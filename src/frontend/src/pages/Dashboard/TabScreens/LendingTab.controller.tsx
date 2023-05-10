@@ -117,7 +117,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
                   <CommaNumber
                     value={lending24hPersentChange}
                     beginningText={lending24hPersentChange > 0 ? '+' : ''}
-                    endingText={'%'}
+                    endingText={'% 24h'}
                   />
                 </div>
               </div>
@@ -166,7 +166,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
                   <CommaNumber
                     value={borrowing24hPersentChange}
                     beginningText={borrowing24hPersentChange > 0 ? '+' : ''}
-                    endingText={'%'}
+                    endingText={'% 24h'}
                   />
                 </div>
               </div>
@@ -205,7 +205,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
       )}
 
       <div className="descr">
-        <div className="title">How does Lending work on Mavyrk?</div>
+        <div className="title">How does Lending work on Mavryk?</div>
         <div className="text">
           Mavryk allows its users to put up existing crypto-assets as collateral for a loan, up to a 50% loan-to-value
           ratio. Likewise, suppliers can loan out their crypto-assets to receive interest.{' '}

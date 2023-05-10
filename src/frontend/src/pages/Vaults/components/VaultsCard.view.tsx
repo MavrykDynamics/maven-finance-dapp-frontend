@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useContext, useRef } from 'react'
-import { useClickAway } from 'react-use'
+import { useEffect, useState, useContext } from 'react'
 import { useSelector } from 'react-redux'
 
 // components
@@ -19,22 +18,24 @@ import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } f
 
 // types
 import { State } from 'reducers'
-import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
+import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 
 // helpers
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
-import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
+import getTimestampByLevel from 'utils/api/getTimestampByLevel'
+import { vaultTabs } from '../Vaults.view'
+import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
     case vaultsStatuses.LIQUIDATABLE:
       return { color: 'down', text: 'Liquidation Armed' }
     case vaultsStatuses.GRACE_PERIOD:
-      return { color: 'darkWarning', text: 'Grace Period' }
+      return { color: 'warning', text: 'Grace Period' }
     case vaultsStatuses.MARK:
       return { color: 'warning', text: 'Ready to Arm' }
     case vaultsStatuses.AT_RISK:
@@ -83,9 +84,10 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
   }
 }
 
-type Props = VaultType & {
+type Props = LoansVaultType & {
   isOwner: boolean
   handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
+  vaultTab: string
 }
 
 export const VaultsCard = (props: Props) => {
@@ -100,38 +102,14 @@ export const VaultsCard = (props: Props) => {
     liquidationMax,
     liquidationPrice,
     handleMarkForLiquidation,
+    vaultTab,
   } = props
 
-  const {
-    openLiquidateVaultPopup,
-    changeBakerPopup,
-    repayPartPopup,
-    repayFullPopup,
-    borrowAssetPopup,
-    addExistingCollateralPopup,
-    addNewCollateralPopup,
-    withdrawCollateralPopup,
-    updateMvkOperatorPopup,
-    managePermissionsPopup,
-    liquidateVaultPopup,
-  } = useContext(loansPopupsContext)
+  const { isActionActive } = useSelector((state: State) => state.loading)
+  const { DAOFee } = useSelector((state: State) => state.loans.config)
 
-  const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
 
-  const notHandleClickAway =
-    repayPartPopup.showModal ||
-    changeBakerPopup.showModal ||
-    repayFullPopup.showModal ||
-    borrowAssetPopup.showModal ||
-    addExistingCollateralPopup.showModal ||
-    addNewCollateralPopup.showModal ||
-    withdrawCollateralPopup.showModal ||
-    updateMvkOperatorPopup.showModal ||
-    managePermissionsPopup.showModal ||
-    liquidateVaultPopup.showModal ||
-    isActionLoading
-
-  const [expanded, setExpanded] = useState(false)
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   const statusColor = findStatusInfo(status).color as StatusFlagStyle
@@ -144,9 +122,6 @@ export const VaultsCard = (props: Props) => {
     status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
 
   const isMarkStatus = vaultsStatuses.MARK === status
-
-  const ref = useRef<HTMLDivElement | null>(null)
-  useClickAway(ref, () => (notHandleClickAway ? null : setExpanded(false)))
 
   const getCountdownTimestamp = async (levelOfEarly: number, levelOfLate: number) => {
     const [timestampOfEarly, timestampOfLate] = await Promise.all([
@@ -165,8 +140,6 @@ export const VaultsCard = (props: Props) => {
   }
 
   useEffect(() => {
-    if (!expanded) return
-
     if (status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.LIQUIDATABLE) {
       ;(async () => {
         if (!levelOfEarly || !levelOfLate) {
@@ -183,7 +156,7 @@ export const VaultsCard = (props: Props) => {
         setTimerTimestamp(timestamp)
       })()
     }
-  }, [status, expanded, levelOfEarly, levelOfLate])
+  }, [status, levelOfEarly, levelOfLate])
 
   const headerSufix = <StatusFlag status={statusColor} text={status} className="sufix" />
 
@@ -290,7 +263,7 @@ export const VaultsCard = (props: Props) => {
                         <div className="cell-content">
                           <CommaNumber
                             value={amount}
-                            decimalsToShow={isTotalRow ? 2 : 4}
+                            decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
                             beginningText={isTotalRow ? '$' : ''}
                             className="balance"
                           />
@@ -322,7 +295,7 @@ export const VaultsCard = (props: Props) => {
             onClick={() => {
               return isMarkStatus ? handleMarkForLiquidation(vaultId, ownerId) : liquidateModalHandler()
             }}
-            disabled={vaultsStatuses.GRACE_PERIOD === status}
+            disabled={vaultsStatuses.GRACE_PERIOD === status || isActionActive}
           />
         </div>
       )}
@@ -330,29 +303,16 @@ export const VaultsCard = (props: Props) => {
   )
 
   return (
-    <div ref={ref}>
-      {isOwner ? (
-        <BorrowingExpandCard
-          {...props}
-          className={`expand-vault ${expanded ? 'openVault' : ''}`}
-          headerSufix={headerSufix}
-          getExpandedStatus={setExpanded}
-          isOpenedVault={expanded}
-          isOwner
-          DAOFee={props.daoFee}
-        />
-      ) : (
-        <BorrowingExpandCard
-          {...props}
-          className={`expand-vault ${expanded ? 'openVault' : ''}`}
-          headerSufix={headerSufix}
-          getExpandedStatus={setExpanded}
-          isOpenedVault={expanded}
-          DAOFee={props.daoFee}
-        >
-          {generalExpand}
+    <>
+      {(vaultTab === vaultTabs.ALL || vaultTab === vaultTabs.MY) && (
+        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} isOwner={isOwner}>
+          {!isOwner && generalExpand}
         </BorrowingExpandCard>
       )}
-    </div>
+
+      {vaultTab === vaultTabs.PERMISSIONED && (
+        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
+      )}
+    </>
   )
 }

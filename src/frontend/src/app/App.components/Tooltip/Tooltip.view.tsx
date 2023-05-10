@@ -11,7 +11,7 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
   height: 12px;
   width: 12px;
 
-  svg {
+  > svg {
     width: 12px;
     height: 12px;
     fill: ${({ theme, defaultStrokeColor }) => defaultStrokeColor ?? theme.dataColor};
@@ -37,6 +37,10 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
     width: max-content;
     max-width: 330px;
     z-index: 1000;
+
+    a {
+      color: ${({ theme }) => theme.valueColor};
+    }
   }
 
   .text::after {
@@ -69,24 +73,6 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
       bottom: 200%;
     }
   }
-
-  &.add-bytes {
-    left: -24px;
-    button {
-      font-size: 26px;
-      color: ${({ theme }) => theme.valueColor};
-    }
-
-    .text {
-      bottom: 180%;
-    }
-  }
-
-  &.delete-bytes {
-    .text {
-      bottom: 210%;
-    }
-  }
 `
 
 export const CustomTooltip = ({
@@ -96,8 +82,8 @@ export const CustomTooltip = ({
   iconId,
   children,
 }: {
-  children?: JSX.Element
-  text?: string
+  children?: React.ReactNode
+  text?: string | React.ReactNode
   defaultStrokeColor?: string
   className?: string
   iconId?: 'info' | 'question'

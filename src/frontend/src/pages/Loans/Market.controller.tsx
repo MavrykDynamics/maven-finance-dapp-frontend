@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 // const
 import { ACTION_SIMPLE, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
-import { BORROW_TAB_ID, LEND_TAB_ID, PERMISSIONS_VAULTS_TAB_ID } from './Loans.const'
+import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -24,7 +24,6 @@ import { MarketPagination, MarketStyled, ThreeLevelListItem } from './Loans.styl
 // types
 import { State } from 'reducers'
 import { MarketPageHeader } from './Components/LoansPageHeader'
-import { PermissionVaults } from './Components/PermissionVaultsTab'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from './Actions/getLoansData.actions'
@@ -51,14 +50,13 @@ export const Market = () => {
     window.scrollTo(0, 0)
   }, [])
 
-  const currentToken = useMemo(
-    () => loanTokens.find(({ loanTokenData: { symbol } }) => assetId === symbol),
-    [assetId, loanTokens],
-  )
-
-  const [prevMarket, nextMarket, currentAsset] = useMemo(() => {
-    const currentAssetIdx = loanTokens.findIndex(({ loanTokenData: { symbol } }) => symbol === assetId)
-    return [loanTokens[currentAssetIdx - 1], loanTokens[currentAssetIdx + 1], loanTokens[currentAssetIdx]]
+  const [prevMarket, nextMarket, currentToken] = useMemo(() => {
+    const currentTokenIdx = loanTokens.findIndex(({ loanTokenData: { symbol } }) => symbol === assetId)
+    return [
+      loanTokens.at(currentTokenIdx - 1) ?? loanTokens.at(-1),
+      loanTokens.at(currentTokenIdx + 1) ?? loanTokens.at(0),
+      loanTokens.at(currentTokenIdx),
+    ]
   }, [assetId, loanTokens])
 
   if (isLoading) {
@@ -112,21 +110,12 @@ export const Market = () => {
       <Link to={`/loans/${assetId}/${BORROW_TAB_ID}`}>
         <Button text={'My Borrowing'} kind={ACTION_SIMPLE} className={`${tabId === BORROW_TAB_ID ? 'active' : ''}`} />
       </Link>
-      {currentToken?.permissionedBorrowingList.length ? (
-        <Link to={`/loans/${assetId}/${PERMISSIONS_VAULTS_TAB_ID}`}>
-          <Button
-            text={'Permissioned Vaults'}
-            kind={ACTION_SIMPLE}
-            className={`${tabId === PERMISSIONS_VAULTS_TAB_ID ? 'active' : ''}`}
-          />
-        </Link>
-      ) : null}
     </div>
   )
 
   return (
     <Page>
-      <MarketPageHeader assetId={assetId} currentAsset={currentAsset} />
+      <MarketPageHeader assetId={assetId} currentAsset={currentToken} />
 
       {marketPagination}
 
@@ -224,15 +213,8 @@ export const Market = () => {
         ) : null}
         {tabId === BORROW_TAB_ID ? (
           <BorrowingTab
-            borrowingItems={currentToken.myBorrowingList}
             lendingControllerAddress={loansControllerAddress}
             currentMarketAsset={currentToken.loanTokenData.gqlName}
-          />
-        ) : null}
-        {tabId === PERMISSIONS_VAULTS_TAB_ID ? (
-          <PermissionVaults
-            permissionVaults={currentToken.permissionedBorrowingList}
-            lendingControllerAddress={loansControllerAddress}
           />
         ) : null}
 

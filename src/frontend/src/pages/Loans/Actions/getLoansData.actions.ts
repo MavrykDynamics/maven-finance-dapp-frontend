@@ -1,4 +1,7 @@
 import { AppDispatch, GetState } from 'app/App.controller'
+import { normalizeLoans } from '../Loans.normalizer'
+import { getXTZBakers, getCollateralTokens } from '../LoansFethcers'
+import { normalizeVaultsStorage } from 'pages/Vaults/Vaults.normalizer'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import {
   AVALIABLE_COLLATERALS_QUERY,
@@ -7,29 +10,32 @@ import {
   LOANS_QUERY,
   LOANS_QUERY_NAME,
   LOANS_QUERY_VARIABLE,
-  NEW_VAULT_QUERY,
-  NEW_VAULT_QUERY_NAME,
-  NEW_VAULT_QUERY_VARIABLE,
 } from 'gql/queries/getLoansStorage'
-import { normalizeLoans } from '../Loans.helpers'
-import { getXTZBakers, getCollateralTokens } from '../LoansFethcers'
+import {
+  VAULTS_STORAGE_QUERY,
+  VAULTS_STORAGE_QUERY_NAME,
+  VAULTS_STORAGE_QUERY_VARIABLE,
+} from 'gql/queries/getVaultsStorage'
 
 export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
-export const CLEAR_LOANS_STORAGE = 'CLEAR_LOANS_STORAGE'
+export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
 export const getLoansStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     tokens: { dipDupTokens, mTokens },
     wallet: {
       accountPkh,
-      user: { mTokens: userMTokens },
+      user: { userMTokens },
     },
     dataFeeds: { feedsLedger },
   } = getState()
   try {
-    const storage = await fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE)
+    const [marketsStorage, vaultsStorage] = await Promise.all([
+      fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE),
+      fetchFromIndexer(VAULTS_STORAGE_QUERY, VAULTS_STORAGE_QUERY_NAME, VAULTS_STORAGE_QUERY_VARIABLE),
+    ])
 
-    const { chartsData, loanTokens, loansControllerAddress, config } = await normalizeLoans({
-      storage: storage?.lending_controller?.[0],
+    const normalizedLoansStorage = await normalizeLoans({
+      storage: marketsStorage?.lending_controller?.[0],
       dipDupData: dipDupTokens,
       mTokens,
       userMTokens,
@@ -37,27 +43,19 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
       feeds: feedsLedger,
     })
 
-    await dispatch({
+    const normallaziedVaultsStorage = await normalizeVaultsStorage({
+      lendingController: vaultsStorage?.lending_controller[0],
+      accountPkh,
+      dipDupTokens,
+      feeds: feedsLedger,
+    })
+
+    dispatch({
       type: GET_LOANS_STORAGE,
-      loansStorage: {
-        loansControllerAddress,
-        chartsData,
-        loanTokens,
-        config,
-      },
+      loansStorage: { ...normalizedLoansStorage, vaults: normallaziedVaultsStorage },
     })
   } catch (e) {
     console.error('getLoansStorage error: ', e)
-  }
-}
-
-export const getNewVaultData = async () => {
-  try {
-    const newVaultData = await fetchFromIndexer(NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE)
-
-    return newVaultData.vault.at(-1)?.lending_controller_vaults[0].vault_id
-  } catch (e) {
-    console.log('getNewVaultData error: ', e)
   }
 }
 
@@ -65,7 +63,6 @@ export const GET_AVALIABLE_COLLATERALS = 'GET_AVALIABLE_COLLATERALS'
 export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     tokens: { dipDupTokens },
-    wallet: { accountPkh },
     dataFeeds: { feedsLedger },
   } = getState()
   try {
@@ -75,11 +72,10 @@ export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getSt
       AVALIABLE_COLLATERALS_QUERY_VARIABLE,
     )
 
-    const avaliableCollaterals = await getCollateralTokens(
+    const avaliableCollaterals = getCollateralTokens(
       storage?.lending_controller?.[0]?.collateral_tokens,
       dipDupTokens,
       feedsLedger,
-      accountPkh,
     )
 
     await dispatch({
@@ -87,7 +83,7 @@ export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getSt
       avaliableCollaterals,
     })
   } catch (e) {
-    console.log('getNewVaultData error: ', e)
+    console.log('getAvaliableCollaterals error: ', e)
   }
 }
 

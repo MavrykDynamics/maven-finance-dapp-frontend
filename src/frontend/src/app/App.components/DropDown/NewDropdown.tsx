@@ -2,15 +2,27 @@ import { useRef, useEffect, useState } from 'react'
 import { useClickAway } from 'react-use'
 
 // styles
-import { DropDownStyled, DropDownMenu, DropDownListContainer, DropDownList, DropDownListItem } from './DropDown.style'
+import {
+  DropDownStyled,
+  DropDownMenu,
+  DropDownListContainer,
+  DropDownList,
+  DropDownListItem,
+  DropDownJsxChild,
+  DropDownTruncatedChild,
+} from './DropDown.style'
 
 // components
 import Icon from '../Icon/Icon.view'
 
 // helpers
 import { scrollToFullView } from 'utils/scrollToFullView'
-import { DropDownJsxChild } from 'pages/Loans/Components/Modals/Modals.style'
 import { ImageWithPlug } from '../Icon/ImageWithPlug'
+
+export const getDdItem = (item: string) => ({
+  content: <DropdownTruncateOption text={item} />,
+  id: item,
+})
 
 export type DDItemId = number | string
 export type DropDownItemType = {
@@ -65,7 +77,7 @@ export const DropDown = ({ placeholder, clickItem, items, activeItem, className,
                   key={id}
                   disabled={disabled}
                 >
-                  {content} {activeItem?.id === id ? <Icon id="check-stroke" /> : null}
+                  {content} {activeItem?.id === id ? <Icon id="check-stroke" className="selectedIcon" /> : null}
                 </DropDownListItem>
               )
             })}
@@ -83,4 +95,8 @@ export const DropdownInputCustomChild = ({ iconSrc, symbol }: { iconSrc: string;
       {symbol}
     </div>
   </DropDownJsxChild>
+)
+
+export const DropdownTruncateOption = ({ text }: { text: string }) => (
+  <DropDownTruncatedChild>{text}</DropDownTruncatedChild>
 )

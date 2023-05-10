@@ -317,11 +317,11 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
   const { openDepositFarmPopup, openRoiCalculatorPopup, openWithdrawFarmPopup } = useContext(farmsPopupsContext)
   const {
     accountPkh,
-    user: { myFarmRewardsData },
+    user: { availableFarmRewards },
   } = useSelector((state: State) => state.wallet)
 
   const valueAPY = calculateAPY(farm.currentRewardPerBlock, farm.lpBalance)
-  const userReward = myFarmRewardsData[farm.address]
+  const userReward = availableFarmRewards[farm.address]
 
   const harvestRewards = () => {
     dispatch(harvest(farm.address))

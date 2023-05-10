@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // components
-import { BUTTON_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
@@ -34,6 +34,7 @@ const INIT_FORM = {
 export function FormChangeCouncilMemberView(maxLength: CouncilMaxLength) {
   const dispatch = useDispatch()
   const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const dropDownItems = useMemo(
     () =>
@@ -49,7 +50,7 @@ export function FormChangeCouncilMemberView(maxLength: CouncilMaxLength) {
     [breakGlassCouncilMembers],
   )
 
-  type DropDownItemType = typeof dropDownItems[0]
+  type DropDownItemType = (typeof dropDownItems)[0]
 
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
   const [form, setForm] = useState(INIT_FORM)
@@ -202,7 +203,7 @@ export function FormChangeCouncilMemberView(maxLength: CouncilMaxLength) {
         />
 
         <div className="align-to-right">
-          <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
             <Icon id="exchange" />
             Change Council Member
           </NewButton>

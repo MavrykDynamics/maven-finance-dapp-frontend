@@ -141,7 +141,7 @@ export const TextareaStyled = styled.textarea`
   line-height: 20px;
   resize: none;
   background-color: ${({ theme }) => theme.backgroundColor};
-  color: ${({ theme }) => theme.headerColor};
+  color: ${({ theme }) => theme.blockNameTitleColor};
   border: unset;
   width: 100%;
   min-height: 85px;
@@ -156,6 +156,8 @@ export const TextareaStyled = styled.textarea`
   transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 
   &::placeholder {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.blockNameTitleColor};
+    font-weight: 400;
+    font-size: 12px;
   }
 `

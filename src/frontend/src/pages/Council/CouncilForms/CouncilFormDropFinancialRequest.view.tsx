@@ -4,28 +4,30 @@ import { State } from 'reducers'
 
 // const
 import { distinctRequestsByExecuting } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
+import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 
 // action
 import { dropFinancialRequest } from '../Council.actions'
-import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
+import { getFinancialRequestStorage } from 'pages/FinacialRequests/FinancialRequest.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()
-  const { financialRequests, isLoaded: isFinancialRequestsLoaded } = useSelector(
-    (state: State) => state.financialRequest,
-  )
+  const { isActionActive } = useSelector((state: State) => state.loading)
+
+  const {
+    financialRequestMapper,
+    financialRequestsIds,
+    isLoaded: isFinancialRequestsLoaded,
+  } = useSelector((state: State) => state.financialRequest)
 
   useDataLoader(async (isDepsChanged) => {
     try {
@@ -37,18 +39,17 @@ export const CouncilFormDropFinancialRequest = () => {
 
   const dropDownItems = useMemo(
     () =>
-      distinctRequestsByExecuting(financialRequests).ongoing.map((item) => ({
-        content: (
-          <div className="truncated-text">
-            {item.type} {item.purpose}
-          </div>
-        ),
-        id: item.id,
-      })),
-    [financialRequests],
+      distinctRequestsByExecuting(financialRequestsIds, financialRequestMapper).ongoing.map((frId) => {
+        const fr = financialRequestMapper[frId]
+        return {
+          content: <DropdownTruncateOption text={`${fr.type} ${fr.purpose}`} />,
+          id: frId,
+        }
+      }),
+    [financialRequestMapper, financialRequestsIds],
   )
 
-  type DropDownItemType = typeof dropDownItems[0]
+  type DropDownItemType = (typeof dropDownItems)[number]
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -89,7 +90,7 @@ export const CouncilFormDropFinancialRequest = () => {
           />
         </div>
         <div className="button-aligment">
-          <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
             <Icon id="navigation-menu_close" />
             Drop Financial Request
           </NewButton>

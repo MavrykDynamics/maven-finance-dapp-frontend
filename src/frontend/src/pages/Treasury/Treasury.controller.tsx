@@ -19,7 +19,7 @@ import { Page } from 'styles'
 import { TreasuryActiveStyle, TreasurySelectStyle } from './Treasury.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
-type TreasuryDDType = DropDownItemType & { treasury: TreasuryType }
+type TreasuryDDType = DropDownItemType & { treasury: TreasuryType[number] }
 
 export const Treasury = () => {
   const dispatch = useDispatch()

@@ -12,10 +12,15 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { DropDownCollateralAssetType, DropDownXTZBakerType } from './CreateNewVault.modal'
 import NewButton from 'app/App.components/Button/NewButton'
 
-import { calcCollateralRatio, getMaxCollateralWithdraw, isTezosAsset } from 'pages/Loans/Loans.helpers'
+import {
+  calcCollateralRatio,
+  getLoansInputMaxAmount,
+  isTezosAsset,
+  loansInputValidation,
+} from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import {
@@ -29,16 +34,19 @@ import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { DropDownJsxChild, LoansModalBase, VaultModalOverview } from './Modals.style'
+import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { silverColor } from 'styles'
 
 type InputState =
   | {
       amount: string
       assetName: string
+      assetDisplayName: string
       assetSymbol: string
-      userBalance: number
       id: DDItemId
       validationStatus: InputStatusType
       ddItems: Record<DDItemId, DropDownCollateralAssetType>
@@ -62,6 +70,8 @@ export const AddNewCollateral = ({
     currentCollateralRatio = 0,
     borrowedAmount = 0,
     borrowedAssetRate = 0,
+    avaliableLiq = 0,
+    borrowCapacity = 0,
     existingCollaterals,
   } = data ?? {}
 
@@ -71,7 +81,7 @@ export const AddNewCollateral = ({
     xtzBakers: { otherBakers, dao, mavrykDynamics },
   } = useSelector((state: State) => state.tokens)
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
-  const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = useMemo(
     () => [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])],
@@ -88,7 +98,7 @@ export const AddNewCollateral = ({
       (acc, collateralData) => {
         acc[collateralData.id] = {
           ...collateralData,
-          content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.symbol} />,
+          content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.name} />,
           disabled: Boolean(
             collateralData.isProtected ||
               existingCollaterals?.find(({ gqlName }) => collateralData.gqlName === gqlName),
@@ -108,7 +118,7 @@ export const AddNewCollateral = ({
       amount: '0',
       assetName: mappedAvaliableCollaterals[firstNotDisabledCollateralId].gqlName,
       assetSymbol: mappedAvaliableCollaterals[firstNotDisabledCollateralId].symbol,
-      userBalance: mappedAvaliableCollaterals[firstNotDisabledCollateralId].userBalance,
+      assetDisplayName: mappedAvaliableCollaterals[firstNotDisabledCollateralId].name,
       validationStatus: '',
       id: mappedAvaliableCollaterals[firstNotDisabledCollateralId].id,
       ddItems: mappedAvaliableCollaterals,
@@ -118,9 +128,11 @@ export const AddNewCollateral = ({
     if (!show) {
       setInputData(undefined)
     }
-  }, [avaliableCollaterals, show, existingCollaterals])
+  }, [avaliableCollaterals, show, existingCollaterals, userTokens])
 
-  const { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance } = useMemo(() => {
+  const collateralBalance = userTokens[inputData?.assetSymbol ?? '']?.balance ?? 0
+
+  const { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance } = useMemo(() => {
     if (inputData) {
       const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
       const selectedAsset = avaliableCollaterals.find(({ id }) => id === inputData?.id)
@@ -130,21 +142,16 @@ export const AddNewCollateral = ({
         ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, borrowedAssetRate)
         : 0
 
-      const futureCollateralWithdraw =
-        getMaxCollateralWithdraw(
-          inputAmount * collateralRate,
-          vaultCollateralBalance + inputAmount * collateralRate,
-          borrowedAmount,
-          borrowedAssetRate,
-          collateralRate,
-        ) * collateralRate
-
       const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
+      const futureBorrowCapacity = Math.min(
+        avaliableLiq,
+        futureCollateralBalance / 2 - borrowedAmount * borrowedAssetRate,
+      )
 
-      return { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance }
+      return { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance }
     }
-    return { futureCollateralRatio: 0, futureCollateralWithdraw: 0, futureCollateralBalance: 0 }
-  }, [inputData, avaliableCollaterals, vaultCollateralBalance, borrowedAmount, borrowedAssetRate])
+    return { futureCollateralRatio: 0, futureBorrowCapacity: 0, futureCollateralBalance: 0 }
+  }, [inputData, avaliableCollaterals, vaultCollateralBalance, borrowedAmount, borrowedAssetRate, avaliableLiq])
 
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
@@ -176,10 +183,13 @@ export const AddNewCollateral = ({
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
-    const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount: userAssetBalance,
+      options: {
+        byDecimalPlaces: inputData?.selectedDdItem.decimals || assetDecimalsToShow,
+      },
+    })
 
     if (inputData) {
       setInputData({
@@ -227,8 +237,8 @@ export const AddNewCollateral = ({
         ...inputData,
         assetName: inputData.ddItems[id].gqlName,
         assetSymbol: inputData.ddItems[id].symbol,
+        assetDisplayName: inputData.ddItems[id].name,
         selectedDdItem: inputData.ddItems[id],
-        userBalance: inputData.ddItems[id].userBalance,
         ddItems: newDDItems,
         id,
       })
@@ -237,10 +247,9 @@ export const AddNewCollateral = ({
 
   const isDepositBtnDisabled = useMemo(
     () =>
-      isActionLoading ||
       (isTezosAsset(inputData?.assetName ?? '') && !bakerChosenDdItem) ||
       inputData?.validationStatus === INPUT_STATUS_ERROR,
-    [bakerChosenDdItem, inputData?.assetName, inputData?.validationStatus, isActionLoading],
+    [bakerChosenDdItem, inputData?.assetName, inputData?.validationStatus],
   )
 
   const depositCollateralHandler = () => {
@@ -280,13 +289,7 @@ export const AddNewCollateral = ({
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
-                <CommaNumber
-                  beginningText={`${currentCollateralRatio > 250 ? '+' : ''}`}
-                  value={Math.max(0, Math.min(currentCollateralRatio, 250))}
-                  endingText="%"
-                  showDecimal
-                  decimalsToShow={2}
-                />
+                <CommaNumber value={currentCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
               </div>
               <GradientDiagram
                 className="diagram"
@@ -299,8 +302,15 @@ export const AddNewCollateral = ({
               <CommaNumber value={vaultCollateralBalance} beginningText="$" className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Available To Withdraw</div>
-              <CommaNumber value={0} className="value" beginningText="$" />
+              <div className="name">
+                Available to Borrow{' '}
+                <CustomTooltip
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  iconId="info"
+                  defaultStrokeColor={silverColor}
+                />
+              </div>
+              <CommaNumber value={borrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
@@ -313,15 +323,15 @@ export const AddNewCollateral = ({
                   type: 'number',
                   onBlur: inputOnBlurHandle,
                   onFocus: onFocusHandler,
-                  onChange: (e) => inputOnChangeHandle(e.target.value, inputData.userBalance),
+                  onChange: (e) => inputOnChangeHandle(e.target.value, collateralBalance),
                 }}
                 settings={{
-                  balance: inputData.userBalance,
-                  balanceAsset: isTezosAsset(inputData.assetName) ? 'XTZ' : inputData.assetSymbol,
+                  balance: collateralBalance,
+                  balanceAsset: isTezosAsset(inputData.assetName) ? 'XTZ' : inputData.assetDisplayName,
                   useMaxHandler: () =>
                     setInputData({
                       ...inputData,
-                      amount: String(inputData.userBalance),
+                      amount: getLoansInputMaxAmount(collateralBalance, inputData.selectedDdItem.decimals),
                       validationStatus: INPUT_STATUS_SUCCESS,
                     }),
                   inputSize: INPUT_LARGE,
@@ -388,13 +398,7 @@ export const AddNewCollateral = ({
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
-                <CommaNumber
-                  beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
-                  value={Math.max(0, Math.min(futureCollateralRatio, 250))}
-                  endingText="%"
-                  showDecimal
-                  decimalsToShow={2}
-                />
+                <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
               </div>
               <GradientDiagram
                 className="diagram"
@@ -407,8 +411,15 @@ export const AddNewCollateral = ({
               <CommaNumber value={futureCollateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Available To Withdraw</div>
-              <CommaNumber value={futureCollateralWithdraw} className="value" beginningText="$" />
+              <div className="name">
+                Available to Borrow{' '}
+                <CustomTooltip
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  iconId="info"
+                  defaultStrokeColor={silverColor}
+                />
+              </div>
+              <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 

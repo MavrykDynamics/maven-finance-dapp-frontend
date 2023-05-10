@@ -17,6 +17,7 @@ import {
   getOnFocusValue,
   RemoveLendingAssetDataType,
 } from './Modals.helpers'
+import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -27,6 +28,7 @@ import { LoansModalBase } from './Modals.style'
 import { withdrawLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import colors from 'styles/colors'
+import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238846&t=Sx2aEpp3ifrGxBtQ-0
 export const RemoveAssetsFromLending = ({
@@ -39,7 +41,6 @@ export const RemoveAssetsFromLending = ({
   data?: RemoveLendingAssetDataType
 }) => {
   const {
-    userBalance = 0,
     mBalance = 0,
     rate = 0,
     symbol = '',
@@ -53,8 +54,8 @@ export const RemoveAssetsFromLending = ({
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
@@ -63,12 +64,19 @@ export const RemoveAssetsFromLending = ({
     [inputData.validationStatus],
   )
 
+  const userAssetBalance = userTokens[symbol]?.balance ?? 0
+
   const continueBtnHandler = () => setShownScreen('confitmation')
   const backBtnHandler = () => setShownScreen('initial')
 
   const onChangeHandler = (inputAmount: string, maxAmount: number) => {
-    const validationStatus =
-      Number(inputAmount) > 0 && Number(inputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    const validationStatus = loansInputValidation({
+      inputAmount,
+      maxAmount,
+      options: {
+        byDecimalPlaces: decimals || assetDecimalsToShow,
+      },
+    })
 
     setInputData({
       ...inputData,
@@ -99,8 +107,8 @@ export const RemoveAssetsFromLending = ({
   }, [show])
 
   const isWithdrawDisabled = useMemo(() => {
-    return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionLoading
-  }, [inputData.validationStatus, isActionLoading])
+    return inputData.validationStatus !== INPUT_STATUS_SUCCESS
+  }, [inputData.validationStatus])
 
   const withdrawHandler = () =>
     dispatch(withdrawLendingAssetAction(gqlName, Number(inputData.amount), decimals, closePopup))
@@ -139,7 +147,7 @@ export const RemoveAssetsFromLending = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Wallet Balance</div>
-                  <CommaNumber value={userBalance * rate} className="value" beginningText="$" />
+                  <CommaNumber value={userAssetBalance * rate} className="value" beginningText="$" />
                 </ThreeLevelListItem>
               </div>
 
@@ -154,11 +162,11 @@ export const RemoveAssetsFromLending = ({
                   onChange: (e) => onChangeHandler(e.target.value, Math.min(mBalance, currentLendedAmount)),
                 }}
                 settings={{
-                  balance: userBalance,
+                  balance: userAssetBalance,
                   balanceAsset: symbol,
                   useMaxHandler: () =>
                     onChangeHandler(
-                      String(Math.min(mBalance, currentLendedAmount)),
+                      getLoansInputMaxAmount(Math.min(mBalance, currentLendedAmount), decimals),
                       Math.min(mBalance, currentLendedAmount),
                     ),
                   inputStatus: inputData.validationStatus,

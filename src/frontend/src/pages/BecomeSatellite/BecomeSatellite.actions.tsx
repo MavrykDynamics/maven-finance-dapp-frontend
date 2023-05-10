@@ -1,56 +1,107 @@
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
+import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
+
+import {
+  ACTION_COMPLETION_MESSAGE_TEXT,
+  ACTION_START_MESSAGE_TEXT,
+  TOASTER_ERROR,
+  TOASTER_INFO,
+  TOASTER_LOADING,
+  TOASTER_SUCCESS,
+  TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
+} from 'app/App.components/Toaster/Toaster.constants'
+
 import { State } from 'reducers'
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 import type { AppDispatch, GetState } from '../../app/App.controller'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { updateUserData } from 'reducers/actions/user.actions'
+import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
 
 export const registerAsSatellite =
   (form: RegisterAsSatelliteForm) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionLoading) {
-      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      const userDelegatedToAddress = state.wallet.user.satelliteMvkIsDelegatedTo
+      // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
 
-      const transaction = await contract?.methods
-        .registerAsSatellite(
-          form.name,
-          form.description,
-          form.image,
-          form.website,
-          form.fee * 100,
-          form.publicKey,
-          form.peerId,
-        )
+      const transaction = tezos.wallet
+        .batch([
+          // Need to undelegate from satellite is user register himself as satellite and is delegated
+          ...((userDelegatedToAddress
+            ? [
+                {
+                  kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+                  ...contract?.methods
+                    .undelegateFromSatellite(state.wallet.accountPkh, userDelegatedToAddress)
+                    .toTransferParams(),
+                },
+              ]
+            : [{}]) as WalletParamsWithKind[]),
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...contract?.methods
+              .registerAsSatellite(
+                form.name,
+                form.description,
+                form.image,
+                form.website,
+                form.fee * 100,
+                form.publicKey,
+                form.peerId,
+              )
+              .toTransferParams(),
+          },
+        ])
         .send()
 
-      dispatch(toggleActionLoader(true))
-      dispatch(showToaster(INFO, 'Registering...', 'Please wait 30s'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Registering...', ACTION_START_MESSAGE_TEXT))
 
-      await transaction?.confirmation()
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
-      dispatch(showToaster(SUCCESS, 'Satellite Registered.', 'All good :)'))
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      dispatch(getSatellitesStorage())
-      dispatch(toggleActionLoader(false))
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getSatellitesStorage())
+            await dispatch(updateUserData())
+
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Satellite Registered.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
       if (error instanceof Error) {
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -59,19 +110,14 @@ export const updateSatelliteRecord =
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionLoading) {
-      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
-
       const transaction = await contract?.methods
         .updateSatelliteRecord(
           form.name,
@@ -84,20 +130,43 @@ export const updateSatelliteRecord =
         )
         .send()
 
-      dispatch(toggleActionLoader(true))
-      dispatch(showToaster(INFO, 'Registering...', 'Please wait 30s'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Updating satellite record...', ACTION_START_MESSAGE_TEXT))
 
-      await transaction?.confirmation()
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
-      dispatch(showToaster(SUCCESS, 'Satellite Registered.', 'All good :)'))
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      dispatch(getSatellitesStorage())
-      dispatch(toggleActionLoader(false))
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getSatellitesStorage())
+            await dispatch(updateUserData())
+
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Satellite record updated.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
       if (error instanceof Error) {
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -105,34 +174,54 @@ export const unregisterAsSatellite = () => async (dispatch: AppDispatch, getStat
   const state: State = getState()
 
   if (!state.wallet.accountPkh) {
-    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  if (state.loading.isActionLoading) {
-    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
   }
 
   try {
+    // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
-
     const transaction = await contract?.methods.unregisterAsSatellite(state.wallet.accountPkh).send()
 
-    dispatch(toggleActionLoader(true))
-    dispatch(showToaster(INFO, 'Unregistering...', 'Please wait 30s'))
+    dispatch(toggleActionFullScreenLoader(true))
+    dispatch(toggleActionCompletion(true))
+    dispatch(showToaster(TOASTER_INFO, 'Unregistering...', ACTION_START_MESSAGE_TEXT))
 
-    await transaction?.confirmation()
+    // turn off fs actions loader and start data updating after 5s after operation started
+    setTimeout(async () => {
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
 
-    dispatch(showToaster(SUCCESS, 'Satellite is no longer registered.', 'All good :)'))
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
 
-    dispatch(getSatellitesStorage())
-    dispatch(toggleActionLoader(false))
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getSatellitesStorage())
+          await dispatch(updateUserData())
+
+          await dispatch(hideToaster())
+          await dispatch(
+            showToaster(TOASTER_SUCCESS, 'Satellite is no longer registered.', ACTION_COMPLETION_MESSAGE_TEXT),
+          )
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
+    }, 5000)
   } catch (error) {
     if (error instanceof Error) {
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }

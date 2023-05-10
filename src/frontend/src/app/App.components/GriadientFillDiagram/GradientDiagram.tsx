@@ -1,4 +1,3 @@
-import { lightTextColor } from 'styles'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { getGradient } from './GradientDiagram.helpers'
 import { GradientBreakpoint, GradientDiagramStyled } from './GradientDiagram.style'
@@ -20,7 +19,7 @@ export type GradientDiagramPropsType = {
 }
 
 export const GradientDiagram = ({ colorBreakpoints, currentPersentage, className = '' }: GradientDiagramPropsType) => {
-  const gradient = getGradient({ colorBreakpoints, currentPersentage })
+  const gradient = getGradient({ colorBreakpoints })
 
   return (
     <GradientDiagramStyled gradient={gradient} gradientWidth={currentPersentage} className={className}>

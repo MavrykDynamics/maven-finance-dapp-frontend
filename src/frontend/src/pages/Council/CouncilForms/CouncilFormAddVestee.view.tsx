@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
@@ -16,8 +16,12 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 // action
 import { addVestee } from '../Council.actions'
 
+// types
+import { InputProps } from 'app/App.components/Input/newInput.type'
+
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
+import { State } from 'reducers'
 
 const INIT_FORM = {
   vesteeAddress: '',
@@ -28,6 +32,8 @@ const INIT_FORM = {
 
 export const CouncilFormAddVestee = () => {
   const dispatch = useDispatch()
+  const { isActionActive } = useSelector((state: State) => state.loading)
+
   const [form, setForm] = useState(INIT_FORM)
 
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
@@ -79,7 +85,7 @@ export const CouncilFormAddVestee = () => {
     inputStatus: formInputStatus.vesteeAddress,
   }
 
-  const totalAllocatedProps = {
+  const totalAllocatedProps: InputProps = {
     type: 'number',
     name: 'totalAllocated',
     value: totalAllocated,
@@ -95,7 +101,7 @@ export const CouncilFormAddVestee = () => {
     inputStatus: formInputStatus.totalAllocated,
   }
 
-  const cliffInMonthsProps = {
+  const cliffInMonthsProps: InputProps = {
     type: 'number',
     name: 'cliffInMonths',
     value: cliffInMonths,
@@ -111,7 +117,7 @@ export const CouncilFormAddVestee = () => {
     inputStatus: formInputStatus.cliffInMonths,
   }
 
-  const vestingInMonthsProps = {
+  const vestingInMonthsProps: InputProps = {
     type: 'number',
     name: 'vestingInMonths',
     value: vestingInMonths,
@@ -124,7 +130,7 @@ export const CouncilFormAddVestee = () => {
   }
 
   const vestingInMonthsSettings = {
-    inputStatus: formInputStatus.totalAllocated,
+    inputStatus: formInputStatus.vestingInMonths,
   }
 
   return (
@@ -160,7 +166,7 @@ export const CouncilFormAddVestee = () => {
         </div>
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
           <Icon id="plus" />
           Add Vestee
         </NewButton>

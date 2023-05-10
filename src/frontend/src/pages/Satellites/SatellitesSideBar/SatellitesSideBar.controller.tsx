@@ -17,8 +17,8 @@ export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
     <h2>Satellite FAQ</h2>
     <FAQLink>
-      <a href="https://mavryk.finance/litepaper#satellite-delegations" target="_blank" rel="noreferrer">
-        What is vote delegation and how does it work?
+      <a href="https://mavryk.finance/litepaper#governance--treasury" target="_blank" rel="noreferrer">
+        Who controls Mavryk Finance, and how are decisions made?
       </a>
     </FAQLink>
     <FAQLink>
@@ -27,22 +27,26 @@ export const SateliteSideBarFAQ = () => (
         target="_blank"
         rel="noreferrer"
       >
-        What are the requirements for becoming a Satellite?
+        What are Satellite’s and what do they do?
       </a>
     </FAQLink>
     <FAQLink>
-      <a href="https://mavryk.finance/litepaper#mvk-and-vmvk-doorman-module" target="_blank" rel="noreferrer">
-        MVK token holder’s delegation agreement
+      <a href="https://mavryk.finance/litepaper#the-decentralized-oracle" target="_blank" rel="noreferrer">
+        How is the price data secured with the decentralized oracle?
       </a>
     </FAQLink>
     <FAQLink>
-      <a href="https://mavryk.finance/litepaper#mvk-and-vmvk-doorman-module" target="_blank" rel="noreferrer">
-        The MVK holder’s guide to delegation
+      <a
+        href="https://mavryk.finance/litepaper#what-is-mvk-and-how-does-it-differ-from-smvk"
+        target="_blank"
+        rel="noreferrer"
+      >
+        What is the difference between MVK and Staked MVK (sMVK)?
       </a>
     </FAQLink>
     <FAQLink>
-      <a href="https://mavryk.finance/litepaper#mvk-and-vmvk-doorman-module" target="_blank" rel="noreferrer">
-        Recognized delegate code of conduct
+      <a href="https://mavryk.finance/litepaper#satellite-delegations " target="_blank" rel="noreferrer">
+        How can I be involved with the DAO without setting up my own Satellite?
       </a>
     </FAQLink>
   </SideBarFaq>
@@ -57,7 +61,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     config: { feedsFactoryAddress },
     feedsLedger,
   } = useSelector((state: State) => state.dataFeeds)
-  const { oraclesIds, allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { delegationAddress } = useSelector((state: State) => state.contractAddresses)
 
   const dataPointsCount = useMemo(
@@ -68,7 +72,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
       ).length,
     [feedsLedger],
   )
-  const totalDelegatedMVK = getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)
+  const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
 
   const averageRevard = calcWithoutPrecision(
     feedsLedger.reduce((acc, { reward_amount_smvk }) => {
@@ -109,7 +113,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <SideBarItem>
           <h3>Number of Satellites</h3>
           <var>
-            <CommaNumber value={allSatellitesIds.length} showDecimal={false} />
+            <CommaNumber value={activeSatellitesIds.length} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>

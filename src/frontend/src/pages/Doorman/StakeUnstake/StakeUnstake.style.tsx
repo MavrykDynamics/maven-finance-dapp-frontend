@@ -192,6 +192,12 @@ export const StakeUnstakeRightPart = styled.div`
   align-items: center;
   justify-content: center;
   min-width: 150px;
+  position: relative;
+
+  .tooltip {
+    position: absolute;
+    right: -17px;
+  }
 `
 
 export const StakeLabel = styled.blockquote`
@@ -224,8 +230,9 @@ export const StakeDelegatedUser = styled.div`
     fill: ${({ theme }) => theme.cardBorderColor};
 
     img {
-      max-width: 100%;
-      max-height: 100%;
+      width: inherit;
+      height: inherit;
+      object-fit: cover;
 
       border-radius: 50%;
     }

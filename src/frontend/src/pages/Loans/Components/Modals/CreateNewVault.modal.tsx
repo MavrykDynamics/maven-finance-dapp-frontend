@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useLockBodyScroll } from 'react-use'
+import { useDebounce, useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
 import {
@@ -9,19 +9,18 @@ import {
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
 import { CreateVaultPopupDataType, VaultNameInputStateType } from './Modals.helpers'
-import { isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { SimpleCircleSpinnerLoader } from 'app/App.components/Loader/Loader.view'
 import { DDItemId, DropDown, DropdownInputCustomChild, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 
-import { DropDownJsxChild, LoansModalBase } from './Modals.style'
+import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
@@ -32,6 +31,9 @@ import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } f
 import { triggerInitialVaultCreation } from 'pages/Loans/Actions/vault.actions'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
+import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
 export type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
 
@@ -71,15 +73,17 @@ export const CreateNewVault = ({
   const dispatch = useDispatch()
   const {
     xtzBakers: { otherBakers, dao, mavrykDynamics },
+    avaliableCollaterals,
   } = useSelector((state: State) => state.tokens)
-  const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = [
-    ...otherBakers,
-    ...(dao ? [dao] : []),
-    ...(mavrykDynamics ? [mavrykDynamics] : []),
-  ]
+  const {
+    vaults: { myVaultsIds, vaultsMapper },
+  } = useSelector((state: State) => state.loans)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
-  const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
-  const { isActionLoading } = useSelector((state: State) => state.loading)
+  const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = useMemo(
+    () => [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])],
+    [dao, mavrykDynamics, otherBakers],
+  )
 
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<DDItemId, DropDownCollateralAssetType>>({})
@@ -97,7 +101,7 @@ export const CreateNewVault = ({
       (acc, collateralData) => {
         acc[collateralData.id] = {
           ...collateralData,
-          content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.symbol} />,
+          content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.name} />,
           disabled: collateralData.isProtected,
         }
         return acc
@@ -120,8 +124,9 @@ export const CreateNewVault = ({
       setAssetChosenDdItem(undefined)
       setVaultCreating(false)
       setNewVaultAddress('')
+      setVaultName({ name: '', validationStatus: '' })
     }
-  }, [avaliableCollaterals, show])
+  }, [show])
 
   // Data for 3rd screen, in case we have only 1 collateral to add
   const firstCollateralMetadata = useMemo(
@@ -211,11 +216,15 @@ export const CreateNewVault = ({
     }
   }
 
-  //handle vaultName input
+  //handle vaultName input TODO: mb add debounce cuz of find operation
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     const validationStatus =
-      value && value.length <= 15 && /^[A-Za-z\s]*$/g.test(value) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+      value &&
+      value.length <= 15 &&
+      !myVaultsIds.find((vaultId) => vaultsMapper[vaultId].name.trim().toLowerCase() === value.trim().toLowerCase())
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR
 
     setVaultName({ name: value, validationStatus })
   }
@@ -253,12 +262,17 @@ export const CreateNewVault = ({
     })
   }
 
+  const { decimals, address, tokenType, gqlName } = collateralsToSelect[collaterals[0]?.id] || {}
+
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, inputIdx: number, userAssetBalance: number) => {
-    const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount: userAssetBalance,
+      options: {
+        byDecimalPlaces: decimals || assetDecimalsToShow,
+      },
+    })
 
     setCollaterals(
       collaterals.map((collateral, updateCollateralIdx) =>
@@ -303,7 +317,6 @@ export const CreateNewVault = ({
     if (currentMarketAsset) {
       try {
         setVaultCreating(true)
-        //TODO: connect this value to an input
         const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset, vaultName.name))
         setCreatedVaultAddress?.(String(newVaultData))
         setNewVaultAddress(String(newVaultData))
@@ -341,8 +354,6 @@ export const CreateNewVault = ({
     //   return acc
     // }, [])
 
-    const { decimals, address, tokenType, gqlName } = collateralsToSelect[collaterals[0].id]
-
     const collaretalToDeposit = {
       collateralName: gqlName,
       assetId: collaterals[0].id,
@@ -352,7 +363,7 @@ export const CreateNewVault = ({
       assetAddress: address,
     }
 
-    if (newVaultAddress && !isAddCollateralContinueDisabled) {
+    if (newVaultAddress && collaretalToDeposit.assetAddress && !isAddCollateralContinueDisabled) {
       dispatch(
         depositCollateralAction(newVaultAddress, collaretalToDeposit, closePopup, bakerChosenDdItem?.bakerAddress),
       )
@@ -367,16 +378,22 @@ export const CreateNewVault = ({
       : 'Confirm Collateral Deposit'
 
   const descrText =
-    shownScreen === 'initial'
-      ? `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod tincidunt felis, ac vehicula tellus
-  auctor id. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
-  Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi et ligula
-  fringilla, tempus sapien eget, pellentesque orci. Donec finibus quam rhoncus, fringilla ex ut, feugiat
-  nulla. Curabitur tristique augue non ante hendrerit ultrices`
-      : shownScreen === 'addCollateral'
-      ? `Select an one or multiple assets to add as collateral. If you are providing XTZ as collateral, make sure you
+    shownScreen === 'initial' ? (
+      <>
+        <p>
+          Create a personal vault to begin borrowing. You may only choose one asset (USDT, EURL, or XTZ) to be borrowed
+          per vault.
+        </p>
+        <p>
+          In your vault, you may deposit a basket of assets such as XTZ, tzBTC, USDT, and EURL together as collateral.
+        </p>
+      </>
+    ) : shownScreen === 'addCollateral' ? (
+      `Select an one or multiple assets to add as collateral. If you are providing XTZ as collateral, make sure you
       select a baker.`
-      : `Please confirm the following details.`
+    ) : (
+      `Please confirm the following details.`
+    )
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -400,16 +417,14 @@ export const CreateNewVault = ({
           {shownScreen === 'initial' ? (
             <>
               <Input
-                className={`vault-name`}
                 inputProps={{
                   value: vaultName.name,
                   type: 'text',
                   onChange: handleVaultNameChange,
-                  placeholder: 'Enter Vault Name',
+                  placeholder: 'e.g. Satoshi’s Personal Vault',
                 }}
                 settings={{
                   inputStatus: vaultName.validationStatus,
-                  label: 'Vault name',
                   inputSize: INPUT_LARGE,
                 }}
               />
@@ -437,6 +452,8 @@ export const CreateNewVault = ({
                 {collaterals.map(({ inputAmount, validationField, id: inputCollateralId }, idx) => {
                   const collateralMetadata = collateralsToSelect[inputCollateralId]
 
+                  const userAssetBalance = userTokens[collateralMetadata.symbol.toLowerCase()]?.balance ?? 0
+
                   if (!collateralMetadata) return null
                   const isXTZCollateral = isTezosAsset(collateralMetadata.gqlName)
 
@@ -448,23 +465,23 @@ export const CreateNewVault = ({
                         inputProps={{
                           value: inputAmount,
                           type: 'number',
-                          onChange: (e) => inputOnChangeHandle(e.target.value, idx, collateralMetadata.userBalance),
+                          onChange: (e) => inputOnChangeHandle(e.target.value, idx, userAssetBalance),
                           onBlur: (e) => inputOnBlurHandle(e.target.value, idx),
                           onFocus: () => onFocusHandler(idx),
                         }}
                         settings={{
-                          balanceAsset: collateralMetadata.symbol,
+                          balanceAsset: collateralMetadata.name,
                           useMaxHandler: () =>
                             inputOnChangeHandle(
-                              String(collateralMetadata.userBalance),
+                              getLoansInputMaxAmount(userAssetBalance, collateralMetadata.decimals),
                               idx,
-                              collateralMetadata.userBalance,
+                              userAssetBalance,
                             ),
                           inputStatus: validationField,
                           ...(collateralMetadata.rate
                             ? { convertedValue: Number(collateralMetadata.rate) * Number(inputAmount) }
                             : {}),
-                          balance: collateralMetadata.userBalance,
+                          balance: userAssetBalance,
                           inputSize: INPUT_LARGE,
                         }}
                       >
@@ -475,7 +492,7 @@ export const CreateNewVault = ({
                               content: (
                                 <DropdownInputCustomChild
                                   iconSrc={collateralMetadata.icon}
-                                  symbol={collateralMetadata.symbol}
+                                  symbol={collateralMetadata.name}
                                 />
                               ),
                               id: inputCollateralId,
@@ -533,7 +550,7 @@ export const CreateNewVault = ({
               {isVaultCreating ? (
                 <div className="creating-vault-loader-wrapper">
                   Creating Vault
-                  <SimpleCircleSpinnerLoader />
+                  <SpinnerCircleLoaderStyled />
                 </div>
               ) : null}
             </>
@@ -546,11 +563,15 @@ export const CreateNewVault = ({
                 <div className="lending-stats" style={{ marginBottom: '30px' }}>
                   <ThreeLevelListItem>
                     <div className="name">Asset</div>
-                    <div className="value">{firstCollateralMetadata?.symbol}</div>
+                    <div className="value">{firstCollateralMetadata?.name}</div>
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Amount</div>
-                    <CommaNumber value={Number(collaterals[0].inputAmount)} className="value" />
+                    <CommaNumber
+                      value={Number(collaterals[0].inputAmount)}
+                      decimalsToShow={assetDecimalsToShow}
+                      className="value"
+                    />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">USD Value</div>
@@ -588,7 +609,7 @@ export const CreateNewVault = ({
                             className="add-hover"
                             key={collateralId + collateralMetadata.name}
                           >
-                            <TableCell width="42%">{collateralMetadata.symbol}</TableCell>
+                            <TableCell width="42%">{collateralMetadata.name}</TableCell>
                             <TableCell width="28%">
                               <CommaNumber value={Number(inputAmount)} />
                             </TableCell>
@@ -646,12 +667,7 @@ export const CreateNewVault = ({
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton
-                  kind={BUTTON_PRIMARY}
-                  form={BUTTON_WIDE}
-                  onClick={depositCollateralHandler}
-                  disabled={isActionLoading}
-                >
+                <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={depositCollateralHandler}>
                   <Icon id="plus" />
                   Deposit
                 </NewButton>

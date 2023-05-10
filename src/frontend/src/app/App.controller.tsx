@@ -1,9 +1,11 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { AnyAction } from 'redux'
 import { useDispatch, useSelector } from 'react-redux'
 import { useMedia } from 'react-use'
 import { ThunkDispatch } from 'redux-thunk'
+import { useCookies } from 'react-cookie'
+
 import { configureStore } from './App.store'
 
 // types
@@ -17,6 +19,7 @@ import { ActionLoader, LoaderRocket, WertLoader } from './App.components/Loader/
 import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
 import { AppStyled } from './App.style'
 import LoansPopupsProvider from 'pages/Loans/Components/Modals/LoansModals.provider'
+import { PolicyPopup } from 'app/App.components/PolicyPopup/Policy.controller'
 
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
@@ -26,12 +29,7 @@ import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
-import {
-  getDipDupTokensStorage,
-  getWhitelistTokensStorage,
-  getTokensPrices,
-  getMTokensStorage,
-} from 'reducers/actions/dipDupActions.actions'
+import { getTokensForDAPP, getTokensPrices } from 'reducers/actions/getTokens.actions'
 import { getCouncilMembers } from 'pages/Council/Council.actions'
 import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 import { getAvaliableCollaterals, getXtzBakers } from 'pages/Loans/Actions/getLoansData.actions'
@@ -43,9 +41,14 @@ export type GetState = typeof store.getState
 
 const AppContainer = () => {
   const dispatch = useDispatch()
+
+  const showSidebarOpened = useMedia('(min-width: 1400px)')
+  const [{ policyPopup }, setCookie] = useCookies(['policyPopup'])
+
   const { changeNodePopupOpen, sidebarOpened } = useSelector((state: State) => state.preferences)
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
-  const showSidebarOpened = useMedia('(min-width: 1400px)')
+
+  const [isIOS, setIsIOS] = useState(true)
 
   useEffect(() => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))
@@ -53,21 +56,25 @@ const AppContainer = () => {
 
   useEffect(() => {
     ;(async () => {
+      // Needs to be fetched before promise all
+      await dispatch(getContractAddressesStorage())
       // Fetching initial&common data for DAPP
       await Promise.all([
         dispatch(getSatellitesStorage()),
         dispatch(getFeedsStorage()),
 
-        dispatch(getContractAddressesStorage()),
-        dispatch(getDipDupTokensStorage()),
-        dispatch(getWhitelistTokensStorage()),
-        dispatch(getMTokensStorage()),
+        dispatch(getTokensForDAPP()),
         dispatch(getXtzBakers()),
+        // TODO: uncomment it when contracts are updated
+        // dispatch(getMvkFaucet()),
 
         // Used to retrieve user avatar
         dispatch(getCouncilMembers()),
         dispatch(getBreakGlassCouncilMembers()),
       ])
+
+      // Depends on data feeds (getFeedsStorage())
+      await Promise.all([dispatch(getTokensPrices()), dispatch(getAvaliableCollaterals())])
 
       // For using Beacon wallet
       if (
@@ -77,19 +84,22 @@ const AppContainer = () => {
         await dispatch(connect())
       }
 
-      // Depends on data feeds (getFeedsStorage())
-      await Promise.all([dispatch(getTokensPrices()), dispatch(getAvaliableCollaterals())])
-
       // Turn off loader
       await dispatch(toggleInitialDataLoading(false))
     })()
   }, [dispatch])
 
   useEffect(() => {
-    dispatch(toggleSidebarCollapsing(showSidebarOpened))
-  }, [showSidebarOpened])
+    setIsIOS(
+      ['iPad Simulator', 'iPhone Simulator', 'iPod Simulator', 'iPad', 'iPhone', 'iPod'].includes(navigator.platform),
+    )
+  }, [])
 
   const closeModalHandler = useCallback(() => dispatch(toggleRPCNodePopup(false)), [])
+
+  const proccedPolicy = useCallback(() => {
+    setCookie('policyPopup', true)
+  }, [])
 
   return isInitialDataLoading ? (
     <LoaderRocket />
@@ -97,15 +107,17 @@ const AppContainer = () => {
     <Router>
       <AppStyled isExpandedMenu={sidebarOpened}>
         <ActionLoader />
+        <Toaster />
         <WertLoader />
         <Menu />
+
         <PopupChangeNode isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
+        <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
         <LoansPopupsProvider>
           <AppRoutes />
         </LoansPopupsProvider>
       </AppStyled>
-      <Toaster />
     </Router>
   )
 }

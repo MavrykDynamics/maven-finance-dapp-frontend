@@ -1,13 +1,12 @@
-import { Input } from 'app/App.components/Input/Input.controller'
 import React, { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
-import { RPCNodeType } from 'reducers/preferences'
 
 // helpers
-import { ACTION_PRIMARY, TRANSPARENT } from '../Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SECONDARY_PURPLE, BUTTON_WIDE } from '../Button/Button.constants'
+import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { isValidRPCNode } from 'utils/validatorFunctions'
-
 
 // actions
 import { selectNewRPCNode, setNewRPCNodes } from './SettingsPopup.actions'
@@ -25,39 +24,50 @@ import {
   ChangeNodeNodesListItem,
   DescrText,
   PopupContainerWrapper,
-  PopupTitle,
-  Button
+  SettingsPopupWrapper,
 } from './SettingsPopup.style'
+import Button from '../Button/NewButton'
+import Icon from '../Icon/Icon.view'
+import { Input } from '../Input/NewInput'
 
 // types
+import { RPCNodeType } from 'reducers/preferences'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 
 export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) => {
   const dispatch = useDispatch()
   const { RPC_NODES, REACT_APP_RPC_PROVIDER, themeSelected } = useSelector((state: State) => state.preferences)
 
-  const [inputData, setInputData] = useState('')
+  const [inputData, setInputData] = useState<{ node: string; nodeValidation: InputStatusType }>({
+    node: '',
+    nodeValidation: '',
+  })
   const [expandedInput, setExpandedInput] = useState(false)
   const [selectedNodeByClick, setSelectedNodeByClick] = useState(REACT_APP_RPC_PROVIDER)
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    add_new_node_input: '',
-  })
 
-  const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setExpandedInput(false)
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const enteredNode = e.target.value.trim()
+    const isValidRPC = await isValidRPCNode(enteredNode, RPC_NODES)
 
-    setFormInputStatus((prev) => {
-      return { ...prev, [e.target.name]: isValidRPCNode(e.target.value) ? 'success' : 'error' }
+    setInputData({
+      node: enteredNode,
+      nodeValidation: isValidRPC ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
     })
   }
 
   const confirmHandler = useCallback(() => {
     if (inputData) {
-      const newRPCNodes: Array<RPCNodeType> = [...RPC_NODES, { title: inputData, url: inputData, isUser: true }]
+      const newRPCNodes: Array<RPCNodeType> = [
+        ...RPC_NODES,
+        { title: inputData.node, url: inputData.node, isUser: true },
+      ]
       dispatch(setNewRPCNodes(newRPCNodes))
-      dispatch(selectNewRPCNode(inputData))
-      setSelectedNodeByClick(inputData)
-      setInputData('')
+      dispatch(selectNewRPCNode(inputData.node))
+      setSelectedNodeByClick(inputData.node)
+      setInputData({
+        node: '',
+        nodeValidation: '',
+      })
     } else {
       dispatch(selectNewRPCNode(selectedNodeByClick))
     }
@@ -67,11 +77,10 @@ export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) 
 
   return (
     <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="settings">
-      <div className="change-node-block">
-        <div onClick={closeModal} className="close_modal">
-          +
-        </div>
-        <PopupTitle className="change_node">Change RPC Node</PopupTitle>
+      <button onClick={closeModal} className="close-modal" />
+
+      <SettingsPopupWrapper>
+        <div className="title">Change RPC Node</div>
 
         <ChangeNodeNodesList className="scroll-block">
           {RPC_NODES.map(({ title, url, nodeLogoUrl, isUser }, idx) => (
@@ -82,7 +91,7 @@ export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) 
             >
               {nodeLogoUrl && (
                 <div className="img_wrapper">
-                  <img src={`./images/${nodeLogoUrl}`} alt={'node logo'} />
+                  <img src={`/images/${nodeLogoUrl}`} alt={'node logo'} />
                 </div>
               )}{' '}
               <span className={isUser ? 'user-url' : ''}>{isUser ? `Link: ${url}` : title}</span>
@@ -93,14 +102,15 @@ export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) 
         <ChangeNodeNodesListItem className={`add_node ${expandedInput ? 'expanded' : ''}`}>
           <div className="add-new-node-handler">Add New Node</div>
           <Input
-            placeholder="https://..."
-            name="add_new_node_input"
-            value={inputData}
-            type="text"
-            onFocus={() => setExpandedInput(true)}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e)}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputData(e.target.value)}
-            inputStatus={formInputStatus.add_new_node_input}
+            settings={{ inputStatus: inputData.nodeValidation }}
+            inputProps={{
+              onFocus: () => setExpandedInput(true),
+              onBlur: () => setExpandedInput(false),
+              onChange: handleChange,
+              placeholder: 'https://...',
+              type: 'text',
+              value: inputData.node,
+            }}
           />
         </ChangeNodeNodesListItem>
 
@@ -110,40 +120,49 @@ export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) 
 
         <Button
           onClick={confirmHandler}
-          className="popup_btn default_svg"
-          text="Confirm"
-          icon="okIcon"
-          strokeWidth={0.3}
-          kind={ACTION_PRIMARY}
-        />
-      </div>
+          kind={BUTTON_PRIMARY}
+          form={BUTTON_WIDE}
+          disabled={inputData.nodeValidation !== INPUT_STATUS_SUCCESS}
+        >
+          <Icon id="okIcon" /> Confirm
+        </Button>
 
-      <div className="theme-switcher-block">
-        <PopupTitle className="change_node">Choose the theme</PopupTitle>
+        <div className="theme-switcher-block">
+          <div className="title">Choose the theme</div>
 
-        <div className="buttons-wrapper">
-          <Button
-            text={'Space'}
-            kind={TRANSPARENT}
-            onClick={() => setNewThemeHandler(SPACE_THEME)}
-            className={`theme-btn ${themeSelected === SPACE_THEME ? 'selected' : ''}`}
-          />
-          <Button
-            text={'Dark'}
-            kind={TRANSPARENT}
-            onClick={() => setNewThemeHandler(DARK_THEME)}
-            className={`theme-btn ${themeSelected === DARK_THEME ? 'selected' : ''}`}
-            disabled
-          />
-          <Button
-            text={'Light'}
-            kind={TRANSPARENT}
-            onClick={() => setNewThemeHandler(LIGHT_THEME)}
-            className={`theme-btn ${themeSelected === LIGHT_THEME ? 'selected' : ''}`}
-            disabled
-          />
+          <div className="buttons-wrapper">
+            <Button
+              kind={themeSelected === SPACE_THEME ? BUTTON_SECONDARY : BUTTON_SECONDARY_PURPLE}
+              form={BUTTON_WIDE}
+              isThin
+              isSquare
+              onClick={() => setNewThemeHandler(SPACE_THEME)}
+            >
+              Space
+            </Button>
+            <Button
+              kind={themeSelected === DARK_THEME ? BUTTON_SECONDARY : BUTTON_SECONDARY_PURPLE}
+              form={BUTTON_WIDE}
+              isThin
+              isSquare
+              onClick={() => setNewThemeHandler(DARK_THEME)}
+              disabled
+            >
+              Dark
+            </Button>
+            <Button
+              kind={themeSelected === LIGHT_THEME ? BUTTON_SECONDARY : BUTTON_SECONDARY_PURPLE}
+              form={BUTTON_WIDE}
+              isThin
+              isSquare
+              onClick={() => setNewThemeHandler(LIGHT_THEME)}
+              disabled
+            >
+              Light
+            </Button>
+          </div>
         </div>
-      </div>
+      </SettingsPopupWrapper>
     </PopupContainerWrapper>
   )
 }

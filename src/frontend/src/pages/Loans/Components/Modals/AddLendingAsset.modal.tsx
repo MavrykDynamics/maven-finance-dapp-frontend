@@ -12,6 +12,7 @@ import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.c
 import { State } from 'reducers'
 import { AddLendingAssetDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -21,6 +22,7 @@ import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { depositLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
@@ -33,7 +35,6 @@ export const AddLendingAsset = ({
   data: AddLendingAssetDataType
 }) => {
   const {
-    userBalance = 0,
     mBalance = 0,
     rate = 0,
     decimals = 0,
@@ -47,13 +48,21 @@ export const AddLendingAsset = ({
   } = data ?? {}
   useLockBodyScroll(show)
 
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
+
+  const collateralBalance = userTokens[symbol.toLowerCase()]?.balance ?? 0
+
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
   const onChangeHandler = (inputAmount: string, userBalance: number) => {
-    const validationStatus =
-      Number(inputAmount) > 0 && Number(inputAmount) <= userBalance ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    const validationStatus = loansInputValidation({
+      inputAmount,
+      maxAmount: userBalance,
+      options: {
+        byDecimalPlaces: decimals || assetDecimalsToShow,
+      },
+    })
 
     setInputData({
       ...inputData,
@@ -82,8 +91,8 @@ export const AddLendingAsset = ({
     }
   }, [show])
   const isDepositDisabled = useMemo(() => {
-    return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionLoading
-  }, [inputData.validationStatus, isActionLoading])
+    return inputData.validationStatus !== INPUT_STATUS_SUCCESS
+  }, [inputData.validationStatus])
 
   const depositHandler = () => {
     if (tokenType && address) {
@@ -112,14 +121,15 @@ export const AddLendingAsset = ({
             inputProps={{
               value: inputData.amount,
               type: 'number',
-              onChange: (e) => onChangeHandler(e.target.value, userBalance),
+              onChange: (e) => onChangeHandler(e.target.value, collateralBalance),
               onBlur: inputOnBlurHandle,
               onFocus: onFocusHandler,
             }}
             settings={{
-              balance: userBalance,
+              balance: collateralBalance,
               balanceAsset: symbol,
-              useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),
+              useMaxHandler: () =>
+                onChangeHandler(getLoansInputMaxAmount(collateralBalance, decimals), collateralBalance),
               inputStatus: inputData.validationStatus,
               inputSize: INPUT_LARGE,
               ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),

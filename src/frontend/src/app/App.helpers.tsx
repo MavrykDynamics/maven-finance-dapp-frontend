@@ -1,7 +1,6 @@
 // types
 import type { ContractAddressesState } from '../reducers/contractAddresses'
 import type { AddressesGraphQl } from '../utils/TypesAndInterfaces/Addresses'
-import { Dipdup_Token_Metadata, M_Token } from 'utils/generated/graphqlTypes'
 import { MichelsonType, unpackDataBytes } from '@taquito/michel-codec'
 
 export function normalizeAddressesStorage(storage: AddressesGraphQl): ContractAddressesState {
@@ -44,16 +43,23 @@ export function getEnumKeyByEnumValue<T extends { [index: string]: string }>(
   return keys.length > 0 ? keys[0] : null
 }
 
-export function normalizeDipDupTokens(storage: { dipdup_token_metadata?: Array<Dipdup_Token_Metadata> }) {
-  return storage?.dipdup_token_metadata ?? []
+const getAddressForDecoding = (address: string) => {
+  switch (address.length) {
+    case 58: // 58 - keyHash length
+      return transformKeyHashWithPrefix(address)
+    default:
+      return address
+  }
 }
 
-export function normalizeDipDupContracts(storage: { dipdup_contract_metadata?: Array<Dipdup_Token_Metadata> }) {
-  return storage?.dipdup_contract_metadata ?? []
-}
+const transformKeyHashWithPrefix = (keyHash: string) => {
+  // TODO it is not a better way, but it will be working for tz address.
+  // I am searching new solution for it.
+  const prefix = '050a'
+  const publicKeyLength = '000000160000'
+  const keyHashPrefixLength = 18
 
-export function normalizeMTokens(storage: { m_token: M_Token }) {
-  return storage?.m_token || []
+  return prefix + publicKeyLength + keyHash.slice(keyHashPrefixLength)
 }
 
 export function convertBytesAddressToAddress(addressInBytes: string): string {
@@ -61,7 +67,10 @@ export function convertBytesAddressToAddress(addressInBytes: string): string {
     const addressType: MichelsonType = {
       prim: 'address',
     }
-    const formattedBytes = { bytes: addressInBytes }
+
+    const address = getAddressForDecoding(addressInBytes)
+
+    const formattedBytes = { bytes: address }
     const unpackedBytes = unpackDataBytes(formattedBytes, addressType)
     const jsonString = JSON.parse(JSON.stringify(unpackedBytes))
     return jsonString['string']

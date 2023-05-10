@@ -4,96 +4,76 @@ import { BUTTON_RADIUS } from 'styles/constants'
 import { MavrykTheme } from 'styles/interfaces'
 
 // Common style parts START
-const VISIBLE_PART_CONNECTED_WALLET = (theme: MavrykTheme, isMobileDetails?: boolean) => `
-.top-visible-part {
-  display: flex;
-  align-items: center;
-  column-gap: 10px;
-  cursor: pointer;
-  height: 100%;
+const VISIBLE_PART_CONNECTED_WALLET = (theme: MavrykTheme, isMobileDetails?: boolean) => css`
+  .top-visible-part {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    cursor: pointer;
+    height: 100%;
 
-  var {
-    font-weight: 600;
-    font-size: 16px;
-    color: ${theme.valueColor};
-  }
-
-  .end-icon {
-    height: 15px;
-    width: 10px;
-    transform: rotate(-90deg);
-    margin-left: 3px;
-    stroke: ${theme.valueColor};
-  }
-
-  .openLink {
-    height: 15px;
-    width: 20px;
-  }
-
-  .inner-wallet,
-  .wallet {
-    width: 22px;
-    height: 17px;
-    stroke: none;
-    fill: ${theme.valueColor};
-  }
-
-  .inner-wallet {
-    fill: ${theme.dataColor};
-  }
-
-  .icon-copy {
-    margin-left: 5px;
-    width: 15px;
-    height: 15px;
-    stroke: transparent;
-  }
-
-  .hover {
-    transition: 0.6s all;
-  }
-
-  ${
-    isMobileDetails
-      ? ''
-      : ` &:hover {
-      .hover {
-        color: ${cyanColor};
-        fill: ${cyanColor};
-
-        div {
-          color: ${cyanColor};
-        }
-
-        svg {
-          fill: ${cyanColor};
-        }
-
-        .icon-copy {
-          stroke: ${cyanColor};
-        }
-      }
-    }
-  `
-  }
-
-  @media screen and (max-width: 870px) {
     var {
-      font-size: 20px;
+      font-weight: 600;
+      font-size: 16px;
+      color: ${theme.valueColor};
+    }
+
+    .end-icon {
+      height: 15px;
+      width: 10px;
+      transform: rotate(-90deg);
+      margin-left: 3px;
+      stroke: ${theme.valueColor};
     }
 
     .openLink {
-      height: 20px;
+      height: 15px;
       width: 20px;
     }
-  
+
+    .inner-wallet,
     .wallet {
-      width: 25px;
-      height: 20px;
+      width: 22px;
+      height: 17px;
+      stroke: none;
+      fill: ${theme.valueColor};
+      transition: 0.3s fill;
+    }
+
+    .inner-wallet {
+      fill: ${theme.dataColor};
+    }
+
+    ${isMobileDetails
+      ? ''
+      : `
+          &:hover {
+            div {
+              color: ${cyanColor};
+            }
+
+            svg {
+              fill: ${cyanColor};
+            }
+          }
+        `}
+
+    @media screen and (max-width: 870px) {
+      var {
+        font-size: 20px;
+      }
+
+      .openLink {
+        height: 20px;
+        width: 20px;
+      }
+
+      .wallet {
+        width: 25px;
+        height: 20px;
+      }
     }
   }
-}
 `
 
 const BUTTONS_WRAPPER_CONNECTED_WALLET = `
@@ -143,10 +123,11 @@ export const ConnectedWalletStyled = styled.div<{ theme: MavrykTheme }>`
   .wallet-details {
     position: absolute;
     visibility: hidden;
-    top: 85px;
+    top: 80px;
     opacity: 0;
     right: 15px;
-    transition: 0.6s all;
+    // TODO: if need to add transition, use this
+    /* transition: 400ms opacity ease-out, 400ms visibility ease-in; */
     width: 375px;
     background: #160e3f;
     border: 1px solid #86d4c9;
@@ -166,7 +147,7 @@ export const ConnectedWalletStyled = styled.div<{ theme: MavrykTheme }>`
       height: 16px;
       fill: ${({ theme }) => theme.textColor};
       cursor: pointer;
-      transition: fill 0.6s;
+      transition: fill 0.3s;
 
       &:hover {
         fill: ${({ theme }) => theme.headerSkyColor};
@@ -231,7 +212,7 @@ export const MobileDetailsStyled = styled.div<{ theme: MavrykTheme }>`
       width: 26px;
       height: 21px;
       stroke: #8d86eb;
-      transition: 0.6s all;
+      transition: 0.3s all;
     }
 
     &:hover {
@@ -472,10 +453,10 @@ export const ConnectWalletInfoStyled = styled.blockquote<{ theme: MavrykTheme }>
 
   p {
     width: 650px;
-    font-weight: 400;
+    font-weight: 500;
     font-size: 14px;
-    line-height: 21px;
-    color: ${({ theme }) => theme.headerColor};
+    line-height: 24px;
+    color: ${({ theme }) => theme.textColor};
     margin-top: 2px;
     margin-bottom: 2px;
 
@@ -525,9 +506,9 @@ export const ConnectWalletClose = styled.button<{ theme: MavrykTheme }>`
   cursor: pointer;
 
   .close-connect-wallet {
-    stroke: ${({ theme }) => theme.headerColor};
-    width: 14px;
-    height: 14px;
+    fill: ${({ theme }) => theme.valueColor};
+    width: 24px;
+    height: 24px;
   }
 `
 

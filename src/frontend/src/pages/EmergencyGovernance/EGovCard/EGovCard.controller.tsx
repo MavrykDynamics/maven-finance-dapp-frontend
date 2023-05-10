@@ -26,6 +26,7 @@ import {
   SatelliteGovernanceCardDropDown,
   SatelliteGovernanceCardTitleTextGroup,
 } from 'pages/SatelliteGovernance/SatelliteGovernanceCard/SatelliteGovernanceCard.style'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 type EGovCardProps = {
   emergencyGovernance: EmergergencyGovernanceItem
@@ -34,12 +35,13 @@ type EGovCardProps = {
 export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
   const dispatch = useDispatch()
   const { totalStakedMvk } = useSelector((state: State) => state.doorman)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     config: { minStakedMvkRequiredToVote },
   } = useSelector((state: State) => state.emergencyGovernance)
   const {
     accountPkh,
-    user: { mySMvkTokenBalance },
+    user: { userTokens },
   } = useSelector((state: State) => state.wallet)
 
   const isActiveProposal =
@@ -47,13 +49,8 @@ export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
     !emergencyGovernance.dropped &&
     emergencyGovernance.expirationTimestamp > Date.now()
 
-  const handleProposalVote = async () => {
-    await dispatch(voteEmergencyGovernanceProposal())
-  }
-
-  const dropProposalHandler = async () => {
-    await dispatch(dropEmergencyGovernanceProposal())
-  }
+  const handleProposalVote = async () => await dispatch(voteEmergencyGovernanceProposal())
+  const dropProposalHandler = async () => await dispatch(dropEmergencyGovernanceProposal())
 
   const status = isActiveProposal
     ? ProposalStatus.WAITING
@@ -93,7 +90,7 @@ export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
             text="Drop Proposal"
             onClick={dropProposalHandler}
             kind={ACTION_SECONDARY}
-            disabled={emergencyGovernance.proposerId !== accountPkh}
+            disabled={emergencyGovernance.proposerId !== accountPkh || isActionActive}
           />
         </div>
         <VotingArea
@@ -101,7 +98,7 @@ export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
           isVotingActive={true}
           disableVotingButtons={
             Boolean(emergencyGovernance.voters.find((voter) => accountPkh === voter.voterId)) ||
-            mySMvkTokenBalance < minStakedMvkRequiredToVote
+            userTokens[SMVK_TOKEN_SYMBOL].balance < minStakedMvkRequiredToVote
           }
           handleVote={handleProposalVote}
           buttonsToShow={{ forBtn: { text: 'Vote to Trigger' } }}

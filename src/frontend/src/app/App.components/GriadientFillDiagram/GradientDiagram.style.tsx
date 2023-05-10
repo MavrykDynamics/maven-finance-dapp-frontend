@@ -12,7 +12,7 @@ export const GradientDiagramStyled = styled.div<{ theme: MavrykTheme; gradient: 
 
   &::before {
     content: '';
-    width: ${({ gradientWidth }) => `${gradientWidth}%`};
+    width: 100%;
     background: ${({ gradient }) => gradient};
     height: 100%;
     z-index: 5;
@@ -20,6 +20,9 @@ export const GradientDiagramStyled = styled.div<{ theme: MavrykTheme; gradient: 
     top: 50%;
     left: 0;
     transform: translateY(-50%);
+
+    clip-path: ${({ gradientWidth }) =>
+      `polygon(${gradientWidth}% 0, ${gradientWidth}% 50%, ${gradientWidth}% 100%, 0 100%, 0 0)`};
   }
 
   &.loansModals {
@@ -31,7 +34,7 @@ export const GradientBreakpoint = styled.div<{ theme: MavrykTheme; background: s
   height: 8px;
   width: 8px;
   border-radius: 50%;
-  z-index: 10;
+  z-index: 6;
   position: relative;
 
   ${({ background }) =>

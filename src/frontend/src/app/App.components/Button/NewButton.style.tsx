@@ -16,6 +16,7 @@ import {
   VOTING_PASS,
   BUTTON_LARGE,
   BUTTON_REGULAR,
+  BUTTON_SECONDARY_PURPLE,
 } from './Button.constants'
 
 const BUTTONS_KIND_STYLES = css`
@@ -35,6 +36,15 @@ const BUTTONS_KIND_STYLES = css`
 
     svg {
       fill: ${({ theme }) => theme.valueColor};
+    }
+  }
+  &.${BUTTON_SECONDARY_PURPLE} {
+    color: ${({ theme }) => theme.textColor};
+    background-color: transparent;
+    border: 2px solid ${({ theme }) => theme.cardBorderColor};
+
+    svg {
+      fill: ${({ theme }) => theme.cardBorderColor};
     }
   }
 
@@ -86,7 +96,7 @@ const BUTTONS_KIND_STYLES = css`
     &:hover:not(:disabled) {
       &::before {
         position: absolute;
-        bottom: -3px;
+        bottom: -7px;
         left: 50%;
         transform: translateX(-50%);
         transition: 0.3s all;
@@ -133,6 +143,10 @@ const BUTTONS_FORMS_STYLES = css`
       width: 36px;
     }
   }
+
+  &.isSquare {
+    border-radius: 10px;
+  }
 `
 
 const BUTTONS_SIZES_STYLES = css`
@@ -173,7 +187,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   /* styling for buttons sizes */
   ${BUTTONS_SIZES_STYLES}
 
-    /* styling for buttons forms */
+  /* styling for buttons forms */
   ${BUTTONS_FORMS_STYLES}
 
   /* styling for main button kinds */

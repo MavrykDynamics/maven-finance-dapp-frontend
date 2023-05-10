@@ -9,7 +9,7 @@ import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import { getTokenDecimals } from 'utils/calcFunctions'
 
 // view
@@ -17,10 +17,13 @@ import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
+import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 
 // action
 import { requestTokens } from '../Council.actions'
+
+// types
+import { InputProps } from 'app/App.components/Input/newInput.type'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
@@ -39,20 +42,21 @@ const tokenTypes = ['FA12', 'FA2', 'TEZ']
 export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
   const { dipDupTokens } = useSelector((state: State) => state.tokens)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [form, setForm] = useState(INIT_FORM)
 
   const dropDownItems = useMemo(
     () =>
       tokenTypes.map((item, index) => ({
-        content: <div>{item}</div>,
+        content: <DropdownTruncateOption text={item} />,
         value: item.toLowerCase(),
         id: index,
       })),
     [],
   )
 
-  type DropDownItemType = typeof dropDownItems[0]
+  type DropDownItemType = (typeof dropDownItems)[0]
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const [tokenDecimals, setTokenDecimals] = useState<number | null>(null)
@@ -175,7 +179,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     inputStatus: formInputStatus.tokenName,
   }
 
-  const tokenAmountProps = {
+  const tokenAmountProps: InputProps = {
     type: 'number',
     name: 'tokenAmount',
     value: tokenAmount,
@@ -191,7 +195,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     inputStatus: formInputStatus.tokenAmount,
   }
 
-  const tokenIdProps = {
+  const tokenIdProps: InputProps = {
     type: 'number',
     name: 'tokenId',
     value: tokenId,
@@ -258,6 +262,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
           name="purpose"
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             handleChange(e)
+            handleBlur(e, maxLength.requestPurposeMaxLength)
           }}
           onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, maxLength.requestPurposeMaxLength)}
           inputStatus={formInputStatus.purpose}
@@ -265,7 +270,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
         />
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
           <Icon id="request_token" />
           Request Tokens
         </NewButton>

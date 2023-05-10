@@ -13,6 +13,7 @@ import {
   ConnectedWalletDetailsItemStyled,
   MobileDetailsStyled,
 } from './ConnectWallet.style'
+import { useLocation } from 'react-router'
 
 export type CoinsInfoType = {
   MVKExchangeRate: number
@@ -110,7 +111,10 @@ export const ConnectedWalletBlock = ({
   isMobile,
   closeMobileMenu,
 }: ConnectedWalletBlockProps) => {
+  const { pathname } = useLocation()
   const [detailsShown, setDetailsShown] = useState(false)
+
+  const isOnStakingPage = pathname === '/staking'
 
   const mouseOverHanlder = useCallback(() => (isMobile ? undefined : setDetailsShown(true)), [isMobile])
   const mobileClickOpenHanler = useCallback(() => (isMobile ? setDetailsShown(true) : undefined), [isMobile])
@@ -137,27 +141,26 @@ export const ConnectedWalletBlock = ({
         <var>
           <TzAddress tzAddress={accountPkh} hasIcon={false} shouldCopy={false} />
         </var>
-        <Icon id="paginationArrowLeft" className="end-icon hover"/>
+        <Icon id="paginationArrowLeft" className="end-icon" />
       </div>
 
       <div className={`wallet-details ${detailsShown ? 'visible' : ''} ${isMobile ? 'mobile' : ''}`}>
-        <div className='wallet-details-header'>
-          <div className="top-visible-part ">
-            <Icon id="wallet" className="inner-wallet hover" />
-            <var className='wallet-details-address hover'>
-              <TzAddress tzAddress={accountPkh} hasIcon={false} type={BLUE} />
-              <Icon id='copyToClipboard' className='icon-copy hover' />
+        <div className="wallet-details-header">
+          <div className="top-visible-part">
+            <Icon id="wallet" className="inner-wallet" />
+            <var className="wallet-details-address">
+              <TzAddress tzAddress={accountPkh} isLargeIcon hasIcon={true} type={BLUE} />
             </var>
           </div>
 
-          <a href={`https://tzstats.com/${accountPkh}`} target="_blank" rel="noreferrer">
+          <a href={`https://ghost.tzstats.com/${accountPkh}`} target="_blank" rel="noreferrer">
             <Icon id="send" className="icon-send" />
           </a>
         </div>
 
         <hr />
 
-        <div className='wallet-details-body'>
+        <div className="wallet-details-body">
           <ConnectedWalletDetailsItem
             buttonText={'Buy MVK'}
             coinAmount={coinsInfo.userMVKBalance}
@@ -165,12 +168,14 @@ export const ConnectedWalletBlock = ({
             buttonHandler={detailsHandlers.buyMVKHandler}
             subtextAmount={coinsInfo.userMVKBalance * coinsInfo.MVKExchangeRate}
             icon="mvkTokenGold"
+            isBtnDisabled
           />
           <ConnectedWalletDetailsItem
             buttonText={'Stake MVK'}
             coinAmount={coinsInfo.userMVKStaked}
             coinName={'MVK'}
-            buttonHandler={detailsHandlers.stakeMVKHandler}
+            // If we already on staking page just hide popup MAV-1357
+            buttonHandler={isOnStakingPage ? () => setDetailsShown(false) : detailsHandlers.stakeMVKHandler}
             subtextInfo="Total staked MVK"
             icon="mvkTokenSilver"
           />
@@ -181,16 +186,12 @@ export const ConnectedWalletBlock = ({
             buttonHandler={detailsHandlers.buyXTZHandler}
             subtextAmount={coinsInfo.userXTZBalance * coinsInfo.XTZExchnageRate}
             icon="xtzTezos"
+            isBtnDisabled
           />
         </div>
 
         <div className="wallet-details-footer">
-          <Button
-            text="Sign out"
-            onClick={signOutHandler}
-            kind={ACTION_SECONDARY}
-            icon="exit"
-          />
+          <Button text="Sign out" onClick={signOutHandler} kind={ACTION_SECONDARY} icon="exit" />
 
           <Button
             text="Change Wallet"
@@ -240,6 +241,7 @@ type ConnectedWalletDetailsItemProps = {
   subtextInfo?: string
   subtextAmount?: number
   icon?: string
+  isBtnDisabled?: boolean
 }
 
 const ConnectedWalletDetailsItem = ({
@@ -250,16 +252,16 @@ const ConnectedWalletDetailsItem = ({
   subtextInfo,
   subtextAmount,
   icon,
+  isBtnDisabled = false,
 }: ConnectedWalletDetailsItemProps) => {
   return (
     <ConnectedWalletDetailsItemStyled>
-      <div className='left-part'>
+      <div className="left-part">
         {icon && <Icon id={icon} />}
 
         <div className="left-part-info">
           <CommaNumber value={coinAmount} endingText={coinName} showDecimal className="main" />
-          
-  
+
           {subtextAmount !== undefined ? (
             <CommaNumber value={subtextAmount} endingText={'USD'} showDecimal className="subtext" />
           ) : (
@@ -268,9 +270,14 @@ const ConnectedWalletDetailsItem = ({
         </div>
       </div>
 
-
       <div className="btn-wrapper">
-        <Button text={buttonText} kind={TRANSPARENT} onClick={buttonHandler} className="connect-wallet-details" />
+        <Button
+          text={buttonText}
+          kind={TRANSPARENT}
+          onClick={buttonHandler}
+          disabled={isBtnDisabled}
+          className="connect-wallet-details"
+        />
         <Icon id="paginationArrowLeft" />
       </div>
     </ConnectedWalletDetailsItemStyled>

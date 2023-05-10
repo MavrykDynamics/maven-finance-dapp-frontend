@@ -36,15 +36,15 @@ import {
   DataFeedInfoBlock,
   DataFeedsStyled,
   DataFeedValueText,
-  FeedInfo,
   FeedDetailsChartWrapper,
+  FeedInfo,
 } from './DataFeedsDetails.style'
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import colors from 'styles/colors'
 import { Chart } from 'app/App.components/Chart/Chart'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 type FeedDetailsProps = {
   feed: Feed | null
@@ -66,6 +66,7 @@ const tabsList = [
 const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsProps) => {
   const dispatch = useDispatch()
   const { dipDupContracts } = useSelector((state: State) => state.tokens)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const registerFeedHandler = () => dispatch(registerFeedAction())
@@ -146,8 +147,8 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                     </DataFeedValueText>
                   </DataFeedInfoBlock>
 
-                  <DataFeedInfoBlock justifyContent={'flex-end'}>
-                    <h4>
+                  <DataFeedInfoBlock justifyContent={'space-between'}>
+                    <h3>
                       Heartbeat
                       <CustomTooltip
                         text={'Countdown until the next set data feed update.'}
@@ -155,7 +156,8 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                         className="info-icon"
                         defaultStrokeColor={colors[themeSelected].textColor}
                       />
-                    </h4>
+                    </h3>
+
                     <DataFeedValueText fontSize={16} fontWeidth={600}>
                       {feed.last_completed_data_last_updated_at ? (
                         <div className="timer">
@@ -250,6 +252,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                   <Button
                     text="Register"
                     kind={ACTION_PRIMARY}
+                    disabled={isActionActive}
                     onClick={() => {
                       // registerFeedHandler()
                       dispatch(showToaster(INFO, 'Coming soon', 'Register to Oracle Feature coming soon'))
@@ -289,9 +292,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
 
             {feedsSatellites.length ? (
               <>
-                <GovRightContainerTitleArea>
-                  <h1>Oracles data</h1>
-                </GovRightContainerTitleArea>
+                <H2Title>Oracles data</H2Title>
 
                 <div className={`oracles-list`}>
                   {feedsSatellites.map((item) => (
@@ -316,9 +317,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
       )}
 
       {/* <UsersListWrapper className="oracle-list-wrapper">
-        <GovRightContainerTitleArea>
-          <h1>Users</h1>
-        </GovRightContainerTitleArea>
+          <H2Title>Users</H2Title>
 
         <Link to="oracles-users">
           <div className="see-all-link">

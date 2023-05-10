@@ -21,6 +21,7 @@ import { mainNavigationLinks } from './NavigationLink/MainNavigationLinks'
 import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
 import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { getMVKTokensFromFaucet } from '../../../pages/Doorman/Doorman.actions'
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 type MenuViewProps = {
   openChangeNodePopupHandler: () => void
@@ -57,6 +58,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const { sidebarOpened } = useSelector((state: State) => state.preferences)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const { user, accountPkh } = useSelector((state: State) => state.wallet)
   const [canGetInitThouthand, setCanGetInitThouthand] = useState(false)
 
@@ -70,8 +72,16 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     })
 
     setSelectedMainLink(selectedMainRoute?.id || 0)
-    setCanGetInitThouthand(Boolean(accountPkh && (user.myMvkTokenBalance === 0 || user.mySMvkTokenBalance === 0)))
-  }, [accountPkh, pathname, user.myMvkTokenBalance, user.mySMvkTokenBalance])
+  }, [accountPkh, pathname, user.isSatellite])
+
+  useEffect(() => {
+    setCanGetInitThouthand(
+      Boolean(
+        accountPkh &&
+          (user.userTokens[MVK_TOKEN_SYMBOL].balance === 0 || user.userTokens[SMVK_TOKEN_SYMBOL].balance === 0),
+      ),
+    )
+  }, [accountPkh, user.userTokens])
 
   const [selectedMainLink, setSelectedMainLink] = useState<number>(0)
 
@@ -89,7 +99,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     }
   }, [burgerClickHandler, sidebarOpened])
 
-  const handleGetMVKTokensFromFaucet = useCallback(() => dispatch(getMVKTokensFromFaucet()), [])
+  const handleGetMVKTokensFromFaucet = async () => await dispatch(getMVKTokensFromFaucet())
 
   return (
     <>
@@ -123,18 +133,36 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND}
               isThin
               onClick={handleGetMVKTokensFromFaucet}
-              disabled={!canGetInitThouthand}
+              disabled={!canGetInitThouthand || isActionActive}
             >
-              {sidebarOpened ? 'Get MVK Tokens' : 'mvk'}
+              {sidebarOpened ? 'MVK Faucet' : 'mvk'}
             </NewButton>
-            <a className="feedbackLink" href="https://forms.gle/bwmTfpoLKBhaf7yD6" target="_blank" rel="noreferrer">
+            <a
+              href="https://faucet.marigold.dev/ "
+              target="_blank"
+              rel="noreferrer"
+              className={sidebarOpened ? '' : 'small'}
+            >
               <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
-                {sidebarOpened ? 'Submit Feedback' : 'F'}
+                {sidebarOpened ? ' Ghostnet Faucet' : 'GF'}
+              </NewButton>
+            </a>
+            <a
+              href="https://forms.gle/bwmTfpoLKBhaf7yD6"
+              target="_blank"
+              rel="noreferrer"
+              className={sidebarOpened ? '' : 'small'}
+            >
+              <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
+                {sidebarOpened ? 'Submit Feedback' : 'SF'}
               </NewButton>
             </a>
 
             <SocialIcons />
-            <span>MAVRYK App v1.0</span>
+            <span>
+              DAPP v0.1
+              <br />© Mavryk Finance 2023
+            </span>
           </MenuFooter>
         </MenuSidebarContent>
       </MenuSidebarStyled>

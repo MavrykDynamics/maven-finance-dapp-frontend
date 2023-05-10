@@ -20,15 +20,13 @@ import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { LBHInfoBlock } from 'pages/DashboardPersonal/DashboardPersonalComponents/DashboardPersonalComponents.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { Page } from 'styles'
 import { AccountStyledStyled, LoansDashboardStyled, TotalVolumeStyled } from './LoansDashboard.styles'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
 import { connect } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
-import { SingleValueData } from 'lightweight-charts'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 export type GaugeChartStateType = {
   maxValue: number
@@ -59,11 +57,14 @@ export const LoansDashboard = () => {
   const {
     isDataLoaded: isLoansLoaded,
     loanTokens,
-    chartsData: { lendingChartData, borrowingChartData },
+    chartsData: {
+      lendBorrow24hDiff: { last24hLending, last48hLending, last24hBorrowing, last48hBorrowing },
+    },
   } = useSelector((state: State) => state.loans)
+
   const {
     accountPkh,
-    user: { myLendingRewardsAmount, userLoansData },
+    user: { availableLoansRewards, userLoansData },
   } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
@@ -114,19 +115,8 @@ export const LoansDashboard = () => {
   }, [userLoansData])
 
   // Calcuating persents of total lended and borrowed changed since last operation
-  const { lendingPersentDiff, borrowingPersentDiff } = useMemo(() => {
-    const secondLastLending = lendingChartData.at(-2) ?? {},
-      secondLastBorrowing = borrowingChartData.at(-2) ?? {}
-
-    const lendingPersentDiff = checkPlotType<SingleValueData>(secondLastLending, ['value'])
-      ? calcDiffBetweenTwoNumbersInPersentage(totalLended, secondLastLending.value)
-      : 0
-    const borrowingPersentDiff = checkPlotType<SingleValueData>(secondLastBorrowing, ['value'])
-      ? calcDiffBetweenTwoNumbersInPersentage(totalBorrowed, secondLastBorrowing.value)
-      : 0
-
-    return { lendingPersentDiff, borrowingPersentDiff }
-  }, [borrowingChartData, lendingChartData, totalBorrowed, totalLended])
+  const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hLending, last48hLending)
+  const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hBorrowing, last48hBorrowing)
 
   // calc data for gauge chart
   const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {
@@ -212,9 +202,7 @@ export const LoansDashboard = () => {
           <>
             <div className="top">
               <TotalVolumeStyled>
-                <GovRightContainerTitleArea>
-                  <h2>Total Volume</h2>
-                </GovRightContainerTitleArea>
+                <H2Title>Total Volume</H2Title>
 
                 <CommaNumber value={totalLended + totalBorrowed} beginningText="$" className="total-amount" />
 
@@ -224,10 +212,12 @@ export const LoansDashboard = () => {
                     <div className="value-wrap">
                       <CommaNumber value={totalLended} beginningText="$" className="value" />
                       <CommaNumber
-                        value={lendingPersentDiff}
-                        endingText="%"
-                        beginningText={lendingPersentDiff > 0 ? '+' : ''}
-                        className={`diff ${lendingPersentDiff ? (lendingPersentDiff > 0 ? 'up' : 'down') : 'neutral'}`}
+                        value={lending24hPersentChange}
+                        endingText="% 24h"
+                        beginningText={lending24hPersentChange > 0 ? '+' : ''}
+                        className={`diff ${
+                          lending24hPersentChange ? (lending24hPersentChange > 0 ? 'up' : 'down') : 'neutral'
+                        }`}
                       />
                     </div>
                   </div>
@@ -237,11 +227,11 @@ export const LoansDashboard = () => {
                     <div className="value-wrap">
                       <CommaNumber value={totalBorrowed} beginningText="$" className="value" />
                       <CommaNumber
-                        value={borrowingPersentDiff}
-                        endingText="%"
-                        beginningText={borrowingPersentDiff > 0 ? '+' : ''}
+                        value={borrowing24hPersentChange}
+                        endingText="% 24h"
+                        beginningText={borrowing24hPersentChange > 0 ? '+' : ''}
                         className={`diff ${
-                          borrowingPersentDiff ? (borrowingPersentDiff > 0 ? 'up' : 'down') : 'neutral'
+                          borrowing24hPersentChange ? (borrowing24hPersentChange > 0 ? 'up' : 'down') : 'neutral'
                         }`}
                       />
                     </div>
@@ -250,9 +240,7 @@ export const LoansDashboard = () => {
               </TotalVolumeStyled>
 
               <AccountStyledStyled>
-                <GovRightContainerTitleArea>
-                  <h2>Account Status</h2>
-                </GovRightContainerTitleArea>
+                <H2Title>Account Status</H2Title>
 
                 <div className="content">
                   <div className="gauge-chart">
@@ -297,7 +285,7 @@ export const LoansDashboard = () => {
                     </div>
                     <div className="column">
                       <div className="label">Rewards to be Distrubuted</div>
-                      <CommaNumber value={myLendingRewardsAmount} beginningText="$" className="value" />
+                      <CommaNumber value={availableLoansRewards} beginningText="$" className="value" />
                     </div>
                   </div>
                 </div>
@@ -305,9 +293,7 @@ export const LoansDashboard = () => {
             </div>
 
             <LBHInfoBlock className="position">
-              <GovRightContainerTitleArea>
-                <h2>Your Positions</h2>
-              </GovRightContainerTitleArea>
+              <H2Title>Your Positions</H2Title>
               <div className="view-markets">
                 {accountPkh ? (
                   <Link to={'/loans'}>

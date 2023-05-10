@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
@@ -7,7 +7,7 @@ import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
@@ -20,6 +20,7 @@ import { requestTokenMint } from '../Council.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
+import { State } from 'reducers'
 
 const INIT_FORM = {
   treasuryAddress: '',
@@ -29,6 +30,8 @@ const INIT_FORM = {
 
 export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
+  const { isActionActive } = useSelector((state: State) => state.loading)
+
   const [form, setForm] = useState(INIT_FORM)
 
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
@@ -126,6 +129,7 @@ export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
           name="purpose"
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             handleChange(e)
+            handleBlur(e, maxLength.requestPurposeMaxLength)
           }}
           onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, maxLength.requestPurposeMaxLength)}
           inputStatus={formInputStatus.purpose}
@@ -133,7 +137,7 @@ export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
         />
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
           <Icon id="loans" />
           Request Mint
         </NewButton>

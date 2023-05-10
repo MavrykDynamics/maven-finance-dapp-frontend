@@ -41,6 +41,12 @@ import {
   StakeDelegatedUser,
   StakeUnstakeAmount,
 } from './StakeUnstake.style'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import colors from 'styles/colors'
+import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
+
+// types
+import { InputProps } from 'app/App.components/Input/newInput.type'
 
 type StakeUnstakeViewProps = {
   stakeCallback: (amount: number) => void
@@ -55,19 +61,22 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const {
     accountPkh,
     user: {
-      myMvkTokenBalance,
-      mySMvkTokenBalance,
-      userRewardsToDate: { farmRewards, doormanRewards },
-      myDoormanRewardsData: { myAvailableDoormanRewards },
-      mySatelliteRewardsData: { myAvailableSatelliteRewards },
+      userTokens,
+      availableDoormanRewards,
+      availableSatellitesRewards,
+      availableFarmRewards,
       satelliteMvkIsDelegatedTo,
       isSatellite,
     },
   } = useSelector((state: State) => state.wallet)
 
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { isActionActive } = useSelector((state: State) => state.loading)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
+  const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
+    myMvkTokenBalance = userTokens[MVK_TOKEN_SYMBOL].balance
 
   const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType; errorMessage: string }>({
     amount: '0',
@@ -85,8 +94,10 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
 
   const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
   const exchangeValue = MVK_exchangeRate && inputData.amount ? Number(inputData.amount) * MVK_exchangeRate : 0
-  const earnedValue = farmRewards + doormanRewards
-  const userHasRewards = myAvailableDoormanRewards + myAvailableSatelliteRewards > 2
+  const rewardsToClaim =
+    availableDoormanRewards +
+    availableSatellitesRewards +
+    Object.values(availableFarmRewards).reduce((acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards), 0)
   const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
 
   const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {
@@ -166,9 +177,9 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     unstakeCallback(mySMvkTokenBalance)
   }
 
-  const handleCompound = () => {
+  const handleCompound = async () => {
     if (accountPkh) {
-      dispatch(rewardsCompound(accountPkh))
+      await dispatch(rewardsCompound(accountPkh))
     }
   }
 
@@ -184,7 +195,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     }
   }
 
-  const inputProps = {
+  const inputProps: InputProps = {
     type: 'number',
     value: inputData.amount,
     onBlur: handleBlur,
@@ -209,7 +220,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
               <div className="balance-btn-group">
                 <CommaNumber value={myMvkTokenBalance} className="amount" />
                 {Boolean(myMvkTokenBalance) && (
-                  <NewButton onClick={handleStakeAll} kind={BUTTON_SIMPLE}>
+                  <NewButton onClick={handleStakeAll} kind={BUTTON_SIMPLE} disabled={isActionActive}>
                     Stake All
                   </NewButton>
                 )}
@@ -226,7 +237,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
               <div className="balance-btn-group">
                 <CommaNumber value={mySMvkTokenBalance} className="amount" />
                 {Boolean(mySMvkTokenBalance) && (
-                  <NewButton onClick={handleUnstakeAll} kind={BUTTON_SIMPLE}>
+                  <NewButton onClick={handleUnstakeAll} kind={BUTTON_SIMPLE} disabled={isActionActive}>
                     Unstake All
                   </NewButton>
                 )}
@@ -242,7 +253,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
                 onClick={handleDelegate}
                 kind={BUTTON_PRIMARY}
                 form={BUTTON_WIDE}
-                disabled={!accountPkh}
+                disabled={!accountPkh || isActionActive}
                 isThin
                 animation={accountPkh ? BUTTON_PULSE : null}
               >
@@ -268,8 +279,15 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           <StakeUnstakeBalance>
             <ImageWithPlug imageLink={'/images/coin-bronze.svg'} alt="coin" />
             <div>
-              <h3>Total MVK Earned</h3>
-              <CommaNumber value={earnedValue} className="amount" />
+              <h3>
+                Pending MVK Rewards{' '}
+                <CustomTooltip
+                  text="Amount of MVK you have earned and not yet claimed. This resets every time you stake, unstake, or compound as doing one of those actions will automatically credit your staked MVK balance with any unclaimed rewards."
+                  iconId="info"
+                  defaultStrokeColor={colors[themeSelected].textColor}
+                />
+              </h3>
+              <CommaNumber value={rewardsToClaim} className="amount" />
             </div>
           </StakeUnstakeBalance>
 
@@ -279,10 +297,20 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
               form={BUTTON_WIDE}
               isThin
               onClick={handleCompound}
-              disabled={!userHasRewards}
+              disabled={rewardsToClaim < 2 || isActionActive}
             >
               <Icon id="compound" /> Compound
             </NewButton>
+            <CustomTooltip
+              text={
+                rewardsToClaim < 2 || isActionActive
+                  ? `Compounds your pending exit fee rewards and converts them to sMVK. You currently, do not have any pending exit fee rewards amounting to at least 2 sMVK.`
+                  : `Compounds your pending exit fee rewards and converts them to sMVK.`
+              }
+              iconId="info"
+              className="tooltip"
+              defaultStrokeColor={colors[themeSelected].textColor}
+            />
           </StakeUnstakeRightPart>
         </StakeUnstakeCard>
       </StakeUnstakeCards>
@@ -328,11 +356,11 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
         </StakeUnstakeRate>
 
         <StakeUnstakeButtonGrid>
-          <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE}>
+          <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE} disabled={isActionActive}>
             <Icon id="in" /> Stake
           </NewButton>
 
-          <NewButton kind={BUTTON_SECONDARY} onClick={handleUnStake} form={BUTTON_WIDE}>
+          <NewButton kind={BUTTON_SECONDARY} onClick={handleUnStake} form={BUTTON_WIDE} disabled={isActionActive}>
             <Icon id="out" /> Unstake
           </NewButton>
         </StakeUnstakeButtonGrid>

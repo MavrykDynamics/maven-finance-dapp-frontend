@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react'
 import { AppDispatch } from 'app/App.controller'
-import { SimpleCircleSpinnerLoader } from '../Loader/Loader.view'
 
 import {
   ButtonForm,
@@ -13,6 +12,7 @@ import {
 } from './Button.constants'
 import { ButtonStyled } from './NewButton.style'
 import classNames from 'classnames'
+import { SpinnerCircleLoaderStyled } from '../Loader/Loader.style'
 
 export type ButtonProps = {
   onClick?: AppDispatch | ((e: React.MouseEvent<HTMLElement>) => Promise<unknown> | void)
@@ -24,6 +24,7 @@ export type ButtonProps = {
   animation?: ButtonAnimation | null
   disabled?: boolean
   isThin?: boolean
+  isSquare?: boolean
   children?: React.ReactNode
 }
 
@@ -45,6 +46,7 @@ const Button = ({
   disabled = false,
   selected = false,
   isThin = false,
+  isSquare = false,
   size = BUTTON_REGULAR,
   type = BUTTON,
 }: ButtonProps) => {
@@ -72,6 +74,7 @@ const Button = ({
   const buttonClasses = classNames(kind, form, animation, size, {
     disabled: isDisabled,
     isThin,
+    isSquare,
     selected,
     isLoading,
   })
@@ -80,7 +83,7 @@ const Button = ({
     <ButtonStyled className={buttonClasses} onClick={loadingWrappedClickHandler} type={type} disabled={isDisabled}>
       {isLoading ? (
         <div className="circle-spinner">
-          <SimpleCircleSpinnerLoader />
+          <SpinnerCircleLoaderStyled />
         </div>
       ) : null}
       <div className="child">{children}</div>

@@ -31,24 +31,11 @@ export const MenuSidebarStyled = styled.div<{ theme: MavrykTheme }>`
     height: fit-content;
   }
 
-  @media screen and (max-width: 1535px) {
-    &:not(.menu-expanded) {
-      max-width: 72px;
-
-      a .navLinkSubTitle,
-      a .navLinkTitle {
-        display: none !important;
-      }
-    }
-
-    &.menu-expanded {
-      max-width: 100vw;
-      display: flex;
-      align-items: flex-start;
-    }
+  .menu-backdrop {
+    display: none;
   }
 
-  @media screen and (max-width: 1400px) {
+  @media screen and (max-width: 1399px) {
     top: 0;
     left: 0;
     z-index: ${MENU_Z_INDEX};
@@ -63,6 +50,15 @@ export const MenuSidebarStyled = styled.div<{ theme: MavrykTheme }>`
 
       .menu-backdrop {
         display: block;
+      }
+    }
+
+    &:not(.menu-expanded) {
+      max-width: 72px;
+
+      a .navLinkSubTitle,
+      a .navLinkTitle {
+        display: none !important;
       }
     }
   }
@@ -149,12 +145,19 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
   row-gap: 20px;
 
   span {
+    font-weight: 500;
+    font-size: 12px;
+
     margin-bottom: 20px;
     color: ${({ theme }) => theme.valueColor};
   }
 
-  .feedbackLink {
+  > a {
     width: 100%;
+
+    &.small {
+      width: fit-content;
+    }
   }
 
   .social-wrapper {
@@ -176,7 +179,6 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
         fill: ${({ theme }) => theme.valueColor};
       }
     }
-
   }
 
   @media screen and (max-width: 1460px) {

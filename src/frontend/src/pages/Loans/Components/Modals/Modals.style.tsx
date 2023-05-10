@@ -2,13 +2,21 @@ import styled from 'styled-components'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
+  h2 {
+    font-size: 22px;
+  }
+
   .modalDescr {
     margin-top: 7px;
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
     color: ${({ theme }) => theme.textColor};
-    margin-bottom: 25px;
+    margin-bottom: 30px;
+
+    p {
+      margin: 0;
+    }
   }
 
   .block-name {
@@ -134,43 +142,5 @@ export const VaultModalOverview = styled.div<{ theme: MavrykTheme }>`
     .copyIcon {
       font-weight: 600;
     }
-  }
-`
-
-export const DropDownJsxChild = styled.div`
-  width: 95%;
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-
-  .flex-row {
-    display: flex;
-    align-items: center;
-    column-gap: 10px;
-    font-weight: 500;
-    font-size: 16px;
-    color: ${({ theme }) => theme.textColor};
-
-    &.with-image {
-      svg,
-      .img-wrapper {
-        width: 24px;
-        height: 24px;
-        fill: ${({ theme }) => theme.textColor};
-
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-      }
-    }
-  }
-
-  .baker-fee {
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 21px;
-    color: ${({ theme }) => theme.dataColor};
   }
 `

@@ -20,11 +20,11 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 
 import { TransactionHistoryStyled } from '../Loans.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { TzAddress } from 'pages/Treasury/Treasury.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { EmptyContainer } from 'app/App.style'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 type TransactionHistoryPropsType = {
   currentToken: LoanMarketType | undefined
@@ -35,17 +35,14 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const [switcherState, setSwitcherState] = useState<'all' | 'personal'>('all')
-  const [transactionHistory, setTransactionHistory] = useState<LoanMarketType['transactionHistory'] | undefined>(
-    currentToken?.transactionHistory,
-  )
 
-  useEffect(() => {
-    setTransactionHistory(
+  const transactionHistory = useMemo(
+    () =>
       switcherState === 'all'
         ? currentToken?.transactionHistory
         : currentToken?.transactionHistory.filter(({ userAddress }) => accountPkh === userAddress),
-    )
-  }, [accountPkh, currentToken?.transactionHistory, switcherState])
+    [switcherState, accountPkh, currentToken?.transactionHistory],
+  )
 
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
 
@@ -57,9 +54,7 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
   return (
     <TransactionHistoryStyled>
       <div className="top">
-        <GovRightContainerTitleArea>
-          <h2>Transaction History</h2>
-        </GovRightContainerTitleArea>
+        <H2Title>Transaction History</H2Title>
 
         <SlidingTabButtons
           onClick={(tabId: number) => setSwitcherState(tabId === 0 ? 'all' : 'personal')}
@@ -88,7 +83,7 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
                 return (
                   <TableRow rowHeight={45} className="add-hover" key={`${operationHash}-${date}`}>
                     <TableCell width={`21%`} className="vert-middle">
-                      <span>{descr}</span>
+                      <span className="descr">{descr}</span>
                     </TableCell>
                     <TableCell width={`21%`}>
                       <CommaNumber value={amount} className="value" endingText={tokenSymbol} />

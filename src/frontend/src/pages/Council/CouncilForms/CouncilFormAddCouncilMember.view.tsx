@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -8,7 +8,7 @@ import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // action
 import { addCouncilMember } from '../Council.actions'
@@ -16,9 +16,12 @@ import { addCouncilMember } from '../Council.actions'
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
+import { State } from 'reducers'
 
 export const CouncilFormAddCouncilMember = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
+  const { isActionActive } = useSelector((state: State) => state.loading)
+
   const [form, setForm] = useState({
     newMemberAddress: '',
     newMemberName: '',
@@ -144,7 +147,7 @@ export const CouncilFormAddCouncilMember = (maxLength: CouncilMaxLength) => {
         title={'Upload Profile Pic'}
       />
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
           <Icon id="plus" />
           Add Council Member
         </NewButton>

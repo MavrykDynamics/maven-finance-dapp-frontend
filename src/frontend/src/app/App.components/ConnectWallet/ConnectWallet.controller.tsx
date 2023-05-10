@@ -15,6 +15,7 @@ import { toggleSidebarCollapsing } from '../Menu/Menu.actions'
 import { showToaster } from '../Toaster/Toaster.actions'
 import { ERROR } from '../Toaster/Toaster.constants'
 import { toggleWertLoader } from '../Loader/Loader.action'
+import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 type ConnectWalletProps = {
   className?: string
@@ -27,7 +28,7 @@ export const ConnectWallet = ({ className, closeMobileMenu }: ConnectWalletProps
   const [showWertIoPopup, setShowWertIoPopup] = useState(false)
   const {
     accountPkh,
-    user: { myMvkTokenBalance, mySMvkTokenBalance, myXTZTokenBalance },
+    user: { userTokens },
   } = useSelector((state: State) => state.wallet)
   const { tokensPrices } = useSelector((state: State) => state.tokens)
 
@@ -67,16 +68,16 @@ export const ConnectWallet = ({ className, closeMobileMenu }: ConnectWalletProps
   // will implemented after Sam's answers about data for this block
   const coinsInfo: CoinsInfoType = {
     MVKExchangeRate: tokensPrices?.mvk ?? 0,
-    userMVKBalance: myMvkTokenBalance,
-    userXTZBalance: myXTZTokenBalance,
-    userMVKStaked: mySMvkTokenBalance,
+    userMVKBalance: userTokens[MVK_TOKEN_SYMBOL].balance,
+    userXTZBalance: userTokens[XTZ_TOKEN_SYMBOL].balance,
+    userMVKStaked: userTokens[SMVK_TOKEN_SYMBOL].balance,
     XTZExchnageRate: tokensPrices?.tezos ?? 0,
   }
 
   const detailsHandlers = {
     buyMVKHandler: () => mountWertWiget('MVK'),
     buyXTZHandler: () => mountWertWiget('XTZ'),
-    stakeMVKHandler: () => history.push('/'),
+    stakeMVKHandler: () => history.push('/staking'),
   }
 
   const closeAllForMobileMenu = useCallback((e: React.MouseEvent<HTMLElement>) => {

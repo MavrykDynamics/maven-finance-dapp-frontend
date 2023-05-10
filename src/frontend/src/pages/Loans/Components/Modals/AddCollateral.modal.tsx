@@ -4,8 +4,8 @@ import { State } from 'reducers'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import {
   AddCollateralPopupDataType,
   DEFAULT_LOANS_INPUT_VALUE,
@@ -25,8 +25,10 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import { calcCollateralRatio, getMaxCollateralWithdraw } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { silverColor } from 'styles'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -45,52 +47,48 @@ export const AddCollateral = ({
     currentCollateralRatio = 0,
     borrowedAmount = 0,
     borrowedAssetRate = 0,
-    currentCollateralBalance = 0,
+    borrowCapacity = 0,
+    avaliableLiq = 0,
   } = data ?? {}
 
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   const collateralData = useMemo(
     () => avaliableCollaterals.find(({ gqlName }) => selectedAsset?.gqlName === gqlName),
     [avaliableCollaterals, selectedAsset],
   )
 
+  const collateralBalance = userTokens[collateralData?.symbol.toLowerCase() ?? '']?.balance ?? 0
+
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
   const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
   const collateralRate = Number(selectedAsset?.rate)
 
-  const { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance, currentCollateralToWithdraw } =
-    useMemo(() => {
-      const futureCollateralRatio = selectedAsset
-        ? calcCollateralRatio(vaultCollateralBalance + inputAmount * collateralRate, borrowedAmount, borrowedAssetRate)
-        : 0
+  const { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance } = useMemo(() => {
+    const futureCollateralRatio = selectedAsset
+      ? calcCollateralRatio(vaultCollateralBalance + inputAmount * collateralRate, borrowedAmount, borrowedAssetRate)
+      : 0
 
-      const currentCollateralToWithdraw = getMaxCollateralWithdraw(
-        currentCollateralBalance * collateralRate,
-        vaultCollateralBalance,
-        borrowedAmount,
-        borrowedAssetRate,
-        collateralRate,
-      )
-
-      const futureCollateralWithdraw = currentCollateralToWithdraw * collateralRate + inputAmount * collateralRate
-
-      const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
-      return { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance, currentCollateralToWithdraw }
-    }, [
-      selectedAsset,
-      vaultCollateralBalance,
-      inputAmount,
-      borrowedAmount,
-      borrowedAssetRate,
-      currentCollateralBalance,
-      collateralRate,
-    ])
+    const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
+    const futureBorrowCapacity = Math.min(
+      avaliableLiq,
+      futureCollateralBalance / 2 - borrowedAmount * borrowedAssetRate,
+    )
+    return { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance }
+  }, [
+    selectedAsset,
+    vaultCollateralBalance,
+    inputAmount,
+    collateralRate,
+    borrowedAmount,
+    borrowedAssetRate,
+    avaliableLiq,
+  ])
 
   useEffect(() => {
     if (!show) {
@@ -100,8 +98,13 @@ export const AddCollateral = ({
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
-    const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount,
+      options: {
+        byDecimalPlaces: collateralData?.decimals || assetDecimalsToShow,
+      },
+    })
 
     setInputData({
       ...inputData,
@@ -158,13 +161,7 @@ export const AddCollateral = ({
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
-                <CommaNumber
-                  beginningText={`${currentCollateralRatio > 250 ? '+' : ''}`}
-                  value={Math.max(0, Math.min(currentCollateralRatio, 250))}
-                  endingText="%"
-                  showDecimal
-                  decimalsToShow={2}
-                />
+                <CommaNumber value={currentCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
               </div>
               <GradientDiagram
                 className="diagram"
@@ -177,8 +174,15 @@ export const AddCollateral = ({
               <CommaNumber value={vaultCollateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Available To Withdraw</div>
-              <CommaNumber value={currentCollateralToWithdraw * collateralRate} className="value" beginningText="$" />
+              <div className="name">
+                Available to Borrow{' '}
+                <CustomTooltip
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  iconId="info"
+                  defaultStrokeColor={silverColor}
+                />
+              </div>
+              <CommaNumber value={borrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
@@ -191,21 +195,24 @@ export const AddCollateral = ({
               type: 'number',
               onFocus: onFocusHandler,
               onBlur: inputOnBlurHandle,
-              onChange: (e) => inputOnChangeHandle(e.target.value, collateralData?.userBalance ?? 0),
+              onChange: (e) => inputOnChangeHandle(e.target.value, collateralBalance),
             }}
             settings={{
-              balance: collateralData?.userBalance ?? 0,
-              balanceAsset: selectedAsset?.symbol,
+              balance: collateralBalance,
+              balanceAsset: collateralData?.name,
               useMaxHandler: () =>
-                inputOnChangeHandle(String(collateralData?.userBalance ?? 0), collateralData?.userBalance ?? 0),
+                inputOnChangeHandle(
+                  getLoansInputMaxAmount(collateralBalance, collateralData?.decimals),
+                  collateralBalance,
+                ),
               inputStatus: inputData.validationStatus,
               convertedValue: inputAmount * (collateralData?.rate ?? 1),
               inputSize: INPUT_LARGE,
             }}
           >
             <InputPinnedTokenInfo>
-              <ImageWithPlug imageLink={collateralData?.icon} alt={`${collateralData?.symbol} icon`} />{' '}
-              {selectedAsset?.symbol}
+              <ImageWithPlug imageLink={collateralData?.icon} alt={`${collateralData?.name} icon`} />{' '}
+              {collateralData?.name}
             </InputPinnedTokenInfo>
           </Input>
 
@@ -217,13 +224,7 @@ export const AddCollateral = ({
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
-                <CommaNumber
-                  beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
-                  value={Math.max(0, Math.min(futureCollateralRatio, 250))}
-                  endingText="%"
-                  showDecimal
-                  decimalsToShow={2}
-                />
+                <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
               </div>
               <GradientDiagram
                 className="diagram"
@@ -236,8 +237,15 @@ export const AddCollateral = ({
               <CommaNumber value={futureCollateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Available To Withdraw</div>
-              <CommaNumber value={futureCollateralWithdraw} className="value" beginningText="$" />
+              <div className="name">
+                Available to Borrow{' '}
+                <CustomTooltip
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  iconId="info"
+                  defaultStrokeColor={silverColor}
+                />
+              </div>
+              <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
@@ -246,7 +254,7 @@ export const AddCollateral = ({
               kind={BUTTON_PRIMARY}
               onClick={depositCollateralHandler}
               form={BUTTON_WIDE}
-              disabled={inputData.validationStatus === INPUT_STATUS_ERROR || isActionLoading}
+              disabled={inputData.validationStatus === INPUT_STATUS_ERROR}
             >
               <Icon id="plus" />
               Deposit

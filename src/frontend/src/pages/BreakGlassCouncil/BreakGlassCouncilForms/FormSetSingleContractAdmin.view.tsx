@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // components
-import { BUTTON_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -18,6 +18,7 @@ import { setSingleContractAdmin } from '../BreakGlassCouncil.actions'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+import { State } from 'reducers'
 
 const INIT_FORM = {
   newAdminAddress: '',
@@ -26,6 +27,7 @@ const INIT_FORM = {
 
 export function FormSetSingleContractAdminView() {
   const dispatch = useDispatch()
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
@@ -93,7 +95,7 @@ export function FormSetSingleContractAdminView() {
   return (
     <FormStyled>
       <h1>Set Single Contract Admin</h1>
-      <p>Please enter valid function parameters for adding a vestee</p>
+      <p>Please enter valid function parameters for setting admin</p>
 
       <form className="form" onSubmit={handleSubmit}>
         <div className="form-fields input-size-primary">
@@ -104,10 +106,12 @@ export function FormSetSingleContractAdminView() {
           <Input inputProps={targetContractProps} settings={targetContracSettings} />
         </div>
 
-        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
-          <Icon id="profile" />
-          Set Contract Admin
-        </NewButton>
+        <div className="btn-wrapper">
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+            <Icon id="profile" />
+            Set Contract Admin
+          </NewButton>
+        </div>
       </form>
     </FormStyled>
   )

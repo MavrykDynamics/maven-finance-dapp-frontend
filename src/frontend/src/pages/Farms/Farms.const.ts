@@ -14,13 +14,13 @@ export const NO_STAKED = 0
 export type isStakedFarmType = typeof STAKED | typeof NO_STAKED
 
 export const itemsForFarmsSortDD = [
-  { text: 'Active', value: 'active' },
-  { text: 'Highest APY', value: 'highestAPY' },
-  { text: 'Lowest APY', value: 'lowestAPY' },
-  { text: 'Highest liquidity (lpBalance)', value: 'highestLiquidity' },
-  { text: 'Lowest liquidity (lpBalance)', value: 'lowestLiquidity' },
-  { text: 'Your Largest Stake', value: 'yourLargestStake' },
-  { text: 'Rewards Per Block', value: 'rewardsPerBlock' },
+  { content: 'Active', id: 'active' },
+  { content: 'Highest APY', id: 'highestAPY' },
+  { content: 'Lowest APY', id: 'lowestAPY' },
+  { content: 'Highest Liquidity (LPBalance)', id: 'highestLiquidity' },
+  { content: 'Lowest Liquidity (LPBalance)', id: 'lowestLiquidity' },
+  { content: 'Your Largest Stake', id: 'yourLargestStake' },
+  { content: 'Rewards Per Block', id: 'rewardsPerBlock' },
 ]
 
 export type FarmsFiltersStateType = {

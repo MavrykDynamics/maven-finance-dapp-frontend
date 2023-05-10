@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
 import { MavrykTheme } from 'styles/interfaces'
 
 const EDITABLE_TABLE_HEADER_STYLES = css`
@@ -9,6 +10,7 @@ const EDITABLE_TABLE_HEADER_STYLES = css`
     th {
       vertical-align: middle;
       text-align: center;
+      font-size: 16px;
       border-right: 1px solid ${({ theme }) => theme.cardBorderColor};
 
       &:last-child {
@@ -18,8 +20,16 @@ const EDITABLE_TABLE_HEADER_STYLES = css`
   }
 `
 
+const PROPOSAL_PAYMENTS_DETAILS_HEADER_STYLES = css`
+  &.proposal-details-payments {
+    th {
+      font-size: 12px;
+    }
+  }
+`
+
 export const TableHeader = styled.thead<{ theme: MavrykTheme }>`
-  z-index: 100;
+  z-index: ${DEFAULT_Z_INDEX_FOR_OVERLAP};
 
   tr {
     height: fit-content;
@@ -57,6 +67,7 @@ export const TableHeader = styled.thead<{ theme: MavrykTheme }>`
   }
 
   ${EDITABLE_TABLE_HEADER_STYLES}
+  ${PROPOSAL_PAYMENTS_DETAILS_HEADER_STYLES}
 `
 
 const LOANS_DASHBOARD_TABLE_HEADER_CELL_STYLES = css`

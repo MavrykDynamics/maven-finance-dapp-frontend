@@ -1,5 +1,6 @@
 import { SmallBlockBase } from 'pages/DashboardPersonal/DashboardPersonalComponents/DashboardPersonalComponents.style'
 import styled from 'styled-components'
+import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const LoansDashboardStyled = styled.div`
@@ -45,7 +46,7 @@ export const LoansDashboardStyled = styled.div`
       border-radius: 5px;
 
       &.up {
-        color: ${({ theme }) => theme.newUpColor};
+        color: ${({ theme }) => theme.upColor};
         background-color: ${({ theme }) => theme.upBgColor};
       }
 
@@ -113,7 +114,7 @@ export const AccountStyledStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }
       position: absolute;
       right: 0px;
       top: 0px;
-      z-index: 100;
+      z-index: ${DEFAULT_Z_INDEX_FOR_OVERLAP};
     }
   }
 
@@ -141,5 +142,13 @@ export const PositionTableStyled = styled.div<{ theme: MavrykTheme }>`
   // TODO: expand button component for different font sizes or change in figma
   button {
     font-size: 14px;
+  }
+
+  .not-connected {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 0;
+    margin: 0 auto;
   }
 `

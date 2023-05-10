@@ -7,15 +7,10 @@ import {
   TREASURY_STORAGE_QUERY_NAME,
   TREASURY_STORAGE_QUERY_VARIABLE,
 } from 'gql/queries/getTreasuryStorage'
-import { getTreasuryAssetsByAddress } from 'utils/api'
-import { FetchedTreasuryBalanceType, TreasuryBalanceType, TreasuryGQLType } from 'utils/TypesAndInterfaces/Treasury'
 
-import { normalizeTreasury, normalizeVestingStorage } from './Treasury.helpers'
+import { normalizeTreasury, normalizeTreasuryStorage, normalizeVestingStorage } from './Treasury.helpers'
 import { AppDispatch, GetState } from '../../app/App.controller'
 import { VESTING_STORAGE_QUERY, VESTING_STORAGE_QUERY_NAME, VESTING_STORAGE_QUERY_VARIABLE } from 'gql/queries'
-import { getAssetColor } from './helpers/treasury.utils'
-import { isTezosAsset } from 'pages/Loans/Loans.helpers'
-import { convertNumberForClient } from 'utils/calcFunctions'
 
 export const GET_TREASURY_STORAGE = 'GET_TREASURY_STORAGE'
 export const SET_TREASURY_STORAGE = 'SET_TREASURY_STORAGE'
@@ -23,9 +18,10 @@ export const SET_TREASURY_STORAGE = 'SET_TREASURY_STORAGE'
 export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
     const {
-      tokens: { tokensPrices },
+      tokens: { tokensPrices, whitelistTokens },
     } = getState()
     const MVK_EXCHANGE_RATE = tokensPrices['mvk'] ?? 0
+
     // Get treasury addresses from gql
     const treasuryAddressesStorage = await fetchFromIndexer(
       GET_TREASURY_DATA,
@@ -36,129 +32,24 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
     // Parse gql data to understandable data format
     const convertedStorage = normalizeTreasury(treasuryAddressesStorage)
 
-    // Get sMVK balances from gql
+    // Get sMVK assets in treasuries from gql
     const sMVKAmounts = await fetchFromIndexer(
       TREASURY_SMVK_QUERY,
       TREASURY_SMVK_QUERY_NAME,
-      TREASURY_SMVK_QUERY_VARIABLES(
-        convertedStorage.treasuryAddresses.map(({ address }: { address: string }) => address),
-      ),
+      TREASURY_SMVK_QUERY_VARIABLES(convertedStorage.treasury.map(({ address }: { address: string }) => address)),
     )
 
-    // Parse sMVK amount for each treasury, to make this structure usable
-    const parsedsMVKAmount: TreasuryBalanceType[] = sMVKAmounts.mavryk_user?.map(
-      ({ smvk_balance, address }: { smvk_balance: number; address: string }): TreasuryBalanceType => {
-        return {
-          balance: smvk_balance,
-          usdValue: smvk_balance * MVK_EXCHANGE_RATE,
-          decimals: 9,
-          contract: address,
-          name: 'Staked MAVRYK',
-          symbol: 'sMVK',
-          thumbnail_uri: 'https://mavryk.finance/logo192.png',
-          rate: MVK_EXCHANGE_RATE,
-          chartColor: '#55D8BA',
-        }
-      },
+    const normalizedTreasuryWithBalances = normalizeTreasuryStorage(
+      sMVKAmounts?.mavryk_user,
+      convertedStorage.treasury,
+      MVK_EXCHANGE_RATE,
+      tokensPrices,
+      whitelistTokens,
     )
-
-    // Map addresses to api cals with treasury addresses
-    const getTreasuryCallbacks = convertedStorage.treasuryAddresses.map(
-      ({ address }: { address: string }) =>
-        () =>
-          getTreasuryAssetsByAddress(address),
-    )
-
-    // Await promises from above
-    const fetchedTheasuryData = await Promise.all(getTreasuryCallbacks.map((fn) => fn()))
-
-    // Gathering metadata for symbols in treasuries
-    const treasurySymbolsMetadata = fetchedTheasuryData.reduce<
-      Record<string, { rate: number | null; symbol: string; color: string }>
-    >((acc, treasuryData, treasuryIdx) => {
-      treasuryData.forEach(
-        (
-          {
-            token: {
-              metadata: { symbol },
-            },
-          },
-          assetIdx,
-        ) => {
-          if (acc[symbol.toLowerCase()]) return acc
-
-          // TODO: temp solution cuz back-end can't normally relate treasury and feeds for now
-          const symbolToSearch =
-            symbol.toLowerCase() === 'tezos' ? 'xtz' : symbol.toLowerCase() === 'tzbtc' ? 'btc' : symbol.toLowerCase()
-
-          const feedAssetRate = tokensPrices[symbol.toLowerCase()] ?? null
-
-          acc[symbol.toLowerCase()] = {
-            symbol: isTezosAsset(symbol.toLowerCase()) ? 'XTZ' : symbol,
-            color: getAssetColor(treasuryIdx + assetIdx),
-            // TODO: this will be redone after normal integration of treasury with feeds
-            rate: symbolToSearch === 'mvk' ? MVK_EXCHANGE_RATE : feedAssetRate,
-          }
-
-          return acc
-        },
-      )
-      return acc
-    }, {})
-
-    // Map every treasury to combine treasury name, and divide balance by constant
-    const treasuryStorage = convertedStorage.treasuryAddresses.map((treasuryData: TreasuryGQLType, idx: number) => {
-      const sMVKAmount = parsedsMVKAmount.find(({ contract }: TreasuryBalanceType) => contract === treasuryData.address)
-
-      const tresuryTokensWithValidBalances = fetchedTheasuryData[idx]
-        .map(
-          ({
-            account: { address },
-            token: {
-              metadata: { symbol, name, decimals, thumbnailUri },
-            },
-            balance,
-          }: FetchedTreasuryBalanceType): TreasuryBalanceType => {
-            const assetData = treasurySymbolsMetadata[symbol.toLowerCase()]
-            const coinsAmount = convertNumberForClient({ number: parseFloat(balance), grade: parseInt(decimals) })
-            return {
-              contract: address,
-              usdValue: coinsAmount * (assetData.rate ?? 1),
-              decimals: parseInt(decimals),
-              name: name,
-              thumbnail_uri: thumbnailUri,
-              symbol: assetData.symbol,
-              balance: coinsAmount,
-              rate: assetData.rate,
-              chartColor: assetData.color,
-            }
-          },
-        )
-        .concat(sMVKAmount || [])
-        .filter(({ balance }: TreasuryBalanceType) => balance > 0 || balance.toString().includes('e'))
-        .sort(
-          (asset1: TreasuryBalanceType, asset2: TreasuryBalanceType) =>
-            Number(asset2.balance) * Number(asset2.rate) - Number(asset1.balance) * Number(asset1.rate),
-        )
-
-      const treasuryTVL = tresuryTokensWithValidBalances.reduce<number>((acc, { usdValue }) => (acc += usdValue), 0)
-
-      return {
-        ...treasuryData,
-        name:
-          treasuryData.name ||
-          `Treasury ${treasuryData.address.slice(0, 7)}...${treasuryData.address.slice(
-            treasuryData.address.length - 4,
-            treasuryData.address.length,
-          )}`,
-        balances: tresuryTokensWithValidBalances,
-        treasuryTVL,
-      }
-    })
 
     dispatch({
       type: SET_TREASURY_STORAGE,
-      treasuryStorage,
+      treasuryStorage: normalizedTreasuryWithBalances,
       treasuryFactoryAddress: convertedStorage.treasuryFactoryAddress,
     })
   } catch (error) {

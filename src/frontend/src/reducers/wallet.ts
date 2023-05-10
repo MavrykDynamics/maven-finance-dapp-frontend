@@ -1,21 +1,24 @@
 import type { M_Token_Account } from './../utils/generated/graphqlTypes'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import type {
-  UserDoormanRewardsData,
-  UserFarmRewardsData,
-  UserSatelliteRewardsData,
-} from 'utils/TypesAndInterfaces/User'
+import type { UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
 import type { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
 
-import { CONNECT, DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL } from 'utils/constants'
 import { UPDATE_USER_DATA } from './actions/user.actions'
 
 export interface UserState {
-  // user balance
-  myMvkTokenBalance: number
-  mySMvkTokenBalance: number
-  myXTZTokenBalance: number
-  mytzBTCTokenBalance: number
+  // user balances
+  userTokens: Record<
+    string,
+    {
+      balance: number
+      symbol: string
+      name: string
+    }
+  >
+
+  userMTokens: Array<M_Token_Account>
 
   satelliteMvkIsDelegatedTo: string
   isLoaded: boolean
@@ -28,18 +31,15 @@ export interface UserState {
     userBorrowing: Array<UserLendObjType>
     userVaultsData: Record<string, { borrowedAmount: number; collateralAmount: number }>
   }
-  mTokens?: Array<M_Token_Account>
 
   // user rewards
-  userRewardsToDate: {
-    farmRewards: number
-    satelliteRewards: number
-    doormanRewards: number
-  }
-  myDoormanRewardsData: UserDoormanRewardsData
-  myFarmRewardsData: Record<string, UserFarmRewardsData>
-  mySatelliteRewardsData: UserSatelliteRewardsData
-  myLendingRewardsAmount: number
+  gatheredFarmRewards: number
+  gatheredSatellitesRewards: number
+  gatheredDoormanRewards: number
+  availableDoormanRewards: number
+  availableFarmRewards: Record<string, UserFarmRewardsData>
+  availableSatellitesRewards: number
+  availableLoansRewards: number
 
   // user's actions history
   actionsHistory: Array<{
@@ -57,10 +57,24 @@ export interface WalletState {
 }
 
 export const DEFAULT_USER: UserState = {
-  myMvkTokenBalance: 0,
-  mySMvkTokenBalance: 0,
-  myXTZTokenBalance: 0,
-  mytzBTCTokenBalance: 0,
+  userTokens: {
+    [MVK_TOKEN_SYMBOL]: {
+      balance: 0,
+      name: 'MVK',
+      symbol: MVK_TOKEN_SYMBOL,
+    },
+    [SMVK_TOKEN_SYMBOL]: {
+      balance: 0,
+      name: 'sMVK',
+      symbol: MVK_TOKEN_SYMBOL,
+    },
+    [XTZ_TOKEN_SYMBOL]: {
+      balance: 0,
+      name: 'XTZ',
+      symbol: XTZ_TOKEN_SYMBOL,
+    },
+  },
+  userMTokens: [],
 
   satelliteMvkIsDelegatedTo: '',
   isLoaded: false,
@@ -72,27 +86,15 @@ export const DEFAULT_USER: UserState = {
     userBorrowing: [],
     userVaultsData: {},
   },
-  myLendingRewardsAmount: 0,
 
-  myFarmRewardsData: {},
-  myDoormanRewardsData: {
-    generalAccumulatedFeesPerShare: 0,
-    generalUnclaimedRewards: 0,
-    myAvailableDoormanRewards: 0,
-    myParticipationFeesPerShare: 0,
-  },
-  mySatelliteRewardsData: {
-    myAvailableSatelliteRewards: 0,
-    paid: 0,
-    participationRewardsPerShare: 0,
-    satelliteAccumulatedRewardPerShare: 0,
-    unpaid: 0,
-  },
-  userRewardsToDate: {
-    farmRewards: 0,
-    satelliteRewards: 0,
-    doormanRewards: 0,
-  },
+  availableLoansRewards: 0,
+  availableDoormanRewards: 0,
+  availableSatellitesRewards: 0,
+  availableFarmRewards: {},
+
+  gatheredFarmRewards: 0,
+  gatheredSatellitesRewards: 0,
+  gatheredDoormanRewards: 0,
 
   actionsHistory: [],
 }
@@ -104,14 +106,10 @@ export const walletDefaultState: WalletState = {
 
 export function wallet(state = walletDefaultState, action: Action) {
   switch (action.type) {
-    case CONNECT:
-      return {
-        ...state,
-        accountPkh: action.accountPkh,
-      }
     case UPDATE_USER_DATA:
       return {
         ...state,
+        accountPkh: action.accountPkh,
         user: { ...action.userData, isLoaded: true },
       }
     case DISCONNECT:

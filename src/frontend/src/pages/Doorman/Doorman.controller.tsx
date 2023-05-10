@@ -18,6 +18,7 @@ import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 import { getDoormanStorage, stake } from './Doorman.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
+import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const Doorman = () => {
   const dispatch = useDispatch()
@@ -25,7 +26,7 @@ export const Doorman = () => {
   const { doormanAddress, mvkTokenAddress } = useSelector((state: State) => state.contractAddresses)
   const {
     accountPkh,
-    user: { mySMvkTokenBalance, myMvkTokenBalance },
+    user: { userTokens },
   } = useSelector((state: State) => state.wallet)
   const {
     totalStakedMvk,
@@ -35,6 +36,8 @@ export const Doorman = () => {
   } = useSelector((state: State) => state.doorman)
   const { mvk: mvkExchangeRate = 0 } = useSelector((state: State) => state.tokens.tokensPrices)
 
+  const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
+    myMvkTokenBalance = userTokens[MVK_TOKEN_SYMBOL].balance
   const [amount, setAmount] = useState<null | number>(null)
   const exitFeeModal = {
     amount: Number(amount),

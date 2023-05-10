@@ -2,12 +2,14 @@ import styled from 'styled-components/macro'
 import { dropShadow } from 'styles/animations'
 import { subTextColor, upColor, skyColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
+import { getNumberInBounds } from 'utils/calcFunctions'
+import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
 
 export const VotingContainer = styled.aside<{ theme: MavrykTheme; showButtons?: boolean }>`
   display: flex;
   flex-direction: column;
-  margin-top: 42px;
-  margin-bottom: ${({ showButtons }) => (showButtons ? 0 : '42px')};
+  margin-top: 30px;
+  margin-bottom: ${({ showButtons }) => (showButtons ? 0 : '30px')};
   text-align: end;
   width: 100%;
   position: relative;
@@ -22,7 +24,7 @@ export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
     font-size: 12px;
     width: fit-content;
     position: absolute;
-    left: ${({ width }) => width}%;
+    left: ${({ width }) => getNumberInBounds(0, 100, width)}%;
     transform: translateX(-50%);
     padding-bottom: 15px;
     white-space: nowrap;
@@ -39,7 +41,7 @@ export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
   }
 `
 export const VotingBarStyled = styled.div<{ theme: MavrykTheme }>`
-  z-index: 10;
+  z-index: ${DEFAULT_Z_INDEX_FOR_OVERLAP};
   height: 4px;
   display: flex;
   flex-direction: row;

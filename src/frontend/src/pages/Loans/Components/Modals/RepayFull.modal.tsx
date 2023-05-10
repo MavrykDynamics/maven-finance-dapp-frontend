@@ -37,6 +37,7 @@ export const RepayFull = ({
     feesAmount = 0,
     currentCollateralBalance = 0,
     collateralRatio = 0,
+    minimumRepay = 0,
     borrowCapacity = 0,
     borrowedAmount = 0,
   } = data ?? {}
@@ -45,12 +46,12 @@ export const RepayFull = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
-  const canRepay = useMemo(
-    () => totalOutstanding <= (borrowedAsset?.userBalance ?? 0),
-    [borrowedAsset, totalOutstanding],
-  )
+  const userAssetBalance = userTokens[borrowedAsset?.symbol ?? '']?.balance ?? 0
+
+  const canRepay = totalOutstanding <= userAssetBalance && totalOutstanding > minimumRepay
+
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
 
   useEffect(() => {
@@ -105,7 +106,7 @@ export const RepayFull = ({
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Borrowed</div>
-                  <CommaNumber value={borrowedAmount} className="value" endingText={borrowedAsset?.symbol} />
+                  <CommaNumber value={borrowedAmount} className="value" />
                   <CommaNumber
                     value={borrowedAmount * Number(borrowedAsset?.rate)}
                     className="rate"
@@ -114,12 +115,12 @@ export const RepayFull = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Fees Due</div>
-                  <CommaNumber value={feesAmount} className="value" endingText={borrowedAsset?.symbol} />
+                  <CommaNumber value={feesAmount} className="value" />
                   <CommaNumber value={feesAmount * Number(borrowedAsset?.rate)} className="rate" beginningText="$" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem className="left-divider">
                   <div className="name">Total Outstanding</div>
-                  <CommaNumber value={totalOutstanding} className="value" endingText={borrowedAsset?.symbol} />
+                  <CommaNumber value={totalOutstanding} className="value" />
                   <CommaNumber
                     value={totalOutstanding * Number(borrowedAsset?.rate)}
                     className="rate"
@@ -131,7 +132,7 @@ export const RepayFull = ({
               <ThreeLevelListItem>
                 <div className="name">My Balance</div>
                 <CommaNumber
-                  value={Number(borrowedAsset?.userBalance)}
+                  value={userAssetBalance}
                   className={`value ${canRepay ? 'up' : 'down'}`}
                   endingText={borrowedAsset?.symbol}
                 />
@@ -152,7 +153,7 @@ export const RepayFull = ({
                       To Repay in Full & Close Vault you need at least{' '}
                       {formatNumber({
                         decimalsToShow: 2,
-                        number: totalOutstanding - Number(borrowedAsset?.userBalance),
+                        number: totalOutstanding - userAssetBalance,
                       })}{' '}
                       {borrowedAsset?.symbol} on your Ballance
                     </p>
@@ -168,13 +169,7 @@ export const RepayFull = ({
                     >
                       <div className={`percentage`}>
                         Collateral Ratio:{' '}
-                        <CommaNumber
-                          beginningText={`${collateralRatio > 250 ? '+' : ''}`}
-                          value={Math.max(0, Math.min(collateralRatio, 250))}
-                          endingText="%"
-                          showDecimal
-                          decimalsToShow={2}
-                        />
+                        <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
                       </div>
                       <GradientDiagram
                         className="diagram"
@@ -229,13 +224,7 @@ export const RepayFull = ({
                 >
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}
-                    <CommaNumber
-                      beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
-                      value={Math.max(0, Math.min(futureCollateralRatio, 250))}
-                      endingText="%"
-                      showDecimal
-                      decimalsToShow={2}
-                    />
+                    <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
                   </div>
                   <GradientDiagram
                     className="diagram"
@@ -258,12 +247,7 @@ export const RepayFull = ({
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton
-                  kind={BUTTON_PRIMARY}
-                  form={BUTTON_WIDE}
-                  onClick={repayBtnHandler}
-                  disabled={isActionLoading}
-                >
+                <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={repayBtnHandler}>
                   <Icon id="close" />
                   Repay And Close
                 </NewButton>

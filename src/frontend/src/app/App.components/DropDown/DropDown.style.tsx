@@ -85,6 +85,24 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
       max-height: 400px;
     }
   }
+
+  &.stage-3-dropDown {
+    #selected-option {
+      div {
+        color: ${({ theme }) => theme.blockNameTitleColor};
+      }
+    }
+
+    #dropDownListContainer {
+      div {
+        color: ${({ theme }) => theme.blockNameTitleColor};
+      }
+    }
+
+    svg {
+      stroke: ${({ theme }) => theme.blockNameTitleColor};
+    }
+  }
 `
 
 export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
@@ -116,8 +134,8 @@ export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
     margin-left: 3px;
 
     > svg {
-      height: 15px;
-      width: 20px;
+      height: 12px;
+      width: 16px;
       stroke: ${({ theme }) => theme.textColor};
       stroke-width: 3px;
       fill: none;
@@ -165,7 +183,7 @@ export const DropDownListItem = styled.li<{ disabled?: boolean }>`
   cursor: pointer;
   justify-content: space-between;
 
-  > svg {
+  .selectedIcon {
     stroke: ${({ theme }) => theme.textColor};
     width: 10px;
     height: 10px;
@@ -244,5 +262,50 @@ export const DropdownCard = styled(Card)`
 
   &.satellite-governance-dropdown {
     margin-top: 30px;
+  }
+`
+
+export const DropDownTruncatedChild = styled.div`
+  max-width: 90%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+`
+
+export const DropDownJsxChild = styled.div`
+  width: 95%;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  .flex-row {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    font-weight: 500;
+    font-size: 16px;
+    color: ${({ theme }) => theme.textColor};
+
+    &.with-image {
+      svg,
+      .img-wrapper {
+        width: 24px;
+        height: 24px;
+        fill: ${({ theme }) => theme.textColor};
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+    }
+  }
+
+  .baker-fee {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+    color: ${({ theme }) => theme.dataColor};
   }
 `

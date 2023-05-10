@@ -72,6 +72,7 @@ export const FeedsListItem = styled.div<{ theme: MavrykTheme }>`
     font-size: 16px;
     display: flex;
     column-gap: 10px;
+    white-space: nowrap;
 
     div {
       line-height: 100%;
@@ -145,4 +146,12 @@ export const DataFeedsSearchFilter = styled(Card)<{ theme: MavrykTheme }>`
       fill: transparent;
     }
   }
+`
+
+export const DataFeedListItemTextTruncated = styled.var<{ theme: MavrykTheme }>`
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block !important;
 `

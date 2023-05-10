@@ -13,19 +13,22 @@ export const primaryColor = '#7068AA'
 export const boxShadowColor = 'rgba(134, 212, 201, 0.5)'
 export const subTextColor = '#7E8794'
 export const accordeonTogglerColor = '#6a6a9b'
-export const infoColor = '#00C2FF'
-export const awaitingColor = '#FFCA43'
 
 export const borderColor = '#4F457C'
 export const textColor = '#CDCDCD'
 export const backgroundTextColor = '#F7F9FD'
 export const placeholderColor = '#F7F9FD'
 export const secondaryColor = '#73d7c3'
-export const upColor = '#27AE60'
+export const upColor = '#34F66A'
 export const downColor = '#FF4343'
-export const newUpColor = '#34F66A'
+export const neutralColor = '#6A6A9B'
 export const dangerColor = '#FF8486'
-export const warningColor = '#FF7A00'
+export const warningColor = '#FE630C'
+export const riskColor = '#FBFF43'
+export const infoColor = '#00C2FF'
+export const upBgColor = 'rgba(52, 246, 106, 0.2)'
+export const downBgColor = 'rgba(255, 67, 67, 0.2)'
+export const neutralBgColor = 'rgba(119, 164, 242, 0.2)'
 export const selectedColor = '#aea3ff3d'
 export const backdropColor = '#08062880'
 export const silverColor = '#C0DBFF'
@@ -33,9 +36,6 @@ export const lightTextColor = '#D0CFD9'
 export const ffff = 'rgba(119, 164, 242, 0)'
 export const dropDownColor = '#0000007a'
 export const modalsBackdropColor = 'rgba(0, 0, 0, 0.5)'
-export const upBgColor = 'rgba(52, 246, 106, 0.2)'
-export const downBgColor = 'rgba(255, 67, 67, 0.2)'
-export const neutralBgColor = 'rgba(119, 164, 242, 0.2)'
 
 export const dark = {
   backgroundColor: darkColor,
@@ -64,13 +64,12 @@ export const dark = {
   textColor: '#CDCDCD',
   upColor,
   downColor,
-  newUpColor,
+  neutralColor,
   upBgColor,
   downBgColor,
   neutralBgColor,
   warningColor,
-  darkWarningColor: '#FE630C',
-  awaitingColor,
+  riskColor,
   selectedColor,
   connectWalletBackgroundColor: '#50508E',
   navLinkBackgroundActive: 'linear-gradient(90deg, #38237c 0%, rgba(80, 80, 142, 0) 100%)',
@@ -113,13 +112,12 @@ export const light = {
   secondaryColor: '#73d7c3',
   upColor: '#27AE60',
   downColor: '#FF4343',
-  newUpColor,
+  neutralColor,
   upBgColor,
   downBgColor,
   neutralBgColor,
   warningColor: '#FF7A00',
-  darkWarningColor: '#FE630C',
-  awaitingColor,
+  riskColor,
   infoColor,
   selectedColor: '#aea3ff3d',
   connectWalletBackgroundColor: '#EEEAF4',

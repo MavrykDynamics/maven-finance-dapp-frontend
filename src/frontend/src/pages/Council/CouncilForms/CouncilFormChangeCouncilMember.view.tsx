@@ -9,14 +9,14 @@ import type { CouncilMaxLength } from '../../../utils/TypesAndInterfaces/Council
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
-import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
+import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 
 // action
 import { changeCouncilMember } from '../Council.actions'
@@ -27,22 +27,19 @@ import { CouncilFormStyled } from './CouncilForm.style'
 export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
   const { councilMembers } = useSelector((state: State) => state.council)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const dropDownItems = useMemo(
     () =>
       councilMembers.map((item, index) => ({
-        content: (
-          <div>
-            {item.name} - {getShortTzAddress({ tzAddress: item.userId })}
-          </div>
-        ),
+        content: <DropdownTruncateOption text={`${item.name} - ${getShortTzAddress({ tzAddress: item.userId })}`} />,
         tzAddress: item.userId,
         id: index,
       })),
     [councilMembers],
   )
 
-  type DropDownItemType = typeof dropDownItems[0]
+  type DropDownItemType = (typeof dropDownItems)[0]
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const [form, setForm] = useState({
@@ -201,7 +198,7 @@ export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
         title={'Upload Profile Pic'}
       />
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
           <Icon id="exchange" />
           Change Council Member
         </NewButton>

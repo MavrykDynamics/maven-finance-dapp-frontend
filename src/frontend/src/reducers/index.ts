@@ -16,9 +16,9 @@ import { contractAddresses, ContractAddressesState } from './contractAddresses'
 import { dataFeeds, DataFeedsState } from './dataFeeds'
 import { tokens, TokensType } from './tokens'
 import { loans, LoansState } from './loans'
-import { vaults, VaultsStateType } from './vaults'
 import { financialRequest, FinancialRequestStoreType } from './financialRequests'
 import { satellites, SatellitesState } from './satellites'
+import { satelliteGovernance, SatelliteGovernanceState } from './satelliteGovernance'
 
 export const reducers = combineReducers({
   loading,
@@ -34,12 +34,12 @@ export const reducers = combineReducers({
   breakGlass,
   emergencyGovernance,
 
+  satelliteGovernance,
   satellites,
   dataFeeds,
 
   doorman,
   loans,
-  vaults,
   treasury,
   farm,
   vesting,
@@ -63,6 +63,6 @@ export interface State {
   dataFeeds: DataFeedsState
   tokens: TokensType
   loans: LoansState
-  vaults: VaultsStateType
   satellites: SatellitesState
+  satelliteGovernance: SatelliteGovernanceState
 }

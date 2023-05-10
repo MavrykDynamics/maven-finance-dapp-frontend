@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // components
-import { BUTTON_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
@@ -29,10 +29,16 @@ const INIT_FORM = {
   newMemberImage: '',
 }
 
-export function FormUpdateCouncilMemberView(maxLength: CouncilMaxLength) {
+type Props = {
+  maxLength: CouncilMaxLength
+  callback: () => void
+}
+
+export function FormUpdateCouncilMemberView({ maxLength, callback }: Props) {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [form, setForm] = useState(INIT_FORM)
   const myInfo = breakGlassCouncilMembers.find((item) => item.userId === accountPkh)
@@ -49,7 +55,7 @@ export function FormUpdateCouncilMemberView(maxLength: CouncilMaxLength) {
     e.preventDefault()
 
     try {
-      await dispatch(updateCouncilMember(newMemberName, newMemberWebsite, newMemberImage))
+      await dispatch(updateCouncilMember(newMemberName, newMemberWebsite, newMemberImage, callback))
 
       setForm(INIT_FORM)
       setFormInputStatus({
@@ -155,7 +161,7 @@ export function FormUpdateCouncilMemberView(maxLength: CouncilMaxLength) {
         />
 
         <div className="align-to-right">
-          <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
             <Icon id="upload" />
             Update Council Member
           </NewButton>

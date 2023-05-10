@@ -54,25 +54,17 @@ export const AppRoutes = () => {
   // TODO: add error boundaries
   return (
     <Switch>
-      <Route exact path="/">
-        <Doorman />
-      </Route>
-      <Route exact path="/stake">
+      <Route exact path="/staking">
         <Doorman />
       </Route>
 
       {/* DASHBOARD */}
-      <Route exact path="/dashboard/:tabId">
+      <Route exact path="/">
         <Dashboard />
       </Route>
-      <ProtectedRoute
-        path="/dashboard-personal/:tabId/:secondaryTabId?"
-        component={DashboardPersonal}
-        hasAccess={Boolean(accountPkh)}
-        isAuthorized={Boolean(accountPkh)}
-        canCheck={!isInitialDataLoading}
-        redirectPath={`/dashboard/${LENDING_TAB_ID}`}
-      />
+      <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
+        <DashboardPersonal />
+      </Route>
 
       {/* SATELLITES */}
       <Route exact path="/satellites">
@@ -98,11 +90,11 @@ export const AppRoutes = () => {
       <Route exact path="/governance">
         <Governance />
       </Route>
-      <Route exact path="/satellite-governance">
+      <Route exact path="/satellite-governance/:tabId?">
         <SatelliteGovernance />
       </Route>
       <Route exact path="/proposal-history">
-        <Governance />
+        <Governance isHistory />
       </Route>
       <Route exact path="/contract-status">
         <BreakGlass />
@@ -125,7 +117,7 @@ export const AppRoutes = () => {
         isAuthorized={Boolean(accountPkh)}
         canCheck={!isInitialDataLoading}
         hasAccess={Boolean(isSatellite)}
-        redirectPath={'/'}
+        redirectPath={'/governance'}
       />
 
       <Route exact path="/treasury">
@@ -174,7 +166,7 @@ export const AppRoutes = () => {
 
       <Route exact path="/404">
         {/*TODO: Replace later on with actual 404 page*/}
-        <Doorman />
+        <Dashboard />
       </Route>
       <Redirect to="/404" />
     </Switch>

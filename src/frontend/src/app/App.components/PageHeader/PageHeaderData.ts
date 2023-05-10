@@ -77,7 +77,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'satellites',
     {
       title: 'Satellites',
-      subText: 'Delegate your voting power to satellites and earn rewards.',
+      subText: 'Delegate your voting power to Satellites and earn rewards.',
       foregroundImageSrc: '/images/satellites-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },
@@ -86,7 +86,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'my satellite profile',
     {
       title: 'My Satellite Profile',
-      subText: 'Delegate your voting power to satellites and earn rewards.',
+      subText: 'Delegate your voting power to Satellites and earn rewards.',
       foregroundImageSrc: '/images/satellites-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },
@@ -95,7 +95,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'satellite details',
     {
       title: 'Satellites',
-      subText: 'Delegate your voting power to satellites and earn rewards',
+      subText: 'Delegate your voting power to Satellites and earn rewards',
       foregroundImageSrc: '/images/satellites-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },

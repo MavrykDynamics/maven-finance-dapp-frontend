@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // helpers
 import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
@@ -19,6 +19,10 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { containerColor } from 'styles'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
+
+// types
+import { InputProps } from 'app/App.components/Input/newInput.type'
+import { State } from 'reducers'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -40,6 +44,7 @@ export const ExitFeeModal = ({
   data: { amount, mvkExchangeRate, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, accountPkh, totalMVKSupply },
 }: ExitFeeModalPropsType) => {
   const dispatch = useDispatch()
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType }>({
     amount: '0',
@@ -51,7 +56,7 @@ export const ExitFeeModal = ({
   const mli = calcMLI(totalMVKSupply, totalStakedMvk)
   const fee = calcExitFee(totalMVKSupply, totalStakedMvk)
 
-  const unstakeCallback = (amount: number) => dispatch(unstake(amount))
+  const unstakeCallback = async (amount: number) => await dispatch(unstake(amount))
 
   // Validating initial amount came from props
   useEffect(() => {
@@ -97,7 +102,7 @@ export const ExitFeeModal = ({
     }
   }
 
-  const inputProps = {
+  const inputProps: InputProps = {
     type: 'number',
     value: inputData.amount,
     onBlur: handleBlur,
@@ -108,9 +113,7 @@ export const ExitFeeModal = ({
   return (
     <PopupContainer onClick={closePopup} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="exitFee">
-        <div onClick={closePopup} className="close_modal">
-          +
-        </div>
+        <button onClick={closePopup} className="close-modal" />
         <h1>Unstake your MVK</h1>
 
         <ExitFeeModalContent>
@@ -130,7 +133,7 @@ export const ExitFeeModal = ({
               <h4>
                 MVK Loyalty Index
                 <a
-                  href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
+                  href="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -149,7 +152,7 @@ export const ExitFeeModal = ({
               <h4>
                 Exit Fee
                 <a
-                  href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
+                  href="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -169,7 +172,7 @@ export const ExitFeeModal = ({
             <NewButton
               kind={BUTTON_PRIMARY}
               form={BUTTON_WIDE}
-              disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
+              disabled={inputData.validation !== INPUT_STATUS_SUCCESS || isActionActive}
               onClick={() => {
                 unstakeCallback(Number(inputData.amount))
                 closePopup()

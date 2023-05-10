@@ -1,12 +1,5 @@
 import type { Mavryk_User } from '../generated/graphqlTypes'
 
-export interface UserDoormanRewardsData {
-  generalUnclaimedRewards: number
-  generalAccumulatedFeesPerShare: number
-  myParticipationFeesPerShare: number
-  myAvailableDoormanRewards: number
-}
-
 export interface UserFarmRewardsData {
   generalAccumulatedRewardsPerShare: number
   currentRewardPerBlock: number
@@ -19,14 +12,6 @@ export interface UserFarmRewardsData {
   myDepositedAmount: number
   myParticipationRewardsPerShare: number
   myAvailableFarmRewards: number
-}
-
-export interface UserSatelliteRewardsData {
-  unpaid: number
-  paid: number
-  participationRewardsPerShare: number
-  satelliteAccumulatedRewardPerShare: number
-  myAvailableSatelliteRewards: number
 }
 
 export type UserType = {

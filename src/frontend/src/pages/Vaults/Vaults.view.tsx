@@ -13,9 +13,15 @@ import { EmptyContainer } from 'app/App.style'
 
 // styles
 import { VaultsStyled } from './Vaults.style'
+import { VaultsList } from 'pages/Loans/Components/LoansComponents.style'
 
 // helpers
-import { VAULTS_LIST_NAME, getPageNumber, MY_VAULTS_LIST_NAME } from 'app/App.components/Pagination/pagination.consts'
+import {
+  VAULTS_LIST_NAME,
+  getPageNumber,
+  MY_VAULTS_LIST_NAME,
+  PERMISSIONED_VAULTS_LIST_NAME,
+} from 'app/App.components/Pagination/pagination.consts'
 import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getVaultAssets } from './Vaults.helpers'
@@ -25,13 +31,15 @@ import { State } from '../../reducers'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
-import { getVaultsStorage, markForLiquidation } from './Vaults.actions'
+import { markForLiquidation } from './Vaults.actions'
+import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
 const pathname = '/vaults'
 
-const tabsId = {
+export const vaultTabs = {
   ALL: 'all',
   MY: 'my',
+  PERMISSIONED: 'permissioned',
 }
 
 export const VaultsView = () => {
@@ -41,46 +49,35 @@ export const VaultsView = () => {
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    vaultsList: { myVaultsIds, allVaultsIds, vaultsMapper },
-    isLoaded,
-  } = useSelector((state: State) => state.vaults)
+    vaults: { permissinedVaultsIds, myVaultsIds, allVaultsIds, vaultsMapper },
+    isDataLoaded,
+  } = useSelector((state: State) => state.loans)
   const { tabId } = useParams<{ tabId: string }>()
-
-  const tabsList: TabItem[] = useMemo(
-    () => [
-      {
-        text: 'All Vaults',
-        id: 1,
-        active: tabsId.ALL === tabId,
-        path: tabsId.ALL,
-      },
-      {
-        text: 'My Vaults',
-        id: 2,
-        active: tabsId.MY === tabId,
-        path: tabsId.MY,
-        isDisabled: !accountPkh,
-      },
-    ],
-    [accountPkh, tabId],
-  )
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
       try {
-        if (!isLoaded || isDepsChanged) {
-          await dispatch(getVaultsStorage())
+        if (!isDataLoaded || isDepsChanged) {
+          await dispatch(getLoansStorage())
         }
       } catch (e) {}
     },
     [accountPkh],
   )
-
+  const [tabsList, setTabsList] = useState<TabItem[]>([])
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
 
-  const currentListName = tabId === tabsId.ALL ? VAULTS_LIST_NAME : MY_VAULTS_LIST_NAME
-  const currentVaultsIds = tabId === tabsId.ALL ? allVaultsIds : myVaultsIds
+  const currentListName =
+    tabId === vaultTabs.ALL
+      ? VAULTS_LIST_NAME
+      : tabId === vaultTabs.MY
+      ? MY_VAULTS_LIST_NAME
+      : PERMISSIONED_VAULTS_LIST_NAME
+
+  const currentVaultsIds =
+    tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissinedVaultsIds
+
   const currentPage = getPageNumber(search, currentListName)
 
   const handleChangeTabs = (id: number) => {
@@ -90,7 +87,7 @@ export const VaultsView = () => {
     if (!foundTab?.path || currentTabId === id) return
 
     history.replace(`${pathname}/${foundTab.path}`)
-    setVaultsIds(foundTab.path === tabsId.ALL ? allVaultsIds : myVaultsIds)
+    setVaultsIds(foundTab.path === vaultTabs.ALL ? allVaultsIds : myVaultsIds)
   }
 
   const paginatedVaultsList = useMemo(() => {
@@ -98,15 +95,46 @@ export const VaultsView = () => {
     return vaultsIds?.slice(from, to)
   }, [currentListName, currentPage, vaultsIds])
 
-  const handleMarkForLiquidation = (vaultId: number, vaultOwner: string) => {
-    dispatch(markForLiquidation(vaultId, vaultOwner))
+  const handleMarkForLiquidation = async (vaultId: number, vaultOwner: string) => {
+    await dispatch(markForLiquidation(vaultId, vaultOwner))
   }
 
-  // switch to "all" tab if user is disabled
+  // switch to "all" tab if user is disabled and set tabs
   useEffect(() => {
+    const baseTabs = [
+      {
+        text: 'All Vaults',
+        id: 1,
+        active: vaultTabs.ALL === tabId,
+        path: vaultTabs.ALL,
+      },
+    ]
+
+    const tabsToUse = accountPkh
+      ? [
+          ...baseTabs,
+          {
+            text: 'My Vaults',
+            id: 2,
+            active: vaultTabs.MY === tabId,
+            path: vaultTabs.MY,
+          },
+          {
+            text: 'Permissioned Vaults',
+            id: 3,
+            active: vaultTabs.PERMISSIONED === tabId,
+            path: vaultTabs.PERMISSIONED,
+            isDisabled: !accountPkh,
+          },
+        ]
+      : baseTabs
+
+    setTabsList(tabsToUse)
+
     if (accountPkh) return
-    handleChangeTabs(tabsList[0].id)
-  }, [accountPkh])
+    // return back to "all vaults" tab if user is not connected
+    history.replace(`${pathname}/${baseTabs[0].path}`)
+  }, [accountPkh, tabId])
 
   return (
     <VaultsStyled>
@@ -125,7 +153,7 @@ export const VaultsView = () => {
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>
       ) : paginatedVaultsList.length ? (
-        <div className="vaults">
+        <VaultsList>
           {paginatedVaultsList.map((item) => {
             const isOwner = vaultsMapper[item]?.ownerId === accountPkh
 
@@ -134,13 +162,14 @@ export const VaultsView = () => {
                 key={item}
                 isOwner={isOwner}
                 handleMarkForLiquidation={handleMarkForLiquidation}
+                vaultTab={tabId}
                 {...vaultsMapper[item]}
               />
             )
           })}
 
           <Pagination itemsCount={vaultsIds.length} listName={currentListName} />
-        </div>
+        </VaultsList>
       ) : (
         <EmptyContainer className="centered">
           <img src="/images/not-found.svg" alt=" No financial requests to show" />

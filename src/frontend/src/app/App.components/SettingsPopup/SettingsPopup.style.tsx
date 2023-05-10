@@ -30,21 +30,10 @@ export const PopupContainerWrapper = styled.div`
     cursor: pointer;
     transition: opacity 0.3s;
 
-    &:after,
     &:before {
-      content: '';
-      height: 30px;
-      width: 30px;
-      border-top: 3px solid ${({ theme }) => theme.valueColor};
-      position: absolute;
-      top: 10px;
-      right: -12px;
-      transform: rotate(-45deg);
-    }
-
-    &:before {
-      right: 9px;
-      transform: rotate(45deg);
+      content: '✕';
+      font-size: 25px;
+      color: ${({ theme }) => theme.textColor};
     }
 
     &:hover {
@@ -99,6 +88,63 @@ export const PopupContainerWrapper = styled.div`
     h1 {
       margin: 0;
       text-align: start;
+    }
+  }
+
+  &.wert-io-wrapper {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 535px;
+    width: 100%;
+    height: 660px;
+
+    @media (max-width: 550px) {
+      width: 100vw;
+      height: 100vh !important;
+    }
+  }
+
+  &.policy {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    padding: 40px 50px 30px;
+    max-width: 950px;
+
+    h1,
+    p,
+    ol {
+      margin: 0;
+    }
+
+    ol {
+      padding-left: 15px;
+    }
+
+    h1:after {
+      margin-bottom: 30px;
+    }
+
+    p,
+    h3,
+    li {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+    }
+
+    li,
+    div {
+      font-weight: 500;
+      line-height: 24px;
+    }
+
+    .procced-btn {
+      width: 270px;
+      margin: 0 auto;
+      padding-top: 30px;
     }
   }
 
@@ -161,7 +207,6 @@ export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean }>`
     input {
       width: 100%;
       border: none;
-      padding: 0;
       padding-left: 7px;
       color: ${({ theme }) => theme.textColor};
       font-size: 16px;
@@ -244,86 +289,20 @@ export const PopupContainer = styled.div<{ show?: boolean }>`
           }
         `
       : ''}
-
-  .close_modal {
-    font-size: 50px;
-    font-weight: 100;
-    height: 24px;
-    width: 24px;
-    color: ${({ theme }) => theme.textColor};
-    transform: rotate(45deg);
-    cursor: pointer;
-    transition: color 300ms;
-    position: absolute;
-    top: 5px;
-    right: 10px;
-
-    &:hover {
-      color: ${({ theme }) => theme.textColorHovered};
-    }
-  }
-
-  .wert-io-wrapper {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    max-width: 535px;
-    width: 100%;
-    height: 660px;
-
-    .close_modal {
-      position: absolute;
-      font-size: 60px;
-      font-weight: 100;
-      height: 35px;
-      width: 35px;
-      color: #8d86eb;
-      transform: unset;
-      top: 5px;
-      right: 15px;
-      cursor: pointer;
-    }
-
-    @media (max-width: 550px) {
-      width: 100vw;
-      height: 100vh !important;
-    }
-  }
 `
 
-export const PopupTitle = styled.div`
-  font-weight: 700;
-  font-size: 25px;
-  line-height: 25px;
-  color: ${({ theme }) => theme.textColor};
-  position: relative;
-
-  &.change_node {
-    margin: 0 auto;
-    width: fit-content;
-    &::before {
-      display: none;
-    }
+export const SettingsPopupWrapper = styled.div`
+  .title {
+    font-weight: 700;
+    font-size: 25px;
+    line-height: 25px;
+    color: ${({ theme }) => theme.textColor};
+    text-align: center;
   }
 
-  &::before {
-    content: '';
-    width: 77px;
-    height: 4px;
-    background: #503eaa;
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-  }
-
-  @media (max-width: 500px) {
-    font-size: 20px;
-    /* text-align: center; */
-
-    &::before {
-      height: 2px;
-    }
+  .buttons-wrapper {
+    display: flex;
+    column-gap: 7px;
   }
 `
 

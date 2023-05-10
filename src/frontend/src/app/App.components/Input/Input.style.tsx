@@ -1,7 +1,14 @@
 import styled from 'styled-components/macro'
 import { zoomIn, slideDown } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { INPUT_BIG, INPUT_LARGE, INPUT_MEDIUM } from './Input.constants'
+import {
+  INPUT_BIG,
+  INPUT_LARGE,
+  INPUT_MEDIUM,
+  INPUT_SMALL,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+} from './Input.constants'
 
 export const InputStyled = styled.div`
   position: relative;
@@ -39,7 +46,7 @@ export const InputComponentContainer = styled.div<{ theme: MavrykTheme }>`
     }
 
     &.search {
-      color: ${({ theme }) => theme.headerColor};
+      color: ${({ theme }) => theme.textColor};
     }
 
     &::placeholder:not(.search) {
@@ -189,7 +196,7 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   border-radius: 10px;
   line-height: 100%;
   margin: 0;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.blockNameTitleColor};
   display: block;
   padding: 13px 45px 13px 20px;
 
@@ -205,11 +212,23 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   &:hover:not(:disabled) {
     background-color: ${({ theme }) => theme.containerColor};
   }
+
+  &.remove-right-border-radius {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &.${INPUT_STATUS_SUCCESS}, &.${INPUT_STATUS_ERROR} {
+    padding-right: 35px;
+  }
 `
 
 export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
   height: 100%;
-  border-left: 1px solid ${({ theme }) => theme.dataColor};
+  border-left: 1px solid ${({ theme }) => theme.cardBorderColor};
+  background-color: ${({ theme }) => theme.backgroundColor};
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 
   .img-wrapper,
   svg {
@@ -275,28 +294,60 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  &.${INPUT_SMALL} {
+    height: 40px;
+
+    input {
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input::placeholder {
+      font-weight: 400;
+      font-size: 12px;
+    }
+  }
+
   &:focus-within {
     box-shadow: 0 0 0 2px ${({ theme }) => theme.primaryColor}19;
     border-color: ${({ theme }) => theme.primaryColor}7F;
   }
 
-  &.error {
+  &.${INPUT_STATUS_ERROR} {
     border: 1px solid ${({ theme }) => theme.downColor};
     input {
       color: ${({ theme }) => theme.downColor};
+
       &::placeholder {
         color: ${({ theme }) => theme.downColor};
       }
+
+      &:focus {
+        box-shadow: 0 0 0 2px ${({ theme }) => theme.downColor}7F;
+      }
+    }
+
+    .pinned-child {
+      border-left: 1px solid ${({ theme }) => theme.downColor};
     }
   }
 
-  &.success {
+  &.${INPUT_STATUS_SUCCESS} {
     border: 1px solid ${({ theme }) => theme.upColor};
     input {
       color: ${({ theme }) => theme.upColor};
+
       &::placeholder {
         color: ${({ theme }) => theme.upColor};
       }
+
+      &:focus {
+        box-shadow: 0 0 0 2px ${({ theme }) => theme.upColor}7F;
+      }
+    }
+
+    .pinned-child {
+      border-left: 1px solid ${({ theme }) => theme.upColor};
     }
   }
 
@@ -356,7 +407,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   .input-balance {
     position: absolute;
     bottom: -35px;
-    right: 0px;
+    right: 15px;
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
@@ -376,16 +427,23 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   .useMax-btn {
     position: absolute;
     top: -20px;
-    right: 0px;
+    right: 15px;
     font-size: 14px;
+
+    &::before {
+      position: absolute;
+      background-color: ${({ theme }) => theme.valueColor};
+      width: 100%;
+      content: '';
+      height: 1px;
+      bottom: 0px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   }
 
   .pointer {
     cursor: pointer;
-  }
-
-  &.vault-name {
-    margin-top: 45px;
   }
 `
 
@@ -403,8 +461,9 @@ export const NewInputLabel = styled.label`
 export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`
   display: block;
   position: absolute;
-  top: 13px;
-  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 13px;
   z-index: 1;
   line-height: 13px;
   text-align: center;
@@ -412,18 +471,14 @@ export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`
   pointer-events: none;
   will-change: transform, opacity;
 
-  &.hasChild {
-    right: px;
-  }
-
-  &.error {
+  &.${INPUT_STATUS_ERROR} {
     background-image: url('/icons/input-error.svg');
     animation: ${zoomIn} 0.3s cubic-bezier(0.12, 0.4, 0.29, 1.46);
     height: 15px;
     width: 15px;
   }
 
-  &.success {
+  &.${INPUT_STATUS_SUCCESS} {
     background-image: url('/icons/input-success.svg');
     animation: ${zoomIn} 0.3s cubic-bezier(0.12, 0.4, 0.29, 1.46);
     height: 12px;

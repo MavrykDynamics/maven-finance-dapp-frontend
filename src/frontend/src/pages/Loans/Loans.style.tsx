@@ -363,16 +363,17 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
   .name {
     font-weight: 600;
     font-size: 14px;
-    line-height: 20px;
+    line-height: 21px;
     color: ${({ theme }) => theme.textColor};
   }
 
   .value {
     font-weight: 600;
     font-size: 16px;
-    line-height: 100%;
+    line-height: 22px;
     color: ${({ theme }) => theme.dataColor};
     display: flex;
+    align-items: center;
 
     .img-wrapper,
     .no-icon {
@@ -390,7 +391,7 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
     }
 
     &.up {
-      color: ${({ theme }) => theme.newUpColor};
+      color: ${({ theme }) => theme.upColor};
     }
 
     &.down {
@@ -403,14 +404,16 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
   }
 
   .rate {
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 14px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
     color: ${({ theme }) => theme.dataColor};
   }
 
   .tooltip {
     margin-left: 7px;
+    display: inline-flex;
   }
 
   &.collateral-diagram {

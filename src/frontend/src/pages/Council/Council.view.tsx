@@ -6,9 +6,9 @@ import { useParams } from 'react-router'
 import qs from 'qs'
 
 // components
-import { DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
+import { DropDown, DDItemId, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 import NewButton from 'app/App.components/Button/NewButton'
-import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
+import { CouncilAction } from 'pages/Council/CouncilActions/CouncilAction.view'
 import Carousel from '../../app/App.components/Carousel/Carousel.view'
 import { CouncilMemberView } from 'pages/Council/CouncilMember/CouncilMember.view'
 import { CouncilPending } from './CouncilPending/CouncilPending.controller'
@@ -19,11 +19,7 @@ import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
 
 // helpers
-import {
-  BUTTON_PRIMARY,
-  BUTTON_SECONDARY,
-  BUTTON_WIDE,
-} from '../../app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../app/App.components/Button/Button.constants'
 import { getSeparateSnakeCase } from 'utils/parse'
 import { memberIsFirstOfList } from 'pages/Council/Council.helpers'
 import {
@@ -45,7 +41,7 @@ import {
 } from './Council.style'
 
 // types
-import { CouncilMaxLength, CouncilAction, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength, CouncilActionType, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
@@ -89,7 +85,7 @@ type Props = {
   allPastActions: number[]
   myPastActions: number[]
 
-  actionsMapper: Record<number, CouncilAction>
+  actionsMapper: Record<number, CouncilActionType>
 
   members: CouncilMembers
   dropdowndActions: Record<string, string>
@@ -98,7 +94,7 @@ type Props = {
   handleDropAction: (id: number) => void
 
   getFormComponent: () => React.ReactNode
-  getFormUpdateMemberInfo: (maxLength: CouncilMaxLength) => React.ReactNode
+  getFormUpdateMemberInfo: (maxLength: CouncilMaxLength, callback: () => void) => React.ReactNode
 }
 
 export function CouncilView({
@@ -140,14 +136,14 @@ export function CouncilView({
   const dropDownItems = useMemo(
     () =>
       Object.values(dropdowndActions).map((item, index) => ({
-        content: <div>{getSeparateSnakeCase(item)}</div>,
+        content: <DropdownTruncateOption text={getSeparateSnakeCase(item)} />,
         value: item,
         id: index,
       })),
     [dropdowndActions],
   )
 
-  type DropDownItemType = typeof dropDownItems[0]
+  type DropDownItemType = (typeof dropDownItems)[0]
 
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
   const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)
@@ -257,7 +253,13 @@ export function CouncilView({
 
       {!tabId && isCouncilMember && showPropagateBreakGlass && (
         <PropagateBreakGlassCouncilCard>
-          <h1>Propagate Break Glass</h1>
+          <div>
+            <h1>Propagate Break Glass</h1>
+            <p>
+              This action can only be taken to pause all contracts in the event of a successful emergency governance
+              where a critical flaw has been detected in the Mavryk Smart Contracts.
+            </p>
+          </div>
 
           <NewButton kind={BUTTON_PRIMARY} onClick={handleClickPropagateBreakGlass} disabled={glassBroken}>
             <Icon id="plus" />
@@ -298,34 +300,40 @@ export function CouncilView({
               {isPastActionsTab ? (
                 <>
                   <h1>{titles.allPastActions}</h1>
-                  {paginatedAllPastActions.length
-                    ? paginatedAllPastActions.map((item) => {
+
+                  {paginatedAllPastActions.length ? (
+                    <div>
+                      {paginatedAllPastActions.map((item) => {
                         const action = actionsMapper[item]
 
                         return (
-                          <CouncilPastActionView
+                          <CouncilAction
                             startDatetime={action.startDatetime}
                             key={action.id}
                             actionType={action.actionType}
                             signersCount={action.signersCount}
-                            numCouncilMembers={members.length}
+                            numCouncilMembers={action.councilSize}
                             councilId={action.councilId}
                           />
                         )
-                      })
-                    : councilEmptyContainer}
+                      })}
+                    </div>
+                  ) : (
+                    councilEmptyContainer
+                  )}
                 </>
               ) : null}
 
               {!isPastActionsTab ? (
                 <>
                   <h1>Pending Signature Council Actions</h1>
-                  {paginatedAllPendingActions.length
-                    ? paginatedAllPendingActions.map((item) => {
+                  {paginatedAllPendingActions.length ? (
+                    <div>
+                      {paginatedAllPendingActions.map((item) => {
                         const action = actionsMapper[item]
 
                         return (
-                          <CouncilPastActionView
+                          <CouncilAction
                             startDatetime={action.startDatetime}
                             key={action.id}
                             actionType={action.actionType}
@@ -334,8 +342,11 @@ export function CouncilView({
                             councilId={action.councilId}
                           />
                         )
-                      })
-                    : councilEmptyContainer}
+                      })}
+                    </div>
+                  ) : (
+                    councilEmptyContainer
+                  )}
                 </>
               ) : null}
 
@@ -384,7 +395,7 @@ export function CouncilView({
 
         <div className="right-block">
           {!tabId && (
-            <ReviewCard displayPendingSignature={displayPendingSignature}>
+            <ReviewCard>
               <Link to={`${queryParameters.pathname}${queryParameters.pastActions}`}>
                 <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
                   Review Past Actions
@@ -403,16 +414,18 @@ export function CouncilView({
             <>
               <h1>{titles.membersName}</h1>
 
-              {sortedCouncilMembers.map((item) => (
-                <CouncilMemberView
-                  key={item.id}
-                  image={item.image}
-                  name={item.name}
-                  userId={item.userId}
-                  openModal={handleOpenleModal}
-                  showUpdateInfo={isCouncilMember}
-                />
-              ))}
+              <div>
+                {sortedCouncilMembers.map((item) => (
+                  <CouncilMemberView
+                    key={item.id}
+                    image={item.image}
+                    name={item.name}
+                    userId={item.userId}
+                    openModal={handleOpenleModal}
+                    showUpdateInfo={isCouncilMember}
+                  />
+                ))}
+              </div>
             </>
           )}
         </div>
@@ -420,7 +433,7 @@ export function CouncilView({
 
       <PopupContainer onClick={closePopup} show={isUpdateCouncilMemberInfo}>
         <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council">
-          {getFormUpdateMemberInfo(maxLength)}
+          {getFormUpdateMemberInfo(maxLength, closePopup)}
         </PopupContainerWrapper>
       </PopupContainer>
     </CounsilPageWrapper>

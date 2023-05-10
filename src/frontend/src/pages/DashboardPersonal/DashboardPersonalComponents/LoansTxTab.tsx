@@ -18,9 +18,11 @@ import {
   TableBody,
   TableCell,
 } from 'app/App.components/Table'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LBHInfoBlock } from './DashboardPersonalComponents.style'
 import { parseDate } from 'utils/time'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { useSelector } from 'react-redux'
+import { ConnectWallet } from 'app/App.components/ConnectWallet/ConnectWallet.controller'
 
 export const LoansTxTab = ({
   txVariant,
@@ -31,14 +33,13 @@ export const LoansTxTab = ({
   isUserLoansLoading: boolean
   userLoansData: State['wallet']['user']['userLoansData']
 }) => {
+  const { accountPkh } = useSelector((state: State) => state.wallet)
   const isLending = txVariant === 'lending'
   const dataToShow = isLending ? userLoansData.userLendings : userLoansData.userBorrowing
 
   return (
     <LBHInfoBlock>
-      <GovRightContainerTitleArea>
-        <h2>{isLending ? 'Lending TXs' : 'Borrow TXs'}</h2>
-      </GovRightContainerTitleArea>
+      <H2Title>{isLending ? 'Lending TXs' : 'Borrow TXs'}</H2Title>
 
       {isUserLoansLoading ? (
         <div className="loader-wrapper">
@@ -91,15 +92,21 @@ export const LoansTxTab = ({
         </TableScrollable>
       ) : (
         <div className="no-data">
-          <span>{isLending ? 'Nothing supplied at this time' : 'Nothing borrowed at this time'}</span>
-          <div className="nav-button">
-            <Link to="/loans">
-              <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
-                <Icon id={isLending ? 'lend' : 'borrow'} />
-                {isLending ? 'Lend Asset' : 'Borrow Asset'}
-              </Button>
-            </Link>
-          </div>
+          {accountPkh ? (
+            <>
+              <span>{isLending ? 'Nothing supplied at this time' : 'Nothing borrowed at this time'}</span>
+              <div className="nav-button">
+                <Link to="/loans">
+                  <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+                    <Icon id={isLending ? 'lend' : 'borrow'} />
+                    {isLending ? 'Lend Asset' : 'Borrow Asset'}
+                  </Button>
+                </Link>
+              </div>
+            </>
+          ) : (
+            <ConnectWallet />
+          )}
         </div>
       )}
     </LBHInfoBlock>

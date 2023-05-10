@@ -16,7 +16,7 @@ import { DDItemId, DropDown, DropDownItemType } from 'app/App.components/DropDow
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
-import { DropDownJsxChild, LoansModalBase } from './Modals.style'
+import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { managePermissionsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 import {
@@ -27,6 +27,7 @@ import {
   VAULT_ALLOWANCE_ACCOUNTS,
 } from 'pages/Loans/Loans.const'
 import { LoanVaultAllowanceType } from 'utils/TypesAndInterfaces/Loans'
+import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
 const ddItems = [
   { text: 'Vault Owner', value: NONE_USER },
@@ -48,7 +49,6 @@ export const ManagePermissions = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const [tableData, setTableData] = useState<Array<LoansPopupsAddressInputStateType>>([
@@ -95,8 +95,8 @@ export const ManagePermissions = ({
       tableData.every(({ address }) => depositors.includes(address)) &&
       deporsitorsFlag === chosenDdItem?.id
 
-    return isActionLoading || isInvalidTable || !chosenDdItem || !vaultAddress || isNoChanges
-  }, [chosenDdItem, deporsitorsFlag, depositors, isActionLoading, tableData, vaultAddress])
+    return isInvalidTable || !chosenDdItem || !vaultAddress || isNoChanges
+  }, [chosenDdItem, deporsitorsFlag, depositors, tableData, vaultAddress])
 
   const handleAddRow = () => {
     setTableData(tableData.concat([{ address: '', validationStatus: '' }]))

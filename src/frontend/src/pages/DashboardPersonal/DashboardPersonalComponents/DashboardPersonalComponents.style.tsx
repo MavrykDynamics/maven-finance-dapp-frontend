@@ -44,7 +44,7 @@ export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
       width: 220px;
     }
 
-    span {
+    > span {
       font-weight: 600;
       font-size: 18px;
       color: ${({ theme }) => theme.textColor};
@@ -113,8 +113,8 @@ export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavrykThem
   .wallet-info {
     display: flex;
     flex-direction: column;
-    row-gap: 7px;
-    margin-top: 30px;
+    row-gap: 8px;
+    margin-top: 20px;
 
     .name {
       font-weight: 600;
@@ -274,6 +274,7 @@ export const HistoryBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
 
   .no-data {
     margin-top: 20px;
+    padding-bottom: 40px;
   }
 
   .history-tooltip {
@@ -327,16 +328,35 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
     justify-content: center;
   }
 
+  .container {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 24px;
+  }
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, min-content) 115px min-content;
+    grid-auto-flow: dense;
+    grid-row-gap: 30px;
+    grid-column-gap: 80px;
+  }
+
   .grid-item {
     display: flex;
     flex-direction: column;
     row-gap: 5px;
+    white-space: nowrap;
 
     p {
       margin: 0;
     }
 
     a {
+      display: block;
+      width: 100%;
+      word-wrap: break-word;
       font-weight: 500;
       font-size: 16px;
       color: ${({ theme }) => theme.valueColor};
@@ -380,6 +400,17 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
         }
       }
     }
+  }
+
+  .grid-item-last {
+    max-width: 366px;
+    grid-column: 4 / span 2;
+    grid-row: 2 / 3;
+    white-space: break-spaces;
+  }
+
+  .grid-item-under-image {
+    padding-left: 50px;
   }
 
   > a {

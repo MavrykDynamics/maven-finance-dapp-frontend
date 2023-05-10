@@ -1,14 +1,24 @@
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
-import { fetchFromIndexer } from '../../gql/fetchGraphQL'
-import { nomalizeSatelliteConfig, normalizeSatellitesLedger } from './helpers/Satellites.normalizer'
-import { updateUserData } from 'reducers/actions/user.actions'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 
 import { State } from 'reducers'
 import type { AppDispatch, GetState } from '../../app/App.controller'
+import { fetchFromIndexer } from '../../gql/fetchGraphQL'
 
-import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
+import { nomalizeSatelliteConfig, normalizeSatellitesLedger } from './helpers/Satellites.normalizer'
+
+import {
+  ACTION_COMPLETION_MESSAGE_TEXT,
+  ACTION_START_MESSAGE_TEXT,
+  TOASTER_ERROR,
+  TOASTER_INFO,
+  TOASTER_LOADING,
+  TOASTER_SUCCESS,
+  TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
+} from 'app/App.components/Toaster/Toaster.constants'
 import {
   SATELLITES_STORAGE_QUERY,
   SATELLITES_STORAGE_QUERY_NAME,
@@ -17,7 +27,8 @@ import {
   SATELLITE_CONFIG_QUERY_NAME,
   SATELLITE_CONFIG_QUERY_VARIABLE,
 } from 'gql/queries'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { updateUserData } from 'reducers/actions/user.actions'
+import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const GET_SATELLITES_STORAGE = 'GET_SATELLITES_STORAGE'
 export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -40,7 +51,7 @@ export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState
   } catch (error) {
     console.error('getSatellitesStorage error: ', error)
     if (error instanceof Error) {
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
   }
 }
@@ -59,7 +70,7 @@ export const getSatelliteConfig = () => async (dispatch: AppDispatch, getState: 
   } catch (error) {
     console.error('getSatelliteConfig error: ', error)
     if (error instanceof Error) {
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
   }
 }
@@ -68,47 +79,69 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
   const state: State = getState()
 
   if (!state.wallet.accountPkh) {
-    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+    dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
   }
 
-  if (state.loading.isActionLoading) {
-    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+  if (
+    state.wallet.user.userTokens[SMVK_TOKEN_SYMBOL].balance === 0 &&
+    state.wallet.user.userTokens[MVK_TOKEN_SYMBOL].balance === 0
+  ) {
+    dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please buy MVK and stake it'))
     return
   }
 
-  if (state.wallet.user?.myMvkTokenBalance === 0 && state.wallet.user?.mySMvkTokenBalance === 0) {
-    dispatch(showToaster(ERROR, 'Unable to Delegate', 'Please buy MVK and stake it'))
-    return
-  }
-
-  if (state.wallet.user?.mySMvkTokenBalance === 0) {
-    dispatch(showToaster(ERROR, 'Unable to Delegate', 'Please stake your MVK'))
+  if (state.wallet.user.userTokens[SMVK_TOKEN_SYMBOL].balance === 0) {
+    dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please stake your MVK'))
     return
   }
 
   try {
+    // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
     const transaction = await contract?.methods.delegateToSatellite(state.wallet.accountPkh, satelliteAddress).send()
 
-    dispatch(toggleActionLoader(true))
-    dispatch(showToaster(INFO, 'Delegating...', 'Please wait 30s'))
+    dispatch(toggleActionFullScreenLoader(true))
+    dispatch(toggleActionCompletion(true))
+    dispatch(showToaster(TOASTER_INFO, 'Delegating...', ACTION_START_MESSAGE_TEXT))
 
-    await transaction?.confirmation()
+    // turn off fs actions loader and start data updating after 5s after operation started
+    setTimeout(async () => {
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
 
-    dispatch(showToaster(SUCCESS, 'Delegation done', 'All good :)'))
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
 
-    await Promise.all([dispatch(getSatellitesStorage()), dispatch(getDoormanStorage())])
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getSatellitesStorage())
+          await dispatch(getDoormanStorage())
+          await dispatch(updateUserData())
 
-    await dispatch(updateUserData())
-    await dispatch(toggleActionLoader(false))
+          // Add here call for update data actions
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Delegation done', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
+    }, 5000)
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -116,37 +149,56 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
   const state: State = getState()
 
   if (!state.wallet.accountPkh) {
-    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  if (state.loading.isActionLoading) {
-    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
   }
 
   try {
+    // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
     const transaction = await contract?.methods.undelegateFromSatellite(state.wallet.accountPkh, delegateAddress).send()
 
-    dispatch(toggleActionLoader(true))
-    dispatch(showToaster(INFO, 'Undelegating...', 'Please wait 30s'))
+    dispatch(toggleActionFullScreenLoader(true))
+    dispatch(toggleActionCompletion(true))
+    dispatch(showToaster(TOASTER_INFO, 'Undelegating...', ACTION_START_MESSAGE_TEXT))
 
-    await transaction?.confirmation()
+    // turn off fs actions loader and start data updating after 5s after operation started
+    setTimeout(async () => {
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
 
-    dispatch(showToaster(SUCCESS, 'Undelegating done', 'All good :)'))
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
 
-    await Promise.all([dispatch(getSatellitesStorage()), dispatch(getDoormanStorage())])
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getSatellitesStorage())
+          await dispatch(getDoormanStorage())
+          await dispatch(updateUserData())
 
-    await dispatch(updateUserData())
-    await dispatch(toggleActionLoader(false))
+          // Add here call for update data actions
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Undelegating done', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
+    }, 5000)
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -155,36 +207,57 @@ export const distributeProposalRewards =
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionLoading) {
-      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
       const transaction = await contract?.methods.distributeProposalRewards(satelliteAddress, proposals).send()
 
-      dispatch(toggleActionLoader(true))
-      dispatch(showToaster(INFO, 'Distributing proposal rewards...', 'Please wait 30s'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Distributing proposal rewards...', ACTION_START_MESSAGE_TEXT))
 
-      await transaction?.confirmation()
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
-      dispatch(showToaster(SUCCESS, 'Distributing proposal rewards done', 'All good :)'))
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      await Promise.all([dispatch(getSatellitesStorage()), dispatch(getDoormanStorage())])
-      await dispatch(updateUserData())
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getSatellitesStorage())
+            await dispatch(getDoormanStorage())
+            await dispatch(updateUserData())
 
-      await dispatch(toggleActionLoader(false))
+            // Add here call for update data actions
+            await dispatch(hideToaster())
+            await dispatch(
+              showToaster(TOASTER_SUCCESS, 'Distributing proposal rewards done', ACTION_COMPLETION_MESSAGE_TEXT),
+            )
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }

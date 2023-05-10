@@ -7,7 +7,7 @@ export const LOANS_QUERY = `
       interest_rate_decimals
       minimum_loan_fee_pct
       decimals
-      history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}) {
+      history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
         type
         amount
         timestamp
@@ -40,7 +40,7 @@ export const LOANS_QUERY = `
         current_interest_rate
         oracle_id
 
-        history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}) {
+        history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
           type
           amount
           timestamp
@@ -58,51 +58,6 @@ export const LOANS_QUERY = `
           aggregate {
             count(distinct: true, columns: owner_id)
           }
-        }
-
-        vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}}) {
-          collateral_balances {
-            token {
-              token_address
-              token_name
-              oracle_id
-            }
-            balance
-          }
-          vault {
-            address
-            name
-            depositors {
-              depositor_id
-            }
-            allowance
-
-            lending_controller_vaults {
-              loan_principal_total
-              loan_outstanding_total
-              loan_interest_total
-              borrow_index
-            }
-          }
-          loan_token {
-            loan_token_address
-            loan_token_name
-            loan_token_contract_standard
-            oracle_id
-            current_interest_rate
-            borrow_index
-          }
-          lending_controller {
-            liquidation_delay_in_minutes
-          }
-          id
-          marked_for_liquidation_level
-          last_updated_block_level
-          loan_principal_total
-          loan_interest_total
-          owner_id
-          loan_outstanding_total
-          borrow_index
         }
       }
     }
@@ -150,9 +105,11 @@ export const AVALIABLE_COLLATERALS_QUERY_NAME = 'GetAvaliableCollaterals'
 export const AVALIABLE_COLLATERALS_QUERY_VARIABLE = {}
 
 export const NEW_VAULT_QUERY = `
-  query GetNewVault {
-    vault {
-      lending_controller_vaults(order_by: {last_updated_timestamp: asc}, where: {lending_controller: {mock_time: {_eq: false}}}) {
+  query GetUsersLastestCreatedVault($userAddress: String = "", $vaultName: String = "") {
+    vault(order_by: {creation_timestamp: desc}, limit: 1, where: {name: {_eq: $vaultName}}) {
+      creation_timestamp
+      name
+      lending_controller_vaults(order_by: {last_updated_timestamp: asc}, where: {owner_id: {_eq: $userAddress}, lending_controller: {mock_time: {_eq: false}}}) {
         last_updated_timestamp
         vault_id
       }
@@ -160,8 +117,8 @@ export const NEW_VAULT_QUERY = `
   }
 `
 
-export const NEW_VAULT_QUERY_NAME = 'GetNewVault'
-export const NEW_VAULT_QUERY_VARIABLE = {}
+export const NEW_VAULT_QUERY_NAME = 'GetUsersLastestCreatedVault'
+export const NEW_VAULT_QUERY_VARIABLE = (userAddress: string, vaultName: string) => ({ userAddress, vaultName })
 
 export const USER_LENDING_DATA_QUERY = `
   query GetLendBorrowHistoryPerUser($userAddress: String = "", $_in: [smallint!] = ["0", "1", "2", "3"]) {

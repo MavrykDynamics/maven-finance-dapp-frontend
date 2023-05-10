@@ -6,7 +6,7 @@ import { Button } from '../../../app/App.components/Button/Button.controller'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { getSeparateSnakeCase } from '../../../utils/parse'
-import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
+import { ProposalStatus, SatelliteGovernance } from '../../../utils/TypesAndInterfaces/Governance'
 import Expand from '../../../app/App.components/Expand/Expand.view'
 
 // action
@@ -20,9 +20,10 @@ import { parseDate } from 'utils/time'
 type Props = {
   satelliteId: string
   initiatorId: string
-  date: string
+  date: string | null
   executed: boolean
   status: number
+  statusFlag: ProposalStatus
   id: number
   purpose: string
   governanceType: string
@@ -32,6 +33,8 @@ type Props = {
   passVoteSmvkTotal: number
   snapshotSmvkTotalSupply: number
   accountPkh?: string
+  isActionActive: boolean
+  votes: SatelliteGovernance['satelliteGovIdsMapper'][0]['votes']
 }
 
 export const SatelliteGovernanceCard = ({
@@ -41,6 +44,7 @@ export const SatelliteGovernanceCard = ({
   date,
   executed,
   status,
+  statusFlag,
   purpose,
   governanceType,
   smvkPercentageForApproval,
@@ -49,10 +53,14 @@ export const SatelliteGovernanceCard = ({
   passVoteSmvkTotal,
   snapshotSmvkTotalSupply,
   accountPkh,
+  isActionActive,
+  votes,
 }: Props) => {
   const dispatch = useDispatch()
+
   const [expanded, setExpanded] = useState(false)
 
+  const myVote = useMemo(() => votes.find((item) => item.voterId === accountPkh)?.vote, [accountPkh, votes])
   const open = () => setExpanded(!expanded)
 
   const handleVotingRoundVote = (type: string) => {
@@ -60,22 +68,13 @@ export const SatelliteGovernanceCard = ({
   }
 
   const handleClick = async () => {
+    console.log('Logging is actionActive', isActionActive)
     await dispatch(dropAction(id, open))
   }
 
   const timeNow = Date.now()
-  const expirationDatetime = new Date(date).getTime()
+  const expirationDatetime = new Date(date ?? 0).getTime()
   const isEndingVotingTime = expirationDatetime > timeNow
-
-  const statusFlag = executed
-    ? ProposalStatus.EXECUTED
-    : status === 1
-    ? ProposalStatus.DROPPED
-    : isEndingVotingTime
-    ? ProposalStatus.ONGOING
-    : expirationDatetime < timeNow
-    ? ProposalStatus.DEFEATED
-    : ProposalStatus.ACTIVE
 
   const voteStatistic = useMemo(
     () => ({
@@ -123,21 +122,26 @@ export const SatelliteGovernanceCard = ({
       sufix={<StatusFlag className="expand-gov-status" status={statusFlag} text={statusFlag} />}
     >
       <SatelliteGovernanceCardDropDown>
-        <div className="left">
-          <h3>Purpose</h3>
-          <p className="purpose">{purpose}</p>
-          {initiatorId ? (
-            <Link className={'view-satellite'} to={`/satellites/satellite-details/${satelliteId}`}>
-              Profile Details
-            </Link>
-          ) : null}
+        <div className="purpose-block">
+          <div>
+            <h3>Purpose</h3>
+            <p className="purpose">{purpose}</p>
+
+            {initiatorId ? (
+              <Link className={'view-satellite'} to={`/satellites/satellite-details/${satelliteId}`}>
+                Profile Details
+              </Link>
+            ) : null}
+          </div>
+
           {statusFlag === ProposalStatus.ONGOING && accountPkh === initiatorId ? (
             <Button
               text="Drop Action"
-              className="brop-btn"
+              className="drop-btn"
               icon="close-stroke"
               kind={'actionSecondary'}
               onClick={handleClick}
+              disabled={isActionActive}
             />
           ) : null}
         </div>
@@ -152,6 +156,8 @@ export const SatelliteGovernanceCard = ({
             voteStatistics={voteStatistic}
             isVotingActive={statusFlag === ProposalStatus.ONGOING}
             handleVote={handleVotingRoundVote}
+            disableVotingButtons={isActionActive}
+            disableButtonByVote={myVote}
           />
         </div>
       </SatelliteGovernanceCardDropDown>

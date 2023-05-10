@@ -7,14 +7,14 @@ import {
   addAllLoanTokensToMarkets,
   adminChangeGovernancePeriod,
   ChangeAllAdminsFromGovernance,
-  createFarm, createTreasuries
+  createFarm,
+  createTreasuries,
 } from './Admin.actions'
 import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { AdminView } from './Admin.view'
-import { getGovernanceStorage } from '../Governance/Governance.actions'
-import {getLoansStorage} from "../Loans/Actions/getLoansData.actions";
-import {getVaultsStorage} from "../Vaults/Vaults.actions";
+import { getLoansStorage } from '../Loans/Actions/getLoansData.actions'
+import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 
 export const Admin = () => {
   const dispatch = useDispatch()
@@ -22,7 +22,6 @@ export const Admin = () => {
   useEffect(() => {
     dispatch(getLoansStorage())
     dispatch(getGovernanceStorage())
-    dispatch(getVaultsStorage())
   }, [dispatch])
 
   const handleChangeGovernancePeriod = (chosenPeriod: string) => {
@@ -51,12 +50,12 @@ export const Admin = () => {
     <Page>
       <PageHeader page={'admin'} />
       <AdminView
-          handleChangeGovernancePeriod={handleChangeGovernancePeriod}
-          handleCreateFarm={handleCreateFarm}
-          handleChangeAllAdminsFromGov={ChangeAllAdminsFromGov}
-          handleAddAllLoanTokensToLendBorrow={handleAddAllLoanTokensToLendBorrow}
-          handleAddAllCollateralTokensToLendBorrow={handleAddAllCollateralTokensToLendBorrow}
-          handleCreateAllTreasuries={handleCreateAllTreasuries}
+        handleChangeGovernancePeriod={handleChangeGovernancePeriod}
+        handleCreateFarm={handleCreateFarm}
+        handleChangeAllAdminsFromGov={ChangeAllAdminsFromGov}
+        handleAddAllLoanTokensToLendBorrow={handleAddAllLoanTokensToLendBorrow}
+        handleAddAllCollateralTokensToLendBorrow={handleAddAllCollateralTokensToLendBorrow}
+        handleCreateAllTreasuries={handleCreateAllTreasuries}
       />
     </Page>
   )
