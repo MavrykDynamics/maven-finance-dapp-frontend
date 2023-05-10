@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 // helpers
 import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
-import { unstake } from 'providers/StakeProvider/actions/stake.actions'
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
 import { InputStatusType, INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
@@ -23,6 +22,7 @@ import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { State } from 'reducers'
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -43,7 +43,8 @@ export const ExitFeeModal = ({
   show,
   data: { amount, mvkExchangeRate, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, accountPkh, totalMVKSupply },
 }: ExitFeeModalPropsType) => {
-  const dispatch = useDispatch()
+  const { unstakeMVK } = useStakeContext()
+
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType }>({
@@ -56,7 +57,7 @@ export const ExitFeeModal = ({
   const mli = calcMLI(totalMVKSupply, totalStakedMvk)
   const fee = calcExitFee(totalMVKSupply, totalStakedMvk)
 
-  const unstakeCallback = async (amount: number) => await dispatch(unstake(amount))
+  const unstakeCallback = async (amount: number) => await unstakeMVK(amount)
 
   // Validating initial amount came from props
   useEffect(() => {

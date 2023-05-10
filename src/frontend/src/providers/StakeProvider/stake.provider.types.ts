@@ -1,9 +1,11 @@
 import React from 'react'
-import { StakeProviderClass } from './stake.provider'
+
 import { normalizeDoormanChartsData } from './helpers/normalizer'
+
+import { StakeProviderClass } from './stake.provider'
 import { UserState } from 'reducers/wallet'
-import { ContractAddressesState } from 'reducers/contractAddresses'
-import { Dispatch } from 'redux'
+import { AppDispatch } from 'app/App.controller'
+
 export type SmvkHistoryData = ReturnType<typeof normalizeDoormanChartsData>
 
 export interface StakeContext {
@@ -19,6 +21,9 @@ export interface StakeContext {
   updateUserStakeData: InstanceType<typeof StakeProviderClass>['updateUserStakeData']
   updateStakeActionContext: InstanceType<typeof StakeProviderClass>['updateStakeActionContext']
   updateTotalMvkToken: InstanceType<typeof StakeProviderClass>['updateTotalMvkToken']
+  // actions
+  stakeMVK: InstanceType<typeof StakeProviderClass>['stakeMVK']
+  unstakeMVK: InstanceType<typeof StakeProviderClass>['unstakeMVK']
 }
 
 export type State = {
@@ -27,8 +32,9 @@ export type State = {
 
 export type Props = {
   children: React.ReactNode
-  doormanAddress: ContractAddressesState
+  doormanAddress: string
+  mvkTokenAddress: string
   accountPkh?: string
   user: UserState
-  dispatch: Dispatch
+  dispatch: AppDispatch
 }

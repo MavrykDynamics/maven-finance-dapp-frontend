@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 // style
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
@@ -17,15 +17,12 @@ import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
-import { stake } from 'providers/StakeProvider/actions/stake.actions'
 
 // actions
 import { State } from 'reducers'
 import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const Doorman = () => {
-  const dispatch = useDispatch()
-
   const { totalStakedMvk, maximumTotalSupply, totalSupply } = useStakeContext()
 
   const { doormanAddress, mvkTokenAddress } = useSelector((state: State) => state.contractAddresses)
@@ -50,7 +47,6 @@ export const Doorman = () => {
 
   const { isLoading: isDoormanLoading } = useStakeUpdater()
 
-  const stakeCallback = (amount: number) => dispatch(stake(amount))
   const unstakeCallback = (amount: number) => setAmount(amount)
   const closeExitFeePopup = () => setAmount(null)
 
@@ -66,11 +62,7 @@ export const Doorman = () => {
       ) : (
         <>
           <ExitFeeModal show={amount !== null} data={exitFeeModal} closePopup={closeExitFeePopup} />
-          <StakeUnstakeView
-            MVK_exchangeRate={mvkExchangeRate}
-            stakeCallback={stakeCallback}
-            unstakeCallback={unstakeCallback}
-          />
+          <StakeUnstakeView MVK_exchangeRate={mvkExchangeRate} unstakeCallback={unstakeCallback} />
           <DoormanInfoStyled>
             <DoormanChart />
             <DoormanStats

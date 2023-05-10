@@ -50,18 +50,16 @@ import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
-import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
 
 type StakeUnstakeViewProps = {
-  stakeCallback: (amount: number) => void
   unstakeCallback: (amount: number) => void
   MVK_exchangeRate: number
 }
 
-export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeRate }: StakeUnstakeViewProps) => {
+export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
-  const { updateStakeActionContext } = useStakeContext()
+  const { stakeMVK } = useStakeContext()
 
   const {
     accountPkh,
@@ -132,8 +130,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
         ...inputData,
         errorMessage: '',
       })
-      updateStakeActionContext(STAKE_ACTION)
-      stakeCallback(Number(inputData.amount))
+      stakeMVK(Number(inputData.amount))
     } else {
       setInputData({
         ...inputData,
@@ -150,8 +147,6 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
         ...inputData,
         errorMessage: '',
       })
-      updateStakeActionContext(UNSTAKE_ACTION)
-
       unstakeCallback(Number(inputData.amount))
     } else {
       setInputData({
@@ -169,10 +164,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
       amount: String(mathRoundTwoDigit(myMvkTokenBalance)),
       validation: INPUT_STATUS_SUCCESS,
     })
-
-    updateStakeActionContext(STAKE_ACTION)
-
-    stakeCallback(myMvkTokenBalance)
+    stakeMVK(myMvkTokenBalance)
   }
 
   const handleUnstakeAll = () => {
@@ -183,9 +175,6 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
       amount: String(mathRoundTwoDigit(mySMvkTokenBalance)),
       validation: INPUT_STATUS_SUCCESS,
     })
-
-    updateStakeActionContext(UNSTAKE_ACTION)
-
     unstakeCallback(mySMvkTokenBalance)
   }
 

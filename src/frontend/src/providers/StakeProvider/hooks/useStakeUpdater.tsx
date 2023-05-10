@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useSubscription } from '@apollo/client'
 import { useStakeContext } from '../stake.provider'
@@ -26,13 +26,6 @@ import {
   SUBSCRIPTION_ADDRESS_BALANCE_DATA,
   SUBSCRIPTION_MVK_TOKEN_TOTAL,
 } from 'gql/subscriptions/stakingData'
-
-// helpers
-function showStakeSuccessMessage(dispatch: AppDispatch, message: string) {
-  dispatch(hideToaster())
-  dispatch(showToaster(TOASTER_SUCCESS, `${message} done`, ACTION_COMPLETION_MESSAGE_TEXT))
-  dispatch(toggleActionCompletion(false))
-}
 
 /**
  * Subscriptions are canceled on component unmount!
@@ -79,7 +72,9 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
       if (error) {
         // showStakeErrorMessage(dispatch, error.message)
       }
-      if (data) updateTotalStakedMvk(data)
+      if (data) {
+        updateTotalStakedMvk(data)
+      }
     },
     shouldResubscribe: true,
   })
@@ -91,7 +86,9 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
       if (error) {
         // showStakeErrorMessage(dispatch, error.message)
       }
-      if (data) updateTotalMvkToken(data)
+      if (data) {
+        updateTotalMvkToken(data)
+      }
     },
     shouldResubscribe: true,
   })
@@ -107,25 +104,43 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
       if (error) {
         // showStakeErrorMessage(dispatch, error.message)
       }
-      if (data) updateUserStakeData(data)
+      if (data) {
+        updateUserStakeData(data)
+      }
     },
     shouldResubscribe: true,
   })
 
   useEffect(() => {
     // to update data only one time
-    if (!historyLoading && !userBalanceLoading && !doormanBalanceLoading && !mvkStatsloading && skip) {
+    if (!userBalanceLoading && !mvkStatsloading && !doormanBalanceLoading && !historyLoading && skip) {
       setShouldSkip(true)
     }
 
+    // TODO: do it after data is updated after action completion
     // show toaster after action completion
-    if (!historyLoading && !userBalanceLoading && !doormanBalanceLoading && !mvkStatsloading && action) {
-      const capital = action.charAt(0).toUpperCase()
-      const msg = capital + action.substring(1)
-      showStakeSuccessMessage(dispatch, msg)
+    if (action) {
+      dispatch(hideToaster())
+      dispatch(
+        showToaster(
+          TOASTER_SUCCESS,
+          `${action.charAt(0).toUpperCase() + action.substring(1)} done`,
+          ACTION_COMPLETION_MESSAGE_TEXT,
+        ),
+      )
+      dispatch(toggleActionCompletion(false))
       updateStakeActionContext('')
     }
-  }, [historyLoading, userBalanceLoading, doormanBalanceLoading, mvkStatsloading, skip, action])
+  }, [
+    skip,
+    action,
+    userBalanceLoading,
+    mvkStatsloading,
+    doormanBalanceLoading,
+    historyLoading,
+    dispatch,
+    updateStakeActionContext,
+  ])
 
   return {
     isLoading: historyLoading || userBalanceLoading || doormanBalanceLoading || mvkStatsloading,
