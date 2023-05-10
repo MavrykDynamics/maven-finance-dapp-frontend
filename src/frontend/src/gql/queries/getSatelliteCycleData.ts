@@ -2,7 +2,7 @@ export const SATELLITE_CYCLE_DATA_QUERY = `
 query GetCurrentCycleGovernanceSatelliteSnapshot($_eq: String = "") {
 	governance(where: {active: {_eq: true}}) {
 		cycle_id
-		satellite_snapshots(where: {user_id: {_eq: $_eq}}) {
+		satellite_snapshots(where: {user_id: {_eq: $_eq}}, order_by: {cycle: desc}) {
 			cycle
 			id
 			user_id
