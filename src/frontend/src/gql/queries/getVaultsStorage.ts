@@ -26,6 +26,7 @@ export const VAULTS_STORAGE_QUERY = `
           creation_timestamp
           address
           name
+          baker_id
           depositors {
             depositor_id
           }
