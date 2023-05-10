@@ -17,7 +17,6 @@ import {
   NewInputLabel,
   StyledInput,
   InputErrorMessage,
-  InputMainContainer,
 } from './Input.style'
 
 export const Input = ({
@@ -45,50 +44,48 @@ export const Input = ({
   })
 
   return (
-    <InputMainContainer>
-      <InputWrapper className={`${className} ${status} ${inputSize}`} id={'inputStyled'}>
-        {label ? (
-          <NewInputLabel>
-            {label}
+    <InputWrapper className={`${className} ${status} ${inputSize}`} id={'inputStyled'}>
+      {label ? (
+        <NewInputLabel>
+          {label}
 
-            <>{tooltip}</>
-          </NewInputLabel>
-        ) : null}
+          <>{tooltip}</>
+        </NewInputLabel>
+      ) : null}
 
-        <StyledInput
-          {...inputProps}
-          onChange={handleChange}
-          className={`${status} ${children ? 'remove-right-border-radius' : ''}`}
-          autoComplete={'off'}
-        />
-        {Boolean(children) ? null : <InputStyledStatus className={`${status} ${inputSize}`} />}
+      <StyledInput
+        {...inputProps}
+        onChange={handleChange}
+        className={`${status} ${children ? 'remove-right-border-radius' : ''}`}
+        autoComplete={'off'}
+      />
+      {Boolean(children) ? null : <InputStyledStatus className={`${status} ${inputSize}`} />}
 
-        {balance !== undefined && balanceAsset ? (
-          <div onClick={balanceHandler}>
-            <CommaNumber
-              value={balance}
-              beginningText={`${balanceName}: `}
-              endingText={balanceAsset}
-              className={`input-balance ${balanceHandler ? 'pointer' : ''}`}
-            />
-          </div>
-        ) : null}
+      {balance !== undefined && balanceAsset ? (
+        <div onClick={balanceHandler}>
+          <CommaNumber
+            value={balance}
+            beginningText={`${balanceName}: `}
+            endingText={balanceAsset}
+            className={`input-balance ${balanceHandler ? 'pointer' : ''}`}
+          />
+        </div>
+      ) : null}
 
-        {useMaxHandler ? (
-          <div className="useMax-btn">
-            <NewButton onClick={useMaxHandler} kind={BUTTON_SIMPLE}>
-              Use Max
-            </NewButton>
-          </div>
-        ) : null}
+      {useMaxHandler ? (
+        <div className="useMax-btn">
+          <NewButton onClick={useMaxHandler} kind={BUTTON_SIMPLE}>
+            Use Max
+          </NewButton>
+        </div>
+      ) : null}
 
-        {convertedValue !== undefined ? (
-          <CommaNumber value={convertedValue} beginningText={'= $'} className={'input-converted-amount'} />
-        ) : null}
+      {convertedValue !== undefined ? (
+        <CommaNumber value={convertedValue} beginningText={'= $'} className={'input-converted-amount'} />
+      ) : null}
 
-        {children && <InputPinnedChild className="pinned-child">{children}</InputPinnedChild>}
-      </InputWrapper>
+      {children && <InputPinnedChild className="pinned-child">{children}</InputPinnedChild>}
       {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
-    </InputMainContainer>
+    </InputWrapper>
   )
 }
