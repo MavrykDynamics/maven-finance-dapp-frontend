@@ -9,7 +9,7 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 // helpers & actions
 import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
 import { parseDate } from 'utils/time'
-import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
+import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
 import {
   executeProposal,
