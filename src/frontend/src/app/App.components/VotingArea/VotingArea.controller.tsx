@@ -15,6 +15,8 @@ import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { ConnectWallet } from '../ConnectWallet/ConnectWallet.controller'
 import Button from '../Button/NewButton'
 import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
+import { Info } from '../Info/Info.view'
+import TimeRemainingSmall from 'pages/Governance/components/TimeRemaining/TimeRemainingSmall'
 
 type VotingType = VotingProps & {
   className?: string
@@ -38,6 +40,7 @@ export const VotingArea = ({
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
+  const isNewlyRegisteredSatellite = true
 
   const votingButtons = accountPkh ? (
     isSatellite && handleVote ? (
@@ -47,7 +50,12 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.YES)}
             kind={VOTING_FOR}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons || isActionActive || disableButtonByVote === VoteList.YES}
+            disabled={
+              disableVotingButtons ||
+              isActionActive ||
+              disableButtonByVote === VoteList.YES ||
+              isNewlyRegisteredSatellite
+            }
           >
             {forBtn.text ?? 'Vote YES'}
           </Button>
@@ -57,7 +65,12 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.PASS)}
             kind={VOTING_PASS}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons || isActionActive || disableButtonByVote === VoteList.PASS}
+            disabled={
+              disableVotingButtons ||
+              isActionActive ||
+              disableButtonByVote === VoteList.PASS ||
+              isNewlyRegisteredSatellite
+            }
           >
             {passBtn.text ?? 'Vote PASS'}
           </Button>
@@ -67,7 +80,12 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.NO)}
             kind={VOTING_AGAINST}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons || isActionActive || disableButtonByVote === VoteList.NO}
+            disabled={
+              disableVotingButtons ||
+              isActionActive ||
+              disableButtonByVote === VoteList.NO ||
+              isNewlyRegisteredSatellite
+            }
           >
             {againsBtn.text ?? 'Vote NO'}
           </Button>
@@ -104,6 +122,7 @@ export const VotingProposalsArea = ({
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
+  const isNewlyRegisteredSatellite = true
 
   // Proposal isn't locked, can't vote
   if (!selectedProposal.locked) return null
@@ -114,11 +133,25 @@ export const VotingProposalsArea = ({
       <VotingAreaStyled className={className}>
         <div className="voted-block">
           <CommaNumber className="voted-label" value={voteStatistics.passVotesMVKTotal ?? 0} endingText={'voted MVK'} />
+          {isNewlyRegisteredSatellite && (
+            <div className="banner-area">
+              <Info
+                text={
+                  <>
+                    Thanks for registering as a Satellite during the current governance cycle. Please note that you are
+                    unable to vote, propose, or take part in any governance as a Satellite until the next governance
+                    cycle starts in <TimeRemainingSmall />
+                  </>
+                }
+                type="info"
+              />
+            </div>
+          )}
           {accountPkh ? (
             <Button
               onClick={() => handleProposalVote(Number(selectedProposal.id))}
               kind={BUTTON_PRIMARY}
-              disabled={vote?.round === 0 || !isSatellite || isActionActive}
+              disabled={vote?.round === 0 || !isSatellite || isActionActive || isNewlyRegisteredSatellite}
             >
               Vote for this Proposal
             </Button>

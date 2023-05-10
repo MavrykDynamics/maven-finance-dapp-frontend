@@ -396,7 +396,7 @@ export const ProposalSubmission = () => {
               <Button
                 kind={BUTTON_SECONDARY}
                 form={BUTTON_WIDE}
-                disabled={!isProposalSubmitted || !isProposalPeriod}
+                disabled={!isProposalSubmitted || !isProposalPeriod || isNewlyRegisteredSatellite}
                 onClick={() => handleDropProposal(selectedUserProposalId)}
               >
                 <Icon id="navigation-menu_close" /> Drop Proposal
@@ -407,7 +407,8 @@ export const ProposalSubmission = () => {
                   !isProposalPeriod ||
                   currentProposal.locked ||
                   proposalHasChange ||
-                  !mappedProposals[selectedUserProposalId]?.proposalData.length
+                  !mappedProposals[selectedUserProposalId]?.proposalData.length ||
+                  isNewlyRegisteredSatellite
                 }
                 onClick={() => handleLockProposal(selectedUserProposalId)}
                 kind={BUTTON_SECONDARY}
@@ -419,7 +420,13 @@ export const ProposalSubmission = () => {
                 <Button
                   kind={BUTTON_PRIMARY}
                   form={BUTTON_WIDE}
-                  disabled={!proposalHasChange || currentProposal.locked || !isBytesValid || !isPaymentsValid}
+                  disabled={
+                    !proposalHasChange ||
+                    currentProposal.locked ||
+                    !isBytesValid ||
+                    !isPaymentsValid ||
+                    isNewlyRegisteredSatellite
+                  }
                   onClick={() => handleUpdateData(selectedUserProposalId)}
                 >
                   <Icon id="bytes" /> Save Changes
@@ -429,7 +436,7 @@ export const ProposalSubmission = () => {
                   kind={BUTTON_PRIMARY}
                   form={BUTTON_WIDE}
                   // TODO: when add stage 2 and 3 to submit, add validation checking here
-                  disabled={!isStageOneDataValid}
+                  disabled={!isStageOneDataValid || isNewlyRegisteredSatellite}
                   onClick={handleSubmitProposal}
                 >
                   <Icon id="auction" /> Submit Proposal
