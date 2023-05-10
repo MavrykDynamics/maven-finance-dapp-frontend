@@ -40,6 +40,7 @@ export function satellites(state = satellitesDefaultState, action: any) {
         activeSatellitesIds: action.activeSatellitesIds,
         allSatellitesIds: action.allSatellitesIds,
         oraclesIds: action.oraclesIds,
+        isNewlyRegisteredSatellite: action.isNewlyRegisteredSatellite,
         isLoaded: true,
       }
     case GET_SATELLITE_CONFIG:

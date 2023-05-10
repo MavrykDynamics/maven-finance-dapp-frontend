@@ -24,6 +24,7 @@ export interface UserState {
   isLoaded: boolean
   isSatellite: boolean
   isVestee: boolean
+  isNewlyRegisteredSatellite: boolean
 
   // loans data
   userLoansData: {
@@ -80,6 +81,7 @@ export const DEFAULT_USER: UserState = {
   isLoaded: false,
   isSatellite: false,
   isVestee: false,
+  isNewlyRegisteredSatellite: false,
 
   userLoansData: {
     userLendings: [],

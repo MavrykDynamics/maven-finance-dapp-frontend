@@ -9,6 +9,9 @@ import {
   USER_REWARDS_QUERY,
   USER_REWARDS_QUERY_NAME,
   USER_REWARDS_QUERY_VARIABLES,
+  SATELLITE_CYCLE_DATA_QUERY,
+  SATELLITE_CYCLE_DATA_QUERY_NAME,
+  SATELLITE_CYCLE_DATA_QUERY_VARIABLE,
 } from 'gql/queries'
 import {
   USER_LENDING_DATA_QUERY,
@@ -53,6 +56,14 @@ export const fetchUserData = async (
       USER_REWARDS_QUERY_VARIABLES(accountPkh),
     )
 
+    const satelliteCycleData = await fetchFromIndexer(
+      SATELLITE_CYCLE_DATA_QUERY,
+      SATELLITE_CYCLE_DATA_QUERY_NAME,
+      SATELLITE_CYCLE_DATA_QUERY_VARIABLE(accountPkh),
+    )
+    const { cycle_id: currentCycle, satellite_snapshots } = satelliteCycleData.governance[0]
+    const currentSatelliteCycle = satellite_snapshots.length > 0 ? satellite_snapshots[0].cycle : currentCycle - 1
+
     const {
       mvk_balance = 0,
       smvk_balance = 0,
@@ -69,6 +80,7 @@ export const fetchUserData = async (
       satelliteMvkIsDelegatedTo: delegations?.[0]?.satellite?.user?.address ?? '',
       isSatellite: Boolean(activeSatelliteRecord),
       isVestee: Boolean(vesteeRecord),
+      isNewlyRegisteredSatellite: currentSatelliteCycle === currentCycle,
     }
 
     // ----- GETTING USER'S TOKENS BALANCES, THAT ARE USED ACROSS DAPP *START* -----

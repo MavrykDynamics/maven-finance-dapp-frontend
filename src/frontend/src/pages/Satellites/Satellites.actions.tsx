@@ -26,6 +26,9 @@ import {
   SATELLITE_CONFIG_QUERY,
   SATELLITE_CONFIG_QUERY_NAME,
   SATELLITE_CONFIG_QUERY_VARIABLE,
+  SATELLITE_CYCLE_DATA_QUERY,
+  SATELLITE_CYCLE_DATA_QUERY_NAME,
+  SATELLITE_CYCLE_DATA_QUERY_VARIABLE,
 } from 'gql/queries'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
@@ -48,6 +51,30 @@ export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState
       allSatellitesIds,
       satellitesMapper,
     })
+  } catch (error) {
+    console.error('getSatellitesStorage error: ', error)
+    if (error instanceof Error) {
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
+    }
+  }
+}
+export const getSatellitesCycleData = (address: string) => async (dispatch: AppDispatch, getState: GetState) => {
+  try {
+    const satelliteCycleData = await fetchFromIndexer(
+      SATELLITE_CYCLE_DATA_QUERY,
+      SATELLITE_CYCLE_DATA_QUERY_NAME,
+      SATELLITE_CYCLE_DATA_QUERY_VARIABLE(address),
+    )
+    const { cycle_id, satellite_snapshots } = satelliteCycleData
+    const currentSatelliteCycle =
+      satellite_snapshots.length > 0 ? satelliteCycleData.satellite_snapshots[0].cycle : cycle_id
+    // dispatch({
+    //   type: GET_SATELLITES_STORAGE,
+    //   oraclesIds,
+    //   activeSatellitesIds,
+    //   allSatellitesIds,
+    //   satellitesMapper,
+    // })
   } catch (error) {
     console.error('getSatellitesStorage error: ', error)
     if (error instanceof Error) {

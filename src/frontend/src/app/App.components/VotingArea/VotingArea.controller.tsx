@@ -37,10 +37,9 @@ export const VotingArea = ({
   const { forBtn, againsBtn, passBtn } = buttonsToShow ?? { forBtn: {}, againsBtn: {}, passBtn: {} }
   const {
     accountPkh,
-    user: { isSatellite },
+    user: { isSatellite, isNewlyRegisteredSatellite },
   } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const isNewlyRegisteredSatellite = true
 
   const votingButtons = accountPkh ? (
     isSatellite && handleVote ? (
@@ -119,10 +118,9 @@ export const VotingProposalsArea = ({
 }: VotingProposalsType) => {
   const {
     accountPkh,
-    user: { isSatellite },
+    user: { isSatellite, isNewlyRegisteredSatellite },
   } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const isNewlyRegisteredSatellite = true
 
   // Proposal isn't locked, can't vote
   if (!selectedProposal.locked) return null

@@ -54,7 +54,10 @@ export const ProposalSubmission = () => {
   const lastSelectedProposalId = useRef(-1)
   const dispatch = useDispatch()
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    accountPkh,
+    user: { isNewlyRegisteredSatellite },
+  } = useSelector((state: State) => state.wallet)
   const {
     currentRoundProposalsIds,
     proposalsMapper,
@@ -303,8 +306,6 @@ export const ProposalSubmission = () => {
   const isStageOneDataValid = isProposalSubmitted
     ? checkStage1Validation({ proposalValidation: currentProposalValidation })
     : true
-
-  const isNewlyRegisteredSatellite = true
 
   return (
     <Page>
