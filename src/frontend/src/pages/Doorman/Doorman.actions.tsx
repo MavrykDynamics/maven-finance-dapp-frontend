@@ -1,4 +1,3 @@
-import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import {
   ACTION_COMPLETION_MESSAGE_TEXT,
   ACTION_START_MESSAGE_TEXT,
@@ -8,65 +7,16 @@ import {
   TOASTER_SUCCESS,
   TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
 } from 'app/App.components/Toaster/Toaster.constants'
+
+import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { updateUserData } from 'reducers/actions/user.actions'
+
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 import { State } from 'reducers'
 import type { AppDispatch, GetState } from '../../app/App.controller'
-import { fetchFromIndexer } from '../../gql/fetchGraphQL'
-import {
-  DOORMAN_STORAGE_QUERY,
-  DOORMAN_STORAGE_QUERY_NAME,
-  DOORMAN_STORAGE_QUERY_VARIABLE,
-  SMVK_HISTORY_DATA_QUERY,
-  SMVK_HISTORY_DATA_QUERY_NAME,
-  SMVK_HISTORY_DATA_QUERY_VARIABLE,
-} from '../../gql/queries'
-import { normalizeDoormanStorage, normalizeSmvkHistoryData } from './Doorman.converter'
-import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
-import { updateUserData } from 'reducers/actions/user.actions'
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
-
-export const GET_DOORMAN_STORAGE = 'GET_DOORMAN_STORAGE'
-export const UPDATE_DOORMAN_STORAGE = 'UPDATE_DOORMAN_STORAGE'
-// export const getDoormanStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
-//   const {
-//     contractAddresses: {
-//       doormanAddress: { address },
-//     },
-//   } = getState()
-//   try {
-//     const smvkStorage = await fetchFromIndexer(
-//       SMVK_HISTORY_DATA_QUERY,
-//       SMVK_HISTORY_DATA_QUERY_NAME,
-//       SMVK_HISTORY_DATA_QUERY_VARIABLE,
-//     )
-
-//     const { smvkHistoryData, mvkHistoryData } = normalizeSmvkHistoryData(smvkStorage)
-
-//     const storage = await fetchFromIndexer(
-//       DOORMAN_STORAGE_QUERY,
-//       DOORMAN_STORAGE_QUERY_NAME,
-//       DOORMAN_STORAGE_QUERY_VARIABLE(address),
-//     )
-
-//     const { totalStakedMvk, totalSupply, maximumTotalSupply } = normalizeDoormanStorage(storage)
-
-//     dispatch({
-//       type: GET_DOORMAN_STORAGE,
-//       totalStakedMvk,
-//       totalSupply,
-//       maximumTotalSupply,
-//       mvkHistoryData,
-//       smvkHistoryData,
-//     })
-//   } catch (error) {
-//     if (error instanceof Error) {
-//       console.error('smvkHistoryData', error)
-//       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-//     }
-//   }
-// }
 
 // there 3-4 places where we call doorman inside actions, so in components where are calling
 // those actions I placed useStakeUpdater(true), so it will be triggered when component is rerendered
@@ -106,7 +56,6 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(updateUserData())
-          // await dispatch(getDoormanStorage())
 
           // Add here call for update data actions
           await dispatch(hideToaster())
@@ -182,7 +131,6 @@ export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getSta
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(updateUserData())
-          // await dispatch(getDoormanStorage())
 
           // Add here call for update data actions
           await dispatch(hideToaster())

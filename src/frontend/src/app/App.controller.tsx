@@ -108,21 +108,21 @@ const AppContainer = () => {
     <LoaderRocket />
   ) : (
     <Router>
-      <StakeProvider>
-        <AppStyled isExpandedMenu={sidebarOpened}>
-          <ActionLoader />
-          <Toaster />
-          <WertLoader />
-          <Menu />
+      <AppStyled isExpandedMenu={sidebarOpened}>
+        <ActionLoader />
+        <Toaster />
+        <WertLoader />
+        <Menu />
 
-          <PopupChangeNode isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
-          <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
+        <PopupChangeNode isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
+        <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
+        <StakeProvider>
           <LoansPopupsProvider>
             <AppRoutes />
           </LoansPopupsProvider>
-        </AppStyled>
-      </StakeProvider>
+        </StakeProvider>
+      </AppStyled>
     </Router>
   )
 }

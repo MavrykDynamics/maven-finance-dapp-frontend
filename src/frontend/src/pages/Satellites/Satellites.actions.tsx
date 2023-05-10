@@ -123,7 +123,6 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(getSatellitesStorage())
-          // await dispatch(getDoormanStorage())
           await dispatch(updateUserData())
 
           // Add here call for update data actions
@@ -180,7 +179,6 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(getSatellitesStorage())
-          // await dispatch(getDoormanStorage())
           await dispatch(updateUserData())
 
           // Add here call for update data actions
@@ -238,7 +236,6 @@ export const distributeProposalRewards =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(getSatellitesStorage())
-            // await dispatch(getDoormanStorage())
             await dispatch(updateUserData())
 
             // Add here call for update data actions

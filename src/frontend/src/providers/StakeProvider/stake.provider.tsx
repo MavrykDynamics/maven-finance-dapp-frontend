@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
 // helpers
-import { normalizeSmvkHistoryData } from './helpers/normalizer'
-import { calcWithoutPrecision } from 'utils/calcFunctions'
+import { normalizeDoormanChartsData } from './helpers/normalizer'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 import {
   SubscribeSmvkHistoryDataSubscription,
@@ -20,6 +20,7 @@ import { State, Props, StakeContext } from './stake.provider.types'
 // redux
 import { State as ReduxState } from 'reducers'
 import { UPDATE_USER_DATA } from 'reducers/actions/user.actions'
+import { MVK_DECIMALS } from 'utils/constants'
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
@@ -34,28 +35,27 @@ export class StakeProviderClass extends React.Component<Props, State> {
         maximumTotalSupply: 0,
         mvkHistoryData: [],
         smvkHistoryData: [],
-        isLoaded: false,
         updateStakeHistoryData: this.updateStakeHistoryData,
         updateTotalStakedMvk: this.updateTotalStakedMvk,
         updateUserStakeData: this.updateUserStakeData,
-        updateStakeContext: this.updateStakeContext,
+        updateStakeActionContext: this.updateStakeActionContext,
         updateTotalMvkToken: this.updateTotalMvkToken,
       },
     }
   }
 
-  updateStakeContext = (data: Partial<StakeContext>) => {
+  updateStakeActionContext = (newAction: StakeContext['action']) => {
     this.setState({
       context: {
         ...this.state.context,
-        ...data,
+        action: newAction,
       },
     })
   }
 
   updateStakeHistoryData = (smvkStorage: SubscribeSmvkHistoryDataSubscription) => {
     const { smvk_history_data } = smvkStorage
-    const { smvkHistoryData, mvkHistoryData } = normalizeSmvkHistoryData({ smvk_history_data })
+    const { smvkHistoryData, mvkHistoryData } = normalizeDoormanChartsData({ smvk_history_data })
 
     this.setState({
       context: {
@@ -67,12 +67,13 @@ export class StakeProviderClass extends React.Component<Props, State> {
   }
 
   updateTotalStakedMvk = (storage: SubscribeDoormanAddressBalanceSubscription) => {
-    const totalStakedMvk = calcWithoutPrecision(storage.mavryk_user[0].mvk_balance ?? 0)
-
     this.setState({
       context: {
         ...this.state.context,
-        totalStakedMvk,
+        totalStakedMvk: convertNumberForClient({
+          number: storage.mavryk_user[0].mvk_balance ?? 0,
+          grade: MVK_DECIMALS,
+        }),
       },
     })
   }
@@ -85,8 +86,8 @@ export class StakeProviderClass extends React.Component<Props, State> {
     this.setState({
       context: {
         ...this.state.context,
-        totalSupply: mvkTokenItem?.total_supply ? calcWithoutPrecision(mvkTokenItem?.total_supply) : 0,
-        maximumTotalSupply: mvkTokenItem?.maximum_supply ? calcWithoutPrecision(mvkTokenItem?.maximum_supply) : 0,
+        totalSupply: convertNumberForClient({ number: mvkTokenItem.total_supply ?? 0, grade: MVK_DECIMALS }),
+        maximumTotalSupply: convertNumberForClient({ number: mvkTokenItem.maximum_supply ?? 0, grade: MVK_DECIMALS }),
       },
     })
   }
@@ -99,8 +100,8 @@ export class StakeProviderClass extends React.Component<Props, State> {
       type: UPDATE_USER_DATA,
       userData: {
         ...this.props.user,
-        myMvkTokenBalance: calcWithoutPrecision(mvk_balance),
-        mySMvkTokenBalance: calcWithoutPrecision(smvk_balance),
+        myMvkTokenBalance: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }),
+        mySMvkTokenBalance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
       },
       accountPkh: this.props.accountPkh,
     })

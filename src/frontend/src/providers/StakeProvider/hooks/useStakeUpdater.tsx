@@ -16,10 +16,9 @@ import { State } from 'reducers'
 
 // queries
 import {
-  SUBSCRIPTION_STAKE,
-  ADDRESS_BALANCE_DATA,
-  DOORMAN_ADDRESS_BALANCE,
-  MVK_TOKEN_TOTAL,
+  SUBSCRIPTION_STAKE_HISTORY,
+  SUBSCRIPTION_ADDRESS_BALANCE_DATA,
+  SUBSCRIPTION_MVK_TOKEN_TOTAL,
 } from 'gql/subscriptions/stakingData'
 
 // helpers
@@ -41,17 +40,16 @@ export const useStakeUpdater = (skip = false) => {
     updateStakeHistoryData,
     updateTotalStakedMvk,
     updateUserStakeData,
-    updateStakeContext,
     updateTotalMvkToken,
+    updateStakeActionContext,
     action,
-    isLoaded,
   } = useStakeContext()
 
   const dispatch = useDispatch()
 
   const [shouldSkip, setShouldSkip] = useState(false)
 
-  const { loading: stakeLoading } = useSubscription(SUBSCRIPTION_STAKE, {
+  const { loading: stakeLoading } = useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
     skip: shouldSkip,
     onData: ({ data: result }) => {
       const { data, error } = result
@@ -60,17 +58,39 @@ export const useStakeUpdater = (skip = false) => {
       }
       if (data) {
         updateStakeHistoryData(data)
-        if (action) {
-          const capital = action.charAt(0).toUpperCase()
-          const msg = capital + action.substring(1)
-          showStakeSuccessMessage(dispatch, msg)
-          updateStakeContext({ action: '' })
-        }
       }
     },
   })
 
-  const { loading: balanceLoading } = useSubscription(ADDRESS_BALANCE_DATA, {
+  const { loading: doormanLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
+    skip: shouldSkip,
+    variables: {
+      _eq: doormanAddress.address,
+    },
+    onData: ({ data: result }) => {
+      const { data, error } = result
+      if (error) {
+        // showStakeErrorMessage(dispatch, error.message)
+      }
+      if (data) updateTotalStakedMvk(data)
+    },
+    shouldResubscribe: true,
+  })
+
+  const { loading: totalMvkloading } = useSubscription(SUBSCRIPTION_MVK_TOKEN_TOTAL, {
+    skip: shouldSkip,
+    onData: ({ data: result }) => {
+      const { data, error } = result
+      if (error) {
+        // showStakeErrorMessage(dispatch, error.message)
+      }
+      if (data) updateTotalMvkToken(data)
+    },
+    shouldResubscribe: true,
+  })
+
+  // TODO: will be moved to user context when user data will be transfered to context
+  const { loading: balanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
     skip: shouldSkip,
     variables: {
       _eq: accountPkh,
@@ -85,44 +105,20 @@ export const useStakeUpdater = (skip = false) => {
     shouldResubscribe: true,
   })
 
-  const { loading: doormanLoading } = useSubscription(DOORMAN_ADDRESS_BALANCE, {
-    skip: shouldSkip,
-    variables: {
-      doormanContractAddress: doormanAddress.address,
-    },
-    onData: ({ data: result }) => {
-      const { data, error } = result
-      if (error) {
-        // showStakeErrorMessage(dispatch, error.message)
-      }
-      if (data) updateTotalStakedMvk(data)
-    },
-    shouldResubscribe: true,
-  })
-
-  const { loading: totalMvkloading } = useSubscription(MVK_TOKEN_TOTAL, {
-    skip: shouldSkip,
-    onData: ({ data: result }) => {
-      const { data, error } = result
-      if (error) {
-        // showStakeErrorMessage(dispatch, error.message)
-      }
-      if (data) updateTotalMvkToken(data)
-    },
-    shouldResubscribe: true,
-  })
-
   useEffect(() => {
     // to update data only one time
-    if (!stakeLoading && !balanceLoading && !doormanLoading && !totalMvkloading && skip && !shouldSkip) {
-      setShouldSkip(skip)
+    if (!stakeLoading && !balanceLoading && !doormanLoading && !totalMvkloading && skip) {
+      setShouldSkip(true)
     }
 
-    // to updated isLoaded when initial data is null
-    if (!isLoaded && !stakeLoading && !balanceLoading && !doormanLoading && !totalMvkloading) {
-      updateStakeContext({ isLoaded: true })
+    // show toaster after action completion
+    if (!stakeLoading && !balanceLoading && !doormanLoading && !totalMvkloading && action) {
+      const capital = action.charAt(0).toUpperCase()
+      const msg = capital + action.substring(1)
+      showStakeSuccessMessage(dispatch, msg)
+      updateStakeActionContext('')
     }
-  }, [stakeLoading, balanceLoading, doormanLoading, totalMvkloading, skip, shouldSkip, isLoaded, updateStakeContext])
+  }, [stakeLoading, balanceLoading, doormanLoading, totalMvkloading, skip, action])
 
-  return { isLoading: stakeLoading && balanceLoading && doormanLoading && totalMvkloading }
+  return { isLoading: stakeLoading || balanceLoading || doormanLoading || totalMvkloading }
 }

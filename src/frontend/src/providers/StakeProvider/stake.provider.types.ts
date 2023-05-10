@@ -1,24 +1,23 @@
 import React from 'react'
 import { StakeProviderClass } from './stake.provider'
-import { normalizeSmvkHistoryData } from './helpers/normalizer'
+import { normalizeDoormanChartsData } from './helpers/normalizer'
 import { UserState } from 'reducers/wallet'
 import { ContractAddressesState } from 'reducers/contractAddresses'
 import { Dispatch } from 'redux'
-export type SmvkHistoryData = ReturnType<typeof normalizeSmvkHistoryData>
+export type SmvkHistoryData = ReturnType<typeof normalizeDoormanChartsData>
 
 export interface StakeContext {
   action: 'stake' | 'unstake' | ''
-  totalStakedMvk: number
   mvkHistoryData: SmvkHistoryData['mvkHistoryData']
   smvkHistoryData: SmvkHistoryData['smvkHistoryData']
-  isLoaded: boolean
+  totalStakedMvk: number
   totalSupply: number
   maximumTotalSupply: number
   // methods
   updateStakeHistoryData: InstanceType<typeof StakeProviderClass>['updateStakeHistoryData']
   updateTotalStakedMvk: InstanceType<typeof StakeProviderClass>['updateTotalStakedMvk']
   updateUserStakeData: InstanceType<typeof StakeProviderClass>['updateUserStakeData']
-  updateStakeContext: InstanceType<typeof StakeProviderClass>['updateStakeContext']
+  updateStakeActionContext: InstanceType<typeof StakeProviderClass>['updateStakeActionContext']
   updateTotalMvkToken: InstanceType<typeof StakeProviderClass>['updateTotalMvkToken']
 }
 

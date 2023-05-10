@@ -24,7 +24,6 @@ import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 // actions
-// import { getDoormanStorage } from '../Doorman/Doorman.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { hideToaster, showToaster } from '../../app/App.components/Toaster/Toaster.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
@@ -126,7 +125,6 @@ export const harvest = (farmAddress: string) => async (dispatch: AppDispatch, ge
         callback: async () => {
           await dispatch(updateUserData())
           await dispatch(getFarmStorage())
-          // await dispatch(getDoormanStorage())
 
           await dispatch(hideToaster())
           await dispatch(showToaster(TOASTER_SUCCESS, 'Harvesting done', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -188,7 +186,6 @@ export const deposit = (farmAddress: string, amount: number) => async (dispatch:
         callback: async () => {
           await dispatch(updateUserData())
           await dispatch(getFarmStorage())
-          // await dispatch(getDoormanStorage())
 
           await dispatch(hideToaster())
           await dispatch(showToaster(TOASTER_SUCCESS, 'Depositing done', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -250,7 +247,6 @@ export const withdraw = (farmAddress: string, amount: number) => async (dispatch
         callback: async () => {
           await dispatch(updateUserData())
           await dispatch(getFarmStorage())
-          // await dispatch(getDoormanStorage())
 
           await dispatch(hideToaster())
           await dispatch(showToaster(TOASTER_SUCCESS, 'Withdrawing done', ACTION_COMPLETION_MESSAGE_TEXT))

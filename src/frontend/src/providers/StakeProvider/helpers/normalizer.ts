@@ -9,7 +9,7 @@ type HistoryItemType = {
   time: UTCTimestamp
 }
 
-export function normalizeSmvkHistoryData(storage: SubscribeSmvkHistoryDataSubscription) {
+export function normalizeDoormanChartsData(storage: SubscribeSmvkHistoryDataSubscription) {
   const { smvk_history_data = [] } = storage
 
   const history = smvk_history_data.reduce<{
