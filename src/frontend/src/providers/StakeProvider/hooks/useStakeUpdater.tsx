@@ -5,6 +5,12 @@ import { useStakeContext } from '../stake.provider'
 
 // types
 import { AppDispatch } from 'app/App.controller'
+import {
+  StakingSubscriptionsTypes,
+  DOORMAN_HISTORY_SUB,
+  DOORMAN_STATS_SUB,
+  USER_MVK_BALANCE_SUB,
+} from '../helpers/stake.consts'
 
 // ------------------------------------------
 import { ACTION_COMPLETION_MESSAGE_TEXT, TOASTER_SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
@@ -27,11 +33,6 @@ function showStakeSuccessMessage(dispatch: AppDispatch, message: string) {
   dispatch(showToaster(TOASTER_SUCCESS, `${message} done`, ACTION_COMPLETION_MESSAGE_TEXT))
   dispatch(toggleActionCompletion(false))
 }
-
-export const DOORMAN_HISTORY_SUB = 'history'
-export const DOORMAN_STATS_SUB = 'doormanStats'
-export const USER_MVK_BALANCE_SUB = 'userMVK_balances'
-type StakingSubscriptionsTypes = typeof USER_MVK_BALANCE_SUB | typeof DOORMAN_STATS_SUB | typeof DOORMAN_HISTORY_SUB
 
 /**
  * Subscriptions are canceled on component unmount!

@@ -7,7 +7,8 @@ import { Page } from 'styles'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { DOORMAN_STATS_SUB, useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { DOORMAN_STATS_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'

@@ -50,6 +50,7 @@ import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
+import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
 
 type StakeUnstakeViewProps = {
   stakeCallback: (amount: number) => void
@@ -131,7 +132,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
         ...inputData,
         errorMessage: '',
       })
-      updateStakeActionContext('stake')
+      updateStakeActionContext(STAKE_ACTION)
       stakeCallback(Number(inputData.amount))
     } else {
       setInputData({
@@ -149,7 +150,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
         ...inputData,
         errorMessage: '',
       })
-      updateStakeActionContext('unstake')
+      updateStakeActionContext(UNSTAKE_ACTION)
 
       unstakeCallback(Number(inputData.amount))
     } else {
@@ -169,7 +170,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
       validation: INPUT_STATUS_SUCCESS,
     })
 
-    updateStakeActionContext('stake')
+    updateStakeActionContext(STAKE_ACTION)
 
     stakeCallback(myMvkTokenBalance)
   }
@@ -183,7 +184,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
       validation: INPUT_STATUS_SUCCESS,
     })
 
-    updateStakeActionContext('unstake')
+    updateStakeActionContext(UNSTAKE_ACTION)
 
     unstakeCallback(mySMvkTokenBalance)
   }

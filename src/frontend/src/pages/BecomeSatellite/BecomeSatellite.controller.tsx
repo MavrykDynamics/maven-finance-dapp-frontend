@@ -12,7 +12,8 @@ import {
 } from './BecomeSatellite.conts'
 
 // providers
-import { USER_MVK_BALANCE_SUB, useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 // Actions
 import { registerAsSatellite, unregisterAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'

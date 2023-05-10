@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // providers
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { USER_MVK_BALANCE_SUB, useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 // types
 import { State } from 'reducers'
@@ -36,6 +35,7 @@ import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 const Satellites = () => {
   const dispatch = useDispatch()
