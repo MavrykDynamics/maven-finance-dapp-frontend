@@ -9,7 +9,7 @@ import PieChartView from '../../app/App.components/PieСhart/PieСhart.view'
 import { scrollToFullView } from 'utils/scrollToFullView'
 
 // style
-import { TreasuryViewStyle, TzAddress } from './Treasury.style'
+import { TreasuryViewStyle } from './Treasury.style'
 import { getPieChartData } from './helpers/calculateChartData'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -26,6 +26,7 @@ import {
 } from 'app/App.components/Table'
 import { Plug } from 'app/App.components/Chart/Chart.style'
 import { silverColor } from 'styles'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 type Props = {
   treasury: TreasuryType[number]

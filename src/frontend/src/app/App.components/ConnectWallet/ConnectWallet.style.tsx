@@ -1,514 +1,206 @@
 import styled, { css } from 'styled-components/macro'
-import { cyanColor } from 'styles'
-import { BUTTON_RADIUS } from 'styles/constants'
 import { MavrykTheme } from 'styles/interfaces'
 
-// Common style parts START
-const VISIBLE_PART_CONNECTED_WALLET = (theme: MavrykTheme, isMobileDetails?: boolean) => css`
-  .top-visible-part {
-    display: flex;
-    align-items: center;
-    column-gap: 10px;
-    cursor: pointer;
-    height: 100%;
-
-    var {
-      font-weight: 600;
-      font-size: 16px;
-      color: ${theme.valueColor};
-    }
-
-    .end-icon {
-      height: 15px;
-      width: 10px;
-      transform: rotate(-90deg);
-      margin-left: 3px;
-      stroke: ${theme.valueColor};
-    }
-
-    .openLink {
-      height: 15px;
-      width: 20px;
-    }
-
-    .inner-wallet,
-    .wallet {
-      width: 22px;
-      height: 17px;
-      stroke: none;
-      fill: ${theme.valueColor};
-      transition: 0.3s fill;
-    }
-
-    .inner-wallet {
-      fill: ${theme.dataColor};
-    }
-
-    ${isMobileDetails
-      ? ''
-      : `
-          &:hover {
-            div {
-              color: ${cyanColor};
-            }
-
-            svg {
-              fill: ${cyanColor};
-            }
-          }
-        `}
-
-    @media screen and (max-width: 870px) {
-      var {
-        font-size: 20px;
-      }
-
-      .openLink {
-        height: 20px;
-        width: 20px;
-      }
-
-      .wallet {
-        width: 25px;
-        height: 20px;
-      }
-    }
-  }
+export const ConnectWalletBtnWrap = styled.div`
+  min-width: 220px;
 `
 
-const BUTTONS_WRAPPER_CONNECTED_WALLET = `
-.buttons-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
-}
-`
-// Common style parts END
-
-export const ConnectWalletStyled = styled.div<{ theme: MavrykTheme }>`
-  text-align: center;
-  border-radius: ${BUTTON_RADIUS};
-  margin: 10px auto 34px;
-  width: 100%;
+// WALLET INFO STYLING
+export const WalletDetailsStyled = styled.div`
   height: 100%;
-  display: flex;
-  align-items: center;
-  column-gap: 20px;
 `
 
-export const ConnectedWalletStyled = styled.div<{ theme: MavrykTheme }>`
-  height: 100%;
-  display: flex;
-  align-items: center;
+export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown: boolean }>`
+  width: 375px;
 
-  ${({ theme }) =>
+  position: absolute;
+  top: 80px;
+  right: 15px;
+
+  background: #160e3f;
+  border: 1px solid ${({ theme }) => theme.valueColor};
+
+  border-radius: 10px;
+  padding: 33px 0 33px 0;
+
+  visibility: hidden;
+  opacity: 0;
+  transition: 500ms opacity, 500ms visibility;
+
+  ${({ isShown }) =>
     css`
-      ${VISIBLE_PART_CONNECTED_WALLET(theme)}
+      visibility: ${isShown ? 'visible' : 'hidden'};
+      opacity: ${isShown ? 1 : 0};
+      pointer-events: ${isShown ? 'initial' : 'none'};
     `}
-
-  &:hover {
-    .end-icon {
-      transform: rotate(90deg);
-    }
-  }
 
   hr {
-    border: none;
-    margin: 0;
+    width: 100%;
     height: 1px;
-    background-color: ${({ theme }) => theme.cardBorderColor};
-  }
-
-  .wallet-details {
-    position: absolute;
-    visibility: hidden;
-    top: 80px;
-    opacity: 0;
-    right: 15px;
-    // TODO: if need to add transition, use this
-    /* transition: 400ms opacity ease-out, 400ms visibility ease-in; */
-    width: 375px;
-    background: #160e3f;
-    border: 1px solid #86d4c9;
-    border-radius: 10px;
-
-    &.visible {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    &.mobile {
-      display: none;
-    }
-
-    .icon-send {
-      width: 16px;
-      height: 16px;
-      fill: ${({ theme }) => theme.textColor};
-      cursor: pointer;
-      transition: fill 0.3s;
-
-      &:hover {
-        fill: ${({ theme }) => theme.headerSkyColor};
-      }
-    }
-
-    .wallet-details-address {
-      display: flex;
-      align-items: center;
-
-      font-weight: 600;
-      font-size: 22px;
-      line-height: 22px;
-    }
-
-    .wallet-details-header {
-      display: flex;
-      justify-content: space-between;
-      padding: 35px 30px;
-    }
-
-    .wallet-details-body {
-      padding: 13px 30px 26px;
-    }
-
-    .wallet-details-footer {
-      padding: 0 20px 44px;
-      display: flex;
-      justify-content: space-between;
-
-      button:first-of-type {
-        width: 140px;
-        fill: ${cyanColor};
-      }
-
-      button:last-of-type {
-        width: 185px;
-      }
-    }
-  }
-
-  ${BUTTONS_WRAPPER_CONNECTED_WALLET}
-`
-
-export const MobileDetailsStyled = styled.div<{ theme: MavrykTheme }>`
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 15;
-  background: #160e3f;
-  padding-top: 60px;
-
-  .close {
-    position: absolute;
-    top: 27px;
-    right: 22px;
-    cursor: pointer;
-
-    svg {
-      width: 26px;
-      height: 21px;
-      stroke: #8d86eb;
-      transition: 0.3s all;
-    }
-
-    &:hover {
-      svg {
-        stroke: ${cyanColor};
-      }
-    }
-  }
-
-  ${({ theme }) =>
-    css`
-      ${VISIBLE_PART_CONNECTED_WALLET(theme, true)}
-    `}
-
-  .top-visible-part {
-    width: fit-content;
-    margin: 25px auto;
-  }
-
-  .details {
-    margin: 0 auto;
-    width: 88%;
-    max-width: 500px;
-
-    ${BUTTONS_WRAPPER_CONNECTED_WALLET}
-
-    .buttons-wrapper {
-      column-gap: 25px;
-    }
-  }
-
-  @media screen and (max-width: 450px) {
-    padding-top: 30px;
-
-    .details {
-      margin: 0 auto;
-      width: 88%;
-    }
-  }
-`
-
-export const ConnectedWalletDetailsItemStyled = styled.div<{ theme: MavrykTheme }>`
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0 7px;
-  border-bottom: 1px solid ${({ theme }) => theme.cardBorderColor};
-
-  &:last-of-type {
-    border-bottom: none;
-  }
-
-  svg {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
-  }
-
-  .left-part {
-    display: flex;
-  }
-
-  .left-part-info {
-    display: flex;
-    flex-direction: column;
-
-    > div {
-      &.main {
-        font-weight: 600;
-        font-size: 18px;
-        line-height: 18px;
-        color: ${({ theme }) => theme.textColor};
-      }
-
-      &.subtext {
-        font-weight: 600;
-        font-size: 14px;
-        line-height: 21px;
-        color: ${({ theme }) => theme.headerSkyColor};
-      }
-
-      p {
-        margin: 0;
-        white-space: nowrap;
-        width: fit-content;
-      }
-    }
-  }
-
-  .btn-wrapper {
-    display: flex;
-    align-items: center;
-
-    button {
-      height: 21px;
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 21px;
-      opacity: 1;
-    }
-
-    svg {
-      width: 6px;
-      height: 13px;
-      transform: rotate(180deg);
-      stroke: ${({ theme }) => theme.secondaryColor};
-    }
-
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-`
-
-export const WalletConnectedButton = styled.div<{ theme: MavrykTheme }>`
-  font-weight: 600;
-  margin: 10px auto;
-  display: flex;
-  column-gap: 10px;
-  align-items: center;
-  margin-top: -6px;
-  margin-bottom: -6px;
-
-  var {
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 14px;
-    font-style: normal;
-    color: ${({ theme }) => theme.headerSkyColor};
-    margin-bottom: 5px;
-
-    > div {
-      svg {
-        stroke: ${({ theme }) => theme.headerSkyColor};
-        width: 18px;
-        height: 18px;
-        margin-left: 6px;
-      }
-    }
-  }
-
-  p {
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 14px;
-    color: ${({ theme }) => theme.stakedColor};
-    margin-top: 4px;
-    margin-bottom: 0;
-  }
-
-  button {
-    svg {
-      width: 24px;
-      height: 18px;
-      fill: ${({ theme }) => theme.headerColor};
-    }
-  }
-`
-
-export const WalletNotConnectedButton = styled.button<{ theme: MavrykTheme }>`
-  margin: 0 auto;
-  height: 50px;
-  cursor: pointer;
-  border-radius: ${BUTTON_RADIUS};
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 220px;
-  color: ${({ theme }) => theme.containerColor};
-  background-color: ${({ theme }) => theme.actionPrimaryBtnColor};
-
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 16px;
-
-  &:hover {
-    opacity: 0.8;
-  }
-
-  svg {
-    width: 25px;
-    height: 20px;
-    stroke-width: 0.8;
-    fill: ${({ theme }) => theme.containerColor};
-    margin-right: 16px;
-  }
-
-  span {
-    padding-right: 16px;
-  }
-`
-
-export const SignOutButton = styled(WalletNotConnectedButton)`
-  width: 110px;
-  margin: 0;
-`
-
-export const SimpleConnectedButton = styled.div<{ theme: MavrykTheme }>`
-  margin: 0 auto;
-  height: 50px;
-  cursor: pointer;
-  color: ${({ theme }) => theme.containerColor};
-  background-color: ${({ theme }) => theme.actionPrimaryBtnColor};
-  border-radius: ${BUTTON_RADIUS};
-  text-align: center;
-  font-weight: bold;
-  line-height: 50px;
-  font-size: 12px;
-  width: 220px;
-
-  > svg {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    margin: 14px 9px 13px 8px;
-    stroke: ${({ theme }) => theme.containerColor};
-    vertical-align: top;
+    background: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
+    border: none;
   }
 
   > div {
-    display: inline-block;
-    margin-right: 9px;
-    font-weight: 600;
-    color: ${({ theme }) => theme.containerColor};
-  }
-`
-
-export const ConnectWalletInfoStyled = styled.blockquote<{ theme: MavrykTheme }>`
-  height: 100px;
-  border-radius: 10px;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 40px;
-  background-color: ${({ theme }) => theme.connectInfoColor};
-  margin-top: 32px;
-
-  p {
-    width: 650px;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 24px;
-    color: ${({ theme }) => theme.textColor};
-    margin-top: 2px;
-    margin-bottom: 2px;
-
-    & + div {
-      margin: 0;
-    }
+    padding: 0 20px;
   }
 
-  &.info {
+  .top {
     display: flex;
-    column-gap: 20px;
-    height: unset;
-    padding: 10px 20px;
+    align-items: center;
+    column-gap: 10px;
+    margin-bottom: 30px;
 
-    p {
-      width: unset;
-      font-weight: 500;
-      line-height: 24px;
-      color: ${({ theme }) => theme.textColor};
+    a {
+      display: block;
+      margin-left: auto;
+      width: 16px;
+      height: 16px;
+
+      svg {
+        width: 16px;
+        height: 16px;
+        fill: ${({ theme }) => theme.textColor};
+      }
+    }
+
+    .tzAddressToClick {
+      font-size: 22px;
+      font-weight: 600;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    > svg {
+      width: 20px;
+      height: 24px;
+      fill: ${({ theme }) => theme.dataColor};
     }
   }
 
-  &.error {
-    border: 1px solid ${({ theme }) => theme.downColor};
-    svg {
-      width: 32px;
-      height: 32px;
-      fill: ${({ theme }) => theme.downColor};
+  .tokens {
+    margin: 12px 0 20px 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 180px;
+    overflow-y: auto;
+
+    .row {
+      height: 60px;
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+      position: relative;
+
+      p {
+        margin: 0;
+      }
+
+      .icon {
+        margin-right: 13px;
+        svg {
+          height: 24px;
+          width: 24px;
+          fill: ${({ theme }) => theme.textColor};
+        }
+      }
+
+      .values {
+        display: flex;
+        flex-direction: column;
+        height: fit-content;
+      }
+
+      .asset-amount {
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 27px;
+        color: ${({ theme }) => theme.textColor};
+      }
+
+      .converted-amount {
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 21px;
+        color: ${({ theme }) => theme.dataColor};
+      }
+
+      .action {
+        margin-left: auto;
+
+        svg {
+          width: 7px;
+          height: 12px;
+          transform: rotate(180deg);
+          fill: ${({ theme }) => theme.valueColor};
+        }
+      }
+
+      &:not(:last-child)::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 1px;
+        background: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
+      }
     }
   }
-`
 
-export const ButtonBar = styled.div`
-  display: flex;
-  align-items: center;
-
-  .connect-wallet {
-    margin: 0;
+  .action-btn-wrapper {
+    display: grid;
+    justify-content: space-between;
+    grid-template-columns: 185px 140px;
   }
 `
 
-export const ConnectWalletClose = styled.button<{ theme: MavrykTheme }>`
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin-left: 46px;
+export const WalletDetailsVisiblePart = styled.div<{ theme: MavrykTheme; isShown: boolean }>`
+  width: fit-content;
+  height: 100%;
   cursor: pointer;
 
-  .close-connect-wallet {
+  * {
+    cursor: pointer;
+  }
+
+  margin-left: auto;
+  column-gap: 10px;
+
+  display: flex;
+  align-items: center;
+
+  > div {
+    font-weight: 600;
+    font-size: 16px;
+    color: ${({ theme }) => theme.valueColor};
+  }
+
+  .end-icon {
+    height: 15px;
+    width: 10px;
+    margin-left: 3px;
+    transform: rotate(-90deg);
     fill: ${({ theme }) => theme.valueColor};
-    width: 24px;
-    height: 24px;
+
+    ${({ isShown }) =>
+      isShown
+        ? css`
+            transform: rotate(-270deg);
+          `
+        : ''}
+  }
+
+  .wallet {
+    width: 22px;
+    height: 17px;
+    stroke: none;
+    fill: ${({ theme }) => theme.valueColor};
+    transition: 0.3s fill;
   }
 `
 
@@ -529,5 +221,71 @@ export const WertIo = styled.div`
     padding: 30px 0px;
     border-radius: 0;
     border: none;
+  }
+`
+
+// MOBILE WALLET STYLING
+export const MobileWalletDetailsStyled = styled.div`
+  height: fit-content;
+  margin: 0 0 30px 0;
+`
+
+export const MobileWalletDetailsHiddenPart = styled(WalletDetailsHiddenPart)<{ theme: MavrykTheme; isShown: boolean }>`
+  width: 100vw;
+  max-height: 90vh;
+
+  position: fixed;
+  top: -90vh;
+  right: 0;
+  z-index: 100;
+
+  padding: 0 0 33px 0;
+  border-radius: 0;
+  border: unset;
+
+  opacity: 1;
+  visibility: visible;
+  transition: 1000ms transform;
+
+  ${({ isShown }) =>
+    css`
+      ${isShown ? 'transform: translateY(90vh);' : ''};
+      pointer-events: ${isShown ? 'initial' : 'none'};
+    `};
+
+  .close-details-btn {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 77px;
+    cursor: pointer;
+    width: fit-content;
+    margin-left: auto;
+    padding-right: 23px;
+
+    svg {
+      max-width: 26px;
+      height: 21px;
+      stroke: #8d86eb;
+      transition: 0.6s all;
+    }
+
+    &:hover {
+      svg {
+        stroke: ${({ theme }) => theme.valueColor};
+      }
+    }
+  }
+
+  .action-btn-wrapper {
+    display: grid;
+    max-width: 400px;
+    margin: 0 auto;
+    justify-content: space-between;
+    grid-template-columns: minmax(120px, 185px) minmax(90px, 140px);
+
+    @media (max-width: 375px) {
+      padding: 0 10px;
+    }
   }
 `
