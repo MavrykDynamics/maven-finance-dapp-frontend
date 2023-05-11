@@ -32,9 +32,11 @@ export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
   }
 
   &.transaction-history {
+    height: 40px;
+    width: 310px;
+
     button {
       white-space: nowrap;
-      margin: 0;
     }
   }
 `

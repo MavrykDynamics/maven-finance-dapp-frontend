@@ -212,10 +212,7 @@ export const Market = () => {
           />
         ) : null}
         {tabId === BORROW_TAB_ID ? (
-          <BorrowingTab
-            lendingControllerAddress={loansControllerAddress}
-            currentMarketAsset={currentToken.loanTokenData.gqlName}
-          />
+          <BorrowingTab lendingControllerAddress={loansControllerAddress} currentToken={currentToken} />
         ) : null}
 
         <TransactionHistory currentToken={currentToken} />

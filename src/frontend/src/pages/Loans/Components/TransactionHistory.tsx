@@ -53,66 +53,68 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
 
   return (
     <TransactionHistoryStyled>
-      <div className="top">
-        <H2Title>Transaction History</H2Title>
+      <div className="main">
+        <div className="top">
+          <H2Title>Transaction History</H2Title>
 
-        <SlidingTabButtons
-          onClick={(tabId: number) => setSwitcherState(tabId === 0 ? 'all' : 'personal')}
-          tabItems={TRANSACTION_HISTORY_SLIDING_BUTTONS}
-          className="transaction-history"
-        />
+          <SlidingTabButtons
+            onClick={(tabId: number) => setSwitcherState(tabId === 0 ? 'all' : 'personal')}
+            tabItems={TRANSACTION_HISTORY_SLIDING_BUTTONS}
+            className="transaction-history"
+          />
+        </div>
+
+        {transactionHistory?.length ? (
+          <>
+            <Table className="treasury-table">
+              <TableHeader className="simple-header treasury">
+                <TableRow>
+                  <TableHeaderCell>Description</TableHeaderCell>
+                  <TableHeaderCell>Amount</TableHeaderCell>
+                  <TableHeaderCell>Date</TableHeaderCell>
+                  <TableHeaderCell>User</TableHeaderCell>
+                  <TableHeaderCell contentPosition="right">View TX</TableHeaderCell>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody className="transaction-history">
+                {paginatedTableRows?.map(({ descr, amount, date, userAddress, operationHash, tokenSymbol = '' }) => {
+                  if (!descr) return null
+
+                  return (
+                    <TableRow rowHeight={45} className="add-hover" key={`${operationHash}-${date}`}>
+                      <TableCell width={`21%`} className="vert-middle">
+                        <span className="descr">{descr}</span>
+                      </TableCell>
+                      <TableCell width={`21%`}>
+                        <CommaNumber value={amount} className="value" endingText={tokenSymbol} />
+                      </TableCell>
+                      <TableCell width={`28%`}>{date}</TableCell>
+                      <TableCell width={`11%`}>
+                        <TzAddress tzAddress={userAddress} type={BLUE} />
+                      </TableCell>
+                      <TableCell contentPosition="right">
+                        <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
+                          <Button text="View TX" kind={TRANSPARENT} className="link" />
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </>
+        ) : (
+          <EmptyContainer
+            style={{
+              padding: '30px 0 20px 0',
+            }}
+          >
+            <img src="/images/not-found.svg" alt=" No Transaction History to show" />
+            <figcaption> No Transaction History to show</figcaption>
+          </EmptyContainer>
+        )}
       </div>
-
-      {transactionHistory?.length ? (
-        <>
-          <Table className="treasury-table">
-            <TableHeader className="simple-header treasury">
-              <TableRow>
-                <TableHeaderCell>Description</TableHeaderCell>
-                <TableHeaderCell>Amount</TableHeaderCell>
-                <TableHeaderCell>Date</TableHeaderCell>
-                <TableHeaderCell>User</TableHeaderCell>
-                <TableHeaderCell contentPosition="right">View TX</TableHeaderCell>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody className="transaction-history">
-              {paginatedTableRows?.map(({ descr, amount, date, userAddress, operationHash, tokenSymbol = '' }) => {
-                if (!descr) return null
-
-                return (
-                  <TableRow rowHeight={45} className="add-hover" key={`${operationHash}-${date}`}>
-                    <TableCell width={`21%`} className="vert-middle">
-                      <span className="descr">{descr}</span>
-                    </TableCell>
-                    <TableCell width={`21%`}>
-                      <CommaNumber value={amount} className="value" endingText={tokenSymbol} />
-                    </TableCell>
-                    <TableCell width={`28%`}>{date}</TableCell>
-                    <TableCell width={`11%`}>
-                      <TzAddress tzAddress={userAddress} type={BLUE} />
-                    </TableCell>
-                    <TableCell contentPosition="right">
-                      <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
-                        <Button text="View TX" kind={TRANSPARENT} className="link" />
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
-        </>
-      ) : (
-        <EmptyContainer
-          style={{
-            padding: '30px 0 20px 0',
-          }}
-        >
-          <img src="/images/not-found.svg" alt=" No Transaction History to show" />
-          <figcaption> No Transaction History to show</figcaption>
-        </EmptyContainer>
-      )}
 
       <Pagination
         itemsCount={transactionHistory?.length ?? 0}

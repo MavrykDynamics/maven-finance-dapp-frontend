@@ -22,7 +22,7 @@ import colors from 'styles/colors'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
+import { LoanMarketType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import Expand from 'app/App.components/Expand/Expand.view'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -52,8 +52,9 @@ import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { getNumberInBounds } from 'utils/calcFunctions'
 import { TabItem, TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { TransactionHistory } from './TransactionHistory'
 
-export const tabsList: TabItem[] = [
+const tabsList: TabItem[] = [
   {
     text: 'Collateral Assets',
     id: 1,
@@ -71,6 +72,12 @@ export const tabsList: TabItem[] = [
   },
 ]
 
+const tabNames = {
+  COLLATERAL_ASSETS: 1,
+  TX_HISTORY: 2,
+  USEFUL_INFO: 3,
+}
+
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
   isOpenedVault?: boolean
@@ -78,6 +85,7 @@ type BorrowingExpandCardPropsType = LoansVaultType & {
   children?: React.ReactNode
   status?: string
   DAOFee: number
+  currentToken: LoanMarketType
 }
 
 export const BorrowingExpandCard = ({
@@ -107,6 +115,7 @@ export const BorrowingExpandCard = ({
   avaliableLiq,
   minimumRepay,
   DAOFee,
+  currentToken,
 }: BorrowingExpandCardPropsType) => {
   const { symbol, icon, rate = 1 } = borrowedAsset
 
@@ -344,140 +353,144 @@ export const BorrowingExpandCard = ({
 
             <TabSwitcher tabItems={tabsList} onClick={handleSwitchTab} className="switcher" />
 
-            <BorrowingTabListItemTabInfo>
-              <div className="tab-header">
-                <H2Title>Your Collateralized Assets</H2Title>
+            {activeTab?.id === tabNames.COLLATERAL_ASSETS && (
+              <BorrowingTabListItemTabInfo>
+                <div className="tab-header">
+                  <H2Title>Your Collateralized Assets</H2Title>
 
-                <Button
-                  onClick={() =>
-                    openAddNewCollateralPopup?.({
-                      vaultAddress: address,
-                      vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                      currentCollateralRatio: collateralRatio,
-                      borrowedAmount,
-                      existingCollaterals: collateralData,
-                      borrowedAssetRate: borrowedAsset.rate,
-                      borrowCapacity,
-                      avaliableLiq,
-                    })
-                  }
-                  kind={BUTTON_PRIMARY}
-                  form={BUTTON_WIDE}
-                  isThin
-                  disabled={
-                    avaliableCollaterals.length === 0 ||
-                    avaliableCollaterals.length === collateralData.length - 1 ||
-                    isActionActive
-                  }
-                >
-                  <Icon id="plus" /> Add Collateral Type
-                </Button>
-              </div>
+                  <Button
+                    onClick={() =>
+                      openAddNewCollateralPopup?.({
+                        vaultAddress: address,
+                        vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                        currentCollateralRatio: collateralRatio,
+                        borrowedAmount,
+                        existingCollaterals: collateralData,
+                        borrowedAssetRate: borrowedAsset.rate,
+                        borrowCapacity,
+                        avaliableLiq,
+                      })
+                    }
+                    kind={BUTTON_PRIMARY}
+                    form={BUTTON_WIDE}
+                    isThin
+                    disabled={
+                      avaliableCollaterals.length === 0 ||
+                      avaliableCollaterals.length === collateralData.length - 1 ||
+                      isActionActive
+                    }
+                  >
+                    <Icon id="plus" /> Add Collateral Type
+                  </Button>
+                </div>
 
-              <Table className="borrowing-table">
-                {collateralData.length ? (
-                  <TableHeader className="simple-header collateral">
-                    <TableRow>
-                      <TableHeaderCell>Asset</TableHeaderCell>
-                      <TableHeaderCell>Amount</TableHeaderCell>
-                      <TableHeaderCell>Collateral Share</TableHeaderCell>
-                    </TableRow>
-                  </TableHeader>
-                ) : null}
+                <Table className="borrowing-table">
+                  {collateralData.length ? (
+                    <TableHeader className="simple-header collateral">
+                      <TableRow>
+                        <TableHeaderCell>Asset</TableHeaderCell>
+                        <TableHeaderCell>Amount</TableHeaderCell>
+                        <TableHeaderCell>Collateral Share</TableHeaderCell>
+                      </TableRow>
+                    </TableHeader>
+                  ) : null}
 
-                <TableBody>
-                  {collateralData.map(({ icon, amount, rate, gqlName, symbol }, idx) => {
-                    const isTotalRow = collateralData.length - 1 === idx
+                  <TableBody>
+                    {collateralData.map(({ icon, amount, rate, gqlName, symbol }, idx) => {
+                      const isTotalRow = collateralData.length - 1 === idx
 
-                    const collateralShare = isTotalRow
-                      ? 100
-                      : getNumberInBounds(0, 100, calculateCollateralShare(amount * rate, collateralTotalBalance))
+                      const collateralShare = isTotalRow
+                        ? 100
+                        : getNumberInBounds(0, 100, calculateCollateralShare(amount * rate, collateralTotalBalance))
 
-                    if (isTotalRow && collateralData.length < 3) return null
+                      if (isTotalRow && collateralData.length < 3) return null
 
-                    return (
-                      <TableRow rowHeight={65} key={gqlName + '-' + idx}>
-                        <TableCell width={'22%'} className="vert-middle">
-                          {isTotalRow ? (
-                            'Total'
-                          ) : (
-                            <div className="cell-content row with-icon">
-                              <ImageWithPlug imageLink={icon} alt={`${gqlName} icon`} />
-                              {symbol}
+                      return (
+                        <TableRow rowHeight={65} key={gqlName + '-' + idx}>
+                          <TableCell width={'22%'} className="vert-middle">
+                            {isTotalRow ? (
+                              'Total'
+                            ) : (
+                              <div className="cell-content row with-icon">
+                                <ImageWithPlug imageLink={icon} alt={`${gqlName} icon`} />
+                                {symbol}
+                              </div>
+                            )}
+                          </TableCell>
+
+                          <TableCell width={'22%'}>
+                            <div className="cell-content">
+                              <CommaNumber
+                                value={amount}
+                                className="value"
+                                showDecimal
+                                decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
+                                beginningText={isTotalRow ? '$' : ''}
+                              />
+                              {rate ? (
+                                <CommaNumber value={amount * rate} className="rate" beginningText="$" showDecimal />
+                              ) : null}
                             </div>
-                          )}
-                        </TableCell>
-
-                        <TableCell width={'22%'}>
-                          <div className="cell-content">
-                            <CommaNumber
-                              value={amount}
-                              className="value"
-                              showDecimal
-                              decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
-                              beginningText={isTotalRow ? '$' : ''}
-                            />
-                            {rate ? (
-                              <CommaNumber value={amount * rate} className="rate" beginningText="$" showDecimal />
-                            ) : null}
-                          </div>
-                        </TableCell>
-                        <TableCell width={'22%'}>
-                          <div className="cell-content">
-                            <CommaNumber value={collateralShare} className="value" endingText="%" />
-                          </div>
-                        </TableCell>
-                        {!isTotalRow && (
-                          <TableCell className={`buttons borrowing ${!isOwner ? 'single-btn' : ''}`}>
-                            <div className="cell-content row">
-                              <Button
-                                onClick={() =>
-                                  openAddExistingCollateralPopup?.({
-                                    vaultAddress: address,
-                                    vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                                    selectedAsset: collateralData[idx],
-                                    currentCollateralRatio: collateralRatio,
-                                    borrowedAmount,
-                                    borrowedAssetRate: borrowedAsset.rate,
-                                    borrowCapacity,
-                                    avaliableLiq,
-                                  })
-                                }
-                                form={BUTTON_WIDE}
-                                kind={BUTTON_SECONDARY}
-                                disabled={isActionActive}
-                              >
-                                <Icon id="plus" /> Add
-                              </Button>
-                              {isOwner ? (
+                          </TableCell>
+                          <TableCell width={'22%'}>
+                            <div className="cell-content">
+                              <CommaNumber value={collateralShare} className="value" endingText="%" />
+                            </div>
+                          </TableCell>
+                          {!isTotalRow && (
+                            <TableCell className={`buttons borrowing ${!isOwner ? 'single-btn' : ''}`}>
+                              <div className="cell-content row">
                                 <Button
                                   onClick={() =>
-                                    openWithdrawCollateralPopup?.({
+                                    openAddExistingCollateralPopup?.({
                                       vaultAddress: address,
-                                      currentCollateralBalance: amount,
                                       vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                                       selectedAsset: collateralData[idx],
                                       currentCollateralRatio: collateralRatio,
                                       borrowedAmount,
                                       borrowedAssetRate: borrowedAsset.rate,
+                                      borrowCapacity,
+                                      avaliableLiq,
                                     })
                                   }
                                   form={BUTTON_WIDE}
                                   kind={BUTTON_SECONDARY}
-                                  disabled={collateralRatio <= 200 || isActionActive}
+                                  disabled={isActionActive}
                                 >
-                                  <Icon id="minus" /> Remove
+                                  <Icon id="plus" /> Add
                                 </Button>
-                              ) : null}
-                            </div>
-                          </TableCell>
-                        )}
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            </BorrowingTabListItemTabInfo>
+                                {isOwner ? (
+                                  <Button
+                                    onClick={() =>
+                                      openWithdrawCollateralPopup?.({
+                                        vaultAddress: address,
+                                        currentCollateralBalance: amount,
+                                        vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                                        selectedAsset: collateralData[idx],
+                                        currentCollateralRatio: collateralRatio,
+                                        borrowedAmount,
+                                        borrowedAssetRate: borrowedAsset.rate,
+                                      })
+                                    }
+                                    form={BUTTON_WIDE}
+                                    kind={BUTTON_SECONDARY}
+                                    disabled={collateralRatio <= 200 || isActionActive}
+                                  >
+                                    <Icon id="minus" /> Remove
+                                  </Button>
+                                ) : null}
+                              </div>
+                            </TableCell>
+                          )}
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
+              </BorrowingTabListItemTabInfo>
+            )}
+
+            {activeTab?.id === tabNames.TX_HISTORY && <TransactionHistory currentToken={currentToken} />}
           </BorrowingTabListItemExpanded>
         )}
       </Expand>

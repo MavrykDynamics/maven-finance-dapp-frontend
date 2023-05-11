@@ -15,13 +15,19 @@ import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { LoansTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
+import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
+
 type BorrowingTabPropsType = {
   lendingControllerAddress: string
-  currentMarketAsset: string
+  currentToken: LoanMarketType
 }
 
-export const BorrowingTab = ({ lendingControllerAddress, currentMarketAsset }: BorrowingTabPropsType) => {
+export const BorrowingTab = ({ lendingControllerAddress, currentToken }: BorrowingTabPropsType) => {
   const { openCreateVaultPopup } = useContext(loansPopupsContext)
+
+  const {
+    loanTokenData: { gqlName },
+  } = currentToken
 
   const [createdVaultId, setCreatedVaultAddress] = useState<null | string>(null)
   const [showZeroVaults, setShowZeroVaults] = useState(false)
@@ -38,10 +44,10 @@ export const BorrowingTab = ({ lendingControllerAddress, currentMarketAsset }: B
         const vault = vaultsMapper[vaultId]
 
         return showZeroVaults
-          ? currentMarketAsset === vault.borrowedAsset.gqlName
-          : currentMarketAsset === vault.borrowedAsset.gqlName && (vault.collateralBalance || vault.borrowedAmount)
+          ? gqlName === vault.borrowedAsset.gqlName
+          : gqlName === vault.borrowedAsset.gqlName && (vault.collateralBalance || vault.borrowedAmount)
       }),
-    [currentMarketAsset, myVaultsIds, showZeroVaults, vaultsMapper],
+    [gqlName, myVaultsIds, showZeroVaults, vaultsMapper],
   )
 
   return (
@@ -63,7 +69,7 @@ export const BorrowingTab = ({ lendingControllerAddress, currentMarketAsset }: B
             text="New Vault"
             icon="plus"
             disabled={!Boolean(accountPkh) || isActionActive}
-            onClick={() => openCreateVaultPopup({ currentMarketAsset, setCreatedVaultAddress })}
+            onClick={() => openCreateVaultPopup({ currentMarketAsset: gqlName, setCreatedVaultAddress })}
             kind={ACTION_PRIMARY}
             className="lending-tab-no-items-btn has-items-borrow-btn"
           />
@@ -77,6 +83,7 @@ export const BorrowingTab = ({ lendingControllerAddress, currentMarketAsset }: B
                   key={vault.borrowedAsset.symbol + '-' + idx}
                   isOpenedVault={createdVaultId === vault.address}
                   DAOFee={DAOFee}
+                  currentToken={currentToken}
                 />
               )
             })}
@@ -90,7 +97,7 @@ export const BorrowingTab = ({ lendingControllerAddress, currentMarketAsset }: B
             icon="plus"
             kind={ACTION_PRIMARY}
             disabled={!Boolean(accountPkh)}
-            onClick={() => openCreateVaultPopup({ currentMarketAsset, setCreatedVaultAddress })}
+            onClick={() => openCreateVaultPopup({ currentMarketAsset: gqlName, setCreatedVaultAddress })}
             className="lending-tab-no-items-btn"
           />
         </NoItemsInTabStyled>
