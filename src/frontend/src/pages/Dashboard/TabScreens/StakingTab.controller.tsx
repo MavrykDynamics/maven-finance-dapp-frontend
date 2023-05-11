@@ -62,7 +62,6 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="name flexbox">
                 Exit Fee
                 <CustomTooltip
-                  className="tooltip"
                   text="The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees are paid directly to sMVK stakeholders for remaining active participants in securing the network. Click to read more."
                   iconId={'info'}
                 />

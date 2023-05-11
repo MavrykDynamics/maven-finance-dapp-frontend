@@ -156,18 +156,6 @@ export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
     align-items: center;
   }
 
-  .tooltip {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-
-    svg {
-      width: 14px;
-      height: 14px;
-      fill: ${({ theme }) => theme.textColor};
-    }
-  }
-
   .left {
     width: 100%;
     padding: 0 20px;
