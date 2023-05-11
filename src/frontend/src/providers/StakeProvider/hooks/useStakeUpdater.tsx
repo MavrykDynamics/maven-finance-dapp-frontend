@@ -66,6 +66,7 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
     }
 
     if (
+      action &&
       !actionLoaderState.doormanBalance &&
       !actionLoaderState.history &&
       !actionLoaderState.userBalance &&
