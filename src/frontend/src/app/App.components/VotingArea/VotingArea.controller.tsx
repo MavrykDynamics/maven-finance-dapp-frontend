@@ -15,6 +15,10 @@ import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import ConnectWalletBtn from '../ConnectWallet/ConnectWalletBtn'
 import Button from '../Button/NewButton'
 import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
+import { Info } from '../Info/Info.view'
+import TimeRemainingSmall from 'pages/Governance/components/TimeRemaining/TimeRemainingSmall'
+import { INFO_DEFAULT } from '../Info/info.constants'
+import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 
 type VotingType = VotingProps & {
   className?: string
@@ -35,7 +39,7 @@ export const VotingArea = ({
   const { forBtn, againsBtn, passBtn } = buttonsToShow ?? { forBtn: {}, againsBtn: {}, passBtn: {} }
   const {
     accountPkh,
-    user: { isSatellite },
+    user: { isSatellite, isNewlyRegisteredSatellite },
   } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -47,7 +51,12 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.YES)}
             kind={VOTING_FOR}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons || isActionActive || disableButtonByVote === VoteList.YES}
+            disabled={
+              disableVotingButtons ||
+              isActionActive ||
+              disableButtonByVote === VoteList.YES ||
+              isNewlyRegisteredSatellite
+            }
           >
             {forBtn.text ?? 'Vote YES'}
           </Button>
@@ -57,7 +66,12 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.PASS)}
             kind={VOTING_PASS}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons || isActionActive || disableButtonByVote === VoteList.PASS}
+            disabled={
+              disableVotingButtons ||
+              isActionActive ||
+              disableButtonByVote === VoteList.PASS ||
+              isNewlyRegisteredSatellite
+            }
           >
             {passBtn.text ?? 'Vote PASS'}
           </Button>
@@ -67,7 +81,12 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.NO)}
             kind={VOTING_AGAINST}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons || isActionActive || disableButtonByVote === VoteList.NO}
+            disabled={
+              disableVotingButtons ||
+              isActionActive ||
+              disableButtonByVote === VoteList.NO ||
+              isNewlyRegisteredSatellite
+            }
           >
             {againsBtn.text ?? 'Vote NO'}
           </Button>
@@ -101,7 +120,7 @@ export const VotingProposalsArea = ({
 }: VotingProposalsType) => {
   const {
     accountPkh,
-    user: { isSatellite },
+    user: { isSatellite, isNewlyRegisteredSatellite },
   } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -114,11 +133,23 @@ export const VotingProposalsArea = ({
       <VotingAreaStyled className={className}>
         <div className="voted-block">
           <CommaNumber className="voted-label" value={voteStatistics.passVotesMVKTotal ?? 0} endingText={'voted MVK'} />
+          {isNewlyRegisteredSatellite && (
+            <div className="banner-area">
+              <Info
+                text={
+                  <>
+                    {UNREGISTERED_SATELLITE_BANNER_TEXT} <TimeRemainingSmall />
+                  </>
+                }
+                type={INFO_DEFAULT}
+              />
+            </div>
+          )}
           {accountPkh ? (
             <Button
               onClick={() => handleProposalVote(Number(selectedProposal.id))}
               kind={BUTTON_PRIMARY}
-              disabled={vote?.round === 0 || !isSatellite || isActionActive}
+              disabled={vote?.round === 0 || !isSatellite || isActionActive || isNewlyRegisteredSatellite}
             >
               Vote for this Proposal
             </Button>
