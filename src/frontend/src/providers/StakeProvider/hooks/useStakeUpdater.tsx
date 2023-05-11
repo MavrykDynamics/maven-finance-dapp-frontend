@@ -12,6 +12,7 @@ import {
   USER_MVK_BALANCE_SUB,
   STAKE_DEFAULT_LOADINGS,
   getInitialLoadingStateForFiredAction,
+  StakeActionsLoaderState,
 } from '../helpers/stake.consts'
 
 // ------------------------------------------
@@ -35,7 +36,7 @@ import {
  * @returns {isLoading: boolean} false if data is still loading, true if it's loaded
  */
 export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSubscriptionsTypes> = []) => {
-  const [actionLoaderState, setActionLoaderState] = useState(STAKE_DEFAULT_LOADINGS)
+  const [actionLoaderState, setActionLoaderState] = useState<StakeActionsLoaderState>(STAKE_DEFAULT_LOADINGS)
 
   const { doormanAddress } = useSelector((state: State) => state.contractAddresses)
   const { accountPkh } = useSelector((state: State) => state.wallet)
@@ -48,16 +49,27 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
     action,
   } = useStakeContext()
 
+  /**
+   * Effect to turn off loader toaster and show success loader
+   * @action action that user performing
+   * @actionLoaderState loading state for action, cuz apollo shows correctly only initial loading state, then all loadings are false
+   *
+   * in 1st cond we check whether we have fired an action and if yes, set loading initial state for action we fired, and
+   * @loadingStateUpdatedForAction means that loading state is updated to the fired action
+   *
+   * in 2nd cond we check whether action state is updated to the current action and all loading indicators are set to false (means all subs are performed), and then turn of loader,
+   * show success toaster and reset action and action loading state
+   */
   useEffect(() => {
     if (action && !actionLoaderState.loadingStateUpdatedForAction) {
-      setActionLoaderState({ ...getInitialLoadingStateForFiredAction(action), loadingStateUpdatedForAction: true })
+      setActionLoaderState({ ...getInitialLoadingStateForFiredAction(action), loadingStateUpdatedForAction: action })
     }
 
     if (
       !actionLoaderState.doormanBalance &&
       !actionLoaderState.history &&
       !actionLoaderState.userBalance &&
-      actionLoaderState.loadingStateUpdatedForAction
+      actionLoaderState.loadingStateUpdatedForAction === action
     ) {
       dispatch(hideToaster())
       dispatch(
@@ -158,8 +170,5 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
 
   return {
     isLoading: historyLoading || userBalanceLoading || doormanBalanceLoading || mvkStatsloading,
-    userBalanceLoading,
-    dormanStatsLoading: doormanBalanceLoading || mvkStatsloading,
-    historyLoading,
   }
 }
