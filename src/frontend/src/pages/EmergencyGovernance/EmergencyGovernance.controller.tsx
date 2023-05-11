@@ -28,7 +28,7 @@ export const EmergencyGovernance = () => {
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 
-  const { isLoading: isDoormanLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB])
+  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

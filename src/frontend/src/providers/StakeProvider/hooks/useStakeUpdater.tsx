@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useSubscription } from '@apollo/client'
 import { useStakeContext } from '../stake.provider'
 
 // types
-import { AppDispatch } from 'app/App.controller'
 import {
   StakingSubscriptionsTypes,
   DOORMAN_HISTORY_SUB,
@@ -14,11 +13,6 @@ import {
   getInitialLoadingStateForFiredAction,
   StakeActionsLoaderState,
 } from '../helpers/stake.consts'
-
-// ------------------------------------------
-import { ACTION_COMPLETION_MESSAGE_TEXT, TOASTER_SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
-import { toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
-import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
 // types
 import { State } from 'reducers'
@@ -33,7 +27,8 @@ import {
 /**
  * Subscriptions are canceled on component unmount!
  * @param skip boolean, if you pass this param, the hook will be triggered only one time
- * @returns {isLoading: boolean} false if data is still loading, true if it's loaded
+ * @returns {isInitialLoading: boolean, isActionLoading: boolean} isInitialLoading is false if initial data is still loading, true if it's loaded
+ * isActionLoading is false if action update is done, true if it's in progress
  */
 export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSubscriptionsTypes> = []) => {
   const [actionLoaderState, setActionLoaderState] = useState<StakeActionsLoaderState>(STAKE_DEFAULT_LOADINGS)
@@ -45,7 +40,7 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
     updateTotalStakedMvk,
     updateUserStakeData,
     updateTotalMvkToken,
-    updateStakeActionContext,
+    updateStakeActionLoaderContext,
     action,
   } = useStakeContext()
 
@@ -57,8 +52,8 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
    * in 1st cond we check whether we have fired an action and if yes, set loading initial state for action we fired, and
    * @loadingStateUpdatedForAction means that loading state is updated to the fired action
    *
-   * in 2nd cond we check whether action state is updated to the current action and all loading indicators are set to false (means all subs are performed), and then turn of loader,
-   * show success toaster and reset action and action loading state
+   * in 2nd cond we check whether action state is updated to the current action and all loading indicators are set to false (means all subs are performed), and then
+   * change action loadingFinish to true, and in provider in componentDidUpdate turn off loader
    */
   useEffect(() => {
     if (action && !actionLoaderState.loadingStateUpdatedForAction) {
@@ -72,16 +67,7 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
       !actionLoaderState.userBalance &&
       actionLoaderState.loadingStateUpdatedForAction === action
     ) {
-      dispatch(hideToaster())
-      dispatch(
-        showToaster(
-          TOASTER_SUCCESS,
-          `${action.charAt(0).toUpperCase() + action.substring(1)} done`,
-          ACTION_COMPLETION_MESSAGE_TEXT,
-        ),
-      )
-      dispatch(toggleActionCompletion(false))
-      updateStakeActionContext('')
+      updateStakeActionLoaderContext(true)
       setActionLoaderState(STAKE_DEFAULT_LOADINGS)
     }
   }, [
@@ -91,8 +77,6 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
     actionLoaderState.userBalance,
     actionLoaderState.loadingStateUpdatedForAction,
   ])
-
-  const dispatch = useDispatch()
 
   const [shouldSkip, setShouldSkip] = useState(false)
   const isLoadAllQueries = subsciptionsList.length === 0
@@ -170,6 +154,10 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
   }, [skip, userBalanceLoading, mvkStatsloading, doormanBalanceLoading, historyLoading])
 
   return {
-    isLoading: historyLoading || userBalanceLoading || doormanBalanceLoading || mvkStatsloading,
+    isIntialLoading: historyLoading || userBalanceLoading || doormanBalanceLoading || mvkStatsloading,
+    isActionLoading:
+      action &&
+      actionLoaderState.loadingStateUpdatedForAction === action &&
+      (actionLoaderState.doormanBalance || !actionLoaderState.history || !actionLoaderState.userBalance),
   }
 }

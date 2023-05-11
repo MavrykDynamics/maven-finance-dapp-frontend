@@ -76,7 +76,7 @@ export const BecomeSatellite = () => {
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
-  const { isLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
+  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {

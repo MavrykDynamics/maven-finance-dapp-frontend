@@ -16,22 +16,26 @@ import {
 // types
 import { State, Props, StakeContext } from './stake.provider.types'
 
-// TODO move wallet to context to avoid redux logic inside Stake Context
-// redux
-import { State as ReduxState } from 'reducers'
-import { UPDATE_USER_DATA } from 'reducers/actions/user.actions'
-import { MVK_DECIMALS, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
+// consts
 import {
   TOASTER_ERROR,
   TOASTER_INFO,
   ACTION_START_MESSAGE_TEXT,
   TOASTER_LOADING,
   TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
+  ACTION_COMPLETION_MESSAGE_TEXT,
+  TOASTER_SUCCESS,
 } from 'app/App.components/Toaster/Toaster.constants'
 import { STAKE_ACTION, UNSTAKE_ACTION } from './helpers/stake.consts'
+import { MVK_DECIMALS, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+
+// TODO move wallet to context to avoid redux logic inside Stake Context
+// redux
+import { State as ReduxState } from 'reducers'
+import { UPDATE_USER_DATA } from 'reducers/actions/user.actions'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
+import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
@@ -46,14 +50,33 @@ export class StakeProviderClass extends React.Component<Props, State> {
         maximumTotalSupply: 0,
         mvkHistoryData: [],
         smvkHistoryData: [],
+        turnOfActionLoader: false,
         updateStakeHistoryData: this.updateStakeHistoryData,
         updateTotalStakedMvk: this.updateTotalStakedMvk,
         updateUserStakeData: this.updateUserStakeData,
         updateStakeActionContext: this.updateStakeActionContext,
         updateTotalMvkToken: this.updateTotalMvkToken,
+        updateStakeActionLoaderContext: this.updateStakeActionLoaderContext,
         stakeMVK: this.stakeMVK,
         unstakeMVK: this.unstakeMVK,
       },
+    }
+  }
+
+  componentDidUpdate(): void {
+    console.log({ ctx: this.state.context })
+    if (this.state.context.turnOfActionLoader) {
+      this.props.dispatch(hideToaster())
+      this.props.dispatch(
+        showToaster(
+          TOASTER_SUCCESS,
+          `${this.state.context.action.charAt(0).toUpperCase() + this.state.context.action.substring(1)} done`,
+          ACTION_COMPLETION_MESSAGE_TEXT,
+        ),
+      )
+      this.props.dispatch(toggleActionCompletion(false))
+      this.updateStakeActionContext('')
+      this.updateStakeActionLoaderContext(false)
     }
   }
 
@@ -62,6 +85,15 @@ export class StakeProviderClass extends React.Component<Props, State> {
       context: {
         ...this.state.context,
         action: newAction,
+      },
+    })
+  }
+
+  updateStakeActionLoaderContext = (newLoaderValue: boolean) => {
+    this.setState({
+      context: {
+        ...this.state.context,
+        turnOfActionLoader: newLoaderValue,
       },
     })
   }
@@ -179,6 +211,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
           .withContractCall(mvkTokenContract.methods.update_operators(removeOperators)))
       await batch?.send()
 
+      this.updateStakeActionContext(STAKE_ACTION)
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, 'Staking...', ACTION_START_MESSAGE_TEXT))
@@ -193,8 +226,6 @@ export class StakeProviderClass extends React.Component<Props, State> {
             TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
           ),
         )
-
-        this.updateStakeActionContext(STAKE_ACTION)
       }, 5000)
     } catch (error) {
       if (error instanceof Error) {
@@ -226,6 +257,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
       const contract = await tezos.wallet.at(doormanAddress)
       await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
 
+      this.updateStakeActionContext(UNSTAKE_ACTION)
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, 'Unstaking...', ACTION_START_MESSAGE_TEXT))
@@ -240,8 +272,6 @@ export class StakeProviderClass extends React.Component<Props, State> {
             TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
           ),
         )
-
-        this.updateStakeActionContext(UNSTAKE_ACTION)
       }, 5000)
     } catch (error) {
       if (error instanceof Error) {

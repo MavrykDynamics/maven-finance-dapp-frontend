@@ -15,12 +15,14 @@ export interface StakeContext {
   totalStakedMvk: number
   totalSupply: number
   maximumTotalSupply: number
+  turnOfActionLoader: boolean
   // methods
   updateStakeHistoryData: InstanceType<typeof StakeProviderClass>['updateStakeHistoryData']
   updateTotalStakedMvk: InstanceType<typeof StakeProviderClass>['updateTotalStakedMvk']
   updateUserStakeData: InstanceType<typeof StakeProviderClass>['updateUserStakeData']
   updateStakeActionContext: InstanceType<typeof StakeProviderClass>['updateStakeActionContext']
   updateTotalMvkToken: InstanceType<typeof StakeProviderClass>['updateTotalMvkToken']
+  updateStakeActionLoaderContext: InstanceType<typeof StakeProviderClass>['updateStakeActionLoaderContext']
   // actions
   stakeMVK: InstanceType<typeof StakeProviderClass>['stakeMVK']
   unstakeMVK: InstanceType<typeof StakeProviderClass>['unstakeMVK']
