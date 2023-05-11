@@ -17,6 +17,8 @@ import Button from '../Button/NewButton'
 import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
 import { Info } from '../Info/Info.view'
 import TimeRemainingSmall from 'pages/Governance/components/TimeRemaining/TimeRemainingSmall'
+import { INFO_DEFAULT } from '../Info/info.constants'
+import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 
 type VotingType = VotingProps & {
   className?: string
@@ -136,12 +138,10 @@ export const VotingProposalsArea = ({
               <Info
                 text={
                   <>
-                    Thanks for registering as a Satellite during the current governance cycle. Please note that you are
-                    unable to vote, propose, or take part in any governance as a Satellite until the next governance
-                    cycle starts in <TimeRemainingSmall />
+                    {UNREGISTERED_SATELLITE_BANNER_TEXT} <TimeRemainingSmall />
                   </>
                 }
-                type="info"
+                type={INFO_DEFAULT}
               />
             </div>
           )}

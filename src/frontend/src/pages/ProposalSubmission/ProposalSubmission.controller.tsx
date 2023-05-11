@@ -49,6 +49,8 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { Info } from 'app/App.components/Info/Info.view'
 import TimeRemainingSmall from 'pages/Governance/components/TimeRemaining/TimeRemainingSmall'
+import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
+import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 
 export const ProposalSubmission = () => {
   const lastSelectedProposalId = useRef(-1)
@@ -356,12 +358,10 @@ export const ProposalSubmission = () => {
               <Info
                 text={
                   <>
-                    Thanks for registering as a Satellite during the current governance cycle. Please note that you are
-                    unable to vote, propose, or take part in any governance as a Satellite until the next governance
-                    cycle starts in <TimeRemainingSmall />
+                    {UNREGISTERED_SATELLITE_BANNER_TEXT} <TimeRemainingSmall />
                   </>
                 }
-                type="info"
+                type={INFO_DEFAULT}
               />
             )}
 

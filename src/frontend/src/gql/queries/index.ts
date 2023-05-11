@@ -1,7 +1,6 @@
 export * from './getContractAddresses'
 export * from './getDoormanStorage'
 export * from './getSatellitesStorage'
-export * from './getSatelliteCycleData'
 export * from './getFarmStorage'
 export * from './getUserInfo'
 export * from './getEmergencyGovernanceStorage'

@@ -7,6 +7,7 @@ import { Timer } from 'app/App.components/Timer/Timer.controller'
 
 // Consts
 import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
+import { skyColor } from 'styles/colors'
 
 // Actions, helpers
 import getTimestampByLevel from 'utils/api/getTimestampByLevel'
@@ -44,7 +45,7 @@ export default function TimeRemainingSmall() {
           shownParts: ['h', 'm', 's'],
           timerView: COLON_VIEW,
           showFullDay: false,
-          defaultColor: '#77A4F2',
+          defaultColor: skyColor,
         }}
       />
     </SmallTimerWrapper>

@@ -8,6 +8,18 @@ type Props = {
   children?: React.ReactNode
 }
 
+/**
+ *
+ * @props
+ * {
+ * text: simple string or JSX.Element (you should use JSX when there is a need to add some colored text, timer etc.
+ * NOTE: no images, buttons and other similar stuff, only text)
+ *
+ * type: 'info' | 'error'
+ * child: React.ReactNode - element that is displayed on the right side of the banner (f.e. timer, button)
+ * }
+ * @returns
+ */
 export const Info = ({ children, text, type }: Props) => {
   const iconToUse = getIconForInfoTyType(type)
 
