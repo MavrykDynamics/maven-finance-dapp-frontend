@@ -44,7 +44,7 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
         <BGPrimaryTitle>Staking</BGPrimaryTitle>
         <Link to="/staking" className="dashboard-sectionLink">
           <NewButton kind={PRIMARY} form={BUTTON_WIDE}>
-            <Icon id="coin-loan" />
+            <Icon id="staking" />
             Staking
           </NewButton>
         </Link>
@@ -58,7 +58,7 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
       ) : (
         <StakingContentStyled>
           <div className="left">
-            <StatBlock className="large">
+            <StatBlock>
               <div className="name flexbox">
                 Exit Fee
                 <CustomTooltip
@@ -72,7 +72,7 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
                 <CommaNumber endingText="%" value={fee} />
               </div>
             </StatBlock>
-            <StatBlock className="large">
+            <StatBlock>
               <div className="name flexbox">
                 MVK Loyalty Index
                 <CustomTooltip

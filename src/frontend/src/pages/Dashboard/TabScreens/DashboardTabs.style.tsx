@@ -147,6 +147,10 @@ export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.textColor};
   }
 
+  .value {
+    height: 25px;
+  }
+
   .flexbox {
     display: flex;
     align-items: center;
@@ -154,12 +158,12 @@ export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
 
   .tooltip {
     display: inline-block;
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
 
     svg {
-      width: 18px;
-      height: 18px;
+      width: 14px;
+      height: 14px;
       fill: ${({ theme }) => theme.textColor};
     }
   }
