@@ -69,8 +69,6 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  console.log(feed, 'feed')
-
   const registerFeedHandler = () => dispatch(registerFeedAction())
 
   const [activeTab, setActiveTab] = useState(tabsList[0].id)

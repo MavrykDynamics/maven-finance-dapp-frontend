@@ -21,7 +21,7 @@ import {
   EmptyContainer,
   StakingHistoryChartWrapper,
 } from './DashboardTabs.style'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
@@ -41,7 +41,7 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
   return (
     <TabWrapperStyled backgroundImage="dashboard_stakingTab_bg.png">
       <div className="top">
-        <BGPrimaryTitle>Staking</BGPrimaryTitle>
+        <H2Title>Staking</H2Title>
         <Link to="/staking" className="dashboard-sectionLink">
           <NewButton kind={PRIMARY} form={BUTTON_WIDE}>
             <Icon id="staking" />
@@ -68,7 +68,6 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
                 />
               </div>
               <div className="value">
-                {/* TODO take from redux */}
                 <CommaNumber endingText="%" value={fee} />
               </div>
             </StatBlock>
@@ -82,7 +81,6 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
                 />
               </div>
               <div className="value">
-                {/* TODO take from redux */}
                 <CommaNumber endingText="%" value={mli} />
               </div>
             </StatBlock>
@@ -99,7 +97,6 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
                   height: 100,
                 }}
                 tooltipAsset={'sMVK'}
-                numberOfItemsToDisplay={5}
               />
             </StakingHistoryChartWrapper>
           </div>
