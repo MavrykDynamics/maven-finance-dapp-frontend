@@ -25,7 +25,7 @@ import { Plug } from 'app/App.components/Chart/Chart.style'
 import { PositionTableStyled } from '../LoansDashboard.styles'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { getGaugeVaultRiskSimpleStatus } from '../helpers/position.helpers'
-import { ConnectWallet } from 'app/App.components/ConnectWallet/ConnectWallet.controller'
+import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 
 export const LoansPositionTable = ({
   markets,
@@ -199,7 +199,7 @@ export const LoansPositionTable = ({
 
           {accountPkh ? null : (
             <div className="not-connected">
-              <ConnectWallet />
+              <ConnectWalletBtn />
             </div>
           )}
 

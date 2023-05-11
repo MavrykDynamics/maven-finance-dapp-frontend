@@ -1,4 +1,7 @@
-import React, { useLayoutEffect, useRef } from 'react'
+import React, { useRef, useLayoutEffect } from 'react'
+
+// hooks
+import { useInputValidator } from 'app/App.hooks/useInputValidator'
 
 import {
   TextAreaStyled,
@@ -36,7 +39,7 @@ export const TextArea = ({
   onChange,
   onBlur,
   inputStatus,
-  errorMessage,
+  errorMessage: errorMessageFromProps,
   disabled,
   required,
   label,
@@ -51,7 +54,11 @@ export const TextArea = ({
     }
   }, [value])
 
-  let status = inputStatus !== undefined ? inputStatus : 'none'
+  const { status, errorMessage, handleChange } = useInputValidator({
+    originalErrorMessage: errorMessageFromProps,
+    status: inputStatus,
+    onChange,
+  })
   return (
     <TextAreaStyled className={className} id={'textAreaContainer'}>
       {label ? <NewInputLabel>{label}</NewInputLabel> : null}
@@ -64,7 +71,7 @@ export const TextArea = ({
         <TextareaStyled
           placeholder={placeholder}
           value={value}
-          onChange={onChange}
+          onChange={handleChange}
           className={`textarea`}
           name={name}
           onBlur={onBlur}

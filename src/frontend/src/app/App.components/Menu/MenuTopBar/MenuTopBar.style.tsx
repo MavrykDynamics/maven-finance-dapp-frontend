@@ -153,17 +153,15 @@ export const MobileTopBarStyled = styled.div<{ show: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 30px;
+  padding: 30px 0;
   overflow-y: scroll;
 
   &::-webkit-scrollbar {
     display: none; /* Safari and Chrome */
   }
 
-  #connectWalletButton {
-    height: fit-content;
-    margin: 20px auto 30px auto;
-    width: fit-content;
+  .connect-wallet {
+    margin-bottom: 30px;
   }
 
   .container {
@@ -183,6 +181,7 @@ export const MobileTopBarStyled = styled.div<{ show: boolean }>`
       svg {
         width: 35px;
         height: 35px;
+        fill: ${({ theme }) => theme.textColor};
       }
     }
   }

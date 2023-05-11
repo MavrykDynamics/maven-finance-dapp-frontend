@@ -35,6 +35,10 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     margin: 30px auto 0 auto;
   }
 
+  .repayFull-banner {
+    margin-top: 30px;
+  }
+
   .buttons-wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;
