@@ -13,7 +13,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { UserActionHistory } from './UserOperationsHistory'
 import { DashboardCardHeader } from '../DashboardPersonal.style'
-import { ConnectWallet } from 'app/App.components/ConnectWallet/ConnectWallet.controller'
+import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 const DelegationTab = () => {
@@ -132,7 +132,7 @@ const DelegationTab = () => {
         ) : (
           <div className="no-data">
             <div className="nav-button">
-              <ConnectWallet />
+              <ConnectWalletBtn />
             </div>
           </div>
         )}

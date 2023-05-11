@@ -317,25 +317,18 @@ export const getChartData = (
 
 // GET LENDING ITEM FOR MARKET
 export const getLendingItem = (
-  loanToken: Lending_Controller_Loan_Token,
+  mTokenAddress: string | null,
   userMTokens: UserState['userMTokens'],
-  loanTokenDecimals: number,
-  interestRateDecimals: number,
   accountPkh?: string,
 ): LendingItemType => {
-  if (userMTokens && loanToken && accountPkh) {
-    const mTokenAsset = userMTokens?.find(
-      ({ m_token_id, m_token: { loan_token_name } }) =>
-        m_token_id === loanToken.loan_token_address || loan_token_name === loanToken.loan_token_name,
-    )
+  if (userMTokens && mTokenAddress && accountPkh) {
+    const mTokenAsset = userMTokens?.find(({ tokenAddress }) => tokenAddress === mTokenAddress)
 
     if (mTokenAsset) {
       return {
-        lendValue: Number(mTokenAsset.balance) / 10 ** loanTokenDecimals,
-        interestEarned: Number(mTokenAsset.rewards_earned) / 10 ** interestRateDecimals / 10 ** loanTokenDecimals,
-        mBalance:
-          Number(mTokenAsset.balance) / 10 ** loanTokenDecimals +
-          Number(mTokenAsset.rewards_earned) / 10 ** interestRateDecimals / 10 ** loanTokenDecimals,
+        lendValue: mTokenAsset.balance,
+        interestEarned: mTokenAsset.rewards_earned,
+        mBalance: mTokenAsset.balance + mTokenAsset.rewards_earned,
       }
     }
   }

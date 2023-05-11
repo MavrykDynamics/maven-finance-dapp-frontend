@@ -12,7 +12,7 @@ import { VotingAreaStyled, VotingButtonsContainer } from './VotingArea.style'
 // view
 import { VotingBar } from './VotingBar.controller'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
-import { ConnectWallet } from '../ConnectWallet/ConnectWallet.controller'
+import ConnectWalletBtn from '../ConnectWallet/ConnectWalletBtn'
 import Button from '../Button/NewButton'
 import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
 
@@ -75,7 +75,7 @@ export const VotingArea = ({
       </VotingButtonsContainer>
     ) : null
   ) : (
-    <ConnectWallet />
+    <ConnectWalletBtn />
   )
 
   return (
@@ -123,7 +123,7 @@ export const VotingProposalsArea = ({
               Vote for this Proposal
             </Button>
           ) : (
-            <ConnectWallet />
+            <ConnectWalletBtn />
           )}
         </div>
       </VotingAreaStyled>
