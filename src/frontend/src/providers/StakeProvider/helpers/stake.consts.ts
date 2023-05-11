@@ -10,4 +10,24 @@ export type StakingSubscriptionsTypes =
 // CONSTS FOR STAKE ACTIONS
 export const STAKE_ACTION = 'stake'
 export const UNSTAKE_ACTION = 'unstake'
-export type StakingActionTypes = typeof STAKE_ACTION | typeof UNSTAKE_ACTION
+export type StakingActionTypes = typeof STAKE_ACTION | typeof UNSTAKE_ACTION | ''
+
+// CONST FOR ACTION LOADING
+export const STAKE_DEFAULT_LOADINGS = {
+  history: false,
+  userBalance: false,
+  doormanBalance: false,
+  loadingStateUpdatedForAction: false,
+}
+
+export const getInitialLoadingStateForFiredAction = (actionName: StakingActionTypes) => {
+  if (actionName === STAKE_ACTION || actionName === UNSTAKE_ACTION) {
+    return {
+      history: true,
+      userBalance: true,
+      doormanBalance: true,
+    }
+  }
+
+  return STAKE_DEFAULT_LOADINGS
+}

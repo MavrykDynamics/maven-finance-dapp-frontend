@@ -10,6 +10,8 @@ import {
   DOORMAN_HISTORY_SUB,
   DOORMAN_STATS_SUB,
   USER_MVK_BALANCE_SUB,
+  STAKE_DEFAULT_LOADINGS,
+  getInitialLoadingStateForFiredAction,
 } from '../helpers/stake.consts'
 
 // ------------------------------------------
@@ -33,6 +35,8 @@ import {
  * @returns {isLoading: boolean} false if data is still loading, true if it's loaded
  */
 export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSubscriptionsTypes> = []) => {
+  const [actionLoaderState, setActionLoaderState] = useState(STAKE_DEFAULT_LOADINGS)
+
   const { doormanAddress } = useSelector((state: State) => state.contractAddresses)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
@@ -43,6 +47,37 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
     updateStakeActionContext,
     action,
   } = useStakeContext()
+
+  useEffect(() => {
+    if (action && !actionLoaderState.loadingStateUpdatedForAction) {
+      setActionLoaderState({ ...getInitialLoadingStateForFiredAction(action), loadingStateUpdatedForAction: true })
+    }
+
+    if (
+      !actionLoaderState.doormanBalance &&
+      !actionLoaderState.history &&
+      !actionLoaderState.userBalance &&
+      actionLoaderState.loadingStateUpdatedForAction
+    ) {
+      dispatch(hideToaster())
+      dispatch(
+        showToaster(
+          TOASTER_SUCCESS,
+          `${action.charAt(0).toUpperCase() + action.substring(1)} done`,
+          ACTION_COMPLETION_MESSAGE_TEXT,
+        ),
+      )
+      dispatch(toggleActionCompletion(false))
+      updateStakeActionContext('')
+      setActionLoaderState(STAKE_DEFAULT_LOADINGS)
+    }
+  }, [
+    action,
+    actionLoaderState.doormanBalance,
+    actionLoaderState.history,
+    actionLoaderState.userBalance,
+    actionLoaderState.loadingStateUpdatedForAction,
+  ])
 
   const dispatch = useDispatch()
 
@@ -58,6 +93,7 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
       }
       if (data) {
         updateStakeHistoryData(data)
+        setActionLoaderState({ ...actionLoaderState, history: false })
       }
     },
   })
@@ -74,6 +110,7 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
       }
       if (data) {
         updateTotalStakedMvk(data)
+        setActionLoaderState({ ...actionLoaderState, doormanBalance: false })
       }
     },
     shouldResubscribe: true,
@@ -106,41 +143,18 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
       }
       if (data) {
         updateUserStakeData(data)
+        setActionLoaderState({ ...actionLoaderState, userBalance: false })
       }
     },
     shouldResubscribe: true,
   })
 
+  // Effect to load data 1 time and then skip loading, cuz loading returned from useSubscription si only for initial loading
   useEffect(() => {
-    // to update data only one time
     if (!userBalanceLoading && !mvkStatsloading && !doormanBalanceLoading && !historyLoading && skip) {
       setShouldSkip(true)
     }
-
-    // TODO: do it after data is updated after action completion
-    // show toaster after action completion
-    if (action) {
-      dispatch(hideToaster())
-      dispatch(
-        showToaster(
-          TOASTER_SUCCESS,
-          `${action.charAt(0).toUpperCase() + action.substring(1)} done`,
-          ACTION_COMPLETION_MESSAGE_TEXT,
-        ),
-      )
-      dispatch(toggleActionCompletion(false))
-      updateStakeActionContext('')
-    }
-  }, [
-    skip,
-    action,
-    userBalanceLoading,
-    mvkStatsloading,
-    doormanBalanceLoading,
-    historyLoading,
-    dispatch,
-    updateStakeActionContext,
-  ])
+  }, [skip, userBalanceLoading, mvkStatsloading, doormanBalanceLoading, historyLoading])
 
   return {
     isLoading: historyLoading || userBalanceLoading || doormanBalanceLoading || mvkStatsloading,
