@@ -167,5 +167,6 @@ export const SatelliteProfileDetails = styled.div<{ theme: MavrykTheme }>`
 
   svg {
     margin-right: -10px;
+    stroke: ${({ theme }) => theme.actionPrimaryBtnColor};
   }
 `

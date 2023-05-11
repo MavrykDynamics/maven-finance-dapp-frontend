@@ -1,20 +1,23 @@
-import { useState, useCallback } from 'react'
+import React from 'react'
 import { BUTTON_SIMPLE } from '../Button/Button.constants'
 import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 
-// consts
-import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
-
-// helpers
-import { validateAsciiInput } from './helpers/validateAsciiInput'
-import { hasSpaces } from './helpers/hasSpaces'
+// hooks
+import { useInputValidator } from 'app/App.hooks/useInputValidator'
 
 // types
 import { InputViewProps } from './newInput.type'
 
 // styles
-import { InputPinnedChild, InputStyledStatus, InputWrapper, NewInputLabel, StyledInput } from './Input.style'
+import {
+  InputPinnedChild,
+  InputStyledStatus,
+  InputWrapper,
+  NewInputLabel,
+  StyledInput,
+  InputErrorMessage,
+} from './Input.style'
 
 export const Input = ({
   children,
@@ -31,28 +34,17 @@ export const Input = ({
     balanceName = 'Balance',
     inputStatus,
     inputSize,
+    errorMessage: errorMessageFromProps,
   },
 }: InputViewProps) => {
-  const [hasError, sethasError] = useState(false)
-
-  const internalInputStatus = hasError ? INPUT_STATUS_ERROR : inputStatus
-
-  const onChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target
-      if (validateAsciiInput(value) && !hasSpaces(value)) {
-        if (hasError) sethasError(false)
-      } else {
-        if (!hasError) sethasError(true)
-      }
-
-      inputProps.onChange(e)
-    },
-    [hasError, inputProps.onChange],
-  )
+  const { status, errorMessage, handleChange } = useInputValidator({
+    originalErrorMessage: errorMessageFromProps,
+    status: inputStatus,
+    onChange: inputProps.onChange,
+  })
 
   return (
-    <InputWrapper className={`${className} ${internalInputStatus} ${inputSize}`} id={'inputStyled'}>
+    <InputWrapper className={`${className} ${status} ${inputSize}`} id={'inputStyled'}>
       {label ? (
         <NewInputLabel>
           {label}
@@ -63,11 +55,11 @@ export const Input = ({
 
       <StyledInput
         {...inputProps}
-        onChange={onChange}
-        className={`${internalInputStatus} ${children ? 'remove-right-border-radius' : ''}`}
+        onChange={handleChange}
+        className={`${status} ${children ? 'remove-right-border-radius' : ''}`}
         autoComplete={'off'}
       />
-      {Boolean(children) ? null : <InputStyledStatus className={`${internalInputStatus} ${inputSize}`} />}
+      {Boolean(children) ? null : <InputStyledStatus className={`${status} ${inputSize}`} />}
 
       {balance !== undefined && balanceAsset ? (
         <div onClick={balanceHandler}>
@@ -93,6 +85,7 @@ export const Input = ({
       ) : null}
 
       {children && <InputPinnedChild className="pinned-child">{children}</InputPinnedChild>}
+      {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
     </InputWrapper>
   )
 }
