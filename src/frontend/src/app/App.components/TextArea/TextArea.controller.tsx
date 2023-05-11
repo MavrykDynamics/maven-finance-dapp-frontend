@@ -81,12 +81,13 @@ export const TextArea = ({
           required={required}
         />
       </div>
-
-      <TextAreaCounter className={status}>
-        {String(value).length}/{textAreaMaxLimit}
-      </TextAreaCounter>
+      <div className="info-error">
+        {errorMessage && <TextAreaErrorMessage>{errorMessage}</TextAreaErrorMessage>}
+        <TextAreaCounter className={status}>
+          {String(value).length}/{textAreaMaxLimit}
+        </TextAreaCounter>
+      </div>
       <TextAreaStatus className={status} />
-      {errorMessage && <TextAreaErrorMessage>{errorMessage}</TextAreaErrorMessage>}
     </TextAreaStyled>
   )
 }
