@@ -109,15 +109,18 @@ export const LendingTabListItem = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.backgroundColor};
+  position: relative;
+  padding: 30px;
+  column-gap: 20px;
+
+  display: grid;
+  grid-template-columns: 450px auto;
+
+  background-color: ${({ theme }) => theme.containerColor};
+  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
   border-radius: 10px;
   border-top-right-radius: 0;
   border-top-left-radius: 0;
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  cursor: default;
 
   &.more-padding {
     padding-bottom: 80px;
@@ -231,6 +234,94 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     bottom: 20px;
   }
 `
+
+export const BorrowingTabListItemSection = styled.div<{ theme: MavrykTheme }>`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 30px;
+  row-gap: 60px;
+  padding: 30px;
+
+  background-color: ${({ theme }) => theme.backgroundColor};
+  border-radius: 10px;
+`
+
+export const BorrowingTabListItemSectionInfo = styled.div<{
+  theme: MavrykTheme
+  hasRate?: boolean
+  customColor?: string
+}>`
+  p {
+    margin: 0;
+  }
+
+  .name {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 27px;
+
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  .value {
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 40px;
+
+    color: ${({ theme }) => theme.dataColor};
+  }
+
+  .rate {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 18px;
+
+    visibility: ${({ theme }) => (theme.hasRate ? 'visible' : 'hidden')};
+    color: ${({ theme }) => theme.dataColor};
+  }
+
+  .margin-top {
+    margin-top: 18px;
+  }
+
+  &.learn-more {
+    grid-column: 1 / 3;
+    grid-row: 5;
+
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
+
+    a {
+      color: ${({ theme }) => theme.valueColor};
+    }
+  }
+
+  &.collateral-diagram {
+    grid-column: 1 / 3;
+    grid-row: 4;
+
+    .percentage {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      margin-bottom: 7px;
+      color: ${({ theme, customColor }) => customColor ?? theme.textColor};
+
+      p {
+        margin-left: 5px;
+      }
+    }
+
+    .copyIcon {
+      font-weight: 600;
+    }
+  }
+`
+
 export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;

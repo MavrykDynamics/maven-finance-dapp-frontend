@@ -296,7 +296,7 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const VaultHeader = styled.div<{ theme: MavrykTheme }>`
+export const BorrowingTabListItemHeader = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
   column-gap: 15px;

@@ -35,8 +35,12 @@ import { scrollToFullView } from 'utils/scrollToFullView'
 import { assetDecimalsToShow } from '../Loans.const'
 
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
-import { ThreeLevelListItem, VaultHeader } from '../Loans.style'
-import { BorrowingTabListItemExpanded } from './LoansComponents.style'
+import { ThreeLevelListItem, BorrowingTabListItemHeader } from '../Loans.style'
+import {
+  BorrowingTabListItemExpanded,
+  BorrowingTabListItemSection,
+  BorrowingTabListItemSectionInfo,
+} from './LoansComponents.style'
 
 import { loansPopupsContext } from './Modals/LoansModals.provider'
 
@@ -180,61 +184,13 @@ export const BorrowingExpandCard = ({
         getExpandedStatus={setExpanded}
         isExpandedByDefault={expanded}
         className={`expand-borrow-tab  ${expanded ? 'expandedCard' : ''}`}
-        sufix={headerSufix}
+        openButtonName={'View'}
         header={
-          <VaultHeader>
+          <BorrowingTabListItemHeader>
             <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
             <div className="name">{name ? name : borrowedAsset.symbol}</div>
-            <span className='change'>Change</span>
-            {/* <ThreeLevelListItem className="borrow-asset-header">
-              <div className="data">
-                <div className="value">
-                  <TzAddress tzAddress={address} shouldCopy hasIcon amountFromStart={4} amountFromEnd={4} />
-                </div>
-              </div>
-            </ThreeLevelListItem>
-            <ThreeLevelListItem
-              className="collateral-diagram"
-              customColor={getCollateralRationPersent(collateralRatio)}
-            >
-              <div className={`percentage`}>
-                Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
-              </div>
-              <GradientDiagram
-                className="diagram"
-                colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
-              />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">Outstanding Debt</div>
-              <CommaNumber
-                value={borrowedAmount + fee}
-                className="value"
-                showDecimal
-                decimalsToShow={borrowedAsset.decimals}
-              />
-              {rate ? (
-                <CommaNumber
-                  value={(borrowedAmount + fee) * rate}
-                  beginningText="$"
-                  className="rate"
-                  showDecimal
-                  decimalsToShow={borrowedAsset.decimals}
-                />
-              ) : null}
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">Collateral amount</div>
-              <CommaNumber
-                value={collateralBalance}
-                className="value"
-                beginningText="$"
-                showDecimal
-                decimalsToShow={2}
-              />
-            </ThreeLevelListItem> */}
-          </VaultHeader>
+            <span className="change">Change</span>
+          </BorrowingTabListItemHeader>
         }
       >
         {children || (
@@ -245,383 +201,106 @@ export const BorrowingExpandCard = ({
           >
             {vaultStatus && <StatusMessage status={vaultStatus} timestamp={timerTimestamp} />}
 
-            <div className="block-name">Borrowed</div>
-            <div className="borrowed-data">
-              <ThreeLevelListItem>
-                <div className="name">Asset</div>
-                <div className="value">
-                  <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
-                  {borrowedAsset.symbol}
-                </div>
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Principal</div>
-                <CommaNumber value={borrowedAmount} decimalsToShow={borrowedAsset.decimals} className="value" />
-                {rate ? (
-                  <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
-                ) : null}
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
+            <BorrowingTabListItemSection>
+              <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+                <CommaNumber
+                  value={borrowedAmount + fee}
+                  className="value"
+                  showDecimal
+                  decimalsToShow={borrowedAsset.decimals}
+                />
+
+                <CommaNumber
+                  value={(borrowedAmount + fee) * rate}
+                  beginningText="$"
+                  className="rate"
+                  showDecimal
+                  decimalsToShow={borrowedAsset.decimals}
+                />
+
                 <div className="name">
-                  Accrued Interest{' '}
+                  Outstanding Debt
+                  <CustomTooltip iconId="info" text="something" defaultStrokeColor={colors[themeSelected].textColor} />
+                </div>
+              </BorrowingTabListItemSectionInfo>
+
+              <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+                <CommaNumber value={borrowedAmount} decimalsToShow={borrowedAsset.decimals} className="value" />
+                <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
+                <div className="name">Principal</div>
+              </BorrowingTabListItemSectionInfo>
+
+              <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+                <CommaNumber
+                  value={collateralBalance}
+                  className="value"
+                  beginningText="$"
+                  showDecimal
+                  decimalsToShow={2}
+                />
+                <div className="name margin-top">
+                  Collateral value
+                  <CustomTooltip iconId="info" text="something" defaultStrokeColor={colors[themeSelected].textColor} />
+                </div>
+              </BorrowingTabListItemSectionInfo>
+
+              <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+                <CommaNumber value={fee} decimalsToShow={borrowedAsset.decimals} className="value" />
+                <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
+                <div className="name">
+                  Accrued Interest
                   <CustomTooltip
                     iconId="info"
                     text="Interest, compounded over time every time you borrow"
                     defaultStrokeColor={colors[themeSelected].textColor}
                   />
                 </div>
-                <CommaNumber value={fee} decimalsToShow={borrowedAsset.decimals} className="value" />
-                {rate ? <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" /> : null}
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">APR</div>
+              </BorrowingTabListItemSectionInfo>
+
+              <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
                 <CommaNumber value={apr} decimalsToShow={2} className="value" endingText="%" />
-              </ThreeLevelListItem>
-              {isOwner ? (
-                <div className="buttons-wrapper">
-                  <Button
-                    onClick={() =>
-                      openBorrowPopup?.({
-                        vaultId,
-                        borrowedAsset: borrowedAsset,
-                        collateralRatio,
-                        borrowAPR: apr,
-                        currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                        hasUserBorrowed: Boolean(borrowedAmount),
-                        borrowCapacity,
-                        currentBorrowedAmount: borrowedAmount,
-                        DAOFee,
-                        scrollToCurrentVault,
-                      })
-                    }
-                    kind={BUTTON_PRIMARY}
-                    form={BUTTON_WIDE}
-                    disabled={collateralRatio <= 201 || isActionActive}
-                  >
-                    <Icon id="coin-loan" /> Borrow
-                  </Button>
-                  <Button
-                    onClick={() =>
-                      openRepayPopup?.({
-                        vaultId,
-                        vaultAddress: address,
-                        borrowedAsset: borrowedAsset,
-                        borrowedAmount,
-                        feesAmount: fee,
-                        minimumRepay,
-                        currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                        borrowCapacity,
-                        scrollToCurrentVault,
-                      })
-                    }
-                    kind={BUTTON_SECONDARY}
-                    form={BUTTON_WIDE}
-                    disabled={!borrowedAmount || isActionActive}
-                  >
-                    <Icon id="okIcon" /> Repay
-                  </Button>
+                <div className="name margin-top">
+                  APR
+                  <CustomTooltip iconId="info" text="something" defaultStrokeColor={colors[themeSelected].textColor} />
                 </div>
-              ) : null}
-            </div>
+              </BorrowingTabListItemSectionInfo>
 
-            {isOwner || (!isOwner && collateralData.length) ? (
-              <>
-                <div className="block-name margin-top">Collateral In Vault</div>
-                <Table
-                  className={`no-margin borrowing-table ${isOwner && collateralData.length <= 2 ? 'show-before' : ''}`}
-                >
-                  {collateralData.length ? (
-                    <TableHeader className={`simple-header collateral `}>
-                      <TableRow>
-                        <TableHeaderCell>Asset</TableHeaderCell>
-                        <TableHeaderCell>Amount</TableHeaderCell>
-                        <TableHeaderCell>Collateral Share</TableHeaderCell>
-                      </TableRow>
-                    </TableHeader>
-                  ) : null}
-
-                  <TableBody>
-                    {collateralData.map(({ icon, amount, rate, gqlName, symbol }, idx) => {
-                      const isTotalRow = collateralData.length - 1 === idx
-
-                      const collateralShare = isTotalRow
-                        ? 100
-                        : getNumberInBounds(0, 100, calculateCollateralShare(amount * rate, collateralTotalBalance))
-
-                      if (isTotalRow && collateralData.length < 3) return null
-
-                      return (
-                        <TableRow rowHeight={65} key={gqlName + '-' + idx}>
-                          <TableCell width={'22%'} className="vert-middle">
-                            {isTotalRow ? (
-                              'Total'
-                            ) : (
-                              <div className="cell-content row with-icon">
-                                <ImageWithPlug imageLink={icon} alt={`${gqlName} icon`} />
-                                {symbol}
-                              </div>
-                            )}
-                          </TableCell>
-
-                          <TableCell width={'22%'}>
-                            <div className="cell-content">
-                              <CommaNumber
-                                value={amount}
-                                className="value"
-                                showDecimal
-                                decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
-                                beginningText={isTotalRow ? '$' : ''}
-                              />
-                              {rate ? (
-                                <CommaNumber value={amount * rate} className="rate" beginningText="$" showDecimal />
-                              ) : null}
-                            </div>
-                          </TableCell>
-                          <TableCell width={'22%'}>
-                            <div className="cell-content">
-                              <CommaNumber value={collateralShare} className="value" endingText="%" />
-                            </div>
-                          </TableCell>
-                          {isTotalRow ? (
-                            <TableCell className="buttons borrowing total">
-                              <div className="cell-content row">
-                                {isOwner ? (
-                                  <Button
-                                    onClick={() =>
-                                      openAddNewCollateralPopup?.({
-                                        vaultAddress: address,
-                                        vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                                        currentCollateralRatio: collateralRatio,
-                                        borrowedAmount,
-                                        existingCollaterals: collateralData,
-                                        borrowedAssetRate: borrowedAsset.rate,
-                                        borrowCapacity,
-                                        avaliableLiq,
-                                      })
-                                    }
-                                    kind={BUTTON_PRIMARY}
-                                    form={BUTTON_WIDE}
-                                    disabled={
-                                      avaliableCollaterals.length === 0 ||
-                                      avaliableCollaterals.length === collateralData.length - 1 ||
-                                      isActionActive
-                                    }
-                                  >
-                                    <Icon id="plus" /> Add Collateral
-                                  </Button>
-                                ) : null}
-                              </div>
-                            </TableCell>
-                          ) : (
-                            <TableCell className={`buttons borrowing ${!isOwner ? 'single-btn' : ''}`}>
-                              <div className="cell-content row">
-                                <Button
-                                  onClick={() =>
-                                    openAddExistingCollateralPopup?.({
-                                      vaultAddress: address,
-                                      vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                                      selectedAsset: collateralData[idx],
-                                      currentCollateralRatio: collateralRatio,
-                                      borrowedAmount,
-                                      borrowedAssetRate: borrowedAsset.rate,
-                                      borrowCapacity,
-                                      avaliableLiq,
-                                    })
-                                  }
-                                  form={BUTTON_WIDE}
-                                  kind={BUTTON_SECONDARY}
-                                  disabled={isActionActive}
-                                >
-                                  <Icon id="plus" /> Add
-                                </Button>
-                                {isOwner ? (
-                                  <Button
-                                    onClick={() =>
-                                      openWithdrawCollateralPopup?.({
-                                        vaultAddress: address,
-                                        currentCollateralBalance: amount,
-                                        vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                                        selectedAsset: collateralData[idx],
-                                        currentCollateralRatio: collateralRatio,
-                                        borrowedAmount,
-                                        borrowedAssetRate: borrowedAsset.rate,
-                                      })
-                                    }
-                                    form={BUTTON_WIDE}
-                                    kind={BUTTON_SECONDARY}
-                                    disabled={collateralRatio <= 200 || isActionActive}
-                                  >
-                                    <Icon id="minus" /> Remove
-                                  </Button>
-                                ) : null}
-                              </div>
-                            </TableCell>
-                          )}
-                        </TableRow>
-                      )
-                    })}
-                  </TableBody>
-                </Table>
-                {collateralData.length < 3 && isOwner ? (
-                  <div className="add-first-collateral">
-                    <Button
-                      onClick={() =>
-                        openAddNewCollateralPopup?.({
-                          vaultAddress: address,
-                          vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                          currentCollateralRatio: collateralRatio,
-                          borrowedAmount,
-                          existingCollaterals: collateralData,
-                          borrowedAssetRate: borrowedAsset.rate,
-                          avaliableLiq,
-                          borrowCapacity,
-                        })
-                      }
-                      kind={BUTTON_PRIMARY}
-                      form={BUTTON_WIDE}
-                      isThin
-                      disabled={
-                        avaliableCollaterals.length === 0 ||
-                        avaliableCollaterals.length === collateralData.length - 1 ||
-                        isActionActive
-                      }
-                    >
-                      <Icon id="plus" /> Add Collateral
-                    </Button>
-                  </div>
-                ) : null}
-              </>
-            ) : null}
-
-            {isOwner ? (
-              <>
-                {vaultHasXtzCollateral || vaultHasSmvkCollateral ? (
-                  <div className="block-name margin-top">Delegations</div>
-                ) : null}
-
-                {vaultHasXtzCollateral ? (
-                  <div className="bottom-info-row">
-                    <div className="name">XTZ Delegated to </div>
-                    <div className="value">
-                      {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'Not Delegated'}
-                    </div>
-                    <Button
-                      kind={BUTTON_SIMPLE}
-                      disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName)) || isActionActive}
-                      onClick={() =>
-                        openChangeBakerPopup?.({
-                          bakerAddress: xtzDelegatedTo,
-                          vaultAddress: address,
-                        })
-                      }
-                    >
-                      Change Baker <Icon id="paginationArrowLeft" />
-                    </Button>
-                  </div>
-                ) : null}
-
-                {vaultHasSmvkCollateral ? (
-                  <div className="bottom-info-row">
-                    <div className="name">sMVK Delegated to </div>
-                    <div className="value">
-                      {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
-                    </div>
-                    <Link
-                      to={sMVKDelegatedTo ? `/satellites/satellite-details/${sMVKDelegatedTo}` : '/satellite-nodes'}
-                    >
-                      <Button kind={BUTTON_SIMPLE}>
-                        View Satellite <Icon id="paginationArrowLeft" />
-                      </Button>
-                    </Link>
-                  </div>
-                ) : null}
-
-                <div
-                  className={`block-name ${
-                    vaultHasXtzCollateral || vaultHasSmvkCollateral ? 'margin-top-20' : 'margin-top'
-                  }`}
-                >
-                  Permissions (Advanced)
+              <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+                <CommaNumber
+                  value={borrowCapacity}
+                  className="value"
+                  beginningText="$"
+                  showDecimal
+                  decimalsToShow={2}
+                />
+                <div className="name margin-top">
+                  Borrow Capacity
+                  <CustomTooltip iconId="info" text="something" defaultStrokeColor={colors[themeSelected].textColor} />
                 </div>
-                <div className="bottom-info-row">
-                  <div className="name">
-                    Depositors{' '}
-                    <CustomTooltip
-                      iconId="info"
-                      text="Depositors are tz and KT addresses that are allowed to deposit tokens and XTZ into your vault. For instance, if you delegate your XTZ to a bakery, you should add the bakery’s payout address as a a depositor so your vault can receive its delegation rewards."
-                      defaultStrokeColor={colors[themeSelected].textColor}
-                    />
-                  </div>
-                  <div className="value">
-                    {deporsitorsFlag === ANY_USER ? 'Allow Any' : null}
-                    {deporsitorsFlag === NONE_USER ? 'Vault Owner' : null}
-                    {deporsitorsFlag === WHITELIST_USERS ? 'Defined Accounts' : null}
-                  </div>
+              </BorrowingTabListItemSectionInfo>
 
-                  <Button
-                    kind={BUTTON_SIMPLE}
-                    onClick={() =>
-                      openManagePermissionsPopup?.({
-                        vaultAddress: address,
-                        deporsitorsFlag,
-                        depositors,
-                      })
-                    }
-                    disabled={isActionActive}
-                  >
-                    Update <Icon id="paginationArrowLeft" />
-                  </Button>
+              <BorrowingTabListItemSectionInfo
+                className="collateral-diagram"
+                customColor={getCollateralRationPersent(collateralRatio)}
+              >
+                <div className="percentage">
+                  Collateral Ratio:
+                  <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
                 </div>
-                {vaultHasSmvkCollateral ? (
-                  <div className="bottom-info-row">
-                    <div className="name">
-                      MVK Operators{' '}
-                      <CustomTooltip
-                        iconId="info"
-                        text="MVK operators are tz or KT addresses that you allow to perform specific actions with your tokens. Only use this if you know exactly what you are doing. By default, you have to allow the vault to do an operator of your sMVK so it can execute its required functions."
-                        defaultStrokeColor={colors[themeSelected].textColor}
-                      />
-                    </div>
-                    <div className="value">
-                      {mappedMVKOperators.firstAddress
-                        ? <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={BLUE} /> +
-                          ` ${mappedMVKOperators.amount ?? ''}`
-                        : 'None'}
-                    </div>
-                    <Button
-                      kind={BUTTON_SIMPLE}
-                      disabled={true || isActionActive}
-                      onClick={() => openUpdateMvkOperatorsPopup?.({})}
-                    >
-                      Update <Icon id="paginationArrowLeft" />
-                    </Button>
-                  </div>
-                ) : null}
+                <GradientDiagram
+                  colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+                  currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
+                />
+              </BorrowingTabListItemSectionInfo>
 
-                <div className="repay-full">
-                  <Button
-                    disabled={true || !borrowedAmount || isActionActive}
-                    isThin
-                    kind={BUTTON_SECONDARY}
-                    onClick={() =>
-                      openRepayFullPopup?.({
-                        vaultId,
-                        vaultAddress: address,
-                        borrowedAsset: borrowedAsset,
-                        collateralRatio,
-                        borrowedAmount,
-                        feesAmount: fee,
-                        minimumRepay,
-                        currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                        borrowCapacity,
-                      })
-                    }
-                  >
-                    <Icon id="navigation-menu_close" /> Repay Loan in Full
-                  </Button>
-                </div>
-              </>
-            ) : null}
+              <BorrowingTabListItemSectionInfo className="learn-more">
+                <a href="" target="_blank" rel="noreferrer">
+                  Learn more at the Mavryk Docs
+                </a>
+              </BorrowingTabListItemSectionInfo>
+            </BorrowingTabListItemSection>
+
+            <BorrowingTabListItemSection></BorrowingTabListItemSection>
           </BorrowingTabListItemExpanded>
         )}
       </Expand>
