@@ -44,8 +44,8 @@ export const BorrowingTab = ({ lendingControllerAddress, currentToken }: Borrowi
         const vault = vaultsMapper[vaultId]
 
         return showZeroVaults
-          ? gqlName === vault.borrowedAsset.gqlName
-          : gqlName === vault.borrowedAsset.gqlName && (vault.collateralBalance || vault.borrowedAmount)
+          ? gqlName === vault.borrowedAsset.gqlName && (vault.collateralBalance || vault.borrowedAmount)
+          : gqlName === vault.borrowedAsset.gqlName
       }),
     [gqlName, myVaultsIds, showZeroVaults, vaultsMapper],
   )

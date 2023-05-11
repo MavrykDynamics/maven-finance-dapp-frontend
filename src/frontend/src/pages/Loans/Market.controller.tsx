@@ -15,7 +15,6 @@ import { BorrowingTab } from './Components/BorrowingTab'
 import { LendingTab } from './Components/LendingTab'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-import { TransactionHistory } from './Components/TransactionHistory'
 
 // styles
 import { Page } from 'styles'
@@ -214,8 +213,6 @@ export const Market = () => {
         {tabId === BORROW_TAB_ID ? (
           <BorrowingTab lendingControllerAddress={loansControllerAddress} currentToken={currentToken} />
         ) : null}
-
-        <TransactionHistory currentToken={currentToken} />
       </MarketStyled>
     </Page>
   )
