@@ -327,6 +327,21 @@ export const BorrowingTabListItemSectionInfo = styled.div<{
   }
 `
 
+export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  row-gap: 30px;
+
+  background-color: ${({ theme }) => theme.backgroundColor};
+  border-radius: 10px;
+
+  .tab-header {
+    display: grid;
+    grid-template-columns: auto 250px;
+  }
+`
+
 export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
