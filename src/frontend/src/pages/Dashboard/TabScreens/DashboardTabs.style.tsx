@@ -14,7 +14,7 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
   background-position: right bottom;
   border: 1px solid ${({ theme }) => theme.cardBorderColor};
   border-radius: 10px;
-  height: 530px;
+  height: 579px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -59,16 +59,16 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
     max-width: 600px;
 
     .title {
-      font-weight: 700;
+      font-weight: 600;
       font-size: 18px;
-      line-height: 18px;
+      line-height: 27px;
       color: ${({ theme }) => theme.textColor};
     }
 
     .text {
       font-weight: 500;
-      font-size: 14px;
-      line-height: 21px;
+      font-size: 16px;
+      line-height: 24px;
 
       a {
         color: ${cyanColor};
