@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useLayoutEffect } from 'react'
 
 // hooks
 import { useInputValidator } from 'app/App.hooks/useInputValidator'
@@ -47,6 +47,13 @@ export const TextArea = ({
 }: TextAreaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
+  useLayoutEffect(() => {
+    if (textareaRef && textareaRef.current) {
+      const scrollHeight = textareaRef.current.scrollHeight
+      textareaRef.current.style.height = Math.max(scrollHeight, 85) + 'px'
+    }
+  }, [value])
+
   const { status, errorMessage, handleChange } = useInputValidator({
     originalErrorMessage: errorMessageFromProps,
     status: inputStatus,
@@ -74,12 +81,13 @@ export const TextArea = ({
           required={required}
         />
       </div>
-
-      <TextAreaCounter className={status}>
-        {String(value).length}/{textAreaMaxLimit}
-      </TextAreaCounter>
+      <div className="info-error">
+        {errorMessage && <TextAreaErrorMessage>{errorMessage}</TextAreaErrorMessage>}
+        <TextAreaCounter className={status}>
+          {String(value).length}/{textAreaMaxLimit}
+        </TextAreaCounter>
+      </div>
       <TextAreaStatus className={status} />
-      {errorMessage && <TextAreaErrorMessage>{errorMessage}</TextAreaErrorMessage>}
     </TextAreaStyled>
   )
 }

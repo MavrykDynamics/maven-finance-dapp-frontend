@@ -1,10 +1,17 @@
-import type { M_Token_Account } from './../utils/generated/graphqlTypes'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import type { UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
+import type { MTokenType, UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
 import type { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
 
 import { DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL } from 'utils/constants'
+import {
+  MVK_TOKEN_SYMBOL,
+  SMVK_TOKEN_SYMBOL,
+  USER_TOKEN_TYPE_COLLATERAL,
+  USER_TOKEN_TYPE_DEFAULT,
+  USER_TOKEN_TYPE_MTOKEN,
+  USER_TOKEN_TYPE_WHITELIST,
+  XTZ_TOKEN_SYMBOL,
+} from 'utils/constants'
 import { UPDATE_USER_DATA } from './actions/user.actions'
 
 export interface UserState {
@@ -15,10 +22,15 @@ export interface UserState {
       balance: number
       symbol: string
       name: string
+      type:
+        | typeof USER_TOKEN_TYPE_COLLATERAL
+        | typeof USER_TOKEN_TYPE_WHITELIST
+        | typeof USER_TOKEN_TYPE_MTOKEN
+        | typeof USER_TOKEN_TYPE_DEFAULT
     }
   >
 
-  userMTokens: Array<M_Token_Account>
+  userMTokens: Array<MTokenType>
 
   satelliteMvkIsDelegatedTo: string
   isLoaded: boolean
@@ -63,16 +75,19 @@ export const DEFAULT_USER: UserState = {
       balance: 0,
       name: 'MVK',
       symbol: MVK_TOKEN_SYMBOL,
+      type: USER_TOKEN_TYPE_DEFAULT,
     },
     [SMVK_TOKEN_SYMBOL]: {
       balance: 0,
       name: 'sMVK',
       symbol: MVK_TOKEN_SYMBOL,
+      type: USER_TOKEN_TYPE_DEFAULT,
     },
     [XTZ_TOKEN_SYMBOL]: {
       balance: 0,
       name: 'XTZ',
       symbol: XTZ_TOKEN_SYMBOL,
+      type: USER_TOKEN_TYPE_DEFAULT,
     },
   },
   userMTokens: [],

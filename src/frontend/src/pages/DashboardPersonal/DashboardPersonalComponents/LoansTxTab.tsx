@@ -22,7 +22,7 @@ import { LBHInfoBlock } from './DashboardPersonalComponents.style'
 import { parseDate } from 'utils/time'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { useSelector } from 'react-redux'
-import { ConnectWallet } from 'app/App.components/ConnectWallet/ConnectWallet.controller'
+import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 
 export const LoansTxTab = ({
   txVariant,
@@ -105,7 +105,7 @@ export const LoansTxTab = ({
               </div>
             </>
           ) : (
-            <ConnectWallet />
+            <ConnectWalletBtn />
           )}
         </div>
       )}

@@ -8,6 +8,8 @@ type Props = {
   children?: React.ReactNode
 }
 
+// TODO: add close banner btn and store it's id in sessionStorage that it's closed
+
 /**
  *
  * @props

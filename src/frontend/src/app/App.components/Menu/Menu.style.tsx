@@ -113,7 +113,7 @@ export const MenuLogo = styled.img`
     width: 160px;
   }
 
-  @media screen and (max-width: 900px) {
+  @media screen and (max-width: 940px) {
     &.desktop-logo {
       display: none;
     }
