@@ -110,11 +110,10 @@ export const LendingTabListItem = styled.div<{ theme: MavrykTheme }>`
 
 export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   position: relative;
+  display: flex;
+  flex-direction: column;
   padding: 30px;
-  column-gap: 20px;
-
-  display: grid;
-  grid-template-columns: 450px auto;
+  row-gap: 30px;
 
   background-color: ${({ theme }) => theme.containerColor};
   border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
@@ -122,8 +121,14 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   border-top-right-radius: 0;
   border-top-left-radius: 0;
 
-  &.more-padding {
-    padding-bottom: 80px;
+  .top {
+    display: grid;
+    grid-template-columns: 450px auto;
+    column-gap: 20px;
+  }
+
+  .switcher {
+    max-width: 380px;
   }
 
   .block-name {

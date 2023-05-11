@@ -49,6 +49,25 @@ import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import { isTezosAsset } from '../Loans.helpers'
 import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { getNumberInBounds } from 'utils/calcFunctions'
+import { TabItem, TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+
+export const tabsList: TabItem[] = [
+  {
+    text: 'Collateral Assets',
+    id: 1,
+    active: true,
+  },
+  {
+    text: 'TX History',
+    id: 2,
+    active: false,
+  },
+  {
+    text: 'Useful Info',
+    id: 3,
+    active: false,
+  },
+]
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -94,6 +113,7 @@ export const BorrowingExpandCard = ({
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [expanded, setExpanded] = useState(false)
+  const [activeTab, setActiveTab] = useState(tabsList.find((item) => item.active))
 
   const {
     openChangeBakerPopup,
@@ -153,6 +173,10 @@ export const BorrowingExpandCard = ({
 
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
 
+  const handleSwitchTab = (tabId: number) => {
+    setActiveTab(tabsList.find((item) => item.id === tabId))
+  }
+
   useEffect(() => {
     if (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE) {
       ;(async () => {
@@ -194,113 +218,129 @@ export const BorrowingExpandCard = ({
         }
       >
         {children || (
-          <BorrowingTabListItemExpanded
-            className={`expand-borrow-tab-container ${
-              vaultHasXtzCollateral || vaultHasSmvkCollateral ? '' : 'more-padding'
-            }`}
-          >
+          <BorrowingTabListItemExpanded>
             {vaultStatus && <StatusMessage status={vaultStatus} timestamp={timerTimestamp} />}
 
-            <BorrowingTabListItemSection>
-              <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
-                <CommaNumber
-                  value={borrowedAmount + fee}
-                  className="value"
-                  showDecimal
-                  decimalsToShow={borrowedAsset.decimals}
-                />
-
-                <CommaNumber
-                  value={(borrowedAmount + fee) * rate}
-                  beginningText="$"
-                  className="rate"
-                  showDecimal
-                  decimalsToShow={borrowedAsset.decimals}
-                />
-
-                <div className="name">
-                  Outstanding Debt
-                  <CustomTooltip iconId="info" text="something" defaultStrokeColor={colors[themeSelected].textColor} />
-                </div>
-              </BorrowingTabListItemSectionInfo>
-
-              <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
-                <CommaNumber value={borrowedAmount} decimalsToShow={borrowedAsset.decimals} className="value" />
-                <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
-                <div className="name">Principal</div>
-              </BorrowingTabListItemSectionInfo>
-
-              <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
-                <CommaNumber
-                  value={collateralBalance}
-                  className="value"
-                  beginningText="$"
-                  showDecimal
-                  decimalsToShow={2}
-                />
-                <div className="name margin-top">
-                  Collateral value
-                  <CustomTooltip iconId="info" text="something" defaultStrokeColor={colors[themeSelected].textColor} />
-                </div>
-              </BorrowingTabListItemSectionInfo>
-
-              <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
-                <CommaNumber value={fee} decimalsToShow={borrowedAsset.decimals} className="value" />
-                <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
-                <div className="name">
-                  Accrued Interest
-                  <CustomTooltip
-                    iconId="info"
-                    text="Interest, compounded over time every time you borrow"
-                    defaultStrokeColor={colors[themeSelected].textColor}
+            <div className="top">
+              <BorrowingTabListItemSection>
+                <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+                  <CommaNumber
+                    value={borrowedAmount + fee}
+                    className="value"
+                    showDecimal
+                    decimalsToShow={borrowedAsset.decimals}
                   />
-                </div>
-              </BorrowingTabListItemSectionInfo>
 
-              <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
-                <CommaNumber value={apr} decimalsToShow={2} className="value" endingText="%" />
-                <div className="name margin-top">
-                  APR
-                  <CustomTooltip iconId="info" text="something" defaultStrokeColor={colors[themeSelected].textColor} />
-                </div>
-              </BorrowingTabListItemSectionInfo>
+                  <CommaNumber
+                    value={(borrowedAmount + fee) * rate}
+                    beginningText="$"
+                    className="rate"
+                    showDecimal
+                    decimalsToShow={borrowedAsset.decimals}
+                  />
 
-              <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
-                <CommaNumber
-                  value={borrowCapacity}
-                  className="value"
-                  beginningText="$"
-                  showDecimal
-                  decimalsToShow={2}
-                />
-                <div className="name margin-top">
-                  Borrow Capacity
-                  <CustomTooltip iconId="info" text="something" defaultStrokeColor={colors[themeSelected].textColor} />
-                </div>
-              </BorrowingTabListItemSectionInfo>
+                  <div className="name">
+                    Outstanding Debt
+                    <CustomTooltip
+                      iconId="info"
+                      text="something"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                    />
+                  </div>
+                </BorrowingTabListItemSectionInfo>
 
-              <BorrowingTabListItemSectionInfo
-                className="collateral-diagram"
-                customColor={getCollateralRationPersent(collateralRatio)}
-              >
-                <div className="percentage">
-                  Collateral Ratio:
-                  <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
-                </div>
-                <GradientDiagram
-                  colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                  currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
-                />
-              </BorrowingTabListItemSectionInfo>
+                <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+                  <CommaNumber value={borrowedAmount} decimalsToShow={borrowedAsset.decimals} className="value" />
+                  <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
+                  <div className="name">Principal</div>
+                </BorrowingTabListItemSectionInfo>
 
-              <BorrowingTabListItemSectionInfo className="learn-more">
-                <a href="" target="_blank" rel="noreferrer">
-                  Learn more at the Mavryk Docs
-                </a>
-              </BorrowingTabListItemSectionInfo>
-            </BorrowingTabListItemSection>
+                <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+                  <CommaNumber
+                    value={collateralBalance}
+                    className="value"
+                    beginningText="$"
+                    showDecimal
+                    decimalsToShow={2}
+                  />
+                  <div className="name margin-top">
+                    Collateral value
+                    <CustomTooltip
+                      iconId="info"
+                      text="something"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                    />
+                  </div>
+                </BorrowingTabListItemSectionInfo>
 
-            <BorrowingTabListItemSection></BorrowingTabListItemSection>
+                <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+                  <CommaNumber value={fee} decimalsToShow={borrowedAsset.decimals} className="value" />
+                  <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
+                  <div className="name">
+                    Accrued Interest
+                    <CustomTooltip
+                      iconId="info"
+                      text="Interest, compounded over time every time you borrow"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                    />
+                  </div>
+                </BorrowingTabListItemSectionInfo>
+
+                <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+                  <CommaNumber value={apr} decimalsToShow={2} className="value" endingText="%" />
+                  <div className="name margin-top">
+                    APR
+                    <CustomTooltip
+                      iconId="info"
+                      text="something"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                    />
+                  </div>
+                </BorrowingTabListItemSectionInfo>
+
+                <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+                  <CommaNumber
+                    value={borrowCapacity}
+                    className="value"
+                    beginningText="$"
+                    showDecimal
+                    decimalsToShow={2}
+                  />
+                  <div className="name margin-top">
+                    Borrow Capacity
+                    <CustomTooltip
+                      iconId="info"
+                      text="something"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                    />
+                  </div>
+                </BorrowingTabListItemSectionInfo>
+
+                <BorrowingTabListItemSectionInfo
+                  className="collateral-diagram"
+                  customColor={getCollateralRationPersent(collateralRatio)}
+                >
+                  <div className="percentage">
+                    Collateral Ratio:
+                    <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+                  </div>
+                  <GradientDiagram
+                    colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+                    currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
+                  />
+                </BorrowingTabListItemSectionInfo>
+
+                <BorrowingTabListItemSectionInfo className="learn-more">
+                  <a href="" target="_blank" rel="noreferrer">
+                    Learn more at the Mavryk Docs
+                  </a>
+                </BorrowingTabListItemSectionInfo>
+              </BorrowingTabListItemSection>
+
+              <BorrowingTabListItemSection></BorrowingTabListItemSection>
+            </div>
+
+            <TabSwitcher tabItems={tabsList} onClick={handleSwitchTab} className="switcher" />
           </BorrowingTabListItemExpanded>
         )}
       </Expand>
