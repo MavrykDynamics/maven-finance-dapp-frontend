@@ -9,7 +9,7 @@ import { State } from 'reducers'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { BorrowingExpandCard } from './NewBorrowindExpandCard'
+import { BorrowingExpandCard } from './BorrowingExpandCard/BorrowingExpandCard'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 
 import { LoansTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'

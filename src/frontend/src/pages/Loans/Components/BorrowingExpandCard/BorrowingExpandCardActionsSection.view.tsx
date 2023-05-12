@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { BorrowingTabListItemSection, BorrowingTabListItemSectionInfo } from '../LoansComponents.style'
-import { VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS, VAULT_CARD_REPAY_SLIDING_BUTTONS, vaultCardTabNames } from 'pages/Loans/Loans.const'
+import {
+  VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS,
+  VAULT_CARD_REPAY_SLIDING_BUTTONS,
+  vaultCardTabNames,
+} from 'pages/Loans/Loans.const'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 type Props = {}
@@ -26,11 +30,13 @@ export const BorrowingExpandCardActionsSection = ({}: Props) => {
           tabItems={VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS}
           className="vault"
         />
-        {activeRepayBorrowTab?.id === vaultCardTabNames.REPAY && <SlidingTabButtons
-          onClick={handleSwitchTab(setActiveRepayTab)}
-          tabItems={VAULT_CARD_REPAY_SLIDING_BUTTONS}
-          className="vault"
-        />}
+        {activeRepayBorrowTab?.id === vaultCardTabNames.REPAY && (
+          <SlidingTabButtons
+            onClick={handleSwitchTab(setActiveRepayTab)}
+            tabItems={VAULT_CARD_REPAY_SLIDING_BUTTONS}
+            className="vault"
+          />
+        )}
       </BorrowingTabListItemSectionInfo>
     </BorrowingTabListItemSection>
   )

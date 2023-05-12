@@ -598,7 +598,7 @@ export const BorrowingExpandCard = ({
                     </Button>
                   </div>
                 ) : null}
- 
+
                 <div className="repay-full">
                   <Button
                     disabled={true || !borrowedAmount || isActionActive}
