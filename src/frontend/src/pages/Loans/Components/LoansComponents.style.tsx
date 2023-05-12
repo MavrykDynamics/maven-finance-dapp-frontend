@@ -340,6 +340,72 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
     display: grid;
     grid-template-columns: auto 250px;
   }
+
+  .useful-info-title {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 27px;
+
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  .useful-info-line {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    width: 400px;
+
+    a,
+    button,
+    .name,
+    .value {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+    }
+
+    .name {
+      margin-right: 10px;
+      color: ${({ theme }) => theme.textColor};
+    }
+
+    .value {
+      display: flex;
+      align-items: center;
+      column-gap: 6px;
+
+      color: ${({ theme }) => theme.dataColor};
+    }
+
+    /* TODO: remove button styles from here */
+    button,
+    a {
+      margin-left: auto;
+      padding: 0;
+      height: fit-content;
+
+      &:hover {
+        opacity: 0.8;
+        color: ${({ theme }) => theme.valueColor};
+
+        svg {
+          opacity: 0.8;
+        }
+
+        &::before {
+          display: none;
+        }
+      }
+
+      svg {
+        height: 14px;
+        width: 8px;
+        transform: rotate(180deg);
+        stroke-width: 2px;
+        stroke: ${({ theme }) => theme.valueColor};
+      }
+    }
+  }
 `
 
 export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`

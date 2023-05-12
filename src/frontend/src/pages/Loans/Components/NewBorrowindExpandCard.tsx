@@ -491,6 +491,114 @@ export const BorrowingExpandCard = ({
             )}
 
             {activeTab?.id === tabNames.TX_HISTORY && <TransactionHistory currentToken={currentToken} />}
+
+            {activeTab?.id === tabNames.USEFUL_INFO && (
+              <BorrowingTabListItemTabInfo>
+                <H2Title>Useful Info</H2Title>
+
+                {vaultHasXtzCollateral || vaultHasSmvkCollateral ? (
+                  <div>
+                    <div className="useful-info-title">Delegations</div>
+
+                    {vaultHasXtzCollateral ? (
+                      <div className="useful-info-line">
+                        <div className="name">XTZ Delegated to </div>
+                        <div className="value">
+                          {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'Not Delegated'}
+                        </div>
+                        <Button
+                          kind={BUTTON_SIMPLE}
+                          disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName)) || isActionActive}
+                          onClick={() =>
+                            openChangeBakerPopup?.({
+                              bakerAddress: xtzDelegatedTo,
+                              vaultAddress: address,
+                            })
+                          }
+                        >
+                          Change Baker <Icon id="paginationArrowLeft" />
+                        </Button>
+                      </div>
+                    ) : null}
+
+                    {vaultHasSmvkCollateral ? (
+                      <div className="useful-info-line">
+                        <div className="name">sMVK Delegated to </div>
+                        <div className="value">
+                          {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
+                        </div>
+                        <Link
+                          to={sMVKDelegatedTo ? `/satellites/satellite-details/${sMVKDelegatedTo}` : '/satellite-nodes'}
+                        >
+                          <Button kind={BUTTON_SIMPLE}>
+                            View Satellite <Icon id="paginationArrowLeft" />
+                          </Button>
+                        </Link>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+
+                <div>
+                  <div className="useful-info-title"> Permissions (Advanced)</div>
+
+                  <div className="useful-info-line">
+                    <div className="name">
+                      Depositors{' '}
+                      <CustomTooltip
+                        iconId="info"
+                        text="Depositors are tz and KT addresses that are allowed to deposit tokens and XTZ into your vault. For instance, if you delegate your XTZ to a bakery, you should add the bakery’s payout address as a a depositor so your vault can receive its delegation rewards."
+                        defaultStrokeColor={colors[themeSelected].textColor}
+                      />
+                    </div>
+                    <div className="value">
+                      {deporsitorsFlag === ANY_USER ? 'Allow Any' : null}
+                      {deporsitorsFlag === NONE_USER ? 'Vault Owner' : null}
+                      {deporsitorsFlag === WHITELIST_USERS ? 'Defined Accounts' : null}
+                    </div>
+                    <Button
+                      kind={BUTTON_SIMPLE}
+                      onClick={() =>
+                        openManagePermissionsPopup?.({
+                          vaultAddress: address,
+                          deporsitorsFlag,
+                          depositors,
+                        })
+                      }
+                      disabled={isActionActive}
+                    >
+                      Update <Icon id="paginationArrowLeft" />
+                    </Button>
+                  </div>
+
+                  {vaultHasSmvkCollateral ? (
+                    <div className="useful-info-line">
+                      <div className="name">
+                        MVK Operators{' '}
+                        <CustomTooltip
+                          iconId="info"
+                          text="MVK operators are tz or KT addresses that you allow to perform specific actions with your tokens. Only use this if you know exactly what you are doing. By default, you have to allow the vault to do an operator of your sMVK so it can execute its required functions."
+                          defaultStrokeColor={colors[themeSelected].textColor}
+                        />
+                      </div>
+                      <div className="value">
+                        {mappedMVKOperators.firstAddress
+                          ? <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={BLUE} /> +
+                            ` ${mappedMVKOperators.amount ?? ''}`
+                          : 'None'}
+                      </div>
+                      <Button
+                        kind={BUTTON_SIMPLE}
+                        disabled={true || isActionActive}
+                        onClick={() => openUpdateMvkOperatorsPopup?.({})}
+                      >
+                        Update <Icon id="paginationArrowLeft" />
+                      </Button>
+                    </div>
+                  ) : null}
+                </div>
+              </BorrowingTabListItemTabInfo>
+            )}
           </BorrowingTabListItemExpanded>
         )}
       </Expand>
