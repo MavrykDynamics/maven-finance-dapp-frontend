@@ -3,7 +3,7 @@ import { cyanColor, dropDownColor, royalPurpleColor } from 'styles'
 import { Button as ButtonBase } from '../Button/Button.controller'
 import { MavrykTheme } from '../../../styles/interfaces'
 
-export const PopupContainerWrapper = styled.div`
+export const PopupContainerWrapper = styled.div<{ theme: MavrykTheme; widthSize?: 586 | 750 | 395 | 950 }>`
   display: flex;
   flex-direction: column;
   padding: 40px;
@@ -11,7 +11,7 @@ export const PopupContainerWrapper = styled.div`
   border: 1px solid #86d4c9;
   border-radius: 10px;
   height: fit-content;
-  max-width: 395px;
+  max-width: ${({ widthSize = 395 }) => `${widthSize}px`};
   width: 100%;
   position: absolute;
   top: 50%;

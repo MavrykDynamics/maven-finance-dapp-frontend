@@ -140,3 +140,76 @@ export const BecomeSatelliteRegisterAsOracle = styled.div<{ theme: MavrykTheme }
     margin-top: 30px;
   }
 `
+
+export const UnregisterSatelliteModal = styled.div<{ theme: MavrykTheme }>`
+  .buttons {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 10px;
+  }
+
+  > div {
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  .icons {
+    display: flex;
+    column-gap: 15px;
+    margin: 10px 0;
+
+    svg {
+      width: 36px;
+      height: 36px;
+      fill: ${({ theme }) => theme.valueColor};
+    }
+  }
+
+  .card {
+    margin-top: 10px;
+    display: flex;
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border-radius: 10px;
+    padding: 18px 15px;
+    column-gap: 80px;
+
+    .col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .name {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      color: ${({ theme }) => theme.textColor};
+    }
+
+    .value {
+      font-weight: 600;
+      font-size: 22px;
+      line-height: 22px;
+      color: ${({ theme }) => theme.dataColor};
+    }
+  }
+
+  .descr {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
+  }
+
+  .descr:nth-child(2) {
+    margin-bottom: 30px;
+  }
+
+  .descr:nth-child(5) {
+    margin-top: 30px;
+  }
+
+  .descr-big {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 27px;
+  }
+`
