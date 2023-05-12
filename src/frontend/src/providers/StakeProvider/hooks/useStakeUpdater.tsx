@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useSubscription } from '@apollo/client'
 import { useStakeContext } from '../stake.provider'
 
@@ -23,16 +23,20 @@ import {
   SUBSCRIPTION_ADDRESS_BALANCE_DATA,
   SUBSCRIPTION_MVK_TOKEN_TOTAL,
 } from 'gql/subscriptions/stakingData'
+import { subsciptionErrorToaster } from 'app/App.components/Toaster/builtActions/actions-helpers.notifications'
 
 /**
  * Subscriptions are canceled on component unmount!
  * @param skip boolean, if you pass this param, the hook will be triggered only one time
  * @returns {isInitialLoading: boolean, isActionLoading: boolean} isInitialLoading is false if initial data is still loading, true if it's loaded
  * isActionLoading is false if action update is done, true if it's in progress
+ *
+ * TODO: add toasters for subs errors handling
  */
 export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSubscriptionsTypes> = []) => {
   const [actionLoaderState, setActionLoaderState] = useState<StakeActionsLoaderState>(STAKE_DEFAULT_LOADINGS)
 
+  const dispatch = useDispatch()
   const { doormanAddress } = useSelector((state: State) => state.contractAddresses)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
@@ -86,9 +90,8 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
     onData: ({ data: result }) => {
       const { data, error } = result
       if (error) {
-        console.error('error: ', error)
-
-        // showStakeErrorMessage(dispatch, error.message)
+        console.error('SUBSCRIPTION_STAKE_HISTORY query error: ', error)
+        dispatch(subsciptionErrorToaster())
       }
       if (data) {
         updateStakeHistoryData(data)
@@ -105,8 +108,8 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
     onData: ({ data: result }) => {
       const { data, error } = result
       if (error) {
-        console.error('error: ', error)
-        // showStakeErrorMessage(dispatch, error.message)
+        console.error('SUBSCRIPTION_ADDRESS_BALANCE_DATA query error: ', error)
+        dispatch(subsciptionErrorToaster())
       }
       if (data) {
         updateTotalStakedMvk(data)
@@ -121,8 +124,8 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
     onData: ({ data: result }) => {
       const { data, error } = result
       if (error) {
-        console.error('error: ', error)
-        // showStakeErrorMessage(dispatch, error.message)
+        console.error('SUBSCRIPTION_MVK_TOKEN_TOTAL query error: ', error)
+        dispatch(subsciptionErrorToaster())
       }
       if (data) {
         updateTotalMvkToken(data)
@@ -140,8 +143,8 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
     onData: ({ data: result }) => {
       const { data, error } = result
       if (error) {
-        console.error('error: ', error)
-        // showStakeErrorMessage(dispatch, error.message)
+        console.error('SUBSCRIPTION_ADDRESS_BALANCE_DATA query error: ', error)
+        dispatch(subsciptionErrorToaster())
       }
       if (data) {
         updateUserStakeData(data)

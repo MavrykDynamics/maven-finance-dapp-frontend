@@ -17,15 +17,7 @@ import {
 import { State, Props, StakeContext } from './stake.provider.types'
 
 // consts
-import {
-  TOASTER_ERROR,
-  TOASTER_INFO,
-  ACTION_START_MESSAGE_TEXT,
-  TOASTER_LOADING,
-  TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
-  ACTION_COMPLETION_MESSAGE_TEXT,
-  TOASTER_SUCCESS,
-} from 'app/App.components/Toaster/Toaster.constants'
+import { TOASTER_ERROR } from 'app/App.components/Toaster/Toaster.constants'
 import { STAKE_ACTION, UNSTAKE_ACTION } from './helpers/stake.consts'
 import { MVK_DECIMALS, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
@@ -35,7 +27,11 @@ import { State as ReduxState } from 'reducers'
 import { UPDATE_USER_DATA } from 'reducers/actions/user.actions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
-import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import {
+  actionEndToaster,
+  actionStartToaster,
+} from 'app/App.components/Toaster/builtActions/actions-helpers.notifications'
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
@@ -63,18 +59,10 @@ export class StakeProviderClass extends React.Component<Props, State> {
     }
   }
 
+  // Used only for action, on it's completion to turn of loading toaster and show success toaster
   componentDidUpdate(): void {
-    console.log({ ctx: this.state.context })
-    if (this.state.context.turnOfActionLoader) {
-      this.props.dispatch(hideToaster())
-      this.props.dispatch(
-        showToaster(
-          TOASTER_SUCCESS,
-          `${this.state.context.action.charAt(0).toUpperCase() + this.state.context.action.substring(1)} done`,
-          ACTION_COMPLETION_MESSAGE_TEXT,
-        ),
-      )
-      this.props.dispatch(toggleActionCompletion(false))
+    if (this.state.context.turnOfActionLoader && this.state.context.action) {
+      this.props.dispatch(actionEndToaster(this.state.context.action))
       this.updateStakeActionContext('')
       this.updateStakeActionLoaderContext(false)
     }
@@ -212,22 +200,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
       await batch?.send()
 
       this.updateStakeActionContext(STAKE_ACTION)
-      dispatch(toggleActionFullScreenLoader(true))
-      dispatch(toggleActionCompletion(true))
-      dispatch(showToaster(TOASTER_INFO, 'Staking...', ACTION_START_MESSAGE_TEXT))
-
-      // show toaster loader after 5000ms after operation started
-      const loadingTimeoutId = setTimeout(async () => {
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(
-          showToaster(
-            TOASTER_LOADING,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          ),
-        )
-        clearTimeout(loadingTimeoutId)
-      }, 5000)
+      dispatch(actionStartToaster(STAKE_ACTION))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
@@ -259,22 +232,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
       await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
 
       this.updateStakeActionContext(UNSTAKE_ACTION)
-      dispatch(toggleActionFullScreenLoader(true))
-      dispatch(toggleActionCompletion(true))
-      dispatch(showToaster(TOASTER_INFO, 'Unstaking...', ACTION_START_MESSAGE_TEXT))
-
-      // show toaster loader after 5000ms after operation started
-      const loadingTimeoutId = setTimeout(async () => {
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(
-          showToaster(
-            TOASTER_LOADING,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          ),
-        )
-        clearTimeout(loadingTimeoutId)
-      }, 5000)
+      dispatch(actionStartToaster(UNSTAKE_ACTION))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
