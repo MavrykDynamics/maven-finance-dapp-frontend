@@ -11,8 +11,11 @@ import {
   getInputValidationStatus,
 } from './BecomeSatellite.conts'
 
+// providers
+import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+
 // Actions
-import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { registerAsSatellite, unregisterAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
 import { getSatelliteConfig } from 'pages/Satellites/Satellites.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -69,20 +72,18 @@ export const BecomeSatellite = () => {
     satelliteMapper,
     config: { minimumStakedMvkBalance, isConfigLoaded, ...restSatelliteConfig },
   } = useSelector((state: State) => state.satellites)
-  const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
+  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
+
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
       try {
-        await Promise.all(
-          [
-            (!isConfigLoaded || isDepsChanged) && dispatch(getSatelliteConfig()),
-            (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
-          ].filter(Boolean),
-        )
+        if (!isConfigLoaded || isDepsChanged) {
+          await dispatch(getSatelliteConfig())
+        }
       } catch (error) {}
     },
     [accountPkh],
@@ -247,7 +248,7 @@ export const BecomeSatellite = () => {
 
       <PageContent>
         <div>
-          {isLoading ? (
+          {isLoading || isDoormanLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellite data</div>

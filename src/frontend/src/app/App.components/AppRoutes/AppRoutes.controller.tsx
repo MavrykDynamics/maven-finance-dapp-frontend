@@ -32,7 +32,6 @@ import { Vaults } from '../../../pages/Vaults/Vaults.controller'
 import { scrollUpPage } from 'utils/scrollUpPage'
 import ProtectedRoute from './ProtectedRoute'
 import DashboardPersonal from 'pages/DashboardPersonal/DashboardPersonal.controller'
-import { LENDING_TAB_ID } from 'pages/Dashboard/Dashboard.utils'
 import { Market } from 'pages/Loans/Market.controller'
 import { LoansDashboard } from 'pages/LoansDashboard/LoansDashboard'
 
