@@ -86,6 +86,8 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
     onData: ({ data: result }) => {
       const { data, error } = result
       if (error) {
+        console.error('error: ', error)
+
         // showStakeErrorMessage(dispatch, error.message)
       }
       if (data) {
@@ -103,6 +105,7 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
     onData: ({ data: result }) => {
       const { data, error } = result
       if (error) {
+        console.error('error: ', error)
         // showStakeErrorMessage(dispatch, error.message)
       }
       if (data) {
@@ -118,6 +121,7 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
     onData: ({ data: result }) => {
       const { data, error } = result
       if (error) {
+        console.error('error: ', error)
         // showStakeErrorMessage(dispatch, error.message)
       }
       if (data) {
@@ -136,6 +140,7 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
     onData: ({ data: result }) => {
       const { data, error } = result
       if (error) {
+        console.error('error: ', error)
         // showStakeErrorMessage(dispatch, error.message)
       }
       if (data) {
