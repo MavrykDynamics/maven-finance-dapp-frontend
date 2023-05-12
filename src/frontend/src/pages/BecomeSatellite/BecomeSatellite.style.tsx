@@ -141,7 +141,7 @@ export const BecomeSatelliteRegisterAsOracle = styled.div<{ theme: MavrykTheme }
   }
 `
 
-export const UnregisterSatelliteModal = styled.div<{ theme: MavrykTheme }>`
+export const UnregisterSatelliteModalBase = styled.div<{ theme: MavrykTheme }>`
   .buttons {
     margin-top: 40px;
     display: grid;

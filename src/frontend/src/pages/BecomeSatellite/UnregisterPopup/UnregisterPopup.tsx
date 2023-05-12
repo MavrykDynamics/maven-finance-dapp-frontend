@@ -1,13 +1,16 @@
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { useDispatch } from 'react-redux'
+
 import { unregisterAsSatellite } from '../BecomeSatellite.actions'
-import { UnregisterSatelliteModal } from '../BecomeSatellite.style'
+import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 import { BUTTON_SECONDARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+
+import { UnregisterSatelliteModalBase } from '../BecomeSatellite.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 export const UnregisterPopup = ({
   show,
@@ -27,7 +30,7 @@ export const UnregisterPopup = ({
     <PopupContainer onClick={closePopup} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} widthSize={586}>
         <button className="close-modal" onClick={closePopup} />
-        <UnregisterSatelliteModal>
+        <UnregisterSatelliteModalBase>
           <H2Title>Unregister Satellite</H2Title>
 
           <div className="descr">
@@ -76,7 +79,7 @@ export const UnregisterPopup = ({
               Confirm
             </NewButton>
           </div>
-        </UnregisterSatelliteModal>
+        </UnregisterSatelliteModalBase>
       </PopupContainerWrapper>
     </PopupContainer>
   )
