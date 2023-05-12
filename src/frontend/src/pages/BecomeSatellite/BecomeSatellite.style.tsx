@@ -91,11 +91,17 @@ export const BecomeSatelliteOracleText = styled.h3<{ theme: MavrykTheme }>`
   font-size: 14px;
   color: ${({ theme }) => theme.textColor};
   padding-bottom: 15px;
+  line-height: 22px;
 
   a {
     color: ${({ theme }) => theme.valueColor};
     text-decoration: underline;
     cursor: pointer;
+  }
+
+  span {
+    font-size: 16px;
+    font-weight: 600;
   }
 `
 export const BecomeSatelliteRegisterAsOracle = styled.div<{ theme: MavrykTheme }>`

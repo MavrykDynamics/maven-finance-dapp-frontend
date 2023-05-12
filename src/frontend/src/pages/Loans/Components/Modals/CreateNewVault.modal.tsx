@@ -433,8 +433,9 @@ export const CreateNewVault = ({
                   kind={BUTTON_PRIMARY}
                   form={BUTTON_WIDE}
                   onClick={() => {
-                    setShownScreen(ADD_COLLATERAL_SCREEN_ID)
-                    createVaultAction()
+                    setShownScreen(CONFIRMATION_SCREEN_ID)
+                    // setShownScreen(ADD_COLLATERAL_SCREEN_ID)
+                    // createVaultAction()
                   }}
                   disabled={vaultName.validationStatus !== INPUT_STATUS_SUCCESS}
                 >
@@ -560,7 +561,7 @@ export const CreateNewVault = ({
           {shownScreen === 'confirmation' ? (
             <>
               {collaterals.length === 1 ? (
-                <div className="lending-stats" style={{ marginBottom: '30px' }}>
+                <div className="confirm-create-vault" style={{ marginBottom: '30px' }}>
                   <ThreeLevelListItem>
                     <div className="name">Asset</div>
                     <div className="value">{firstCollateralMetadata?.name}</div>
@@ -637,7 +638,7 @@ export const CreateNewVault = ({
                   </TableBody>
                 </Table>
               )}
-              <div className="confirm-collateral-deposit-cv">
+              <div className="confirm-create-vault">
                 {showBakerAddress && bakerChosenDdItem ? (
                   <ThreeLevelListItem>
                     <div className="name">Selected Baker</div>
@@ -656,6 +657,11 @@ export const CreateNewVault = ({
                     />
                   </div>
                   <CommaNumber value={borrowingCapacity} className="value" beginningText="$" />
+                </ThreeLevelListItem>
+
+                <ThreeLevelListItem>
+                  <div className="name">Vault Name</div>
+                  <div className="value">{vaultName.name}</div>
                 </ThreeLevelListItem>
               </div>
               <div className="buttons-wrapper" style={{ marginTop: '30px' }}>

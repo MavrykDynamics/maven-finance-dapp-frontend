@@ -63,7 +63,7 @@ export const BecomeSatellite = () => {
   const dispatch = useDispatch()
   const {
     accountPkh = '',
-    user: { userTokens, isSatellite },
+    user: { userTokens, isSatellite, satelliteMvkIsDelegatedTo },
   } = useSelector((state: State) => state.wallet)
   const {
     satelliteMapper,
@@ -256,10 +256,10 @@ export const BecomeSatellite = () => {
             <BecomeSatelliteForm>
               <h2>{pageText.pageTitle}</h2>
               <BecomeSatelliteOracleText>
-                Important Note: Becoming a Satellite offers the operation an oracle node. Technically, one may become a
-                Satellite without operating an oracle and take part in Governance. However, they will forgo all of the
-                oracle rewards which are a major source of payments. For information on operating an oracle node for
-                your Satellite, please read more on Gitbook{' '}
+                <span>Important Note:</span> Becoming a Satellite offers the operation an oracle node. Technically, one
+                may become a Satellite without operating an oracle and take part in Governance. However, they will forgo
+                all of the oracle rewards which are a major source of payments. For information on operating an oracle
+                node for your Satellite, please read more on Gitbook{' '}
                 <a href="https://mavryk.finance/litepaper#the-decentralized-oracle" target="_blank" rel="noreferrer">
                   here
                 </a>
