@@ -58,6 +58,7 @@ import { TabItem, TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { TransactionHistory } from './TransactionHistory'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { BorrowingExpandCardMenuSection } from './BorrowingExpandCard/BorrowingExpandCardMenuSection.view'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -174,6 +175,63 @@ export const BorrowingExpandCard = ({
     const tabs = VAULT_CARD_MENU_TABS.concat(VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS, VAULT_CARD_REPAY_SLIDING_BUTTONS)
 
     setActiveTab(tabs.find((item) => item.id === tabId))
+  }
+
+  const handleClickOpenAddNewCollateralPopup = () => {
+    openAddNewCollateralPopup?.({
+      vaultAddress: address,
+      vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+      currentCollateralRatio: collateralRatio,
+      borrowedAmount,
+      existingCollaterals: collateralData,
+      borrowedAssetRate: borrowedAsset.rate,
+      borrowCapacity,
+      avaliableLiq,
+    })
+  }
+
+  const handleClickOpenAddExistingCollateralPopup = (idx: number) => {
+    openAddExistingCollateralPopup?.({
+      vaultAddress: address,
+      vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+      selectedAsset: collateralData[idx],
+      currentCollateralRatio: collateralRatio,
+      borrowedAmount,
+      borrowedAssetRate: borrowedAsset.rate,
+      borrowCapacity,
+      avaliableLiq,
+    })
+  }
+
+  const handleClickOpenWithdrawCollateralPopup = ({ amount, idx }: { amount: number; idx: number }) => {
+    openWithdrawCollateralPopup?.({
+      vaultAddress: address,
+      currentCollateralBalance: amount,
+      vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+      selectedAsset: collateralData[idx],
+      currentCollateralRatio: collateralRatio,
+      borrowedAmount,
+      borrowedAssetRate: borrowedAsset.rate,
+    })
+  }
+
+  const handleClickOpenChangeBakerPopup = () => {
+    openChangeBakerPopup?.({
+      bakerAddress: xtzDelegatedTo,
+      vaultAddress: address,
+    })
+  }
+
+  const handleClickOpenManagePermissionsPopup = () => {
+    openManagePermissionsPopup?.({
+      vaultAddress: address,
+      deporsitorsFlag,
+      depositors,
+    })
+  }
+
+  const handleClickOpenUpdateMvkOperatorsPopup = () => {
+    openUpdateMvkOperatorsPopup?.({})
   }
 
   useEffect(() => {
@@ -352,274 +410,25 @@ export const BorrowingExpandCard = ({
               </BorrowingTabListItemSection>
             </div>
 
-            <TabSwitcher
-              tabItems={VAULT_CARD_MENU_TABS}
-              onClick={handleSwitchTab(setActiveMenuTab)}
-              className="menu-switcher"
+            <BorrowingExpandCardMenuSection
+              handleSwitchTab={handleSwitchTab(setActiveMenuTab)}
+              openAddNewCollateralPopup={handleClickOpenAddNewCollateralPopup}
+              openAddExistingCollateralPopup={handleClickOpenAddExistingCollateralPopup}
+              openWithdrawCollateralPopup={handleClickOpenWithdrawCollateralPopup}
+              openChangeBakerPopup={handleClickOpenChangeBakerPopup}
+              openManagePermissionsPopup={handleClickOpenManagePermissionsPopup}
+              openUpdateMvkOperatorsPopup={handleClickOpenUpdateMvkOperatorsPopup}
+              collateralData={collateralData}
+              currentToken={currentToken}
+              activeMenuTab={activeMenuTab}
+              isOwner={isOwner}
+              vaultAddress={address}
+              xtzDelegatedTo={xtzDelegatedTo}
+              sMVKDelegatedTo={sMVKDelegatedTo}
+              collateralRatio={collateralRatio}
+              deporsitorsFlag={deporsitorsFlag}
+              mappedMVKOperators={mappedMVKOperators}
             />
-
-            {activeMenuTab?.id === vaultCardTabNames.COLLATERAL_ASSETS && (
-              <BorrowingTabListItemTabInfo>
-                <div className="tab-header">
-                  <H2Title>Your Collateralized Assets</H2Title>
-
-                  <Button
-                    onClick={() =>
-                      openAddNewCollateralPopup?.({
-                        vaultAddress: address,
-                        vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                        currentCollateralRatio: collateralRatio,
-                        borrowedAmount,
-                        existingCollaterals: collateralData,
-                        borrowedAssetRate: borrowedAsset.rate,
-                        borrowCapacity,
-                        avaliableLiq,
-                      })
-                    }
-                    kind={BUTTON_PRIMARY}
-                    form={BUTTON_WIDE}
-                    isThin
-                    disabled={
-                      avaliableCollaterals.length === 0 ||
-                      avaliableCollaterals.length === collateralData.length - 1 ||
-                      isActionActive
-                    }
-                  >
-                    <Icon id="plus" /> Add Collateral Type
-                  </Button>
-                </div>
-
-                <Table className="borrowing-table">
-                  {collateralData.length ? (
-                    <TableHeader className="simple-header collateral">
-                      <TableRow>
-                        <TableHeaderCell>Asset</TableHeaderCell>
-                        <TableHeaderCell>Amount</TableHeaderCell>
-                        <TableHeaderCell>Collateral Share</TableHeaderCell>
-                      </TableRow>
-                    </TableHeader>
-                  ) : null}
-
-                  <TableBody>
-                    {collateralData.map(({ icon, amount, rate, gqlName, symbol }, idx) => {
-                      const isTotalRow = collateralData.length - 1 === idx
-
-                      const collateralShare = isTotalRow
-                        ? 100
-                        : getNumberInBounds(0, 100, calculateCollateralShare(amount * rate, collateralTotalBalance))
-
-                      if (isTotalRow && collateralData.length < 3) return null
-
-                      return (
-                        <TableRow rowHeight={65} key={gqlName + '-' + idx}>
-                          <TableCell width={'22%'} className="vert-middle">
-                            {isTotalRow ? (
-                              'Total'
-                            ) : (
-                              <div className="cell-content row with-icon">
-                                <ImageWithPlug imageLink={icon} alt={`${gqlName} icon`} />
-                                {symbol}
-                              </div>
-                            )}
-                          </TableCell>
-
-                          <TableCell width={'22%'}>
-                            <div className="cell-content">
-                              <CommaNumber
-                                value={amount}
-                                className="value"
-                                showDecimal
-                                decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
-                                beginningText={isTotalRow ? '$' : ''}
-                              />
-                              {rate ? (
-                                <CommaNumber value={amount * rate} className="rate" beginningText="$" showDecimal />
-                              ) : null}
-                            </div>
-                          </TableCell>
-                          <TableCell width={'22%'}>
-                            <div className="cell-content">
-                              <CommaNumber value={collateralShare} className="value" endingText="%" />
-                            </div>
-                          </TableCell>
-                          {!isTotalRow && (
-                            <TableCell className={`buttons borrowing ${!isOwner ? 'single-btn' : ''}`}>
-                              <div className="cell-content row">
-                                <Button
-                                  onClick={() =>
-                                    openAddExistingCollateralPopup?.({
-                                      vaultAddress: address,
-                                      vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                                      selectedAsset: collateralData[idx],
-                                      currentCollateralRatio: collateralRatio,
-                                      borrowedAmount,
-                                      borrowedAssetRate: borrowedAsset.rate,
-                                      borrowCapacity,
-                                      avaliableLiq,
-                                    })
-                                  }
-                                  form={BUTTON_WIDE}
-                                  kind={BUTTON_SECONDARY}
-                                  disabled={isActionActive}
-                                >
-                                  <Icon id="plus" /> Add
-                                </Button>
-                                {isOwner ? (
-                                  <Button
-                                    onClick={() =>
-                                      openWithdrawCollateralPopup?.({
-                                        vaultAddress: address,
-                                        currentCollateralBalance: amount,
-                                        vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                                        selectedAsset: collateralData[idx],
-                                        currentCollateralRatio: collateralRatio,
-                                        borrowedAmount,
-                                        borrowedAssetRate: borrowedAsset.rate,
-                                      })
-                                    }
-                                    form={BUTTON_WIDE}
-                                    kind={BUTTON_SECONDARY}
-                                    disabled={collateralRatio <= 200 || isActionActive}
-                                  >
-                                    <Icon id="minus" /> Remove
-                                  </Button>
-                                ) : null}
-                              </div>
-                            </TableCell>
-                          )}
-                        </TableRow>
-                      )
-                    })}
-                  </TableBody>
-                </Table>
-              </BorrowingTabListItemTabInfo>
-            )}
-
-            {activeMenuTab?.id === vaultCardTabNames.TX_HISTORY && <TransactionHistory currentToken={currentToken} />}
-
-            {activeMenuTab?.id === vaultCardTabNames.USEFUL_INFO && (
-              <BorrowingTabListItemTabInfo>
-                <H2Title>Useful Info</H2Title>
-
-                <div className="useful-info">
-                  <div className="useful-info-line">
-                    <div className="name">Vault Address</div>
-                    <div className="value">
-                      <TzAddress tzAddress={address} type={BLUE} />
-                    </div>
-                  </div>
-
-                  <div className="useful-info-line">
-                    <div className="name">Lending Controller Address</div>
-                    <div className="value">
-                      <TzAddress tzAddress={loansControllerAddress} type={BLUE} />
-                    </div>
-                  </div>
-                </div>
-
-                {vaultHasXtzCollateral || vaultHasSmvkCollateral ? (
-                  <div className="useful-info">
-                    <div className="useful-info-title">Delegations</div>
-
-                    {vaultHasXtzCollateral ? (
-                      <div className="useful-info-line">
-                        <div className="name">XTZ Delegated to</div>
-                        <div className="value">
-                          {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'Not Delegated'}
-                        </div>
-                        <Button
-                          kind={BUTTON_SIMPLE}
-                          disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName)) || isActionActive}
-                          onClick={() =>
-                            openChangeBakerPopup?.({
-                              bakerAddress: xtzDelegatedTo,
-                              vaultAddress: address,
-                            })
-                          }
-                        >
-                          Change Baker <Icon id="paginationArrowLeft" />
-                        </Button>
-                      </div>
-                    ) : null}
-
-                    {vaultHasSmvkCollateral ? (
-                      <div className="useful-info-line">
-                        <div className="name">sMVK Delegated to </div>
-                        <div className="value">
-                          {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
-                        </div>
-                        <Link
-                          to={sMVKDelegatedTo ? `/satellites/satellite-details/${sMVKDelegatedTo}` : '/satellite-nodes'}
-                        >
-                          <Button kind={BUTTON_SIMPLE}>
-                            View Satellite <Icon id="paginationArrowLeft" />
-                          </Button>
-                        </Link>
-                      </div>
-                    ) : null}
-                  </div>
-                ) : null}
-
-                <div className="useful-info">
-                  <div className="useful-info-title"> Permissions (Advanced)</div>
-
-                  <div className="useful-info-line">
-                    <div className="name">
-                      Depositors{' '}
-                      <CustomTooltip
-                        iconId="info"
-                        text="Depositors are tz and KT addresses that are allowed to deposit tokens and XTZ into your vault. For instance, if you delegate your XTZ to a bakery, you should add the bakery’s payout address as a a depositor so your vault can receive its delegation rewards."
-                        defaultStrokeColor={colors[themeSelected].textColor}
-                      />
-                    </div>
-                    <div className="value">
-                      {deporsitorsFlag === ANY_USER ? 'Allow Any' : null}
-                      {deporsitorsFlag === NONE_USER ? 'Vault Owner' : null}
-                      {deporsitorsFlag === WHITELIST_USERS ? 'Defined Accounts' : null}
-                    </div>
-                    <Button
-                      kind={BUTTON_SIMPLE}
-                      onClick={() =>
-                        openManagePermissionsPopup?.({
-                          vaultAddress: address,
-                          deporsitorsFlag,
-                          depositors,
-                        })
-                      }
-                      disabled={isActionActive}
-                    >
-                      Update <Icon id="paginationArrowLeft" />
-                    </Button>
-                  </div>
-
-                  {vaultHasSmvkCollateral ? (
-                    <div className="useful-info-line">
-                      <div className="name">
-                        MVK Operators{' '}
-                        <CustomTooltip
-                          iconId="info"
-                          text="MVK operators are tz or KT addresses that you allow to perform specific actions with your tokens. Only use this if you know exactly what you are doing. By default, you have to allow the vault to do an operator of your sMVK so it can execute its required functions."
-                          defaultStrokeColor={colors[themeSelected].textColor}
-                        />
-                      </div>
-                      <div className="value">
-                        {mappedMVKOperators.firstAddress
-                          ? <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={BLUE} /> +
-                            ` ${mappedMVKOperators.amount ?? ''}`
-                          : 'None'}
-                      </div>
-                      <Button
-                        kind={BUTTON_SIMPLE}
-                        disabled={true || isActionActive}
-                        onClick={() => openUpdateMvkOperatorsPopup?.({})}
-                      >
-                        Update <Icon id="paginationArrowLeft" />
-                      </Button>
-                    </div>
-                  ) : null}
-                </div>
-              </BorrowingTabListItemTabInfo>
-            )}
           </BorrowingTabListItemExpanded>
         )}
       </Expand>
