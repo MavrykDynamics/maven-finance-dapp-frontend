@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { TabItem, TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
@@ -34,7 +35,6 @@ import { State } from 'reducers'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 
 type Props = {
-  handleSwitchTab: (tabId: number) => void
   openAddNewCollateralPopup: () => void
   openAddExistingCollateralPopup: (idx: number) => void
   openWithdrawCollateralPopup: ({ amount, idx }: { amount: number; idx: number }) => void
@@ -58,7 +58,6 @@ type Props = {
 }
 
 export const BorrowingExpandCardMenuSection = ({
-  handleSwitchTab,
   openAddNewCollateralPopup,
   openAddExistingCollateralPopup,
   openWithdrawCollateralPopup,
@@ -68,7 +67,6 @@ export const BorrowingExpandCardMenuSection = ({
 
   collateralData,
   currentToken,
-  activeMenuTab,
   isOwner,
   vaultAddress,
   xtzDelegatedTo,
@@ -82,14 +80,24 @@ export const BorrowingExpandCardMenuSection = ({
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
+  const [activeMenuTab, setActiveMenuTab] = useState(VAULT_CARD_MENU_TABS.find((item) => item.active))
+
   const vaultHasXtzCollateral = collateralData.find(({ gqlName }) => isTezosAsset(gqlName))
   // TODO: test it when sMVK will be avaliable as collateral
   const vaultHasSmvkCollateral = collateralData.find(({ gqlName }) => gqlName === 'smvk')
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
 
+  const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (tabId: number) => {
+    setActiveTab(VAULT_CARD_MENU_TABS.find((item) => item.id === tabId))
+  }
+
   return (
     <>
-      <TabSwitcher tabItems={VAULT_CARD_MENU_TABS} onClick={handleSwitchTab} className="menu-switcher" />
+      <TabSwitcher
+        tabItems={VAULT_CARD_MENU_TABS}
+        onClick={handleSwitchTab(setActiveMenuTab)}
+        className="menu-switcher"
+      />
 
       {activeMenuTab?.id === vaultCardTabNames.COLLATERAL_ASSETS && (
         <BorrowingTabListItemTabInfo>

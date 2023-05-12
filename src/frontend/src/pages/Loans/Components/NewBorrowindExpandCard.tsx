@@ -59,6 +59,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { TransactionHistory } from './TransactionHistory'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { BorrowingExpandCardMenuSection } from './BorrowingExpandCard/BorrowingExpandCardMenuSection.view'
+import { BorrowingExpandCardActionsSection } from './BorrowingExpandCard/BorrowingExpandCardActionsSection.view'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -107,11 +108,6 @@ export const BorrowingExpandCard = ({
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [expanded, setExpanded] = useState(false)
-  const [activeMenuTab, setActiveMenuTab] = useState(VAULT_CARD_MENU_TABS.find((item) => item.active))
-  const [activeRepayBorrowTab, setActiveRepayBorrowTab] = useState(
-    VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS.find((item) => item.active),
-  )
-  const [activeRepayTab, setActiveRepayTab] = useState(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.active))
 
   const {
     openChangeBakerPopup,
@@ -170,12 +166,6 @@ export const BorrowingExpandCard = ({
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
-
-  const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (tabId: number) => {
-    const tabs = VAULT_CARD_MENU_TABS.concat(VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS, VAULT_CARD_REPAY_SLIDING_BUTTONS)
-
-    setActiveTab(tabs.find((item) => item.id === tabId))
-  }
 
   const handleClickOpenAddNewCollateralPopup = () => {
     openAddNewCollateralPopup?.({
@@ -394,24 +384,10 @@ export const BorrowingExpandCard = ({
                 </BorrowingTabListItemSectionInfo>
               </BorrowingTabListItemSection>
 
-              <BorrowingTabListItemSection>
-                <BorrowingTabListItemSectionInfo className="action-switchers">
-                  <SlidingTabButtons
-                    onClick={handleSwitchTab(setActiveRepayBorrowTab)}
-                    tabItems={VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS}
-                    className="vault"
-                  />
-                  <SlidingTabButtons
-                    onClick={handleSwitchTab(setActiveRepayTab)}
-                    tabItems={VAULT_CARD_REPAY_SLIDING_BUTTONS}
-                    className="vault"
-                  />
-                </BorrowingTabListItemSectionInfo>
-              </BorrowingTabListItemSection>
+              <BorrowingExpandCardActionsSection />
             </div>
 
             <BorrowingExpandCardMenuSection
-              handleSwitchTab={handleSwitchTab(setActiveMenuTab)}
               openAddNewCollateralPopup={handleClickOpenAddNewCollateralPopup}
               openAddExistingCollateralPopup={handleClickOpenAddExistingCollateralPopup}
               openWithdrawCollateralPopup={handleClickOpenWithdrawCollateralPopup}
@@ -420,7 +396,6 @@ export const BorrowingExpandCard = ({
               openUpdateMvkOperatorsPopup={handleClickOpenUpdateMvkOperatorsPopup}
               collateralData={collateralData}
               currentToken={currentToken}
-              activeMenuTab={activeMenuTab}
               isOwner={isOwner}
               vaultAddress={address}
               xtzDelegatedTo={xtzDelegatedTo}
