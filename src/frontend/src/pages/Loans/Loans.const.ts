@@ -67,6 +67,8 @@ export const vaultCardTabNames = {
   COLLATERAL_ASSETS: 1,
   TX_HISTORY: 2,
   USEFUL_INFO: 3,
+  TX_HISTORY_VIEW_ALL: 8,
+  TX_HISTORY_VIEW_PERSONAL: 9,
 }
 
 export const ANY_USER = 'any'

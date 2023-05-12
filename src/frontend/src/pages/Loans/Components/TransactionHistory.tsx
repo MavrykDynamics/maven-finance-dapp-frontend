@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -58,7 +58,7 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
           <H2Title>Transaction History</H2Title>
 
           <SlidingTabButtons
-            onClick={(tabId: number) => setSwitcherState(tabId === 0 ? 'all' : 'personal')}
+            onClick={(tabId: number) => setSwitcherState(tabId === 8 ? 'all' : 'personal')}
             tabItems={VAULT_TRANSACTION_HISTORY_SLIDING_BUTTONS}
             className="vault"
           />

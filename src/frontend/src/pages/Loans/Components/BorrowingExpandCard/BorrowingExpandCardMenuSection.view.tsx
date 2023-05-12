@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 import { TabItem, TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { BorrowingTabListItemTabInfo } from '../LoansComponents.style'
 import {
@@ -31,7 +32,6 @@ import colors from 'styles/colors'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { State } from 'reducers'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
-import { Link } from 'react-router-dom'
 
 type Props = {
   handleSwitchTab: (tabId: number) => void
