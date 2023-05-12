@@ -6,18 +6,68 @@ export const LEND_TAB_ID = 'lendingTab'
 export const BORROW_TAB_ID = 'borrowTab'
 export const ASSETS_WE_HAVE_BG_TO = ['XTZ', 'EURL', 'USDT']
 
-export const TRANSACTION_HISTORY_SLIDING_BUTTONS = [
+export const VAULT_CARD_MENU_TABS = [
+  {
+    text: 'Collateral Assets',
+    id: 1,
+    active: true,
+  },
+  {
+    text: 'TX History',
+    id: 2,
+    active: false,
+  },
+  {
+    text: 'Useful Info',
+    id: 3,
+    active: false,
+  },
+]
+
+export const VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS = [
+  {
+    text: 'Borrow',
+    id: 4,
+    active: true,
+  },
+  {
+    text: 'Repay',
+    id: 5,
+    active: false,
+  },
+]
+
+export const VAULT_CARD_REPAY_SLIDING_BUTTONS = [
+  {
+    text: 'Repay in Part',
+    id: 6,
+    active: true,
+  },
+  {
+    text: 'Repay in Full',
+    id: 7,
+    active: false,
+  },
+]
+
+export const VAULT_TRANSACTION_HISTORY_SLIDING_BUTTONS = [
   {
     text: 'View All',
-    id: 0,
+    id: 8,
     active: true,
   },
   {
     text: 'View Personal',
-    id: 1,
+    id: 9,
     active: false,
   },
 ]
+
+export const vaultCardTabNames = {
+  COLLATERAL_ASSETS: 1,
+  TX_HISTORY: 2,
+  USEFUL_INFO: 3,
+}
 
 export const ANY_USER = 'any'
 export const NONE_USER = 'none'

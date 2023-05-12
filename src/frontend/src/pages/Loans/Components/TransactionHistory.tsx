@@ -9,7 +9,7 @@ import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingT
 import { State } from 'reducers'
 import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
-import { TRANSACTION_HISTORY_SLIDING_BUTTONS } from '../Loans.const'
+import { VAULT_TRANSACTION_HISTORY_SLIDING_BUTTONS } from '../Loans.const'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TRANSPARENT } from 'app/App.components/Button/Button.constants'
 import {
@@ -59,8 +59,8 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
 
           <SlidingTabButtons
             onClick={(tabId: number) => setSwitcherState(tabId === 0 ? 'all' : 'personal')}
-            tabItems={TRANSACTION_HISTORY_SLIDING_BUTTONS}
-            className="transaction-history"
+            tabItems={VAULT_TRANSACTION_HISTORY_SLIDING_BUTTONS}
+            className="vault"
           />
         </div>
 

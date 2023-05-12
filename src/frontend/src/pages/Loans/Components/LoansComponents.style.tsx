@@ -127,8 +127,15 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     column-gap: 20px;
   }
 
-  .switcher {
+  .menu-switcher {
     max-width: 380px;
+  }
+
+  .action-switchers {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    margin: 0 auto;
   }
 
   .block-name {
@@ -287,6 +294,11 @@ export const BorrowingTabListItemSectionInfo = styled.div<{
 
   .margin-top {
     margin-top: 18px;
+  }
+
+  &.action-switchers {
+    grid-column: 1 / 3;
+    grid-row: 1;
   }
 
   &.learn-more {

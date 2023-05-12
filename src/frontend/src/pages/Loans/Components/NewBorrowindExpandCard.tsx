@@ -6,10 +6,14 @@ import { Link } from 'react-router-dom'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
   ANY_USER,
+  vaultCardTabNames,
   COLLATERAL_RATIO_GRADIENT,
   getCollateralRationPersent,
   getStatusByCollateralRatio,
+  VAULT_CARD_MENU_TABS,
   NONE_USER,
+  VAULT_CARD_REPAY_SLIDING_BUTTONS,
+  VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS,
   WHITELIST_USERS,
 } from '../Loans.const'
 import {
@@ -53,30 +57,7 @@ import { getNumberInBounds } from 'utils/calcFunctions'
 import { TabItem, TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { TransactionHistory } from './TransactionHistory'
-
-const tabsList: TabItem[] = [
-  {
-    text: 'Collateral Assets',
-    id: 1,
-    active: true,
-  },
-  {
-    text: 'TX History',
-    id: 2,
-    active: false,
-  },
-  {
-    text: 'Useful Info',
-    id: 3,
-    active: false,
-  },
-]
-
-const tabNames = {
-  COLLATERAL_ASSETS: 1,
-  TX_HISTORY: 2,
-  USEFUL_INFO: 3,
-}
+import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -125,7 +106,11 @@ export const BorrowingExpandCard = ({
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [expanded, setExpanded] = useState(false)
-  const [activeTab, setActiveTab] = useState(tabsList.find((item) => item.active))
+  const [activeMenuTab, setActiveMenuTab] = useState(VAULT_CARD_MENU_TABS.find((item) => item.active))
+  const [activeRepayBorrowTab, setActiveRepayBorrowTab] = useState(
+    VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS.find((item) => item.active),
+  )
+  const [activeRepayTab, setActiveRepayTab] = useState(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.active))
 
   const {
     openChangeBakerPopup,
@@ -185,8 +170,10 @@ export const BorrowingExpandCard = ({
 
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
 
-  const handleSwitchTab = (tabId: number) => {
-    setActiveTab(tabsList.find((item) => item.id === tabId))
+  const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (tabId: number) => {
+    const tabs = VAULT_CARD_MENU_TABS.concat(VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS, VAULT_CARD_REPAY_SLIDING_BUTTONS)
+
+    setActiveTab(tabs.find((item) => item.id === tabId))
   }
 
   useEffect(() => {
@@ -349,12 +336,29 @@ export const BorrowingExpandCard = ({
                 </BorrowingTabListItemSectionInfo>
               </BorrowingTabListItemSection>
 
-              <BorrowingTabListItemSection></BorrowingTabListItemSection>
+              <BorrowingTabListItemSection>
+                <BorrowingTabListItemSectionInfo className="action-switchers">
+                  <SlidingTabButtons
+                    onClick={handleSwitchTab(setActiveRepayBorrowTab)}
+                    tabItems={VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS}
+                    className="vault"
+                  />
+                  <SlidingTabButtons
+                    onClick={handleSwitchTab(setActiveRepayTab)}
+                    tabItems={VAULT_CARD_REPAY_SLIDING_BUTTONS}
+                    className="vault"
+                  />
+                </BorrowingTabListItemSectionInfo>
+              </BorrowingTabListItemSection>
             </div>
 
-            <TabSwitcher tabItems={tabsList} onClick={handleSwitchTab} className="switcher" />
+            <TabSwitcher
+              tabItems={VAULT_CARD_MENU_TABS}
+              onClick={handleSwitchTab(setActiveMenuTab)}
+              className="menu-switcher"
+            />
 
-            {activeTab?.id === tabNames.COLLATERAL_ASSETS && (
+            {activeMenuTab?.id === vaultCardTabNames.COLLATERAL_ASSETS && (
               <BorrowingTabListItemTabInfo>
                 <div className="tab-header">
                   <H2Title>Your Collateralized Assets</H2Title>
@@ -491,9 +495,9 @@ export const BorrowingExpandCard = ({
               </BorrowingTabListItemTabInfo>
             )}
 
-            {activeTab?.id === tabNames.TX_HISTORY && <TransactionHistory currentToken={currentToken} />}
+            {activeMenuTab?.id === vaultCardTabNames.TX_HISTORY && <TransactionHistory currentToken={currentToken} />}
 
-            {activeTab?.id === tabNames.USEFUL_INFO && (
+            {activeMenuTab?.id === vaultCardTabNames.USEFUL_INFO && (
               <BorrowingTabListItemTabInfo>
                 <H2Title>Useful Info</H2Title>
 

@@ -31,7 +31,7 @@ export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  &.transaction-history {
+  &.vault {
     height: 40px;
     width: 310px;
 
