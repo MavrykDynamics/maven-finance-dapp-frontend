@@ -413,7 +413,6 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
   align-items: center;
   column-gap: 20px;
   padding: 15px 25px;
-  margin: 15px 0 25px 0;
   background-color: ${({ theme }) => theme.dPurple_container_dPurple};
   font-weight: 600;
   font-size: 14px;
