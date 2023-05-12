@@ -341,6 +341,12 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
     grid-template-columns: auto 250px;
   }
 
+  .useful-info {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+  }
+
   .useful-info-title {
     font-weight: 600;
     font-size: 18px;
@@ -352,7 +358,6 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
   .useful-info-line {
     display: flex;
     align-items: center;
-    margin-top: 10px;
     width: 400px;
 
     a,

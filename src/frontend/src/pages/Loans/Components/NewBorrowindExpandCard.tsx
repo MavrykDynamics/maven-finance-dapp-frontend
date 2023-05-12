@@ -119,6 +119,7 @@ export const BorrowingExpandCard = ({
 }: BorrowingExpandCardPropsType) => {
   const { symbol, icon, rate = 1 } = borrowedAsset
 
+  const { loansControllerAddress } = useSelector((state: State) => state.loans)
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -496,13 +497,29 @@ export const BorrowingExpandCard = ({
               <BorrowingTabListItemTabInfo>
                 <H2Title>Useful Info</H2Title>
 
+                <div className="useful-info">
+                  <div className="useful-info-line">
+                    <div className="name">Vault Address</div>
+                    <div className="value">
+                      <TzAddress tzAddress={address} type={BLUE} />
+                    </div>
+                  </div>
+
+                  <div className="useful-info-line">
+                    <div className="name">Lending Controller Address</div>
+                    <div className="value">
+                      <TzAddress tzAddress={loansControllerAddress} type={BLUE} />
+                    </div>
+                  </div>
+                </div>
+
                 {vaultHasXtzCollateral || vaultHasSmvkCollateral ? (
-                  <div>
+                  <div className="useful-info">
                     <div className="useful-info-title">Delegations</div>
 
                     {vaultHasXtzCollateral ? (
                       <div className="useful-info-line">
-                        <div className="name">XTZ Delegated to </div>
+                        <div className="name">XTZ Delegated to</div>
                         <div className="value">
                           {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'Not Delegated'}
                         </div>
@@ -539,7 +556,7 @@ export const BorrowingExpandCard = ({
                   </div>
                 ) : null}
 
-                <div>
+                <div className="useful-info">
                   <div className="useful-info-title"> Permissions (Advanced)</div>
 
                   <div className="useful-info-line">
