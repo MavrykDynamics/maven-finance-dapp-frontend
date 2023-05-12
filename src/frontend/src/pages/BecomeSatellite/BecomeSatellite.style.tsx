@@ -93,10 +93,15 @@ export const BecomeSatelliteOracleText = styled.h3<{ theme: MavrykTheme }>`
   padding-bottom: 15px;
   line-height: 22px;
 
-  a {
+  a,
+  a * {
+    cursor: pointer;
+    display: inline;
+  }
+
+  a:not(.satellite) {
     color: ${({ theme }) => theme.valueColor};
     text-decoration: underline;
-    cursor: pointer;
   }
 
   span {

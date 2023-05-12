@@ -49,6 +49,9 @@ import {
 } from './BecomeSatellite.style'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { Link } from 'react-router-dom'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -255,16 +258,27 @@ export const BecomeSatellite = () => {
           ) : (
             <BecomeSatelliteForm>
               <h2>{pageText.pageTitle}</h2>
-              <BecomeSatelliteOracleText>
-                <span>Important Note:</span> Becoming a Satellite offers the operation an oracle node. Technically, one
-                may become a Satellite without operating an oracle and take part in Governance. However, they will forgo
-                all of the oracle rewards which are a major source of payments. For information on operating an oracle
-                node for your Satellite, please read more on Gitbook{' '}
-                <a href="https://mavryk.finance/litepaper#the-decentralized-oracle" target="_blank" rel="noreferrer">
-                  here
-                </a>
-                .
-              </BecomeSatelliteOracleText>
+              {satelliteMvkIsDelegatedTo ? (
+                <BecomeSatelliteOracleText>
+                  <span>Important Note:</span> You are currently delegated to satellite{' '}
+                  <Link to={`/satellites/satellite-details/${satelliteMvkIsDelegatedTo}`} className="satellite">
+                    <TzAddress tzAddress={satelliteMvkIsDelegatedTo} hasIcon={false} shouldCopy={false} type={BLUE} />
+                  </Link>
+                  . When becoming a satellite, you will first be undelegated from your current satellite and then
+                  registered as a satellite.
+                </BecomeSatelliteOracleText>
+              ) : (
+                <BecomeSatelliteOracleText>
+                  <span>Important Note:</span> Becoming a Satellite offers the operation an oracle node. Technically,
+                  one may become a Satellite without operating an oracle and take part in Governance. However, they will
+                  forgo all of the oracle rewards which are a major source of payments. For information on operating an
+                  oracle node for your Satellite, please read more on Gitbook{' '}
+                  <a href="https://mavryk.finance/litepaper#the-decentralized-oracle" target="_blank" rel="noreferrer">
+                    here
+                  </a>
+                  .
+                </BecomeSatelliteOracleText>
+              )}
               <CommaNumber
                 className="label"
                 value={Number(minimumStakedMvkBalance)}

@@ -433,9 +433,8 @@ export const CreateNewVault = ({
                   kind={BUTTON_PRIMARY}
                   form={BUTTON_WIDE}
                   onClick={() => {
-                    setShownScreen(CONFIRMATION_SCREEN_ID)
-                    // setShownScreen(ADD_COLLATERAL_SCREEN_ID)
-                    // createVaultAction()
+                    setShownScreen(ADD_COLLATERAL_SCREEN_ID)
+                    createVaultAction()
                   }}
                   disabled={vaultName.validationStatus !== INPUT_STATUS_SUCCESS}
                 >
