@@ -47,12 +47,19 @@ import { getBytesDiff, getPaymentsDiff } from './ProposalSubmition.helpers'
 import { dropProposal, lockProposal, submitProposal, updateProposalData } from './ProposalSubmission.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import { Info } from 'app/App.components/Info/Info.view'
+import TimeRemainingSmall from 'pages/Governance/components/TimeRemaining/TimeRemainingSmall'
+import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
+import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 
 export const ProposalSubmission = () => {
   const lastSelectedProposalId = useRef(-1)
   const dispatch = useDispatch()
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    accountPkh,
+    user: { isNewlyRegisteredSatellite },
+  } = useSelector((state: State) => state.wallet)
   const {
     currentRoundProposalsIds,
     proposalsMapper,
@@ -347,6 +354,17 @@ export const ProposalSubmission = () => {
               />
             </SubmitProposalHeader>
 
+            {isNewlyRegisteredSatellite && (
+              <Info
+                text={
+                  <>
+                    {UNREGISTERED_SATELLITE_BANNER_TEXT} <TimeRemainingSmall />
+                  </>
+                }
+                type={INFO_DEFAULT}
+              />
+            )}
+
             {activeTab === 1 && (
               <StageOneForm
                 proposalId={selectedUserProposalId}
@@ -379,7 +397,7 @@ export const ProposalSubmission = () => {
               <Button
                 kind={BUTTON_SECONDARY}
                 form={BUTTON_WIDE}
-                disabled={!isProposalSubmitted || !isProposalPeriod}
+                disabled={!isProposalSubmitted || !isProposalPeriod || isNewlyRegisteredSatellite}
                 onClick={() => handleDropProposal(selectedUserProposalId)}
               >
                 <Icon id="navigation-menu_close" /> Drop Proposal
@@ -390,7 +408,8 @@ export const ProposalSubmission = () => {
                   !isProposalPeriod ||
                   currentProposal.locked ||
                   proposalHasChange ||
-                  !mappedProposals[selectedUserProposalId]?.proposalData.length
+                  !mappedProposals[selectedUserProposalId]?.proposalData.length ||
+                  isNewlyRegisteredSatellite
                 }
                 onClick={() => handleLockProposal(selectedUserProposalId)}
                 kind={BUTTON_SECONDARY}
@@ -402,7 +421,13 @@ export const ProposalSubmission = () => {
                 <Button
                   kind={BUTTON_PRIMARY}
                   form={BUTTON_WIDE}
-                  disabled={!proposalHasChange || currentProposal.locked || !isBytesValid || !isPaymentsValid}
+                  disabled={
+                    !proposalHasChange ||
+                    currentProposal.locked ||
+                    !isBytesValid ||
+                    !isPaymentsValid ||
+                    isNewlyRegisteredSatellite
+                  }
                   onClick={() => handleUpdateData(selectedUserProposalId)}
                 >
                   <Icon id="bytes" /> Save Changes
@@ -412,7 +437,7 @@ export const ProposalSubmission = () => {
                   kind={BUTTON_PRIMARY}
                   form={BUTTON_WIDE}
                   // TODO: when add stage 2 and 3 to submit, add validation checking here
-                  disabled={!isStageOneDataValid}
+                  disabled={!isStageOneDataValid || isNewlyRegisteredSatellite}
                   onClick={handleSubmitProposal}
                 >
                   <Icon id="auction" /> Submit Proposal

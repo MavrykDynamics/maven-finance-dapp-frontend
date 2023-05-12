@@ -73,7 +73,7 @@ const Satellites = () => {
   return (
     <Page>
       <PageHeader page={'satellites'} />
-      {!isSatellite || userTokens[SMVK_TOKEN_SYMBOL].balance === 0 ? (
+      {!isSatellite && userTokens[SMVK_TOKEN_SYMBOL].balance === 0 ? (
         <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
       ) : null}
       <PageContent>

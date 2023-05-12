@@ -39,6 +39,11 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
 
   const isOnStakingPage = pathname === '/staking'
 
+  const handleStakeBtn = () => {
+    if (!isOnStakingPage) history.push('/staking')
+    setDetailsShown(false)
+  }
+
   const handleChangeWallet = async () => await dispatch(changeWallet())
   const disconnectWallet = async () => await dispatch(disconnect())
   const closeDetailsHandler = () => setDetailsShown(false)
@@ -111,10 +116,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             </div>
 
             <div className="action">
-              <Button
-                onClick={() => (isOnStakingPage ? setDetailsShown(false) : history.push('/staking'))}
-                kind={BUTTON_SIMPLE}
-              >
+              <Button onClick={handleStakeBtn} kind={BUTTON_SIMPLE}>
                 Stake MVK <Icon id="paginationArrowLeft" />
               </Button>
             </div>
@@ -219,6 +221,15 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
   const isOnStakingPage = pathname === '/staking'
 
+  const handleStakeBtn = () => {
+    if (!isOnStakingPage) {
+      history.push('/staking')
+    }
+
+    setDetailsShown(false)
+    closeMobileMenu()
+  }
+
   const handleChangeWallet = async () => await dispatch(changeWallet())
   const disconnectWallet = async () => await dispatch(disconnect())
   const clickHander = () => setDetailsShown(!detailsShown)
@@ -294,17 +305,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             </div>
 
             <div className="action">
-              <Button
-                onClick={(e) => {
-                  if (!isOnStakingPage) {
-                    history.push('/staking')
-                  }
-
-                  setDetailsShown(false)
-                  closeMobileMenu()
-                }}
-                kind={BUTTON_SIMPLE}
-              >
+              <Button onClick={handleStakeBtn} kind={BUTTON_SIMPLE}>
                 Stake MVK <Icon id="paginationArrowLeft" />
               </Button>
             </div>

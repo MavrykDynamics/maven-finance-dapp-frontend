@@ -58,12 +58,18 @@ export const TextAreaStyled = styled.div`
       }
     }
   }
+
+  .info-error {
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 `
 
 export const TextAreaCounter = styled.div`
-  position: absolute;
-  bottom: -20px;
-  right: 10px;
+  margin-left: auto;
   color: ${({ theme }) => theme.headerColor};
 
   &.error {
@@ -122,7 +128,8 @@ export const TextAreaIcon = styled.svg<{ theme: MavrykTheme }>`
 
 export const TextAreaErrorMessage = styled.div<{ theme: MavrykTheme }>`
   color: ${({ theme }) => theme.downColor};
-  line-height: 24px;
+  font-size: 14px;
+  font-weight: 600;
   animation: ${slideDown} 0.3s cubic-bezier(0.12, 0.4, 0.29, 1.46);
   white-space: nowrap;
   overflow: hidden;

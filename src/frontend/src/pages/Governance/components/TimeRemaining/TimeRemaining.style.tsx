@@ -77,3 +77,10 @@ export const MoveNextRoundModalBase = styled.div<{ theme: MavrykTheme }>`
     margin-top: 10px;
   }
 `
+export const SmallTimerWrapper = styled.div<{ theme: MavrykTheme }>`
+  display: inline-block;
+  ul > li {
+    font-size: 14px;
+    width: 22px;
+  }
+`
