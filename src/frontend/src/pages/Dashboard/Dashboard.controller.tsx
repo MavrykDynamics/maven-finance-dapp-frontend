@@ -8,7 +8,7 @@ import { Page } from 'styles'
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
-import { DOORMAN_STATS_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { DOORMAN_HISTORY_SUB, DOORMAN_STATS_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -84,7 +84,7 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB])
+  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB, DOORMAN_HISTORY_SUB])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
