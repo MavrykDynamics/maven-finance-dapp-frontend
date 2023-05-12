@@ -217,7 +217,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
       dispatch(showToaster(TOASTER_INFO, 'Staking...', ACTION_START_MESSAGE_TEXT))
 
       // show toaster loader after 5000ms after operation started
-      setTimeout(async () => {
+      const loadingTimeoutId = setTimeout(async () => {
         dispatch(toggleActionFullScreenLoader(false))
         dispatch(
           showToaster(
@@ -226,6 +226,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
             TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
           ),
         )
+        clearTimeout(loadingTimeoutId)
       }, 5000)
     } catch (error) {
       if (error instanceof Error) {
@@ -263,7 +264,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
       dispatch(showToaster(TOASTER_INFO, 'Unstaking...', ACTION_START_MESSAGE_TEXT))
 
       // show toaster loader after 5000ms after operation started
-      setTimeout(async () => {
+      const loadingTimeoutId = setTimeout(async () => {
         dispatch(toggleActionFullScreenLoader(false))
         dispatch(
           showToaster(
@@ -272,6 +273,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
             TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
           ),
         )
+        clearTimeout(loadingTimeoutId)
       }, 5000)
     } catch (error) {
       if (error instanceof Error) {
