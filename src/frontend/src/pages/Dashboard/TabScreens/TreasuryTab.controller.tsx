@@ -191,7 +191,7 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
           Mavryk Finance for assigned purposes, such as buying back MVK, investing & holding in on-chain assets, and
           more.{' '}
           <a href="https://mavryk.finance/litepaper#treasury" target="_blank" rel="noreferrer">
-            Read more
+            Read More
           </a>
         </div>
       </div>
