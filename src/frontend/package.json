@@ -80,7 +80,6 @@
   },
   "husky": {
     "hooks": {
-      "commit-msg": "echo 'hello world'",
       "post-commit": "node ./scripts/git-post-commit.js"
     }
   },
