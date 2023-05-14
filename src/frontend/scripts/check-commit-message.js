@@ -2,11 +2,11 @@ const fs = require('fs')
 const path = require('path')
 const { spawnSync } = require('child_process')
 
-const p = path.join(__dirname, '../../../')
+const p = path.join(__dirname, '../../../.git/COMMIT_EDITMSG')
 const msg = fs.readFileSync(p, { encoding: 'utf8' })
 
-const taskReg = /^((MEG-[0-9]+)|(MEGAPP-[0-9]+))/
-const reg = /^(MEG-[0-9]+)|(MEGAPP-[0-9]+)|Merge/
+const taskReg = /^((MAV-[0-9]+))/
+const reg = /^(MAV-[0-9]+)|Merge/
 
 const status = spawnSync('gtm', ['status', '--total-only'])
 const time = status.stdout.toString()
