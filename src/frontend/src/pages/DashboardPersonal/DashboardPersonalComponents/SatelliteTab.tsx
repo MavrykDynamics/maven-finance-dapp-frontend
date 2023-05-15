@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+import { ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { distributeProposalRewards } from 'pages/Satellites/Satellites.actions'
 
@@ -20,7 +20,6 @@ import Icon from 'app/App.components/Icon/Icon.view'
 
 const SatelliteTab = () => {
   const dispatch = useDispatch()
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const {
     accountPkh = '',
     user: { availableSatellitesRewards },
@@ -28,8 +27,6 @@ const SatelliteTab = () => {
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const satelliteRecord = satelliteMapper[accountPkh]
-
-  const oracleStatusType = getOracleStatus(satelliteRecord, feedsLedger)
 
   const handleDistributeRewards = () => {
     // TODO: add valid data
@@ -117,8 +114,8 @@ const SatelliteTab = () => {
                 <div className="grid-item ">
                   <div className="name">Oracle Status</div>
                   <div className="value">
-                    <SatelliteOracleStatusComponent statusType={oracleStatusType}>
-                      {ORACLE_STATUSES_MAPPER[oracleStatusType]}
+                    <SatelliteOracleStatusComponent statusType={satelliteRecord.oracleStatus}>
+                      {ORACLE_STATUSES_MAPPER[satelliteRecord.oracleStatus]}
                     </SatelliteOracleStatusComponent>
                   </div>
                 </div>
