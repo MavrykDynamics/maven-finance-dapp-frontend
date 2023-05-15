@@ -16,7 +16,6 @@ import ConnectWalletBtn from '../ConnectWallet/ConnectWalletBtn'
 import Button from '../Button/NewButton'
 import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
 import { Info } from '../Info/Info.view'
-import TimeRemainingSmall from 'pages/Governance/components/TimeRemaining/TimeRemainingSmall'
 import { INFO_DEFAULT } from '../Info/info.constants'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 
@@ -135,14 +134,7 @@ export const VotingProposalsArea = ({
           <CommaNumber className="voted-label" value={voteStatistics.passVotesMVKTotal ?? 0} endingText={'voted MVK'} />
           {isNewlyRegisteredSatellite && (
             <div className="banner-area">
-              <Info
-                text={
-                  <>
-                    {UNREGISTERED_SATELLITE_BANNER_TEXT} <TimeRemainingSmall />
-                  </>
-                }
-                type={INFO_DEFAULT}
-              />
+              <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />
             </div>
           )}
           {accountPkh ? (
