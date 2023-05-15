@@ -1,36 +1,27 @@
 import type { State } from 'reducers'
 import type { AppDispatch, GetState } from '../../App.controller'
 import { TOASTER_LOADING, ToasterStatusType } from './Toaster.constants'
+import { sleep } from 'utils/api/sleep'
 
 export const SHOW_TOASTER = 'SHOW_TOASTER'
 export const HIDE_TOASTER = 'HIDE_TOASTER'
 
 export const showToaster =
   (status: ToasterStatusType, title: string, message: string, timeout: number = 4000) =>
-  (dispatch: AppDispatch, getState: GetState) => {
+  async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
-    // if we have toaster loader showing, turn it of, and show new toaster
+    // if we show loader toaster, turn it off, and show new toaster
     if (state.toaster?.status === TOASTER_LOADING && status !== TOASTER_LOADING) {
-      dispatch(hideToaster())
+      await dispatch(hideToaster())
 
-      dispatch({
-        type: SHOW_TOASTER,
-        status,
-        title,
-        message,
-      })
+      // need sleep to perform transition
+      await sleep(1300)
 
-      // Loader toaster should be turned off by hide action, cuz we don't know when loading finisheings
-      if (status !== TOASTER_LOADING) {
-        const timeoutId = setTimeout(() => {
-          dispatch(hideToaster())
-          clearTimeout(timeoutId)
-        }, timeout)
-      }
+      await dispatch(showToaster(status, title, message))
     }
 
-    // If we don't have toaster showing, show it
+    // If we don't show toaster, show it
     if (!state.toaster) {
       dispatch({
         type: SHOW_TOASTER,
