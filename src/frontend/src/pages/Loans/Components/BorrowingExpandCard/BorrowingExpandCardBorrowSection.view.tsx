@@ -1,36 +1,22 @@
-import { useEffect, useMemo, useState } from 'react'
-import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import {
-  BorrowingExpandCardActionsSectionStyled,
-  VaultOverview,
-  StatusMessageStyled,
-} from '../LoansComponents.style'
-import {
-  COLLATERAL_RATIO_GRADIENT,
-  VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS,
-  VAULT_CARD_REPAY_SLIDING_BUTTONS,
-  assetDecimalsToShow,
-  getCollateralRationPersent,
-  vaultCardTabNames,
-} from 'pages/Loans/Loans.const'
-import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+import { useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
+import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from '../Modals/Modals.helpers'
-import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
 import { INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Input } from 'app/App.components/Input/NewInput'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { VaultModalOverview } from '../Modals/Modals.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
-import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
@@ -48,46 +34,22 @@ type Props = {
   scrollToCurrentVault?: () => void
 }
 
-export const BorrowingExpandCardActionsSection = (props: Props) => {
+export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const dispatch = useDispatch()
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   const {
     vaultId,
     borrowedAsset,
     borrowCapacity = 0,
-    collateralRatio = 0,
-    borrowAPR = 0,
-    hasUserBorrowed,
     currentBorrowedAmount = 0,
     currentCollateralBalance = 0,
     DAOFee = 0,
     scrollToCurrentVault,
   } = props
 
-  const repayBorrowSlidingButtons = useMemo(
-    () =>
-      VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS.map((item) => ({
-        ...item,
-        text: `${item.text} ${borrowedAsset?.symbol}`,
-      })),
-    [borrowedAsset?.symbol],
-  )
-
-  const [activeRepayBorrowTab, setActiveRepayBorrowTab] = useState(
-    repayBorrowSlidingButtons.find((item) => item.active),
-  )
-  const [activeRepayTab, setActiveRepayTab] = useState(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.active))
-
-  const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (tabId: number) => {
-    const tabs = repayBorrowSlidingButtons.concat(VAULT_CARD_REPAY_SLIDING_BUTTONS)
-
-    setActiveTab(tabs.find((item) => item.id === tabId))
-  }
-
-  const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { userTokens } = useSelector((state: State) => state.wallet.user)
-
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
+
   const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
   const userAssetBalance = userTokens[borrowedAsset?.symbol ?? '']?.balance ?? 0
 
@@ -102,10 +64,6 @@ export const BorrowingExpandCardActionsSection = (props: Props) => {
   }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputAmount, borrowCapacity])
 
   const showWarning = inputAmount > borrowCapacity / (borrowedAsset?.rate ?? 0) || futureCollateralRatio < 200
-
-  useEffect(() => {
-    setInputData(DEFAULT_LOANS_INPUT_VALUE)
-  }, [activeRepayBorrowTab, activeRepayTab])
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
@@ -153,57 +111,41 @@ export const BorrowingExpandCardActionsSection = (props: Props) => {
   }
 
   return (
-    <BorrowingExpandCardActionsSectionStyled>
-      <div className="switchers">
-        <SlidingTabButtons
-          onClick={handleSwitchTab(setActiveRepayBorrowTab)}
-          tabItems={repayBorrowSlidingButtons}
-          className="vault"
-        />
-        {activeRepayBorrowTab?.id === vaultCardTabNames.REPAY && (
-          <SlidingTabButtons
-            onClick={handleSwitchTab(setActiveRepayTab)}
-            tabItems={VAULT_CARD_REPAY_SLIDING_BUTTONS}
-            className="vault"
-          />
-        )}
-      </div>
-
+    <>
       <div className="tab-text">
         Select the asset you would like to borrow. You cannot borrow more than your borrow capacity.
       </div>
 
       <div>
         <div className="tab-text">Select Amount to Borrow</div>
-        {borrowedAsset ? (
-          <Input
-            className={`${borrowedAsset.rate ? 'input-with-rate' : ''} pinned-dropdown`}
-            inputProps={{
-              value: inputData.amount,
-              type: 'number',
-              onBlur: inputOnBlurHandle,
-              onFocus: onFocusHandler,
-              onChange: (e) => inputOnChangeHandle(e.target.value, borrowCapacity / borrowedAsset.rate),
-            }}
-            settings={{
-              balance: userAssetBalance,
-              balanceAsset: borrowedAsset?.symbol,
-              useMaxHandler: () =>
-                inputOnChangeHandle(
-                  getLoansInputMaxAmount(borrowCapacity / borrowedAsset.rate, borrowedAsset.decimals),
-                  borrowCapacity / borrowedAsset.rate,
-                ),
-              inputStatus: inputData.validationStatus,
-              convertedValue: inputAmount * borrowedAsset.rate,
-              inputSize: INPUT_LARGE,
-            }}
-          >
-            <InputPinnedTokenInfo>
-              <ImageWithPlug imageLink={borrowedAsset.icon} alt={`${borrowedAsset.symbol} icon`} />{' '}
-              {borrowedAsset?.symbol}
-            </InputPinnedTokenInfo>
-          </Input>
-        ) : null}
+
+        <Input
+          className={`${borrowedAsset.rate ? 'input-with-rate' : ''} pinned-dropdown`}
+          inputProps={{
+            value: inputData.amount,
+            type: 'number',
+            onBlur: inputOnBlurHandle,
+            onFocus: onFocusHandler,
+            onChange: (e) => inputOnChangeHandle(e.target.value, borrowCapacity / borrowedAsset.rate),
+          }}
+          settings={{
+            balance: userAssetBalance,
+            balanceAsset: borrowedAsset?.symbol,
+            useMaxHandler: () =>
+              inputOnChangeHandle(
+                getLoansInputMaxAmount(borrowCapacity / borrowedAsset.rate, borrowedAsset.decimals),
+                borrowCapacity / borrowedAsset.rate,
+              ),
+            inputStatus: inputData.validationStatus,
+            convertedValue: inputAmount * borrowedAsset.rate,
+            inputSize: INPUT_LARGE,
+          }}
+        >
+          <InputPinnedTokenInfo>
+            <ImageWithPlug imageLink={borrowedAsset.icon} alt={`${borrowedAsset.symbol} icon`} />{' '}
+            {borrowedAsset?.symbol}
+          </InputPinnedTokenInfo>
+        </Input>
       </div>
 
       {showWarning ? (
@@ -256,7 +198,7 @@ export const BorrowingExpandCardActionsSection = (props: Props) => {
               />
             </ThreeLevelListItem>
 
-            <ThreeLevelListItem>
+            <ThreeLevelListItem className="right">
               <div className="name">Collateral Value</div>
               <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
@@ -295,6 +237,6 @@ export const BorrowingExpandCardActionsSection = (props: Props) => {
           Borrow
         </NewButton>
       </div>
-    </BorrowingExpandCardActionsSectionStyled>
+    </>
   )
 }
