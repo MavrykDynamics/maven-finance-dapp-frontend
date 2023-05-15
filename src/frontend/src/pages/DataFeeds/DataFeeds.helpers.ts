@@ -72,7 +72,6 @@ export function normalizeFeeds({
     feedCategories: [...dataFeedUniqueCategories],
     config: {
       feedNameMaxLength: aggregator_factory[0]?.aggregator_name_max_length || defaultAggregatorNameMaxLength,
-      feedsFactoryAddress: aggregator_factory?.[0]?.address || '',
     },
   }
 }
