@@ -452,7 +452,10 @@ export const CreateNewVault = ({
                 {collaterals.map(({ inputAmount, validationField, id: inputCollateralId }, idx) => {
                   const collateralMetadata = collateralsToSelect[inputCollateralId]
 
-                  const userAssetBalance = userTokens[collateralMetadata.symbol.toLowerCase()]?.balance ?? 0
+                  const balanceSymbol = isTezosAsset(collateralMetadata?.symbol ?? '')
+                    ? 'tezos'
+                    : collateralMetadata?.symbol?.toLowerCase() ?? ''
+                  const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
 
                   if (!collateralMetadata) return null
                   const isXTZCollateral = isTezosAsset(collateralMetadata.gqlName)
