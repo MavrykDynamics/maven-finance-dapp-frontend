@@ -5,11 +5,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useMedia } from 'react-use'
 import { ThunkDispatch } from 'redux-thunk'
 import { useCookies } from 'react-cookie'
+import { useQuery } from '@apollo/client'
 
 import { configureStore } from './App.store'
 
 // providers
 import { StakeProvider } from 'providers/StakeProvider/stake.provider'
+
+// queries
+import { GET_MAX_LENGTHS_QUERY } from 'gql/queries/getMaxLengthsData'
 
 // types
 import { State } from '../reducers'
@@ -47,6 +51,10 @@ const AppContainer = () => {
 
   const showSidebarOpened = useMedia('(min-width: 1400px)')
   const [{ policyPopup }, setCookie] = useCookies(['policyPopup'])
+
+  const { data, loading } = useQuery(GET_MAX_LENGTHS_QUERY)
+
+  console.log(data, '----------------------', loading)
 
   const { changeNodePopupOpen, sidebarOpened } = useSelector((state: State) => state.preferences)
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
