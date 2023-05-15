@@ -13,7 +13,7 @@
     "import-contracts": "rm -Rf src/deployments && cp -R ../contracts/deployments src/deployments",
     "open-explorer": "open https://better-call.dev/hangzhou2net/KT1N4WXRdpxmqKVuukhQXX5kgc6JwJwyJrVH/",
     "codegen": "graphql-codegen --config codegen.yml",
-    "prepare": "husky install"
+    "install": "cd ../../ && npx husky install"
   },
   "dependencies": {
     "@airgap/beacon-sdk": "^3.3.0",
