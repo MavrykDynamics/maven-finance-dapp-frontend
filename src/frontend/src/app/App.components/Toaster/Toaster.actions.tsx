@@ -13,12 +13,12 @@ export const showToaster =
 
     // if we show loader toaster, turn it off, and show new toaster
     if (state.toaster?.status === TOASTER_LOADING && status !== TOASTER_LOADING) {
-      await dispatch(hideToaster())
+      dispatch(hideToaster())
 
       // need sleep to perform transition
       await sleep(1300)
 
-      await dispatch(showToaster(status, title, message))
+      dispatch(showToaster(status, title, message))
     }
 
     // If we don't show toaster, show it
