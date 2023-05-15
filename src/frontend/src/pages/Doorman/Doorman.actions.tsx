@@ -135,7 +135,7 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
       const currentOperationLevel = transaction?.lastHead?.header?.level
 
       // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
+      return await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(updateUserData())
           await dispatch(getDoormanStorage())
@@ -196,7 +196,7 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
       const currentOperationLevel = transaction?.lastHead?.header?.level
 
       // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
+      return await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(updateUserData())
           await dispatch(getDoormanStorage())
