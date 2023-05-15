@@ -38,7 +38,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const dispatch = useDispatch()
   const { userTokens } = useSelector((state: State) => state.wallet.user)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  
+
   const {
     vaultId,
     borrowedAsset,
@@ -53,7 +53,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
   const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
-  const userAssetBalance = userTokens[borrowedAsset?.symbol ?? '']?.balance ?? 0
+  const userAssetBalance = userTokens[borrowedAsset?.symbol.toLowerCase() ?? '']?.balance ?? 0
 
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = borrowedAsset
@@ -238,7 +238,9 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={handleClickBorrow}
-          disabled={userAssetBalance < inputAmount || userAssetBalance === 0 || collateralRatio <= 201 || isActionActive}
+          disabled={
+            userAssetBalance < inputAmount || userAssetBalance === 0 || collateralRatio <= 201 || isActionActive
+          }
         >
           <Icon id="coin-loan" />
           Borrow

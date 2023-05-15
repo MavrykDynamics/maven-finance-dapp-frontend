@@ -65,7 +65,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
   const totalOutstanding = feesAmount + Number(borrowedAmount)
-  const userAssetBalance = userTokens[borrowedAsset?.symbol ?? '']?.balance ?? 0
+  const userAssetBalance = userTokens[borrowedAsset?.symbol.toLowerCase() ?? '']?.balance ?? 0
   const isRepayInFull = activeRepayTab?.id === vaultCardTabNames.REPAY_IN_FULL
   const isMinimumRepayWarning = inputData.validationStatus === INPUT_STATUS_ERROR && inputAmount <= minimumRepay
   const isNotRepayInFullWarning = isRepayInFull && mathRoundTwoDigit(totalOutstanding) !== inputAmount
@@ -142,7 +142,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   useEffect(() => {
     if (isRepayInFull) {
       const validationStatus = loansInputValidation({
-        inputAmount: String(inputAmount),
+        inputAmount: String(totalOutstanding),
         maxAmount: Math.min(userAssetBalance, totalOutstanding),
         minAmount: minimumRepay,
         options: {
