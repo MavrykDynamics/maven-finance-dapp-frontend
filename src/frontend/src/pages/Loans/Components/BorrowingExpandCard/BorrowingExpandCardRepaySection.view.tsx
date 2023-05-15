@@ -1,7 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
-import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import {
+  COLLATERAL_RATIO_GRADIENT,
+  assetDecimalsToShow,
+  getCollateralRationPersent,
+  vaultCardTabNames,
+} from 'pages/Loans/Loans.const'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from '../Modals/Modals.helpers'
@@ -21,6 +26,9 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import colors from 'styles/colors'
+import { TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { mathRoundTwoDigit } from 'utils/validatorFunctions'
+import { INFO } from 'app/App.components/Toaster/Toaster.constants'
 
 type Props = {
   vaultId: number
@@ -32,6 +40,7 @@ type Props = {
   currentCollateralBalance: number
   borrowCapacity: number
   scrollToCurrentVault?: () => void
+  activeRepayTab?: TabItem
 }
 
 export const BorrowingExpandCardRepaySection = (props: Props) => {
@@ -49,6 +58,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     minimumRepay = 0,
     borrowedAmount = 0,
     scrollToCurrentVault,
+    activeRepayTab,
   } = props
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -56,7 +66,9 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
   const totalOutstanding = feesAmount + Number(borrowedAmount)
   const userAssetBalance = userTokens[borrowedAsset?.symbol ?? '']?.balance ?? 0
-  const showWarning = inputData.validationStatus === INPUT_STATUS_ERROR && inputAmount <= minimumRepay
+  const isRepayInFull = activeRepayTab?.id === vaultCardTabNames.REPAY_IN_FULL
+  const isMinimumRepayWarning = inputData.validationStatus === INPUT_STATUS_ERROR && inputAmount <= minimumRepay
+  const isNotRepayInFullWarning = isRepayInFull && mathRoundTwoDigit(totalOutstanding) !== inputAmount
 
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = borrowedAsset
@@ -115,6 +127,26 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     }
   }
 
+  useEffect(() => {
+    if (isRepayInFull) {
+      const validationStatus = loansInputValidation({
+        inputAmount: String(inputAmount),
+        maxAmount: Math.min(userAssetBalance, totalOutstanding),
+        minAmount: minimumRepay,
+        options: {
+          byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
+        },
+      })
+
+      setInputData({
+        amount: String(mathRoundTwoDigit(totalOutstanding)),
+        validationStatus,
+      })
+    } else {
+      setInputData(DEFAULT_LOANS_INPUT_VALUE)
+    }
+  }, [activeRepayTab, totalOutstanding])
+
   return (
     <>
       <div>
@@ -149,7 +181,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         </Input>
       </div>
 
-      {showWarning ? (
+      {isMinimumRepayWarning ? (
         <StatusMessageStyled className={`${vaultsStatuses.LIQUIDATABLE}`}>
           <Icon id="error-triangle" />
           {
@@ -158,7 +190,14 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         </StatusMessageStyled>
       ) : null}
 
-      <div className={!showWarning ? 'mt-25' : ''}>
+      {isNotRepayInFullWarning ? (
+        <StatusMessageStyled className="repay-in-full">
+          <Icon id="info" />
+          You are no longer fully repaying there loan.
+        </StatusMessageStyled>
+      ) : null}
+
+      <div className={!isMinimumRepayWarning ? 'mt-25' : ''}>
         <div className="tab-text mb-10">Updated Repay {borrowedAsset?.symbol} Stats</div>
         <VaultOverview>
           <div className="line">
@@ -184,9 +223,9 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
               </div>
               <CommaNumber value={Math.ceil(feesAmount)} decimalsToShow={0} className="value" />
             </ThreeLevelListItem>
-            <ThreeLevelListItem className="left-divider">
+            <ThreeLevelListItem>
               <div className="name">Total Outstanding</div>
-              <CommaNumber value={totalOutstanding} className="value" />
+              <CommaNumber value={mathRoundTwoDigit(totalOutstanding) || 0} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem className="right">
               <div className="name">Collateral Value</div>
@@ -221,7 +260,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       <div className="button-wrapper">
         <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={handleClickRepay}>
           <Icon id="okIcon" />
-          Repay
+          Repay in {isRepayInFull ? 'Full' : 'Part'}
         </NewButton>
       </div>
     </>

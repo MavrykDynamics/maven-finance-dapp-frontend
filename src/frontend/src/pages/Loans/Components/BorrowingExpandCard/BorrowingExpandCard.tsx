@@ -202,6 +202,12 @@ export const BorrowingExpandCard = ({
   }
 
   useEffect(() => {
+    if (activeRepayBorrowTab?.id !== vaultCardTabNames.REPAY) return
+
+    setActiveRepayTab(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.id === vaultCardTabNames.REPAY_IN_PART))
+  }, [activeRepayBorrowTab])
+
+  useEffect(() => {
     if (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE) {
       ;(async () => {
         if (!levelOfEarly || !levelOfLate) {
@@ -288,20 +294,20 @@ export const BorrowingExpandCard = ({
                   />
                 )}
 
-                {activeRepayBorrowTab?.id === vaultCardTabNames.REPAY &&
-                  activeRepayTab?.id === vaultCardTabNames.REPAY_IN_PART && (
-                    <BorrowingExpandCardRepaySection
-                      vaultId={vaultId}
-                      borrowedAsset={borrowedAsset}
-                      currentCollateralBalance={collateralData.at(-1)?.amount ?? 0}
-                      borrowCapacity={borrowCapacity}
-                      scrollToCurrentVault={scrollToCurrentVault}
-                      vaultAddress={address}
-                      borrowedAmount={borrowedAmount}
-                      feesAmount={fee}
-                      minimumRepay={minimumRepay}
-                    />
-                  )}
+                {activeRepayBorrowTab?.id === vaultCardTabNames.REPAY && (
+                  <BorrowingExpandCardRepaySection
+                    vaultId={vaultId}
+                    borrowedAsset={borrowedAsset}
+                    currentCollateralBalance={collateralData.at(-1)?.amount ?? 0}
+                    borrowCapacity={borrowCapacity}
+                    scrollToCurrentVault={scrollToCurrentVault}
+                    vaultAddress={address}
+                    borrowedAmount={borrowedAmount}
+                    feesAmount={fee}
+                    minimumRepay={minimumRepay}
+                    activeRepayTab={activeRepayTab}
+                  />
+                )}
               </BorrowingExpandCardActionsSectionStyled>
             </div>
 
