@@ -130,7 +130,10 @@ export const AddNewCollateral = ({
     }
   }, [avaliableCollaterals, show, existingCollaterals, userTokens])
 
-  const collateralBalance = userTokens[inputData?.assetSymbol ?? '']?.balance ?? 0
+  const balanceSymbol = isTezosAsset(inputData?.assetSymbol ?? '')
+    ? 'tezos'
+    : inputData?.assetSymbol.toLowerCase() ?? ''
+  const collateralBalance = userTokens[balanceSymbol]?.balance ?? 0
 
   const { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance } = useMemo(() => {
     if (inputData) {
