@@ -73,8 +73,6 @@ const SatelliteNodes = () => {
     setDdIsOpen(!ddIsOpen)
   }
 
-  console.log(userTokens[SMVK_TOKEN_SYMBOL].balance, 'userTokens[SMVK_TOKEN_SYMBOL].balance')
-
   return (
     <Page>
       <PageHeader page={'satellites'} />
