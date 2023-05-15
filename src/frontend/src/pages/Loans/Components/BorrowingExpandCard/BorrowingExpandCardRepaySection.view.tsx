@@ -11,7 +11,7 @@ import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from '../Modals/Modals.helpers'
 import { State } from 'reducers'
-import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
+import { repayFullAndCloseVaultAction, repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
 import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Input } from 'app/App.components/Input/NewInput'
@@ -28,7 +28,6 @@ import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import colors from 'styles/colors'
 import { TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { mathRoundTwoDigit } from 'utils/validatorFunctions'
-import { INFO } from 'app/App.components/Toaster/Toaster.constants'
 
 type Props = {
   vaultId: number
@@ -47,6 +46,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const dispatch = useDispatch()
   const { userTokens } = useSelector((state: State) => state.wallet.user)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {
     vaultId,
@@ -112,18 +112,30 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   const handleClickRepay = async () => {
     if (vaultId && borrowedAsset && vaultAddress) {
-      await dispatch(
-        repayPartOfVaultAction(
-          vaultId,
-          vaultAddress,
-          inputAmount,
-          borrowedAsset.decimals,
-          borrowedAsset.tokenType,
-          borrowedAsset.address,
-          () => {}, // TODO: remove
-          scrollToCurrentVault,
-        ),
-      )
+      isRepayInFull && !isNotRepayInFullWarning
+        ? await dispatch(
+            repayFullAndCloseVaultAction(
+              vaultId,
+              vaultAddress,
+              totalOutstanding,
+              borrowedAsset.decimals,
+              borrowedAsset.tokenType,
+              borrowedAsset.address,
+              () => {}, // TODO: remove
+            ),
+          )
+        : await dispatch(
+            repayPartOfVaultAction(
+              vaultId,
+              vaultAddress,
+              inputAmount,
+              borrowedAsset.decimals,
+              borrowedAsset.tokenType,
+              borrowedAsset.address,
+              () => {}, // TODO: remove
+              scrollToCurrentVault,
+            ),
+          )
     }
   }
 
@@ -258,7 +270,12 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       </div>
 
       <div className="button-wrapper">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={handleClickRepay}>
+        <NewButton
+          kind={BUTTON_PRIMARY}
+          form={BUTTON_WIDE}
+          onClick={handleClickRepay}
+          disabled={userAssetBalance < inputAmount || userAssetBalance === 0 || !borrowedAmount || isActionActive}
+        >
           <Icon id="okIcon" />
           Repay in {isRepayInFull ? 'Full' : 'Part'}
         </NewButton>

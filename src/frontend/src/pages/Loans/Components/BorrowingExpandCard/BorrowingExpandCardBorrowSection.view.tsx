@@ -37,11 +37,13 @@ type Props = {
 export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const dispatch = useDispatch()
   const { userTokens } = useSelector((state: State) => state.wallet.user)
-
+  const { isActionActive } = useSelector((state: State) => state.loading)
+  
   const {
     vaultId,
     borrowedAsset,
     borrowCapacity = 0,
+    collateralRatio,
     currentBorrowedAmount = 0,
     currentCollateralBalance = 0,
     DAOFee = 0,
@@ -232,7 +234,12 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
       </div>
 
       <div className="button-wrapper">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={handleClickBorrow}>
+        <NewButton
+          kind={BUTTON_PRIMARY}
+          form={BUTTON_WIDE}
+          onClick={handleClickBorrow}
+          disabled={userAssetBalance < inputAmount || userAssetBalance === 0 || collateralRatio <= 201 || isActionActive}
+        >
           <Icon id="coin-loan" />
           Borrow
         </NewButton>
