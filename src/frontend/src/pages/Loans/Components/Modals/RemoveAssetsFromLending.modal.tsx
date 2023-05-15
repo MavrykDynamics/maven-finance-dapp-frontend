@@ -17,7 +17,7 @@ import {
   getOnFocusValue,
   RemoveLendingAssetDataType,
 } from './Modals.helpers'
-import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -64,7 +64,8 @@ export const RemoveAssetsFromLending = ({
     [inputData.validationStatus],
   )
 
-  const userAssetBalance = userTokens[symbol]?.balance ?? 0
+  const balanceSymbol = isTezosAsset(symbol.toLowerCase() ?? '') ? 'tezos' : symbol.toLowerCase().toLowerCase() ?? ''
+  const tokenBalance = userTokens[balanceSymbol]?.balance ?? 0
 
   const continueBtnHandler = () => setShownScreen('confitmation')
   const backBtnHandler = () => setShownScreen('initial')
@@ -147,7 +148,7 @@ export const RemoveAssetsFromLending = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Wallet Balance</div>
-                  <CommaNumber value={userAssetBalance * rate} className="value" beginningText="$" />
+                  <CommaNumber value={tokenBalance * rate} className="value" beginningText="$" />
                 </ThreeLevelListItem>
               </div>
 
@@ -162,7 +163,7 @@ export const RemoveAssetsFromLending = ({
                   onChange: (e) => onChangeHandler(e.target.value, Math.min(mBalance, currentLendedAmount)),
                 }}
                 settings={{
-                  balance: userAssetBalance,
+                  balance: tokenBalance,
                   balanceAsset: symbol,
                   useMaxHandler: () =>
                     onChangeHandler(
