@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // consts, helpers, actions
 import { DOWN, WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
-import { getOracleStatus, getVoteText, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+import { getVoteText, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
   ACTION_PRIMARY,
@@ -60,7 +60,6 @@ const renderVotingHistoryItem = (vote: number) => {
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
   const dispatch = useDispatch()
 
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     accountPkh,
@@ -85,7 +84,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const lastSupportedgProposalId = satellite.proposalVotingHistory?.at(0)?.proposalId ?? null
 
   // Satellite status data
-  const oracleStatusType = getOracleStatus(satellite, feedsLedger)
   const satelliteStatusColor = satellite.status === SatelliteStatus.BANNED || !currentlyRegistered ? DOWN : WARNING
   // if satellite is unregistered, show inactive status
   const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE || !currentlyRegistered
@@ -204,8 +202,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup className="oracle-status">
               <SatelliteMainText>Oracle Status</SatelliteMainText>
               <SatelliteSubText>
-                <SatelliteOracleStatusComponent statusType={oracleStatusType}>
-                  {ORACLE_STATUSES_MAPPER[oracleStatusType]}
+                <SatelliteOracleStatusComponent statusType={satellite.oracleStatus}>
+                  {ORACLE_STATUSES_MAPPER[satellite.oracleStatus]}
                 </SatelliteOracleStatusComponent>
               </SatelliteSubText>
             </SatelliteTextGroup>

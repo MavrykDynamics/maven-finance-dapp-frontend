@@ -16,7 +16,7 @@ import {
   defaultSatelliteNameMaxLength,
   defaultSatelliteWebsiteMaxLength,
 } from 'app/App.components/Input/Input.constants'
-import { VOTE_NUM_MAPPER } from './Satellites.consts'
+import { OracleStatusTypes, VOTE_NUM_MAPPER } from './Satellites.consts'
 
 export const getSatelliteAccuracy = (satelliteRecord: SatelliteRecordGraphQl) => {
   const v1 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.aggregator?.last_completed_data),
@@ -234,6 +234,35 @@ export const normallizeSatellite = (
     satelliteVotings: { proposalVotingHistory, financialRequestsVotes, emergencyGovernanceVotes, satelliteActionVotes },
   })
 
+  // Getting oracle status
+  let oracleStatus: OracleStatusTypes = 'notAnOracle'
+
+  // check if satellite is an oracle
+  if (satelliteOracleRecords?.length > 0) {
+    // check whether oracle is active, if true status can be responded or awaiting
+    if (satelliteRecord.status === 0) {
+      const currentOracleFeeds = metricsData.feeds.filter(
+        ({ admin }) => satelliteOracleRecords[0].oracleAddress === admin,
+      )
+
+      // if timestamp or all feeds from this satellite is >= than 30m ago, feed is not active, if all feeds are not active oracle status is responded, if at least 1 feed is still active, satellite status is awaiting
+      if (
+        currentOracleFeeds.every(
+          ({ last_completed_data_last_updated_at, heart_beat_seconds }) =>
+            (Number(Date.now()) - Number(new Date(last_completed_data_last_updated_at || Date.now()))) / 1000 >=
+            heart_beat_seconds,
+        )
+      ) {
+        oracleStatus = 'responded'
+      } else {
+        oracleStatus = 'awaiting'
+      }
+      // if oracle is not active, status should be "no response"
+    } else {
+      oracleStatus = 'noResponse'
+    }
+  }
+
   return {
     address: satelliteRecord.user_id,
     description: satelliteRecord.description,
@@ -258,6 +287,7 @@ export const normallizeSatellite = (
     emergencyGovernanceVotes,
     satelliteActionVotes,
     satelliteMetrics,
+    oracleStatus,
   }
 }
 

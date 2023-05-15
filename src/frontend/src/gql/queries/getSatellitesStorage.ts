@@ -121,6 +121,7 @@ export const SATELLITES_STORAGE_QUERY = `
     }
 
     aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {
+      admin
       oracles {
         observations {
           epoch
