@@ -64,6 +64,10 @@ export const BecomeSatelliteForm = styled(Card)`
     column-gap: 20px;
   }
 
+  .delegated-banner {
+    margin-bottom: 20px;
+  }
+
   .input-fee-wrap {
     width: 163px;
   }
@@ -92,17 +96,6 @@ export const BecomeSatelliteOracleText = styled.h3<{ theme: MavrykTheme }>`
   color: ${({ theme }) => theme.textColor};
   padding-bottom: 15px;
   line-height: 22px;
-
-  a,
-  a * {
-    cursor: pointer;
-    display: inline;
-  }
-
-  a:not(.satellite) {
-    color: ${({ theme }) => theme.valueColor};
-    text-decoration: underline;
-  }
 
   span {
     font-size: 16px;

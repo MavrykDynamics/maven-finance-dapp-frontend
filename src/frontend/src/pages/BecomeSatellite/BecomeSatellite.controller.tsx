@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 // Consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
+import { INFO_DEFAULT, INFO_ERROR } from 'app/App.components/Info/info.constants'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import colors from 'styles/colors'
 import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
   BecomeSatelliteFormStateType,
@@ -13,7 +18,7 @@ import {
 
 // Actions
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
-import { registerAsSatellite, unregisterAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
+import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
 import { getSatelliteConfig } from 'pages/Satellites/Satellites.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
@@ -36,23 +41,19 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { Info } from 'app/App.components/Info/Info.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { UnregisterPopup } from './UnregisterPopup/UnregisterPopup'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // Styled components
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { Page, PageContent } from 'styles'
-import colors from 'styles/colors'
 import {
   BecomeSatelliteForm,
   BecomeSatelliteFormBalanceCheck,
   BecomeSatelliteRegisterAsOracle,
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
-import { INFO_ERROR } from 'app/App.components/Info/info.constants'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { Link } from 'react-router-dom'
-import { UnregisterPopup } from './UnregisterPopup/UnregisterPopup'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -259,32 +260,41 @@ export const BecomeSatellite = () => {
               </DataLoaderWrapper>
             ) : (
               <BecomeSatelliteForm>
-                <h2>{pageText.pageTitle}</h2>
+                <H2Title>{pageText.pageTitle}</H2Title>
                 {satelliteMvkIsDelegatedTo ? (
-                  <BecomeSatelliteOracleText>
-                    <span>Important Note:</span> You are currently delegated to satellite{' '}
-                    <Link to={`/satellites/satellite-details/${satelliteMvkIsDelegatedTo}`} className="satellite">
-                      <TzAddress tzAddress={satelliteMvkIsDelegatedTo} hasIcon={false} shouldCopy={false} type={BLUE} />
-                    </Link>
-                    . When becoming a satellite, you will first be undelegated from your current satellite and then
-                    registered as a satellite.
-                  </BecomeSatelliteOracleText>
-                ) : (
-                  <BecomeSatelliteOracleText>
-                    <span>Important Note:</span> Becoming a Satellite offers the operation an oracle node. Technically,
-                    one may become a Satellite without operating an oracle and take part in Governance. However, they
-                    will forgo all of the oracle rewards which are a major source of payments. For information on
-                    operating an oracle node for your Satellite, please read more on Gitbook{' '}
-                    <a
-                      href="https://mavryk.finance/litepaper#the-decentralized-oracle"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      here
-                    </a>
-                    .
-                  </BecomeSatelliteOracleText>
-                )}
+                  <div className="delegated-banner">
+                    <Info
+                      type={INFO_DEFAULT}
+                      text={
+                        <>
+                          You are currently delegated to satellite{' '}
+                          <Link to={`/satellites/satellite-details/${satelliteMvkIsDelegatedTo}`} className="satellite">
+                            <TzAddress
+                              tzAddress={satelliteMvkIsDelegatedTo}
+                              hasIcon={false}
+                              shouldCopy={false}
+                              type={CYAN}
+                            />
+                          </Link>
+                          . When becoming a satellite, you will first be undelegated from your current satellite and
+                          then registered as a satellite.
+                        </>
+                      }
+                    />
+                  </div>
+                ) : null}
+
+                <BecomeSatelliteOracleText>
+                  <span>Important Note:</span> Becoming a Satellite offers the operation an oracle node. Technically,
+                  one may become a Satellite without operating an oracle and take part in Governance. However, they will
+                  forgo all of the oracle rewards which are a major source of payments. For information on operating an
+                  oracle node for your Satellite, please read more on Gitbook{' '}
+                  <a href="https://mavryk.finance/litepaper#the-decentralized-oracle" target="_blank" rel="noreferrer">
+                    here
+                  </a>
+                  .
+                </BecomeSatelliteOracleText>
+
                 <CommaNumber
                   className="label"
                   value={Number(minimumStakedMvkBalance)}
