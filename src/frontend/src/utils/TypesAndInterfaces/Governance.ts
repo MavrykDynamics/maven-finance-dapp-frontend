@@ -14,16 +14,18 @@ import { normalizerSatelliteGovernance } from 'pages/SatelliteGovernance/Satelli
 export type GovernanceProposalGraphQL = Omit<Governance_Proposal, '__typename'>
 export type ProposalRecordType = ReturnType<typeof normalizeProposal>
 
-export enum ProposalStatus {
-  EXECUTED = 'EXECUTED',
-  DEFEATED = 'DEFEATED',
-  ONGOING = 'ONGOING',
-  WAITING = 'WAITING',
-  DROPPED = 'DROPPED',
-  LOCKED = 'LOCKED',
-  UNLOCKED = 'UNLOCKED',
-  TIMELOCK = 'TIMELOCK',
-}
+export const ProposalStatus = {
+  EXECUTED: 'EXECUTED',
+  DEFEATED: 'DEFEATED',
+  ONGOING: 'ONGOING',
+  WAITING: 'WAITING',
+  DROPPED: 'DROPPED',
+  LOCKED: 'LOCKED',
+  UNLOCKED: 'UNLOCKED',
+  TIMELOCK: 'TIMELOCK',
+} as const
+
+export type ProposalStatusType = (typeof ProposalStatus)[keyof typeof ProposalStatus]
 
 // Governance config types
 export type GovernanceGraphQL = Omit<Governance, '__typename'>

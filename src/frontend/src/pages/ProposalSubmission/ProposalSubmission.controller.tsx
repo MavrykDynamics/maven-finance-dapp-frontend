@@ -267,7 +267,7 @@ export const ProposalSubmission = () => {
         },
         fee,
         bytes,
-        payments.length ? payments : undefined,
+        payments,
       ),
     )
   }
@@ -321,6 +321,13 @@ export const ProposalSubmission = () => {
   const isStageOneDataValid = isProposalSubmitted
     ? checkStage1Validation({ proposalValidation: currentProposalValidation })
     : true
+
+  const isSubmitDisabled =
+    !isProposalPeriod ||
+    !isNewlyRegisteredSatellite ||
+    !isStageOneDataValid ||
+    !isBytesValid ||
+    currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code).length > 0
 
   return (
     <Page>
@@ -449,8 +456,7 @@ export const ProposalSubmission = () => {
                 <Button
                   kind={BUTTON_PRIMARY}
                   form={BUTTON_WIDE}
-                  // TODO: when add stage 2 and 3 to submit, add validation checking here
-                  disabled={!isStageOneDataValid || isNewlyRegisteredSatellite}
+                  disabled={isSubmitDisabled}
                   onClick={handleSubmitProposal}
                 >
                   <Icon id="auction" /> Submit Proposal

@@ -28,7 +28,7 @@ export const submitProposal =
     form: SubmitProposalForm,
     fee: number,
     proposalBytes: ProposalDataChangesType,
-    proposalPayments?: PaymentsDataChangesType,
+    proposalPayments: PaymentsDataChangesType,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
@@ -44,7 +44,14 @@ export const submitProposal =
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
       const transaction = await contract?.methods
-        .propose(title, description, ipfs, sourceCode, proposalBytes, proposalPayments)
+        .propose(
+          title,
+          description,
+          ipfs,
+          sourceCode,
+          proposalBytes,
+          proposalPayments.length ? proposalPayments : undefined,
+        )
         .send({ amount: fee })
 
       dispatch(toggleActionFullScreenLoader(true))

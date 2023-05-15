@@ -18,7 +18,7 @@ import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } f
 
 // types
 import { State } from 'reducers'
-import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
+import { StatusFlagKind } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 
 // helpers
@@ -48,7 +48,7 @@ const findStatusInfo = (status: string) => {
   }
 }
 
-const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?: number) => {
+const findFooterText = (status: string, statusColor: StatusFlagKind, timestamp?: number) => {
   const timer = timestamp ? (
     <div className="timer">
       <Timer timestamp={timestamp} options={{ defaultColor: '#77A4F2', negativeColor: '#77A4F2' }} />
@@ -112,7 +112,7 @@ export const VaultsCard = (props: Props) => {
 
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
-  const statusColor = findStatusInfo(status).color as StatusFlagStyle
+  const statusColor = findStatusInfo(status).color as StatusFlagKind
   const statusText = findStatusInfo(status).text
   const footerText = findFooterText(status, statusColor, timerTimestamp)
 

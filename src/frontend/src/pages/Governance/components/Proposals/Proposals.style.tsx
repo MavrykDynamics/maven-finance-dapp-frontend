@@ -130,39 +130,3 @@ export const ProposalItemLeftSide = styled.div<{ theme: MavrykTheme }>`
     white-space: nowrap;
   }
 `
-
-export const ProposalStatusFlag = styled.div<{ status?: ProposalStatus; theme: MavrykTheme }>`
-  border-radius: 10px;
-  font-size: 12px;
-  border: 1px solid;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-transform: uppercase;
-  height: 28px;
-  width: 110px;
-  border-color: ${({ status }) => {
-    switch (status) {
-      case ProposalStatus.EXECUTED:
-        return ({ theme }) => theme.upColor
-      case ProposalStatus.DEFEATED:
-        return ({ theme }) => theme.downColor
-      case ProposalStatus.ONGOING:
-        return ({ theme }) => theme.primaryColor
-      default:
-        return ({ theme }) => theme.dataColor
-    }
-  }};
-  color: ${({ status }) => {
-    switch (status) {
-      case ProposalStatus.EXECUTED:
-        return ({ theme }) => theme.upColor
-      case ProposalStatus.DEFEATED:
-        return ({ theme }) => theme.downColor
-      case ProposalStatus.ONGOING:
-        return ({ theme }) => theme.primaryColor
-      default:
-        return ({ theme }) => theme.dataColor
-    }
-  }};
-`

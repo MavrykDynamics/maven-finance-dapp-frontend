@@ -231,7 +231,7 @@ export const StageThreeForm = ({
                         inputSize: INPUT_SMALL,
                       }}
                       inputProps={{
-                        placeholder: 'Enter receiver address',
+                        placeholder: 'Enter Receiver Address',
                         value: String(payment.to__id),
                         type: 'text',
                         name: 'to__id',
@@ -252,7 +252,7 @@ export const StageThreeForm = ({
                         inputSize: INPUT_SMALL,
                       }}
                       inputProps={{
-                        placeholder: 'Enter proposal purpose',
+                        placeholder: 'Enter Payment Purpose',
                         value: String(payment.title),
                         type: 'text',
                         name: 'title',
@@ -273,7 +273,7 @@ export const StageThreeForm = ({
                         inputSize: INPUT_SMALL,
                       }}
                       inputProps={{
-                        placeholder: 'Enter tokens amount',
+                        placeholder: 'Enter Tokens Amount',
                         value: String(payment.token_amount),
                         type: 'number',
                         name: 'token_amount',
