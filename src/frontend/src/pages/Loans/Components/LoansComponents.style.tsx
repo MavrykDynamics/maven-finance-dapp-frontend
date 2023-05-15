@@ -66,6 +66,22 @@ export const LoansTabStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
+export const BorrowingTabStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+
+  .title-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+  }
+
+  .has-items-borrow-btn {
+    max-width: 250px;
+  }
+`
+
 export const VaultsList = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
@@ -247,7 +263,44 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const BorrowingTabListItemSection = styled.div<{ theme: MavrykTheme }>`
+export const BorrowingExpandCardActionsSectionStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 30px;
+  padding: 30px;
+
+  background-color: ${({ theme }) => theme.backgroundColor};
+  border-radius: 10px;
+
+  .switchers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 15px;
+  }
+
+  .tab-text {
+    margin: 0 15px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .button-wrapper {
+    width: 300px;
+    margin: 0 auto;
+  }
+
+  .mt-25 {
+    margin-top: 25px;
+  }
+
+  .mb-10 {
+    margin-bottom: 10px;
+  }
+`
+
+export const BorrowingTabListItemValuesSectionStyled = styled.div<{ theme: MavrykTheme }>`
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 30px;
@@ -258,7 +311,7 @@ export const BorrowingTabListItemSection = styled.div<{ theme: MavrykTheme }>`
   border-radius: 10px;
 `
 
-export const BorrowingTabListItemSectionInfo = styled.div<{
+export const BorrowingTabListItemValuesSectionInfo = styled.div<{
   theme: MavrykTheme
   hasRate?: boolean
   customColor?: string
@@ -294,11 +347,6 @@ export const BorrowingTabListItemSectionInfo = styled.div<{
 
   .margin-top {
     margin-top: 18px;
-  }
-
-  &.action-switchers {
-    grid-column: 1 / 3;
-    grid-row: 1;
   }
 
   &.learn-more {
@@ -421,6 +469,30 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
         stroke-width: 2px;
         stroke: ${({ theme }) => theme.valueColor};
       }
+    }
+  }
+`
+
+export const VaultOverview = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  row-gap: 25px;
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  padding: 20px 15px;
+  border-radius: 10px;
+
+  .line {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .collateral-diagram {
+    .diagram {
+      width: 210px;
+    }
+
+    .copyIcon {
+      font-weight: 600;
     }
   }
 `

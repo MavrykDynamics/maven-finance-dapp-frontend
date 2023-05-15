@@ -11,7 +11,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { scrollToFullView } from 'utils/scrollToFullView'
 
 import { BorrowingTabListItemHeader } from '../../Loans.style'
-import { BorrowingTabListItemExpanded } from '../LoansComponents.style' 
+import { BorrowingTabListItemExpanded } from '../LoansComponents.style'
 import { loansPopupsContext } from '../Modals/LoansModals.provider'
 
 import { State } from 'reducers'
@@ -228,7 +228,19 @@ export const BorrowingExpandCard = ({
                 apr={apr}
                 rate={rate}
               />
-              <BorrowingExpandCardActionsSection />
+              
+              <BorrowingExpandCardActionsSection
+                vaultId={vaultId}
+                borrowedAsset={borrowedAsset}
+                collateralRatio={collateralRatio}
+                borrowAPR={apr}
+                currentCollateralBalance={collateralData.at(-1)?.amount ?? 0}
+                hasUserBorrowed={Boolean(borrowedAmount)}
+                borrowCapacity={borrowCapacity}
+                currentBorrowedAmount={borrowedAmount}
+                DAOFee={DAOFee}
+                scrollToCurrentVault={scrollToCurrentVault}
+              />
             </div>
 
             <BorrowingExpandCardMenuSection

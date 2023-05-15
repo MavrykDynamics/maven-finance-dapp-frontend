@@ -231,7 +231,7 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
   margin-top: 30px;
   display: flex;
   flex-direction: column;
-  row-gap: 25px;
+  row-gap: 50px;
 
   .gen-info {
     display: flex;

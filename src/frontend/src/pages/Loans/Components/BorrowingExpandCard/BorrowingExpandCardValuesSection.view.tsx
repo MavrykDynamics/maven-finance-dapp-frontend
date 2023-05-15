@@ -1,7 +1,10 @@
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { BorrowingTabListItemSection, BorrowingTabListItemSectionInfo } from '../LoansComponents.style'
+import {
+  BorrowingTabListItemValuesSectionStyled,
+  BorrowingTabListItemValuesSectionInfo,
+} from '../LoansComponents.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
@@ -31,8 +34,8 @@ export const BorrowingExpandCardValuesSection = ({
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   return (
-    <BorrowingTabListItemSection>
-      <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+    <BorrowingTabListItemValuesSectionStyled>
+      <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>
         <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={decimals} />
 
         <CommaNumber
@@ -47,23 +50,23 @@ export const BorrowingExpandCardValuesSection = ({
           Outstanding Debt
           <CustomTooltip iconId="info" text="something" defaultStrokeColor={colors[themeSelected].textColor} />
         </div>
-      </BorrowingTabListItemSectionInfo>
+      </BorrowingTabListItemValuesSectionInfo>
 
-      <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+      <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>
         <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
         <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
         <div className="name">Principal</div>
-      </BorrowingTabListItemSectionInfo>
+      </BorrowingTabListItemValuesSectionInfo>
 
-      <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+      <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>
         <CommaNumber value={collateralBalance} className="value" beginningText="$" showDecimal decimalsToShow={2} />
         <div className="name margin-top">
           Collateral value
           <CustomTooltip iconId="info" text="something" defaultStrokeColor={colors[themeSelected].textColor} />
         </div>
-      </BorrowingTabListItemSectionInfo>
+      </BorrowingTabListItemValuesSectionInfo>
 
-      <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+      <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>
         <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
         <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
         <div className="name">
@@ -74,25 +77,25 @@ export const BorrowingExpandCardValuesSection = ({
             defaultStrokeColor={colors[themeSelected].textColor}
           />
         </div>
-      </BorrowingTabListItemSectionInfo>
+      </BorrowingTabListItemValuesSectionInfo>
 
-      <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+      <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>
         <CommaNumber value={apr} decimalsToShow={2} className="value" endingText="%" />
         <div className="name margin-top">
           APR
           <CustomTooltip iconId="info" text="something" defaultStrokeColor={colors[themeSelected].textColor} />
         </div>
-      </BorrowingTabListItemSectionInfo>
+      </BorrowingTabListItemValuesSectionInfo>
 
-      <BorrowingTabListItemSectionInfo hasRate={Boolean(rate)}>
+      <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>
         <CommaNumber value={borrowCapacity} className="value" beginningText="$" showDecimal decimalsToShow={2} />
         <div className="name margin-top">
           Borrow Capacity
           <CustomTooltip iconId="info" text="something" defaultStrokeColor={colors[themeSelected].textColor} />
         </div>
-      </BorrowingTabListItemSectionInfo>
+      </BorrowingTabListItemValuesSectionInfo>
 
-      <BorrowingTabListItemSectionInfo
+      <BorrowingTabListItemValuesSectionInfo
         className="collateral-diagram"
         customColor={getCollateralRationPersent(collateralRatio)}
       >
@@ -104,13 +107,13 @@ export const BorrowingExpandCardValuesSection = ({
           colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
           currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
         />
-      </BorrowingTabListItemSectionInfo>
+      </BorrowingTabListItemValuesSectionInfo>
 
-      <BorrowingTabListItemSectionInfo className="learn-more">
+      <BorrowingTabListItemValuesSectionInfo className="learn-more">
         <a href="" target="_blank" rel="noreferrer">
           Learn more at the Mavryk Docs
         </a>
-      </BorrowingTabListItemSectionInfo>
-    </BorrowingTabListItemSection>
+      </BorrowingTabListItemValuesSectionInfo>
+    </BorrowingTabListItemValuesSectionStyled>
   )
 }
