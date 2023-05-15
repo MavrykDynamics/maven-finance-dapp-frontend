@@ -6,7 +6,7 @@ type UpdateDataReturnType = {
   value: unknown | null
 }
 
-const MAX_CALLS_AMOUNT = 15
+const MAX_CALLS_AMOUNT = 1
 
 /**
  * @callback - async fn that will load data, when indexer is updated

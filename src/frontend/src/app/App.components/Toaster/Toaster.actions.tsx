@@ -10,6 +10,27 @@ export const showToaster =
   (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
+    // if we have toaster loader showing, turn it of, and show new toaster
+    if (state.toaster?.status === TOASTER_LOADING && status !== TOASTER_LOADING) {
+      dispatch(hideToaster())
+
+      dispatch({
+        type: SHOW_TOASTER,
+        status,
+        title,
+        message,
+      })
+
+      // Loader toaster should be turned off by hide action, cuz we don't know when loading finisheings
+      if (status !== TOASTER_LOADING) {
+        const timeoutId = setTimeout(() => {
+          dispatch(hideToaster())
+          clearTimeout(timeoutId)
+        }, timeout)
+      }
+    }
+
+    // If we don't have toaster showing, show it
     if (!state.toaster) {
       dispatch({
         type: SHOW_TOASTER,
@@ -20,8 +41,9 @@ export const showToaster =
 
       // Loader toaster should be turned off by hide action, cuz we don't know when loading finisheings
       if (status !== TOASTER_LOADING) {
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
           dispatch(hideToaster())
+          clearTimeout(timeoutId)
         }, timeout)
       }
     }
