@@ -108,11 +108,10 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
           secure Mavryk Finance’s governance & decentralized oracles, by allowing Satellites to vote on business
           decisions & sign data feeds on your behalf. The earned rewards are paid directly to you, minus a small
           Satellite fee. Satellites can never move or spend your tokens, and you may re-delegate to a new Satellite at
-          any time{' '}
+          any time.{' '}
           <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
-            Read more
+            Read More
           </a>
-          .
         </div>
       </div>
     </TabWrapperStyled>
