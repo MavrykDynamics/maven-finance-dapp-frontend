@@ -24,7 +24,13 @@ import { State } from 'reducers'
 import { PaymentsDataChangesType, ProposalDataChangesType } from './ProposalSubmittion.types'
 
 export const submitProposal =
-  (form: SubmitProposalForm, fee: number) => async (dispatch: AppDispatch, getState: GetState) => {
+  (
+    form: SubmitProposalForm,
+    fee: number,
+    proposalBytes: ProposalDataChangesType,
+    proposalPayments?: PaymentsDataChangesType,
+  ) =>
+  async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
@@ -37,7 +43,9 @@ export const submitProposal =
       const { title, description, ipfs, sourceCode } = form
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
-      const transaction = await contract?.methods.propose(title, description, ipfs, sourceCode).send({ amount: fee })
+      const transaction = await contract?.methods
+        .propose(title, description, ipfs, sourceCode, proposalBytes, proposalPayments)
+        .send({ amount: fee })
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))

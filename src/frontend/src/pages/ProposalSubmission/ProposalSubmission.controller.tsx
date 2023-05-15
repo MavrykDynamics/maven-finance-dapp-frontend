@@ -245,7 +245,18 @@ export const ProposalSubmission = () => {
   }
 
   const handleSubmitProposal = async () => {
-    // TODO: add also setting stage 2 and stage 3 stuff when submitting proposal
+    const bytes = getBytesDiff(
+      [],
+      currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code),
+    )
+
+    const payments = getPaymentsDiff(
+      [],
+      currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
+      whitelistTokens,
+      dipDupTokens,
+    )
+
     await dispatch(
       submitProposal(
         {
@@ -255,6 +266,8 @@ export const ProposalSubmission = () => {
           ipfs: '',
         },
         fee,
+        bytes,
+        payments.length ? payments : undefined,
       ),
     )
   }

@@ -42,7 +42,7 @@ export const StageTwoForm = ({
     (state: State) => state.governance.config,
   )
   const isProposalPeriod = governancePhase === 'PROPOSAL'
-  const isDisabledActions = proposalId === DEFAULT_PROPOSAL.id
+  const isDisabledActions = false // proposalId === DEFAULT_PROPOSAL.id
 
   // is no bytes pair on proposal change add empty pair on client
   useEffect(() => {
