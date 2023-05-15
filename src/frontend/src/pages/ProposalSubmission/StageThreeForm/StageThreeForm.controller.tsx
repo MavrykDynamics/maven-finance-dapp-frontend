@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // types
-import { StageThreeFormProps, StageThreeValidityItem } from '../ProposalSybmittion.types'
+import { StageThreeFormProps, StageThreeValidityItem } from '../ProposalSubmittion.types'
 import { Governance_Proposal } from 'utils/generated/graphqlTypes'
 
 // helpers

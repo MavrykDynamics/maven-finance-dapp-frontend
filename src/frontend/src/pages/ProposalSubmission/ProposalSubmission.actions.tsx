@@ -21,7 +21,7 @@ import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.ac
 import type { AppDispatch, GetState } from '../../app/App.controller'
 import { SubmitProposalForm } from '../../utils/TypesAndInterfaces/Forms'
 import { State } from 'reducers'
-import { PaymentsDataChangesType, ProposalDataChangesType } from './ProposalSybmittion.types'
+import { PaymentsDataChangesType, ProposalDataChangesType } from './ProposalSubmittion.types'
 
 export const submitProposal =
   (form: SubmitProposalForm, fee: number) => async (dispatch: AppDispatch, getState: GetState) => {

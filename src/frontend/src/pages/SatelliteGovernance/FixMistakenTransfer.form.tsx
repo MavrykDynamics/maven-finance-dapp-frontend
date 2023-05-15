@@ -22,7 +22,7 @@ import { fixMistakenTransfer } from './SatelliteGovernance.actions'
 
 // style
 import { AvailableActionsStyle } from './SatelliteGovernance.style'
-import { ValidationResult } from 'pages/ProposalSubmission/ProposalSybmittion.types'
+import { ValidationResult } from 'pages/ProposalSubmission/ProposalSubmittion.types'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import {

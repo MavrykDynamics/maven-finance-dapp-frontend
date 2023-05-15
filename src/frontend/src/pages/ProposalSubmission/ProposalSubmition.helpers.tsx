@@ -9,7 +9,7 @@ import {
   ProposalDataChangesType,
   ProposalValidityObj,
   StageThreeValidityItem,
-} from './ProposalSybmittion.types'
+} from './ProposalSubmittion.types'
 import { State } from 'reducers'
 
 // helpers

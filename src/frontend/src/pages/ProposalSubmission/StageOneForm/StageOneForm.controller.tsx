@@ -11,7 +11,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // types
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
-import { StageOneFormProps } from '../ProposalSybmittion.types'
+import { StageOneFormProps } from '../ProposalSubmittion.types'
 import { State } from 'reducers'
 
 // helpers, constants

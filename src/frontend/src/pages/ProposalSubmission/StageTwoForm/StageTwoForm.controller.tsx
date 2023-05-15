@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // types
-import { StageTwoFormProps, ProposalBytesType } from '../ProposalSybmittion.types'
+import { StageTwoFormProps, ProposalBytesType } from '../ProposalSubmittion.types'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'

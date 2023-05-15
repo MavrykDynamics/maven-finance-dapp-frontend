@@ -23,7 +23,7 @@ import { Page } from 'styles'
 
 // types
 import { State } from 'reducers'
-import { MultyProposalItem, ProposalValidityObj, SubmittedProposalsMapper } from './ProposalSybmittion.types'
+import { MultyProposalItem, ProposalValidityObj, SubmittedProposalsMapper } from './ProposalSubmittion.types'
 import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 
 // consts
