@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom'
 import qs from 'qs'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
+
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 
 // components
 import { FormSetAllContractsAdminView } from './FormSetAllContractsAdmin.view'
@@ -24,9 +24,7 @@ export function BreakGlassCouncilForm() {
   const { search } = useLocation()
   const { action } = qs.parse(search, { ignoreQueryPrefix: true })
 
-  const {
-    config: { councilMaxLength },
-  } = useSelector((state: State) => state.council)
+  const { council: councilMaxLength } = useDAPPConfigContext()
 
   switch (action) {
     case actions.SET_ALL_CONTRACTS_ADMIN:

@@ -1,5 +1,4 @@
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
-import { defaultAggregatorNameMaxLength } from 'app/App.components/Input/Input.constants'
 import { UTCTimestamp } from 'lightweight-charts'
 import { percentageDifference } from 'utils/calcFunctions'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
@@ -70,9 +69,6 @@ export function normalizeFeeds({
   return {
     feedsLedger,
     feedCategories: [...dataFeedUniqueCategories],
-    config: {
-      feedNameMaxLength: aggregator_factory[0]?.aggregator_name_max_length || defaultAggregatorNameMaxLength,
-    },
   }
 }
 

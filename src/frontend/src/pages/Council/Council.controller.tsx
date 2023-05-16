@@ -2,6 +2,9 @@ import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
+// providers
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+
 // components
 import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -19,7 +22,6 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import {
   getCouncilPastActions,
   getCouncilPendingActions,
-  getCouncilStorage,
   getCouncilMembers,
   dropRequest,
   sign,
@@ -37,9 +39,10 @@ const titles = {
 export const Council = () => {
   const dispatch = useDispatch()
 
+  const { council: councilMaxLength } = useDAPPConfigContext()
+
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    config: { councilMaxLength },
     councilMembers,
     councilActions: {
       allPendingActions,
@@ -85,7 +88,6 @@ export const Council = () => {
     try {
       await Promise.all(
         [
-          (!isStorageLoaded || isDepsChanged) && dispatch(getCouncilStorage()),
           (!isCouncilMembersLoaded || isDepsChanged) && dispatch(getCouncilMembers()),
           (!isCouncilPastActionsLoaded || isDepsChanged) && dispatch(getCouncilPastActions()),
         ].filter(Boolean),

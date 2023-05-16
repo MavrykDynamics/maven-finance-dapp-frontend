@@ -2,6 +2,9 @@ import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
+// prviders
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+
 // components
 import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -23,7 +26,6 @@ import {
   dropBreakGlass,
   signAction,
 } from './BreakGlassCouncil.actions'
-import { getCouncilStorage } from 'pages/Council/Council.actions'
 import { getBreakGlassConfig } from 'pages/BreakGlass/BreakGlass.actions'
 
 // types
@@ -38,10 +40,11 @@ const titles = {
 export function BreakGlassCouncil() {
   const dispatch = useDispatch()
 
+  const { council: councilMaxLengths } = useDAPPConfigContext()
+
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { glassBroken, isConfigLoaded } = useSelector((state: State) => state.breakGlass.config)
   const {
-    config: { councilMaxLength },
     breakGlassCouncilMembers,
     breakGlassCouncilActions: {
       allPendingActions,
@@ -94,7 +97,6 @@ export function BreakGlassCouncil() {
       await Promise.all(
         [
           (!isConfigLoaded || isDepsChanged) && dispatch(getBreakGlassConfig()),
-          (!isStorageLoaded || isDepsChanged) && dispatch(getCouncilStorage()),
           (!isBreakGlassCouncilMembersLoaded || isDepsChanged) && dispatch(getBreakGlassCouncilMembers()),
           (!isBreakGlassCouncilPastActionsLoaded || isDepsChanged) && dispatch(getBreakGlassCouncilPastActions()),
         ].filter(Boolean),
@@ -133,7 +135,7 @@ export function BreakGlassCouncil() {
         <CouncilView
           // general info
           pathnameOfPage="/break-glass-council"
-          maxLength={councilMaxLength}
+          maxLength={councilMaxLengths}
           glassBroken={!emergencyGovActive}
           showPropagateBreakGlass
           titles={titles}
