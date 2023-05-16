@@ -144,7 +144,8 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   }
 
   .menu-switcher {
-    max-width: 380px;
+    width: fit-content;
+    column-gap: 20px;
   }
 
   .action-switchers {

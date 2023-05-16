@@ -12,17 +12,7 @@ import { MavrykTheme } from '../../styles/interfaces'
 export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
   .expand-borrow-tab {
     .expand-header {
-      padding: 23px 30px 13px 30px;
-      align-items: flex-start;
-      grid-template-columns: 0.7fr 1fr 0.6fr 0.5fr 0.6fr 0.4fr;
-
-      .sufix {
-        margin-top: 8px;
-      }
-
-      .arrow-wrap {
-        padding-bottom: 10px;
-      }
+      grid-template-columns: auto 120px 120px;
     }
   }
 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { TabItem, TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
@@ -55,6 +55,7 @@ type Props = {
     amount?: number
     firstAddress?: string
   }
+  hideTransactionHistory?: boolean
 }
 
 export const BorrowingExpandCardMenuSection = ({
@@ -74,13 +75,26 @@ export const BorrowingExpandCardMenuSection = ({
   collateralRatio,
   deporsitorsFlag,
   mappedMVKOperators,
+  hideTransactionHistory,
 }: Props) => {
   const { loansControllerAddress } = useSelector((state: State) => state.loans)
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  const [activeMenuTab, setActiveMenuTab] = useState(VAULT_CARD_MENU_TABS.find((item) => item.active))
+  const menuTabs = useMemo(
+    () =>
+      VAULT_CARD_MENU_TABS.filter((item) => {
+        if (hideTransactionHistory) {
+          return item.id !== vaultCardTabNames.TX_HISTORY
+        }
+
+        return true
+      }),
+    [hideTransactionHistory],
+  )
+
+  const [activeMenuTab, setActiveMenuTab] = useState(menuTabs.find((item) => item.active))
 
   const vaultHasXtzCollateral = collateralData.find(({ gqlName }) => isTezosAsset(gqlName))
   // TODO: test it when sMVK will be avaliable as collateral
@@ -88,16 +102,12 @@ export const BorrowingExpandCardMenuSection = ({
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
 
   const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (tabId: number) => {
-    setActiveTab(VAULT_CARD_MENU_TABS.find((item) => item.id === tabId))
+    setActiveTab(menuTabs.find((item) => item.id === tabId))
   }
 
   return (
     <>
-      <TabSwitcher
-        tabItems={VAULT_CARD_MENU_TABS}
-        onClick={handleSwitchTab(setActiveMenuTab)}
-        className="menu-switcher"
-      />
+      <TabSwitcher tabItems={menuTabs} onClick={handleSwitchTab(setActiveMenuTab)} className="menu-switcher " />
 
       {activeMenuTab?.id === vaultCardTabNames.COLLATERAL_ASSETS && (
         <BorrowingTabListItemTabInfo>

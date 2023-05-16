@@ -9,7 +9,7 @@ import {
   vaultCardTabNames,
 } from 'pages/Loans/Loans.const'
 
-import { LoanMarketType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
+import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import Expand from 'app/App.components/Expand/Expand.view'
 import { StatusMessage } from '../StatusMessage.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -35,7 +35,7 @@ type BorrowingExpandCardPropsType = LoansVaultType & {
   children?: React.ReactNode
   status?: string
   DAOFee: number
-  currentToken: LoanMarketType
+  hideTransactionHistory?: boolean
 }
 
 export const BorrowingExpandCard = ({
@@ -65,9 +65,11 @@ export const BorrowingExpandCard = ({
   avaliableLiq,
   minimumRepay,
   DAOFee,
-  currentToken,
+  hideTransactionHistory
 }: BorrowingExpandCardPropsType) => {
   const { symbol, icon, rate = 1 } = borrowedAsset
+
+  const { loanTokens } = useSelector((state: State) => state.loans)
 
   const repayBorrowSlidingButtons = useMemo(
     () =>
@@ -90,10 +92,7 @@ export const BorrowingExpandCard = ({
     openChangeBakerPopup,
     openAddExistingCollateralPopup,
     openAddNewCollateralPopup,
-    openBorrowPopup,
     openManagePermissionsPopup,
-    openRepayFullPopup,
-    openRepayPopup,
     openUpdateMvkOperatorsPopup,
     openWithdrawCollateralPopup,
     changeBakerPopup,
@@ -137,6 +136,10 @@ export const BorrowingExpandCard = ({
 
   const vaultStatus = status ?? getStatusByCollateralRatio(collateralRatio)
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
+
+  const currentToken = useMemo(() => {
+    return loanTokens.find(({ loanTokenData }) => loanTokenData.symbol === symbol)
+  }, [symbol, loanTokens])
 
   const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (tabId: number) => {
     const tabs = repayBorrowSlidingButtons.concat(VAULT_CARD_REPAY_SLIDING_BUTTONS)
@@ -239,11 +242,12 @@ export const BorrowingExpandCard = ({
         isExpandedByDefault={expanded}
         className={`expand-borrow-tab  ${expanded ? 'expandedCard' : ''}`}
         openButtonName={'View'}
+        sufix={headerSufix}
         header={
           <BorrowingTabListItemHeader>
             <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
             <div className="name">{name ? name : borrowedAsset.symbol}</div>
-            <span className="change">Change</span>
+            {isOwner && <span className="change">Change</span>}
           </BorrowingTabListItemHeader>
         }
       >
@@ -311,23 +315,26 @@ export const BorrowingExpandCard = ({
               </BorrowingExpandCardActionsSectionStyled>
             </div>
 
-            <BorrowingExpandCardMenuSection
-              openAddNewCollateralPopup={handleClickOpenAddNewCollateralPopup}
-              openAddExistingCollateralPopup={handleClickOpenAddExistingCollateralPopup}
-              openWithdrawCollateralPopup={handleClickOpenWithdrawCollateralPopup}
-              openChangeBakerPopup={handleClickOpenChangeBakerPopup}
-              openManagePermissionsPopup={handleClickOpenManagePermissionsPopup}
-              openUpdateMvkOperatorsPopup={handleClickOpenUpdateMvkOperatorsPopup}
-              collateralData={collateralData}
-              currentToken={currentToken}
-              isOwner={isOwner}
-              vaultAddress={address}
-              xtzDelegatedTo={xtzDelegatedTo}
-              sMVKDelegatedTo={sMVKDelegatedTo}
-              collateralRatio={collateralRatio}
-              deporsitorsFlag={deporsitorsFlag}
-              mappedMVKOperators={mappedMVKOperators}
-            />
+            {currentToken && (
+              <BorrowingExpandCardMenuSection
+                openAddNewCollateralPopup={handleClickOpenAddNewCollateralPopup}
+                openAddExistingCollateralPopup={handleClickOpenAddExistingCollateralPopup}
+                openWithdrawCollateralPopup={handleClickOpenWithdrawCollateralPopup}
+                openChangeBakerPopup={handleClickOpenChangeBakerPopup}
+                openManagePermissionsPopup={handleClickOpenManagePermissionsPopup}
+                openUpdateMvkOperatorsPopup={handleClickOpenUpdateMvkOperatorsPopup}
+                collateralData={collateralData}
+                currentToken={currentToken}
+                isOwner={isOwner}
+                vaultAddress={address}
+                xtzDelegatedTo={xtzDelegatedTo}
+                sMVKDelegatedTo={sMVKDelegatedTo}
+                collateralRatio={collateralRatio}
+                deporsitorsFlag={deporsitorsFlag}
+                mappedMVKOperators={mappedMVKOperators}
+                hideTransactionHistory={hideTransactionHistory}
+              />
+            )}
           </BorrowingTabListItemExpanded>
         )}
       </Expand>

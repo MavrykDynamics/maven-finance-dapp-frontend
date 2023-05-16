@@ -8,7 +8,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
+import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/BorrowingExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
@@ -305,7 +305,13 @@ export const VaultsCard = (props: Props) => {
   return (
     <>
       {(vaultTab === vaultTabs.ALL || vaultTab === vaultTabs.MY) && (
-        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} isOwner={isOwner}>
+        <BorrowingExpandCard
+          {...props}
+          headerSufix={headerSufix}
+          DAOFee={DAOFee}
+          isOwner={isOwner}
+          hideTransactionHistory
+        >
           {!isOwner && generalExpand}
         </BorrowingExpandCard>
       )}

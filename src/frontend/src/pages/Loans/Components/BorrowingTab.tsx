@@ -4,15 +4,13 @@ import { useContext, useState } from 'react'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { loansPopupsContext } from './Modals/LoansModals.provider'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { State } from 'reducers'
 
 import { Button } from 'app/App.components/Button/Button.controller'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BorrowingExpandCard } from './BorrowingExpandCard/BorrowingExpandCard'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 
-import { BorrowingTabStyled, LoansTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
+import { BorrowingTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
@@ -54,7 +52,7 @@ export const BorrowingTab = ({ lendingControllerAddress, currentToken }: Borrowi
     <BorrowingTabStyled>
       {userMarketVaultsIds.length ? (
         <>
-          <div className='title-block'>
+          <div className="title-block">
             <H2Title>Your {symbol} Vaults</H2Title>
 
             <Button
@@ -86,7 +84,6 @@ export const BorrowingTab = ({ lendingControllerAddress, currentToken }: Borrowi
                   key={vault.borrowedAsset.symbol + '-' + idx}
                   isOpenedVault={createdVaultId === vault.address}
                   DAOFee={DAOFee}
-                  currentToken={currentToken}
                 />
               )
             })}
