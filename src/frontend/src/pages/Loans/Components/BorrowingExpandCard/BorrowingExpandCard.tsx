@@ -3,8 +3,10 @@ import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import {
+  COLLATERAL_RATIO_GRADIENT,
   VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS,
   VAULT_CARD_REPAY_SLIDING_BUTTONS,
+  getCollateralRationPersent,
   getStatusByCollateralRatio,
   vaultCardTabNames,
 } from 'pages/Loans/Loans.const'
@@ -15,7 +17,7 @@ import { StatusMessage } from '../StatusMessage.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { scrollToFullView } from 'utils/scrollToFullView'
 
-import { BorrowingTabListItemHeader } from '../../Loans.style'
+import { BorrowingTabListItemHeader, ThreeLevelListItem } from '../../Loans.style'
 import { BorrowingExpandCardActionsSectionStyled, BorrowingTabListItemExpanded } from '../LoansComponents.style'
 import { loansPopupsContext } from '../Modals/LoansModals.provider'
 
@@ -27,6 +29,9 @@ import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingT
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { BorrowingExpandCardBorrowSection } from './BorrowingExpandCardBorrowSection.view'
 import { BorrowingExpandCardRepaySection } from './BorrowingExpandCardRepaySection.view'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import { TzAddress } from 'pages/Treasury/Treasury.style'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -244,11 +249,58 @@ export const BorrowingExpandCard = ({
         openButtonName={'View'}
         sufix={headerSufix}
         header={
-          <BorrowingTabListItemHeader>
-            <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
-            <div className="name">{name ? name : borrowedAsset.symbol}</div>
-            {isOwner && <span className="change">Change</span>}
-          </BorrowingTabListItemHeader>
+          <>
+            <ThreeLevelListItem className="borrow-asset-header">
+              <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+              <div className="data">
+                <div className="value">{name ? name : borrowedAsset.symbol}</div>
+                <div className="value">
+                  <TzAddress tzAddress={address} shouldCopy hasIcon amountFromStart={4} amountFromEnd={4} />
+                </div>
+              </div>
+            </ThreeLevelListItem>
+            <ThreeLevelListItem
+              className="collateral-diagram"
+              customColor={getCollateralRationPersent(collateralRatio)}
+            >
+              <div className={`percentage`}>
+                Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+              </div>
+              <GradientDiagram
+                className="diagram"
+                colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+                currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
+              />
+            </ThreeLevelListItem>
+            <ThreeLevelListItem>
+              <div className="name">Outstanding Debt</div>
+              <CommaNumber
+                value={borrowedAmount + fee}
+                className="value"
+                showDecimal
+                decimalsToShow={borrowedAsset.decimals}
+              />
+              {rate ? (
+                <CommaNumber
+                  value={(borrowedAmount + fee) * rate}
+                  beginningText="$"
+                  className="rate"
+                  showDecimal
+                  decimalsToShow={borrowedAsset.decimals}
+                />
+              ) : null}
+            </ThreeLevelListItem>
+            <ThreeLevelListItem>
+              <div className="name">Collateral amount</div>
+              <CommaNumber
+                value={collateralBalance}
+                className="value"
+                beginningText="$"
+                showDecimal
+                decimalsToShow={2}
+              />
+            </ThreeLevelListItem>
+          </>
         }
       >
         {children || (

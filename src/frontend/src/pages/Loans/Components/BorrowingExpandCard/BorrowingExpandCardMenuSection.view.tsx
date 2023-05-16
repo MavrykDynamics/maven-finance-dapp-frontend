@@ -230,7 +230,7 @@ export const BorrowingExpandCardMenuSection = ({
               <div className="value">{vaultName}</div>
               <Button
                 kind={BUTTON_SIMPLE}
-                disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName)) || isActionActive}
+                disabled={!isOwner}
                 onClick={() => {}}
               >
                 Change <Icon id="paginationArrowLeft" />
