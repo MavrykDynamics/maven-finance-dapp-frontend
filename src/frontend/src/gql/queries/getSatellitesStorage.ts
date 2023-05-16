@@ -145,9 +145,6 @@ export const SATELLITE_CONFIG_QUERY = `
   query SatelliteConfigQuery {
     delegation {
       minimum_smvk_balance
-      satellite_description_max_length
-      satellite_name_max_length
-      satellite_website_max_length
     }
   }
 `
