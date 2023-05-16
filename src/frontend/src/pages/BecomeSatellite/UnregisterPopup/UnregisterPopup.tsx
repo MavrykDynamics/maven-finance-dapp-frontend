@@ -36,7 +36,7 @@ export const UnregisterPopup = ({
           <div className="descr">
             Please note, you are unregistering as a satellite from the Mavryk Finance network. You will no longer be
             able to participate in governance through voting and will have to delegate to a different satellite to take
-            part in the ecosystem. Are you sure you wish to unregister as a satellite?
+            part in the ecosystem.
           </div>
 
           {delegatorCount > 0 ? (
@@ -59,10 +59,10 @@ export const UnregisterPopup = ({
               </div>
               <div className="icons">
                 <a href="https://discord.com/invite/7VXPR4gkT6" target="_blank" rel="noreferrer">
-                  <Icon id="discord" />
+                  <Icon id="discord" className="discord" />
                 </a>
                 <a href="https://t.me/Mavryk_Finance" target="_blank" rel="noreferrer">
-                  <Icon id="telegram" />
+                  <Icon id="telegram" className="telegram" />
                 </a>
               </div>
               <div className="descr-big">Are you sure you wish to unregister as a satellite?</div>
@@ -75,7 +75,7 @@ export const UnregisterPopup = ({
             </NewButton>
 
             <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={handleUnregisterSatellite}>
-              <Icon id="success-ok" />
+              <Icon id="doubleCheckmark" />
               Confirm
             </NewButton>
           </div>

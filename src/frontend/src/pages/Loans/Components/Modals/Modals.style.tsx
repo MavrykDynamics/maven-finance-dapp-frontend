@@ -126,7 +126,7 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
 
   .confirm-create-vault {
     display: grid;
-    grid-template-columns: 1.2fr 1fr 1fr;
+    grid-template-columns: minmax(33%, 1.2fr) minmax(33%, 1.2fr) 1fr;
     margin-top: 20px;
     column-gap: 30px;
   }
