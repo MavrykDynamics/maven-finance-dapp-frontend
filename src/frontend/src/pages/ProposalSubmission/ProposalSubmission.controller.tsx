@@ -326,14 +326,14 @@ export const ProposalSubmission = () => {
     isNewlyRegisteredSatellite ||
     !isStageOneDataValid ||
     !isBytesValid ||
-    currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code).length < 1
+    Boolean(currentProposal?.proposalData?.filter(({ title, encoded_code }) => title || encoded_code)?.length ?? 0 < 1)
 
   console.log({
     isBytesValid,
     isStageOneDataValid,
     isNewlyRegisteredSatellite,
     isProposalPeriod,
-    bytes: currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code).length > 0,
+    bytes: currentProposal?.proposalData?.filter(({ title, encoded_code }) => title || encoded_code)?.length,
   })
   return (
     <Page>
