@@ -1,10 +1,11 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { create } from 'ipfs-http-client'
 
 import { IPFSUploaderView } from './IPFSUploader.view'
-import { create } from 'ipfs-http-client'
+
 import { showToaster } from '../Toaster/Toaster.actions'
 import { ERROR } from '../Toaster/Toaster.constants'
-import { useDispatch } from 'react-redux'
 import { isHexadecimalByteString } from '../../../utils/validatorFunctions'
 
 export type IPFSUploaderTypeFile = 'document' | 'image'
@@ -47,7 +48,21 @@ export const IPFSUploader = ({
   const dispatch = useDispatch()
   const [isUploading, setIsUploading] = useState(false)
   const [imageOk, setImageOk] = useState(false)
+  const [isDisabled, setIsDisabled] = useState(disabled)
   const inputFile = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const checkIPFS = async () => {
+      try {
+        // check whether keys are valid, if keys are invalid it will throw 401 status error
+        await client.config.getAll()
+      } catch (e) {
+        // disable if keys are invalid
+        setIsDisabled(true)
+      }
+    }
+    checkIPFS()
+  }, [])
 
   async function handleUpload(file: File) {
     try {
@@ -83,7 +98,7 @@ export const IPFSUploader = ({
       typeFile={typeFile}
       className={className}
       title={title}
-      disabled={disabled}
+      disabled={isDisabled}
       listNumber={listNumber}
       imageIpfsUrl={imageIpfsUrl}
       setIpfsImageUrl={setIpfsImageUrl}
