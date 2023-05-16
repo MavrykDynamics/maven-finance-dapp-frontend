@@ -29,6 +29,7 @@ export interface PreferencesState {
   sidebarOpened: boolean
 }
 
+console.log(process.env.NODE_ENV, '--------')
 const mariGoldUrl =
   process.env.NODE_ENV === 'development'
     ? 'https://ghostnet.tezos.marigold.dev/'
