@@ -29,15 +29,22 @@ export interface PreferencesState {
   sidebarOpened: boolean
 }
 
+const mariGoldUrl =
+  process.env.NODE_ENV === 'development'
+    ? 'https://ghostnet.tezos.marigold.dev/'
+    : 'https://mainnet.tezos.marigold.dev/'
+const ecadLabSUrl =
+  process.env.NODE_ENV === 'development' ? 'https://ghostnet.tezos.marigold.dev/' : 'https://mainnet.api.tez.ie/'
+
 export const preferencesDefaultState: PreferencesState = {
   themeSelected: getItemFromStorage('theme') || 'space',
   changeNodePopupOpen: false,
   sidebarOpened: false,
   RPC_NODES: [
-    { title: 'MARIGOLD', url: 'https://ghostnet.tezos.marigold.dev/', nodeLogoUrl: 'marigold_logo.png' },
-    { title: 'ECADLABS', url: 'https://ghostnet.ecadinfra.com', nodeLogoUrl: 'ECAD_logo.png' },
+    { title: 'MARIGOLD', url: mariGoldUrl, nodeLogoUrl: 'marigold_logo.png' },
+    { title: 'ECADLABS', url: ecadLabSUrl, nodeLogoUrl: 'ECAD_logo.png' },
   ],
-  REACT_APP_RPC_PROVIDER: 'https://ghostnet.ecadinfra.com',
+  REACT_APP_RPC_PROVIDER: ecadLabSUrl,
 }
 
 export function preferences(state = preferencesDefaultState, action: Action) {
