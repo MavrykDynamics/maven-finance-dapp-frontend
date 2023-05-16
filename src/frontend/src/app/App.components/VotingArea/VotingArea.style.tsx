@@ -10,6 +10,7 @@ export const VotingAreaStyled = styled.article<{ theme: MavrykTheme }>`
   flex-direction: column;
 
   .banner-area {
+    grid-row: 1 / 2;
     grid-column: 1 / -1;
   }
 
@@ -23,7 +24,7 @@ export const VotingAreaStyled = styled.article<{ theme: MavrykTheme }>`
   }
 
   .voted-label {
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.dataColor};
     font-weight: 600;
     font-size: 18px;
   }
