@@ -452,7 +452,10 @@ export const CreateNewVault = ({
                 {collaterals.map(({ inputAmount, validationField, id: inputCollateralId }, idx) => {
                   const collateralMetadata = collateralsToSelect[inputCollateralId]
 
-                  const userAssetBalance = userTokens[collateralMetadata.symbol.toLowerCase()]?.balance ?? 0
+                  const balanceSymbol = isTezosAsset(collateralMetadata?.symbol ?? '')
+                    ? 'tezos'
+                    : collateralMetadata?.symbol?.toLowerCase() ?? ''
+                  const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
 
                   if (!collateralMetadata) return null
                   const isXTZCollateral = isTezosAsset(collateralMetadata.gqlName)
@@ -560,7 +563,7 @@ export const CreateNewVault = ({
           {shownScreen === 'confirmation' ? (
             <>
               {collaterals.length === 1 ? (
-                <div className="lending-stats" style={{ marginBottom: '30px' }}>
+                <div className="confirm-create-vault" style={{ marginBottom: '30px' }}>
                   <ThreeLevelListItem>
                     <div className="name">Asset</div>
                     <div className="value">{firstCollateralMetadata?.name}</div>
@@ -637,7 +640,7 @@ export const CreateNewVault = ({
                   </TableBody>
                 </Table>
               )}
-              <div className="confirm-collateral-deposit-cv">
+              <div className="confirm-create-vault">
                 {showBakerAddress && bakerChosenDdItem ? (
                   <ThreeLevelListItem>
                     <div className="name">Selected Baker</div>
@@ -656,6 +659,11 @@ export const CreateNewVault = ({
                     />
                   </div>
                   <CommaNumber value={borrowingCapacity} className="value" beginningText="$" />
+                </ThreeLevelListItem>
+
+                <ThreeLevelListItem>
+                  <div className="name">Vault Name</div>
+                  <div className="value">{vaultName.name}</div>
                 </ThreeLevelListItem>
               </div>
               <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
