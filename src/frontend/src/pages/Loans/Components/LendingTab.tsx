@@ -16,6 +16,7 @@ import { ThreeLevelListItem } from '../Loans.style'
 import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { isTezosAsset } from '../Loans.helpers'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -32,7 +33,10 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
   } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  const balanceOfTheToken = userTokens[assetData.symbol.toLowerCase()]?.balance ?? 0
+  const balanceSymbol = isTezosAsset(assetData.symbol.toLowerCase() ?? '')
+    ? 'tezos'
+    : assetData.symbol.toLowerCase().toLowerCase() ?? ''
+  const tokenBalance = userTokens[balanceSymbol]?.balance ?? 0
 
   return (
     <LoansTabStyled>
@@ -68,9 +72,9 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={balanceOfTheToken} decimalsToShow={assetDecimalsToShow} className="value" />
+              <CommaNumber value={tokenBalance} decimalsToShow={assetDecimalsToShow} className="value" />
               {assetData.rate ? (
-                <CommaNumber value={balanceOfTheToken * assetData.rate} beginningText="$" className="rate" />
+                <CommaNumber value={tokenBalance * assetData.rate} beginningText="$" className="rate" />
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>

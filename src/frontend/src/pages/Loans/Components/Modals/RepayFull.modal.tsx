@@ -17,7 +17,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { Info } from 'app/App.components/Info/Info.view'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 
@@ -49,7 +49,8 @@ export const RepayFull = ({
   const dispatch = useDispatch()
   const { userTokens } = useSelector((state: State) => state.wallet.user)
 
-  const userAssetBalance = userTokens[borrowedAsset?.symbol ?? '']?.balance ?? 0
+  const balanceSymbol = isTezosAsset(borrowedAsset?.gqlName ?? '') ? 'tezos' : borrowedAsset?.symbol.toLowerCase() ?? ''
+  const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
 
   const canRepay = totalOutstanding <= userAssetBalance && totalOutstanding > minimumRepay
 

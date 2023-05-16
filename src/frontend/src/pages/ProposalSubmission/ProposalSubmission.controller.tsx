@@ -48,7 +48,6 @@ import { dropProposal, lockProposal, submitProposal, updateProposalData } from '
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { Info } from 'app/App.components/Info/Info.view'
-import TimeRemainingSmall from 'pages/Governance/components/TimeRemaining/TimeRemainingSmall'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 
@@ -374,16 +373,7 @@ export const ProposalSubmission = () => {
               />
             </SubmitProposalHeader>
 
-            {isNewlyRegisteredSatellite && (
-              <Info
-                text={
-                  <>
-                    {UNREGISTERED_SATELLITE_BANNER_TEXT} <TimeRemainingSmall />
-                  </>
-                }
-                type={INFO_DEFAULT}
-              />
-            )}
+            {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
 
             {activeTab === 1 && (
               <StageOneForm
