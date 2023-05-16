@@ -148,13 +148,22 @@ export const UnregisterSatelliteModalBase = styled.div<{ theme: MavrykTheme }>`
 
   .icons {
     display: flex;
+    align-items: center;
     column-gap: 15px;
     margin: 10px 0;
 
     svg {
-      width: 36px;
-      height: 36px;
       fill: ${({ theme }) => theme.valueColor};
+
+      &.telegram {
+        width: 22px;
+        height: 22px;
+      }
+
+      &.discord {
+        width: 26px;
+        height: 20px;
+      }
     }
   }
 
