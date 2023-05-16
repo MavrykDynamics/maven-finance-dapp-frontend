@@ -499,11 +499,6 @@ export const FillBlock = styled.div<{ theme: MavrykTheme; width: number }>`
 `
 
 export const TransactionHistoryStyled = styled.div<{ theme: MavrykTheme }>`
-  .top {
-    display: flex;
-    justify-content: space-between;
-  }
-
   .main {
     border-radius: 10px;
     background-color: ${({ theme }) => theme.backgroundColor};

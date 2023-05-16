@@ -1,15 +1,12 @@
-import { useState, useMemo } from 'react'
-import { useSelector } from 'react-redux'
+
+import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
-import { State } from 'reducers'
 import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
-import { VAULT_TRANSACTION_HISTORY_SLIDING_BUTTONS } from '../Loans.const'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TRANSPARENT } from 'app/App.components/Button/Button.constants'
 import {
@@ -26,45 +23,33 @@ import { EmptyContainer } from 'app/App.style'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
+
 type TransactionHistoryPropsType = {
   currentToken: LoanMarketType | undefined
+  vaultAddress: string
 }
 
-export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType) => {
+export const TransactionHistory = ({ currentToken, vaultAddress }: TransactionHistoryPropsType) => {
   const { search } = useLocation()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const [switcherState, setSwitcherState] = useState<'all' | 'personal'>('all')
-
-  const transactionHistory = useMemo(
-    () =>
-      switcherState === 'all'
-        ? currentToken?.transactionHistory
-        : currentToken?.transactionHistory.filter(({ userAddress }) => accountPkh === userAddress),
-    [switcherState, accountPkh, currentToken?.transactionHistory],
+  const history = useMemo(
+    () => currentToken?.transactionHistory.filter((item) => item.vaultAddress === vaultAddress),
+    [currentToken?.transactionHistory, vaultAddress],
   )
 
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
 
   const paginatedTableRows = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, TRANSACTION_HISTORY_TABLE_NAME)
-    return transactionHistory?.slice(from, to)
-  }, [currentPage, transactionHistory])
+    return history?.slice(from, to)
+  }, [currentPage, history])
 
   return (
     <TransactionHistoryStyled>
       <div className="main">
-        <div className="top">
-          <H2Title>Transaction History</H2Title>
+        <H2Title>Transaction History</H2Title>
 
-          <SlidingTabButtons
-            onClick={(tabId: number) => setSwitcherState(tabId === 8 ? 'all' : 'personal')}
-            tabItems={VAULT_TRANSACTION_HISTORY_SLIDING_BUTTONS}
-            className="vault"
-          />
-        </div>
-
-        {transactionHistory?.length ? (
+        {history?.length ? (
           <>
             <Table className="treasury-table">
               <TableHeader className="simple-header treasury">
@@ -117,7 +102,7 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
       </div>
 
       <Pagination
-        itemsCount={transactionHistory?.length ?? 0}
+        itemsCount={history?.length ?? 0}
         listName={TRANSACTION_HISTORY_TABLE_NAME}
         side={PAGINATION_SIDE_CENTER}
       />

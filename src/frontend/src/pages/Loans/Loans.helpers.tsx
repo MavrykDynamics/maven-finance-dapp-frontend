@@ -97,7 +97,7 @@ export const getTransactionHistory = (
   feeds: State['dataFeeds']['feedsLedger'],
 ) =>
   history_data.reduce<TransactionHistoryReduceType>(
-    (acc, { type, amount, timestamp, sender_id, operation_hash, loan_token }) => {
+    (acc, { type, amount, timestamp, sender_id, operation_hash, loan_token, vault }) => {
       if (!loan_token) return acc
 
       const assetMetadata = getAssetMetadata({
@@ -116,6 +116,7 @@ export const getTransactionHistory = (
             amount: transformedAmount,
             date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
             userAddress: sender_id,
+            vaultAddress: vault?.vault?.address,
             operationHash: operation_hash,
             descr: getDescrByType(type),
             tokenSymbol: assetMetadata.symbol,
