@@ -323,11 +323,18 @@ export const ProposalSubmission = () => {
 
   const isSubmitDisabled =
     !isProposalPeriod ||
-    !isNewlyRegisteredSatellite ||
+    isNewlyRegisteredSatellite ||
     !isStageOneDataValid ||
     !isBytesValid ||
-    currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code).length > 0
+    currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code).length < 1
 
+  console.log({
+    isBytesValid,
+    isStageOneDataValid,
+    isNewlyRegisteredSatellite,
+    isProposalPeriod,
+    bytes: currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code).length > 0,
+  })
   return (
     <Page>
       <PageHeader page={'proposal submission'} />
@@ -367,10 +374,7 @@ export const ProposalSubmission = () => {
 
             <SubmitProposalHeader>
               <H2Title>Stage {activeTab}</H2Title>
-              <StatusFlag
-                text={currentProposal.locked ? ProposalStatus.LOCKED : ProposalStatus.UNLOCKED}
-                status={currentProposal.locked ? ProposalStatus.DEFEATED : ProposalStatus.EXECUTED}
-              />
+              <StatusFlag text={currentProposal.status} status={currentProposal.status} />
             </SubmitProposalHeader>
 
             {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
