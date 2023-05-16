@@ -17,7 +17,7 @@ import { StatusMessage } from '../StatusMessage.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { scrollToFullView } from 'utils/scrollToFullView'
 
-import { BorrowingTabListItemHeader, ThreeLevelListItem } from '../../Loans.style'
+import { ThreeLevelListItem } from '../../Loans.style'
 import { BorrowingExpandCardActionsSectionStyled, BorrowingTabListItemExpanded } from '../LoansComponents.style'
 import { loansPopupsContext } from '../Modals/LoansModals.provider'
 
@@ -94,6 +94,9 @@ export const BorrowingExpandCard = ({
   const [activeRepayTab, setActiveRepayTab] = useState(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.active))
 
   const {
+    openConfirmBorrowPopup,
+    openConfirmRepayPopup,
+    openConfirmRepayFullPopup,
     openChangeBakerPopup,
     openAddExistingCollateralPopup,
     openAddNewCollateralPopup,
@@ -150,6 +153,44 @@ export const BorrowingExpandCard = ({
     const tabs = repayBorrowSlidingButtons.concat(VAULT_CARD_REPAY_SLIDING_BUTTONS)
 
     setActiveTab(tabs.find((item) => item.id === tabId))
+  }
+
+  const handleClickOpenConfirmBorrowPopup = async (inputAmount: number) => {
+    openConfirmBorrowPopup?.({
+      inputAmount,
+      vaultId,
+      borrowedAsset: borrowedAsset,
+      currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+      borrowCapacity,
+      currentBorrowedAmount: borrowedAmount,
+      DAOFee,
+      scrollToCurrentVault,
+    })
+  }
+
+  const handleClickOpenConfirmRepayPopup = async (inputAmount: number) => {
+    openConfirmRepayPopup?.({
+      inputAmount,
+      vaultId,
+      vaultAddress: address,
+      borrowedAsset: borrowedAsset,
+      borrowedAmount,
+      currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+      borrowCapacity,
+      scrollToCurrentVault,
+    })
+  }
+
+  const handleClickOpenConfirmRepayFullPopup = async () => {
+    openConfirmRepayFullPopup?.({
+      vaultId,
+      vaultAddress: address,
+      borrowedAsset: borrowedAsset,
+      borrowedAmount,
+      feesAmount: fee,
+      currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+      borrowCapacity,
+    })
   }
 
   const handleClickOpenAddNewCollateralPopup = () => {
@@ -337,7 +378,6 @@ export const BorrowingExpandCard = ({
 
                 {activeRepayBorrowTab?.id === vaultCardTabNames.BORROW && (
                   <BorrowingExpandCardBorrowSection
-                    vaultId={vaultId}
                     borrowedAsset={borrowedAsset}
                     collateralRatio={collateralRatio}
                     borrowAPR={apr}
@@ -346,7 +386,7 @@ export const BorrowingExpandCard = ({
                     borrowCapacity={borrowCapacity}
                     currentBorrowedAmount={borrowedAmount}
                     DAOFee={DAOFee}
-                    scrollToCurrentVault={scrollToCurrentVault}
+                    openConfirmBorrowPopup={handleClickOpenConfirmBorrowPopup}
                   />
                 )}
 
@@ -356,12 +396,13 @@ export const BorrowingExpandCard = ({
                     borrowedAsset={borrowedAsset}
                     currentCollateralBalance={collateralData.at(-1)?.amount ?? 0}
                     borrowCapacity={borrowCapacity}
-                    scrollToCurrentVault={scrollToCurrentVault}
                     vaultAddress={address}
                     borrowedAmount={borrowedAmount}
                     feesAmount={fee}
                     minimumRepay={minimumRepay}
                     activeRepayTab={activeRepayTab}
+                    openConfirmRepayPopup={handleClickOpenConfirmRepayPopup}
+                    openConfirmRepayFullPopup={handleClickOpenConfirmRepayFullPopup}
                   />
                 )}
               </BorrowingExpandCardActionsSectionStyled>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
 import {
   COLLATERAL_RATIO_GRADIENT,
@@ -11,7 +11,6 @@ import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from '../Modals/Modals.helpers'
 import { State } from 'reducers'
-import { repayFullAndCloseVaultAction, repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
 import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Input } from 'app/App.components/Input/NewInput'
@@ -38,12 +37,12 @@ type Props = {
   minimumRepay: number
   currentCollateralBalance: number
   borrowCapacity: number
-  scrollToCurrentVault?: () => void
   activeRepayTab?: TabItem
+  openConfirmRepayPopup: (inputAmount: number) => void
+  openConfirmRepayFullPopup: () => void
 }
 
 export const BorrowingExpandCardRepaySection = (props: Props) => {
-  const dispatch = useDispatch()
   const { userTokens } = useSelector((state: State) => state.wallet.user)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -57,8 +56,9 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     borrowCapacity = 0,
     minimumRepay = 0,
     borrowedAmount = 0,
-    scrollToCurrentVault,
     activeRepayTab,
+    openConfirmRepayPopup,
+    openConfirmRepayFullPopup,
   } = props
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -113,30 +113,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   const handleClickRepay = async () => {
     if (vaultId && borrowedAsset && vaultAddress) {
-      isRepayInFull && !isNotRepayInFullWarning
-        ? await dispatch(
-            repayFullAndCloseVaultAction(
-              vaultId,
-              vaultAddress,
-              totalOutstanding,
-              borrowedAsset.decimals,
-              borrowedAsset.tokenType,
-              borrowedAsset.address,
-              () => {}, // TODO: remove
-            ),
-          )
-        : await dispatch(
-            repayPartOfVaultAction(
-              vaultId,
-              vaultAddress,
-              inputAmount,
-              borrowedAsset.decimals,
-              borrowedAsset.tokenType,
-              borrowedAsset.address,
-              () => {}, // TODO: remove
-              scrollToCurrentVault,
-            ),
-          )
+      isRepayInFull && !isNotRepayInFullWarning ? openConfirmRepayFullPopup() : openConfirmRepayPopup(inputAmount)
     }
   }
 
@@ -288,7 +265,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           }
         >
           <Icon id="okIcon" />
-          Repay in {isRepayInFull ? 'Full' : 'Part'}
+          Confirm Repay in {isRepayInFull ? 'Full' : 'Part'}
         </NewButton>
       </div>
     </>

@@ -1,12 +1,11 @@
 import { useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from '../Modals/Modals.helpers'
 import { State } from 'reducers'
-import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
 import { INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Input } from 'app/App.components/Input/NewInput'
@@ -22,7 +21,6 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 type Props = {
-  vaultId: number
   borrowedAsset: LoansVaultType['borrowedAsset']
   borrowCapacity: number
   collateralRatio: number
@@ -31,23 +29,21 @@ type Props = {
   currentCollateralBalance: number
   DAOFee: number
   currentBorrowedAmount: number
-  scrollToCurrentVault?: () => void
+  openConfirmBorrowPopup: (inputAmount: number) => void
 }
 
 export const BorrowingExpandCardBorrowSection = (props: Props) => {
-  const dispatch = useDispatch()
   const { userTokens } = useSelector((state: State) => state.wallet.user)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {
-    vaultId,
     borrowedAsset,
     borrowCapacity = 0,
     collateralRatio,
     currentBorrowedAmount = 0,
     currentCollateralBalance = 0,
     DAOFee = 0,
-    scrollToCurrentVault,
+    openConfirmBorrowPopup,
   } = props
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -97,20 +93,6 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
       ...inputData,
       amount: getOnFocusValue(inputData.amount),
     })
-  }
-
-  const handleClickBorrow = async () => {
-    if (vaultId && borrowedAsset) {
-      await dispatch(
-        borrowVaultAssetAction(
-          vaultId,
-          Number(inputData.amount),
-          borrowedAsset.decimals,
-          () => {}, // TODO: remove
-          scrollToCurrentVault,
-        ),
-      )
-    }
   }
 
   return (
@@ -238,7 +220,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
         <NewButton
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
-          onClick={handleClickBorrow}
+          onClick={() => openConfirmBorrowPopup(inputAmount)}
           disabled={
             userAssetBalance < inputAmount ||
             userAssetBalance === 0 ||
@@ -249,7 +231,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
           }
         >
           <Icon id="coin-loan" />
-          Borrow
+          Confirm Borrow
         </NewButton>
       </div>
     </>

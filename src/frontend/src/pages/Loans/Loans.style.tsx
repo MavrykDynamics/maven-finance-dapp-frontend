@@ -296,42 +296,6 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const BorrowingTabListItemHeader = styled.div<{ theme: MavrykTheme }>`
-  display: flex;
-  align-items: center;
-  column-gap: 15px;
-
-  & > svg,
-  .img-wrapper {
-    width: 36px;
-    height: 36px;
-    fill: ${({ theme }) => theme.dataColor};
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  .name {
-    font-weight: 700;
-    font-size: 25px;
-    line-height: 30px;
-
-    color: ${({ theme }) => theme.dataColor};
-  }
-
-  .change {
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 24px;
-
-    color: ${({ theme }) => theme.valueColor};
-    cursor: pointer;
-  }
-`
-
 export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?: string }>`
   p {
     margin: 0;
