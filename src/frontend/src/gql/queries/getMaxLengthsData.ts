@@ -9,6 +9,13 @@ query getMaxlenghtsQuery {
       request_purpose_max_length
       request_token_name_max_length
     }
+    governance(order_by: {active: desc}) {
+      proposal_description_max_length
+      proposal_invoice_max_length
+      proposal_metadata_title_max_length
+      proposal_source_code_max_length
+      proposal_title_max_length
+    }
     emergency_governance {
       proposal_desc_max_length
       proposal_title_max_length

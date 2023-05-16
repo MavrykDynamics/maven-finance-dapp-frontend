@@ -28,6 +28,9 @@ import { AppStyled } from './App.style'
 import LoansPopupsProvider from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { PolicyPopup } from 'app/App.components/PolicyPopup/Policy.controller'
 
+// providers
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
 import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
@@ -51,15 +54,20 @@ const AppContainer = () => {
 
   const showSidebarOpened = useMedia('(min-width: 1400px)')
   const [{ policyPopup }, setCookie] = useCookies(['policyPopup'])
+  const { initializeDappConfigData } = useDAPPConfigContext()
 
   const { data, loading } = useQuery(GET_MAX_LENGTHS_QUERY)
-
-  console.log(data, '----------------------', loading)
 
   const { changeNodePopupOpen, sidebarOpened } = useSelector((state: State) => state.preferences)
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
 
   const [isIOS, setIsIOS] = useState(true)
+
+  useEffect(() => {
+    if (!loading && data) {
+      initializeDappConfigData(data)
+    }
+  }, [loading])
 
   useEffect(() => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))
