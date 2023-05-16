@@ -48,7 +48,7 @@ export const IPFSUploader = ({
   const dispatch = useDispatch()
   const [isUploading, setIsUploading] = useState(false)
   const [imageOk, setImageOk] = useState(false)
-  const [isDisabled, setIsDisabled] = useState(disabled)
+  const [isDisabled, setIsDisabled] = useState(true)
   const inputFile = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -56,6 +56,7 @@ export const IPFSUploader = ({
       try {
         // check whether keys are valid, if keys are invalid it will throw 401 status error
         await client.config.getAll()
+        setIsDisabled(Boolean(disabled))
       } catch (e) {
         // disable if keys are invalid
         setIsDisabled(true)
