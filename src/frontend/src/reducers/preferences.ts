@@ -29,9 +29,6 @@ export interface PreferencesState {
   sidebarOpened: boolean
 }
 
-console.log(process.env.REACT_APP_BUILD_ENV, 'process.env.REACT_APP_BUILD_ENV')
-console.log(process.env.REACT_APP_NETWORK, 'process.env.REACT_APP_NETWORK')
-
 const mariGoldUrl =
   process.env.REACT_APP_BUILD_ENV === 'development'
     ? 'https://ghostnet.tezos.marigold.dev/'
