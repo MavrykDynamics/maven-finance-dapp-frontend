@@ -56,7 +56,7 @@ export const IPFSUploader = ({
     const checkIPFS = async () => {
       try {
         // check whether keys are valid, if keys are invalid it will throw 401 status error
-        if (!isKeysChecked.current) await client.config.getAll()
+        if (!isKeysChecked.current) await client.version()
         setIsDisabled(Boolean(disabled))
       } catch (e) {
         // disable if keys are invalid
