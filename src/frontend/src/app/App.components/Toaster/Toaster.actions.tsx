@@ -18,6 +18,7 @@ export const showToaster =
       // need sleep to perform transition
       await sleep(1300)
 
+      // TODO: handle loader toaster closing with toaster we don't want
       dispatch(showToaster(status, title, message))
     }
 
