@@ -32,10 +32,8 @@ export const showToaster =
 
       // Loader toaster should be turned off by hide action, cuz we don't know when loading finisheings
       if (status !== TOASTER_LOADING) {
-        const timeoutId = setTimeout(() => {
-          dispatch(hideToaster())
-          clearTimeout(timeoutId)
-        }, timeout)
+        await sleep(timeout)
+        dispatch(hideToaster())
       }
     }
   }
