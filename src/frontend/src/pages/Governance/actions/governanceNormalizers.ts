@@ -1,10 +1,3 @@
-import {
-  defaultProposalDescriptionMaxLength,
-  defaultProposalInvoiceMaxLength,
-  defaultProposalMetadataTitleMaxLength,
-  defaultProposalSourceCodeMaxLength,
-  defaultProposalTitleMaxLength,
-} from 'app/App.components/Input/Input.constants'
 import { State } from 'reducers'
 import { calcWithoutPrecision, calcWithoutMu, convertNumberForClient } from 'utils/calcFunctions'
 import {
@@ -153,15 +146,6 @@ export const normalizeGovernanceConfig = (currentGovernance: GovernanceGraphQL):
     address: currentGovernance.address,
     fee: calcWithoutMu(currentGovernance.proposal_submission_fee_mutez),
     successReward: calcWithoutPrecision(currentGovernance.success_reward),
-    proposalDescriptionMaxLength:
-      currentGovernance.proposal_description_max_length ?? defaultProposalDescriptionMaxLength,
-    proposalInvoiceMaxLength: currentGovernance.proposal_invoice_max_length ?? defaultProposalInvoiceMaxLength,
-    proposalMetadataTitleMaxLength:
-      currentGovernance.proposal_source_code_max_length ?? defaultProposalMetadataTitleMaxLength,
-    proposalSourceCodeMaxLength:
-      currentGovernance.proposal_source_code_max_length ?? defaultProposalSourceCodeMaxLength,
-    proposalTitleMaxLength: currentGovernance.proposal_title_max_length ?? defaultProposalTitleMaxLength,
-
     currentRoundEndLevel: currentGovernance.current_round_end_level ?? 0,
     cycle: currentGovernance.cycle_id ?? 0,
     timelockProposalId: currentGovernance.timelock_proposal_id ?? 0,
