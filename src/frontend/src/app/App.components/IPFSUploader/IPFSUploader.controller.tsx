@@ -59,6 +59,7 @@ export const IPFSUploader = ({
       } catch (e) {
         // disable if keys are invalid
         setIsDisabled(true)
+        dispatch(showToaster(ERROR, 'Keys are invalid', 'IPFS auth keys are invalid, image selection will be disabled'))
       }
     }
     checkIPFS()
