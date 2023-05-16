@@ -21,8 +21,13 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    max-width: 650px;
     color: ${({ theme }) => theme.textColor};
+
+    a,
+    a * {
+      cursor: pointer;
+      display: inline;
+    }
   }
 
   .info-icon {
@@ -33,6 +38,12 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
 
   &.isLarge {
     padding: 22px 40px;
+  }
+
+  &.hasChild {
+    p {
+      max-width: 65%;
+    }
   }
 
   &.hasBorder {

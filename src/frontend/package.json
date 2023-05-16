@@ -13,7 +13,8 @@
     "import-contracts": "rm -Rf src/deployments && cp -R ../contracts/deployments src/deployments",
     "open-explorer": "open https://better-call.dev/hangzhou2net/KT1N4WXRdpxmqKVuukhQXX5kgc6JwJwyJrVH/",
     "graphql-compile": "graphql-codegen",
-    "graphql-watch": "graphql-codegen -w"
+    "graphql-watch": "graphql-codegen -w",
+    "postinstall": "cd ../../ && npx husky install"
   },
   "dependencies": {
     "@airgap/beacon-sdk": "^3.3.0",
@@ -77,6 +78,7 @@
     "babel-plugin-styled-components": "^1.13.2",
     "cypress": "^8.4.1",
     "eslint-config-react-app": "^6.0.0",
+    "husky": "^8.0.3",
     "prettier": "2.8.7",
     "source-map-explorer": "^2.5.2",
     "typescript": "^5.0.4"
