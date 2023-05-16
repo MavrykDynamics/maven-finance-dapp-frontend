@@ -83,6 +83,10 @@ export const SubmitProposalBytes = styled.div<{ theme: MavrykTheme }>`
       }
     }
   }
+
+  .bytes-restriction-banner {
+    margin-top: 10px;
+  }
 `
 
 export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>`

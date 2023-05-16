@@ -23,7 +23,7 @@ import {
 } from '../ProposalSubmition.helpers'
 import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { isValidLength } from 'utils/validatorFunctions'
-import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
+import { INFO_DEFAULT, INFO_WARNING } from 'app/App.components/Info/info.constants'
 import { BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { isHexadecimal } from 'utils/validatorFunctions'
 
@@ -309,6 +309,18 @@ export const StageTwoForm = ({
             </SubmitProposalBytesPair>
           )
         })}
+
+        {dndBytes.length >= 5 ? (
+          <div className="bytes-restriction-banner">
+            <Info
+              text={
+                'If you are adding a heavy load of bytes, such as bytes to create 20 farms, note that this can cause the operation size can be too large to execute successfully. We suggest to only create farms in batches of 5 per proposal'
+              }
+              type={INFO_WARNING}
+            />
+          </div>
+        ) : null}
+
         <div className="add-byte">
           <CustomTooltip text="Add bytes pair" className="tooltip">
             <Button

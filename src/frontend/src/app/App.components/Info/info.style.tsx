@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from 'styles/interfaces'
-import { INFO_DEFAULT, INFO_ERROR, INFO_SUCCESS } from './info.constants'
+import { INFO_DEFAULT, INFO_ERROR, INFO_SUCCESS, INFO_WARNING } from './info.constants'
 
 export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   border-radius: 10px;
@@ -67,6 +67,15 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
 
     .info-icon {
       fill: ${({ theme }) => theme.downColor};
+    }
+  }
+
+  /* Error styling to show user danger zone  */
+  &.${INFO_WARNING} {
+    border-color: ${({ theme }) => theme.riskColor};
+
+    .info-icon {
+      fill: ${({ theme }) => theme.riskColor};
     }
   }
 
