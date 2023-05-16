@@ -338,11 +338,11 @@ export const BorrowingTabListItemValuesSectionInfo = styled.div<{
   }
 
   .rate {
-    font-weight: 500;
-    font-size: 12px;
+    font-weight: 600;
+    font-size: 16px;
     line-height: 18px;
 
-    visibility: ${({ theme }) => (theme.hasRate ? 'visible' : 'hidden')};
+    visibility: ${({ theme }) => (theme.hasRate ? 'hidden' : 'visible')};
     color: ${({ theme }) => theme.dataColor};
   }
 
