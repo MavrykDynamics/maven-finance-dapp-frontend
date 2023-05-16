@@ -4,7 +4,7 @@ import { State } from 'reducers'
 
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
-import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength } from 'providers/DAPPConfig/dappConfig.types'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // helpers

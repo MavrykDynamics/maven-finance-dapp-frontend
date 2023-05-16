@@ -28,7 +28,6 @@ import {
 } from './Council.actions'
 
 // types
-import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 const titles = {
   membersName: 'Council Members',
@@ -143,7 +142,7 @@ export const Council = () => {
           handleDropAction={handleDropAction}
           // components
           getFormComponent={() => <CouncilForm />}
-          getFormUpdateMemberInfo={(maxLength: CouncilMaxLength, callback: () => void) => (
+          getFormUpdateMemberInfo={(maxLength, callback: () => void) => (
             <CouncilFormUpdateCouncilMemberInfo maxLength={maxLength} callback={callback} />
           )}
         />

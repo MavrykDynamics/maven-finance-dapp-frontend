@@ -4,7 +4,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
-import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength } from 'providers/DAPPConfig/dappConfig.types'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'

@@ -29,7 +29,6 @@ import {
 import { getBreakGlassConfig } from 'pages/BreakGlass/BreakGlass.actions'
 
 // types
-import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 const titles = {
   membersName: 'Break Glass Council',
@@ -156,7 +155,7 @@ export function BreakGlassCouncil() {
           handleDropAction={handleDropAction}
           // components
           getFormComponent={() => <BreakGlassCouncilForm />}
-          getFormUpdateMemberInfo={(maxLength: CouncilMaxLength, callback: () => void) => (
+          getFormUpdateMemberInfo={(maxLength, callback: () => void) => (
             <FormUpdateCouncilMemberView maxLength={maxLength} callback={callback} />
           )}
         />

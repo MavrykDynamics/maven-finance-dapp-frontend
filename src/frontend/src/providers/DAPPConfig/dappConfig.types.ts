@@ -1,6 +1,6 @@
 import DAPPConfigProvider from './dappConfig.provider'
 
-type Council = {
+export type CouncilMaxLength = {
   councilMemberImageMaxLength: number
   councilMemberNameMaxLength: number
   councilMemberWebsiteMaxLength: number
@@ -8,16 +8,16 @@ type Council = {
   requestTokenNameMaxLength: number
 }
 
-type DataFeeds = {
+export type DataFeedsMaxLength = {
   feedNameMaxLength: number
 }
 
-type EmergencyGovernance = {
+export type EmergencyGovernanceMaxLength = {
   proposalTitleMaxLength: number
   proposalDescMaxLength: number
 }
 
-type Governance = {
+export type GovernanceMaxLength = {
   proposalDescriptionMaxLength: number
   proposalInvoiceMaxLength: number
   proposalMetadataTitleMaxLength: number
@@ -25,23 +25,23 @@ type Governance = {
   proposalTitleMaxLength: number
 }
 
-type GovernanceSatellite = {
+export type GovernanceSatelliteMaxLength = {
   purposeMaxLength: number
 }
 
-type SatelliteDelegation = {
+export type SatelliteDelegationMaxLength = {
   satelliteNameMaxLength: number
   satelliteDescriptionMaxLength: number
   satelliteWebsiteMaxLength: number
 }
 
 export type DAPPConfigContext = {
-  council: Council
-  dataFeeds: DataFeeds
-  emergencyGovernance: EmergencyGovernance
-  governance: Governance
-  governanceSatellite: GovernanceSatellite
-  satelliteDelegation: SatelliteDelegation
+  council: CouncilMaxLength
+  dataFeeds: DataFeedsMaxLength
+  emergencyGovernance: EmergencyGovernanceMaxLength
+  governance: GovernanceMaxLength
+  governanceSatellite: GovernanceSatelliteMaxLength
+  satelliteDelegation: SatelliteDelegationMaxLength
   // actions
   initializeDappConfigData: InstanceType<typeof DAPPConfigProvider>['initializeDappConfigData']
 }

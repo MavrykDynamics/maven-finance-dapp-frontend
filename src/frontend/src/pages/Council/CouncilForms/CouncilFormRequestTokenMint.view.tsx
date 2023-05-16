@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
-import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength } from 'providers/DAPPConfig/dappConfig.types'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'

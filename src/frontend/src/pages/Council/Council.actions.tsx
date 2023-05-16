@@ -5,13 +5,7 @@ import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // helpers
 import { parseDate } from 'utils/time'
-import {
-  normalizeCouncilActions,
-  normalizeCouncilMembers,
-  normalizeMaxLength,
-  PENDING_ACTIONS,
-  PAST_ACTIONS,
-} from './Council.helpers'
+import { normalizeCouncilActions, normalizeCouncilMembers, PENDING_ACTIONS, PAST_ACTIONS } from './Council.helpers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
