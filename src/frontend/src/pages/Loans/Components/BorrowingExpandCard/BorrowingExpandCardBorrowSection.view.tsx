@@ -239,7 +239,12 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
           form={BUTTON_WIDE}
           onClick={handleClickBorrow}
           disabled={
-            userAssetBalance < inputAmount || userAssetBalance === 0 || collateralRatio <= 201 || isActionActive
+            userAssetBalance < inputAmount ||
+            userAssetBalance === 0 ||
+            inputAmount === 0 ||
+            collateralRatio <= 201 ||
+            isActionActive ||
+            showWarning
           }
         >
           <Icon id="coin-loan" />

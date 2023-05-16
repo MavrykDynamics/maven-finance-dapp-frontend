@@ -143,7 +143,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     if (isRepayInFull) {
       const validationStatus = loansInputValidation({
         inputAmount: String(totalOutstanding),
-        maxAmount: Math.min(userAssetBalance, totalOutstanding),
+        maxAmount: Math.min(userAssetBalance, totalOutstanding), // TODO: fix rounding 
         minAmount: minimumRepay,
         options: {
           byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
@@ -274,7 +274,14 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={handleClickRepay}
-          disabled={userAssetBalance < inputAmount || userAssetBalance === 0 || !borrowedAmount || isActionActive}
+          disabled={
+            userAssetBalance < inputAmount ||
+            userAssetBalance === 0 ||
+            inputAmount === 0 ||
+            !borrowedAmount ||
+            isActionActive ||
+            isMinimumRepayWarning
+          }
         >
           <Icon id="okIcon" />
           Repay in {isRepayInFull ? 'Full' : 'Part'}
