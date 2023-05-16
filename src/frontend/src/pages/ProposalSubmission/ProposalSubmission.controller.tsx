@@ -91,7 +91,7 @@ export const ProposalSubmission = () => {
             title: '',
             description: '',
             sourceCode: '',
-            ipfs: '',
+            invoice: '',
             successMVKReward: '',
             invoiceTable: '',
             bytesValidation: proposal.proposalData.map((bytesPair) => ({
@@ -262,7 +262,7 @@ export const ProposalSubmission = () => {
           title: currentProposal.title,
           description: currentProposal.description,
           sourceCode: currentProposal.sourceCode,
-          ipfs: '',
+          invoice: currentProposal.invoice,
         },
         fee,
         bytes,

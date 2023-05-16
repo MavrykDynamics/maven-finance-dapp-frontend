@@ -352,6 +352,7 @@ export const DEFAULT_PROPOSAL: ProposalRecordType = {
   status: ProposalStatus.UNLOCKED,
   title: '',
   description: '',
+  invoice: '',
   sourceCode: '',
   passVoteMvkTotal: 0,
   upvoteMvkTotal: 0,
@@ -376,7 +377,7 @@ export const DEFAULT_PROPOSAL: ProposalRecordType = {
 export const DEFAULT_PROPOSAL_VALIDATION: ProposalValidityObj = {
   title: '',
   description: '',
-  ipfs: '',
+  invoice: '',
   successMVKReward: '',
   invoiceTable: '',
   sourceCode: '',
@@ -388,7 +389,7 @@ export const DEFAULT_PROPOSAL_VALIDATION: ProposalValidityObj = {
 export const DEFAULT_VALIDITY: ValidSubmitProposalForm = {
   title: false,
   description: false,
-  ipfs: true,
+  invoice: true,
   successMVKReward: true,
   invoiceTable: true,
   sourceCode: false,
@@ -397,7 +398,7 @@ export const DEFAULT_VALIDITY: ValidSubmitProposalForm = {
 export const DEFAULT_INPUT_STATUSES: SubmitProposalFormInputStatus = {
   title: '',
   description: '',
-  ipfs: '',
+  invoice: '',
   successMVKReward: '',
   invoiceTable: 'success',
   sourceCode: '',

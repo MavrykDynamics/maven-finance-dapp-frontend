@@ -17,6 +17,7 @@ import { State } from 'reducers'
 // helpers, constants
 import { isValidLength, isValidHttpUrl } from '../../../utils/validatorFunctions'
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 
 export const StageOneForm = ({
   proposalId,
@@ -31,7 +32,9 @@ export const StageOneForm = ({
   const isProposalSubmitted = proposalId >= 0
 
   // update local state value and parent state due to inputted info
-  const inputHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const inputHandler = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string; value: string } },
+  ) => {
     const { name, value } = e.target
     updateLocalProposalData(
       {
@@ -67,6 +70,14 @@ export const StageOneForm = ({
               isValidHttpUrl(value) && isValidLength(value, 1, proposalSourceCodeMaxLength)
                 ? INPUT_STATUS_SUCCESS
                 : INPUT_STATUS_ERROR,
+          },
+          proposalId,
+        )
+        break
+      case 'invoice':
+        updateLocalProposalValidation(
+          {
+            invoice: isValidHttpUrl(value) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
           },
           proposalId,
         )
@@ -168,6 +179,32 @@ export const StageOneForm = ({
             onChange: inputHandler,
           }}
         />
+      )}
+
+      {isProposalSubmitted ? (
+        <div className="submitted-data source-code">
+          <div className="label">6 - Add an Invoice Image</div>
+          <a className="isCyan" href={currentProposal.sourceCode}>
+            {currentProposal.sourceCode}
+          </a>
+        </div>
+      ) : (
+        <div className="invoice">
+          <IPFSUploader
+            typeFile="image"
+            imageIpfsUrl={currentProposal.invoice}
+            setIpfsImageUrl={(e: string) => {
+              inputHandler({
+                target: {
+                  name: 'invoice',
+                  value: e,
+                },
+              })
+            }}
+            title={'Add an Invoice Image'}
+            listNumber={6}
+          />
+        </div>
       )}
     </ProposalSubmittionStageOneBody>
   )

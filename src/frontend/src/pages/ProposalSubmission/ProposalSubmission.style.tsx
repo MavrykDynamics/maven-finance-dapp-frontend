@@ -16,7 +16,7 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme }>
 
   display: grid;
   grid-template-columns: 50% 25% 15%;
-  grid-template-rows: 40px minmax(40px, 2fr) 40px;
+  grid-template-rows: 40px minmax(40px, 2fr) 40px minmax(40px, 2fr);
 
   justify-content: space-between;
   row-gap: 50px;
@@ -60,6 +60,12 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme }>
   }
 
   .source-code {
+    grid-column-start: 1;
+    grid-column-end: 4;
+  }
+
+  .invoice {
+    position: relative;
     grid-column-start: 1;
     grid-column-end: 4;
   }

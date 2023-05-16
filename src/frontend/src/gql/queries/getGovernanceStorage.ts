@@ -36,6 +36,7 @@ export const GOVERNANCE_PROPOSALS_QUERY = `
       
       description
       title
+      invoice
       
       current_round_proposal
       locked

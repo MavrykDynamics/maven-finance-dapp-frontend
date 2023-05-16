@@ -40,14 +40,14 @@ export const submitProposal =
 
     try {
       // prepare and send transaction
-      const { title, description, ipfs, sourceCode } = form
+      const { title, description, invoice, sourceCode } = form
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
       const transaction = await contract?.methods
         .propose(
           title,
           description,
-          ipfs,
+          invoice,
           sourceCode,
           proposalBytes,
           proposalPayments.length ? proposalPayments : undefined,
