@@ -65,7 +65,7 @@ export const BorrowingExpandCard = ({
   avaliableLiq,
   minimumRepay,
   DAOFee,
-  hideTransactionHistory
+  hideTransactionHistory,
 }: BorrowingExpandCardPropsType) => {
   const { symbol, icon, rate = 1 } = borrowedAsset
 
@@ -326,6 +326,7 @@ export const BorrowingExpandCard = ({
                 collateralData={collateralData}
                 currentToken={currentToken}
                 isOwner={isOwner}
+                vaultName={name}
                 vaultAddress={address}
                 xtzDelegatedTo={xtzDelegatedTo}
                 sMVKDelegatedTo={sMVKDelegatedTo}

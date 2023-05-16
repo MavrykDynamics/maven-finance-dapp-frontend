@@ -282,9 +282,12 @@ export const BorrowingExpandCardActionsSectionStyled = styled.div`
 
   .tab-text {
     margin: 0 15px;
+
     font-weight: 600;
     font-size: 14px;
     line-height: 22px;
+
+    color: ${({ theme }) => theme.textColor};
   }
 
   .button-wrapper {

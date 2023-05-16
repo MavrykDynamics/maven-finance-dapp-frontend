@@ -46,6 +46,7 @@ type Props = {
   currentToken: LoanMarketType
   activeMenuTab?: TabItem
   isOwner: boolean
+  vaultName: string
   vaultAddress: string
   xtzDelegatedTo: string | null
   sMVKDelegatedTo?: string
@@ -69,6 +70,7 @@ export const BorrowingExpandCardMenuSection = ({
   collateralData,
   currentToken,
   isOwner,
+  vaultName,
   vaultAddress,
   xtzDelegatedTo,
   sMVKDelegatedTo,
@@ -223,6 +225,18 @@ export const BorrowingExpandCardMenuSection = ({
           <H2Title>Useful Info</H2Title>
 
           <div className="useful-info">
+            <div className="useful-info-line">
+              <div className="name">Vault Name</div>
+              <div className="value">{vaultName}</div>
+              <Button
+                kind={BUTTON_SIMPLE}
+                disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName)) || isActionActive}
+                onClick={() => {}}
+              >
+                Change <Icon id="paginationArrowLeft" />
+              </Button>
+            </div>
+
             <div className="useful-info-line">
               <div className="name">Vault Address</div>
               <div className="value">
