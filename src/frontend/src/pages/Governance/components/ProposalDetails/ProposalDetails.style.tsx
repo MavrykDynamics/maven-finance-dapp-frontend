@@ -67,6 +67,10 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     color: ${({ theme }) => theme.dataColor};
     font-weight: 500;
     font-size: 14px;
+
+    * {
+      word-break: break-all;
+    }
   }
 
   .drop-proposal {

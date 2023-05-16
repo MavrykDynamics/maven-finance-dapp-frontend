@@ -184,8 +184,8 @@ export const StageOneForm = ({
       {isProposalSubmitted ? (
         <div className="submitted-data source-code">
           <div className="label">6 - Add an Invoice Image</div>
-          <a className="isCyan" href={currentProposal.sourceCode}>
-            {currentProposal.sourceCode}
+          <a className="isCyan" href={currentProposal.invoice}>
+            {currentProposal.invoice}
           </a>
         </div>
       ) : (
