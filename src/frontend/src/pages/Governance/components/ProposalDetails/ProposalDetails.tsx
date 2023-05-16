@@ -166,6 +166,15 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       </div>
 
       <div className="proposal-data-block-wrapper">
+        <div className="proposal-data-block-name">Invoice</div>
+        <div className="proposal-data-block-value">
+          <a href={proposal.invoice} target="_blank" rel="noreferrer" className="isCyan">
+            {proposal.invoice}
+          </a>
+        </div>
+      </div>
+
+      <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Meta-Data</div>
         {proposal.proposalData?.length ? (
           <ol className="bytes-list">
