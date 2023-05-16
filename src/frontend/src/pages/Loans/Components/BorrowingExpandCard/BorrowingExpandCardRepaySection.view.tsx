@@ -67,7 +67,8 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const totalOutstanding = feesAmount + Number(borrowedAmount)
   const userAssetBalance = userTokens[borrowedAsset?.symbol.toLowerCase() ?? '']?.balance ?? 0
   const isRepayInFull = activeRepayTab?.id === vaultCardTabNames.REPAY_IN_FULL
-  const isMinimumRepayWarning = inputData.validationStatus === INPUT_STATUS_ERROR && inputAmount <= minimumRepay
+  const isMinimumRepayWarning =
+    inputData.validationStatus === INPUT_STATUS_ERROR && inputAmount <= minimumRepay && totalOutstanding !== 0
   const isNotRepayInFullWarning = isRepayInFull && mathRoundTwoDigit(totalOutstanding) !== inputAmount
 
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
@@ -141,14 +142,17 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   useEffect(() => {
     if (isRepayInFull) {
-      const validationStatus = loansInputValidation({
-        inputAmount: String(totalOutstanding),
-        maxAmount: Math.min(userAssetBalance, totalOutstanding), // TODO: fix rounding 
-        minAmount: minimumRepay,
-        options: {
-          byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
-        },
-      })
+      const validationStatus =
+        totalOutstanding !== 0
+          ? loansInputValidation({
+              inputAmount: String(totalOutstanding),
+              maxAmount: Math.min(userAssetBalance, totalOutstanding), // TODO: fix rounding
+              minAmount: minimumRepay,
+              options: {
+                byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
+              },
+            })
+          : ''
 
       setInputData({
         amount: String(mathRoundTwoDigit(totalOutstanding)),

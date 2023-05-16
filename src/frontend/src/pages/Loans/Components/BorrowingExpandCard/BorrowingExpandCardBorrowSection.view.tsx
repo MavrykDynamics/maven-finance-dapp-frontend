@@ -65,7 +65,8 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputAmount, borrowCapacity])
 
-  const showWarning = inputAmount > borrowCapacity / (borrowedAsset?.rate ?? 0) || futureCollateralRatio < 200
+  const showWarning =
+    (inputAmount > borrowCapacity / (borrowedAsset?.rate ?? 0) || futureCollateralRatio < 200) && inputAmount !== 0
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
