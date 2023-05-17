@@ -110,7 +110,7 @@ export const BorrowingExpandCardValuesSection = ({
       </BorrowingTabListItemValuesSectionInfo>
 
       <BorrowingTabListItemValuesSectionInfo className="learn-more">
-        <a href="" target="_blank" rel="noreferrer">
+        <a href="https://mavryk.finance/litepaper#multi-collateral-vaults" target="_blank" rel="noreferrer">
           Learn more at the Mavryk Docs
         </a>
       </BorrowingTabListItemValuesSectionInfo>

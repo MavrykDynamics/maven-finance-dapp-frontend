@@ -103,6 +103,9 @@ export const BorrowingExpandCard = ({
     openManagePermissionsPopup,
     openUpdateMvkOperatorsPopup,
     openWithdrawCollateralPopup,
+    confirmBorrowAssetPopup,
+    confirmRepayFullPopup,
+    confirmRepayPartPopup,
     changeBakerPopup,
     repayPartPopup,
     repayFullPopup,
@@ -116,6 +119,9 @@ export const BorrowingExpandCard = ({
   } = useContext(loansPopupsContext)
 
   const notHandleClickAway =
+    confirmBorrowAssetPopup.showModal ||
+    confirmRepayFullPopup.showModal ||
+    confirmRepayPartPopup.showModal ||
     repayPartPopup.showModal ||
     changeBakerPopup.showModal ||
     repayFullPopup.showModal ||

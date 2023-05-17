@@ -42,11 +42,6 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     margin-top: 60px;
   }
 
-  .button-wrapper {
-    margin: 30px auto 0;
-    max-width: 300px;
-  }
-
   hr {
     background: ${({ theme }) => theme.cardBorderColor};
     margin: 40px 0;

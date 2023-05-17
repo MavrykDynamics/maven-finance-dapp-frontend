@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { ConfirmBorrowPopupDataType } from './Modals.helpers'
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -146,7 +146,10 @@ export const ConfirmBorrowAsset = ({
             </ThreeLevelListItem>
           </VaultModalOverview>
 
-          <div className="button-wrapper">
+          <div className="buttons-wrapper" style={{ marginTop: '40px' }}>
+            <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={closePopup}>
+              Cancel
+            </NewButton>
             <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={borrowAsserHandler}>
               <Icon id="coin-loan" />
               Borrow {borrowedAsset?.symbol}

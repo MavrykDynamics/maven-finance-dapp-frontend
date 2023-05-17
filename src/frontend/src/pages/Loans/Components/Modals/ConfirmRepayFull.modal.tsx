@@ -5,7 +5,7 @@ import { useLockBodyScroll } from 'react-use'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { ConfirmRepayFullPopupDataType } from './Modals.helpers'
 import { repayFullAndCloseVaultAction } from 'pages/Loans/Actions/vault.actions'
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import NewButton from 'app/App.components/Button/NewButton'
@@ -121,7 +121,10 @@ export const ConfirmRepayFull = ({
             </ThreeLevelListItem>
           </VaultModalOverview>
 
-          <div className="button-wrapper">
+          <div className="buttons-wrapper" style={{ marginTop: '40px' }}>
+            <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={closePopup}>
+              Cancel
+            </NewButton>
             <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={repayBtnHandler}>
               <Icon id="close" />
               Repay And Close

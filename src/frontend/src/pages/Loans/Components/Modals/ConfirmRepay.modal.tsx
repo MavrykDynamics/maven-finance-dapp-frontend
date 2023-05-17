@@ -5,7 +5,13 @@ import { State } from 'reducers'
 
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
-import { ConfirmRepayPartPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue, RepayPartPopupDataType } from './Modals.helpers'
+import {
+  ConfirmRepayPartPopupDataType,
+  DEFAULT_LOANS_INPUT_VALUE,
+  getOnBlurValue,
+  getOnFocusValue,
+  RepayPartPopupDataType,
+} from './Modals.helpers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
 
@@ -22,7 +28,6 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
-
 
 export const ConfirmRepay = ({
   closePopup,
@@ -124,7 +129,10 @@ export const ConfirmRepay = ({
             </ThreeLevelListItem>
           </VaultModalOverview>
 
-          <div className="button-wrapper" style={{ marginTop: '40px' }}>
+          <div className="buttons-wrapper" style={{ marginTop: '40px' }}>
+            <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={closePopup}>
+              Cancel
+            </NewButton>
             <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={repayBtnHandler}>
               <Icon id="okIcon" />
               Repay
