@@ -1,12 +1,13 @@
 import type { SatelliteRecordType, SatelliteVotingsType } from '../../../utils/TypesAndInterfaces/Satellites'
 import type { SatelliteRecordGraphQl, DelegationGraphQl } from '../../../utils/TypesAndInterfaces/Satellites'
-import { GovernanceFinancialRequestGraphQL } from 'utils/TypesAndInterfaces/Governance'
+import { GovernanceFinancialRequestGraphQL, GovernanceSatelliteCycleData } from 'utils/TypesAndInterfaces/Governance'
 import {
   Aggregator,
   Aggregator_Oracle,
   Aggregator_Oracle_Observation,
   Emergency_Governance,
   Governance_Proposal,
+  Governance_Satellite_Snapshot,
 } from 'utils/generated/graphqlTypes'
 
 // helpers
@@ -216,15 +217,17 @@ export const getSatelliteVotings = ({
   }
 }
 
+type Snapshot = Pick<Governance_Satellite_Snapshot, 'user_id' | 'total_voting_power'>
 /**
  * @param snapshots array of objects with user_id and total_voting_power
+ * @param cycle current active cycle (can be 0 if cycle hadn't started yet)
  * @returns object where user_id is key and snapshot object as value
  */
-export const createSatelliteSnapshotsByIds = (snapshots: any) => {
-  if (snapshots.length === 0) return {}
+export const createSatelliteSnapshotsByIds = (snapshots: Snapshot[], cycle: number) => {
+  if (snapshots.length === 0 || cycle === 0) return {}
 
   const uniqueIds = new Set<string>()
-  const snapshotsWithoutDuplicates = []
+  const snapshotsWithoutDuplicates: Snapshot[] = []
 
   for (const obj of snapshots) {
     if (!uniqueIds.has(obj.user_id)) {
@@ -233,7 +236,7 @@ export const createSatelliteSnapshotsByIds = (snapshots: any) => {
     }
   }
 
-  return snapshotsWithoutDuplicates.reduce((acc: any, s: any) => {
+  return snapshotsWithoutDuplicates.reduce((acc: { [key: string]: Snapshot }, s) => {
     acc[s.user_id] = { ...s }
     return acc
   }, {})
@@ -241,7 +244,7 @@ export const createSatelliteSnapshotsByIds = (snapshots: any) => {
 
 export const normallizeSatellite = (
   satelliteRecord: SatelliteRecordGraphQl,
-  satelliteObjectSnapshots: any,
+  satelliteObjectSnapshots: ReturnType<typeof createSatelliteSnapshotsByIds>,
   metricsData: {
     proposals: Array<Governance_Proposal>
     emergencyGovernanceLedger: Array<Emergency_Governance>
@@ -309,10 +312,10 @@ export const normalizeSatellitesLedger = (store: {
   emergency_governance: Array<Emergency_Governance>
   aggregator: Array<Aggregator>
   governance_financial_request: Array<GovernanceFinancialRequestGraphQL>
-  governance: any
+  governance: GovernanceSatelliteCycleData[]
 }) => {
-  const { satellite_snapshots } = store.governance[0]
-  const satelliteObjectSnapshots = createSatelliteSnapshotsByIds(satellite_snapshots)
+  const { satellite_snapshots, cycle_id } = store.governance[0]
+  const satelliteObjectSnapshots = createSatelliteSnapshotsByIds(satellite_snapshots, cycle_id)
 
   const normalizedSatellites = store.satellite.reduce<{
     satellitesMapper: Record<SatelliteRecordType['address'], SatelliteRecordType>

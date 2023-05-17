@@ -65,3 +65,6 @@ export type FinancialRequestRecord = {
   sMVKTotakSupply: number
   quorum: number
 }
+
+// governance satellite snapshots
+export type GovernanceSatelliteCycleData = Pick<Governance, 'cycle_id' | 'satellite_snapshots'>
