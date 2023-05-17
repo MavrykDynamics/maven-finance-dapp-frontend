@@ -10,7 +10,12 @@ import {
 } from 'utils/generated/graphqlTypes'
 
 // helpers
-import { calcWithoutMu, calcWithoutPrecision, getNumberInBounds } from '../../../utils/calcFunctions'
+import {
+  calcWithoutMu,
+  calcWithoutPrecision,
+  getNumberInBounds,
+  convertNumberForClient,
+} from '../../../utils/calcFunctions'
 import {
   defaultSatelliteDescriptionMaxLength,
   defaultSatelliteNameMaxLength,
@@ -211,8 +216,32 @@ export const getSatelliteVotings = ({
   }
 }
 
+/**
+ * @param snapshots array of objects with user_id and total_voting_power
+ * @returns object where user_id is key and snapshot object as value
+ */
+export const createSatelliteSnapshotsByIds = (snapshots: any) => {
+  if (snapshots.length === 0) return {}
+
+  const uniqueIds = new Set<string>()
+  const snapshotsWithoutDuplicates = []
+
+  for (const obj of snapshots) {
+    if (!uniqueIds.has(obj.user_id)) {
+      snapshotsWithoutDuplicates.push(obj)
+      uniqueIds.add(obj.user_id)
+    }
+  }
+
+  return snapshotsWithoutDuplicates.reduce((acc: any, s: any) => {
+    acc[s.user_id] = { ...s }
+    return acc
+  }, {})
+}
+
 export const normallizeSatellite = (
   satelliteRecord: SatelliteRecordGraphQl,
+  satelliteObjectSnapshots: any,
   metricsData: {
     proposals: Array<Governance_Proposal>
     emergencyGovernanceLedger: Array<Emergency_Governance>
@@ -250,6 +279,9 @@ export const normallizeSatellite = (
     satelliteFee: (satelliteRecord?.fee ?? 0) / 100,
     mvkBalance: calcWithoutPrecision(satelliteRecord?.user.mvk_balance),
     sMvkBalance: calcWithoutPrecision(satelliteRecord?.user.smvk_balance),
+    totalVotingPower: convertNumberForClient({
+      number: satelliteObjectSnapshots[satelliteRecord.user_id]?.total_voting_power ?? 0,
+    }),
     totalDelegatedAmount: calcWithoutPrecision(satelliteTotalDelegatedAmount),
     accuracy: getSatelliteAccuracy(satelliteRecord),
     oracleRecords: satelliteOracleRecords,
@@ -277,7 +309,11 @@ export const normalizeSatellitesLedger = (store: {
   emergency_governance: Array<Emergency_Governance>
   aggregator: Array<Aggregator>
   governance_financial_request: Array<GovernanceFinancialRequestGraphQL>
+  governance: any
 }) => {
+  const { satellite_snapshots } = store.governance[0]
+  const satelliteObjectSnapshots = createSatelliteSnapshotsByIds(satellite_snapshots)
+
   const normalizedSatellites = store.satellite.reduce<{
     satellitesMapper: Record<SatelliteRecordType['address'], SatelliteRecordType>
     activeSatellitesIds: Array<SatelliteRecordType['address']>
@@ -285,7 +321,7 @@ export const normalizeSatellitesLedger = (store: {
     oraclesIds: Array<SatelliteRecordType['address']>
   }>(
     (acc, satelliteRecord) => {
-      const nomalizedSatellite = normallizeSatellite(satelliteRecord, {
+      const nomalizedSatellite = normallizeSatellite(satelliteRecord, satelliteObjectSnapshots, {
         proposals: store.governance_proposal,
         emergencyGovernanceLedger: store.emergency_governance,
         feeds: store.aggregator,
