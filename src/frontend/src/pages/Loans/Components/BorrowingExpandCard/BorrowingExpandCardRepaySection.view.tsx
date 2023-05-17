@@ -195,11 +195,8 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         <VaultOverview>
           <div className="line">
             <ThreeLevelListItem>
-              <div className="name">
-                Total Amount
-                <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text="something" className="tooltip" />
-              </div>
-              <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
+              <div className="name">Borrowed</div>
+              <CommaNumber value={borrowedAmount} className="value" />
             </ThreeLevelListItem>
 
             <ThreeLevelListItem>

@@ -15,7 +15,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_PULSE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
@@ -227,6 +227,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
           disabled={
             inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
           }
+          animation={BUTTON_PULSE}
         >
           <Icon id="coin-loan" />
           Confirm Borrow
