@@ -152,7 +152,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
                 <CustomTooltip
                   iconId="info"
                   defaultStrokeColor={silverColor}
-                  text={`Total amount you are borrowing, a portion of which is paid to the treasury as the DAO fee. The amount you will actually receive is the Total Amount minus the DAO fee.`}
+                  text={`Total amount you are borrowing, a portion of which is paid to the treasury as the DAO fee. The amount you will actually receive is the Total Amount minus the DAO fee`}
                   className="tooltip"
                 />
               </div>
@@ -208,7 +208,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
             <ThreeLevelListItem className="right">
               <div className="name">
                 Available To Borrow
-                <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text="something" className="tooltip" />
+                <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)" className="tooltip" />
               </div>
               <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>

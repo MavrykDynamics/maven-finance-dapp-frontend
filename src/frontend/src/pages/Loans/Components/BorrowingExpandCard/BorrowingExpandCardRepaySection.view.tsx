@@ -243,7 +243,15 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
             </ThreeLevelListItem>
 
             <ThreeLevelListItem className="right">
-              <div className="name">Available To Borrow</div>
+              <div className="name">
+                Available To Borrow
+                <CustomTooltip
+                  iconId="info"
+                  defaultStrokeColor={silverColor}
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  className="tooltip"
+                />
+              </div>
               <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </div>
