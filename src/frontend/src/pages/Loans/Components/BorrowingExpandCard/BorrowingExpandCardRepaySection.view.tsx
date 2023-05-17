@@ -119,11 +119,17 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   useEffect(() => {
     if (isRepayInFull) {
+      console.log({
+        inputAmount: totalOutstanding,
+        maxAmount: Math.min(userAssetBalance, totalOutstanding),
+        minAmount: minimumRepay,
+      })
+
       const validationStatus =
         totalOutstanding !== 0
           ? loansInputValidation({
               inputAmount: String(totalOutstanding),
-              maxAmount: Math.min(userAssetBalance, totalOutstanding), // TODO: fix rounding
+              maxAmount: Math.min(userAssetBalance, totalOutstanding),
               minAmount: minimumRepay,
               options: {
                 byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
