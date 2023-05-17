@@ -102,10 +102,7 @@ const SatelliteTab = () => {
                 <div className="grid-item grid-item-under-image">
                   <div className="name">Total Voting Power</div>
                   <div className="value">
-                    <CommaNumber
-                      value={satelliteRecord.sMvkBalance + satelliteRecord.totalDelegatedAmount}
-                      endingText="sMVK"
-                    />
+                    <CommaNumber value={satelliteRecord.totalVotingPower} endingText="sMVK" />
                   </div>
                 </div>
                 <div className="grid-item ">

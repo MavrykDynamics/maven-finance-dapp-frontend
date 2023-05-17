@@ -186,7 +186,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
               <SatelliteTextGroup>
                 <SatelliteMainText>Total Voting Power</SatelliteMainText>
                 <SatelliteSubText>
-                  <CommaNumber value={satellite.sMvkBalance + satellite.totalDelegatedAmount} endingText="sMVK" />
+                  <CommaNumber value={satellite.totalVotingPower} endingText="sMVK" />
                 </SatelliteSubText>
               </SatelliteTextGroup>
             )}
