@@ -99,9 +99,10 @@ export const isValidRPCNode = async (
   if (currentRpcNodes.find(({ url }) => url.toLowerCase().trim() === input.toLowerCase().trim())) return false
 
   try {
-    const client = new RpcClient(input, 'NetXnHfVqm9iesp')
+    const chainPublicKey = process.env.REACT_APP_CHAIN_ID ?? 'NetXnHfVqm9iesp'
+    const client = new RpcClient(input, chainPublicKey)
     const chainID = await client.getChainId()
-    return chainID === 'NetXnHfVqm9iesp'
+    return chainID === chainPublicKey
   } catch (error) {
     if (error instanceof Error) {
       console.error('RPC node error:', error.message)

@@ -287,7 +287,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Proposer</div>
-        <div className="proposal-data-block-value">
+        <div className="proposal-data-block-value proposal-data-block-address">
           <TzAddress tzAddress={proposal.proposerId} type={BLUE} isBold />
         </div>
       </div>
@@ -298,7 +298,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         <div className="proposal-data-block-name">Governance Info</div>
         <div className="gov-data">
           <div className="proposal-data-block-name">Governance Contract</div>
-          <div className="proposal-data-block-value">
+          <div className="proposal-data-block-value proposal-data-block-address">
             <TzAddress tzAddress={proposal.governanceId} type={BLUE} isBold />
           </div>
         </div>

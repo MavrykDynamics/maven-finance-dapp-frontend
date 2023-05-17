@@ -47,7 +47,7 @@ export const registerAsSatellite =
                     .toTransferParams(),
                 },
               ]
-            : [{}]) as WalletParamsWithKind[]),
+            : []) as WalletParamsWithKind[]),
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...contract?.methods

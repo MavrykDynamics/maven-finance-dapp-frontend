@@ -24,7 +24,7 @@ export const UnregisterPopup = ({
   const dispatch = useDispatch()
   const handleUnregisterSatellite = async () => await dispatch(unregisterAsSatellite())
 
-  const { delegatorCount, totalDelegatedAmount } = satellite
+  const { delegatorCount = 0, totalDelegatedAmount = 0 } = satellite ?? {}
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
