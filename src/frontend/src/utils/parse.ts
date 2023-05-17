@@ -1,5 +1,7 @@
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 
+export const getStringWithoutUnderline = (str: string): string => (str?.length ? str.replaceAll('_', ' ') : '')
+
 export const getSeparateCamelCase = (stringCamelCase: string): string =>
   stringCamelCase?.length ? stringCamelCase.replace(/([a-z0-9])([A-Z])/g, '$1 $2') : ''
 

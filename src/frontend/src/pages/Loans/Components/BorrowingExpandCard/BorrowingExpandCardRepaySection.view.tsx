@@ -263,14 +263,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={handleClickRepay}
-          disabled={
-            userAssetBalance < inputAmount ||
-            userAssetBalance === 0 ||
-            inputAmount === 0 ||
-            !borrowedAmount ||
-            isActionActive ||
-            isMinimumRepayWarning
-          }
+          disabled={inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive}
         >
           <Icon id="okIcon" />
           Confirm Repay in {isRepayInFull ? 'Full' : 'Part'}

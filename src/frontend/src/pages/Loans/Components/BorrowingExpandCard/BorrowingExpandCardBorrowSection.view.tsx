@@ -6,7 +6,7 @@ import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from '../Modals/Modals.helpers'
 import { State } from 'reducers'
-import { INPUT_LARGE } from 'app/App.components/Input/Input.constants'
+import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Input } from 'app/App.components/Input/NewInput'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -23,7 +23,6 @@ import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 type Props = {
   borrowedAsset: LoansVaultType['borrowedAsset']
   borrowCapacity: number
-  collateralRatio: number
   borrowAPR: number
   hasUserBorrowed: boolean
   currentCollateralBalance: number
@@ -39,7 +38,6 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const {
     borrowedAsset,
     borrowCapacity = 0,
-    collateralRatio,
     currentBorrowedAmount = 0,
     currentCollateralBalance = 0,
     DAOFee = 0,
@@ -208,7 +206,12 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
             <ThreeLevelListItem className="right">
               <div className="name">
                 Available To Borrow
-                <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)" className="tooltip" />
+                <CustomTooltip
+                  iconId="info"
+                  defaultStrokeColor={silverColor}
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  className="tooltip"
+                />
               </div>
               <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>
@@ -222,12 +225,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
           form={BUTTON_WIDE}
           onClick={() => openConfirmBorrowPopup(inputAmount)}
           disabled={
-            userAssetBalance < inputAmount ||
-            userAssetBalance === 0 ||
-            inputAmount === 0 ||
-            collateralRatio <= 201 ||
-            isActionActive ||
-            showWarning
+            inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
           }
         >
           <Icon id="coin-loan" />

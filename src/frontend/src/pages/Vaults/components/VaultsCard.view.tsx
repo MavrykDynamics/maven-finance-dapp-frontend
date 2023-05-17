@@ -30,6 +30,7 @@ import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { vaultTabs } from '../Vaults.view'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { OldBorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/OldBorrowingExpandCard'
+import { getStringWithoutUnderline } from 'utils/parse'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -159,7 +160,7 @@ export const VaultsCard = (props: Props) => {
     }
   }, [status, levelOfEarly, levelOfLate])
 
-  const headerSufix = <StatusFlag status={statusColor} text={status} className="sufix" />
+  const headerSufix = <StatusFlag status={statusColor} text={getStringWithoutUnderline(status)} className="sufix" />
 
   const generalExpand = (
     <VaultsCardDropDown>
@@ -318,7 +319,7 @@ export const VaultsCard = (props: Props) => {
       )}
 
       {vaultTab === vaultTabs.PERMISSIONED && (
-        // TODO: use old component, because need old view for permission vaults. 
+        // TODO: use old component, because need old view for permission vaults.
         // After all redesign in the future, we will move everything into BorrowingExpandCard component
         <OldBorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
       )}

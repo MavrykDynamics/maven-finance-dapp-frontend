@@ -6,9 +6,9 @@ export const ALL_VAULTS_FILTER = 'All Assets'
 
 export const vaultsStatuses = {
   LIQUIDATABLE: 'LIQUIDATABLE',
-  GRACE_PERIOD: 'GRACE PERIOD',
+  GRACE_PERIOD: 'GRACE_PERIOD',
   MARK: 'MARK',
-  AT_RISK: 'AT RISK',
+  AT_RISK: 'AT_RISK',
   ACTIVE: 'ACTIVE',
 }
 

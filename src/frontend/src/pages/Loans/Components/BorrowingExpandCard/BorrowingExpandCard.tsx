@@ -72,7 +72,7 @@ export const BorrowingExpandCard = ({
   DAOFee,
   hideTransactionHistory,
 }: BorrowingExpandCardPropsType) => {
-  const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
+  const { symbol, icon, rate = 1 } = borrowedAsset
 
   const { loanTokens } = useSelector((state: State) => state.loans)
 
@@ -395,7 +395,6 @@ export const BorrowingExpandCard = ({
                 {activeRepayBorrowTab?.id === vaultCardTabNames.BORROW && (
                   <BorrowingExpandCardBorrowSection
                     borrowedAsset={borrowedAsset}
-                    collateralRatio={collateralRatio}
                     borrowAPR={apr}
                     currentCollateralBalance={collateralData.at(-1)?.amount ?? 0}
                     hasUserBorrowed={Boolean(borrowedAmount)}
