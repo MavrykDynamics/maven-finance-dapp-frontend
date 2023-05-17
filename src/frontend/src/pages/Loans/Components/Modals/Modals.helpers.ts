@@ -130,6 +130,11 @@ export type ChangeBakerPopupDataType = {
   vaultAddress: string
 } | null
 
+export type ChangeVaultNamePopupDataType = {
+  vaultName: string
+  vaultAddress: string
+} | null
+
 export type CreateVaultPopupDataType = {
   currentMarketAsset: string
   setCreatedVaultAddress?: (address: string) => void
@@ -162,6 +167,7 @@ export type LoansPopupsContextStateType = {
   withdrawCollateralPopup: ModalStateType<WithdrawCollateralPopupDataType>
   updateMvkOperatorPopup: ModalStateType<UpdateOperatorsPopupDataType>
   managePermissionsPopup: ModalStateType<ManagePermissionsPopupDataType>
+  changeVaultNamePopup: ModalStateType<ChangeVaultNamePopupDataType>
   createVaultPopup: ModalStateType<CreateVaultPopupDataType>
   addLendingAssetPopup: ModalStateType<AddLendingAssetDataType>
   removeLendingAssetPopup: ModalStateType<RemoveLendingAssetDataType>
@@ -191,6 +197,8 @@ export type LoansPopupsContextStateType = {
   closeUpdateMvkOperatorsPopup: InstanceType<typeof LoansPopupsProvider>['closeUpdateMvkOperatorsPopup']
   openManagePermissionsPopup: InstanceType<typeof LoansPopupsProvider>['openManagePermissionsPopup']
   closeManagePermissionsPopup: InstanceType<typeof LoansPopupsProvider>['closeManagePermissionsPopup']
+  openChangeVaultNamePopup: InstanceType<typeof LoansPopupsProvider>['openChangeVaultNamePopup']
+  closeChangeVaultNamePopup: InstanceType<typeof LoansPopupsProvider>['closeChangeVaultNamePopup']
   openCreateVaultPopup: InstanceType<typeof LoansPopupsProvider>['openCreateVaultPopup']
   closeCreateVaultPopup: InstanceType<typeof LoansPopupsProvider>['closeCreateVaultPopup']
   openAddLendingAssetPopup: InstanceType<typeof LoansPopupsProvider>['openAddLendingAssetPopup']
@@ -219,6 +227,7 @@ export const DEFAULT_LOANS_POPUPS_STATE = {
   withdrawCollateralPopup: DEFAULT_LOANS_POPUP_STATE,
   updateMvkOperatorPopup: DEFAULT_LOANS_POPUP_STATE,
   managePermissionsPopup: DEFAULT_LOANS_POPUP_STATE,
+  changeVaultNamePopup: DEFAULT_LOANS_POPUP_STATE,
   createVaultPopup: DEFAULT_LOANS_POPUP_STATE,
   addLendingAssetPopup: DEFAULT_LOANS_POPUP_STATE,
   removeLendingAssetPopup: DEFAULT_LOANS_POPUP_STATE,

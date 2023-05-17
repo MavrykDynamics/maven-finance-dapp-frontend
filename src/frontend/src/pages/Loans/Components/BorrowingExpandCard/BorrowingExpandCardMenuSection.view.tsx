@@ -41,6 +41,7 @@ type Props = {
   openChangeBakerPopup: () => void
   openManagePermissionsPopup: () => void
   openUpdateMvkOperatorsPopup: () => void
+  openChangeVaultNamePopup: () => void
 
   collateralData: CollateralType[]
   currentToken: LoanMarketType
@@ -66,6 +67,7 @@ export const BorrowingExpandCardMenuSection = ({
   openChangeBakerPopup,
   openManagePermissionsPopup,
   openUpdateMvkOperatorsPopup,
+  openChangeVaultNamePopup,
 
   collateralData,
   currentToken,
@@ -228,11 +230,7 @@ export const BorrowingExpandCardMenuSection = ({
             <div className="useful-info-line">
               <div className="name">Vault Name</div>
               <div className="value">{vaultName}</div>
-              <Button
-                kind={BUTTON_SIMPLE}
-                disabled={!isOwner}
-                onClick={() => {}}
-              >
+              <Button kind={BUTTON_SIMPLE} disabled={!isOwner} onClick={openChangeVaultNamePopup}>
                 Change <Icon id="paginationArrowLeft" />
               </Button>
             </div>
@@ -293,7 +291,7 @@ export const BorrowingExpandCardMenuSection = ({
 
             <div className="useful-info-line">
               <div className="name">
-                Depositors{' '}
+                Depositors
                 <CustomTooltip
                   iconId="info"
                   text="Depositors are tz and KT addresses that are allowed to deposit tokens and XTZ into your vault. For instance, if you delegate your XTZ to a bakery, you should add the bakery’s payout address as a a depositor so your vault can receive its delegation rewards."
@@ -313,7 +311,7 @@ export const BorrowingExpandCardMenuSection = ({
             {vaultHasSmvkCollateral ? (
               <div className="useful-info-line">
                 <div className="name">
-                  MVK Operators{' '}
+                  MVK Operators
                   <CustomTooltip
                     iconId="info"
                     text="MVK operators are tz or KT addresses that you allow to perform specific actions with your tokens. Only use this if you know exactly what you are doing. By default, you have to allow the vault to do an operator of your sMVK so it can execute its required functions."

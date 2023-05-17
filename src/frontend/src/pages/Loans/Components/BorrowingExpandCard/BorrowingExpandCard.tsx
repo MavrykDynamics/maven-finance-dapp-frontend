@@ -72,7 +72,7 @@ export const BorrowingExpandCard = ({
   DAOFee,
   hideTransactionHistory,
 }: BorrowingExpandCardPropsType) => {
-  const { symbol, icon, rate = 1 } = borrowedAsset
+  const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
 
   const { loanTokens } = useSelector((state: State) => state.loans)
 
@@ -94,6 +94,7 @@ export const BorrowingExpandCard = ({
   const [activeRepayTab, setActiveRepayTab] = useState(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.active))
 
   const {
+    openChangeVaultNamePopup,
     openConfirmBorrowPopup,
     openConfirmRepayPopup,
     openConfirmRepayFullPopup,
@@ -106,6 +107,7 @@ export const BorrowingExpandCard = ({
     confirmBorrowAssetPopup,
     confirmRepayFullPopup,
     confirmRepayPartPopup,
+    changeVaultNamePopup,
     changeBakerPopup,
     repayPartPopup,
     repayFullPopup,
@@ -119,6 +121,7 @@ export const BorrowingExpandCard = ({
   } = useContext(loansPopupsContext)
 
   const notHandleClickAway =
+    changeVaultNamePopup.showModal ||
     confirmBorrowAssetPopup.showModal ||
     confirmRepayFullPopup.showModal ||
     confirmRepayPartPopup.showModal ||
@@ -161,7 +164,14 @@ export const BorrowingExpandCard = ({
     setActiveTab(tabs.find((item) => item.id === tabId))
   }
 
-  const handleClickOpenConfirmBorrowPopup = async (inputAmount: number) => {
+  const handleClickOpenChangeVaultNamePopup = () => {
+    openChangeVaultNamePopup?.({
+      vaultName: name,
+      vaultAddress: address,
+    })
+  }
+
+  const handleClickOpenConfirmBorrowPopup = (inputAmount: number) => {
     openConfirmBorrowPopup?.({
       inputAmount,
       vaultId,
@@ -174,7 +184,7 @@ export const BorrowingExpandCard = ({
     })
   }
 
-  const handleClickOpenConfirmRepayPopup = async (inputAmount: number) => {
+  const handleClickOpenConfirmRepayPopup = (inputAmount: number) => {
     openConfirmRepayPopup?.({
       inputAmount,
       vaultId,
@@ -187,7 +197,7 @@ export const BorrowingExpandCard = ({
     })
   }
 
-  const handleClickOpenConfirmRepayFullPopup = async () => {
+  const handleClickOpenConfirmRepayFullPopup = () => {
     openConfirmRepayFullPopup?.({
       vaultId,
       vaultAddress: address,
@@ -422,6 +432,7 @@ export const BorrowingExpandCard = ({
                 openChangeBakerPopup={handleClickOpenChangeBakerPopup}
                 openManagePermissionsPopup={handleClickOpenManagePermissionsPopup}
                 openUpdateMvkOperatorsPopup={handleClickOpenUpdateMvkOperatorsPopup}
+                openChangeVaultNamePopup={handleClickOpenChangeVaultNamePopup}
                 collateralData={collateralData}
                 currentToken={currentToken}
                 isOwner={isOwner}
