@@ -92,7 +92,7 @@ export const FarmsTab = ({ isLoading }: { isLoading: boolean }) => {
           DEX LP tokens and Mavryk mTokens may be staked to available farms. By default, Mavryk farms are spawned for
           three months.{' '}
           <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
-            Read more
+            Read More
           </a>
         </div>
       </div>

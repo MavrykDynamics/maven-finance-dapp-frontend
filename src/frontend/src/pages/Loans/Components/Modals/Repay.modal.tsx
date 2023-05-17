@@ -21,7 +21,12 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import {
+  calcCollateralRatio,
+  getLoansInputMaxAmount,
+  isTezosAsset,
+  loansInputValidation,
+} from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { StatusMessageStyled } from '../LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
@@ -54,6 +59,10 @@ export const Repay = ({
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
+
+  const balanceSymbol = isTezosAsset(borrowedAsset?.gqlName ?? '') ? 'tezos' : borrowedAsset?.symbol.toLowerCase() ?? ''
+  const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
 
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -188,19 +197,15 @@ export const Repay = ({
                     type: 'number',
                     onBlur: inputOnBlurHandle,
                     onFocus: onFocusHandler,
-                    onChange: (e) =>
-                      inputOnChangeHandle(e.target.value, Math.min(borrowedAsset.userBalance, totalOutstanding)),
+                    onChange: (e) => inputOnChangeHandle(e.target.value, Math.min(userAssetBalance, totalOutstanding)),
                   }}
                   settings={{
-                    balance: borrowedAsset.userBalance,
+                    balance: userAssetBalance,
                     balanceAsset: borrowedAsset?.symbol,
                     useMaxHandler: () =>
                       inputOnChangeHandle(
-                        getLoansInputMaxAmount(
-                          Math.min(borrowedAsset.userBalance, totalOutstanding),
-                          borrowedAsset.decimals,
-                        ),
-                        Math.min(borrowedAsset.userBalance, totalOutstanding),
+                        getLoansInputMaxAmount(Math.min(userAssetBalance, totalOutstanding), borrowedAsset.decimals),
+                        Math.min(userAssetBalance, totalOutstanding),
                       ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,

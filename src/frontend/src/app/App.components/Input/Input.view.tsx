@@ -1,5 +1,9 @@
 import { InputStatusType, InputKind } from './Input.constants'
 import { InputOneChange } from './Input.controller'
+
+// hooks
+import { useInputValidator } from 'app/App.hooks/useInputValidator'
+
 import {
   InputComponentContainer,
   InputErrorMessage,
@@ -34,13 +38,17 @@ type InputViewProps = {
 export const InputView = ({
   icon,
   inputStatus,
-  errorMessage,
+  errorMessage: errorMessageFromProps,
   pinnedText,
   kind,
   className,
   inputProps,
 }: InputViewProps) => {
-  const classNames = `${kind ?? ''} ${inputStatus !== undefined ? inputStatus : 'none'}`
+  const { status, errorMessage, handleChange } = useInputValidator({
+    originalErrorMessage: errorMessageFromProps,
+    status: inputStatus,
+    onChange: inputProps.onChange,
+  })
 
   return (
     <InputStyled className={className} id={'inputStyled'}>
@@ -50,9 +58,9 @@ export const InputView = ({
         </InputIcon>
       )}
       <InputComponentContainer>
-        <input {...inputProps} className={classNames} autoComplete={inputProps.name} />
-        <InputStatus className={`${classNames} ${pinnedText ? 'with-text' : ''}`} />
-        {pinnedText && <InputLabel className={`${classNames} pinned-text`}>{pinnedText}</InputLabel>}
+        <input {...inputProps} onChange={handleChange} className={status} autoComplete={inputProps.name} />
+        <InputStatus className={`${status} ${pinnedText ? 'with-text' : ''}`} />
+        {pinnedText && <InputLabel className={`${status} pinned-text`}>{pinnedText}</InputLabel>}
       </InputComponentContainer>
       {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
     </InputStyled>

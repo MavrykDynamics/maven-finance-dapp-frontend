@@ -2,6 +2,17 @@
 export const ROCKET_LOADER = 'rocket'
 export const WERT_IO_LOADER = 'wert-loader'
 
+// User tokens symbols
+export const MVK_TOKEN_SYMBOL = 'mvk'
+export const SMVK_TOKEN_SYMBOL = 'smvk'
+export const XTZ_TOKEN_SYMBOL = 'tezos'
+
+// User token types
+export const USER_TOKEN_TYPE_COLLATERAL = 'collateralToken'
+export const USER_TOKEN_TYPE_WHITELIST = 'whitelistToken'
+export const USER_TOKEN_TYPE_MTOKEN = 'mToken'
+export const USER_TOKEN_TYPE_DEFAULT = 'defaultDDtoken'
+
 // Decimals contants
 export const PRECISION_NUMBER = 1_000_000_000 // (10^9) MVK decimals
 export const MU_NUMBER = 1_000_000 // (10^6) XTZ decimals

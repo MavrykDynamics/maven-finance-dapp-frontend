@@ -81,5 +81,6 @@ export const PaginationArrow = styled.div<{ isRight?: boolean; isDisabled: boole
   svg {
     height: 24px;
     width: 10px;
+    fill: #8d86eb;
   }
 `

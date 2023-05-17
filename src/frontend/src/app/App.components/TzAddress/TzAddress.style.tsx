@@ -6,13 +6,17 @@ export const TzAddressContainer = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+  transition: opacity 0.4s ease-in-out;
 
   &.notCopy {
     cursor: default;
   }
+
+  &:not(.notCopy):hover {
+    opacity: 0.7;
+  }
 `
 export const TzAddressStyled = styled.div<{ theme: MavrykTheme }>`
-  transition: color 0.4s ease-in-out;
   &.${PRIMARY} {
     color: ${({ theme }) => theme.primaryColor};
   }

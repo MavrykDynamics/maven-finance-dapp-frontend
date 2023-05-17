@@ -26,7 +26,7 @@ import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
-import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
+import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { vaultTabs } from '../Vaults.view'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 

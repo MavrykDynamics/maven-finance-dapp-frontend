@@ -6,6 +6,7 @@ export enum SatelliteStatus {
   ACTIVE = 0,
   SUSPENDED = 1,
   BANNED = 2,
+  INACTIVE = 3,
 }
 
 export type SatelliteRecordType = ReturnType<typeof normallizeSatellite>

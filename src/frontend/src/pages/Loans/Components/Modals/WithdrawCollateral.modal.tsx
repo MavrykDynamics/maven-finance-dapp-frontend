@@ -29,6 +29,7 @@ import {
   calcCollateralRatio,
   getLoansInputMaxAmount,
   getMaxCollateralWithdraw,
+  isTezosAsset,
   loansInputValidation,
 } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -59,6 +60,10 @@ export const WithdrawCollateral = ({
   const dispatch = useDispatch()
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
+
+  const balanceSymbol = isTezosAsset(selectedAsset?.gqlName ?? '') ? 'tezos' : selectedAsset?.symbol.toLowerCase() ?? ''
+  const collateralBalance = userTokens[balanceSymbol]?.balance ?? 0
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const [isActionPerforming, setIsActionPerforming] = useState(false)
@@ -216,8 +221,8 @@ export const WithdrawCollateral = ({
                 onChange: (e) => inputOnChangeHandle(e.target.value, currentCollateralToWithdraw),
               }}
               settings={{
-                balance: collateralData.userBalance,
-                balanceAsset: collateralData.symbol,
+                balance: collateralBalance,
+                balanceAsset: collateralData.name,
                 useMaxHandler: () =>
                   inputOnChangeHandle(
                     getLoansInputMaxAmount(currentCollateralToWithdraw, collateralData.decimals),
@@ -229,8 +234,8 @@ export const WithdrawCollateral = ({
               }}
             >
               <InputPinnedTokenInfo>
-                <ImageWithPlug imageLink={collateralData.icon} alt={`${collateralData.symbol} icon`} />{' '}
-                {collateralData.symbol}
+                <ImageWithPlug imageLink={collateralData.icon} alt={`${collateralData.name} icon`} />{' '}
+                {collateralData.name}
               </InputPinnedTokenInfo>
             </Input>
           ) : null}

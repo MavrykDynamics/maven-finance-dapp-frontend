@@ -43,7 +43,7 @@ import { loansPopupsContext } from './Modals/LoansModals.provider'
 import { State } from 'reducers'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import { isTezosAsset } from '../Loans.helpers'
-import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
+import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { getNumberInBounds } from 'utils/calcFunctions'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {

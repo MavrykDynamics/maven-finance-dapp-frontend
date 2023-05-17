@@ -40,10 +40,10 @@ import { Page } from 'styles'
 import { GovernanceStyled, GovernanceLeftContainer } from './Governance.style'
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { TzAddress } from 'pages/Treasury/Treasury.style'
 import { VoterListItem, ProposalStatusFlag } from './components/Proposals/Proposals.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const dispatch = useDispatch()

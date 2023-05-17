@@ -123,11 +123,10 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
           <br />
           <br />
           To operate a Mavryk Satellite, a users needs to stake a security deposit in MVK, and operate an oracle node
-          for signing data feeds. For more information about starting & operating a Satellite, please read more{' '}
+          for signing data feeds. For more information about starting & operating a Satellite.{' '}
           <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
-            here
+            Read More
           </a>
-          .
         </div>
       </div>
     </TabWrapperStyled>

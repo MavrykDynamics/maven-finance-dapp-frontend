@@ -9,7 +9,7 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 // helpers & actions
 import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
 import { parseDate } from 'utils/time'
-import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
+import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
 import {
   executeProposal,
@@ -264,7 +264,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Proposer</div>
-        <div className="proposal-data-block-value">
+        <div className="proposal-data-block-value proposal-data-block-address">
           <TzAddress tzAddress={proposal.proposerId} type={BLUE} isBold />
         </div>
       </div>
@@ -275,7 +275,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         <div className="proposal-data-block-name">Governance Info</div>
         <div className="gov-data">
           <div className="proposal-data-block-name">Governance Contract</div>
-          <div className="proposal-data-block-value">
+          <div className="proposal-data-block-value proposal-data-block-address">
             <TzAddress tzAddress={proposal.governanceId} type={BLUE} isBold />
           </div>
         </div>

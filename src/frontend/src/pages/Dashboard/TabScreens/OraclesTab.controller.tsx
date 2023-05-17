@@ -145,7 +145,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
           receive rewards in sMVK proportionate to their total voting power, and will distribute these rewards to their
           delegates.{' '}
           <a href="https://mavryk.finance/litepaper#satellites" target="_blank" rel="noreferrer">
-            Read more
+            Read More
           </a>
         </div>
       </div>

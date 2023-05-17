@@ -1,26 +1,42 @@
-import type { M_Token_Account } from './../utils/generated/graphqlTypes'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import type {
-  UserDoormanRewardsData,
-  UserFarmRewardsData,
-  UserSatelliteRewardsData,
-} from 'utils/TypesAndInterfaces/User'
+import type { MTokenType, UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
 import type { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
 
 import { DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import {
+  MVK_TOKEN_SYMBOL,
+  SMVK_TOKEN_SYMBOL,
+  USER_TOKEN_TYPE_COLLATERAL,
+  USER_TOKEN_TYPE_DEFAULT,
+  USER_TOKEN_TYPE_MTOKEN,
+  USER_TOKEN_TYPE_WHITELIST,
+  XTZ_TOKEN_SYMBOL,
+} from 'utils/constants'
 import { UPDATE_USER_DATA } from './actions/user.actions'
 
 export interface UserState {
-  // user balance
-  myMvkTokenBalance: number
-  mySMvkTokenBalance: number
-  myXTZTokenBalance: number
-  mytzBTCTokenBalance: number
+  // user balances
+  userTokens: Record<
+    string,
+    {
+      balance: number
+      symbol: string
+      name: string
+      type:
+        | typeof USER_TOKEN_TYPE_COLLATERAL
+        | typeof USER_TOKEN_TYPE_WHITELIST
+        | typeof USER_TOKEN_TYPE_MTOKEN
+        | typeof USER_TOKEN_TYPE_DEFAULT
+    }
+  >
+
+  userMTokens: Array<MTokenType>
 
   satelliteMvkIsDelegatedTo: string
   isLoaded: boolean
   isSatellite: boolean
   isVestee: boolean
+  isNewlyRegisteredSatellite: boolean
 
   // loans data
   userLoansData: {
@@ -28,18 +44,15 @@ export interface UserState {
     userBorrowing: Array<UserLendObjType>
     userVaultsData: Record<string, { borrowedAmount: number; collateralAmount: number }>
   }
-  mTokens?: Array<M_Token_Account>
 
   // user rewards
-  userRewardsToDate: {
-    farmRewards: number
-    satelliteRewards: number
-    doormanRewards: number
-  }
-  myDoormanRewardsData: UserDoormanRewardsData
-  myFarmRewardsData: Record<string, UserFarmRewardsData>
-  mySatelliteRewardsData: UserSatelliteRewardsData
-  myLendingRewardsAmount: number
+  gatheredFarmRewards: number
+  gatheredSatellitesRewards: number
+  gatheredDoormanRewards: number
+  availableDoormanRewards: number
+  availableFarmRewards: Record<string, UserFarmRewardsData>
+  availableSatellitesRewards: number
+  availableLoansRewards: number
 
   // user's actions history
   actionsHistory: Array<{
@@ -57,42 +70,48 @@ export interface WalletState {
 }
 
 export const DEFAULT_USER: UserState = {
-  myMvkTokenBalance: 0,
-  mySMvkTokenBalance: 0,
-  myXTZTokenBalance: 0,
-  mytzBTCTokenBalance: 0,
+  userTokens: {
+    [MVK_TOKEN_SYMBOL]: {
+      balance: 0,
+      name: 'MVK',
+      symbol: MVK_TOKEN_SYMBOL,
+      type: USER_TOKEN_TYPE_DEFAULT,
+    },
+    [SMVK_TOKEN_SYMBOL]: {
+      balance: 0,
+      name: 'sMVK',
+      symbol: MVK_TOKEN_SYMBOL,
+      type: USER_TOKEN_TYPE_DEFAULT,
+    },
+    [XTZ_TOKEN_SYMBOL]: {
+      balance: 0,
+      name: 'XTZ',
+      symbol: XTZ_TOKEN_SYMBOL,
+      type: USER_TOKEN_TYPE_DEFAULT,
+    },
+  },
+  userMTokens: [],
 
   satelliteMvkIsDelegatedTo: '',
   isLoaded: false,
   isSatellite: false,
   isVestee: false,
+  isNewlyRegisteredSatellite: false,
 
   userLoansData: {
     userLendings: [],
     userBorrowing: [],
     userVaultsData: {},
   },
-  myLendingRewardsAmount: 0,
 
-  myFarmRewardsData: {},
-  myDoormanRewardsData: {
-    generalAccumulatedFeesPerShare: 0,
-    generalUnclaimedRewards: 0,
-    myAvailableDoormanRewards: 0,
-    myParticipationFeesPerShare: 0,
-  },
-  mySatelliteRewardsData: {
-    myAvailableSatelliteRewards: 0,
-    paid: 0,
-    participationRewardsPerShare: 0,
-    satelliteAccumulatedRewardPerShare: 0,
-    unpaid: 0,
-  },
-  userRewardsToDate: {
-    farmRewards: 0,
-    satelliteRewards: 0,
-    doormanRewards: 0,
-  },
+  availableLoansRewards: 0,
+  availableDoormanRewards: 0,
+  availableSatellitesRewards: 0,
+  availableFarmRewards: {},
+
+  gatheredFarmRewards: 0,
+  gatheredSatellitesRewards: 0,
+  gatheredDoormanRewards: 0,
 
   actionsHistory: [],
 }

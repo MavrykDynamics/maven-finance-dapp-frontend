@@ -24,7 +24,7 @@ export const LendBorrowPosition = ({
 }: {
   markets: State['loans']['loanTokens']
   userLoansData: State['wallet']['user']['userLoansData']
-  userLoansRewards: State['wallet']['user']['myLendingRewardsAmount']
+  userLoansRewards: State['wallet']['user']['availableLoansRewards']
 }) => {
   const { themeSelected } = useSelector((state: State) => state.preferences)
   // Calcuating total lended and borrowed by user

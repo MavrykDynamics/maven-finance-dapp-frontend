@@ -154,7 +154,7 @@ export const TopBarLinksStyled = styled.div<{ useClickOpening?: boolean; selecte
               color: ${({ theme }) => theme.topBarLinkColorActive};
 
               svg {
-                color: ${({ theme }) => theme.topBarLinkColorActive};
+                stroke: ${({ theme }) => theme.topBarLinkColorActive};
                 transform: rotate(90deg);
               }
             }

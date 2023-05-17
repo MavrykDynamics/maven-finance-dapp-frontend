@@ -69,6 +69,10 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     font-size: 14px;
   }
 
+  .proposal-data-block-address {
+    font-size: 16px;
+  }
+
   .drop-proposal {
     margin-left: auto;
     width: fit-content;

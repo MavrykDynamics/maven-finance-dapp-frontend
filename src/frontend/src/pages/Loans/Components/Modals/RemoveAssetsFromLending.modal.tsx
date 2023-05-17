@@ -17,7 +17,7 @@ import {
   getOnFocusValue,
   RemoveLendingAssetDataType,
 } from './Modals.helpers'
-import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -41,7 +41,6 @@ export const RemoveAssetsFromLending = ({
   data?: RemoveLendingAssetDataType
 }) => {
   const {
-    userBalance = 0,
     mBalance = 0,
     rate = 0,
     symbol = '',
@@ -56,6 +55,7 @@ export const RemoveAssetsFromLending = ({
 
   const dispatch = useDispatch()
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
@@ -63,6 +63,9 @@ export const RemoveAssetsFromLending = ({
     () => inputData.validationStatus !== INPUT_STATUS_SUCCESS,
     [inputData.validationStatus],
   )
+
+  const balanceSymbol = isTezosAsset(symbol.toLowerCase() ?? '') ? 'tezos' : symbol.toLowerCase().toLowerCase() ?? ''
+  const tokenBalance = userTokens[balanceSymbol]?.balance ?? 0
 
   const continueBtnHandler = () => setShownScreen('confitmation')
   const backBtnHandler = () => setShownScreen('initial')
@@ -145,7 +148,7 @@ export const RemoveAssetsFromLending = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Wallet Balance</div>
-                  <CommaNumber value={userBalance * rate} className="value" beginningText="$" />
+                  <CommaNumber value={tokenBalance * rate} className="value" beginningText="$" />
                 </ThreeLevelListItem>
               </div>
 
@@ -160,7 +163,7 @@ export const RemoveAssetsFromLending = ({
                   onChange: (e) => onChangeHandler(e.target.value, Math.min(mBalance, currentLendedAmount)),
                 }}
                 settings={{
-                  balance: userBalance,
+                  balance: tokenBalance,
                   balanceAsset: symbol,
                   useMaxHandler: () =>
                     onChangeHandler(
