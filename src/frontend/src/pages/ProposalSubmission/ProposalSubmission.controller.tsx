@@ -175,8 +175,6 @@ export const ProposalSubmission = () => {
   )
 
   // ------ ACTIONS HANDLERDS START ------
-  // Change proposal stage
-  const handleChangeTab = (tabId?: number) => setActiveTab(tabId ?? 0)
 
   // Change user's vieving proposal
   const changeActiveProposal = (proposalId: number) => {
@@ -222,6 +220,9 @@ export const ProposalSubmission = () => {
     await dispatch(lockProposal(proposalId))
   }
 
+  // Handle stages change
+  const handleNextStep = (tabId: number) => setActiveTab(tabId)
+
   const handleDropProposal = async (proposalId: number) => {
     if (proposalId && proposalId !== -1) await dispatch(dropProposal(proposalId))
   }
@@ -244,32 +245,36 @@ export const ProposalSubmission = () => {
   }
 
   const handleSubmitProposal = async () => {
-    const bytes = getBytesDiff(
-      [],
-      currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code),
-    )
-
-    const payments = getPaymentsDiff(
-      [],
-      currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
-      whitelistTokens,
-      dipDupTokens,
-    )
-
-    await dispatch(
-      submitProposal(
-        {
-          title: currentProposal.title,
-          description: currentProposal.description,
-          sourceCode: currentProposal.sourceCode,
-          invoice: currentProposal.invoice,
-        },
-        fee,
-        bytes,
-        payments,
-      ),
-    )
+    await dispatch(lockProposal(selectedUserProposalId))
   }
+
+  // async () => {
+  //   const bytes = getBytesDiff(
+  //     [],
+  //     currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code),
+  //   )
+
+  //   const payments = getPaymentsDiff(
+  //     [],
+  //     currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
+  //     whitelistTokens,
+  //     dipDupTokens,
+  //   )
+
+  //   await dispatch(
+  //     submitProposal(
+  //       {
+  //         title: currentProposal.title,
+  //         description: currentProposal.description,
+  //         sourceCode: currentProposal.sourceCode,
+  //         invoice: currentProposal.invoice,
+  //       },
+  //       fee,
+  //       bytes,
+  //       payments,
+  //     ),
+  //   )
+  // }
   // ------ ACTIONS HANDLERDS END ------
 
   // action buttons stuff for disabling
@@ -321,12 +326,18 @@ export const ProposalSubmission = () => {
     ? checkStage1Validation({ proposalValidation: currentProposalValidation })
     : true
 
+  const genProposalDisabledState = !isProposalPeriod || isNewlyRegisteredSatellite
+  const isSaveDisabled =
+    !proposalHasChange || currentProposal.locked || !isBytesValid || !isPaymentsValid || genProposalDisabledState
+
   const isSubmitDisabled =
-    !isProposalPeriod ||
-    isNewlyRegisteredSatellite ||
-    !isStageOneDataValid ||
-    !isBytesValid ||
-    Boolean(currentProposal?.proposalData?.filter(({ title, encoded_code }) => title || encoded_code)?.length ?? 0 < 1)
+    !isProposalSubmitted ||
+    currentProposal.locked ||
+    proposalHasChange ||
+    !mappedProposals[selectedUserProposalId]?.proposalData.length ||
+    genProposalDisabledState
+
+  const isDropDisabled = !isProposalSubmitted || genProposalDisabledState
 
   console.log({
     isBytesValid,
@@ -360,7 +371,7 @@ export const ProposalSubmission = () => {
             </MultyProposalsStyled>
           ) : null}
 
-          <PropSubmissionTopBar valueCallback={handleChangeTab} />
+          <PropSubmissionTopBar valueCallback={handleNextStep} activeTab={activeTab} />
 
           <ProposalSubmissionForm>
             <a
@@ -408,52 +419,39 @@ export const ProposalSubmission = () => {
             )}
 
             <ProposalSubmittionButtons>
+              {/* Drop proposal drops proposal */}
               <Button
                 kind={BUTTON_SECONDARY}
                 form={BUTTON_WIDE}
-                disabled={!isProposalSubmitted || !isProposalPeriod || isNewlyRegisteredSatellite}
+                disabled={isDropDisabled}
                 onClick={() => handleDropProposal(selectedUserProposalId)}
               >
                 <Icon id="navigation-menu_close" /> Drop Proposal
               </Button>
+
+              {/* Submit proposal locks proposal */}
               <Button
-                disabled={
-                  !isProposalSubmitted ||
-                  !isProposalPeriod ||
-                  currentProposal.locked ||
-                  proposalHasChange ||
-                  !mappedProposals[selectedUserProposalId]?.proposalData.length ||
-                  isNewlyRegisteredSatellite
-                }
-                onClick={() => handleLockProposal(selectedUserProposalId)}
-                kind={BUTTON_SECONDARY}
+                kind={BUTTON_PRIMARY}
                 form={BUTTON_WIDE}
+                disabled={isSubmitDisabled}
+                onClick={handleSubmitProposal}
               >
-                <Icon id="lock" /> Lock Proposal
+                <Icon id="auction" /> Submit Proposal
               </Button>
-              {isProposalSubmitted ? (
+
+              {/* if we are on stage 3 show save changes btn (it creates if proposal is not created, or updates data if proposal exists), othervise show next step (navigating to thee next stage btn) */}
+              {activeTab === 3 ? (
                 <Button
                   kind={BUTTON_PRIMARY}
                   form={BUTTON_WIDE}
-                  disabled={
-                    !proposalHasChange ||
-                    currentProposal.locked ||
-                    !isBytesValid ||
-                    !isPaymentsValid ||
-                    isNewlyRegisteredSatellite
-                  }
+                  disabled={isSaveDisabled}
                   onClick={() => handleUpdateData(selectedUserProposalId)}
                 >
                   <Icon id="bytes" /> Save Changes
                 </Button>
               ) : (
-                <Button
-                  kind={BUTTON_PRIMARY}
-                  form={BUTTON_WIDE}
-                  disabled={isSubmitDisabled}
-                  onClick={handleSubmitProposal}
-                >
-                  <Icon id="auction" /> Submit Proposal
+                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={() => handleNextStep(activeTab + 1)}>
+                  Next Step <Icon id="full-arrow-right" />
                 </Button>
               )}
             </ProposalSubmittionButtons>
