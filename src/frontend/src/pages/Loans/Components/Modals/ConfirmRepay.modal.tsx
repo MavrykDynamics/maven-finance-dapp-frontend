@@ -1,17 +1,9 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useMemo, useState } from 'react'
-import { State } from 'reducers'
+import { useMemo } from 'react'
 
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
-import {
-  ConfirmRepayPartPopupDataType,
-  DEFAULT_LOANS_INPUT_VALUE,
-  getOnBlurValue,
-  getOnFocusValue,
-  RepayPartPopupDataType,
-} from './Modals.helpers'
+import { ConfirmRepayPartPopupDataType } from './Modals.helpers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
 
@@ -19,15 +11,12 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { Input } from 'app/App.components/Input/NewInput'
-import colors from 'styles/colors'
 
-import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
 
 export const ConfirmRepay = ({
   closePopup,
