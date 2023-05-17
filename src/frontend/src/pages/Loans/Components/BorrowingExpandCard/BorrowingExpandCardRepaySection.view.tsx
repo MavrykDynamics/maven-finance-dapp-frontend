@@ -119,12 +119,6 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   useEffect(() => {
     if (isRepayInFull) {
-      console.log({
-        inputAmount: totalOutstanding,
-        maxAmount: Math.min(userAssetBalance, totalOutstanding),
-        minAmount: minimumRepay,
-      })
-
       const validationStatus =
         totalOutstanding !== 0
           ? loansInputValidation({
