@@ -304,9 +304,27 @@ export const VaultsCard = (props: Props) => {
     </VaultsCardDropDown>
   )
 
-  return (
-    <>
-      {(vaultTab === vaultTabs.ALL || vaultTab === vaultTabs.MY) && (
+  switch (vaultTab) {
+    case vaultTabs.MY:
+      return (
+        <BorrowingExpandCard
+          {...props}
+          headerSufix={headerSufix}
+          DAOFee={DAOFee}
+          isOwner={isOwner}
+          hideTransactionHistory
+        />
+      )
+
+    case vaultTabs.PERMISSIONED:
+      return (
+        // TODO: use old component, because need old view for permission vaults.
+        // After all redesign in the future, we will move everything into BorrowingExpandCard component
+        <OldBorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
+      )
+
+    default:
+      return (
         <BorrowingExpandCard
           {...props}
           headerSufix={headerSufix}
@@ -314,15 +332,8 @@ export const VaultsCard = (props: Props) => {
           isOwner={isOwner}
           hideTransactionHistory
         >
-          {!isOwner && generalExpand}
+          {generalExpand}
         </BorrowingExpandCard>
-      )}
-
-      {vaultTab === vaultTabs.PERMISSIONED && (
-        // TODO: use old component, because need old view for permission vaults.
-        // After all redesign in the future, we will move everything into BorrowingExpandCard component
-        <OldBorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
-      )}
-    </>
-  )
+      )
+  }
 }
