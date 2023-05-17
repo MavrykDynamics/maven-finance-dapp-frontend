@@ -29,6 +29,7 @@ import { calculateCollateralShare } from '../calcFunctionsForVault'
 import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { vaultTabs } from '../Vaults.view'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+import { OldBorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/OldBorrowingExpandCard'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -317,7 +318,9 @@ export const VaultsCard = (props: Props) => {
       )}
 
       {vaultTab === vaultTabs.PERMISSIONED && (
-        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
+        // TODO: use old component, because need old view for permission vaults. 
+        // After all redesign in the future, we will move everything into BorrowingExpandCard component
+        <OldBorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
       )}
     </>
   )
