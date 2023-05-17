@@ -10,8 +10,8 @@ import { getTotalDelegatedMVK } from '../helpers/Satellites.consts'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { TzAddress } from 'pages/Treasury/Treasury.style'
 import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>

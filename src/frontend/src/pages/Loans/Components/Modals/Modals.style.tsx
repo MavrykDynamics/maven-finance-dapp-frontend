@@ -35,6 +35,10 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     margin: 30px auto 0 auto;
   }
 
+  .repayFull-banner {
+    margin-top: 30px;
+  }
+
   .buttons-wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -120,10 +124,11 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     line-height: 20px;
   }
 
-  .confirm-collateral-deposit-cv {
+  .confirm-create-vault {
     display: grid;
-    grid-template-columns: 43% 43%;
+    grid-template-columns: minmax(33%, 1.2fr) minmax(33%, 1.2fr) 1fr;
     margin-top: 20px;
+    column-gap: 30px;
   }
 `
 

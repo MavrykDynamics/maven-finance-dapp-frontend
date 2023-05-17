@@ -12,6 +12,7 @@ export type Settings = {
   inputStatus: InputStatusType
   convertedValue?: number
   inputSize?: InputSizeType
+  errorMessage?: string
 }
 
 export type InputProps = {

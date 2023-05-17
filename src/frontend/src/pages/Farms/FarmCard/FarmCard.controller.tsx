@@ -8,7 +8,7 @@ import type { FarmsViewVariantType } from '../Farms.const'
 // view
 import Expand from '../../../app/App.components/Expand/Expand.view'
 import { Button } from '../../../app/App.components/Button/Button.controller'
-import { ConnectWallet } from '../../../app/App.components/ConnectWallet/ConnectWallet.controller'
+import ConnectWalletBtn from '../../../app/App.components/ConnectWallet/ConnectWalletBtn'
 import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
 import { harvest } from '../Farms.actions'
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -160,7 +160,7 @@ const FarmingBlock = ({
       {!accountPhk ? (
         <div className="start-farming">
           <h3>Start Farming</h3>
-          <ConnectWallet className={accountPhk ? 'isConnected' : ''} />
+          <ConnectWalletBtn />
         </div>
       ) : (
         <FarmStakeStyled className="farm-stake">

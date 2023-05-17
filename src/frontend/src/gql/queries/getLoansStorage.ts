@@ -40,6 +40,10 @@ export const LOANS_QUERY = `
         current_interest_rate
         oracle_id
 
+        m_token {
+          address
+        }
+
         history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
           type
           amount

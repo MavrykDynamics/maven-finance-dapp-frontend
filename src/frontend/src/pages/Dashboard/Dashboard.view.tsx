@@ -10,6 +10,7 @@ import {
   TabId,
   TREASURY_TAB_ID,
   VAULTS_TAB_ID,
+  STAKING_TAB_ID,
 } from './Dashboard.utils'
 import { FarmsTab } from './TabScreens/FarmsTab.controller'
 import { LendingTab } from './TabScreens/LendingTab.controller'
@@ -17,6 +18,7 @@ import { OraclesTab } from './TabScreens/OraclesTab.controller'
 import { SatellitesTab } from './TabScreens/SatellitesTab.controller'
 import { TreasuryTab } from './TabScreens/TreasuryTab.controller'
 import { VaultsTab } from './TabScreens/VaultsTab.controller'
+import { StakingTab } from './TabScreens/StakingTab.controller'
 
 const TabById = ({ activeTab, isDataLoading }: { activeTab: TabId; isDataLoading: boolean }) => {
   switch (activeTab) {
@@ -32,6 +34,8 @@ const TabById = ({ activeTab, isDataLoading }: { activeTab: TabId; isDataLoading
       return <OraclesTab isLoading={isDataLoading} />
     case TREASURY_TAB_ID:
       return <TreasuryTab isLoading={isDataLoading} />
+    case STAKING_TAB_ID:
+      return <StakingTab isLoading={isDataLoading} />
   }
 }
 
@@ -105,6 +109,9 @@ export const DashboardView = ({
         </Link>
         <Link to={`/?tab=${VAULTS_TAB_ID}`} className={activeTab === VAULTS_TAB_ID ? 'selected' : ''}>
           Vaults
+        </Link>
+        <Link to={`/?tab=${STAKING_TAB_ID}`} className={activeTab === STAKING_TAB_ID ? 'selected' : ''}>
+          Staking
         </Link>
         <Link to={`/?tab=${SATELLITES_TAB_ID}`} className={activeTab === SATELLITES_TAB_ID ? 'selected' : ''}>
           Satellites

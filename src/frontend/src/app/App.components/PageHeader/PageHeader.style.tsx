@@ -12,6 +12,7 @@ export const PageHeaderStyled = styled.div<{ backgroundImageSrc: string }>`
   overflow: visible;
   padding: 0 0 0 40px;
   position: relative;
+  margin-bottom: 30px;
 
   &::before {
     background-image: url(${({ backgroundImageSrc }) => backgroundImageSrc}),

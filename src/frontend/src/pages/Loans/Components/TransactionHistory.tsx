@@ -17,11 +17,11 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 
 import { TransactionHistoryStyled } from '../Loans.style'
-import { TzAddress } from 'pages/Treasury/Treasury.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { EmptyContainer } from 'app/App.style'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 
 type TransactionHistoryPropsType = {

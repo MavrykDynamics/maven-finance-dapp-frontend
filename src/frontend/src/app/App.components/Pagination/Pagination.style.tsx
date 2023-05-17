@@ -73,8 +73,7 @@ export const PaginationArrow = styled.div<{ isLeft?: boolean; isDisabled: boolea
 
   svg {
     height: 24px;
-    width: 24px;
-
-    fill: ${({ theme }) => theme.valueColor};
+    width: 10px;
+    fill: #8d86eb;
   }
 `

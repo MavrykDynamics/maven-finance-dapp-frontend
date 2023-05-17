@@ -153,7 +153,7 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
           Mavryk Finance’s vaults are non-custodial smart contracts and are direct between the vault owner and smart
           contract. In order to borrow, users must open a vault and deposit collateral.{' '}
           <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
-            Read more
+            Read More
           </a>
         </div>
       </div>

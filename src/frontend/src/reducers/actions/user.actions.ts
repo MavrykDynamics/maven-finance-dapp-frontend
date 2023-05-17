@@ -9,6 +9,9 @@ import {
   USER_REWARDS_QUERY,
   USER_REWARDS_QUERY_NAME,
   USER_REWARDS_QUERY_VARIABLES,
+  SATELLITE_CYCLE_DATA_QUERY,
+  SATELLITE_CYCLE_DATA_QUERY_NAME,
+  SATELLITE_CYCLE_DATA_QUERY_VARIABLE,
 } from 'gql/queries'
 import {
   USER_LENDING_DATA_QUERY,
@@ -16,21 +19,64 @@ import {
   USER_LENDING_DATA_QUERY_VARIABLE,
 } from 'gql/queries/getLoansStorage'
 import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
-import { getAssetMetadata } from 'pages/Loans/Loans.helpers'
+import { getAssetMetadata, isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { normalizeUserLending } from 'pages/Loans/Loans.normalizer'
 import { State } from 'reducers'
 import { UserState, DEFAULT_USER } from 'reducers/wallet'
+import { MTokenType, MavrykUserGraphQl } from 'utils/TypesAndInterfaces/User'
 import {
   calcUsersRewardsToDate,
   calcUsersDoormanRewards,
   calcUsersSatelliteRewards,
   calcUsersFarmRewards,
-  convertFromIndexerToRegNum,
   convertNumberForClient,
 } from 'utils/calcFunctions'
-import { MVK_DECIMALS, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL, XTZ_DECIMALS, XTZ_TOKEN_SYMBOL } from 'utils/constants'
-import { Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
+import {
+  MVK_DECIMALS,
+  MVK_TOKEN_SYMBOL,
+  SMVK_TOKEN_SYMBOL,
+  USER_TOKEN_TYPE_COLLATERAL,
+  USER_TOKEN_TYPE_DEFAULT,
+  USER_TOKEN_TYPE_MTOKEN,
+  USER_TOKEN_TYPE_WHITELIST,
+  XTZ_DECIMALS,
+  XTZ_TOKEN_SYMBOL,
+} from 'utils/constants'
+import { Lending_Controller_Loan_Token, Satellite, Vesting } from 'utils/generated/graphqlTypes'
 import { getSymbolAndNameFromCollaterealGqlname } from 'utils/parse'
+
+export type SatelliteSnapshot = {
+  cycle: number
+  ready: boolean
+}
+
+/**
+ * @param snapshots satellite snapshots for cycle data
+ * @param currentCycle current active cycle
+ * @returns boolean value for newly registered satellite
+ */
+export function detectNewlyRegisteredSatellite(snapshots: SatelliteSnapshot[], currentCycle: number) {
+  // If highest cycle one is false then not registered/ineligable as a satellite
+  if (snapshots.length < 2 && snapshots.length > 0) {
+    const { cycle, ready } = snapshots[0]
+    return !ready || cycle === currentCycle
+  } else if (snapshots.length >= 2) {
+    const { ready: r1 } = snapshots[0]
+    const { ready: r2 } = snapshots[1]
+
+    if (!r1) return true
+
+    // Check those 2 objects, if both are true -> not newly registered.
+    if (r1 && r2) {
+      return false
+    }
+    // If lowest cycle one is false and hgihest cycle one is true then newly registered.
+    if (!r2 && r1) {
+      return true
+    }
+  }
+  return false
+}
 
 export const fetchUserData = async (
   accountPkh: string,
@@ -53,6 +99,15 @@ export const fetchUserData = async (
       USER_REWARDS_QUERY_VARIABLES(accountPkh),
     )
 
+    // fetch current cycle data and current user cycle data
+    const satelliteCycleData = await fetchFromIndexer(
+      SATELLITE_CYCLE_DATA_QUERY,
+      SATELLITE_CYCLE_DATA_QUERY_NAME,
+      SATELLITE_CYCLE_DATA_QUERY_VARIABLE(accountPkh),
+    )
+    const { cycle_id: currentCycle, satellite_snapshots } = satelliteCycleData.governance[0]
+    const isNewSatellite = detectNewlyRegisteredSatellite(satellite_snapshots, currentCycle)
+
     const {
       mvk_balance = 0,
       smvk_balance = 0,
@@ -61,14 +116,62 @@ export const fetchUserData = async (
       stakes_history_data = [],
       activeSatelliteRecord: [activeSatelliteRecord = null] = [],
       vesteeRecord: [vesteeRecord = null] = [],
-    } = userInfoFromIndexer?.mavryk_user?.[0] ?? {}
+    } = (userInfoFromIndexer?.mavryk_user?.[0] ?? {}) as MavrykUserGraphQl & {
+      activeSatelliteRecord: Array<Satellite>
+      vesteeRecord: Array<Vesting>
+    }
+
+    const loanTokens = userRewardsData?.lending_controller?.[0]?.loan_tokens as Array<Lending_Controller_Loan_Token>
+    const interestRateDecimals = userRewardsData?.lending_controller?.[0]?.interest_rate_decimals ?? 0
+
+    const normalizedMTokens = m_token_accounts.reduce<Array<MTokenType>>((acc, tokenData) => {
+      const { oracle_id } =
+        loanTokens?.find(({ loan_token_name }) => loan_token_name === tokenData.m_token.loan_token_name) ?? {}
+
+      if (!oracle_id) return acc
+
+      const loanTokenMetadata = getAssetMetadata({
+        tokenName: tokenData.m_token.loan_token_name,
+        tokenAddress: tokenData.m_token.address,
+        dipDupTokens,
+        feeds,
+        oracleId: String(oracle_id),
+      })
+
+      if (!loanTokenMetadata) return acc
+
+      const normalizedBalance = convertNumberForClient({ number: tokenData.balance, grade: loanTokenMetadata.decimals })
+      const normalizedEarnedRewards = convertNumberForClient({
+        number: tokenData.rewards_earned,
+        grade: interestRateDecimals + loanTokenMetadata.decimals,
+      })
+      const normalizedIndexRewards = convertNumberForClient({
+        number: tokenData.reward_index,
+        grade: interestRateDecimals + loanTokenMetadata.decimals,
+      })
+
+      acc.push({
+        lendedAmount: normalizedBalance,
+        balance: normalizedBalance + normalizedEarnedRewards,
+        usdBalance: normalizedBalance + normalizedEarnedRewards * loanTokenMetadata.rate,
+        tokenRate: loanTokenMetadata.rate,
+        tokenSymbol: isTezosAsset(loanTokenMetadata.symbol) ? loanTokenMetadata.name : loanTokenMetadata.symbol,
+        tokenName: isTezosAsset(loanTokenMetadata.symbol) ? `m${loanTokenMetadata.symbol}` : loanTokenMetadata.name,
+        tokenAddress: tokenData.m_token.address,
+        reward_index: normalizedIndexRewards,
+        rewards_earned: normalizedEarnedRewards,
+        icon: loanTokenMetadata.icon ?? null,
+      })
+      return acc
+    }, [])
 
     const userInfo: UserState = {
       ...DEFAULT_USER,
-      userMTokens: m_token_accounts,
+      userMTokens: normalizedMTokens,
       satelliteMvkIsDelegatedTo: delegations?.[0]?.satellite?.user?.address ?? '',
       isSatellite: Boolean(activeSatelliteRecord),
       isVestee: Boolean(vesteeRecord),
+      isNewlyRegisteredSatellite: isNewSatellite,
     }
 
     // ----- GETTING USER'S TOKENS BALANCES, THAT ARE USED ACROSS DAPP *START* -----
@@ -98,9 +201,28 @@ export const fetchUserData = async (
           balance,
           name,
           symbol,
+          type: USER_TOKEN_TYPE_COLLATERAL,
         }
 
         userTokenNames.add(symbol)
+        return acc
+      },
+      Promise.resolve({}),
+    )
+
+    const mTokens = await normalizedMTokens.reduce<Promise<UserState['userTokens']>>(
+      async (promiseAcc, { tokenSymbol, tokenName, balance, icon }) => {
+        const acc = await promiseAcc
+        if (userTokenNames.has(tokenName)) return acc
+
+        acc[tokenName] = {
+          balance,
+          name: tokenName,
+          symbol: tokenSymbol,
+          type: USER_TOKEN_TYPE_MTOKEN,
+        }
+
+        userTokenNames.add(tokenName)
         return acc
       },
       Promise.resolve({}),
@@ -130,6 +252,7 @@ export const fetchUserData = async (
           balance,
           name,
           symbol,
+          type: USER_TOKEN_TYPE_WHITELIST,
         }
 
         userTokenNames.add(symbol)
@@ -145,20 +268,24 @@ export const fetchUserData = async (
     userInfo.userTokens = {
       ...collateralTokens,
       ...whitelistTokensBalances,
+      ...mTokens,
       [MVK_TOKEN_SYMBOL]: {
         balance: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }),
         name: 'MVK',
         symbol: MVK_TOKEN_SYMBOL,
+        type: USER_TOKEN_TYPE_DEFAULT,
       },
       [SMVK_TOKEN_SYMBOL]: {
         balance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
         name: 'sMVK',
         symbol: MVK_TOKEN_SYMBOL,
+        type: USER_TOKEN_TYPE_DEFAULT,
       },
       [XTZ_TOKEN_SYMBOL]: {
         balance: convertNumberForClient({ number: fetchedUserXtzBalance, grade: XTZ_DECIMALS }),
         name: 'XTZ',
         symbol: XTZ_TOKEN_SYMBOL,
+        type: USER_TOKEN_TYPE_DEFAULT,
       },
     }
     // ----- GETTING USER'S TOKENS BALANCES, THAT ARE USED ACROSS DAPP *END* -----
@@ -177,9 +304,6 @@ export const fetchUserData = async (
       userFarmsRewardsFromGQL: userRewardsData?.farm ?? [],
     })
 
-    const loanTokens = userRewardsData?.lending_controller?.[0]?.loan_tokens as Array<Lending_Controller_Loan_Token>
-    const interestRateDecimals = userRewardsData?.lending_controller?.[0]?.interest_rate_decimals ?? 0
-
     /**
      * @description userInfo.mTokens.reduce
      * getting how much user has earned by loans,
@@ -189,24 +313,8 @@ export const fetchUserData = async (
      * (reward amount in blockchain number) / (10 ** decimals for loanasset + decimals for loans in general) * (rate of the loan asset to convert it all to $)
      */
     userInfo.availableLoansRewards =
-      userInfo.userMTokens?.reduce((acc, { rewards_earned, m_token: { loan_token_name: mTokenName, address } }) => {
-        const { oracle_id } = loanTokens?.find(({ loan_token_name }) => loan_token_name === mTokenName) ?? {}
-
-        if (!oracle_id) return acc
-
-        const loanTokenMetadata = getAssetMetadata({
-          tokenName: mTokenName,
-          tokenAddress: address,
-          dipDupTokens,
-          feeds,
-          oracleId: String(oracle_id),
-        })
-
-        if (loanTokenMetadata) {
-          acc +=
-            convertFromIndexerToRegNum(rewards_earned, interestRateDecimals + loanTokenMetadata.decimals) *
-            loanTokenMetadata.rate
-        }
+      normalizedMTokens.reduce((acc, { rewards_earned, tokenSymbol }) => {
+        acc += rewards_earned
 
         return acc
       }, 0) ?? 0
