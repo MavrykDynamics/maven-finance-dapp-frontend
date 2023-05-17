@@ -28,6 +28,13 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    position: relative;
+
+    .tooltip {
+      position: absolute;
+      right: 0px;
+      top: -17px;
+    }
   }
 
   .voting-ends {
