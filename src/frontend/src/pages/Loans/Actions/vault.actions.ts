@@ -27,14 +27,11 @@ import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 import { scrollUpPage } from 'utils/scrollUpPage'
+import { sleep } from 'utils/api/sleep'
 
 // change vault name
 export const changeVaultNameAction =
-  (
-    newVaultName: string,
-    vaultAddress: string,
-    callback: () => void,
-  ) =>
+  (newVaultName: string, vaultAddress: string, callback: () => void) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -48,9 +45,7 @@ export const changeVaultNameAction =
       // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(vaultAddress)
-      const transaction = await contract.methods
-        .initVaultAction('updateVaultName', newVaultName)
-        .send()
+      const transaction = await contract.methods.initVaultAction('updateVaultName', newVaultName).send()
 
       // close popup
       callback()
@@ -58,32 +53,32 @@ export const changeVaultNameAction =
       dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, 'Changing vault name...', ACTION_START_MESSAGE_TEXT))
 
+      await sleep(5000)
+
       // turn off fs actions loader and start data updating after 5s after operation started
-      setTimeout(async () => {
-        await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(
-          showToaster(
-            TOASTER_LOADING,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          ),
-        )
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
 
-        // @ts-ignore don't have proper type to acees data, type has only methods
-        const currentOperationLevel = transaction?.lastHead?.header?.level
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
 
-        // refetch data we need
-        await checkIndexerLevelAndRunDataUpdateCallback({
-          callback: async () => {
-            await dispatch(getLoansStorage())
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getLoansStorage())
 
-            await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Vault name is changed.', ACTION_COMPLETION_MESSAGE_TEXT))
-            await dispatch(toggleActionCompletion(false))
-          },
-          currentOperationLevel,
-        })
-      }, 5000)
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Vault name is changed.', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
     } catch (error) {
       console.error('changeVaultNameAction error:', error)
       if (error instanceof Error) {
@@ -204,9 +199,7 @@ export const borrowVaultAssetAction =
         })
       }, 5000)
 
-      if (scrollToCurrentVault) {
-        scrollToCurrentVault()
-      }
+      scrollToCurrentVault?.()
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
       if (error instanceof Error) {
@@ -342,9 +335,7 @@ export const repayPartOfVaultAction =
         })
       }, 5000)
 
-      if (scrollToCurrentVault) {
-        scrollToCurrentVault()
-      }
+      scrollToCurrentVault?.()
     } catch (error) {
       console.error('repayPartOfVaultAction error:', error)
       if (error instanceof Error) {

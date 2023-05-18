@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
 import {
@@ -27,6 +27,9 @@ import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import colors from 'styles/colors'
 import { TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { mathRoundTwoDigit } from 'utils/validatorFunctions'
+import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
+import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT } from 'texts/statusMessages/vault.text'
+import { AVALIABLE_TO_BORROW, FEES_DUE } from 'texts/tooltips/vault.text'
 
 type Props = {
   vaultId: number
@@ -80,36 +83,39 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [borrowedAsset, currentCollateralBalance, borrowCapacity, inputAmount, borrowedAmount])
 
-  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
-    const validationStatus = loansInputValidation({
-      inputAmount: newInputAmount,
-      maxAmount,
-      minAmount: minimumRepay,
-      options: {
-        byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
-      },
-    })
+  const inputOnChangeHandle = useCallback(
+    (newInputAmount: string, maxAmount: number) => {
+      const validationStatus = loansInputValidation({
+        inputAmount: newInputAmount,
+        maxAmount,
+        minAmount: minimumRepay,
+        options: {
+          byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
+        },
+      })
 
-    setInputData({
-      ...inputData,
-      amount: newInputAmount,
-      validationStatus: validationStatus,
-    })
-  }
+      setInputData({
+        ...inputData,
+        amount: newInputAmount,
+        validationStatus: validationStatus,
+      })
+    },
+    [borrowedAsset?.decimals, inputData, minimumRepay],
+  )
 
-  const inputOnBlurHandle = () => {
+  const inputOnBlurHandle = useCallback(() => {
     setInputData({
       ...inputData,
       amount: getOnBlurValue(inputData.amount),
     })
-  }
+  }, [inputData])
 
-  const onFocusHandler = () => {
+  const onFocusHandler = useCallback(() => {
     setInputData({
       ...inputData,
       amount: getOnFocusValue(inputData.amount),
     })
-  }
+  }, [inputData])
 
   const handleClickRepay = async () => {
     if (vaultId && borrowedAsset && vaultAddress) {
@@ -140,6 +146,34 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     }
   }, [activeRepayTab, totalOutstanding])
 
+  const inputProps: InputProps = useMemo(
+    () => ({
+      value: inputData.amount,
+      type: 'number',
+      onBlur: inputOnBlurHandle,
+      onFocus: onFocusHandler,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+        inputOnChangeHandle(e.target.value, Math.min(userAssetBalance, totalOutstanding)),
+    }),
+    [inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler, totalOutstanding, userAssetBalance],
+  )
+
+  const settings: Settings = useMemo(
+    () => ({
+      balance: userAssetBalance,
+      balanceAsset: borrowedAsset?.symbol,
+      useMaxHandler: () =>
+        inputOnChangeHandle(
+          getLoansInputMaxAmount(Math.min(userAssetBalance, totalOutstanding), borrowedAsset.decimals),
+          Math.min(userAssetBalance, totalOutstanding),
+        ),
+      inputStatus: inputData.validationStatus,
+      convertedValue: inputAmount * borrowedAsset.rate,
+      inputSize: INPUT_LARGE,
+    }),
+    [borrowedAsset, inputAmount, inputData.validationStatus, inputOnChangeHandle, totalOutstanding, userAssetBalance],
+  )
+
   return (
     <>
       <div>
@@ -147,25 +181,8 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
         <Input
           className={`${borrowedAsset.rate ? 'input-with-rate' : ''} pinned-dropdown`}
-          inputProps={{
-            value: inputData.amount,
-            type: 'number',
-            onBlur: inputOnBlurHandle,
-            onFocus: onFocusHandler,
-            onChange: (e) => inputOnChangeHandle(e.target.value, Math.min(userAssetBalance, totalOutstanding)),
-          }}
-          settings={{
-            balance: userAssetBalance,
-            balanceAsset: borrowedAsset?.symbol,
-            useMaxHandler: () =>
-              inputOnChangeHandle(
-                getLoansInputMaxAmount(Math.min(userAssetBalance, totalOutstanding), borrowedAsset.decimals),
-                Math.min(userAssetBalance, totalOutstanding),
-              ),
-            inputStatus: inputData.validationStatus,
-            convertedValue: inputAmount * borrowedAsset.rate,
-            inputSize: INPUT_LARGE,
-          }}
+          inputProps={inputProps}
+          settings={settings}
         >
           <InputPinnedTokenInfo>
             <ImageWithPlug imageLink={borrowedAsset.icon} alt={`${borrowedAsset.symbol} icon`} />{' '}
@@ -177,16 +194,14 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       {isMinimumRepayWarning ? (
         <StatusMessageStyled className={`${vaultsStatuses.LIQUIDATABLE}`}>
           <Icon id="error-triangle" />
-          {
-            'Your outstanding debt is less than the minimum repayment amount set by the smart contracts. We will have you repay the minimum repayment amount and the amount you are overpaying will automatically be refunded by the smart contract.'
-          }
+          {CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND}
         </StatusMessageStyled>
       ) : null}
 
       {isNotRepayInFullWarning ? (
         <StatusMessageStyled className="repay-in-full">
           <Icon id="info" />
-          You are no longer fully repaying there loan.
+          {PARTIAL_LOAN_REPAYMENT}
         </StatusMessageStyled>
       ) : null}
 
@@ -205,9 +220,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
                 <CustomTooltip
                   iconId="info"
                   defaultStrokeColor={colors[themeSelected].textColor}
-                  text={`Your current interest fee of ${feesAmount} was rounded to ${Math.ceil(
-                    feesAmount,
-                  )}. Any overpaid amount will automatically be refunded.`}
+                  text={FEES_DUE(feesAmount)}
                   className="tooltip"
                 />
               </div>
@@ -245,7 +258,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
                 <CustomTooltip
                   iconId="info"
                   defaultStrokeColor={silverColor}
-                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  text={AVALIABLE_TO_BORROW}
                   className="tooltip"
                 />
               </div>

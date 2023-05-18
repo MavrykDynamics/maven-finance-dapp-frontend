@@ -9,6 +9,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import colors from 'styles/colors'
+import { ACCRUED_INTEREST, APR, BORROW_CAPACITY, COLLATERAL_VALUE, OUTSTANDING_DEBT } from 'texts/tooltips/vault.text'
 
 type Props = {
   collateralRatio: number
@@ -48,7 +49,7 @@ export const BorrowingExpandCardValuesSection = ({
 
         <div className="name">
           Outstanding Debt
-          <CustomTooltip iconId="info" text="Outstanding debt + any accrued interest since the last time you interacted with your vault’s smart contract." defaultStrokeColor={colors[themeSelected].textColor} />
+          <CustomTooltip iconId="info" text={OUTSTANDING_DEBT} defaultStrokeColor={colors[themeSelected].textColor} />
         </div>
       </BorrowingTabListItemValuesSectionInfo>
 
@@ -62,7 +63,11 @@ export const BorrowingExpandCardValuesSection = ({
         <CommaNumber value={collateralBalance} className="value" beginningText="$" showDecimal decimalsToShow={2} />
         <div className="name margin-top">
           Collateral value
-          <CustomTooltip iconId="info" text="The summed dollar value of all of the collateral assets your have deposited into this vault." defaultStrokeColor={colors[themeSelected].textColor} />
+          <CustomTooltip
+            iconId="info"
+            text={ COLLATERAL_VALUE}
+            defaultStrokeColor={colors[themeSelected].textColor}
+          />
         </div>
       </BorrowingTabListItemValuesSectionInfo>
 
@@ -73,7 +78,7 @@ export const BorrowingExpandCardValuesSection = ({
           Accrued Interest
           <CustomTooltip
             iconId="info"
-            text="Interest compounded overtime, every time you borrow."
+            text={ACCRUED_INTEREST}
             defaultStrokeColor={colors[themeSelected].textColor}
           />
         </div>
@@ -83,7 +88,11 @@ export const BorrowingExpandCardValuesSection = ({
         <CommaNumber value={apr} decimalsToShow={2} className="value" endingText="%" />
         <div className="name margin-top">
           APR
-          <CustomTooltip iconId="info" text="Current interest rate being charged to borrowers." defaultStrokeColor={colors[themeSelected].textColor} />
+          <CustomTooltip
+            iconId="info"
+            text={APR}
+            defaultStrokeColor={colors[themeSelected].textColor}
+          />
         </div>
       </BorrowingTabListItemValuesSectionInfo>
 
@@ -91,7 +100,11 @@ export const BorrowingExpandCardValuesSection = ({
         <CommaNumber value={borrowCapacity} className="value" beginningText="$" showDecimal decimalsToShow={2} />
         <div className="name margin-top">
           Borrow Capacity
-          <CustomTooltip iconId="info" text="How much you are able to borrow given your current collateral ratio including the amount you wish to borrow and the total amount available to borrow from the pool." defaultStrokeColor={colors[themeSelected].textColor} />
+          <CustomTooltip
+            iconId="info"
+            text={BORROW_CAPACITY}
+            defaultStrokeColor={colors[themeSelected].textColor}
+          />
         </div>
       </BorrowingTabListItemValuesSectionInfo>
 

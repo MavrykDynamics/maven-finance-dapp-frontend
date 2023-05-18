@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
@@ -19,6 +19,12 @@ import { BUTTON_PRIMARY, BUTTON_PULSE, BUTTON_WIDE } from 'app/App.components/Bu
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
+import {
+  COLLATERAL_AWARE_BORROWING_ADJUST_YOUR_AMOUNT,
+  SELECT_THE_AMOUNT_YOU_WOULD_LIKE_TO_BORROW,
+} from 'texts/statusMessages/vault.text'
+import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault.text'
 
 type Props = {
   borrowedAsset: LoansVaultType['borrowedAsset']
@@ -63,35 +69,66 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
     (inputAmount > borrowCapacity / (borrowedAsset?.rate ?? 0) || futureCollateralRatio < 200) && inputAmount !== 0
 
   // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
-    const validationStatus = loansInputValidation({
-      inputAmount: newInputAmount,
-      maxAmount,
-      options: {
-        byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
-      },
-    })
+  const inputOnChangeHandle = useCallback(
+    (newInputAmount: string, maxAmount: number) => {
+      const validationStatus = loansInputValidation({
+        inputAmount: newInputAmount,
+        maxAmount,
+        options: {
+          byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
+        },
+      })
 
-    setInputData({
-      ...inputData,
-      amount: newInputAmount,
-      validationStatus: validationStatus,
-    })
-  }
+      setInputData({
+        ...inputData,
+        amount: newInputAmount,
+        validationStatus: validationStatus,
+      })
+    },
+    [borrowedAsset?.decimals, inputData],
+  )
 
-  const inputOnBlurHandle = () => {
+  const inputOnBlurHandle = useCallback(() => {
     setInputData({
       ...inputData,
       amount: getOnBlurValue(inputData.amount),
     })
-  }
+  }, [inputData])
 
-  const onFocusHandler = () => {
+  const onFocusHandler = useCallback(() => {
     setInputData({
       ...inputData,
       amount: getOnFocusValue(inputData.amount),
     })
-  }
+  }, [inputData])
+
+  const inputProps: InputProps = useMemo(
+    () => ({
+      value: inputData.amount,
+      type: 'number',
+      onBlur: inputOnBlurHandle,
+      onFocus: onFocusHandler,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+        inputOnChangeHandle(e.target.value, borrowCapacity / borrowedAsset.rate),
+    }),
+    [borrowCapacity, borrowedAsset.rate, inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler],
+  )
+
+  const settings: Settings = useMemo(
+    () => ({
+      balance: userAssetBalance,
+      balanceAsset: borrowedAsset?.symbol,
+      useMaxHandler: () =>
+        inputOnChangeHandle(
+          getLoansInputMaxAmount(borrowCapacity / borrowedAsset.rate, borrowedAsset.decimals),
+          borrowCapacity / borrowedAsset.rate,
+        ),
+      inputStatus: inputData.validationStatus,
+      convertedValue: inputAmount * borrowedAsset.rate,
+      inputSize: INPUT_LARGE,
+    }),
+    [borrowCapacity, borrowedAsset, inputAmount, inputData.validationStatus, inputOnChangeHandle, userAssetBalance],
+  )
 
   return (
     <>
@@ -104,25 +141,8 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
 
         <Input
           className={`${borrowedAsset.rate ? 'input-with-rate' : ''} pinned-dropdown`}
-          inputProps={{
-            value: inputData.amount,
-            type: 'number',
-            onBlur: inputOnBlurHandle,
-            onFocus: onFocusHandler,
-            onChange: (e) => inputOnChangeHandle(e.target.value, borrowCapacity / borrowedAsset.rate),
-          }}
-          settings={{
-            balance: userAssetBalance,
-            balanceAsset: borrowedAsset?.symbol,
-            useMaxHandler: () =>
-              inputOnChangeHandle(
-                getLoansInputMaxAmount(borrowCapacity / borrowedAsset.rate, borrowedAsset.decimals),
-                borrowCapacity / borrowedAsset.rate,
-              ),
-            inputStatus: inputData.validationStatus,
-            convertedValue: inputAmount * borrowedAsset.rate,
-            inputSize: INPUT_LARGE,
-          }}
+          inputProps={inputProps}
+          settings={settings}
         >
           <InputPinnedTokenInfo>
             <ImageWithPlug imageLink={borrowedAsset.icon} alt={`${borrowedAsset.symbol} icon`} />{' '}
@@ -135,8 +155,8 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
         <StatusMessageStyled className={`${vaultsStatuses.LIQUIDATABLE}`}>
           <Icon id="error-triangle" />
           {futureCollateralRatio < 200
-            ? 'The amount you wish to borrow would under-collateralize your vault. Please enter a different amount to borrow so your vault will not be under-collateralized when you borrow.'
-            : 'Select the amount you would like to borrow. You cannot borrow more than your borrow capacity.'}
+            ? COLLATERAL_AWARE_BORROWING_ADJUST_YOUR_AMOUNT
+            : SELECT_THE_AMOUNT_YOU_WOULD_LIKE_TO_BORROW}
         </StatusMessageStyled>
       ) : null}
 
@@ -147,24 +167,14 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
             <ThreeLevelListItem>
               <div className="name">
                 Total Amount
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={silverColor}
-                  text={`Total amount you are borrowing, a portion of which is paid to the treasury as the DAO fee. The amount you will actually receive is the Total Amount minus the DAO fee`}
-                  className="tooltip"
-                />
+                <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={TOTAL_AMOUNT} className="tooltip" />
               </div>
               <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">
                 DAO Fee
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={silverColor}
-                  text={`Amount paid to the DAO as the origination fee for borrowing. Each time you borrow, a fee is paid.`}
-                  className="tooltip"
-                />
+                <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={DAO_FEE} className="tooltip" />
               </div>
               <CommaNumber
                 value={inputAmount * (DAOFee / 100)}
@@ -209,7 +219,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
                 <CustomTooltip
                   iconId="info"
                   defaultStrokeColor={silverColor}
-                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  text={AVALIABLE_TO_BORROW}
                   className="tooltip"
                 />
               </div>
@@ -224,9 +234,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={() => openConfirmBorrowPopup(inputAmount)}
-          disabled={
-            inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
-          }
+          disabled={inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive}
           animation={BUTTON_PULSE}
         >
           <Icon id="coin-loan" />
