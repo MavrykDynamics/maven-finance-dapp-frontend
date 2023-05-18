@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useMemo } from 'react'
 
@@ -17,6 +17,10 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
+import { State } from 'reducers'
+import colors from 'styles/colors'
 
 export const ConfirmRepay = ({
   closePopup,
@@ -40,6 +44,8 @@ export const ConfirmRepay = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
+  const { themeSelected } = useSelector((state: State) => state.preferences)
+
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = borrowedAsset
       ? calcCollateralRatio(currentCollateralBalance, borrowedAmount - inputAmount, borrowedAsset.rate)
@@ -92,7 +98,7 @@ export const ConfirmRepay = ({
             </ThreeLevelListItem>
           </div>
 
-          <div className="block-name">New Vaults Stats</div>
+          <div className="block-name">New Vault Stats</div>
           <VaultModalOverview>
             <ThreeLevelListItem
               className="collateral-diagram"
@@ -113,7 +119,15 @@ export const ConfirmRepay = ({
               <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Available To Borrow</div>
+              <div className="name">
+                Available To Borrow
+                <CustomTooltip
+                  iconId="info"
+                  defaultStrokeColor={colors[themeSelected].textColor}
+                  text={AVALIABLE_TO_BORROW}
+                  className="tooltip"
+                />
+              </div>
               <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>

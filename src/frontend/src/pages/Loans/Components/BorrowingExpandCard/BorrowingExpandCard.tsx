@@ -31,7 +31,7 @@ import { BorrowingExpandCardBorrowSection } from './BorrowingExpandCardBorrowSec
 import { BorrowingExpandCardRepaySection } from './BorrowingExpandCardRepaySection.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view' 
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean

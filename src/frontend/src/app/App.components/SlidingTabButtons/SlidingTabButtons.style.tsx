@@ -50,7 +50,7 @@ export const ButtonStyled = styled.button<{ disabled: boolean; theme: MavrykThem
   padding: 0 22px;
   border-radius: ${BUTTON_RADIUS};
   user-select: none;
-  color: ${({ theme }) => theme.headerColor};
+  color: ${({ theme }) => theme.lightTextColor};
   background: transparent;
 
   &.selected {

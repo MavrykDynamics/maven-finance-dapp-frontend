@@ -162,6 +162,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     () => ({
       balance: userAssetBalance,
       balanceAsset: borrowedAsset?.symbol,
+      balanceName: 'Wallet Balance',
       useMaxHandler: () =>
         inputOnChangeHandle(
           getLoansInputMaxAmount(Math.min(userAssetBalance, totalOutstanding), borrowedAsset.decimals),
@@ -276,7 +277,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           disabled={inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive}
         >
           <Icon id="okIcon" />
-          Confirm Repay in {isRepayInFull ? 'Full' : 'Part'}
+          Repay in {isRepayInFull ? 'Full' : 'Part'}
         </NewButton>
       </div>
     </>

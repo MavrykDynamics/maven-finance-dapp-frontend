@@ -341,10 +341,10 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
         }
 
         font-weight: 600;
-        font-size: 16px;
+        font-size: 18px;
 
         .tzAddressToClick {
-          font-size: 14px;
+          font-size: 16px;
         }
 
         p {

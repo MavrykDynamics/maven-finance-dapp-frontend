@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useMemo } from 'react'
 
@@ -17,9 +17,11 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { silverColor } from 'styles'
 import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
 import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
+import { State } from 'reducers'
+import colors from 'styles/colors'
 
 export const ConfirmBorrowAsset = ({
   closePopup,
@@ -43,6 +45,7 @@ export const ConfirmBorrowAsset = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = borrowedAsset
@@ -79,7 +82,7 @@ export const ConfirmBorrowAsset = ({
                 Total Amount
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={silverColor}
+                  defaultStrokeColor={colors[themeSelected].textColor}
                   text={`Total amount you are borrowing, a portion of which is paid to the treasury as the DAO fee. The amount you will actually receive is the Total Amount minus the DAO fee.`}
                   className="tooltip"
                 />
@@ -99,7 +102,7 @@ export const ConfirmBorrowAsset = ({
                 DAO Fee
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={silverColor}
+                  defaultStrokeColor={colors[themeSelected].textColor}
                   text={`Amount paid to the DAO as the origination fee for borrowing. Each time you borrow, a fee is paid.`}
                   className="tooltip"
                 />
@@ -141,7 +144,15 @@ export const ConfirmBorrowAsset = ({
               <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Available To Borrow</div>
+              <div className="name">
+                Available To Borrow
+                <CustomTooltip
+                  iconId="info"
+                  defaultStrokeColor={colors[themeSelected].textColor}
+                  text={AVALIABLE_TO_BORROW}
+                  className="tooltip"
+                />
+              </div>
               <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>

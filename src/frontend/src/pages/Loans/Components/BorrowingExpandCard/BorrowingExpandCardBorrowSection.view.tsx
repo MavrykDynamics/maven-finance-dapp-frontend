@@ -118,6 +118,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
     () => ({
       balance: userAssetBalance,
       balanceAsset: borrowedAsset?.symbol,
+      balanceName: 'Wallet Balance',
       useMaxHandler: () =>
         inputOnChangeHandle(
           getLoansInputMaxAmount(borrowCapacity / borrowedAsset.rate, borrowedAsset.decimals),
@@ -133,7 +134,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   return (
     <>
       <div className="tab-text">
-        Select the asset you would like to borrow. You cannot borrow more than your borrow capacity.
+        Input an amount you would borrow. You are only able to borrow up to a 50% value of your collateral.
       </div>
 
       <div>
@@ -238,7 +239,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
           animation={BUTTON_PULSE}
         >
           <Icon id="coin-loan" />
-          Confirm Borrow
+          Borrow
         </NewButton>
       </div>
     </>

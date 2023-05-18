@@ -38,6 +38,7 @@ export const dropDownColor = '#0000007a'
 export const modalsBackdropColor = 'rgba(0, 0, 0, 0.5)'
 
 export const dark = {
+  lightTextColor,
   backgroundColor: darkColor,
   containerColor,
   navTitleColor: cyanColor,
@@ -86,6 +87,7 @@ export const dark = {
 }
 
 export const light = {
+  lightTextColor,
   backgroundColor: lightColor,
   containerColor: whiteColor,
   navTitleColor: cyanColor,

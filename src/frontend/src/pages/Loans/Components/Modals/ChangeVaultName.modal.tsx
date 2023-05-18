@@ -102,7 +102,7 @@ export const ChangeVaultName = ({
             }}
           />
 
-          <div className="manage-btn">
+          <div className="confirmation-btn">
             <NewButton
               kind={BUTTON_PRIMARY}
               form={BUTTON_WIDE}

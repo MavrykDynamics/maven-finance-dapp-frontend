@@ -56,7 +56,7 @@ export const BorrowingExpandCardValuesSection = ({
       <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>
         <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
         <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
-        <div className="name">Principal</div>
+        <div className="name">Principle</div>
       </BorrowingTabListItemValuesSectionInfo>
 
       <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>

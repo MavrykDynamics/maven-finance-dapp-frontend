@@ -137,6 +137,12 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   border-top-right-radius: 0;
   border-top-left-radius: 0;
 
+  .useMax-btn {
+    button {
+      font-size: 14px;
+    }
+  }
+
   .top {
     display: grid;
     grid-template-columns: 450px auto;
@@ -336,6 +342,7 @@ export const BorrowingTabListItemValuesSectionInfo = styled.div<{
     font-weight: 700;
     font-size: 30px;
     line-height: 40px;
+    word-break: break-all;
 
     color: ${({ theme }) => theme.dataColor};
   }

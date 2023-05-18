@@ -24,7 +24,7 @@ import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } f
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { TransactionHistory } from '../TransactionHistory'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view' 
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { CollateralType, DepositorsFlagType, LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 import { getNumberInBounds } from 'utils/calcFunctions'
@@ -81,7 +81,9 @@ export const BorrowingExpandCardMenuSection = ({
   mappedMVKOperators,
   hideTransactionHistory,
 }: Props) => {
-  const { loansControllerAddress } = useSelector((state: State) => state.loans)
+  const {
+    config: { loansControllerAddress },
+  } = useSelector((state: State) => state.loans)
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)

@@ -31,7 +31,11 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 export const Market = () => {
   const dispatch = useDispatch()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
-  const { loanTokens, loansControllerAddress, isDataLoaded } = useSelector((state: State) => state.loans)
+  const {
+    loanTokens,
+    config: { loansControllerAddress },
+    isDataLoaded,
+  } = useSelector((state: State) => state.loans)
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const { isLoading } = useDataLoader(
