@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 
-// TODO getTokensPrices
+// context
+import { dataFeedsContext } from '../DataFeedsProvider/dataFeeds.provider'
 
 // utils
 import {
@@ -9,14 +10,21 @@ import {
   normalizeMTokens,
   normalizeWhitelistTokens,
 } from 'utils/normalizers/DAPPTokens.normalizers'
+import { getSymbolAndNameFromFeedName } from 'utils/parse'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 // types
 import { State, Props, TokensContext } from './tokens.provider.types'
 import { DappTokensQuery, Dipdup_Token_Metadata, MvkFaucetQuery } from 'utils/__generated__/graphql'
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
 export class TokensProvider extends React.Component<Props, State> {
+  static contextType = dataFeedsContext
+
+  feedsContext!: React.ContextType<typeof dataFeedsContext>
+
   constructor(props: Props) {
     super(props)
     this.state = {
@@ -82,24 +90,37 @@ export class TokensProvider extends React.Component<Props, State> {
     })
   }
 
-  //   updateAvailableCollaterals = () => {
+  updateTokenPrices = (feedsLedger: Feed[]) => {
+    const tokenPricesFromFeeds = feedsLedger.reduce(
+      (acc: Record<string, number>, { name, last_completed_data, decimals }) => {
+        const assetSymbol = getSymbolAndNameFromFeedName(name).symbol
+        const rate = convertNumberForClient({ number: last_completed_data, grade: decimals })
+        acc[assetSymbol] = rate
+        return acc
+      },
+      {},
+    )
 
-  //   }
+    this.setState({
+      context: {
+        ...this.state.context,
+        tokensPrices: tokenPricesFromFeeds,
+      },
+    })
+  }
+
+  componentDidUpdate(prevProps: Readonly<Props>): void {
+    if (prevProps.feedsLedger !== this.props.feedsLedger) {
+      this.updateTokenPrices(this.props.feedsLedger)
+    }
+  }
 
   //   case GET_AVALIABLE_COLLATERALS:
   //     return { ...state, avaliableCollaterals: action.avaliableCollaterals }
   //   case GET_XTZ_BAKERS:
   //     return { ...state, xtzBakers: action.xtzBakers }
-  //   case GET_MVK_FAUCET:
-  //     return { ...state, mvkFaucetAddress: action.mvkFaucet }
-  //   case GET_TOKENS_PRICES:
-  //     return {
-  //       ...state,
-  //       tokensPrices: { ...state.tokensPrices, ...action.tokensPrices },
-  //     }
 
   render(): React.ReactNode {
-    console.log(this.state.context)
     return <tokensContext.Provider value={this.state.context}>{this.props.children}</tokensContext.Provider>
   }
 }

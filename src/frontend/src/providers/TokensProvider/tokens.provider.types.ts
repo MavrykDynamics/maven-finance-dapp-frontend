@@ -5,6 +5,7 @@ import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 export type TokensContext = {
   dipDupTokens: Array<DipDupTokensGraphQl>
@@ -35,4 +36,5 @@ export type State = {
 
 export type Props = {
   children: React.ReactNode
+  feedsLedger: Feed[]
 }
