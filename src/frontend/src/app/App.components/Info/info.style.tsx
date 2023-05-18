@@ -70,7 +70,7 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
     }
   }
 
-  /* Error styling to show user danger zone  */
+  /* Error styling to show user warning zone  */
   &.${INFO_WARNING} {
     border-color: ${({ theme }) => theme.riskColor};
 
