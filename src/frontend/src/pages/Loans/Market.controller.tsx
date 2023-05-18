@@ -204,8 +204,6 @@ export const Market = () => {
           )}
         </div>
 
-        {/* {tabsNav} */}
-
         {tabId === LEND_TAB_ID ? (
           <LendingTab
             lendingItem={currentToken.lendingItem}

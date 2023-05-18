@@ -146,8 +146,6 @@ export const PageHeaderForegroundImage = styled.img<{ page: string; src: string 
   }};
   height: ${({ page }) => {
     switch (page) {
-      case 'farms':
-        return '150px'
       case 'dashboard':
         return '172px'
       case 'break glass':
@@ -162,10 +160,9 @@ export const PageHeaderForegroundImage = styled.img<{ page: string; src: string 
         return '192px'
       case 'data-feeds':
         return '190px'
+      case 'farms':
       case 'break glass council':
-        return '150px'
       case 'loansEarn':
-        return '150px'
       case 'loansBorrow':
         return '150px'
       default:
@@ -188,7 +185,6 @@ export const PageHeaderForegroundImage = styled.img<{ page: string; src: string 
         return '-2px'
       case 'break glass council':
       case 'loansEarn':
-        return '-10px'
       case 'loansBorrow':
         return '-10px'
       default:

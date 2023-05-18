@@ -73,7 +73,7 @@ export const vaultCardTabNames = {
   REPAY_IN_FULL: 7,
   TX_HISTORY_VIEW_ALL: 8,
   TX_HISTORY_VIEW_PERSONAL: 9,
-}
+} as const
 
 export const ANY_USER = 'any'
 export const NONE_USER = 'none'

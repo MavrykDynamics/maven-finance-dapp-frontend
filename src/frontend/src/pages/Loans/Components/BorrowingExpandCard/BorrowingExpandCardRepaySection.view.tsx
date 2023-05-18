@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
+import classNames from 'classnames'
 import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
 import {
   COLLATERAL_RATIO_GRADIENT,
@@ -8,7 +9,12 @@ import {
   vaultCardTabNames,
 } from 'pages/Loans/Loans.const'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
-import { calcCollateralRatio, getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import {
+  calcCollateralRatio,
+  getLoansInputMaxAmount,
+  isTezosAsset,
+  loansInputValidation,
+} from 'pages/Loans/Loans.helpers'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from '../Modals/Modals.helpers'
 import { State } from 'reducers'
 import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
@@ -65,8 +71,9 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   } = props
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
+  const parsedAmount = parseFloat(inputData.amount)
+  const inputAmount = isNaN(parsedAmount) ? 0 : parsedAmount
 
-  const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
   const totalOutstanding = feesAmount + Number(borrowedAmount)
   const balanceSymbol = isTezosAsset(borrowedAsset?.gqlName ?? '') ? 'tezos' : borrowedAsset?.symbol.toLowerCase() ?? ''
   const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
@@ -183,7 +190,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         <div className="tab-text">Select Amount to Repay</div>
 
         <Input
-          className={`${borrowedAsset.rate ? 'input-with-rate' : ''} pinned-dropdown`}
+          className={classNames('pinned-dropdown', { 'input-with-rate': borrowedAsset.rate })}
           inputProps={inputProps}
           settings={settings}
         >
