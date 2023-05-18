@@ -18,6 +18,8 @@ import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { Info } from 'app/App.components/Info/Info.view'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // types
 import { State } from 'reducers'
@@ -39,14 +41,8 @@ import {
   BUTTON_NAVIGATION,
   BUTTON_WIDE,
 } from 'app/App.components/Button/Button.constants'
-
-// helpers
-import { getBytesDiff, getPaymentsDiff } from './ProposalSubmission.helpers'
-import { dropProposal, lockProposal, submitProposal, updateProposalData } from './ProposalSubmission.actions'
-import { Info } from 'app/App.components/Info/Info.view'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
 import {
   DROP_PROPOSAL_BUTTON_TOOLTIP,
@@ -54,6 +50,10 @@ import {
   SAVE_CHANGES_BUTTON_TOOLTIP,
   NEXT_STEP_BUTTON_TOOLTIP,
 } from 'texts/tooltips/governance'
+
+// helpers & actions
+import { getBytesDiff, getPaymentsDiff } from './ProposalSubmission.helpers'
+import { dropProposal, lockProposal, submitProposal, updateProposalData } from './ProposalSubmission.actions'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const dispatch = useDispatch()
@@ -144,15 +144,6 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   // Change user's vieving proposal
   const changeActiveProposal = (proposalId: number) => {
     history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
-    // setSeletedUserProposalId(proposalId)
-
-    // it means that we choose create new proposal
-    if (proposalId === -1 && !proposalState[-1]) {
-      setProposalsState({
-        ...proposalState,
-        [DEFAULT_PROPOSAL.id - 1]: { ...DEFAULT_PROPOSAL },
-      })
-    }
   }
 
   const updateLocalProposalData = useCallback(
@@ -182,15 +173,16 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   )
 
   const handleNextStep = (tabId: number) => setActiveTab(tabId)
+  const handleLockProposal = async (proposalId: number) => await dispatch(lockProposal(proposalId))
+  const handleDropProposal = async (proposalId: number) =>
+    proposalId && proposalId !== -1 ? await dispatch(dropProposal(proposalId)) : null
 
-  const handleDropProposal = async (proposalId: number) => {
-    if (proposalId && proposalId !== -1) await dispatch(dropProposal(proposalId))
-  }
-
-  const handleSubmitProposal = async (proposalId: number) => {
-    await dispatch(lockProposal(proposalId))
-  }
-
+  /**
+   * @param proposalId id of proposal to save | update
+   *
+   * if proposal exists in indexer @currentProposalOnRemote !== null we update it with diff between stage 2 & 3 on client and remote via @updateProposalData method
+   * if proposal doesn't exists save it via @submitProposal action call
+   */
   const handleUpdateData = async (proposalId: number) => {
     if (!currentProposalOnRemote) {
       const bytes = getBytesDiff(
@@ -234,10 +226,11 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   }
   // ------ ACTIONS HANDLERDS END ------
 
-  // action buttons stuff for disabling
+  // disabling action buttons
   const isProposalSubmitted = selectedUserProposalId >= 0
   const isProposalPeriod = governancePhase === 'PROPOSAL'
 
+  // Detect whether proposal has smth to save
   const proposalHasChange = useMemo(
     () =>
       isProposalSubmitted && isProposalPeriod && !currentProposal.locked
@@ -249,7 +242,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     [isProposalSubmitted, isProposalPeriod, currentProposal, currentProposalOnRemote],
   )
 
-  // Validate bytes
+  // validate bytes (stage 2)
   const isBytesValid = useMemo(
     () =>
       checkStage2Validation({
@@ -260,7 +253,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     [currentProposal, currentProposalOnRemote, currentProposalValidation],
   )
 
-  // Validate payments
+  // validate payments (stage 3)
   const isPaymentsValid = useMemo(
     () =>
       checkStage3Validation({
@@ -271,28 +264,32 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     [currentProposal, currentProposalValidation, currentProposalOnRemote],
   )
 
-  // Validate stage 1, if porposal is submitted we can't change anything here
-  const isStageOneDataValid = isProposalSubmitted
-    ? checkStage1Validation({ proposalValidation: currentProposalValidation })
-    : true
+  // validate proposal metadata (stage 1)
+  const isStageOneDataValid = checkStage1Validation({ proposalValidation: currentProposalValidation })
 
   const genProposalDisabledState = !isProposalPeriod || isNewlyRegisteredSatellite
 
   /**
-   * User can save proposal first time, then he should have
-   * 1. 1st stage filled valid
-   * 2. 2st should have at least 1 byte pair
-   * Or user can update proposal, it it's already exists, for this he should have
-   * 1. changes between original proposal and client one
-   * 2. valid changes
+   * save btn is used to create and update proposal
+   *
+   * create is disabled if stage 1, state 2 or 3 has invalid data
+   * or if it's not proposal period or user can not iteract with proposals, cuz he is newly registered
+   *
+   * update is disabled if state 2 or 3 has invalid data or proposal don't have chanes to save
+   * or if it's not proposal period or user can not iteract with proposals, cuz he is newly registered
+   * or proposal is locked and can not be modified
+   *
+   * currentProposal.id === DEFAULT_PROPOSAL.id means we are on "create new proposal" tab creating new proposal that is not exist yet
    */
-  const isSavingFirstTimeDisabled =
-    !isStageOneDataValid ||
+  const isSaveProposalDisabled =
+    !proposalHasChange ||
     !isBytesValid ||
-    currentProposal?.proposalData?.filter(({ title, encoded_code }) => title || encoded_code).length < 1
-  const isUpdateDisabled =
-    !proposalHasChange || currentProposal.locked || !isBytesValid || !isPaymentsValid || genProposalDisabledState
-  const isSaveProposalDisabled = currentProposal.id > 1 ? isUpdateDisabled : isSavingFirstTimeDisabled
+    !isPaymentsValid ||
+    genProposalDisabledState ||
+    (currentProposal.id === DEFAULT_PROPOSAL.id
+      ? currentProposal?.proposalData?.filter(({ title, encoded_code }) => title || encoded_code).length < 1 ||
+        !isStageOneDataValid
+      : currentProposal.locked)
 
   const isSubmitDisabled =
     !isProposalSubmitted || currentProposal.locked || proposalHasChange || genProposalDisabledState
@@ -378,7 +375,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               kind={BUTTON_PRIMARY}
               form={BUTTON_WIDE}
               disabled={isSubmitDisabled}
-              onClick={() => handleSubmitProposal(selectedUserProposalId)}
+              onClick={() => handleLockProposal(selectedUserProposalId)}
             >
               <Icon id="submit" /> Submit Proposal
             </Button>
