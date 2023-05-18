@@ -157,10 +157,16 @@ export const StageThreeForm = ({
 
   return (
     <>
+      <div className="stage-descr">
+        In this step, you are able to add a list of payments and treasury transfers to your proposal. This can used to
+        request payment for the work you have put into your proposal or to rearrange treasury funds. If you area a
+        business and using an actual invoice in Step 1, please add each required payment to this table also.
+      </div>
+
       <SubmitProposalGeneralData>
         <div className="submitted-data">
           <div className="label">1 - Proposal Title</div>
-          <div className="value">{title}</div>
+          <div className="value">{title || '–'}</div>
         </div>
 
         <div className="submitted-data">

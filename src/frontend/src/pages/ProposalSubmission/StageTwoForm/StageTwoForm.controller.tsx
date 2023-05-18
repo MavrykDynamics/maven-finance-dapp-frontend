@@ -222,10 +222,16 @@ export const StageTwoForm = ({
 
   return (
     <>
+      <div className="stage-descr">
+        In this step, you are able to add sets of bytes to your proposal. Each set of bytes can change/add one part of
+        Mavryk’s smart contracts. For example, a set can create a new farm and another set of bytes can whitelist a
+        token for one of the treasury contracts. Read more about in the Mavryk Docs
+      </div>
+
       <SubmitProposalGeneralData>
         <div className="submitted-data">
           <div className="label">1 - Proposal Title</div>
-          <div className="value">{title}</div>
+          <div className="value">{title || '–'}</div>
         </div>
 
         <div className="submitted-data">

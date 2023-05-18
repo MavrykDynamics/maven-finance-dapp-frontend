@@ -8,6 +8,14 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
   position: relative;
   margin-top: 20px;
   padding-top: 28px;
+
+  .stage-descr {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
+    color: ${({ theme }) => theme.textColor};
+    margin-bottom: 50px;
+  }
 `
 
 // Proposal submittion stage 1 styles
@@ -190,7 +198,6 @@ export const ProposalSubmittionButtons = styled.div<{ theme: MavrykTheme }>`
 export const SubmitProposalHeader = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
 `
 
 export const SubmitProposalGeneralData = styled(ProposalSubmittionStageOneBody)<{ theme: MavrykTheme }>`

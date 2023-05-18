@@ -372,7 +372,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             <CustomTooltip
               className="tooltip"
               iconId="info"
-              text={'f'}
+              text={
+                'Drop your proposal from the round, you will be unable to retrieve it afterwards. Please double check yourself before doing this action.'
+              }
               defaultStrokeColor={colors[themeSelected]['valueColor']}
             />
           </div>
@@ -390,7 +392,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             <CustomTooltip
               className="tooltip"
               iconId="info"
-              text={'f'}
+              text={
+                'Submit proposal for voting. After submission, you are unable to edit your proposal anymore. The only way to fix an issue with it is to drop it and recreate from the start.'
+              }
               defaultStrokeColor={colors[themeSelected]['valueColor']}
             />
           </div>
@@ -409,7 +413,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               <CustomTooltip
                 className="tooltip"
                 iconId="info"
-                text={'f'}
+                text={
+                  'Save your current progress in the building of your proposal. Note that you have to at least filled out the first step in order to save it.'
+                }
                 defaultStrokeColor={colors[themeSelected]['valueColor']}
               />
             </div>
@@ -421,7 +427,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               <CustomTooltip
                 className="tooltip"
                 iconId="info"
-                text={'f'}
+                text={'Move on to the next step of creating a proposal.'}
                 defaultStrokeColor={colors[themeSelected]['valueColor']}
               />
             </div>
