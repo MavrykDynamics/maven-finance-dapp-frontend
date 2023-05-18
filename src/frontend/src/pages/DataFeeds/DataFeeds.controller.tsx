@@ -26,6 +26,8 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { getFeedsStorage } from './DataFeeds.actions'
 
+import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
+
 // styles
 import { Page } from 'styles'
 import { DataFeedsSearchFilter, DataFeedsStyled } from './DataFeeds.styles'
@@ -39,6 +41,8 @@ export const DataFeeds = () => {
   const { search } = useLocation()
   const { feedsLedger, feedCategories, isLoaded: isDataFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { isActionActive } = useSelector((state: State) => state.loading)
+
+  useDataFeedsUpdater()
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

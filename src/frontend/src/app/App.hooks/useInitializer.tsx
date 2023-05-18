@@ -13,7 +13,7 @@ import {
   GET_DAPP_TOKENS_QUERY,
   GET_MVK_FAUCET_QUERY,
 } from 'gql/queries/getTokensData'
-import { GET_ORACLE_STORAGE_QUERY_NAME } from 'gql/queries/getOracleStorage'
+import { GET_ORACLE_STORAGE_QUERY } from 'gql/queries/getOracleStorage'
 
 type InternalState = {
   tokensAddress: string | null
@@ -53,7 +53,7 @@ export const useInitializer = () => {
   const { data: mvkData, loading: mvkLoading } = useQuery(GET_MVK_FAUCET_QUERY)
 
   // data feeds
-  const { data: feedsData, loading: feedsLoading } = useQuery(GET_ORACLE_STORAGE_QUERY_NAME)
+  const { data: feedsData, loading: feedsLoading } = useQuery(GET_ORACLE_STORAGE_QUERY)
 
   // maxLengths init
   useEffect(() => {
