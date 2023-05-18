@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useSubscription } from '@apollo/client'
 
 // providers
@@ -12,20 +12,57 @@ import {
 } from 'gql/queries/getOracleStorage'
 import { GetOracleDataFeedsQuery } from 'utils/__generated__/graphql'
 
+// TODO add checks if data is empty (valid data with zod) and handle errors for it
 export const useDataFeedsUpdater = () => {
   const [feedsData, setFeedsData] = useState<Partial<GetOracleDataFeedsQuery>>({})
+  const [forcedUpdate, setForcedUpdate] = useState(false)
   const { initializeDataFeeds } = useDataFeedsContext()
+  const initialDataStorageRef = useRef<GetOracleDataFeedsQuery | null>(null)
 
   useEffect(() => {
+    if (
+      forcedUpdate ||
+      (feedsData.hasOwnProperty('aggregator') &&
+        feedsData.hasOwnProperty('aggregator_factory') &&
+        feedsData.hasOwnProperty('dipdup_contract_metadata'))
+    ) {
+      if (initialDataStorageRef.current === null) {
+        initialDataStorageRef.current = feedsData as GetOracleDataFeedsQuery
+      }
+
+      const _data = { ...feedsData }
+
+      if (!_data.hasOwnProperty('aggregator_factory')) {
+        _data.aggregator_factory = { ...initialDataStorageRef.current.aggregator_factory }
+      }
+
+      if (!_data.hasOwnProperty('dipdup_contract_metadata')) {
+        _data.dipdup_contract_metadata = { ...initialDataStorageRef.current.dipdup_contract_metadata }
+      }
+      initializeDataFeeds(_data as GetOracleDataFeedsQuery, true)
+      setFeedsData({})
+      setForcedUpdate(false)
+    }
+  }, [forcedUpdate, feedsData, initializeDataFeeds])
+
+  //   like heartbeat (default 10 seconds if there is a data)
+  useEffect(() => {
+    let timeout: NodeJS.Timeout
+
     if (
       feedsData.hasOwnProperty('aggregator') &&
       feedsData.hasOwnProperty('aggregator_factory') &&
       feedsData.hasOwnProperty('dipdup_contract_metadata')
     ) {
-      initializeDataFeeds(feedsData as GetOracleDataFeedsQuery)
-      setFeedsData({})
+      timeout = setTimeout(() => {
+        setForcedUpdate(true)
+      }, 10000)
     }
-  }, [feedsData, initializeDataFeeds])
+
+    return () => {
+      if (timeout) clearTimeout(timeout)
+    }
+  }, [feedsData])
 
   const { loading: aggregatorLoading } = useSubscription(SUBSCRIBTION_ORACLE_STORAGE_AGGREGATOR, {
     onData: ({ data: response }) => {
@@ -45,7 +82,7 @@ export const useDataFeedsUpdater = () => {
     },
   })
 
-  const { loading: dipdeupContractsMetadataLoading } = useSubscription(
+  const { loading: dipdupContractsMetadataLoading } = useSubscription(
     SUBSCRIBTION_ORACLE_STORAGE_DIPDUP_CONTRACT_METADATA,
     {
       onData: ({ data: response }) => {
@@ -57,5 +94,5 @@ export const useDataFeedsUpdater = () => {
     },
   )
 
-  return { isLoading: !dipdeupContractsMetadataLoading && !aggregatorFactoryLoading && !aggregatorLoading }
+  return { isLoading: !dipdupContractsMetadataLoading && !aggregatorFactoryLoading && !aggregatorLoading }
 }
