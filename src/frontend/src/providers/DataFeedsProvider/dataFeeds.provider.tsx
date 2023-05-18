@@ -22,17 +22,25 @@ export class DataFeedsProvider extends React.Component<Props, State> {
     }
   }
 
-  initializeDataFeeds = (data: GetOracleDataFeedsQuery) => {
+  initializeDataFeeds = (data: GetOracleDataFeedsQuery, isOneFeed = false) => {
     const normalizedFeedsStorage = normalizeFeeds(data)
+    const { feedCategories, feedsLedger } = normalizedFeedsStorage
+
+    const _feedsLedger = isOneFeed
+      ? [...this.state.context.feedsLedger.filter((el) => el.address !== feedsLedger[0].address), ...feedsLedger]
+      : feedsLedger
 
     this.setState({
       context: {
         ...this.state.context,
-        ...normalizedFeedsStorage,
+        feedCategories,
+        feedsLedger: _feedsLedger,
         isLoaded: true,
       },
     })
   }
+
+  updateDataFeedDetails = (data: GetOracleDataFeedsQuery) => {}
 
   registerFeedAction = () => {
     console.info('Unimplemented')
