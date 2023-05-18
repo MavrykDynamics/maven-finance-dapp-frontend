@@ -45,17 +45,17 @@ export const LoansBorrow = () => {
     chartsData: { collateralChartData, borrowingChartData },
   } = useSelector((state: State) => state.loans)
 
-  const { totalBorrowed, totalCollaterals } = useMemo(
+  const { totalCollaterals, totalBorrowed } = useMemo(
     () =>
-      loanTokens.reduce<{
+      allVaultsIds.reduce<{
         totalCollaterals: number
         totalBorrowed: number
       }>(
-        // TODO: add total collateral
-        // (acc, { totalBorrowed, loanTokenTotalCollaterals, loanTokenData: { rate } }) => {
-        (acc, { totalBorrowed, loanTokenData: { rate } }) => {
-          acc.totalBorrowed += totalBorrowed * rate
-          // acc.totalCollaterals += loanTokenTotalCollaterals * rate
+        (acc, vaultId) => {
+          const vault = vaultsMapper[vaultId]
+
+          acc.totalCollaterals += vault.collateralBalance
+          acc.totalBorrowed += vault.borrowedAmount * vault.borrowedAsset.rate
           return acc
         },
         {
@@ -63,7 +63,7 @@ export const LoansBorrow = () => {
           totalBorrowed: 0,
         },
       ),
-    [loanTokens],
+    [allVaultsIds, vaultsMapper],
   )
 
   const { openBorrowPopup } = useContext(loansPopupsContext)
