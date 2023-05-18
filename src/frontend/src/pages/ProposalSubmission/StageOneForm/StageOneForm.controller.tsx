@@ -95,6 +95,7 @@ export const StageOneForm = ({
         save as you go. Furthermore, once you have submitted your proposal, you are unable to make any more changes to
         it and it is open to voting. So please ensure your proposal is ready before you click Submit Proposal.
       </div>
+
       <ProposalSubmittionStageOneBody>
         {isProposalSubmitted ? (
           <div className="submitted-data">

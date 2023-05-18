@@ -134,17 +134,6 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const currentProposalValidation: ProposalValidityObj | null = proposalsValidation[selectedUserProposalId] ?? null
   const currentProposalOnRemote: ProposalRecordType | null = proposalsMapper[selectedUserProposalId] ?? null
 
-  console.log({
-    currentProposal,
-    currentProposalValidation,
-    currentProposalOnRemote,
-    proposalState,
-    selectedUserProposalId,
-    proposalsMapper,
-    mappedProposals,
-    mappedValidation,
-  })
-
   // ------ ACTIONS HANDLERDS START ------
   // Change user's vieving proposal
   const changeActiveProposal = (proposalId: number) => {
