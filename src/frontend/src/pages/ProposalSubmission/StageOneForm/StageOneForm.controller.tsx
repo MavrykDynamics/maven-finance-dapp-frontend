@@ -11,7 +11,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // types
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
-import { StageOneFormProps } from '../ProposalSubmittion.types'
+import { StageOneFormProps } from '../ProposalSubmission.types'
 import { State } from 'reducers'
 
 // helpers, constants
@@ -75,6 +75,8 @@ export const StageOneForm = ({
         )
         break
       case 'invoice':
+        console.log({ invoice: e })
+
         updateLocalProposalValidation(
           {
             invoice: isValidHttpUrl(value) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
@@ -82,23 +84,6 @@ export const StageOneForm = ({
           proposalId,
         )
         break
-      // TODO: remove if no need
-      // case 'SUCCESS_MVK_REWARD':
-      //   updateLocalProposalValidation(
-      //     {
-      //       successMVKReward: currentProposal.successReward >= 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
-      //     },
-      //     proposalId,
-      //   )
-      //   break
-      // case 'IPFS':
-      //   updateLocalProposalValidation(
-      //     {
-      //       ipfs: Boolean(e) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
-      //     },
-      //     proposalId,
-      //   )
-      //   break
     }
   }
 

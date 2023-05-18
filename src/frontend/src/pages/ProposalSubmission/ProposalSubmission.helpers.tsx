@@ -9,7 +9,7 @@ import {
   ProposalDataChangesType,
   ProposalValidityObj,
   StageThreeValidityItem,
-} from './ProposalSubmittion.types'
+} from './ProposalSubmission.types'
 import { State } from 'reducers'
 
 // helpers
@@ -62,8 +62,8 @@ export const isProposalHasChange = ({
   clientProposal,
   remoteProposal,
 }: {
-  clientProposal?: ProposalRecordType
-  remoteProposal?: ProposalRecordType
+  clientProposal: ProposalRecordType | null
+  remoteProposal: ProposalRecordType | null
 }): boolean => {
   const isTitleDiff = clientProposal?.title !== remoteProposal?.title,
     isDescrDiff = clientProposal?.description !== remoteProposal?.description,
@@ -122,11 +122,16 @@ export const isProposalHasChange = ({
   return isTitleDiff || isDescrDiff || isSourceLinkDiff || isBytesDiff || isPaymentsDiff
 }
 
-export const checkStage1Validation = ({ proposalValidation }: { proposalValidation: ProposalValidityObj }): boolean => {
+export const checkStage1Validation = ({
+  proposalValidation,
+}: {
+  proposalValidation: ProposalValidityObj | null
+}): boolean => {
   return (
-    proposalValidation.description === INPUT_STATUS_SUCCESS &&
-    proposalValidation.title === INPUT_STATUS_SUCCESS &&
-    proposalValidation.sourceCode === INPUT_STATUS_SUCCESS
+    proposalValidation?.description === INPUT_STATUS_SUCCESS &&
+    proposalValidation?.title === INPUT_STATUS_SUCCESS &&
+    proposalValidation?.sourceCode === INPUT_STATUS_SUCCESS &&
+    proposalValidation?.invoice === INPUT_STATUS_SUCCESS
   )
 }
 
@@ -135,21 +140,21 @@ export const checkStage2Validation = ({
   currentProposal,
   remoteProposal,
 }: {
-  proposalValidation: ProposalValidityObj
-  currentProposal: ProposalRecordType
-  remoteProposal: ProposalRecordType
+  proposalValidation: ProposalValidityObj | null
+  currentProposal: ProposalRecordType | null
+  remoteProposal: ProposalRecordType | null
 }): boolean => {
   // if proposal is locked we can't change anything in it
-  return currentProposal.locked
+  return currentProposal?.locked
     ? true
-    : proposalValidation.bytesValidation
+    : proposalValidation?.bytesValidation
         // Filter empty bytes
         ?.filter(({ byteId }) => {
           const byte = currentProposal?.proposalData?.find(({ id }) => id === byteId)
           return byte && (byte.title || byte.encoded_code)
         })
         // Validate every byte that is non empty
-        .every(({ validBytes, validTitle, byteId }) => {
+        ?.every(({ validBytes, validTitle, byteId }) => {
           const isRemoteByte = remoteProposal?.proposalData?.find(({ id }) => byteId === id)
           return isRemoteByte
             ? validBytes !== INPUT_STATUS_ERROR
@@ -162,21 +167,21 @@ export const checkStage3Validation = ({
   currentProposal,
   remoteProposal,
 }: {
-  proposalValidation: ProposalValidityObj
-  currentProposal: ProposalRecordType
-  remoteProposal: ProposalRecordType
+  proposalValidation: ProposalValidityObj | null
+  currentProposal: ProposalRecordType | null
+  remoteProposal: ProposalRecordType | null
 }) => {
   // if proposal is locked we can't change anything in it
-  return currentProposal.locked
+  return currentProposal?.locked
     ? true
-    : proposalValidation.paymentsValidation
+    : proposalValidation?.paymentsValidation
         // Filter empty payments
         ?.filter(({ paymentId }) => {
           const payment = currentProposal?.proposalPayments?.find(({ id }) => id === paymentId)
           return payment && (payment.title || payment.to__id || payment.token_amount)
         })
         // Validate every paymnet that is non empty
-        .every(({ to__id, title, token_amount, paymentId }) => {
+        ?.every(({ to__id, title, token_amount, paymentId }) => {
           const isRemotePayment = remoteProposal?.proposalPayments?.find(({ id }) => paymentId === id)
 
           return isRemotePayment

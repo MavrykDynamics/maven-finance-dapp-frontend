@@ -3,11 +3,11 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // types
-import { StageThreeFormProps, StageThreeValidityItem } from '../ProposalSubmittion.types'
+import { StageThreeFormProps, StageThreeValidityItem } from '../ProposalSubmission.types'
 import { Governance_Proposal } from 'utils/generated/graphqlTypes'
 
 // helpers
-import { DEFAULT_PROPOSAL, checkPaymentExists, getValidityStageThreeTable } from '../ProposalSubmition.helpers'
+import { DEFAULT_PROPOSAL, checkPaymentExists, getValidityStageThreeTable } from '../ProposalSubmission.helpers'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'

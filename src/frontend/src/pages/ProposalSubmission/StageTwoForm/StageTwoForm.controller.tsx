@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // types
-import { StageTwoFormProps, ProposalBytesType } from '../ProposalSubmittion.types'
+import { StageTwoFormProps, ProposalBytesType } from '../ProposalSubmission.types'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -20,7 +20,7 @@ import {
   DEFAULT_PROPOSAL,
   getBytesPairValidationStatus,
   PROPOSAL_BYTE,
-} from '../ProposalSubmition.helpers'
+} from '../ProposalSubmission.helpers'
 import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { isValidLength } from 'utils/validatorFunctions'
 import { INFO_DEFAULT, INFO_WARNING } from 'app/App.components/Info/info.constants'
