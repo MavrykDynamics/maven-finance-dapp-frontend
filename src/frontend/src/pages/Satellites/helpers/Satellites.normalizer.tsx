@@ -1,16 +1,22 @@
 import type { SatelliteRecordType, SatelliteVotingsType } from '../../../utils/TypesAndInterfaces/Satellites'
 import type { SatelliteRecordGraphQl, DelegationGraphQl } from '../../../utils/TypesAndInterfaces/Satellites'
-import { GovernanceFinancialRequestGraphQL } from 'utils/TypesAndInterfaces/Governance'
+import { GovernanceFinancialRequestGraphQL, GovernanceSatelliteCycleData } from 'utils/TypesAndInterfaces/Governance'
 import {
   Aggregator,
   Aggregator_Oracle,
   Aggregator_Oracle_Observation,
   Emergency_Governance,
   Governance_Proposal,
+  Governance_Satellite_Snapshot,
 } from 'utils/generated/graphqlTypes'
 
 // helpers
-import { calcWithoutMu, calcWithoutPrecision, getNumberInBounds } from '../../../utils/calcFunctions'
+import {
+  calcWithoutMu,
+  calcWithoutPrecision,
+  getNumberInBounds,
+  convertNumberForClient,
+} from '../../../utils/calcFunctions'
 import {
   defaultSatelliteDescriptionMaxLength,
   defaultSatelliteNameMaxLength,
@@ -211,8 +217,34 @@ export const getSatelliteVotings = ({
   }
 }
 
+type Snapshot = Pick<Governance_Satellite_Snapshot, 'user_id' | 'total_voting_power'>
+/**
+ * @param snapshots array of objects with user_id and total_voting_power
+ * @param cycle current active cycle (can be 0 if cycle hadn't started yet)
+ * @returns object where user_id is key and snapshot object as value
+ */
+export const createSatelliteSnapshotsByIds = (snapshots: Snapshot[], cycle: number) => {
+  if (snapshots.length === 0 || cycle === 0) return {}
+
+  const uniqueIds = new Set<string>()
+  const snapshotsWithoutDuplicates: Snapshot[] = []
+
+  for (const obj of snapshots) {
+    if (!uniqueIds.has(obj.user_id)) {
+      snapshotsWithoutDuplicates.push(obj)
+      uniqueIds.add(obj.user_id)
+    }
+  }
+
+  return snapshotsWithoutDuplicates.reduce((acc: { [key: string]: Snapshot }, s) => {
+    acc[s.user_id] = { ...s }
+    return acc
+  }, {})
+}
+
 export const normallizeSatellite = (
   satelliteRecord: SatelliteRecordGraphQl,
+  satelliteObjectSnapshots: ReturnType<typeof createSatelliteSnapshotsByIds>,
   metricsData: {
     proposals: Array<Governance_Proposal>
     emergencyGovernanceLedger: Array<Emergency_Governance>
@@ -250,6 +282,9 @@ export const normallizeSatellite = (
     satelliteFee: (satelliteRecord?.fee ?? 0) / 100,
     mvkBalance: calcWithoutPrecision(satelliteRecord?.user.mvk_balance),
     sMvkBalance: calcWithoutPrecision(satelliteRecord?.user.smvk_balance),
+    totalVotingPower: convertNumberForClient({
+      number: satelliteObjectSnapshots[satelliteRecord.user_id]?.total_voting_power ?? 0,
+    }),
     totalDelegatedAmount: calcWithoutPrecision(satelliteTotalDelegatedAmount),
     accuracy: getSatelliteAccuracy(satelliteRecord),
     oracleRecords: satelliteOracleRecords,
@@ -277,7 +312,11 @@ export const normalizeSatellitesLedger = (store: {
   emergency_governance: Array<Emergency_Governance>
   aggregator: Array<Aggregator>
   governance_financial_request: Array<GovernanceFinancialRequestGraphQL>
+  governance: GovernanceSatelliteCycleData[]
 }) => {
+  const { satellite_snapshots, cycle_id } = store.governance[0]
+  const satelliteObjectSnapshots = createSatelliteSnapshotsByIds(satellite_snapshots, cycle_id)
+
   const normalizedSatellites = store.satellite.reduce<{
     satellitesMapper: Record<SatelliteRecordType['address'], SatelliteRecordType>
     activeSatellitesIds: Array<SatelliteRecordType['address']>
@@ -285,7 +324,7 @@ export const normalizeSatellitesLedger = (store: {
     oraclesIds: Array<SatelliteRecordType['address']>
   }>(
     (acc, satelliteRecord) => {
-      const nomalizedSatellite = normallizeSatellite(satelliteRecord, {
+      const nomalizedSatellite = normallizeSatellite(satelliteRecord, satelliteObjectSnapshots, {
         proposals: store.governance_proposal,
         emergencyGovernanceLedger: store.emergency_governance,
         feeds: store.aggregator,

@@ -22,6 +22,7 @@ import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // types
 import { State } from 'reducers'
@@ -43,6 +44,8 @@ import {
   SatelliteCardRow,
 } from './SatelliteCard.style'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
+import colors from 'styles/colors'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -61,6 +64,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const dispatch = useDispatch()
 
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     accountPkh,
@@ -184,9 +188,16 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
               </SatelliteProfileDetails>
             ) : (
               <SatelliteTextGroup>
-                <SatelliteMainText>Total Voting Power</SatelliteMainText>
+                <div className="text-wrapper">
+                  <SatelliteMainText>Total Voting Power</SatelliteMainText>
+                  <CustomTooltip
+                    text={TOTAL_VOTING_POWER_TOOLTIP_TEXT}
+                    iconId="info"
+                    defaultStrokeColor={colors[themeSelected]['textColor']}
+                  />
+                </div>
                 <SatelliteSubText>
-                  <CommaNumber value={satellite.sMvkBalance + satellite.totalDelegatedAmount} endingText="sMVK" />
+                  <CommaNumber value={satellite.totalVotingPower} endingText="sMVK" />
                 </SatelliteSubText>
               </SatelliteTextGroup>
             )}
