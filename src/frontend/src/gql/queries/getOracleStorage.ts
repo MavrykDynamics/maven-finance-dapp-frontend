@@ -117,3 +117,13 @@ query GetOracleDataFeeds {
   }
 }
 `)
+
+export const SUBSCRIBE_CHAIN_POINTS_COUNT = gql(`
+subscription SatellitesStorageSubscription {
+  aggregator_aggregate {
+    aggregate {
+      count
+    }
+  }
+}
+`)

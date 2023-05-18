@@ -12,6 +12,8 @@ import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { useSubscription } from '@apollo/client'
+import { SUBSCRIBE_CHAIN_POINTS_COUNT } from 'gql/queries/getOracleStorage'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -61,14 +63,12 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
   const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
 
-  const dataPointsCount = useMemo(
-    () =>
-      feedsLedger?.filter(
-        ({ last_completed_data_last_updated_at }) =>
-          dayjs(Date.now()).diff(dayjs(last_completed_data_last_updated_at), 'minutes') <= 60,
-      ).length,
-    [feedsLedger],
-  )
+  // onChain data points subscription
+  const { data: chainPointsData } = useSubscription(SUBSCRIBE_CHAIN_POINTS_COUNT, {
+    fetchPolicy: 'network-only',
+  })
+  const dataPointsCount = chainPointsData ? chainPointsData.aggregator_aggregate.aggregate?.count ?? 0 : 0
+
   const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
 
   const averageRevard = calcWithoutPrecision(
