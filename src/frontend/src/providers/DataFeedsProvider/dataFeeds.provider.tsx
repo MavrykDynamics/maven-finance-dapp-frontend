@@ -40,8 +40,6 @@ export class DataFeedsProvider extends React.Component<Props, State> {
     })
   }
 
-  updateDataFeedDetails = (data: GetOracleDataFeedsQuery) => {}
-
   registerFeedAction = () => {
     console.info('Unimplemented')
   }

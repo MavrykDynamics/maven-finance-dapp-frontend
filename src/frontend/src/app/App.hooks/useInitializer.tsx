@@ -14,6 +14,7 @@ import {
   GET_MVK_FAUCET_QUERY,
 } from 'gql/queries/getTokensData'
 import { GET_ORACLE_STORAGE_QUERY } from 'gql/queries/getOracleStorage'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 type InternalState = {
   tokensAddress: string | null
@@ -23,7 +24,7 @@ export const useInitializer = () => {
   const [state, setState] = useState<InternalState>({ tokensAddress: null })
 
   const { initializeDappConfigData } = useDAPPConfigContext()
-  const { initializeDAPPTokens, updateMVKFaucetAddress } = useTokensContext()
+  const { initializeDAPPTokens, updateMVKFaucetAddress, selfUpdateXtzBakers } = useTokensContext()
   const { initializeDataFeeds } = useDataFeedsContext()
 
   // dapp max lengths
@@ -55,6 +56,15 @@ export const useInitializer = () => {
   // data feeds
   const { data: feedsData, loading: feedsLoading } = useQuery(GET_ORACLE_STORAGE_QUERY)
 
+  // for tokens
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await selfUpdateXtzBakers()
+    } catch (error) {
+      console.error(error)
+    }
+  }, [])
+
   // maxLengths init
   useEffect(() => {
     if (!maxLengthsLoading && maxLengthsData) {
@@ -64,10 +74,10 @@ export const useInitializer = () => {
 
   // tokens init
   useEffect(() => {
-    if (!contractsLoading && !dappTokensLoading && contractsData && dappTokensData) {
+    if (!contractsLoading && !dappTokensLoading && !isLoading && contractsData && dappTokensData) {
       initializeDAPPTokens(dappTokensData)
     }
-  }, [contractsLoading, dappTokensLoading])
+  }, [contractsLoading, dappTokensLoading, isLoading])
 
   useEffect(() => {
     if (!mvkLoading && mvkData) {

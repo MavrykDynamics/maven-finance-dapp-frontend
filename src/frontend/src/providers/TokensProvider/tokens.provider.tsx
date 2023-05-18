@@ -14,9 +14,10 @@ import { getSymbolAndNameFromFeedName } from 'utils/parse'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 // types
-import { State, Props, TokensContext } from './tokens.provider.types'
+import { State, Props, TokensContext, XtxBakersType } from './tokens.provider.types'
 import { DappTokensQuery, Dipdup_Token_Metadata, MvkFaucetQuery } from 'utils/__generated__/graphql'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
+import { getXTZBakers } from 'pages/Loans/LoansFethcers'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
@@ -52,6 +53,7 @@ export class TokensProvider extends React.Component<Props, State> {
         // actions
         initializeDAPPTokens: this.initializeDAPPTokens,
         updateMVKFaucetAddress: this.updateMVKFaucetAddress,
+        selfUpdateXtzBakers: this.selfUpdateXtzBakers,
       },
     }
   }
@@ -109,6 +111,18 @@ export class TokensProvider extends React.Component<Props, State> {
     })
   }
 
+  selfUpdateXtzBakers = async () => {
+    // TODO fix types
+    const xtzBakers = (await getXTZBakers()) as unknown as XtxBakersType
+
+    this.setState({
+      context: {
+        ...this.state.context,
+        xtzBakers,
+      },
+    })
+  }
+
   componentDidUpdate(prevProps: Readonly<Props>): void {
     if (prevProps.feedsLedger !== this.props.feedsLedger) {
       this.updateTokenPrices(this.props.feedsLedger)
@@ -117,10 +131,9 @@ export class TokensProvider extends React.Component<Props, State> {
 
   //   case GET_AVALIABLE_COLLATERALS:
   //     return { ...state, avaliableCollaterals: action.avaliableCollaterals }
-  //   case GET_XTZ_BAKERS:
-  //     return { ...state, xtzBakers: action.xtzBakers }
 
   render(): React.ReactNode {
+    console.log(this.state.context)
     return <tokensContext.Provider value={this.state.context}>{this.props.children}</tokensContext.Provider>
   }
 }
