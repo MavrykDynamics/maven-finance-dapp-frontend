@@ -56,7 +56,6 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
   const config = {
     address: governanceSatellite.address,
     admin: governanceSatellite.admin,
-    purposeMaxLength: governanceSatellite.gov_purpose_max_length,
     approvalPercentage: governanceSatellite.gov_sat_approval_percentage,
     durationInDays: governanceSatellite.gov_sat_duration_in_days,
     counter: governanceSatellite.governance_satellite_counter,

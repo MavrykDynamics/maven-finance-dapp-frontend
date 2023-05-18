@@ -4,7 +4,7 @@ import { State } from 'reducers'
 
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
-import type { CouncilMaxLength } from '../../../utils/TypesAndInterfaces/Council'
+import type { CouncilMaxLength } from 'providers/DAPPConfig/dappConfig.types'
 
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'

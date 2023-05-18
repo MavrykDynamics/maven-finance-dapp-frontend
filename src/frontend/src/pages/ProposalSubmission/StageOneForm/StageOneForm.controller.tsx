@@ -17,6 +17,7 @@ import { State } from 'reducers'
 // helpers, constants
 import { isValidLength, isValidHttpUrl } from '../../../utils/validatorFunctions'
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 
 export const StageOneForm = ({
   proposalId,
@@ -25,8 +26,10 @@ export const StageOneForm = ({
   updateLocalProposalValidation,
   updateLocalProposalData,
 }: StageOneFormProps) => {
-  const { fee, successReward, proposalTitleMaxLength, proposalDescriptionMaxLength, proposalSourceCodeMaxLength } =
-    useSelector((state: State) => state.governance.config)
+  const {
+    governance: { proposalTitleMaxLength, proposalDescriptionMaxLength, proposalSourceCodeMaxLength },
+  } = useDAPPConfigContext()
+  const { fee, successReward } = useSelector((state: State) => state.governance.config)
 
   const isProposalSubmitted = proposalId >= 0
 

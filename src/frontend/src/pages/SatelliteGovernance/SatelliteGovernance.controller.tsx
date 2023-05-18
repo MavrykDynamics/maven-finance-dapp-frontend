@@ -5,6 +5,9 @@ import { State } from 'reducers'
 import { useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 
+// providers
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+
 // const
 import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
 
@@ -98,15 +101,15 @@ export const SatelliteGovernance = () => {
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {
-    isLoaded,
-    ongoingSatelliteGovIds,
-    pastSatelliteGovIds,
-    mySatelliteGovIds,
-    satelliteGovIdsMapper,
-    config: { purposeMaxLength },
-  } = useSelector((state: State) => state.satelliteGovernance)
+    governanceSatellite: { purposeMaxLength },
+  } = useDAPPConfigContext()
 
-  const { feedNameMaxLength } = useSelector((state: State) => state.dataFeeds.config)
+  const { isLoaded, ongoingSatelliteGovIds, pastSatelliteGovIds, mySatelliteGovIds, satelliteGovIdsMapper } =
+    useSelector((state: State) => state.satelliteGovernance)
+
+  const {
+    dataFeeds: { feedNameMaxLength },
+  } = useDAPPConfigContext()
 
   const ddItems = useMemo(() => itemsForDropDown.map((item) => getDdItem(item)), [])
 

@@ -1,21 +1,3 @@
-export const COUNCIL_STORAGE_QUERY = `
-  query GetCouncilStorageQuery {
-    council {
-      council_member_name_max_length
-      council_member_image_max_length
-      council_member_website_max_length
-      request_purpose_max_length
-      request_token_name_max_length
-    }
-
-    break_glass {
-      glass_broken
-    }
-  }
-`
-export const COUNCIL_STORAGE_QUERY_NAME = 'GetCouncilStorageQuery'
-export const COUNCIL_STORAGE_QUERY_VARIABLE = {}
-
 export const COUNCIL_MEMBERS_QUERY = `
   query GetCouncilMembers {
     council {

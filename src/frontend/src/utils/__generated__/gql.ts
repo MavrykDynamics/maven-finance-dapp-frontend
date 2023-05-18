@@ -13,9 +13,9 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
+    "\nquery getMaxlenghtsQuery {\n    council {\n      council_member_image_max_length\n      council_member_name_max_length\n      council_member_website_max_length\n      request_purpose_max_length\n      request_token_name_max_length\n    }\n    governance(order_by: {active: desc}) {\n      proposal_description_max_length\n      proposal_invoice_max_length\n      proposal_metadata_title_max_length\n      proposal_source_code_max_length\n      proposal_title_max_length\n    }\n    emergency_governance {\n      proposal_desc_max_length\n      proposal_title_max_length\n    }\n    governance_satellite {\n      gov_purpose_max_length\n    }\n    delegation {\n      satellite_description_max_length\n      satellite_image_max_length\n      satellite_name_max_length\n      satellite_website_max_length\n    }\n  }\n  \n": types.GetMaxlenghtsQueryDocument,
     "\n  subscription subscribeSmvkHistoryData {\n    smvk_history_data(distinct_on: timestamp) {\n      mvk_total_supply\n      smvk_total_supply\n      timestamp\n    }\n  }\n": types.SubscribeSmvkHistoryDataDocument,
     "\n  subscription subscribeAdressBalance($_eq: String) {\n    mavryk_user(where: { address: { _eq: $_eq } }) {\n      address\n      mvk_balance\n      smvk_balance\n    }\n  }\n": types.SubscribeAdressBalanceDocument,
-    "\n  subscription subscribeDoormanAddressBalance($doormanContractAddress: String) {\n    mavryk_user(where: { address: { _eq: $doormanContractAddress } }) {\n      mvk_balance\n    }\n  }\n": types.SubscribeDoormanAddressBalanceDocument,
     "\nsubscription subscribeMvkTokenTotal {\n  mvk_token {\n    total_supply\n    maximum_supply\n  }\n}\n": types.SubscribeMvkTokenTotalDocument,
 };
 
@@ -36,15 +36,15 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "\nquery getMaxlenghtsQuery {\n    council {\n      council_member_image_max_length\n      council_member_name_max_length\n      council_member_website_max_length\n      request_purpose_max_length\n      request_token_name_max_length\n    }\n    governance(order_by: {active: desc}) {\n      proposal_description_max_length\n      proposal_invoice_max_length\n      proposal_metadata_title_max_length\n      proposal_source_code_max_length\n      proposal_title_max_length\n    }\n    emergency_governance {\n      proposal_desc_max_length\n      proposal_title_max_length\n    }\n    governance_satellite {\n      gov_purpose_max_length\n    }\n    delegation {\n      satellite_description_max_length\n      satellite_image_max_length\n      satellite_name_max_length\n      satellite_website_max_length\n    }\n  }\n  \n"): (typeof documents)["\nquery getMaxlenghtsQuery {\n    council {\n      council_member_image_max_length\n      council_member_name_max_length\n      council_member_website_max_length\n      request_purpose_max_length\n      request_token_name_max_length\n    }\n    governance(order_by: {active: desc}) {\n      proposal_description_max_length\n      proposal_invoice_max_length\n      proposal_metadata_title_max_length\n      proposal_source_code_max_length\n      proposal_title_max_length\n    }\n    emergency_governance {\n      proposal_desc_max_length\n      proposal_title_max_length\n    }\n    governance_satellite {\n      gov_purpose_max_length\n    }\n    delegation {\n      satellite_description_max_length\n      satellite_image_max_length\n      satellite_name_max_length\n      satellite_website_max_length\n    }\n  }\n  \n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "\n  subscription subscribeSmvkHistoryData {\n    smvk_history_data(distinct_on: timestamp) {\n      mvk_total_supply\n      smvk_total_supply\n      timestamp\n    }\n  }\n"): (typeof documents)["\n  subscription subscribeSmvkHistoryData {\n    smvk_history_data(distinct_on: timestamp) {\n      mvk_total_supply\n      smvk_total_supply\n      timestamp\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  subscription subscribeAdressBalance($_eq: String) {\n    mavryk_user(where: { address: { _eq: $_eq } }) {\n      address\n      mvk_balance\n      smvk_balance\n    }\n  }\n"): (typeof documents)["\n  subscription subscribeAdressBalance($_eq: String) {\n    mavryk_user(where: { address: { _eq: $_eq } }) {\n      address\n      mvk_balance\n      smvk_balance\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  subscription subscribeDoormanAddressBalance($doormanContractAddress: String) {\n    mavryk_user(where: { address: { _eq: $doormanContractAddress } }) {\n      mvk_balance\n    }\n  }\n"): (typeof documents)["\n  subscription subscribeDoormanAddressBalance($doormanContractAddress: String) {\n    mavryk_user(where: { address: { _eq: $doormanContractAddress } }) {\n      mvk_balance\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

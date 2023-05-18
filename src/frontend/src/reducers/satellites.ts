@@ -4,9 +4,6 @@ import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 export type SatellitesState = {
   config: {
     minimumStakedMvkBalance: number
-    satelliteNameMaxLength: number
-    satelliteDescriptionMaxLength: number
-    satelliteWebsiteMaxLength: number
     isConfigLoaded: boolean
   }
   satelliteMapper: Record<string, SatelliteRecordType>
@@ -19,9 +16,6 @@ export type SatellitesState = {
 const satellitesDefaultState: SatellitesState = {
   config: {
     minimumStakedMvkBalance: 0,
-    satelliteNameMaxLength: 0,
-    satelliteDescriptionMaxLength: 0,
-    satelliteWebsiteMaxLength: 0,
     isConfigLoaded: false,
   },
   satelliteMapper: {},

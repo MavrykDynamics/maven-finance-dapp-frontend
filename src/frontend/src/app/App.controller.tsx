@@ -5,11 +5,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useMedia } from 'react-use'
 import { ThunkDispatch } from 'redux-thunk'
 import { useCookies } from 'react-cookie'
+import { useQuery } from '@apollo/client'
 
 import { configureStore } from './App.store'
 
 // providers
 import { StakeProvider } from 'providers/StakeProvider/stake.provider'
+
+// queries
+import { GET_MAX_LENGTHS_QUERY } from 'gql/queries/getMaxLengthsData'
 
 // types
 import { State } from '../reducers'
@@ -23,6 +27,9 @@ import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
 import { AppStyled } from './App.style'
 import LoansPopupsProvider from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { PolicyPopup } from 'app/App.components/PolicyPopup/Policy.controller'
+
+// providers
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
@@ -47,11 +54,20 @@ const AppContainer = () => {
 
   const showSidebarOpened = useMedia('(min-width: 1400px)')
   const [{ policyPopup }, setCookie] = useCookies(['policyPopup'])
+  const { initializeDappConfigData } = useDAPPConfigContext()
+
+  const { data, loading } = useQuery(GET_MAX_LENGTHS_QUERY)
 
   const { changeNodePopupOpen, sidebarOpened } = useSelector((state: State) => state.preferences)
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
 
   const [isIOS, setIsIOS] = useState(true)
+
+  useEffect(() => {
+    if (!loading && data) {
+      initializeDappConfigData(data)
+    }
+  }, [loading])
 
   useEffect(() => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))

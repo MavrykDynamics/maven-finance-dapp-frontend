@@ -3,6 +3,9 @@ import qs from 'qs'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
+// providers
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+
 // components
 import { CouncilFormAddVestee } from './CouncilFormAddVestee.view'
 import { CouncilFormAddCouncilMember } from './CouncilFormAddCouncilMember.view'
@@ -38,9 +41,7 @@ export function CouncilForm() {
   const { search } = useLocation()
   const { action } = qs.parse(search, { ignoreQueryPrefix: true })
 
-  const {
-    config: { councilMaxLength },
-  } = useSelector((state: State) => state.council)
+  const { council: councilMaxLength } = useDAPPConfigContext()
 
   switch (action) {
     case actions.ADD_VESTEE:

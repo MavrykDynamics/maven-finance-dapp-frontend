@@ -48,7 +48,7 @@ export function normalizeCouncilActions(
       signersCount: item.signers_count,
       startDatetime: item.start_datetime ?? '',
       parameters: item.parameters,
-      councilSize: item.council_size_snapshot
+      councilSize: item.council_size_snapshot,
     }
 
     acc.actionsMapper[action.id] = action
@@ -87,16 +87,6 @@ export function normalizeCouncilMembers(storage: CouncilMemberGraphQL[]) {
       website: item.website,
     }
   })
-}
-
-export const normalizeMaxLength = (storage: CouncilGraphQL) => {
-  return {
-    councilMemberImageMaxLength: storage?.council_member_image_max_length ?? defaultCouncilMemberImageMaxLength,
-    councilMemberNameMaxLength: storage?.council_member_name_max_length ?? defaultCouncilMemberNameMaxLength,
-    councilMemberWebsiteMaxLength: storage?.council_member_website_max_length ?? defaultCouncilMemberWebsiteMaxLength,
-    requestPurposeMaxLength: storage?.request_purpose_max_length ?? defaultRequestPurposeMaxLength,
-    requestTokenNameMaxLength: storage?.request_token_name_max_length ?? defaultRequestTokenNameMaxLength,
-  }
 }
 
 export const memberIsFirstOfList = (list: CouncilMembers, address?: string) => {

@@ -1,7 +1,6 @@
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import { CouncilActionType, CouncilMembers, CouncilMaxLength } from '../utils/TypesAndInterfaces/Council'
+import { CouncilActionType, CouncilMembers } from '../utils/TypesAndInterfaces/Council'
 import {
-  GET_COUNCIL_STORAGE,
   GET_COUNCIL_MEMBERS,
   GET_COUNCIL_PENDING_ACTIONS,
   GET_COUNCIL_PAST_ACTIONS,
@@ -13,18 +12,8 @@ import {
   GET_BREAK_GLASS_COUNCIL_PAST_ACTIONS,
   CLEAR_MY_BREAK_GLASS_COUNCIL_ACTIONS,
 } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
-import {
-  defaultCouncilMemberImageMaxLength,
-  defaultCouncilMemberNameMaxLength,
-  defaultCouncilMemberWebsiteMaxLength,
-  defaultRequestPurposeMaxLength,
-  defaultRequestTokenNameMaxLength,
-} from 'app/App.components/Input/Input.constants'
 
 export type CouncilState = {
-  config: {
-    councilMaxLength: CouncilMaxLength
-  }
   councilMembers: CouncilMembers
   councilActions: {
     allPendingActions: number[]
@@ -53,15 +42,6 @@ export type CouncilState = {
 }
 
 const councilDefaultState: CouncilState = {
-  config: {
-    councilMaxLength: {
-      councilMemberImageMaxLength: defaultCouncilMemberImageMaxLength,
-      councilMemberNameMaxLength: defaultCouncilMemberNameMaxLength,
-      councilMemberWebsiteMaxLength: defaultCouncilMemberWebsiteMaxLength,
-      requestPurposeMaxLength: defaultRequestPurposeMaxLength,
-      requestTokenNameMaxLength: defaultRequestTokenNameMaxLength,
-    },
-  },
   councilMembers: [],
   councilActions: {
     allPendingActions: [],
@@ -91,15 +71,6 @@ const councilDefaultState: CouncilState = {
 
 export function council(state = councilDefaultState, action: Action) {
   switch (action.type) {
-    case GET_COUNCIL_STORAGE:
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          councilMaxLength: action.councilMaxLength,
-        },
-        isStorageLoaded: true,
-      }
     case GET_COUNCIL_MEMBERS:
       return {
         ...state,

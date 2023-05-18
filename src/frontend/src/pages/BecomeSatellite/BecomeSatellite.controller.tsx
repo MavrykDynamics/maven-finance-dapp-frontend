@@ -57,6 +57,7 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -75,11 +76,13 @@ export const BecomeSatellite = () => {
   } = useSelector((state: State) => state.wallet)
   const {
     satelliteMapper,
-    config: { minimumStakedMvkBalance, isConfigLoaded, ...restSatelliteConfig },
+    config: { minimumStakedMvkBalance, isConfigLoaded },
   } = useSelector((state: State) => state.satellites)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
+
+  const { satelliteDelegation } = useDAPPConfigContext()
 
   const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
 
@@ -182,7 +185,7 @@ export const BecomeSatellite = () => {
           ...form,
           [name]: {
             text: `${value.substring(0, value.length - 1)}%`,
-            status: getInputValidationStatus(name, value.substring(0, value.length - 1), restSatelliteConfig),
+            status: getInputValidationStatus(name, value.substring(0, value.length - 1), satelliteDelegation),
           },
         })
       } else {
@@ -190,12 +193,12 @@ export const BecomeSatellite = () => {
           ...form,
           [name]: {
             text: `${value.replace('%', '')}%`,
-            status: getInputValidationStatus(name, value.replace('%', ''), restSatelliteConfig),
+            status: getInputValidationStatus(name, value.replace('%', ''), satelliteDelegation),
           },
         })
       }
     } else {
-      setForm({ ...form, [name]: { text: value, status: getInputValidationStatus(name, value, restSatelliteConfig) } })
+      setForm({ ...form, [name]: { text: value, status: getInputValidationStatus(name, value, satelliteDelegation) } })
     }
   }
 
@@ -352,7 +355,7 @@ export const BecomeSatellite = () => {
                   onChange={handleChange}
                   inputStatus={form.description.status}
                   name={'description'}
-                  textAreaMaxLimit={restSatelliteConfig.satelliteDescriptionMaxLength}
+                  textAreaMaxLimit={satelliteDelegation.satelliteDescriptionMaxLength}
                   label={pageText.descrInputLabel}
                 />
 

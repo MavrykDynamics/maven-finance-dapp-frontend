@@ -3,7 +3,6 @@ export const SATELLITE_GOVERNANCE_STORAGE_QUERY = `
     governance_satellite {
       address
       admin
-      gov_purpose_max_length
       gov_sat_approval_percentage
       gov_sat_duration_in_days
       governance_id
