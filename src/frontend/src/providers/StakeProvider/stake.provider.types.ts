@@ -36,7 +36,7 @@ export type Props = {
   children: React.ReactNode
   doormanAddress: string
   mvkTokenAddress: string
-  accountPkh?: string
   user: UserState
+  accountPkh?: string
   dispatch: AppDispatch
 }

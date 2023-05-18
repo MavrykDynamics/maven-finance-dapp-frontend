@@ -18,6 +18,7 @@ import Mobile from './app/App.components/Mobile/Mobile.view'
 
 // providers
 import DAPPConfigProvider from 'providers/DAPPConfig/dappConfig.provider'
+import DataFeedsProvider from 'providers/DataFeedsProvider/dataFeeds.provider'
 import TokensProvider from 'providers/TokensProvider/tokens.provider'
 import DarkThemeProvider from './app/App.components/DarkThemeProvider/DarkThemeProvider.view'
 
@@ -31,14 +32,16 @@ export const Root = () => {
       <ApolloProvider client={client}>
         <Provider store={store}>
           <DAPPConfigProvider>
-            <TokensProvider>
-              {/* <PersistGate loading={null} persistor={persistor}> */}
-              <DarkThemeProvider>
-                <GlobalStyle />
-                {isMobile ? <Mobile /> : <App />}
-              </DarkThemeProvider>
-              {/* </PersistGate> */}
-            </TokensProvider>
+            <DataFeedsProvider>
+              <TokensProvider>
+                {/* <PersistGate loading={null} persistor={persistor}> */}
+                <DarkThemeProvider>
+                  <GlobalStyle />
+                  {isMobile ? <Mobile /> : <App />}
+                </DarkThemeProvider>
+                {/* </PersistGate> */}
+              </TokensProvider>
+            </DataFeedsProvider>
           </DAPPConfigProvider>
         </Provider>
       </ApolloProvider>
