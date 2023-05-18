@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
-import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from '../Modals/Modals.helpers'
 import { State } from 'reducers'
 import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
@@ -53,7 +53,8 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
   const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
-  const userAssetBalance = userTokens[borrowedAsset?.symbol.toLowerCase() ?? '']?.balance ?? 0
+  const balanceSymbol = isTezosAsset(borrowedAsset?.gqlName ?? '') ? 'tezos' : borrowedAsset?.symbol.toLowerCase() ?? ''
+  const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
 
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = borrowedAsset

@@ -8,7 +8,7 @@ import {
   vaultCardTabNames,
 } from 'pages/Loans/Loans.const'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
-import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from '../Modals/Modals.helpers'
 import { State } from 'reducers'
 import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
@@ -68,7 +68,9 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
   const totalOutstanding = feesAmount + Number(borrowedAmount)
-  const userAssetBalance = userTokens[borrowedAsset?.symbol.toLowerCase() ?? '']?.balance ?? 0
+  const balanceSymbol = isTezosAsset(borrowedAsset?.gqlName ?? '') ? 'tezos' : borrowedAsset?.symbol.toLowerCase() ?? ''
+  const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
+
   const isRepayInFull = activeRepayTab?.id === vaultCardTabNames.REPAY_IN_FULL
   const isMinimumRepayWarning =
     inputData.validationStatus === INPUT_STATUS_ERROR && inputAmount <= minimumRepay && totalOutstanding !== 0
