@@ -46,6 +46,8 @@ import { dropProposal, lockProposal, submitProposal, updateProposalData } from '
 import { Info } from 'app/App.components/Info/Info.view'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import colors from 'styles/colors'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const dispatch = useDispatch()
@@ -61,6 +63,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     config: { fee, governancePhase },
   } = useSelector((state: State) => state.governance)
   const { whitelistTokens, dipDupTokens } = useSelector((state: State) => state.tokens)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const [activeTab, setActiveTab] = useState(1)
 
@@ -357,39 +360,71 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
         <ProposalSubmittionButtons>
           {/* Drop proposal drops proposal */}
-          <Button
-            kind={BUTTON_SECONDARY}
-            form={BUTTON_WIDE}
-            disabled={isDropDisabled}
-            onClick={() => handleDropProposal(selectedUserProposalId)}
-          >
-            <Icon id="navigation-menu_close" /> Drop Proposal
-          </Button>
+          <div className="btn-wrapper">
+            <Button
+              kind={BUTTON_SECONDARY}
+              form={BUTTON_WIDE}
+              disabled={isDropDisabled}
+              onClick={() => handleDropProposal(selectedUserProposalId)}
+            >
+              <Icon id="navigation-menu_close" /> Drop Proposal
+            </Button>
+            <CustomTooltip
+              className="tooltip"
+              iconId="info"
+              text={'f'}
+              defaultStrokeColor={colors[themeSelected]['valueColor']}
+            />
+          </div>
 
           {/* Submit proposal locks proposal */}
-          <Button
-            kind={BUTTON_PRIMARY}
-            form={BUTTON_WIDE}
-            disabled={isSubmitDisabled}
-            onClick={() => handleSubmitProposal(selectedUserProposalId)}
-          >
-            <Icon id="auction" /> Submit Proposal
-          </Button>
-
-          {/* if we are on stage 3 show save changes btn (it creates if proposal is not created, or updates data if proposal exists), othervise show next step (navigating to thee next stage btn) */}
-          {activeTab === 3 ? (
+          <div className="btn-wrapper">
             <Button
               kind={BUTTON_PRIMARY}
               form={BUTTON_WIDE}
-              disabled={isSaveProposalDisabled}
-              onClick={() => handleUpdateData(selectedUserProposalId)}
+              disabled={isSubmitDisabled}
+              onClick={() => handleSubmitProposal(selectedUserProposalId)}
             >
-              <Icon id="bytes" /> Save Changes
+              <Icon id="submit" /> Submit Proposal
             </Button>
+            <CustomTooltip
+              className="tooltip"
+              iconId="info"
+              text={'f'}
+              defaultStrokeColor={colors[themeSelected]['valueColor']}
+            />
+          </div>
+
+          {/* if we are on stage 3 show save changes btn (it creates if proposal is not created, or updates data if proposal exists), othervise show next step (navigating to thee next stage btn) */}
+          {activeTab === 3 ? (
+            <div className="btn-wrapper">
+              <Button
+                kind={BUTTON_PRIMARY}
+                form={BUTTON_WIDE}
+                disabled={isSaveProposalDisabled}
+                onClick={() => handleUpdateData(selectedUserProposalId)}
+              >
+                <Icon id="save" /> Save Changes
+              </Button>
+              <CustomTooltip
+                className="tooltip"
+                iconId="info"
+                text={'f'}
+                defaultStrokeColor={colors[themeSelected]['valueColor']}
+              />
+            </div>
           ) : (
-            <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={() => handleNextStep(activeTab + 1)}>
-              Next Step <Icon id="full-arrow-right" />
-            </Button>
+            <div className="btn-wrapper">
+              <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={() => handleNextStep(activeTab + 1)}>
+                Next Step <Icon id="full-arrow-right" />
+              </Button>
+              <CustomTooltip
+                className="tooltip"
+                iconId="info"
+                text={'f'}
+                defaultStrokeColor={colors[themeSelected]['valueColor']}
+              />
+            </div>
           )}
         </ProposalSubmittionButtons>
       </ProposalSubmissionForm>

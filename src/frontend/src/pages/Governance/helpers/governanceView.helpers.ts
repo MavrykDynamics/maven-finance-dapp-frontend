@@ -20,11 +20,11 @@ export const generateCyclesDdOptions = (currentCycle: number): Array<DropDownIte
 export const getTooltipForStatus = (proposalStatus: ProposalStatusType) => {
   switch (proposalStatus) {
     case ProposalStatus.ONGOING:
-      return 'Text for tooltip'
+      return 'Proposal is open for voting during this voting round.'
     case ProposalStatus.LOCKED:
-      return 'Text for tooltip'
+      return 'Proposal is locked. Proposal data can no longer be edited. Able to be voted on.'
     case ProposalStatus.UNLOCKED:
-      return 'Text for tooltip'
+      return 'Proposal is unlocked and can be edited at this time. Can only be voted on once the proposer locks it.'
     default:
       return null
   }

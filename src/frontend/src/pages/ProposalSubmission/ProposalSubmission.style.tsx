@@ -170,11 +170,21 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>
 
 // Proposal submittion general styles
 export const ProposalSubmittionButtons = styled.div<{ theme: MavrykTheme }>`
-  margin-top: 30px;
+  margin-top: 40px;
   display: grid;
   grid-template-columns: 220px 220px 220px;
   justify-content: flex-end;
   column-gap: 10px;
+
+  .btn-wrapper {
+    position: relative;
+
+    .tooltip {
+      position: absolute;
+      top: -15px;
+      right: -2px;
+    }
+  }
 `
 
 export const SubmitProposalHeader = styled.div<{ theme: MavrykTheme }>`

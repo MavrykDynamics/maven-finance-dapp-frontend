@@ -50,7 +50,6 @@ export const StageThreeForm = ({
   const { whitelistTokens } = useSelector((state: State) => state.tokens)
 
   const isProposalRound = governancePhase === 'PROPOSAL'
-  const isDisabledActions = proposalId === DEFAULT_PROPOSAL.id
 
   // is no bytes payments on proposal change add empty pair on client
   useEffect(() => {
@@ -236,7 +235,6 @@ export const StageThreeForm = ({
                         type: 'text',
                         name: 'to__id',
                         onChange: (e) => handleChange(e, rowIdx),
-                        disabled: isDisabledActions,
                       }}
                     />
                   )}
@@ -257,7 +255,6 @@ export const StageThreeForm = ({
                         type: 'text',
                         name: 'title',
                         onChange: (e) => handleChange(e, rowIdx),
-                        disabled: isDisabledActions,
                       }}
                     />
                   )}
@@ -278,7 +275,6 @@ export const StageThreeForm = ({
                         type: 'number',
                         name: 'token_amount',
                         onChange: (e) => handleChange(e, rowIdx),
-                        disabled: isDisabledActions,
                       }}
                     />
                   )}
@@ -292,7 +288,6 @@ export const StageThreeForm = ({
                       placeholder={'Select payment method'}
                       className="stage-3-dropDown"
                       items={ddItems}
-                      disabled={isDisabledActions}
                       activeItem={ddItems.find(({ id }) => address === id) ?? ddItems[0]}
                       clickItem={(newSelectedAddress: DDItemId) => {
                         handleChange(
@@ -311,7 +306,7 @@ export const StageThreeForm = ({
                     <Button
                       kind={BUTTON_SIMPLE_SMALL}
                       onClick={() => handleDeleteRow(rowIdx)}
-                      disabled={isTableDisabled || isDisabledActions}
+                      disabled={isTableDisabled}
                     >
                       <Icon id="delete" />
                     </Button>
@@ -323,7 +318,7 @@ export const StageThreeForm = ({
         </TableBody>
         <AddRowBtn>
           <CustomTooltip text="Insert 1 row below" className="tooltip">
-            <Button kind={BUTTON_SIMPLE_SMALL} onClick={handleAddRow} disabled={isTableDisabled || isDisabledActions}>
+            <Button kind={BUTTON_SIMPLE_SMALL} onClick={handleAddRow} disabled={isTableDisabled}>
               <Icon id="plus" />
             </Button>
           </CustomTooltip>
