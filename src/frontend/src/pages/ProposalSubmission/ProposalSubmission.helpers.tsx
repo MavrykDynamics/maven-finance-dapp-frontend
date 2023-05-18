@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { Governance_Proposal } from 'utils/generated/graphqlTypes'
-import { ValidSubmitProposalForm, SubmitProposalFormInputStatus } from 'utils/TypesAndInterfaces/Forms'
 import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
   PaymentsDataChangesType,
@@ -389,27 +388,3 @@ export const DEFAULT_PROPOSAL_VALIDATION: ProposalValidityObj = {
   bytesValidation: [],
   paymentsValidation: [],
 }
-
-// stage 1 default values
-export const DEFAULT_VALIDITY: ValidSubmitProposalForm = {
-  title: false,
-  description: false,
-  invoice: true,
-  successMVKReward: true,
-  invoiceTable: true,
-  sourceCode: false,
-}
-
-export const DEFAULT_INPUT_STATUSES: SubmitProposalFormInputStatus = {
-  title: '',
-  description: '',
-  invoice: '',
-  successMVKReward: '',
-  invoiceTable: 'success',
-  sourceCode: '',
-}
-
-export const PAYMENTS_TYPES = ['XTZ', 'MVK']
-export const INIT_TABLE_HEADERS = ['Address', 'Purpose', 'Amount', 'Payment Type (XTZ/MVK)', '-', '-']
-export const INIT_TABLE_DATA = [INIT_TABLE_HEADERS, ['', '', '', PAYMENTS_TYPES[0], '-', '-']]
-export const MAX_ROWS = 10

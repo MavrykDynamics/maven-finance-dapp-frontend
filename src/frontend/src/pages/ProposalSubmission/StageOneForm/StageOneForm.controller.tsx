@@ -75,8 +75,6 @@ export const StageOneForm = ({
         )
         break
       case 'invoice':
-        console.log({ invoice: e })
-
         updateLocalProposalValidation(
           {
             invoice: isValidHttpUrl(value) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,

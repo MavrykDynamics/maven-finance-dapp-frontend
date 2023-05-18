@@ -48,6 +48,12 @@ import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
+import {
+  DROP_PROPOSAL_BUTTON_TOOLTIP,
+  SUBMIT_PROPOSAL_BUTTON_TOOLTIP,
+  SAVE_CHANGES_BUTTON_TOOLTIP,
+  NEXT_STEP_BUTTON_TOOLTIP,
+} from 'texts/tooltips/governance'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const dispatch = useDispatch()
@@ -361,9 +367,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             <CustomTooltip
               className="tooltip"
               iconId="info"
-              text={
-                'Drop your proposal from the round, you will be unable to retrieve it afterwards. Please double check yourself before doing this action.'
-              }
+              text={DROP_PROPOSAL_BUTTON_TOOLTIP}
               defaultStrokeColor={colors[themeSelected]['valueColor']}
             />
           </div>
@@ -381,9 +385,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             <CustomTooltip
               className="tooltip"
               iconId="info"
-              text={
-                'Submit proposal for voting. After submission, you are unable to edit your proposal anymore. The only way to fix an issue with it is to drop it and recreate from the start.'
-              }
+              text={SUBMIT_PROPOSAL_BUTTON_TOOLTIP}
               defaultStrokeColor={colors[themeSelected]['valueColor']}
             />
           </div>
@@ -402,9 +404,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               <CustomTooltip
                 className="tooltip"
                 iconId="info"
-                text={
-                  'Save your current progress in the building of your proposal. Note that you have to at least filled out the first step in order to save it.'
-                }
+                text={SAVE_CHANGES_BUTTON_TOOLTIP}
                 defaultStrokeColor={colors[themeSelected]['valueColor']}
               />
             </div>
@@ -416,7 +416,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               <CustomTooltip
                 className="tooltip"
                 iconId="info"
-                text={'Move on to the next step of creating a proposal.'}
+                text={NEXT_STEP_BUTTON_TOOLTIP}
                 defaultStrokeColor={colors[themeSelected]['valueColor']}
               />
             </div>

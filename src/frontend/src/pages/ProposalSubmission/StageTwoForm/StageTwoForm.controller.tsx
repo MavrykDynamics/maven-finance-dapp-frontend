@@ -42,7 +42,6 @@ export const StageTwoForm = ({
     (state: State) => state.governance.config,
   )
   const isProposalPeriod = governancePhase === 'PROPOSAL'
-  const isDisabledActions = false // proposalId === DEFAULT_PROPOSAL.id
 
   // is no bytes pair on proposal change add empty pair on client
   useEffect(() => {
@@ -285,7 +284,7 @@ export const StageTwoForm = ({
                   inputSize: INPUT_MEDIUM,
                 }}
                 inputProps={{
-                  disabled: existInServer || locked || isDisabledActions,
+                  disabled: existInServer || locked,
                   value: title,
                   type: 'text',
                   name: 'title',
@@ -302,12 +301,12 @@ export const StageTwoForm = ({
                   handleOnChange(item, e.target.value, e.target.name)
                 }
                 inputStatus={validityObject?.validBytes}
-                disabled={!isProposalPeriod || locked || isDisabledActions}
+                disabled={!isProposalPeriod || locked}
               />
 
               <div className={`remove-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
                 <CustomTooltip text="Delete bytes pair" className="tooltip">
-                  <Button kind={BUTTON_SIMPLE} onClick={() => handleDeletePair(item.id)} disabled={isDisabledActions}>
+                  <Button kind={BUTTON_SIMPLE} onClick={() => handleDeletePair(item.id)}>
                     <Icon id="delete" />
                   </Button>
                 </CustomTooltip>
@@ -329,11 +328,7 @@ export const StageTwoForm = ({
 
         <div className="add-byte">
           <CustomTooltip text="Add bytes pair" className="tooltip">
-            <Button
-              kind={BUTTON_SIMPLE_SMALL}
-              disabled={!isProposalPeriod || locked || isDisabledActions}
-              onClick={handleCreateNewByte}
-            >
+            <Button kind={BUTTON_SIMPLE_SMALL} disabled={!isProposalPeriod || locked} onClick={handleCreateNewByte}>
               <Icon id="plus" /> Add New Bytes
             </Button>
           </CustomTooltip>

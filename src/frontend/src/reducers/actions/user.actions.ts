@@ -171,8 +171,7 @@ export const fetchUserData = async (
       satelliteMvkIsDelegatedTo: delegations?.[0]?.satellite?.user?.address ?? '',
       isSatellite: Boolean(activeSatelliteRecord),
       isVestee: Boolean(vesteeRecord),
-      // TODO: return it back
-      // isNewlyRegisteredSatellite: isNewSatellite,
+      isNewlyRegisteredSatellite: isNewSatellite,
     }
 
     // ----- GETTING USER'S TOKENS BALANCES, THAT ARE USED ACROSS DAPP *START* -----
