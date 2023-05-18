@@ -282,14 +282,13 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
    * currentProposal.id === DEFAULT_PROPOSAL.id means we are on "create new proposal" tab creating new proposal that is not exist yet
    */
   const isSaveProposalDisabled =
-    !proposalHasChange ||
     !isBytesValid ||
     !isPaymentsValid ||
     genProposalDisabledState ||
     (currentProposal.id === DEFAULT_PROPOSAL.id
       ? currentProposal?.proposalData?.filter(({ title, encoded_code }) => title || encoded_code).length < 1 ||
         !isStageOneDataValid
-      : currentProposal.locked)
+      : currentProposal.locked || !proposalHasChange)
 
   const isSubmitDisabled =
     !isProposalSubmitted || currentProposal.locked || proposalHasChange || genProposalDisabledState
