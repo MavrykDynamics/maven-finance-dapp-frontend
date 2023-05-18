@@ -126,11 +126,12 @@ export const checkStage1Validation = ({
 }: {
   proposalValidation: ProposalValidityObj | null
 }): boolean => {
+  const { description, title, sourceCode, invoice } = proposalValidation ?? {}
   return (
-    proposalValidation?.description === INPUT_STATUS_SUCCESS &&
-    proposalValidation?.title === INPUT_STATUS_SUCCESS &&
-    proposalValidation?.sourceCode === INPUT_STATUS_SUCCESS &&
-    proposalValidation?.invoice === INPUT_STATUS_SUCCESS
+    description === INPUT_STATUS_SUCCESS &&
+    title === INPUT_STATUS_SUCCESS &&
+    sourceCode === INPUT_STATUS_SUCCESS &&
+    invoice === INPUT_STATUS_SUCCESS
   )
 }
 

@@ -15,12 +15,8 @@ import { Info } from 'app/App.components/Info/Info.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // const, helpers
-import {
-  checkBytesPairExists,
-  DEFAULT_PROPOSAL,
-  getBytesPairValidationStatus,
-  PROPOSAL_BYTE,
-} from '../ProposalSubmission.helpers'
+import { checkBytesPairExists, getBytesPairValidationStatus, PROPOSAL_BYTE } from '../ProposalSubmission.helpers'
+import { STAGE_2_DESCRIPTION } from 'texts/tooltips/governance'
 import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { isValidLength } from 'utils/validatorFunctions'
 import { INFO_DEFAULT, INFO_WARNING } from 'app/App.components/Info/info.constants'
@@ -221,11 +217,7 @@ export const StageTwoForm = ({
 
   return (
     <>
-      <div className="stage-descr">
-        In this step, you are able to add sets of bytes to your proposal. Each set of bytes can change/add one part of
-        Mavryk’s smart contracts. For example, a set can create a new farm and another set of bytes can whitelist a
-        token for one of the treasury contracts. Read more about in the Mavryk Docs
-      </div>
+      <div className="stage-descr">{STAGE_2_DESCRIPTION}</div>
 
       <SubmitProposalGeneralData>
         <div className="submitted-data">

@@ -2,15 +2,12 @@ import { useSelector } from 'react-redux'
 import React from 'react'
 
 // view
-import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { TextArea } from 'app/App.components/TextArea/TextArea.controller'
-import { ProposalSubmittionStageOneBody, SubmitProposalHeader } from '../ProposalSubmission.style'
+import { ProposalSubmittionStageOneBody } from '../ProposalSubmission.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // types
-import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import { StageOneFormProps } from '../ProposalSubmission.types'
 import { State } from 'reducers'
 
@@ -18,6 +15,7 @@ import { State } from 'reducers'
 import { isValidLength, isValidHttpUrl } from '../../../utils/validatorFunctions'
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
+import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
 
 export const StageOneForm = ({
   proposalId,
@@ -87,12 +85,7 @@ export const StageOneForm = ({
 
   return (
     <>
-      <div className="stage-descr">
-        Welcome to the first step of creating a governance proposal. In this step you will add basic information to your
-        proposal. Please note, you have the option to fill out all 3 steps one after the other and then save them or
-        save as you go. Furthermore, once you have submitted your proposal, you are unable to make any more changes to
-        it and it is open to voting. So please ensure your proposal is ready before you click Submit Proposal.
-      </div>
+      <div className="stage-descr">{STAGE_1_DESCRIPTION}</div>
 
       <ProposalSubmittionStageOneBody>
         {isProposalSubmitted ? (

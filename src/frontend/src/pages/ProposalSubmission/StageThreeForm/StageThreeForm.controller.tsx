@@ -7,7 +7,7 @@ import { StageThreeFormProps, StageThreeValidityItem } from '../ProposalSubmissi
 import { Governance_Proposal } from 'utils/generated/graphqlTypes'
 
 // helpers
-import { DEFAULT_PROPOSAL, checkPaymentExists, getValidityStageThreeTable } from '../ProposalSubmission.helpers'
+import { checkPaymentExists, getValidityStageThreeTable } from '../ProposalSubmission.helpers'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -22,6 +22,7 @@ import Button from 'app/App.components/Button/NewButton'
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { STAGE_3_DESCRIPTION } from 'texts/tooltips/governance'
 
 // styles
 import { SubmitProposalGeneralData } from '../ProposalSubmission.style'
@@ -157,11 +158,7 @@ export const StageThreeForm = ({
 
   return (
     <>
-      <div className="stage-descr">
-        In this step, you are able to add a list of payments and treasury transfers to your proposal. This can used to
-        request payment for the work you have put into your proposal or to rearrange treasury funds. If you area a
-        business and using an actual invoice in Step 1, please add each required payment to this table also.
-      </div>
+      <div className="stage-descr">{STAGE_3_DESCRIPTION}</div>
 
       <SubmitProposalGeneralData>
         <div className="submitted-data">
