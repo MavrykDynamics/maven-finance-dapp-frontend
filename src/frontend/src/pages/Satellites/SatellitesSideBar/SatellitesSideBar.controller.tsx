@@ -1,5 +1,3 @@
-import dayjs from 'dayjs'
-import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
@@ -12,8 +10,7 @@ import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { useSubscription } from '@apollo/client'
-import { SUBSCRIBE_CHAIN_POINTS_COUNT } from 'gql/queries/getOracleStorage'
+import { useChainCount } from 'providers/DataFeedsProvider/hooks/useChainCount'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -64,11 +61,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
   const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
 
   // onChain data points subscription
-  // TODO extract to hook
-  const { data: chainPointsData } = useSubscription(SUBSCRIBE_CHAIN_POINTS_COUNT, {
-    fetchPolicy: 'network-only',
-  })
-  const dataPointsCount = chainPointsData ? chainPointsData.aggregator_aggregate.aggregate?.count ?? 0 : 0
+  const { dataPointsCount } = useChainCount()
 
   const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
 
