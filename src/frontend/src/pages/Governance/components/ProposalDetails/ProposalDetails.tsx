@@ -144,6 +144,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
           ({ voter_id, round }) =>
             voter_id === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
         )}
+        isVoteActive={(votingTill ?? 0) >= Date.now()}
         govPhase={governancePhase}
       />
 
