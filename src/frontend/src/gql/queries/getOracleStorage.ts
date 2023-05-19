@@ -1,4 +1,7 @@
+import { OperationVariables, TypedDocumentNode } from '@apollo/client'
+import { DocumentNode } from 'graphql'
 import { gql } from 'utils/__generated__'
+import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
 
 export const ORACLE_STORAGE_QUERY = `
    query GetOracleDataFeeds {
@@ -129,6 +132,28 @@ subscription SatellitesStorageSubscription {
 }
 `)
 
+export const SUBSCRIBTION_ORACLE_STORAGE_AGGREGATOR_FACTORY = gql(`
+  subscription subscribeOracleStorageAggregatorFactory {
+    aggregator_factory {
+      aggregator_name_max_length
+    }
+  }
+`)
+export const SUBSCRIBTION_ORACLE_STORAGE_DIPDUP_CONTRACT_METADATA = gql(`
+  subscription subscribeOracleStorageDipdupContractMetadata {
+    dipdup_contract_metadata {
+      contract
+      created_at
+      id
+      metadata
+      update_id
+      updated_at
+      network
+    }
+  }
+`)
+
+// this one used for generetad type
 export const SUBSCRIBTION_ORACLE_STORAGE_AGGREGATOR = gql(`
   subscription subscribeOracleStorageAggregator {
     aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {
@@ -174,32 +199,15 @@ export const SUBSCRIBTION_ORACLE_STORAGE_AGGREGATOR = gql(`
   }
 `)
 
-export const SUBSCRIBTION_ORACLE_STORAGE_AGGREGATOR_FACTORY = gql(`
-  subscription subscribeOracleStorageAggregatorFactory {
-    aggregator_factory {
-      aggregator_name_max_length
-    }
-  }
-`)
-export const SUBSCRIBTION_ORACLE_STORAGE_DIPDUP_CONTRACT_METADATA = gql(`
-  subscription subscribeOracleStorageDipdupContractMetadata {
-    dipdup_contract_metadata {
-      contract
-      created_at
-      id
-      metadata
-      update_id
-      updated_at
-      network
-    }
-  }
-`)
+// thos one for useDataFeedsUpdater
+export const getOrcaleStorageAggregatorQuery = (
+  address?: string,
+): DocumentNode | TypedDocumentNode<SubscribeOracleStorageAggregatorSubscription, OperationVariables> => {
+  const temp = address ? 'address: {_eq: $address}' : ''
 
-// TODO check if you can use same query only for one address
-
-export const SUBSCRIBE_ORACLE_DETAILS_AGGREGATOR = gql(`
+  return gql(`
 subscription subsribeOracleDataFeed($address:String = "") {
-  aggregator(where: {admin: {_neq: ""}, address: {_eq: $address}}, order_by: {creation_timestamp: desc}) {
+  aggregator(where: {admin: {_neq: ""}, ${temp}}, order_by: {creation_timestamp: desc}) {
     address
     admin
     decimals
@@ -240,4 +248,5 @@ subscription subsribeOracleDataFeed($address:String = "") {
     }
   }
 }
-`)
+`) as DocumentNode | TypedDocumentNode<SubscribeOracleStorageAggregatorSubscription, OperationVariables>
+}

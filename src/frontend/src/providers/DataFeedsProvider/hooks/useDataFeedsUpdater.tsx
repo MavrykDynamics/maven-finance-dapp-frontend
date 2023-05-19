@@ -6,14 +6,14 @@ import { useDataFeedsContext } from '../dataFeeds.provider'
 
 // subs
 import {
-  SUBSCRIBTION_ORACLE_STORAGE_AGGREGATOR,
+  getOrcaleStorageAggregatorQuery,
   SUBSCRIBTION_ORACLE_STORAGE_AGGREGATOR_FACTORY,
   SUBSCRIBTION_ORACLE_STORAGE_DIPDUP_CONTRACT_METADATA,
 } from 'gql/queries/getOracleStorage'
 import { GetOracleDataFeedsQuery } from 'utils/__generated__/graphql'
 
 // TODO add checks if data is empty (valid data with zod) and handle errors for it
-export const useDataFeedsUpdater = () => {
+export const useDataFeedsUpdater = (feedAddress?: string) => {
   const [feedsData, setFeedsData] = useState<Partial<GetOracleDataFeedsQuery>>({})
   const [forcedUpdate, setForcedUpdate] = useState(false)
   const { initializeDataFeeds } = useDataFeedsContext()
@@ -65,7 +65,7 @@ export const useDataFeedsUpdater = () => {
   //   }
   // }, [feedsData])
 
-  const { loading: aggregatorLoading } = useSubscription(SUBSCRIBTION_ORACLE_STORAGE_AGGREGATOR, {
+  const { loading: aggregatorLoading } = useSubscription(getOrcaleStorageAggregatorQuery(feedAddress), {
     onData: ({ data: response }) => {
       const { data } = response
       if (data) {

@@ -178,7 +178,6 @@ export class TokensProvider extends React.Component<Props, State> {
   }
 
   render(): React.ReactNode {
-    console.log(this.state.context)
     return <tokensContext.Provider value={this.state.context}>{this.props.children}</tokensContext.Provider>
   }
 }
