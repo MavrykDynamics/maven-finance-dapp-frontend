@@ -62,9 +62,9 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
       opacity: 1;
     }
 
-    svg {
+    > svg {
       fill: ${cyanColor};
-      opacity: 0.6;
+      opacity: 0.8;
     }
   }
 

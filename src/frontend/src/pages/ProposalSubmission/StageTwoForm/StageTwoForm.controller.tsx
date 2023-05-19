@@ -300,7 +300,11 @@ export const StageTwoForm = ({
 
               <div className={`remove-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
                 <CustomTooltip text="Delete bytes pair" className="tooltip">
-                  <Button kind={BUTTON_SIMPLE} onClick={() => handleDeletePair(item.id)}>
+                  <Button
+                    kind={BUTTON_SIMPLE}
+                    onClick={() => handleDeletePair(item.id)}
+                    disabled={!isProposalPeriod || locked}
+                  >
                     <Icon id="delete" />
                   </Button>
                 </CustomTooltip>
@@ -320,7 +324,7 @@ export const StageTwoForm = ({
           </div>
         ) : null}
 
-        <div className="add-byte">
+        <div className={`add-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
           <CustomTooltip text="Add bytes pair" className="tooltip">
             <Button kind={BUTTON_SIMPLE_SMALL} disabled={!isProposalPeriod || locked} onClick={handleCreateNewByte}>
               <Icon id="plus" /> Add New Bytes

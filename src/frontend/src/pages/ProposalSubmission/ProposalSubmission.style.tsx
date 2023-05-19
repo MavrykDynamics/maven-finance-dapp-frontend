@@ -113,7 +113,19 @@ export const SubmitProposalBytes = styled.div<{ theme: MavrykTheme }>`
   }
 
   .bytes-restriction-banner {
-    margin-top: 10px;
+    margin-top: 20px;
+  }
+
+  .remove-byte,
+  .add-byte {
+    &.disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+
+      > div {
+        pointer-events: none;
+      }
+    }
   }
 `
 
@@ -123,14 +135,14 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>
   row-gap: 40px;
 
   margin-top: 30px;
-  padding: 40px 50px 30px 40px;
+  padding: 40px 20px 30px 20px;
 
   background: ${({ theme }) => theme.backgroundColor};
   position: relative;
 
   .idx {
     position: absolute;
-    left: 15px;
+    left: -20px;
     top: 50%;
     transform: translateY(-50%);
     font-weight: 500;
@@ -145,29 +157,17 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>
 
   .remove-byte {
     position: absolute;
-    right: 15px;
+    right: -20px;
     top: 50%;
     transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
+    width: 13px;
+    height: 13px;
 
     svg {
-      width: 20px;
-      height: 20px;
-      fill: ${({ theme }) => theme.headerColor};
+      width: 13px;
+      height: 13px;
+      fill: ${({ theme }) => theme.valueColor};
       transition: 0.3s all;
-    }
-
-    &:hover {
-      svg {
-        fill: ${({ theme }) => theme.valueColor};
-      }
-    }
-
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-      cursor: not-allowed;
     }
 
     .tooltip {
