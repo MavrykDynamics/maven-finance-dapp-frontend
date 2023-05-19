@@ -26,7 +26,6 @@ import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { BorrowingExpandCardMenuSection } from './BorrowingExpandCardMenuSection.view'
 import { BorrowingExpandCardValuesSection } from './BorrowingExpandCardValuesSection.view'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { BorrowingExpandCardBorrowSection } from './BorrowingExpandCardBorrowSection.view'
 import { BorrowingExpandCardRepaySection } from './BorrowingExpandCardRepaySection.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -158,10 +157,15 @@ export const BorrowingExpandCard = ({
     return loanTokens.find(({ loanTokenData }) => loanTokenData.symbol === symbol)
   }, [symbol, loanTokens])
 
-  const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (tabId: number) => {
-    const tabs = repayBorrowSlidingButtons.concat(VAULT_CARD_REPAY_SLIDING_BUTTONS)
-
-    setActiveTab(tabs.find((item) => item.id === tabId))
+  const handleSwitchTab = (switcher: 'repay' | 'repayAndBorrow') => (tabId: number) => {
+    switch (switcher) {
+      case 'repay':
+        setActiveRepayTab(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.id === tabId))
+        break
+      case 'repayAndBorrow':
+        setActiveRepayBorrowTab(repayBorrowSlidingButtons.find((item) => item.id === tabId))
+        break
+    }
   }
 
   const handleClickOpenChangeVaultNamePopup = () => {
@@ -312,7 +316,7 @@ export const BorrowingExpandCard = ({
               <div className="data">
                 <div className="value">{name ? name : borrowedAsset.symbol}</div>
                 <div className="value">
-                  <TzAddress tzAddress={address} shouldCopy hasIcon amountFromStart={4} amountFromEnd={4} />
+                  <TzAddress tzAddress={address} shouldCopy hasIcon />
                 </div>
               </div>
             </ThreeLevelListItem>
@@ -332,20 +336,12 @@ export const BorrowingExpandCard = ({
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
               <CommaNumber
-                value={borrowedAmount + fee}
+                value={(borrowedAmount + fee) * rate}
+                beginningText="$"
                 className="value"
                 showDecimal
                 decimalsToShow={borrowedAsset.decimals}
               />
-              {rate ? (
-                <CommaNumber
-                  value={(borrowedAmount + fee) * rate}
-                  beginningText="$"
-                  className="rate"
-                  showDecimal
-                  decimalsToShow={borrowedAsset.decimals}
-                />
-              ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral amount</div>
@@ -379,13 +375,13 @@ export const BorrowingExpandCard = ({
               <BorrowingExpandCardActionsSectionStyled>
                 <div className="switchers">
                   <SlidingTabButtons
-                    onClick={handleSwitchTab(setActiveRepayBorrowTab)}
+                    onClick={handleSwitchTab('repayAndBorrow')}
                     tabItems={repayBorrowSlidingButtons}
                     className="vault"
                   />
                   {activeRepayBorrowTab?.id === vaultCardTabNames.REPAY && (
                     <SlidingTabButtons
-                      onClick={handleSwitchTab(setActiveRepayTab)}
+                      onClick={handleSwitchTab('repay')}
                       tabItems={VAULT_CARD_REPAY_SLIDING_BUTTONS}
                       className="vault"
                     />

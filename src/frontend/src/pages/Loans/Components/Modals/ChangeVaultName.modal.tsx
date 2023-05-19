@@ -12,10 +12,10 @@ import Icon from 'app/App.components/Icon/Icon.view'
 
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { State } from 'reducers'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { changeVaultNameAction } from 'pages/Loans/Actions/vault.actions'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 export const ChangeVaultName = ({
   closePopup,
@@ -74,9 +74,7 @@ export const ChangeVaultName = ({
         <LoansModalBase>
           <button onClick={closePopup} className="close-modal" />
 
-          <GovRightContainerTitleArea>
-            <h2>Change Vault Name</h2>
-          </GovRightContainerTitleArea>
+          <H2Title>Change Vault Name</H2Title>
 
           <div className="modalDescr">Please enter a new name.</div>
 

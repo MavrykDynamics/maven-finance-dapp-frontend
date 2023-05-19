@@ -186,6 +186,8 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   return (
     <>
+      {isRepayInFull && <div className="coming-soon">Coming Soon</div>}
+
       <div>
         <div className="tab-text">Select Amount to Repay</div>
 
@@ -283,7 +285,9 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={handleClickRepay}
-          disabled={inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive}
+          disabled={
+            inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive || isRepayInFull
+          }
         >
           <Icon id="okIcon" />
           Repay in {isRepayInFull ? 'Full' : 'Part'}

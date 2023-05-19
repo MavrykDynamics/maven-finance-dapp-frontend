@@ -279,6 +279,16 @@ export const BorrowingExpandCardActionsSectionStyled = styled.div`
   background-color: ${({ theme }) => theme.backgroundColor};
   border-radius: 10px;
 
+  .coming-soon {
+    text-align: center;
+
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+
+    color: ${({ theme }) => theme.textColor};
+  }
+
   .switchers {
     display: flex;
     flex-direction: column;

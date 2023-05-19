@@ -50,24 +50,24 @@ const Pagination = ({ itemsCount, side = PAGINATION_SIDE_RIGHT, listName, classN
       of {pagesCount}
       <PaginationArrow
         isDisabled={+currentPage === 1}
-        isLeft
         onClick={() => {
           if (currentPage > 1) {
             history.push(generateNewUrl(currentPage - 1))
           }
         }}
       >
-        <Icon id="paginationArrowRight" />
+        <Icon id="paginationArrowLeft" />
       </PaginationArrow>
       <PaginationArrow
         isDisabled={+currentPage === +pagesCount}
+        isRight
         onClick={() => {
           if (currentPage < pagesCount) {
             history.push(generateNewUrl(+currentPage + 1))
           }
         }}
       >
-        <Icon id="paginationArrowRight" />
+        <Icon id="paginationArrowLeft" />
       </PaginationArrow>
     </PaginationWrapper>
   ) : null
