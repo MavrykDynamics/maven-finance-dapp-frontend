@@ -139,11 +139,6 @@ export const PositionTableStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  // TODO: expand button component for different font sizes or change in figma
-  button {
-    font-size: 14px;
-  }
-
   .not-connected {
     display: flex;
     justify-content: center;

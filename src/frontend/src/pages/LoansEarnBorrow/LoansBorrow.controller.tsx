@@ -19,7 +19,7 @@ import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { ERROR } from 'app/App.components/Toaster/Toaster.constants'
+import { TOASTER_ERROR } from 'app/App.components/Toaster/Toaster.constants'
 
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
@@ -89,7 +89,7 @@ export const LoansBorrow = () => {
     })
 
     if (!validVaultId) {
-      dispatch(showToaster(ERROR, 'Error', 'The market does not have a vault to borrow'))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', 'The market does not have a vault to borrow'))
       return
     }
 
@@ -108,13 +108,16 @@ export const LoansBorrow = () => {
     })
   }
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      if (!isDataLoaded) {
-        await dispatch(getLoansStorage())
-      }
-    } catch (e) {}
-  }, [isDataLoaded])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        if (!isDataLoaded || isDepsChanged) {
+          await dispatch(getLoansStorage())
+        }
+      } catch (e) {}
+    },
+    [isDataLoaded],
+  )
 
   return (
     <Page>

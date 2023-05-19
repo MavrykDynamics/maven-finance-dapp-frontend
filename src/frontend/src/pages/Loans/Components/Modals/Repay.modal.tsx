@@ -23,6 +23,7 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import {
   calcCollateralRatio,
+  getCollateralRatioByPersentage,
   getLoansInputMaxAmount,
   isTezosAsset,
   loansInputValidation,
@@ -275,7 +276,7 @@ export const Repay = ({
                   <GradientDiagram
                     className="diagram"
                     colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                    currentPersentage={Math.max(0, Math.min(((futureCollateralRatio - 100) / 150) * 100, 100))}
+                    currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>

@@ -6,6 +6,7 @@ import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPers
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import {
   calcCollateralRatio,
+  getCollateralRatioByPersentage,
   getLoansInputMaxAmount,
   isTezosAsset,
   loansInputValidation,
@@ -218,7 +219,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((futureCollateralRatio - 100) / 150) * 100, 100))}
+                currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
               />
             </ThreeLevelListItem>
 

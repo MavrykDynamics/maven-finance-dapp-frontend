@@ -17,6 +17,7 @@ export const CHART_SETTINGS = {
   hideYAxis: true,
 }
 
+// TODO: use colors[theme]
 export const CHART_COLORS = {
   lineColor: skyColor,
   areaTopColor: skyColor,

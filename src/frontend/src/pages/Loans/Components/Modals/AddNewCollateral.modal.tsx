@@ -14,6 +14,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 
 import {
   calcCollateralRatio,
+  getCollateralRatioByPersentage,
   getLoansInputMaxAmount,
   isTezosAsset,
   loansInputValidation,
@@ -297,7 +298,7 @@ export const AddNewCollateral = ({
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((currentCollateralRatio - 100) / 150) * 100, 100))}
+                currentPersentage={getCollateralRatioByPersentage(currentCollateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -406,7 +407,7 @@ export const AddNewCollateral = ({
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((futureCollateralRatio - 100) / 150) * 100, 100))}
+                currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>

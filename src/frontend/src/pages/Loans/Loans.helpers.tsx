@@ -3,7 +3,7 @@ import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
-import { Lending_Controller_History_Data, Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
+import { Lending_Controller_History_Data } from 'utils/generated/graphqlTypes'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import {
   LendingItemType,
@@ -21,7 +21,7 @@ import { assetDecimalsToShow } from './Loans.const'
 // CONST FOR HELPERS
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 const ONE_WEEK_IN_MS = ONE_DAY_IN_MS * 7
-const TWO_WEEK_IN_MS = ONE_DAY_IN_MS * 14
+const TWO_WEEKS_IN_MS = ONE_DAY_IN_MS * 14
 
 // GET ASSET METADATA
 export const isTezosAsset = (tokenName: string) =>
@@ -129,7 +129,7 @@ export const getTransactionHistory = (
             acc.lending24hVolume += transformedAmount * assetMetadata.rate
           }
 
-          if (dayjs().diff(timestamp) <= TWO_WEEK_IN_MS) {
+          if (dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
             acc.marketLiquidityChartData.push({
               value: (acc.marketLiquidityChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
               time: new Date(timestamp).getTime() as UTCTimestamp,
@@ -143,7 +143,7 @@ export const getTransactionHistory = (
             acc.lending24hVolume -= transformedAmount * assetMetadata.rate
           }
 
-          if (dayjs().diff(timestamp) <= TWO_WEEK_IN_MS) {
+          if (dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
             acc.marketCollateralChartData.push({
               value: (acc.marketLiquidityChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
               time: new Date(timestamp).getTime() as UTCTimestamp,
@@ -166,7 +166,7 @@ export const getTransactionHistory = (
         }
 
         // Deposit collateral
-        if ((type === 4 || type === 6) && dayjs().diff(timestamp) <= TWO_WEEK_IN_MS) {
+        if ((type === 4 || type === 6) && dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
           acc.marketCollateralChartData.push({
             value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
             time: new Date(timestamp).getTime() as UTCTimestamp,
@@ -174,7 +174,7 @@ export const getTransactionHistory = (
         }
 
         // Withdraw collateral
-        if ((type === 5 || type === 7) && dayjs().diff(timestamp) <= TWO_WEEK_IN_MS) {
+        if ((type === 5 || type === 7) && dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
           acc.marketCollateralChartData.push({
             value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
             time: new Date(timestamp).getTime() as UTCTimestamp,
@@ -486,4 +486,12 @@ export const getLoansInputMaxAmount = (amount: number = 0, decimals: number = as
   const blockchainNumberWithoutDecimals = Math.trunc(convertNumberForContractCall({ number: amount, grade: decimals }))
 
   return String(convertNumberForClient({ number: blockchainNumberWithoutDecimals, grade: decimals }))
+}
+
+/**
+ * @param collateralRatio it is number from 0 to 250. Which ussualy useing for displaying collateral ratio in persentage
+ * @returns number from 1 to 100. Use this result for currentPersentage prop into GradientDiagram component
+ */
+export const getCollateralRatioByPersentage = (collateralRatio: number) => {
+  return Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))
 }

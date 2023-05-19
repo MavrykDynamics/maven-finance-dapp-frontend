@@ -3,7 +3,7 @@ import { EarnBorrowCard } from './Components/EarnBorrowCard.view'
 
 // styles
 import { LoansEarnBorrowStyled, EarnBorrowCards } from './LoansEarnBorrow.styles'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // types
 import { MarketType, MarketSettingsType } from './LoansEarnBorrow.consts'
@@ -19,9 +19,9 @@ type Props = {
 export const LoansEarnBorrow = ({ title, markets, settings, handleClick, isDisabledButton }: Props) => {
   return (
     <LoansEarnBorrowStyled>
-      <GovRightContainerTitleArea>
+      <H2Title>
         <h2>{title}</h2>
-      </GovRightContainerTitleArea>
+      </H2Title>
 
       <EarnBorrowCards>
         {markets.map((item) => (

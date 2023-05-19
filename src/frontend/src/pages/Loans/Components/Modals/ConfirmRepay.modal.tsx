@@ -16,7 +16,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 import { State } from 'reducers'
@@ -111,7 +111,7 @@ export const ConfirmRepay = ({
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((futureCollateralRatio - 100) / 150) * 100, 100))}
+                currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>

@@ -1,5 +1,9 @@
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
-
+/**
+ * 
+ * @param str string with bottom underlines. F.e. "string_with_bottom_underline"
+ * @returns string with empty spaces instead of bottom underlines. F.e. "string with bottom underline"
+ */
 export const getStringWithoutUnderline = (str: string): string => (str?.length ? str.replaceAll('_', ' ') : '')
 
 export const getSeparateCamelCase = (stringCamelCase: string): string =>

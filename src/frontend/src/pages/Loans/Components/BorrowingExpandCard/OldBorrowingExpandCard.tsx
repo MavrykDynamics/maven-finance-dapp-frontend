@@ -42,7 +42,7 @@ import { loansPopupsContext } from '../Modals/LoansModals.provider'
 
 import { State } from 'reducers'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
-import { isTezosAsset } from '../../Loans.helpers'
+import { getCollateralRatioByPersentage, isTezosAsset } from '../../Loans.helpers'
 import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { getNumberInBounds } from 'utils/calcFunctions'
 
@@ -204,7 +204,7 @@ export const OldBorrowingExpandCard = ({
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
+                currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>

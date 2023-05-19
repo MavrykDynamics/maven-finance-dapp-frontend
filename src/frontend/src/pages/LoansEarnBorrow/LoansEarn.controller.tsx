@@ -14,7 +14,6 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // types
 import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
-import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -87,13 +86,16 @@ export const LoansEarn = () => {
     })
   }
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      if (!isDataLoaded) {
-        await dispatch(getLoansStorage())
-      }
-    } catch (e) {}
-  }, [isDataLoaded])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        if (!isDataLoaded || isDepsChanged) {
+          await dispatch(getLoansStorage())
+        }
+      } catch (e) {}
+    },
+    [isDataLoaded],
+  )
 
   return (
     <Page>

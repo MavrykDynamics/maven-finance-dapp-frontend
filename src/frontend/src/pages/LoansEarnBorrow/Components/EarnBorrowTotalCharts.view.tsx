@@ -43,7 +43,7 @@ export const EarnBorrowTotalCharts = ({
           data={{ type: AREA_CHART_TYPE, plots: leftChartData }}
           colors={CHART_COLORS}
           settings={CHART_SETTINGS}
-          numberOfItemsToDisplay={3}
+          numberOfItemsToDisplay={numberOfItemsToDisplay}
           tooltipAsset="$"
         />
         <div className="chart-interval">7 Days</div>

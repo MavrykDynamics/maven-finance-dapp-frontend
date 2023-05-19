@@ -31,6 +31,7 @@ import { BorrowingExpandCardRepaySection } from './BorrowingExpandCardRepaySecti
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -277,7 +278,8 @@ export const BorrowingExpandCard = ({
   }, [activeRepayBorrowTab])
 
   useEffect(() => {
-    if (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE) {
+    if (expanded && (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE)) {
+      console.log(expanded)
       ;(async () => {
         if (!levelOfEarly || !levelOfLate) {
           setTimerTimestamp(undefined)
@@ -330,7 +332,7 @@ export const BorrowingExpandCard = ({
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
+                currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>

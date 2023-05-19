@@ -10,6 +10,7 @@ import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loa
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import colors from 'styles/colors'
 import { ACCRUED_INTEREST, APR, BORROW_CAPACITY, COLLATERAL_VALUE, OUTSTANDING_DEBT } from 'texts/tooltips/vault.text'
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 
 type Props = {
   collateralRatio: number
@@ -118,7 +119,7 @@ export const BorrowingExpandCardValuesSection = ({
         </div>
         <GradientDiagram
           colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-          currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
+          currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
         />
       </BorrowingTabListItemValuesSectionInfo>
 
