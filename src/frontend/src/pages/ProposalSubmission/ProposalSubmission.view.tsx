@@ -143,7 +143,8 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   // ------ ACTIONS HANDLERDS START ------
   // Change user's vieving proposal
   const changeActiveProposal = (proposalId: number) => {
-    history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
+    if (proposalId !== selectedUserProposalId)
+      history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
   }
 
   const updateLocalProposalData = useCallback(
@@ -208,6 +209,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
           fee,
           bytes,
           payments,
+          changeActiveProposal,
         ),
       )
     } else {

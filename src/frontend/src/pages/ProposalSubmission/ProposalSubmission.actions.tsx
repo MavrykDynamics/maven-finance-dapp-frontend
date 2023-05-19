@@ -22,6 +22,13 @@ import type { AppDispatch, GetState } from '../../app/App.controller'
 import { SubmitProposalForm } from '../../utils/TypesAndInterfaces/Forms'
 import { State } from 'reducers'
 import { PaymentsDataChangesType, ProposalDataChangesType } from './ProposalSubmission.types'
+import { fetchFromIndexer } from 'gql/fetchGraphQL'
+import {
+  GOVERNANCE_LATEST_USER_PROPOSAL_NAME,
+  GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
+  GOVERNANCE_LATEST_USER_PROPOSAL_VARIABLE,
+} from 'gql/queries'
+import { DEFAULT_PROPOSAL } from './ProposalSubmission.helpers'
 
 export const submitProposal =
   (
@@ -29,6 +36,7 @@ export const submitProposal =
     fee: number,
     proposalBytes: ProposalDataChangesType,
     proposalPayments: PaymentsDataChangesType,
+    callback: (latestProposalId: number) => void,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
@@ -78,10 +86,19 @@ export const submitProposal =
             await dispatch(getGovernanceStorage())
             await dispatch(getSatellitesStorage())
 
+            const usersLatestCreatedProposalId = await fetchFromIndexer(
+              GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
+              GOVERNANCE_LATEST_USER_PROPOSAL_NAME,
+              GOVERNANCE_LATEST_USER_PROPOSAL_VARIABLE(state.wallet.accountPkh ?? ''),
+            )
+
+            const latestProposalId = usersLatestCreatedProposalId?.['governance_proposal']?.[0] ?? DEFAULT_PROPOSAL.id
+
             // Add here call for update data actions
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal Submitted.', ACTION_COMPLETION_MESSAGE_TEXT))
             await dispatch(toggleActionCompletion(false))
+            callback(latestProposalId)
           },
           currentOperationLevel,
         })
