@@ -2,14 +2,13 @@ import BigNumber from 'bignumber.js'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { Governance_Proposal } from 'utils/generated/graphqlTypes'
-import { ValidSubmitProposalForm, SubmitProposalFormInputStatus } from 'utils/TypesAndInterfaces/Forms'
 import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
   PaymentsDataChangesType,
   ProposalDataChangesType,
   ProposalValidityObj,
   StageThreeValidityItem,
-} from './ProposalSybmittion.types'
+} from './ProposalSubmission.types'
 import { State } from 'reducers'
 
 // helpers
@@ -62,8 +61,8 @@ export const isProposalHasChange = ({
   clientProposal,
   remoteProposal,
 }: {
-  clientProposal?: ProposalRecordType
-  remoteProposal?: ProposalRecordType
+  clientProposal: ProposalRecordType | null
+  remoteProposal: ProposalRecordType | null
 }): boolean => {
   const isTitleDiff = clientProposal?.title !== remoteProposal?.title,
     isDescrDiff = clientProposal?.description !== remoteProposal?.description,
@@ -122,11 +121,17 @@ export const isProposalHasChange = ({
   return isTitleDiff || isDescrDiff || isSourceLinkDiff || isBytesDiff || isPaymentsDiff
 }
 
-export const checkStage1Validation = ({ proposalValidation }: { proposalValidation: ProposalValidityObj }): boolean => {
+export const checkStage1Validation = ({
+  proposalValidation,
+}: {
+  proposalValidation: ProposalValidityObj | null
+}): boolean => {
+  const { description, title, sourceCode, invoice } = proposalValidation ?? {}
   return (
-    proposalValidation.description === INPUT_STATUS_SUCCESS &&
-    proposalValidation.title === INPUT_STATUS_SUCCESS &&
-    proposalValidation.sourceCode === INPUT_STATUS_SUCCESS
+    description === INPUT_STATUS_SUCCESS &&
+    title === INPUT_STATUS_SUCCESS &&
+    sourceCode === INPUT_STATUS_SUCCESS &&
+    invoice === INPUT_STATUS_SUCCESS
   )
 }
 
@@ -135,21 +140,21 @@ export const checkStage2Validation = ({
   currentProposal,
   remoteProposal,
 }: {
-  proposalValidation: ProposalValidityObj
-  currentProposal: ProposalRecordType
-  remoteProposal: ProposalRecordType
+  proposalValidation: ProposalValidityObj | null
+  currentProposal: ProposalRecordType | null
+  remoteProposal: ProposalRecordType | null
 }): boolean => {
   // if proposal is locked we can't change anything in it
-  return currentProposal.locked
+  return currentProposal?.locked
     ? true
-    : proposalValidation.bytesValidation
+    : proposalValidation?.bytesValidation
         // Filter empty bytes
         ?.filter(({ byteId }) => {
           const byte = currentProposal?.proposalData?.find(({ id }) => id === byteId)
           return byte && (byte.title || byte.encoded_code)
         })
         // Validate every byte that is non empty
-        .every(({ validBytes, validTitle, byteId }) => {
+        ?.every(({ validBytes, validTitle, byteId }) => {
           const isRemoteByte = remoteProposal?.proposalData?.find(({ id }) => byteId === id)
           return isRemoteByte
             ? validBytes !== INPUT_STATUS_ERROR
@@ -162,21 +167,21 @@ export const checkStage3Validation = ({
   currentProposal,
   remoteProposal,
 }: {
-  proposalValidation: ProposalValidityObj
-  currentProposal: ProposalRecordType
-  remoteProposal: ProposalRecordType
+  proposalValidation: ProposalValidityObj | null
+  currentProposal: ProposalRecordType | null
+  remoteProposal: ProposalRecordType | null
 }) => {
   // if proposal is locked we can't change anything in it
-  return currentProposal.locked
+  return currentProposal?.locked
     ? true
-    : proposalValidation.paymentsValidation
+    : proposalValidation?.paymentsValidation
         // Filter empty payments
         ?.filter(({ paymentId }) => {
           const payment = currentProposal?.proposalPayments?.find(({ id }) => id === paymentId)
           return payment && (payment.title || payment.to__id || payment.token_amount)
         })
         // Validate every paymnet that is non empty
-        .every(({ to__id, title, token_amount, paymentId }) => {
+        ?.every(({ to__id, title, token_amount, paymentId }) => {
           const isRemotePayment = remoteProposal?.proposalPayments?.find(({ id }) => paymentId === id)
 
           return isRemotePayment
@@ -352,6 +357,7 @@ export const DEFAULT_PROPOSAL: ProposalRecordType = {
   status: ProposalStatus.UNLOCKED,
   title: '',
   description: '',
+  invoice: '',
   sourceCode: '',
   passVoteMvkTotal: 0,
   upvoteMvkTotal: 0,
@@ -376,34 +382,10 @@ export const DEFAULT_PROPOSAL: ProposalRecordType = {
 export const DEFAULT_PROPOSAL_VALIDATION: ProposalValidityObj = {
   title: '',
   description: '',
-  ipfs: '',
+  invoice: '',
   successMVKReward: '',
   invoiceTable: '',
   sourceCode: '',
   bytesValidation: [],
   paymentsValidation: [],
 }
-
-// stage 1 default values
-export const DEFAULT_VALIDITY: ValidSubmitProposalForm = {
-  title: false,
-  description: false,
-  ipfs: true,
-  successMVKReward: true,
-  invoiceTable: true,
-  sourceCode: false,
-}
-
-export const DEFAULT_INPUT_STATUSES: SubmitProposalFormInputStatus = {
-  title: '',
-  description: '',
-  ipfs: '',
-  successMVKReward: '',
-  invoiceTable: 'success',
-  sourceCode: '',
-}
-
-export const PAYMENTS_TYPES = ['XTZ', 'MVK']
-export const INIT_TABLE_HEADERS = ['Address', 'Purpose', 'Amount', 'Payment Type (XTZ/MVK)', '-', '-']
-export const INIT_TABLE_DATA = [INIT_TABLE_HEADERS, ['', '', '', PAYMENTS_TYPES[0], '-', '-']]
-export const MAX_ROWS = 10

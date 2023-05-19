@@ -28,6 +28,10 @@ export const VotingAreaStyled = styled.article<{ theme: MavrykTheme }>`
     font-weight: 600;
     font-size: 18px;
   }
+
+  .voted-bar {
+    width: 100%;
+  }
 `
 
 export const VotingButtonsContainer = styled.div`

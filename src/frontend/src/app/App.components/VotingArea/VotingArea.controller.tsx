@@ -105,15 +105,15 @@ export const VotingArea = ({
 }
 
 type VotingProposalsType = VotingProposalsProps & {
-  className?: string
+  isVoteActive: boolean
 }
 
 export const VotingProposalsArea = ({
   selectedProposal,
   govPhase,
+  isVoteActive,
   vote,
   voteStatistics,
-  className,
   handleProposalVote,
   votingPhaseHandler,
 }: VotingProposalsType) => {
@@ -126,10 +126,42 @@ export const VotingProposalsArea = ({
   // Proposal isn't locked, can't vote
   if (!selectedProposal.locked) return null
 
+  if (!isVoteActive) {
+    if (
+      selectedProposal.upvoteMvkTotal > 0 ||
+      selectedProposal.abstainMvkTotal > 0 ||
+      selectedProposal.downvoteMvkTotal > 0
+    ) {
+      return (
+        <VotingAreaStyled>
+          <div className="voted-bar">
+            <VotingBar voteStatistics={voteStatistics} />
+          </div>
+        </VotingAreaStyled>
+      )
+    }
+
+    if (selectedProposal.passVoteMvkTotal > 0) {
+      return (
+        <VotingAreaStyled>
+          <div className="voted-block">
+            <CommaNumber
+              className="voted-label"
+              value={voteStatistics.passVotesMVKTotal ?? 0}
+              endingText={'voted MVK'}
+            />
+          </div>
+        </VotingAreaStyled>
+      )
+    }
+
+    return null
+  }
+
   // Proposal is locked and phase is proposal, (phase we can only vote yes, and most voted go to the next phase)
   if (selectedProposal.locked && govPhase === GovPhases.PROPOSAL) {
     return (
-      <VotingAreaStyled className={className}>
+      <VotingAreaStyled>
         <div className="voted-block">
           <CommaNumber className="voted-label" value={voteStatistics.passVotesMVKTotal ?? 0} endingText={'voted MVK'} />
           {isNewlyRegisteredSatellite && (
@@ -165,6 +197,5 @@ export const VotingProposalsArea = ({
     )
   }
 
-  // on timelock phase show only voting bar, witout voting buttons
-  return <VotingBar voteStatistics={voteStatistics} />
+  return null
 }
