@@ -52,8 +52,10 @@ export const useDataFeedDetailsUpdater = (feedId: string) => {
 
     if (
       feedsData.hasOwnProperty('aggregator') &&
-      feedsData.hasOwnProperty('aggregator_factory') &&
-      feedsData.hasOwnProperty('dipdup_contract_metadata')
+      // remove factory
+      !feedsData.hasOwnProperty('aggregator_factory') &&
+      // rare data updates
+      !feedsData.hasOwnProperty('dipdup_contract_metadata')
     ) {
       timeout = setTimeout(() => {
         setForcedUpdate(true)

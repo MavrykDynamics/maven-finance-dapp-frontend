@@ -126,3 +126,37 @@ query MVKFaucet {
   }
 }
 `)
+
+export const GET_AVAILABLE_COLLATERALS = gql(`
+query GetAvaliableCollaterals {
+  lending_controller(where: {mock_time: {_eq: false}}) {
+    collateral_tokens {
+      token_address
+      id
+      token_name
+      token_contract_standard
+      protected
+      oracle_id
+    }
+
+    loan_tokens {
+      loan_token_name
+      oracle_id
+
+      vaults {
+        collateral_balances {
+          token {
+            token_address
+            token_name
+          }
+        }
+        loan_token {
+          loan_token_address
+          loan_token_name
+          oracle_id
+        }
+      }
+    }
+  }
+}
+`)

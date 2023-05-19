@@ -64,6 +64,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
   const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
 
   // onChain data points subscription
+  // TODO extract to hook
   const { data: chainPointsData } = useSubscription(SUBSCRIBE_CHAIN_POINTS_COUNT, {
     fetchPolicy: 'network-only',
   })

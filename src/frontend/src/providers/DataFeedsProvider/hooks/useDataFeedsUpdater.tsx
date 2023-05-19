@@ -46,23 +46,24 @@ export const useDataFeedsUpdater = () => {
   }, [forcedUpdate, feedsData, initializeDataFeeds])
 
   //   like heartbeat (default 10 seconds if there is a data)
-  useEffect(() => {
-    let timeout: NodeJS.Timeout
+  // update by aggregator if no dipdupmetadata
+  // useEffect(() => {
+  //   let timeout: NodeJS.Timeout
 
-    if (
-      feedsData.hasOwnProperty('aggregator') &&
-      feedsData.hasOwnProperty('aggregator_factory') &&
-      feedsData.hasOwnProperty('dipdup_contract_metadata')
-    ) {
-      timeout = setTimeout(() => {
-        setForcedUpdate(true)
-      }, 10000)
-    }
+  //   if (
+  //     feedsData.hasOwnProperty('aggregator') &&
+  //     !feedsData.hasOwnProperty('aggregator_factory') &&
+  //     !feedsData.hasOwnProperty('dipdup_contract_metadata')
+  //   ) {
+  //     timeout = setTimeout(() => {
+  //       setForcedUpdate(true)
+  //     }, 10000)
+  //   }
 
-    return () => {
-      if (timeout) clearTimeout(timeout)
-    }
-  }, [feedsData])
+  //   return () => {
+  //     if (timeout) clearTimeout(timeout)
+  //   }
+  // }, [feedsData])
 
   const { loading: aggregatorLoading } = useSubscription(SUBSCRIBTION_ORACLE_STORAGE_AGGREGATOR, {
     onData: ({ data: response }) => {

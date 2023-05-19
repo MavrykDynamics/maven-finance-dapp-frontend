@@ -13,11 +13,19 @@ import {
 import { getSymbolAndNameFromFeedName } from 'utils/parse'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
+// helpers
+import { getXTZBakers, getCollateralTokens } from 'pages/Loans/LoansFethcers'
+
 // types
 import { State, Props, TokensContext, XtxBakersType } from './tokens.provider.types'
-import { DappTokensQuery, Dipdup_Token_Metadata, MvkFaucetQuery } from 'utils/__generated__/graphql'
+import {
+  DappTokensQuery,
+  Dipdup_Token_Metadata,
+  GetAvaliableCollateralsQuery,
+  Lending_Controller_Collateral_Token,
+  MvkFaucetQuery,
+} from 'utils/__generated__/graphql'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { getXTZBakers } from 'pages/Loans/LoansFethcers'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
@@ -40,7 +48,7 @@ export class TokensProvider extends React.Component<Props, State> {
             id: 0,
           },
         ],
-        avaliableCollaterals: [],
+        avaliableCollaterals: null,
         xtzBakers: {
           otherBakers: [],
           dao: null,
@@ -50,10 +58,14 @@ export class TokensProvider extends React.Component<Props, State> {
         mTokens: [],
         // TODO: set default address to null, when contracts are updated
         mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh', //null,
+        // internal helper state
+        collateralData: null,
         // actions
         initializeDAPPTokens: this.initializeDAPPTokens,
         updateMVKFaucetAddress: this.updateMVKFaucetAddress,
         selfUpdateXtzBakers: this.selfUpdateXtzBakers,
+        updateCollateralsData: this.updateCollateralsData,
+        updateAvaliableCollaterals: this.updateAvaliableCollaterals,
       },
     }
   }
@@ -111,6 +123,32 @@ export class TokensProvider extends React.Component<Props, State> {
     })
   }
 
+  updateCollateralsData = (collateralData: GetAvaliableCollateralsQuery) => {
+    this.setState({
+      context: {
+        ...this.state.context,
+        collateralData,
+      },
+    })
+  }
+
+  updateAvaliableCollaterals = () => {
+    // TODO update typed after removing redux (remove -> as Array<Lending_Controller_Collateral_Token>)
+    const avaliableCollaterals = getCollateralTokens(
+      this.state.context.collateralData?.lending_controller?.[0]
+        ?.collateral_tokens as Array<Lending_Controller_Collateral_Token>,
+      this.state.context.dipDupTokens,
+      this.props.feedsLedger,
+    )
+
+    this.setState({
+      context: {
+        ...this.state.context,
+        avaliableCollaterals,
+      },
+    })
+  }
+
   selfUpdateXtzBakers = async () => {
     // TODO fix types
     const xtzBakers = (await getXTZBakers()) as unknown as XtxBakersType
@@ -127,10 +165,17 @@ export class TokensProvider extends React.Component<Props, State> {
     if (prevProps.feedsLedger !== this.props.feedsLedger) {
       this.updateTokenPrices(this.props.feedsLedger)
     }
-  }
 
-  //   case GET_AVALIABLE_COLLATERALS:
-  //     return { ...state, avaliableCollaterals: action.avaliableCollaterals }
+    // update collaterals when there is essential data for it
+    if (
+      this.props.feedsLedger.length > 0 &&
+      this.state.context.dipDupTokens.length > 0 &&
+      this.state.context.collateralData !== null &&
+      this.state.context.avaliableCollaterals === null
+    ) {
+      this.updateAvaliableCollaterals()
+    }
+  }
 
   render(): React.ReactNode {
     console.log(this.state.context)

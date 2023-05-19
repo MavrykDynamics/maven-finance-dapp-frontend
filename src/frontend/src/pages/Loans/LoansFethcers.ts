@@ -101,7 +101,7 @@ export const getXTZBakers = async () => {
     }
   } catch (e) {
     console.log('getXTZBakers fething error', e)
-    return []
+    return {}
   }
 }
 
