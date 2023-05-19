@@ -29,6 +29,7 @@ import {
   GOVERNANCE_LATEST_USER_PROPOSAL_VARIABLE,
 } from 'gql/queries'
 import { DEFAULT_PROPOSAL } from './ProposalSubmission.helpers'
+import { sleep } from 'utils/api/sleep'
 
 export const submitProposal =
   (
@@ -66,43 +67,41 @@ export const submitProposal =
       dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, 'Submitting proposal...', ACTION_START_MESSAGE_TEXT))
 
+      await sleep(5000)
+
       // turn off fs actions loader and start data updating after 5s after operation started
-      setTimeout(async () => {
-        await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(
-          showToaster(
-            TOASTER_LOADING,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          ),
-        )
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
 
-        // @ts-ignore don't have proper type to acees data, type has only methods
-        const currentOperationLevel = transaction?.lastHead?.header?.level
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
 
-        // refetch data we need
-        await checkIndexerLevelAndRunDataUpdateCallback({
-          callback: async () => {
-            await dispatch(getGovernanceStorage())
-            await dispatch(getSatellitesStorage())
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getGovernanceStorage())
 
-            const usersLatestCreatedProposalId = await fetchFromIndexer(
-              GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
-              GOVERNANCE_LATEST_USER_PROPOSAL_NAME,
-              GOVERNANCE_LATEST_USER_PROPOSAL_VARIABLE(state.wallet.accountPkh ?? ''),
-            )
+          const usersLatestCreatedProposalId = await fetchFromIndexer(
+            GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
+            GOVERNANCE_LATEST_USER_PROPOSAL_NAME,
+            GOVERNANCE_LATEST_USER_PROPOSAL_VARIABLE(state.wallet.accountPkh ?? ''),
+          )
+          const latestProposalId = usersLatestCreatedProposalId?.['governance_proposal']?.[0]?.id ?? DEFAULT_PROPOSAL.id
 
-            const latestProposalId = usersLatestCreatedProposalId?.['governance_proposal']?.[0] ?? DEFAULT_PROPOSAL.id
-
-            // Add here call for update data actions
-            await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal Submitted.', ACTION_COMPLETION_MESSAGE_TEXT))
-            await dispatch(toggleActionCompletion(false))
-            callback(latestProposalId)
-          },
-          currentOperationLevel,
-        })
-      }, 5000)
+          // Add here call for update data actions
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Unstaking done', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+          callback(latestProposalId)
+        },
+        currentOperationLevel,
+      })
     } catch (error) {
       console.error('submitProposal error:', error)
       if (error instanceof Error) {

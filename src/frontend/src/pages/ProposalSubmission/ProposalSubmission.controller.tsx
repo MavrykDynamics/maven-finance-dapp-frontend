@@ -40,9 +40,18 @@ export const ProposalSubmission = () => {
     (proposalId) => proposalsMapper[proposalId].proposerId === accountPkh,
   )
 
-  const redirect = parsedQp.proposalId ? null : (
-    <Redirect to={`/submit-proposal?${QueryString.stringify({ proposalId: userProposals[0] ?? -1 })}`} />
-  )
+  const convertedProposalId = parsedQp.proposalId ? Number(parsedQp.proposalId) : null
+  const isValidProposalId =
+    convertedProposalId && convertedProposalId > DEFAULT_PROPOSAL.id
+      ? userProposals.includes(convertedProposalId)
+      : true
+
+  const redirect =
+    userProposals.length >= 2 && convertedProposalId === DEFAULT_PROPOSAL.id ? (
+      <Redirect to={`/submit-proposal?${QueryString.stringify({ proposalId: userProposals[0] })}`} />
+    ) : convertedProposalId && isValidProposalId ? null : (
+      <Redirect to={`/submit-proposal?${QueryString.stringify({ proposalId: userProposals[0] ?? -1 })}`} />
+    )
 
   return (
     <Page>
