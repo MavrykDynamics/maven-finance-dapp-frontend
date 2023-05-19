@@ -155,7 +155,7 @@ export const fetchUserData = async (
         balance: normalizedBalance + normalizedEarnedRewards,
         usdBalance: normalizedBalance + normalizedEarnedRewards * loanTokenMetadata.rate,
         tokenRate: loanTokenMetadata.rate,
-        tokenSymbol: isTezosAsset(loanTokenMetadata.symbol) ? loanTokenMetadata.name : loanTokenMetadata.symbol,
+        tokenSymbol: isTezosAsset(loanTokenMetadata.symbol) ? 'tezos' : loanTokenMetadata.symbol,
         tokenName: isTezosAsset(loanTokenMetadata.symbol) ? `m${loanTokenMetadata.symbol}` : loanTokenMetadata.name,
         tokenAddress: tokenData.m_token.address,
         reward_index: normalizedIndexRewards,
