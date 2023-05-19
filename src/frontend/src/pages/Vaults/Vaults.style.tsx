@@ -56,10 +56,7 @@ export const VaultsFilters = styled.div`
   .filter {
     display: flex;
     align-items: center;
-
-    &:first-of-type {
-      margin-right: 20px;
-    }
+    margin-left: 20px;
 
     h4 {
       margin: 0 10px 0 0;

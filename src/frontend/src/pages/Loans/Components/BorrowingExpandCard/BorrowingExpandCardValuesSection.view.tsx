@@ -63,7 +63,7 @@ export const BorrowingExpandCardValuesSection = ({
       <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>
         <CommaNumber value={collateralBalance} className="value" beginningText="$" showDecimal decimalsToShow={2} />
         <div className="name margin-top">
-          Collateral value
+          Collateral Value
           <CustomTooltip
             iconId="info"
             text={ COLLATERAL_VALUE}
