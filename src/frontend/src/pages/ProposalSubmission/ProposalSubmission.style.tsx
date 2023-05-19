@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 
 import { Card, boxShadowColor, CardHover } from '../../styles'
 import { MavrykTheme } from '../../styles/interfaces'
@@ -16,15 +16,21 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.textColor};
     margin-bottom: 50px;
   }
+
+  .bytes-label {
+    position: unset;
+    margin-bottom: 20px;
+  }
 `
 
 // Proposal submittion stage 1 styles
-export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme }>`
+export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; isProposalSubmitted?: boolean }>`
   margin-top: 40px;
 
   display: grid;
-  grid-template-columns: 50% 25% 15%;
-  grid-template-rows: 40px minmax(40px, 2fr) 40px minmax(40px, 2fr);
+  grid-template-columns: ${({ isProposalSubmitted }) => (isProposalSubmitted ? '35% 35% 15%' : '50% 25% 15%')};
+  column-gap: ${({ isProposalSubmitted }) => (isProposalSubmitted ? '30px' : '0')};
+  grid-template-rows: minmax(40px, max-content) minmax(40px, 2fr) 40px minmax(40px, 2fr);
 
   justify-content: space-between;
   row-gap: 50px;
@@ -32,6 +38,14 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme }>
   .submitted-data {
     display: flex;
     flex-direction: column;
+    ${({ isProposalSubmitted }) =>
+      !isProposalSubmitted
+        ? css`
+            &.vert-center {
+              justify-content: center;
+            }
+          `
+        : ''};
     justify-content: center;
     height: 100%;
     position: relative;
@@ -81,7 +95,7 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme }>
 
 // Proposal submittion stage 2 styles
 export const SubmitProposalBytes = styled.div<{ theme: MavrykTheme }>`
-  margin-top: 20px;
+  margin-top: 15px;
   position: relative;
   padding-bottom: 15px;
 
@@ -201,6 +215,7 @@ export const SubmitProposalHeader = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const SubmitProposalGeneralData = styled(ProposalSubmittionStageOneBody)<{ theme: MavrykTheme }>`
+  grid-template-columns: 32% 35% 15%;
   grid-template-rows: 40px;
   margin-bottom: 20px;
 `

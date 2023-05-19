@@ -236,6 +236,8 @@ export const StageTwoForm = ({
         </div>
       </SubmitProposalGeneralData>
 
+      <div className="bytes-label label">4 - Enter Proposal Bytes</div>
+
       <Info
         type={INFO_DEFAULT}
         text={

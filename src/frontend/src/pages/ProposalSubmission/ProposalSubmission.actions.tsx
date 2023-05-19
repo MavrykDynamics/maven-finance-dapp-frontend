@@ -47,8 +47,8 @@ export const submitProposal =
         .propose(
           title,
           description,
-          sourceCode,
           invoice,
+          sourceCode,
           proposalBytes,
           proposalPayments.length ? proposalPayments : undefined,
         )

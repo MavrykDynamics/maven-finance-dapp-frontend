@@ -13,6 +13,7 @@ import { ProposalSubmissionView } from './ProposalSubmission.view'
 
 import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { DEFAULT_PROPOSAL } from './ProposalSubmission.helpers'
 
 export const ProposalSubmission = () => {
   const dispatch = useDispatch()
@@ -39,7 +40,12 @@ export const ProposalSubmission = () => {
     (proposalId) => proposalsMapper[proposalId].proposerId === accountPkh,
   )
 
-  const redirect = parsedQp.proposalId ? null : (
+  const redirect = parsedQp.proposalId ? (
+    // If selected proposal === -1, but user created all his 2 proposals he can redirect to first created
+    Number(parsedQp.proposalId) === DEFAULT_PROPOSAL.id && userProposals.length >= 2 ? (
+      <Redirect to={`/submit-proposal?${QueryString.stringify({ proposalId: userProposals[0] })}`} />
+    ) : null
+  ) : (
     <Redirect to={`/submit-proposal?${QueryString.stringify({ proposalId: userProposals[0] ?? -1 })}`} />
   )
 

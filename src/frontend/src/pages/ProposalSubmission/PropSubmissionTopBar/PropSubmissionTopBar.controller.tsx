@@ -19,9 +19,9 @@ export const PropSubmissionTopBar = ({ valueCallback, activeTab }: PropSubmissio
 
   const topBarItems = useMemo(
     () => [
-      { text: 'Stage 1', id: 1, active: activeTab === 1 },
-      { text: 'Stage 2', id: 2, active: activeTab === 2 },
-      { text: 'Stage 3', id: 3, active: activeTab === 3 },
+      { text: 'Step 1', id: 1, active: activeTab === 1 },
+      { text: 'Step 2', id: 2, active: activeTab === 2 },
+      { text: 'Step 3', id: 3, active: activeTab === 3 },
     ],
     [activeTab],
   )

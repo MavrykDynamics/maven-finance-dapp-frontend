@@ -315,7 +315,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         </a>
 
         <SubmitProposalHeader>
-          <H2Title>Stage {activeTab}</H2Title>
+          <H2Title>Step {activeTab}</H2Title>
           <StatusFlag text={currentProposal.status} status={currentProposal.status} />
         </SubmitProposalHeader>
 
@@ -371,7 +371,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
           {/* Submit proposal locks proposal */}
           <div className="btn-wrapper">
             <Button
-              kind={BUTTON_PRIMARY}
+              kind={BUTTON_SECONDARY}
               form={BUTTON_WIDE}
               disabled={isSubmitDisabled}
               onClick={() => handleLockProposal(selectedUserProposalId)}
@@ -395,7 +395,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
                 disabled={isSaveProposalDisabled}
                 onClick={() => handleUpdateData(selectedUserProposalId)}
               >
-                <Icon id="save" /> Save Changes
+                <Icon id="save" /> {isProposalSubmitted ? 'Save Changes' : 'Save Proposal'}
               </Button>
               <CustomTooltip
                 className="tooltip"
