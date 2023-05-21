@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from '../../reducers'
+import { useDispatch } from 'react-redux'
 import {
   addAllCollateralTokensToMarkets,
   addAllLoanTokensToMarkets,
@@ -9,6 +8,7 @@ import {
   ChangeAllAdminsFromGovernance,
   createFarm,
   createTreasuries,
+  testErrorCodesChangeAdmin,
 } from './Admin.actions'
 import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -46,6 +46,9 @@ export const Admin = () => {
   const handleCreateAllTreasuries = () => {
     dispatch(createTreasuries())
   }
+  const handleErrorCodesTest = () => {
+    dispatch(testErrorCodesChangeAdmin())
+  }
   return (
     <Page>
       <PageHeader page={'admin'} />
@@ -56,6 +59,7 @@ export const Admin = () => {
         handleAddAllLoanTokensToLendBorrow={handleAddAllLoanTokensToLendBorrow}
         handleAddAllCollateralTokensToLendBorrow={handleAddAllCollateralTokensToLendBorrow}
         handleCreateAllTreasuries={handleCreateAllTreasuries}
+        handleErrorCodesTest={handleErrorCodesTest}
       />
     </Page>
   )
