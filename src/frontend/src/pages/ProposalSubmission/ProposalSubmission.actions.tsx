@@ -240,8 +240,6 @@ export const updateProposalData =
     }
 
     try {
-      console.log({ bytesChanges })
-
       // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)

@@ -16,16 +16,14 @@ import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
 import { defaultProposalDescriptionMaxLength } from 'app/App.components/Input/Input.constants'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
-// VALIDATION FN'S
+// VALIDATION FN'S TODO: add some checking in future (no cond for it now)
 export const getBytesPairValidationStatus = (
   newText: string,
-  fieldToValidate: 'validTitle' | 'validBytes',
+  maxLength?: number,
 ): typeof INPUT_STATUS_SUCCESS | typeof INPUT_STATUS_ERROR => {
-  if (fieldToValidate === 'validTitle') {
-    return Boolean(newText) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
-  } else {
-    return Boolean(newText) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
-  }
+  const isValidMaxLength = maxLength ? isValidLength(newText, 1, maxLength) : true
+
+  return Boolean(newText) && isValidMaxLength ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 }
 
 export const getValidityStageThreeTable = (

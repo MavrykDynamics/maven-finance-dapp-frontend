@@ -18,7 +18,6 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { checkBytesPairExists, getBytesPairValidationStatus, PROPOSAL_BYTE } from '../ProposalSubmission.helpers'
 import { STAGE_2_DESCRIPTION } from 'texts/tooltips/governance'
 import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { isValidLength } from 'utils/validatorFunctions'
 import { INFO_DEFAULT, INFO_WARNING } from 'app/App.components/Info/info.constants'
 import { BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { isHexadecimal } from 'utils/validatorFunctions'
@@ -34,9 +33,14 @@ export const StageTwoForm = ({
   updateLocalProposalValidation,
   updateLocalProposalData,
 }: StageTwoFormProps) => {
-  const { governancePhase, fee, successReward, proposalMetadataTitleMaxLength } = useSelector(
-    (state: State) => state.governance.config,
-  )
+  const {
+    governancePhase,
+    fee,
+    successReward,
+    proposalMetadataTitleMaxLength,
+    proposalDescriptionMaxLength,
+    proposalSourceCodeMaxLength,
+  } = useSelector((state: State) => state.governance.config)
   const isProposalPeriod = governancePhase === 'PROPOSAL'
 
   // is no bytes pair on proposal change add empty pair on client
@@ -64,11 +68,7 @@ export const StageTwoForm = ({
               byteValidity.byteId === byte.id
                 ? {
                     ...byteValidity,
-                    validTitle:
-                      isValidLength(text, 1, proposalMetadataTitleMaxLength) &&
-                      getBytesPairValidationStatus(text, 'validTitle') === INPUT_STATUS_SUCCESS
-                        ? INPUT_STATUS_SUCCESS
-                        : INPUT_STATUS_ERROR,
+                    validTitle: getBytesPairValidationStatus(text, proposalMetadataTitleMaxLength),
                   }
                 : byteValidity,
             ),
@@ -84,7 +84,8 @@ export const StageTwoForm = ({
                 ? {
                     ...byteValidity,
                     validBytes:
-                      isHexadecimal(text) && getBytesPairValidationStatus(text, 'validBytes') === INPUT_STATUS_SUCCESS
+                      isHexadecimal(text) &&
+                      getBytesPairValidationStatus(text, proposalSourceCodeMaxLength) === INPUT_STATUS_SUCCESS
                         ? INPUT_STATUS_SUCCESS
                         : INPUT_STATUS_ERROR,
                   }
@@ -101,11 +102,7 @@ export const StageTwoForm = ({
               byteValidity.byteId === byte.id
                 ? {
                     ...byteValidity,
-                    validDescr:
-                      isValidLength(text, 1, proposalMetadataTitleMaxLength) &&
-                      getBytesPairValidationStatus(text, 'validTitle') === INPUT_STATUS_SUCCESS
-                        ? INPUT_STATUS_SUCCESS
-                        : INPUT_STATUS_ERROR,
+                    validDescr: getBytesPairValidationStatus(text, proposalDescriptionMaxLength),
                   }
                 : byteValidity,
             ),
@@ -318,6 +315,7 @@ export const StageTwoForm = ({
                 }
                 inputStatus={validityObject?.validBytes}
                 disabled={!isProposalPeriod || locked}
+                textAreaMaxLimit={proposalSourceCodeMaxLength}
               />
 
               <TextArea
@@ -329,6 +327,7 @@ export const StageTwoForm = ({
                 }
                 inputStatus={validityObject?.validDescr}
                 disabled={!isProposalPeriod || locked}
+                textAreaMaxLimit={proposalDescriptionMaxLength}
               />
 
               <div className={`remove-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
