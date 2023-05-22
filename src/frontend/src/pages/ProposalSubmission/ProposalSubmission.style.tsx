@@ -21,6 +21,15 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
     position: unset;
     margin-bottom: 20px;
   }
+
+  .payments-table {
+    position: relative;
+  }
+
+  .label,
+  label {
+    color: ${({ theme }) => theme.textColor};
+  }
 `
 
 // Proposal submittion stage 1 styles
@@ -73,7 +82,6 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
     left: 0;
     font-size: 14px;
     font-weight: 700;
-    color: ${({ theme }) => theme.textColor};
   }
 
   .description {

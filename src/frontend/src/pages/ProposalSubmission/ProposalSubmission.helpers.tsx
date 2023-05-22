@@ -69,7 +69,9 @@ export const isProposalHasChange = ({
     isSourceLinkDiff = clientProposal?.sourceCode !== remoteProposal?.sourceCode
 
   // check only not empty bytes, skip empty ones
-  const filteredBytes = clientProposal?.proposalData.filter(({ title, encoded_code }) => title || encoded_code)
+  const filteredBytes = clientProposal?.proposalData.filter(
+    ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
+  )
   // Need to filter remote bytes, cuz when we remowe byte pair backend sets its encoded_code to null
   const filteredRemoteBytes = remoteProposal?.proposalData.filter(({ encoded_code }) => encoded_code)
 
@@ -81,11 +83,12 @@ export const isProposalHasChange = ({
       filteredBytes?.length !== filteredRemoteBytes?.length
       ? true
       : // Compare every title and byte code to see whether they are eaqual
-        filteredBytes?.some(({ title, encoded_code, id }, idx) => {
+        filteredBytes?.some(({ title, encoded_code, code_description, id }, idx) => {
           const remoteProposalByte = filteredRemoteBytes?.[idx]
           return (
             title !== remoteProposalByte?.title ||
             encoded_code !== remoteProposalByte?.encoded_code ||
+            code_description !== remoteProposalByte?.code_description ||
             id !== remoteProposalByte?.id
           )
         }),
@@ -128,10 +131,8 @@ export const checkStage1Validation = ({
 }): boolean => {
   const { description, title, sourceCode, invoice } = proposalValidation ?? {}
   return (
-    description === INPUT_STATUS_SUCCESS &&
-    title === INPUT_STATUS_SUCCESS &&
-    sourceCode === INPUT_STATUS_SUCCESS &&
-    invoice === INPUT_STATUS_SUCCESS
+    description === INPUT_STATUS_SUCCESS && title === INPUT_STATUS_SUCCESS && sourceCode === INPUT_STATUS_SUCCESS
+    // && invoice === INPUT_STATUS_SUCCESS
   )
 }
 
@@ -154,11 +155,13 @@ export const checkStage2Validation = ({
           return byte && (byte.title || byte.encoded_code)
         })
         // Validate every byte that is non empty
-        ?.every(({ validBytes, validTitle, byteId }) => {
+        ?.every(({ validBytes, validTitle, validDescr, byteId }) => {
           const isRemoteByte = remoteProposal?.proposalData?.find(({ id }) => byteId === id)
           return isRemoteByte
-            ? validBytes !== INPUT_STATUS_ERROR
-            : validBytes === INPUT_STATUS_SUCCESS && validTitle === INPUT_STATUS_SUCCESS
+            ? validBytes !== INPUT_STATUS_ERROR && validDescr !== INPUT_STATUS_ERROR
+            : validBytes === INPUT_STATUS_SUCCESS &&
+                validTitle === INPUT_STATUS_SUCCESS &&
+                validDescr === INPUT_STATUS_SUCCESS
         }) ?? true
 }
 
@@ -199,14 +202,14 @@ export const getBytesDiff = (
   const changes = updatedData
     .map<ProposalDataChangesType[number] | null>((item1) => {
       const item2 = originalData?.[originalIdx]
-
+      console.log({ item1, item2 })
       // if we have more items on client than on server, when we reach end of the items that stored on client array, just add everything to the end
       if (!item2) {
         return {
           addOrSetProposalData: {
             title: item1.title ?? '',
             encodedCode: item1.encoded_code ?? '',
-            codeDescription: '',
+            codeDescription: item1.code_description ?? '',
           },
         }
       }
@@ -217,7 +220,8 @@ export const getBytesDiff = (
 
       if (
         (item2.title !== item1.title && item1.title !== null) ||
-        (item2.encoded_code !== item1.encoded_code && item1.title !== null)
+        ((item2.encoded_code !== item1.encoded_code || item2.code_description !== item1.code_description) &&
+          item1.title !== null)
       ) {
         return {
           addOrSetProposalData: {
