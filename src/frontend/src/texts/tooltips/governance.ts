@@ -23,5 +23,5 @@ export const STAGE_2_DESCRIPTION = `In this step, you are able to add sets of by
 Mavryk’s smart contracts. For example, a set can create a new farm and another set of bytes can whitelist a
 token for one of the treasury contracts. Read more about in the Mavryk Docs`
 export const STAGE_3_DESCRIPTION = `In this step, you are able to add a list of payments and treasury transfers to your proposal. This can used to
-request payment for the work you have put into your proposal or to rearrange treasury funds. If you area a
+request payment for the work you have put into your proposal or to rearrange treasury funds. If you are a
 business and using an actual invoice in Step 1, please add each required payment to this table also.`
