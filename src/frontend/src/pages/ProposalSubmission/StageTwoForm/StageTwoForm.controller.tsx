@@ -84,8 +84,7 @@ export const StageTwoForm = ({
                 ? {
                     ...byteValidity,
                     validBytes:
-                      isHexadecimal(text) &&
-                      getBytesPairValidationStatus(text, proposalSourceCodeMaxLength) === INPUT_STATUS_SUCCESS
+                      isHexadecimal(text) && getBytesPairValidationStatus(text) === INPUT_STATUS_SUCCESS
                         ? INPUT_STATUS_SUCCESS
                         : INPUT_STATUS_ERROR,
                   }
