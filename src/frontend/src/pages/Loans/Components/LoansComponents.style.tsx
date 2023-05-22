@@ -51,6 +51,7 @@ export const LoansTabStyled = styled.div<{ theme: MavrykTheme }>`
 
   .factory-info {
     display: flex;
+    align-items: center;
     column-gap: 10px;
     font-weight: 600;
     font-size: 14px;
@@ -58,6 +59,26 @@ export const LoansTabStyled = styled.div<{ theme: MavrykTheme }>`
     position: absolute;
     bottom: 10px;
     right: 30px;
+
+    div {
+      font-size: 16px;
+    }
+  }
+`
+
+export const BorrowingTabStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+
+  .title-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+  }
+
+  .has-items-borrow-btn {
+    max-width: 250px;
   }
 `
 
@@ -104,18 +125,40 @@ export const LendingTabListItem = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.backgroundColor};
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  row-gap: 30px;
+
+  background-color: ${({ theme }) => theme.containerColor};
+  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
   border-radius: 10px;
   border-top-right-radius: 0;
   border-top-left-radius: 0;
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  cursor: default;
 
-  &.more-padding {
-    padding-bottom: 80px;
+  .useMax-btn {
+    button {
+      font-size: 14px;
+    }
+  }
+
+  .top {
+    display: grid;
+    grid-template-columns: 450px auto;
+    column-gap: 20px;
+  }
+
+  .menu-switcher {
+    width: fit-content;
+    column-gap: 20px;
+  }
+
+  .action-switchers {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    margin: 0 auto;
   }
 
   .block-name {
@@ -226,12 +269,261 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     bottom: 20px;
   }
 `
+
+export const BorrowingExpandCardActionsSectionStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 30px;
+  padding: 30px;
+
+  background-color: ${({ theme }) => theme.backgroundColor};
+  border-radius: 10px;
+
+  .coming-soon {
+    text-align: center;
+
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  .switchers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 15px;
+  }
+
+  .tab-text {
+    margin: 0 15px;
+
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 22px;
+
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  .button-wrapper {
+    width: 300px;
+    margin: 0 auto;
+  }
+
+  .mt-25 {
+    margin-top: 25px;
+  }
+
+  .mb-10 {
+    margin-bottom: 10px;
+  }
+`
+
+export const BorrowingTabListItemValuesSectionStyled = styled.div<{ theme: MavrykTheme }>`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 30px;
+  row-gap: 60px;
+  padding: 30px;
+
+  background-color: ${({ theme }) => theme.backgroundColor};
+  border-radius: 10px;
+`
+
+export const BorrowingTabListItemValuesSectionInfo = styled.div<{
+  theme: MavrykTheme
+  hasRate?: boolean
+  customColor?: string
+}>`
+  p {
+    margin: 0;
+  }
+
+  .name {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 27px;
+
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  .value {
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 40px;
+    word-break: break-all;
+
+    color: ${({ theme }) => theme.dataColor};
+  }
+
+  .rate {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 18px;
+
+    visibility: ${({ theme }) => (theme.hasRate ? 'hidden' : 'visible')};
+    color: ${({ theme }) => theme.dataColor};
+  }
+
+  .margin-top {
+    margin-top: 18px;
+  }
+
+  &.learn-more {
+    grid-column: 1 / 3;
+    grid-row: 5;
+
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
+
+    a {
+      color: ${({ theme }) => theme.valueColor};
+    }
+  }
+
+  &.collateral-diagram {
+    grid-column: 1 / 3;
+    grid-row: 4;
+
+    .percentage {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      margin-bottom: 7px;
+      color: ${({ theme, customColor }) => customColor ?? theme.textColor};
+
+      p {
+        margin-left: 5px;
+      }
+    }
+
+    .copyIcon {
+      font-weight: 600;
+    }
+  }
+`
+
+export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  row-gap: 30px;
+
+  background-color: ${({ theme }) => theme.backgroundColor};
+  border-radius: 10px;
+
+  .tab-header {
+    display: grid;
+    grid-template-columns: auto 250px;
+  }
+
+  .useful-info {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+  }
+
+  .useful-info-title {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 27px;
+
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  .useful-info-line {
+    display: flex;
+    align-items: center;
+    width: 400px;
+
+    a,
+    button,
+    .name,
+    .value {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+    }
+
+    .name {
+      margin-right: 10px;
+      color: ${({ theme }) => theme.textColor};
+    }
+
+    .value {
+      display: flex;
+      align-items: center;
+      column-gap: 6px;
+
+      font-size: 16px;
+      color: ${({ theme }) => theme.dataColor};
+    }
+
+    /* TODO: remove button styles from here */
+    button,
+    a {
+      margin-left: auto;
+      padding: 0;
+      height: fit-content;
+
+      &:hover {
+        opacity: 0.8;
+        color: ${({ theme }) => theme.valueColor};
+
+        svg {
+          opacity: 0.8;
+        }
+
+        &::before {
+          display: none;
+        }
+      }
+
+      svg {
+        height: 14px;
+        width: 8px;
+        transform: rotate(180deg);
+        stroke-width: 2px;
+        stroke: ${({ theme }) => theme.valueColor};
+      }
+    }
+  }
+`
+
+export const VaultOverview = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  row-gap: 25px;
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  padding: 20px 15px;
+  border-radius: 10px;
+
+  .line {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .collateral-diagram {
+    .diagram {
+      width: 210px;
+    }
+
+    .copyIcon {
+      font-weight: 600;
+    }
+  }
+`
+
 export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
   column-gap: 20px;
   padding: 15px 25px;
-  margin: 15px 0 25px 0;
   background-color: ${({ theme }) => theme.dPurple_container_dPurple};
   font-weight: 600;
   font-size: 14px;
@@ -246,6 +538,16 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
 
   &.borrow-message {
     margin: 40px 0 40px 0;
+  }
+
+  &.repay-in-full {
+    border: 1px solid ${({ theme }) => theme.infoColor};
+
+    svg {
+      width: 16px;
+      height: 16px;
+      fill: ${({ theme }) => theme.infoColor};
+    }
   }
 
   svg {

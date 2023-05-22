@@ -27,6 +27,8 @@ import { SatelliteDetails } from '../../../pages/SatelliteDetails/SatelliteDetai
 import { SatelliteGovernance } from '../../../pages/SatelliteGovernance/SatelliteGovernance.controller'
 import { Treasury } from '../../../pages/Treasury/Treasury.controller'
 import { Vaults } from '../../../pages/Vaults/Vaults.controller'
+import { LoansEarn } from 'pages/LoansEarnBorrow/LoansEarn.controller'
+import { LoansBorrow } from 'pages/LoansEarnBorrow/LoansBorrow.controller'
 
 import { scrollUpPage } from 'utils/scrollUpPage'
 import ProtectedRoute from './ProtectedRoute'
@@ -137,6 +139,12 @@ export const AppRoutes = () => {
       </Route>
       <Route exact path="/loans/dashboard">
         <LoansDashboard />
+      </Route>
+      <Route exact path="/loans/earn">
+        <LoansEarn />
+      </Route>
+      <Route exact path="/loans/borrow">
+        <LoansBorrow />
       </Route>
 
       {/* NOT READY PAGES */}

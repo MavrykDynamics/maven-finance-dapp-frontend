@@ -15,7 +15,6 @@ import { BorrowingTab } from './Components/BorrowingTab'
 import { LendingTab } from './Components/LendingTab'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-import { TransactionHistory } from './Components/TransactionHistory'
 
 // styles
 import { Page } from 'styles'
@@ -37,8 +36,8 @@ export const Market = () => {
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
   const {
     loanTokens,
-    loansControllerAddress,
     isDataLoaded,
+    config: { loansControllerAddress },
     vaults: { allVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
   const { accountPkh } = useSelector((state: State) => state.wallet)
@@ -246,8 +245,6 @@ export const Market = () => {
           )}
         </div>
 
-        {tabsNav}
-
         {tabId === LEND_TAB_ID ? (
           <LendingTab
             lendingItem={currentToken.lendingItem}
@@ -257,13 +254,8 @@ export const Market = () => {
           />
         ) : null}
         {tabId === BORROW_TAB_ID ? (
-          <BorrowingTab
-            lendingControllerAddress={loansControllerAddress}
-            currentMarketAsset={currentToken.loanTokenData.gqlName}
-          />
+          <BorrowingTab lendingControllerAddress={loansControllerAddress} currentToken={currentToken} />
         ) : null}
-
-        <TransactionHistory currentToken={currentToken} />
       </MarketStyled>
     </Page>
   )

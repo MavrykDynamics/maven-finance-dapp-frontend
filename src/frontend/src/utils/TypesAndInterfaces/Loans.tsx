@@ -123,6 +123,7 @@ export type LoanMarketType = {
     amount: number
     date: string | null
     userAddress: string
+    vaultAddress?: string
     operationHash: string
     tokenSymbol: string | undefined
   }>

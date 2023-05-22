@@ -24,6 +24,7 @@ import { silverColor } from 'styles'
 import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
 import {
   calcCollateralRatio,
+  getCollateralRatioByPersentage,
   getLoansInputMaxAmount,
   isTezosAsset,
   loansInputValidation,
@@ -121,7 +122,7 @@ export const BorrowAsset = ({
   const backBtnHandler = () => setShownScreen('initial')
 
   const borrowAsserHandler = async () => {
-    if (vaultId && borrowedAsset && scrollToCurrentVault) {
+    if (vaultId && borrowedAsset) {
       await dispatch(
         borrowVaultAssetAction(
           vaultId,
@@ -228,7 +229,7 @@ export const BorrowAsset = ({
                   <GradientDiagram
                     className="diagram"
                     colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                    currentPersentage={Math.max(0, Math.min(((futureCollateralRatio - 100) / 150) * 100, 100))}
+                    currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
@@ -329,7 +330,7 @@ export const BorrowAsset = ({
                   <GradientDiagram
                     className="diagram"
                     colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                    currentPersentage={Math.max(0, Math.min(((futureCollateralRatio - 100) / 150) * 100, 100))}
+                    currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>

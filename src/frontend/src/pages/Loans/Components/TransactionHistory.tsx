@@ -1,15 +1,12 @@
-import { useState, useEffect, useMemo } from 'react'
-import { useSelector } from 'react-redux'
+
+import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
-import { State } from 'reducers'
 import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
-import { TRANSACTION_HISTORY_SLIDING_BUTTONS } from '../Loans.const'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TRANSPARENT } from 'app/App.components/Button/Button.constants'
 import {
@@ -26,96 +23,86 @@ import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
+
 type TransactionHistoryPropsType = {
   currentToken: LoanMarketType | undefined
+  vaultAddress: string
 }
 
-export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType) => {
+export const TransactionHistory = ({ currentToken, vaultAddress }: TransactionHistoryPropsType) => {
   const { search } = useLocation()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const [switcherState, setSwitcherState] = useState<'all' | 'personal'>('all')
-
-  const transactionHistory = useMemo(
-    () =>
-      switcherState === 'all'
-        ? currentToken?.transactionHistory
-        : currentToken?.transactionHistory.filter(({ userAddress }) => accountPkh === userAddress),
-    [switcherState, accountPkh, currentToken?.transactionHistory],
+  const history = useMemo(
+    () => currentToken?.transactionHistory.filter((item) => item.vaultAddress === vaultAddress),
+    [currentToken?.transactionHistory, vaultAddress],
   )
 
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
 
   const paginatedTableRows = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, TRANSACTION_HISTORY_TABLE_NAME)
-    return transactionHistory?.slice(from, to)
-  }, [currentPage, transactionHistory])
+    return history?.slice(from, to)
+  }, [currentPage, history])
 
   return (
     <TransactionHistoryStyled>
-      <div className="top">
+      <div className="main">
         <H2Title>Transaction History</H2Title>
 
-        <SlidingTabButtons
-          onClick={(tabId: number) => setSwitcherState(tabId === 0 ? 'all' : 'personal')}
-          tabItems={TRANSACTION_HISTORY_SLIDING_BUTTONS}
-          className="transaction-history"
-        />
+        {history?.length ? (
+          <>
+            <Table className="treasury-table">
+              <TableHeader className="simple-header treasury">
+                <TableRow>
+                  <TableHeaderCell>Description</TableHeaderCell>
+                  <TableHeaderCell>Amount</TableHeaderCell>
+                  <TableHeaderCell>Date</TableHeaderCell>
+                  <TableHeaderCell>User</TableHeaderCell>
+                  <TableHeaderCell contentPosition="right">View TX</TableHeaderCell>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody className="transaction-history">
+                {paginatedTableRows?.map(({ descr, amount, date, userAddress, operationHash, tokenSymbol = '' }) => {
+                  if (!descr) return null
+
+                  return (
+                    <TableRow rowHeight={45} className="add-hover" key={`${operationHash}-${date}`}>
+                      <TableCell width={`21%`} className="vert-middle">
+                        <span className="descr">{descr}</span>
+                      </TableCell>
+                      <TableCell width={`21%`}>
+                        <CommaNumber value={amount} className="value" endingText={tokenSymbol} />
+                      </TableCell>
+                      <TableCell width={`28%`}>{date}</TableCell>
+                      <TableCell width={`11%`}>
+                        <TzAddress tzAddress={userAddress} type={BLUE} />
+                      </TableCell>
+                      <TableCell contentPosition="right">
+                        <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
+                          <Button text="View TX" kind={TRANSPARENT} className="link" />
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </>
+        ) : (
+          <EmptyContainer
+            style={{
+              padding: '30px 0 20px 0',
+            }}
+          >
+            <img src="/images/not-found.svg" alt=" No Transaction History to show" />
+            <figcaption> No Transaction History to show</figcaption>
+          </EmptyContainer>
+        )}
       </div>
 
-      {transactionHistory?.length ? (
-        <>
-          <Table className="treasury-table">
-            <TableHeader className="simple-header treasury">
-              <TableRow>
-                <TableHeaderCell>Description</TableHeaderCell>
-                <TableHeaderCell>Amount</TableHeaderCell>
-                <TableHeaderCell>Date</TableHeaderCell>
-                <TableHeaderCell>User</TableHeaderCell>
-                <TableHeaderCell contentPosition="right">View TX</TableHeaderCell>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody className="transaction-history">
-              {paginatedTableRows?.map(({ descr, amount, date, userAddress, operationHash, tokenSymbol = '' }) => {
-                if (!descr) return null
-
-                return (
-                  <TableRow rowHeight={45} className="add-hover" key={`${operationHash}-${date}`}>
-                    <TableCell width={`21%`} className="vert-middle">
-                      <span className="descr">{descr}</span>
-                    </TableCell>
-                    <TableCell width={`21%`}>
-                      <CommaNumber value={amount} className="value" endingText={tokenSymbol} />
-                    </TableCell>
-                    <TableCell width={`28%`}>{date}</TableCell>
-                    <TableCell width={`11%`}>
-                      <TzAddress tzAddress={userAddress} type={BLUE} />
-                    </TableCell>
-                    <TableCell contentPosition="right">
-                      <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
-                        <Button text="View TX" kind={TRANSPARENT} className="link" />
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
-        </>
-      ) : (
-        <EmptyContainer
-          style={{
-            padding: '30px 0 20px 0',
-          }}
-        >
-          <img src="/images/not-found.svg" alt=" No Transaction History to show" />
-          <figcaption> No Transaction History to show</figcaption>
-        </EmptyContainer>
-      )}
-
       <Pagination
-        itemsCount={transactionHistory?.length ?? 0}
+        itemsCount={history?.length ?? 0}
         listName={TRANSACTION_HISTORY_TABLE_NAME}
         side={PAGINATION_SIDE_CENTER}
       />

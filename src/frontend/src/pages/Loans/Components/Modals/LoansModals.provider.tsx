@@ -23,6 +23,10 @@ import {
   UpdateOperatorsPopupDataType,
   WithdrawCollateralPopupDataType,
   LiquidateVaultDataType,
+  ConfirmBorrowPopupDataType,
+  ConfirmRepayPartPopupDataType,
+  ConfirmRepayFullPopupDataType,
+  ChangeVaultNamePopupDataType,
 } from './Modals.helpers'
 import { RemoveAssetsFromLending } from './RemoveAssetsFromLending.modal'
 import { Repay } from './Repay.modal'
@@ -30,6 +34,10 @@ import { RepayFull } from './RepayFull.modal'
 import { UpdateMVKOperator } from './UpdateMVKOperator.modal'
 import { WithdrawCollateral } from './WithdrawCollateral.modal'
 import { LiquidateVaultModal } from 'pages/Vaults/components/LiquidateVaultModal/LiquidateVaultModal.modal'
+import { ConfirmBorrowAsset } from './ConfirmBorrowAsset.modal'
+import { ConfirmRepay } from './ConfirmRepay.modal'
+import { ConfirmRepayFull } from './ConfirmRepayFull.modal'
+import { ChangeVaultName } from './ChangeVaultName.modal'
 
 export const loansPopupsContext = createContext<LoansPopupsContextStateType>(undefined!)
 
@@ -39,6 +47,15 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
 
     this.state = {
       ...DEFAULT_LOANS_POPUPS_STATE,
+      openConfirmBorrowPopup: this.openConfirmBorrowPopup,
+      closeConfirmBorrowPopup: this.closeConfirmBorrowPopup,
+
+      openConfirmRepayPopup: this.openConfirmRepayPopup,
+      closeConfirmRepayPopup: this.closeConfirmRepayPopup,
+
+      openConfirmRepayFullPopup: this.openConfirmRepayFullPopup,
+      closeConfirmRepayFullPopup: this.closeConfirmRepayFullPopup,
+
       openChangeBakerPopup: this.openChangeBakerPopup,
       closeChangeBakerPopup: this.closeChangeBakerPopup,
 
@@ -66,6 +83,9 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
       openWithdrawCollateralPopup: this.openWithdrawCollateralPopup,
       closeWithdrawCollateralPopup: this.closeWithdrawCollateralPopup,
 
+      openChangeVaultNamePopup: this.openChangeVaultNamePopup,
+      closeChangeVaultNamePopup: this.closeChangeVaultNamePopup,
+
       openCreateVaultPopup: this.openCreateVaultPopup,
       closeCreateVaultPopup: this.closeCreateVaultPopup,
 
@@ -78,6 +98,66 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
       openLiquidateVaultPopup: this.openLiquidateVaultPopup,
       closeLiquidateVaultPopup: this.closeLiquidateVaultPopup,
     }
+  }
+
+  openConfirmBorrowPopup = (popupData: ConfirmBorrowPopupDataType) => {
+    this.setState({
+      ...this.state,
+      confirmBorrowAssetPopup: {
+        showModal: true,
+        data: popupData,
+      },
+    })
+  }
+
+  closeConfirmBorrowPopup = () => {
+    this.setState({
+      ...this.state,
+      confirmBorrowAssetPopup: {
+        ...this.state.confirmBorrowAssetPopup,
+        showModal: false,
+      },
+    })
+  }
+
+  openConfirmRepayPopup = (popupData: ConfirmRepayPartPopupDataType) => {
+    this.setState({
+      ...this.state,
+      confirmRepayPartPopup: {
+        showModal: true,
+        data: popupData,
+      },
+    })
+  }
+
+  closeConfirmRepayPopup = () => {
+    this.setState({
+      ...this.state,
+      confirmRepayPartPopup: {
+        ...this.state.confirmRepayPartPopup,
+        showModal: false,
+      },
+    })
+  }
+
+  openConfirmRepayFullPopup = (popupData: ConfirmRepayFullPopupDataType) => {
+    this.setState({
+      ...this.state,
+      confirmRepayFullPopup: {
+        showModal: true,
+        data: popupData,
+      },
+    })
+  }
+
+  closeConfirmRepayFullPopup = () => {
+    this.setState({
+      ...this.state,
+      confirmRepayFullPopup: {
+        ...this.state.confirmRepayFullPopup,
+        showModal: false,
+      },
+    })
   }
 
   openChangeBakerPopup = (popupData: ChangeBakerPopupDataType) => {
@@ -260,6 +340,26 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
     })
   }
 
+  openChangeVaultNamePopup = (popupData: ChangeVaultNamePopupDataType) => {
+    this.setState({
+      ...this.state,
+      changeVaultNamePopup: {
+        showModal: true,
+        data: popupData,
+      },
+    })
+  }
+
+  closeChangeVaultNamePopup = () => {
+    this.setState({
+      ...this.state,
+      changeVaultNamePopup: {
+        ...this.state.changeVaultNamePopup,
+        showModal: false,
+      },
+    })
+  }
+
   openCreateVaultPopup = (popupData: CreateVaultPopupDataType) => {
     this.setState({
       ...this.state,
@@ -342,6 +442,9 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
 
   render() {
     const {
+      confirmRepayPartPopup,
+      confirmRepayFullPopup,
+      confirmBorrowAssetPopup,
       changeBakerPopup,
       repayPartPopup,
       repayFullPopup,
@@ -351,6 +454,7 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
       managePermissionsPopup,
       updateMvkOperatorPopup,
       withdrawCollateralPopup,
+      changeVaultNamePopup,
       createVaultPopup,
       addLendingAssetPopup,
       removeLendingAssetPopup,
@@ -358,6 +462,9 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
     } = this.state
 
     const {
+      closeConfirmBorrowPopup,
+      closeConfirmRepayPopup,
+      closeConfirmRepayFullPopup,
       closeChangeBakerPopup,
       closeAddExistingCollateralPopup,
       closeAddNewCollateralPopup,
@@ -367,6 +474,7 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
       closeWithdrawCollateralPopup,
       closeManagePermissionsPopup,
       closeUpdateMvkOperatorsPopup,
+      closeChangeVaultNamePopup,
       closeCreateVaultPopup,
       closeAddLendingAssetPopup,
       closeRemoveLendingAssetPopup,
@@ -374,11 +482,30 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
     } = this.state
     return (
       <loansPopupsContext.Provider value={this.state}>
+        <ConfirmBorrowAsset
+          closePopup={closeConfirmBorrowPopup}
+          show={confirmBorrowAssetPopup.showModal}
+          data={confirmBorrowAssetPopup.data}
+        />
+
+        <ConfirmRepay
+          closePopup={closeConfirmRepayPopup}
+          show={confirmRepayPartPopup.showModal}
+          data={confirmRepayPartPopup.data}
+        />
+
+        <ConfirmRepayFull
+          closePopup={closeConfirmRepayFullPopup}
+          show={confirmRepayFullPopup.showModal}
+          data={confirmRepayFullPopup.data}
+        />
+
         <ChangeBaker
           closePopup={closeChangeBakerPopup}
           show={changeBakerPopup.showModal}
           data={changeBakerPopup.data}
         />
+
         <BorrowAsset closePopup={closeBorrowPopup} show={borrowAssetPopup.showModal} data={borrowAssetPopup.data} />
 
         <AddCollateral
@@ -409,7 +536,14 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
         />
 
         <Repay closePopup={closeRepayPopup} show={repayPartPopup.showModal} data={repayPartPopup.data} />
+
         <RepayFull closePopup={closeRepayFullPopup} show={repayFullPopup.showModal} data={repayFullPopup.data} />
+
+        <ChangeVaultName
+          closePopup={closeChangeVaultNamePopup}
+          show={changeVaultNamePopup.showModal}
+          data={changeVaultNamePopup.data}
+        />
 
         <CreateNewVault
           closePopup={closeCreateVaultPopup}

@@ -29,6 +29,24 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     },
   ],
   [
+    'loansEarn',
+    {
+      title: 'Earn Yield on Your Assets',
+      subText: 'Earn yield by depositing your tokens',
+      foregroundImageSrc: '/images/lending-header.svg',
+      backgroundImageSrc: '/images/dapp-header-bg.svg',
+    },
+  ],
+  [
+    'loansBorrow',
+    {
+      title: 'Borrow',
+      subText: 'Borrow stablecoins and bitcoin using your assets as collateral',
+      foregroundImageSrc: '/images/lending-header.svg',
+      backgroundImageSrc: '/images/dapp-header-bg.svg',
+    },
+  ],
+  [
     'dashboard',
     {
       title: 'Dashboard',

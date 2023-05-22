@@ -7,14 +7,10 @@ import { State } from 'reducers'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { LoansGQL, LoansVaultType, CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
 
-import {
-  getAssetMetadata,
-  calculateAccruedInterest,
-  calcCollateralRatio,
-  isTezosAsset,
-} from 'pages/Loans/Loans.helpers'
+import { getAssetMetadata, calculateAccruedInterest, calcCollateralRatio } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount, calculateLiquidationPrice } from './calcFunctionsForVault'
+import { vaultsStatuses } from './Vaults.consts'
 
 type VaultsStorageProps = {
   lendingController: LoansGQL
@@ -130,7 +126,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         // Need one source to get status like vaults or loans.
         // Because at the moment the data is different for the same items
 
-        const status = getStatusByCollateralRatio(collateralRatio)
+        const status = borrowedAmount === 0 ? vaultsStatuses.ACTIVE : getStatusByCollateralRatio(collateralRatio)
 
         // gotStatusByCollateralRatio !== 'no status'
         //   ? gotStatusByCollateralRatio

@@ -11,7 +11,7 @@ import {
   getStatusByCollateralRatio,
   NONE_USER,
   WHITELIST_USERS,
-} from '../Loans.const'
+} from '../../Loans.const'
 import {
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
@@ -26,23 +26,23 @@ import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import Expand from 'app/App.components/Expand/Expand.view'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { StatusMessage } from './StatusMessage.view'
+import { StatusMessage } from '../StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { scrollToFullView } from 'utils/scrollToFullView'
-import { assetDecimalsToShow } from '../Loans.const'
+import { assetDecimalsToShow } from '../../Loans.const'
 
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
-import { ThreeLevelListItem } from '../Loans.style'
-import { BorrowingTabListItemExpanded } from './LoansComponents.style'
+import { ThreeLevelListItem } from '../../Loans.style'
+import { BorrowingTabListItemExpanded } from '../LoansComponents.style'
 
-import { loansPopupsContext } from './Modals/LoansModals.provider'
+import { loansPopupsContext } from '../Modals/LoansModals.provider'
 
 import { State } from 'reducers'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
-import { isTezosAsset } from '../Loans.helpers'
+import { getCollateralRatioByPersentage, isTezosAsset } from '../../Loans.helpers'
 import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { getNumberInBounds } from 'utils/calcFunctions'
 
@@ -56,7 +56,7 @@ type BorrowingExpandCardPropsType = LoansVaultType & {
   DAOFee: number
 }
 
-export const BorrowingExpandCard = ({
+export const OldBorrowingExpandCard = ({
   isOwner = false,
   borrowedAsset,
   collateralData,
@@ -204,7 +204,7 @@ export const BorrowingExpandCard = ({
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
+                currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>

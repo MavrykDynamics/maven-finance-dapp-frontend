@@ -30,11 +30,6 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
         padding-bottom: 10px;
       }
     }
-
-    .expand-borrow-tab-container {
-      background-color: ${({ theme }) => theme.containerColor};
-      border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
-    }
   }
 
   .tabSwitcher {
@@ -67,10 +62,7 @@ export const VaultsFilters = styled.div`
   .filter {
     display: flex;
     align-items: center;
-
-    &:first-of-type {
-      margin-right: 20px;
-    }
+    margin-left: 20px;
 
     h4 {
       margin: 0 10px 0 0;

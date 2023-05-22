@@ -8,9 +8,11 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
+import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/BorrowingExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { OldBorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/OldBorrowingExpandCard'
+import { vaultTabs } from '../Vaults.view'
 
 // styles
 import { VaultsCardDropDown } from './../Vaults.style'
@@ -34,10 +36,9 @@ import { vaultsStatuses } from '../Vaults.consts'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
 import getTimestampByLevel from 'utils/api/getTimestampByLevel'
-import { vaultTabs } from '../Vaults.view'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
-import colors from 'styles/colors'
 import { LIQUIDATION_COST, LIQUIDATION_PRICE, VAULT_RISK } from 'texts/tooltips/vault.text'
+import { getStringWithoutUnderline } from 'utils/parse'
 
 const findStatusInfo = (
   status: string,
@@ -171,7 +172,7 @@ export const VaultsCard = (props: Props) => {
     }
   }, [status, levelOfEarly, levelOfLate])
 
-  const headerSufix = <StatusFlag status={statusColor} text={status} className="sufix" />
+  const headerSufix = <StatusFlag status={statusColor} text={getStringWithoutUnderline(status)} className="sufix" />
 
   const generalExpand = (
     <VaultsCardDropDown>
@@ -294,17 +295,36 @@ export const VaultsCard = (props: Props) => {
     </VaultsCardDropDown>
   )
 
-  return (
-    <>
-      {(vaultTab === vaultTabs.ALL || vaultTab === vaultTabs.MY) && (
-        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} isOwner={isOwner}>
-          {!isOwner && generalExpand}
-        </BorrowingExpandCard>
-      )}
+  switch (vaultTab) {
+    case vaultTabs.MY:
+      return (
+        <BorrowingExpandCard
+          {...props}
+          headerSufix={headerSufix}
+          DAOFee={DAOFee}
+          isOwner={isOwner}
+          hideTransactionHistory
+        />
+      )
 
-      {vaultTab === vaultTabs.PERMISSIONED && (
-        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
-      )}
-    </>
-  )
+    case vaultTabs.PERMISSIONED:
+      return (
+        // TODO: use old component, because need old view for permission vaults.
+        // After all redesign in the future, we will move everything into BorrowingExpandCard component
+        <OldBorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
+      )
+
+    default:
+      return (
+        <BorrowingExpandCard
+          {...props}
+          headerSufix={headerSufix}
+          DAOFee={DAOFee}
+          isOwner={isOwner}
+          hideTransactionHistory
+        >
+          {generalExpand}
+        </BorrowingExpandCard>
+      )
+  }
 }

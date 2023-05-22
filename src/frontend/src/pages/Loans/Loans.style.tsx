@@ -61,6 +61,18 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
     border: 1px solid ${({ theme }) => theme.cardBorderColor};
     border-radius: 10px;
   }
+
+  &.earn-borrow-chart {
+    column-gap: 150px;
+
+    .chart-wrapper {
+      width: fit-content;
+    }
+
+    .chart {
+      height: fit-content;
+    }
+  }
 `
 
 export const MarketsOverviewContainer = styled.div<{ theme: MavrykTheme }>`
@@ -219,7 +231,7 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
   margin-top: 30px;
   display: flex;
   flex-direction: column;
-  row-gap: 25px;
+  row-gap: 50px;
 
   .gen-info {
     display: flex;
@@ -329,10 +341,10 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
         }
 
         font-weight: 600;
-        font-size: 16px;
+        font-size: 18px;
 
         .tzAddressToClick {
-          font-size: 14px;
+          font-size: 16px;
         }
 
         p {
@@ -451,14 +463,9 @@ export const FillBlock = styled.div<{ theme: MavrykTheme; width: number }>`
 `
 
 export const TransactionHistoryStyled = styled.div<{ theme: MavrykTheme }>`
-  margin-top: 20px;
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
-  border-radius: 10px;
-  background-color: ${({ theme }) => theme.containerColor};
-  padding: 30px;
-
-  .top {
-    display: flex;
-    justify-content: space-between;
+  .main {
+    border-radius: 10px;
+    background-color: ${({ theme }) => theme.backgroundColor};
+    padding: 30px;
   }
 `

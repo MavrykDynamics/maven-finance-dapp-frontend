@@ -50,6 +50,11 @@ export const LOANS_QUERY = `
           timestamp
           operation_hash
           sender_id
+          vault {
+            vault {
+              address
+            }
+          } 
           loan_token {
             loan_token_name
             loan_token_address
