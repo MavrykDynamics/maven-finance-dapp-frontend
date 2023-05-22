@@ -1,0 +1,1 @@
+export const USER_AVAILABLE_BORROW = (asset: string) => `The total available borrow across all of your vaults for the ${asset} market. Please note, this number does not factor in the borrow capacity of the market itself so this number can be significantly higher than the current borrow capacity of the market and thus your vaults.`
