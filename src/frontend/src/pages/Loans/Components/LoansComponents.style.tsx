@@ -68,7 +68,7 @@ export const VaultsList = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
+export const BorrowingExpandedCard = styled.div<{ theme: MavrykTheme }>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -87,7 +87,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  .top {
+  .main {
     display: grid;
     grid-template-columns: 450px auto;
     column-gap: 20px;
@@ -105,55 +105,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     margin: 0 auto;
   }
 
-  .block-name {
-    font-weight: 600;
-    font-size: 18px;
-    color: ${({ theme }) => theme.textColor};
-    margin-bottom: 10px;
-
-    &.margin-top {
-      margin-top: 60px;
-    }
-
-    &.margin-top-20 {
-      margin-top: 20px;
-    }
-  }
-
-  .borrowed-data {
-    display: flex;
-
-    > div:not(.buttons-wrapper) {
-      width: 17%;
-    }
-
-    .buttons-wrapper {
-      display: grid;
-      grid-template-columns: 180px 180px;
-      column-gap: 10px;
-      margin-left: auto;
-    }
-  }
-
   .bottom-info-row {
-    display: flex;
-    align-items: center;
-    width: 400px;
-    margin: 6px 0;
-
-    .name {
-      margin-right: 10px;
-    }
-
-    .value {
-      color: ${({ theme }) => theme.dataColor};
-      font-weight: 600;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      column-gap: 6px;
-    }
-
     /* TODO: remove button styles from here */
     button,
     a {
@@ -184,21 +136,34 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  .close-vault {
-    position: absolute;
-    right: 18px;
-    bottom: 20px;
-    width: 250px;
-    height: 36px;
+  // styles below useing only in OldBorrowingExpandComponent
+  .block-name {
+    font-weight: 600;
+    font-size: 18px;
+    color: ${({ theme }) => theme.textColor};
+    margin-bottom: 10px;
 
-    > div {
-      display: flex;
-      align-items: center;
+    &.margin-top {
+      margin-top: 60px;
     }
 
-    svg {
-      width: 15px;
-      height: 15px;
+    &.margin-top-20 {
+      margin-top: 20px;
+    }
+  }
+
+  .borrowed-data {
+    display: flex;
+
+    > div:not(.buttons-wrapper) {
+      width: 17%;
+    }
+
+    .buttons-wrapper {
+      display: grid;
+      grid-template-columns: 180px 180px;
+      column-gap: 10px;
+      margin-left: auto;
     }
   }
 

@@ -18,7 +18,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { scrollToFullView } from 'utils/scrollToFullView'
 
 import { ThreeLevelListItem } from '../../Loans.style'
-import { LoansActionsSection, BorrowingTabListItemExpanded } from '../LoansComponents.style'
+import { LoansActionsSection, BorrowingExpandedCard } from '../LoansComponents.style'
 import { loansPopupsContext } from '../Modals/LoansModals.provider'
 
 import { State } from 'reducers'
@@ -359,10 +359,10 @@ export const BorrowingExpandCard = ({
         }
       >
         {children || (
-          <BorrowingTabListItemExpanded>
+          <BorrowingExpandedCard>
             {vaultStatus && <StatusMessage status={vaultStatus} timestamp={timerTimestamp} />}
 
-            <div className="top">
+            <div className="main">
               <BorrowingExpandCardValuesSection
                 collateralRatio={collateralRatio}
                 collateralBalance={collateralBalance}
@@ -443,7 +443,7 @@ export const BorrowingExpandCard = ({
                 hideTransactionHistory={hideTransactionHistory}
               />
             )}
-          </BorrowingTabListItemExpanded>
+          </BorrowingExpandedCard>
         )}
       </Expand>
     </div>
