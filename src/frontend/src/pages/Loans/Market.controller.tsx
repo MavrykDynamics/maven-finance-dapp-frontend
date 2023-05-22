@@ -30,7 +30,7 @@ import { getLoansStorage } from './Actions/getLoansData.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
-import { USER_AVAILABLE_BORROW } from 'texts/tooltips/loans.text'
+import { USER_AVAILABLE_BORROW } from 'texts/tooltips/loan.text'
 
 export const Market = () => {
   const dispatch = useDispatch()
