@@ -131,8 +131,10 @@ export const checkStage1Validation = ({
 }): boolean => {
   const { description, title, sourceCode, invoice } = proposalValidation ?? {}
   return (
-    description === INPUT_STATUS_SUCCESS && title === INPUT_STATUS_SUCCESS && sourceCode === INPUT_STATUS_SUCCESS
-    // && invoice === INPUT_STATUS_SUCCESS
+    description === INPUT_STATUS_SUCCESS &&
+    title === INPUT_STATUS_SUCCESS &&
+    sourceCode === INPUT_STATUS_SUCCESS &&
+    invoice === INPUT_STATUS_SUCCESS
   )
 }
 
@@ -202,7 +204,6 @@ export const getBytesDiff = (
   const changes = updatedData
     .map<ProposalDataChangesType[number] | null>((item1) => {
       const item2 = originalData?.[originalIdx]
-      console.log({ item1, item2 })
       // if we have more items on client than on server, when we reach end of the items that stored on client array, just add everything to the end
       if (!item2) {
         return {

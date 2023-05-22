@@ -317,7 +317,7 @@ export const StageTwoForm = ({
                   handleOnChange(item, e.target.value, e.target.name)
                 }
                 inputStatus={validityObject?.validBytes}
-                // disabled={!isProposalPeriod || locked}
+                disabled={!isProposalPeriod || locked}
               />
 
               <TextArea

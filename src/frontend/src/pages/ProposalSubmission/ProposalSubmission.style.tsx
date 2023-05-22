@@ -144,7 +144,7 @@ export const SubmitProposalBytes = styled.div<{ theme: MavrykTheme }>`
 export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
-  row-gap: 40px;
+  row-gap: 50px;
 
   margin-top: 30px;
   padding: 40px 20px 40px 20px;

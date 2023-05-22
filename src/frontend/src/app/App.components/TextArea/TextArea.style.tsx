@@ -62,7 +62,7 @@ export const TextAreaStyled = styled.div`
 
   .info-error {
     position: absolute;
-    bottom: -25px;
+    bottom: -20px;
     left: 0px;
     padding-right: 10px;
     width: 100%;
