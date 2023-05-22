@@ -13,6 +13,12 @@ import {
   SATELLITE_CYCLE_DATA_QUERY_NAME,
   SATELLITE_CYCLE_DATA_QUERY_VARIABLE,
 } from 'gql/queries'
+
+import {
+  SATELLITE_ACTIONS_COUNT_QUERY,
+  SATELLITE_ACTIONS_COUNT_QUERY_NAME,
+  SATELLITE_ACTIONS_COUNT_QUERY_VARIABLE,
+} from 'gql/queries/getSatelliteGovernanceStorage'
 import {
   USER_LENDING_DATA_QUERY,
   USER_LENDING_DATA_QUERY_NAME,
@@ -120,6 +126,16 @@ export const fetchUserData = async (
       activeSatelliteRecord: Array<Satellite>
       vesteeRecord: Array<Vesting>
     }
+    let satelliteActionsCount = 0
+    if (Boolean(activeSatelliteRecord)) {
+      const satelliteActionsData = await fetchFromIndexer(
+        SATELLITE_ACTIONS_COUNT_QUERY,
+        SATELLITE_ACTIONS_COUNT_QUERY_NAME,
+        SATELLITE_ACTIONS_COUNT_QUERY_VARIABLE(accountPkh),
+      )
+
+      satelliteActionsCount = satelliteActionsData.governance_satellite[0].actions.length
+    }
 
     const loanTokens = userRewardsData?.lending_controller?.[0]?.loan_tokens as Array<Lending_Controller_Loan_Token>
     const interestRateDecimals = userRewardsData?.lending_controller?.[0]?.interest_rate_decimals ?? 0
@@ -172,6 +188,7 @@ export const fetchUserData = async (
       isSatellite: Boolean(activeSatelliteRecord),
       isVestee: Boolean(vesteeRecord),
       isNewlyRegisteredSatellite: isNewSatellite,
+      govActionsCount: satelliteActionsCount,
     }
 
     // ----- GETTING USER'S TOKENS BALANCES, THAT ARE USED ACROSS DAPP *START* -----
