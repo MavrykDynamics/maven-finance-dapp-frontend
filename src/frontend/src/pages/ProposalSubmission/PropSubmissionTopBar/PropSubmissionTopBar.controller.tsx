@@ -7,25 +7,30 @@ import { SlidingTabButtons } from '../../../app/App.components/SlidingTabButtons
 import { getSeparateSnakeCase } from '../../../utils/parse'
 
 import { CurrentPhaseContainer, PropSubmissionTopBarStyled } from './PropSubmissionTopBar.style'
+import { useMemo } from 'react'
 
 export type PropSubmissionTopBarProps = {
   valueCallback: (val: number) => void
+  activeTab: number
 }
 
-const GOV_PROPOSAL_SUBMISSION_ITEMS = [
-  { text: 'Stage 1', id: 1, active: true },
-  { text: 'Stage 2', id: 2, active: false },
-  { text: 'Stage 3', id: 3, active: false },
-]
-
-export const PropSubmissionTopBar = ({ valueCallback }: PropSubmissionTopBarProps) => {
+export const PropSubmissionTopBar = ({ valueCallback, activeTab }: PropSubmissionTopBarProps) => {
   const { governancePhase } = useSelector((state: State) => state.governance.config)
+
+  const topBarItems = useMemo(
+    () => [
+      { text: 'Step 1', id: 1, active: activeTab === 1 },
+      { text: 'Step 2', id: 2, active: activeTab === 2 },
+      { text: 'Step 3', id: 3, active: activeTab === 3 },
+    ],
+    [activeTab],
+  )
 
   return (
     <PropSubmissionTopBarStyled>
       <div className="left-side">
         <div className="title">Submission Process:</div>
-        <SlidingTabButtons tabItems={GOV_PROPOSAL_SUBMISSION_ITEMS} onClick={valueCallback} />
+        <SlidingTabButtons tabItems={topBarItems} onClick={valueCallback} />
       </div>
 
       <div className="right-side">

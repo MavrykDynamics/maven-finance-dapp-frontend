@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 
 import { Card, boxShadowColor, CardHover } from '../../styles'
 import { MavrykTheme } from '../../styles/interfaces'
@@ -8,15 +8,29 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
   position: relative;
   margin-top: 20px;
   padding-top: 28px;
+
+  .stage-descr {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
+    color: ${({ theme }) => theme.textColor};
+    margin-bottom: 50px;
+  }
+
+  .bytes-label {
+    position: unset;
+    margin-bottom: 20px;
+  }
 `
 
 // Proposal submittion stage 1 styles
-export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme }>`
+export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; isProposalSubmitted?: boolean }>`
   margin-top: 40px;
 
   display: grid;
-  grid-template-columns: 50% 25% 15%;
-  grid-template-rows: 40px minmax(40px, 2fr) 40px;
+  grid-template-columns: ${({ isProposalSubmitted }) => (isProposalSubmitted ? '35% 35% 15%' : '50% 25% 15%')};
+  column-gap: ${({ isProposalSubmitted }) => (isProposalSubmitted ? '30px' : '0')};
+  grid-template-rows: minmax(40px, max-content) minmax(40px, 2fr) 40px minmax(40px, 2fr);
 
   justify-content: space-between;
   row-gap: 50px;
@@ -24,6 +38,14 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme }>
   .submitted-data {
     display: flex;
     flex-direction: column;
+    ${({ isProposalSubmitted }) =>
+      !isProposalSubmitted
+        ? css`
+            &.vert-center {
+              justify-content: center;
+            }
+          `
+        : ''};
     justify-content: center;
     height: 100%;
     position: relative;
@@ -63,11 +85,17 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme }>
     grid-column-start: 1;
     grid-column-end: 4;
   }
+
+  .invoice {
+    position: relative;
+    grid-column-start: 1;
+    grid-column-end: 4;
+  }
 `
 
 // Proposal submittion stage 2 styles
 export const SubmitProposalBytes = styled.div<{ theme: MavrykTheme }>`
-  margin-top: 20px;
+  margin-top: 15px;
   position: relative;
   padding-bottom: 15px;
 
@@ -83,6 +111,22 @@ export const SubmitProposalBytes = styled.div<{ theme: MavrykTheme }>`
       }
     }
   }
+
+  .bytes-restriction-banner {
+    margin-top: 20px;
+  }
+
+  .remove-byte,
+  .add-byte {
+    &.disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+
+      > div {
+        pointer-events: none;
+      }
+    }
+  }
 `
 
 export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>`
@@ -91,14 +135,14 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>
   row-gap: 40px;
 
   margin-top: 30px;
-  padding: 40px 50px 30px 40px;
+  padding: 40px 20px 30px 20px;
 
   background: ${({ theme }) => theme.backgroundColor};
   position: relative;
 
   .idx {
     position: absolute;
-    left: 15px;
+    left: -20px;
     top: 50%;
     transform: translateY(-50%);
     font-weight: 500;
@@ -113,29 +157,17 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>
 
   .remove-byte {
     position: absolute;
-    right: 15px;
+    right: -20px;
     top: 50%;
     transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
+    width: 13px;
+    height: 13px;
 
     svg {
-      width: 20px;
-      height: 20px;
-      fill: ${({ theme }) => theme.headerColor};
+      width: 13px;
+      height: 13px;
+      fill: ${({ theme }) => theme.valueColor};
       transition: 0.3s all;
-    }
-
-    &:hover {
-      svg {
-        fill: ${({ theme }) => theme.valueColor};
-      }
-    }
-
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-      cursor: not-allowed;
     }
 
     .tooltip {
@@ -160,20 +192,30 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>
 
 // Proposal submittion general styles
 export const ProposalSubmittionButtons = styled.div<{ theme: MavrykTheme }>`
-  margin-top: 30px;
+  margin-top: 40px;
   display: grid;
   grid-template-columns: 220px 220px 220px;
   justify-content: flex-end;
   column-gap: 10px;
+
+  .btn-wrapper {
+    position: relative;
+
+    .tooltip {
+      position: absolute;
+      top: -15px;
+      right: -2px;
+    }
+  }
 `
 
 export const SubmitProposalHeader = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
 `
 
 export const SubmitProposalGeneralData = styled(ProposalSubmittionStageOneBody)<{ theme: MavrykTheme }>`
+  grid-template-columns: 32% 35% 15%;
   grid-template-rows: 40px;
   margin-bottom: 20px;
 `

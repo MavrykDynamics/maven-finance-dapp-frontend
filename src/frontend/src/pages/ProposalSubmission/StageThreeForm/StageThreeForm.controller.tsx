@@ -3,11 +3,11 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // types
-import { StageThreeFormProps, StageThreeValidityItem } from '../ProposalSybmittion.types'
+import { StageThreeFormProps, StageThreeValidityItem } from '../ProposalSubmission.types'
 import { Governance_Proposal } from 'utils/generated/graphqlTypes'
 
 // helpers
-import { DEFAULT_PROPOSAL, checkPaymentExists, getValidityStageThreeTable } from '../ProposalSubmition.helpers'
+import { checkPaymentExists, getValidityStageThreeTable } from '../ProposalSubmission.helpers'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -22,6 +22,7 @@ import Button from 'app/App.components/Button/NewButton'
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { STAGE_3_DESCRIPTION } from 'texts/tooltips/governance'
 
 // styles
 import { SubmitProposalGeneralData } from '../ProposalSubmission.style'
@@ -50,7 +51,6 @@ export const StageThreeForm = ({
   const { whitelistTokens } = useSelector((state: State) => state.tokens)
 
   const isProposalRound = governancePhase === 'PROPOSAL'
-  const isDisabledActions = proposalId === DEFAULT_PROPOSAL.id
 
   // is no bytes payments on proposal change add empty pair on client
   useEffect(() => {
@@ -158,10 +158,12 @@ export const StageThreeForm = ({
 
   return (
     <>
+      <div className="stage-descr">{STAGE_3_DESCRIPTION}</div>
+
       <SubmitProposalGeneralData>
         <div className="submitted-data">
           <div className="label">1 - Proposal Title</div>
-          <div className="value">{title}</div>
+          <div className="value">{title || '–'}</div>
         </div>
 
         <div className="submitted-data">
@@ -231,12 +233,11 @@ export const StageThreeForm = ({
                         inputSize: INPUT_SMALL,
                       }}
                       inputProps={{
-                        placeholder: 'Enter receiver address',
+                        placeholder: 'Enter Receiver Address',
                         value: String(payment.to__id),
                         type: 'text',
                         name: 'to__id',
                         onChange: (e) => handleChange(e, rowIdx),
-                        disabled: isDisabledActions,
                       }}
                     />
                   )}
@@ -252,12 +253,11 @@ export const StageThreeForm = ({
                         inputSize: INPUT_SMALL,
                       }}
                       inputProps={{
-                        placeholder: 'Enter proposal purpose',
+                        placeholder: 'Enter Payment Purpose',
                         value: String(payment.title),
                         type: 'text',
                         name: 'title',
                         onChange: (e) => handleChange(e, rowIdx),
-                        disabled: isDisabledActions,
                       }}
                     />
                   )}
@@ -273,12 +273,11 @@ export const StageThreeForm = ({
                         inputSize: INPUT_SMALL,
                       }}
                       inputProps={{
-                        placeholder: 'Enter tokens amount',
+                        placeholder: 'Enter Tokens Amount',
                         value: String(payment.token_amount),
                         type: 'number',
                         name: 'token_amount',
                         onChange: (e) => handleChange(e, rowIdx),
-                        disabled: isDisabledActions,
                       }}
                     />
                   )}
@@ -292,7 +291,6 @@ export const StageThreeForm = ({
                       placeholder={'Select payment method'}
                       className="stage-3-dropDown"
                       items={ddItems}
-                      disabled={isDisabledActions}
                       activeItem={ddItems.find(({ id }) => address === id) ?? ddItems[0]}
                       clickItem={(newSelectedAddress: DDItemId) => {
                         handleChange(
@@ -311,7 +309,7 @@ export const StageThreeForm = ({
                     <Button
                       kind={BUTTON_SIMPLE_SMALL}
                       onClick={() => handleDeleteRow(rowIdx)}
-                      disabled={isTableDisabled || isDisabledActions}
+                      disabled={isTableDisabled}
                     >
                       <Icon id="delete" />
                     </Button>
@@ -323,7 +321,7 @@ export const StageThreeForm = ({
         </TableBody>
         <AddRowBtn>
           <CustomTooltip text="Insert 1 row below" className="tooltip">
-            <Button kind={BUTTON_SIMPLE_SMALL} onClick={handleAddRow} disabled={isTableDisabled || isDisabledActions}>
+            <Button kind={BUTTON_SIMPLE_SMALL} onClick={handleAddRow} disabled={isTableDisabled}>
               <Icon id="plus" />
             </Button>
           </CustomTooltip>

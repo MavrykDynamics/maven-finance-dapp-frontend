@@ -23,7 +23,6 @@ import { EmergencyGovernance } from '../../../pages/EmergencyGovernance/Emergenc
 import { Farms } from '../../../pages/Farms/Farms.controller'
 import { Governance } from '../../../pages/Governance/Governance.controller'
 import { Loans } from '../../../pages/Loans/Loans.controller'
-import { ProposalSubmission } from '../../../pages/ProposalSubmission/ProposalSubmission.controller'
 import { SatelliteDetails } from '../../../pages/SatelliteDetails/SatelliteDetails.controller'
 import { SatelliteGovernance } from '../../../pages/SatelliteGovernance/SatelliteGovernance.controller'
 import { Treasury } from '../../../pages/Treasury/Treasury.controller'
@@ -34,9 +33,9 @@ import { LoansBorrow } from 'pages/LoansEarnBorrow/LoansBorrow.controller'
 import { scrollUpPage } from 'utils/scrollUpPage'
 import ProtectedRoute from './ProtectedRoute'
 import DashboardPersonal from 'pages/DashboardPersonal/DashboardPersonal.controller'
-import { LENDING_TAB_ID } from 'pages/Dashboard/Dashboard.utils'
 import { Market } from 'pages/Loans/Market.controller'
 import { LoansDashboard } from 'pages/LoansDashboard/LoansDashboard'
+import { ProposalSubmission } from 'pages/ProposalSubmission/ProposalSubmission.controller'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()

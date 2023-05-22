@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // types
-import { StageTwoFormProps, ProposalBytesType } from '../ProposalSybmittion.types'
+import { StageTwoFormProps, ProposalBytesType } from '../ProposalSubmission.types'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -15,15 +15,11 @@ import { Info } from 'app/App.components/Info/Info.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // const, helpers
-import {
-  checkBytesPairExists,
-  DEFAULT_PROPOSAL,
-  getBytesPairValidationStatus,
-  PROPOSAL_BYTE,
-} from '../ProposalSubmition.helpers'
+import { checkBytesPairExists, getBytesPairValidationStatus, PROPOSAL_BYTE } from '../ProposalSubmission.helpers'
+import { STAGE_2_DESCRIPTION } from 'texts/tooltips/governance'
 import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { isValidLength } from 'utils/validatorFunctions'
-import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
+import { INFO_DEFAULT, INFO_WARNING } from 'app/App.components/Info/info.constants'
 import { BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { isHexadecimal } from 'utils/validatorFunctions'
 
@@ -42,7 +38,6 @@ export const StageTwoForm = ({
     (state: State) => state.governance.config,
   )
   const isProposalPeriod = governancePhase === 'PROPOSAL'
-  const isDisabledActions = proposalId === DEFAULT_PROPOSAL.id
 
   // is no bytes pair on proposal change add empty pair on client
   useEffect(() => {
@@ -222,10 +217,12 @@ export const StageTwoForm = ({
 
   return (
     <>
+      <div className="stage-descr">{STAGE_2_DESCRIPTION}</div>
+
       <SubmitProposalGeneralData>
         <div className="submitted-data">
           <div className="label">1 - Proposal Title</div>
-          <div className="value">{title}</div>
+          <div className="value">{title || '–'}</div>
         </div>
 
         <div className="submitted-data">
@@ -238,6 +235,8 @@ export const StageTwoForm = ({
           <CommaNumber className="value" value={fee} endingText="XTZ" />
         </div>
       </SubmitProposalGeneralData>
+
+      <div className="bytes-label label">4 - Enter Proposal Bytes</div>
 
       <Info
         type={INFO_DEFAULT}
@@ -279,7 +278,7 @@ export const StageTwoForm = ({
                   inputSize: INPUT_MEDIUM,
                 }}
                 inputProps={{
-                  disabled: existInServer || locked || isDisabledActions,
+                  disabled: existInServer || locked,
                   value: title,
                   type: 'text',
                   name: 'title',
@@ -296,12 +295,16 @@ export const StageTwoForm = ({
                   handleOnChange(item, e.target.value, e.target.name)
                 }
                 inputStatus={validityObject?.validBytes}
-                disabled={!isProposalPeriod || locked || isDisabledActions}
+                disabled={!isProposalPeriod || locked}
               />
 
               <div className={`remove-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
                 <CustomTooltip text="Delete bytes pair" className="tooltip">
-                  <Button kind={BUTTON_SIMPLE} onClick={() => handleDeletePair(item.id)} disabled={isDisabledActions}>
+                  <Button
+                    kind={BUTTON_SIMPLE}
+                    onClick={() => handleDeletePair(item.id)}
+                    disabled={!isProposalPeriod || locked}
+                  >
                     <Icon id="delete" />
                   </Button>
                 </CustomTooltip>
@@ -309,13 +312,21 @@ export const StageTwoForm = ({
             </SubmitProposalBytesPair>
           )
         })}
-        <div className="add-byte">
+
+        {dndBytes.length >= 5 ? (
+          <div className="bytes-restriction-banner">
+            <Info
+              text={
+                'If you are adding a heavy load of bytes, such as bytes to create 20 farms, note that this can cause the operation size can be too large to execute successfully. We suggest to only create farms in batches of 5 per proposal'
+              }
+              type={INFO_WARNING}
+            />
+          </div>
+        ) : null}
+
+        <div className={`add-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
           <CustomTooltip text="Add bytes pair" className="tooltip">
-            <Button
-              kind={BUTTON_SIMPLE_SMALL}
-              disabled={!isProposalPeriod || locked || isDisabledActions}
-              onClick={handleCreateNewByte}
-            >
+            <Button kind={BUTTON_SIMPLE_SMALL} disabled={!isProposalPeriod || locked} onClick={handleCreateNewByte}>
               <Icon id="plus" /> Add New Bytes
             </Button>
           </CustomTooltip>

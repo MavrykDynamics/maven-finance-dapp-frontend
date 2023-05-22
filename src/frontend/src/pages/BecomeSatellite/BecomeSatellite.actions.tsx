@@ -170,7 +170,7 @@ export const updateSatelliteRecord =
     }
   }
 
-export const unregisterAsSatellite = () => async (dispatch: AppDispatch, getState: GetState) => {
+export const unregisterAsSatellite = (closePopup: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
   if (!state.wallet.accountPkh) {
@@ -183,6 +183,8 @@ export const unregisterAsSatellite = () => async (dispatch: AppDispatch, getStat
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
     const transaction = await contract?.methods.unregisterAsSatellite(state.wallet.accountPkh).send()
+
+    closePopup()
 
     dispatch(toggleActionFullScreenLoader(true))
     dispatch(toggleActionCompletion(true))

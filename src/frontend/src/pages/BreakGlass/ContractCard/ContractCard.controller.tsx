@@ -1,10 +1,10 @@
 import { ContractCardTopSection, ContractCardWrapper } from './ContractCard.style'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
-import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { BGAccordion } from '../Accordeon/Accordeon.view'
 import { parseDate } from 'utils/time'
 import { BreakGlassStatusStorage } from 'utils/TypesAndInterfaces/BreakGlass'
+import { STATUS_FLAG_DOWN, STATUS_FLAG_UP } from 'app/App.components/StatusFlag/StatusFlag.constants'
 
 type ContractCardProps = {
   contract: BreakGlassStatusStorage[number]
@@ -31,7 +31,7 @@ export const ContractCard = ({
 
           <StatusFlag
             text={isStatusPaused ? 'PAUSED' : 'LIVE'}
-            status={isStatusPaused ? ProposalStatus.DEFEATED : ProposalStatus.EXECUTED}
+            status={isStatusPaused ? STATUS_FLAG_DOWN : STATUS_FLAG_UP}
           />
         </div>
 

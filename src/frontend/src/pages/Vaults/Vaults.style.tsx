@@ -4,7 +4,13 @@ import styled from 'styled-components/macro'
 import { Card } from 'styles'
 
 // helpers
-import { DOWN, INFO, PRIMARY, UP, WAITING, WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
+import {
+  STATUS_FLAG_DOWN,
+  STATUS_FLAG_INFO,
+  STATUS_FLAG_UP,
+  STATUS_FLAG_WAITING,
+  STATUS_FLAG_WARNING,
+} from 'app/App.components/StatusFlag/StatusFlag.constants'
 
 // types
 import { MavrykTheme } from '../../styles/interfaces'
@@ -197,27 +203,23 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  .${PRIMARY} {
-    color: ${({ theme }) => theme.infoColor};
-  }
-
-  .${UP} {
+  .${STATUS_FLAG_UP} {
     color: ${({ theme }) => theme.upColor};
   }
 
-  .${DOWN} {
+  .${STATUS_FLAG_DOWN} {
     color: ${({ theme }) => theme.downColor};
   }
 
-  .${INFO} {
+  .${STATUS_FLAG_INFO} {
     color: ${({ theme }) => theme.infoColor};
   }
 
-  .${WARNING} {
+  .${STATUS_FLAG_WARNING} {
     color: ${({ theme }) => theme.warningColor};
   }
 
-  .${WAITING} {
+  .${STATUS_FLAG_WAITING} {
     color: ${({ theme }) => theme.riskColor};
   }
 `
