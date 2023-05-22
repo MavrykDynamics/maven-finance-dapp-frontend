@@ -22,9 +22,9 @@ export const UnregisterPopup = ({
   satellite: SatelliteRecordType
 }) => {
   const dispatch = useDispatch()
-  const handleUnregisterSatellite = async () => await dispatch(unregisterAsSatellite())
+  const handleUnregisterSatellite = async () => await dispatch(unregisterAsSatellite(closePopup))
 
-  const { delegatorCount, totalDelegatedAmount } = satellite
+  const { delegatorCount = 0, totalDelegatedAmount = 0 } = satellite ?? {}
 
   return (
     <PopupContainer onClick={closePopup} show={show}>

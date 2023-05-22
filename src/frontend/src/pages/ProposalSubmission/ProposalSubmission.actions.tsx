@@ -21,10 +21,25 @@ import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.ac
 import type { AppDispatch, GetState } from '../../app/App.controller'
 import { SubmitProposalForm } from '../../utils/TypesAndInterfaces/Forms'
 import { State } from 'reducers'
-import { PaymentsDataChangesType, ProposalDataChangesType } from './ProposalSybmittion.types'
+import { PaymentsDataChangesType, ProposalDataChangesType } from './ProposalSubmission.types'
+import { fetchFromIndexer } from 'gql/fetchGraphQL'
+import {
+  GOVERNANCE_LATEST_USER_PROPOSAL_NAME,
+  GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
+  GOVERNANCE_LATEST_USER_PROPOSAL_VARIABLE,
+} from 'gql/queries'
+import { DEFAULT_PROPOSAL } from './ProposalSubmission.helpers'
+import { sleep } from 'utils/api/sleep'
 
 export const submitProposal =
-  (form: SubmitProposalForm, fee: number) => async (dispatch: AppDispatch, getState: GetState) => {
+  (
+    form: SubmitProposalForm,
+    fee: number,
+    proposalBytes: ProposalDataChangesType,
+    proposalPayments: PaymentsDataChangesType,
+    callback: (latestProposalId: number) => void,
+  ) =>
+  async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
@@ -34,43 +49,59 @@ export const submitProposal =
 
     try {
       // prepare and send transaction
-      const { title, description, ipfs, sourceCode } = form
+      const { title, description, invoice, sourceCode } = form
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
-      const transaction = await contract?.methods.propose(title, description, ipfs, sourceCode).send({ amount: fee })
+      const transaction = await contract?.methods
+        .propose(
+          title,
+          description,
+          invoice,
+          sourceCode,
+          proposalBytes,
+          proposalPayments.length ? proposalPayments : undefined,
+        )
+        .send({ amount: fee })
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, 'Submitting proposal...', ACTION_START_MESSAGE_TEXT))
 
+      await sleep(5000)
+
       // turn off fs actions loader and start data updating after 5s after operation started
-      setTimeout(async () => {
-        await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(
-          showToaster(
-            TOASTER_LOADING,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          ),
-        )
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
 
-        // @ts-ignore don't have proper type to acees data, type has only methods
-        const currentOperationLevel = transaction?.lastHead?.header?.level
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
 
-        // refetch data we need
-        await checkIndexerLevelAndRunDataUpdateCallback({
-          callback: async () => {
-            await dispatch(getGovernanceStorage())
-            await dispatch(getSatellitesStorage())
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getGovernanceStorage())
 
-            // Add here call for update data actions
-            await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal Submitted.', ACTION_COMPLETION_MESSAGE_TEXT))
-            await dispatch(toggleActionCompletion(false))
-          },
-          currentOperationLevel,
-        })
-      }, 5000)
+          const usersLatestCreatedProposalId = await fetchFromIndexer(
+            GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
+            GOVERNANCE_LATEST_USER_PROPOSAL_NAME,
+            GOVERNANCE_LATEST_USER_PROPOSAL_VARIABLE(state.wallet.accountPkh ?? ''),
+          )
+          const latestProposalId = usersLatestCreatedProposalId?.['governance_proposal']?.[0]?.id ?? DEFAULT_PROPOSAL.id
+
+          // Add here call for update data actions
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Unstaking done', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+          callback(latestProposalId)
+        },
+        currentOperationLevel,
+      })
     } catch (error) {
       console.error('submitProposal error:', error)
       if (error instanceof Error) {
@@ -99,34 +130,34 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     dispatch(toggleActionCompletion(true))
     dispatch(showToaster(TOASTER_INFO, 'Drop proposal...', ACTION_START_MESSAGE_TEXT))
 
+    await sleep(5000)
+
     // turn off fs actions loader and start data updating after 5s after operation started
-    setTimeout(async () => {
-      await dispatch(toggleActionFullScreenLoader(false))
-      await dispatch(
-        showToaster(
-          TOASTER_LOADING,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        ),
-      )
+    await dispatch(toggleActionFullScreenLoader(false))
+    await dispatch(
+      showToaster(
+        TOASTER_LOADING,
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+      ),
+    )
 
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
+    // @ts-ignore don't have proper type to acees data, type has only methods
+    const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(getGovernanceStorage())
-          await dispatch(getSatellitesStorage())
+    // refetch data we need
+    await checkIndexerLevelAndRunDataUpdateCallback({
+      callback: async () => {
+        await dispatch(getGovernanceStorage())
+        await dispatch(getSatellitesStorage())
 
-          // Add here call for update data actions
-          await dispatch(hideToaster())
-          await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal dropped.', ACTION_COMPLETION_MESSAGE_TEXT))
-          await dispatch(toggleActionCompletion(false))
-        },
-        currentOperationLevel,
-      })
-    }, 5000)
+        // Add here call for update data actions
+        await dispatch(hideToaster())
+        await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal dropped.', ACTION_COMPLETION_MESSAGE_TEXT))
+        await dispatch(toggleActionCompletion(false))
+      },
+      currentOperationLevel,
+    })
   } catch (error) {
     console.error('dropProposal error:', error)
     if (error instanceof Error) {
@@ -155,34 +186,34 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     dispatch(toggleActionCompletion(true))
     dispatch(showToaster(TOASTER_INFO, 'Locking proposal...', ACTION_START_MESSAGE_TEXT))
 
+    await sleep(5000)
+
     // turn off fs actions loader and start data updating after 5s after operation started
-    setTimeout(async () => {
-      await dispatch(toggleActionFullScreenLoader(false))
-      await dispatch(
-        showToaster(
-          TOASTER_LOADING,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        ),
-      )
+    await dispatch(toggleActionFullScreenLoader(false))
+    await dispatch(
+      showToaster(
+        TOASTER_LOADING,
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+      ),
+    )
 
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
+    // @ts-ignore don't have proper type to acees data, type has only methods
+    const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(getGovernanceStorage())
-          await dispatch(getSatellitesStorage())
+    // refetch data we need
+    await checkIndexerLevelAndRunDataUpdateCallback({
+      callback: async () => {
+        await dispatch(getGovernanceStorage())
+        await dispatch(getSatellitesStorage())
 
-          // Add here call for update data actions
-          await dispatch(hideToaster())
-          await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal locked.', ACTION_COMPLETION_MESSAGE_TEXT))
-          await dispatch(toggleActionCompletion(false))
-        },
-        currentOperationLevel,
-      })
-    }, 5000)
+        // Add here call for update data actions
+        await dispatch(hideToaster())
+        await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal locked.', ACTION_COMPLETION_MESSAGE_TEXT))
+        await dispatch(toggleActionCompletion(false))
+      },
+      currentOperationLevel,
+    })
   } catch (error) {
     console.error('lockProposal error:', error)
     if (error instanceof Error) {
@@ -230,34 +261,34 @@ export const updateProposalData =
       //   console.log('estimate error', e)
       // }
 
+      await sleep(5000)
+
       // turn off fs actions loader and start data updating after 5s after operation started
-      setTimeout(async () => {
-        await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(
-          showToaster(
-            TOASTER_LOADING,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          ),
-        )
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
 
-        // @ts-ignore don't have proper type to acees data, type has only methods
-        const currentOperationLevel = transaction?.lastHead?.header?.level
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
 
-        // refetch data we need
-        await checkIndexerLevelAndRunDataUpdateCallback({
-          callback: async () => {
-            await dispatch(getGovernanceStorage())
-            await dispatch(getSatellitesStorage())
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getGovernanceStorage())
+          await dispatch(getSatellitesStorage())
 
-            // Add here call for update data actions
-            await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal updated.', ACTION_COMPLETION_MESSAGE_TEXT))
-            await dispatch(toggleActionCompletion(false))
-          },
-          currentOperationLevel,
-        })
-      }, 5000)
+          // Add here call for update data actions
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal updated.', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)

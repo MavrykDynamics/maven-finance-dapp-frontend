@@ -45,6 +45,39 @@ import {
 import { Lending_Controller_Loan_Token, Satellite, Vesting } from 'utils/generated/graphqlTypes'
 import { getSymbolAndNameFromCollaterealGqlname } from 'utils/parse'
 
+export type SatelliteSnapshot = {
+  cycle: number
+  ready: boolean
+}
+
+/**
+ * @param snapshots satellite snapshots for cycle data
+ * @param currentCycle current active cycle
+ * @returns boolean value for newly registered satellite
+ */
+export function detectNewlyRegisteredSatellite(snapshots: SatelliteSnapshot[], currentCycle: number) {
+  // If highest cycle one is false then not registered/ineligable as a satellite
+  if (snapshots.length < 2 && snapshots.length > 0) {
+    const { cycle, ready } = snapshots[0]
+    return !ready || cycle === currentCycle
+  } else if (snapshots.length >= 2) {
+    const { ready: r1 } = snapshots[0]
+    const { ready: r2 } = snapshots[1]
+
+    if (!r1) return true
+
+    // Check those 2 objects, if both are true -> not newly registered.
+    if (r1 && r2) {
+      return false
+    }
+    // If lowest cycle one is false and hgihest cycle one is true then newly registered.
+    if (!r2 && r1) {
+      return true
+    }
+  }
+  return false
+}
+
 export const fetchUserData = async (
   accountPkh: string,
   dipDupTokens: State['tokens']['dipDupTokens'],
@@ -73,8 +106,7 @@ export const fetchUserData = async (
       SATELLITE_CYCLE_DATA_QUERY_VARIABLE(accountPkh),
     )
     const { cycle_id: currentCycle, satellite_snapshots } = satelliteCycleData.governance[0]
-    // if user is not a sattelite by default provide lower value of cycle to make "isNewlyRegisteredSatellite" field -> false
-    const currentSatelliteCycle = satellite_snapshots.length > 0 ? satellite_snapshots[0].cycle : currentCycle - 1
+    const isNewSatellite = detectNewlyRegisteredSatellite(satellite_snapshots, currentCycle)
 
     const {
       mvk_balance = 0,
@@ -123,7 +155,7 @@ export const fetchUserData = async (
         balance: normalizedBalance + normalizedEarnedRewards,
         usdBalance: normalizedBalance + normalizedEarnedRewards * loanTokenMetadata.rate,
         tokenRate: loanTokenMetadata.rate,
-        tokenSymbol: isTezosAsset(loanTokenMetadata.symbol) ? loanTokenMetadata.name : loanTokenMetadata.symbol,
+        tokenSymbol: isTezosAsset(loanTokenMetadata.symbol) ? 'tezos' : loanTokenMetadata.symbol,
         tokenName: isTezosAsset(loanTokenMetadata.symbol) ? `m${loanTokenMetadata.symbol}` : loanTokenMetadata.name,
         tokenAddress: tokenData.m_token.address,
         reward_index: normalizedIndexRewards,
@@ -139,7 +171,7 @@ export const fetchUserData = async (
       satelliteMvkIsDelegatedTo: delegations?.[0]?.satellite?.user?.address ?? '',
       isSatellite: Boolean(activeSatelliteRecord),
       isVestee: Boolean(vesteeRecord),
-      isNewlyRegisteredSatellite: currentSatelliteCycle === currentCycle,
+      isNewlyRegisteredSatellite: isNewSatellite,
     }
 
     // ----- GETTING USER'S TOKENS BALANCES, THAT ARE USED ACROSS DAPP *START* -----

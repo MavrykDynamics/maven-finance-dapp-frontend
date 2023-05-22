@@ -45,6 +45,7 @@ export const IPFSUploader = ({
   setFormInputStatus,
   className,
 }: IPFSUploaderProps) => {
+  const isKeysChecked = useRef(false)
   const dispatch = useDispatch()
   const [isUploading, setIsUploading] = useState(false)
   const [imageOk, setImageOk] = useState(false)
@@ -55,16 +56,18 @@ export const IPFSUploader = ({
     const checkIPFS = async () => {
       try {
         // check whether keys are valid, if keys are invalid it will throw 401 status error
-        await client.config.getAll()
+        if (!isKeysChecked.current) await client.version()
         setIsDisabled(Boolean(disabled))
       } catch (e) {
         // disable if keys are invalid
         setIsDisabled(true)
         dispatch(showToaster(ERROR, 'Keys are invalid', 'IPFS auth keys are invalid, image selection will be disabled'))
+      } finally {
+        isKeysChecked.current = true
       }
     }
     checkIPFS()
-  }, [])
+  }, [disabled])
 
   async function handleUpload(file: File) {
     try {

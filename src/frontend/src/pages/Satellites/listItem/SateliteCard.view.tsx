@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // consts, helpers, actions
-import { DOWN, WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { getVoteText, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+import { STATUS_FLAG_DOWN, STATUS_FLAG_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
   ACTION_PRIMARY,
@@ -22,6 +22,7 @@ import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // types
 import { State } from 'reducers'
@@ -43,6 +44,8 @@ import {
   SatelliteCardRow,
 } from './SatelliteCard.style'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
+import colors from 'styles/colors'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -60,6 +63,8 @@ const renderVotingHistoryItem = (vote: number) => {
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
   const dispatch = useDispatch()
 
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     accountPkh,
@@ -84,7 +89,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const lastSupportedgProposalId = satellite.proposalVotingHistory?.at(0)?.proposalId ?? null
 
   // Satellite status data
-  const satelliteStatusColor = satellite.status === SatelliteStatus.BANNED || !currentlyRegistered ? DOWN : WARNING
+  const satelliteStatusColor =
+    satellite.status === SatelliteStatus.BANNED || !currentlyRegistered ? STATUS_FLAG_DOWN : STATUS_FLAG_WARNING
   // if satellite is unregistered, show inactive status
   const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE || !currentlyRegistered
 
@@ -182,9 +188,16 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
               </SatelliteProfileDetails>
             ) : (
               <SatelliteTextGroup>
-                <SatelliteMainText>Total Voting Power</SatelliteMainText>
+                <div className="text-wrapper">
+                  <SatelliteMainText>Total Voting Power</SatelliteMainText>
+                  <CustomTooltip
+                    text={TOTAL_VOTING_POWER_TOOLTIP_TEXT}
+                    iconId="info"
+                    defaultStrokeColor={colors[themeSelected]['textColor']}
+                  />
+                </div>
                 <SatelliteSubText>
-                  <CommaNumber value={satellite.sMvkBalance + satellite.totalDelegatedAmount} endingText="sMVK" />
+                  <CommaNumber value={satellite.totalVotingPower} endingText="sMVK" />
                 </SatelliteSubText>
               </SatelliteTextGroup>
             )}
