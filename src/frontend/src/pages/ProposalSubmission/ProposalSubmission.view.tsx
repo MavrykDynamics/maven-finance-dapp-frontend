@@ -102,7 +102,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         { keys: [], mapper: {}, validityObj: {} },
       )
 
-    if (keys.length < 2 && governancePhase === 'PROPOSAL') {
+    if (keys.length < 2) {
       return [
         keys.concat(DEFAULT_PROPOSAL.id),
         { ...mapper, [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL },
@@ -110,7 +110,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       ]
     }
     return [keys, mapper, validityObj]
-  }, [accountPkh, currentRoundProposalsIds, governancePhase, proposalsMapper])
+  }, [accountPkh, currentRoundProposalsIds, proposalsMapper])
 
   // mapping user created proposals to tabs buttons data
   const usersProposalsToSwitch = useMemo(
