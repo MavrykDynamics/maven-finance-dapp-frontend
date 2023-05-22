@@ -223,7 +223,7 @@ export const getBytesDiff = (
           addOrSetProposalData: {
             title: item1.title ?? '',
             encodedCode: item1.encoded_code ?? '',
-            codeDescription: '',
+            codeDescription: item1.code_description ?? '',
             index: String(originalIdx++),
           },
         }

@@ -87,6 +87,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             bytesValidation: proposal.proposalData.map((bytesPair) => ({
               validBytes: '',
               validTitle: '',
+              validDescr: '',
               byteId: bytesPair.id,
             })),
             paymentsValidation: proposal.proposalPayments.map((payment) => ({

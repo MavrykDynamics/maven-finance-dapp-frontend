@@ -96,6 +96,25 @@ export const StageTwoForm = ({
           proposalId,
         )
         break
+      case 'code_description':
+        updateLocalProposalValidation(
+          {
+            bytesValidation: currentProposalValidation.bytesValidation.map((byteValidity) =>
+              byteValidity.byteId === byte.id
+                ? {
+                    ...byteValidity,
+                    validDescr:
+                      isValidLength(text, 1, proposalMetadataTitleMaxLength) &&
+                      getBytesPairValidationStatus(text, 'validTitle') === INPUT_STATUS_SUCCESS
+                        ? INPUT_STATUS_SUCCESS
+                        : INPUT_STATUS_ERROR,
+                  }
+                : byteValidity,
+            ),
+          },
+          proposalId,
+        )
+        break
     }
   }
 
@@ -123,6 +142,7 @@ export const StageTwoForm = ({
         bytesValidation: (currentProposalValidation.bytesValidation ?? []).concat({
           validBytes: '',
           validTitle: '',
+          validDescr: '',
           byteId: newId,
         }),
       },
@@ -254,7 +274,7 @@ export const StageTwoForm = ({
             typeof item.encoded_code !== 'string'
           )
             return null
-          const { title = '', encoded_code = '' } = item
+          const { title = '', encoded_code = '', code_description } = item
           const existInServer = Boolean(proposalData?.find(({ id }) => item.id === id && !item.isLocalBytes))
           const validityObject = currentProposalValidation.bytesValidation?.find(({ byteId }) => byteId === item.id)
 
@@ -278,7 +298,7 @@ export const StageTwoForm = ({
                   inputSize: INPUT_MEDIUM,
                 }}
                 inputProps={{
-                  disabled: existInServer || locked,
+                  disabled: existInServer || locked || !isProposalPeriod,
                   value: title,
                   type: 'text',
                   name: 'title',
@@ -295,6 +315,17 @@ export const StageTwoForm = ({
                   handleOnChange(item, e.target.value, e.target.name)
                 }
                 inputStatus={validityObject?.validBytes}
+                // disabled={!isProposalPeriod || locked}
+              />
+
+              <TextArea
+                name="code_description"
+                label="Enter Proposal Bytes Description"
+                value={code_description ?? ''}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  handleOnChange(item, e.target.value, e.target.name)
+                }
+                inputStatus={validityObject?.validDescr}
                 disabled={!isProposalPeriod || locked}
               />
 

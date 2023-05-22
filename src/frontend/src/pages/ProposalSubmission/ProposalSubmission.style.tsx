@@ -30,7 +30,7 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
   display: grid;
   grid-template-columns: ${({ isProposalSubmitted }) => (isProposalSubmitted ? '35% 35% 15%' : '50% 25% 15%')};
   column-gap: ${({ isProposalSubmitted }) => (isProposalSubmitted ? '30px' : '0')};
-  grid-template-rows: minmax(40px, max-content) minmax(40px, 2fr) 40px minmax(40px, 2fr);
+  grid-template-rows: minmax(40px, max-content) minmax(40px, max-content) 40px minmax(40px, max-content);
 
   justify-content: space-between;
   row-gap: 50px;
@@ -90,6 +90,10 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
     position: relative;
     grid-column-start: 1;
     grid-column-end: 4;
+
+    > div {
+      margin: 0;
+    }
   }
 `
 
@@ -135,7 +139,7 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>
   row-gap: 40px;
 
   margin-top: 30px;
-  padding: 40px 20px 30px 20px;
+  padding: 40px 20px 40px 20px;
 
   background: ${({ theme }) => theme.backgroundColor};
   position: relative;
