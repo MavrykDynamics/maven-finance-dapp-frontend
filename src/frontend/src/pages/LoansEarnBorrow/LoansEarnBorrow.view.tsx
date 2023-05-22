@@ -19,9 +19,7 @@ type Props = {
 export const LoansEarnBorrow = ({ title, markets, settings, handleClick, isDisabledButton }: Props) => {
   return (
     <LoansEarnBorrowStyled>
-      <H2Title>
-        <h2>{title}</h2>
-      </H2Title>
+      <H2Title>{title}</H2Title>
 
       <EarnBorrowCards>
         {markets.map((item) => (
