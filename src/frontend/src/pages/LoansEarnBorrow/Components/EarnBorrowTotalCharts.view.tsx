@@ -6,6 +6,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { Chart } from 'app/App.components/Chart/Chart'
 import { CHART_COLORS, CHART_SETTINGS, numberOfItemsToDisplay } from '../LoansEarnBorrow.consts'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
@@ -45,6 +46,7 @@ export const EarnBorrowTotalCharts = ({
           settings={CHART_SETTINGS}
           numberOfItemsToDisplay={numberOfItemsToDisplay}
           tooltipAsset="$"
+          tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
         />
         <div className="chart-interval">7 Days</div>
       </div>
@@ -65,6 +67,7 @@ export const EarnBorrowTotalCharts = ({
           settings={CHART_SETTINGS}
           numberOfItemsToDisplay={numberOfItemsToDisplay}
           tooltipAsset="$"
+          tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
         />
         <div className="chart-interval">7 Days</div>
       </div>

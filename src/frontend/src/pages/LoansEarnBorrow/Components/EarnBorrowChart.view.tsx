@@ -12,6 +12,7 @@ import { EarnBorrowChartStyled } from '../LoansEarnBorrow.styles'
 import { CHART_COLORS, MINI_CHART_SETTINGS, numberOfItemsToDisplay } from '../LoansEarnBorrow.consts'
 import { BUTTON_THIRD, BUTTON_ROUND } from 'app/App.components/Button/Button.constants'
 import { AREA_CHART_TYPE, HISTOGRAM_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
@@ -49,6 +50,7 @@ export const EarnBorrowChart = ({ data }: Props) => {
         settings={MINI_CHART_SETTINGS}
         numberOfItemsToDisplay={numberOfItemsToDisplay}
         tooltipAsset="$"
+        tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
       />
     </EarnBorrowChartStyled>
   )
