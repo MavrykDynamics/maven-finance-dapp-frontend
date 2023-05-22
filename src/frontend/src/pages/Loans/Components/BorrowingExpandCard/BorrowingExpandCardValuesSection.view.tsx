@@ -1,10 +1,7 @@
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import {
-  BorrowingTabListItemValuesSectionStyled,
-  BorrowingTabListItemValuesSectionInfo,
-} from '../LoansComponents.style'
+import { LoansValuesSection, LoansValuesSectionInfo } from '../LoansComponents.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
@@ -36,83 +33,65 @@ export const BorrowingExpandCardValuesSection = ({
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   return (
-    <BorrowingTabListItemValuesSectionStyled>
-      <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>
-        <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={decimals} />
+    <LoansValuesSection>
+      <div className="stats">
+        <LoansValuesSectionInfo hasRate={Boolean(rate)}>
+          <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={decimals} />
 
-        <CommaNumber
-          value={(borrowedAmount + fee) * rate}
-          beginningText="$"
-          className="rate"
-          showDecimal
-          decimalsToShow={decimals}
-        />
-
-        <div className="name">
-          Outstanding Debt
-          <CustomTooltip iconId="info" text={OUTSTANDING_DEBT} defaultStrokeColor={colors[themeSelected].textColor} />
-        </div>
-      </BorrowingTabListItemValuesSectionInfo>
-
-      <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>
-        <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
-        <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
-        <div className="name">Principle</div>
-      </BorrowingTabListItemValuesSectionInfo>
-
-      <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>
-        <CommaNumber value={collateralBalance} className="value" beginningText="$" showDecimal decimalsToShow={2} />
-        <div className="name margin-top">
-          Collateral Value
-          <CustomTooltip
-            iconId="info"
-            text={ COLLATERAL_VALUE}
-            defaultStrokeColor={colors[themeSelected].textColor}
+          <CommaNumber
+            value={(borrowedAmount + fee) * rate}
+            beginningText="$"
+            className="rate"
+            showDecimal
+            decimalsToShow={decimals}
           />
-        </div>
-      </BorrowingTabListItemValuesSectionInfo>
 
-      <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>
-        <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
-        <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
-        <div className="name">
-          Accrued Interest
-          <CustomTooltip
-            iconId="info"
-            text={ACCRUED_INTEREST}
-            defaultStrokeColor={colors[themeSelected].textColor}
-          />
-        </div>
-      </BorrowingTabListItemValuesSectionInfo>
+          <div className="name">
+            Outstanding Debt
+            <CustomTooltip iconId="info" text={OUTSTANDING_DEBT} defaultStrokeColor={colors[themeSelected].textColor} />
+          </div>
+        </LoansValuesSectionInfo>
 
-      <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>
-        <CommaNumber value={apr} decimalsToShow={2} className="value" endingText="%" />
-        <div className="name margin-top">
-          APR
-          <CustomTooltip
-            iconId="info"
-            text={APR}
-            defaultStrokeColor={colors[themeSelected].textColor}
-          />
-        </div>
-      </BorrowingTabListItemValuesSectionInfo>
+        <LoansValuesSectionInfo hasRate={Boolean(rate)}>
+          <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
+          <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
+          <div className="name">Principle</div>
+        </LoansValuesSectionInfo>
 
-      <BorrowingTabListItemValuesSectionInfo hasRate={Boolean(rate)}>
-        <CommaNumber value={borrowCapacity} className="value" beginningText="$" showDecimal decimalsToShow={2} />
-        <div className="name margin-top">
-          Borrow Capacity
-          <CustomTooltip
-            iconId="info"
-            text={BORROW_CAPACITY}
-            defaultStrokeColor={colors[themeSelected].textColor}
-          />
-        </div>
-      </BorrowingTabListItemValuesSectionInfo>
+        <LoansValuesSectionInfo>
+          <CommaNumber value={collateralBalance} className="value" beginningText="$" showDecimal decimalsToShow={2} />
+          <div className="name margin-top">
+            Collateral Value
+            <CustomTooltip iconId="info" text={COLLATERAL_VALUE} defaultStrokeColor={colors[themeSelected].textColor} />
+          </div>
+        </LoansValuesSectionInfo>
 
-      <BorrowingTabListItemValuesSectionInfo
-        className="collateral-diagram"
-        customColor={getCollateralRationPersent(collateralRatio)}
-      >
+        <LoansValuesSectionInfo hasRate={Boolean(rate)}>
+          <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
+          <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
+          <div className="name">
+            Accrued Interest
+            <CustomTooltip iconId="info" text={ACCRUED_INTEREST} defaultStrokeColor={colors[themeSelected].textColor} />
+          </div>
+        </LoansValuesSectionInfo>
+
+        <LoansValuesSectionInfo>
+          <CommaNumber value={apr} decimalsToShow={2} className="value" endingText="%" />
+          <div className="name margin-top">
+            APR
+            <CustomTooltip iconId="info" text={APR} defaultStrokeColor={colors[themeSelected].textColor} />
+          </div>
+        </LoansValuesSectionInfo>
+
+        <LoansValuesSectionInfo>
+          <CommaNumber value={borrowCapacity} className="value" beginningText="$" showDecimal decimalsToShow={2} />
+          <div className="name margin-top">
+            Borrow Capacity
+            <CustomTooltip iconId="info" text={BORROW_CAPACITY} defaultStrokeColor={colors[themeSelected].textColor} />
+          </div>
+        </LoansValuesSectionInfo>
+      </div>
+      <LoansValuesSectionInfo className="collateral-diagram" customColor={getCollateralRationPersent(collateralRatio)}>
         <div className="percentage">
           Collateral Ratio:
           <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
@@ -121,13 +100,12 @@ export const BorrowingExpandCardValuesSection = ({
           colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
           currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
         />
-      </BorrowingTabListItemValuesSectionInfo>
-
-      <BorrowingTabListItemValuesSectionInfo className="learn-more">
+      </LoansValuesSectionInfo>
+      <LoansValuesSectionInfo className="learn-more">
         <a href="https://mavryk.finance/litepaper#multi-collateral-vaults" target="_blank" rel="noreferrer">
           Learn more at the Mavryk Docs
         </a>
-      </BorrowingTabListItemValuesSectionInfo>
-    </BorrowingTabListItemValuesSectionStyled>
+      </LoansValuesSectionInfo>
+    </LoansValuesSection>
   )
 }

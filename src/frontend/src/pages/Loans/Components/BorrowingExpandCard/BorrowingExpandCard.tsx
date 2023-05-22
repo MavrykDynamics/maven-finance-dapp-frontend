@@ -18,7 +18,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { scrollToFullView } from 'utils/scrollToFullView'
 
 import { ThreeLevelListItem } from '../../Loans.style'
-import { BorrowingExpandCardActionsSectionStyled, BorrowingTabListItemExpanded } from '../LoansComponents.style'
+import { LoansActionsSection, BorrowingTabListItemExpanded } from '../LoansComponents.style'
 import { loansPopupsContext } from '../Modals/LoansModals.provider'
 
 import { State } from 'reducers'
@@ -374,7 +374,7 @@ export const BorrowingExpandCard = ({
                 rate={rate}
               />
 
-              <BorrowingExpandCardActionsSectionStyled>
+              <LoansActionsSection>
                 <div className="switchers">
                   <SlidingTabButtons
                     onClick={handleSwitchTab('repayAndBorrow')}
@@ -418,7 +418,7 @@ export const BorrowingExpandCard = ({
                     openConfirmRepayFullPopup={handleClickOpenConfirmRepayFullPopup}
                   />
                 )}
-              </BorrowingExpandCardActionsSectionStyled>
+              </LoansActionsSection>
             </div>
 
             {currentToken && (

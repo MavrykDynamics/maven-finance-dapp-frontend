@@ -13,10 +13,17 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { assetDecimalsToShow } from '../Loans.const'
 
 import { ThreeLevelListItem } from '../Loans.style'
-import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
+import {
+  LoansValuesSectionInfo,
+  LoansValuesSection,
+  LendingTabStyled,
+  NoItemsInTabStyled,
+  VaultsList,
+} from './LoansComponents.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { isTezosAsset } from '../Loans.helpers'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -39,79 +46,91 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
   const tokenBalance = userTokens[balanceSymbol]?.balance ?? 0
 
   return (
-    <LoansTabStyled>
-      <H2Title>My Lending</H2Title>
-
+    <LendingTabStyled>
       {lendingItem ? (
-        <VaultsList>
-          <LendingTabListItem>
-            <ThreeLevelListItem>
-              <div className="name">Asset</div>
-              <div className="value">
-                <ImageWithPlug imageLink={assetData.icon} alt={`${assetData.symbol} icon`} />
-                {assetData.symbol}
-              </div>
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">Lending</div>
-              <CommaNumber value={lendingItem.lendValue} decimalsToShow={assetDecimalsToShow} className="value" />
-              {assetData.rate ? (
-                <CommaNumber value={lendingItem.lendValue * assetData.rate} beginningText="$" className="rate" />
-              ) : null}
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">Lend APY</div>
-              <CommaNumber value={lendAPY} className="value" endingText="%" />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">Interest Earned</div>
-              <CommaNumber value={lendingItem.interestEarned} className="value" />
-              {assetData.rate ? (
-                <CommaNumber value={lendingItem.interestEarned * assetData.rate} beginningText="$" className="rate" />
-              ) : null}
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">Wallet Balance</div>
-              <CommaNumber value={tokenBalance} decimalsToShow={assetDecimalsToShow} className="value" />
-              {assetData.rate ? (
-                <CommaNumber value={tokenBalance * assetData.rate} beginningText="$" className="rate" />
-              ) : null}
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">m{assetData.symbol} Balance</div>
-              <CommaNumber value={lendingItem.mBalance} decimalsToShow={assetDecimalsToShow} className="value" />
-            </ThreeLevelListItem>
-            <Button
-              text="Add"
-              icon="plus"
-              kind={TRANSPARENT_WITH_BORDER}
-              disabled={!Boolean(accountPkh) || isActionActive}
-              onClick={() => {
-                openAddLendingAssetPopup({
-                  mBalance: lendingItem.mBalance,
-                  lendingAPY: lendAPY,
-                  ...assetData,
-                })
-              }}
-              className="lending-btn"
-            />
-            <Button
-              text="Remove"
-              icon="minus"
-              kind={TRANSPARENT_WITH_BORDER}
-              disabled={!Boolean(accountPkh) || isActionActive}
-              onClick={() => {
-                openRemoveLendingAssetPopup({
-                  mBalance: lendingItem.mBalance,
-                  lendingAPY: lendAPY,
-                  currentLendedAmount: lendingItem.lendValue,
-                  ...assetData,
-                })
-              }}
-              className="lending-btn"
-            />
-          </LendingTabListItem>
-        </VaultsList>
+        <div className="main">
+          <LoansValuesSection className="secondary-background">
+            <H2Title>Your Supplied XTZ Position</H2Title>
+
+            <div className="stats">
+              <LoansValuesSectionInfo hasRate={Boolean(assetData.rate)}>
+                <CommaNumber
+                  value={lendingItem.lendValue}
+                  className="value"
+                  showDecimal
+                  decimalsToShow={assetDecimalsToShow}
+                />
+
+                <CommaNumber
+                  value={lendingItem.lendValue * assetData.rate}
+                  beginningText="$"
+                  className="rate"
+                  showDecimal
+                />
+
+                <div className="name">
+                  Supplied Amount
+                  <CustomTooltip iconId="info" text={''} />
+                </div>
+              </LoansValuesSectionInfo>
+
+              <LoansValuesSectionInfo hasRate={Boolean(assetData.rate)}>
+                <CommaNumber value={lendingItem.interestEarned} className="value" showDecimal />
+
+                <CommaNumber
+                  value={lendingItem.interestEarned * assetData.rate}
+                  beginningText="$"
+                  className="rate"
+                  showDecimal
+                />
+
+                <div className="name">
+                  Interest Earned
+                  <CustomTooltip iconId="info" text={''} />
+                </div>
+              </LoansValuesSectionInfo>
+
+              <LoansValuesSectionInfo>
+                <CommaNumber value={lendAPY} className="value" showDecimal />
+
+                <div className="name margin-top">
+                  Earn APY
+                  <CustomTooltip iconId="info" text={''} />
+                </div>
+              </LoansValuesSectionInfo>
+
+              <LoansValuesSectionInfo>
+                <CommaNumber
+                  value={lendingItem.mBalance}
+                  className="value"
+                  showDecimal
+                  decimalsToShow={assetDecimalsToShow}
+                />
+
+                <div className="name margin-top">
+                  m{assetData.symbol} Balance
+                  <CustomTooltip iconId="info" text={''} />
+                </div>
+              </LoansValuesSectionInfo>
+
+              <LoansValuesSectionInfo hasRate={Boolean(assetData.rate)}>
+                <CommaNumber value={tokenBalance} className="value" showDecimal decimalsToShow={assetDecimalsToShow} />
+                <CommaNumber value={tokenBalance * assetData.rate} beginningText="$" className="rate" showDecimal />
+
+                <div className="name">
+                  Wallet Balance
+                  <CustomTooltip iconId="info" text={''} />
+                </div>
+              </LoansValuesSectionInfo>
+            </div>
+
+            <LoansValuesSectionInfo className="learn-more">
+              <a href="https://mavryk.finance/litepaper#multi-collateral-vaults" target="_blank" rel="noreferrer">
+                Learn more at the Mavryk Docs
+              </a>
+            </LoansValuesSectionInfo>
+          </LoansValuesSection>
+        </div>
       ) : (
         <NoItemsInTabStyled>
           <span>Lend assets to earn interest.</span>
@@ -131,9 +150,6 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
           />
         </NoItemsInTabStyled>
       )}
-      <div className="factory-info">
-        Lending Controller Address <TzAddress tzAddress={lendingControllerAddress} type={BLUE} />
-      </div>
-    </LoansTabStyled>
+    </LendingTabStyled>
   )
 }
