@@ -30,8 +30,6 @@ import { subsciptionErrorToaster } from 'app/App.components/Toaster/builtActions
  * @param skip boolean, if you pass this param, the hook will be triggered only one time
  * @returns {isInitialLoading: boolean, isActionLoading: boolean} isInitialLoading is false if initial data is still loading, true if it's loaded
  * isActionLoading is false if action update is done, true if it's in progress
- *
- * TODO: add toasters for subs errors handling
  */
 export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSubscriptionsTypes> = []) => {
   const [actionLoaderState, setActionLoaderState] = useState<StakeActionsLoaderState>(STAKE_DEFAULT_LOADINGS)
