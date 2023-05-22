@@ -50,9 +50,7 @@ export const StageTwoForm = ({
     // update input value
     updateLocalProposalData(
       {
-        proposalData: proposalData.map((oldByte) =>
-          oldByte.id === byte.id ? { ...oldByte, [type === 'title' ? 'title' : 'encoded_code']: text } : oldByte,
-        ),
+        proposalData: proposalData.map((oldByte) => (oldByte.id === byte.id ? { ...oldByte, [type]: text } : oldByte)),
       },
       proposalId,
     )
@@ -261,7 +259,11 @@ export const StageTwoForm = ({
       <Info
         type={INFO_DEFAULT}
         text={
-          'Bytes are executed in FILO. If you want to change the order of execution of the bytes, drag the pair to thedesired position.'
+          <>
+            Bytes are executed in FILO. If you want to change the order of execution of the bytes, drag the pair to the
+            desired position. Learn more on how to create bytes for governance proposals in the{' '}
+            <a href="https://www.npmjs.com/package/@mavrykdynamics/create-lambda-bytes">Mavryk Docs</a>.
+          </>
         }
       />
 
