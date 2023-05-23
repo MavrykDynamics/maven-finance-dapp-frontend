@@ -39,6 +39,7 @@ import { getTokensForDAPP, getTokensPrices } from 'reducers/actions/getTokens.ac
 import { getCouncilMembers } from 'pages/Council/Council.actions'
 import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 import { getAvaliableCollaterals, getXtzBakers } from 'pages/Loans/Actions/getLoansData.actions'
+import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
@@ -58,6 +59,7 @@ const AppContainer = () => {
 
   // inital data load
   useInitializer()
+  useSatellitesUpdater()
 
   useEffect(() => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))

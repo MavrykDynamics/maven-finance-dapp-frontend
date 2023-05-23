@@ -1,7 +1,8 @@
 import React, { useContext } from 'react'
 
 // types
-import { State, Props, SatellitesContext } from './satellites.provider.types'
+import { State, Props, SatellitesContext, SatellitesStorage } from './satellites.provider.types'
+import { normalizeSatellitesLedger } from './helpers/Satellites.normalizer'
 
 export const satellitesContext = React.createContext<SatellitesContext>(undefined!)
 
@@ -15,12 +16,29 @@ export class SatellitesProvider extends React.Component<Props, State> {
         allSatellitesIds: [],
         oraclesIds: [],
         isLoaded: false,
+        // actions
+        updateSatellitesContext: this.updateSatellitesContext,
       },
     }
   }
 
+  updateSatellitesContext = (storage: SatellitesStorage) => {
+    const { oraclesIds, activeSatellitesIds, allSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(storage)
+
+    this.setState({
+      context: {
+        ...this.state.context,
+        oraclesIds,
+        activeSatellitesIds,
+        allSatellitesIds,
+        satelliteMapper: satelliteMapper as any,
+        isLoaded: true,
+      },
+    })
+  }
+
   render(): React.ReactNode {
-    console.log(this.state.context)
+    console.log(this.state.context, 'satellites context')
     return <satellitesContext.Provider value={this.state.context}>{this.props.children}</satellitesContext.Provider>
   }
 }

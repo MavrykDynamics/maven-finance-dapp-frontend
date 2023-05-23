@@ -158,7 +158,6 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
   }
 
   render(): React.ReactNode {
-    console.log(this.state.context)
     return <dappContext.Provider value={this.state.context}>{this.props.children}</dappContext.Provider>
   }
 }

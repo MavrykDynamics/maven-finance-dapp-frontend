@@ -1,24 +1,18 @@
-import type { SatelliteRecordType, SatelliteVotingsType } from '../../../utils/TypesAndInterfaces/Satellites'
-import type { SatelliteRecordGraphQl, DelegationGraphQl } from '../../../utils/TypesAndInterfaces/Satellites'
-import { GovernanceFinancialRequestGraphQL } from 'utils/TypesAndInterfaces/Governance'
-import {
-  Aggregator,
-  Aggregator_Oracle,
-  Aggregator_Oracle_Observation,
-  Emergency_Governance,
-  Governance_Proposal,
-} from 'utils/generated/graphqlTypes'
+import type { SatelliteVotingsType } from '../../../utils/TypesAndInterfaces/Satellites'
 
 // helpers
 import { calcWithoutMu, calcWithoutPrecision, getNumberInBounds } from '../../../utils/calcFunctions'
+import { OracleStatusTypes, VOTE_NUM_MAPPER } from '../satellites.const'
+import { SatellitesStorage } from '../satellites.provider.types'
 import {
-  defaultSatelliteDescriptionMaxLength,
-  defaultSatelliteNameMaxLength,
-  defaultSatelliteWebsiteMaxLength,
-} from 'app/App.components/Input/Input.constants'
-import { OracleStatusTypes, VOTE_NUM_MAPPER } from './Satellites.consts'
+  SatelliteDataSubscription,
+  SatelliteGovernanceProposalDataSubscription,
+  SatelliteEmergencyGovernanceDataSubscription,
+  SatelliteGovernanceFinancialRequestSubscription,
+  SatelliteAggregatorOraclesSubscription,
+} from 'utils/__generated__/graphql'
 
-export const getSatelliteAccuracy = (satelliteRecord: SatelliteRecordGraphQl) => {
+export const getSatelliteAccuracy = (satelliteRecord: SatelliteDataSubscription['satellite'][0]) => {
   const v1 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.aggregator?.last_completed_data),
     v2 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.observations?.[0]?.data)
 
@@ -29,7 +23,9 @@ export const getSatelliteAccuracy = (satelliteRecord: SatelliteRecordGraphQl) =>
   return 100 - ((parsedV1 - parsedv2) / ((parsedV1 + parsedv2) / 2)) * 100
 }
 
-const getOraclePredictionSuccessRatio = (latestObservation?: Aggregator_Oracle_Observation): number => {
+const getOraclePredictionSuccessRatio = (
+  latestObservation?: SatelliteAggregatorOraclesSubscription['aggregator'][0]['oracles'][0]['observations'][0],
+): number => {
   if (!latestObservation) return 0
   const {
     epoch,
@@ -47,10 +43,15 @@ export const getNewSatelliteMetrics = ({
   financialRequestLedger,
   feeds,
 }: {
-  proposals: Array<Governance_Proposal>
-  emergencyGovernanceLedger: Array<Emergency_Governance>
-  feeds: Array<Aggregator>
-  financialRequestLedger: Array<GovernanceFinancialRequestGraphQL>
+  // proposals: SatelliteGovernanceProposalDataSubscription['governance_proposal']
+  //   emergencyGovernanceLedger: SatelliteEmergencyGovernanceDataSubscription['emergency_governance']
+  //   feeds: SatelliteAggregatorOraclesSubscription['aggregator']
+  //   financialRequestLedger: SatelliteGovernanceFinancialRequestSubscription['governance_financial_request']
+
+  proposals: SatelliteGovernanceProposalDataSubscription['governance_proposal']
+  emergencyGovernanceLedger: SatelliteEmergencyGovernanceDataSubscription['emergency_governance']
+  feeds: SatelliteAggregatorOraclesSubscription['aggregator']
+  financialRequestLedger: SatelliteGovernanceFinancialRequestSubscription['governance_financial_request']
   satelliteVotings: SatelliteVotingsType
   satelliteAddress: string
 }) => {
@@ -97,17 +98,23 @@ export const getNewSatelliteMetrics = ({
    * @epochRoundRatio – success of the predictions?
    */
   const observationsForSatellite = feeds
-    .reduce<Aggregator_Oracle['observations']>((acc, { oracles }) => {
-      const filteredSatellitesObservations = oracles
-        .map(({ observations }) => observations)
-        .flat()
-        .filter(({ oracle: { user_id } }) => user_id === satelliteAddress)
-      return acc.concat(filteredSatellitesObservations)
-    }, [])
+    .reduce(
+      (acc: SatelliteAggregatorOraclesSubscription['aggregator'][0]['oracles'][0]['observations'], { oracles }) => {
+        const filteredSatellitesObservations = oracles
+          .map(({ observations }) => observations)
+          .flat()
+          .filter(({ oracle: { user_id } }) => user_id === satelliteAddress)
+        return acc.concat(filteredSatellitesObservations)
+      },
+      [],
+    )
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
   const latestObservation = observationsForSatellite[0]
-  const numberOfObservations = observationsForSatellite.length
+  const numberOfObservations = feeds.reduce((acc, f) => {
+    acc += f.oracles[0].observations_aggregate.aggregate?.count ?? 0
+    return acc
+  }, 0)
   const epochRoundRatio = getOraclePredictionSuccessRatio(latestObservation)
   const oracleEfficiency = (numberOfObservations / Math.max(epochRoundRatio, 1)) * 100
 
@@ -118,7 +125,9 @@ export const getNewSatelliteMetrics = ({
   }
 }
 
-export const getSatelliteOracleRecords = ({ user: { aggregator_oracles = [] } }: SatelliteRecordGraphQl) => {
+export const getSatelliteOracleRecords = ({
+  user: { aggregator_oracles = [] },
+}: SatelliteDataSubscription['satellite'][0]) => {
   return aggregator_oracles.map(({ aggregator: { oracles, address: feedAddress }, user_id: oracleAddress }) => {
     // getting rewards for oracle per feed
     const { sMVKReward, XTZReward } = oracles.reduce(
@@ -157,7 +166,7 @@ export const getSatelliteVotings = ({
     governance_satellite_actions_votes,
     emergency_governance_votes,
   },
-}: SatelliteRecordGraphQl) => {
+}: SatelliteDataSubscription['satellite'][0]) => {
   const proposalVotingHistory = governance_proposals_votes.map((vote) => {
     return {
       id: vote.id,
@@ -212,12 +221,12 @@ export const getSatelliteVotings = ({
 }
 
 export const normallizeSatellite = (
-  satelliteRecord: SatelliteRecordGraphQl,
+  satelliteRecord: SatelliteDataSubscription['satellite'][0],
   metricsData: {
-    proposals: Array<Governance_Proposal>
-    emergencyGovernanceLedger: Array<Emergency_Governance>
-    feeds: Array<Aggregator>
-    financialRequestLedger: Array<GovernanceFinancialRequestGraphQL>
+    proposals: SatelliteGovernanceProposalDataSubscription['governance_proposal']
+    emergencyGovernanceLedger: SatelliteEmergencyGovernanceDataSubscription['emergency_governance']
+    feeds: SatelliteAggregatorOraclesSubscription['aggregator']
+    financialRequestLedger: SatelliteGovernanceFinancialRequestSubscription['governance_financial_request']
   },
 ) => {
   const satelliteTotalDelegatedAmount = satelliteRecord
@@ -291,18 +300,12 @@ export const normallizeSatellite = (
   }
 }
 
-export const normalizeSatellitesLedger = (store: {
-  satellite: Array<SatelliteRecordGraphQl>
-  governance_proposal: Array<Governance_Proposal>
-  emergency_governance: Array<Emergency_Governance>
-  aggregator: Array<Aggregator>
-  governance_financial_request: Array<GovernanceFinancialRequestGraphQL>
-}) => {
+export const normalizeSatellitesLedger = (store: SatellitesStorage) => {
   const normalizedSatellites = store.satellite.reduce<{
-    satellitesMapper: Record<SatelliteRecordType['address'], SatelliteRecordType>
-    activeSatellitesIds: Array<SatelliteRecordType['address']>
-    allSatellitesIds: Array<SatelliteRecordType['address']>
-    oraclesIds: Array<SatelliteRecordType['address']>
+    satelliteMapper: Record<string, SatelliteDataSubscription['satellite'][0]>
+    activeSatellitesIds: string[]
+    allSatellitesIds: string[]
+    oraclesIds: string[]
   }>(
     (acc, satelliteRecord) => {
       const nomalizedSatellite = normallizeSatellite(satelliteRecord, {
@@ -310,8 +313,8 @@ export const normalizeSatellitesLedger = (store: {
         emergencyGovernanceLedger: store.emergency_governance,
         feeds: store.aggregator,
         financialRequestLedger: store.governance_financial_request,
-      })
-      acc.satellitesMapper[nomalizedSatellite.address] = nomalizedSatellite
+      }) as any
+      acc.satelliteMapper[nomalizedSatellite.address] = nomalizedSatellite
       acc.allSatellitesIds.push(nomalizedSatellite.address)
 
       if (nomalizedSatellite.currentlyRegistered && nomalizedSatellite.status === 0) {
@@ -325,7 +328,7 @@ export const normalizeSatellitesLedger = (store: {
       return acc
     },
     {
-      satellitesMapper: {},
+      satelliteMapper: {},
       activeSatellitesIds: [],
       allSatellitesIds: [],
       oraclesIds: [],

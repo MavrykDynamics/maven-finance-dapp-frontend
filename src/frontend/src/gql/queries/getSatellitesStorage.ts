@@ -145,7 +145,7 @@ export const SATELLITES_STORAGE_QUERY_VARIABLE = {}
 
 // subs
 export const SATELLITE_DATA_SUBSCRIPTION = gql(`
-subscription satelliteDataSubscription {
+subscription satelliteData {
 satellite(order_by: {currently_registered: desc}) {
   description
   fee
@@ -251,7 +251,7 @@ satellite(order_by: {currently_registered: desc}) {
 `)
 
 export const SATELLITE_GOVERNANCE_PROPOSAL_DATA_SUBSCRIPTION = gql(`
-subscription satelliteGovernanceProposalDataSubscription {
+subscription satelliteGovernanceProposalData {
 governance_proposal(order_by: {start_datetime: desc}) {
   id
   executed
@@ -261,7 +261,7 @@ governance_proposal(order_by: {start_datetime: desc}) {
 `)
 
 export const SATELLITE_EMERGENCY_GOVERNANCE_DATA_SUBSCRIPTION = gql(`
-subscription satelliteEmergencyGovernanceDataSubscription {
+subscription satelliteEmergencyGovernanceData {
   emergency_governance {
     emergency_governance_records(order_by: {start_timestamp: desc}) {
       emergency_governance_id
@@ -272,7 +272,7 @@ subscription satelliteEmergencyGovernanceDataSubscription {
 `)
 
 export const SATELLITE_GOVERNANCE_FINANCIAL_REQUEST_SUBSCRIPTION = gql(`
-subscription satelliteGovernanceFinancialRequestSubscription {
+subscription satelliteGovernanceFinancialRequest {
   governance_financial_request {
     executed
     id
@@ -281,11 +281,13 @@ subscription satelliteGovernanceFinancialRequestSubscription {
 `)
 
 export const SATELLITE_AGGREGATOR_ORACLES_SUBSCRIPTION = gql(`
-subscription satelliteAggregatorOraclesSubscription {
+subscription satelliteAggregatorOracles {
   aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {
     admin
+    last_completed_data_last_updated_at
+    heart_beat_seconds
     oracles {
-      observations {
+      observations(order_by: {timestamp: desc}, limit: 1) {
         epoch
         round
         timestamp
@@ -293,6 +295,11 @@ subscription satelliteAggregatorOraclesSubscription {
           user_id
           init_epoch
           init_round
+        }
+      }
+      observations_aggregate {
+        aggregate {
+          count(columns: timestamp)
         }
       }
     }
