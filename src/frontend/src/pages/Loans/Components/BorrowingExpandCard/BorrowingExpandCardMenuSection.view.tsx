@@ -9,7 +9,7 @@ import {
   VAULT_CARD_MENU_TABS,
   WHITELIST_USERS,
   assetDecimalsToShow,
-  vaultCardTabNames,
+  loansTabNames,
 } from 'pages/Loans/Loans.const'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import Button from 'app/App.components/Button/NewButton'
@@ -92,7 +92,7 @@ export const BorrowingExpandCardMenuSection = ({
     () =>
       VAULT_CARD_MENU_TABS.filter((item) => {
         if (hideTransactionHistory) {
-          return item.id !== vaultCardTabNames.TX_HISTORY
+          return item.id !== loansTabNames.TX_HISTORY
         }
 
         return true
@@ -115,7 +115,7 @@ export const BorrowingExpandCardMenuSection = ({
     <>
       <TabSwitcher tabItems={menuTabs} onClick={handleSwitchTab(setActiveMenuTab)} className="menu-switcher " />
 
-      {activeMenuTab?.id === vaultCardTabNames.COLLATERAL_ASSETS && (
+      {activeMenuTab?.id === loansTabNames.COLLATERAL_ASSETS && (
         <BorrowingTabListItemTabInfo>
           <div className="tab-header">
             <H2Title>Your Collateralized Assets</H2Title>
@@ -220,11 +220,11 @@ export const BorrowingExpandCardMenuSection = ({
         </BorrowingTabListItemTabInfo>
       )}
 
-      {activeMenuTab?.id === vaultCardTabNames.TX_HISTORY && (
+      {activeMenuTab?.id === loansTabNames.TX_HISTORY && (
         <TransactionHistory currentToken={currentToken} vaultAddress={vaultAddress} />
       )}
 
-      {activeMenuTab?.id === vaultCardTabNames.USEFUL_INFO && (
+      {activeMenuTab?.id === loansTabNames.USEFUL_INFO && (
         <BorrowingTabListItemTabInfo>
           <H2Title>Useful Info</H2Title>
 

@@ -8,7 +8,7 @@ import {
   VAULT_CARD_REPAY_SLIDING_BUTTONS,
   getCollateralRationPersent,
   getStatusByCollateralRatio,
-  vaultCardTabNames,
+  loansTabNames,
 } from 'pages/Loans/Loans.const'
 
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
@@ -272,9 +272,9 @@ export const BorrowingExpandCard = ({
   }
 
   useEffect(() => {
-    if (activeRepayBorrowTab?.id !== vaultCardTabNames.REPAY) return
+    if (activeRepayBorrowTab?.id !== loansTabNames.REPAY) return
 
-    setActiveRepayTab(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.id === vaultCardTabNames.REPAY_IN_PART))
+    setActiveRepayTab(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.id === loansTabNames.REPAY_IN_PART))
   }, [activeRepayBorrowTab])
 
   useEffect(() => {
@@ -381,7 +381,7 @@ export const BorrowingExpandCard = ({
                     tabItems={repayBorrowSlidingButtons}
                     className="vault"
                   />
-                  {activeRepayBorrowTab?.id === vaultCardTabNames.REPAY && (
+                  {activeRepayBorrowTab?.id === loansTabNames.REPAY && (
                     <SlidingTabButtons
                       onClick={handleSwitchTab('repay')}
                       tabItems={VAULT_CARD_REPAY_SLIDING_BUTTONS}
@@ -390,7 +390,7 @@ export const BorrowingExpandCard = ({
                   )}
                 </div>
 
-                {activeRepayBorrowTab?.id === vaultCardTabNames.BORROW && (
+                {activeRepayBorrowTab?.id === loansTabNames.BORROW && (
                   <BorrowingExpandCardBorrowSection
                     borrowedAsset={borrowedAsset}
                     borrowAPR={apr}
@@ -403,7 +403,7 @@ export const BorrowingExpandCard = ({
                   />
                 )}
 
-                {activeRepayBorrowTab?.id === vaultCardTabNames.REPAY && (
+                {activeRepayBorrowTab?.id === loansTabNames.REPAY && (
                   <BorrowingExpandCardRepaySection
                     vaultId={vaultId}
                     borrowedAsset={borrowedAsset}

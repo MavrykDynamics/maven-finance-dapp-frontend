@@ -188,6 +188,11 @@ export const LoansActionsSection = styled.div`
   background-color: ${({ theme }) => theme.backgroundColor};
   border-radius: 10px;
 
+  &.secondary-background {
+    background-color: ${({ theme }) => theme.containerColor};
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  }
+
   .coming-soon {
     text-align: center;
 
@@ -213,6 +218,15 @@ export const LoansActionsSection = styled.div`
     line-height: 22px;
 
     color: ${({ theme }) => theme.textColor};
+  }
+
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 15px;
+
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border-radius: 10px;
   }
 
   .button-wrapper {

@@ -30,7 +30,7 @@ import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 import {
   COLLATERAL_AWARE_BORROWING_ADJUST_YOUR_AMOUNT,
   SELECT_THE_AMOUNT_YOU_WOULD_LIKE_TO_BORROW,
-} from 'texts/statusMessages/vault.text'
+} from 'texts/banners/vault.text'
 import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault.text'
 
 type Props = {

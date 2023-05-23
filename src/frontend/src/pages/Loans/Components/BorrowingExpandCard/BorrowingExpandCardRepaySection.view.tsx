@@ -6,7 +6,7 @@ import {
   COLLATERAL_RATIO_GRADIENT,
   assetDecimalsToShow,
   getCollateralRationPersent,
-  vaultCardTabNames,
+  loansTabNames,
 } from 'pages/Loans/Loans.const'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import {
@@ -35,7 +35,7 @@ import colors from 'styles/colors'
 import { TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { mathRoundTwoDigit } from 'utils/validatorFunctions'
 import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
-import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT } from 'texts/statusMessages/vault.text'
+import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT } from 'texts/banners/vault.text'
 import { AVALIABLE_TO_BORROW, FEES_DUE } from 'texts/tooltips/vault.text'
 
 type Props = {
@@ -79,7 +79,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const balanceSymbol = isTezosAsset(borrowedAsset?.gqlName ?? '') ? 'tezos' : borrowedAsset?.symbol.toLowerCase() ?? ''
   const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
 
-  const isRepayInFull = activeRepayTab?.id === vaultCardTabNames.REPAY_IN_FULL
+  const isRepayInFull = activeRepayTab?.id === loansTabNames.REPAY_IN_FULL
   const isMinimumRepayWarning =
     inputData.validationStatus === INPUT_STATUS_ERROR && inputAmount <= minimumRepay && totalOutstanding !== 0
   const isNotRepayInFullWarning = isRepayInFull && mathRoundTwoDigit(totalOutstanding) !== inputAmount

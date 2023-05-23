@@ -63,7 +63,20 @@ export const VAULT_TRANSACTION_HISTORY_SLIDING_BUTTONS = [
   },
 ]
 
-export const vaultCardTabNames = {
+export const LENDING_TAB_SLIDING_BUTTONS = [
+  {
+    text: 'Supply',
+    id: 10,
+    active: true,
+  },
+  {
+    text: 'Withdraw',
+    id: 11,
+    active: false,
+  },
+]
+
+export const loansTabNames = {
   COLLATERAL_ASSETS: 1,
   TX_HISTORY: 2,
   USEFUL_INFO: 3,
@@ -73,6 +86,8 @@ export const vaultCardTabNames = {
   REPAY_IN_FULL: 7,
   TX_HISTORY_VIEW_ALL: 8,
   TX_HISTORY_VIEW_PERSONAL: 9,
+  SUPPLY: 10,
+  WITHDRAW: 11,
 } as const
 
 export const ANY_USER = 'any'
