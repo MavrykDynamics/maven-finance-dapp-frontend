@@ -17,7 +17,7 @@ import { useSatellitesContext } from '../satellites.provider'
  * @param isInit boolean valut which forces to load data only once
  * @returns {isLoading} boolean value which indicates if all data was loaded
  */
-export const useSatellitesUpdater = (isInit = false) => {
+export const useSatellitesUpdater = (isInit = false): { isLoading: boolean } => {
   const [shouldSkip, setShouldSkip] = useState(false)
   const [storage, setStorage] = useState<Partial<SatellitesStorage>>({})
   const { updateSatellitesContext } = useSatellitesContext()
