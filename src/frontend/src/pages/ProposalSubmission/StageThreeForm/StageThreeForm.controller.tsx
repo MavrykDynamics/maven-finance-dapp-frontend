@@ -63,7 +63,7 @@ export const StageThreeForm = ({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: string | number } },
     row: number,
-    options: { tokenBalance?: number; maxLength?: number },
+    options?: { tokenBalance?: number; maxLength?: number },
   ) => {
     let { name, value } = e.target
 
@@ -239,7 +239,7 @@ export const StageThreeForm = ({
                             value: String(payment.to__id),
                             type: 'text',
                             name: 'to__id',
-                            onChange: (e) => handleChange(e, rowIdx, {}),
+                            onChange: (e) => handleChange(e, rowIdx),
                           }}
                         />
                       )}
@@ -300,7 +300,6 @@ export const StageThreeForm = ({
                                 target: { name: 'token_address', value: newSelectedAddress },
                               },
                               rowIdx,
-                              {},
                             )
                           }}
                         />
