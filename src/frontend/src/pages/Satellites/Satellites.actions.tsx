@@ -18,16 +18,9 @@ import {
   TOASTER_SUCCESS,
   TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
 } from 'app/App.components/Toaster/Toaster.constants'
-import {
-  SATELLITES_STORAGE_QUERY,
-  SATELLITES_STORAGE_QUERY_NAME,
-  SATELLITES_STORAGE_QUERY_VARIABLE,
-  SATELLITE_CONFIG_QUERY,
-  SATELLITE_CONFIG_QUERY_NAME,
-  SATELLITE_CONFIG_QUERY_VARIABLE,
-} from 'gql/queries'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SATELLITES_STORAGE_QUERY, SATELLITES_STORAGE_QUERY_NAME, SATELLITES_STORAGE_QUERY_VARIABLE } from 'gql/queries'
 
 export const GET_SATELLITES_STORAGE = 'GET_SATELLITES_STORAGE'
 export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState: GetState) => {

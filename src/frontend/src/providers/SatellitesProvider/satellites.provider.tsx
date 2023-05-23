@@ -9,7 +9,13 @@ export class SatellitesProvider extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      context: {},
+      context: {
+        satelliteMapper: {},
+        activeSatellitesIds: [],
+        allSatellitesIds: [],
+        oraclesIds: [],
+        isLoaded: false,
+      },
     }
   }
 
