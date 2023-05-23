@@ -60,6 +60,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const parsedAmount = parseFloat(inputData.amount)
   const inputAmount = isNaN(parsedAmount) ? 0 : parsedAmount
+  const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
 
   const balanceSymbol = isTezosAsset(borrowedAsset?.gqlName ?? '') ? 'tezos' : borrowedAsset?.symbol.toLowerCase() ?? ''
   const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
@@ -244,8 +245,8 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={() => openConfirmBorrowPopup(inputAmount)}
-          disabled={inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive}
-          animation={BUTTON_PULSE}
+          disabled={isDisabledButton}
+          animation={isDisabledButton ? null : BUTTON_PULSE}
         >
           <Icon id="coin-loan" />
           Borrow

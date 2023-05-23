@@ -1,0 +1,1 @@
+export const LENDING_APY = (asset: string) => `You will receive m${asset} instead of your ${asset}`

@@ -40,6 +40,7 @@ import { INPUT_LARGE, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Inpu
 import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { LENDING_APY } from 'texts/tooltips/loan.text'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -49,7 +50,7 @@ type LendingTabPropsType = {
 }
 
 export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, lendAPY }: LendingTabPropsType) => {
-  const { openAddLendingAssetPopup, openRemoveLendingAssetPopup } = useContext(loansPopupsContext)
+  const { openConfirmAddLendingAssetPopup, openConfirmRemoveLendingAssetPopup } = useContext(loansPopupsContext)
   const {
     accountPkh,
     user: { userTokens },
@@ -66,14 +67,38 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
 
   const isSupplyActiveTab = activeTab?.id === loansTabNames.SUPPLY
   const isDisabledButton = useMemo(() => {
-    return inputData.validationStatus !== INPUT_STATUS_SUCCESS
-  }, [inputData.validationStatus])
+    return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionActive
+  }, [inputData.validationStatus, isActionActive])
 
   const handleSwitchTab = (tabId: number) => {
+    setInputData(DEFAULT_LOANS_INPUT_VALUE)
     setActiveTab(LENDING_TAB_SLIDING_BUTTONS.find((item) => item.id === tabId))
   }
 
-  const handleClickButton = () => {}
+  const handleClickButton = () => {
+    if (!lendingItem) return
+
+    switch (activeTab?.id) {
+      case loansTabNames.SUPPLY:
+        openConfirmAddLendingAssetPopup({
+          inputAmount: Number(inputData.amount),
+          mBalance: lendingItem.mBalance,
+          lendingAPY: lendAPY,
+          ...assetData,
+        })
+
+        break
+      case loansTabNames.WITHDRAW:
+        openConfirmRemoveLendingAssetPopup({
+          inputAmount: Number(inputData.amount),
+          mBalance: lendingItem.mBalance,
+          lendingAPY: lendAPY,
+          currentLendedAmount: lendingItem.lendValue,
+          ...assetData,
+        })
+        break
+    }
+  }
 
   const onChangeHandler = useCallback(
     (inputAmount: string, userBalance: number) => {
@@ -137,7 +162,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
       {lendingItem ? (
         <div className="main">
           <LoansValuesSection className="lending-tab">
-            <H2Title>Your Supplied XTZ Position</H2Title>
+            <H2Title>Your Supplied {assetData.symbol} Position</H2Title>
 
             <div className="stats">
               <LoansValuesSectionInfo hasRate={Boolean(assetData.rate)}>
@@ -204,10 +229,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
                 <CommaNumber value={tokenBalance} className="value" showDecimal decimalsToShow={assetDecimalsToShow} />
                 <CommaNumber value={tokenBalance * assetData.rate} beginningText="$" className="rate" showDecimal />
 
-                <div className="name">
-                  Wallet Balance
-                  <CustomTooltip iconId="info" text={''} />
-                </div>
+                <div className="name">Wallet Balance</div>
               </LoansValuesSectionInfo>
             </div>
 
@@ -239,17 +261,14 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
               </Input>
             </div>
 
-            <div className='mt-25'>
+            <div className="mt-25">
               <div className="tab-text mb-10">Updated Lending {assetData?.symbol} Stats</div>
 
-              <div className='stats'>
+              <div className="stats">
                 <ThreeLevelListItem>
                   <div className="name">
                     Lending APY
-                    <CustomTooltip
-                      iconId="info"
-                      text={`You will receive m${assetData.symbol} instead of your ${assetData.symbol}`}
-                    />
+                    <CustomTooltip iconId="info" text={LENDING_APY(assetData.symbol)} />
                   </div>
                   <CommaNumber value={lendAPY} className="value" endingText="%" />
                 </ThreeLevelListItem>
@@ -280,20 +299,6 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
       ) : (
         <NoItemsInTabStyled>
           <span>Lend assets to earn interest.</span>
-          <Button
-            text="Lend Asset"
-            icon="plus"
-            kind={ACTION_PRIMARY}
-            disabled={!Boolean(accountPkh) || isActionActive}
-            onClick={() =>
-              openAddLendingAssetPopup({
-                mBalance: 0,
-                lendingAPY: lendAPY,
-                ...assetData,
-              })
-            }
-            className="lending-tab-no-items-btn"
-          />
         </NoItemsInTabStyled>
       )}
     </LendingTabStyled>

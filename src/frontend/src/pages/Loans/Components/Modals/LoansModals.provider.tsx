@@ -27,6 +27,8 @@ import {
   ConfirmRepayPartPopupDataType,
   ConfirmRepayFullPopupDataType,
   ChangeVaultNamePopupDataType,
+  ConfirmAddLendingAssetDataType,
+  ConfirmRemoveLendingAssetDataType,
 } from './Modals.helpers'
 import { RemoveAssetsFromLending } from './RemoveAssetsFromLending.modal'
 import { Repay } from './Repay.modal'
@@ -38,6 +40,8 @@ import { ConfirmBorrowAsset } from './ConfirmBorrowAsset.modal'
 import { ConfirmRepay } from './ConfirmRepay.modal'
 import { ConfirmRepayFull } from './ConfirmRepayFull.modal'
 import { ChangeVaultName } from './ChangeVaultName.modal'
+import { ConfirmAddLendingAsset } from './ConfirmAddLendingAsset.modal'
+import { ConfirmRemoveAssetsFromLending } from './ConfirmRemoveAssetsFromLending.modal'
 
 export const loansPopupsContext = createContext<LoansPopupsContextStateType>(undefined!)
 
@@ -47,6 +51,12 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
 
     this.state = {
       ...DEFAULT_LOANS_POPUPS_STATE,
+      openConfirmAddLendingAssetPopup: this.openConfirmAddLendingAssetPopup,
+      closeConfirmAddLendingAssetPopup: this.closeConfirmAddLendingAssetPopup,
+
+      openConfirmRemoveLendingAssetPopup: this.openConfirmRemoveLendingAssetPopup,
+      closeConfirmRemoveLendingAssetPopup: this.closeConfirmRemoveLendingAssetPopup,
+
       openConfirmBorrowPopup: this.openConfirmBorrowPopup,
       closeConfirmBorrowPopup: this.closeConfirmBorrowPopup,
 
@@ -98,6 +108,46 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
       openLiquidateVaultPopup: this.openLiquidateVaultPopup,
       closeLiquidateVaultPopup: this.closeLiquidateVaultPopup,
     }
+  }
+
+  openConfirmAddLendingAssetPopup = (popupData: ConfirmAddLendingAssetDataType) => {
+    this.setState({
+      ...this.state,
+      confirmAddLendingAssetPopup: {
+        showModal: true,
+        data: popupData,
+      },
+    })
+  }
+
+  closeConfirmAddLendingAssetPopup = () => {
+    this.setState({
+      ...this.state,
+      confirmAddLendingAssetPopup: {
+        ...this.state.confirmAddLendingAssetPopup,
+        showModal: false,
+      },
+    })
+  }
+
+  openConfirmRemoveLendingAssetPopup = (popupData: ConfirmRemoveLendingAssetDataType) => {
+    this.setState({
+      ...this.state,
+      confirmRemoveLendingAssetPopup: {
+        showModal: true,
+        data: popupData,
+      },
+    })
+  }
+
+  closeConfirmRemoveLendingAssetPopup = () => {
+    this.setState({
+      ...this.state,
+      confirmRemoveLendingAssetPopup: {
+        ...this.state.confirmRemoveLendingAssetPopup,
+        showModal: false,
+      },
+    })
   }
 
   openConfirmBorrowPopup = (popupData: ConfirmBorrowPopupDataType) => {
@@ -442,6 +492,8 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
 
   render() {
     const {
+      confirmAddLendingAssetPopup,
+      confirmRemoveLendingAssetPopup,
       confirmRepayPartPopup,
       confirmRepayFullPopup,
       confirmBorrowAssetPopup,
@@ -462,6 +514,8 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
     } = this.state
 
     const {
+      closeConfirmAddLendingAssetPopup,
+      closeConfirmRemoveLendingAssetPopup,
       closeConfirmBorrowPopup,
       closeConfirmRepayPopup,
       closeConfirmRepayFullPopup,
@@ -482,6 +536,18 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
     } = this.state
     return (
       <loansPopupsContext.Provider value={this.state}>
+        <ConfirmAddLendingAsset
+          closePopup={closeConfirmAddLendingAssetPopup}
+          show={confirmAddLendingAssetPopup.showModal}
+          data={confirmAddLendingAssetPopup.data}
+        />
+
+        <ConfirmRemoveAssetsFromLending
+          closePopup={closeConfirmRemoveLendingAssetPopup}
+          show={confirmRemoveLendingAssetPopup.showModal}
+          data={confirmRemoveLendingAssetPopup.data}
+        />
+
         <ConfirmBorrowAsset
           closePopup={closeConfirmBorrowPopup}
           show={confirmBorrowAssetPopup.showModal}

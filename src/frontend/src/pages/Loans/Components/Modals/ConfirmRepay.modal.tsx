@@ -134,6 +134,7 @@ export const ConfirmRepay = ({
 
           <div className="buttons-wrapper" style={{ marginTop: '40px' }}>
             <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={closePopup}>
+              <Icon id="navigation-menu_close" />
               Cancel
             </NewButton>
             <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={repayBtnHandler}>
