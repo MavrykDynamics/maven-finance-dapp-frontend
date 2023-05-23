@@ -33,10 +33,7 @@ export const Proposals = ({
 }: ProposalsProps) => {
   const { search } = useLocation()
 
-  const {
-    proposalsMapper,
-    config: { governancePhase },
-  } = useSelector((state: State) => state.governance)
+  const { proposalsMapper } = useSelector((state: State) => state.governance)
 
   const currentPage = getPageNumber(search, listName)
   const paginatedItemsList = useMemo(() => {
@@ -64,7 +61,7 @@ export const Proposals = ({
               </ProposalItemLeftSide>
               <CommaNumber
                 className="proposal-voted-mvk"
-                value={governancePhase === GovPhases.PROPOSAL ? proposal.passVoteMvkTotal : proposal.quorumMvkTotal}
+                value={proposal.quorumMvkTotal}
                 endingText={'voted MVK'}
                 showDecimal={false}
               />

@@ -40,6 +40,7 @@ export const normalizeProposal = (
 
     title: item.title,
     description: item.description,
+    invoice: item.invoice,
 
     paymentProcessed: item.payment_processed,
     executed: item.executed,

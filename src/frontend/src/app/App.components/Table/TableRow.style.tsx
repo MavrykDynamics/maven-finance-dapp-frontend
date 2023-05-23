@@ -73,6 +73,20 @@ export const TableRow = styled.tr<{ theme: MavrykTheme; borderColor?: string; ro
     border-bottom: 0.5px solid ${({ theme, borderColor = 'cardBorderColor' }) => theme[borderColor]};
   }
 
+  &.plug-row {
+    position: relative;
+
+    .plug-row-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-weight: 600;
+      font-size: 14px;
+      color: ${({ theme }) => theme.textColor};
+    }
+  }
+
   ${HOVERABLE_TABLE_ROW_STYLES}
 
   ${EDITABLE_TABLE_ROW_STYLES}

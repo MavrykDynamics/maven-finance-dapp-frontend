@@ -11,6 +11,7 @@ import {
 } from '../Toaster.constants'
 import { TOASTER_ACTIONS_TEXTS } from '../texts/toasterActions.texts'
 import { TOASTER_TEXTS } from '../texts/toaster.texts'
+import { sleep } from 'utils/api/sleep'
 
 export const actionStartToaster = (actionName: keyof typeof TOASTER_ACTIONS_TEXTS) => (dispatch: AppDispatch) => {
   dispatch(toggleActionFullScreenLoader(true))
@@ -23,18 +24,17 @@ export const actionStartToaster = (actionName: keyof typeof TOASTER_ACTIONS_TEXT
     ),
   )
 
+  sleep(5000)
+
   // show toaster loader after 5000ms after operation started
-  const loadingTimeoutId = setTimeout(async () => {
-    dispatch(toggleActionFullScreenLoader(false))
-    dispatch(
-      showToaster(
-        TOASTER_LOADING,
-        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-      ),
-    )
-    clearTimeout(loadingTimeoutId)
-  }, 5000)
+  dispatch(toggleActionFullScreenLoader(false))
+  dispatch(
+    showToaster(
+      TOASTER_LOADING,
+      TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+      TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+    ),
+  )
 }
 
 export const actionEndToaster = (actionName: keyof typeof TOASTER_ACTIONS_TEXTS) => (dispatch: AppDispatch) => {

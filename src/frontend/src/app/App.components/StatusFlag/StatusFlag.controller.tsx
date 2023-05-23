@@ -1,41 +1,16 @@
-import { StatusFlagStyle, UP, DOWN, PRIMARY, INFO, WAITING } from './StatusFlag.constants'
-
-import { StatusFlagView } from './StatusFlag.view'
-import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
+import { StatusFlagKind } from './StatusFlag.constants'
+import { StatusFlagStyled } from './StatusFlag.style'
 
 type StatusFlagProps = {
-  text?: string
+  text: string
   className?: string
-  status: ProposalStatus | StatusFlagStyle | undefined
+  status: StatusFlagKind
 }
 
 export const StatusFlag = ({ text = '', status, className }: StatusFlagProps) => {
-  let kind: StatusFlagStyle
-  switch (status) {
-    case ProposalStatus.EXECUTED:
-    case ProposalStatus.UNLOCKED:
-      kind = UP
-      break
-    case ProposalStatus.DEFEATED:
-    case ProposalStatus.DROPPED:
-    case ProposalStatus.LOCKED:
-    case ProposalStatus.TIMELOCK:
-      kind = DOWN
-      break
-    case ProposalStatus.ONGOING:
-      kind = PRIMARY
-      break
-    case ProposalStatus.WAITING:
-      kind = WAITING
-      break
-    default:
-      kind = INFO
-      break
-  }
-
-  if (!Object.values(ProposalStatus).includes(status as ProposalStatus)) {
-    kind = status as StatusFlagStyle
-  }
-
-  return <StatusFlagView className={className} kind={kind} text={text} />
+  return (
+    <StatusFlagStyled kind={status} className={className}>
+      {text}
+    </StatusFlagStyled>
+  )
 }

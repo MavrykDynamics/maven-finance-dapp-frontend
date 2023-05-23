@@ -40,10 +40,12 @@ import { Page } from 'styles'
 import { GovernanceStyled, GovernanceLeftContainer } from './Governance.style'
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { VoterListItem, ProposalStatusFlag } from './components/Proposals/Proposals.style'
+import { VoterListItem } from './components/Proposals/Proposals.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
+import { STATUS_FLAG_DOWN, STATUS_FLAG_UP } from 'app/App.components/StatusFlag/StatusFlag.constants'
 
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const dispatch = useDispatch()
@@ -266,7 +268,6 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
               <div className="voters-list">
                 <H2Title>Satellite Voting History</H2Title>
                 {paginatedVotersList.map(({ vote, address, name, avatar }) => {
-                  const status = vote === 1 ? ProposalStatus.EXECUTED : vote === 2 ? ProposalStatus.DEFEATED : undefined
                   return (
                     <VoterListItem>
                       <div className="left">
@@ -276,7 +277,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                           <TzAddress tzAddress={address} />
                         </div>
                       </div>
-                      <ProposalStatusFlag status={status}>{getVoteText(vote)}</ProposalStatusFlag>
+                      <StatusFlag status={vote === 1 ? STATUS_FLAG_UP : STATUS_FLAG_DOWN} text={getVoteText(vote)} />
                     </VoterListItem>
                   )
                 })}

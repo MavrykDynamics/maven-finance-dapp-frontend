@@ -33,7 +33,7 @@ export const SatelliteCardInner = styled.div<{ isExtendedListItem?: boolean }>`
   .grid-container {
     display: grid;
     grid-template-rows: repeat(2, auto);
-    grid-template-columns: 188px minmax(87px, 1fr) minmax(121px, 1fr);
+    grid-template-columns: 202px minmax(87px, 1fr) minmax(121px, 1fr);
     grid-column-gap: 34px;
     grid-row-gap: 20px;
   }
@@ -116,6 +116,11 @@ export const SatelliteTextGroup = styled.div<{ theme: MavrykTheme }>`
   justify-content: center;
   align-items: flex-start;
   row-gap: 5px;
+
+  .text-wrapper {
+    display: flex;
+    align-items: center;
+  }
 
   &.oracle-status {
     row-gap: 2px;

@@ -4,7 +4,7 @@ import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { UserState } from 'reducers/wallet'
 import { Mavryk_User } from 'utils/generated/graphqlTypes'
 
-import { convertNumberForClient, calcWithoutDecimals } from 'utils/calcFunctions'
+import { convertNumberForClient, calcWithoutDecimals, getNumberInBounds } from 'utils/calcFunctions'
 import { calcLendingAPY, getAssetMetadata, getChartData, getLendingItem, getTransactionHistory } from './Loans.helpers'
 
 // Normalize user loans data
@@ -230,7 +230,11 @@ export const normalizeLoans = async ({
           transactionHistory: [...transactionHistory].reverse(),
           marketCollateralChartData,
           marketLiquidityChartData,
-          utilisationRate: utilisation_rate / 10 ** interestRateDecimals,
+          utilisationRate: getNumberInBounds(
+            0,
+            100,
+            convertNumberForClient({ number: utilisation_rate, grade: interestRateDecimals }) * 100,
+          ),
 
           availableLiquidity,
           totalLended: convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }),

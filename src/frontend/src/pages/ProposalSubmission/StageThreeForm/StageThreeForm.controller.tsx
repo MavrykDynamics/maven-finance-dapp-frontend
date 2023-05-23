@@ -1,13 +1,13 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // types
-import { StageThreeFormProps, StageThreeValidityItem } from '../ProposalSybmittion.types'
+import { StageThreeFormProps, StageThreeValidityItem } from '../ProposalSubmission.types'
 import { Governance_Proposal } from 'utils/generated/graphqlTypes'
 
 // helpers
-import { DEFAULT_PROPOSAL, checkPaymentExists, getValidityStageThreeTable } from '../ProposalSubmition.helpers'
+import { getValidityStageThreeTable } from '../ProposalSubmission.helpers'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -22,6 +22,7 @@ import Button from 'app/App.components/Button/NewButton'
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { STAGE_3_DESCRIPTION } from 'texts/tooltips/governance'
 
 // styles
 import { SubmitProposalGeneralData } from '../ProposalSubmission.style'
@@ -50,14 +51,6 @@ export const StageThreeForm = ({
   const { whitelistTokens } = useSelector((state: State) => state.tokens)
 
   const isProposalRound = governancePhase === 'PROPOSAL'
-  const isDisabledActions = proposalId === DEFAULT_PROPOSAL.id
-
-  // is no bytes payments on proposal change add empty pair on client
-  useEffect(() => {
-    if (!proposalPayments.some(checkPaymentExists) && !currentProposal.locked) {
-      handleAddRow()
-    }
-  }, [proposalId, currentProposal.locked])
 
   const ddItems = useMemo(() => {
     return whitelistTokens.map((method) => ({
@@ -158,10 +151,12 @@ export const StageThreeForm = ({
 
   return (
     <>
+      <div className="stage-descr">{STAGE_3_DESCRIPTION}</div>
+
       <SubmitProposalGeneralData>
         <div className="submitted-data">
           <div className="label">1 - Proposal Title</div>
-          <div className="value">{title}</div>
+          <div className="value">{title || '–'}</div>
         </div>
 
         <div className="submitted-data">
@@ -175,160 +170,173 @@ export const StageThreeForm = ({
         </div>
       </SubmitProposalGeneralData>
 
-      <Table className="editable-table with-header">
-        <TableHeader className="editable-head">
-          <TableRow>
-            <TableHeaderCell
-              style={
-                proposalPayments.length === 0
-                  ? {
-                      borderBottomLeftRadius: '10px',
-                    }
-                  : undefined
-              }
-            >
-              Address
-            </TableHeaderCell>
-            <TableHeaderCell>Purpose</TableHeaderCell>
-            <TableHeaderCell>Amount</TableHeaderCell>
-            <TableHeaderCell
-              style={
-                proposalPayments.length === 0
-                  ? {
-                      borderBottomRightRadius: '10px',
-                    }
-                  : undefined
-              }
-            >
-              Payment Type (XTZ/MVK)
-            </TableHeaderCell>
-          </TableRow>
-        </TableHeader>
+      <div className="payments-table">
+        <div className="label">4 - Enter Proposal Payment Data</div>
+        <Table className="editable-table with-header">
+          <TableHeader className="editable-head">
+            <TableRow>
+              <TableHeaderCell
+                style={
+                  proposalPayments.length === 0
+                    ? {
+                        borderBottomLeftRadius: '10px',
+                      }
+                    : undefined
+                }
+              >
+                Address
+              </TableHeaderCell>
+              <TableHeaderCell>Purpose</TableHeaderCell>
+              <TableHeaderCell>Amount</TableHeaderCell>
+              <TableHeaderCell
+                style={
+                  proposalPayments.length === 0
+                    ? {
+                        borderBottomRightRadius: '10px',
+                      }
+                    : undefined
+                }
+              >
+                Payment Type (XTZ/MVK)
+              </TableHeaderCell>
+            </TableRow>
+          </TableHeader>
 
-        <TableBody>
-          {proposalPayments.map((payment, rowIdx) => {
-            const validationObj = currentProposalValidation.paymentsValidation?.find(
-              ({ paymentId }) => paymentId === payment.id,
-            )
-            const { symbol: selectedSymbol = 'MVK', address } =
-              whitelistTokens.find(({ address }) => address === payment.token_address) ?? whitelistTokens?.[0] ?? {}
+          <TableBody>
+            {proposalPayments.length ? (
+              proposalPayments.map((payment, rowIdx) => {
+                const validationObj = currentProposalValidation.paymentsValidation?.find(
+                  ({ paymentId }) => paymentId === payment.id,
+                )
+                const { symbol: selectedSymbol = 'MVK', address } =
+                  whitelistTokens.find(({ address }) => address === payment.token_address) ?? whitelistTokens?.[0] ?? {}
 
-            if (payment.to__id === null || payment.title === null) return null
+                if (payment.to__id === null || payment.title === null) return null
 
-            return (
-              <TableRow className="editable-row">
-                <TableCell width="25%" className="hide-overflow tz-address-cell-center">
-                  {isTableDisabled ? (
-                    payment.to__id ? (
-                      <TzAddress tzAddress={String(payment.to__id)} type={BLUE} hasIcon />
-                    ) : (
-                      '-'
-                    )
-                  ) : (
-                    <Input
-                      settings={{
-                        inputStatus: validationObj?.to__id,
-                        inputSize: INPUT_SMALL,
-                      }}
-                      inputProps={{
-                        placeholder: 'Enter receiver address',
-                        value: String(payment.to__id),
-                        type: 'text',
-                        name: 'to__id',
-                        onChange: (e) => handleChange(e, rowIdx),
-                        disabled: isDisabledActions,
-                      }}
-                    />
-                  )}
-                </TableCell>
-
-                <TableCell width="25%" className="hide-overflow">
-                  {isTableDisabled ? (
-                    String(payment.title)
-                  ) : (
-                    <Input
-                      settings={{
-                        inputStatus: validationObj?.title,
-                        inputSize: INPUT_SMALL,
-                      }}
-                      inputProps={{
-                        placeholder: 'Enter proposal purpose',
-                        value: String(payment.title),
-                        type: 'text',
-                        name: 'title',
-                        onChange: (e) => handleChange(e, rowIdx),
-                        disabled: isDisabledActions,
-                      }}
-                    />
-                  )}
-                </TableCell>
-
-                <TableCell width="25%" className="hide-overflow">
-                  {isTableDisabled ? (
-                    <CommaNumber value={Number(payment.token_amount)} endingText={selectedSymbol} />
-                  ) : (
-                    <Input
-                      settings={{
-                        inputStatus: validationObj?.token_amount,
-                        inputSize: INPUT_SMALL,
-                      }}
-                      inputProps={{
-                        placeholder: 'Enter tokens amount',
-                        value: String(payment.token_amount),
-                        type: 'number',
-                        name: 'token_amount',
-                        onChange: (e) => handleChange(e, rowIdx),
-                        disabled: isDisabledActions,
-                      }}
-                    />
-                  )}
-                </TableCell>
-
-                <TableCell width="25%">
-                  {isTableDisabled ? (
-                    selectedSymbol
-                  ) : (
-                    <DropDown
-                      placeholder={'Select payment method'}
-                      className="stage-3-dropDown"
-                      items={ddItems}
-                      disabled={isDisabledActions}
-                      activeItem={ddItems.find(({ id }) => address === id) ?? ddItems[0]}
-                      clickItem={(newSelectedAddress: DDItemId) => {
-                        handleChange(
-                          {
-                            target: { name: 'token_address', value: newSelectedAddress },
-                          },
-                          rowIdx,
+                return (
+                  <TableRow className="editable-row" key={payment.id}>
+                    <TableCell width="25%" className="hide-overflow tz-address-cell-center">
+                      {isTableDisabled ? (
+                        payment.to__id ? (
+                          <TzAddress tzAddress={String(payment.to__id)} type={BLUE} hasIcon />
+                        ) : (
+                          '-'
                         )
-                      }}
-                    />
-                  )}
-                </TableCell>
+                      ) : (
+                        <Input
+                          settings={{
+                            inputStatus: validationObj?.to__id,
+                            inputSize: INPUT_SMALL,
+                          }}
+                          inputProps={{
+                            placeholder: 'Enter Receiver Address',
+                            value: String(payment.to__id),
+                            type: 'text',
+                            name: 'to__id',
+                            onChange: (e) => handleChange(e, rowIdx),
+                          }}
+                        />
+                      )}
+                    </TableCell>
 
-                <RemoveRowBtn>
-                  <CustomTooltip text="Delete row" className="tooltip">
-                    <Button
-                      kind={BUTTON_SIMPLE_SMALL}
-                      onClick={() => handleDeleteRow(rowIdx)}
-                      disabled={isTableDisabled || isDisabledActions}
-                    >
-                      <Icon id="delete" />
-                    </Button>
-                  </CustomTooltip>
-                </RemoveRowBtn>
-              </TableRow>
-            )
-          })}
-        </TableBody>
-        <AddRowBtn>
-          <CustomTooltip text="Insert 1 row below" className="tooltip">
-            <Button kind={BUTTON_SIMPLE_SMALL} onClick={handleAddRow} disabled={isTableDisabled || isDisabledActions}>
-              <Icon id="plus" />
-            </Button>
-          </CustomTooltip>
-        </AddRowBtn>
-      </Table>
+                    <TableCell width="25%" className="hide-overflow">
+                      {isTableDisabled ? (
+                        String(payment.title)
+                      ) : (
+                        <Input
+                          settings={{
+                            inputStatus: validationObj?.title,
+                            inputSize: INPUT_SMALL,
+                          }}
+                          inputProps={{
+                            placeholder: 'Enter Payment Purpose',
+                            value: String(payment.title),
+                            type: 'text',
+                            name: 'title',
+                            onChange: (e) => handleChange(e, rowIdx),
+                          }}
+                        />
+                      )}
+                    </TableCell>
+
+                    <TableCell width="25%" className="hide-overflow">
+                      {isTableDisabled ? (
+                        <CommaNumber value={Number(payment.token_amount)} endingText={selectedSymbol} />
+                      ) : (
+                        <Input
+                          settings={{
+                            inputStatus: validationObj?.token_amount,
+                            inputSize: INPUT_SMALL,
+                          }}
+                          inputProps={{
+                            placeholder: 'Enter Tokens Amount',
+                            value: String(payment.token_amount),
+                            type: 'number',
+                            name: 'token_amount',
+                            onChange: (e) => handleChange(e, rowIdx),
+                          }}
+                        />
+                      )}
+                    </TableCell>
+
+                    <TableCell width="25%">
+                      {isTableDisabled ? (
+                        selectedSymbol
+                      ) : (
+                        <DropDown
+                          placeholder={'Select payment method'}
+                          className="stage-3-dropDown"
+                          items={ddItems}
+                          activeItem={ddItems.find(({ id }) => address === id) ?? ddItems[0]}
+                          clickItem={(newSelectedAddress: DDItemId) => {
+                            handleChange(
+                              {
+                                target: { name: 'token_address', value: newSelectedAddress },
+                              },
+                              rowIdx,
+                            )
+                          }}
+                        />
+                      )}
+                    </TableCell>
+
+                    <RemoveRowBtn>
+                      <CustomTooltip text="Delete row" className="tooltip">
+                        <Button
+                          kind={BUTTON_SIMPLE_SMALL}
+                          onClick={() => handleDeleteRow(rowIdx)}
+                          disabled={isTableDisabled}
+                        >
+                          <Icon id="delete" />
+                        </Button>
+                      </CustomTooltip>
+                    </RemoveRowBtn>
+                  </TableRow>
+                )
+              })
+            ) : (
+              <>
+                <TableRow className="plug-row" rowHeight={43}>
+                  <TableCell width="25%" />
+                  <TableCell width="25%" />
+                  <TableCell width="25%" />
+                  <TableCell width="25%" />
+                  <div className="plug-row-text">
+                    {locked ? 'Proposal is locked without payments' : 'Add payments to your proposal'}
+                  </div>
+                </TableRow>
+              </>
+            )}
+          </TableBody>
+          <AddRowBtn>
+            <CustomTooltip text="Insert 1 row below" className="tooltip">
+              <Button kind={BUTTON_SIMPLE_SMALL} onClick={handleAddRow} disabled={isTableDisabled}>
+                <Icon id="plus" />
+              </Button>
+            </CustomTooltip>
+          </AddRowBtn>
+        </Table>
+      </div>
     </>
   )
 }
