@@ -76,8 +76,11 @@ export const normalizeProposal = (
     })),
 
     proposalPayments: item.payments.map(({ governance_proposal, governance_proposal_id, ...paymentData }) => {
+      // TODO: remove this check with tokens reorganization
       const decimals =
-        dipDupTokens?.find(({ contract }) => contract === paymentData.token_address)?.metadata?.decimals ?? 0
+        paymentData.token_address?.toLowerCase() === 'xtz'
+          ? 6
+          : dipDupTokens?.find(({ contract }) => contract === paymentData.token_address)?.metadata?.decimals ?? 0
 
       return {
         ...paymentData,
