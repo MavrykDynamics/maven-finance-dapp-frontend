@@ -321,7 +321,6 @@ export const StageTwoForm = ({
                 }
                 inputStatus={validityObject?.validBytes}
                 disabled={!isProposalPeriod || locked}
-                textAreaMaxLimit={proposalSourceCodeMaxLength}
               />
 
               <TextArea
