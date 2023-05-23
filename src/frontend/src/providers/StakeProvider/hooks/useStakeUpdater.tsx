@@ -154,7 +154,7 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
     shouldResubscribe: true,
   })
 
-  // Effect to load data 1 time and then skip loading, cuz loading returned from useSubscription si only for initial loading
+  // Effect to load data 1 time and then skip loading, cuz loading returned from useSubscription so only for initial loading
   useEffect(() => {
     if (!userBalanceLoading && !mvkStatsloading && !doormanBalanceLoading && !historyLoading && skip) {
       setShouldSkip(true)
