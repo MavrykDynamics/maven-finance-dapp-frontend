@@ -29,18 +29,16 @@ export const getBytesPairValidationStatus = (
 export const getValidityStageThreeTable = (
   valueName: StageThreeValidityItem,
   value: string | number,
-  maxLength?: number,
+  options: { tokenBalance?: number; maxLength?: number },
 ): boolean => {
   switch (valueName) {
     case 'token_amount':
-      if (Number(value) < 0) return false
-      break
+      return Number(value) > 0 && (options.tokenBalance ? Number(value) <= options.tokenBalance : true)
     case 'to__id':
       return validateTzAddress(value as string)
     case 'title':
-      return isValidLength(value as string, 1, maxLength || defaultProposalDescriptionMaxLength)
+      return isValidLength(value as string, 1, options.maxLength || defaultProposalDescriptionMaxLength)
   }
-  return true
 }
 
 export const checkBytesPairExists = (proposalDataItem: ProposalRecordType['proposalData'][number]): boolean => {

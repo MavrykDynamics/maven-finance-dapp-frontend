@@ -49,7 +49,8 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
 
     dispatch({
       type: SET_TREASURY_STORAGE,
-      treasuryStorage: normalizedTreasuryWithBalances,
+      treasuryStorage: normalizedTreasuryWithBalances.mappedTreasuries,
+      treasuryTokens: normalizedTreasuryWithBalances.tokenBalanceMapper,
       treasuryFactoryAddress: convertedStorage.treasuryFactoryAddress,
     })
   } catch (error) {

@@ -108,15 +108,16 @@ export const normalizeTreasuryStorage = (
       icon: 'https://mavryk.finance/logo192.png',
       rate: mvkRate,
       chartColor: treasuryAssetsColors['smvk'],
+      tokenAddress: '',
     }),
   )
 
   // Map every treasury to combine treasury name, and divide balance by constant
-  return treasury.map((treasuryData) => {
+  const mappedTreasuries = treasury.map((treasuryData) => {
     const sMVKAmount = parsedsMVKAmount.find(({ contract }: TreasuryBalanceType) => contract === treasuryData.address)
 
     const treasuryNormalizedTokens = treasuryData.balances
-      .map(({ balance, metadata }): TreasuryBalanceType => {
+      .map(({ balance, metadata, token_address }): TreasuryBalanceType => {
         // metadata has no type in indexer types so use 'as'
         const { symbol = '', decimals = '0', icon = '' } = (metadata ?? {}) as TreasuryAssetMapperType
         const parsedDecimals = parseInt(decimals)
@@ -136,6 +137,12 @@ export const normalizeTreasuryStorage = (
           treasuryAssetsColors[symbol.toLowerCase()] = getAssetColor(Object.keys(treasuryAssetsColors).length)
         }
 
+        // TODO: temporary solution, cuz i don't have valid addresses in treasury token obj
+        const tokenAddress =
+          whitelistTokens.find(
+            ({ symbol: whitelistTokenSymbol }) => symbol.toLowerCase() === whitelistTokenSymbol.toLowerCase(),
+          )?.address ?? token_address
+
         return {
           icon,
           rate,
@@ -146,6 +153,7 @@ export const normalizeTreasuryStorage = (
           symbol: symbol,
           balance: coinsAmount,
           chartColor: treasuryAssetsColors[symbol.toLowerCase()],
+          tokenAddress,
         }
       })
       // Add sMVK treasury asset if has
@@ -176,4 +184,32 @@ export const normalizeTreasuryStorage = (
       treasuryTVL,
     }
   })
+
+  const tokenBalanceMapper = mappedTreasuries
+    .map(({ balances }) => balances)
+    .flat()
+    .reduce<Record<string, { balance: number; name: string; tokenAddress: string }>>(
+      (acc, { name, balance, tokenAddress }) => {
+        if (!acc[tokenAddress]) {
+          acc[tokenAddress] = {
+            balance,
+            name,
+            tokenAddress,
+          }
+        } else {
+          acc[tokenAddress] = {
+            ...acc[tokenAddress],
+            balance: acc[tokenAddress].balance + balance,
+          }
+        }
+
+        return acc
+      },
+      {},
+    )
+
+  return {
+    tokenBalanceMapper,
+    mappedTreasuries,
+  }
 }

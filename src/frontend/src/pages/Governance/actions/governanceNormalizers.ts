@@ -75,7 +75,7 @@ export const normalizeProposal = (
       isLocalBytes: false,
     })),
 
-    proposalPayments: item.payments.map((paymentData) => {
+    proposalPayments: item.payments.map(({ governance_proposal, governance_proposal_id, ...paymentData }) => {
       const decimals =
         dipDupTokens?.find(({ contract }) => contract === paymentData.token_address)?.metadata?.decimals ?? 0
 
