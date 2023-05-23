@@ -138,7 +138,7 @@ export const Market = () => {
           {tabId === LEND_TAB_ID ? (
             <>
               <ThreeLevelListItem>
-                <div className="name">Oracle Price</div>
+                <div className="name">Price</div>
                 <CommaNumber
                   value={currentToken.loanTokenData.rate}
                   beginningText="$"
@@ -171,7 +171,7 @@ export const Market = () => {
           ) : (
             <>
               <ThreeLevelListItem>
-                <div className="name">Oracle Price</div>
+                <div className="name">Price</div>
                 <CommaNumber
                   value={currentToken.loanTokenData.rate}
                   beginningText="$"
