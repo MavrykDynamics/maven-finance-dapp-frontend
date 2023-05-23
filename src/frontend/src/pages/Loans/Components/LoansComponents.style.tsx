@@ -27,7 +27,11 @@ export const NoItemsInTabStyled = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const LendingTabStyled = styled.div<{ theme: MavrykTheme }>`
-  .main {
+  display: flex;
+  flex-direction: column;
+  row-gap: 40px;
+
+  .stats-and-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 20px;
@@ -87,7 +91,7 @@ export const BorrowingExpandedCard = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  .main {
+  .stats-and-actions {
     display: grid;
     grid-template-columns: 450px auto;
     column-gap: 20px;

@@ -90,6 +90,9 @@ export const loansTabNames = {
   WITHDRAW: 11,
 } as const
 
+export const PRIMARY_TRANSACTION_HISTORY_STYLE = 'PRIMARY_TRANSACTION_HISTORY_STYLE'
+export const SECONDARY_TRANSACTION_HISTORY_STYLE = 'SECONDARY_TRANSACTION_HISTORY_STYLE'
+
 export const ANY_USER = 'any'
 export const NONE_USER = 'none'
 export const WHITELIST_USERS = 'whitelist'

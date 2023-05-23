@@ -1,6 +1,28 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
+import { State } from 'reducers'
+
+import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
+import Expand from 'app/App.components/Expand/Expand.view'
+import { StatusMessage } from '../StatusMessage.view'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { BorrowingExpandCardMenuSection } from './BorrowingExpandCardMenuSection.view'
+import { BorrowingExpandCardValuesSection } from './BorrowingExpandCardValuesSection.view'
+import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { BorrowingExpandCardBorrowSection } from './BorrowingExpandCardBorrowSection.view'
+import { BorrowingExpandCardRepaySection } from './BorrowingExpandCardRepaySection.view'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+
+import { ThreeLevelListItem } from '../../Loans.style'
+import { LoansActionsSection, BorrowingExpandedCard } from '../LoansComponents.style'
+import { loansPopupsContext } from '../Modals/LoansModals.provider'
+
+import getTimestampByLevel from 'utils/api/getTimestampByLevel'
+import { scrollToFullView } from 'utils/scrollToFullView'
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import {
   COLLATERAL_RATIO_GRADIENT,
@@ -10,28 +32,6 @@ import {
   getStatusByCollateralRatio,
   loansTabNames,
 } from 'pages/Loans/Loans.const'
-
-import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
-import Expand from 'app/App.components/Expand/Expand.view'
-import { StatusMessage } from '../StatusMessage.view'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { scrollToFullView } from 'utils/scrollToFullView'
-
-import { ThreeLevelListItem } from '../../Loans.style'
-import { LoansActionsSection, BorrowingExpandedCard } from '../LoansComponents.style'
-import { loansPopupsContext } from '../Modals/LoansModals.provider'
-
-import { State } from 'reducers'
-import getTimestampByLevel from 'utils/api/getTimestampByLevel'
-import { BorrowingExpandCardMenuSection } from './BorrowingExpandCardMenuSection.view'
-import { BorrowingExpandCardValuesSection } from './BorrowingExpandCardValuesSection.view'
-import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import { BorrowingExpandCardBorrowSection } from './BorrowingExpandCardBorrowSection.view'
-import { BorrowingExpandCardRepaySection } from './BorrowingExpandCardRepaySection.view'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -362,7 +362,7 @@ export const BorrowingExpandCard = ({
           <BorrowingExpandedCard>
             {vaultStatus && <StatusMessage status={vaultStatus} timestamp={timerTimestamp} />}
 
-            <div className="main">
+            <div className="stats-and-actions">
               <BorrowingExpandCardValuesSection
                 collateralRatio={collateralRatio}
                 collateralBalance={collateralBalance}
