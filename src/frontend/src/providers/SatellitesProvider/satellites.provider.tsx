@@ -31,7 +31,7 @@ export class SatellitesProvider extends React.Component<Props, State> {
         oraclesIds,
         activeSatellitesIds,
         allSatellitesIds,
-        satelliteMapper: satelliteMapper as any,
+        satelliteMapper,
         isLoaded: true,
       },
     })

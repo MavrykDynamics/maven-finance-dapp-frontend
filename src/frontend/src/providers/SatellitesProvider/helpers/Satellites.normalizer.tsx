@@ -300,9 +300,16 @@ export const normallizeSatellite = (
   }
 }
 
-export const normalizeSatellitesLedger = (store: SatellitesStorage) => {
+export const normalizeSatellitesLedger = (
+  store: SatellitesStorage,
+): {
+  satelliteMapper: Record<string, ReturnType<typeof normallizeSatellite>>
+  activeSatellitesIds: string[]
+  allSatellitesIds: string[]
+  oraclesIds: string[]
+} => {
   const normalizedSatellites = store.satellite.reduce<{
-    satelliteMapper: Record<string, SatelliteDataSubscription['satellite'][0]>
+    satelliteMapper: Record<string, ReturnType<typeof normallizeSatellite>>
     activeSatellitesIds: string[]
     allSatellitesIds: string[]
     oraclesIds: string[]
