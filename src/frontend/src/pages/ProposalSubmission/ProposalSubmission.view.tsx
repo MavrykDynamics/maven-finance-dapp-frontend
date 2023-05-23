@@ -70,6 +70,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   } = useSelector((state: State) => state.governance)
   const { whitelistTokens, dipDupTokens } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [activeTab, setActiveTab] = useState(1)
 
@@ -356,7 +357,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             <Button
               kind={BUTTON_SECONDARY}
               form={BUTTON_WIDE}
-              disabled={isDropDisabled}
+              disabled={isDropDisabled || isActionActive}
               onClick={() => handleDropProposal(selectedUserProposalId)}
             >
               <Icon id="navigation-menu_close" /> Drop Proposal
@@ -374,7 +375,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             <Button
               kind={BUTTON_SECONDARY}
               form={BUTTON_WIDE}
-              disabled={isSubmitDisabled}
+              disabled={isSubmitDisabled || isActionActive}
               onClick={() => handleLockProposal(selectedUserProposalId)}
             >
               <Icon id="submit" /> Submit Proposal
@@ -393,7 +394,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               <Button
                 kind={BUTTON_PRIMARY}
                 form={BUTTON_WIDE}
-                disabled={isSaveProposalDisabled}
+                disabled={isSaveProposalDisabled || isActionActive}
                 onClick={() => handleUpdateData(selectedUserProposalId)}
               >
                 <Icon id="save" /> {isProposalSubmitted ? 'Save Changes' : 'Save Proposal'}

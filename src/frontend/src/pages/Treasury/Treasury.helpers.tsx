@@ -137,12 +137,6 @@ export const normalizeTreasuryStorage = (
           treasuryAssetsColors[symbol.toLowerCase()] = getAssetColor(Object.keys(treasuryAssetsColors).length)
         }
 
-        // TODO: temporary solution, cuz i don't have valid addresses in treasury token obj
-        const tokenAddress =
-          whitelistTokens.find(
-            ({ symbol: whitelistTokenSymbol }) => symbol.toLowerCase() === whitelistTokenSymbol.toLowerCase(),
-          )?.address ?? token_address
-
         return {
           icon,
           rate,
@@ -153,7 +147,7 @@ export const normalizeTreasuryStorage = (
           symbol: symbol,
           balance: coinsAmount,
           chartColor: treasuryAssetsColors[symbol.toLowerCase()],
-          tokenAddress,
+          tokenAddress: token_address,
         }
       })
       // Add sMVK treasury asset if has

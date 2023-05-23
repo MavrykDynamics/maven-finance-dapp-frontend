@@ -259,8 +259,15 @@ export const getPaymentsDiff = (
       const item2 = originalData?.[originalIdx]
 
       // default decimals is 6 cuz 6 is xtz decimals, and dipDupTokens don't contain xtz asset
-      const decimals = dipDupTokens.find(({ contract }) => contract === item1.token_address)?.metadata?.decimals ?? 6
-      const symbol = paymentMethods.find(({ address }) => address === item1.token_address)?.shortSymbol ?? 'fa2'
+      const decimals =
+        item1.token_address === 'XTZ'
+          ? 6
+          : dipDupTokens.find(({ contract }) => contract === item1.token_address)?.metadata?.decimals ?? 0
+
+      const symbol =
+        item1.token_address === 'XTZ'
+          ? 'tez'
+          : paymentMethods.find(({ address }) => address === item1.token_address)?.shortSymbol ?? 'fa2'
 
       let token = {}
 
