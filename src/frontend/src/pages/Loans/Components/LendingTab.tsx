@@ -143,19 +143,34 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
     })
   }, [inputData])
 
+  const useMaxHandler = useCallback(() => {
+    isSupplyActiveTab
+      ? onChangeHandler(getLoansInputMaxAmount(tokenBalance, assetData.decimals), tokenBalance)
+      : onChangeHandler(
+          getLoansInputMaxAmount(Math.min(lendingItem?.mBalance ?? 0, lendingItem?.lendValue ?? 0), assetData.decimals),
+          Math.min(lendingItem?.mBalance ?? 0, lendingItem?.lendValue ?? 0),
+        )
+  }, [assetData, isSupplyActiveTab, lendingItem, onChangeHandler, tokenBalance])
+
+  const inputOnChangeHandler = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChangeHandler(
+        e.target.value,
+        isSupplyActiveTab ? tokenBalance : Math.min(lendingItem?.mBalance ?? 0, lendingItem?.lendValue ?? 0),
+      )
+    },
+    [isSupplyActiveTab, lendingItem, onChangeHandler, tokenBalance],
+  )
+
   const inputProps: InputProps = useMemo(
     () => ({
       value: inputData.amount,
       type: 'number',
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-        onChangeHandler(
-          e.target.value,
-          isSupplyActiveTab ? tokenBalance : Math.min(lendingItem?.mBalance ?? 0, lendingItem?.lendValue ?? 0),
-        ),
+      onChange: inputOnChangeHandler,
       onBlur: inputOnBlurHandle,
       onFocus: onFocusHandler,
     }),
-    [inputData, inputOnBlurHandle, isSupplyActiveTab, lendingItem, onChangeHandler, onFocusHandler, tokenBalance],
+    [inputData.amount, inputOnChangeHandler, inputOnBlurHandle, onFocusHandler],
   )
 
   const settings: Settings = useMemo(
@@ -163,30 +178,12 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
       balance: tokenBalance,
       balanceAsset: assetData.symbol,
       balanceName: 'Wallet Balance',
-      useMaxHandler: () =>
-        isSupplyActiveTab
-          ? onChangeHandler(getLoansInputMaxAmount(tokenBalance, assetData.decimals), tokenBalance)
-          : onChangeHandler(
-              getLoansInputMaxAmount(
-                Math.min(lendingItem?.mBalance ?? 0, lendingItem?.lendValue ?? 0),
-                assetData.decimals,
-              ),
-              Math.min(lendingItem?.mBalance ?? 0, lendingItem?.lendValue ?? 0),
-            ),
+      useMaxHandler,
       inputStatus: inputData.validationStatus,
       inputSize: INPUT_LARGE,
       ...(assetData.rate ? { convertedValue: assetData.rate * Number(inputData.amount) } : {}),
     }),
-    [
-      assetData,
-      inputData.amount,
-      inputData.validationStatus,
-      isSupplyActiveTab,
-      lendingItem?.lendValue,
-      lendingItem?.mBalance,
-      onChangeHandler,
-      tokenBalance,
-    ],
+    [assetData, inputData.amount, inputData.validationStatus, tokenBalance, useMaxHandler],
   )
 
   return (

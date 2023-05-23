@@ -473,6 +473,12 @@ export const TransactionHistoryStyled = styled.div<{ theme: MavrykTheme }>`
     line-height: 21px;
 
     color: ${({ theme }) => theme.textColor};
+
+    div {
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 21px;
+    }
   }
 
   &.${PRIMARY_TRANSACTION_HISTORY_STYLE} {

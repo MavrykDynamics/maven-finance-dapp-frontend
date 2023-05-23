@@ -118,7 +118,7 @@ export const TransactionHistory = ({
 
       {lendingControllerAddress ? (
         <div className="lending-controller">
-          Lending Controller Address: <TzAddress tzAddress={lendingControllerAddress} type={BLUE} />
+          Lending Controller Address: <TzAddress tzAddress={lendingControllerAddress} type={BLUE} isBold />
         </div>
       ) : null}
     </TransactionHistoryStyled>
