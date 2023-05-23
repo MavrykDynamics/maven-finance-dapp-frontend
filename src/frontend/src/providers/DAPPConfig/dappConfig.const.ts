@@ -8,6 +8,7 @@ export const defaultSatelliteDescriptionMaxLength = 800
 export const defaultSatelliteImageMaxLength = 500
 export const defaultSatelliteNameMaxLength = 20
 export const defaultSatelliteWebsiteMaxLength = 500
+export const defaultSatelliteMinimumStakedMvk = 100
 export const defaultGovPurposeMaxLength = 800
 export const defaultProposalInvoiceMaxLength = 50
 export const defaultProposalMetadataTitleMaxLength = 110

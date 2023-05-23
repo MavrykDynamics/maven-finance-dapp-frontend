@@ -7,7 +7,7 @@ import type { AppDispatch, GetState } from '../../app/App.controller'
 import { fetchFromIndexer } from '../../gql/fetchGraphQL'
 
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
-import { nomalizeSatelliteConfig, normalizeSatellitesLedger } from './helpers/Satellites.normalizer'
+import { normalizeSatellitesLedger } from './helpers/Satellites.normalizer'
 
 import {
   ACTION_COMPLETION_MESSAGE_TEXT,
@@ -56,23 +56,6 @@ export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState
 }
 
 export const GET_SATELLITE_CONFIG = 'GET_SATELLITE_CONFIG'
-export const getSatelliteConfig = () => async (dispatch: AppDispatch, getState: GetState) => {
-  try {
-    const storage = await fetchFromIndexer(
-      SATELLITE_CONFIG_QUERY,
-      SATELLITE_CONFIG_QUERY_NAME,
-      SATELLITE_CONFIG_QUERY_VARIABLE,
-    )
-
-    const nomalizedConfig = nomalizeSatelliteConfig(storage)
-    dispatch({ type: GET_SATELLITE_CONFIG, config: nomalizedConfig })
-  } catch (error) {
-    console.error('getSatelliteConfig error: ', error)
-    if (error instanceof Error) {
-      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-    }
-  }
-}
 
 export const delegate = (satelliteAddress: string) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()

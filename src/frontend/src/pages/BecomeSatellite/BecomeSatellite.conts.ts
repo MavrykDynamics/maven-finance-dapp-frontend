@@ -3,7 +3,7 @@ import { State } from 'reducers'
 import { isNotAllWhitespace, isValidLength, validatePublicKey } from 'utils/validatorFunctions'
 import { defaultOraclePeerIdMaxLength } from 'app/App.components/Input/Input.constants'
 
-import { SatelliteDelegationMaxLength } from 'providers/DAPPConfig/dappConfig.types'
+import { SatelliteDelegation } from 'providers/DAPPConfig/dappConfig.types'
 
 export const getFormTextBasedOnUserRole = (isUserSatellite: boolean) => ({
   pageTitle: isUserSatellite ? 'Edit Satellite Profile' : 'Become a Satellite',
@@ -19,7 +19,7 @@ export const getFormTextBasedOnUserRole = (isUserSatellite: boolean) => ({
 export const getInputValidationStatus = (
   name: string,
   value: string,
-  satelliteConfig: SatelliteDelegationMaxLength,
+  satelliteConfig: SatelliteDelegation,
 ): InputStatusType => {
   switch (name) {
     case 'name':

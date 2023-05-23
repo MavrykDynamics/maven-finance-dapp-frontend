@@ -2,10 +2,6 @@ import { GET_SATELLITES_STORAGE, GET_SATELLITE_CONFIG } from 'pages/Satellites/S
 import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 
 export type SatellitesState = {
-  config: {
-    minimumStakedMvkBalance: number
-    isConfigLoaded: boolean
-  }
   satelliteMapper: Record<string, SatelliteRecordType>
   activeSatellitesIds: Array<SatelliteRecordType['address']>
   allSatellitesIds: Array<SatelliteRecordType['address']>
@@ -14,10 +10,6 @@ export type SatellitesState = {
 }
 
 const satellitesDefaultState: SatellitesState = {
-  config: {
-    minimumStakedMvkBalance: 0,
-    isConfigLoaded: false,
-  },
   satelliteMapper: {},
   activeSatellitesIds: [],
   allSatellitesIds: [],

@@ -29,10 +29,12 @@ export type GovernanceSatelliteMaxLength = {
   purposeMaxLength: number
 }
 
-export type SatelliteDelegationMaxLength = {
+export type SatelliteDelegation = {
   satelliteNameMaxLength: number
   satelliteDescriptionMaxLength: number
   satelliteWebsiteMaxLength: number
+  satelliteImageMaxLength: number
+  minimumStakedMvkBalance: number
 }
 
 export type DAPPConfigContext = {
@@ -41,7 +43,9 @@ export type DAPPConfigContext = {
   emergencyGovernance: EmergencyGovernanceMaxLength
   governance: GovernanceMaxLength
   governanceSatellite: GovernanceSatelliteMaxLength
-  satelliteDelegation: SatelliteDelegationMaxLength
+  satelliteDelegation: SatelliteDelegation
+  // loader
+  isDappLoading: boolean
   // actions
   initializeDappConfigData: InstanceType<typeof DAPPConfigProvider>['initializeDappConfigData']
 }

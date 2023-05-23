@@ -22,8 +22,6 @@ import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 // Actions
 import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
-import { getSatelliteConfig } from 'pages/Satellites/Satellites.actions'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // Types
 import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
@@ -76,26 +74,19 @@ export const BecomeSatellite = () => {
   } = useSelector((state: State) => state.wallet)
   const {
     satelliteMapper,
-    config: { minimumStakedMvkBalance, isConfigLoaded },
+    // config: { minimumStakedMvkBalance, isConfigLoaded },
   } = useSelector((state: State) => state.satellites)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    isDappLoading,
+    satelliteDelegation: { minimumStakedMvkBalance },
+  } = useDAPPConfigContext()
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
   const { satelliteDelegation } = useDAPPConfigContext()
 
   const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
-
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isConfigLoaded || isDepsChanged) {
-          await dispatch(getSatelliteConfig())
-        }
-      } catch (error) {}
-    },
-    [accountPkh],
-  )
 
   const balanceOverMinStakedMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= minimumStakedMvkBalance
   const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null
@@ -257,7 +248,7 @@ export const BecomeSatellite = () => {
 
         <PageContent>
           <div>
-            {isLoading ? (
+            {isDappLoading ? (
               <DataLoaderWrapper>
                 <ClockLoader width={150} height={150} />
                 <div className="text">Loading satellite data</div>

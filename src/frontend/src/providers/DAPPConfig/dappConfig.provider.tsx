@@ -1,7 +1,17 @@
 import React, { useContext } from 'react'
 
 // types
-import { State, Props, DAPPConfigContext } from './dappConfig.types'
+import {
+  State,
+  Props,
+  DAPPConfigContext,
+  SatelliteDelegation,
+  GovernanceMaxLength,
+  GovernanceSatelliteMaxLength,
+  EmergencyGovernanceMaxLength,
+  DataFeedsMaxLength,
+  CouncilMaxLength,
+} from './dappConfig.types'
 import { GetMaxlenghtsQueryQuery } from 'utils/__generated__/graphql'
 
 // consts
@@ -11,9 +21,11 @@ import {
   defaultCouncilMemberWebsiteMaxLength,
   defaultRequestPurposeMaxLength,
   defaultRequestTokenNameMaxLength,
+  defaultSatelliteImageMaxLength,
   defaultSatelliteDescriptionMaxLength,
   defaultSatelliteNameMaxLength,
   defaultSatelliteWebsiteMaxLength,
+  defaultSatelliteMinimumStakedMvk,
   defaultGovPurposeMaxLength,
   defaultProposalInvoiceMaxLength,
   defaultProposalMetadataTitleMaxLength,
@@ -22,6 +34,7 @@ import {
   defaultProposalSourceCodeMaxLength,
   defaultAggregatorNameMaxLength,
 } from './dappConfig.const'
+import { calcWithoutPrecision } from 'utils/calcFunctions'
 
 export const dappContext = React.createContext<DAPPConfigContext>(undefined!)
 
@@ -58,7 +71,11 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
           satelliteNameMaxLength: defaultSatelliteNameMaxLength,
           satelliteDescriptionMaxLength: defaultSatelliteDescriptionMaxLength,
           satelliteWebsiteMaxLength: defaultSatelliteWebsiteMaxLength,
+          satelliteImageMaxLength: defaultSatelliteImageMaxLength,
+          minimumStakedMvkBalance: defaultSatelliteMinimumStakedMvk,
         },
+        // loader indicator
+        isDappLoading: true,
         // actions
         initializeDappConfigData: this.initializeDappConfigData,
       },
@@ -79,6 +96,7 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
       satellite_image_max_length,
       satellite_name_max_length,
       satellite_website_max_length,
+      minimum_smvk_balance,
     } = data.delegation[0]
     const {
       proposal_description_max_length,
@@ -88,7 +106,7 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
       proposal_title_max_length: gov_proposal_title_max_length,
     } = data.governance[0]
 
-    const council = {
+    const council: CouncilMaxLength = {
       councilMemberImageMaxLength: council_member_image_max_length,
       councilMemberNameMaxLength: council_member_name_max_length,
       councilMemberWebsiteMaxLength: council_member_website_max_length,
@@ -96,16 +114,16 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
       requestTokenNameMaxLength: request_token_name_max_length,
     }
 
-    const dataFeeds = {
+    const dataFeeds: DataFeedsMaxLength = {
       feedNameMaxLength: data.governance_satellite[0].gov_purpose_max_length,
     }
 
-    const emergencyGovernance = {
+    const emergencyGovernance: EmergencyGovernanceMaxLength = {
       proposalTitleMaxLength: proposal_title_max_length,
       proposalDescMaxLength: proposal_desc_max_length,
     }
 
-    const governance = {
+    const governance: GovernanceMaxLength = {
       proposalDescriptionMaxLength: proposal_description_max_length,
       proposalInvoiceMaxLength: proposal_invoice_max_length,
       proposalMetadataTitleMaxLength: proposal_metadata_title_max_length,
@@ -113,15 +131,16 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
       proposalTitleMaxLength: gov_proposal_title_max_length,
     }
 
-    const governanceSatellite = {
+    const governanceSatellite: GovernanceSatelliteMaxLength = {
       purposeMaxLength: data.governance_satellite[0].gov_purpose_max_length,
     }
 
-    const satelliteDelegation = {
+    const satelliteDelegation: SatelliteDelegation = {
       satelliteNameMaxLength: satellite_name_max_length,
       satelliteDescriptionMaxLength: satellite_description_max_length,
       satelliteWebsiteMaxLength: satellite_website_max_length,
       satelliteImageMaxLength: satellite_image_max_length,
+      minimumStakedMvkBalance: calcWithoutPrecision(minimum_smvk_balance),
     }
 
     this.setState({
@@ -133,11 +152,13 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
         governance,
         governanceSatellite,
         satelliteDelegation,
+        isDappLoading: false,
       },
     })
   }
 
   render(): React.ReactNode {
+    console.log(this.state.context)
     return <dappContext.Provider value={this.state.context}>{this.props.children}</dappContext.Provider>
   }
 }

@@ -291,12 +291,6 @@ export const normallizeSatellite = (
   }
 }
 
-export const nomalizeSatelliteConfig = ({ delegation: [delegationInfo] }: { delegation: Array<DelegationGraphQl> }) => {
-  return {
-    minimumStakedMvkBalance: calcWithoutPrecision(delegationInfo.minimum_smvk_balance),
-  }
-}
-
 export const normalizeSatellitesLedger = (store: {
   satellite: Array<SatelliteRecordGraphQl>
   governance_proposal: Array<Governance_Proposal>
