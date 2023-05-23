@@ -136,7 +136,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
     <LendingTabStyled>
       {lendingItem ? (
         <div className="main">
-          <LoansValuesSection className="secondary-background">
+          <LoansValuesSection className="lending-tab">
             <H2Title>Your Supplied XTZ Position</H2Title>
 
             <div className="stats">
@@ -218,7 +218,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             </LoansValuesSectionInfo>
           </LoansValuesSection>
 
-          <LoansActionsSection className="secondary-background">
+          <LoansActionsSection className="lending-tab">
             <div className="switchers">
               <SlidingTabButtons onClick={handleSwitchTab} tabItems={LENDING_TAB_SLIDING_BUTTONS} className="vault" />
             </div>
@@ -239,7 +239,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
               </Input>
             </div>
 
-            <div>
+            <div className='mt-25'>
               <div className="tab-text mb-10">Updated Lending {assetData?.symbol} Stats</div>
 
               <div className='stats'>

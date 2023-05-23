@@ -374,7 +374,7 @@ export const BorrowingExpandCard = ({
                 rate={rate}
               />
 
-              <LoansActionsSection>
+              <LoansActionsSection className='borrowing-tab'>
                 <div className="switchers">
                   <SlidingTabButtons
                     onClick={handleSwitchTab('repayAndBorrow')}

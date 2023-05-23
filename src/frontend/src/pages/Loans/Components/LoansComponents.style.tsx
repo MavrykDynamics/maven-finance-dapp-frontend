@@ -184,11 +184,13 @@ export const LoansActionsSection = styled.div`
   flex-direction: column;
   row-gap: 30px;
   padding: 30px;
-
-  background-color: ${({ theme }) => theme.backgroundColor};
   border-radius: 10px;
 
-  &.secondary-background {
+  &.borrowing-tab {
+    background-color: ${({ theme }) => theme.backgroundColor};
+  }
+
+  &.lending-tab {
     background-color: ${({ theme }) => theme.containerColor};
     border: 1px solid ${({ theme }) => theme.cardBorderColor};
   }
@@ -246,22 +248,32 @@ export const LoansActionsSection = styled.div`
 export const LoansValuesSection = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
-  row-gap: 60px;
   padding: 30px;
-
-  background-color: ${({ theme }) => theme.backgroundColor};
   border-radius: 10px;
 
-  &.secondary-background {
+  &.borrowing-tab {
+    row-gap: 60px;
+    background-color: ${({ theme }) => theme.backgroundColor};
+
+    .stats {
+      row-gap: 60px;
+    }
+  }
+
+  &.lending-tab {
+    row-gap: 45px;
     background-color: ${({ theme }) => theme.containerColor};
     border: 1px solid ${({ theme }) => theme.cardBorderColor};
+
+    .stats {
+      row-gap: 45px;
+    }
   }
 
   .stats {
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 30px;
-    row-gap: 60px;
   }
 `
 

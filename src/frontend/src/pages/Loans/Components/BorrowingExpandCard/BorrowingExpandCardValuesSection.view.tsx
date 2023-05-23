@@ -33,7 +33,7 @@ export const BorrowingExpandCardValuesSection = ({
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   return (
-    <LoansValuesSection>
+    <LoansValuesSection className='borrowing-tab'>
       <div className="stats">
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
           <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={decimals} />
