@@ -128,8 +128,10 @@ export const SATELLITES_STORAGE_QUERY = gql(`
 
     aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {
       admin
+      last_completed_data_last_updated_at
+      heart_beat_seconds
       oracles {
-        observations {
+        observations(order_by: {timestamp: desc}, limit: 1) {
           epoch
           round
           timestamp
@@ -137,6 +139,11 @@ export const SATELLITES_STORAGE_QUERY = gql(`
             user_id
             init_epoch
             init_round
+          }
+        }
+        observations_aggregate {
+          aggregate {
+            count(columns: timestamp)
           }
         }
       }

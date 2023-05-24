@@ -320,7 +320,7 @@ export const normalizeSatellitesLedger = (
         emergencyGovernanceLedger: store.emergency_governance,
         feeds: store.aggregator,
         financialRequestLedger: store.governance_financial_request,
-      }) as any
+      })
       acc.satelliteMapper[nomalizedSatellite.address] = nomalizedSatellite
       acc.allSatellitesIds.push(nomalizedSatellite.address)
 

@@ -20,33 +20,9 @@ import {
 } from 'app/App.components/Toaster/Toaster.constants'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
-import { SATELLITES_STORAGE_QUERY, SATELLITES_STORAGE_QUERY_NAME, SATELLITES_STORAGE_QUERY_VARIABLE } from 'gql/queries'
 
 export const GET_SATELLITES_STORAGE = 'GET_SATELLITES_STORAGE'
-export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
-  try {
-    const storage = await fetchFromIndexer(
-      SATELLITES_STORAGE_QUERY,
-      SATELLITES_STORAGE_QUERY_NAME,
-      SATELLITES_STORAGE_QUERY_VARIABLE,
-    )
-
-    const { oraclesIds, activeSatellitesIds, allSatellitesIds, satellitesMapper } = normalizeSatellitesLedger(storage)
-
-    dispatch({
-      type: GET_SATELLITES_STORAGE,
-      oraclesIds,
-      activeSatellitesIds,
-      allSatellitesIds,
-      satellitesMapper,
-    })
-  } catch (error) {
-    console.error('getSatellitesStorage error: ', error)
-    if (error instanceof Error) {
-      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-    }
-  }
-}
+export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState: GetState) => {}
 
 export const GET_SATELLITE_CONFIG = 'GET_SATELLITE_CONFIG'
 
