@@ -10,10 +10,11 @@ import NewButton from 'app/App.components/Button/NewButton'
 
 // style
 import { SatellitePaginationStyled } from './SatellitePagination.style'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 const SatellitePagination = () => {
   const { satelliteId = '' }: { satelliteId: string } = useParams()
-  const { allSatellitesIds } = useSelector((state: State) => state.satellites)
+  const { allSatellitesIds } = useSatellitesContext()
 
   const currentSatelliteIndex = allSatellitesIds.findIndex(
     (activeSatelliteAddress) => activeSatelliteAddress === satelliteId,

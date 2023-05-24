@@ -13,9 +13,10 @@ import { StatBlock } from '../Dashboard.style'
 import { SatellitesContentStyled, TabWrapperStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { activeSatellitesIds, satelliteMapper } = useSatellitesContext()
 
   const satellitesInfo = activeSatellitesIds.reduce(
     (acc, satelliteAddress) => {

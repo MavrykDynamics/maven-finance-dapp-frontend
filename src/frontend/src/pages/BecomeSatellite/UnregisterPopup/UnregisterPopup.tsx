@@ -1,7 +1,8 @@
 import { useDispatch } from 'react-redux'
 
 import { unregisterAsSatellite } from '../BecomeSatellite.actions'
-import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
+
 import { BUTTON_SECONDARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton'

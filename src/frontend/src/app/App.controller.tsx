@@ -29,7 +29,6 @@ import { PolicyPopup } from 'app/App.components/PolicyPopup/Policy.controller'
 
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
-import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
 import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.actions'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
@@ -69,7 +68,6 @@ const AppContainer = () => {
       await dispatch(getContractAddressesStorage())
       // Fetching initial&common data for DAPP
       await Promise.all([
-        dispatch(getSatellitesStorage()),
         dispatch(getFeedsStorage()),
 
         dispatch(getTokensForDAPP()),

@@ -12,11 +12,12 @@ import DataFeedDetailsView from './DataFeedsDetails.view'
 // actions
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getFeedsStorage } from '../DataFeeds/DataFeeds.actions'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 const DataFeedDetails = () => {
   const dispatch = useDispatch()
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
-  const { oraclesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { oraclesIds, satelliteMapper } = useSatellitesContext()
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

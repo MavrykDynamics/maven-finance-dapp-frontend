@@ -24,7 +24,6 @@ import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
 
 // Types
-import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 import { State } from 'reducers'
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 
@@ -56,6 +55,8 @@ import {
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { normallizeSatellite } from 'providers/SatellitesProvider/helpers/Satellites.normalizer'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -72,10 +73,7 @@ export const BecomeSatellite = () => {
     accountPkh = '',
     user: { userTokens, isSatellite, satelliteMvkIsDelegatedTo },
   } = useSelector((state: State) => state.wallet)
-  const {
-    satelliteMapper,
-    // config: { minimumStakedMvkBalance, isConfigLoaded },
-  } = useSelector((state: State) => state.satellites)
+  const { satelliteMapper } = useSatellitesContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const {
@@ -119,7 +117,7 @@ export const BecomeSatellite = () => {
 
     const formIsValid = Object.values(formForValidation).every(({ status }) => status === INPUT_STATUS_SUCCESS)
     const hasChangedValues = Object.entries(formForValidation).some(([key, { text }]) => {
-      const existingSatelliteField = usersSatelliteProfile?.[key as keyof SatelliteRecordType]
+      const existingSatelliteField = usersSatelliteProfile?.[key as keyof ReturnType<typeof normallizeSatellite>]
 
       if (existingSatelliteField) {
         return text !== String(existingSatelliteField)

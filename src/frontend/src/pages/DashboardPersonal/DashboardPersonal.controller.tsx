@@ -40,13 +40,14 @@ import { DOORMAN_STATS_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
   const { tokensPrices } = useSelector((state: State) => state.tokens)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { satelliteMapper } = useSatellitesContext()
   const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)

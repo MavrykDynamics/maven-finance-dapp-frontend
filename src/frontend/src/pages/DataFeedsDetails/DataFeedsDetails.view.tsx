@@ -28,7 +28,7 @@ import Pagination from 'app/App.components/Pagination/Pagination.view'
 // types
 import { State } from 'reducers'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 // styles
 import {

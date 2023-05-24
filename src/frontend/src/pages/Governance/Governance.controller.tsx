@@ -32,7 +32,7 @@ import {
   WAITING_EXECUTED_PROPOSALS_LIST_NAME,
   WAITING_PAYMENT_PROPOSALS_LIST_NAME,
 } from 'app/App.components/Pagination/pagination.consts'
-import { getVoteText } from 'pages/Satellites/helpers/Satellites.consts'
+import { getVoteText } from 'providers/SatellitesProvider/satellites.const'
 import { generateCyclesDdOptions, NONE_CYCLE_SELECTED_OPTION } from './helpers/governanceView.helpers'
 
 // styles
@@ -44,6 +44,7 @@ import { VoterListItem, ProposalStatusFlag } from './components/Proposals/Propos
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const dispatch = useDispatch()
@@ -59,7 +60,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
     proposalsMapper,
   } = useSelector((state: State) => state.governance)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { satelliteMapper } = useSatellitesContext()
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

@@ -11,11 +11,12 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { Trim } from 'app/App.components/Trim/Trim.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { DataFeedsCardStyled, FeedsListItem } from 'pages/DataFeeds/DataFeeds.styles'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 export const DataFeedCard = ({ feed }: { feed: Feed }) => {
   const { pathname } = useLocation()
   const { dipDupContracts } = useSelector((state: State) => state.tokens)
-  const { oraclesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { oraclesIds, satelliteMapper } = useSatellitesContext()
 
   const oracleNodes = useMemo(
     () =>

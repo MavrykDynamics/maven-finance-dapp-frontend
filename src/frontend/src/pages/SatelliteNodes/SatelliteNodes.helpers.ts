@@ -1,8 +1,7 @@
-import { State } from 'reducers'
-import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteMapper, SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 export const handleSortSatellites =
-  (sortType: string, satelliteMapper: State['satellites']['satelliteMapper']) =>
+  (sortType: string, satelliteMapper: SatelliteMapper) =>
   (a: SatelliteRecordType['address'], b: SatelliteRecordType['address']): number => {
     const satelliteA = satelliteMapper[a],
       satelliteB = satelliteMapper[b]
@@ -28,7 +27,7 @@ export const handleSortSatellites =
   }
 
 export const handleFilterSatellites =
-  (inputSearch: string, satelliteMapper: State['satellites']['satelliteMapper']) =>
+  (inputSearch: string, satelliteMapper: SatelliteMapper) =>
   (satelliteAddress: SatelliteRecordType['address']): boolean => {
     const satellite = satelliteMapper[satelliteAddress]
     return (

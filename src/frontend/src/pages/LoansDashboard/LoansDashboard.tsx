@@ -27,6 +27,7 @@ import colors from 'styles/colors'
 import { connect } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 export type GaugeChartStateType = {
   maxValue: number
@@ -66,7 +67,7 @@ export const LoansDashboard = () => {
     accountPkh,
     user: { availableLoansRewards, userLoansData },
   } = useSelector((state: State) => state.wallet)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { satelliteMapper } = useSatellitesContext()
   const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
 
   const { totalBorrowed, totalLended } = loanTokens.reduce<{

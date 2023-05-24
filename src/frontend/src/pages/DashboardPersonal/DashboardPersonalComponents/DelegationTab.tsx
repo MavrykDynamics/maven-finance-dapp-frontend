@@ -15,6 +15,7 @@ import { UserActionHistory } from './UserOperationsHistory'
 import { DashboardCardHeader } from '../DashboardPersonal.style'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 const DelegationTab = () => {
   const dispatch = useDispatch()
@@ -22,7 +23,7 @@ const DelegationTab = () => {
     user: { satelliteMvkIsDelegatedTo, userTokens, availableSatellitesRewards },
     accountPkh,
   } = useSelector((state: State) => state.wallet)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { satelliteMapper } = useSatellitesContext()
   const satelliteInfo = satelliteMapper[satelliteMvkIsDelegatedTo]
 
   const handleDistributeRewards = () => {

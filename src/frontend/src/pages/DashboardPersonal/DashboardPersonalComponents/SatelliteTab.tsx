@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+import { ORACLE_STATUSES_MAPPER } from 'providers/SatellitesProvider/satellites.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { distributeProposalRewards } from 'pages/Satellites/Satellites.actions'
 
@@ -17,6 +17,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { UserActionHistory } from './UserOperationsHistory'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 const SatelliteTab = () => {
   const dispatch = useDispatch()
@@ -24,7 +25,7 @@ const SatelliteTab = () => {
     accountPkh = '',
     user: { availableSatellitesRewards },
   } = useSelector((state: State) => state.wallet)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { satelliteMapper } = useSatellitesContext()
 
   const satelliteRecord = satelliteMapper[accountPkh]
 

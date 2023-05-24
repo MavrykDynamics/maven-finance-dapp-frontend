@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
-import { findColorBasedOnStatus, OracleStatusTypes } from '../helpers/Satellites.consts'
+import { findColorBasedOnStatus, OracleStatusTypes } from 'providers/SatellitesProvider/satellites.const'
 
 export const SatelliteOracleStatusComponent = styled.div<{
   statusType: OracleStatusTypes

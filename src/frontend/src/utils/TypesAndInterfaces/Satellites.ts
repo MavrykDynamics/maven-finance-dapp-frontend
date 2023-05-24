@@ -1,5 +1,5 @@
 import type { Satellite, Delegation } from '../generated/graphqlTypes'
-import { getSatelliteVotings, normallizeSatellite } from '../../pages/Satellites/helpers/Satellites.normalizer'
+import { getSatelliteVotings, normallizeSatellite } from 'providers/SatellitesProvider/helpers/Satellites.normalizer'
 import { TokenType } from './General'
 
 export enum SatelliteStatus {

@@ -20,6 +20,7 @@ import { StatBlock } from '../Dashboard.style'
 import { OraclesContentStyled, TabWrapperStyled, PopularFeed } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
@@ -28,7 +29,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
     dipDupContracts,
     tokensPrices: { mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
-  const { satelliteMapper, oraclesIds } = useSelector((state: State) => state.satellites)
+  const { satelliteMapper, oraclesIds } = useSatellitesContext()
 
   const oracleFeeds = feedsLedger.length
   const popularFeeds = feedsLedger.slice(0, 3)

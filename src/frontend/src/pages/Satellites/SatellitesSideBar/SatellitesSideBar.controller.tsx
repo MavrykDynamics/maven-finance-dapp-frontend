@@ -4,13 +4,14 @@ import { Link } from 'react-router-dom'
 import { State } from 'reducers'
 import { calcWithoutPrecision } from 'utils/calcFunctions'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { getTotalDelegatedMVK } from '../helpers/Satellites.consts'
+import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/satellites.const'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { useChainCount } from 'providers/DataFeedsProvider/hooks/useChainCount'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -57,7 +58,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
-  const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSatellitesContext()
   const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
 
   // onChain data points subscription

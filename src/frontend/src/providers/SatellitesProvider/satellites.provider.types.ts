@@ -31,3 +31,5 @@ export type Props = {
 }
 
 export type SatellitesStorage = SatellitesStorageQuery
+export type SatelliteRecordType = ReturnType<typeof normallizeSatellite>
+export type SatelliteMapper = Record<string, ReturnType<typeof normallizeSatellite>>

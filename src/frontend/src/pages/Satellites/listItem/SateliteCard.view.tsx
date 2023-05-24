@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // consts, helpers, actions
 import { DOWN, WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
-import { getVoteText, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+import { getVoteText, ORACLE_STATUSES_MAPPER } from 'providers/SatellitesProvider/satellites.const'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
   ACTION_PRIMARY,
@@ -25,7 +25,8 @@ import NewButton from 'app/App.components/Button/NewButton'
 
 // types
 import { State } from 'reducers'
-import { SatelliteStatus, SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteStatus } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 //styles
 import { AvatarStyle } from 'app/App.components/Avatar/Avatar.style'

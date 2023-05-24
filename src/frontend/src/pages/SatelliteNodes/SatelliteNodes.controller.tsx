@@ -27,6 +27,7 @@ import { SatelliteNodesStyled } from './SatelliteNodes.style'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
 import { NotStakingBanner } from 'pages/Satellites/components/NotStakingBanner.view'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 const itemsForDropDown = [
   { text: 'Lowest Fee', value: 'satelliteFee' },
@@ -40,7 +41,7 @@ const ddItems = itemsForDropDown.map(({ text }) => text)
 const SatelliteNodes = () => {
   const { pathname, search } = useLocation()
 
-  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { allSatellitesIds, satelliteMapper } = useSatellitesContext()
   const {
     user: { isSatellite, userTokens },
   } = useSelector((state: State) => state.wallet)

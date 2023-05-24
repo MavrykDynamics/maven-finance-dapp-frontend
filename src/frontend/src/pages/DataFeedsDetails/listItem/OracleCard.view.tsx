@@ -1,10 +1,10 @@
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { FeedsListItem, FeedsOraclesCardStyled, DataFeedListItemTextTruncated } from 'pages/DataFeeds/DataFeeds.styles'
-import { ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+import { ORACLE_STATUSES_MAPPER } from 'providers/SatellitesProvider/satellites.const'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { State } from 'reducers'
-import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 import { SatelliteOracleStatusComponent } from '../../Satellites/listItem/SatelliteCard.style'
 

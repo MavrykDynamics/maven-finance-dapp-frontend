@@ -26,6 +26,7 @@ import {
   dropRequest,
   sign,
 } from './Council.actions'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 // types
 
@@ -57,7 +58,7 @@ export const Council = () => {
     isCouncilPastActionsLoaded,
     breakGlassCouncilMembers,
   } = useSelector((state: State) => state.council)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { satelliteMapper } = useSatellitesContext()
 
   const handleSignAction = (id: number) => {
     dispatch(sign(id))

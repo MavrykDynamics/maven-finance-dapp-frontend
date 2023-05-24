@@ -150,7 +150,7 @@ export class SatellitesProviderClass extends React.Component<Props, State> {
   undelegate = async (delegateAddress: string) => {
     const wallet = this.props.wallet
     const contractAddresses = this.props.contractAddresses
-    const { accountPkh, user } = wallet
+    const { accountPkh } = wallet
 
     const dispatch = this.props.dispatch
 

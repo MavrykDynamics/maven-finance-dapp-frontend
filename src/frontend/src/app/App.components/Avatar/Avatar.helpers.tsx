@@ -1,12 +1,12 @@
 // types
-import { SatellitesState } from 'reducers/satellites'
+import { normallizeSatellite } from 'providers/SatellitesProvider/helpers/Satellites.normalizer'
 import { CouncilMembers } from 'utils/TypesAndInterfaces/Council'
 
 export const defaultUserImage = '/images/default-avatar.png'
 
 type Props = {
   accountPkh?: string
-  satelliteMapper: SatellitesState['satelliteMapper']
+  satelliteMapper: Record<string, ReturnType<typeof normallizeSatellite>>
   councilMembers: CouncilMembers
   breakGlassCouncilMembers: CouncilMembers
   priorityImage?: 'satellite' | 'council' | 'breakGlassCouncil' | 'default'

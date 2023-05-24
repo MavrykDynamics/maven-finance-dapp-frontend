@@ -7,11 +7,12 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import SatellitePagination from './SatellitePagination/SatellitePagination.view'
 import { SatelliteListItem } from 'pages/Satellites/listItem/SateliteCard.view'
 
-import { getVoteText } from 'pages/Satellites/helpers/Satellites.consts'
+import { getVoteText } from 'providers/SatellitesProvider/satellites.const'
 import { parseDate } from 'utils/time'
 
 import { State } from 'reducers'
-import { SatelliteRecordType, SatelliteVoteType } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteVoteType } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 import { Page, PageContent } from 'styles'
 import { EmptyContainer } from 'app/App.style'
@@ -24,6 +25,7 @@ import {
   SatelliteVotingInfoWrapper,
   SatelliteVotingHistoryListItem,
 } from './SatelliteDetails.style'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 const renderVotingHistoryItem = (item: SatelliteVoteType) => {
   const voteText = getVoteText(item.vote)
@@ -73,7 +75,7 @@ const SatellitesVotingHistory = ({
 
 export const SatelliteDetails = () => {
   const { satelliteId } = useParams<{ satelliteId: string }>()
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { satelliteMapper } = useSatellitesContext()
   const currentSatellite = satelliteMapper[satelliteId]
   if (!currentSatellite) return <Redirect to={'/currentSatellite-nodes'} />
 

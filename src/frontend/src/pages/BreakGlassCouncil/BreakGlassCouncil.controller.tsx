@@ -27,6 +27,7 @@ import {
   signAction,
 } from './BreakGlassCouncil.actions'
 import { getBreakGlassConfig } from 'pages/BreakGlass/BreakGlass.actions'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 // types
 
@@ -59,7 +60,7 @@ export function BreakGlassCouncil() {
     isBreakGlassCouncilPastActionsLoaded,
     councilMembers,
   } = useSelector((state: State) => state.council)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { satelliteMapper } = useSatellitesContext()
   const {
     config: { emergencyGovActive },
   } = useSelector((state: State) => state.emergencyGovernance)

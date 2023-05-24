@@ -1,5 +1,5 @@
 import { MavrykTheme } from 'styles/interfaces'
-import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 export const ORACLE_STATUSES_MAPPER = {
   responded: 'Responded',

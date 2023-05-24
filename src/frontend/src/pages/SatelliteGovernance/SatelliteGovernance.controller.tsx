@@ -27,7 +27,7 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 // actions
 import { getSatelliteGovernanceStorage } from './SatelliteGovernance.actions'
-import { getTotalDelegatedMVK } from 'pages/Satellites/helpers/Satellites.consts'
+import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/satellites.const'
 
 // style
 import { SatelliteGovernanceStyled, SmallInfoBlock } from './SatelliteGovernance.style'
@@ -44,6 +44,7 @@ import {
   PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST,
   MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 type ExtendedTabItem = TabItem & {
   path: string
@@ -96,7 +97,7 @@ export const SatelliteGovernance = () => {
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
 
-  const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSatellitesContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
 
