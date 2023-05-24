@@ -1,8 +1,7 @@
-import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
 import { OperationVariables, TypedDocumentNode, gql as apolloGql } from '@apollo/client'
 import { DocumentNode } from 'graphql'
-
-import { gql } from 'utils/__generated__'
+import { gql } from 'utils/__generated__/gql'
+import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
 
 // Dip dup metadate for feeds TODO: remove later
 export const DIP_DUP_CONTRACTS_QUERY = gql(`

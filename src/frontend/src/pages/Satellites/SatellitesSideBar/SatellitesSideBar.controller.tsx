@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { State } from 'reducers'
-import { calcWithoutPrecision } from 'utils/calcFunctions'
+import { calcWithoutPrecision, convertNumberForClient } from 'utils/calcFunctions'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { getTotalDelegatedMVK } from '../helpers/Satellites.consts'
 
@@ -10,8 +10,8 @@ import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { useChainCount } from 'providers/DataFeedsProvider/hooks/useChainCount'
-import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import { useFeedsStats } from 'providers/DataFeedsProvider/hooks/useFeedsStats'
+import { MVK_DECIMALS } from 'utils/constants'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -57,23 +57,17 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     accountPkh,
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
-  const { feedsAddresses, feedsMapper } = useDataFeedsContext()
 
   const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
 
   // onChain data points subscription
-  const { dataPointsCount } = useChainCount()
+  const { feedsAmount, rewardsAmount } = useFeedsStats()
 
   const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
 
-  const averageRevard = calcWithoutPrecision(
-    feedsAddresses.reduce((acc, feedAddress) => {
-      const { reward_amount_smvk } = feedsMapper[feedAddress]
-      acc += reward_amount_smvk
-      return acc
-    }, 0) / Math.max(feedsAddresses.length, 1),
-  )
+  const averageRevard =
+    convertNumberForClient({ number: rewardsAmount, grade: MVK_DECIMALS }) / Math.max(feedsAmount, 1)
 
   return (
     <SatelliteSideBarStyled>
@@ -117,7 +111,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <SideBarItem>
           <h3>On-Chain Data Points</h3>
           <var>
-            <CommaNumber value={dataPointsCount} showDecimal={false} />
+            <CommaNumber value={feedsAmount} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>

@@ -7,7 +7,7 @@ import { useDataFeedsContext } from '../dataFeeds.provider'
 import { getOrcaleStorageAggregatorQuery } from 'gql/queries/getOracleStorage'
 import { useEffect, useState } from 'react'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
-import { GetOracleDataFeedsQuery } from 'utils/__generated__/graphql'
+import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
 
 // TODO add checks if data is empty (valid data with zod) and handle errors for it
 export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
@@ -17,7 +17,7 @@ export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
   const isContractsLoading = dipDupContracts === null
 
   const [shouldSkip, setShouldSkip] = useState(false)
-  const [feeds, setFeeds] = useState<GetOracleDataFeedsQuery['aggregator']>([])
+  const [feeds, setFeeds] = useState<SubscribeOracleStorageAggregatorSubscription['aggregator']>([])
 
   const { loading: aggregatorLoading } = useSubscription(getOrcaleStorageAggregatorQuery(feedAddress), {
     skip: shouldSkip,
