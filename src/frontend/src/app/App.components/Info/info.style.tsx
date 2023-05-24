@@ -27,6 +27,7 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
     a * {
       cursor: pointer;
       display: inline;
+      color: ${({ theme }) => theme.valueColor};
     }
   }
 

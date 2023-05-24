@@ -87,6 +87,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             bytesValidation: proposal.proposalData.map((bytesPair) => ({
               validBytes: '',
               validTitle: '',
+              validDescr: '',
               byteId: bytesPair.id,
             })),
             paymentsValidation: proposal.proposalPayments.map((payment) => ({
@@ -147,31 +148,25 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
   }
 
-  const updateLocalProposalData = useCallback(
-    (newProposalData: Partial<ProposalRecordType>, proposalId: number) => {
-      setProposalsState({
-        ...proposalState,
-        [proposalId]: {
-          ...proposalState[proposalId],
-          ...newProposalData,
-        },
-      })
-    },
-    [proposalState],
-  )
+  const updateLocalProposalData = (newProposalData: Partial<ProposalRecordType>, proposalId: number) => {
+    setProposalsState({
+      ...proposalState,
+      [proposalId]: {
+        ...proposalState[proposalId],
+        ...newProposalData,
+      },
+    })
+  }
 
-  const updateLocalProposalValidation = useCallback(
-    (newProposalValidation: Partial<ProposalValidityObj>, proposalId: number) => {
-      setProposalsValidation({
-        ...proposalsValidation,
-        [proposalId]: {
-          ...proposalsValidation[proposalId],
-          ...newProposalValidation,
-        },
-      })
-    },
-    [proposalsValidation],
-  )
+  const updateLocalProposalValidation = (newProposalValidation: Partial<ProposalValidityObj>, proposalId: number) => {
+    setProposalsValidation({
+      ...proposalsValidation,
+      [proposalId]: {
+        ...proposalsValidation[proposalId],
+        ...newProposalValidation,
+      },
+    })
+  }
 
   const handleNextStep = (tabId: number) => setActiveTab(tabId)
   const handleLockProposal = async (proposalId: number) => await dispatch(lockProposal(proposalId))
@@ -188,7 +183,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     if (!currentProposalOnRemote) {
       const bytes = getBytesDiff(
         [],
-        currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code),
+        currentProposal.proposalData.filter(
+          ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
+        ),
       )
 
       const payments = getPaymentsDiff(
@@ -215,7 +212,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     } else {
       const bytesDiff = getBytesDiff(
         currentProposalOnRemote.proposalData,
-        currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code),
+        currentProposal.proposalData.filter(
+          ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
+        ),
       )
       const paymentsDiff = getPaymentsDiff(
         currentProposalOnRemote.proposalPayments,

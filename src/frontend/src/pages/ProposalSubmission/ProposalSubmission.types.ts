@@ -28,6 +28,7 @@ export type ProposalValidityObj = {
   bytesValidation: Array<{
     validBytes: ValidationResult
     validTitle: ValidationResult
+    validDescr: ValidationResult
     byteId: number
   }>
   paymentsValidation: Array<{
