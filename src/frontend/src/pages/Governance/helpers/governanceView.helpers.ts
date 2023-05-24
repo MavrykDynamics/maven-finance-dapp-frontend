@@ -27,9 +27,9 @@ export const getTooltipForStatus = (proposalStatus: ProposalStatusType) => {
     case ProposalStatus.ONGOING:
       return ONGOING_PROPOSAL_STATUS_TOOLTIP
     case ProposalStatus.LOCKED:
-      return UNLOCKED_PROPOSAL_STATUS_TOOLTIP
-    case ProposalStatus.UNLOCKED:
       return LOCKED_PROPOSAL_STATUS_TOOLTIP
+    case ProposalStatus.UNLOCKED:
+      return UNLOCKED_PROPOSAL_STATUS_TOOLTIP
     default:
       return null
   }

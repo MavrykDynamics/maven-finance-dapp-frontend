@@ -18,7 +18,7 @@ export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
   width: 100%;
 
   .text {
-    color: ${({ theme }) => theme.headerColor};
+    color: ${({ theme }) => theme.textColor};
     top: -27px;
     font-weight: 400;
     font-size: 12px;
@@ -36,7 +36,7 @@ export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      color: ${({ theme }) => theme.headerColor};
+      color: ${({ theme }) => theme.textColor};
     }
   }
 `
