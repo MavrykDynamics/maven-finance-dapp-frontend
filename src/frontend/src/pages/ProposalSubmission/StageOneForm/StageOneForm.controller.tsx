@@ -26,7 +26,9 @@ export const StageOneForm = ({
   updateLocalProposalData,
 }: StageOneFormProps) => {
   const {
-    governance: { proposalTitleMaxLength, proposalDescriptionMaxLength, proposalSourceCodeMaxLength },
+    maxLengths: {
+      governance: { proposalTitleMaxLength, proposalDescriptionMaxLength, proposalSourceCodeMaxLength },
+    },
   } = useDAPPConfigContext()
   const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
 

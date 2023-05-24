@@ -81,7 +81,7 @@ export function detectNewlyRegisteredSatellite(snapshots: SatelliteSnapshot[], c
 export const fetchUserData = async (
   accountPkh: string,
   dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: State['dataFeeds']['feedsLedger'],
+  feeds: any[], //State['dataFeeds']['feedsLedger'],
   avaliableCollaterals: State['tokens']['avaliableCollaterals'],
   whitelistTokens: State['tokens']['whitelistTokens'],
   currentBlockLevel: number | undefined = 0,
@@ -365,9 +365,9 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
     preferences: { headData: { level = 0 } = {} },
     wallet: { accountPkh },
     tokens: { dipDupTokens, avaliableCollaterals, whitelistTokens },
-    dataFeeds: { feedsLedger },
   } = getState()
 
+  const feedsLedger = [] as any[]
   const userAddressToLoadData = newAccAddress ?? accountPkh
 
   try {

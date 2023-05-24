@@ -82,7 +82,9 @@ export const BecomeSatellite = () => {
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
-  const { satelliteDelegation } = useDAPPConfigContext()
+  const {
+    maxLengths: { satelliteDelegation },
+  } = useDAPPConfigContext()
 
   const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
 

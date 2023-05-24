@@ -27,7 +27,6 @@ import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 // types
 import { State } from 'reducers'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 
 // styles
@@ -45,6 +44,7 @@ import colors from 'styles/colors'
 import { Chart } from 'app/App.components/Chart/Chart'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { Feed } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 
 type FeedDetailsProps = {
   feed: Feed | null

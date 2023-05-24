@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 
 // types
 import { State, Props, DataFeedsContext } from './dataFeeds.provider.types'
-import { normalizeFeeds } from './helpers/normalizer'
+import { normalizeFeeds } from './helpers/feedsNormalizer'
 import { GetOracleDataFeedsQuery } from 'utils/__generated__/graphql'
 
 export const dataFeedsContext = React.createContext<DataFeedsContext>(undefined!)
@@ -12,30 +12,33 @@ export class DataFeedsProvider extends React.Component<Props, State> {
     super(props)
     this.state = {
       context: {
-        feedsLedger: [],
-        feedCategories: [],
-        isLoaded: false,
+        feedsAddresses: [],
+        feedsMapper: {},
+        feedsCategories: [],
         // actions
-        initializeDataFeeds: this.initializeDataFeeds,
+        updateDataFeeds: this.updateDataFeeds,
         registerFeedAction: this.registerFeedAction,
       },
     }
   }
 
-  initializeDataFeeds = (data: GetOracleDataFeedsQuery, isOneFeed = false) => {
-    const normalizedFeedsStorage = normalizeFeeds(data)
-    const { feedCategories, feedsLedger } = normalizedFeedsStorage
+  updateDataFeeds = (data: GetOracleDataFeedsQuery['aggregator'], isOneFeed = false) => {
+    const { feedsCategories, feedsAddresses, feedsMapper } = normalizeFeeds(data, this.props.dipDupContracts)
 
-    const _feedsLedger = isOneFeed
-      ? [...this.state.context.feedsLedger.filter((el) => el.address !== feedsLedger[0].address), ...feedsLedger]
-      : feedsLedger
+    console.log({
+      dipDup: this.props.dipDupContracts,
+      feeds: data,
+      feedsCategories,
+      feedsAddresses,
+      feedsMapper,
+    })
 
     this.setState({
       context: {
         ...this.state.context,
-        feedCategories,
-        feedsLedger: _feedsLedger,
-        isLoaded: true,
+        feedsCategories,
+        feedsAddresses,
+        feedsMapper,
       },
     })
   }

@@ -20,9 +20,13 @@ import { StatBlock } from '../Dashboard.style'
 import { OraclesContentStyled, TabWrapperStyled, PopularFeed } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
 
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  useDataFeedsUpdater()
+  const { feedsAddresses, feedsMapper } = useDataFeedsContext()
+
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const {
     dipDupContracts,
@@ -30,8 +34,8 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   } = useSelector((state: State) => state.tokens)
   const { satelliteMapper, oraclesIds } = useSelector((state: State) => state.satellites)
 
-  const oracleFeeds = feedsLedger.length
-  const popularFeeds = feedsLedger.slice(0, 3)
+  const oracleFeeds = feedsAddresses.length
+  const popularFeeds = feedsAddresses.slice(0, 3)
 
   const oracleRewardsTotal = useMemo(
     () =>
@@ -85,7 +89,8 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
 
           {popularFeeds.length ? (
             <div className="feeds-grid">
-              {popularFeeds.map((feed) => {
+              {popularFeeds.map((feedAddress) => {
+                const feed = feedsMapper[feedAddress]
                 const imageLink = dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
 
                 return (

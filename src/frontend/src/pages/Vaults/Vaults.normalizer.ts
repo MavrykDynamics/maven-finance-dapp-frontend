@@ -19,7 +19,7 @@ import { calculateVaultMaxLiquidationAmount, calculateLiquidationPrice } from '.
 type VaultsStorageProps = {
   lendingController: LoansGQL
   accountPkh?: string
-  feeds: State['dataFeeds']['feedsLedger']
+  feeds: any[] //State['dataFeeds']['feedsLedger']
   dipDupTokens: State['tokens']['dipDupTokens']
 }
 
@@ -274,7 +274,7 @@ const normalizeCollateralAssets = ({
   dipDupTokens,
   collateralAssets,
 }: {
-  feeds: State['dataFeeds']['feedsLedger']
+  feeds: any[] //State['dataFeeds']['feedsLedger']
   dipDupTokens: State['tokens']['dipDupTokens']
   collateralAssets: LoansGQL['vaults'][number]['collateral_balances']
 }): {

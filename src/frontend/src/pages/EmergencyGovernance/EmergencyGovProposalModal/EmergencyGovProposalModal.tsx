@@ -29,10 +29,11 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
   const dispatch = useDispatch()
 
   const {
-    emergencyGovernance: { proposalTitleMaxLength, proposalDescMaxLength },
+    maxLengths: {
+      emergencyGovernance: { proposalTitleMaxLength, proposalDescMaxLength },
+    },
   } = useDAPPConfigContext()
   const { fee } = useSelector((state: State) => state.governance.config)
-  const {} = useSelector((state: State) => state.emergencyGovernance)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [proposalData, setProposalData] = useState<{

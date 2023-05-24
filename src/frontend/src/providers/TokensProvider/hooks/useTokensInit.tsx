@@ -15,6 +15,7 @@ type InternalState = {
   tokensAddress: string | null
 }
 
+// TODO: will be updated with tokens reorganization task
 export const useTokensInit = () => {
   const [state, setState] = useState<InternalState>({ tokensAddress: null })
   const { initializeDAPPTokens, updateCollateralsData } = useTokensContext()

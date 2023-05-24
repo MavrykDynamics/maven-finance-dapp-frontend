@@ -5,8 +5,8 @@ import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import { GetAvaliableCollateralsQuery } from 'utils/__generated__/graphql'
+import { Feed } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 
 export type XtxBakersType = {
   otherBakers: Array<XtzBakerType>

@@ -1,6 +1,4 @@
 import { State } from 'reducers'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { SatelliteRecordGraphQl, SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const ORACLE_STATUSES_MAPPER = {

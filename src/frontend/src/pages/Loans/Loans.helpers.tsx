@@ -4,7 +4,6 @@ import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
 import { Lending_Controller_History_Data, Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import {
   LendingItemType,
   LoansChartsDataType,
@@ -17,6 +16,7 @@ import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Inp
 import { parseDate } from 'utils/time'
 import { convertNumberForClient, convertNumberForContractCall, getNumberInBounds } from '../../utils/calcFunctions'
 import { assetDecimalsToShow } from './Loans.const'
+import { Feed } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 
 // CONST FOR HELPERS
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
@@ -92,7 +92,7 @@ type TransactionHistoryReduceType = {
 export const getTransactionHistory = (
   history_data: Lending_Controller_History_Data[],
   dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: State['dataFeeds']['feedsLedger'],
+  feeds: any[],
 ) =>
   history_data.reduce<TransactionHistoryReduceType>(
     (acc, { type, amount, timestamp, sender_id, operation_hash, loan_token }) => {
@@ -198,7 +198,7 @@ export const getTransactionHistory = (
 export const getChartData = (
   history_data: Lending_Controller_History_Data[],
   dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: State['dataFeeds']['feedsLedger'],
+  feeds: Array<Feed>,
 ) =>
   history_data?.reduce<LoansChartsDataType>(
     (acc, { type, amount, timestamp, loan_token }) => {

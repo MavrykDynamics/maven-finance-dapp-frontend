@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 
 // types
 import { State, Props, DAPPConfigContext } from './dappConfig.types'
-import { GetMaxlenghtsQueryQuery, MvkFaucetQuery } from 'utils/__generated__/graphql'
+import { DipDupContractsQuery, GetMaxlenghtsQueryQuery, MvkFaucetQuery } from 'utils/__generated__/graphql'
 
 // consts
 import { DAPP_DEFAULT_MAX_LENGHTS } from './dappConfig.const'
@@ -17,13 +17,16 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
       context: {
         // data
         maxLengths: DAPP_DEFAULT_MAX_LENGHTS,
+        xtzBakers: null,
         // TODO: set default address to null, when contracts are updated
         mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh',
-        xtzBakers: null,
+        // temp storage while it's not implemented inside feeds
+        dipDupContracts: {},
         // actions
         updateMaxLengths: this.updateMaxLengths,
         updateXtzBakers: this.updateXtzBakers,
         updateMVKFaucetAddress: this.updateMVKFaucetAddress,
+        updateDipDupContracts: this.updateDipDupContracts,
       },
     }
   }
@@ -105,6 +108,25 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
       context: {
         ...this.state.context,
         xtzBakers,
+      },
+    })
+  }
+
+  updateDipDupContracts = async (dipDupContracts: DipDupContractsQuery) => {
+    const normalizedDipDupContracts = dipDupContracts.dipdup_contract_metadata.reduce<
+      DAPPConfigContext['dipDupContracts']
+    >((acc, contract) => {
+      if (!acc[contract.contract]) {
+        acc[contract.contract] = contract
+      }
+
+      return acc
+    }, {})
+
+    this.setState({
+      context: {
+        ...this.state.context,
+        dipDupContracts: normalizedDipDupContracts,
       },
     })
   }

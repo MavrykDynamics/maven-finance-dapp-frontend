@@ -2,7 +2,6 @@ import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.co
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
-import { normalizeFeeds } from './DataFeeds.helpers'
 
 import {
   ACTION_COMPLETION_MESSAGE_TEXT,
@@ -13,24 +12,9 @@ import {
   TOASTER_SUCCESS,
   TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
 } from 'app/App.components/Toaster/Toaster.constants'
-import { ORACLE_STORAGE_QUERY, ORACLE_STORAGE_QUERY_NAME, ORACLE_STORAGE_QUERY_VARIABLE } from 'gql/queries'
 
 import { State } from 'reducers'
-import { fetchFromIndexer } from '../../gql/fetchGraphQL'
 import type { AppDispatch, GetState } from '../../app/App.controller'
-
-export const GET_FEEDS_STORAGE = 'GET_FEEDS_STORAGE'
-export const getFeedsStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
-  try {
-    const feeds = await fetchFromIndexer(ORACLE_STORAGE_QUERY, ORACLE_STORAGE_QUERY_NAME, ORACLE_STORAGE_QUERY_VARIABLE)
-
-    const normalizedFeedsStorage = normalizeFeeds(feeds)
-
-    dispatch({ type: GET_FEEDS_STORAGE, normalizedFeedsStorage })
-  } catch (error) {
-    console.error('getFeedsStorage: ', error)
-  }
-}
 
 export const REGISTER_FEED = 'REGISTER_FEED'
 export const registerFeedAction = () => async (dispatch: AppDispatch, getState: GetState) => {

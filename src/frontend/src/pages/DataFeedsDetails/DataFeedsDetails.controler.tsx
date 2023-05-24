@@ -6,52 +6,48 @@ import { Redirect, useParams } from 'react-router-dom'
 import { State } from 'reducers'
 
 // view
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import DataFeedDetailsView from './DataFeedsDetails.view'
 
 // actions
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getFeedsStorage } from '../DataFeeds/DataFeeds.actions'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
 
 const DataFeedDetails = () => {
   const dispatch = useDispatch()
-  const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
-  const { oraclesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    try {
-      if (!isFeedsLoaded || isDepsChanged) {
-        await dispatch(getFeedsStorage())
-      }
-    } catch (e) {}
-  }, [])
+  const { isLoading } = useDataFeedsUpdater()
+  const { feedsMapper } = useDataFeedsContext()
+
+  const { oraclesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const timerId = useRef<null | NodeJS.Timeout>(null)
   const { feedId } = useParams<{ feedId: string }>()
-  const [selectedFeed, setSelectedFeed] = useState<null | Feed>(null)
+  // const [selectedFeed, setSelectedFeed] = useState<null | Feed>(null)
+
+  const selectedFeed = feedsMapper[feedId]
 
   /**
    * @description in this effect we need to update feeds data every
    * (last_completed_data_last_updated_at + heart_beat_seconds + 5000)ms
    * or every 30000ms, when user is on details page
    */
-  useEffect(() => {
-    const feedToDisplay = feedsLedger.find((feed) => feed.address === feedId) ?? null
-    setSelectedFeed(feedToDisplay)
+  // useEffect(() => {
+  //   const feedToDisplay = feedsLedger.find((feed) => feed.address === feedId) ?? null
+  //   setSelectedFeed(feedToDisplay)
 
-    if (feedToDisplay) {
-      const { last_completed_data_last_updated_at: lastUpdateTimestamp, heart_beat_seconds } = feedToDisplay
-      const timeToUpdate =
-        new Date(lastUpdateTimestamp ?? 0).getTime() + heart_beat_seconds * 1000 - new Date(Date.now()).getTime()
+  //   if (feedToDisplay) {
+  //     const { last_completed_data_last_updated_at: lastUpdateTimestamp, heart_beat_seconds } = feedToDisplay
+  //     const timeToUpdate =
+  //       new Date(lastUpdateTimestamp ?? 0).getTime() + heart_beat_seconds * 1000 - new Date(Date.now()).getTime()
 
-      const timer = setTimeout(() => dispatch(getFeedsStorage()), timeToUpdate < 0 ? 30000 : timeToUpdate + 5000)
-      timerId.current = timer
-    }
+  //     const timer = setTimeout(() => dispatch(getFeedsStorage()), timeToUpdate < 0 ? 30000 : timeToUpdate + 5000)
+  //     timerId.current = timer
+  //   }
 
-    return () => {
-      if (timerId.current) clearTimeout(timerId.current)
-    }
-  }, [feedId, feedsLedger])
+  //   return () => {
+  //     if (timerId.current) clearTimeout(timerId.current)
+  //   }
+  // }, [feedId, feedsLedger])
 
   const feedsSatellites = useMemo(
     () =>

@@ -35,7 +35,9 @@ export const StageTwoForm = ({
   updateLocalProposalData,
 }: StageTwoFormProps) => {
   const {
-    governance: { proposalMetadataTitleMaxLength, proposalSourceCodeMaxLength, proposalDescriptionMaxLength },
+    maxLengths: {
+      governance: { proposalMetadataTitleMaxLength, proposalSourceCodeMaxLength, proposalDescriptionMaxLength },
+    },
   } = useDAPPConfigContext()
   const { governancePhase, fee, successReward } = useSelector((state: State) => state.governance.config)
   const isProposalPeriod = governancePhase === 'PROPOSAL'

@@ -15,7 +15,7 @@ export const normalizeUserLending = ({
   feeds,
 }: {
   dipDupTokens: State['tokens']['dipDupTokens']
-  feeds: State['dataFeeds']['feedsLedger']
+  feeds: any[] // State['dataFeeds']['feedsLedger']
   userDataLoansHistoryGql: Mavryk_User['lending_controller_history_data_sender']
   userVaultsDataGql: Mavryk_User['lending_controller_vaults']
 }) => {
@@ -158,7 +158,7 @@ export const normalizeLoans = async ({
   mTokens: State['tokens']['mTokens']
   userMTokens: UserState['userMTokens']
   userAddres?: string
-  feeds: State['dataFeeds']['feedsLedger']
+  feeds: any[] //State['dataFeeds']['feedsLedger']
 }) => {
   const interestTreasuryShare = calcWithoutDecimals(storage?.interest_treasury_share, storage.decimals)
   const interestRateDecimals = storage?.interest_rate_decimals ?? 0

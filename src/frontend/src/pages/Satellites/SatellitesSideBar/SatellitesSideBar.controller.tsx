@@ -11,6 +11,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { useChainCount } from 'providers/DataFeedsProvider/hooks/useChainCount'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -56,7 +57,8 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     accountPkh,
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { feedsAddresses, feedsMapper } = useDataFeedsContext()
+
   const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
 
@@ -66,10 +68,11 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
   const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
 
   const averageRevard = calcWithoutPrecision(
-    feedsLedger.reduce((acc, { reward_amount_smvk }) => {
+    feedsAddresses.reduce((acc, feedAddress) => {
+      const { reward_amount_smvk } = feedsMapper[feedAddress]
       acc += reward_amount_smvk
       return acc
-    }, 0) / Math.max(feedsLedger.length, 1),
+    }, 0) / Math.max(feedsAddresses.length, 1),
   )
 
   return (

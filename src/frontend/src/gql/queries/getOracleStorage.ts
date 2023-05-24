@@ -63,6 +63,23 @@ export const ORACLE_STORAGE_QUERY = `
 export const ORACLE_STORAGE_QUERY_NAME = 'GetOracleDataFeeds'
 export const ORACLE_STORAGE_QUERY_VARIABLE = {}
 
+export const DIP_DUP_CONTRACTS_QUERY = gql(`
+   query dipDupContracts {
+    dipdup_contract_metadata {
+      contract
+      created_at
+      id
+      metadata
+      update_id
+      updated_at
+      network
+    }
+  }
+`)
+
+export const DIP_DUP_CONTRACTS_QUERY_NAME = 'dipDupContracts'
+export const DIP_DUP_CONTRACTS_QUERY_VARIABLE = {}
+
 // data feeds context
 export const GET_ORACLE_STORAGE_QUERY = gql(`
 query GetOracleDataFeeds {
@@ -106,18 +123,6 @@ query GetOracleDataFeeds {
       }
     }
   }
-  aggregator_factory {
-    aggregator_name_max_length
-  }
-  dipdup_contract_metadata {
-    contract
-    created_at
-    id
-    metadata
-    update_id
-    updated_at
-    network
-  }
 }
 `)
 
@@ -130,27 +135,6 @@ subscription SatellitesStorageSubscription {
     }
   }
 }
-`)
-
-export const SUBSCRIBTION_ORACLE_STORAGE_AGGREGATOR_FACTORY = gql(`
-  subscription subscribeOracleStorageAggregatorFactory {
-    aggregator_factory {
-      aggregator_name_max_length
-    }
-  }
-`)
-export const SUBSCRIBTION_ORACLE_STORAGE_DIPDUP_CONTRACT_METADATA = gql(`
-  subscription subscribeOracleStorageDipdupContractMetadata {
-    dipdup_contract_metadata {
-      contract
-      created_at
-      id
-      metadata
-      update_id
-      updated_at
-      network
-    }
-  }
 `)
 
 // this one used for generetad type
@@ -204,9 +188,10 @@ export const getOrcaleStorageAggregatorQuery = (
   address?: string,
 ): DocumentNode | TypedDocumentNode<SubscribeOracleStorageAggregatorSubscription, OperationVariables> => {
   const temp = address ? 'address: {_eq: $address}' : ''
+  const temp2 = address ? '($address:String = "")' : ''
 
   return gql(`
-subscription subsribeOracleDataFeed($address:String = "") {
+subscription subsribeOracleDataFeed${temp2} {
   aggregator(where: {admin: {_neq: ""}, ${temp}}, order_by: {creation_timestamp: desc}) {
     address
     admin

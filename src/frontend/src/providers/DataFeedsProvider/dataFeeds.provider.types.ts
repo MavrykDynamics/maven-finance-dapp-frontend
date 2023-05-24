@@ -1,11 +1,18 @@
+import { DAPPConfigContext } from 'providers/DAPPConfig/dappConfig.types'
 import DataFeedsProvider from './dataFeeds.provider'
 
-import { DataFeedsStorageType } from 'utils/TypesAndInterfaces/DataFeeds'
+import { normalizeFeeds, normalizeFeed } from './helpers/feedsNormalizer'
 
-export type DataFeedsContext = DataFeedsStorageType & {
-  isLoaded: boolean
+export type DataFeedsStorageType = ReturnType<typeof normalizeFeeds>
+export type Feed = ReturnType<typeof normalizeFeed>
+
+export type DataFeedsContext = {
+  // data
+  feedsMapper: DataFeedsStorageType['feedsMapper']
+  feedsAddresses: DataFeedsStorageType['feedsAddresses']
+  feedsCategories: DataFeedsStorageType['feedsCategories']
   // actions
-  initializeDataFeeds: InstanceType<typeof DataFeedsProvider>['initializeDataFeeds']
+  updateDataFeeds: InstanceType<typeof DataFeedsProvider>['updateDataFeeds']
   registerFeedAction: InstanceType<typeof DataFeedsProvider>['registerFeedAction']
 }
 
@@ -14,5 +21,6 @@ export type State = {
 }
 
 export type Props = {
+  dipDupContracts: DAPPConfigContext['dipDupContracts']
   children: React.ReactNode
 }

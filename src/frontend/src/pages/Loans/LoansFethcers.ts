@@ -26,7 +26,7 @@ export const getBakeryDelegateData = async (bakerAddress: string): Promise<Baker
 export const getCollateralTokens = (
   collateralTokens: Array<Lending_Controller_Collateral_Token>,
   dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: State['dataFeeds']['feedsLedger'],
+  feeds: any[], //State['dataFeeds']['feedsLedger'],
 ): Array<AvaliableCollateralType> => {
   try {
     return collateralTokens.reduce<AvaliableCollateralType[]>(

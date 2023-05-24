@@ -23,7 +23,6 @@ import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 
 const SatelliteTab = () => {
   const dispatch = useDispatch()
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const {

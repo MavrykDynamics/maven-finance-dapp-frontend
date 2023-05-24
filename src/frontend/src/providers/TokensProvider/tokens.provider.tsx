@@ -24,7 +24,7 @@ import {
   GetAvaliableCollateralsQuery,
   Lending_Controller_Collateral_Token,
 } from 'utils/__generated__/graphql'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
+import { Feed } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 

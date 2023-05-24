@@ -63,7 +63,6 @@ const renderVotingHistoryItem = (vote: number) => {
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
   const dispatch = useDispatch()
 
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const {

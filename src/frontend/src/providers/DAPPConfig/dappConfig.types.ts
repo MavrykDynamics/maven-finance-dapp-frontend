@@ -1,6 +1,8 @@
 import { XtxBakersType } from 'providers/TokensProvider/tokens.provider.types'
 import DAPPConfigProvider from './dappConfig.provider'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
+import { Dipdup_Contract } from 'utils/generated/graphqlTypes'
+import { DipDupContractsQuery } from 'utils/__generated__/graphql'
 
 export type CouncilMaxLength = {
   councilMemberImageMaxLength: number
@@ -52,10 +54,12 @@ export type DAPPConfigContext = {
     mavrykDynamics: XtzBakerType
     otherBakers: Array<XtzBakerType>
   } | null
+  dipDupContracts: Record<string, DipDupContractsQuery['dipdup_contract_metadata'][number]>
   // actions
   updateMaxLengths: InstanceType<typeof DAPPConfigProvider>['updateMaxLengths']
   updateMVKFaucetAddress: InstanceType<typeof DAPPConfigProvider>['updateMVKFaucetAddress']
   updateXtzBakers: InstanceType<typeof DAPPConfigProvider>['updateXtzBakers']
+  updateDipDupContracts: InstanceType<typeof DAPPConfigProvider>['updateDipDupContracts']
 }
 
 export type State = {

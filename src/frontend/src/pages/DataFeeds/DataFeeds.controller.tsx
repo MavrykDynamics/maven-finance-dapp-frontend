@@ -22,9 +22,7 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 
 // types, actions
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { getFeedsStorage } from './DataFeeds.actions'
 
 import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
 
@@ -35,29 +33,22 @@ import { EmptyContainer } from 'app/App.style'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { useLocation } from 'react-router'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
 export const DataFeeds = () => {
+  const { isLoading } = useDataFeedsUpdater()
+  const { feedsAddresses, feedsMapper, feedsCategories } = useDataFeedsContext()
+
   const dispatch = useDispatch()
   const { search } = useLocation()
-  const { feedsLedger, feedCategories, isLoaded: isDataFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  useDataFeedsUpdater()
-
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    try {
-      if (!isDataFeedsLoaded || isDepsChanged) {
-        await dispatch(getFeedsStorage())
-      }
-    } catch (e) {}
-  }, [])
-
-  const ddItems = useMemo(() => ['all', ...feedCategories], [feedCategories])
+  const ddItems = useMemo(() => ['all', ...feedsCategories], [feedsCategories])
 
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [searchInputValue, setSearchInput] = useState('')
   const [chosenDdItem, setChosenDdItem] = useState('all')
-  const [filteredFeeds, setFilteredFeeds] = useState(feedsLedger)
+  const [filteredFeeds, setFilteredFeeds] = useState(feedsAddresses)
 
   const paginatedFeeds = useMemo(() => {
     const currentPage = getPageNumber(search, FEEDS_ALL_LIST_NAME)
@@ -67,7 +58,8 @@ export const DataFeeds = () => {
 
   useEffect(() => {
     setFilteredFeeds(
-      feedsLedger.filter(({ category, name, address }) => {
+      feedsAddresses.filter((feedAddress) => {
+        const { category, name, address } = feedsMapper[feedAddress]
         if (chosenDdItem === 'all') {
           return (
             name.toLowerCase().includes(searchInputValue.toLowerCase()) ||
@@ -82,7 +74,7 @@ export const DataFeeds = () => {
         )
       }),
     )
-  }, [feedsLedger, chosenDdItem, searchInputValue])
+  }, [feedsAddresses, chosenDdItem, searchInputValue])
 
   const handleSelect = (selectedOption: string) => {
     setDdIsOpen(!ddIsOpen)
@@ -139,8 +131,8 @@ export const DataFeeds = () => {
             {filteredFeeds.length ? (
               <>
                 <div className="list-wrapper">
-                  {paginatedFeeds.map((item) => (
-                    <DataFeedCard feed={item} key={item.address} />
+                  {paginatedFeeds.map((feedAddress) => (
+                    <DataFeedCard feed={feedsMapper[feedAddress]} key={feedAddress} />
                   ))}
                 </div>
 

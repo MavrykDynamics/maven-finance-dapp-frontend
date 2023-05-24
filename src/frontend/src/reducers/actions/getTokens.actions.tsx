@@ -81,23 +81,10 @@ export const getTokensForDAPP = () => async (dispatch: AppDispatch, getState: Ge
 
 export const GET_TOKENS_PRICES = 'GET_TOKENS_PRICES'
 export const getTokensPrices = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const {
-    dataFeeds: { feedsLedger },
-  } = getState()
   try {
-    const tokenPricesFromFeeds = feedsLedger.reduce<State['tokens']['tokensPrices']>(
-      (acc, { name, last_completed_data, decimals }) => {
-        const assetSymbol = getSymbolAndNameFromFeedName(name).symbol
-        const rate = convertNumberForClient({ number: last_completed_data, grade: decimals })
-        acc[assetSymbol] = rate
-        return acc
-      },
-      {},
-    )
-
     dispatch({
       type: GET_TOKENS_PRICES,
-      tokensPrices: tokenPricesFromFeeds,
+      tokensPrices: {},
     })
   } catch (e) {
     console.error('getTokensPrices error: ', e)
