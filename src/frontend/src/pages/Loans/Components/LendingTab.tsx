@@ -35,7 +35,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
 
   return (
     <LendingTabStyled>
-      {!lendingItem ? (
+      {lendingItem ? (
         <div className="stats-and-actions">
           <LendingTabValuesSection lendingItem={lendingItem} assetData={assetData} lendAPY={lendAPY} />
           <LendingTabActionsSection lendingItem={lendingItem} assetData={assetData} lendAPY={lendAPY} />
