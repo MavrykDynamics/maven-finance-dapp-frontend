@@ -1,4 +1,6 @@
+import { XtxBakersType } from 'providers/TokensProvider/tokens.provider.types'
 import DAPPConfigProvider from './dappConfig.provider'
+import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 
 export type CouncilMaxLength = {
   councilMemberImageMaxLength: number
@@ -36,14 +38,24 @@ export type SatelliteDelegationMaxLength = {
 }
 
 export type DAPPConfigContext = {
-  council: CouncilMaxLength
-  dataFeeds: DataFeedsMaxLength
-  emergencyGovernance: EmergencyGovernanceMaxLength
-  governance: GovernanceMaxLength
-  governanceSatellite: GovernanceSatelliteMaxLength
-  satelliteDelegation: SatelliteDelegationMaxLength
+  maxLengths: {
+    council: CouncilMaxLength
+    dataFeeds: DataFeedsMaxLength
+    emergencyGovernance: EmergencyGovernanceMaxLength
+    governance: GovernanceMaxLength
+    governanceSatellite: GovernanceSatelliteMaxLength
+    satelliteDelegation: SatelliteDelegationMaxLength
+  }
+  mvkFaucetAddress: string | null
+  xtzBakers: {
+    dao: XtzBakerType
+    mavrykDynamics: XtzBakerType
+    otherBakers: Array<XtzBakerType>
+  } | null
   // actions
-  initializeDappConfigData: InstanceType<typeof DAPPConfigProvider>['initializeDappConfigData']
+  updateMaxLengths: InstanceType<typeof DAPPConfigProvider>['updateMaxLengths']
+  updateMVKFaucetAddress: InstanceType<typeof DAPPConfigProvider>['updateMVKFaucetAddress']
+  updateXtzBakers: InstanceType<typeof DAPPConfigProvider>['updateXtzBakers']
 }
 
 export type State = {

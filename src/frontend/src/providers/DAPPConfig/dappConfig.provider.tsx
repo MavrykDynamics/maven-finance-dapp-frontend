@@ -2,26 +2,11 @@ import React, { useContext } from 'react'
 
 // types
 import { State, Props, DAPPConfigContext } from './dappConfig.types'
-import { GetMaxlenghtsQueryQuery } from 'utils/__generated__/graphql'
+import { GetMaxlenghtsQueryQuery, MvkFaucetQuery } from 'utils/__generated__/graphql'
 
 // consts
-import {
-  defaultCouncilMemberImageMaxLength,
-  defaultCouncilMemberNameMaxLength,
-  defaultCouncilMemberWebsiteMaxLength,
-  defaultRequestPurposeMaxLength,
-  defaultRequestTokenNameMaxLength,
-  defaultSatelliteDescriptionMaxLength,
-  defaultSatelliteNameMaxLength,
-  defaultSatelliteWebsiteMaxLength,
-  defaultGovPurposeMaxLength,
-  defaultProposalInvoiceMaxLength,
-  defaultProposalMetadataTitleMaxLength,
-  defaultProposalDescriptionMaxLength,
-  defaultProposalTitleMaxLength,
-  defaultProposalSourceCodeMaxLength,
-  defaultAggregatorNameMaxLength,
-} from './dappConfig.const'
+import { DAPP_DEFAULT_MAX_LENGHTS } from './dappConfig.const'
+import { getXTZBakers } from './helpers/getXtzBakers'
 
 export const dappContext = React.createContext<DAPPConfigContext>(undefined!)
 
@@ -30,42 +15,20 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
     super(props)
     this.state = {
       context: {
-        council: {
-          councilMemberImageMaxLength: defaultCouncilMemberImageMaxLength,
-          councilMemberNameMaxLength: defaultCouncilMemberNameMaxLength,
-          councilMemberWebsiteMaxLength: defaultCouncilMemberWebsiteMaxLength,
-          requestPurposeMaxLength: defaultRequestPurposeMaxLength,
-          requestTokenNameMaxLength: defaultRequestTokenNameMaxLength,
-        },
-        dataFeeds: {
-          feedNameMaxLength: defaultAggregatorNameMaxLength,
-        },
-        emergencyGovernance: {
-          proposalTitleMaxLength: defaultProposalTitleMaxLength,
-          proposalDescMaxLength: defaultProposalDescriptionMaxLength,
-        },
-        governance: {
-          proposalDescriptionMaxLength: defaultProposalDescriptionMaxLength,
-          proposalInvoiceMaxLength: defaultProposalInvoiceMaxLength,
-          proposalMetadataTitleMaxLength: defaultProposalMetadataTitleMaxLength,
-          proposalSourceCodeMaxLength: defaultProposalSourceCodeMaxLength,
-          proposalTitleMaxLength: defaultProposalTitleMaxLength,
-        },
-        governanceSatellite: {
-          purposeMaxLength: defaultGovPurposeMaxLength,
-        },
-        satelliteDelegation: {
-          satelliteNameMaxLength: defaultSatelliteNameMaxLength,
-          satelliteDescriptionMaxLength: defaultSatelliteDescriptionMaxLength,
-          satelliteWebsiteMaxLength: defaultSatelliteWebsiteMaxLength,
-        },
+        // data
+        maxLengths: DAPP_DEFAULT_MAX_LENGHTS,
+        // TODO: set default address to null, when contracts are updated
+        mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh',
+        xtzBakers: null,
         // actions
-        initializeDappConfigData: this.initializeDappConfigData,
+        updateMaxLengths: this.updateMaxLengths,
+        updateXtzBakers: this.updateXtzBakers,
+        updateMVKFaucetAddress: this.updateMVKFaucetAddress,
       },
     }
   }
 
-  initializeDappConfigData = (data: GetMaxlenghtsQueryQuery) => {
+  updateMaxLengths = (data: GetMaxlenghtsQueryQuery) => {
     const {
       council_member_image_max_length,
       council_member_name_max_length,
@@ -74,12 +37,8 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
       request_token_name_max_length,
     } = data.council[0]
     const { proposal_desc_max_length, proposal_title_max_length } = data.emergency_governance[0]
-    const {
-      satellite_description_max_length,
-      satellite_image_max_length,
-      satellite_name_max_length,
-      satellite_website_max_length,
-    } = data.delegation[0]
+    const { satellite_description_max_length, satellite_name_max_length, satellite_website_max_length } =
+      data.delegation[0]
     const {
       proposal_description_max_length,
       proposal_invoice_max_length,
@@ -88,51 +47,64 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
       proposal_title_max_length: gov_proposal_title_max_length,
     } = data.governance[0]
 
-    const council = {
-      councilMemberImageMaxLength: council_member_image_max_length,
-      councilMemberNameMaxLength: council_member_name_max_length,
-      councilMemberWebsiteMaxLength: council_member_website_max_length,
-      requestPurposeMaxLength: request_purpose_max_length,
-      requestTokenNameMaxLength: request_token_name_max_length,
-    }
-
-    const dataFeeds = {
-      feedNameMaxLength: data.governance_satellite[0].gov_purpose_max_length,
-    }
-
-    const emergencyGovernance = {
-      proposalTitleMaxLength: proposal_title_max_length,
-      proposalDescMaxLength: proposal_desc_max_length,
-    }
-
-    const governance = {
-      proposalDescriptionMaxLength: proposal_description_max_length,
-      proposalInvoiceMaxLength: proposal_invoice_max_length,
-      proposalMetadataTitleMaxLength: proposal_metadata_title_max_length,
-      proposalSourceCodeMaxLength: proposal_source_code_max_length,
-      proposalTitleMaxLength: gov_proposal_title_max_length,
-    }
-
-    const governanceSatellite = {
-      purposeMaxLength: data.governance_satellite[0].gov_purpose_max_length,
-    }
-
-    const satelliteDelegation = {
-      satelliteNameMaxLength: satellite_name_max_length,
-      satelliteDescriptionMaxLength: satellite_description_max_length,
-      satelliteWebsiteMaxLength: satellite_website_max_length,
-      satelliteImageMaxLength: satellite_image_max_length,
+    const newMaxLengths: DAPPConfigContext['maxLengths'] = {
+      council: {
+        councilMemberImageMaxLength: council_member_image_max_length,
+        councilMemberNameMaxLength: council_member_name_max_length,
+        councilMemberWebsiteMaxLength: council_member_website_max_length,
+        requestPurposeMaxLength: request_purpose_max_length,
+        requestTokenNameMaxLength: request_token_name_max_length,
+      },
+      dataFeeds: {
+        feedNameMaxLength: data.governance_satellite[0].gov_purpose_max_length,
+      },
+      emergencyGovernance: {
+        proposalTitleMaxLength: proposal_title_max_length,
+        proposalDescMaxLength: proposal_desc_max_length,
+      },
+      governance: {
+        proposalDescriptionMaxLength: proposal_description_max_length,
+        proposalInvoiceMaxLength: proposal_invoice_max_length,
+        proposalMetadataTitleMaxLength: proposal_metadata_title_max_length,
+        proposalSourceCodeMaxLength: proposal_source_code_max_length,
+        proposalTitleMaxLength: gov_proposal_title_max_length,
+      },
+      governanceSatellite: {
+        purposeMaxLength: data.governance_satellite[0].gov_purpose_max_length,
+      },
+      satelliteDelegation: {
+        satelliteNameMaxLength: satellite_name_max_length,
+        satelliteDescriptionMaxLength: satellite_description_max_length,
+        satelliteWebsiteMaxLength: satellite_website_max_length,
+      },
     }
 
     this.setState({
       context: {
         ...this.state.context,
-        council,
-        dataFeeds,
-        emergencyGovernance,
-        governance,
-        governanceSatellite,
-        satelliteDelegation,
+        maxLengths: newMaxLengths,
+      },
+    })
+  }
+
+  updateMVKFaucetAddress = (mvkData: MvkFaucetQuery) => {
+    const address = mvkData.mvk_faucet[0]?.address ?? null
+
+    this.setState({
+      context: {
+        ...this.state.context,
+        mvkFaucetAddress: address,
+      },
+    })
+  }
+
+  updateXtzBakers = async () => {
+    const xtzBakers = await getXTZBakers()
+
+    this.setState({
+      context: {
+        ...this.state.context,
+        xtzBakers,
       },
     })
   }

@@ -17,8 +17,7 @@ type InternalState = {
 
 export const useTokensInit = () => {
   const [state, setState] = useState<InternalState>({ tokensAddress: null })
-  const { initializeDAPPTokens, updateMVKFaucetAddress, selfUpdateXtzBakers, updateCollateralsData } =
-    useTokensContext()
+  const { initializeDAPPTokens, updateCollateralsData } = useTokensContext()
 
   const { data: contractsData, loading: contractsLoading } = useQuery(GET_GOVERNANCE_CONTRACT_ADDRESS_QUERY, {
     onCompleted(data) {
@@ -39,28 +38,13 @@ export const useTokensInit = () => {
       _whitelistTokensAddress: state.tokensAddress,
     },
   })
-  const { data: mvkData, loading: mvkLoading } = useQuery(GET_MVK_FAUCET_QUERY)
   const { data: collateralData, loading: collateralLoading } = useQuery(GET_AVAILABLE_COLLATERALS)
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      await selfUpdateXtzBakers()
-    } catch (error) {
-      console.error(error)
-    }
-  }, [])
-
   useEffect(() => {
-    if (!contractsLoading && !dappTokensLoading && !isLoading && contractsData && dappTokensData) {
+    if (!contractsLoading && !dappTokensLoading && contractsData && dappTokensData) {
       initializeDAPPTokens(dappTokensData)
     }
-  }, [contractsLoading, dappTokensLoading, isLoading])
-
-  useEffect(() => {
-    if (!mvkLoading && mvkData) {
-      updateMVKFaucetAddress(mvkData)
-    }
-  }, [mvkLoading])
+  }, [contractsLoading, dappTokensLoading])
 
   useEffect(() => {
     if (!collateralLoading && collateralData) {

@@ -14,16 +14,15 @@ import { getSymbolAndNameFromFeedName } from 'utils/parse'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 // helpers
-import { getXTZBakers, getCollateralTokens } from 'pages/Loans/LoansFethcers'
+import { getCollateralTokens } from 'pages/Loans/LoansFethcers'
 
 // types
-import { State, Props, TokensContext, XtxBakersType } from './tokens.provider.types'
+import { State, Props, TokensContext } from './tokens.provider.types'
 import {
   DappTokensQuery,
   Dipdup_Token_Metadata,
   GetAvaliableCollateralsQuery,
   Lending_Controller_Collateral_Token,
-  MvkFaucetQuery,
 } from 'utils/__generated__/graphql'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
@@ -49,21 +48,12 @@ export class TokensProvider extends React.Component<Props, State> {
           },
         ],
         avaliableCollaterals: null,
-        xtzBakers: {
-          otherBakers: [],
-          dao: null,
-          mavrykDynamics: null,
-        },
         tokensPrices: { mvk: 1 },
         mTokens: [],
-        // TODO: set default address to null, when contracts are updated
-        mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh', //null,
         // internal helper state
         collateralData: null,
         // actions
         initializeDAPPTokens: this.initializeDAPPTokens,
-        updateMVKFaucetAddress: this.updateMVKFaucetAddress,
-        selfUpdateXtzBakers: this.selfUpdateXtzBakers,
         updateCollateralsData: this.updateCollateralsData,
         updateAvaliableCollaterals: this.updateAvaliableCollaterals,
       },
@@ -89,17 +79,6 @@ export class TokensProvider extends React.Component<Props, State> {
         dipDupContracts,
         whitelistTokens: this.state.context.whitelistTokens.concat(whitelistTokens),
         mTokens,
-      },
-    })
-  }
-
-  updateMVKFaucetAddress = (mvkData: MvkFaucetQuery) => {
-    const address = mvkData.mvk_faucet[0]?.address ?? null
-
-    this.setState({
-      context: {
-        ...this.state.context,
-        mvkFaucetAddress: address,
       },
     })
   }
@@ -145,18 +124,6 @@ export class TokensProvider extends React.Component<Props, State> {
       context: {
         ...this.state.context,
         avaliableCollaterals,
-      },
-    })
-  }
-
-  selfUpdateXtzBakers = async () => {
-    // TODO fix types
-    const xtzBakers = (await getXTZBakers()) as unknown as XtxBakersType
-
-    this.setState({
-      context: {
-        ...this.state.context,
-        xtzBakers,
       },
     })
   }

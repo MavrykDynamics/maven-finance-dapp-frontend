@@ -26,16 +26,12 @@ export type TokensContext = {
   dipDupContracts: Array<DipDupTokensGraphQl>
   tokensPrices: Record<string, number>
   avaliableCollaterals: Array<AvaliableCollateralType> | null
-  xtzBakers: XtxBakersType
   whitelistTokens: WhiteListTokensType
   mTokens: Array<M_Token>
-  mvkFaucetAddress: string | null
   // internal helper state
   collateralData: GetAvaliableCollateralsQuery | null
   // actions
   initializeDAPPTokens: InstanceType<typeof TokensProvider>['initializeDAPPTokens']
-  updateMVKFaucetAddress: InstanceType<typeof TokensProvider>['updateMVKFaucetAddress']
-  selfUpdateXtzBakers: InstanceType<typeof TokensProvider>['selfUpdateXtzBakers']
   updateCollateralsData: InstanceType<typeof TokensProvider>['updateCollateralsData']
   updateAvaliableCollaterals: InstanceType<typeof TokensProvider>['updateAvaliableCollaterals']
 }
