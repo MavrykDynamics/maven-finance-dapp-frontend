@@ -39,7 +39,7 @@ export const useDappInit = () => {
     if (!dipDupContractsLoading && dipDupContracts) {
       updateDipDupContracts(dipDupContracts)
     }
-  }, [mvkLoading])
+  }, [dipDupContractsLoading])
 
   // load bakers if they are not loaded
   // TODO: consider loading them when we need to use them

@@ -10,7 +10,7 @@ type FeedContractType = { metadata?: { category?: string; icon: string }; networ
 
 export const normalizeFeed = (
   feedGql: GetOracleDataFeedsQuery['aggregator'][number],
-  dipDupContracts: DAPPConfigContext['dipDupContracts'],
+  dipDupContracts: NonNullable<DAPPConfigContext['dipDupContracts']>,
 ) => {
   const dataFeedsHistory = normalizeDataFeedsHistory(feedGql.history_data)
   const dataFeedsVolatility = normalizeDataFeedsVolatility(feedGql.history_data)
@@ -36,7 +36,7 @@ export const normalizeFeed = (
 
 export function normalizeFeeds(
   feeds: GetOracleDataFeedsQuery['aggregator'],
-  dipDupContracts: DAPPConfigContext['dipDupContracts'],
+  dipDupContracts: NonNullable<DAPPConfigContext['dipDupContracts']>,
 ) {
   const dataFeedUniqueCategories = new Set<string>()
 

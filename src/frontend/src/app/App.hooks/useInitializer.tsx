@@ -4,8 +4,8 @@ import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFe
 import { useTokensInit } from 'providers/TokensProvider/hooks/useTokensInit'
 
 export const useInitializer = () => {
-  console.log('insiisde init hook')
   useDappInit()
+  // TODO: implement tokens context
   // useTokensInit()
   useDataFeedsUpdater(true)
 }

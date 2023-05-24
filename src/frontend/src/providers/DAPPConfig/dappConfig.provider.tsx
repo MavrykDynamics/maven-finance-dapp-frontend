@@ -21,7 +21,7 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
         // TODO: set default address to null, when contracts are updated
         mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh',
         // temp storage while it's not implemented inside feeds
-        dipDupContracts: {},
+        dipDupContracts: null,
         // actions
         updateMaxLengths: this.updateMaxLengths,
         updateXtzBakers: this.updateXtzBakers,
@@ -114,7 +114,7 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
 
   updateDipDupContracts = async (dipDupContracts: DipDupContractsQuery) => {
     const normalizedDipDupContracts = dipDupContracts.dipdup_contract_metadata.reduce<
-      DAPPConfigContext['dipDupContracts']
+      NonNullable<DAPPConfigContext['dipDupContracts']>
     >((acc, contract) => {
       if (!acc[contract.contract]) {
         acc[contract.contract] = contract

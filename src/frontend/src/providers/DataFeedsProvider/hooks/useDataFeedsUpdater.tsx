@@ -6,12 +6,18 @@ import { useDataFeedsContext } from '../dataFeeds.provider'
 // subs
 import { getOrcaleStorageAggregatorQuery } from 'gql/queries/getOracleStorage'
 import { useEffect, useState } from 'react'
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { GetOracleDataFeedsQuery } from 'utils/__generated__/graphql'
 
 // TODO add checks if data is empty (valid data with zod) and handle errors for it
 export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
   const { updateDataFeeds } = useDataFeedsContext()
+  const { dipDupContracts } = useDAPPConfigContext()
+
+  const isContractsLoading = dipDupContracts === null
 
   const [shouldSkip, setShouldSkip] = useState(false)
+  const [feeds, setFeeds] = useState<GetOracleDataFeedsQuery['aggregator']>([])
 
   const { loading: aggregatorLoading } = useSubscription(getOrcaleStorageAggregatorQuery(feedAddress), {
     skip: shouldSkip,
@@ -20,9 +26,8 @@ export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
     },
     onData: ({ data: response }) => {
       const { data } = response
-      console.log(data)
       if (data) {
-        updateDataFeeds(data.aggregator)
+        setFeeds(data.aggregator)
       }
     },
     shouldResubscribe: true,
@@ -31,14 +36,25 @@ export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
     },
   })
 
-  console.log({ aggregatorLoading, shouldSkip })
-
   // Effect to load data 1 time and then skip loading, cuz loading returned from useSubscription si only for initial loading
   useEffect(() => {
     if (!aggregatorLoading && skip) {
       setShouldSkip(true)
     }
   }, [skip, aggregatorLoading])
+
+  console.log({
+    aggregatorLoading,
+    isContractsLoading,
+    feeds,
+    dipDupContracts,
+  })
+
+  useEffect(() => {
+    if (!aggregatorLoading && !isContractsLoading) {
+      updateDataFeeds(feeds)
+    }
+  }, [aggregatorLoading, feeds, isContractsLoading, updateDataFeeds])
 
   return { isLoading: !aggregatorLoading }
 }

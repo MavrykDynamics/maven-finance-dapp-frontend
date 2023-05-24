@@ -2,8 +2,10 @@ import React, { useContext } from 'react'
 
 // types
 import { State, Props, DataFeedsContext } from './dataFeeds.provider.types'
-import { normalizeFeeds } from './helpers/feedsNormalizer'
 import { GetOracleDataFeedsQuery } from 'utils/__generated__/graphql'
+
+// helpers
+import { normalizeFeeds } from './helpers/feedsNormalizer'
 
 export const dataFeedsContext = React.createContext<DataFeedsContext>(undefined!)
 
@@ -12,6 +14,7 @@ export class DataFeedsProvider extends React.Component<Props, State> {
     super(props)
     this.state = {
       context: {
+        // data
         feedsAddresses: [],
         feedsMapper: {},
         feedsCategories: [],
@@ -22,16 +25,10 @@ export class DataFeedsProvider extends React.Component<Props, State> {
     }
   }
 
+  // TODO: check how 1 feed will update store
   updateDataFeeds = (data: GetOracleDataFeedsQuery['aggregator'], isOneFeed = false) => {
+    if (!this.props.dipDupContracts) return
     const { feedsCategories, feedsAddresses, feedsMapper } = normalizeFeeds(data, this.props.dipDupContracts)
-
-    console.log({
-      dipDup: this.props.dipDupContracts,
-      feeds: data,
-      feedsCategories,
-      feedsAddresses,
-      feedsMapper,
-    })
 
     this.setState({
       context: {
