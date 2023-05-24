@@ -17,6 +17,10 @@ export const NoItemsInTabStyled = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.textColor};
   }
 
+  .manage-btn {
+    width: 250px;
+  }
+
   .lending-tab-no-items-btn {
     max-width: 250px;
 
