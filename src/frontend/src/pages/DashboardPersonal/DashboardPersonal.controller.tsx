@@ -119,15 +119,16 @@ const DashboardPersonal = () => {
     return accAssetBalanceInUSD > assetToCompareBalanceInUSD ? acc : symbol
   }, '')
 
+  // TODO REMOVE ToLowerCase BEFORE MERGE
   const walletData = {
-    xtzAmount: userTokens[XTZ_TOKEN_SYMBOL].balance,
-    sMVKAmount: userTokens[SMVK_TOKEN_SYMBOL].balance,
-    MVKAmount: userTokens[MVK_TOKEN_SYMBOL].balance,
+    xtzAmount: userTokens[XTZ_TOKEN_SYMBOL.toLowerCase()].balance,
+    sMVKAmount: userTokens[SMVK_TOKEN_SYMBOL.toLowerCase()].balance,
+    MVKAmount: userTokens[MVK_TOKEN_SYMBOL.toLowerCase()].balance,
     ...(mostSuppliedUserTokenSymbol
       ? {
           mostSuppliedUserToken: {
-            name: userTokens[mostSuppliedUserTokenSymbol].name,
-            amount: userTokens[mostSuppliedUserTokenSymbol].balance,
+            name: userTokens[mostSuppliedUserTokenSymbol.toLowerCase()].name,
+            amount: userTokens[mostSuppliedUserTokenSymbol.toLowerCase()].balance,
           },
         }
       : {}),

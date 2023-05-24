@@ -266,7 +266,7 @@ export class SatellitesProviderClass extends React.Component<Props, State> {
   }
 
   render(): React.ReactNode {
-    console.log(this.state.context, 'satellites context')
+    // console.log(this.state.context, 'satellites context')
     return <satellitesContext.Provider value={this.state.context}>{this.props.children}</satellitesContext.Provider>
   }
 }

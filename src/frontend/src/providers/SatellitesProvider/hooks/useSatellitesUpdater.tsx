@@ -15,11 +15,10 @@ import { useSatellitesContext } from '../satellites.provider'
 /**
  *
  * @param address string representation of satellite address (used for only one satellite subscription)
- * @param isInit boolean valut which forces to load data only once
+ * @param options {skip: boolean} options object to manipulate gq subscriptions
  * @returns {isLoading} boolean value which indicates if all data was loaded
  */
-export const useSatellitesUpdater = (address = '', isInit = false): { isLoading: boolean } => {
-  const [shouldSkip, setShouldSkip] = useState(false)
+export const useSatellitesUpdater = (address = '', options = { skip: false }): { isLoading: boolean } => {
   const [storage, setStorage] = useState<Partial<SatellitesStorage>>({})
   const { updateSatellitesContext } = useSatellitesContext()
 
@@ -30,10 +29,10 @@ export const useSatellitesUpdater = (address = '', isInit = false): { isLoading:
         setStorage({ ...storage, satellite: [...data.satellite] })
       }
     },
-    variables: {
-      address,
+    onError: (error) => {
+      console.log({ error })
     },
-    skip: shouldSkip,
+    skip: options.skip,
     shouldResubscribe: true,
   })
 
@@ -44,7 +43,7 @@ export const useSatellitesUpdater = (address = '', isInit = false): { isLoading:
         setStorage({ ...storage, governance_proposal: [...data.governance_proposal] })
       }
     },
-    skip: shouldSkip,
+    skip: options.skip,
     shouldResubscribe: true,
   })
 
@@ -55,7 +54,7 @@ export const useSatellitesUpdater = (address = '', isInit = false): { isLoading:
         setStorage({ ...storage, emergency_governance: [...data.emergency_governance] })
       }
     },
-    skip: shouldSkip,
+    skip: options.skip,
     shouldResubscribe: true,
   })
 
@@ -66,7 +65,7 @@ export const useSatellitesUpdater = (address = '', isInit = false): { isLoading:
         setStorage({ ...storage, governance_financial_request: [...data.governance_financial_request] })
       }
     },
-    skip: shouldSkip,
+    skip: options.skip,
     shouldResubscribe: true,
   })
 
@@ -77,12 +76,11 @@ export const useSatellitesUpdater = (address = '', isInit = false): { isLoading:
         setStorage({ ...storage, aggregator: [...data.aggregator] })
       }
     },
-    skip: shouldSkip,
+    skip: options.skip,
     shouldResubscribe: true,
   })
 
   const isStorageLoaded =
-    !shouldSkip &&
     !satellitesLoading &&
     !govProposalLoading &&
     !emergencyGovLoading &&
@@ -90,6 +88,7 @@ export const useSatellitesUpdater = (address = '', isInit = false): { isLoading:
     !aggregatorOraclesLoading
 
   useEffect(() => {
+    console.log('run effect')
     if (
       storage.hasOwnProperty('aggregator') &&
       storage.hasOwnProperty('satellite') &&
@@ -100,12 +99,6 @@ export const useSatellitesUpdater = (address = '', isInit = false): { isLoading:
       updateSatellitesContext(storage as SatellitesStorage, address)
     }
   }, [storage, updateSatellitesContext, address])
-
-  useEffect(() => {
-    if (isInit && isStorageLoaded) {
-      setShouldSkip(true)
-    }
-  }, [isInit, shouldSkip, isStorageLoaded])
 
   return {
     isLoading: isStorageLoaded,

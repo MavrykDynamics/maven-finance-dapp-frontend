@@ -1,6 +1,7 @@
 import { OperationVariables, TypedDocumentNode } from '@apollo/client'
 import { DocumentNode } from 'graphql'
 import { gql } from 'utils/__generated__'
+import { gql as apolloGql } from '@apollo/client'
 import { SatelliteDataSubscription } from 'utils/__generated__/graphql'
 
 // queries
@@ -152,6 +153,64 @@ export const SATELLITES_STORAGE_QUERY = gql(`
 `)
 
 // subs
+
+export const SATELLITE_GOVERNANCE_PROPOSAL_DATA_SUBSCRIPTION = gql(`
+subscription satelliteGovernanceProposalData {
+governance_proposal(order_by: {start_datetime: desc}) {
+  id
+  executed
+  locked  
+}
+}
+`)
+
+export const SATELLITE_EMERGENCY_GOVERNANCE_DATA_SUBSCRIPTION = gql(`
+subscription satelliteEmergencyGovernanceData {
+  emergency_governance {
+    emergency_governance_records(order_by: {start_timestamp: desc}) {
+      emergency_governance_id
+      executed
+    }
+  }
+}
+`)
+
+export const SATELLITE_GOVERNANCE_FINANCIAL_REQUEST_SUBSCRIPTION = gql(`
+subscription satelliteGovernanceFinancialRequest {
+  governance_financial_request {
+    executed
+    id
+  }
+}
+`)
+
+export const SATELLITE_AGGREGATOR_ORACLES_SUBSCRIPTION = gql(`
+subscription satelliteAggregatorOracles {
+  aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {
+    admin
+    last_completed_data_last_updated_at
+    heart_beat_seconds
+    oracles {
+      observations(order_by: {timestamp: desc}, limit: 1) {
+        epoch
+        round
+        timestamp
+        oracle {
+          user_id
+          init_epoch
+          init_round
+        }
+      }
+      observations_aggregate {
+        aggregate {
+          count(columns: timestamp)
+        }
+      }
+    }
+  }
+}
+`)
+
 // this one used for type creation only
 export const SATELLITE_DATA_SUBSCRIPTION = gql(`
 subscription satelliteData {
@@ -259,14 +318,14 @@ satellite(order_by: {currently_registered: desc}) {
 }
 `)
 
-export const getSatelliteDataSubscription = (
-  address?: string,
-): DocumentNode | TypedDocumentNode<SatelliteDataSubscription, OperationVariables> => {
-  const temp = address ? `where: {user_id: {_eq: $address}},` : ''
+export function getSatelliteDataSubscription(
+  user_id?: string,
+): DocumentNode | TypedDocumentNode<SatelliteDataSubscription, OperationVariables> {
+  const filteredCondition = user_id ? `user_id: {_eq: "${user_id}"}` : `user_id: {_neq: ""}`
 
-  return gql(`
-  subscription satelliteData {
-    satellite(${temp}order_by: {currently_registered: desc}) {
+  return apolloGql`
+  subscription satelliteDataSub {
+    satellite(where: {registration_timestamp: {_is_null: false}, ${filteredCondition}}, order_by: {currently_registered: desc}) {
       description
       fee
       image
@@ -277,17 +336,14 @@ export const getSatelliteDataSubscription = (
       currently_registered
       peer_id
       public_key
-    
       delegations {
         user {
           smvk_balance
         }
       }
-    
       delegation {
         delegation_ratio
       }
-    
       user {
         smvk_balance
         mvk_balance
@@ -315,7 +371,6 @@ export const getSatelliteDataSubscription = (
             }
           }
         }
-    
         emergency_governance_votes {
           emergency_governance_record_id
           id
@@ -326,7 +381,6 @@ export const getSatelliteDataSubscription = (
             title
           }
         }
-    
         governance_financial_requests_votes {
           governance_financial_request_id
           id
@@ -337,8 +391,7 @@ export const getSatelliteDataSubscription = (
             request_type
           }
         }
-    
-        governance_proposals_votes (order_by: {timestamp: desc}) {
+        governance_proposals_votes(order_by: {timestamp: desc}) {
           governance_proposal_id
           id
           round
@@ -353,7 +406,6 @@ export const getSatelliteDataSubscription = (
             locked
           }
         }
-    
         governance_satellite_actions_votes {
           governance_satellite_action_id
           id
@@ -364,66 +416,8 @@ export const getSatelliteDataSubscription = (
             governance_type
           }
         }
-        
-      }
-    }
-    }
-  `) as DocumentNode | TypedDocumentNode<SatelliteDataSubscription, OperationVariables>
-}
-
-export const SATELLITE_GOVERNANCE_PROPOSAL_DATA_SUBSCRIPTION = gql(`
-subscription satelliteGovernanceProposalData {
-governance_proposal(order_by: {start_datetime: desc}) {
-  id
-  executed
-  locked
-}
-}
-`)
-
-export const SATELLITE_EMERGENCY_GOVERNANCE_DATA_SUBSCRIPTION = gql(`
-subscription satelliteEmergencyGovernanceData {
-  emergency_governance {
-    emergency_governance_records(order_by: {start_timestamp: desc}) {
-      emergency_governance_id
-      executed
-    }
-  }
-}
-`)
-
-export const SATELLITE_GOVERNANCE_FINANCIAL_REQUEST_SUBSCRIPTION = gql(`
-subscription satelliteGovernanceFinancialRequest {
-  governance_financial_request {
-    executed
-    id
-  }
-}
-`)
-
-export const SATELLITE_AGGREGATOR_ORACLES_SUBSCRIPTION = gql(`
-subscription satelliteAggregatorOracles {
-  aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {
-    admin
-    last_completed_data_last_updated_at
-    heart_beat_seconds
-    oracles {
-      observations(order_by: {timestamp: desc}, limit: 1) {
-        epoch
-        round
-        timestamp
-        oracle {
-          user_id
-          init_epoch
-          init_round
-        }
-      }
-      observations_aggregate {
-        aggregate {
-          count(columns: timestamp)
-        }
       }
     }
   }
+  ` as DocumentNode | TypedDocumentNode<SatelliteDataSubscription, OperationVariables>
 }
-`)

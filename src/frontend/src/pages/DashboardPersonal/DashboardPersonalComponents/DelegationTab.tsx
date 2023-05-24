@@ -16,6 +16,7 @@ import { DashboardCardHeader } from '../DashboardPersonal.style'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
 const DelegationTab = () => {
   const dispatch = useDispatch()
@@ -25,6 +26,8 @@ const DelegationTab = () => {
   } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSatellitesContext()
   const satelliteInfo = satelliteMapper[satelliteMvkIsDelegatedTo]
+
+  useSatellitesUpdater(accountPkh)
 
   const handleDistributeRewards = () => {
     // TODO: add valid data
