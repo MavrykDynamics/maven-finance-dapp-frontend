@@ -25,7 +25,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 
 // types
 import { State } from 'reducers'
-import { SatelliteStatus } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteStatus } from 'providers/SatellitesProvider/satellites.provider.types'
 import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 //styles

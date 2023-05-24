@@ -11,7 +11,7 @@ import { getVoteText } from 'providers/SatellitesProvider/satellites.const'
 import { parseDate } from 'utils/time'
 
 import { State } from 'reducers'
-import { SatelliteVoteType } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
 import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 import { Page, PageContent } from 'styles'

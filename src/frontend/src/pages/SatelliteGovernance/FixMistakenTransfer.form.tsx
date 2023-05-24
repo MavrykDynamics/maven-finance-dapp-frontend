@@ -14,7 +14,7 @@ import {
 } from '../../app/App.components/Input/Input.constants'
 
 // helpers
-import { SatelliteGovernanceTransfer } from '../../utils/TypesAndInterfaces/Satellites'
+import { SatelliteGovernanceTransfer } from 'providers/SatellitesProvider/satellites.provider.types'
 import { validateFormAddress, validateFormField, validateTzAddress } from 'utils/validatorFunctions'
 
 // actions

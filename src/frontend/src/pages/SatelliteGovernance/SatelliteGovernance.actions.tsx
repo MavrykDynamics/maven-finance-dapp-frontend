@@ -1,7 +1,7 @@
 // types
 import type { AppDispatch, GetState } from '../../app/App.controller'
 import { State } from 'reducers'
-import { SatelliteGovernanceTransfer } from '../../utils/TypesAndInterfaces/Satellites'
+import { SatelliteGovernanceTransfer } from 'providers/SatellitesProvider/satellites.provider.types'
 
 // helpers
 import { fetchFromIndexerWithPromise } from '../../gql/fetchGraphQL'

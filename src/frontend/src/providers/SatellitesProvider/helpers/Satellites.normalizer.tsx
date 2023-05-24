@@ -1,4 +1,4 @@
-import type { SatelliteVotingsType } from '../../../utils/TypesAndInterfaces/Satellites'
+import type { SatelliteVotingsType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 // helpers
 import { calcWithoutMu, calcWithoutPrecision, getNumberInBounds } from '../../../utils/calcFunctions'
