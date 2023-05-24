@@ -112,6 +112,7 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
     })
   }
 
+  // TODO: remove when dipDupContract will be implemented inside feeds
   updateDipDupContracts = async (dipDupContracts: DipDupContractsQuery) => {
     const normalizedDipDupContracts = dipDupContracts.dipdup_contract_metadata.reduce<
       NonNullable<DAPPConfigContext['dipDupContracts']>
