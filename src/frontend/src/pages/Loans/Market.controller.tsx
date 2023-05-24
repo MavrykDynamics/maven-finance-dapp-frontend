@@ -27,16 +27,45 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from './Actions/getLoansData.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import colors from 'styles/colors'
+import { USER_AVAILABLE_BORROW } from 'texts/tooltips/loan.text'
 
 export const Market = () => {
   const dispatch = useDispatch()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
   const {
     loanTokens,
-    config: { loansControllerAddress },
     isDataLoaded,
+    config: { loansControllerAddress },
+    vaults: { allVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
   const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
+
+  const { userTotalBorrowed, userTotalCollateral, userAccruedInterest, userAvailableBorrow } = useMemo(
+    () =>
+      allVaultsIds.reduce(
+        (acc, itemId) => {
+          const vault = vaultsMapper[itemId]
+
+          if (vault.ownerId !== accountPkh || vault.borrowedAsset.symbol !== assetId) return acc
+
+          acc.userTotalBorrowed += vault.borrowedAmount * vault.borrowedAsset.rate
+          acc.userTotalCollateral += vault.collateralBalance
+          acc.userAccruedInterest += vault.fee * vault.borrowedAsset.rate
+          acc.userAvailableBorrow += vault.borrowCapacity * vault.borrowedAsset.rate
+          return acc
+        },
+        {
+          userTotalBorrowed: 0,
+          userTotalCollateral: 0,
+          userAccruedInterest: 0,
+          userAvailableBorrow: 0,
+        },
+      ),
+    [accountPkh, allVaultsIds, assetId, vaultsMapper],
+  )
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -185,20 +214,27 @@ export const Market = () => {
                 <CommaNumber value={currentToken.borrowAPR} endingText="%" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Total Borrowed</div>
-                <CommaNumber value={currentToken.totalBorrowed} className="value" />
+                <div className="name">Your Total Loan Balance</div>
+                <CommaNumber value={userTotalBorrowed} beginningText="$" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Reserve Amount</div>
-                <CommaNumber value={currentToken.reserveAmount} className="value" />
+                <div className="name">Your Total Collateral</div>
+                <CommaNumber value={userTotalCollateral} beginningText="$" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Reserve Factor</div>
-                <CommaNumber value={currentToken.reserveFactor} endingText="%" className="value" />
+                <div className="name">Your Accrued Interest</div>
+                <CommaNumber value={userAccruedInterest} beginningText="$" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Borrowers</div>
-                <CommaNumber value={currentToken.borrowers} className="value" />
+                <div className="name">
+                  Your Available Borrow
+                  <CustomTooltip
+                    iconId="info"
+                    text={USER_AVAILABLE_BORROW(assetId)}
+                    defaultStrokeColor={colors[themeSelected].textColor}
+                  />
+                </div>
+                <CommaNumber value={userAvailableBorrow} beginningText="$" className="value" />
               </ThreeLevelListItem>
             </>
           )}

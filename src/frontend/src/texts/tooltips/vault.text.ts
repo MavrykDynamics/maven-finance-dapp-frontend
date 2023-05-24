@@ -1,3 +1,6 @@
+export const LIQUIDATION_PRICE = 'Price value of your vault’s collateral at which your vault can be liquidated.'
+export const LIQUIDATION_COST = 'How much it will cost to liquidated this vault.'
+export const VAULT_RISK = 'The level of risk of being liquidated your vault is at.'
 export const TOTAL_AMOUNT =
   'Total amount you are borrowing, a portion of which is paid to the treasury as the DAO fee. The amount you will actually receive is the Total Amount minus the DAO fee'
 export const DAO_FEE =
@@ -14,6 +17,5 @@ export const COLLATERAL_VALUE =
   'The summed dollar value of all of the collateral assets your have deposited into this vault.'
 export const ACCRUED_INTEREST = 'Interest compounded overtime, every time you borrow.'
 export const APR = 'Current interest rate being charged to borrowers.'
-
 export const BORROW_CAPACITY =
   'How much you are able to borrow given your current collateral ratio including the amount you wish to borrow and the total amount available to borrow from the pool.'

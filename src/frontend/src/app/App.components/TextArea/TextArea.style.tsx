@@ -4,6 +4,7 @@ import { MavrykTheme } from '../../../styles/interfaces'
 
 export const TextAreaStyled = styled.div`
   position: relative;
+  height: fit-content;
 
   .textArea-wrapper {
     border-radius: 10px;
@@ -60,7 +61,10 @@ export const TextAreaStyled = styled.div`
   }
 
   .info-error {
-    padding: 10px;
+    position: absolute;
+    bottom: -20px;
+    left: 0px;
+    padding-right: 10px;
     width: 100%;
     display: flex;
     align-items: center;

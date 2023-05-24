@@ -24,10 +24,17 @@ export const StageOneForm = ({
   updateLocalProposalValidation,
   updateLocalProposalData,
 }: StageOneFormProps) => {
-  const { fee, successReward, proposalTitleMaxLength, proposalDescriptionMaxLength, proposalSourceCodeMaxLength } =
-    useSelector((state: State) => state.governance.config)
+  const {
+    fee,
+    successReward,
+    proposalTitleMaxLength,
+    proposalDescriptionMaxLength,
+    proposalSourceCodeMaxLength,
+    governancePhase,
+  } = useSelector((state: State) => state.governance.config)
 
   const isProposalSubmitted = proposalId >= 0
+  const isProposalPeriod = governancePhase === 'PROPOSAL'
 
   // update local state value and parent state due to inputted info
   const inputHandler = (
@@ -101,7 +108,7 @@ export const StageOneForm = ({
               inputSize: INPUT_SMALL,
             }}
             inputProps={{
-              disabled: isProposalSubmitted,
+              disabled: isProposalSubmitted || !isProposalPeriod,
               value: currentProposal.title,
               type: 'text',
               placeholder: 'Proposal Title',
@@ -135,7 +142,7 @@ export const StageOneForm = ({
             value={currentProposal.description}
             onChange={inputHandler}
             inputStatus={currentProposalValidation.description}
-            disabled={isProposalSubmitted}
+            disabled={isProposalSubmitted || !isProposalPeriod}
             textAreaMaxLimit={proposalDescriptionMaxLength}
           />
         )}
@@ -155,7 +162,7 @@ export const StageOneForm = ({
               inputSize: INPUT_SMALL,
             }}
             inputProps={{
-              disabled: isProposalSubmitted,
+              disabled: isProposalSubmitted || !isProposalPeriod,
               value: currentProposal.sourceCode,
               type: 'text',
               placeholder: 'Source code link',
@@ -186,6 +193,7 @@ export const StageOneForm = ({
                 })
               }}
               title={'Add an Invoice Image'}
+              disabled={isProposalSubmitted || !isProposalPeriod}
               listNumber={6}
             />
           </div>

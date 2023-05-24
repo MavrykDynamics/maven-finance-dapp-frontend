@@ -63,11 +63,16 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
         }
       }
 
+      tr:not(.plug-row) {
+        td {
+          border-right: 1px solid ${({ theme }) => theme.cardBorderColor};
+        }
+      }
+
       tr {
         td {
           border: unset;
           border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
-          border-right: 1px solid ${({ theme }) => theme.cardBorderColor};
         }
 
         td:last-of-type {
