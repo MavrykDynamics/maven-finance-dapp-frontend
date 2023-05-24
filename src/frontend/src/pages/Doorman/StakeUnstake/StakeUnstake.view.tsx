@@ -51,6 +51,7 @@ import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
 type StakeUnstakeViewProps = {
   unstakeCallback: (amount: number) => void
@@ -87,6 +88,8 @@ export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUns
     validation: '',
     errorMessage: '',
   })
+
+  useSatellitesUpdater(satelliteMvkIsDelegatedTo)
 
   useEffect(() => {
     setInputData({

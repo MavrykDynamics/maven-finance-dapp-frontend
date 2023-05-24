@@ -27,7 +27,7 @@ const DelegationTab = () => {
   const { satelliteMapper } = useSatellitesContext()
   const satelliteInfo = satelliteMapper[satelliteMvkIsDelegatedTo]
 
-  useSatellitesUpdater(accountPkh)
+  useSatellitesUpdater(satelliteMvkIsDelegatedTo)
 
   const handleDistributeRewards = () => {
     // TODO: add valid data

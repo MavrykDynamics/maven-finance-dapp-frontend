@@ -26,6 +26,7 @@ export const useSatellitesUpdater = (address = '', options = { skip: false }): {
     onData: ({ data: response }) => {
       const { data } = response
       if (data) {
+        console.log(data)
         setStorage({ ...storage, satellite: [...data.satellite] })
       }
     },
