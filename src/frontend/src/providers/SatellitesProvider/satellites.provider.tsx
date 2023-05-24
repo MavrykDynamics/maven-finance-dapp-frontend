@@ -22,16 +22,29 @@ export class SatellitesProvider extends React.Component<Props, State> {
     }
   }
 
-  updateSatellitesContext = (storage: SatellitesStorage) => {
+  updateSatellitesContext = (storage: SatellitesStorage, satelliteAddress = '') => {
     const { oraclesIds, activeSatellitesIds, allSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(storage)
+
+    let _oraclesIds = oraclesIds
+    let _activeSatellitesIds = activeSatellitesIds
+    let _allSatellitesIds = allSatellitesIds
+    let _satelliteMapper = satelliteMapper
+
+    if (Boolean(satelliteAddress)) {
+      _oraclesIds = [...new Set([...oraclesIds, ...this.state.context.oraclesIds])]
+      _activeSatellitesIds = [...new Set([...activeSatellitesIds, ...this.state.context.activeSatellitesIds])]
+      _allSatellitesIds = [...new Set([...allSatellitesIds, ...this.state.context.allSatellitesIds])]
+
+      _satelliteMapper = { ...this.state.context.satelliteMapper, ..._satelliteMapper }
+    }
 
     this.setState({
       context: {
         ...this.state.context,
-        oraclesIds,
-        activeSatellitesIds,
-        allSatellitesIds,
-        satelliteMapper,
+        oraclesIds: _oraclesIds,
+        activeSatellitesIds: _activeSatellitesIds,
+        allSatellitesIds: _allSatellitesIds,
+        satelliteMapper: _satelliteMapper,
         isLoaded: true,
       },
     })

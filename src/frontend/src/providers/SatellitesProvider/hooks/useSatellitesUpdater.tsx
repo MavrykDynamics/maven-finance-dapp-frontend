@@ -3,7 +3,7 @@ import { useSubscription } from '@apollo/client'
 
 // subs
 import {
-  SATELLITE_DATA_SUBSCRIPTION,
+  getSatelliteDataSubscription,
   SATELLITE_GOVERNANCE_PROPOSAL_DATA_SUBSCRIPTION,
   SATELLITE_EMERGENCY_GOVERNANCE_DATA_SUBSCRIPTION,
   SATELLITE_GOVERNANCE_FINANCIAL_REQUEST_SUBSCRIPTION,
@@ -14,20 +14,24 @@ import { useSatellitesContext } from '../satellites.provider'
 
 /**
  *
+ * @param address string representation of satellite address (used for only one satellite subscription)
  * @param isInit boolean valut which forces to load data only once
  * @returns {isLoading} boolean value which indicates if all data was loaded
  */
-export const useSatellitesUpdater = (isInit = false): { isLoading: boolean } => {
+export const useSatellitesUpdater = (address = '', isInit = false): { isLoading: boolean } => {
   const [shouldSkip, setShouldSkip] = useState(false)
   const [storage, setStorage] = useState<Partial<SatellitesStorage>>({})
   const { updateSatellitesContext } = useSatellitesContext()
 
-  const { loading: satellitesLoading } = useSubscription(SATELLITE_DATA_SUBSCRIPTION, {
+  const { loading: satellitesLoading } = useSubscription(getSatelliteDataSubscription(address), {
     onData: ({ data: response }) => {
       const { data } = response
       if (data) {
         setStorage({ ...storage, satellite: [...data.satellite] })
       }
+    },
+    variables: {
+      address,
     },
     skip: shouldSkip,
     shouldResubscribe: true,
@@ -93,9 +97,9 @@ export const useSatellitesUpdater = (isInit = false): { isLoading: boolean } => 
       storage.hasOwnProperty('emergency_governance') &&
       storage.hasOwnProperty('governance_financial_request')
     ) {
-      updateSatellitesContext(storage as SatellitesStorage)
+      updateSatellitesContext(storage as SatellitesStorage, address)
     }
-  }, [storage, updateSatellitesContext])
+  }, [storage, updateSatellitesContext, address])
 
   useEffect(() => {
     if (isInit && isStorageLoaded) {
