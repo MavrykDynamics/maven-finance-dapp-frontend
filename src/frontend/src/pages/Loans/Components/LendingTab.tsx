@@ -22,8 +22,8 @@ type LendingTabPropsType = {
 export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, lendAPY }: LendingTabPropsType) => {
   const { loanTokens } = useSelector((state: State) => state.loans)
 
-  const currentToken = useMemo(() => {
-    return loanTokens.find(({ loanTokenData }) => loanTokenData.symbol === assetData.symbol)
+  const transactionHistory = useMemo(() => {
+    return loanTokens.find(({ loanTokenData }) => loanTokenData.symbol === assetData.symbol)?.transactionHistory ?? []
   }, [assetData, loanTokens])
 
   return (
@@ -36,7 +36,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
       )}
 
       <TransactionHistory
-        currentToken={currentToken}
+        transactionHistory={transactionHistory}
         lendingControllerAddress={lendingControllerAddress}
         styleType={SECONDARY_TRANSACTION_HISTORY_STYLE}
       />

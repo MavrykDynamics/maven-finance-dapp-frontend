@@ -88,6 +88,8 @@ export const BorrowingExpandCardMenuSection = ({
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
+  const { transactionHistory } = currentToken 
+
   const menuTabs = useMemo(
     () =>
       VAULT_CARD_MENU_TABS.filter((item) => {
@@ -221,7 +223,7 @@ export const BorrowingExpandCardMenuSection = ({
       )}
 
       {activeMenuTab?.id === loansTabNames.TX_HISTORY && (
-        <TransactionHistory currentToken={currentToken} vaultAddress={vaultAddress} />
+        <TransactionHistory transactionHistory={transactionHistory} vaultAddress={vaultAddress} />
       )}
 
       {activeMenuTab?.id === loansTabNames.USEFUL_INFO && (

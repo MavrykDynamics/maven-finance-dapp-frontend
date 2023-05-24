@@ -23,14 +23,21 @@ import { EmptyContainer } from 'app/App.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 type TransactionHistoryPropsType = {
-  currentToken?: LoanMarketType
+  transactionHistory: LoanMarketType['transactionHistory']
   vaultAddress?: string
   lendingControllerAddress?: string
   styleType?: typeof PRIMARY_TRANSACTION_HISTORY_STYLE | typeof SECONDARY_TRANSACTION_HISTORY_STYLE
 }
 
+/**
+ *
+ * @param transactionHistory - transaction list, if the array is empty, you get the text "No transaction history to show".
+ * @param vaultAddress - if you want to get a transaction history for one vault, you can specify this option.
+ * @param lendingControllerAddress - if you want the lending controller addressto appear at the bottom left, you can specify this option.
+ * @param styleType - you can set one of several background options. Use the constant from Loans.const.tsx.
+ */
 export const TransactionHistory = ({
-  currentToken,
+  transactionHistory,
   vaultAddress,
   lendingControllerAddress,
   styleType = PRIMARY_TRANSACTION_HISTORY_STYLE,
@@ -39,11 +46,11 @@ export const TransactionHistory = ({
 
   const history = useMemo(() => {
     const historyTransaction = vaultAddress
-      ? currentToken?.transactionHistory.filter((item) => item.vaultAddress === vaultAddress)
-      : currentToken?.transactionHistory
+      ? transactionHistory.filter((item) => item.vaultAddress === vaultAddress)
+      : transactionHistory
 
-    return historyTransaction || []
-  }, [currentToken?.transactionHistory, vaultAddress])
+    return historyTransaction
+  }, [transactionHistory, vaultAddress])
   console.log(styleType)
 
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
@@ -105,7 +112,7 @@ export const TransactionHistory = ({
             }}
           >
             <img src="/images/not-found.svg" alt=" No Transaction History to show" />
-            <figcaption> No Transaction History to show</figcaption>
+            <figcaption>No Transaction History to show</figcaption>
           </EmptyContainer>
         )}
       </div>
