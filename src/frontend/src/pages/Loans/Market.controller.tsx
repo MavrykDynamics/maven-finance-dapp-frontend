@@ -45,12 +45,7 @@ export const Market = () => {
 
   const { userTotalBorrowed, userTotalCollateral, userAccruedInterest, userAvailableBorrow } = useMemo(
     () =>
-      allVaultsIds.reduce<{
-        userTotalBorrowed: number
-        userTotalCollateral: number
-        userAccruedInterest: number
-        userAvailableBorrow: number
-      }>(
+      allVaultsIds.reduce(
         (acc, itemId) => {
           const vault = vaultsMapper[itemId]
 
