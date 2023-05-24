@@ -229,6 +229,12 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
                       {isByteOpened ? 'hide' : 'see all'}
                     </Button>
                   </div>
+                  <div className="byte-descr">
+                    <div className="title" style={{ marginRight: '5px' }}>
+                      Description:
+                    </div>
+                    <div className="proposal-data-block-value">{item.code_description || '–'}</div>
+                  </div>
                 </li>
               )
             })}
