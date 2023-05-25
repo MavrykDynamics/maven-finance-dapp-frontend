@@ -22,6 +22,7 @@ import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
 import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 
 type MenuViewProps = {
   openChangeNodePopupHandler: () => void
@@ -56,6 +57,7 @@ export const SocialIcons = () => (
 
 export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const { getMVKTokensFromFaucet } = useStakeContext()
+  const { mvkFaucetAddress } = useDAPPConfigContext()
 
   const dispatch = useDispatch()
   const { pathname } = useLocation()
@@ -132,7 +134,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               kind={BUTTON_PRIMARY}
               form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND}
               isThin
-              onClick={getMVKTokensFromFaucet}
+              onClick={() => getMVKTokensFromFaucet(mvkFaucetAddress)}
               disabled={!canGetInitThouthand || isActionActive}
             >
               {sidebarOpened ? 'MVK Faucet' : 'mvk'}

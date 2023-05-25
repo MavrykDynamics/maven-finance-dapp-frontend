@@ -10,7 +10,6 @@ import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
-// TODO add checks if data is empty (valid data with zod) and handle errors for it
 export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
   const { updateDataFeeds } = useDataFeedsContext()
   const { updateTokensPrices } = useTokensContext()
@@ -23,6 +22,7 @@ export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
 
   const { loading: aggregatorLoading } = useSubscription(getOrcaleStorageAggregatorQuery(feedAddress), {
     skip: shouldSkip,
+    shouldResubscribe: true,
     variables: {
       address: feedAddress,
     },
@@ -32,7 +32,6 @@ export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
         setFeeds(data.aggregator)
       }
     },
-    shouldResubscribe: true,
     onError: (error) => {
       console.log({ error })
     },

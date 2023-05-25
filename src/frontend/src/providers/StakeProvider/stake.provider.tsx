@@ -243,8 +243,8 @@ export class StakeProviderClass extends React.Component<Props, State> {
     }
   }
 
-  getMVKTokensFromFaucet = async () => {
-    const { accountPkh, dispatch, user, mvkFaucetAddress } = this.props
+  getMVKTokensFromFaucet = async (mvkFaucetAddress: string | null) => {
+    const { accountPkh, dispatch, user } = this.props
 
     // check whether we can send transaction
     if (!mvkFaucetAddress) {

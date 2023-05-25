@@ -37,6 +37,7 @@ import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provi
 
 export const DataFeeds = () => {
   const { isLoading } = useDataFeedsUpdater()
+
   const { feedsAddresses, feedsMapper, feedsCategories } = useDataFeedsContext()
 
   const dispatch = useDispatch()

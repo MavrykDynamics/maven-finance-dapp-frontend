@@ -38,7 +38,6 @@ import { getTokensForDAPP } from 'reducers/actions/getTokens.actions'
 import { getCouncilMembers } from 'pages/Council/Council.actions'
 import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 
 export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
@@ -57,8 +56,6 @@ const AppContainer = () => {
 
   // inital data load
   useInitializer()
-
-  const { mvkFaucetAddress } = useDAPPConfigContext()
 
   useEffect(() => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))
@@ -116,7 +113,7 @@ const AppContainer = () => {
     <LoaderRocket />
   ) : (
     <Router>
-      <StakeProvider mvkFaucetAddress={mvkFaucetAddress}>
+      <StakeProvider>
         <AppStyled isExpandedMenu={sidebarOpened}>
           <ActionLoader />
           <Toaster />

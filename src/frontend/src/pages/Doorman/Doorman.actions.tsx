@@ -13,7 +13,6 @@ import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.ac
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 import { State } from 'reducers'
 import type { AppDispatch, GetState } from '../../app/App.controller'
