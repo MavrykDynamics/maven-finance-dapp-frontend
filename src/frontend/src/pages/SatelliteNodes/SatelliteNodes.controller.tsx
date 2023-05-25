@@ -28,6 +28,7 @@ import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSide
 import { NotStakingBanner } from 'pages/Satellites/components/NotStakingBanner.view'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
 const itemsForDropDown = [
   { text: 'Lowest Fee', value: 'satelliteFee' },
@@ -50,6 +51,8 @@ const SatelliteNodes = () => {
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [inputSearch, setInputSearch] = useState('')
   const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
+
+  useSatellitesUpdater()
 
   const currentPage = getPageNumber(search, SATELITES_NODES_LIST_NAME)
 

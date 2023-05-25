@@ -19,6 +19,7 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
+import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/satellites.const'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
@@ -36,7 +37,7 @@ import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
+import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
 const Satellites = () => {
   const dispatch = useDispatch()
@@ -49,6 +50,8 @@ const Satellites = () => {
     user: { isSatellite, userTokens },
   } = useSelector((state: State) => state.wallet)
 
+  useSatellitesUpdater()
+
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
@@ -60,15 +63,15 @@ const Satellites = () => {
     } catch (e) {}
   }, [])
 
-  const { totalDelegatedMVK, totalActiveSatellites } = useSatelliteStatistics()
-
   const tabsInfo = useMemo(
     () => ({
-      totalDelegetedMVK: <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />,
-      totalSatelliteOracles: totalActiveSatellites,
+      totalDelegetedMVK: (
+        <CommaNumber value={getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)} endingText={'MVK'} />
+      ),
+      totalSatelliteOracles: activeSatellitesIds.length,
       numberOfDataFeeds: feedsLedger.length > 50 ? feedsLedger.length + '+' : feedsLedger.length,
     }),
-    [feedsLedger.length, totalActiveSatellites, totalDelegatedMVK],
+    [activeSatellitesIds, feedsLedger, satelliteMapper],
   )
 
   return (
