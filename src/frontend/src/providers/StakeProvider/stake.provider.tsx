@@ -17,7 +17,7 @@ import { State, Props, StakeContext } from './stake.provider.types'
 
 // consts
 import { TOASTER_ERROR } from 'app/App.components/Toaster/Toaster.constants'
-import { STAKE_ACTION, UNSTAKE_ACTION } from './helpers/stake.consts'
+import { GET_MVK_FROM_FAUCET_ACTION, STAKE_ACTION, UNSTAKE_ACTION } from './helpers/stake.consts'
 import { MVK_DECIMALS, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 // TODO move wallet to context to avoid redux logic inside Stake Context
@@ -54,6 +54,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
         updateStakeActionLoaderContext: this.updateStakeActionLoaderContext,
         stakeMVK: this.stakeMVK,
         unstakeMVK: this.unstakeMVK,
+        getMVKTokensFromFaucet: this.getMVKTokensFromFaucet,
       },
     }
   }
@@ -242,17 +243,64 @@ export class StakeProviderClass extends React.Component<Props, State> {
     }
   }
 
+  getMVKTokensFromFaucet = async () => {
+    const { accountPkh, dispatch, user, mvkFaucetAddress } = this.props
+
+    // check whether we can send transaction
+    if (!mvkFaucetAddress) {
+      dispatch(showToaster(TOASTER_ERROR, 'Cannot send transaction', 'No faucet address provided'))
+      return
+    }
+
+    // check whether we can send transaction
+    if (!accountPkh) {
+      dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
+    }
+
+    if (user.userTokens[MVK_TOKEN_SYMBOL].balance > 0 || user.userTokens[SMVK_TOKEN_SYMBOL].balance > 0) {
+      dispatch(
+        showToaster(
+          TOASTER_ERROR,
+          'You have already claimed MVK',
+          'You are unable to claim MVK, you have already claimed',
+        ),
+      )
+      return
+    }
+
+    try {
+      // prepare and send transaction
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(mvkFaucetAddress)
+      await contract.methods.requestMvk().send()
+
+      this.updateStakeActionContext(GET_MVK_FROM_FAUCET_ACTION)
+      dispatch(actionStartToaster(GET_MVK_FROM_FAUCET_ACTION))
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error)
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
+      }
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
+    }
+  }
+
   render(): React.ReactNode {
     return <stakeContext.Provider value={this.state.context}>{this.props.children}</stakeContext.Provider>
   }
 }
 
-const mapStateToProps = (state: ReduxState) => ({
-  doormanAddress: state.contractAddresses.doormanAddress.address,
-  mvkTokenAddress: state.contractAddresses.mvkTokenAddress.address,
-  accountPkh: state.wallet.accountPkh,
-  user: state.wallet.user,
-})
+const mapStateToProps = (state: ReduxState) => {
+  console.log({ state })
+  return {
+    doormanAddress: state.contractAddresses.doormanAddress.address,
+    mvkTokenAddress: state.contractAddresses.mvkTokenAddress.address,
+    accountPkh: state.wallet.accountPkh,
+    user: state.wallet.user,
+  }
+}
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   dispatch,

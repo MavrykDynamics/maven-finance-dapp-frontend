@@ -1,9 +1,6 @@
-import { State } from 'reducers'
 import { AppDispatch, GetState } from 'app/App.controller'
 
-import { getSymbolAndNameFromFeedName } from 'utils/parse'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
-import { convertNumberForClient } from 'utils/calcFunctions'
 import {
   normalizeDipDupTokens,
   normalizeDipDupContracts,
@@ -18,23 +15,7 @@ import {
   GOVERNANCE_CONTRACT_ADDRESS_NAME,
   GOVERNANCE_CONTRACT_ADDRESS_QUERY,
   GOVERNANCE_CONTRACT_ADDRESS_VARIABLE,
-  MVK_FAUCET_QUERY,
-  MVK_FAUCET_QUERY_NAME,
 } from 'gql/queries/getTokensData'
-
-export const GET_MVK_FAUCET = 'GET_MVK_FAUCET'
-export const getMvkFaucet = () => async (dispatch: AppDispatch, getState: GetState) => {
-  try {
-    const mvkFaucetResponce = await fetchFromIndexer(MVK_FAUCET_QUERY, MVK_FAUCET_QUERY_NAME, {})
-
-    dispatch({
-      type: GET_MVK_FAUCET,
-      mvkFaucet: mvkFaucetResponce?.[0]?.address ?? null,
-    })
-  } catch (e) {
-    console.error('getMvkFaucet error: ', e)
-  }
-}
 
 export const GET_DAPP_TOKENS = 'GET_DAPP_TOKENS'
 export const getTokensForDAPP = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -76,17 +57,5 @@ export const getTokensForDAPP = () => async (dispatch: AppDispatch, getState: Ge
     })
   } catch (e) {
     console.error('getTokensForDAPP error: ', e)
-  }
-}
-
-export const GET_TOKENS_PRICES = 'GET_TOKENS_PRICES'
-export const getTokensPrices = () => async (dispatch: AppDispatch, getState: GetState) => {
-  try {
-    dispatch({
-      type: GET_TOKENS_PRICES,
-      tokensPrices: {},
-    })
-  } catch (e) {
-    console.error('getTokensPrices error: ', e)
   }
 }

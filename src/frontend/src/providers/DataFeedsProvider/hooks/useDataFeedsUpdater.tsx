@@ -8,10 +8,12 @@ import { getOrcaleStorageAggregatorQuery } from 'gql/queries/getOracleStorage'
 import { useEffect, useState } from 'react'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // TODO add checks if data is empty (valid data with zod) and handle errors for it
 export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
   const { updateDataFeeds } = useDataFeedsContext()
+  const { updateTokensPrices } = useTokensContext()
   const { dipDupContracts } = useDAPPConfigContext()
 
   const isContractsLoading = dipDupContracts === null
@@ -53,6 +55,7 @@ export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
   useEffect(() => {
     if (!aggregatorLoading && !isContractsLoading) {
       updateDataFeeds(feeds)
+      updateTokensPrices(feeds)
     }
   }, [aggregatorLoading, feeds, isContractsLoading, updateDataFeeds])
 

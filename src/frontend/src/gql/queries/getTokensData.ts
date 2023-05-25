@@ -1,13 +1,12 @@
 import { gql } from 'utils/__generated__'
 
-export const MVK_FAUCET_QUERY = `
+export const GET_MVK_FAUCET_QUERY = gql(`
 query MVKFaucet {
   mvk_faucet{
     address
   }
 }
-`
-export const MVK_FAUCET_QUERY_NAME = 'MVKFaucet'
+`)
 
 export const GOVERNANCE_CONTRACT_ADDRESS_QUERY = `
   query GetContractAddress {
@@ -64,99 +63,3 @@ query DappTokens($_whitelistTokensAddress: String) {
 `
 export const DAPP_TOKENS_QUERY_NAME = 'DappTokens'
 export const DAPP_TOKENS_VARIABLE = (address: string) => ({ _whitelistTokensAddress: address })
-
-// tokens context queries
-
-export const GET_GOVERNANCE_CONTRACT_ADDRESS_QUERY = gql(`
-query GetContractAddress {
-  governance(where: {active: {_eq: true}}) {
-    general_contracts(where: {contract_name: {_eq: "paymentTreasury"}}) {
-      contract_address
-    }
-  }
-}
-`)
-
-export const GET_DAPP_TOKENS_QUERY = gql(`
-query DappTokens($_whitelistTokensAddress: String) {
-  dipdup_contract_metadata {
-    contract
-    created_at
-    metadata
-    id
-    network
-    update_id
-    updated_at
-  }
-
-  dipdup_token_metadata {
-    contract
-    created_at
-    metadata
-    id
-    network
-    update_id
-    updated_at
-  }
-
-  treasury(where: {address: {_eq: $_whitelistTokensAddress}}) {
-    whitelist_token_contracts {
-      contract_address
-      contract_name
-      token_contract_standard
-    }
-  }
-
-  m_token {
-    accounts {
-      user_id
-      m_token_id
-    }
-    address
-    admin
-    loan_token_name
-  }
-}
-`)
-
-export const GET_MVK_FAUCET_QUERY = gql(`
-query MVKFaucet {
-  mvk_faucet{
-    address
-  }
-}
-`)
-
-export const GET_AVAILABLE_COLLATERALS = gql(`
-query GetAvaliableCollaterals {
-  lending_controller(where: {mock_time: {_eq: false}}) {
-    collateral_tokens {
-      token_address
-      id
-      token_name
-      token_contract_standard
-      protected
-      oracle_id
-    }
-
-    loan_tokens {
-      loan_token_name
-      oracle_id
-
-      vaults {
-        collateral_balances {
-          token {
-            token_address
-            token_name
-          }
-        }
-        loan_token {
-          loan_token_address
-          loan_token_name
-          oracle_id
-        }
-      }
-    }
-  }
-}
-`)

@@ -3,7 +3,7 @@ import { DocumentNode } from 'graphql'
 import { gql } from 'utils/__generated__/gql'
 import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
 
-// Dip dup metadate for feeds TODO: remove later
+// Dip dup metadata for feeds TODO: remove later
 export const DIP_DUP_CONTRACTS_QUERY = gql(`
    query dipDupContracts {
     dipdup_contract_metadata {
@@ -18,7 +18,7 @@ export const DIP_DUP_CONTRACTS_QUERY = gql(`
   }
 `)
 
-// feeds amount sub
+// feeds amount subsciption
 export const SUBSCRIBE_CHAIN_POINTS_COUNT = gql(`
   subscription FeedsAmountSubscription {
     aggregator_aggregate {
@@ -29,7 +29,7 @@ export const SUBSCRIBE_CHAIN_POINTS_COUNT = gql(`
   }
 `)
 
-// feeds amount sub
+// feeds rewards subsciption
 export const SUBSCRIBE_FEEDS_REWARDS_COUNT = gql(`
   subscription FeedsRewardsAmountSubscription {
     aggregator_aggregate {

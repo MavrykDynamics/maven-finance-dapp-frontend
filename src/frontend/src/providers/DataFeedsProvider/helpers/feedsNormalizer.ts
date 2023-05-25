@@ -1,15 +1,17 @@
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { UTCTimestamp } from 'lightweight-charts'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { DAPPConfigContext } from 'providers/DAPPConfig/dappConfig.types'
-import { GetOracleDataFeedsQuery } from 'utils/__generated__/graphql'
+import { Feed } from '../dataFeeds.provider.types'
+import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
+
 import { percentageDifference } from 'utils/calcFunctions'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
-import { Feed } from '../dataFeeds.provider.types'
 
+// Can't type it cuz metadata has unknown type for now
 type FeedContractType = { metadata?: { category?: string; icon: string }; network?: string } | undefined
 
 export const normalizeFeed = (
-  feedGql: GetOracleDataFeedsQuery['aggregator'][number],
+  feedGql: SubscribeOracleStorageAggregatorSubscription['aggregator'][number],
   dipDupContracts: NonNullable<DAPPConfigContext['dipDupContracts']>,
 ) => {
   const dataFeedsHistory = normalizeDataFeedsHistory(feedGql.history_data)
@@ -35,7 +37,7 @@ export const normalizeFeed = (
 }
 
 export function normalizeFeeds(
-  feeds: GetOracleDataFeedsQuery['aggregator'],
+  feeds: SubscribeOracleStorageAggregatorSubscription['aggregator'],
   dipDupContracts: NonNullable<DAPPConfigContext['dipDupContracts']>,
 ) {
   const dataFeedUniqueCategories = new Set<string>()
@@ -66,18 +68,9 @@ export function normalizeFeeds(
   }
 }
 
-// TODO: check types
-export type HistoryData = Array<{
-  __typename?: 'aggregator_history_data'
-  data: any
-  timestamp: any
-  aggregator: {
-    __typename?: 'aggregator'
-    decimals: any
-  }
-}>
-
-export function normalizeDataFeedsHistory(historyData: HistoryData) {
+export function normalizeDataFeedsHistory(
+  historyData: SubscribeOracleStorageAggregatorSubscription['aggregator'][number]['history_data'],
+) {
   return historyData?.length
     ? historyData
         .map((item) => {
@@ -90,7 +83,9 @@ export function normalizeDataFeedsHistory(historyData: HistoryData) {
     : []
 }
 
-export function normalizeDataFeedsVolatility(historyData: HistoryData) {
+export function normalizeDataFeedsVolatility(
+  historyData: SubscribeOracleStorageAggregatorSubscription['aggregator'][number]['history_data'],
+) {
   return historyData?.length >= 2
     ? historyData
         .reduce<Array<AreaChartPlotType>>((acc, { data, aggregator: { decimals }, timestamp }, idx, arr) => {

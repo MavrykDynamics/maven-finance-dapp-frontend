@@ -25,17 +25,16 @@ export class DataFeedsProvider extends React.Component<Props, State> {
     }
   }
 
-  // TODO: check how 1 feed will update store
-  updateDataFeeds = (data: SubscribeOracleStorageAggregatorSubscription['aggregator'], isOneFeed = false) => {
+  updateDataFeeds = (data: SubscribeOracleStorageAggregatorSubscription['aggregator']) => {
     if (!this.props.dipDupContracts) return
     const { feedsCategories, feedsAddresses, feedsMapper } = normalizeFeeds(data, this.props.dipDupContracts)
 
     this.setState({
       context: {
         ...this.state.context,
-        feedsCategories,
-        feedsAddresses,
-        feedsMapper,
+        feedsCategories: [...this.state.context.feedsCategories, ...feedsCategories],
+        feedsAddresses: [...this.state.context.feedsAddresses, ...feedsAddresses],
+        feedsMapper: { ...this.state.context.feedsMapper, ...feedsMapper },
       },
     })
   }

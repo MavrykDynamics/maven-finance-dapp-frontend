@@ -22,18 +22,19 @@ export type WhiteListTokensType = Array<{
 }>
 
 export type TokensContext = {
-  dipDupTokens: Array<DipDupTokensGraphQl>
-  dipDupContracts: Array<DipDupTokensGraphQl>
+  // data
+  // dipDupTokens: Array<DipDupTokensGraphQl>
   tokensPrices: Record<string, number>
-  avaliableCollaterals: Array<AvaliableCollateralType> | null
-  whitelistTokens: WhiteListTokensType
-  mTokens: Array<M_Token>
+  // avaliableCollaterals: Array<AvaliableCollateralType> | null
+  // whitelistTokens: WhiteListTokensType
+  // mTokens: Array<M_Token>
   // internal helper state
-  collateralData: GetAvaliableCollateralsQuery | null
+  // collateralData: GetAvaliableCollateralsQuery | null
   // actions
-  initializeDAPPTokens: InstanceType<typeof TokensProvider>['initializeDAPPTokens']
-  updateCollateralsData: InstanceType<typeof TokensProvider>['updateCollateralsData']
-  updateAvaliableCollaterals: InstanceType<typeof TokensProvider>['updateAvaliableCollaterals']
+  // initializeDAPPTokens: InstanceType<typeof TokensProvider>['initializeDAPPTokens']
+  // updateCollateralsData: InstanceType<typeof TokensProvider>['updateCollateralsData']
+  // updateAvaliableCollaterals: InstanceType<typeof TokensProvider>['updateAvaliableCollaterals']
+  updateTokensPrices: InstanceType<typeof TokensProvider>['updateTokensPrices']
 }
 
 export type State = {
@@ -42,5 +43,4 @@ export type State = {
 
 export type Props = {
   children: React.ReactNode
-  feedsLedger: Feed[]
 }

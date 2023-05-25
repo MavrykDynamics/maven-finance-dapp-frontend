@@ -6,9 +6,6 @@ import { ApolloProvider } from '@apollo/client'
 // apollo
 import { client } from './apollo'
 
-// import { PersistGate } from "redux-persist/integration/react";
-
-// import { App, store, persistor } from "./app/App.controller";
 import { App, store } from './app/App.controller'
 import reportWebVitals from './reportWebVitals'
 import { unregister } from './serviceWorker'
@@ -18,12 +15,13 @@ import Mobile from './app/App.components/Mobile/Mobile.view'
 
 // providers
 import DAPPConfigProvider, { dappContext } from 'providers/DAPPConfig/dappConfig.provider'
-import DataFeedsProvider, { dataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import DataFeedsProvider from 'providers/DataFeedsProvider/dataFeeds.provider'
 import TokensProvider from 'providers/TokensProvider/tokens.provider'
 import DarkThemeProvider from './app/App.components/DarkThemeProvider/DarkThemeProvider.view'
 
 import './styles/fonts.css'
 import './styles/animations.css'
+import StakeProvider from 'providers/StakeProvider/stake.provider'
 
 // TODO: implement tokens context while tokens reorganization task
 export const Root = () => {
@@ -36,18 +34,12 @@ export const Root = () => {
             <dappContext.Consumer>
               {(value) => (
                 <DataFeedsProvider dipDupContracts={value.dipDupContracts}>
-                  {/* <dataFeedsContext.Consumer> */}
-                  {/* {(value) => ( */}
-                  {/* <TokensProvider feedsLedger={value.feedsLedger}> */}
-                  {/* <PersistGate loading={null} persistor={persistor}> */}
-                  <DarkThemeProvider>
-                    <GlobalStyle />
-                    {isMobile ? <Mobile /> : <App />}
-                  </DarkThemeProvider>
-                  {/* </PersistGate> */}
-                  {/* </TokensProvider> */}
-                  {/* )} */}
-                  {/* </dataFeedsContext.Consumer> */}
+                  <TokensProvider>
+                    <DarkThemeProvider>
+                      <GlobalStyle />
+                      {isMobile ? <Mobile /> : <App />}
+                    </DarkThemeProvider>
+                  </TokensProvider>
                 </DataFeedsProvider>
               )}
             </dappContext.Consumer>

@@ -10,7 +10,8 @@ export type StakingSubscriptionsTypes =
 // CONSTS FOR STAKE ACTIONS
 export const STAKE_ACTION = 'stake'
 export const UNSTAKE_ACTION = 'unstake'
-export type StakingActionTypes = typeof STAKE_ACTION | typeof UNSTAKE_ACTION | ''
+export const GET_MVK_FROM_FAUCET_ACTION = 'getFaucetMvk'
+export type StakingActionTypes = typeof STAKE_ACTION | typeof UNSTAKE_ACTION | typeof GET_MVK_FROM_FAUCET_ACTION | ''
 
 // CONST FOR ACTION LOADING
 export const STAKE_DEFAULT_LOADINGS: StakeActionsLoaderState = {
@@ -32,6 +33,14 @@ export const getInitialLoadingStateForFiredAction = (actionName: StakingActionTy
     return {
       ...STAKE_DEFAULT_LOADINGS,
       history: true,
+      userBalance: true,
+      doormanBalance: true,
+    }
+  }
+
+  if (actionName === GET_MVK_FROM_FAUCET_ACTION) {
+    return {
+      ...STAKE_DEFAULT_LOADINGS,
       userBalance: true,
       doormanBalance: true,
     }

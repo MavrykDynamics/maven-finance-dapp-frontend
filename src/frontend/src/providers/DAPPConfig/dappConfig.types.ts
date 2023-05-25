@@ -1,7 +1,5 @@
-import { XtxBakersType } from 'providers/TokensProvider/tokens.provider.types'
 import DAPPConfigProvider from './dappConfig.provider'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
-import { Dipdup_Contract } from 'utils/generated/graphqlTypes'
 import { DipDupContractsQuery } from 'utils/__generated__/graphql'
 
 export type CouncilMaxLength = {

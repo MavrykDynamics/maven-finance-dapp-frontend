@@ -34,6 +34,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 
 export type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
 
@@ -71,19 +72,14 @@ export const CreateNewVault = ({
 }) => {
   const { currentMarketAsset, setCreatedVaultAddress } = data ?? {}
   const dispatch = useDispatch()
-  const {
-    xtzBakers: { otherBakers, dao, mavrykDynamics },
-    avaliableCollaterals,
-  } = useSelector((state: State) => state.tokens)
+
+  const { xtzBakers } = useDAPPConfigContext()
+  const { otherBakers = [], dao, mavrykDynamics } = xtzBakers ?? {}
+  const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const {
     vaults: { myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
   const { userTokens } = useSelector((state: State) => state.wallet.user)
-
-  const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = useMemo(
-    () => [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])],
-    [dao, mavrykDynamics, otherBakers],
-  )
 
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<DDItemId, DropDownCollateralAssetType>>({})
@@ -135,9 +131,13 @@ export const CreateNewVault = ({
   )
 
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
-  const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
-    () =>
-      xtzBakers.map(({ name, fee, logo, address, yield: bakerYield, freespace, isDisabled }, idx) => ({
+  const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(() => {
+    const { otherBakers = [], dao, mavrykDynamics } = xtzBakers ?? {}
+
+    return otherBakers
+      .concat(dao ? dao : [])
+      .concat(mavrykDynamics ? mavrykDynamics : [])
+      .map(({ name, fee, logo, address, yield: bakerYield, freespace, isDisabled }, idx) => ({
         content: (
           <DropDownJsxChild>
             <div className="flex-row with-image">
@@ -154,9 +154,8 @@ export const CreateNewVault = ({
         bakerYield,
         bakerFreeSpace: freespace,
         disabled: isDisabled,
-      })),
-    [xtzBakers],
-  )
+      }))
+  }, [xtzBakers])
   const [bakerChosenDdItem, setAssetChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
   const showBakerAddress = useMemo(
     () => bakerChosenDdItem?.bakerName && collaterals.find(({ id }) => isTezosAsset(collateralsToSelect[id].gqlName)),

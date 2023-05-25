@@ -21,6 +21,7 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 
 const MAVRYK_DYNAMICS_BAKERY = 1
 const DAO_BAKERY = 2
@@ -38,9 +39,8 @@ export const ChangeBaker = ({
 }) => {
   const { bakerAddress = null, vaultAddress = '' } = data ?? {}
 
-  const {
-    xtzBakers: { otherBakers, dao, mavrykDynamics },
-  } = useSelector((state: State) => state.tokens)
+  const { xtzBakers } = useDAPPConfigContext()
+  const { otherBakers = [], dao, mavrykDynamics } = xtzBakers ?? {}
 
   const dispatch = useDispatch()
   const [activeTab, setActiveSliding] = useState(MAVRYK_DYNAMICS_BAKERY)
@@ -96,7 +96,16 @@ export const ChangeBaker = ({
         bakeryAddresses: otherBakers.map(({ address }) => address),
       },
     ],
-    [mavrykDynamics?.name, mavrykDynamics?.address, activeTab, dao?.name, dao?.address, otherBakers],
+    [
+      mavrykDynamics?.name,
+      mavrykDynamics?.address,
+      mavrykDynamics?.isDisabled,
+      activeTab,
+      dao?.name,
+      dao?.address,
+      dao?.isDisabled,
+      otherBakers,
+    ],
   )
 
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
