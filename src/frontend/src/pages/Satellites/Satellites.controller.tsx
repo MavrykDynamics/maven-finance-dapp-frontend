@@ -145,7 +145,7 @@ const Satellites = () => {
 
                   <div className={`satellitesList`}>
                     {feedsLedger.slice(0, 3).map((feed) => (
-                      <DataFeedCard feed={feed} key={feed.address} />
+                      <DataFeedCard feed={feed} oracleNodes={tabsInfo.totalSatelliteOracles} key={feed.address} />
                     ))}
                   </div>
                 </>

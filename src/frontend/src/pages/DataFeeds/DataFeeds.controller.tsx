@@ -35,6 +35,7 @@ import { EmptyContainer } from 'app/App.style'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { useLocation } from 'react-router'
+import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
 
 export const DataFeeds = () => {
   const dispatch = useDispatch()
@@ -43,6 +44,10 @@ export const DataFeeds = () => {
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   useDataFeedsUpdater()
+  const { totalOracleNetworks } = useSatelliteStatistics({
+    skipActiveSatellitesCount: true,
+    skipTotalDelegatedMVK: true,
+  })
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
@@ -140,7 +145,7 @@ export const DataFeeds = () => {
               <>
                 <div className="list-wrapper">
                   {paginatedFeeds.map((item) => (
-                    <DataFeedCard feed={item} key={item.address} />
+                    <DataFeedCard feed={item} oracleNodes={totalOracleNetworks} key={item.address} />
                   ))}
                 </div>
 

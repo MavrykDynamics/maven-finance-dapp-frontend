@@ -3,7 +3,15 @@ import { useSubscription } from '@apollo/client'
 import { ORACLES_COUNT_STAT, ACTIVE_SATELLITES_COUNT_STAT, SATELLITES_TOTAL_SMVK_NUMBERS } from 'gql/queries'
 import { calcWithoutPrecision } from 'utils/calcFunctions'
 
-export const useSatelliteStatistics = () => {
+type Options = {
+  skipOracleCount?: boolean
+  skipActiveSatellitesCount?: boolean
+  skipTotalDelegatedMVK?: boolean
+}
+
+export const useSatelliteStatistics = (options: Options = {}) => {
+  const { skipOracleCount = false, skipActiveSatellitesCount = false, skipTotalDelegatedMVK = false } = options
+
   const [storage, setStorage] = useState({
     totalActiveSatellites: 0,
     totalOracleNetworks: 0,
@@ -15,9 +23,12 @@ export const useSatelliteStatistics = () => {
       const { data } = response
 
       if (data) {
+        console.log('yes')
         setStorage({ ...storage, totalOracleNetworks: data.satellite_aggregate.aggregate?.count ?? 0 })
       }
     },
+    skip: skipOracleCount,
+    shouldResubscribe: true,
   })
 
   useSubscription(ACTIVE_SATELLITES_COUNT_STAT, {
@@ -25,9 +36,12 @@ export const useSatelliteStatistics = () => {
       const { data } = response
 
       if (data) {
+        console.log('no')
         setStorage({ ...storage, totalActiveSatellites: data.satellite_aggregate.aggregate?.count ?? 0 })
       }
     },
+    skip: skipActiveSatellitesCount,
+    shouldResubscribe: true,
   })
 
   useSubscription(SATELLITES_TOTAL_SMVK_NUMBERS, {
@@ -47,6 +61,8 @@ export const useSatelliteStatistics = () => {
         setStorage({ ...storage, totalDelegatedMVK: calcWithoutPrecision(totalDelegatedMVK) })
       }
     },
+    skip: skipTotalDelegatedMVK,
+    shouldResubscribe: true,
   })
 
   return { ...storage }
