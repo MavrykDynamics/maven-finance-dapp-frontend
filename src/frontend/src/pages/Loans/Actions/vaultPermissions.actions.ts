@@ -19,7 +19,7 @@ import { VAULT_ALLOWANCE_ACCOUNTS, VAULT_ALLOWANCE_ANY } from '../Loans.const'
 
 import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
-import { LoanVaultAllowanceType } from 'utils/TypesAndInterfaces/Loans'
+import { LoanVaultAllowanceType, UpdateTokenOperator } from 'utils/TypesAndInterfaces/Loans'
 
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
@@ -203,60 +203,64 @@ export const managePermissionsAction =
     }
   }
 
-export const updateOperatorsAction = (callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
+export const updateOperatorsAction =
+  (vaultAddress: string, tokenName: string, updateOperators: UpdateTokenOperator[], callback: () => void) =>
+  async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
 
-  // check whether we can send transaction
-  if (!state.wallet.accountPkh) {
-    await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  try {
-    // prepare and send transaction
-    const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
-    // const transaction  = await contract?.methods.any.send()
-
-    // close popup
-    callback()
-    dispatch(toggleActionFullScreenLoader(true))
-    dispatch(toggleActionCompletion(true))
-    dispatch(showToaster(TOASTER_INFO, 'Updating operators...', ACTION_START_MESSAGE_TEXT))
-
-    // turn off fs actions loader and start data updating after 5s after operation started
-    setTimeout(async () => {
-      await dispatch(toggleActionFullScreenLoader(false))
-      await dispatch(
-        showToaster(
-          TOASTER_LOADING,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        ),
-      )
-
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
-
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(getLoansStorage())
-
-          await dispatch(hideToaster())
-          await dispatch(showToaster(TOASTER_SUCCESS, 'Operators updated.', ACTION_COMPLETION_MESSAGE_TEXT))
-          await dispatch(toggleActionCompletion(false))
-        },
-        currentOperationLevel,
-      })
-    }, 5000)
-  } catch (error) {
-    console.error('updateOperatorsAction error:', error)
-    if (error instanceof Error) {
-      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-      callback()
+    // check whether we can send transaction
+    if (!state.wallet.accountPkh) {
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
     }
-    dispatch(toggleActionFullScreenLoader(false))
-    dispatch(toggleActionCompletion(false))
+
+    try {
+      // prepare and send transaction
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(vaultAddress)
+      const transaction = await contract?.methods
+        .initVaultAction('updateTokenOperators', tokenName, updateOperators)
+        .send()
+
+      // close popup
+      callback()
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Updating operators...', ACTION_START_MESSAGE_TEXT))
+
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
+
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
+
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getLoansStorage())
+
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Operators updated.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
+    } catch (error) {
+      console.error('updateOperatorsAction error:', error)
+      if (error instanceof Error) {
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
+        callback()
+      }
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
+    }
   }
-}
