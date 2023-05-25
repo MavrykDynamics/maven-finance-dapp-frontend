@@ -45,6 +45,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const dispatch = useDispatch()
@@ -61,6 +62,9 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   } = useSelector((state: State) => state.governance)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { satelliteMapper } = useSatellitesContext()
+
+  // listen for satellites only for proposal round
+  useSatellitesUpdater('', { skip: governancePhase !== 'PROPOSAL' })
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
