@@ -1,18 +1,16 @@
 import TokensProvider from './tokens.provider'
 
-import { M_Token } from 'utils/generated/graphqlTypes'
-import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
-import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { GetAvaliableCollateralsQuery } from 'utils/__generated__/graphql'
-import { Feed } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
+import { normalizeTokenPrices } from './hooks/tokens.normalizer'
 
 export type XtxBakersType = {
   otherBakers: Array<XtzBakerType>
   dao: (XtzBakerType & { description: string; isDisabled: boolean }) | null
   mavrykDynamics: (XtzBakerType & { description: string; isDisabled: boolean }) | null
 }
+
+type TokensPricesType = ReturnType<typeof normalizeTokenPrices>
 
 export type WhiteListTokensType = Array<{
   symbol: string
@@ -22,9 +20,9 @@ export type WhiteListTokensType = Array<{
 }>
 
 export type TokensContext = {
+  // TODO: implement later
   // data
   // dipDupTokens: Array<DipDupTokensGraphQl>
-  tokensPrices: Record<string, number>
   // avaliableCollaterals: Array<AvaliableCollateralType> | null
   // whitelistTokens: WhiteListTokensType
   // mTokens: Array<M_Token>
@@ -34,6 +32,8 @@ export type TokensContext = {
   // initializeDAPPTokens: InstanceType<typeof TokensProvider>['initializeDAPPTokens']
   // updateCollateralsData: InstanceType<typeof TokensProvider>['updateCollateralsData']
   // updateAvaliableCollaterals: InstanceType<typeof TokensProvider>['updateAvaliableCollaterals']
+
+  tokensPrices: TokensPricesType
   updateTokensPrices: InstanceType<typeof TokensProvider>['updateTokensPrices']
 }
 

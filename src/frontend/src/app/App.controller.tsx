@@ -40,7 +40,6 @@ import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassC
 import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 
-// export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
 export type GetState = typeof store.getState
@@ -68,7 +67,7 @@ const AppContainer = () => {
   /**
    * dispatch(getTokensForDAPP())
    * dispatch(getAvaliableCollaterals())
-   *
+   * hexagonal arch
    * will be removed after tokens reorganization, cuz it'll be in useInitializer and will be on context
    */
 

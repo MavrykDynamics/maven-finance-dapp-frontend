@@ -292,15 +292,12 @@ export class StakeProviderClass extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: ReduxState) => {
-  console.log({ state })
-  return {
-    doormanAddress: state.contractAddresses.doormanAddress.address,
-    mvkTokenAddress: state.contractAddresses.mvkTokenAddress.address,
-    accountPkh: state.wallet.accountPkh,
-    user: state.wallet.user,
-  }
-}
+const mapStateToProps = (state: ReduxState) => ({
+  doormanAddress: state.contractAddresses.doormanAddress.address,
+  mvkTokenAddress: state.contractAddresses.mvkTokenAddress.address,
+  accountPkh: state.wallet.accountPkh,
+  user: state.wallet.user,
+})
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   dispatch,

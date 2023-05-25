@@ -74,7 +74,7 @@ export const DataFeeds = () => {
         )
       }),
     )
-  }, [feedsAddresses, chosenDdItem, searchInputValue])
+  }, [feedsAddresses, chosenDdItem, searchInputValue, feedsMapper])
 
   const handleSelect = (selectedOption: string) => {
     setDdIsOpen(!ddIsOpen)

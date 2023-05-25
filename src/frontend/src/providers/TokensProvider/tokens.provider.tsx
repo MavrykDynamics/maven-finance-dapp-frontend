@@ -4,28 +4,13 @@ import React, { useContext } from 'react'
 import { dataFeedsContext } from '../DataFeedsProvider/dataFeeds.provider'
 
 // utils
-import {
-  normalizeDipDupTokens,
-  normalizeDipDupContracts,
-  normalizeMTokens,
-  normalizeWhitelistTokens,
-} from 'utils/normalizers/DAPPTokens.normalizers'
-import { getSymbolAndNameFromFeedName } from 'utils/parse'
-import { convertNumberForClient } from 'utils/calcFunctions'
 
 // helpers
-import { getCollateralTokens } from 'pages/Loans/LoansFethcers'
+import { normalizeTokenPrices } from './hooks/tokens.normalizer'
 
 // types
 import { State, Props, TokensContext } from './tokens.provider.types'
-import {
-  DappTokensQuery,
-  Dipdup_Token_Metadata,
-  GetAvaliableCollateralsQuery,
-  Lending_Controller_Collateral_Token,
-  SubscribeOracleStorageAggregatorSubscription,
-} from 'utils/__generated__/graphql'
-import { DataFeedsContext, Feed } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
+import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
@@ -38,27 +23,21 @@ export class TokensProvider extends React.Component<Props, State> {
     super(props)
     this.state = {
       context: {
-        // dipDupTokens: [],
-        // whitelistTokens: [
-        //   {
-        //     symbol: 'xtz',
-        //     address: 'KT1XYiqkAE2BtSeujKsiHBuRAAt3kmeuK4pP',
-        //     shortSymbol: 'tez',
-        //     id: 0,
-        //   },
-        // ],
-        // avaliableCollaterals: null,
-        tokensPrices: { mvk: 1 },
-        // mTokens: [],
-        // internal helper state
-        // collateralData: null,
-        // actions
-        // initializeDAPPTokens: this.initializeDAPPTokens,
-        // updateCollateralsData: this.updateCollateralsData,
-        // updateAvaliableCollaterals: this.updateAvaliableCollaterals,
+        tokensPrices: { MVK: 1 },
         updateTokensPrices: this.updateTokensPrices,
       },
     }
+  }
+
+  updateTokensPrices = (feedsLedger: SubscribeOracleStorageAggregatorSubscription['aggregator']) => {
+    const normalizedTokenPrices = normalizeTokenPrices(feedsLedger)
+
+    this.setState({
+      context: {
+        ...this.state.context,
+        tokensPrices: { ...this.state.context.tokensPrices, ...normalizedTokenPrices },
+      },
+    })
   }
 
   // initializeDAPPTokens = (dappTokensData: DappTokensQuery) => {
@@ -83,26 +62,6 @@ export class TokensProvider extends React.Component<Props, State> {
   //     },
   //   })
   // }
-
-  updateTokensPrices = (feedsLedger: SubscribeOracleStorageAggregatorSubscription['aggregator']) => {
-    console.log({ feedsLedger })
-    // const tokenPricesFromFeeds = feedsLedger.reduce(
-    //   (acc: Record<string, number>, { name, last_completed_data, decimals }) => {
-    //     const assetSymbol = getSymbolAndNameFromFeedName(name).symbol
-    //     const rate = convertNumberForClient({ number: last_completed_data, grade: decimals })
-    //     acc[assetSymbol] = rate
-    //     return acc
-    //   },
-    //   {},
-    // )
-
-    // this.setState({
-    //   context: {
-    //     ...this.state.context,
-    //     tokensPrices: tokenPricesFromFeeds,
-    //   },
-    // })
-  }
 
   // updateCollateralsData = (collateralData: GetAvaliableCollateralsQuery) => {
   //   this.setState({

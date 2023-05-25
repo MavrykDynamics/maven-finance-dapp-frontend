@@ -32,8 +32,8 @@ export class DataFeedsProvider extends React.Component<Props, State> {
     this.setState({
       context: {
         ...this.state.context,
-        feedsCategories: [...this.state.context.feedsCategories, ...feedsCategories],
-        feedsAddresses: [...this.state.context.feedsAddresses, ...feedsAddresses],
+        feedsCategories: Array.from(new Set([...this.state.context.feedsCategories, ...feedsCategories])),
+        feedsAddresses: Array.from(new Set([...this.state.context.feedsAddresses, ...feedsAddresses])),
         feedsMapper: { ...this.state.context.feedsMapper, ...feedsMapper },
       },
     })

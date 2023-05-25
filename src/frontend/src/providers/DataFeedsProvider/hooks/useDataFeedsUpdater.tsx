@@ -45,19 +45,13 @@ export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
     }
   }, [skip, aggregatorLoading])
 
-  console.log({
-    aggregatorLoading,
-    isContractsLoading,
-    feeds,
-    dipDupContracts,
-  })
-
+  // TODO: remove when dipDupContracts are updated
   useEffect(() => {
-    if (!aggregatorLoading && !isContractsLoading) {
+    if (!aggregatorLoading && !isContractsLoading && feeds.length) {
       updateDataFeeds(feeds)
       updateTokensPrices(feeds)
     }
-  }, [aggregatorLoading, feeds, isContractsLoading, updateDataFeeds])
+  }, [aggregatorLoading, feeds, isContractsLoading])
 
-  return { isLoading: !aggregatorLoading }
+  return { isLoading: aggregatorLoading }
 }
