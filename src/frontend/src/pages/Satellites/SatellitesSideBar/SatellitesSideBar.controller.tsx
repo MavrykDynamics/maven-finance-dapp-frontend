@@ -2,16 +2,15 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { State } from 'reducers'
-import { calcWithoutPrecision } from 'utils/calcFunctions'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/satellites.const'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { useChainCount } from 'providers/DataFeedsProvider/hooks/useChainCount'
-import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
+import { useOracleRewarsAvg } from 'providers/DataFeedsProvider/hooks/useOracleRewarsAvg'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -57,21 +56,12 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     accountPkh,
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
-  const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSatellitesContext()
   const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
-
   // onChain data points subscription
   const { dataPointsCount } = useChainCount()
 
-  const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
-
-  const averageRevard = calcWithoutPrecision(
-    feedsLedger.reduce((acc, { reward_amount_smvk }) => {
-      acc += reward_amount_smvk
-      return acc
-    }, 0) / Math.max(feedsLedger.length, 1),
-  )
+  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
+  const { oracleRewardsAvg } = useOracleRewarsAvg()
 
   return (
     <SatelliteSideBarStyled>
@@ -109,7 +99,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <SideBarItem>
           <h3>Number of Satellites</h3>
           <var>
-            <CommaNumber value={activeSatellitesIds.length} showDecimal={false} />
+            <CommaNumber value={totalActiveSatellites} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>
@@ -121,7 +111,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <SideBarItem>
           <h3>Total Oracles</h3>
           <var>
-            <CommaNumber value={oraclesIds.length} showDecimal={false} />
+            <CommaNumber value={totalOracleNetworks} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>
@@ -132,7 +122,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         </SideBarItem>
         <SideBarItem>
           <h3>Avg. Oracles Rewards MVK</h3>
-          <var>{averageRevard ? <CommaNumber value={averageRevard} /> : '-'}</var>
+          <var>{oracleRewardsAvg ? <CommaNumber value={oracleRewardsAvg} /> : '-'}</var>
         </SideBarItem>
       </SideBarSection>
 

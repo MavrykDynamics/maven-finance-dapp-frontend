@@ -199,6 +199,15 @@ export const SUBSCRIBTION_ORACLE_STORAGE_AGGREGATOR = gql(`
   }
 `)
 
+// STATISTICS
+export const REWARD_AMOUNT_SMVK = gql(`
+subscription rewardAmountSMVK {
+  aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {
+    reward_amount_smvk
+  }
+}
+`)
+
 // thos one for useDataFeedsUpdater
 export const getOrcaleStorageAggregatorQuery = (
   address?: string,

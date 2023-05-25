@@ -34,6 +34,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const oracleFeeds = feedsLedger.length
   const popularFeeds = feedsLedger.slice(0, 3)
 
+  // TODO sub for some by type 1
   const oracleRewardsTotal = useMemo(
     () =>
       oraclesIds.reduce((acc, address) => {

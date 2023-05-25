@@ -1,7 +1,5 @@
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { State } from 'reducers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
 import { emptyContainer } from './LendingTab.controller'
@@ -14,9 +12,12 @@ import { SatellitesContentStyled, TabWrapperStyled } from './DashboardTabs.style
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
 export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
   const { activeSatellitesIds, satelliteMapper } = useSatellitesContext()
+
+  useSatellitesUpdater()
 
   const satellitesInfo = activeSatellitesIds.reduce(
     (acc, satelliteAddress) => {

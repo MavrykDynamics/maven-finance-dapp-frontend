@@ -45,6 +45,7 @@ import {
   MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
 
 type ExtendedTabItem = TabItem & {
   path: string
@@ -97,8 +98,6 @@ export const SatelliteGovernance = () => {
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
 
-  const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSatellitesContext()
-
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {
@@ -111,6 +110,8 @@ export const SatelliteGovernance = () => {
   const {
     dataFeeds: { feedNameMaxLength },
   } = useDAPPConfigContext()
+
+  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
 
   const ddItems = useMemo(() => itemsForDropDown.map((item) => getDdItem(item)), [])
 
@@ -144,7 +145,6 @@ export const SatelliteGovernance = () => {
     return currentSatelliteGovIds?.slice(from, to)
   }, [currentListName, currentPage, currentSatelliteGovIds])
 
-  const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
   const ongoingActionsAmount = ongoingSatelliteGovIds.length
 
   const maxLength = {
@@ -216,11 +216,11 @@ export const SatelliteGovernance = () => {
         <article className="satellite-governance-article">
           <SmallInfoBlock>
             <h3>Total Active Satellites</h3>
-            <div className="info-content">{activeSatellitesIds.length}</div>
+            <div className="info-content">{totalActiveSatellites}</div>
           </SmallInfoBlock>
           <SmallInfoBlock>
             <h3>Total Oracle Networks</h3>
-            <div className="info-content">{oraclesIds.length}</div>
+            <div className="info-content">{totalOracleNetworks}</div>
           </SmallInfoBlock>
           <SmallInfoBlock>
             <h3>Total Delegated MVK</h3>

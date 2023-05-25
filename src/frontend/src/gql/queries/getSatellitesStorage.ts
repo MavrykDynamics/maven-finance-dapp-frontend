@@ -4,6 +4,45 @@ import { gql } from 'utils/__generated__'
 import { gql as apolloGql } from '@apollo/client'
 import { SatelliteDataSubscription } from 'utils/__generated__/graphql'
 
+// statistic subs
+
+export const ORACLES_COUNT_STAT = gql(`
+subscription OraclesCountStat {
+  satellite_aggregate(where: {user: {aggregator_oracles_aggregate: {count: {predicate: {_gt: 0}}}}}) {
+    aggregate {
+      count
+    }
+  }
+}
+`)
+
+export const ACTIVE_SATELLITES_COUNT_STAT = gql(`
+subscription ActiveSatellitesCount {
+  satellite_aggregate(where: {user: {satellites: {status: {_eq: "0"}, currently_registered: {_eq: true}}}}) {
+    aggregate {
+      count
+    }
+  }
+}
+`)
+
+export const SATELLITES_TOTAL_SMVK_NUMBERS = gql(`
+subscription SatelliteStatTotal {
+  satellite_aggregate(where: {currently_registered: {_eq: true}, status: {_eq: "0"}}) {
+    nodes {
+      user {
+        smvk_balance,
+      }
+      delegations {
+        user {
+          smvk_balance
+        }
+      }
+    }
+  }
+}
+`)
+
 // queries
 export const SATELLITES_STORAGE_QUERY = gql(`
   query SatellitesStorage {

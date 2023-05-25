@@ -18,6 +18,7 @@ import { UserActionHistory } from './UserOperationsHistory'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
 const SatelliteTab = () => {
   const dispatch = useDispatch()
@@ -26,6 +27,8 @@ const SatelliteTab = () => {
     user: { availableSatellitesRewards },
   } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSatellitesContext()
+
+  useSatellitesUpdater(accountPkh)
 
   const satelliteRecord = satelliteMapper[accountPkh]
 

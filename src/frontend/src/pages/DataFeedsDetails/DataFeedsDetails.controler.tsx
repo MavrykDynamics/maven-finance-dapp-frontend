@@ -54,6 +54,7 @@ const DataFeedDetails = () => {
     }
   }, [feedId, feedsLedger])
 
+  // TODO try ghql
   const feedsSatellites = useMemo(
     () =>
       selectedFeed?.address
