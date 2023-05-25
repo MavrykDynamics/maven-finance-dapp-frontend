@@ -17,6 +17,10 @@ export const NoItemsInTabStyled = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.textColor};
   }
 
+  .manage-btn {
+    width: 250px;
+  }
+
   .lending-tab-no-items-btn {
     max-width: 250px;
 
@@ -26,43 +30,15 @@ export const NoItemsInTabStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const LoansTabStyled = styled.div<{ theme: MavrykTheme }>`
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
-  background-color: ${({ theme }) => theme.containerColor};
-  border-radius: 10px;
-  padding: 30px;
-  padding-bottom: 40px;
-  position: relative;
+export const LendingTabStyled = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  row-gap: 40px;
 
-  .has-items-borrow-btn {
-    position: absolute;
-    right: 30px;
-    top: 20px;
-    max-width: 250px;
-
-    svg {
-      stroke: unset;
-    }
-  }
-
-  .checkbox {
-    margin: 25px 0 10px 0;
-  }
-
-  .factory-info {
-    display: flex;
-    align-items: center;
-    column-gap: 10px;
-    font-weight: 600;
-    font-size: 14px;
-    color: ${({ theme }) => theme.textColor};
-    position: absolute;
-    bottom: 10px;
-    right: 30px;
-
-    div {
-      font-size: 16px;
-    }
+  .stats-and-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 20px;
   }
 `
 
@@ -100,31 +76,7 @@ export const VaultsList = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const LendingTabListItem = styled.div<{ theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.containerColor};
-  border-radius: 10px;
-  padding: 18px 20px 8px 20px;
-  display: grid;
-  grid-template-columns: 0.8fr 0.8fr 0.8fr 1fr 1fr 1fr 125px 125px;
-  column-gap: 10px;
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
-
-  .lending-btn {
-    width: 120px;
-    height: 36px;
-    font-weight: 600;
-    font-size: 16px;
-    padding: 0;
-    align-items: center;
-    display: flex;
-
-    svg {
-      stroke-width: 0.5px;
-    }
-  }
-`
-
-export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
+export const BorrowingExpandedCard = styled.div<{ theme: MavrykTheme }>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -143,7 +95,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  .top {
+  .stats-and-actions {
     display: grid;
     grid-template-columns: 450px auto;
     column-gap: 20px;
@@ -161,55 +113,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     margin: 0 auto;
   }
 
-  .block-name {
-    font-weight: 600;
-    font-size: 18px;
-    color: ${({ theme }) => theme.textColor};
-    margin-bottom: 10px;
-
-    &.margin-top {
-      margin-top: 60px;
-    }
-
-    &.margin-top-20 {
-      margin-top: 20px;
-    }
-  }
-
-  .borrowed-data {
-    display: flex;
-
-    > div:not(.buttons-wrapper) {
-      width: 17%;
-    }
-
-    .buttons-wrapper {
-      display: grid;
-      grid-template-columns: 180px 180px;
-      column-gap: 10px;
-      margin-left: auto;
-    }
-  }
-
   .bottom-info-row {
-    display: flex;
-    align-items: center;
-    width: 400px;
-    margin: 6px 0;
-
-    .name {
-      margin-right: 10px;
-    }
-
-    .value {
-      color: ${({ theme }) => theme.dataColor};
-      font-weight: 600;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      column-gap: 6px;
-    }
-
     /* TODO: remove button styles from here */
     button,
     a {
@@ -240,21 +144,34 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  .close-vault {
-    position: absolute;
-    right: 18px;
-    bottom: 20px;
-    width: 250px;
-    height: 36px;
+  // styles below useing only in OldBorrowingExpandComponent
+  .block-name {
+    font-weight: 600;
+    font-size: 18px;
+    color: ${({ theme }) => theme.textColor};
+    margin-bottom: 10px;
 
-    > div {
-      display: flex;
-      align-items: center;
+    &.margin-top {
+      margin-top: 60px;
     }
 
-    svg {
-      width: 15px;
-      height: 15px;
+    &.margin-top-20 {
+      margin-top: 20px;
+    }
+  }
+
+  .borrowed-data {
+    display: flex;
+
+    > div:not(.buttons-wrapper) {
+      width: 17%;
+    }
+
+    .buttons-wrapper {
+      display: grid;
+      grid-template-columns: 180px 180px;
+      column-gap: 10px;
+      margin-left: auto;
     }
   }
 
@@ -270,14 +187,21 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const BorrowingExpandCardActionsSectionStyled = styled.div`
+export const LoansActionsSection = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 30px;
   padding: 30px;
-
-  background-color: ${({ theme }) => theme.backgroundColor};
   border-radius: 10px;
+
+  &.borrowing-tab {
+    background-color: ${({ theme }) => theme.backgroundColor};
+  }
+
+  &.lending-tab {
+    background-color: ${({ theme }) => theme.containerColor};
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  }
 
   .coming-soon {
     text-align: center;
@@ -306,6 +230,15 @@ export const BorrowingExpandCardActionsSectionStyled = styled.div`
     color: ${({ theme }) => theme.textColor};
   }
 
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 15px;
+
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border-radius: 10px;
+  }
+
   .button-wrapper {
     width: 300px;
     margin: 0 auto;
@@ -320,18 +253,39 @@ export const BorrowingExpandCardActionsSectionStyled = styled.div`
   }
 `
 
-export const BorrowingTabListItemValuesSectionStyled = styled.div<{ theme: MavrykTheme }>`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 30px;
-  row-gap: 60px;
+export const LoansValuesSection = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
   padding: 30px;
-
-  background-color: ${({ theme }) => theme.backgroundColor};
   border-radius: 10px;
+
+  &.borrowing-tab {
+    row-gap: 60px;
+    background-color: ${({ theme }) => theme.backgroundColor};
+
+    .stats {
+      row-gap: 60px;
+    }
+  }
+
+  &.lending-tab {
+    row-gap: 45px;
+    background-color: ${({ theme }) => theme.containerColor};
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+
+    .stats {
+      row-gap: 45px;
+    }
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 30px;
+  }
 `
 
-export const BorrowingTabListItemValuesSectionInfo = styled.div<{
+export const LoansValuesSectionInfo = styled.div<{
   theme: MavrykTheme
   hasRate?: boolean
   customColor?: string
@@ -371,9 +325,6 @@ export const BorrowingTabListItemValuesSectionInfo = styled.div<{
   }
 
   &.learn-more {
-    grid-column: 1 / 3;
-    grid-row: 5;
-
     font-weight: 500;
     font-size: 14px;
     line-height: 24px;
@@ -384,9 +335,6 @@ export const BorrowingTabListItemValuesSectionInfo = styled.div<{
   }
 
   &.collateral-diagram {
-    grid-column: 1 / 3;
-    grid-row: 4;
-
     .percentage {
       width: 100%;
       display: flex;

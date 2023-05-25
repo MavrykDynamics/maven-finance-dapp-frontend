@@ -13,6 +13,18 @@ export const DEFAULT_LOANS_INPUT_VALUE: LoansPopupsInputStateType = {
 export const getOnBlurValue = (inputValue: string) => (inputValue === '' ? '0' : inputValue)
 export const getOnFocusValue = (inputValue: string) => (inputValue === '0' ? '' : inputValue)
 
+export type ConfirmAddLendingAssetDataType =
+  | (AddLendingAssetDataType & {
+      inputAmount: number
+    })
+  | null
+
+export type ConfirmRemoveLendingAssetDataType =
+  | (RemoveLendingAssetDataType & {
+      inputAmount: number
+    })
+  | null
+
 export type ConfirmBorrowPopupDataType = {
   inputAmount: number
   vaultId: number
@@ -155,6 +167,8 @@ export type ModalStateType<T = {}> = {
 }
 
 export type LoansPopupsContextStateType = {
+  confirmAddLendingAssetPopup: ModalStateType<ConfirmAddLendingAssetDataType>
+  confirmRemoveLendingAssetPopup: ModalStateType<ConfirmRemoveLendingAssetDataType>
   confirmRepayPartPopup: ModalStateType<ConfirmRepayPartPopupDataType>
   confirmRepayFullPopup: ModalStateType<ConfirmRepayFullPopupDataType>
   confirmBorrowAssetPopup: ModalStateType<ConfirmBorrowPopupDataType>
@@ -173,6 +187,10 @@ export type LoansPopupsContextStateType = {
   removeLendingAssetPopup: ModalStateType<RemoveLendingAssetDataType>
   liquidateVaultPopup: ModalStateType<LiquidateVaultDataType>
 
+  openConfirmAddLendingAssetPopup: InstanceType<typeof LoansPopupsProvider>['openConfirmAddLendingAssetPopup']
+  closeConfirmAddLendingAssetPopup: InstanceType<typeof LoansPopupsProvider>['closeConfirmAddLendingAssetPopup']
+  openConfirmRemoveLendingAssetPopup: InstanceType<typeof LoansPopupsProvider>['openConfirmRemoveLendingAssetPopup']
+  closeConfirmRemoveLendingAssetPopup: InstanceType<typeof LoansPopupsProvider>['closeConfirmRemoveLendingAssetPopup']
   openConfirmBorrowPopup: InstanceType<typeof LoansPopupsProvider>['openConfirmBorrowPopup']
   closeConfirmBorrowPopup: InstanceType<typeof LoansPopupsProvider>['closeConfirmBorrowPopup']
   openConfirmRepayPopup: InstanceType<typeof LoansPopupsProvider>['openConfirmRepayPopup']
@@ -215,6 +233,8 @@ const DEFAULT_LOANS_POPUP_STATE = {
 }
 
 export const DEFAULT_LOANS_POPUPS_STATE = {
+  confirmAddLendingAssetPopup: DEFAULT_LOANS_POPUP_STATE,
+  confirmRemoveLendingAssetPopup: DEFAULT_LOANS_POPUP_STATE,
   confirmRepayPartPopup: DEFAULT_LOANS_POPUP_STATE,
   confirmRepayFullPopup: DEFAULT_LOANS_POPUP_STATE,
   confirmBorrowAssetPopup: DEFAULT_LOANS_POPUP_STATE,

@@ -1,11 +1,11 @@
-
 import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-
-import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TRANSPARENT } from 'app/App.components/Button/Button.constants'
@@ -15,27 +15,43 @@ import {
   PAGINATION_SIDE_CENTER,
   calculateSlicePositions,
 } from 'app/App.components/Pagination/pagination.consts'
+import { PRIMARY_TRANSACTION_HISTORY_STYLE, SECONDARY_TRANSACTION_HISTORY_STYLE } from '../Loans.const'
 
 import { TransactionHistoryStyled } from '../Loans.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { EmptyContainer } from 'app/App.style'
-import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-
 
 type TransactionHistoryPropsType = {
-  currentToken: LoanMarketType | undefined
-  vaultAddress: string
+  transactionHistory: LoanMarketType['transactionHistory']
+  vaultAddress?: string
+  lendingControllerAddress?: string
+  styleType?: typeof PRIMARY_TRANSACTION_HISTORY_STYLE | typeof SECONDARY_TRANSACTION_HISTORY_STYLE
 }
 
-export const TransactionHistory = ({ currentToken, vaultAddress }: TransactionHistoryPropsType) => {
+/**
+ *
+ * @param transactionHistory - transaction list, if the array is empty, you get the text "No transaction history to show".
+ * @param vaultAddress - if you want to get a transaction history for one vault, you can specify this option.
+ * @param lendingControllerAddress - if you want the lending controller addressto appear at the bottom left, you can specify this option.
+ * @param styleType - you can set one of several background options. Use the constant from Loans.const.tsx.
+ */
+export const TransactionHistory = ({
+  transactionHistory,
+  vaultAddress,
+  lendingControllerAddress,
+  styleType = PRIMARY_TRANSACTION_HISTORY_STYLE,
+}: TransactionHistoryPropsType) => {
   const { search } = useLocation()
 
-  const history = useMemo(
-    () => currentToken?.transactionHistory.filter((item) => item.vaultAddress === vaultAddress),
-    [currentToken?.transactionHistory, vaultAddress],
-  )
+  const history = useMemo(() => {
+    const historyTransaction = vaultAddress
+      ? transactionHistory.filter((item) => item.vaultAddress === vaultAddress)
+      : transactionHistory
+
+    return historyTransaction
+  }, [transactionHistory, vaultAddress])
+  console.log(styleType)
 
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
 
@@ -45,11 +61,11 @@ export const TransactionHistory = ({ currentToken, vaultAddress }: TransactionHi
   }, [currentPage, history])
 
   return (
-    <TransactionHistoryStyled>
+    <TransactionHistoryStyled className={styleType}>
       <div className="main">
         <H2Title>Transaction History</H2Title>
 
-        {history?.length ? (
+        {history.length ? (
           <>
             <Table className="treasury-table">
               <TableHeader className="simple-header treasury">
@@ -96,7 +112,7 @@ export const TransactionHistory = ({ currentToken, vaultAddress }: TransactionHi
             }}
           >
             <img src="/images/not-found.svg" alt=" No Transaction History to show" />
-            <figcaption> No Transaction History to show</figcaption>
+            <figcaption>No Transaction History to show</figcaption>
           </EmptyContainer>
         )}
       </div>
@@ -106,6 +122,12 @@ export const TransactionHistory = ({ currentToken, vaultAddress }: TransactionHi
         listName={TRANSACTION_HISTORY_TABLE_NAME}
         side={PAGINATION_SIDE_CENTER}
       />
+
+      {lendingControllerAddress ? (
+        <div className="lending-controller">
+          Lending Controller Address: <TzAddress tzAddress={lendingControllerAddress} type={BLUE} isBold />
+        </div>
+      ) : null}
     </TransactionHistoryStyled>
   )
 }

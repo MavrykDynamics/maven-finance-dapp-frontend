@@ -1,28 +1,12 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
-import {
-  COLLATERAL_RATIO_GRADIENT,
-  VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS,
-  VAULT_CARD_REPAY_SLIDING_BUTTONS,
-  getCollateralRationPersent,
-  getStatusByCollateralRatio,
-  vaultCardTabNames,
-} from 'pages/Loans/Loans.const'
+import { State } from 'reducers'
 
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import Expand from 'app/App.components/Expand/Expand.view'
 import { StatusMessage } from '../StatusMessage.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { scrollToFullView } from 'utils/scrollToFullView'
-
-import { ThreeLevelListItem } from '../../Loans.style'
-import { BorrowingExpandCardActionsSectionStyled, BorrowingTabListItemExpanded } from '../LoansComponents.style'
-import { loansPopupsContext } from '../Modals/LoansModals.provider'
-
-import { State } from 'reducers'
-import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { BorrowingExpandCardMenuSection } from './BorrowingExpandCardMenuSection.view'
 import { BorrowingExpandCardValuesSection } from './BorrowingExpandCardValuesSection.view'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
@@ -31,7 +15,23 @@ import { BorrowingExpandCardRepaySection } from './BorrowingExpandCardRepaySecti
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+
+import { ThreeLevelListItem } from '../../Loans.style'
+import { LoansActionsSection, BorrowingExpandedCard } from '../LoansComponents.style'
+import { loansPopupsContext } from '../Modals/LoansModals.provider'
+
+import getTimestampByLevel from 'utils/api/getTimestampByLevel'
+import { scrollToFullView } from 'utils/scrollToFullView'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import {
+  COLLATERAL_RATIO_GRADIENT,
+  VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS,
+  VAULT_CARD_REPAY_SLIDING_BUTTONS,
+  getCollateralRationPersent,
+  getStatusByCollateralRatio,
+  loansTabNames,
+} from 'pages/Loans/Loans.const'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -272,9 +272,9 @@ export const BorrowingExpandCard = ({
   }
 
   useEffect(() => {
-    if (activeRepayBorrowTab?.id !== vaultCardTabNames.REPAY) return
+    if (activeRepayBorrowTab?.id !== loansTabNames.REPAY) return
 
-    setActiveRepayTab(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.id === vaultCardTabNames.REPAY_IN_PART))
+    setActiveRepayTab(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.id === loansTabNames.REPAY_IN_PART))
   }, [activeRepayBorrowTab])
 
   useEffect(() => {
@@ -359,10 +359,10 @@ export const BorrowingExpandCard = ({
         }
       >
         {children || (
-          <BorrowingTabListItemExpanded>
+          <BorrowingExpandedCard>
             {vaultStatus && <StatusMessage status={vaultStatus} timestamp={timerTimestamp} />}
 
-            <div className="top">
+            <div className="stats-and-actions">
               <BorrowingExpandCardValuesSection
                 collateralRatio={collateralRatio}
                 collateralBalance={collateralBalance}
@@ -374,14 +374,14 @@ export const BorrowingExpandCard = ({
                 rate={rate}
               />
 
-              <BorrowingExpandCardActionsSectionStyled>
+              <LoansActionsSection className='borrowing-tab'>
                 <div className="switchers">
                   <SlidingTabButtons
                     onClick={handleSwitchTab('repayAndBorrow')}
                     tabItems={repayBorrowSlidingButtons}
                     className="vault"
                   />
-                  {activeRepayBorrowTab?.id === vaultCardTabNames.REPAY && (
+                  {activeRepayBorrowTab?.id === loansTabNames.REPAY && (
                     <SlidingTabButtons
                       onClick={handleSwitchTab('repay')}
                       tabItems={VAULT_CARD_REPAY_SLIDING_BUTTONS}
@@ -390,7 +390,7 @@ export const BorrowingExpandCard = ({
                   )}
                 </div>
 
-                {activeRepayBorrowTab?.id === vaultCardTabNames.BORROW && (
+                {activeRepayBorrowTab?.id === loansTabNames.BORROW && (
                   <BorrowingExpandCardBorrowSection
                     borrowedAsset={borrowedAsset}
                     borrowAPR={apr}
@@ -403,7 +403,7 @@ export const BorrowingExpandCard = ({
                   />
                 )}
 
-                {activeRepayBorrowTab?.id === vaultCardTabNames.REPAY && (
+                {activeRepayBorrowTab?.id === loansTabNames.REPAY && (
                   <BorrowingExpandCardRepaySection
                     vaultId={vaultId}
                     borrowedAsset={borrowedAsset}
@@ -418,7 +418,7 @@ export const BorrowingExpandCard = ({
                     openConfirmRepayFullPopup={handleClickOpenConfirmRepayFullPopup}
                   />
                 )}
-              </BorrowingExpandCardActionsSectionStyled>
+              </LoansActionsSection>
             </div>
 
             {currentToken && (
@@ -443,7 +443,7 @@ export const BorrowingExpandCard = ({
                 hideTransactionHistory={hideTransactionHistory}
               />
             )}
-          </BorrowingTabListItemExpanded>
+          </BorrowingExpandedCard>
         )}
       </Expand>
     </div>

@@ -30,7 +30,7 @@ import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 import {
   COLLATERAL_AWARE_BORROWING_ADJUST_YOUR_AMOUNT,
   SELECT_THE_AMOUNT_YOU_WOULD_LIKE_TO_BORROW,
-} from 'texts/statusMessages/vault.text'
+} from 'texts/banners/vault.text'
 import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault.text'
 
 type Props = {
@@ -60,6 +60,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const parsedAmount = parseFloat(inputData.amount)
   const inputAmount = isNaN(parsedAmount) ? 0 : parsedAmount
+  const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
 
   const balanceSymbol = isTezosAsset(borrowedAsset?.gqlName ?? '') ? 'tezos' : borrowedAsset?.symbol.toLowerCase() ?? ''
   const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
@@ -244,8 +245,8 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={() => openConfirmBorrowPopup(inputAmount)}
-          disabled={inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive}
-          animation={BUTTON_PULSE}
+          disabled={isDisabledButton}
+          animation={isDisabledButton ? null : BUTTON_PULSE}
         >
           <Icon id="coin-loan" />
           Borrow

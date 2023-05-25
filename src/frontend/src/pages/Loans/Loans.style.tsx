@@ -1,5 +1,6 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../styles/interfaces'
+import { PRIMARY_TRANSACTION_HISTORY_STYLE, SECONDARY_TRANSACTION_HISTORY_STYLE } from './Loans.const'
 
 export const LoansStyled = styled.div<{ theme: MavrykTheme }>``
 
@@ -463,9 +464,35 @@ export const FillBlock = styled.div<{ theme: MavrykTheme; width: number }>`
 `
 
 export const TransactionHistoryStyled = styled.div<{ theme: MavrykTheme }>`
-  .main {
-    border-radius: 10px;
-    background-color: ${({ theme }) => theme.backgroundColor};
+  .lending-controller {
+    display: flex;
+    column-gap: 5px;
+
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+
+    color: ${({ theme }) => theme.textColor};
+
+    div {
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 21px;
+    }
+  }
+
+  &.${PRIMARY_TRANSACTION_HISTORY_STYLE} {
+    .main {
+      padding: 30px;
+      border-radius: 10px;
+      background-color: ${({ theme }) => theme.backgroundColor};
+    }
+  }
+
+  &.${SECONDARY_TRANSACTION_HISTORY_STYLE} {
     padding: 30px;
+    border-radius: 10px;
+    background-color: ${({ theme }) => theme.containerColor};
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
   }
 `

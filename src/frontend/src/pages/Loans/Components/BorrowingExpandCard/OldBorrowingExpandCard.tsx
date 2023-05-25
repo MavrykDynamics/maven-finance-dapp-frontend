@@ -36,7 +36,7 @@ import { assetDecimalsToShow } from '../../Loans.const'
 
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { ThreeLevelListItem } from '../../Loans.style'
-import { BorrowingTabListItemExpanded } from '../LoansComponents.style'
+import { BorrowingExpandedCard } from '../LoansComponents.style'
 
 import { loansPopupsContext } from '../Modals/LoansModals.provider'
 
@@ -239,7 +239,7 @@ export const OldBorrowingExpandCard = ({
         }
       >
         {children || (
-          <BorrowingTabListItemExpanded
+          <BorrowingExpandedCard
             className={`expand-borrow-tab-container ${
               vaultHasXtzCollateral || vaultHasSmvkCollateral ? '' : 'more-padding'
             }`}
@@ -623,7 +623,7 @@ export const OldBorrowingExpandCard = ({
                 </div>
               </>
             ) : null}
-          </BorrowingTabListItemExpanded>
+          </BorrowingExpandedCard>
         )}
       </Expand>
     </div>
