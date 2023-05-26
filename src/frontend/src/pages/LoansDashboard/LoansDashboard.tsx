@@ -64,10 +64,12 @@ export const LoansDashboard = () => {
 
   const {
     accountPkh,
-    user: { availableLoansRewards, userLoansData },
+    user: {
+      availableLoansRewards,
+      userLoansData,
+      userAvatars: { mainAvatar },
+    },
   } = useSelector((state: State) => state.wallet)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
 
   const { totalBorrowed, totalLended } = loanTokens.reduce<{
     totalLended: number
@@ -93,17 +95,6 @@ export const LoansDashboard = () => {
       } catch (e) {}
     },
     [accountPkh],
-  )
-
-  const userImage = useMemo(
-    () =>
-      getUserAvatar({
-        accountPkh,
-        satelliteMapper,
-        councilMembers,
-        breakGlassCouncilMembers,
-      }),
-    [accountPkh, breakGlassCouncilMembers, councilMembers, satelliteMapper],
   )
 
   // Calcuating total lended and borrowed by user
@@ -190,7 +181,7 @@ export const LoansDashboard = () => {
 
   return (
     <Page>
-      <PageHeader page={'loansDashboard'} avatar={userImage} />
+      <PageHeader page={'loansDashboard'} avatar={mainAvatar} />
 
       <LoansDashboardStyled>
         {isLoading ? (
