@@ -10,17 +10,37 @@ import {
   SATELLITE_AGGREGATOR_ORACLES_SUBSCRIPTION,
   SATELLITE_CYCLE_SUBSCRIPTION,
 } from 'gql/queries/getSatellitesStorage'
-import { SatellitesStorage } from '../satellites.provider.types'
+import { SatellitesStorage, SatellitesSubsSkipsType } from '../satellites.provider.types'
 import { useSatellitesContext } from '../satellites.provider'
+import { SUB_QUERY, SUB_SKIP, SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
 
-/**
- *
- * @param address string representation of satellite address (used for only one satellite subscription)
- * @param options {skip: boolean} options object to manipulate gq subscriptions
- * @returns {isLoading} boolean value which indicates if all data was loaded
- */
-export const useSatellitesUpdater = (address = '', options = { skip: false }): { isLoading: boolean } => {
+export const useSatellitesUpdater = (
+  {
+    skipSatelliteData,
+    skipGovProposal,
+    skipEmergencyGov,
+    skipFinancialRequest,
+    skipAggregatorOracles,
+    skipSatelliteCycle,
+  }: SatellitesSubsSkipsType = {
+    skipSatelliteData: SUB_SUBSCRIBE,
+    skipGovProposal: SUB_SUBSCRIBE,
+    skipEmergencyGov: SUB_SUBSCRIBE,
+    skipFinancialRequest: SUB_SUBSCRIBE,
+    skipAggregatorOracles: SUB_SUBSCRIBE,
+    skipSatelliteCycle: SUB_SUBSCRIBE,
+  },
+  address = '',
+): { isLoading: boolean } => {
   const [storage, setStorage] = useState<Partial<SatellitesStorage>>({})
+  const [shouldSkip, setShouldSkip] = useState<SatellitesSubsSkipsType>({
+    skipSatelliteData,
+    skipGovProposal,
+    skipEmergencyGov,
+    skipFinancialRequest,
+    skipAggregatorOracles,
+    skipSatelliteCycle,
+  })
   const { updateSatellitesContext } = useSatellitesContext()
 
   const { loading: satellitesLoading } = useSubscription(getSatelliteDataSubscription(address), {
@@ -34,7 +54,7 @@ export const useSatellitesUpdater = (address = '', options = { skip: false }): {
     onError: (error) => {
       console.log({ error })
     },
-    skip: options.skip,
+    skip: shouldSkip.skipSatelliteData === SUB_SKIP,
     shouldResubscribe: true,
   })
 
@@ -45,7 +65,7 @@ export const useSatellitesUpdater = (address = '', options = { skip: false }): {
         setStorage({ ...storage, governance_proposal: [...data.governance_proposal] })
       }
     },
-    skip: options.skip,
+    skip: shouldSkip.skipGovProposal === SUB_SKIP,
     shouldResubscribe: true,
   })
 
@@ -56,7 +76,7 @@ export const useSatellitesUpdater = (address = '', options = { skip: false }): {
         setStorage({ ...storage, emergency_governance: [...data.emergency_governance] })
       }
     },
-    skip: options.skip,
+    skip: shouldSkip.skipEmergencyGov === SUB_SKIP,
     shouldResubscribe: true,
   })
 
@@ -67,7 +87,7 @@ export const useSatellitesUpdater = (address = '', options = { skip: false }): {
         setStorage({ ...storage, governance_financial_request: [...data.governance_financial_request] })
       }
     },
-    skip: options.skip,
+    skip: shouldSkip.skipFinancialRequest === SUB_SKIP,
     shouldResubscribe: true,
   })
 
@@ -78,7 +98,7 @@ export const useSatellitesUpdater = (address = '', options = { skip: false }): {
         setStorage({ ...storage, aggregator: [...data.aggregator] })
       }
     },
-    skip: options.skip,
+    skip: shouldSkip.skipAggregatorOracles === SUB_SKIP,
     shouldResubscribe: true,
   })
 
@@ -89,7 +109,7 @@ export const useSatellitesUpdater = (address = '', options = { skip: false }): {
         setStorage({ ...storage, governance: [...data.governance] })
       }
     },
-    skip: options.skip,
+    skip: shouldSkip.skipSatelliteCycle === SUB_SKIP,
     shouldResubscribe: true,
   })
 
@@ -101,19 +121,64 @@ export const useSatellitesUpdater = (address = '', options = { skip: false }): {
     !satelliteCycleLoading &&
     !aggregatorOraclesLoading
 
+  // Effect to load data 1 time and then skip loading, cuz loading returned from useSubscription so only for initial loading
   useEffect(() => {
-    console.log('run effect')
-    if (
-      storage.hasOwnProperty('aggregator') &&
-      storage.hasOwnProperty('satellite') &&
-      storage.hasOwnProperty('governance_proposal') &&
-      storage.hasOwnProperty('emergency_governance') &&
-      storage.hasOwnProperty('governance_financial_request') &&
-      storage.hasOwnProperty('governance')
-    ) {
+    if (isStorageLoaded && skipSatelliteData === SUB_QUERY) {
+      setShouldSkip((prevSkip) => ({
+        ...prevSkip,
+        skipSatelliteData: SUB_SKIP,
+      }))
+    }
+
+    if (isStorageLoaded && skipGovProposal === SUB_QUERY) {
+      setShouldSkip((prevSkip) => ({
+        ...prevSkip,
+        skipGovProposal: SUB_SKIP,
+      }))
+    }
+
+    if (isStorageLoaded && skipEmergencyGov === SUB_QUERY) {
+      setShouldSkip((prevSkip) => ({
+        ...prevSkip,
+        skipEmergencyGov: SUB_SKIP,
+      }))
+    }
+
+    if (isStorageLoaded && skipFinancialRequest === SUB_QUERY) {
+      setShouldSkip((prevSkip) => ({
+        ...prevSkip,
+        skipFinancialRequest: SUB_SKIP,
+      }))
+    }
+
+    if (isStorageLoaded && skipAggregatorOracles === SUB_QUERY) {
+      setShouldSkip((prevSkip) => ({
+        ...prevSkip,
+        skipAggregatorOracles: SUB_SKIP,
+      }))
+    }
+
+    if (isStorageLoaded && skipSatelliteCycle === SUB_QUERY) {
+      setShouldSkip((prevSkip) => ({
+        ...prevSkip,
+        skipSatelliteCycle: SUB_SKIP,
+      }))
+    }
+  }, [
+    isStorageLoaded,
+    skipSatelliteData,
+    skipGovProposal,
+    skipEmergencyGov,
+    skipFinancialRequest,
+    skipAggregatorOracles,
+    skipSatelliteCycle,
+  ])
+
+  useEffect(() => {
+    if (isStorageLoaded) {
       updateSatellitesContext(storage as SatellitesStorage, address)
     }
-  }, [storage, updateSatellitesContext, address])
+  }, [storage, updateSatellitesContext, address, isStorageLoaded])
 
   return {
     isLoading: !isStorageLoaded,

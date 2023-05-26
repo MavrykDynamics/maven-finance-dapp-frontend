@@ -67,3 +67,12 @@ export type SatelliteGovernanceTransfer = {
   amount: number
   token: TokenType
 }
+
+export type SatellitesSubsSkipsType = {
+  skipSatelliteData?: string
+  skipGovProposal?: string
+  skipEmergencyGov?: string
+  skipFinancialRequest?: string
+  skipAggregatorOracles?: string
+  skipSatelliteCycle?: string
+}

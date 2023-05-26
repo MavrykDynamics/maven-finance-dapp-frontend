@@ -34,7 +34,7 @@ const DelegationTab = () => {
   const { satelliteMapper } = useSatellitesContext()
   const satelliteInfo = satelliteMapper[satelliteMvkIsDelegatedTo]
 
-  useSatellitesUpdater(satelliteMvkIsDelegatedTo)
+  useSatellitesUpdater({}, satelliteMvkIsDelegatedTo)
 
   const handleDistributeRewards = () => {
     // TODO: add valid data

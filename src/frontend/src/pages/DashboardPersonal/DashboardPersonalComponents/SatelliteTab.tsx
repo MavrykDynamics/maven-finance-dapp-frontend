@@ -34,7 +34,7 @@ const SatelliteTab = () => {
   } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSatellitesContext()
 
-  useSatellitesUpdater(accountPkh)
+  useSatellitesUpdater({}, accountPkh)
 
   const satelliteRecord = satelliteMapper[accountPkh]
 

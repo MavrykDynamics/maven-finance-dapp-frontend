@@ -89,7 +89,7 @@ export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUns
     errorMessage: '',
   })
 
-  useSatellitesUpdater(satelliteMvkIsDelegatedTo)
+  useSatellitesUpdater({}, satelliteMvkIsDelegatedTo)
 
   useEffect(() => {
     setInputData({

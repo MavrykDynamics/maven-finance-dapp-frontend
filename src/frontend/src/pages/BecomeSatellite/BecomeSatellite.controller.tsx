@@ -54,6 +54,7 @@ import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { normallizeSatellite } from 'providers/SatellitesProvider/helpers/Satellites.normalizer'
 import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
+import { SUB_QUERY } from 'utils/api/apollo.consts'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -85,7 +86,17 @@ export const BecomeSatellite = () => {
     minimumStakedMvkBalance,
   } = useDAPPConfigContext()
 
-  const { isLoading } = useSatellitesUpdater(accountPkh, { skip: true })
+  const { isLoading } = useSatellitesUpdater(
+    {
+      skipAggregatorOracles: SUB_QUERY,
+      skipEmergencyGov: SUB_QUERY,
+      skipFinancialRequest: SUB_QUERY,
+      skipGovProposal: SUB_QUERY,
+      skipSatelliteCycle: SUB_QUERY,
+      skipSatelliteData: SUB_QUERY,
+    },
+    accountPkh,
+  )
 
   const balanceOverMinStakedMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= minimumStakedMvkBalance
   const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null

@@ -39,7 +39,7 @@ export const useDataFeedsUpdater = (
     },
   })
 
-  // Effect to load data 1 time and then skip loading, cuz loading returned from useSubscription si only for initial loading
+  // Effect to load data 1 time and then skip loading, cuz loading returned from useSubscription so only for initial loading
   useEffect(() => {
     if (!aggregatorLoading && skipFeedsSubscription === SUB_QUERY) {
       setShouldSkip((prevSkip) => ({

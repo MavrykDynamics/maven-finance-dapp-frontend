@@ -10,5 +10,12 @@ export const useInitializer = () => {
   // TODO: implement tokens context
   // useTokensInit()
   useDataFeedsUpdater({ skipFeedsSubscription: SUB_QUERY })
-  useSatellitesUpdater()
+  useSatellitesUpdater({
+    skipAggregatorOracles: SUB_QUERY,
+    skipEmergencyGov: SUB_QUERY,
+    skipFinancialRequest: SUB_QUERY,
+    skipGovProposal: SUB_QUERY,
+    skipSatelliteCycle: SUB_QUERY,
+    skipSatelliteData: SUB_QUERY,
+  })
 }
