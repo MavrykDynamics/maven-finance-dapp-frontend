@@ -2,7 +2,7 @@ import { UTCTimestamp } from 'lightweight-charts'
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { DAPPConfigContext } from 'providers/DAPPConfig/dappConfig.types'
 import { Feed } from '../dataFeeds.provider.types'
-import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
+import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 
 import { percentageDifference } from 'utils/calcFunctions'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
@@ -11,7 +11,7 @@ import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 type FeedContractType = { metadata?: { category?: string; icon: string }; network?: string } | undefined
 
 export const normalizeFeed = (
-  feedGql: SubscribeOracleStorageAggregatorSubscription['aggregator'][number],
+  feedGql: SubsribeOracleDataFeedSubscription['aggregator'][number],
   dipDupContracts: NonNullable<DAPPConfigContext['dipDupContracts']>,
 ) => {
   const dataFeedsHistory = normalizeDataFeedsHistory(feedGql.history_data)
@@ -37,7 +37,7 @@ export const normalizeFeed = (
 }
 
 export function normalizeFeeds(
-  feeds: SubscribeOracleStorageAggregatorSubscription['aggregator'],
+  feeds: SubsribeOracleDataFeedSubscription['aggregator'],
   dipDupContracts: NonNullable<DAPPConfigContext['dipDupContracts']>,
 ) {
   const dataFeedUniqueCategories = new Set<string>()
@@ -69,7 +69,7 @@ export function normalizeFeeds(
 }
 
 export function normalizeDataFeedsHistory(
-  historyData: SubscribeOracleStorageAggregatorSubscription['aggregator'][number]['history_data'],
+  historyData: SubsribeOracleDataFeedSubscription['aggregator'][number]['history_data'],
 ) {
   return historyData?.length
     ? historyData
@@ -84,7 +84,7 @@ export function normalizeDataFeedsHistory(
 }
 
 export function normalizeDataFeedsVolatility(
-  historyData: SubscribeOracleStorageAggregatorSubscription['aggregator'][number]['history_data'],
+  historyData: SubsribeOracleDataFeedSubscription['aggregator'][number]['history_data'],
 ) {
   return historyData?.length >= 2
     ? historyData

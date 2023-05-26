@@ -1,8 +1,8 @@
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
+import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 import { getTokenSymbolAndName } from './tokenNames'
 
-export const normalizeTokenPrices = (feedsLedger: SubscribeOracleStorageAggregatorSubscription['aggregator']) => {
+export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscription['aggregator']) => {
   return feedsLedger.reduce<Record<string, number>>((acc, feed) => {
     const { symbol } = getTokenSymbolAndName(feed.name) ?? {}
 

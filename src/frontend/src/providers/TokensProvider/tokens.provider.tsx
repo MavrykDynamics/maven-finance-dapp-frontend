@@ -10,7 +10,7 @@ import { normalizeTokenPrices } from './hooks/tokens.normalizer'
 
 // types
 import { State, Props, TokensContext } from './tokens.provider.types'
-import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
+import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
@@ -30,7 +30,7 @@ export class TokensProvider extends React.Component<Props, State> {
     }
   }
 
-  updateTokensPrices = (feedsLedger: SubscribeOracleStorageAggregatorSubscription['aggregator']) => {
+  updateTokensPrices = (feedsLedger: SubsribeOracleDataFeedSubscription['aggregator']) => {
     const normalizedTokenPrices = normalizeTokenPrices(feedsLedger)
 
     this.setState({

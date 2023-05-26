@@ -7,7 +7,7 @@ import { useDataFeedsContext } from '../dataFeeds.provider'
 import { getOrcaleStorageAggregatorQuery } from 'gql/queries/getOracleStorage'
 import { useEffect, useState } from 'react'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
-import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
+import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
@@ -18,7 +18,7 @@ export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
   const isContractsLoading = dipDupContracts === null
 
   const [shouldSkip, setShouldSkip] = useState(false)
-  const [feeds, setFeeds] = useState<SubscribeOracleStorageAggregatorSubscription['aggregator']>([])
+  const [feeds, setFeeds] = useState<SubsribeOracleDataFeedSubscription['aggregator']>([])
 
   const { loading: aggregatorLoading } = useSubscription(getOrcaleStorageAggregatorQuery(feedAddress), {
     skip: shouldSkip,
@@ -46,7 +46,7 @@ export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
 
   // TODO: remove when dipDupContracts are updated
   useEffect(() => {
-    if (!aggregatorLoading && !isContractsLoading && feeds.length) {
+    if (!aggregatorLoading && !isContractsLoading) {
       updateDataFeeds(feeds)
       updateTokensPrices(feeds)
     }

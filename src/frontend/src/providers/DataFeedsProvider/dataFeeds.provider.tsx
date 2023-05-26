@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 
 // types
 import { State, Props, DataFeedsContext } from './dataFeeds.provider.types'
-import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
+import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 
 // helpers
 import { normalizeFeeds } from './helpers/feedsNormalizer'
@@ -25,7 +25,7 @@ export class DataFeedsProvider extends React.Component<Props, State> {
     }
   }
 
-  updateDataFeeds = (data: SubscribeOracleStorageAggregatorSubscription['aggregator']) => {
+  updateDataFeeds = (data: SubsribeOracleDataFeedSubscription['aggregator']) => {
     if (!this.props.dipDupContracts) return
     const { feedsCategories, feedsAddresses, feedsMapper } = normalizeFeeds(data, this.props.dipDupContracts)
 
