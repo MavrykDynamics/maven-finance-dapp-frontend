@@ -64,7 +64,6 @@ const AppContainer = () => {
   /**
    * dispatch(getTokensForDAPP())
    * dispatch(getAvaliableCollaterals())
-   * hexagonal arch
    * will be removed after tokens reorganization, cuz it'll be in useInitializer and will be on context
    */
 
