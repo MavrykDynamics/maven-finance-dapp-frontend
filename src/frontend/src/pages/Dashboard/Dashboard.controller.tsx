@@ -8,7 +8,6 @@ import { Page } from 'styles'
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
-import { DOORMAN_HISTORY_SUB, DOORMAN_STATS_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -18,6 +17,7 @@ import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import QueryString from 'qs'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -84,7 +84,7 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB, DOORMAN_HISTORY_SUB])
+  useStakeUpdater({ skipAddressBalance: SUB_SKIP, skipMvkTokenTotal: SUB_SKIP })
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

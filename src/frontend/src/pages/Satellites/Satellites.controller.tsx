@@ -34,15 +34,19 @@ import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
 
 const Satellites = () => {
   const { isLoading: isFeedsLoading } = useDataFeedsUpdater()
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
+  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
+    skipAddressBalance: SUB_SKIP,
+    skipMvkTokenTotal: SUB_SKIP,
+    skipStakeHistory: SUB_SKIP,
+  })
 
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
 

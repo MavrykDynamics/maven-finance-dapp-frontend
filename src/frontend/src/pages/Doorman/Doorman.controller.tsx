@@ -45,7 +45,7 @@ export const Doorman = () => {
     accountPkh,
   }
 
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater()
+  const { isInitialLoading: isDoormanLoading } = useStakeUpdater()
 
   const unstakeCallback = (amount: number) => setAmount(amount)
   const closeExitFeePopup = () => setAmount(null)

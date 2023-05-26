@@ -53,6 +53,7 @@ import { parseDate } from 'utils/time'
 // actions
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
+import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
 const tabsList = [
   {
@@ -84,6 +85,8 @@ const DataFeedDetails = () => {
 
   const [activeTab, setActiveTab] = useState(tabsList[0].id)
 
+  useSatellitesUpdater()
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTrustedAnswer(
@@ -98,7 +101,6 @@ const DataFeedDetails = () => {
 
   const chartPlots = (activeTab === 1 ? feed?.dataFeedsHistory : feed?.dataFeedsVolatility) ?? []
 
-  // TODO add query with filter or useSatellites all subs
   const feedsSatellites = useMemo(
     () =>
       feedId
