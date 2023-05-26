@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 // view
 import Icon from '../../app/App.components/Icon/Icon.view'
 import { Input } from '../../app/App.components/Input/Input.controller'
-import NewButton from 'app/App.components/Button/NewButton'
+import Button from 'app/App.components/Button/NewButton'
 import { TextArea } from '../../app/App.components/TextArea/TextArea.controller'
 
 // type
@@ -25,7 +25,7 @@ import {
 } from './SatelliteGovernance.actions'
 
 // style
-import { AvailableActionsStyle } from './SatelliteGovernance.style'
+import { SatelliteGovernanceAvailableAction } from './SatelliteGovernance.style'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
@@ -230,7 +230,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
   if (!variant) return null
 
   return (
-    <AvailableActionsStyle>
+    <SatelliteGovernanceAvailableAction>
       <form onSubmit={handleSubmit} className="inputs-block">
         <a
           href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle"
@@ -302,11 +302,11 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
           </div>
         </div>
         <div className="suspend-satellite-group">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isActionActive} type={SUBMIT}>
+          <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isActionActive} type={SUBMIT}>
             <Icon id={content?.btnIcon || ''} /> {content?.btnText || ''}
-          </NewButton>
+          </Button>
         </div>
       </form>
-    </AvailableActionsStyle>
+    </SatelliteGovernanceAvailableAction>
   )
 }

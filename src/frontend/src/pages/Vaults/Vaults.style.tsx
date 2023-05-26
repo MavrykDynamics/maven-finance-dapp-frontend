@@ -36,11 +36,6 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
       border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
     }
   }
-
-  .tabSwitcher {
-    margin-bottom: 0;
-    width: 350px;
-  }
 `
 
 export const VaultsSearchFilterWrapper = styled.div`

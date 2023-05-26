@@ -3,7 +3,6 @@ import { MavrykTheme } from 'styles/interfaces'
 
 export const H2Title = styled.h2<{ theme: MavrykTheme }>`
   font-weight: 600;
-  font-weight: 700;
   font-size: 22px;
 
   color: ${({ theme }) => theme.textColor};
@@ -15,5 +14,11 @@ export const H2Title = styled.h2<{ theme: MavrykTheme }>`
     height: 4px;
     background: ${({ theme }) => theme.textColor};
     margin: 7px 0 10px 1px;
+  }
+`
+
+export const H2SimpleTitle = styled(H2Title)<{ theme: MavrykTheme }>`
+  &::after {
+    display: none;
   }
 `

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 // view
 import Icon from '../../app/App.components/Icon/Icon.view'
 import { Input } from '../../app/App.components/Input/Input.controller'
-import NewButton from 'app/App.components/Button/NewButton'
+import Button from 'app/App.components/Button/NewButton'
 
 // type
 import {
@@ -21,7 +21,7 @@ import { validateFormAddress, validateFormField, validateTzAddress } from 'utils
 import { fixMistakenTransfer } from './SatelliteGovernance.actions'
 
 // style
-import { AvailableActionsStyle } from './SatelliteGovernance.style'
+import { SatelliteGovernanceAvailableAction } from './SatelliteGovernance.style'
 import { ValidationResult } from 'pages/ProposalSubmission/ProposalSubmission.types'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
@@ -158,7 +158,7 @@ export const FixMistakenTransferForm = ({ maxLength, isActionActive }: Props) =>
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
   return (
-    <AvailableActionsStyle>
+    <SatelliteGovernanceAvailableAction>
       <form onSubmit={handleSubmit} className="inputs-block">
         <a
           className="info-link"
@@ -273,11 +273,11 @@ export const FixMistakenTransferForm = ({ maxLength, isActionActive }: Props) =>
         </Table>
 
         <div className="suspend-satellite-group">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isActionActive} type={SUBMIT}>
+          <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isActionActive} type={SUBMIT}>
             <Icon id="gear" /> Fix Mistaken Transfer
-          </NewButton>
+          </Button>
         </div>
       </form>
-    </AvailableActionsStyle>
+    </SatelliteGovernanceAvailableAction>
   )
 }
