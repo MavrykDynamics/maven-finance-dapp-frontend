@@ -67,7 +67,7 @@ export const LoansDashboard = () => {
     user: {
       availableLoansRewards,
       userLoansData,
-      userAvatars: { mainAvatar, counsilAvatar, breakGlassAvatar },
+      userAvatars: { mainAvatar },
     },
   } = useSelector((state: State) => state.wallet)
 
@@ -181,7 +181,7 @@ export const LoansDashboard = () => {
 
   return (
     <Page>
-      <PageHeader page={'loansDashboard'} avatar={mainAvatar ?? counsilAvatar ?? breakGlassAvatar} />
+      <PageHeader page={'loansDashboard'} avatar={mainAvatar} />
 
       <LoansDashboardStyled>
         {isLoading ? (

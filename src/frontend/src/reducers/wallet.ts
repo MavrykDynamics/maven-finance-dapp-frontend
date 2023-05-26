@@ -56,6 +56,7 @@ export interface UserState {
 
   userAvatars: {
     mainAvatar: string | null
+    satelliteAvatar: string | null
     counsilAvatar: string | null
     breakGlassAvatar: string | null
   }
@@ -121,6 +122,7 @@ export const DEFAULT_USER: UserState = {
 
   userAvatars: {
     mainAvatar: null,
+    satelliteAvatar: null,
     counsilAvatar: null,
     breakGlassAvatar: null,
   },

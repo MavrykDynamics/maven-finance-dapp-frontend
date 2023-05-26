@@ -124,10 +124,15 @@ export const fetchUserData = async (
       vesteeRecord: Array<Vesting>
     }
 
+    // Getting user avatar
+    const satelliteAvatar = satellites?.[0]?.image ?? null
+    const counsilAvatar = council_council_members?.[0]?.image ?? null
+    const breakGlassAvatar = break_glass_council_members?.[0]?.image ?? null
     const userAvatars = {
-      mainAvatar: satellites?.[0]?.image ?? null,
-      counsilAvatar: council_council_members?.[0]?.image ?? null,
-      breakGlassAvatar: break_glass_council_members?.[0]?.image ?? null,
+      mainAvatar: satelliteAvatar ?? counsilAvatar ?? breakGlassAvatar,
+      satelliteAvatar,
+      counsilAvatar,
+      breakGlassAvatar,
     }
 
     const loanTokens = userRewardsData?.lending_controller?.[0]?.loan_tokens as Array<Lending_Controller_Loan_Token>

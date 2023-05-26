@@ -44,8 +44,6 @@ const DashboardPersonal = () => {
   const { tabId } = useParams<{ tabId: string }>()
 
   const { tokensPrices } = useSelector((state: State) => state.tokens)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
@@ -64,7 +62,7 @@ const DashboardPersonal = () => {
       isSatellite,
       isVestee,
       isLoaded: isUserDataLoaded,
-      userAvatars: { mainAvatar, counsilAvatar, breakGlassAvatar },
+      userAvatars: { mainAvatar },
     },
   } = useSelector((state: State) => state.wallet)
 
@@ -134,7 +132,7 @@ const DashboardPersonal = () => {
 
   return (
     <Page>
-      <PageHeader page={'dashboard'} avatar={mainAvatar ?? counsilAvatar ?? breakGlassAvatar} />
+      <PageHeader page={'dashboard'} avatar={mainAvatar} />
 
       <DashboardPersonalStyled>
         <div className="top">
