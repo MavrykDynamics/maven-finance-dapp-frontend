@@ -43,6 +43,16 @@ query GetUserInfo ($_eq: String = "") {
       }
     }
 
+    satellites {
+      image
+    }
+    council_council_members{
+      image
+    }
+    break_glass_council_members {
+      image
+    }
+
     activeSatelliteRecord: satellites(where: {user_id: {_eq: $_eq}, _and: {currently_registered: {_eq: true}, _and: {status: {_eq: "0"}}}}) {
       user_id
     }

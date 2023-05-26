@@ -64,6 +64,7 @@ const DashboardPersonal = () => {
       isSatellite,
       isVestee,
       isLoaded: isUserDataLoaded,
+      userAvatars: { mainAvatar, counsilAvatar, breakGlassAvatar },
     },
   } = useSelector((state: State) => state.wallet)
 
@@ -131,20 +132,9 @@ const DashboardPersonal = () => {
 
   const activeTab = useMemo(() => (isValidPersonalDashboardTabId(tabId) ? tabId : PORTFOLIO_TAB_ID), [tabId])
 
-  const userImage = useMemo(
-    () =>
-      getUserAvatar({
-        accountPkh,
-        satelliteMapper,
-        councilMembers,
-        breakGlassCouncilMembers,
-      }),
-    [accountPkh, breakGlassCouncilMembers, councilMembers, satelliteMapper],
-  )
-
   return (
     <Page>
-      <PageHeader page={'dashboard'} avatar={userImage} />
+      <PageHeader page={'dashboard'} avatar={mainAvatar ?? counsilAvatar ?? breakGlassAvatar} />
 
       <DashboardPersonalStyled>
         <div className="top">

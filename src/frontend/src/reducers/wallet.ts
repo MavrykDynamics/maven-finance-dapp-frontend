@@ -54,6 +54,12 @@ export interface UserState {
   availableSatellitesRewards: number
   availableLoansRewards: number
 
+  userAvatars: {
+    mainAvatar: string | null
+    counsilAvatar: string | null
+    breakGlassAvatar: string | null
+  }
+
   // user's actions history
   actionsHistory: Array<{
     action: string
@@ -112,6 +118,12 @@ export const DEFAULT_USER: UserState = {
   gatheredFarmRewards: 0,
   gatheredSatellitesRewards: 0,
   gatheredDoormanRewards: 0,
+
+  userAvatars: {
+    mainAvatar: null,
+    counsilAvatar: null,
+    breakGlassAvatar: null,
+  },
 
   actionsHistory: [],
 }

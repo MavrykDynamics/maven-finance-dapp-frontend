@@ -114,11 +114,20 @@ export const fetchUserData = async (
       m_token_accounts = [],
       delegations = [],
       stakes_history_data = [],
+      satellites,
+      council_council_members,
+      break_glass_council_members,
       activeSatelliteRecord: [activeSatelliteRecord = null] = [],
       vesteeRecord: [vesteeRecord = null] = [],
     } = (userInfoFromIndexer?.mavryk_user?.[0] ?? {}) as MavrykUserGraphQl & {
       activeSatelliteRecord: Array<Satellite>
       vesteeRecord: Array<Vesting>
+    }
+
+    const userAvatars = {
+      mainAvatar: satellites?.[0]?.image ?? null,
+      counsilAvatar: council_council_members?.[0]?.image ?? null,
+      breakGlassAvatar: break_glass_council_members?.[0]?.image ?? null,
     }
 
     const loanTokens = userRewardsData?.lending_controller?.[0]?.loan_tokens as Array<Lending_Controller_Loan_Token>
@@ -172,6 +181,7 @@ export const fetchUserData = async (
       isSatellite: Boolean(activeSatelliteRecord),
       isVestee: Boolean(vesteeRecord),
       isNewlyRegisteredSatellite: isNewSatellite,
+      userAvatars,
     }
 
     // ----- GETTING USER'S TOKENS BALANCES, THAT ARE USED ACROSS DAPP *START* -----
