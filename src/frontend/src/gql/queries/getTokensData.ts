@@ -21,16 +21,6 @@ export const GOVERNANCE_CONTRACT_ADDRESS_VARIABLE = {}
 
 export const DAPP_TOKENS_QUERY = `
 query DappTokens($_whitelistTokensAddress: String) {
-  dipdup_contract_metadata {
-    contract
-    created_at
-    metadata
-    id
-    network
-    update_id
-    updated_at
-  }
-
   dipdup_token_metadata {
     contract
     created_at

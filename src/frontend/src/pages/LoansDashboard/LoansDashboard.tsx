@@ -16,7 +16,6 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { LoansPositionTable } from './components/PositionTable'
 import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
-import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { LBHInfoBlock } from 'pages/DashboardPersonal/DashboardPersonalComponents/DashboardPersonalComponents.style'

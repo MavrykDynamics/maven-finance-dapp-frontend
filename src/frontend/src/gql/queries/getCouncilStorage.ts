@@ -20,10 +20,12 @@ export const COUNCIL_MEMBERS_QUERY = `
   query GetCouncilMembers {
     council {
       members {
+        user {
+          address
+        }
         id
         name
         image
-        user_id
         website
       }
     }

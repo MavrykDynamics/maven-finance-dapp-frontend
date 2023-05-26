@@ -1,7 +1,9 @@
 export const BREAK_GLASS_COUNCIL_MEMBERS_QUERY = `
   query GetBreakGlassCouncilMemberQuery {
     break_glass_council_member {
-      user_id
+      user {
+        address
+      }
       name
       break_glass_id
       website

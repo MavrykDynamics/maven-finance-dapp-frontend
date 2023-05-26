@@ -42,8 +42,12 @@ export const GOVERNANCE_PROPOSALS_QUERY = `
       success_reward
       
       id
-      proposer_id
-      governance_id
+      proposer {
+        address
+      }
+      governance {
+        address
+      }
       
       description
       title
@@ -67,7 +71,9 @@ export const GOVERNANCE_PROPOSALS_QUERY = `
       votes {
         round
         vote
-        voter_id
+        voter {
+          address
+        }
       }
 
       data {

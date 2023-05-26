@@ -4,6 +4,8 @@ export const ORACLE_STORAGE_QUERY = `
       address
       admin
       decimals
+      metadata
+      network
       factory {
         address
       }
@@ -33,7 +35,9 @@ export const ORACLE_STORAGE_QUERY = `
           round
           timestamp
           oracle {
-            user_id
+            user {
+              address
+            }
             init_epoch
             init_round
           }
