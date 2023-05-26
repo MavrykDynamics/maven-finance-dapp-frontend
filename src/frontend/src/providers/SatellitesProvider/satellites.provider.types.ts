@@ -3,7 +3,14 @@ import { normallizeSatellite, getSatelliteVotings } from './helpers/Satellites.n
 import { State as ReduxState } from 'reducers'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 
-import { SatellitesStorageQuery } from 'utils/__generated__/graphql'
+import {
+  SatelliteAggregatorOraclesSubscription,
+  SatelliteDataSubSubscription,
+  SatelliteEmergencyGovernanceDataSubscription,
+  SatelliteGovernanceCycleSubscription,
+  SatelliteGovernanceFinancialRequestSubscription,
+  SatelliteGovernanceProposalDataSubscription,
+} from 'utils/__generated__/graphql'
 import { AppDispatch } from 'app/App.controller'
 
 export type SatellitesContext = {
@@ -32,7 +39,12 @@ export type Props = {
 }
 
 // additional types
-export type SatellitesStorage = SatellitesStorageQuery
+export type SatellitesStorage = SatelliteDataSubSubscription &
+  SatelliteGovernanceCycleSubscription &
+  SatelliteAggregatorOraclesSubscription &
+  SatelliteGovernanceFinancialRequestSubscription &
+  SatelliteEmergencyGovernanceDataSubscription &
+  SatelliteGovernanceProposalDataSubscription
 export type SatelliteRecordType = ReturnType<typeof normallizeSatellite>
 export type SatelliteMapper = Record<string, ReturnType<typeof normallizeSatellite>>
 

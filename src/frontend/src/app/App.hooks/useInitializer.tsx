@@ -2,7 +2,7 @@
 import { useDappInit } from 'providers/DAPPConfig/hooks/useDappInit'
 import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
 import { useTokensInit } from 'providers/TokensProvider/hooks/useTokensInit'
-import { useSatellitesInit } from 'providers/SatellitesProvider/hooks/useSatellitesInit'
+import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 import { SUB_QUERY } from 'utils/api/apollo.consts'
 
 export const useInitializer = () => {
@@ -10,5 +10,5 @@ export const useInitializer = () => {
   // TODO: implement tokens context
   // useTokensInit()
   useDataFeedsUpdater({ skipFeedsSubscription: SUB_QUERY })
-  useSatellitesInit()
+  useSatellitesUpdater()
 }

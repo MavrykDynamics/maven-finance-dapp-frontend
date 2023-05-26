@@ -10,7 +10,7 @@ import {
 import { OracleStatusTypes, VOTE_NUM_MAPPER } from '../satellites.const'
 import { SatellitesStorage } from '../satellites.provider.types'
 import {
-  SatelliteDataSubscription,
+  SatelliteDataSubSubscription,
   SatelliteGovernanceProposalDataSubscription,
   SatelliteEmergencyGovernanceDataSubscription,
   SatelliteGovernanceFinancialRequestSubscription,
@@ -43,7 +43,7 @@ export const createSatelliteSnapshotsByIds = (snapshots: Snapshot[], cycle: numb
   }, {})
 }
 
-export const getSatelliteAccuracy = (satelliteRecord: SatelliteDataSubscription['satellite'][0]) => {
+export const getSatelliteAccuracy = (satelliteRecord: SatelliteDataSubSubscription['satellite'][0]) => {
   const v1 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.aggregator?.last_completed_data),
     v2 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.observations?.[0]?.data)
 
@@ -158,7 +158,7 @@ export const getNewSatelliteMetrics = ({
 
 export const getSatelliteOracleRecords = ({
   user: { aggregator_oracles = [] },
-}: SatelliteDataSubscription['satellite'][0]) => {
+}: SatelliteDataSubSubscription['satellite'][0]) => {
   return aggregator_oracles.map(({ aggregator: { oracles, address: feedAddress }, user_id: oracleAddress }) => {
     // getting rewards for oracle per feed
     const { sMVKReward, XTZReward } = oracles.reduce(
@@ -197,7 +197,7 @@ export const getSatelliteVotings = ({
     governance_satellite_actions_votes,
     emergency_governance_votes,
   },
-}: SatelliteDataSubscription['satellite'][0]) => {
+}: SatelliteDataSubSubscription['satellite'][0]) => {
   const proposalVotingHistory = governance_proposals_votes.map((vote) => {
     return {
       id: vote.id,
@@ -252,7 +252,7 @@ export const getSatelliteVotings = ({
 }
 
 export const normallizeSatellite = (
-  satelliteRecord: SatelliteDataSubscription['satellite'][0],
+  satelliteRecord: SatelliteDataSubSubscription['satellite'][0],
   satelliteObjectSnapshots: ReturnType<typeof createSatelliteSnapshotsByIds>,
   metricsData: {
     proposals: SatelliteGovernanceProposalDataSubscription['governance_proposal']
