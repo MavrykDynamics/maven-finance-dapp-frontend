@@ -42,7 +42,16 @@ export const SUBSCRIBE_FEEDS_REWARDS_COUNT = gql(`
   }
 `)
 
-// feeds subsciption
+// feeds addresses subsciption
+export const SUBSCRIBE_FEEDS_ADDRESSES = gql(`
+  subscription FeedsAddressesSubscription {
+    aggregator {
+      address
+    }
+  }
+`)
+
+// feeds subsciption As it's dynamic query remove it when generating types
 export const getOrcaleStorageAggregatorQuery = (
   address?: string,
 ): DocumentNode | TypedDocumentNode<SubscribeOracleStorageAggregatorSubscription, OperationVariables> =>
