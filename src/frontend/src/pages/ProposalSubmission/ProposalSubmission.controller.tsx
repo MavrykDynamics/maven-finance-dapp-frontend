@@ -14,6 +14,7 @@ import { ProposalSubmissionView } from './ProposalSubmission.view'
 import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { DEFAULT_PROPOSAL } from './ProposalSubmission.helpers'
+import { fillTreasuryStorage } from 'pages/Treasury/Treasury.actions'
 
 export const ProposalSubmission = () => {
   const dispatch = useDispatch()
@@ -25,12 +26,16 @@ export const ProposalSubmission = () => {
     proposalsMapper,
     isLoaded: isGovernanceLoaded,
   } = useSelector((state: State) => state.governance)
+  const { isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
-      if (!isGovernanceLoaded || isDepsChanged) {
-        await dispatch(getGovernanceStorage())
-      }
+      await Promise.all(
+        [
+          (!isTreasuryLoaded || isDepsChanged) && dispatch(fillTreasuryStorage()),
+          (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
+        ].filter(Boolean),
+      )
     } catch (e) {}
   }, [])
 

@@ -33,8 +33,6 @@ import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
 import { getTokensForDAPP, getTokensPrices } from 'reducers/actions/getTokens.actions'
-import { getCouncilMembers } from 'pages/Council/Council.actions'
-import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 import { getAvaliableCollaterals, getXtzBakers } from 'pages/Loans/Actions/getLoansData.actions'
 
 // export const { store, persistor } = configureStore({})
@@ -63,6 +61,7 @@ const AppContainer = () => {
       await dispatch(getContractAddressesStorage())
       // Fetching initial&common data for DAPP
       await Promise.all([
+        // TODO: idk whether we still need this, but better to remove it after satellites live update task is done
         dispatch(getSatellitesStorage()),
         dispatch(getFeedsStorage()),
 
@@ -70,10 +69,6 @@ const AppContainer = () => {
         dispatch(getXtzBakers()),
         // TODO: uncomment it when contracts are updated
         // dispatch(getMvkFaucet()),
-
-        // Used to retrieve user avatar
-        dispatch(getCouncilMembers()),
-        dispatch(getBreakGlassCouncilMembers()),
       ])
 
       // Depends on data feeds (getFeedsStorage())

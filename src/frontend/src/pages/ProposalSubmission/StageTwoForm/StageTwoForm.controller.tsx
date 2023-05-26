@@ -84,8 +84,7 @@ export const StageTwoForm = ({
                 ? {
                     ...byteValidity,
                     validBytes:
-                      isHexadecimal(text) &&
-                      getBytesPairValidationStatus(text, proposalSourceCodeMaxLength) === INPUT_STATUS_SUCCESS
+                      isHexadecimal(text) && getBytesPairValidationStatus(text) === INPUT_STATUS_SUCCESS
                         ? INPUT_STATUS_SUCCESS
                         : INPUT_STATUS_ERROR,
                   }
@@ -259,7 +258,14 @@ export const StageTwoForm = ({
           <>
             Bytes are executed in FILO. If you want to change the order of execution of the bytes, drag the pair to the
             desired position. Learn more on how to create bytes for governance proposals in the{' '}
-            <a href="https://www.npmjs.com/package/@mavrykdynamics/create-lambda-bytes">Mavryk Docs</a>.
+            <a
+              href="https://www.npmjs.com/package/@mavrykdynamics/create-lambda-bytes"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Mavryk Docs
+            </a>
+            .
           </>
         }
       />
@@ -315,7 +321,6 @@ export const StageTwoForm = ({
                 }
                 inputStatus={validityObject?.validBytes}
                 disabled={!isProposalPeriod || locked}
-                textAreaMaxLimit={proposalSourceCodeMaxLength}
               />
 
               <TextArea

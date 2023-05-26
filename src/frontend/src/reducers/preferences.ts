@@ -29,12 +29,8 @@ export interface PreferencesState {
   sidebarOpened: boolean
 }
 
-const mariGoldUrl =
-  process.env.REACT_APP_BUILD_ENV === 'development'
-    ? 'https://ghostnet.tezos.marigold.dev/'
-    : 'https://mainnet.tezos.marigold.dev/'
-const ecadLabSUrl =
-  process.env.REACT_APP_BUILD_ENV === 'development' ? 'https://ghostnet.ecadinfra.com' : 'https://mainnet.api.tez.ie/'
+const mariGoldUrl = 'https://ghostnet.tezos.marigold.dev/'
+const ecadLabSUrl = 'https://ghostnet.ecadinfra.com'
 
 export const preferencesDefaultState: PreferencesState = {
   themeSelected: getItemFromStorage('theme') || 'space',
