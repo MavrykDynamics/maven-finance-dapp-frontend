@@ -1,17 +1,20 @@
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { State } from 'reducers'
-import { calcWithoutPrecision, convertNumberForClient } from 'utils/calcFunctions'
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { useFeedsStats } from 'providers/DataFeedsProvider/hooks/useFeedsStats'
+
+import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTotalDelegatedMVK } from '../helpers/Satellites.consts'
+
+import { State } from 'reducers'
+import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { MVK_DECIMALS } from 'utils/constants'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { useFeedsStats } from 'providers/DataFeedsProvider/hooks/useFeedsStats'
-import { MVK_DECIMALS } from 'utils/constants'
+
+import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>

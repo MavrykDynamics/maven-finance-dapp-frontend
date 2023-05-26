@@ -39,21 +39,24 @@ import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provi
 import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
 
 const Satellites = () => {
-  useDataFeedsUpdater()
+  const { isLoading: isFeedsLoading } = useDataFeedsUpdater()
+  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
+
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
 
   const dispatch = useDispatch()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
   const {
     user: { isSatellite, userTokens },
   } = useSelector((state: State) => state.wallet)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
-      await Promise.all([(!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage())].filter(Boolean))
+      if (!isGovernanceLoaded || isDepsChanged) {
+        dispatch(getGovernanceStorage())
+      }
     } catch (e) {}
   }, [])
 
@@ -96,7 +99,7 @@ const Satellites = () => {
             </SmallInfoBlock>
           </InfoBlockWrapper>
 
-          {isLoading || isDoormanLoading ? (
+          {isLoading || isDoormanLoading || isFeedsLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellites and data feeds data</div>

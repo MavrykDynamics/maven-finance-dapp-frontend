@@ -6,7 +6,7 @@ import { DIP_DUP_CONTRACTS_QUERY, GET_MAX_LENGTHS_QUERY, GET_MVK_FAUCET_QUERY } 
 /**
  * @useDappInit loand data that is considered as needed across the whole DAPP
  *
- * @xtzBakers -> bakers off the xtz token
+ * @xtzBakers -> bakers for the xtz token
  * @mvkFaucetAddress -> faucet for MVK token
  * @maxLenghts -> max symbols amount per inputs, that is defined in indexer
  */

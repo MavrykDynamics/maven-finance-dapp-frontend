@@ -21,7 +21,6 @@ import DarkThemeProvider from './app/App.components/DarkThemeProvider/DarkThemeP
 
 import './styles/fonts.css'
 import './styles/animations.css'
-import StakeProvider from 'providers/StakeProvider/stake.provider'
 
 // TODO: implement tokens context while tokens reorganization task
 export const Root = () => {
