@@ -8,7 +8,6 @@ import { Button } from 'app/App.components/Button/Button.controller'
 import { Input } from 'app/App.components/Input/Input.controller'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import { DataFeedCard } from 'pages/DataFeedsDetails/listItem/DataFeedCard.view'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 // const, actions
@@ -31,12 +30,11 @@ import { Page } from 'styles'
 import { DataFeedsSearchFilter, DataFeedsStyled } from './DataFeeds.styles'
 import { EmptyContainer } from 'app/App.style'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { useLocation } from 'react-router'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
 export const DataFeeds = () => {
-  const { isLoading } = useDataFeedsUpdater()
+  useDataFeedsUpdater()
 
   const { feedsAddresses, feedsMapper, feedsCategories } = useDataFeedsContext()
 
@@ -89,69 +87,56 @@ export const DataFeeds = () => {
   return (
     <Page>
       <PageHeader page={'data-feeds'} />
-      {isLoading ? (
-        <DataLoaderWrapper>
-          <ClockLoader width={150} height={150} />
-          <div className="text">Loading data feeds</div>
-        </DataLoaderWrapper>
-      ) : (
-        <>
-          <DataFeedsSearchFilter>
-            <DropdownContainer className="dropDown">
-              <h4>Category:</h4>
-              {/* TODO: replace to new dd */}
-              <DropDown
-                placeholder="Choose category"
-                isOpen={ddIsOpen}
-                setIsOpen={setDdIsOpen}
-                itemSelected={chosenDdItem}
-                items={ddItems}
-                clickOnItem={handleSelect}
-              />
-            </DropdownContainer>
-            <Input
-              type="text"
-              kind={'search'}
-              placeholder="Search data feed..."
-              onChange={handleSearch}
-              value={searchInputValue}
-            />
+      <DataFeedsSearchFilter>
+        <DropdownContainer className="dropDown">
+          <h4>Category:</h4>
+          {/* TODO: replace to new dd */}
+          <DropDown
+            placeholder="Choose category"
+            isOpen={ddIsOpen}
+            setIsOpen={setDdIsOpen}
+            itemSelected={chosenDdItem}
+            items={ddItems}
+            clickOnItem={handleSelect}
+          />
+        </DropdownContainer>
+        <Input
+          type="text"
+          kind={'search'}
+          placeholder="Search data feed..."
+          onChange={handleSearch}
+          value={searchInputValue}
+        />
 
-            <Button
-              text="Request data feed"
-              icon="requestFeed"
-              disabled={isActionActive}
-              kind={ACTION_PRIMARY}
-              onClick={() => {
-                dispatch(showToaster(INFO, 'Coming soon', 'Request feed Feature coming soon'))
-              }}
-            />
-          </DataFeedsSearchFilter>
+        <Button
+          text="Request data feed"
+          icon="requestFeed"
+          disabled={isActionActive}
+          kind={ACTION_PRIMARY}
+          onClick={() => {
+            dispatch(showToaster(INFO, 'Coming soon', 'Request feed Feature coming soon'))
+          }}
+        />
+      </DataFeedsSearchFilter>
 
-          <DataFeedsStyled>
-            {filteredFeeds.length ? (
-              <>
-                <div className="list-wrapper">
-                  {paginatedFeeds.map((feedAddress) => (
-                    <DataFeedCard feed={feedsMapper[feedAddress]} key={feedAddress} />
-                  ))}
-                </div>
+      <DataFeedsStyled>
+        {filteredFeeds.length ? (
+          <>
+            <div className="list-wrapper">
+              {paginatedFeeds.map((feedAddress) => (
+                <DataFeedCard feed={feedsMapper[feedAddress]} key={feedAddress} />
+              ))}
+            </div>
 
-                <Pagination
-                  itemsCount={filteredFeeds.length}
-                  side={PAGINATION_SIDE_RIGHT}
-                  listName={FEEDS_ALL_LIST_NAME}
-                />
-              </>
-            ) : (
-              <EmptyContainer>
-                <img src="/images/not-found.svg" alt=" No data feeds to show" />
-                <figcaption> No data feeds to show</figcaption>
-              </EmptyContainer>
-            )}
-          </DataFeedsStyled>
-        </>
-      )}
+            <Pagination itemsCount={filteredFeeds.length} side={PAGINATION_SIDE_RIGHT} listName={FEEDS_ALL_LIST_NAME} />
+          </>
+        ) : (
+          <EmptyContainer>
+            <img src="/images/not-found.svg" alt=" No data feeds to show" />
+            <figcaption> No data feeds to show</figcaption>
+          </EmptyContainer>
+        )}
+      </DataFeedsStyled>
     </Page>
   )
 }
