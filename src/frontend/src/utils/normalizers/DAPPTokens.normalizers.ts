@@ -10,10 +10,6 @@ export function normalizeDipDupTokens(dipdup_token_metadata?: Array<Dipdup_Token
   return dipdup_token_metadata ?? []
 }
 
-export function normalizeDipDupContracts(dipdup_contract_metadata?: Array<Dipdup_Token_Metadata>) {
-  return dipdup_contract_metadata ?? []
-}
-
 export function normalizeMTokens(m_token: M_Token) {
   return m_token || []
 }

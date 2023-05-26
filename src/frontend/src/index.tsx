@@ -30,6 +30,7 @@ export const Root = () => {
       <ApolloProvider client={client}>
         <Provider store={store}>
           <DAPPConfigProvider>
+            {/* TODO: remove after indexer update */}
             <dappContext.Consumer>
               {(value) => (
                 <DataFeedsProvider dipDupContracts={value.dipDupContracts}>

@@ -11,6 +11,7 @@ import { normalizeTokenPrices } from './hooks/tokens.normalizer'
 // types
 import { State, Props, TokensContext } from './tokens.provider.types'
 import { SubscribeOracleStorageAggregatorSubscription } from 'utils/__generated__/graphql'
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
@@ -23,7 +24,7 @@ export class TokensProvider extends React.Component<Props, State> {
     super(props)
     this.state = {
       context: {
-        tokensPrices: { MVK: 1 },
+        tokensPrices: { [MVK_TOKEN_SYMBOL]: 1, [SMVK_TOKEN_SYMBOL]: 1 },
         updateTokensPrices: this.updateTokensPrices,
       },
     }
@@ -42,13 +43,11 @@ export class TokensProvider extends React.Component<Props, State> {
 
   // initializeDAPPTokens = (dappTokensData: DappTokensQuery) => {
   //   const dipDupTokensStorage = dappTokensData.dipdup_token_metadata
-  //   const dipDupContractsStorage = dappTokensData.dipdup_contract_metadata
   //   const whitelistTokensStorage = dappTokensData.treasury
   //   const mTokensStorage = dappTokensData.m_token
 
   //   // TODO remove any after removing redux logic
   //   const dipDupTokens = normalizeDipDupTokens(dipDupTokensStorage as any) as Dipdup_Token_Metadata[]
-  //   const dipDupContracts = normalizeDipDupContracts(dipDupContractsStorage as any) as Dipdup_Token_Metadata[]
   //   const mTokens = normalizeMTokens(mTokensStorage as any) as any
   //   const whitelistTokens = normalizeWhitelistTokens(whitelistTokensStorage as any) as any
 
@@ -56,7 +55,6 @@ export class TokensProvider extends React.Component<Props, State> {
   //     context: {
   //       ...this.state.context,
   //       dipDupTokens,
-  //       dipDupContracts,
   //       whitelistTokens: this.state.context.whitelistTokens.concat(whitelistTokens),
   //       mTokens,
   //     },

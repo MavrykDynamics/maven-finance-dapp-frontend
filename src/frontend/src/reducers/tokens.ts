@@ -8,7 +8,6 @@ import { AnyAction } from 'redux'
 
 export type TokensType = {
   dipDupTokens: Array<DipDupTokensGraphQl>
-  dipDupContracts: Array<DipDupTokensGraphQl>
   tokensPrices: Record<string, number>
   avaliableCollaterals: Array<AvaliableCollateralType>
   whitelistTokens: Array<{
@@ -21,7 +20,6 @@ export type TokensType = {
 }
 const defaultTokensInfoState: TokensType = {
   dipDupTokens: [],
-  dipDupContracts: [],
   whitelistTokens: [
     {
       symbol: 'xtz',
@@ -41,7 +39,6 @@ export function tokens(state = defaultTokensInfoState, action: AnyAction) {
       return {
         ...state,
         dipDupTokens: action.dipDupTokens,
-        dipDupContracts: action.dipDupContracts,
         whitelistTokens: state.whitelistTokens.concat(action.whitelistTokens),
         mTokens: action.mTokens,
       }
