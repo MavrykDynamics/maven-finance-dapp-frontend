@@ -146,3 +146,14 @@ export type LoanMarketType = {
   lending24hVolume: number
   borrowing24hVolume: number
 }
+
+type TokenOperator = {
+  owner: string
+  operator: string
+  token_id: number
+}
+
+export type UpdateTokenOperator = {
+  add_operator?: TokenOperator
+  remove_operator?: TokenOperator
+}

@@ -68,7 +68,12 @@ export const BecomeSatellite = () => {
   const dispatch = useDispatch()
   const {
     accountPkh = '',
-    user: { userTokens, isSatellite, satelliteMvkIsDelegatedTo },
+    user: {
+      userTokens,
+      isSatellite,
+      satelliteMvkIsDelegatedTo,
+      userAvatars: { mainAvatar = '/images/default-avatar.png' },
+    },
   } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSatellitesContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -228,10 +233,7 @@ export const BecomeSatellite = () => {
   return (
     <>
       <Page>
-        <PageHeader
-          page={isSatellite ? 'my satellite profile' : 'satellites'}
-          avatar={usersSatelliteProfile?.image || '/images/default-avatar.png'}
-        />
+        <PageHeader page={isSatellite ? 'my satellite profile' : 'satellites'} avatar={mainAvatar} />
 
         {!balanceOverMinStakedMvk && (
           <NotStakingBanner

@@ -43,7 +43,7 @@ export const TextArea = ({
   disabled,
   required,
   label,
-  textAreaMaxLimit = 1000,
+  textAreaMaxLimit,
 }: TextAreaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -83,9 +83,11 @@ export const TextArea = ({
       </div>
       <div className="info-error">
         {errorMessage && <TextAreaErrorMessage>{errorMessage}</TextAreaErrorMessage>}
-        <TextAreaCounter className={status}>
-          {String(value).length}/{textAreaMaxLimit}
-        </TextAreaCounter>
+        {textAreaMaxLimit ? (
+          <TextAreaCounter className={status}>
+            {String(value).length}/{textAreaMaxLimit}
+          </TextAreaCounter>
+        ) : null}
       </div>
       <TextAreaStatus className={status} />
     </TextAreaStyled>
