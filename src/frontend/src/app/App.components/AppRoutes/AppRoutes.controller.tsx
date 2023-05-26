@@ -8,8 +8,6 @@ import DataFeedDetails from 'pages/DataFeedsDetails/DataFeedsDetails.controler'
 import { FinancialRequests } from 'pages/FinacialRequests/FinancialRequests.controller'
 import SatelliteNodes from 'pages/SatelliteNodes/SatelliteNodes.controller'
 import Satellites from 'pages/Satellites/Satellites.controller'
-import UserDetails from 'pages/UsersOracles/details/UsersDetails.controler'
-import Users from 'pages/UsersOracles/Users.controller'
 
 // pages
 import { Admin } from '../../../pages/Admin/Admin.controller'
@@ -23,7 +21,6 @@ import { EmergencyGovernance } from '../../../pages/EmergencyGovernance/Emergenc
 import { Farms } from '../../../pages/Farms/Farms.controller'
 import { Governance } from '../../../pages/Governance/Governance.controller'
 import { Loans } from '../../../pages/Loans/Loans.controller'
-import { ProposalSubmission } from '../../../pages/ProposalSubmission/ProposalSubmission.controller'
 import { SatelliteDetails } from '../../../pages/SatelliteDetails/SatelliteDetails.controller'
 import { SatelliteGovernance } from '../../../pages/SatelliteGovernance/SatelliteGovernance.controller'
 import { Treasury } from '../../../pages/Treasury/Treasury.controller'
@@ -34,6 +31,7 @@ import ProtectedRoute from './ProtectedRoute'
 import DashboardPersonal from 'pages/DashboardPersonal/DashboardPersonal.controller'
 import { Market } from 'pages/Loans/Market.controller'
 import { LoansDashboard } from 'pages/LoansDashboard/LoansDashboard'
+import { ProposalSubmission } from 'pages/ProposalSubmission/ProposalSubmission.controller'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
@@ -142,12 +140,6 @@ export const AppRoutes = () => {
       {/* NOT READY PAGES */}
       <Route exact path="/your-vesting">
         <Dashboard />
-      </Route>
-      <Route exact path="/oracle-users">
-        <Users />
-      </Route>
-      <Route exact path="/satellites/user-details/:userId">
-        <UserDetails />
       </Route>
 
       {/* NOT PROD PAGES */}

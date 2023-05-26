@@ -1,99 +1,56 @@
-import { useEffect, useState, useRef } from 'react'
 import { useSubscription } from '@apollo/client'
 
 // providers
 import { useDataFeedsContext } from '../dataFeeds.provider'
 
 // subs
-import {
-  getOrcaleStorageAggregatorQuery,
-  SUBSCRIBTION_ORACLE_STORAGE_AGGREGATOR_FACTORY,
-  SUBSCRIBTION_ORACLE_STORAGE_DIPDUP_CONTRACT_METADATA,
-} from 'gql/queries/getOracleStorage'
-import { GetOracleDataFeedsQuery } from 'utils/__generated__/graphql'
+import { getOrcaleStorageAggregatorQuery } from 'gql/queries/getOracleStorage'
+import { useEffect, useState } from 'react'
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
-// TODO add checks if data is empty (valid data with zod) and handle errors for it
-export const useDataFeedsUpdater = (feedAddress?: string) => {
-  const [feedsData, setFeedsData] = useState<Partial<GetOracleDataFeedsQuery>>({})
-  const [forcedUpdate, setForcedUpdate] = useState(false)
-  const { initializeDataFeeds } = useDataFeedsContext()
-  const initialDataStorageRef = useRef<GetOracleDataFeedsQuery | null>(null)
+export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
+  const { updateDataFeeds } = useDataFeedsContext()
+  const { updateTokensPrices } = useTokensContext()
+  const { dipDupContracts } = useDAPPConfigContext()
 
-  useEffect(() => {
-    if (
-      forcedUpdate ||
-      (feedsData.hasOwnProperty('aggregator') &&
-        feedsData.hasOwnProperty('aggregator_factory') &&
-        feedsData.hasOwnProperty('dipdup_contract_metadata'))
-    ) {
-      if (initialDataStorageRef.current === null) {
-        initialDataStorageRef.current = feedsData as GetOracleDataFeedsQuery
-      }
+  const isContractsLoading = dipDupContracts === null
 
-      const _data = { ...feedsData }
-
-      if (!_data.hasOwnProperty('aggregator_factory')) {
-        _data.aggregator_factory = { ...initialDataStorageRef.current.aggregator_factory }
-      }
-
-      if (!_data.hasOwnProperty('dipdup_contract_metadata')) {
-        _data.dipdup_contract_metadata = { ...initialDataStorageRef.current.dipdup_contract_metadata }
-      }
-      initializeDataFeeds(_data as GetOracleDataFeedsQuery, true)
-      setFeedsData({})
-      setForcedUpdate(false)
-    }
-  }, [forcedUpdate, feedsData, initializeDataFeeds])
-
-  //   like heartbeat (default 10 seconds if there is a data)
-  // update by aggregator if no dipdupmetadata
-  // useEffect(() => {
-  //   let timeout: NodeJS.Timeout
-
-  //   if (
-  //     feedsData.hasOwnProperty('aggregator') &&
-  //     !feedsData.hasOwnProperty('aggregator_factory') &&
-  //     !feedsData.hasOwnProperty('dipdup_contract_metadata')
-  //   ) {
-  //     timeout = setTimeout(() => {
-  //       setForcedUpdate(true)
-  //     }, 10000)
-  //   }
-
-  //   return () => {
-  //     if (timeout) clearTimeout(timeout)
-  //   }
-  // }, [feedsData])
+  const [shouldSkip, setShouldSkip] = useState(false)
+  const [feeds, setFeeds] = useState<SubsribeOracleDataFeedSubscription['aggregator']>([])
 
   const { loading: aggregatorLoading } = useSubscription(getOrcaleStorageAggregatorQuery(feedAddress), {
+    skip: shouldSkip,
+    shouldResubscribe: true,
+    variables: {
+      address: feedAddress,
+    },
     onData: ({ data: response }) => {
       const { data } = response
       if (data) {
-        setFeedsData({ ...feedsData, aggregator: data.aggregator })
+        setFeeds(data.aggregator)
       }
+    },
+    onError: (error) => {
+      console.log({ error })
     },
   })
 
-  const { loading: aggregatorFactoryLoading } = useSubscription(SUBSCRIBTION_ORACLE_STORAGE_AGGREGATOR_FACTORY, {
-    onData: ({ data: response }) => {
-      const { data } = response
-      if (data) {
-        setFeedsData({ ...feedsData, aggregator_factory: data.aggregator_factory })
-      }
-    },
-  })
+  // Effect to load data 1 time and then skip loading, cuz loading returned from useSubscription si only for initial loading
+  useEffect(() => {
+    if (!aggregatorLoading && skip) {
+      setShouldSkip(true)
+    }
+  }, [skip, aggregatorLoading])
 
-  const { loading: dipdupContractsMetadataLoading } = useSubscription(
-    SUBSCRIBTION_ORACLE_STORAGE_DIPDUP_CONTRACT_METADATA,
-    {
-      onData: ({ data: response }) => {
-        const { data } = response
-        if (data) {
-          setFeedsData({ ...feedsData, dipdup_contract_metadata: data.dipdup_contract_metadata })
-        }
-      },
-    },
-  )
+  // TODO: remove when dipDupContracts are updated
+  useEffect(() => {
+    if (!aggregatorLoading && !isContractsLoading) {
+      updateDataFeeds(feeds)
+      updateTokensPrices(feeds)
+    }
+  }, [aggregatorLoading, feeds, isContractsLoading])
 
-  return { isLoading: !dipdupContractsMetadataLoading && !aggregatorFactoryLoading && !aggregatorLoading }
+  return { isLoading: aggregatorLoading }
 }

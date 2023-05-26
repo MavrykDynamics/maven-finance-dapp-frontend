@@ -1,18 +1,16 @@
 import TokensProvider from './tokens.provider'
 
-import { M_Token } from 'utils/generated/graphqlTypes'
-import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
-import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { GetAvaliableCollateralsQuery } from 'utils/__generated__/graphql'
+import { normalizeTokenPrices } from './hooks/tokens.normalizer'
 
 export type XtxBakersType = {
   otherBakers: Array<XtzBakerType>
   dao: (XtzBakerType & { description: string; isDisabled: boolean }) | null
   mavrykDynamics: (XtzBakerType & { description: string; isDisabled: boolean }) | null
 }
+
+type TokensPricesType = ReturnType<typeof normalizeTokenPrices>
 
 export type WhiteListTokensType = Array<{
   symbol: string
@@ -22,22 +20,21 @@ export type WhiteListTokensType = Array<{
 }>
 
 export type TokensContext = {
-  dipDupTokens: Array<DipDupTokensGraphQl>
-  dipDupContracts: Array<DipDupTokensGraphQl>
-  tokensPrices: Record<string, number>
-  avaliableCollaterals: Array<AvaliableCollateralType> | null
-  xtzBakers: XtxBakersType
-  whitelistTokens: WhiteListTokensType
-  mTokens: Array<M_Token>
-  mvkFaucetAddress: string | null
+  // TODO: implement later
+  // data
+  // dipDupTokens: Array<DipDupTokensGraphQl>
+  // avaliableCollaterals: Array<AvaliableCollateralType> | null
+  // whitelistTokens: WhiteListTokensType
+  // mTokens: Array<M_Token>
   // internal helper state
-  collateralData: GetAvaliableCollateralsQuery | null
+  // collateralData: GetAvaliableCollateralsQuery | null
   // actions
-  initializeDAPPTokens: InstanceType<typeof TokensProvider>['initializeDAPPTokens']
-  updateMVKFaucetAddress: InstanceType<typeof TokensProvider>['updateMVKFaucetAddress']
-  selfUpdateXtzBakers: InstanceType<typeof TokensProvider>['selfUpdateXtzBakers']
-  updateCollateralsData: InstanceType<typeof TokensProvider>['updateCollateralsData']
-  updateAvaliableCollaterals: InstanceType<typeof TokensProvider>['updateAvaliableCollaterals']
+  // initializeDAPPTokens: InstanceType<typeof TokensProvider>['initializeDAPPTokens']
+  // updateCollateralsData: InstanceType<typeof TokensProvider>['updateCollateralsData']
+  // updateAvaliableCollaterals: InstanceType<typeof TokensProvider>['updateAvaliableCollaterals']
+
+  tokensPrices: TokensPricesType
+  updateTokensPrices: InstanceType<typeof TokensProvider>['updateTokensPrices']
 }
 
 export type State = {
@@ -46,5 +43,4 @@ export type State = {
 
 export type Props = {
   children: React.ReactNode
-  feedsLedger: Feed[]
 }

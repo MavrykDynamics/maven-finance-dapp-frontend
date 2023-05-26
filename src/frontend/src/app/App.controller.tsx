@@ -30,16 +30,14 @@ import { PolicyPopup } from 'app/App.components/PolicyPopup/Policy.controller'
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
 import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.actions'
-import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
-import { getTokensForDAPP, getTokensPrices } from 'reducers/actions/getTokens.actions'
+import { getTokensForDAPP } from 'reducers/actions/getTokens.actions'
 import { getCouncilMembers } from 'pages/Council/Council.actions'
 import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
-import { getAvaliableCollaterals, getXtzBakers } from 'pages/Loans/Actions/getLoansData.actions'
+import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
 
-// export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
 export type GetState = typeof store.getState
@@ -62,26 +60,25 @@ const AppContainer = () => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))
   }, [showSidebarOpened])
 
+  /**
+   * dispatch(getTokensForDAPP())
+   * dispatch(getAvaliableCollaterals())
+   * will be removed after tokens reorganization, cuz it'll be in useInitializer and will be on context
+   */
+
   useEffect(() => {
     ;(async () => {
       // Needs to be fetched before promise all
       await dispatch(getContractAddressesStorage())
       // Fetching initial&common data for DAPP
       await Promise.all([
-        dispatch(getFeedsStorage()),
-
         dispatch(getTokensForDAPP()),
-        dispatch(getXtzBakers()),
-        // TODO: uncomment it when contracts are updated
-        // dispatch(getMvkFaucet()),
+        dispatch(getAvaliableCollaterals()),
 
         // Used to retrieve user avatar
         dispatch(getCouncilMembers()),
         dispatch(getBreakGlassCouncilMembers()),
       ])
-
-      // Depends on data feeds (getFeedsStorage())
-      await Promise.all([dispatch(getTokensPrices()), dispatch(getAvaliableCollaterals())])
 
       // For using Beacon wallet
       if (
@@ -112,21 +109,21 @@ const AppContainer = () => {
     <LoaderRocket />
   ) : (
     <Router>
-      <AppStyled isExpandedMenu={sidebarOpened}>
-        <ActionLoader />
-        <Toaster />
-        <WertLoader />
-        <Menu />
+      <StakeProvider>
+        <AppStyled isExpandedMenu={sidebarOpened}>
+          <ActionLoader />
+          <Toaster />
+          <WertLoader />
+          <Menu />
 
-        <PopupChangeNode isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
-        <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
+          <PopupChangeNode isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
+          <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
-        <StakeProvider>
           <LoansPopupsProvider>
             <AppRoutes />
           </LoansPopupsProvider>
-        </StakeProvider>
-      </AppStyled>
+        </AppStyled>
+      </StakeProvider>
     </Router>
   )
 }

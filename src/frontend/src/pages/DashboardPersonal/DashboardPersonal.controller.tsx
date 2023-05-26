@@ -112,8 +112,9 @@ const DashboardPersonal = () => {
   }
 
   const userTokensList = Object.values(userTokens)
-  const mostSuppliedUserTokenSymbol = userTokensList.reduce((acc, { symbol, balance }) => {
-    if (symbol === MVK_TOKEN_SYMBOL || symbol === SMVK_TOKEN_SYMBOL || symbol === XTZ_TOKEN_SYMBOL) return acc
+  const mostSuppliedUserTokenSymbol = userTokensList.reduce((acc, { symbol, balance, type }) => {
+    if (symbol === MVK_TOKEN_SYMBOL || symbol === SMVK_TOKEN_SYMBOL || symbol === XTZ_TOKEN_SYMBOL || type === 'mToken')
+      return acc
     const accAssetBalanceInUSD = Number(userTokens[acc]?.balance ?? 0) * (tokensPrices[acc] ?? 1)
     const assetToCompareBalanceInUSD = Number(balance) * (tokensPrices[symbol] ?? 1)
     return accAssetBalanceInUSD > assetToCompareBalanceInUSD ? acc : symbol

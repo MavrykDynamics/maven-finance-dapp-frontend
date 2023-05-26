@@ -118,6 +118,7 @@ export const SATELLITES_STORAGE_QUERY = gql(`
           }
         }
 
+
         governance_proposals_votes (order_by: {timestamp: desc}) {
           governance_proposal_id
           id
@@ -164,6 +165,15 @@ export const SATELLITES_STORAGE_QUERY = gql(`
     governance_financial_request {
       executed
       id
+    }
+
+    governance(where: {active: {_eq: true}}) {
+      satellite_snapshots(order_by: {cycle: desc_nulls_last}) {
+        cycle
+        user_id
+        total_voting_power
+      }
+      cycle_id
     }
 
     aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {

@@ -1,4 +1,6 @@
 import DAPPConfigProvider from './dappConfig.provider'
+import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
+import { DipDupContractsQuery } from 'utils/__generated__/graphql'
 
 export type CouncilMaxLength = {
   councilMemberImageMaxLength: number
@@ -29,25 +31,34 @@ export type GovernanceSatelliteMaxLength = {
   purposeMaxLength: number
 }
 
-export type SatelliteDelegation = {
+export type SatelliteDelegationMaxLength = {
   satelliteNameMaxLength: number
   satelliteDescriptionMaxLength: number
   satelliteWebsiteMaxLength: number
-  satelliteImageMaxLength: number
-  minimumStakedMvkBalance: number
 }
 
 export type DAPPConfigContext = {
-  council: CouncilMaxLength
-  dataFeeds: DataFeedsMaxLength
-  emergencyGovernance: EmergencyGovernanceMaxLength
-  governance: GovernanceMaxLength
-  governanceSatellite: GovernanceSatelliteMaxLength
-  satelliteDelegation: SatelliteDelegation
-  // loader
-  isDappLoading: boolean
+  maxLengths: {
+    council: CouncilMaxLength
+    dataFeeds: DataFeedsMaxLength
+    emergencyGovernance: EmergencyGovernanceMaxLength
+    governance: GovernanceMaxLength
+    governanceSatellite: GovernanceSatelliteMaxLength
+    satelliteDelegation: SatelliteDelegationMaxLength
+  }
+  minimumStakedMvkBalance: number
+  mvkFaucetAddress: string | null
+  xtzBakers: {
+    dao: XtzBakerType
+    mavrykDynamics: XtzBakerType
+    otherBakers: Array<XtzBakerType>
+  } | null
+  dipDupContracts: Record<string, DipDupContractsQuery['dipdup_contract_metadata'][number]> | null
   // actions
-  initializeDappConfigData: InstanceType<typeof DAPPConfigProvider>['initializeDappConfigData']
+  updateMaxLengths: InstanceType<typeof DAPPConfigProvider>['updateMaxLengths']
+  updateMVKFaucetAddress: InstanceType<typeof DAPPConfigProvider>['updateMVKFaucetAddress']
+  updateXtzBakers: InstanceType<typeof DAPPConfigProvider>['updateXtzBakers']
+  updateDipDupContracts: InstanceType<typeof DAPPConfigProvider>['updateDipDupContracts']
 }
 
 export type State = {

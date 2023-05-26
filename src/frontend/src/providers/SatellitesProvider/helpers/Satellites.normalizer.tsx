@@ -1,7 +1,12 @@
 import type { SatelliteVotingsType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 // helpers
-import { calcWithoutMu, calcWithoutPrecision, getNumberInBounds } from '../../../utils/calcFunctions'
+import {
+  calcWithoutMu,
+  calcWithoutPrecision,
+  convertNumberForClient,
+  getNumberInBounds,
+} from '../../../utils/calcFunctions'
 import { OracleStatusTypes, VOTE_NUM_MAPPER } from '../satellites.const'
 import { SatellitesStorage } from '../satellites.provider.types'
 import {
@@ -10,7 +15,33 @@ import {
   SatelliteEmergencyGovernanceDataSubscription,
   SatelliteGovernanceFinancialRequestSubscription,
   SatelliteAggregatorOraclesSubscription,
+  Governance_Satellite_Snapshot,
 } from 'utils/__generated__/graphql'
+
+type Snapshot = Pick<Governance_Satellite_Snapshot, 'user_id' | 'total_voting_power'>
+/**
+ * @param snapshots array of objects with user_id and total_voting_power
+ * @param cycle current active cycle (can be 0 if cycle hadn't started yet)
+ * @returns object where user_id is key and snapshot object as value
+ */
+export const createSatelliteSnapshotsByIds = (snapshots: Snapshot[], cycle: number) => {
+  if (snapshots.length === 0 || cycle === 0) return {}
+
+  const uniqueIds = new Set<string>()
+  const snapshotsWithoutDuplicates: Snapshot[] = []
+
+  for (const obj of snapshots) {
+    if (!uniqueIds.has(obj.user_id)) {
+      snapshotsWithoutDuplicates.push(obj)
+      uniqueIds.add(obj.user_id)
+    }
+  }
+
+  return snapshotsWithoutDuplicates.reduce((acc: { [key: string]: Snapshot }, s) => {
+    acc[s.user_id] = { ...s }
+    return acc
+  }, {})
+}
 
 export const getSatelliteAccuracy = (satelliteRecord: SatelliteDataSubscription['satellite'][0]) => {
   const v1 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.aggregator?.last_completed_data),
@@ -222,6 +253,7 @@ export const getSatelliteVotings = ({
 
 export const normallizeSatellite = (
   satelliteRecord: SatelliteDataSubscription['satellite'][0],
+  satelliteObjectSnapshots: ReturnType<typeof createSatelliteSnapshotsByIds>,
   metricsData: {
     proposals: SatelliteGovernanceProposalDataSubscription['governance_proposal']
     emergencyGovernanceLedger: SatelliteEmergencyGovernanceDataSubscription['emergency_governance']
@@ -289,6 +321,9 @@ export const normallizeSatellite = (
     mvkBalance: calcWithoutPrecision(satelliteRecord?.user.mvk_balance),
     sMvkBalance: calcWithoutPrecision(satelliteRecord?.user.smvk_balance),
     totalDelegatedAmount: calcWithoutPrecision(satelliteTotalDelegatedAmount),
+    totalVotingPower: convertNumberForClient({
+      number: satelliteObjectSnapshots[satelliteRecord.user_id]?.total_voting_power ?? 0,
+    }),
     accuracy: getSatelliteAccuracy(satelliteRecord),
     oracleRecords: satelliteOracleRecords,
     proposalVotingHistory,
@@ -315,7 +350,10 @@ export const normalizeSatellitesLedger = (
     oraclesIds: string[]
   }>(
     (acc, satelliteRecord) => {
-      const nomalizedSatellite = normallizeSatellite(satelliteRecord, {
+      const { satellite_snapshots, cycle_id } = store.governance[0]
+      const satelliteObjectSnapshots = createSatelliteSnapshotsByIds(satellite_snapshots, cycle_id)
+
+      const nomalizedSatellite = normallizeSatellite(satelliteRecord, satelliteObjectSnapshots, {
         proposals: store.governance_proposal,
         emergencyGovernanceLedger: store.emergency_governance,
         feeds: store.aggregator,

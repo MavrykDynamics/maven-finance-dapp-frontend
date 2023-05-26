@@ -40,7 +40,9 @@ const titles = {
 export function BreakGlassCouncil() {
   const dispatch = useDispatch()
 
-  const { council: councilMaxLengths } = useDAPPConfigContext()
+  const {
+    maxLengths: { council: councilMaxLengths },
+  } = useDAPPConfigContext()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { glassBroken, isConfigLoaded } = useSelector((state: State) => state.breakGlass.config)

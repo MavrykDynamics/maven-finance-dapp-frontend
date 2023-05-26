@@ -66,7 +66,8 @@ query GetCurrentCycleGovernanceSatelliteSnapshot($_eq: String = "") {
 	governance(where: {active: {_eq: true}}) {
 		cycle_id
 		satellite_snapshots(where: {user_id: {_eq: $_eq}}, order_by: {cycle: desc}) {
-			cycle
+			cycle,
+      ready
 			}
 		}
 	}

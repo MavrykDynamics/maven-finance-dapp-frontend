@@ -23,7 +23,6 @@ import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/satellites.co
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
 // styles
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
@@ -36,16 +35,21 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
 const Satellites = () => {
+  const { isLoading: isFeedsLoading } = useDataFeedsUpdater()
+  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
+
+  const { feedsAddresses, feedsMapper } = useDataFeedsContext()
+
   const dispatch = useDispatch()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { activeSatellitesIds, satelliteMapper } = useSatellitesContext()
-  const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
 
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
   const {
     user: { isSatellite, userTokens },
   } = useSelector((state: State) => state.wallet)
@@ -54,12 +58,9 @@ const Satellites = () => {
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
-      await Promise.all(
-        [
-          (!isFeedsLoaded || isDepsChanged) && dispatch(getFeedsStorage()),
-          (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
-        ].filter(Boolean),
-      )
+      if (!isGovernanceLoaded || isDepsChanged) {
+        dispatch(getGovernanceStorage())
+      }
     } catch (e) {}
   }, [])
 
@@ -69,9 +70,9 @@ const Satellites = () => {
         <CommaNumber value={getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)} endingText={'MVK'} />
       ),
       totalSatelliteOracles: activeSatellitesIds.length,
-      numberOfDataFeeds: feedsLedger.length > 50 ? feedsLedger.length + '+' : feedsLedger.length,
+      numberOfDataFeeds: feedsAddresses.length > 50 ? feedsAddresses.length + '+' : feedsAddresses.length,
     }),
-    [activeSatellitesIds, feedsLedger, satelliteMapper],
+    [activeSatellitesIds, feedsAddresses, satelliteMapper],
   )
 
   return (
@@ -102,7 +103,7 @@ const Satellites = () => {
             </SmallInfoBlock>
           </InfoBlockWrapper>
 
-          {isLoading || isDoormanLoading ? (
+          {isLoading || isDoormanLoading || isFeedsLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellites and data feeds data</div>
@@ -130,7 +131,7 @@ const Satellites = () => {
                 </>
               ) : null}
 
-              {feedsLedger.length ? (
+              {feedsAddresses.length ? (
                 <>
                   <div className="top-list">
                     <H2Title>Popular Feeds</H2Title>
@@ -144,14 +145,18 @@ const Satellites = () => {
                   </div>
 
                   <div className={`satellitesList`}>
-                    {feedsLedger.slice(0, 3).map((feed) => (
-                      <DataFeedCard feed={feed} oracleNodes={tabsInfo.totalSatelliteOracles} key={feed.address} />
+                    {feedsAddresses.slice(0, 3).map((feedAddress) => (
+                      <DataFeedCard
+                        feed={feedsMapper[feedAddress]}
+                        oracleNodes={tabsInfo.totalSatelliteOracles}
+                        key={feedAddress}
+                      />
                     ))}
                   </div>
                 </>
               ) : null}
 
-              {feedsLedger.length === 0 && activeSatellitesIds.length === 0 ? (
+              {feedsAddresses.length === 0 && activeSatellitesIds.length === 0 ? (
                 <EmptyContainer>
                   <img src="/images/not-found.svg" alt={`no satellites and data feeds`} />
                   <figcaption>No satellites and data feeds</figcaption>

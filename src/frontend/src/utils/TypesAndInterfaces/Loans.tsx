@@ -68,8 +68,10 @@ export type XtzBakerType = {
   address: string
   fee: number
   yield: number
-  efficiency: number
   freespace: number
+  efficiency?: number
+  isDisabled?: boolean
+  description?: string
 }
 
 export type UserLendObjType = {

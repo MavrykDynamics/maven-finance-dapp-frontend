@@ -1,16 +1,20 @@
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+import { useFeedsStats } from 'providers/DataFeedsProvider/hooks/useFeedsStats'
+import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
+
+import { convertNumberForClient } from 'utils/calcFunctions'
+
 import { State } from 'reducers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { MVK_DECIMALS } from 'utils/constants'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { useChainCount } from 'providers/DataFeedsProvider/hooks/useChainCount'
-import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
-import { useOracleRewarsAvg } from 'providers/DataFeedsProvider/hooks/useOracleRewarsAvg'
+
+import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -56,12 +60,14 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     accountPkh,
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
+
   const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
   // onChain data points subscription
-  const { dataPointsCount } = useChainCount()
-
+  const { feedsAmount, rewardsAmount } = useFeedsStats()
   const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
-  const { oracleRewardsAvg } = useOracleRewarsAvg()
+
+  const averageRevard =
+    convertNumberForClient({ number: rewardsAmount, grade: MVK_DECIMALS }) / Math.max(feedsAmount, 1)
 
   return (
     <SatelliteSideBarStyled>
@@ -105,7 +111,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <SideBarItem>
           <h3>On-Chain Data Points</h3>
           <var>
-            <CommaNumber value={dataPointsCount} showDecimal={false} />
+            <CommaNumber value={feedsAmount} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>
@@ -122,7 +128,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         </SideBarItem>
         <SideBarItem>
           <h3>Avg. Oracles Rewards MVK</h3>
-          <var>{oracleRewardsAvg ? <CommaNumber value={oracleRewardsAvg} /> : '-'}</var>
+          <var>{averageRevard ? <CommaNumber value={averageRevard} /> : '-'}</var>
         </SideBarItem>
       </SideBarSection>
 

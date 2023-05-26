@@ -35,11 +35,11 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 
 type InputState =
   | {
@@ -76,17 +76,10 @@ export const AddNewCollateral = ({
   } = data ?? {}
 
   useLockBodyScroll(show)
+  const { xtzBakers } = useDAPPConfigContext()
   const dispatch = useDispatch()
-  const {
-    xtzBakers: { otherBakers, dao, mavrykDynamics },
-  } = useSelector((state: State) => state.tokens)
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { userTokens } = useSelector((state: State) => state.wallet.user)
-
-  const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = useMemo(
-    () => [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])],
-    [dao, mavrykDynamics, otherBakers],
-  )
 
   const [inputData, setInputData] = useState<InputState>()
 
@@ -157,9 +150,13 @@ export const AddNewCollateral = ({
   }, [inputData, avaliableCollaterals, vaultCollateralBalance, borrowedAmount, borrowedAssetRate, avaliableLiq])
 
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
-  const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
-    () =>
-      xtzBakers.map(({ name, fee, logo, address, yield: bakerYield, freespace, isDisabled }, idx) => ({
+  const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(() => {
+    const { otherBakers = [], dao, mavrykDynamics } = xtzBakers ?? {}
+
+    return otherBakers
+      .concat(dao ? dao : [])
+      .concat(mavrykDynamics ? mavrykDynamics : [])
+      .map(({ name, fee, logo, address, yield: bakerYield, freespace, isDisabled }, idx) => ({
         content: (
           <DropDownJsxChild>
             <div className="flex-row with-image">
@@ -176,9 +173,8 @@ export const AddNewCollateral = ({
         bakerYield,
         bakerFreeSpace: freespace,
         disabled: isDisabled,
-      })),
-    [xtzBakers],
-  )
+      }))
+  }, [xtzBakers])
   const [bakerChosenDdItem, setAssetChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
   const showBakerAddress = useMemo(() => isTezosAsset(inputData?.assetName ?? ''), [inputData])
   const handleOnClickDropdownBakerItem = (itemId: DDItemId) =>

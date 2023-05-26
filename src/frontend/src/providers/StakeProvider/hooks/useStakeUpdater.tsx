@@ -30,10 +30,16 @@ import { subsciptionErrorToaster } from 'app/App.components/Toaster/builtActions
  * @param skip boolean, if you pass this param, the hook will be triggered only one time
  * @returns {isInitialLoading: boolean, isActionLoading: boolean} isInitialLoading is false if initial data is still loading, true if it's loaded
  * isActionLoading is false if action update is done, true if it's in progress
- *
- * TODO: add toasters for subs errors handling
  */
-export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSubscriptionsTypes> = []) => {
+export const useStakeUpdater = (
+  skip = false,
+  subsciptionsList: Array<StakingSubscriptionsTypes> = [
+    DOORMAN_HISTORY_SUB,
+    DOORMAN_STATS_SUB,
+    DOORMAN_STATS_SUB,
+    USER_MVK_BALANCE_SUB,
+  ],
+) => {
   const [actionLoaderState, setActionLoaderState] = useState<StakeActionsLoaderState>(STAKE_DEFAULT_LOADINGS)
 
   const dispatch = useDispatch()
@@ -83,10 +89,9 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
   ])
 
   const [shouldSkip, setShouldSkip] = useState(false)
-  const isLoadAllQueries = subsciptionsList.length === 0
 
   const { loading: historyLoading } = useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
-    skip: shouldSkip || (!isLoadAllQueries && !subsciptionsList.includes(DOORMAN_HISTORY_SUB)),
+    skip: shouldSkip || !subsciptionsList.includes(DOORMAN_HISTORY_SUB),
     onData: ({ data: result }) => {
       const { data, error } = result
       if (error) {
@@ -101,7 +106,7 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
   })
 
   const { loading: doormanBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
-    skip: shouldSkip || (!isLoadAllQueries && !subsciptionsList.includes(DOORMAN_STATS_SUB)),
+    skip: shouldSkip || !subsciptionsList.includes(DOORMAN_STATS_SUB),
     variables: {
       _eq: doormanAddress.address,
     },
@@ -120,7 +125,7 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
   })
 
   const { loading: mvkStatsloading } = useSubscription(SUBSCRIPTION_MVK_TOKEN_TOTAL, {
-    skip: shouldSkip || (!isLoadAllQueries && !subsciptionsList.includes(DOORMAN_STATS_SUB)),
+    skip: shouldSkip || !subsciptionsList.includes(DOORMAN_STATS_SUB),
     onData: ({ data: result }) => {
       const { data, error } = result
       if (error) {
@@ -136,7 +141,7 @@ export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSub
 
   // TODO: will be moved to user context when user data will be transfered to context
   const { loading: userBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
-    skip: shouldSkip || (!isLoadAllQueries && !subsciptionsList.includes(USER_MVK_BALANCE_SUB)),
+    skip: shouldSkip || !subsciptionsList.includes(USER_MVK_BALANCE_SUB),
     variables: {
       _eq: accountPkh,
     },

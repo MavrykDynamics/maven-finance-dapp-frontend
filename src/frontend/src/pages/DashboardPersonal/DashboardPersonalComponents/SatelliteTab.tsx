@@ -11,6 +11,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { SatelliteStatusBlock } from './DashboardPersonalComponents.style'
 import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/SatelliteCard.style'
 import { DashboardCardHeader } from '../DashboardPersonal.style'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 import { State } from 'reducers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -20,8 +21,13 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
+import colors from 'styles/colors'
+import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
+
 const SatelliteTab = () => {
   const dispatch = useDispatch()
+  const { themeSelected } = useSelector((state: State) => state.preferences)
+
   const {
     accountPkh = '',
     user: { availableSatellitesRewards },
@@ -101,12 +107,16 @@ const SatelliteTab = () => {
                 </div>
 
                 <div className="grid-item grid-item-under-image">
-                  <div className="name">Total Voting Power</div>
-                  <div className="value">
-                    <CommaNumber
-                      value={satelliteRecord.sMvkBalance + satelliteRecord.totalDelegatedAmount}
-                      endingText="sMVK"
+                  <div className="text-wrapper">
+                    <div className="name">Total Voting Power</div>
+                    <CustomTooltip
+                      text={TOTAL_VOTING_POWER_TOOLTIP_TEXT}
+                      iconId="info"
+                      defaultStrokeColor={colors[themeSelected]['textColor']}
                     />
+                  </div>
+                  <div className="value">
+                    <CommaNumber value={satelliteRecord.totalVotingPower} endingText="sMVK" />
                   </div>
                 </div>
                 <div className="grid-item ">

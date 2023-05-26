@@ -24,7 +24,9 @@ export function BreakGlassCouncilForm() {
   const { search } = useLocation()
   const { action } = qs.parse(search, { ignoreQueryPrefix: true })
 
-  const { council: councilMaxLength } = useDAPPConfigContext()
+  const {
+    maxLengths: { council: councilMaxLengths },
+  } = useDAPPConfigContext()
 
   switch (action) {
     case actions.SET_ALL_CONTRACTS_ADMIN:
@@ -34,9 +36,9 @@ export function BreakGlassCouncilForm() {
     case actions.SIGN_ACTION:
       return <FormSignActionView />
     case actions.ADD_COUNCIL_MEMBER:
-      return <FormAddCouncilMemberView {...councilMaxLength} />
+      return <FormAddCouncilMemberView {...councilMaxLengths} />
     case actions.CHANGE_COUNCIL_MEMBER:
-      return <FormChangeCouncilMemberView {...councilMaxLength} />
+      return <FormChangeCouncilMemberView {...councilMaxLengths} />
     case actions.REMOVE_COUNCIL_MEMBER:
       return <FormRemoveCouncilMemberView />
 

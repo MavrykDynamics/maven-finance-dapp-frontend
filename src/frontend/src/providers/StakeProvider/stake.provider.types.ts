@@ -5,11 +5,12 @@ import { normalizeDoormanChartsData } from './helpers/normalizer'
 import { StakeProviderClass } from './stake.provider'
 import { UserState } from 'reducers/wallet'
 import { AppDispatch } from 'app/App.controller'
+import { StakingActionTypes } from './helpers/stake.consts'
 
 export type SmvkHistoryData = ReturnType<typeof normalizeDoormanChartsData>
 
 export interface StakeContext {
-  action: 'stake' | 'unstake' | ''
+  action: StakingActionTypes
   mvkHistoryData: SmvkHistoryData['mvkHistoryData']
   smvkHistoryData: SmvkHistoryData['smvkHistoryData']
   totalStakedMvk: number
@@ -26,6 +27,7 @@ export interface StakeContext {
   // actions
   stakeMVK: InstanceType<typeof StakeProviderClass>['stakeMVK']
   unstakeMVK: InstanceType<typeof StakeProviderClass>['unstakeMVK']
+  getMVKTokensFromFaucet: InstanceType<typeof StakeProviderClass>['getMVKTokensFromFaucet']
 }
 
 export type State = {

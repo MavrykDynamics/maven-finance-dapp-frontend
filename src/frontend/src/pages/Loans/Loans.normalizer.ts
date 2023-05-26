@@ -4,7 +4,7 @@ import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { UserState } from 'reducers/wallet'
 import { Mavryk_User } from 'utils/generated/graphqlTypes'
 
-import { convertNumberForClient, calcWithoutDecimals } from 'utils/calcFunctions'
+import { convertNumberForClient, calcWithoutDecimals, getNumberInBounds } from 'utils/calcFunctions'
 import { calcLendingAPY, getAssetMetadata, getChartData, getLendingItem, getTransactionHistory } from './Loans.helpers'
 
 // Normalize user loans data
@@ -15,7 +15,7 @@ export const normalizeUserLending = ({
   feeds,
 }: {
   dipDupTokens: State['tokens']['dipDupTokens']
-  feeds: State['dataFeeds']['feedsLedger']
+  feeds: any[] // State['dataFeeds']['feedsLedger']
   userDataLoansHistoryGql: Mavryk_User['lending_controller_history_data_sender']
   userVaultsDataGql: Mavryk_User['lending_controller_vaults']
 }) => {
@@ -158,7 +158,7 @@ export const normalizeLoans = async ({
   mTokens: State['tokens']['mTokens']
   userMTokens: UserState['userMTokens']
   userAddres?: string
-  feeds: State['dataFeeds']['feedsLedger']
+  feeds: any[] //State['dataFeeds']['feedsLedger']
 }) => {
   const interestTreasuryShare = calcWithoutDecimals(storage?.interest_treasury_share, storage.decimals)
   const interestRateDecimals = storage?.interest_rate_decimals ?? 0
@@ -230,7 +230,11 @@ export const normalizeLoans = async ({
           transactionHistory: [...transactionHistory].reverse(),
           marketCollateralChartData,
           marketLiquidityChartData,
-          utilisationRate: utilisation_rate / 10 ** interestRateDecimals,
+          utilisationRate: getNumberInBounds(
+            0,
+            100,
+            convertNumberForClient({ number: utilisation_rate, grade: interestRateDecimals }) * 100,
+          ),
 
           availableLiquidity,
           totalLended: convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }),

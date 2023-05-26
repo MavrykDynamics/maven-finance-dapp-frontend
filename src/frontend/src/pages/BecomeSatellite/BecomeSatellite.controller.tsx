@@ -16,10 +16,6 @@ import {
   getInputValidationStatus,
 } from './BecomeSatellite.conts'
 
-// providers
-import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
-
 // Actions
 import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
 
@@ -57,6 +53,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { normallizeSatellite } from 'providers/SatellitesProvider/helpers/Satellites.normalizer'
+import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -76,15 +73,14 @@ export const BecomeSatellite = () => {
   const { satelliteMapper } = useSatellitesContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const {
-    isDappLoading,
-    satelliteDelegation: { minimumStakedMvkBalance },
-  } = useDAPPConfigContext()
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
-  const { satelliteDelegation } = useDAPPConfigContext()
+  const {
+    maxLengths: { satelliteDelegation },
+    minimumStakedMvkBalance,
+  } = useDAPPConfigContext()
 
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
+  const { isLoading } = useSatellitesUpdater(accountPkh, { skip: true })
 
   const balanceOverMinStakedMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= minimumStakedMvkBalance
   const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null
@@ -246,7 +242,7 @@ export const BecomeSatellite = () => {
 
         <PageContent>
           <div>
-            {isDappLoading ? (
+            {isLoading ? (
               <DataLoaderWrapper>
                 <ClockLoader width={150} height={150} />
                 <div className="text">Loading satellite data</div>

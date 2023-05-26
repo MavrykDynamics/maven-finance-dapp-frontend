@@ -101,15 +101,14 @@ export const SatelliteGovernance = () => {
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {
-    governanceSatellite: { purposeMaxLength },
+    maxLengths: {
+      governanceSatellite: { purposeMaxLength },
+      dataFeeds: { feedNameMaxLength },
+    },
   } = useDAPPConfigContext()
 
   const { isLoaded, ongoingSatelliteGovIds, pastSatelliteGovIds, mySatelliteGovIds, satelliteGovIdsMapper } =
     useSelector((state: State) => state.satelliteGovernance)
-
-  const {
-    dataFeeds: { feedNameMaxLength },
-  } = useDAPPConfigContext()
 
   const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
 

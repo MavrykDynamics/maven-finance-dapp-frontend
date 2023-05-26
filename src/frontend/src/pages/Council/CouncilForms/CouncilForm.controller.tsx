@@ -41,13 +41,15 @@ export function CouncilForm() {
   const { search } = useLocation()
   const { action } = qs.parse(search, { ignoreQueryPrefix: true })
 
-  const { council: councilMaxLength } = useDAPPConfigContext()
+  const {
+    maxLengths: { council: councilMaxLengths },
+  } = useDAPPConfigContext()
 
   switch (action) {
     case actions.ADD_VESTEE:
       return <CouncilFormAddVestee />
     case actions.ADD_COUNCIL_MEMBER:
-      return <CouncilFormAddCouncilMember {...councilMaxLength} />
+      return <CouncilFormAddCouncilMember {...councilMaxLengths} />
     case actions.UPDATE_VESTEE:
       return <CouncilFormUpdateVestee />
     case actions.REMOVE_VESTEE:
@@ -55,15 +57,15 @@ export function CouncilForm() {
     case actions.TOGGLE_VESTEE_LOCK:
       return <CouncilFormToggleVesteeLock />
     case actions.CHANGE_COUNCIL_MEMBER:
-      return <CouncilFormChangeCouncilMember {...councilMaxLength} />
+      return <CouncilFormChangeCouncilMember {...councilMaxLengths} />
     case actions.REMOVE_COUNCIL_MEMBER:
       return <CouncilFormRemoveCouncilMember />
     case actions.TRANSFER_TOKENS:
-      return <CouncilFormTransferTokens {...councilMaxLength} />
+      return <CouncilFormTransferTokens {...councilMaxLengths} />
     case actions.REQUEST_TOKENS:
-      return <CouncilFormRequestTokens {...councilMaxLength} />
+      return <CouncilFormRequestTokens {...councilMaxLengths} />
     case actions.REQUEST_TOKEN_MINT:
-      return <CouncilFormRequestTokenMint {...councilMaxLength} />
+      return <CouncilFormRequestTokenMint {...councilMaxLengths} />
     case actions.DROP_FINANCIAL_REQUEST:
       return <CouncilFormDropFinancialRequest />
     case actions.SET_BAKER:

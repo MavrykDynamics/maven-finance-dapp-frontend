@@ -2,8 +2,10 @@ import React, { useContext } from 'react'
 
 // types
 import { State, Props, DataFeedsContext } from './dataFeeds.provider.types'
-import { normalizeFeeds } from './helpers/normalizer'
-import { GetOracleDataFeedsQuery } from 'utils/__generated__/graphql'
+import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
+
+// helpers
+import { normalizeFeeds } from './helpers/feedsNormalizer'
 
 export const dataFeedsContext = React.createContext<DataFeedsContext>(undefined!)
 
@@ -12,30 +14,27 @@ export class DataFeedsProvider extends React.Component<Props, State> {
     super(props)
     this.state = {
       context: {
-        feedsLedger: [],
-        feedCategories: [],
-        isLoaded: false,
+        // data
+        feedsAddresses: [],
+        feedsMapper: {},
+        feedsCategories: [],
         // actions
-        initializeDataFeeds: this.initializeDataFeeds,
+        updateDataFeeds: this.updateDataFeeds,
         registerFeedAction: this.registerFeedAction,
       },
     }
   }
 
-  initializeDataFeeds = (data: GetOracleDataFeedsQuery, isOneFeed = false) => {
-    const normalizedFeedsStorage = normalizeFeeds(data)
-    const { feedCategories, feedsLedger } = normalizedFeedsStorage
-
-    const _feedsLedger = isOneFeed
-      ? [...this.state.context.feedsLedger.filter((el) => el.address !== feedsLedger[0].address), ...feedsLedger]
-      : feedsLedger
+  updateDataFeeds = (data: SubsribeOracleDataFeedSubscription['aggregator']) => {
+    if (!this.props.dipDupContracts) return
+    const { feedsCategories, feedsAddresses, feedsMapper } = normalizeFeeds(data, this.props.dipDupContracts)
 
     this.setState({
       context: {
         ...this.state.context,
-        feedCategories,
-        feedsLedger: _feedsLedger,
-        isLoaded: true,
+        feedsCategories: Array.from(new Set([...this.state.context.feedsCategories, ...feedsCategories])),
+        feedsAddresses: Array.from(new Set([...this.state.context.feedsAddresses, ...feedsAddresses])),
+        feedsMapper: { ...this.state.context.feedsMapper, ...feedsMapper },
       },
     })
   }

@@ -1,6 +1,6 @@
 import { AppDispatch, GetState } from 'app/App.controller'
 import { normalizeLoans } from '../Loans.normalizer'
-import { getXTZBakers, getCollateralTokens } from '../LoansFethcers'
+import { getCollateralTokens } from '../LoansFethcers'
 import { normalizeVaultsStorage } from 'pages/Vaults/Vaults.normalizer'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import {
@@ -16,6 +16,7 @@ import {
   VAULTS_STORAGE_QUERY_NAME,
   VAULTS_STORAGE_QUERY_VARIABLE,
 } from 'gql/queries/getVaultsStorage'
+import { getXTZBakers } from 'providers/DAPPConfig/helpers/getXtzBakers'
 
 export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
 export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
@@ -26,8 +27,8 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
       accountPkh,
       user: { userMTokens },
     },
-    dataFeeds: { feedsLedger },
   } = getState()
+  const feedsLedger = [] as any
   try {
     const [marketsStorage, vaultsStorage] = await Promise.all([
       fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE),
@@ -63,8 +64,8 @@ export const GET_AVALIABLE_COLLATERALS = 'GET_AVALIABLE_COLLATERALS'
 export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     tokens: { dipDupTokens },
-    dataFeeds: { feedsLedger },
   } = getState()
+  const feedsLedger = [] as any
   try {
     const storage = await fetchFromIndexer(
       AVALIABLE_COLLATERALS_QUERY,

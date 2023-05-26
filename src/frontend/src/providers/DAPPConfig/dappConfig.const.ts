@@ -18,3 +18,35 @@ export const defaultProposalSourceCodeMaxLength = 100_000
 export const defaultAggregatorNameMaxLength = 35
 export const defaultTreasuryNameMaxLength = 25
 export const defaultOraclePeerIdMaxLength = 52
+
+export const DAPP_DEFAULT_MAX_LENGHTS = {
+  council: {
+    councilMemberImageMaxLength: defaultCouncilMemberImageMaxLength,
+    councilMemberNameMaxLength: defaultCouncilMemberNameMaxLength,
+    councilMemberWebsiteMaxLength: defaultCouncilMemberWebsiteMaxLength,
+    requestPurposeMaxLength: defaultRequestPurposeMaxLength,
+    requestTokenNameMaxLength: defaultRequestTokenNameMaxLength,
+  },
+  dataFeeds: {
+    feedNameMaxLength: defaultAggregatorNameMaxLength,
+  },
+  emergencyGovernance: {
+    proposalTitleMaxLength: defaultProposalTitleMaxLength,
+    proposalDescMaxLength: defaultProposalDescriptionMaxLength,
+  },
+  governance: {
+    proposalDescriptionMaxLength: defaultProposalDescriptionMaxLength,
+    proposalInvoiceMaxLength: defaultProposalInvoiceMaxLength,
+    proposalMetadataTitleMaxLength: defaultProposalMetadataTitleMaxLength,
+    proposalSourceCodeMaxLength: defaultProposalSourceCodeMaxLength,
+    proposalTitleMaxLength: defaultProposalTitleMaxLength,
+  },
+  governanceSatellite: {
+    purposeMaxLength: defaultGovPurposeMaxLength,
+  },
+  satelliteDelegation: {
+    satelliteNameMaxLength: defaultSatelliteNameMaxLength,
+    satelliteDescriptionMaxLength: defaultSatelliteDescriptionMaxLength,
+    satelliteWebsiteMaxLength: defaultSatelliteWebsiteMaxLength,
+  },
+}

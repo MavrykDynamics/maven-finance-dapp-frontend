@@ -4,28 +4,14 @@ import React, { useContext } from 'react'
 import { dataFeedsContext } from '../DataFeedsProvider/dataFeeds.provider'
 
 // utils
-import {
-  normalizeDipDupTokens,
-  normalizeDipDupContracts,
-  normalizeMTokens,
-  normalizeWhitelistTokens,
-} from 'utils/normalizers/DAPPTokens.normalizers'
-import { getSymbolAndNameFromFeedName } from 'utils/parse'
-import { convertNumberForClient } from 'utils/calcFunctions'
 
 // helpers
-import { getXTZBakers, getCollateralTokens } from 'pages/Loans/LoansFethcers'
+import { normalizeTokenPrices } from './hooks/tokens.normalizer'
 
 // types
-import { State, Props, TokensContext, XtxBakersType } from './tokens.provider.types'
-import {
-  DappTokensQuery,
-  Dipdup_Token_Metadata,
-  GetAvaliableCollateralsQuery,
-  Lending_Controller_Collateral_Token,
-  MvkFaucetQuery,
-} from 'utils/__generated__/graphql'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
+import { State, Props, TokensContext } from './tokens.provider.types'
+import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
@@ -38,144 +24,84 @@ export class TokensProvider extends React.Component<Props, State> {
     super(props)
     this.state = {
       context: {
-        dipDupTokens: [],
-        dipDupContracts: [],
-        whitelistTokens: [
-          {
-            symbol: 'xtz',
-            address: 'KT1XYiqkAE2BtSeujKsiHBuRAAt3kmeuK4pP',
-            shortSymbol: 'tez',
-            id: 0,
-          },
-        ],
-        avaliableCollaterals: null,
-        xtzBakers: {
-          otherBakers: [],
-          dao: null,
-          mavrykDynamics: null,
-        },
-        tokensPrices: { mvk: 1 },
-        mTokens: [],
-        // TODO: set default address to null, when contracts are updated
-        mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh', //null,
-        // internal helper state
-        collateralData: null,
-        // actions
-        initializeDAPPTokens: this.initializeDAPPTokens,
-        updateMVKFaucetAddress: this.updateMVKFaucetAddress,
-        selfUpdateXtzBakers: this.selfUpdateXtzBakers,
-        updateCollateralsData: this.updateCollateralsData,
-        updateAvaliableCollaterals: this.updateAvaliableCollaterals,
+        tokensPrices: { [MVK_TOKEN_SYMBOL]: 1, [SMVK_TOKEN_SYMBOL]: 1 },
+        updateTokensPrices: this.updateTokensPrices,
       },
     }
   }
 
-  initializeDAPPTokens = (dappTokensData: DappTokensQuery) => {
-    const dipDupTokensStorage = dappTokensData.dipdup_token_metadata
-    const dipDupContractsStorage = dappTokensData.dipdup_contract_metadata
-    const whitelistTokensStorage = dappTokensData.treasury
-    const mTokensStorage = dappTokensData.m_token
-
-    // TODO remove any after removing redux logic
-    const dipDupTokens = normalizeDipDupTokens(dipDupTokensStorage as any) as Dipdup_Token_Metadata[]
-    const dipDupContracts = normalizeDipDupContracts(dipDupContractsStorage as any) as Dipdup_Token_Metadata[]
-    const mTokens = normalizeMTokens(mTokensStorage as any) as any
-    const whitelistTokens = normalizeWhitelistTokens(whitelistTokensStorage as any) as any
+  updateTokensPrices = (feedsLedger: SubsribeOracleDataFeedSubscription['aggregator']) => {
+    const normalizedTokenPrices = normalizeTokenPrices(feedsLedger)
 
     this.setState({
       context: {
         ...this.state.context,
-        dipDupTokens,
-        dipDupContracts,
-        whitelistTokens: this.state.context.whitelistTokens.concat(whitelistTokens),
-        mTokens,
+        tokensPrices: { ...this.state.context.tokensPrices, ...normalizedTokenPrices },
       },
     })
   }
 
-  updateMVKFaucetAddress = (mvkData: MvkFaucetQuery) => {
-    const address = mvkData.mvk_faucet[0]?.address ?? null
+  // initializeDAPPTokens = (dappTokensData: DappTokensQuery) => {
+  //   const dipDupTokensStorage = dappTokensData.dipdup_token_metadata
+  //   const whitelistTokensStorage = dappTokensData.treasury
+  //   const mTokensStorage = dappTokensData.m_token
 
-    this.setState({
-      context: {
-        ...this.state.context,
-        mvkFaucetAddress: address,
-      },
-    })
-  }
+  //   // TODO remove any after removing redux logic
+  //   const dipDupTokens = normalizeDipDupTokens(dipDupTokensStorage as any) as Dipdup_Token_Metadata[]
+  //   const mTokens = normalizeMTokens(mTokensStorage as any) as any
+  //   const whitelistTokens = normalizeWhitelistTokens(whitelistTokensStorage as any) as any
 
-  updateTokenPrices = (feedsLedger: Feed[]) => {
-    const tokenPricesFromFeeds = feedsLedger.reduce(
-      (acc: Record<string, number>, { name, last_completed_data, decimals }) => {
-        const assetSymbol = getSymbolAndNameFromFeedName(name).symbol
-        const rate = convertNumberForClient({ number: last_completed_data, grade: decimals })
-        acc[assetSymbol] = rate
-        return acc
-      },
-      {},
-    )
+  //   this.setState({
+  //     context: {
+  //       ...this.state.context,
+  //       dipDupTokens,
+  //       whitelistTokens: this.state.context.whitelistTokens.concat(whitelistTokens),
+  //       mTokens,
+  //     },
+  //   })
+  // }
 
-    this.setState({
-      context: {
-        ...this.state.context,
-        tokensPrices: tokenPricesFromFeeds,
-      },
-    })
-  }
+  // updateCollateralsData = (collateralData: GetAvaliableCollateralsQuery) => {
+  //   this.setState({
+  //     context: {
+  //       ...this.state.context,
+  //       collateralData,
+  //     },
+  //   })
+  // }
 
-  updateCollateralsData = (collateralData: GetAvaliableCollateralsQuery) => {
-    this.setState({
-      context: {
-        ...this.state.context,
-        collateralData,
-      },
-    })
-  }
+  // updateAvaliableCollaterals = () => {
+  //   // TODO update typed after removing redux (remove -> as Array<Lending_Controller_Collateral_Token>)
+  //   const avaliableCollaterals = getCollateralTokens(
+  //     this.state.context.collateralData?.lending_controller?.[0]
+  //       ?.collateral_tokens as Array<Lending_Controller_Collateral_Token>,
+  //     this.state.context.dipDupTokens,
+  //     this.props.feedsLedger,
+  //   )
 
-  updateAvaliableCollaterals = () => {
-    // TODO update typed after removing redux (remove -> as Array<Lending_Controller_Collateral_Token>)
-    const avaliableCollaterals = getCollateralTokens(
-      this.state.context.collateralData?.lending_controller?.[0]
-        ?.collateral_tokens as Array<Lending_Controller_Collateral_Token>,
-      this.state.context.dipDupTokens,
-      this.props.feedsLedger,
-    )
+  //   this.setState({
+  //     context: {
+  //       ...this.state.context,
+  //       avaliableCollaterals,
+  //     },
+  //   })
+  // }
 
-    this.setState({
-      context: {
-        ...this.state.context,
-        avaliableCollaterals,
-      },
-    })
-  }
+  // componentDidUpdate(prevProps: Readonly<Props>): void {
+  //   if (prevProps.feedsLedger !== this.props.feedsLedger) {
+  //     this.updateTokenPrices(this.props.feedsLedger)
+  //   }
 
-  selfUpdateXtzBakers = async () => {
-    // TODO fix types
-    const xtzBakers = (await getXTZBakers()) as unknown as XtxBakersType
-
-    this.setState({
-      context: {
-        ...this.state.context,
-        xtzBakers,
-      },
-    })
-  }
-
-  componentDidUpdate(prevProps: Readonly<Props>): void {
-    if (prevProps.feedsLedger !== this.props.feedsLedger) {
-      this.updateTokenPrices(this.props.feedsLedger)
-    }
-
-    // update collaterals when there is essential data for it
-    if (
-      this.props.feedsLedger.length > 0 &&
-      this.state.context.dipDupTokens.length > 0 &&
-      this.state.context.collateralData !== null &&
-      this.state.context.avaliableCollaterals === null
-    ) {
-      this.updateAvaliableCollaterals()
-    }
-  }
+  //   // update collaterals when there is essential data for it
+  //   if (
+  //     this.props.feedsLedger.length > 0 &&
+  //     this.state.context.dipDupTokens.length > 0 &&
+  //     this.state.context.collateralData !== null &&
+  //     this.state.context.avaliableCollaterals === null
+  //   ) {
+  //     this.updateAvaliableCollaterals()
+  //   }
+  // }
 
   render(): React.ReactNode {
     return <tokensContext.Provider value={this.state.context}>{this.props.children}</tokensContext.Provider>

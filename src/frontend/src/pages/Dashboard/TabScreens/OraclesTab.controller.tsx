@@ -20,19 +20,22 @@ import { StatBlock } from '../Dashboard.style'
 import { OraclesContentStyled, TabWrapperStyled, PopularFeed } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  useDataFeedsUpdater()
+  const { feedsAddresses, feedsMapper } = useDataFeedsContext()
+
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const {
-    dipDupContracts,
-    tokensPrices: { mvk: mvkExchangeRate = 0 },
+    tokensPrices: { MVK: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
   const { satelliteMapper, oraclesIds } = useSatellitesContext()
 
-  const oracleFeeds = feedsLedger.length
-  const popularFeeds = feedsLedger.slice(0, 3)
+  const oracleFeeds = feedsAddresses.length
+  const popularFeeds = feedsAddresses.slice(0, 3)
 
   // TODO sub for some by type 1
   const oracleRewardsTotal = useMemo(
@@ -87,14 +90,14 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
 
           {popularFeeds.length ? (
             <div className="feeds-grid">
-              {popularFeeds.map((feed) => {
-                const imageLink = dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
+              {popularFeeds.map((feedAddress) => {
+                const feed = feedsMapper[feedAddress]
 
                 return (
                   <Link key={feed.address} to={`/satellites/feed-details/${feed.address}`}>
                     <PopularFeed className="row">
                       <StatBlock className="icon-first">
-                        <ImageWithPlug imageLink={imageLink} alt={`${feed.name} logo`} />
+                        <ImageWithPlug imageLink={feed.icon} alt={`${feed.name} logo`} />
                         <div className="name">Feed</div>
                         <div className="value">
                           <Trim title={feed.name} />

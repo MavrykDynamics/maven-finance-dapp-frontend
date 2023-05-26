@@ -1,29 +1,24 @@
-import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 
-import { State } from 'reducers'
 import { parseDate } from 'utils/time'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Trim } from 'app/App.components/Trim/Trim.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { DataFeedsCardStyled, FeedsListItem } from 'pages/DataFeeds/DataFeeds.styles'
+import { Feed } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 
 export const DataFeedCard = ({ feed, oracleNodes }: { feed: Feed; oracleNodes: number }) => {
   const { pathname } = useLocation()
-  const { dipDupContracts } = useSelector((state: State) => state.tokens)
 
-  const imageLink = dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
   const showAllColumns = pathname === '/data-feeds'
 
   return (
     <Link to={`/satellites/feed-details/${feed.address}`}>
       <DataFeedsCardStyled isExtendedCard={showAllColumns}>
         <FeedsListItem className="with-img">
-          <ImageWithPlug imageLink={imageLink} alt={`${feed.name} logo`} />
+          <ImageWithPlug imageLink={feed.icon} alt={`${feed.name} logo`} />
           <h5>Feed</h5>
           <var>
             <Trim title={feed.name} />

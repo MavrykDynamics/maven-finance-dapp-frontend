@@ -14,9 +14,15 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { UserActionHistory } from './UserOperationsHistory'
 import { DashboardCardHeader } from '../DashboardPersonal.style'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+
+// providers
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
+
+import colors from 'styles/colors'
+import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 
 const DelegationTab = () => {
   const dispatch = useDispatch()
@@ -24,6 +30,7 @@ const DelegationTab = () => {
     user: { satelliteMvkIsDelegatedTo, userTokens, availableSatellitesRewards },
     accountPkh,
   } = useSelector((state: State) => state.wallet)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
   const { satelliteMapper } = useSatellitesContext()
   const satelliteInfo = satelliteMapper[satelliteMvkIsDelegatedTo]
 
@@ -65,12 +72,16 @@ const DelegationTab = () => {
                 </div>
               </div>
               <div className="grid-item space">
-                <div className="name">Total Voting Power</div>
-                <div className="value">
-                  <CommaNumber
-                    value={satelliteInfo.sMvkBalance + satelliteInfo.totalDelegatedAmount}
-                    endingText="sMVK"
+                <div className="text-wrapper">
+                  <div className="name">Total Voting Power</div>
+                  <CustomTooltip
+                    text={TOTAL_VOTING_POWER_TOOLTIP_TEXT}
+                    iconId="info"
+                    defaultStrokeColor={colors[themeSelected]['textColor']}
                   />
+                </div>
+                <div className="value">
+                  <CommaNumber value={satelliteInfo.totalVotingPower} endingText="sMVK" />
                 </div>
               </div>
               <div className="grid-item space">

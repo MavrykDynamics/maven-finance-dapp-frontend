@@ -39,7 +39,9 @@ const titles = {
 export const Council = () => {
   const dispatch = useDispatch()
 
-  const { council: councilMaxLength } = useDAPPConfigContext()
+  const {
+    maxLengths: { council: councilMaxLengths },
+  } = useDAPPConfigContext()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
@@ -124,7 +126,7 @@ export const Council = () => {
         <CouncilView
           // general info
           pathnameOfPage="/mavryk-council"
-          maxLength={councilMaxLength}
+          maxLength={councilMaxLengths}
           titles={titles}
           // pending actions
           allPendingActions={allPendingActions}

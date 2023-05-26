@@ -1,9 +1,8 @@
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { State } from 'reducers'
 import { isNotAllWhitespace, isValidLength, validatePublicKey } from 'utils/validatorFunctions'
 import { defaultOraclePeerIdMaxLength } from 'app/App.components/Input/Input.constants'
 
-import { SatelliteDelegation } from 'providers/DAPPConfig/dappConfig.types'
+import { DAPPConfigContext } from 'providers/DAPPConfig/dappConfig.types'
 
 export const getFormTextBasedOnUserRole = (isUserSatellite: boolean) => ({
   pageTitle: isUserSatellite ? 'Edit Satellite Profile' : 'Become a Satellite',
@@ -19,7 +18,7 @@ export const getFormTextBasedOnUserRole = (isUserSatellite: boolean) => ({
 export const getInputValidationStatus = (
   name: string,
   value: string,
-  satelliteConfig: SatelliteDelegation,
+  satelliteConfig: DAPPConfigContext['maxLengths']['satelliteDelegation'],
 ): InputStatusType => {
   switch (name) {
     case 'name':
