@@ -8,6 +8,7 @@ import {
   SATELLITE_EMERGENCY_GOVERNANCE_DATA_SUBSCRIPTION,
   SATELLITE_GOVERNANCE_FINANCIAL_REQUEST_SUBSCRIPTION,
   SATELLITE_AGGREGATOR_ORACLES_SUBSCRIPTION,
+  SATELLITE_CYCLE_SUBSCRIPTION,
 } from 'gql/queries/getSatellitesStorage'
 import { SatellitesStorage } from '../satellites.provider.types'
 import { useSatellitesContext } from '../satellites.provider'
@@ -81,11 +82,23 @@ export const useSatellitesUpdater = (address = '', options = { skip: false }): {
     shouldResubscribe: true,
   })
 
+  const { loading: satelliteCycleLoading } = useSubscription(SATELLITE_CYCLE_SUBSCRIPTION, {
+    onData: ({ data: response }) => {
+      const { data } = response
+      if (data) {
+        setStorage({ ...storage, governance: [...data.governance] })
+      }
+    },
+    skip: options.skip,
+    shouldResubscribe: true,
+  })
+
   const isStorageLoaded =
     !satellitesLoading &&
     !govProposalLoading &&
     !emergencyGovLoading &&
     !financialRequestLoading &&
+    !satelliteCycleLoading &&
     !aggregatorOraclesLoading
 
   useEffect(() => {
@@ -95,13 +108,14 @@ export const useSatellitesUpdater = (address = '', options = { skip: false }): {
       storage.hasOwnProperty('satellite') &&
       storage.hasOwnProperty('governance_proposal') &&
       storage.hasOwnProperty('emergency_governance') &&
-      storage.hasOwnProperty('governance_financial_request')
+      storage.hasOwnProperty('governance_financial_request') &&
+      storage.hasOwnProperty('governance')
     ) {
       updateSatellitesContext(storage as SatellitesStorage, address)
     }
   }, [storage, updateSatellitesContext, address])
 
   return {
-    isLoading: isStorageLoaded,
+    isLoading: !isStorageLoaded,
   }
 }

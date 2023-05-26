@@ -260,6 +260,19 @@ subscription satelliteAggregatorOracles {
 }
 `)
 
+export const SATELLITE_CYCLE_SUBSCRIPTION = gql(`
+subscription satelliteGovernanceCycle {
+  governance(where: {active: {_eq: true}}) {
+    satellite_snapshots(order_by: {cycle: desc_nulls_last}) {
+      cycle
+      user_id
+      total_voting_power
+    }
+    cycle_id
+  }
+}
+`)
+
 // this one used for type creation only
 export const SATELLITE_DATA_SUBSCRIPTION = gql(`
 subscription satelliteData {
