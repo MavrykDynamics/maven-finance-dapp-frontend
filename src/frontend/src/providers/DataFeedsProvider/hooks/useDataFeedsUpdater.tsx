@@ -23,9 +23,6 @@ export const useDataFeedsUpdater = (skip = false, feedAddress?: string) => {
   const { loading: aggregatorLoading } = useSubscription(getOrcaleStorageAggregatorQuery(feedAddress), {
     skip: shouldSkip,
     shouldResubscribe: true,
-    variables: {
-      address: feedAddress,
-    },
     onData: ({ data: response }) => {
       const { data } = response
       if (data) {
