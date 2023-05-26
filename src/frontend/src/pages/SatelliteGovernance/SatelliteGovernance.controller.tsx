@@ -27,7 +27,6 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 // actions
 import { getSatelliteGovernanceStorage } from './SatelliteGovernance.actions'
-import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/satellites.const'
 
 // style
 import { SatelliteGovernanceStyled, SmallInfoBlock } from './SatelliteGovernance.style'

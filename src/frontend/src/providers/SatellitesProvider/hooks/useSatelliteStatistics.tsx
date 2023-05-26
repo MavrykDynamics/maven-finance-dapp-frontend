@@ -23,7 +23,6 @@ export const useSatelliteStatistics = (options: Options = {}) => {
       const { data } = response
 
       if (data) {
-        console.log('yes')
         setStorage({ ...storage, totalOracleNetworks: data.satellite_aggregate.aggregate?.count ?? 0 })
       }
     },
@@ -36,7 +35,6 @@ export const useSatelliteStatistics = (options: Options = {}) => {
       const { data } = response
 
       if (data) {
-        console.log('no')
         setStorage({ ...storage, totalActiveSatellites: data.satellite_aggregate.aggregate?.count ?? 0 })
       }
     },

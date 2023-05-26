@@ -36,7 +36,6 @@ export class SatellitesProviderClass extends React.Component<Props, State> {
         activeSatellitesIds: [],
         allSatellitesIds: [],
         oraclesIds: [],
-        isLoaded: false,
         // actions
         updateSatellitesContext: this.updateSatellitesContext,
         // redux actions
@@ -71,7 +70,6 @@ export class SatellitesProviderClass extends React.Component<Props, State> {
         activeSatellitesIds: _activeSatellitesIds,
         allSatellitesIds: _allSatellitesIds,
         satelliteMapper: _satelliteMapper,
-        isLoaded: true,
       },
     })
   }

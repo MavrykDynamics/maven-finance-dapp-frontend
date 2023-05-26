@@ -18,7 +18,6 @@ export type SatellitesContext = {
   activeSatellitesIds: string[]
   allSatellitesIds: string[]
   oraclesIds: string[]
-  isLoaded: boolean
   // actions
   updateSatellitesContext: InstanceType<typeof SatellitesProviderClass>['updateSatellitesContext']
   // redux actions

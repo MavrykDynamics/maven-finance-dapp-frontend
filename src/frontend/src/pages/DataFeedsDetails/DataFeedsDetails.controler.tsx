@@ -98,7 +98,7 @@ const DataFeedDetails = () => {
 
   const chartPlots = (activeTab === 1 ? feed?.dataFeedsHistory : feed?.dataFeedsVolatility) ?? []
 
-  // TODO try ghql
+  // TODO add query with filter or useSatellites all subs
   const feedsSatellites = useMemo(
     () =>
       feedId
