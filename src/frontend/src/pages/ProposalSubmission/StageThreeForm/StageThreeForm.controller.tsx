@@ -52,6 +52,7 @@ export const StageThreeForm = ({
       governance: { proposalMetadataTitleMaxLength },
     },
   } = useDAPPConfigContext()
+
   const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
   const { treasuryTokens } = useSelector((state: State) => state.treasury)
 

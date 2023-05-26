@@ -38,7 +38,7 @@ export const DataFeeds = () => {
   useDataFeedsUpdater()
 
   const { feedsAddresses, feedsMapper, feedsCategories } = useDataFeedsContext()
-  const { isLoading } = useDataFeedsUpdater()
+  useDataFeedsUpdater()
   const { totalOracleNetworks } = useSatelliteStatistics({
     skipActiveSatellitesCount: true,
     skipTotalDelegatedMVK: true,
@@ -130,7 +130,7 @@ export const DataFeeds = () => {
           <>
             <div className="list-wrapper">
               {paginatedFeeds.map((feedAddress) => (
-                <DataFeedCard feed={feedsMapper[feedAddress]} key={feedAddress} />
+                <DataFeedCard feed={feedsMapper[feedAddress]} oracleNodes={totalOracleNetworks} key={feedAddress} />
               ))}
             </div>
 
