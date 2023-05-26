@@ -22,6 +22,7 @@ const documents = {
     "\nquery getMaxlenghtsQuery {\n    council {\n      council_member_image_max_length\n      council_member_name_max_length\n      council_member_website_max_length\n      request_purpose_max_length\n      request_token_name_max_length\n    }\n    governance(order_by: {active: desc}) {\n      proposal_description_max_length\n      proposal_invoice_max_length\n      proposal_metadata_title_max_length\n      proposal_source_code_max_length\n      proposal_title_max_length\n    }\n    emergency_governance {\n      proposal_desc_max_length\n      proposal_title_max_length\n    }\n    governance_satellite {\n      gov_purpose_max_length\n    }\n    delegation {\n      satellite_description_max_length\n      satellite_name_max_length\n      satellite_website_max_length\n      minimum_smvk_balance\n    }\n  }\n  \n": types.GetMaxlenghtsQueryDocument,
     "\nsubscription OraclesCountStat {\n  satellite_aggregate(where: {user: {aggregator_oracles_aggregate: {count: {predicate: {_gt: 0}}}}}) {\n    aggregate {\n      count\n    }\n  }\n}\n": types.OraclesCountStatDocument,
     "\nsubscription ActiveSatellitesCount {\n  satellite_aggregate(where: {user: {satellites: {status: {_eq: \"0\"}, currently_registered: {_eq: true}}}}) {\n    aggregate {\n      count\n    }\n  }\n}\n": types.ActiveSatellitesCountDocument,
+    "\nsubscription allSatellitesCount {\n  satellite_aggregate {\n    aggregate {\n      count\n    }\n  }\n}\n": types.AllSatellitesCountDocument,
     "\nsubscription SatelliteStatTotal {\n  satellite_aggregate(where: {currently_registered: {_eq: true}, status: {_eq: \"0\"}}) {\n    nodes {\n      user {\n        smvk_balance,\n      }\n      delegations {\n        user {\n          smvk_balance\n        }\n      }\n    }\n  }\n}\n": types.SatelliteStatTotalDocument,
     "\nsubscription satelliteGovernanceProposalData {\ngovernance_proposal(order_by: {start_datetime: desc}) {\n  id\n  executed\n  locked  \n}\n}\n": types.SatelliteGovernanceProposalDataDocument,
     "\nsubscription satelliteEmergencyGovernanceData {\n  emergency_governance {\n    emergency_governance_records(order_by: {start_timestamp: desc}) {\n      emergency_governance_id\n      executed\n    }\n  }\n}\n": types.SatelliteEmergencyGovernanceDataDocument,
@@ -85,6 +86,10 @@ export function gql(source: "\nsubscription OraclesCountStat {\n  satellite_aggr
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\nsubscription ActiveSatellitesCount {\n  satellite_aggregate(where: {user: {satellites: {status: {_eq: \"0\"}, currently_registered: {_eq: true}}}}) {\n    aggregate {\n      count\n    }\n  }\n}\n"): (typeof documents)["\nsubscription ActiveSatellitesCount {\n  satellite_aggregate(where: {user: {satellites: {status: {_eq: \"0\"}, currently_registered: {_eq: true}}}}) {\n    aggregate {\n      count\n    }\n  }\n}\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nsubscription allSatellitesCount {\n  satellite_aggregate {\n    aggregate {\n      count\n    }\n  }\n}\n"): (typeof documents)["\nsubscription allSatellitesCount {\n  satellite_aggregate {\n    aggregate {\n      count\n    }\n  }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

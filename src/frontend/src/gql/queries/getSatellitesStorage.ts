@@ -26,6 +26,16 @@ subscription ActiveSatellitesCount {
 }
 `)
 
+export const ALL_SATELLITES_COUNT_STAT = gql(`
+subscription allSatellitesCount {
+  satellite_aggregate {
+    aggregate {
+      count
+    }
+  }
+}
+`)
+
 export const SATELLITES_TOTAL_SMVK_NUMBERS = gql(`
 subscription SatelliteStatTotal {
   satellite_aggregate(where: {currently_registered: {_eq: true}, status: {_eq: "0"}}) {

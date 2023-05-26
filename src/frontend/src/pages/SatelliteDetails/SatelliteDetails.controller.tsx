@@ -27,6 +27,9 @@ import {
 } from './SatelliteDetails.style'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
+import { useSatellitesCount } from 'providers/SatellitesProvider/hooks/useSatellitesCount'
+import { usePrevious } from 'app/App.hooks/usePrevious'
+import { useEffect, useState } from 'react'
 
 const renderVotingHistoryItem = (item: SatelliteVoteType, idx: number) => {
   const voteText = getVoteText(item.vote)
@@ -78,10 +81,28 @@ const SatellitesVotingHistory = ({
 
 export const SatelliteDetails = () => {
   const { satelliteId } = useParams<{ satelliteId: string }>()
+  const [currentSatelliteId, setCurrentSatelliteId] = useState(satelliteId)
   const { satelliteMapper } = useSatellitesContext()
   const currentSatellite = satelliteMapper[satelliteId]
 
-  useSatellitesUpdater({}, satelliteId)
+  const allSatellitesCount = useSatellitesCount()
+  const prevCount = usePrevious<number>(allSatellitesCount)
+
+  const { isLoading } = useSatellitesUpdater({}, currentSatelliteId)
+
+  // if new satellites was added while user was on details page
+  // subscribe for all of them to get new data and then abort sunscription and resubscribe
+  // only to current satellite
+  useEffect(() => {
+    if (prevCount !== 0 && allSatellitesCount !== prevCount) {
+      setCurrentSatelliteId('')
+      setCurrentSatelliteId(satelliteId)
+    }
+
+    if (!isLoading && currentSatelliteId !== satelliteId) {
+      setCurrentSatelliteId(satelliteId)
+    }
+  }, [allSatellitesCount, satelliteId, prevCount, isLoading, currentSatelliteId])
 
   if (!currentSatellite) return <Redirect to={'/currentSatellite-nodes'} />
 
