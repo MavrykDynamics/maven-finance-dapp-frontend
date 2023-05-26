@@ -352,7 +352,6 @@ export const normalizeSatellitesLedger = (
     (acc, satelliteRecord) => {
       const { satellite_snapshots, cycle_id } = store.governance[0]
       const satelliteObjectSnapshots = createSatelliteSnapshotsByIds(satellite_snapshots, cycle_id)
-
       const nomalizedSatellite = normallizeSatellite(satelliteRecord, satelliteObjectSnapshots, {
         proposals: store.governance_proposal,
         emergencyGovernanceLedger: store.emergency_governance,

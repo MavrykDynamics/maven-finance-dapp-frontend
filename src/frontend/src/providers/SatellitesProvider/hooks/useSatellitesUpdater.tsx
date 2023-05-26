@@ -175,7 +175,16 @@ export const useSatellitesUpdater = (
   ])
 
   useEffect(() => {
-    if (isStorageLoaded) {
+    if (
+      // ensure if all necessary data is present
+      isStorageLoaded &&
+      storage.hasOwnProperty('aggregator') &&
+      storage.hasOwnProperty('satellite') &&
+      storage.hasOwnProperty('governance_proposal') &&
+      storage.hasOwnProperty('emergency_governance') &&
+      storage.hasOwnProperty('governance_financial_request') &&
+      storage.hasOwnProperty('governance')
+    ) {
       updateSatellitesContext(storage as SatellitesStorage, address)
     }
   }, [storage, updateSatellitesContext, address, isStorageLoaded])
