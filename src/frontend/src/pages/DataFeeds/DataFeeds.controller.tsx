@@ -33,6 +33,7 @@ import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
 import { useLocation } from 'react-router'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
 
 export const DataFeeds = () => {
   useDataFeedsUpdater()
@@ -40,8 +41,8 @@ export const DataFeeds = () => {
   const { feedsAddresses, feedsMapper, feedsCategories } = useDataFeedsContext()
   useDataFeedsUpdater()
   const { totalOracleNetworks } = useSatelliteStatistics({
-    skipActiveSatellitesCount: true,
-    skipTotalDelegatedMVK: true,
+    skipActiveSatellitesCount: SUB_SKIP,
+    skipTotalDelegatedMVK: SUB_SKIP,
   })
 
   const dispatch = useDispatch()

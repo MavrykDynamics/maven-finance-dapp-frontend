@@ -75,3 +75,9 @@ export type SatellitesSubsSkipsType = {
   skipAggregatorOracles?: string
   skipSatelliteCycle?: string
 }
+
+export type SatellitesStatisticsSubsSkipsType = {
+  skipOracleCount?: string
+  skipActiveSatellitesCount?: string
+  skipTotalDelegatedMVK?: string
+}

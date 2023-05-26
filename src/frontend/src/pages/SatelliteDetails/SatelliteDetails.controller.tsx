@@ -26,11 +26,12 @@ import {
   SatelliteVotingHistoryListItem,
 } from './SatelliteDetails.style'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
-const renderVotingHistoryItem = (item: SatelliteVoteType) => {
+const renderVotingHistoryItem = (item: SatelliteVoteType, idx: number) => {
   const voteText = getVoteText(item.vote)
   return (
-    <SatelliteVotingHistoryListItem key={item.id}>
+    <SatelliteVotingHistoryListItem key={item.id.toString().concat(`${idx}`)}>
       <p>{item?.voteName?.split('_').join(' ').toLowerCase()}</p>
       <span className="currentSatellite-voting-history-info">
         Voted <b className={`voting-${voteText.toLowerCase()}`}>{voteText} </b>
@@ -69,7 +70,9 @@ const SatellitesVotingHistory = ({
     ...emergencyGovernanceVotes,
   ]
   return (
-    <div className="voting-info-list-wrapper scroll-block">{allVotes.map((item) => renderVotingHistoryItem(item))}</div>
+    <div className="voting-info-list-wrapper scroll-block">
+      {allVotes.map((item, idx) => renderVotingHistoryItem(item, idx))}
+    </div>
   )
 }
 
@@ -77,6 +80,9 @@ export const SatelliteDetails = () => {
   const { satelliteId } = useParams<{ satelliteId: string }>()
   const { satelliteMapper } = useSatellitesContext()
   const currentSatellite = satelliteMapper[satelliteId]
+
+  useSatellitesUpdater({}, satelliteId)
+
   if (!currentSatellite) return <Redirect to={'/currentSatellite-nodes'} />
 
   return (
