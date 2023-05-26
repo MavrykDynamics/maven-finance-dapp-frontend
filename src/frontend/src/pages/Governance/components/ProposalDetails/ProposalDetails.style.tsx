@@ -125,6 +125,10 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
         white-space: nowrap;
       }
 
+      .byte-descr {
+        display: flex;
+      }
+
       .byte {
         display: flex;
 

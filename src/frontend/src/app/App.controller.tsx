@@ -35,8 +35,6 @@ import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
 import { getTokensForDAPP } from 'reducers/actions/getTokens.actions'
-import { getCouncilMembers } from 'pages/Council/Council.actions'
-import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
 
 export const { store } = configureStore({})
@@ -73,14 +71,11 @@ const AppContainer = () => {
       await dispatch(getContractAddressesStorage())
       // Fetching initial&common data for DAPP
       await Promise.all([
+        // TODO: idk whether we still need this, but better to remove it after satellites live update task is done
         dispatch(getSatellitesStorage()),
 
         dispatch(getTokensForDAPP()),
         dispatch(getAvaliableCollaterals()),
-
-        // Used to retrieve user avatar
-        dispatch(getCouncilMembers()),
-        dispatch(getBreakGlassCouncilMembers()),
       ])
 
       // For using Beacon wallet

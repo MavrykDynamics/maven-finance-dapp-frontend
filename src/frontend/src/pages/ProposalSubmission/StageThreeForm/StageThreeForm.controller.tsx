@@ -4,7 +4,6 @@ import { State } from 'reducers'
 
 // types
 import { StageThreeFormProps, StageThreeValidityItem } from '../ProposalSubmission.types'
-import { Governance_Proposal } from 'utils/generated/graphqlTypes'
 
 // helpers
 import { getValidityStageThreeTable } from '../ProposalSubmission.helpers'
@@ -47,22 +46,24 @@ export const StageThreeForm = ({
 }: StageThreeFormProps) => {
   const { proposalPayments, locked, title } = currentProposal
 
-  const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
-  const { whitelistTokens } = useSelector((state: State) => state.tokens)
+  const { fee, successReward, governancePhase, proposalMetadataTitleMaxLength } = useSelector(
+    (state: State) => state.governance.config,
+  )
+  const { treasuryTokens } = useSelector((state: State) => state.treasury)
 
   const isProposalRound = governancePhase === 'PROPOSAL'
 
   const ddItems = useMemo(() => {
-    return whitelistTokens.map((method) => ({
-      content: <DropDownJsxChild>{method.symbol.toUpperCase()}</DropDownJsxChild>,
-      id: method.address,
+    return Object.keys(treasuryTokens).map((tokenAddress) => ({
+      content: <DropDownJsxChild>{treasuryTokens[tokenAddress].name}</DropDownJsxChild>,
+      id: tokenAddress,
     }))
-  }, [whitelistTokens])
+  }, [treasuryTokens])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: string | number } },
     row: number,
-    maxLength?: number,
+    options?: { tokenBalance?: number; maxLength?: number },
   ) => {
     let { name, value } = e.target
 
@@ -84,7 +85,7 @@ export const StageThreeForm = ({
     // we don't need validation for token address, cuz it's not used on backend, and it's dd value
     if (name !== 'token_address') {
       // update validation
-      const validationResult = getValidityStageThreeTable(name as StageThreeValidityItem, value, maxLength)
+      const validationResult = getValidityStageThreeTable(name as StageThreeValidityItem, value, options)
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
 
@@ -100,21 +101,22 @@ export const StageThreeForm = ({
   }
 
   const handleAddRow = () => {
-    const { address = '', id = 0 } = whitelistTokens?.[0] ?? {}
+    const paymentToken = Object.values(treasuryTokens)?.[0] ?? null
+
+    if (!paymentToken) return
+
     const newId = -(proposalPayments.length + 1)
     updateLocalProposalData(
       {
         proposalPayments: (proposalPayments ?? []).concat({
-          // TODO: check how to remove it
-          governance_proposal: currentProposal as unknown as Governance_Proposal,
-          governance_proposal_id: 0,
           id: -(proposalPayments.length + 1),
           internal_id: 0,
           title: '',
           to__id: '',
           token_amount: 0,
-          token_id: id,
-          token_address: address,
+          // TODO: implement token id's when it's fixed on backend
+          token_id: 0,
+          token_address: paymentToken.tokenAddress,
         }),
       },
       proposalId,
@@ -197,7 +199,7 @@ export const StageThreeForm = ({
                     : undefined
                 }
               >
-                Payment Type (XTZ/MVK)
+                Payment Type
               </TableHeaderCell>
             </TableRow>
           </TableHeader>
@@ -208,10 +210,14 @@ export const StageThreeForm = ({
                 const validationObj = currentProposalValidation.paymentsValidation?.find(
                   ({ paymentId }) => paymentId === payment.id,
                 )
-                const { symbol: selectedSymbol = 'MVK', address } =
-                  whitelistTokens.find(({ address }) => address === payment.token_address) ?? whitelistTokens?.[0] ?? {}
 
-                if (payment.to__id === null || payment.title === null) return null
+                if (payment.to__id === null || payment.title === null || !payment.token_address) return null
+
+                const token = treasuryTokens[payment.token_address]
+
+                if (!token) return null
+
+                const { name, tokenAddress, balance } = token
 
                 return (
                   <TableRow className="editable-row" key={payment.id}>
@@ -253,7 +259,7 @@ export const StageThreeForm = ({
                             value: String(payment.title),
                             type: 'text',
                             name: 'title',
-                            onChange: (e) => handleChange(e, rowIdx),
+                            onChange: (e) => handleChange(e, rowIdx, { maxLength: proposalMetadataTitleMaxLength }),
                           }}
                         />
                       )}
@@ -261,7 +267,7 @@ export const StageThreeForm = ({
 
                     <TableCell width="25%" className="hide-overflow">
                       {isTableDisabled ? (
-                        <CommaNumber value={Number(payment.token_amount)} endingText={selectedSymbol} />
+                        <CommaNumber value={Number(payment.token_amount)} endingText={name} />
                       ) : (
                         <Input
                           settings={{
@@ -273,7 +279,7 @@ export const StageThreeForm = ({
                             value: String(payment.token_amount),
                             type: 'number',
                             name: 'token_amount',
-                            onChange: (e) => handleChange(e, rowIdx),
+                            onChange: (e) => handleChange(e, rowIdx, { tokenBalance: balance }),
                           }}
                         />
                       )}
@@ -281,13 +287,13 @@ export const StageThreeForm = ({
 
                     <TableCell width="25%">
                       {isTableDisabled ? (
-                        selectedSymbol
+                        name
                       ) : (
                         <DropDown
                           placeholder={'Select payment method'}
                           className="stage-3-dropDown"
                           items={ddItems}
-                          activeItem={ddItems.find(({ id }) => address === id) ?? ddItems[0]}
+                          activeItem={ddItems.find(({ id }) => tokenAddress === id)}
                           clickItem={(newSelectedAddress: DDItemId) => {
                             handleChange(
                               {

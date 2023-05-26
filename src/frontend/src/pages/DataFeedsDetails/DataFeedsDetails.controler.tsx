@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Redirect, useParams } from 'react-router-dom'
+import { Redirect, useLocation, useParams } from 'react-router-dom'
 
 // types
 import { State } from 'reducers'
@@ -34,7 +34,12 @@ import { EmptyContainer } from 'app/App.style'
 
 // consts
 import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
-import { PAGINATION_SIDE_RIGHT, ORACLES_DATA_IN_FEED_LIST_NAME } from 'app/App.components/Pagination/pagination.consts'
+import {
+  PAGINATION_SIDE_RIGHT,
+  ORACLES_DATA_IN_FEED_LIST_NAME,
+  calculateSlicePositions,
+  getPageNumber,
+} from 'app/App.components/Pagination/pagination.consts'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import colors from 'styles/colors'
 import { Page, downColor, skyColor, cyanColor } from 'styles'
@@ -58,6 +63,7 @@ const tabsList = [
 ]
 
 const DataFeedDetails = () => {
+  const { search } = useLocation()
   const { feedId } = useParams<{ feedId: string }>()
 
   useDataFeedsUpdater({}, feedId)
@@ -100,6 +106,12 @@ const DataFeedDetails = () => {
         : [],
     [feedId, oraclesIds, satelliteMapper],
   )
+
+  const paginatedFeedsOracles = useMemo(() => {
+    const currentPage = getPageNumber(search, ORACLES_DATA_IN_FEED_LIST_NAME)
+    const [from, to] = calculateSlicePositions(currentPage, ORACLES_DATA_IN_FEED_LIST_NAME)
+    return feedsSatellites.slice(from, to)
+  }, [feedsSatellites, search])
 
   if (!feed) return <Redirect to={'/data-feeds'} />
 
@@ -298,7 +310,7 @@ const DataFeedDetails = () => {
           </FeedDetailsChartWrapper>
         </div>
 
-        {feedsSatellites.length ? (
+        {paginatedFeedsOracles.length ? (
           <>
             <H2Title>Oracles data</H2Title>
 

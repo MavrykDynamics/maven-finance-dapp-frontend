@@ -99,7 +99,7 @@ export const isValidRPCNode = async (
   if (currentRpcNodes.find(({ url }) => url.toLowerCase().trim() === input.toLowerCase().trim())) return false
 
   try {
-    const chainPublicKey = process.env.REACT_APP_CHAIN_ID ?? 'NetXnHfVqm9iesp'
+    const chainPublicKey = 'NetXnHfVqm9iesp'
     const client = new RpcClient(input, chainPublicKey)
     const chainID = await client.getChainId()
     return chainID === chainPublicKey

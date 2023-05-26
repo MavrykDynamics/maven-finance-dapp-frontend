@@ -43,8 +43,13 @@ export function BreakGlassCouncil() {
     maxLengths: { council: councilMaxLengths },
   } = useDAPPConfigContext()
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { glassBroken, isConfigLoaded } = useSelector((state: State) => state.breakGlass.config)
+  const {
+    accountPkh,
+    user: {
+      userAvatars: { breakGlassAvatar },
+    },
+  } = useSelector((state: State) => state.wallet)
+  const { isConfigLoaded } = useSelector((state: State) => state.breakGlass.config)
   const {
     breakGlassCouncilMembers,
     breakGlassCouncilActions: {
@@ -59,9 +64,7 @@ export function BreakGlassCouncil() {
     isBreakGlassCouncilMembersLoaded,
     isBreakGlassCouncilPendingActionsLoaded,
     isBreakGlassCouncilPastActionsLoaded,
-    councilMembers,
   } = useSelector((state: State) => state.council)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const {
     config: { emergencyGovActive },
   } = useSelector((state: State) => state.emergencyGovernance)
@@ -73,25 +76,6 @@ export function BreakGlassCouncil() {
   const handleDropAction = (id: number) => {
     dispatch(dropBreakGlass(id))
   }
-
-  const isBreakGlassCouncilMember = Boolean(breakGlassCouncilMembers.find((item) => item.userId === accountPkh))
-
-  const userImage = useMemo(
-    () =>
-      getUserAvatar({
-        accountPkh,
-        satelliteMapper,
-        councilMembers,
-        breakGlassCouncilMembers,
-        priorityImage: 'breakGlassCouncil',
-      }),
-    [accountPkh, breakGlassCouncilMembers, councilMembers, satelliteMapper],
-  )
-
-  const breackGlassCouncilUserImage = useMemo(
-    () => (isBreakGlassCouncilMember ? userImage : undefined),
-    [isBreakGlassCouncilMember, userImage],
-  )
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
@@ -125,7 +109,7 @@ export function BreakGlassCouncil() {
 
   return (
     <Page>
-      <PageHeader page={'break glass council'} avatar={breackGlassCouncilUserImage} />
+      <PageHeader page={'break glass council'} avatar={breakGlassAvatar} />
 
       {isLoading ? (
         <DataLoaderWrapper>

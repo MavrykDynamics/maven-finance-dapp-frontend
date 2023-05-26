@@ -42,7 +42,12 @@ export const Council = () => {
     maxLengths: { council: councilMaxLengths },
   } = useDAPPConfigContext()
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    accountPkh,
+    user: {
+      userAvatars: { counsilAvatar },
+    },
+  } = useSelector((state: State) => state.wallet)
   const {
     councilMembers,
     councilActions: {
@@ -57,9 +62,7 @@ export const Council = () => {
     isCouncilMembersLoaded,
     isCouncilPendingActionsLoaded,
     isCouncilPastActionsLoaded,
-    breakGlassCouncilMembers,
   } = useSelector((state: State) => state.council)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const handleSignAction = (id: number) => {
     dispatch(sign(id))
@@ -68,22 +71,6 @@ export const Council = () => {
   const handleDropAction = (id: number) => {
     dispatch(dropRequest(id))
   }
-
-  const isCouncilMember = Boolean(councilMembers.find((item) => item.userId === accountPkh))
-
-  const userImage = useMemo(
-    () =>
-      getUserAvatar({
-        accountPkh,
-        satelliteMapper,
-        councilMembers,
-        breakGlassCouncilMembers,
-        priorityImage: 'council',
-      }),
-    [accountPkh, breakGlassCouncilMembers, councilMembers, satelliteMapper],
-  )
-
-  const councilUserImage = useMemo(() => (isCouncilMember ? userImage : undefined), [isCouncilMember, userImage])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
@@ -114,7 +101,7 @@ export const Council = () => {
 
   return (
     <Page>
-      <PageHeader page={'council'} avatar={councilUserImage} />
+      <PageHeader page={'council'} avatar={counsilAvatar} />
 
       {isLoading ? (
         <DataLoaderWrapper>

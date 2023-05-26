@@ -3,7 +3,8 @@ import type { Treasury, Treasury_Factory } from '../generated/graphqlTypes'
 export type TreasuryGraphQL = Omit<Treasury, '__typename'>
 export type TreasuryFactoryGraphQL = Omit<Treasury_Factory, '__typename'>
 
-export type TreasuryType = ReturnType<typeof normalizeTreasuryStorage>
+export type TreasuryType = ReturnType<typeof normalizeTreasuryStorage>['mappedTreasuries']
+export type TreasuryTokenBalanceMapper = ReturnType<typeof normalizeTreasuryStorage>['tokenBalanceMapper']
 
 export type TreasuryBalanceType = {
   rate: number | null
@@ -15,6 +16,7 @@ export type TreasuryBalanceType = {
   icon: string
   usdValue: number
   chartColor: string
+  tokenAddress: string
 }
 
 export type TreasuryChartType = Array<ChartSectorType>
