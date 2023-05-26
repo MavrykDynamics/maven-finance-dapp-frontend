@@ -210,10 +210,6 @@ export const Market = () => {
                 />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Borrow APR</div>
-                <CommaNumber value={currentToken.borrowAPR} endingText="%" className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
                 <div className="name">Your Total Loan Balance</div>
                 <CommaNumber value={userTotalBorrowed} beginningText="$" className="value" />
               </ThreeLevelListItem>
@@ -222,12 +218,12 @@ export const Market = () => {
                 <CommaNumber value={userTotalCollateral} beginningText="$" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Your Accrued Interest</div>
+                <div className="name">Your Total Accrued Interest</div>
                 <CommaNumber value={userAccruedInterest} beginningText="$" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">
-                  Your Available Borrow
+                  Your Total Available Borrow
                   <CustomTooltip
                     iconId="info"
                     text={USER_AVAILABLE_BORROW(assetId)}

@@ -51,7 +51,6 @@ export const TransactionHistory = ({
 
     return historyTransaction
   }, [transactionHistory, vaultAddress])
-  console.log(styleType)
 
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
 
@@ -73,7 +72,8 @@ export const TransactionHistory = ({
                   <TableHeaderCell>Description</TableHeaderCell>
                   <TableHeaderCell>Amount</TableHeaderCell>
                   <TableHeaderCell>Date</TableHeaderCell>
-                  <TableHeaderCell>User</TableHeaderCell>
+                  {/* // TODO: remove this and below if it will be unnecessary. Or make it optional */}
+                  {/* <TableHeaderCell>User</TableHeaderCell> */}
                   <TableHeaderCell contentPosition="right">View TX</TableHeaderCell>
                 </TableRow>
               </TableHeader>
@@ -84,16 +84,16 @@ export const TransactionHistory = ({
 
                   return (
                     <TableRow rowHeight={45} className="add-hover" key={`${operationHash}-${date}`}>
-                      <TableCell width={`21%`} className="vert-middle">
+                      <TableCell width={`30%`} className="vert-middle">
                         <span className="descr">{descr}</span>
                       </TableCell>
-                      <TableCell width={`21%`}>
+                      <TableCell width={`30%`}>
                         <CommaNumber value={amount} className="value" endingText={tokenSymbol} />
                       </TableCell>
-                      <TableCell width={`28%`}>{date}</TableCell>
-                      <TableCell width={`11%`}>
+                      <TableCell width={`30%`}>{date}</TableCell>
+                      {/* <TableCell width={`11%`}>
                         <TzAddress tzAddress={userAddress} type={BLUE} />
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell contentPosition="right">
                         <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
                           <Button text="View TX" kind={TRANSPARENT} className="link" />

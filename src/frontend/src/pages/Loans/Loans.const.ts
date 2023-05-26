@@ -65,7 +65,7 @@ export const VAULT_TRANSACTION_HISTORY_SLIDING_BUTTONS = [
 
 export const LENDING_TAB_SLIDING_BUTTONS = [
   {
-    text: 'Supply',
+    text: 'Deposit',
     id: 10,
     active: true,
   },

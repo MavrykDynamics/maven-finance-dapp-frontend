@@ -165,7 +165,9 @@ export const LendingTabActionsSection = ({ lendingItem, assetData, lendAPY }: Le
         <SlidingTabButtons onClick={handleSwitchTab} tabItems={LENDING_TAB_SLIDING_BUTTONS} className="vault" />
       </div>
 
-      <div className="tab-text">{isSupplyActiveTab ? LENDING_TAB_SUPPLY_TEXT : LENDING_TAB_WITHDRAW_TEXT}</div>
+      <div className="tab-text">
+        {isSupplyActiveTab ? LENDING_TAB_SUPPLY_TEXT(assetData?.symbol) : LENDING_TAB_WITHDRAW_TEXT}
+      </div>
 
       <div>
         <div className="tab-text">Select Amount to {isSupplyActiveTab ? 'Supply' : 'Withdraw'}</div>
