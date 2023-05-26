@@ -23,6 +23,7 @@ const documents = {
     "\nsubscription OraclesCountStat {\n  satellite_aggregate(where: {user: {aggregator_oracles_aggregate: {count: {predicate: {_gt: 0}}}}}) {\n    aggregate {\n      count\n    }\n  }\n}\n": types.OraclesCountStatDocument,
     "\nsubscription ActiveSatellitesCount {\n  satellite_aggregate(where: {user: {satellites: {status: {_eq: \"0\"}, currently_registered: {_eq: true}}}}) {\n    aggregate {\n      count\n    }\n  }\n}\n": types.ActiveSatellitesCountDocument,
     "\nsubscription allSatellitesCount {\n  satellite_aggregate {\n    aggregate {\n      count\n    }\n  }\n}\n": types.AllSatellitesCountDocument,
+    "\nsubscription satelliteOraclesReward {\n  aggregator_oracle_reward_aggregate(where: {type: {_eq: \"1\"}, oracle: {user: {satellites: {registration_timestamp: {_is_null: false}}}}}) {\n    aggregate {\n      sum {\n        reward\n      }\n    }\n  }\n}\n": types.SatelliteOraclesRewardDocument,
     "\nsubscription SatelliteStatTotal {\n  satellite_aggregate(where: {currently_registered: {_eq: true}, status: {_eq: \"0\"}}) {\n    nodes {\n      user {\n        smvk_balance,\n      }\n      delegations {\n        user {\n          smvk_balance\n        }\n      }\n    }\n  }\n}\n": types.SatelliteStatTotalDocument,
     "\nsubscription satelliteGovernanceProposalData {\ngovernance_proposal(order_by: {start_datetime: desc}) {\n  id\n  executed\n  locked  \n}\n}\n": types.SatelliteGovernanceProposalDataDocument,
     "\nsubscription satelliteEmergencyGovernanceData {\n  emergency_governance {\n    emergency_governance_records(order_by: {start_timestamp: desc}) {\n      emergency_governance_id\n      executed\n    }\n  }\n}\n": types.SatelliteEmergencyGovernanceDataDocument,
@@ -90,6 +91,10 @@ export function gql(source: "\nsubscription ActiveSatellitesCount {\n  satellite
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\nsubscription allSatellitesCount {\n  satellite_aggregate {\n    aggregate {\n      count\n    }\n  }\n}\n"): (typeof documents)["\nsubscription allSatellitesCount {\n  satellite_aggregate {\n    aggregate {\n      count\n    }\n  }\n}\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nsubscription satelliteOraclesReward {\n  aggregator_oracle_reward_aggregate(where: {type: {_eq: \"1\"}, oracle: {user: {satellites: {registration_timestamp: {_is_null: false}}}}}) {\n    aggregate {\n      sum {\n        reward\n      }\n    }\n  }\n}\n"): (typeof documents)["\nsubscription satelliteOraclesReward {\n  aggregator_oracle_reward_aggregate(where: {type: {_eq: \"1\"}, oracle: {user: {satellites: {registration_timestamp: {_is_null: false}}}}}) {\n    aggregate {\n      sum {\n        reward\n      }\n    }\n  }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

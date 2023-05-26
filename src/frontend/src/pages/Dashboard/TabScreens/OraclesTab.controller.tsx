@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
@@ -22,7 +21,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
-import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useOraclesRewadSum } from 'providers/SatellitesProvider/hooks/useOraclesRewadSum'
 
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   useDataFeedsUpdater()
@@ -32,23 +31,11 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const {
     tokensPrices: { MVK: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
-  const { satelliteMapper, oraclesIds } = useSatellitesContext()
 
   const oracleFeeds = feedsAddresses.length
   const popularFeeds = feedsAddresses.slice(0, 3)
 
-  // TODO sub for some by type 1
-  const oracleRewardsTotal = useMemo(
-    () =>
-      oraclesIds.reduce((acc, address) => {
-        const sMVKReward = satelliteMapper[address].oracleRecords.reduce(
-          (acc, { sMVKReward = 0 }) => (acc += sMVKReward),
-          0,
-        )
-        return (acc += sMVKReward)
-      }, 0),
-    [satelliteMapper, oraclesIds],
-  )
+  const oracleRewardsTotal = useOraclesRewadSum()
 
   return (
     <TabWrapperStyled className="oracles" backgroundImage="dashboard_oraclesTab_bg.png">

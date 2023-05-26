@@ -36,6 +36,18 @@ subscription allSatellitesCount {
 }
 `)
 
+export const ORACLES_TOTAL_REWARD = gql(`
+subscription satelliteOraclesReward {
+  aggregator_oracle_reward_aggregate(where: {type: {_eq: "1"}, oracle: {user: {satellites: {registration_timestamp: {_is_null: false}}}}}) {
+    aggregate {
+      sum {
+        reward
+      }
+    }
+  }
+}
+`)
+
 export const SATELLITES_TOTAL_SMVK_NUMBERS = gql(`
 subscription SatelliteStatTotal {
   satellite_aggregate(where: {currently_registered: {_eq: true}, status: {_eq: "0"}}) {
