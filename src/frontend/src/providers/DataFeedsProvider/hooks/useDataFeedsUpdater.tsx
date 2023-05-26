@@ -4,7 +4,7 @@ import { useSubscription } from '@apollo/client'
 import { useDataFeedsContext } from '../dataFeeds.provider'
 
 // subs
-import { getOrcaleStorageAggregatorQuery } from 'gql/queries/getOracleStorage'
+import { getOrcaleStorageAggregatorQuery } from 'gql/queries/getFeedsStorage'
 import { useEffect, useState } from 'react'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
