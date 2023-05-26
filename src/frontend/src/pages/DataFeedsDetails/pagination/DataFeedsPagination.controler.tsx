@@ -9,7 +9,6 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { SUB_SKIP } from 'utils/api/apollo.consts'
 import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { useFeedsStats } from 'providers/DataFeedsProvider/hooks/useFeedsStats'
-import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
 // style
 import { SatellitePaginationStyled } from 'pages/SatelliteDetails/SatellitePagination/SatellitePagination.style'
@@ -19,7 +18,7 @@ const DataFeedsPagination = () => {
 
   const { feedsAddresses } = useFeedsStats({
     skipFeedsRewardsSubsciption: SUB_SKIP,
-    skipFeedsAddressesSubsciption: SUB_SKIP,
+    skipFeedsAmountSubsciption: SUB_SKIP,
   })
 
   const currentFeedIdx = useMemo(

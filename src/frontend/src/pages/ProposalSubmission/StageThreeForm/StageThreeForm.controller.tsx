@@ -36,6 +36,7 @@ import {
   TableRow,
 } from 'app/App.components/Table'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 
 export const StageThreeForm = ({
   proposalId,
@@ -46,9 +47,12 @@ export const StageThreeForm = ({
 }: StageThreeFormProps) => {
   const { proposalPayments, locked, title } = currentProposal
 
-  const { fee, successReward, governancePhase, proposalMetadataTitleMaxLength } = useSelector(
-    (state: State) => state.governance.config,
-  )
+  const {
+    maxLengths: {
+      governance: { proposalMetadataTitleMaxLength },
+    },
+  } = useDAPPConfigContext()
+  const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
   const { treasuryTokens } = useSelector((state: State) => state.treasury)
 
   const isProposalRound = governancePhase === 'PROPOSAL'
