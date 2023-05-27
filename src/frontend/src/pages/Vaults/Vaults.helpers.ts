@@ -24,7 +24,7 @@ export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) 
   const uniqueOracleAddresses = new Set<string>()
 
   vaults.map((item) => {
-    const loanTokenOracleAddress = item.loan_token?.oracle_id
+    const loanTokenOracleAddress = item.loan_token?.oracle?.address
     const collateralBalances = item.collateral_balances
 
     if (loanTokenOracleAddress) {
@@ -33,8 +33,8 @@ export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) 
 
     if (collateralBalances.length) {
       collateralBalances.map((collateral) => {
-        if (collateral.token?.oracle_id) {
-          uniqueOracleAddresses.add(collateral.token.oracle_id)
+        if (collateral.token?.oracle?.address) {
+          uniqueOracleAddresses.add(collateral.token.oracle?.address)
         }
       })
     }

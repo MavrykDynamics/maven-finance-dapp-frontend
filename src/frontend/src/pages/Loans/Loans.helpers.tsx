@@ -95,11 +95,11 @@ export const getTransactionHistory = (
   feeds: State['dataFeeds']['feedsLedger'],
 ) =>
   history_data.reduce<TransactionHistoryReduceType>(
-    (acc, { type, amount, timestamp, sender_id, operation_hash, loan_token }) => {
-      if (!loan_token) return acc
+    (acc, { type, amount, timestamp, sender: { address: senderAddress }, operation_hash, loan_token }) => {
+      if (!loan_token?.loan_token?.token_address) return acc
 
       const assetMetadata = getAssetMetadata({
-        tokenAddress: loan_token.loan_token_address,
+        tokenAddress: loan_token.loan_token?.token_address,
         tokenName: loan_token.loan_token_name,
         dipDupTokens,
         feeds,
@@ -113,7 +113,7 @@ export const getTransactionHistory = (
           acc.transactionHistory.push({
             amount: transformedAmount,
             date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
-            userAddress: sender_id,
+            userAddress: senderAddress,
             operationHash: operation_hash,
             descr: getDescrByType(type),
             tokenSymbol: assetMetadata.symbol,
@@ -202,9 +202,9 @@ export const getChartData = (
 ) =>
   history_data?.reduce<LoansChartsDataType>(
     (acc, { type, amount, timestamp, loan_token }) => {
-      if (!loan_token) return acc
+      if (!loan_token?.loan_token?.token_address) return acc
       const assetMetadata = getAssetMetadata({
-        tokenAddress: loan_token.loan_token_address,
+        tokenAddress: loan_token?.loan_token?.token_address,
         tokenName: loan_token.loan_token_name,
         dipDupTokens,
         feeds,

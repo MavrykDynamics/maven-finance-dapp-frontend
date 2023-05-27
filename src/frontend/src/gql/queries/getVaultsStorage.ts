@@ -18,7 +18,9 @@ export const VAULTS_STORAGE_QUERY = `
           token {
             token_name
             token_address
-            oracle_id
+            oracle {
+              address
+            }
           }
         }
 
@@ -26,9 +28,13 @@ export const VAULTS_STORAGE_QUERY = `
           creation_timestamp
           address
           name
-          baker_id
+          baker {
+            address
+          }
           depositors {
-            depositor_id
+            depositor {
+              address
+            }
           }
           allowance
         }
@@ -38,7 +44,9 @@ export const VAULTS_STORAGE_QUERY = `
         }
         
         last_updated_block_level
-        owner_id
+        owner {
+          address
+        }
         id
         marked_for_liquidation_level
         loan_outstanding_total
@@ -53,7 +61,9 @@ export const VAULTS_STORAGE_QUERY = `
           loan_token_name
           loan_token_address
           loan_token_contract_standard
-          oracle_id
+          oracle {
+            address
+          }
           current_interest_rate
           borrow_index
 

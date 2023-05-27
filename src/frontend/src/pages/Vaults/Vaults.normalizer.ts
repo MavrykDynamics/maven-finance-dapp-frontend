@@ -52,12 +52,12 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         const acc = await promiseAcc
 
         // Check whether we have market & vault
-        if (!item.loan_token || !item.vault?.address) return acc
+        if (!item.loan_token || !item.vault?.address || !item.loan_token.loan_token?.token_address) return acc
 
         // Get market asset metadata
         const loanTokenMetadata = getAssetMetadata({
           tokenName: item.loan_token.loan_token_name,
-          tokenAddress: item.loan_token.loan_token_address,
+          tokenAddress: item.loan_token.loan_token.token_address,
           dipDupTokens,
           feeds,
           oracleId: String(item.loan_token.oracle_id),
@@ -116,7 +116,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           : 0
 
         // Convert deep structure of depositors to array of depositrors addresses (strings)
-        const depositors = (item.vault?.depositors.map(({ depositor_id }) => depositor_id).filter(Boolean) ??
+        const depositors = (item.vault?.depositors.map(({ depositor }) => depositor?.address).filter(Boolean) ??
           []) as Array<string>
         // Calc what permission type vaults it is visible to any, whitelist, owner only
         const deporsitorsFlag: DepositorsFlagType =
@@ -176,14 +176,15 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           // Vault stats&meta data
           borrowedAsset: {
             ...loanTokenMetadata,
-            tokenType: item.loan_token.loan_token_contract_standard as TokenType,
+            // TODO: token issue
+            tokenType: item.loan_token.loan_token?.token_standard as TokenType,
           },
           name: item.vault.name,
           address: item.vault?.address,
-          ownerId: item.owner_id || '',
+          ownerId: item.owner?.address || '',
           vaultId: item.internal_id,
           creationTimestamp: item.vault.creation_timestamp ?? undefined,
-          xtzDelegatedTo: item.vault?.baker_id ?? null,
+          xtzDelegatedTo: item.vault?.baker?.address ?? null,
           status,
           apr:
             convertNumberForClient({
@@ -286,11 +287,11 @@ const normalizeCollateralAssets = ({
     totalRow: CollateralType
   }>(
     (acc, collateral) => {
-      if (!collateral.token) return acc
+      if (!collateral.token?.collateral_token) return acc
 
       const collateralAsset = getAssetMetadata({
         tokenName: collateral.token.token_name,
-        tokenAddress: collateral.token.token_address,
+        tokenAddress: collateral.token.collateral_token?.token_address,
         dipDupTokens,
         feeds,
         oracleId: String(collateral.token.oracle_id),

@@ -13,7 +13,9 @@ export const LOANS_QUERY = `
         timestamp
         loan_token {
           loan_token_name
-          oracle_id
+          oracle {
+            address
+          }
           loan_token_address
         }
       }
@@ -24,7 +26,9 @@ export const LOANS_QUERY = `
         token_name
         token_contract_standard
         protected
-        oracle_id
+        oracle {
+          address
+        }
       }
 
       loan_tokens {
@@ -38,7 +42,9 @@ export const LOANS_QUERY = `
         total_remaining
         reserve_ratio
         current_interest_rate
-        oracle_id
+        oracle {
+          address
+        }
 
         m_token {
           address
@@ -49,12 +55,15 @@ export const LOANS_QUERY = `
           amount
           timestamp
           operation_hash
-          sender_id
+          sender {
+            address
+          }
           loan_token {
             loan_token_name
             loan_token_address
-            
-            oracle_id
+            oracle {
+              address
+            }
           }
         }
 

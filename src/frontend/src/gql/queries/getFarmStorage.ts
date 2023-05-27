@@ -13,6 +13,9 @@ export const FARM_STORAGE_QUERY = `
       accumulated_rewards_per_share
       current_reward_per_block
       init
+      lp_token {
+        token_address: string
+      }
       lp_token_address
       lp_token_balance
       paid_rewards
@@ -30,7 +33,9 @@ export const FARM_STORAGE_QUERY = `
         farm_id
         id
         unclaimed_rewards
-        user_id
+        user {
+          address
+        }
         participation_rewards_per_share
       }
       lp_token_address
