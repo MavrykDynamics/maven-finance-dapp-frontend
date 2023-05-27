@@ -16,24 +16,25 @@ export const LOANS_QUERY = `
           oracle {
             address
           }
-          loan_token_address
+          loan_token {
+            token_address
+            token_standard
+          }
         }
       }
-
       collateral_tokens {
-        token_address
+        collateral_token {
+          token_address
+          token_standard
+        }
         id
         token_name
-        token_contract_standard
         protected
         oracle {
           address
         }
       }
-
       loan_tokens {
-        loan_token_contract_standard
-        loan_token_address
         loan_token_name
         id
         utilisation_rate
@@ -45,11 +46,13 @@ export const LOANS_QUERY = `
         oracle {
           address
         }
-
+        loan_token {
+          token_address
+          token_standard
+        }
         m_token {
           address
         }
-
         history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
           type
           amount
@@ -60,13 +63,15 @@ export const LOANS_QUERY = `
           }
           loan_token {
             loan_token_name
-            loan_token_address
+            loan_token {
+              token_address
+              token_standard
+            }
             oracle {
               address
             }
           }
         }
-
         vaults_aggregate(where: {loan_outstanding_total: {_neq: "0"}}) {
           aggregate {
             count(distinct: true, columns: owner_id)

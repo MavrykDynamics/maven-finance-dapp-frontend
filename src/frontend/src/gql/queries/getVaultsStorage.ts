@@ -11,19 +11,20 @@ export const VAULTS_STORAGE_QUERY = `
       liquidation_fee_pct
       decimals
       minimum_loan_fee_pct
-
       vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}}) {
         collateral_balances {
           balance
           token {
+            collateral_token {
+              token_address
+              token_standard
+            }
             token_name
-            token_address
             oracle {
               address
             }
           }
         }
-
         vault {
           creation_timestamp
           address
@@ -38,11 +39,9 @@ export const VAULTS_STORAGE_QUERY = `
           }
           allowance
         }
-
         lending_controller {
           liquidation_delay_in_minutes
         }
-        
         last_updated_block_level
         owner {
           address
@@ -56,19 +55,19 @@ export const VAULTS_STORAGE_QUERY = `
         liquidation_end_level
         internal_id
         borrow_index
-
         loan_token {
           loan_token_name
-          loan_token_address
-          loan_token_contract_standard
+          loan_token {
+            token_address
+            token_standard
+          }
           oracle {
             address
           }
           current_interest_rate
           borrow_index
-
-          total_remaining,
-          token_pool_total,
+          total_remaining
+          token_pool_total
           reserve_ratio
           min_repayment_amount
         }
