@@ -5,6 +5,7 @@ import { Lending_Controller_Collateral_Token } from 'utils/generated/graphqlType
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import BakersMocked from './bakers.json'
 import { getSymbolAndNameFromCollaterealGqlname } from 'utils/parse'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 export type BakeryDelegateDataType = {
   balance: number
@@ -112,10 +113,11 @@ export const getCollateralTokens = (
 ): Array<AvaliableCollateralType> => {
   try {
     return collateralTokens.reduce<AvaliableCollateralType[]>(
-      (acc, { token_address, token_contract_standard, token_name, protected: isProtected, oracle_id }) => {
+      (acc, { collateral_token, token_name, protected: isProtected, oracle_id }) => {
+        if (!collateral_token) return acc
         const assetMetadata = getAssetMetadata({
           tokenName: token_name,
-          tokenAddress: token_address,
+          tokenAddress: collateral_token.token_address,
           dipDupTokens,
           feeds,
           oracleId: String(oracle_id),
@@ -128,7 +130,7 @@ export const getCollateralTokens = (
             ...assetMetadata,
             name,
             symbol,
-            tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
+            tokenType: collateral_token.token_standard as TokenType,
             isProtected,
           })
         }
