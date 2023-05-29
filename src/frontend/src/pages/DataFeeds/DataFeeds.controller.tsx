@@ -39,7 +39,7 @@ export const DataFeeds = () => {
   const { search } = useLocation()
   const { feedsLedger, feedCategories, isLoaded: isDataFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { isActionActive } = useSelector((state: State) => state.loading)
-
+  const datafortest = [...feedsLedger, ...feedsLedger, ...feedsLedger, ...feedsLedger, ...feedsLedger, ...feedsLedger]
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       if (!isDataFeedsLoaded || isDepsChanged) {
@@ -53,7 +53,7 @@ export const DataFeeds = () => {
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [searchInputValue, setSearchInput] = useState('')
   const [chosenDdItem, setChosenDdItem] = useState('all')
-  const [filteredFeeds, setFilteredFeeds] = useState(feedsLedger)
+  const [filteredFeeds, setFilteredFeeds] = useState(datafortest)
 
   const paginatedFeeds = useMemo(() => {
     const currentPage = getPageNumber(search, FEEDS_ALL_LIST_NAME)
@@ -63,7 +63,7 @@ export const DataFeeds = () => {
 
   useEffect(() => {
     setFilteredFeeds(
-      feedsLedger.filter(({ category, name, address }) => {
+      datafortest.filter(({ category, name, address }) => {
         if (chosenDdItem === 'all') {
           return (
             name.toLowerCase().includes(searchInputValue.toLowerCase()) ||
@@ -78,7 +78,7 @@ export const DataFeeds = () => {
         )
       }),
     )
-  }, [feedsLedger, chosenDdItem, searchInputValue])
+  }, [datafortest, chosenDdItem, searchInputValue])
 
   const handleSelect = (selectedOption: string) => {
     setDdIsOpen(!ddIsOpen)
@@ -136,12 +136,12 @@ export const DataFeeds = () => {
               <>
                 <div className="list-wrapper">
                   {paginatedFeeds.map((item) => (
-                    <DataFeedCard feed={item} key={item.address} />
+                    <DataFeedCard feed={item} />
                   ))}
                 </div>
 
                 <Pagination
-                  itemsCount={filteredFeeds.length}
+                  itemsCount={datafortest.length}
                   side={PAGINATION_SIDE_RIGHT}
                   listName={FEEDS_ALL_LIST_NAME}
                 />

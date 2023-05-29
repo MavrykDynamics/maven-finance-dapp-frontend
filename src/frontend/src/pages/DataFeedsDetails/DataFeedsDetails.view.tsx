@@ -76,7 +76,13 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
   const { dipDupContracts } = useSelector((state: State) => state.tokens)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
-
+  const datafortest = [
+    ...feedsSatellites,
+    ...feedsSatellites,
+    ...feedsSatellites,
+    ...feedsSatellites,
+    ...feedsSatellites,
+  ]
   const registerFeedHandler = () => dispatch(registerFeedAction())
 
   const [activeTab, setActiveTab] = useState(tabsList[0].id)
@@ -90,8 +96,8 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
   const paginatedFeeds = useMemo(() => {
     const currentPage = getPageNumber(search, ORACLES_DATA_IN_FEED_LIST_NAME)
     const [from, to] = calculateSlicePositions(currentPage, ORACLES_DATA_IN_FEED_LIST_NAME)
-    return feedsSatellites.slice(from, to)
-  }, [feedsSatellites, search])
+    return datafortest.slice(from, to)
+  }, [datafortest, search])
 
   return (
     <Page>
@@ -314,7 +320,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                   ))}
 
                   <Pagination
-                    itemsCount={feedsSatellites.length}
+                    itemsCount={datafortest.length}
                     side={PAGINATION_SIDE_RIGHT}
                     listName={ORACLES_DATA_IN_FEED_LIST_NAME}
                   />
