@@ -36,7 +36,7 @@ export const StageTwoForm = ({
 }: StageTwoFormProps) => {
   const {
     maxLengths: {
-      governance: { proposalMetadataTitleMaxLength, proposalSourceCodeMaxLength, proposalDescriptionMaxLength },
+      governance: { proposalMetadataTitleMaxLength, proposalDescriptionMaxLength },
     },
   } = useDAPPConfigContext()
   const { governancePhase, fee, successReward } = useSelector((state: State) => state.governance.config)

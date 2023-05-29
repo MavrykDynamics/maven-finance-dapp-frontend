@@ -63,11 +63,11 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
 
   const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
   // onChain data points subscription
-  const { feedsAmount, rewardsAmount } = useFeedsStats()
+  const { feedsAddresses, rewardsAmount } = useFeedsStats()
   const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
 
   const averageRevard =
-    convertNumberForClient({ number: rewardsAmount, grade: MVK_DECIMALS }) / Math.max(feedsAmount, 1)
+    convertNumberForClient({ number: rewardsAmount, grade: MVK_DECIMALS }) / Math.max(feedsAddresses.length, 1)
 
   return (
     <SatelliteSideBarStyled>
@@ -111,7 +111,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <SideBarItem>
           <h3>On-Chain Data Points</h3>
           <var>
-            <CommaNumber value={feedsAmount} showDecimal={false} />
+            <CommaNumber value={feedsAddresses.length} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>

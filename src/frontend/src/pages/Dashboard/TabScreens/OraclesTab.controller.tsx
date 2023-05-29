@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
@@ -21,18 +22,19 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useOraclesRewadSum } from 'providers/SatellitesProvider/hooks/useOraclesRewadSum'
 
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
-  useDataFeedsUpdater()
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
+  const {
+    tokensPrices: { MVK_TOKEN_SYMBOL: mvkExchangeRate = 0 },
+  } = useTokensContext()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const {
-    tokensPrices: { MVK: mvkExchangeRate = 0 },
-  } = useSelector((state: State) => state.tokens)
-
+  useDataFeedsUpdater()
   const oracleFeeds = feedsAddresses.length
+  // TODO: consider add limitation filter and popularity sorting to the sub
   const popularFeeds = feedsAddresses.slice(0, 3)
 
   const oracleRewardsTotal = useOraclesRewadSum()

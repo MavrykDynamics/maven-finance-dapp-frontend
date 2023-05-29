@@ -1,26 +1,24 @@
 import { UTCTimestamp } from 'lightweight-charts'
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
-import { DAPPConfigContext } from 'providers/DAPPConfig/dappConfig.types'
 import { Feed } from '../dataFeeds.provider.types'
 import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 
-import { percentageDifference } from 'utils/calcFunctions'
+import { convertNumberForClient, percentageDifference } from 'utils/calcFunctions'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
+
+// TODO: use contracts inside feeds after it's in dev
 
 // Can't type it cuz metadata has unknown type for now
 type FeedContractType = { metadata?: { category?: string; icon: string }; network?: string } | undefined
 
-export const normalizeFeed = (
-  feedGql: SubsribeOracleDataFeedSubscription['aggregator'][number],
-  dipDupContracts: NonNullable<DAPPConfigContext['dipDupContracts']>,
-) => {
+export const normalizeFeed = (feedGql: SubsribeOracleDataFeedSubscription['aggregator'][number]) => {
   const dataFeedsHistory = normalizeDataFeedsHistory(feedGql.history_data)
   const dataFeedsVolatility = normalizeDataFeedsVolatility(feedGql.history_data)
 
-  const feedMetadata = (dipDupContracts[feedGql.address] ?? {}) as FeedContractType
+  const feedMetadata = feedGql.metadata as FeedContractType
 
   const category = feedMetadata?.metadata?.category ?? null
-  const network = feedMetadata?.network ?? null
+  const network = feed?.network ?? null
 
   const { history_data, ...restOfTheItem } = feedGql
 
@@ -28,7 +26,7 @@ export const normalizeFeed = (
     ...restOfTheItem,
     category,
     network,
-    amount: feedGql.last_completed_data / 10 ** feedGql.decimals,
+    amount: convertNumberForClient({ number: feedGql.last_completed_data, grade: feedGql.decimals }),
     oraclesResponces: feedGql.last_completed_data_pct_oracle_resp / 100,
     dataFeedsHistory: dataFeedsHistory,
     dataFeedsVolatility: dataFeedsVolatility,
@@ -36,10 +34,7 @@ export const normalizeFeed = (
   }
 }
 
-export function normalizeFeeds(
-  feeds: SubsribeOracleDataFeedSubscription['aggregator'],
-  dipDupContracts: NonNullable<DAPPConfigContext['dipDupContracts']>,
-) {
+export function normalizeFeeds(feeds: SubsribeOracleDataFeedSubscription['aggregator']) {
   const dataFeedUniqueCategories = new Set<string>()
 
   const { feedsMapper, feedsAddresses } = feeds.reduce<{
@@ -47,7 +42,7 @@ export function normalizeFeeds(
     feedsAddresses: Array<string>
   }>(
     (acc, item) => {
-      const feed = normalizeFeed(item, dipDupContracts)
+      const feed = normalizeFeed(item)
 
       if (feed.category) {
         dataFeedUniqueCategories.add(feed.category)
@@ -76,7 +71,9 @@ export function normalizeDataFeedsHistory(
         .map((item) => {
           return {
             time: new Date(item.timestamp).getTime() as UTCTimestamp,
-            value: symbolsAfterDecimalPoint(item.data / 10 ** item.aggregator.decimals),
+            value: symbolsAfterDecimalPoint(
+              convertNumberForClient({ number: item.data, grade: item.aggregator.decimals }),
+            ),
           }
         })
         .reverse()
@@ -93,8 +90,8 @@ export function normalizeDataFeedsVolatility(
           acc.push({
             time: new Date(timestamp).getTime() as UTCTimestamp,
             value: percentageDifference(
-              symbolsAfterDecimalPoint(data / 10 ** decimals),
-              symbolsAfterDecimalPoint(arr[idx - 1]?.data / 10 ** decimals),
+              symbolsAfterDecimalPoint(convertNumberForClient({ number: data, grade: decimals })),
+              symbolsAfterDecimalPoint(convertNumberForClient({ number: arr[idx - 1]?.data ?? 0, grade: decimals })),
             ),
           })
           return acc

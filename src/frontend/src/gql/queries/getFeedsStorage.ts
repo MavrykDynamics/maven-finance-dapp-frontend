@@ -3,41 +3,6 @@ import { DocumentNode } from 'graphql'
 import { gql } from 'utils/__generated__/gql'
 import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 
-// TODO REMOVE THIS QUERY STATISTICS
-export const REWARD_AMOUNT_SMVK = gql(`
-subscription rewardAmountSMVK {
-  aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {
-    reward_amount_smvk
-  }
-}
-`)
-
-// Dip dup metadata for feeds TODO: remove later
-export const DIP_DUP_CONTRACTS_QUERY = gql(`
-   query dipDupContracts {
-    dipdup_contract_metadata {
-      contract
-      created_at
-      id
-      metadata
-      update_id
-      updated_at
-      network
-    }
-  }
-`)
-
-// feeds amount subsciption
-export const SUBSCRIBE_CHAIN_POINTS_COUNT = gql(`
-  subscription FeedsAmountSubscription {
-    aggregator_aggregate {
-      aggregate {
-        count
-      }
-    }
-  }
-`)
-
 // feeds rewards subsciption
 export const SUBSCRIBE_FEEDS_REWARDS_COUNT = gql(`
   subscription FeedsRewardsAmountSubscription {

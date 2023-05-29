@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 
 // types
 import { State, Props, DAPPConfigContext } from './dappConfig.types'
-import { DipDupContractsQuery, GetMaxlenghtsQueryQuery, MvkFaucetQuery } from 'utils/__generated__/graphql'
+import { GetMaxlenghtsQueryQuery, MvkFaucetQuery } from 'utils/__generated__/graphql'
 
 // consts
 import { defaultSatelliteMinimumStakedMvk } from './dappConfig.const'
@@ -21,15 +21,11 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
         xtzBakers: null,
         // TODO: set default address to null, when contracts are updated
         mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh',
-        // TODO create method for update
         minimumStakedMvkBalance: defaultSatelliteMinimumStakedMvk,
-        // temp storage while it's not implemented inside feeds
-        dipDupContracts: null,
         // actions
         updateMaxLengths: this.updateMaxLengths,
         updateXtzBakers: this.updateXtzBakers,
         updateMVKFaucetAddress: this.updateMVKFaucetAddress,
-        updateDipDupContracts: this.updateDipDupContracts,
       },
     }
   }
@@ -111,26 +107,6 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
       context: {
         ...this.state.context,
         xtzBakers,
-      },
-    })
-  }
-
-  // TODO: remove when dipDupContract will be implemented inside feeds
-  updateDipDupContracts = async (dipDupContracts: DipDupContractsQuery) => {
-    const normalizedDipDupContracts = dipDupContracts.dipdup_contract_metadata.reduce<
-      NonNullable<DAPPConfigContext['dipDupContracts']>
-    >((acc, contract) => {
-      if (!acc[contract.contract]) {
-        acc[contract.contract] = contract
-      }
-
-      return acc
-    }, {})
-
-    this.setState({
-      context: {
-        ...this.state.context,
-        dipDupContracts: normalizedDipDupContracts,
       },
     })
   }
