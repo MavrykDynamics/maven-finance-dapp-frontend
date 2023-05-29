@@ -21,19 +21,17 @@ export const Root = () => {
   const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
   return (
     <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey} language="en">
-      <ApolloProvider client={client}>
-        <Provider store={store}>
-          {/* <PersistGate loading={null} persistor={persistor}> */}
-          <DarkThemeProvider>
-            <GlobalStyle />
-            <ToasterProvider>
-              {isMobile ? <Mobile /> : <App />}
-              <ToasterMessages />
-            </ToasterProvider>
-          </DarkThemeProvider>
-          {/* </PersistGate> */}
-        </Provider>
-      </ApolloProvider>
+      <Provider store={store}>
+        {/* <PersistGate loading={null} persistor={persistor}> */}
+        <DarkThemeProvider>
+          <GlobalStyle />
+          <ToasterProvider>
+            {isMobile ? <Mobile /> : <App />}
+            <ToasterMessages />
+          </ToasterProvider>
+        </DarkThemeProvider>
+        {/* </PersistGate> */}
+      </Provider>
     </GoogleReCaptchaProvider>
   )
 }
