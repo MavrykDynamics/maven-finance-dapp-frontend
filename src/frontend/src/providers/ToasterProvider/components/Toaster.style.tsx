@@ -1,0 +1,133 @@
+import styled, { css } from 'styled-components/macro'
+import { decreaseBar } from 'styles/animations'
+import { MavrykTheme } from '../../../styles/interfaces'
+import { TOASTER_LOADING, getColorByToasterStatus } from '../toaster.provider.const'
+
+export const ToasterContainer = styled.div<{ delay: number }>`
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  z-index: 13;
+  width: 500px;
+  background: transparent;
+
+  .reveal {
+    /* animation-name: reveal;
+    animation-timing-function: ease-in-out;
+    animation-delay: ${({ delay }) => (delay ? `${delay}ms` : '200ms')}; */
+    /* animation: ${({ delay }) => `hide ${delay}s ease-in-out`}; */
+    animation: reveal 0.2s ease-in-out;
+  }
+
+  .hide {
+    /* animation: ${({ delay }) => `hide ${delay}s ease-in-out`}; */
+    animation: hide 0.2s ease-in-out;
+  }
+
+  @keyframes reveal {
+    from {
+      transform: translateX(500px);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes hide {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(500px);
+    }
+  }
+`
+
+export const ToasterStyled = styled.div<{ theme: MavrykTheme }>`
+  width: 100%;
+  position: relative;
+  padding: 0 20px;
+  border-radius: 4px;
+
+  display: flex;
+  align-items: center;
+  column-gap: 15px;
+  min-height: 90px;
+
+  background-color: ${({ theme }) => theme.containerColor};
+  box-shadow: 1px 7px 14px -5px rgba(0, 0, 0, 0.2);
+
+  transition: transform 1s ease-in-out;
+  overflow: hidden;
+`
+
+export const ToasterCountdown = styled.div<{ showing: boolean; status?: string; theme: MavrykTheme }>`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+
+  height: 4px;
+  width: 100%;
+  border-radius: 0 0 4px 0;
+
+  background-color: ${({ status, theme, showing }) =>
+    showing ? getColorByToasterStatus({ toasterStatus: status, theme }) : 'transparent'};
+
+  ${(props) =>
+    props.showing &&
+    props.status !== TOASTER_LOADING &&
+    css`
+      animation: ${decreaseBar} ease-in-out 1;
+      animation-fill-mode: forwards;
+      animation-duration: 5s;
+    `}
+`
+
+export const ToasterIcon = styled.div<{ status?: string; theme: MavrykTheme }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  width: 40px;
+  height: 40px;
+
+  .toaster-loader {
+    transform: scale(0.175);
+    color: ${({ theme }) => theme.primaryColor};
+  }
+
+  > svg {
+    height: 16px;
+    width: 16px;
+    fill: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status, theme })};
+  }
+`
+
+export const ToasterContent = styled.div<{ status?: string; theme: MavrykTheme }>`
+  padding: 8px;
+  max-width: calc(100% - 60px);
+  width: 100%;
+
+  div {
+    word-break: break-word;
+  }
+
+  .title {
+    color: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status, theme })};
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .message {
+    font-weight: 500;
+    font-size: 14px;
+    color: ${({ theme }) => theme.textColor};
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+`
