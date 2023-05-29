@@ -4,7 +4,6 @@ import { State } from 'reducers'
 import { LoansValuesSectionInfo, LoansValuesSection } from './../LoansComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
-import { assetDecimalsToShow } from '../../Loans.const'
 import { isTezosAsset } from '../../Loans.helpers'
 
 import { LendingItemType, LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
@@ -37,7 +36,7 @@ export const LendingTabValuesSection = ({ lendingItem, assetData, lendAPY }: Pro
 
       <div className="stats">
         <LoansValuesSectionInfo hasRate={Boolean(assetData.rate)}>
-          <CommaNumber value={lendValue} className="value" showDecimal decimalsToShow={assetDecimalsToShow} />
+          <CommaNumber value={lendValue} className="value" showDecimal decimalsToShow={assetData.decimals} />
 
           <CommaNumber value={lendValue * assetData.rate} beginningText="$" className="rate" showDecimal />
 
@@ -48,7 +47,7 @@ export const LendingTabValuesSection = ({ lendingItem, assetData, lendAPY }: Pro
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo hasRate={Boolean(assetData.rate)}>
-          <CommaNumber value={interestEarned} className="value" showDecimal />
+          <CommaNumber value={interestEarned} className="value" showDecimal decimalsToShow={assetData.decimals} />
 
           <CommaNumber value={interestEarned * assetData.rate} beginningText="$" className="rate" showDecimal />
 
@@ -59,7 +58,7 @@ export const LendingTabValuesSection = ({ lendingItem, assetData, lendAPY }: Pro
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo>
-          <CommaNumber value={lendAPY} className="value" showDecimal />
+          <CommaNumber value={lendAPY} className="value" showDecimal decimalsToShow={assetData.decimals} />
 
           <div className="name margin-top">
             Earn APY
@@ -68,7 +67,7 @@ export const LendingTabValuesSection = ({ lendingItem, assetData, lendAPY }: Pro
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo>
-          <CommaNumber value={mBalance} className="value" showDecimal decimalsToShow={assetDecimalsToShow} />
+          <CommaNumber value={mBalance} className="value" showDecimal decimalsToShow={assetData.decimals} />
 
           <div className="name margin-top">
             m{assetData.symbol} Balance
@@ -77,7 +76,7 @@ export const LendingTabValuesSection = ({ lendingItem, assetData, lendAPY }: Pro
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo hasRate={Boolean(assetData.rate)}>
-          <CommaNumber value={tokenBalance} className="value" showDecimal decimalsToShow={assetDecimalsToShow} />
+          <CommaNumber value={tokenBalance} className="value" showDecimal decimalsToShow={assetData.decimals} />
           <CommaNumber value={tokenBalance * assetData.rate} beginningText="$" className="rate" showDecimal />
 
           <div className="name">Wallet Balance</div>
