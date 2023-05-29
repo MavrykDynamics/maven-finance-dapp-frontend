@@ -23,14 +23,15 @@ query SatellitesStorageQuery {
       smvk_balance
       mvk_balance
       aggregator_oracles {
-        aggregator_id
-        user_id
         observations(order_by: {epoch: desc_nulls_last}, limit: 5) {
           oracle_id
           epoch
           data
           round
           timestamp
+        }
+        user {
+          address
         }
         aggregator {
           address
@@ -122,6 +123,7 @@ query SatellitesStorageQuery {
     id
   }
   aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {
+    address
     oracles {
       observations {
         epoch

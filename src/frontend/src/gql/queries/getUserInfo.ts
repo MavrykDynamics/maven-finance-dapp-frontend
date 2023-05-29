@@ -53,11 +53,11 @@ query GetUserInfo ($_eq: String = "") {
       image
     }
 
-    activeSatelliteRecord: satellites(where: {user_id: {_eq: $_eq}, _and: {currently_registered: {_eq: true}, _and: {status: {_eq: "0"}}}}) {
+    activeSatelliteRecord: satellites(where: {user: {address: {_eq: $_eq}}, _and: {currently_registered: {_eq: true}, _and: {status: {_eq: "0"}}}}) {
       user_id
     }
     
-    vesteeRecord: vesting_vestees(where: {vestee_id: {_eq: $_eq}}) {
+    vesteeRecord: vesting_vestees(where: {vestee : {address: {_eq: $_eq}}}) {
       vestee_id
     }
   }
@@ -75,7 +75,7 @@ export const SATELLITE_CYCLE_DATA_QUERY = `
 query GetCurrentCycleGovernanceSatelliteSnapshot($_eq: String = "") {
 	governance(where: {active: {_eq: true}}) {
 		cycle_id
-		satellite_snapshots(where: {user_id: {_eq: $_eq}}, order_by: {cycle: desc}) {
+		satellite_snapshots(where: {user:  {address: {_eq: $_eq}}}, order_by: {cycle: desc}) {
 			cycle,
       ready
 			}

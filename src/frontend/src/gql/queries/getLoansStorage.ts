@@ -89,10 +89,12 @@ export const AVALIABLE_COLLATERALS_QUERY = `
   query GetAvaliableCollaterals {
     lending_controller(where: {mock_time: {_eq: false}}) {
       collateral_tokens {
-        token_address
+        collateral_token {
+          token_address
+          token_standard
+        }
         id
         token_name
-        token_contract_standard
         protected
         oracle_id
       }
@@ -104,12 +106,16 @@ export const AVALIABLE_COLLATERALS_QUERY = `
         vaults {
           collateral_balances {
             token {
-              token_address
               token_name
+              collateral_token {
+                token_address
+              }
             }
           }
           loan_token {
-            loan_token_address
+            loan_token {
+              token_address
+            }
             loan_token_name
             oracle_id
           }

@@ -1,6 +1,6 @@
 export const USER_REWARDS_QUERY = `
   query GetUserRewards($user_address: String = "") {
-    farm(where: {farm_accounts: {user_id: {_eq: $user_address}}}) {
+    farm(where: {farm_accounts: {user: {address: {_eq: $user_address}}}}) {
       address
       accumulated_rewards_per_share
       current_reward_per_block
@@ -18,7 +18,7 @@ export const USER_REWARDS_QUERY = `
     doorman {
       unclaimed_rewards
       accumulated_fees_per_share
-      stake_accounts(where: {user_id: {_eq: $user_address}}) {
+      stake_accounts(where: {user: {address: {_eq: $user_address}}}) {
         participation_fees_per_share
         smvk_balance
         user_id
@@ -28,7 +28,7 @@ export const USER_REWARDS_QUERY = `
       address
       mvk_balance
     }
-    satellite_rewards(where: {user_id: {_eq: $user_address}}) {
+    satellite_rewards(where: {user: {address: {_eq: $user_address}}}) {
       unpaid
       paid
       participation_rewards_per_share

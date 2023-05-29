@@ -35,7 +35,9 @@ query DappTokens($_whitelistTokensAddress: String) {
     whitelist_token_contracts {
       contract_address
       contract_name
-      token_contract_standard
+      token {
+        token_standard
+      }
     }
   }
 

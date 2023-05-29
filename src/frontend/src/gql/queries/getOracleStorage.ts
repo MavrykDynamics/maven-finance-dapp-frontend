@@ -1,5 +1,5 @@
 export const ORACLE_STORAGE_QUERY = `
-   query GetOracleDataFeeds {
+  query GetOracleDataFeeds {
     aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {
       address
       admin
@@ -54,15 +54,6 @@ export const ORACLE_STORAGE_QUERY = `
       track_aggregator_paused
       untrack_aggregator_paused
       aggregator_name_max_length
-    }
-    dipdup_contract_metadata {
-      contract
-      created_at
-      id
-      metadata
-      update_id
-      updated_at
-      network
     }
   }
 `

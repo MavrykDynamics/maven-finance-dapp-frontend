@@ -89,7 +89,9 @@ export const GOVERNANCE_PROPOSALS_QUERY = `
         id
         internal_id
         title
-        to__id
+        to_ {
+          address
+        }
         token_amount
         token_address
       }

@@ -24,7 +24,7 @@ export const getFeedsStorage = () => async (dispatch: AppDispatch, getState: Get
   try {
     const feeds = await fetchFromIndexer(ORACLE_STORAGE_QUERY, ORACLE_STORAGE_QUERY_NAME, ORACLE_STORAGE_QUERY_VARIABLE)
 
-    const normalizedFeedsStorage = normalizeFeeds(feeds, feeds.aggregator_factory[0])
+    const normalizedFeedsStorage = normalizeFeeds(feeds.aggregator, feeds.aggregator_factory[0])
 
     dispatch({ type: GET_FEEDS_STORAGE, normalizedFeedsStorage })
   } catch (error) {
