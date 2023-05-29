@@ -89,12 +89,6 @@ export const BorrowingExpandedCard = styled.div<{ theme: MavrykTheme }>`
   border-top-right-radius: 0;
   border-top-left-radius: 0;
 
-  .useMax-btn {
-    button {
-      font-size: 14px;
-    }
-  }
-
   .stats-and-actions {
     display: grid;
     grid-template-columns: 450px auto;
@@ -201,6 +195,12 @@ export const LoansActionsSection = styled.div`
   &.lending-tab {
     background-color: ${({ theme }) => theme.containerColor};
     border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  }
+
+  .useMax-btn {
+    button {
+      font-size: 14px;
+    }
   }
 
   .coming-soon {

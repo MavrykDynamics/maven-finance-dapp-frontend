@@ -198,7 +198,7 @@ export const LendingTabActionsSection = ({ lendingItem, assetData, lendAPY }: Le
             <div className="name">{isSupplyActiveTab ? `m${assetData.symbol} Received` : 'Amount To Withdraw'}</div>
             <CommaNumber value={Number(inputData.amount)} className="value" />
           </ThreeLevelListItem>
-          <ThreeLevelListItem>
+          <ThreeLevelListItem className='right'>
             <div className="name">New m{assetData.symbol} Balance</div>
             <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
           </ThreeLevelListItem>

@@ -4,4 +4,4 @@ export const LENDING_TAB_SUPPLY_TEXT = (asset: string) =>
   }`
   
 export const LENDING_TAB_WITHDRAW_TEXT =
-  'Input the amount you wish to withdraw from earning. You cannot withdraw more than you have supplied in this earn market.'
+  'Input the amount you wish to withdraw from Mavryk Finance’s lending pools. You will stop earning interest on withdrawn funds.'
