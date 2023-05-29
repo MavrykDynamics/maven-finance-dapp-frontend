@@ -57,82 +57,64 @@ export const SatelliteGovernanceAvailableActions = styled(Card)`
   }
 `
 
-export const SatelliteGovernanceAvailableAction = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteGovernanceAvailableAction = styled.form<{ theme: MavrykTheme }>`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  row-gap: 30px;
+  padding: 30px 20px 40px;
+
   border-top: 1px solid ${royalPurpleColor};
 
-  .satellite-address {
-    margin-bottom: 19px;
-  }
+  a {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: fit-content;
 
-  .inputs-block {
-    padding-top: 40px;
-    padding-left: 26px;
-    padding-right: 26px;
-    padding-bottom: 23px;
-    position: relative;
-
-    a {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      width: fit-content;
-      svg {
-        fill: ${cyanColor};
-        width: 16px;
-        height: 16px;
-      }
-    }
-
-    .banSatellite,
-    .removeOracles,
-    .removeFromAggregator {
-      &.fill {
-        svg {
-          stroke: ${containerColor};
-        }
-      }
-    }
-
-    h1 {
-      margin-top: 0;
-      margin-bottom: 0;
-      margin-left: 10px;
-    }
-
-    p {
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 21px;
-      color: ${({ theme }) => theme.textColor};
-      margin-top: 1px;
-      margin-bottom: 17px;
-      margin-left: 10px;
-    }
-
-    .textarea {
-      color: ${({ theme }) => theme.textColor};
-    }
-
-    label {
-      font-weight: 700;
-      font-size: 14px;
-      line-height: 21px;
-      color: ${({ theme }) => theme.textColor};
-      padding-left: 8px;
-      padding-left: 10px;
-      margin-bottom: 5px;
-      display: block;
-    }
-
-    fieldset {
-      display: grid;
-      grid-template-columns: 0.5fr 0.5fr;
-      gap: 20px;
+    svg {
+      fill: ${cyanColor};
+      width: 16px;
+      height: 16px;
     }
   }
 
-  .table-wrap {
-    position: relative;
+  p {
+    margin: 0;
+
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  fieldset {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  label {
+    margin-bottom: 5px;
+
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  h2,
+  p,
+  label {
+    margin-left: 10px;
+  }
+
+  .button-wrapper {
+    margin-top: 25px;
+    margin-left: auto;
+    width: 300px;
   }
 `
 

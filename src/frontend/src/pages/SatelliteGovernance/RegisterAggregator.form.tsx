@@ -80,9 +80,11 @@ export const RegisterAggregatorForm = ({ maxLength, isActionActive }: Props) => 
         >
           <Icon id="question" />
         </a>
+
         <div>
           <h1>Register Aggregator</h1>
           <p>Please enter a valid tz1 address of the satellite to take action on</p>
+          
           <fieldset>
             <div className="satellite-address">
               <label>Aggregator Pair</label>

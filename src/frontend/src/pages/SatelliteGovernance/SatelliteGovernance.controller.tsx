@@ -56,9 +56,9 @@ const itemsForDropDown = [
   'Add to Aggregator',
   'Restore Satellite',
   // TODO: commented according to [MAV-1404]
-  // 'Set Aggregator Maintainer',
-  // 'Update Aggregator Status',
-  // 'Register Aggregator',
+  'Set Aggregator Maintainer',
+  'Update Aggregator Status',
+  'Register Aggregator',
   'Fix Mistaken Transfer',
 ]
 
@@ -83,6 +83,13 @@ const getCurrentListNameById = (tabId: string) => {
       return ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST
   }
 }
+
+const emptyContainer = (
+  <EmptyContainer>
+    <img src="/images/not-found.svg" alt="No proposals to show" />
+    <figcaption>No actions to show</figcaption>
+  </EmptyContainer>
+)
 
 export const SatelliteGovernance = () => {
   const { search } = useLocation()
@@ -208,13 +215,6 @@ export const SatelliteGovernance = () => {
     }
   }, [accountPkh, isSatellite, tabId])
 
-  const emptyContainer = (
-    <EmptyContainer>
-      <img src="/images/not-found.svg" alt="No proposals to show" />
-      <figcaption>No actions to show</figcaption>
-    </EmptyContainer>
-  )
-
   return (
     <Page>
       <PageHeader page={'satellite-governance'} />
@@ -255,17 +255,11 @@ export const SatelliteGovernance = () => {
               />
             </div>
 
-            {chosenDdItem?.id === 'Register Aggregator' ? (
-              <RegisterAggregatorForm maxLength={maxLength} isActionActive={isActionActive} />
-            ) : chosenDdItem?.id === 'Fix Mistaken Transfer' ? (
-              <FixMistakenTransferForm maxLength={maxLength} isActionActive={isActionActive} />
-            ) : (
-              <SatelliteGovernanceForm
-                maxLength={maxLength}
-                isActionActive={isActionActive}
-                variant={chosenDdItem?.id ?? ''}
-              />
-            )}
+            <SatelliteGovernanceForm
+              maxLength={maxLength}
+              isActionActive={isActionActive}
+              variant={chosenDdItem?.id ?? ''}
+            />
           </SatelliteGovernanceAvailableActions>
         ) : null}
 
