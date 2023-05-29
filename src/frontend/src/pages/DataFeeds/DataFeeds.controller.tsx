@@ -141,7 +141,7 @@ export const DataFeeds = () => {
                 </div>
 
                 <Pagination
-                  itemsCount={filteredFeeds.length}
+                  itemsCount={feedsLedger.length}
                   side={PAGINATION_SIDE_RIGHT}
                   listName={FEEDS_ALL_LIST_NAME}
                 />
