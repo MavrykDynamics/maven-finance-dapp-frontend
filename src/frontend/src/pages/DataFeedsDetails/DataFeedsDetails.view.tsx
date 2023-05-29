@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useLocation } from 'react-router'
 
 // consts, helpers
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -9,7 +10,12 @@ import { parseDate } from 'utils/time'
 import { cyanColor, downColor, Page, skyColor } from 'styles'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { registerFeedAction } from 'pages/DataFeeds/DataFeeds.actions'
-import { ORACLES_DATA_IN_FEED_LIST_NAME, PAGINATION_SIDE_RIGHT } from 'app/App.components/Pagination/pagination.consts'
+import {
+  calculateSlicePositions,
+  getPageNumber,
+  ORACLES_DATA_IN_FEED_LIST_NAME,
+  PAGINATION_SIDE_RIGHT,
+} from 'app/App.components/Pagination/pagination.consts'
 
 // view
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
@@ -65,6 +71,8 @@ const tabsList = [
 
 const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsProps) => {
   const dispatch = useDispatch()
+  const { search } = useLocation()
+
   const { dipDupContracts } = useSelector((state: State) => state.tokens)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
@@ -78,6 +86,12 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
   const imageLink = dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
 
   const chartPlots = (activeTab === 1 ? feed?.dataFeedsHistory : feed?.dataFeedsVolatility) ?? []
+
+  const paginatedFeeds = useMemo(() => {
+    const currentPage = getPageNumber(search, ORACLES_DATA_IN_FEED_LIST_NAME)
+    const [from, to] = calculateSlicePositions(currentPage, ORACLES_DATA_IN_FEED_LIST_NAME)
+    return feedsSatellites.slice(from, to)
+  }, [feedsSatellites, search])
 
   return (
     <Page>
@@ -295,7 +309,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                 <H2Title>Oracles data</H2Title>
 
                 <div className={`oracles-list`}>
-                  {feedsSatellites.map((item) => (
+                  {paginatedFeeds.map((item) => (
                     <OracleCard oracle={item} key={item.address} />
                   ))}
 

@@ -1,6 +1,10 @@
 import BigNumber from 'bignumber.js'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+  defaultProposalMetadataTitleMaxLength,
+} from 'app/App.components/Input/Input.constants'
 import { Governance_Proposal } from 'utils/generated/graphqlTypes'
 import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
@@ -13,7 +17,6 @@ import { State } from 'reducers'
 
 // helpers
 import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
-import { defaultProposalDescriptionMaxLength } from 'app/App.components/Input/Input.constants'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 // VALIDATION FN'S TODO: add some checking in future (no cond for it now)
@@ -29,18 +32,16 @@ export const getBytesPairValidationStatus = (
 export const getValidityStageThreeTable = (
   valueName: StageThreeValidityItem,
   value: string | number,
-  maxLength?: number,
+  options?: { tokenBalance?: number; maxLength?: number },
 ): boolean => {
   switch (valueName) {
     case 'token_amount':
-      if (Number(value) < 0) return false
-      break
+      return Number(value) > 0 && (options?.tokenBalance ? Number(value) <= options.tokenBalance : true)
     case 'to__id':
       return validateTzAddress(value as string)
     case 'title':
-      return isValidLength(value as string, 1, maxLength || defaultProposalDescriptionMaxLength)
+      return isValidLength(value as string, 1, options?.maxLength ?? defaultProposalMetadataTitleMaxLength)
   }
-  return true
 }
 
 export const checkBytesPairExists = (proposalDataItem: ProposalRecordType['proposalData'][number]): boolean => {
@@ -258,8 +259,15 @@ export const getPaymentsDiff = (
       const item2 = originalData?.[originalIdx]
 
       // default decimals is 6 cuz 6 is xtz decimals, and dipDupTokens don't contain xtz asset
-      const decimals = dipDupTokens.find(({ contract }) => contract === item1.token_address)?.metadata?.decimals ?? 6
-      const symbol = paymentMethods.find(({ address }) => address === item1.token_address)?.shortSymbol ?? 'fa2'
+      const decimals =
+        item1.token_address === 'XTZ'
+          ? 6
+          : dipDupTokens.find(({ contract }) => contract === item1.token_address)?.metadata?.decimals ?? 0
+
+      const symbol =
+        item1.token_address === 'XTZ'
+          ? 'tez'
+          : paymentMethods.find(({ address }) => address === item1.token_address)?.shortSymbol ?? 'fa2'
 
       let token = {}
 

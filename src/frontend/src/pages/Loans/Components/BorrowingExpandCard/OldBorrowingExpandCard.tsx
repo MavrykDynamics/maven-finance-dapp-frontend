@@ -85,7 +85,7 @@ export const OldBorrowingExpandCard = ({
   minimumRepay,
   DAOFee,
 }: BorrowingExpandCardPropsType) => {
-  const { symbol, icon, rate = 1 } = borrowedAsset
+  const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
 
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
@@ -592,7 +592,14 @@ export const OldBorrowingExpandCard = ({
                     <Button
                       kind={BUTTON_SIMPLE}
                       disabled={true || isActionActive}
-                      onClick={() => openUpdateMvkOperatorsPopup?.({})}
+                      onClick={() =>
+                        openUpdateMvkOperatorsPopup?.({
+                          vaultAddress: address,
+                          tokenName: gqlName,
+                          // TODO: add valid operators
+                          operators: [],
+                        })
+                      }
                     >
                       Update <Icon id="paginationArrowLeft" />
                     </Button>
