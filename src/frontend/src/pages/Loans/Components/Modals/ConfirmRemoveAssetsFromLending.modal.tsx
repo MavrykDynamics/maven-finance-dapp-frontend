@@ -49,7 +49,7 @@ export const ConfirmRemoveAssetsFromLending = ({
 
           <H2Title>Confirm Asset Withdrawal</H2Title>
 
-          <div className="modalDescr">Please confirm the amount you would like to withdraw from Earning.s</div>
+          <div className="modalDescr">Please confirm the amount you would like to withdraw from Earning.</div>
 
           <div className="loans-confirmation-info">
             <div className="lending-stats">
