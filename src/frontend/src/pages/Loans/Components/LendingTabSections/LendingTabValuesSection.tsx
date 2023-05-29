@@ -10,6 +10,7 @@ import { isTezosAsset } from '../../Loans.helpers'
 import { LendingItemType, LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { EARN_APY, INTEREST_EARNED, M_TOKEN_BALANCE, SUPPLIED_AMOUNT } from 'texts/tooltips/loan.text'
 
 type Props = {
   lendingItem: LendingItemType
@@ -42,7 +43,7 @@ export const LendingTabValuesSection = ({ lendingItem, assetData, lendAPY }: Pro
 
           <div className="name">
             Supplied Amount
-            <CustomTooltip iconId="info" text={''} />
+            <CustomTooltip iconId="info" text={SUPPLIED_AMOUNT(assetData.symbol)} />
           </div>
         </LoansValuesSectionInfo>
 
@@ -53,7 +54,7 @@ export const LendingTabValuesSection = ({ lendingItem, assetData, lendAPY }: Pro
 
           <div className="name">
             Interest Earned
-            <CustomTooltip iconId="info" text={''} />
+            <CustomTooltip iconId="info" text={INTEREST_EARNED} />
           </div>
         </LoansValuesSectionInfo>
 
@@ -62,7 +63,7 @@ export const LendingTabValuesSection = ({ lendingItem, assetData, lendAPY }: Pro
 
           <div className="name margin-top">
             Earn APY
-            <CustomTooltip iconId="info" text={''} />
+            <CustomTooltip iconId="info" text={EARN_APY} />
           </div>
         </LoansValuesSectionInfo>
 
@@ -71,7 +72,7 @@ export const LendingTabValuesSection = ({ lendingItem, assetData, lendAPY }: Pro
 
           <div className="name margin-top">
             m{assetData.symbol} Balance
-            <CustomTooltip iconId="info" text={''} />
+            <CustomTooltip iconId="info" text={M_TOKEN_BALANCE(assetData.symbol)} />
           </div>
         </LoansValuesSectionInfo>
 
