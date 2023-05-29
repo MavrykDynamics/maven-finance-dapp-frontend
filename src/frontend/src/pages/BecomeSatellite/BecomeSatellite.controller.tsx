@@ -17,8 +17,8 @@ import {
 } from './BecomeSatellite.conts'
 
 // providers
-import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
 
 // Actions
 import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
@@ -91,7 +91,11 @@ export const BecomeSatellite = () => {
     maxLengths: { satelliteDelegation },
   } = useDAPPConfigContext()
 
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
+  useStakeUpdater({
+    skipAddressBalance: SUB_SKIP,
+    skipMvkTokenTotal: SUB_SKIP,
+    skipStakeHistory: SUB_SKIP,
+  })
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {

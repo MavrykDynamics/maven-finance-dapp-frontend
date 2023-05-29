@@ -42,3 +42,10 @@ export type Props = {
   accountPkh?: string
   dispatch: AppDispatch
 }
+
+export type StakingSubsSkipsType = {
+  skipStakeHistory?: string
+  skipAddressBalance?: string
+  skipMvkTokenTotal?: string
+  skipUserBalance?: string
+}

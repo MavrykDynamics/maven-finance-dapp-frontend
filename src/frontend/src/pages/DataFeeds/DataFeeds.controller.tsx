@@ -33,6 +33,11 @@ import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
 import { useLocation } from 'react-router'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
+/**
+ * this page don't need loader, cuz feeds are loaded while initial loading, and by the time we get here
+ * we already have feeds context loaded, and we just subscribe to it, and update feeds in background
+ */
+
 export const DataFeeds = () => {
   useDataFeedsUpdater()
 

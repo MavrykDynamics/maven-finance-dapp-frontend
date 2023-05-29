@@ -23,6 +23,8 @@ import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 // styles
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
@@ -33,14 +35,16 @@ import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
 
 const Satellites = () => {
   const { isLoading: isFeedsLoading } = useDataFeedsUpdater()
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
+  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
+    skipAddressBalance: SUB_SKIP,
+    skipStakeHistory: SUB_SKIP,
+    skipMvkTokenTotal: SUB_SKIP,
+  })
 
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
 

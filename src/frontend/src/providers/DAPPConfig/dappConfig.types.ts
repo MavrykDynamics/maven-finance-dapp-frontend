@@ -52,12 +52,10 @@ export type DAPPConfigContext = {
     mavrykDynamics: XtzBakerType
     otherBakers: Array<XtzBakerType>
   } | null
-  dipDupContracts: Record<string, DipDupContractsQuery['dipdup_contract_metadata'][number]> | null
   // actions
   updateMaxLengths: InstanceType<typeof DAPPConfigProvider>['updateMaxLengths']
   updateMVKFaucetAddress: InstanceType<typeof DAPPConfigProvider>['updateMVKFaucetAddress']
   updateXtzBakers: InstanceType<typeof DAPPConfigProvider>['updateXtzBakers']
-  updateDipDupContracts: InstanceType<typeof DAPPConfigProvider>['updateDipDupContracts']
 }
 
 export type State = {

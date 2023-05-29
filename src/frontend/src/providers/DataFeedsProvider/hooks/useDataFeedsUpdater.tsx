@@ -6,8 +6,6 @@ import { useDataFeedsContext } from '../dataFeeds.provider'
 // subs
 import { getOrcaleStorageAggregatorQuery } from 'gql/queries/getFeedsStorage'
 import { useEffect, useState } from 'react'
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
-import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { FeedsSubscriptionSkipsType } from '../helpers/feeds.types'
 import { SUB_SUBSCRIBE, SUB_SKIP, SUB_QUERY } from 'utils/api/apollo.consts'
@@ -18,12 +16,8 @@ export const useDataFeedsUpdater = (
 ) => {
   const { updateDataFeeds } = useDataFeedsContext()
   const { updateTokensPrices } = useTokensContext()
-  const { dipDupContracts } = useDAPPConfigContext()
-
-  const isContractsLoading = dipDupContracts === null
 
   const [shouldSkip, setShouldSkip] = useState<FeedsSubscriptionSkipsType>({ skipFeedsSubscription })
-  const [feeds, setFeeds] = useState<SubsribeOracleDataFeedSubscription['aggregator']>([])
 
   const { loading: aggregatorLoading } = useSubscription(getOrcaleStorageAggregatorQuery(feedAddress), {
     skip: shouldSkip.skipFeedsSubscription === SUB_SKIP,
@@ -31,7 +25,8 @@ export const useDataFeedsUpdater = (
     onData: ({ data: response }) => {
       const { data } = response
       if (data) {
-        setFeeds(data.aggregator)
+        updateDataFeeds(data.aggregator)
+        updateTokensPrices(data.aggregator)
       }
     },
     onError: (error) => {
@@ -48,14 +43,6 @@ export const useDataFeedsUpdater = (
       }))
     }
   }, [skipFeedsSubscription, aggregatorLoading])
-
-  // TODO: remove when dipDupContracts are updated
-  useEffect(() => {
-    if (!aggregatorLoading && !isContractsLoading) {
-      updateDataFeeds(feeds)
-      updateTokensPrices(feeds)
-    }
-  }, [aggregatorLoading, feeds, isContractsLoading])
 
   return { isLoading: aggregatorLoading }
 }

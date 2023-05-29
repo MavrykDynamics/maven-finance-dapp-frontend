@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
+import QueryString from 'qs'
 import { useLocation } from 'react-router'
 
 import { DashboardView } from './Dashboard.view'
@@ -8,7 +9,6 @@ import { Page } from 'styles'
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
-import { DOORMAN_HISTORY_SUB, DOORMAN_STATS_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -17,7 +17,6 @@ import { fillTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.act
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import QueryString from 'qs'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -84,9 +83,10 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB, DOORMAN_HISTORY_SUB])
+  // TODO: check skips
+  const { isInitialLoading: isDoormanLoading } = useStakeUpdater()
 
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
+  const { isLoading: isPromiseLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
@@ -99,6 +99,8 @@ export const Dashboard = () => {
       )
     } catch (e) {}
   }, [])
+
+  const isLoading = isPromiseLoading || isDoormanLoading
 
   const mvkStatsBlock: mvkStatsType = {
     marketCap: marketCapValue,
