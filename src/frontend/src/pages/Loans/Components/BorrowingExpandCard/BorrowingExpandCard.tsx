@@ -72,7 +72,7 @@ export const BorrowingExpandCard = ({
   DAOFee,
   hideTransactionHistory,
 }: BorrowingExpandCardPropsType) => {
-  const { symbol, icon, rate = 1 } = borrowedAsset
+  const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
 
   const { loanTokens } = useSelector((state: State) => state.loans)
 
@@ -268,7 +268,12 @@ export const BorrowingExpandCard = ({
   }
 
   const handleClickOpenUpdateMvkOperatorsPopup = () => {
-    openUpdateMvkOperatorsPopup?.({})
+    openUpdateMvkOperatorsPopup?.({
+      vaultAddress: address,
+      tokenName: gqlName,
+      // TODO: add valid operators
+      operators: [],
+    })
   }
 
   useEffect(() => {
@@ -374,7 +379,7 @@ export const BorrowingExpandCard = ({
                 rate={rate}
               />
 
-              <LoansActionsSection className='borrowing-tab'>
+              <LoansActionsSection className="borrowing-tab">
                 <div className="switchers">
                   <SlidingTabButtons
                     onClick={handleSwitchTab('repayAndBorrow')}
