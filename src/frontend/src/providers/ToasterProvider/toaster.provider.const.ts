@@ -22,6 +22,10 @@ export const TOAST_TIME_TO_LIVE = 4600
 export const ANIMATION_DURATION = 400
 export const TOASTS_LIMIT = 5
 
+// animations
+export const TOASTER_HIDE = 'hide'
+export const TOASTER_REVEAL = 'reveal'
+
 export const getColorByToasterStatus = ({
   toasterStatus,
   theme,

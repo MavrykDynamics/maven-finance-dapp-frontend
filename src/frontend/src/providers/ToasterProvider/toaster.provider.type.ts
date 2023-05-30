@@ -2,8 +2,10 @@ import type { ExtendedErrors } from '../../errors/error'
 import type ToasterProvider from './toaster.provider'
 import {
   TOASTER_ERROR,
+  TOASTER_HIDE,
   TOASTER_INFO,
   TOASTER_LOADING,
+  TOASTER_REVEAL,
   TOASTER_SUCCESS,
   TOASTER_WARNING,
 } from './toaster.provider.const'
@@ -14,6 +16,8 @@ export type ToasterTypes =
   | typeof TOASTER_INFO
   | typeof TOASTER_LOADING
   | typeof TOASTER_WARNING
+
+export type ToasterAnimationType = typeof TOASTER_REVEAL | typeof TOASTER_HIDE
 
 export type ToasterMessage = {
   type: ToasterTypes

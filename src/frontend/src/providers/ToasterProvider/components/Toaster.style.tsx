@@ -1,12 +1,12 @@
 import styled, { css } from 'styled-components/macro'
 import { decreaseBar } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { TOASTER_LOADING, getColorByToasterStatus } from '../toaster.provider.const'
-import { ToasterTypes } from '../toaster.provider.type'
+import { TOASTER_LOADING, TOASTER_REVEAL, getColorByToasterStatus } from '../toaster.provider.const'
+import { ToasterAnimationType, ToasterTypes } from '../toaster.provider.type'
 // animations
 import { revealFromRight, hideToRight } from 'styles/animations'
 
-export const ToasterContainer = styled.div<{ delay: number; distance: number }>`
+export const ToasterContainer = styled.div`
   position: fixed;
   top: 10px;
   right: 10px;
@@ -16,21 +16,14 @@ export const ToasterContainer = styled.div<{ delay: number; distance: number }>`
   z-index: 13;
   width: 500px;
   background: transparent;
-
-  .reveal {
-    animation-name: ${({ distance }) => revealFromRight(distance)};
-    animation-duration: ${({ delay }) => `${delay}ms`};
-    animation-timing-function: ease-in-out;
-  }
-
-  .hide {
-    animation-name: ${({ distance }) => hideToRight(distance)};
-    animation-duration: ${({ delay }) => `${delay}ms`};
-    animation-timing-function: ease-in-out;
-  }
 `
 
-export const ToasterStyled = styled.div<{ theme: MavrykTheme }>`
+export const ToasterStyled = styled.div<{
+  theme: MavrykTheme
+  distance: number
+  delay: number
+  animationType: ToasterAnimationType
+}>`
   width: 100%;
   position: relative;
   padding: 0 20px;
@@ -46,6 +39,11 @@ export const ToasterStyled = styled.div<{ theme: MavrykTheme }>`
 
   transition: transform 1s ease-in-out;
   overflow: hidden;
+
+  animation-name: ${({ distance, animationType }) =>
+    animationType === TOASTER_REVEAL ? revealFromRight(distance) : hideToRight(distance)};
+  animation-duration: ${({ delay }) => `${delay}ms`};
+  animation-timing-function: ease-in-out;
 `
 
 export const ToasterCountdown = styled.div<{ status?: ToasterTypes; theme: MavrykTheme }>`
