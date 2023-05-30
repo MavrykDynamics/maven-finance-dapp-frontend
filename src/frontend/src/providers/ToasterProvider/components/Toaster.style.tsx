@@ -1,9 +1,12 @@
 import styled, { css } from 'styled-components/macro'
 import { decreaseBar } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { TOASTER_LOADING, ToasterStatusType, getColorByToasterStatus } from '../toaster.provider.const'
+import { TOASTER_LOADING, getColorByToasterStatus } from '../toaster.provider.const'
+import { ToasterTypes } from '../toaster.provider.type'
+// animations
+import { revealFromRight, hideToRight } from 'styles/animations'
 
-export const ToasterContainer = styled.div<{ delay: number }>`
+export const ToasterContainer = styled.div<{ delay: number; distance: number }>`
   position: fixed;
   top: 10px;
   right: 10px;
@@ -15,33 +18,15 @@ export const ToasterContainer = styled.div<{ delay: number }>`
   background: transparent;
 
   .reveal {
-    animation-name: reveal;
+    animation-name: ${({ distance }) => revealFromRight(distance)};
     animation-duration: ${({ delay }) => `${delay}ms`};
     animation-timing-function: ease-in-out;
   }
 
   .hide {
-    animation-name: hide;
+    animation-name: ${({ distance }) => hideToRight(distance)};
     animation-duration: ${({ delay }) => `${delay}ms`};
     animation-timing-function: ease-in-out;
-  }
-
-  @keyframes reveal {
-    from {
-      transform: translateX(500px);
-    }
-    to {
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes hide {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(500px);
-    }
   }
 `
 
@@ -63,7 +48,7 @@ export const ToasterStyled = styled.div<{ theme: MavrykTheme }>`
   overflow: hidden;
 `
 
-export const ToasterCountdown = styled.div<{ showing: boolean; status?: string; theme: MavrykTheme }>`
+export const ToasterCountdown = styled.div<{ status?: ToasterTypes; theme: MavrykTheme }>`
   position: absolute;
   bottom: 0;
   right: 0;
@@ -72,11 +57,9 @@ export const ToasterCountdown = styled.div<{ showing: boolean; status?: string; 
   width: 100%;
   border-radius: 0 0 4px 0;
 
-  background-color: ${({ status, theme, showing }) =>
-    showing ? getColorByToasterStatus({ toasterStatus: status as ToasterStatusType, theme }) : 'transparent'};
+  background-color: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status, theme })};
 
   ${(props) =>
-    props.showing &&
     props.status !== TOASTER_LOADING &&
     css`
       animation: ${decreaseBar} ease-in-out 1;
@@ -85,7 +68,7 @@ export const ToasterCountdown = styled.div<{ showing: boolean; status?: string; 
     `}
 `
 
-export const ToasterIcon = styled.div<{ status?: string; theme: MavrykTheme }>`
+export const ToasterIcon = styled.div<{ status?: ToasterTypes; theme: MavrykTheme }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -101,11 +84,11 @@ export const ToasterIcon = styled.div<{ status?: string; theme: MavrykTheme }>`
   > svg {
     height: 16px;
     width: 16px;
-    fill: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status as ToasterStatusType, theme })};
+    fill: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status, theme })};
   }
 `
 
-export const ToasterContent = styled.div<{ status?: string; theme: MavrykTheme }>`
+export const ToasterContent = styled.div<{ status?: ToasterTypes; theme: MavrykTheme }>`
   padding: 8px;
   max-width: calc(100% - 60px);
   width: 100%;
@@ -115,7 +98,7 @@ export const ToasterContent = styled.div<{ status?: string; theme: MavrykTheme }
   }
 
   .title {
-    color: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status as ToasterStatusType, theme })};
+    color: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status, theme })};
     font-weight: 600;
     font-size: 18px;
     margin-bottom: 8px;
@@ -125,8 +108,9 @@ export const ToasterContent = styled.div<{ status?: string; theme: MavrykTheme }
     font-weight: 500;
     font-size: 14px;
     color: ${({ theme }) => theme.textColor};
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
   }
 `

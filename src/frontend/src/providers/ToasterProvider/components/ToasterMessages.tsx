@@ -4,7 +4,13 @@ import { ToasterContainer, ToasterContent, ToasterCountdown, ToasterIcon, Toaste
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { ToasterMessage } from '../toaster.provider.type'
-import { ANIMATION_DURATION, TOASTER_LOADING, TOASTS_LIMIT, TOAST_TILE_TO_LIVE } from '../toaster.provider.const'
+import {
+  ANIMATION_DURATION,
+  TOASTER_LOADING,
+  TOASTS_LIMIT,
+  TOAST_ICON_MAPPER,
+  TOAST_TIME_TO_LIVE,
+} from '../toaster.provider.const'
 import classNames from 'classnames'
 import { sleep } from 'utils/api/sleep'
 
@@ -16,7 +22,7 @@ const Toast = ({ toast }: { toast: ToasterMessage }) => {
   useEffect(() => {
     if (type !== TOASTER_LOADING) {
       ;(async () => {
-        await sleep(TOAST_TILE_TO_LIVE)
+        await sleep(TOAST_TIME_TO_LIVE)
         setToastAnimation('hide')
         // wait for animation finish
         await sleep(ANIMATION_DURATION)
@@ -33,7 +39,11 @@ const Toast = ({ toast }: { toast: ToasterMessage }) => {
       })}
     >
       <ToasterIcon status={type}>
-        {type === TOASTER_LOADING ? <SpinnerCircleLoaderStyled className="toaster-loader" /> : <Icon id={type} />}
+        {type === TOASTER_LOADING ? (
+          <SpinnerCircleLoaderStyled className="toaster-loader" />
+        ) : (
+          <Icon id={TOAST_ICON_MAPPER[type]} />
+        )}
       </ToasterIcon>
 
       <ToasterContent status={type} lang="en">
@@ -41,7 +51,7 @@ const Toast = ({ toast }: { toast: ToasterMessage }) => {
         <div className="message">{message}</div>
       </ToasterContent>
 
-      <ToasterCountdown showing={true} status={type} />
+      <ToasterCountdown status={type} />
     </ToasterStyled>
   )
 }
@@ -62,7 +72,7 @@ export const ToasterMessages = () => {
   if (!messages.length) return null
 
   return (
-    <ToasterContainer delay={ANIMATION_DURATION}>
+    <ToasterContainer delay={ANIMATION_DURATION} distance={500}>
       {messages.map((m) => (
         <Toast key={m.unique} toast={m} />
       ))}

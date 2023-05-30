@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 
 // types
 import type { ToasterContextType, ToasterTypes } from './toaster.provider.type'
-import type { Errors } from '../../errors/error'
+import type { ExtendedErrors } from '../../errors/error'
 
 // consts
 import {
@@ -12,12 +12,14 @@ import {
   TOASTER_SUCCESS,
   TOASTER_WARNING,
 } from './toaster.provider.const'
+import { generateUniqueId } from 'utils/calcFunctions'
 
 export const toasterContext = React.createContext<ToasterContextType>(undefined!)
 
+// TODO add 404 page for critical errors
 type Props = {
   children: React.ReactNode
-  error?: Errors
+  error?: ExtendedErrors
   pageNotFound?: JSX.Element
 }
 
@@ -49,7 +51,7 @@ export default class ToasterProvider extends React.Component<Props, State> {
   }
 
   addToasterMessage = (title: string, message: string, type: ToasterTypes): string => {
-    const unique = Math.random().toString(36).substring(2) + Date.now().toString(36)
+    const unique = generateUniqueId()
     this.setState((prevState) => ({
       context: {
         ...prevState.context,
@@ -77,7 +79,7 @@ export default class ToasterProvider extends React.Component<Props, State> {
     }
   }
 
-  fatal = (error: Errors): void => {
+  fatal = (error: ExtendedErrors): void => {
     this.setError(error)
     console.error(error)
   }
@@ -87,7 +89,6 @@ export default class ToasterProvider extends React.Component<Props, State> {
   }
 
   info = (title: string, message: string): string => {
-    console.info(message)
     return this.addToasterMessage(title, message, TOASTER_INFO)
   }
 
@@ -100,7 +101,7 @@ export default class ToasterProvider extends React.Component<Props, State> {
     return this.addToasterMessage(title, message, TOASTER_LOADING)
   }
 
-  setError = (error: Errors): void => {
+  setError = (error: ExtendedErrors): void => {
     this.setState((prevState) => ({
       context: {
         ...prevState.context,

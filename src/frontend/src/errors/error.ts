@@ -1,5 +1,9 @@
 import type { InputPayload, Payload } from './error.type'
 
+/**
+ * ExtendedErrorClass as base class. Contains all essential information
+ * for error. You can create another extened class from it. See examples below (ValidationError, PropertyError etc.)
+ */
 class ExtendedErrorClass extends Error {
   payload: Payload | InputPayload
 
@@ -38,7 +42,7 @@ export class PropertyError extends ExtendedErrorClass {
   declare payload: InputPayload
 }
 
-export type Errors = Error | PermissionError | ApiError | ValidationError | FatalError | null
+export type ExtendedErrors = Error | PermissionError | ApiError | ValidationError | FatalError | null
 export type ExtendedError = FatalError | ApiError | PermissionError | ValidationError
 
 /**
