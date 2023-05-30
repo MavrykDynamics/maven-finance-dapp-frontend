@@ -1,4 +1,5 @@
 import {
+  ProposalStatusType,
   ProposalStatus,
   GovernancePhaseType,
   GovPhases,
@@ -10,7 +11,7 @@ export const getProposalStatus = (
   governancePhase: GovernancePhaseType,
   cycleHighestVotedProposalId: number,
   timelockProposalId: number,
-): ProposalStatus => {
+): ProposalStatusType => {
   // if proposal is executed give it's executed status
   if (proposal.executed) return ProposalStatus.EXECUTED
 

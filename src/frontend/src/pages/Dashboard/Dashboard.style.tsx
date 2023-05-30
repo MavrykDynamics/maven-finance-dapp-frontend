@@ -3,6 +3,7 @@ import { MavrykTheme } from '../../styles/interfaces'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 
 export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
+  margin-bottom: -20px;
   > .top {
     margin-top: 32px;
     display: flex;
@@ -54,7 +55,7 @@ export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
 
   .dashboard-navigation {
     display: flex;
-    margin: 30px 0 25px 0;
+    margin: 30px 0 20px 0;
     column-gap: 15px;
 
     > a {

@@ -9,7 +9,7 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 // helpers & actions
 import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
 import { parseDate } from 'utils/time'
-import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
+import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
 import {
   executeProposal,
@@ -34,6 +34,9 @@ import { VotingProposalsArea } from 'app/App.components/VotingArea/VotingArea.co
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ProposalDetailsStyled } from './ProposalDetails.style'
 import { TzAddress, handleCopyToClipboard } from 'app/App.components/TzAddress/TzAddress.view'
+import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.helpers'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import colors from 'styles/colors'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
   const dispatch = useDispatch()
@@ -42,6 +45,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { whitelistTokens } = useSelector((state: State) => state.tokens)
   const { governancePhase } = useSelector((state: State) => state.governance.config)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const isUserOwnerIfTheProposal = proposal.proposerId === accountPkh
 
@@ -96,11 +100,21 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   // store bytes that are opened
   const [openedBytes, setOpenedBytes] = useState<Array<number>>([])
 
+  const statusTooltipText = getTooltipForStatus(proposal.status)
+
   return (
     <ProposalDetailsStyled isAuthorized={Boolean(accountPkh)}>
       <div className="title-status">
         <H2Title>{proposal.title}</H2Title>
         <StatusFlag text={proposal.status} status={proposal.status} />
+        {statusTooltipText ? (
+          <CustomTooltip
+            className="tooltip"
+            text={statusTooltipText}
+            iconId="info"
+            defaultStrokeColor={colors[themeSelected]['textColor']}
+          />
+        ) : null}
       </div>
 
       {votingTill ? (
@@ -130,6 +144,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
           ({ voter_id, round }) =>
             voter_id === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
         )}
+        isVoteActive={(votingTill ?? 0) >= Date.now()}
         govPhase={governancePhase}
       />
 
@@ -161,6 +176,15 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         <div className="proposal-data-block-value">
           <a href={proposal.sourceCode} target="_blank" rel="noreferrer" className="isCyan">
             {proposal.sourceCode}
+          </a>
+        </div>
+      </div>
+
+      <div className="proposal-data-block-wrapper">
+        <div className="proposal-data-block-name">Invoice</div>
+        <div className="proposal-data-block-value">
+          <a href={proposal.invoice} target="_blank" rel="noreferrer" className="isCyan">
+            {proposal.invoice}
           </a>
         </div>
       </div>
@@ -204,6 +228,12 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
                     >
                       {isByteOpened ? 'hide' : 'see all'}
                     </Button>
+                  </div>
+                  <div className="byte-descr">
+                    <div className="title" style={{ marginRight: '5px' }}>
+                      Description:
+                    </div>
+                    <div className="proposal-data-block-value">{item.code_description || '–'}</div>
                   </div>
                 </li>
               )
@@ -264,7 +294,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Proposer</div>
-        <div className="proposal-data-block-value">
+        <div className="proposal-data-block-value proposal-data-block-address">
           <TzAddress tzAddress={proposal.proposerId} type={BLUE} isBold />
         </div>
       </div>
@@ -275,7 +305,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         <div className="proposal-data-block-name">Governance Info</div>
         <div className="gov-data">
           <div className="proposal-data-block-name">Governance Contract</div>
-          <div className="proposal-data-block-value">
+          <div className="proposal-data-block-value proposal-data-block-address">
             <TzAddress tzAddress={proposal.governanceId} type={BLUE} isBold />
           </div>
         </div>

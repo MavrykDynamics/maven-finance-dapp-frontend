@@ -110,7 +110,11 @@ export type ManagePermissionsPopupDataType = {
   depositors: Array<string>
   deporsitorsFlag: DepositorsFlagType
 } | null
-export type UpdateOperatorsPopupDataType = {} | null
+export type UpdateOperatorsPopupDataType = {
+  vaultAddress: string
+  tokenName: string
+  operators: string[]
+} | null
 
 export type ModalStateType<T = {}> = {
   showModal: boolean

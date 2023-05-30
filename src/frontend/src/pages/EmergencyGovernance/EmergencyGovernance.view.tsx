@@ -18,7 +18,7 @@ import Icon from '../../app/App.components/Icon/Icon.view'
 
 import { ACTION_PRIMARY } from '../../app/App.components/Button/Button.constants'
 import { Button } from '../../app/App.components/Button/Button.controller'
-import { ConnectWallet } from '../../app/App.components/ConnectWallet/ConnectWallet.controller'
+import ConnectWalletBtn from '../../app/App.components/ConnectWallet/ConnectWalletBtn'
 import { EGovCard } from './EGovCard/EGovCard.controller'
 import {
   CardContent,
@@ -112,7 +112,7 @@ export const EmergencyGovernanceView = ({
                 disabled
               />
             ) : (
-              <ConnectWallet className="connect-wallet" />
+              <ConnectWalletBtn />
             )}
           </CardContentRightSide>
         </CardContent>

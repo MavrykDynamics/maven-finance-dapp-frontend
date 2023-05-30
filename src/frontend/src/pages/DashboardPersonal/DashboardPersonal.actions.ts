@@ -27,7 +27,7 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
   const {
     wallet: {
       accountPkh,
-      user: { myFarmRewardsData, myDoormanRewardsData, mySatelliteRewardsData },
+      user: { availableDoormanRewards, availableFarmRewards, availableSatellitesRewards },
     },
     contractAddresses: { doormanAddress },
   }: State = getState()
@@ -42,9 +42,9 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
     const tezos = await DAPP_INSTANCE.tezos()
     // if user has farm rewards to claim it will transfrom this rewards to batch call getting rewards array
     const farmsRewardsBatchPart = await Promise.all(
-      Object.keys(myFarmRewardsData)
+      Object.keys(availableFarmRewards)
         .reduce<Array<() => Promise<WalletParamsWithKind>>>((callbacks, farmAddress) => {
-          if (myFarmRewardsData[farmAddress].myAvailableFarmRewards > 0) {
+          if (availableFarmRewards[farmAddress].myAvailableFarmRewards > 0) {
             callbacks.push(async () => {
               const farmContractInstance = await tezos?.wallet.at(farmAddress)
 
@@ -63,7 +63,7 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
     const bachArr = [...farmsRewardsBatchPart]
 
     // if user has satelite/doorman reward batch part of getting this reward will be added to the batch array
-    if (myDoormanRewardsData.myAvailableDoormanRewards > 0 || mySatelliteRewardsData.myAvailableSatelliteRewards > 0) {
+    if (availableDoormanRewards > 0 || availableSatellitesRewards > 0) {
       const doormanContractInstance = await tezos?.wallet.at(doormanAddress.address)
       bachArr.push({
         kind: OpKind.TRANSACTION,

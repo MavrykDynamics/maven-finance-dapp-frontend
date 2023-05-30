@@ -16,6 +16,7 @@ import { SatelliteGovernanceCardDropDown, SatelliteGovernanceCardTitleTextGroup 
 import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
 import { PRECISION_NUMBER } from 'utils/constants'
 import { parseDate } from 'utils/time'
+import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
 
 type Props = {
   satelliteId: string
@@ -23,7 +24,7 @@ type Props = {
   date: string | null
   executed: boolean
   status: number
-  statusFlag: ProposalStatus
+  statusFlag: StatusFlagKind
   id: number
   purpose: string
   governanceType: string

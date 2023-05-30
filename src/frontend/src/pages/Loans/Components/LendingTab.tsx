@@ -10,13 +10,13 @@ import { loansPopupsContext } from './Modals/LoansModals.provider'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import Icon from 'app/App.components/Icon/Icon.view'
 import { assetDecimalsToShow } from '../Loans.const'
 
 import { ThreeLevelListItem } from '../Loans.style'
 import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { isTezosAsset } from '../Loans.helpers'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -27,8 +27,16 @@ type LendingTabPropsType = {
 
 export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, lendAPY }: LendingTabPropsType) => {
   const { openAddLendingAssetPopup, openRemoveLendingAssetPopup } = useContext(loansPopupsContext)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    accountPkh,
+    user: { userTokens },
+  } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
+
+  const balanceSymbol = isTezosAsset(assetData.symbol.toLowerCase() ?? '')
+    ? 'tezos'
+    : assetData.symbol.toLowerCase().toLowerCase() ?? ''
+  const tokenBalance = userTokens[balanceSymbol]?.balance ?? 0
 
   return (
     <LoansTabStyled>
@@ -64,9 +72,9 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={assetData.userBalance} decimalsToShow={assetDecimalsToShow} className="value" />
+              <CommaNumber value={tokenBalance} decimalsToShow={assetDecimalsToShow} className="value" />
               {assetData.rate ? (
-                <CommaNumber value={assetData.userBalance * assetData.rate} beginningText="$" className="rate" />
+                <CommaNumber value={tokenBalance * assetData.rate} beginningText="$" className="rate" />
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>

@@ -1,49 +1,47 @@
 import BigNumber from 'bignumber.js'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+  defaultProposalMetadataTitleMaxLength,
+} from 'app/App.components/Input/Input.constants'
 import { Governance_Proposal } from 'utils/generated/graphqlTypes'
-import { ValidSubmitProposalForm, SubmitProposalFormInputStatus } from 'utils/TypesAndInterfaces/Forms'
 import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
   PaymentsDataChangesType,
   ProposalDataChangesType,
   ProposalValidityObj,
   StageThreeValidityItem,
-} from './ProposalSybmittion.types'
+} from './ProposalSubmission.types'
 import { State } from 'reducers'
 
 // helpers
 import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
-import { defaultProposalDescriptionMaxLength } from 'app/App.components/Input/Input.constants'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
-// VALIDATION FN'S
+// VALIDATION FN'S TODO: add some checking in future (no cond for it now)
 export const getBytesPairValidationStatus = (
   newText: string,
-  fieldToValidate: 'validTitle' | 'validBytes',
+  maxLength?: number,
 ): typeof INPUT_STATUS_SUCCESS | typeof INPUT_STATUS_ERROR => {
-  if (fieldToValidate === 'validTitle') {
-    return Boolean(newText) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
-  } else {
-    return Boolean(newText) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
-  }
+  const isValidMaxLength = maxLength ? isValidLength(newText, 1, maxLength) : true
+
+  return Boolean(newText) && isValidMaxLength ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 }
 
 export const getValidityStageThreeTable = (
   valueName: StageThreeValidityItem,
   value: string | number,
-  maxLength?: number,
+  options?: { tokenBalance?: number; maxLength?: number },
 ): boolean => {
   switch (valueName) {
     case 'token_amount':
-      if (Number(value) < 0) return false
-      break
+      return Number(value) > 0 && (options?.tokenBalance ? Number(value) <= options.tokenBalance : true)
     case 'to__id':
       return validateTzAddress(value as string)
     case 'title':
-      return isValidLength(value as string, 1, maxLength || defaultProposalDescriptionMaxLength)
+      return isValidLength(value as string, 1, options?.maxLength ?? defaultProposalMetadataTitleMaxLength)
   }
-  return true
 }
 
 export const checkBytesPairExists = (proposalDataItem: ProposalRecordType['proposalData'][number]): boolean => {
@@ -62,15 +60,17 @@ export const isProposalHasChange = ({
   clientProposal,
   remoteProposal,
 }: {
-  clientProposal?: ProposalRecordType
-  remoteProposal?: ProposalRecordType
+  clientProposal: ProposalRecordType | null
+  remoteProposal: ProposalRecordType | null
 }): boolean => {
   const isTitleDiff = clientProposal?.title !== remoteProposal?.title,
     isDescrDiff = clientProposal?.description !== remoteProposal?.description,
     isSourceLinkDiff = clientProposal?.sourceCode !== remoteProposal?.sourceCode
 
   // check only not empty bytes, skip empty ones
-  const filteredBytes = clientProposal?.proposalData.filter(({ title, encoded_code }) => title || encoded_code)
+  const filteredBytes = clientProposal?.proposalData.filter(
+    ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
+  )
   // Need to filter remote bytes, cuz when we remowe byte pair backend sets its encoded_code to null
   const filteredRemoteBytes = remoteProposal?.proposalData.filter(({ encoded_code }) => encoded_code)
 
@@ -82,11 +82,12 @@ export const isProposalHasChange = ({
       filteredBytes?.length !== filteredRemoteBytes?.length
       ? true
       : // Compare every title and byte code to see whether they are eaqual
-        filteredBytes?.some(({ title, encoded_code, id }, idx) => {
+        filteredBytes?.some(({ title, encoded_code, code_description, id }, idx) => {
           const remoteProposalByte = filteredRemoteBytes?.[idx]
           return (
             title !== remoteProposalByte?.title ||
             encoded_code !== remoteProposalByte?.encoded_code ||
+            code_description !== remoteProposalByte?.code_description ||
             id !== remoteProposalByte?.id
           )
         }),
@@ -122,11 +123,17 @@ export const isProposalHasChange = ({
   return isTitleDiff || isDescrDiff || isSourceLinkDiff || isBytesDiff || isPaymentsDiff
 }
 
-export const checkStage1Validation = ({ proposalValidation }: { proposalValidation: ProposalValidityObj }): boolean => {
+export const checkStage1Validation = ({
+  proposalValidation,
+}: {
+  proposalValidation: ProposalValidityObj | null
+}): boolean => {
+  const { description, title, sourceCode, invoice } = proposalValidation ?? {}
   return (
-    proposalValidation.description === INPUT_STATUS_SUCCESS &&
-    proposalValidation.title === INPUT_STATUS_SUCCESS &&
-    proposalValidation.sourceCode === INPUT_STATUS_SUCCESS
+    description === INPUT_STATUS_SUCCESS &&
+    title === INPUT_STATUS_SUCCESS &&
+    sourceCode === INPUT_STATUS_SUCCESS &&
+    invoice === INPUT_STATUS_SUCCESS
   )
 }
 
@@ -135,25 +142,27 @@ export const checkStage2Validation = ({
   currentProposal,
   remoteProposal,
 }: {
-  proposalValidation: ProposalValidityObj
-  currentProposal: ProposalRecordType
-  remoteProposal: ProposalRecordType
+  proposalValidation: ProposalValidityObj | null
+  currentProposal: ProposalRecordType | null
+  remoteProposal: ProposalRecordType | null
 }): boolean => {
   // if proposal is locked we can't change anything in it
-  return currentProposal.locked
+  return currentProposal?.locked
     ? true
-    : proposalValidation.bytesValidation
+    : proposalValidation?.bytesValidation
         // Filter empty bytes
         ?.filter(({ byteId }) => {
           const byte = currentProposal?.proposalData?.find(({ id }) => id === byteId)
           return byte && (byte.title || byte.encoded_code)
         })
         // Validate every byte that is non empty
-        .every(({ validBytes, validTitle, byteId }) => {
+        ?.every(({ validBytes, validTitle, validDescr, byteId }) => {
           const isRemoteByte = remoteProposal?.proposalData?.find(({ id }) => byteId === id)
           return isRemoteByte
-            ? validBytes !== INPUT_STATUS_ERROR
-            : validBytes === INPUT_STATUS_SUCCESS && validTitle === INPUT_STATUS_SUCCESS
+            ? validBytes !== INPUT_STATUS_ERROR && validDescr !== INPUT_STATUS_ERROR
+            : validBytes === INPUT_STATUS_SUCCESS &&
+                validTitle === INPUT_STATUS_SUCCESS &&
+                validDescr === INPUT_STATUS_SUCCESS
         }) ?? true
 }
 
@@ -162,21 +171,21 @@ export const checkStage3Validation = ({
   currentProposal,
   remoteProposal,
 }: {
-  proposalValidation: ProposalValidityObj
-  currentProposal: ProposalRecordType
-  remoteProposal: ProposalRecordType
+  proposalValidation: ProposalValidityObj | null
+  currentProposal: ProposalRecordType | null
+  remoteProposal: ProposalRecordType | null
 }) => {
   // if proposal is locked we can't change anything in it
-  return currentProposal.locked
+  return currentProposal?.locked
     ? true
-    : proposalValidation.paymentsValidation
+    : proposalValidation?.paymentsValidation
         // Filter empty payments
         ?.filter(({ paymentId }) => {
           const payment = currentProposal?.proposalPayments?.find(({ id }) => id === paymentId)
           return payment && (payment.title || payment.to__id || payment.token_amount)
         })
         // Validate every paymnet that is non empty
-        .every(({ to__id, title, token_amount, paymentId }) => {
+        ?.every(({ to__id, title, token_amount, paymentId }) => {
           const isRemotePayment = remoteProposal?.proposalPayments?.find(({ id }) => paymentId === id)
 
           return isRemotePayment
@@ -194,14 +203,13 @@ export const getBytesDiff = (
   const changes = updatedData
     .map<ProposalDataChangesType[number] | null>((item1) => {
       const item2 = originalData?.[originalIdx]
-
       // if we have more items on client than on server, when we reach end of the items that stored on client array, just add everything to the end
       if (!item2) {
         return {
           addOrSetProposalData: {
             title: item1.title ?? '',
             encodedCode: item1.encoded_code ?? '',
-            codeDescription: '',
+            codeDescription: item1.code_description ?? '',
           },
         }
       }
@@ -212,13 +220,14 @@ export const getBytesDiff = (
 
       if (
         (item2.title !== item1.title && item1.title !== null) ||
-        (item2.encoded_code !== item1.encoded_code && item1.title !== null)
+        ((item2.encoded_code !== item1.encoded_code || item2.code_description !== item1.code_description) &&
+          item1.title !== null)
       ) {
         return {
           addOrSetProposalData: {
             title: item1.title ?? '',
             encodedCode: item1.encoded_code ?? '',
-            codeDescription: '',
+            codeDescription: item1.code_description ?? '',
             index: String(originalIdx++),
           },
         }
@@ -250,8 +259,15 @@ export const getPaymentsDiff = (
       const item2 = originalData?.[originalIdx]
 
       // default decimals is 6 cuz 6 is xtz decimals, and dipDupTokens don't contain xtz asset
-      const decimals = dipDupTokens.find(({ contract }) => contract === item1.token_address)?.metadata?.decimals ?? 6
-      const symbol = paymentMethods.find(({ address }) => address === item1.token_address)?.shortSymbol ?? 'fa2'
+      const decimals =
+        item1.token_address === 'XTZ'
+          ? 6
+          : dipDupTokens.find(({ contract }) => contract === item1.token_address)?.metadata?.decimals ?? 0
+
+      const symbol =
+        item1.token_address === 'XTZ'
+          ? 'tez'
+          : paymentMethods.find(({ address }) => address === item1.token_address)?.shortSymbol ?? 'fa2'
 
       let token = {}
 
@@ -352,6 +368,7 @@ export const DEFAULT_PROPOSAL: ProposalRecordType = {
   status: ProposalStatus.UNLOCKED,
   title: '',
   description: '',
+  invoice: '',
   sourceCode: '',
   passVoteMvkTotal: 0,
   upvoteMvkTotal: 0,
@@ -376,34 +393,10 @@ export const DEFAULT_PROPOSAL: ProposalRecordType = {
 export const DEFAULT_PROPOSAL_VALIDATION: ProposalValidityObj = {
   title: '',
   description: '',
-  ipfs: '',
+  invoice: '',
   successMVKReward: '',
   invoiceTable: '',
   sourceCode: '',
   bytesValidation: [],
   paymentsValidation: [],
 }
-
-// stage 1 default values
-export const DEFAULT_VALIDITY: ValidSubmitProposalForm = {
-  title: false,
-  description: false,
-  ipfs: true,
-  successMVKReward: true,
-  invoiceTable: true,
-  sourceCode: false,
-}
-
-export const DEFAULT_INPUT_STATUSES: SubmitProposalFormInputStatus = {
-  title: '',
-  description: '',
-  ipfs: '',
-  successMVKReward: '',
-  invoiceTable: 'success',
-  sourceCode: '',
-}
-
-export const PAYMENTS_TYPES = ['XTZ', 'MVK']
-export const INIT_TABLE_HEADERS = ['Address', 'Purpose', 'Amount', 'Payment Type (XTZ/MVK)', '-', '-']
-export const INIT_TABLE_DATA = [INIT_TABLE_HEADERS, ['', '', '', PAYMENTS_TYPES[0], '-', '-']]
-export const MAX_ROWS = 10

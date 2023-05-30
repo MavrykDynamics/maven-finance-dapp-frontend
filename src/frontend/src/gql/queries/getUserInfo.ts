@@ -43,6 +43,16 @@ query GetUserInfo ($_eq: String = "") {
       }
     }
 
+    satellites {
+      image
+    }
+    council_council_members{
+      image
+    }
+    break_glass_council_members {
+      image
+    }
+
     activeSatelliteRecord: satellites(where: {user_id: {_eq: $_eq}, _and: {currently_registered: {_eq: true}, _and: {status: {_eq: "0"}}}}) {
       user_id
     }
@@ -58,4 +68,21 @@ export const USER_INFO_QUERY_NAME = 'GetUserInfo'
 export function USER_INFO_QUERY_VARIABLES(address: string) {
   /* prettier-ignore */
   return { _eq: address }
+}
+
+// cycle data
+export const SATELLITE_CYCLE_DATA_QUERY = `
+query GetCurrentCycleGovernanceSatelliteSnapshot($_eq: String = "") {
+	governance(where: {active: {_eq: true}}) {
+		cycle_id
+		satellite_snapshots(where: {user_id: {_eq: $_eq}}, order_by: {cycle: desc}) {
+			cycle,
+      ready
+			}
+		}
+	}
+`
+export const SATELLITE_CYCLE_DATA_QUERY_NAME = 'GetCurrentCycleGovernanceSatelliteSnapshot'
+export function SATELLITE_CYCLE_DATA_QUERY_VARIABLE(_eq: string) {
+  return { _eq }
 }

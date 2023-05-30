@@ -12,9 +12,12 @@ import { VotingAreaStyled, VotingButtonsContainer } from './VotingArea.style'
 // view
 import { VotingBar } from './VotingBar.controller'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
-import { ConnectWallet } from '../ConnectWallet/ConnectWallet.controller'
+import ConnectWalletBtn from '../ConnectWallet/ConnectWalletBtn'
 import Button from '../Button/NewButton'
 import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
+import { Info } from '../Info/Info.view'
+import { INFO_DEFAULT } from '../Info/info.constants'
+import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 
 type VotingType = VotingProps & {
   className?: string
@@ -35,7 +38,7 @@ export const VotingArea = ({
   const { forBtn, againsBtn, passBtn } = buttonsToShow ?? { forBtn: {}, againsBtn: {}, passBtn: {} }
   const {
     accountPkh,
-    user: { isSatellite },
+    user: { isSatellite, isNewlyRegisteredSatellite },
   } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -47,7 +50,12 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.YES)}
             kind={VOTING_FOR}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons || isActionActive || disableButtonByVote === VoteList.YES}
+            disabled={
+              disableVotingButtons ||
+              isActionActive ||
+              disableButtonByVote === VoteList.YES ||
+              isNewlyRegisteredSatellite
+            }
           >
             {forBtn.text ?? 'Vote YES'}
           </Button>
@@ -57,7 +65,12 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.PASS)}
             kind={VOTING_PASS}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons || isActionActive || disableButtonByVote === VoteList.PASS}
+            disabled={
+              disableVotingButtons ||
+              isActionActive ||
+              disableButtonByVote === VoteList.PASS ||
+              isNewlyRegisteredSatellite
+            }
           >
             {passBtn.text ?? 'Vote PASS'}
           </Button>
@@ -67,7 +80,12 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.NO)}
             kind={VOTING_AGAINST}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons || isActionActive || disableButtonByVote === VoteList.NO}
+            disabled={
+              disableVotingButtons ||
+              isActionActive ||
+              disableButtonByVote === VoteList.NO ||
+              isNewlyRegisteredSatellite
+            }
           >
             {againsBtn.text ?? 'Vote NO'}
           </Button>
@@ -75,7 +93,7 @@ export const VotingArea = ({
       </VotingButtonsContainer>
     ) : null
   ) : (
-    <ConnectWallet />
+    <ConnectWalletBtn />
   )
 
   return (
@@ -87,43 +105,80 @@ export const VotingArea = ({
 }
 
 type VotingProposalsType = VotingProposalsProps & {
-  className?: string
+  isVoteActive: boolean
 }
 
 export const VotingProposalsArea = ({
   selectedProposal,
   govPhase,
+  isVoteActive,
   vote,
   voteStatistics,
-  className,
   handleProposalVote,
   votingPhaseHandler,
 }: VotingProposalsType) => {
   const {
     accountPkh,
-    user: { isSatellite },
+    user: { isSatellite, isNewlyRegisteredSatellite },
   } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   // Proposal isn't locked, can't vote
   if (!selectedProposal.locked) return null
 
+  if (!isVoteActive) {
+    if (
+      selectedProposal.upvoteMvkTotal > 0 ||
+      selectedProposal.abstainMvkTotal > 0 ||
+      selectedProposal.downvoteMvkTotal > 0
+    ) {
+      return (
+        <VotingAreaStyled>
+          <div className="voted-bar">
+            <VotingBar voteStatistics={voteStatistics} />
+          </div>
+        </VotingAreaStyled>
+      )
+    }
+
+    if (selectedProposal.passVoteMvkTotal > 0) {
+      return (
+        <VotingAreaStyled>
+          <div className="voted-block">
+            <CommaNumber
+              className="voted-label"
+              value={voteStatistics.passVotesMVKTotal ?? 0}
+              endingText={'voted MVK'}
+            />
+          </div>
+        </VotingAreaStyled>
+      )
+    }
+
+    return null
+  }
+
   // Proposal is locked and phase is proposal, (phase we can only vote yes, and most voted go to the next phase)
   if (selectedProposal.locked && govPhase === GovPhases.PROPOSAL) {
     return (
-      <VotingAreaStyled className={className}>
+      <VotingAreaStyled>
         <div className="voted-block">
           <CommaNumber className="voted-label" value={voteStatistics.passVotesMVKTotal ?? 0} endingText={'voted MVK'} />
+          {isNewlyRegisteredSatellite && (
+            <div className="banner-area">
+              <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />
+            </div>
+          )}
           {accountPkh ? (
             <Button
               onClick={() => handleProposalVote(Number(selectedProposal.id))}
               kind={BUTTON_PRIMARY}
-              disabled={vote?.round === 0 || !isSatellite || isActionActive}
+              disabled={vote?.round === 0 || !isSatellite || isActionActive || isNewlyRegisteredSatellite}
             >
               Vote for this Proposal
             </Button>
           ) : (
-            <ConnectWallet />
+            <ConnectWalletBtn />
           )}
         </div>
       </VotingAreaStyled>
@@ -142,6 +197,5 @@ export const VotingProposalsArea = ({
     )
   }
 
-  // on timelock phase show only voting bar, witout voting buttons
-  return <VotingBar voteStatistics={voteStatistics} />
+  return null
 }

@@ -3,7 +3,7 @@ import { PAGE_HEADER_DATA } from './PageHeaderData'
 
 type PageHeaderProps = {
   page: string
-  avatar?: string
+  avatar?: string | null
 }
 
 export const PageHeader = ({ page, avatar }: PageHeaderProps) => {

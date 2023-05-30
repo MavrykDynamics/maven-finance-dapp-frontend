@@ -13,12 +13,13 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CommaNumber, formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
-import { ConnectWalletInfoStyled } from 'app/App.components/ConnectWallet/ConnectWallet.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { Info } from 'app/App.components/Info/Info.view'
+import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17953%3A224221&t=Sx2aEpp3ifrGxBtQ-0
 export const RepayFull = ({
@@ -46,8 +47,12 @@ export const RepayFull = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
-  const canRepay = totalOutstanding <= (borrowedAsset?.userBalance ?? 0) && totalOutstanding > minimumRepay
+  const balanceSymbol = isTezosAsset(borrowedAsset?.gqlName ?? '') ? 'tezos' : borrowedAsset?.symbol.toLowerCase() ?? ''
+  const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
+
+  const canRepay = totalOutstanding <= userAssetBalance && totalOutstanding > minimumRepay
 
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
 
@@ -129,7 +134,7 @@ export const RepayFull = ({
               <ThreeLevelListItem>
                 <div className="name">My Balance</div>
                 <CommaNumber
-                  value={Number(borrowedAsset?.userBalance)}
+                  value={userAssetBalance}
                   className={`value ${canRepay ? 'up' : 'down'}`}
                   endingText={borrowedAsset?.symbol}
                 />
@@ -144,17 +149,17 @@ export const RepayFull = ({
                 </div>
               ) : (
                 <>
-                  <ConnectWalletInfoStyled className="info error">
-                    <Icon id="info" />{' '}
-                    <p>
-                      To Repay in Full & Close Vault you need at least{' '}
-                      {formatNumber({
+                  <div className="repayFull-banner">
+                    <Info
+                      text={`To Repay in Full & Close Vault you need at least 
+                      ${formatNumber({
                         decimalsToShow: 2,
-                        number: totalOutstanding - Number(borrowedAsset?.userBalance),
-                      })}{' '}
-                      {borrowedAsset?.symbol} on your Ballance
-                    </p>
-                  </ConnectWalletInfoStyled>
+                        number: totalOutstanding - userAssetBalance,
+                      })} 
+                      ${borrowedAsset?.symbol ?? ''} on your balance`}
+                      type={INFO_ERROR}
+                    />
+                  </div>
 
                   <div className="block-name" style={{ marginTop: '30px' }}>
                     Vault Stats

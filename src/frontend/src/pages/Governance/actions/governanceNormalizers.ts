@@ -7,7 +7,6 @@ import {
 } from 'app/App.components/Input/Input.constants'
 import { State } from 'reducers'
 import { calcWithoutPrecision, calcWithoutMu, convertNumberForClient } from 'utils/calcFunctions'
-import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 import {
   GovernanceProposalGraphQL,
   GovernanceGraphQL,
@@ -19,7 +18,7 @@ import { MVK_DECIMALS } from 'utils/constants'
 
 export const normalizeProposal = (
   item: GovernanceProposalGraphQL,
-  dipDupTokens: Array<DipDupTokensGraphQl>,
+  dipDupTokens: State['tokens']['dipDupTokens'],
   { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: State['governance']['config'],
 ) => {
   const proposalConvertedStatus = getProposalStatus(
@@ -48,6 +47,7 @@ export const normalizeProposal = (
 
     title: item.title,
     description: item.description,
+    invoice: item.invoice,
 
     paymentProcessed: item.payment_processed,
     executed: item.executed,
@@ -75,9 +75,12 @@ export const normalizeProposal = (
       isLocalBytes: false,
     })),
 
-    proposalPayments: item.payments.map((paymentData) => {
+    proposalPayments: item.payments.map(({ governance_proposal, governance_proposal_id, ...paymentData }) => {
+      // TODO: remove this check with tokens reorganization
       const decimals =
-        dipDupTokens?.find(({ contract }) => contract === paymentData.token_address)?.metadata?.decimals ?? 0
+        paymentData.token_address?.toLowerCase() === 'xtz'
+          ? 6
+          : dipDupTokens?.find(({ contract }) => contract === paymentData.token_address)?.metadata?.decimals ?? 0
 
       return {
         ...paymentData,
@@ -90,7 +93,7 @@ export const normalizeProposal = (
 
 export const normalizeGovernanceProposals = (
   proposals: Array<GovernanceProposalGraphQL>,
-  dipDupTokens: Array<DipDupTokensGraphQl>,
+  dipDupTokens: State['tokens']['dipDupTokens'],
   governanceConfig: State['governance']['config'],
 ): Omit<Omit<State['governance'], 'isLoaded'>, 'config'> => {
   const { governancePhase, timelockProposalId } = governanceConfig

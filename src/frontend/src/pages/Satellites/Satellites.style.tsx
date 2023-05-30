@@ -51,10 +51,17 @@ export const SatelliteSearchFilter = styled(Card)<{ theme: MavrykTheme; oracle?:
 
 export const NotStakinkBannerStyled = styled.div`
   margin-top: 30px;
-  margin-bottom: -10px;
+  max-height: 90px;
+  margin-bottom: 30px;
 
   p {
-    max-width: 610px;
+    max-width: 596px;
+    margin: 0;
+  }
+
+  blockquote {
+    margin: 0;
+    padding: 19px 40px;
   }
 
   button {
@@ -66,6 +73,7 @@ export const NotStakinkBannerStyled = styled.div`
       font-weight: 500;
       font-size: 14px;
       line-height: 24px;
+      margin: 0;
     }
   }
 `

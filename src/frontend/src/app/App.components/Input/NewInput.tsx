@@ -1,39 +1,23 @@
+import React from 'react'
 import { BUTTON_SIMPLE } from '../Button/Button.constants'
 import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
-import { InputSizeType, InputStatusType } from './Input.constants'
-import { InputOneChange } from './Input.controller'
-import { InputPinnedChild, InputStyledStatus, InputWrapper, NewInputLabel, StyledInput } from './Input.style'
 
-type InputViewProps = {
-  children?: React.ReactNode
-  className?: string
-  settings: {
-    balance?: number
-    balanceAsset?: string
-    balanceName?: string
-    useMaxHandler?: () => void
-    balanceHandler?: () => void
-    label?: string
-    tooltip?: React.ReactNode
-    inputStatus: InputStatusType
-    convertedValue?: number
-    inputSize?: InputSizeType
-  }
-  inputProps: {
-    disabled?: boolean
-    value: string | number
-    type?: string
-    placeholder?: string
-    name?: string
-    id?: string
-    onChange: InputOneChange
-    onBlur?: InputOneChange
-    onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>
-    onFocus?: InputOneChange
-    required?: boolean
-  }
-}
+// hooks
+import { useInputValidator } from 'app/App.hooks/useInputValidator'
+
+// types
+import { InputViewProps } from './newInput.type'
+
+// styles
+import {
+  InputPinnedChild,
+  InputStyledStatus,
+  InputWrapper,
+  NewInputLabel,
+  StyledInput,
+  InputErrorMessage,
+} from './Input.style'
 
 export const Input = ({
   children,
@@ -50,10 +34,17 @@ export const Input = ({
     balanceName = 'Balance',
     inputStatus,
     inputSize,
+    errorMessage: errorMessageFromProps,
   },
 }: InputViewProps) => {
+  const { status, errorMessage, handleChange } = useInputValidator({
+    originalErrorMessage: errorMessageFromProps,
+    status: inputStatus,
+    onChange: inputProps.onChange,
+  })
+
   return (
-    <InputWrapper className={`${className} ${inputStatus} ${inputSize}`} id={'inputStyled'}>
+    <InputWrapper className={`${className} ${status} ${inputSize}`} id={'inputStyled'}>
       {label ? (
         <NewInputLabel>
           {label}
@@ -64,10 +55,11 @@ export const Input = ({
 
       <StyledInput
         {...inputProps}
-        className={`${inputStatus} ${children ? 'remove-right-border-radius' : ''}`}
+        onChange={handleChange}
+        className={`${status} ${children ? 'remove-right-border-radius' : ''}`}
         autoComplete={'off'}
       />
-      {Boolean(children) ? null : <InputStyledStatus className={`${inputStatus} ${inputSize}`} />}
+      {Boolean(children) ? null : <InputStyledStatus className={`${status} ${inputSize}`} />}
 
       {balance !== undefined && balanceAsset ? (
         <div onClick={balanceHandler}>
@@ -93,6 +85,7 @@ export const Input = ({
       ) : null}
 
       {children && <InputPinnedChild className="pinned-child">{children}</InputPinnedChild>}
+      {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
     </InputWrapper>
   )
 }

@@ -45,8 +45,8 @@ type InputState =
   | {
       amount: string
       assetName: string
+      assetDisplayName: string
       assetSymbol: string
-      userBalance: number
       id: DDItemId
       validationStatus: InputStatusType
       ddItems: Record<DDItemId, DropDownCollateralAssetType>
@@ -81,6 +81,7 @@ export const AddNewCollateral = ({
     xtzBakers: { otherBakers, dao, mavrykDynamics },
   } = useSelector((state: State) => state.tokens)
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = useMemo(
     () => [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])],
@@ -97,7 +98,7 @@ export const AddNewCollateral = ({
       (acc, collateralData) => {
         acc[collateralData.id] = {
           ...collateralData,
-          content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.symbol} />,
+          content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.name} />,
           disabled: Boolean(
             collateralData.isProtected ||
               existingCollaterals?.find(({ gqlName }) => collateralData.gqlName === gqlName),
@@ -117,7 +118,7 @@ export const AddNewCollateral = ({
       amount: '0',
       assetName: mappedAvaliableCollaterals[firstNotDisabledCollateralId].gqlName,
       assetSymbol: mappedAvaliableCollaterals[firstNotDisabledCollateralId].symbol,
-      userBalance: mappedAvaliableCollaterals[firstNotDisabledCollateralId].userBalance,
+      assetDisplayName: mappedAvaliableCollaterals[firstNotDisabledCollateralId].name,
       validationStatus: '',
       id: mappedAvaliableCollaterals[firstNotDisabledCollateralId].id,
       ddItems: mappedAvaliableCollaterals,
@@ -127,7 +128,12 @@ export const AddNewCollateral = ({
     if (!show) {
       setInputData(undefined)
     }
-  }, [avaliableCollaterals, show, existingCollaterals])
+  }, [avaliableCollaterals, show, existingCollaterals, userTokens])
+
+  const balanceSymbol = isTezosAsset(inputData?.assetSymbol ?? '')
+    ? 'tezos'
+    : inputData?.assetSymbol.toLowerCase() ?? ''
+  const collateralBalance = userTokens[balanceSymbol]?.balance ?? 0
 
   const { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance } = useMemo(() => {
     if (inputData) {
@@ -234,8 +240,8 @@ export const AddNewCollateral = ({
         ...inputData,
         assetName: inputData.ddItems[id].gqlName,
         assetSymbol: inputData.ddItems[id].symbol,
+        assetDisplayName: inputData.ddItems[id].name,
         selectedDdItem: inputData.ddItems[id],
-        userBalance: inputData.ddItems[id].userBalance,
         ddItems: newDDItems,
         id,
       })
@@ -320,15 +326,15 @@ export const AddNewCollateral = ({
                   type: 'number',
                   onBlur: inputOnBlurHandle,
                   onFocus: onFocusHandler,
-                  onChange: (e) => inputOnChangeHandle(e.target.value, inputData.userBalance),
+                  onChange: (e) => inputOnChangeHandle(e.target.value, collateralBalance),
                 }}
                 settings={{
-                  balance: inputData.userBalance,
-                  balanceAsset: isTezosAsset(inputData.assetName) ? 'XTZ' : inputData.assetSymbol,
+                  balance: collateralBalance,
+                  balanceAsset: isTezosAsset(inputData.assetName) ? 'XTZ' : inputData.assetDisplayName,
                   useMaxHandler: () =>
                     setInputData({
                       ...inputData,
-                      amount: getLoansInputMaxAmount(inputData.userBalance, inputData.selectedDdItem.decimals),
+                      amount: getLoansInputMaxAmount(collateralBalance, inputData.selectedDdItem.decimals),
                       validationStatus: INPUT_STATUS_SUCCESS,
                     }),
                   inputSize: INPUT_LARGE,

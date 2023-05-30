@@ -13,7 +13,6 @@ import {
   calcCollateralRatio,
   isTezosAsset,
 } from 'pages/Loans/Loans.helpers'
-import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount, calculateLiquidationPrice } from './calcFunctionsForVault'
 
@@ -68,25 +67,11 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         if (!loanTokenMetadata) return acc
 
         // Normalize collaterals and check whether vault has xtz collateral
-        const [vaultCollateral, hasXtz] = normalizeCollateralAssets({
+        const vaultCollateral = normalizeCollateralAssets({
           dipDupTokens,
           feeds,
           collateralAssets: item.collateral_balances,
         })
-
-        // If vault has xtz collateral, we need to call whether it's delegated to someone, or no
-        const vaultXtzDelegatedTo = hasXtz
-          ? await (
-              await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${item.vault.address}`)
-            ).json()
-          : null
-
-        // User balance of the market asset TODO: move to the wallet
-        const userBalance = await getUserBalanceForLoanAsset(
-          item.loan_token.loan_token_address,
-          item.loan_token.loan_token_name,
-          accountPkh,
-        )
 
         // Borrowed amount of the vault
         const borrowedAmount = convertNumberForClient({
@@ -192,14 +177,13 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           borrowedAsset: {
             ...loanTokenMetadata,
             tokenType: item.loan_token.loan_token_contract_standard as TokenType,
-            userBalance,
           },
           name: item.vault.name,
           address: item.vault?.address,
           ownerId: item.owner_id || '',
           vaultId: item.internal_id,
           creationTimestamp: item.vault.creation_timestamp ?? undefined,
-          xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
+          xtzDelegatedTo: item.vault?.baker_id ?? null,
           status,
           apr:
             convertNumberForClient({
@@ -293,14 +277,10 @@ const normalizeCollateralAssets = ({
   feeds: State['dataFeeds']['feedsLedger']
   dipDupTokens: State['tokens']['dipDupTokens']
   collateralAssets: LoansGQL['vaults'][number]['collateral_balances']
-}): [
-  {
-    normalizedCollaterals: Array<CollateralType>
-    totalRow: CollateralType
-  },
-  boolean,
-] => {
-  let hasXtzCollateral = false
+}): {
+  normalizedCollaterals: Array<CollateralType>
+  totalRow: CollateralType
+} => {
   const normalizedCollaterals = collateralAssets?.reduce<{
     normalizedCollaterals: Array<CollateralType>
     totalRow: CollateralType
@@ -317,8 +297,6 @@ const normalizeCollateralAssets = ({
       })
 
       if (!collateralAsset) return acc
-
-      if (isTezosAsset(collateralAsset.gqlName)) hasXtzCollateral = true
 
       const collateralBalance = collateral.balance / 10 ** collateralAsset.decimals
 
@@ -345,5 +323,5 @@ const normalizeCollateralAssets = ({
     },
   )
 
-  return [normalizedCollaterals, hasXtzCollateral]
+  return normalizedCollaterals
 }

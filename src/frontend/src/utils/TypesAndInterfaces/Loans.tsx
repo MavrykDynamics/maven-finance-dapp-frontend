@@ -29,7 +29,6 @@ export type BaseLoansAssetDataType = {
 }
 
 export type LoansAssetDataType = BaseLoansAssetDataType & {
-  userBalance: number
   tokenType: TokenType
   address: string
 }
@@ -144,4 +143,15 @@ export type LoanMarketType = {
   reserveAmount: number
   lending24hVolume: number
   borrowing24hVolume: number
+}
+
+type TokenOperator = {
+  owner: string
+  operator: string
+  token_id: number
+}
+
+export type UpdateTokenOperator = {
+  add_operator?: TokenOperator
+  remove_operator?: TokenOperator
 }

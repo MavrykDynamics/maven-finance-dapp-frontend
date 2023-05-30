@@ -1,8 +1,17 @@
-import styled from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { DOWN, INFO, PRIMARY, UP, WAITING, WARNING } from './StatusFlag.constants'
+import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 
-export const StatusFlagStyled = styled.div<{ theme: MavrykTheme }>`
+import {
+  STATUS_FLAG_UP,
+  STATUS_FLAG_DOWN,
+  StatusFlagKind,
+  STATUS_FLAG_INFO,
+  STATUS_FLAG_WARNING,
+  STATUS_FLAG_WAITING,
+} from './StatusFlag.constants'
+
+export const StatusFlagStyled = styled.div<{ theme: MavrykTheme; kind: StatusFlagKind }>`
   border-radius: 10px;
   border: 1px solid;
   text-align: center;
@@ -20,33 +29,42 @@ export const StatusFlagStyled = styled.div<{ theme: MavrykTheme }>`
     margin-left: auto;
   }
 
-  &.${PRIMARY} {
-    color: ${({ theme }) => theme.infoColor};
-    border-color: ${({ theme }) => theme.infoColor};
-  }
-
-  &.${UP} {
-    color: ${({ theme }) => theme.upColor};
-    border-color: ${({ theme }) => theme.upColor};
-  }
-
-  &.${DOWN} {
-    color: ${({ theme }) => theme.downColor};
-    border-color: ${({ theme }) => theme.downColor};
-  }
-
-  &.${INFO} {
-    color: ${({ theme }) => theme.infoColor};
-    border-color: ${({ theme }) => theme.infoColor};
-  }
-
-  &.${WARNING} {
-    color: ${({ theme }) => theme.warningColor};
-    border-color: ${({ theme }) => theme.warningColor};
-  }
-
-  &.${WAITING} {
-    color:  ${({ theme }) => theme.riskColor};
-    border-color:  ${({ theme }) => theme.riskColor};
-  }
+  ${({ kind }) => {
+    switch (kind) {
+      case ProposalStatus.EXECUTED:
+      case ProposalStatus.LOCKED:
+      case STATUS_FLAG_UP:
+        return css`
+          color: ${({ theme }) => theme.upColor};
+          border-color: ${({ theme }) => theme.upColor};
+        `
+      case ProposalStatus.DEFEATED:
+      case ProposalStatus.DROPPED:
+      case ProposalStatus.TIMELOCK:
+      case STATUS_FLAG_DOWN:
+        return css`
+          color: ${({ theme }) => theme.downColor};
+          border-color: ${({ theme }) => theme.downColor};
+        `
+      case ProposalStatus.ONGOING:
+      case ProposalStatus.UNLOCKED:
+      case STATUS_FLAG_INFO:
+        return css`
+          color: ${({ theme }) => theme.infoColor};
+          border-color: ${({ theme }) => theme.infoColor};
+        `
+      case ProposalStatus.WAITING:
+      case STATUS_FLAG_WARNING:
+        return css`
+          color: ${({ theme }) => theme.warningColor};
+          border-color: ${({ theme }) => theme.warningColor};
+        `
+      case STATUS_FLAG_WAITING:
+      default:
+        return css`
+          color: ${({ theme }) => theme.riskColor};
+          border-color: ${({ theme }) => theme.riskColor};
+        `
+    }
+  }}
 `

@@ -47,9 +47,7 @@ export const checkIndexerLevelAndRunDataUpdateCallback = ({
         console.info({ indexerLevel, currentOperationLevel, callsCounter })
 
         // if indexer level in gql > current level in client => update data and clear interval
-        // if (currentOperationLevel && indexerLevel && indexerLevel > currentOperationLevel) { // prev cond indexer just > than client
-        if (currentOperationLevel && indexerLevel && Number(indexerLevel) - Number(currentOperationLevel) > 1) {
-          // new cond indexer lvl should be more than 1 diff to client one
+        if (currentOperationLevel && indexerLevel && indexerLevel - currentOperationLevel >= 2) {
           clearInterval(intervalId)
           const result = await callback()
           resolve({ value: result })

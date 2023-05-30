@@ -1,26 +1,4 @@
-async function fetchGraphQL(operationsDoc: string, operationName: string, variables: Record<string, object | string>) {
-  const developmentAPI = process.env.REACT_APP_DEV_GRAPHQL_API || 'https://api.mavryk.finance/v1/graphql'
-
-  const prodictionAPI = process.env.REACT_APP_GRAPHQL_API || 'https://api.mavryk.finance/v1/graphql'
-  const gqlAPINetwork = process.env.NODE_ENV === 'development' ? developmentAPI : prodictionAPI
-
-  return new Promise((resolve, reject) => {
-    fetch(gqlAPINetwork, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify({
-        query: operationsDoc,
-        variables: variables,
-        operationName: operationName,
-      }),
-    })
-      .then((res) => resolve(res.json()))
-      .catch((err) => reject(err))
-  })
-}
+import { fetchGraphQL } from 'utils/api/fetchGraphQL'
 
 export async function fetchFromIndexer(
   operationsDoc: string,

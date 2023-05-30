@@ -43,7 +43,7 @@ import { loansPopupsContext } from './Modals/LoansModals.provider'
 import { State } from 'reducers'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import { isTezosAsset } from '../Loans.helpers'
-import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
+import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { getNumberInBounds } from 'utils/calcFunctions'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
@@ -85,7 +85,7 @@ export const BorrowingExpandCard = ({
   minimumRepay,
   DAOFee,
 }: BorrowingExpandCardPropsType) => {
-  const { symbol, icon, rate = 1 } = borrowedAsset
+  const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
 
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
@@ -592,7 +592,14 @@ export const BorrowingExpandCard = ({
                     <Button
                       kind={BUTTON_SIMPLE}
                       disabled={true || isActionActive}
-                      onClick={() => openUpdateMvkOperatorsPopup?.({})}
+                      onClick={() =>
+                        openUpdateMvkOperatorsPopup?.({
+                          vaultAddress: address,
+                          tokenName: gqlName,
+                          // TODO: add valid operators
+                          operators: [],
+                        })
+                      }
                     >
                       Update <Icon id="paginationArrowLeft" />
                     </Button>

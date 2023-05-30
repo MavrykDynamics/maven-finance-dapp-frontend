@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 // Consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
+import { INFO_DEFAULT, INFO_ERROR } from 'app/App.components/Info/info.constants'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import colors from 'styles/colors'
 import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
   BecomeSatelliteFormStateType,
@@ -13,7 +18,7 @@ import {
 
 // Actions
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
-import { registerAsSatellite, unregisterAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
+import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
 import { getSatelliteConfig } from 'pages/Satellites/Satellites.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
@@ -36,18 +41,19 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { Info } from 'app/App.components/Info/Info.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { UnregisterPopup } from './UnregisterPopup/UnregisterPopup'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // Styled components
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { Page, PageContent } from 'styles'
-import colors from 'styles/colors'
 import {
   BecomeSatelliteForm,
   BecomeSatelliteFormBalanceCheck,
   BecomeSatelliteRegisterAsOracle,
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
-import { INFO_ERROR } from 'app/App.components/Info/info.constants'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -62,7 +68,12 @@ export const BecomeSatellite = () => {
   const dispatch = useDispatch()
   const {
     accountPkh = '',
-    user: { mySMvkTokenBalance, isSatellite },
+    user: {
+      userTokens,
+      isSatellite,
+      satelliteMvkIsDelegatedTo,
+      userAvatars: { mainAvatar = '/images/default-avatar.png' },
+    },
   } = useSelector((state: State) => state.wallet)
   const {
     satelliteMapper,
@@ -87,7 +98,7 @@ export const BecomeSatellite = () => {
     [accountPkh],
   )
 
-  const balanceOverMinStakedMvk = mySMvkTokenBalance >= minimumStakedMvkBalance
+  const balanceOverMinStakedMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= minimumStakedMvkBalance
   const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
@@ -95,6 +106,8 @@ export const BecomeSatellite = () => {
   const pageText = getFormTextBasedOnUserRole(isSatellite)
   const isUserOracle = Boolean(usersSatelliteProfile?.peerId || usersSatelliteProfile?.publicKey)
   const showOracleWarning = isUserOracle && !isChecked
+
+  const [showUnregisterPopup, setShowUnregisterPopup] = useState(false)
 
   // Disable update button when no user connected, not enoght sMVK to become a satellite, not full valid form, or user is satellite, but hasn't changed nothing
   const isUpdateButtonDisabled = useMemo(() => {
@@ -191,8 +204,6 @@ export const BecomeSatellite = () => {
   }
 
   // Handlers for register/unregister and update data
-  const handleUnregisterSatellite = async () => await dispatch(unregisterAsSatellite())
-
   const handleRegisterOrUpdateSatellite = async () => {
     const mainRequestForm: RegisterAsSatelliteForm = {
       name: form.name.text,
@@ -231,230 +242,259 @@ export const BecomeSatellite = () => {
   )
 
   return (
-    <Page>
-      <PageHeader
-        page={isSatellite ? 'my satellite profile' : 'satellites'}
-        avatar={usersSatelliteProfile?.image || '/images/default-avatar.png'}
-      />
+    <>
+      <Page>
+        <PageHeader page={isSatellite ? 'my satellite profile' : 'satellites'} avatar={mainAvatar} />
 
-      {!balanceOverMinStakedMvk && (
-        <NotStakingBanner
-          className="become-satellite"
-          text={`To become a satellite you need to stake ${minimumStakedMvkBalance} MVK`}
-        />
-      )}
+        {!balanceOverMinStakedMvk && (
+          <NotStakingBanner
+            className="become-satellite"
+            text={`To become a satellite you need to stake ${minimumStakedMvkBalance} MVK`}
+          />
+        )}
 
-      <PageContent>
-        <div>
-          {isLoading ? (
-            <DataLoaderWrapper>
-              <ClockLoader width={150} height={150} />
-              <div className="text">Loading satellite data</div>
-            </DataLoaderWrapper>
-          ) : (
-            <BecomeSatelliteForm>
-              <h2>{pageText.pageTitle}</h2>
-              <BecomeSatelliteOracleText>
-                Important Note: Becoming a Satellite offers the operation an oracle node. Technically, one may become a
-                Satellite without operating an oracle and take part in Governance. However, they will forgo all of the
-                oracle rewards which are a major source of payments. For information on operating an oracle node for
-                your Satellite, please read more on Gitbook{' '}
-                <a href="https://mavryk.finance/litepaper#the-decentralized-oracle" target="_blank" rel="noreferrer">
-                  here
-                </a>
-                .
-              </BecomeSatelliteOracleText>
-              <CommaNumber
-                className="label"
-                value={Number(minimumStakedMvkBalance)}
-                beginningText={'1 - Stake at least'}
-                endingText={'MVK'}
-              />
+        <PageContent>
+          <div>
+            {isLoading ? (
+              <DataLoaderWrapper>
+                <ClockLoader width={150} height={150} />
+                <div className="text">Loading satellite data</div>
+              </DataLoaderWrapper>
+            ) : (
+              <BecomeSatelliteForm>
+                <H2Title>{pageText.pageTitle}</H2Title>
+                {satelliteMvkIsDelegatedTo ? (
+                  <div className="delegated-banner">
+                    <Info
+                      type={INFO_DEFAULT}
+                      text={
+                        <>
+                          You are currently delegated to satellite{' '}
+                          <Link to={`/satellites/satellite-details/${satelliteMvkIsDelegatedTo}`} className="satellite">
+                            <TzAddress
+                              tzAddress={satelliteMvkIsDelegatedTo}
+                              hasIcon={false}
+                              shouldCopy={false}
+                              type={CYAN}
+                            />
+                          </Link>
+                          . When becoming a satellite, you will first be undelegated from your current satellite and
+                          then registered as a satellite.
+                        </>
+                      }
+                    />
+                  </div>
+                ) : null}
 
-              {accountPkh ? (
-                <BecomeSatelliteFormBalanceCheck balanceOk={balanceOverMinStakedMvk}>
-                  <Icon id={balanceOverMinStakedMvk ? 'check-stroke' : 'close-stroke'} />
-                  <CommaNumber
-                    value={Number(mySMvkTokenBalance)}
-                    beginningText={'Currently staking'}
-                    endingText={'MVK'}
+                <BecomeSatelliteOracleText>
+                  <span>Important Note:</span> Becoming a Satellite offers the operation an oracle node. Technically,
+                  one may become a Satellite without operating an oracle and take part in Governance. However, they will
+                  forgo all of the oracle rewards which are a major source of payments. For information on operating an
+                  oracle node for your Satellite, please read more on Gitbook{' '}
+                  <a href="https://mavryk.finance/litepaper#the-decentralized-oracle" target="_blank" rel="noreferrer">
+                    here
+                  </a>
+                  .
+                </BecomeSatelliteOracleText>
+
+                <CommaNumber
+                  className="label"
+                  value={Number(minimumStakedMvkBalance)}
+                  beginningText={'1 - Stake at least'}
+                  endingText={'MVK'}
+                />
+
+                {accountPkh ? (
+                  <BecomeSatelliteFormBalanceCheck balanceOk={balanceOverMinStakedMvk}>
+                    <Icon id={balanceOverMinStakedMvk ? 'check-stroke' : 'close-stroke'} />
+                    <CommaNumber
+                      value={userTokens[SMVK_TOKEN_SYMBOL].balance}
+                      beginningText={'Currently staking'}
+                      endingText={'MVK'}
+                    />
+                  </BecomeSatelliteFormBalanceCheck>
+                ) : (
+                  connectWalletMessage
+                )}
+
+                <div className="row">
+                  <Input
+                    settings={{
+                      label: pageText.nameInputLabel,
+                      inputStatus: form.name.status,
+                    }}
+                    inputProps={{
+                      value: form.name.text,
+                      placeholder: 'Name',
+                      name: 'name',
+                      onChange: handleChange,
+                      required: true,
+                    }}
                   />
-                </BecomeSatelliteFormBalanceCheck>
-              ) : (
-                connectWalletMessage
-              )}
 
-              <div className="row">
-                <Input
-                  settings={{
-                    label: pageText.nameInputLabel,
-                    inputStatus: form.name.status,
-                  }}
-                  inputProps={{
-                    value: form.name.text,
-                    placeholder: 'Name',
-                    name: 'name',
-                    onChange: handleChange,
-                    required: true,
-                  }}
-                />
-
-                <Input
-                  settings={{
-                    label: pageText.websiteInputLabel,
-                    inputStatus: form.website.status,
-                  }}
-                  inputProps={{
-                    value: form.website.text,
-                    placeholder: 'Website',
-                    name: 'website',
-                    onChange: handleChange,
-                    required: true,
-                  }}
-                />
-              </div>
-
-              <TextArea
-                placeholder="Your description here..."
-                value={form.description.text}
-                onChange={handleChange}
-                inputStatus={form.description.status}
-                name={'description'}
-                textAreaMaxLimit={restSatelliteConfig.satelliteDescriptionMaxLength}
-                label={pageText.descrInputLabel}
-              />
-
-              <Input
-                className="input-fee-wrap"
-                settings={{
-                  label: pageText.feeInputLabel,
-                  inputStatus: form.satelliteFee.status,
-                }}
-                inputProps={{
-                  value: form.satelliteFee.text,
-                  placeholder: 'Fee',
-                  name: 'satelliteFee',
-                  onChange: handleChange,
-                  onKeyDown: (e: React.KeyboardEvent<HTMLElement>) =>
-                    !/^\d*\.?\d*$/.test(e.key) && e.key !== 'Backspace' && e.preventDefault(),
-                  required: true,
-                }}
-              />
-
-              <IPFSUploader
-                typeFile="image"
-                imageIpfsUrl={form.image.text}
-                setIpfsImageUrl={(e: string) => {
-                  handleChange({
-                    target: {
-                      name: 'image',
-                      value: e,
-                    },
-                  })
-                }}
-                title={'Upload your photo'}
-                listNumber={6}
-              />
-
-              <BecomeSatelliteRegisterAsOracle>
-                <div className="checkbox">
-                  {pageText.registerAsOracle}
-
-                  <Checkbox
-                    id="become-satellite-is-oracle"
-                    onChangeHandler={() => setIsChecked(!isChecked)}
-                    checked={isChecked}
-                    disabled={isGhostnet}
+                  <Input
+                    settings={{
+                      label: pageText.websiteInputLabel,
+                      inputStatus: form.website.status,
+                    }}
+                    inputProps={{
+                      value: form.website.text,
+                      placeholder: 'Website',
+                      name: 'website',
+                      onChange: handleChange,
+                      required: true,
+                    }}
                   />
                 </div>
 
-                <Info
-                  type={INFO_ERROR}
-                  text={`Applying to become an Oracle for aggregators is disabled on testnet, it requires running hardware and software along with subscriptions to multiple API providers which are costly.`}
+                <TextArea
+                  placeholder="Your description here..."
+                  value={form.description.text}
+                  onChange={handleChange}
+                  inputStatus={form.description.status}
+                  name={'description'}
+                  textAreaMaxLimit={restSatelliteConfig.satelliteDescriptionMaxLength}
+                  label={pageText.descrInputLabel}
                 />
 
-                <BecomeSatelliteOracleText>
-                  By registering as an oracle, you will be taking part in signing the oracle data feeds and earning
-                  rewards for doing so. Please make sure to check the Gitbook (coming soon) for setting up the oracle
-                  node. Upon registering, you need to be accepted via Satellite governance to start signing price feeds
-                  and earning.
-                </BecomeSatelliteOracleText>
+                <Input
+                  className="input-fee-wrap"
+                  settings={{
+                    label: pageText.feeInputLabel,
+                    inputStatus: form.satelliteFee.status,
+                  }}
+                  inputProps={{
+                    value: form.satelliteFee.text,
+                    placeholder: 'Fee',
+                    name: 'satelliteFee',
+                    onChange: handleChange,
+                    onKeyDown: (e: React.KeyboardEvent<HTMLElement>) =>
+                      !/^\d*\.?\d*$/.test(e.key) && e.key !== 'Backspace' && e.preventDefault(),
+                    required: true,
+                  }}
+                />
 
-                {isChecked && (
-                  <div className="inputs">
-                    <Input
-                      settings={{
-                        label: pageText.oraclePublicKey,
-                        tooltip: tooltipPublicKey,
-                        inputStatus: form.oraclePublicKey.status,
-                      }}
-                      inputProps={{
-                        value: form.oraclePublicKey.text,
-                        placeholder: 'Enter Public Key',
-                        name: 'oraclePublicKey',
-                        onChange: handleChange,
-                        required: true,
-                        disabled: isGhostnet,
-                      }}
-                    />
+                <IPFSUploader
+                  typeFile="image"
+                  imageIpfsUrl={form.image.text}
+                  setIpfsImageUrl={(e: string) => {
+                    handleChange({
+                      target: {
+                        name: 'image',
+                        value: e,
+                      },
+                    })
+                  }}
+                  title={'Upload your photo'}
+                  listNumber={6}
+                />
 
-                    <Input
-                      settings={{
-                        label: pageText.oraclePeerId,
-                        tooltip: tooltipPeerId,
-                        inputStatus: form.oraclePeerId.status,
-                      }}
-                      inputProps={{
-                        value: form.oraclePeerId.text,
-                        placeholder: 'Enter Oracle Peer ID',
-                        name: 'oraclePeerId',
-                        onChange: handleChange,
-                        required: true,
-                        disabled: isGhostnet,
-                      }}
-                    />
-                  </div>
-                )}
+                <BecomeSatelliteRegisterAsOracle>
+                  <div className="checkbox">
+                    {pageText.registerAsOracle}
 
-                {showOracleWarning && (
-                  <div className="warning">
-                    <Info
-                      text={`You are unregistering for being an oracle. This means you will no longer be able to sign price feeds and subsequently no longer receive rewards for participation in the oracle network.`}
-                      type={INFO_ERROR}
+                    <Checkbox
+                      id="become-satellite-is-oracle"
+                      onChangeHandler={() => setIsChecked(!isChecked)}
+                      checked={isChecked}
+                      disabled={isGhostnet}
                     />
                   </div>
-                )}
-              </BecomeSatelliteRegisterAsOracle>
 
-              <div className="buttons-wrapper">
-                {usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered && (
+                  <Info
+                    type={INFO_ERROR}
+                    text={`Applying to become an Oracle for aggregators is disabled on testnet, it requires running hardware and software along with subscriptions to multiple API providers which are costly.`}
+                  />
+
+                  <BecomeSatelliteOracleText>
+                    By registering as an oracle, you will be taking part in signing the oracle data feeds and earning
+                    rewards for doing so. Please make sure to check the Gitbook (coming soon) for setting up the oracle
+                    node. Upon registering, you need to be accepted via Satellite governance to start signing price
+                    feeds and earning.
+                  </BecomeSatelliteOracleText>
+
+                  {isChecked && (
+                    <div className="inputs">
+                      <Input
+                        settings={{
+                          label: pageText.oraclePublicKey,
+                          tooltip: tooltipPublicKey,
+                          inputStatus: form.oraclePublicKey.status,
+                        }}
+                        inputProps={{
+                          value: form.oraclePublicKey.text,
+                          placeholder: 'Enter Public Key',
+                          name: 'oraclePublicKey',
+                          onChange: handleChange,
+                          required: true,
+                          disabled: isGhostnet,
+                        }}
+                      />
+
+                      <Input
+                        settings={{
+                          label: pageText.oraclePeerId,
+                          tooltip: tooltipPeerId,
+                          inputStatus: form.oraclePeerId.status,
+                        }}
+                        inputProps={{
+                          value: form.oraclePeerId.text,
+                          placeholder: 'Enter Oracle Peer ID',
+                          name: 'oraclePeerId',
+                          onChange: handleChange,
+                          required: true,
+                          disabled: isGhostnet,
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {showOracleWarning && (
+                    <div className="warning">
+                      <Info
+                        text={`You are unregistering for being an oracle. This means you will no longer be able to sign price feeds and subsequently no longer receive rewards for participation in the oracle network.`}
+                        type={INFO_ERROR}
+                      />
+                    </div>
+                  )}
+                </BecomeSatelliteRegisterAsOracle>
+
+                <div className="buttons-wrapper">
+                  {usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered && (
+                    <NewButton
+                      kind={BUTTON_SECONDARY}
+                      disabled={!usersSatelliteProfile.currentlyRegistered || isActionActive}
+                      onClick={() => setShowUnregisterPopup(true)}
+                    >
+                      <Icon id="navigation-menu_close" /> Unregister Satellite
+                    </NewButton>
+                  )}
+
                   <NewButton
-                    kind={BUTTON_SECONDARY}
-                    disabled={!usersSatelliteProfile.currentlyRegistered || isActionActive}
-                    onClick={handleUnregisterSatellite}
+                    disabled={isUpdateButtonDisabled || isActionActive}
+                    kind={BUTTON_PRIMARY}
+                    onClick={handleRegisterOrUpdateSatellite}
                   >
-                    <Icon id="navigation-menu_close" /> Unregister Satellite
+                    <Icon id="satellite-small" />
+                    {usersSatelliteProfile
+                      ? usersSatelliteProfile.currentlyRegistered
+                        ? 'Update Satellite Info'
+                        : 'Register Satellite'
+                      : 'Become a Satellite'}
                   </NewButton>
-                )}
+                </div>
+              </BecomeSatelliteForm>
+            )}
+          </div>
+          <SatellitesSideBar isButton={false} />
+        </PageContent>
+      </Page>
 
-                <NewButton
-                  disabled={isUpdateButtonDisabled || isActionActive}
-                  kind={BUTTON_PRIMARY}
-                  onClick={handleRegisterOrUpdateSatellite}
-                >
-                  <Icon id="satellite-small" />
-                  {usersSatelliteProfile
-                    ? usersSatelliteProfile.currentlyRegistered
-                      ? 'Update Satellite Info'
-                      : 'Register Satellite'
-                    : 'Become a Satellite'}
-                </NewButton>
-              </div>
-            </BecomeSatelliteForm>
-          )}
-        </div>
-        <SatellitesSideBar isButton={false} />
-      </PageContent>
-    </Page>
+      <UnregisterPopup
+        show={usersSatelliteProfile && showUnregisterPopup}
+        closePopup={() => setShowUnregisterPopup(false)}
+        satellite={usersSatelliteProfile}
+      />
+    </>
   )
 }

@@ -21,10 +21,12 @@ import {
 } from '../../gql/queries'
 import { normalizeDoormanStorage, normalizeSmvkHistoryData } from './Doorman.converter'
 import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
-import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
+import { updateUserData } from 'reducers/actions/user.actions'
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { sleep } from 'utils/api/sleep'
 
 export const GET_DOORMAN_STORAGE = 'GET_DOORMAN_STORAGE'
 export const getDoormanStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -119,34 +121,34 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
     dispatch(toggleActionCompletion(true))
     dispatch(showToaster(TOASTER_INFO, 'Staking...', ACTION_START_MESSAGE_TEXT))
 
+    await sleep(5300)
+
     // turn off fs actions loader and start data updating after 5s after operation started
-    setTimeout(async () => {
-      await dispatch(toggleActionFullScreenLoader(false))
-      await dispatch(
-        showToaster(
-          TOASTER_LOADING,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        ),
-      )
+    await dispatch(toggleActionFullScreenLoader(false))
+    await dispatch(
+      showToaster(
+        TOASTER_LOADING,
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+      ),
+    )
 
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
+    // @ts-ignore don't have proper type to acees data, type has only methods
+    const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(updateUserData())
-          await dispatch(getDoormanStorage())
+    // refetch data we need
+    await checkIndexerLevelAndRunDataUpdateCallback({
+      callback: async () => {
+        await dispatch(updateUserData())
+        await dispatch(getDoormanStorage())
 
-          // Add here call for update data actions
-          await dispatch(hideToaster())
-          await dispatch(showToaster(TOASTER_SUCCESS, 'Staking done', ACTION_COMPLETION_MESSAGE_TEXT))
-          await dispatch(toggleActionCompletion(false))
-        },
-        currentOperationLevel,
-      })
-    }, 5000)
+        // Add here call for update data actions
+        await dispatch(hideToaster())
+        await dispatch(showToaster(TOASTER_SUCCESS, 'Staking done', ACTION_COMPLETION_MESSAGE_TEXT))
+        await dispatch(toggleActionCompletion(false))
+      },
+      currentOperationLevel,
+    })
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
@@ -180,34 +182,34 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
     dispatch(toggleActionCompletion(true))
     dispatch(showToaster(TOASTER_INFO, 'Unstaking...', ACTION_START_MESSAGE_TEXT))
 
+    await sleep(5000)
+
     // turn off fs actions loader and start data updating after 5s after operation started
-    setTimeout(async () => {
-      await dispatch(toggleActionFullScreenLoader(false))
-      await dispatch(
-        showToaster(
-          TOASTER_LOADING,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        ),
-      )
+    await dispatch(toggleActionFullScreenLoader(false))
+    await dispatch(
+      showToaster(
+        TOASTER_LOADING,
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+      ),
+    )
 
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
+    // @ts-ignore don't have proper type to acees data, type has only methods
+    const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(updateUserData())
-          await dispatch(getDoormanStorage())
+    // refetch data we need
+    await checkIndexerLevelAndRunDataUpdateCallback({
+      callback: async () => {
+        await dispatch(updateUserData())
+        await dispatch(getDoormanStorage())
 
-          // Add here call for update data actions
-          await dispatch(hideToaster())
-          await dispatch(showToaster(TOASTER_SUCCESS, 'Unstaking done', ACTION_COMPLETION_MESSAGE_TEXT))
-          await dispatch(toggleActionCompletion(false))
-        },
-        currentOperationLevel,
-      })
-    }, 5000)
+        // Add here call for update data actions
+        await dispatch(hideToaster())
+        await dispatch(showToaster(TOASTER_SUCCESS, 'Unstaking done', ACTION_COMPLETION_MESSAGE_TEXT))
+        await dispatch(toggleActionCompletion(false))
+      },
+      currentOperationLevel,
+    })
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
@@ -288,7 +290,10 @@ export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getSta
     return
   }
 
-  if (state.wallet.user.myMvkTokenBalance > 0 || state.wallet.user.mySMvkTokenBalance > 0) {
+  if (
+    state.wallet.user.userTokens[MVK_TOKEN_SYMBOL].balance > 0 ||
+    state.wallet.user.userTokens[SMVK_TOKEN_SYMBOL].balance > 0
+  ) {
     dispatch(
       showToaster(
         TOASTER_ERROR,

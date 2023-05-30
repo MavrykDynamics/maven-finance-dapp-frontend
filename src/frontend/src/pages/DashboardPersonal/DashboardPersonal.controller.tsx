@@ -7,7 +7,6 @@ import { State } from 'reducers'
 
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { claimAllRewardsAction } from './DashboardPersonal.actions'
-import { updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import {
   isValidPersonalDashboardTabId,
@@ -37,16 +36,14 @@ import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import { updateUserData } from 'reducers/actions/user.actions'
+import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
-  const {
-    tokensPrices: { tezos: xtzExchangeRate = 0, mvk: mvkExchangeRate = 0 },
-  } = useSelector((state: State) => state.tokens)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
+  const { tokensPrices } = useSelector((state: State) => state.tokens)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
@@ -54,18 +51,18 @@ const DashboardPersonal = () => {
   const {
     accountPkh,
     user: {
-      myMvkTokenBalance,
-      mySMvkTokenBalance,
-      myXTZTokenBalance,
-      mytzBTCTokenBalance,
-      myLendingRewardsAmount,
+      userTokens,
+      availableDoormanRewards,
+      availableSatellitesRewards,
+      availableFarmRewards,
+      availableLoansRewards,
+      gatheredDoormanRewards,
+      gatheredFarmRewards,
+      gatheredSatellitesRewards,
       isSatellite,
       isVestee,
-      myDoormanRewardsData: { myAvailableDoormanRewards },
-      myFarmRewardsData,
-      mySatelliteRewardsData: { myAvailableSatelliteRewards },
-      userRewardsToDate: { satelliteRewards, farmRewards, doormanRewards },
       isLoaded: isUserDataLoaded,
+      userAvatars: { mainAvatar },
     },
   } = useSelector((state: State) => state.wallet)
 
@@ -90,44 +87,52 @@ const DashboardPersonal = () => {
 
   const rewards = {
     rewardsToClaim:
-      myAvailableDoormanRewards +
-      myAvailableSatelliteRewards +
-      Object.values(myFarmRewardsData).reduce((acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards), 0),
-    earnedRewards: satelliteRewards + farmRewards + doormanRewards,
+      availableDoormanRewards +
+      availableSatellitesRewards +
+      Object.values(availableFarmRewards).reduce(
+        (acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards),
+        0,
+      ),
+    earnedRewards: gatheredSatellitesRewards + gatheredFarmRewards + gatheredDoormanRewards,
   }
 
   const earnings = {
-    mvkRate: mvkExchangeRate,
-    xtzRate: xtzExchangeRate,
-    satelliteRewards: satelliteRewards,
-    farmsRewards: farmRewards,
-    exitRewards: doormanRewards,
-    lendingIncome: myLendingRewardsAmount,
+    mvkRate: tokensPrices[MVK_TOKEN_SYMBOL],
+    xtzRate: tokensPrices[XTZ_TOKEN_SYMBOL],
+    satelliteRewards: gatheredSatellitesRewards,
+    farmsRewards: gatheredFarmRewards,
+    exitRewards: gatheredDoormanRewards,
+    lendingIncome: availableLoansRewards,
   }
 
+  const userTokensList = Object.values(userTokens)
+  const mostSuppliedUserTokenSymbol = userTokensList.reduce((acc, { symbol, balance, type }) => {
+    if (symbol === MVK_TOKEN_SYMBOL || symbol === SMVK_TOKEN_SYMBOL || symbol === XTZ_TOKEN_SYMBOL || type === 'mToken')
+      return acc
+    const accAssetBalanceInUSD = Number(userTokens[acc]?.balance ?? 0) * (tokensPrices[acc] ?? 1)
+    const assetToCompareBalanceInUSD = Number(balance) * (tokensPrices[symbol] ?? 1)
+    return accAssetBalanceInUSD > assetToCompareBalanceInUSD ? acc : symbol
+  }, '')
+
   const walletData = {
-    xtzAmount: myXTZTokenBalance,
-    sMVKAmount: mySMvkTokenBalance,
-    notsMVKAmount: myMvkTokenBalance,
-    tzBTCAmount: mytzBTCTokenBalance,
+    xtzAmount: userTokens[XTZ_TOKEN_SYMBOL].balance,
+    sMVKAmount: userTokens[SMVK_TOKEN_SYMBOL].balance,
+    MVKAmount: userTokens[MVK_TOKEN_SYMBOL].balance,
+    ...(mostSuppliedUserTokenSymbol
+      ? {
+          mostSuppliedUserToken: {
+            name: userTokens[mostSuppliedUserTokenSymbol].name,
+            amount: userTokens[mostSuppliedUserTokenSymbol].balance,
+          },
+        }
+      : {}),
   }
 
   const activeTab = useMemo(() => (isValidPersonalDashboardTabId(tabId) ? tabId : PORTFOLIO_TAB_ID), [tabId])
 
-  const userImage = useMemo(
-    () =>
-      getUserAvatar({
-        accountPkh,
-        satelliteMapper,
-        councilMembers,
-        breakGlassCouncilMembers,
-      }),
-    [accountPkh, breakGlassCouncilMembers, councilMembers, satelliteMapper],
-  )
-
   return (
     <Page>
-      <PageHeader page={'dashboard'} avatar={userImage} />
+      <PageHeader page={'dashboard'} avatar={mainAvatar} />
 
       <DashboardPersonalStyled>
         <div className="top">
