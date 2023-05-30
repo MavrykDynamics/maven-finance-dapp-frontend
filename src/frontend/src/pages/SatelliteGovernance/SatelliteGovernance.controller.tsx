@@ -42,6 +42,10 @@ import {
   MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
 
+// consts
+// TODO move to consts | context after subs merge
+const MAX_ACTIONS_LIMIT = 10
+
 type ExtendedTabItem = TabItem & {
   path: string
 }
@@ -90,7 +94,7 @@ export const SatelliteGovernance = () => {
 
   const {
     accountPkh,
-    user: { isSatellite },
+    user: { isSatellite, govActionsCount },
   } = useSelector((state: State) => state.wallet)
 
   const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
@@ -234,7 +238,12 @@ export const SatelliteGovernance = () => {
         {isSatellite ? (
           <DropdownCard className="satellite-governance-dropdown">
             <DropdownWrap>
-              <h2>Available Actions</h2>
+              <div className="header">
+                <h2>Available Actions</h2>
+                <h3>
+                  {govActionsCount} from {MAX_ACTIONS_LIMIT}
+                </h3>
+              </div>
 
               <DropDown
                 placeholder="Choose action"
