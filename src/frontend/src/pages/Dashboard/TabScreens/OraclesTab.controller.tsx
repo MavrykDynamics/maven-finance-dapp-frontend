@@ -21,11 +21,9 @@ import { OraclesContentStyled, TabWrapperStyled, PopularFeed } from './Dashboard
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
-  useDataFeedsUpdater()
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
   const {
     tokensPrices: { MVK_TOKEN_SYMBOL: mvkExchangeRate = 0 },

@@ -36,10 +36,8 @@ import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
 
 const Satellites = () => {
-  const { isLoading: isFeedsLoading } = useDataFeedsUpdater()
   const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
     skipAddressBalance: SUB_SKIP,
     skipStakeHistory: SUB_SKIP,
@@ -103,7 +101,7 @@ const Satellites = () => {
             </SmallInfoBlock>
           </InfoBlockWrapper>
 
-          {isLoading || isDoormanLoading || isFeedsLoading ? (
+          {isLoading || isDoormanLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellites and data feeds data</div>

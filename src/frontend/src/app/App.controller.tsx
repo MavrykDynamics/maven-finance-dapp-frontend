@@ -53,8 +53,6 @@ const AppContainer = () => {
 
   const [isIOS, setIsIOS] = useState(true)
 
-  const { feedsMapper } = useDataFeedsContext()
-
   // inital data load
   useInitializer()
 
@@ -78,7 +76,7 @@ const AppContainer = () => {
         dispatch(getSatellitesStorage()),
 
         dispatch(getTokensForDAPP()),
-        dispatch(getAvaliableCollaterals(feedsMapper)),
+        dispatch(getAvaliableCollaterals()),
       ])
 
       // For using Beacon wallet
@@ -86,7 +84,7 @@ const AppContainer = () => {
         localStorage.getItem('beacon:active-account') &&
         localStorage.getItem('beacon:active-account') !== 'undefined'
       ) {
-        await dispatch(connect(feedsMapper))
+        await dispatch(connect())
       }
 
       // Turn off loader
