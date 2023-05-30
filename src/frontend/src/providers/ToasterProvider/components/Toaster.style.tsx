@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components/macro'
 import { decreaseBar } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { TOASTER_LOADING, getColorByToasterStatus } from '../toaster.provider.const'
+import { TOASTER_LOADING, ToasterStatusType, getColorByToasterStatus } from '../toaster.provider.const'
 
 export const ToasterContainer = styled.div<{ delay: number }>`
   position: fixed;
@@ -15,16 +15,15 @@ export const ToasterContainer = styled.div<{ delay: number }>`
   background: transparent;
 
   .reveal {
-    /* animation-name: reveal;
+    animation-name: reveal;
+    animation-duration: ${({ delay }) => `${delay}ms`};
     animation-timing-function: ease-in-out;
-    animation-delay: ${({ delay }) => (delay ? `${delay}ms` : '200ms')}; */
-    /* animation: ${({ delay }) => `hide ${delay}s ease-in-out`}; */
-    animation: reveal 0.2s ease-in-out;
   }
 
   .hide {
-    /* animation: ${({ delay }) => `hide ${delay}s ease-in-out`}; */
-    animation: hide 0.2s ease-in-out;
+    animation-name: hide;
+    animation-duration: ${({ delay }) => `${delay}ms`};
+    animation-timing-function: ease-in-out;
   }
 
   @keyframes reveal {
@@ -74,7 +73,7 @@ export const ToasterCountdown = styled.div<{ showing: boolean; status?: string; 
   border-radius: 0 0 4px 0;
 
   background-color: ${({ status, theme, showing }) =>
-    showing ? getColorByToasterStatus({ toasterStatus: status, theme }) : 'transparent'};
+    showing ? getColorByToasterStatus({ toasterStatus: status as ToasterStatusType, theme }) : 'transparent'};
 
   ${(props) =>
     props.showing &&
@@ -102,7 +101,7 @@ export const ToasterIcon = styled.div<{ status?: string; theme: MavrykTheme }>`
   > svg {
     height: 16px;
     width: 16px;
-    fill: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status, theme })};
+    fill: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status as ToasterStatusType, theme })};
   }
 `
 
@@ -116,7 +115,7 @@ export const ToasterContent = styled.div<{ status?: string; theme: MavrykTheme }
   }
 
   .title {
-    color: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status, theme })};
+    color: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status as ToasterStatusType, theme })};
     font-weight: 600;
     font-size: 18px;
     margin-bottom: 8px;

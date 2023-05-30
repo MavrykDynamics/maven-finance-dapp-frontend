@@ -48,30 +48,32 @@ export default class ToasterProvider extends React.Component<Props, State> {
     this.addToasterMessage('', error.message, TOASTER_ERROR)
   }
 
-  addToasterMessage = (title: string, message: string, type: ToasterTypes): void => {
-    const { messages } = this.state.context
+  addToasterMessage = (title: string, message: string, type: ToasterTypes): string => {
+    const unique = Math.random().toString(36).substring(2) + Date.now().toString(36)
     this.setState((prevState) => ({
       context: {
         ...prevState.context,
-        messages: messages.concat([
+        messages: prevState.context.messages.concat([
           {
             type,
             title,
             message,
-            unique: Math.random().toString(36).substring(2) + Date.now().toString(36),
+            unique,
           },
         ]),
       },
     }))
+
+    return unique
   }
 
-  bug = (rawError: Error | string, title = ''): void => {
+  bug = (rawError: Error | string, title = ''): string => {
     if (rawError instanceof Error) {
       console.warn(rawError.message)
-      this.addToasterMessage(title, rawError.message, TOASTER_ERROR)
+      return this.addToasterMessage(title, rawError.message, TOASTER_ERROR)
     } else {
       console.warn(rawError)
-      this.addToasterMessage(title, rawError, TOASTER_ERROR)
+      return this.addToasterMessage(title, rawError, TOASTER_ERROR)
     }
   }
 
@@ -80,23 +82,22 @@ export default class ToasterProvider extends React.Component<Props, State> {
     console.error(error)
   }
 
-  success = (title: string, message: string): void => {
-    this.addToasterMessage(title, message, TOASTER_SUCCESS)
+  success = (title: string, message: string): string => {
+    return this.addToasterMessage(title, message, TOASTER_SUCCESS)
   }
 
-  info = (title: string, message: string): void => {
+  info = (title: string, message: string): string => {
     console.info(message)
-    this.addToasterMessage(title, message, TOASTER_INFO)
+    return this.addToasterMessage(title, message, TOASTER_INFO)
   }
 
-  warning = (title: string, message: string): void => {
+  warning = (title: string, message: string): string => {
     console.warn(message)
-    this.addToasterMessage(title, message, TOASTER_WARNING)
+    return this.addToasterMessage(title, message, TOASTER_WARNING)
   }
 
-  loading = (title: string, message: string): void => {
-    console.warn(message)
-    this.addToasterMessage(title, message, TOASTER_LOADING)
+  loading = (title: string, message: string): string => {
+    return this.addToasterMessage(title, message, TOASTER_LOADING)
   }
 
   setError = (error: Errors): void => {

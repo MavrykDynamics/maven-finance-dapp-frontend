@@ -19,7 +19,6 @@ import { SatellitesTab } from './TabScreens/SatellitesTab.controller'
 import { TreasuryTab } from './TabScreens/TreasuryTab.controller'
 import { VaultsTab } from './TabScreens/VaultsTab.controller'
 import { StakingTab } from './TabScreens/StakingTab.controller'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 const TabById = ({ activeTab, isDataLoading }: { activeTab: TabId; isDataLoading: boolean }) => {
   switch (activeTab) {
@@ -51,16 +50,8 @@ export const DashboardView = ({
   activeTab: TabId
   isLoading: boolean
 }) => {
-  const { info, success, warning, loading, bug } = useToasterContext()
-
   return (
     <DashboardStyled>
-      <button onClick={() => success('success title', 'lorem ipsom junk')}>SUCCESS</button>
-      <button onClick={() => info('info title', 'lorem ipsom junk')}>INFO</button>
-      <button onClick={() => loading('loading title', 'lorem ipsom junk')}>LOADING</button>
-      <button onClick={() => warning('warning title', 'lorem ipsom junk')}>WARNING</button>
-      <button onClick={() => bug('bug title', 'lorem ipsom junk')}>BUG</button>
-
       <div className="top">
         <div className="tvlBlock">
           <BGPrimaryTitleStyled>Mavryk TVL</BGPrimaryTitleStyled>

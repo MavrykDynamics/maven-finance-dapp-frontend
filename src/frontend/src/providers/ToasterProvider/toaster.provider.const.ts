@@ -9,7 +9,8 @@ export const TOASTER_INFO = 'info-reg'
 export const TOASTER_LOADING = 'TOASTER_LOADING'
 
 // consts
-export const ANIMATION_DURATION = 200
+export const TOAST_TILE_TO_LIVE = 4600
+export const ANIMATION_DURATION = 400
 export const TOASTS_LIMIT = 5
 
 export type ToasterStatusType =
@@ -18,8 +19,6 @@ export type ToasterStatusType =
   | typeof TOASTER_INFO
   | typeof TOASTER_LOADING
   | typeof TOASTER_WARNING
-  // TODO: remove after we will use statuses only with TOASTER_ prefix
-  | string
 
 export const getColorByToasterStatus = ({
   toasterStatus,

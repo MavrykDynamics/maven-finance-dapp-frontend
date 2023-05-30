@@ -4,7 +4,7 @@ import { ToasterContainer, ToasterContent, ToasterCountdown, ToasterIcon, Toaste
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { ToasterMessage } from '../toaster.provider.type'
-import { ANIMATION_DURATION, TOASTER_LOADING, TOASTS_LIMIT } from '../toaster.provider.const'
+import { ANIMATION_DURATION, TOASTER_LOADING, TOASTS_LIMIT, TOAST_TILE_TO_LIVE } from '../toaster.provider.const'
 import classNames from 'classnames'
 import { sleep } from 'utils/api/sleep'
 
@@ -14,13 +14,16 @@ const Toast = ({ toast }: { toast: ToasterMessage }) => {
   const { title, message, type, unique } = toast
 
   useEffect(() => {
-    ;(async () => {
-      await sleep(4600)
-      setToastAnimation('hide')
-      await sleep(200)
-      removeToasterMessage(unique)
-    })()
-  }, [removeToasterMessage, unique])
+    if (type !== TOASTER_LOADING) {
+      ;(async () => {
+        await sleep(TOAST_TILE_TO_LIVE)
+        setToastAnimation('hide')
+        // wait for animation finish
+        await sleep(ANIMATION_DURATION)
+        removeToasterMessage(unique)
+      })()
+    }
+  }, [removeToasterMessage, type, unique])
 
   return (
     <ToasterStyled
