@@ -10,7 +10,11 @@ export type APIReturnType<T> = {
   fetch: () => Promise<APIFetchReturnType<T>>
 }
 
-export const api = <T>(url: string, options?: RequestInit | null, schema?: ZodSchema<T> | null): APIReturnType<T> => {
+export const api = <T>(
+  url: string,
+  options: RequestInit = { method: 'GET' },
+  schema: ZodSchema<T> = z.any(),
+): APIReturnType<T> => {
   const controller = new AbortController()
   const signal = controller.signal
 
