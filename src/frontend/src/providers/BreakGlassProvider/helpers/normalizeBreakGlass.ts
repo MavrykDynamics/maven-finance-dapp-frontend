@@ -1,15 +1,10 @@
-import { toCamelCase } from 'utils/toCamelCase'
-
-import { BreakGlassStatusType, BreakGlassStatusStorage } from '../breakGlass.provider.type'
+import { BreakGlassStatusType, BreakGlassStatusStorage, BreakGlassConfigType } from '../breakGlass.provider.type'
 
 export const normalizeBreakGlass = ({
   break_glass: [breakGlassStorage],
   whitelist_developer,
-}: {
-  break_glass: any[]
-  whitelist_developer: any[]
-}) => {
-  const whitelistDev = whitelist_developer.map((developer) => developer?.address ?? '').filter((item) => item !== '')
+}: BreakGlassConfigType) => {
+  const whitelistDev = whitelist_developer.map((item) => item.developer?.address ?? '').filter((item) => item !== '')
 
   return {
     glassBroken: breakGlassStorage?.glass_broken,

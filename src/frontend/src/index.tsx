@@ -19,6 +19,7 @@ import Mobile from './app/App.components/Mobile/Mobile.view'
 
 import './styles/fonts.css'
 import './styles/animations.css'
+import BrealGlassProvider from 'providers/BreakGlassProvider/breakGlass.provider'
 
 export const Root = () => {
   const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
@@ -26,12 +27,14 @@ export const Root = () => {
     <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey} language="en">
       <ApolloProvider client={client}>
         <Provider store={store}>
-          {/* <PersistGate loading={null} persistor={persistor}> */}
-          <DarkThemeProvider>
-            <GlobalStyle />
-            {isMobile ? <Mobile /> : <App />}
-          </DarkThemeProvider>
-          {/* </PersistGate> */}
+          <BrealGlassProvider>
+            {/* <PersistGate loading={null} persistor={persistor}> */}
+            <DarkThemeProvider>
+              <GlobalStyle />
+              {isMobile ? <Mobile /> : <App />}
+            </DarkThemeProvider>
+            {/* </PersistGate> */}
+          </BrealGlassProvider>
         </Provider>
       </ApolloProvider>
     </GoogleReCaptchaProvider>

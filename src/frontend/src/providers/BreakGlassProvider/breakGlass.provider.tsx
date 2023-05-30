@@ -45,7 +45,6 @@ export class BrealGlassProvider extends React.Component<Props, State> {
   }
 
   render(): React.ReactNode {
-    console.log(this.state.context)
     return <breakGlassContext.Provider value={this.state.context}>{this.props.children}</breakGlassContext.Provider>
   }
 }
