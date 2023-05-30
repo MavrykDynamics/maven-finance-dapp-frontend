@@ -21,6 +21,5 @@ export type State = {
 }
 
 export type Props = {
-  dipDupContracts: DAPPConfigContext['dipDupContracts']
   children: React.ReactNode
 }

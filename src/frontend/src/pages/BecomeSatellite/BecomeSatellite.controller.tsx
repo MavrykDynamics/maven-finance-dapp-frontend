@@ -112,9 +112,9 @@ export const BecomeSatellite = () => {
   const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
-  const [isChecked, setIsChecked] = useState(false)
   const pageText = getFormTextBasedOnUserRole(isSatellite)
   const isUserOracle = Boolean(usersSatelliteProfile?.peerId || usersSatelliteProfile?.publicKey)
+  const [isChecked, setIsChecked] = useState(isUserOracle)
   const showOracleWarning = isUserOracle && !isChecked
 
   const [showUnregisterPopup, setShowUnregisterPopup] = useState(false)
@@ -173,12 +173,6 @@ export const BecomeSatellite = () => {
       setForm(DEFAULT_BECOME_SATELLITE_FORM)
     }
   }, [usersSatelliteProfile, accountPkh])
-
-  // Set checkbox === true if satellite is oracle
-  useEffect(() => {
-    if (isChecked === isUserOracle) return
-    setIsChecked(isUserOracle)
-  }, [isUserOracle])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string; value: string } },
