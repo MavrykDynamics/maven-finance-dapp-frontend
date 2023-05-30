@@ -15,22 +15,24 @@ export const useDappInit = () => {
   const { updateMaxLengths, updateMVKFaucetAddress, updateXtzBakers, xtzBakers } = useDAPPConfigContext()
 
   // Load max lenghts for inputs
-  const { data: maxLengthsData, loading: maxLengthsLoading } = useQuery(GET_MAX_LENGTHS_QUERY)
-
-  useEffect(() => {
-    if (!maxLengthsLoading && maxLengthsData) {
-      updateMaxLengths(maxLengthsData)
-    }
-  }, [maxLengthsLoading])
+  const { loading: maxLengthsLoading } = useQuery(GET_MAX_LENGTHS_QUERY, {
+    onCompleted: (data) => {
+      updateMaxLengths(data)
+    },
+    onError: (error) => {
+      console.error('GET_MAX_LENGTHS_QUERY error: ', { error })
+    },
+  })
 
   // Load MVK faucet
-  const { data: mvkData, loading: mvkLoading } = useQuery(GET_MVK_FAUCET_QUERY)
-
-  useEffect(() => {
-    if (!mvkLoading && mvkData) {
-      updateMVKFaucetAddress(mvkData)
-    }
-  }, [mvkLoading])
+  const { loading: mvkLoading } = useQuery(GET_MVK_FAUCET_QUERY, {
+    onCompleted: (data) => {
+      updateMVKFaucetAddress(data)
+    },
+    onError: (error) => {
+      console.error('GET_MVK_FAUCET_QUERY error: ', { error })
+    },
+  })
 
   // load bakers if they are not loaded
   // TODO: consider loading them when we need to use them
@@ -39,4 +41,6 @@ export const useDappInit = () => {
       updateXtzBakers()
     }
   }, [xtzBakers])
+
+  return { isLoading: mvkLoading || maxLengthsLoading }
 }

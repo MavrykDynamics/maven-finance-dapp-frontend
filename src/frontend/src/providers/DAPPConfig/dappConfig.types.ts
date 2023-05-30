@@ -1,6 +1,5 @@
 import DAPPConfigProvider from './dappConfig.provider'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
-import { DipDupContractsQuery } from 'utils/__generated__/graphql'
 
 export type CouncilMaxLength = {
   councilMemberImageMaxLength: number
