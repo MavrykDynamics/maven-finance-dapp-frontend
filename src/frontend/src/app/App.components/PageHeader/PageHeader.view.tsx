@@ -15,7 +15,7 @@ type PageHeaderViewProps = {
   subText: string
   backgroundImageSrc?: string
   foregroundImageSrc?: string
-  avatar?: string
+  avatar?: string | null
 }
 
 export const PageHeaderView = ({

@@ -70,6 +70,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   } = useSelector((state: State) => state.governance)
   const { whitelistTokens, dipDupTokens } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [activeTab, setActiveTab] = useState(1)
 
@@ -87,6 +88,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             bytesValidation: proposal.proposalData.map((bytesPair) => ({
               validBytes: '',
               validTitle: '',
+              validDescr: '',
               byteId: bytesPair.id,
             })),
             paymentsValidation: proposal.proposalPayments.map((payment) => ({
@@ -147,31 +149,25 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
   }
 
-  const updateLocalProposalData = useCallback(
-    (newProposalData: Partial<ProposalRecordType>, proposalId: number) => {
-      setProposalsState({
-        ...proposalState,
-        [proposalId]: {
-          ...proposalState[proposalId],
-          ...newProposalData,
-        },
-      })
-    },
-    [proposalState],
-  )
+  const updateLocalProposalData = (newProposalData: Partial<ProposalRecordType>, proposalId: number) => {
+    setProposalsState({
+      ...proposalState,
+      [proposalId]: {
+        ...proposalState[proposalId],
+        ...newProposalData,
+      },
+    })
+  }
 
-  const updateLocalProposalValidation = useCallback(
-    (newProposalValidation: Partial<ProposalValidityObj>, proposalId: number) => {
-      setProposalsValidation({
-        ...proposalsValidation,
-        [proposalId]: {
-          ...proposalsValidation[proposalId],
-          ...newProposalValidation,
-        },
-      })
-    },
-    [proposalsValidation],
-  )
+  const updateLocalProposalValidation = (newProposalValidation: Partial<ProposalValidityObj>, proposalId: number) => {
+    setProposalsValidation({
+      ...proposalsValidation,
+      [proposalId]: {
+        ...proposalsValidation[proposalId],
+        ...newProposalValidation,
+      },
+    })
+  }
 
   const handleNextStep = (tabId: number) => setActiveTab(tabId)
   const handleLockProposal = async (proposalId: number) => await dispatch(lockProposal(proposalId))
@@ -188,7 +184,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     if (!currentProposalOnRemote) {
       const bytes = getBytesDiff(
         [],
-        currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code),
+        currentProposal.proposalData.filter(
+          ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
+        ),
       )
 
       const payments = getPaymentsDiff(
@@ -215,7 +213,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     } else {
       const bytesDiff = getBytesDiff(
         currentProposalOnRemote.proposalData,
-        currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code),
+        currentProposal.proposalData.filter(
+          ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
+        ),
       )
       const paymentsDiff = getPaymentsDiff(
         currentProposalOnRemote.proposalPayments,
@@ -357,7 +357,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             <Button
               kind={BUTTON_SECONDARY}
               form={BUTTON_WIDE}
-              disabled={isDropDisabled}
+              disabled={isDropDisabled || isActionActive}
               onClick={() => handleDropProposal(selectedUserProposalId)}
             >
               <Icon id="navigation-menu_close" /> Drop Proposal
@@ -375,7 +375,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             <Button
               kind={BUTTON_SECONDARY}
               form={BUTTON_WIDE}
-              disabled={isSubmitDisabled}
+              disabled={isSubmitDisabled || isActionActive}
               onClick={() => handleLockProposal(selectedUserProposalId)}
             >
               <Icon id="submit" /> Submit Proposal
@@ -394,7 +394,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               <Button
                 kind={BUTTON_PRIMARY}
                 form={BUTTON_WIDE}
-                disabled={isSaveProposalDisabled}
+                disabled={isSaveProposalDisabled || isActionActive}
                 onClick={() => handleUpdateData(selectedUserProposalId)}
               >
                 <Icon id="save" /> {isProposalSubmitted ? 'Save Changes' : 'Save Proposal'}

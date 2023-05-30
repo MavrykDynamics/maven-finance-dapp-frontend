@@ -1,13 +1,12 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // types
 import { StageThreeFormProps, StageThreeValidityItem } from '../ProposalSubmission.types'
-import { Governance_Proposal } from 'utils/generated/graphqlTypes'
 
 // helpers
-import { checkPaymentExists, getValidityStageThreeTable } from '../ProposalSubmission.helpers'
+import { getValidityStageThreeTable } from '../ProposalSubmission.helpers'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -47,29 +46,24 @@ export const StageThreeForm = ({
 }: StageThreeFormProps) => {
   const { proposalPayments, locked, title } = currentProposal
 
-  const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
-  const { whitelistTokens } = useSelector((state: State) => state.tokens)
+  const { fee, successReward, governancePhase, proposalMetadataTitleMaxLength } = useSelector(
+    (state: State) => state.governance.config,
+  )
+  const { treasuryTokens } = useSelector((state: State) => state.treasury)
 
   const isProposalRound = governancePhase === 'PROPOSAL'
 
-  // is no bytes payments on proposal change add empty pair on client
-  useEffect(() => {
-    if (!proposalPayments.some(checkPaymentExists) && !currentProposal.locked) {
-      handleAddRow()
-    }
-  }, [proposalId, currentProposal.locked])
-
   const ddItems = useMemo(() => {
-    return whitelistTokens.map((method) => ({
-      content: <DropDownJsxChild>{method.symbol.toUpperCase()}</DropDownJsxChild>,
-      id: method.address,
+    return Object.keys(treasuryTokens).map((tokenAddress) => ({
+      content: <DropDownJsxChild>{treasuryTokens[tokenAddress].name}</DropDownJsxChild>,
+      id: tokenAddress,
     }))
-  }, [whitelistTokens])
+  }, [treasuryTokens])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: string | number } },
     row: number,
-    maxLength?: number,
+    options?: { tokenBalance?: number; maxLength?: number },
   ) => {
     let { name, value } = e.target
 
@@ -91,7 +85,7 @@ export const StageThreeForm = ({
     // we don't need validation for token address, cuz it's not used on backend, and it's dd value
     if (name !== 'token_address') {
       // update validation
-      const validationResult = getValidityStageThreeTable(name as StageThreeValidityItem, value, maxLength)
+      const validationResult = getValidityStageThreeTable(name as StageThreeValidityItem, value, options)
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
 
@@ -107,21 +101,22 @@ export const StageThreeForm = ({
   }
 
   const handleAddRow = () => {
-    const { address = '', id = 0 } = whitelistTokens?.[0] ?? {}
+    const paymentToken = Object.values(treasuryTokens)?.[0] ?? null
+
+    if (!paymentToken) return
+
     const newId = -(proposalPayments.length + 1)
     updateLocalProposalData(
       {
         proposalPayments: (proposalPayments ?? []).concat({
-          // TODO: check how to remove it
-          governance_proposal: currentProposal as unknown as Governance_Proposal,
-          governance_proposal_id: 0,
           id: -(proposalPayments.length + 1),
           internal_id: 0,
           title: '',
           to__id: '',
           token_amount: 0,
-          token_id: id,
-          token_address: address,
+          // TODO: implement token id's when it's fixed on backend
+          token_id: 0,
+          token_address: paymentToken.tokenAddress,
         }),
       },
       proposalId,
@@ -177,156 +172,177 @@ export const StageThreeForm = ({
         </div>
       </SubmitProposalGeneralData>
 
-      <Table className="editable-table with-header">
-        <TableHeader className="editable-head">
-          <TableRow>
-            <TableHeaderCell
-              style={
-                proposalPayments.length === 0
-                  ? {
-                      borderBottomLeftRadius: '10px',
-                    }
-                  : undefined
-              }
-            >
-              Address
-            </TableHeaderCell>
-            <TableHeaderCell>Purpose</TableHeaderCell>
-            <TableHeaderCell>Amount</TableHeaderCell>
-            <TableHeaderCell
-              style={
-                proposalPayments.length === 0
-                  ? {
-                      borderBottomRightRadius: '10px',
-                    }
-                  : undefined
-              }
-            >
-              Payment Type (XTZ/MVK)
-            </TableHeaderCell>
-          </TableRow>
-        </TableHeader>
+      <div className="payments-table">
+        <div className="label">4 - Enter Proposal Payment Data</div>
+        <Table className="editable-table with-header">
+          <TableHeader className="editable-head">
+            <TableRow>
+              <TableHeaderCell
+                style={
+                  proposalPayments.length === 0
+                    ? {
+                        borderBottomLeftRadius: '10px',
+                      }
+                    : undefined
+                }
+              >
+                Address
+              </TableHeaderCell>
+              <TableHeaderCell>Purpose</TableHeaderCell>
+              <TableHeaderCell>Amount</TableHeaderCell>
+              <TableHeaderCell
+                style={
+                  proposalPayments.length === 0
+                    ? {
+                        borderBottomRightRadius: '10px',
+                      }
+                    : undefined
+                }
+              >
+                Payment Type
+              </TableHeaderCell>
+            </TableRow>
+          </TableHeader>
 
-        <TableBody>
-          {proposalPayments.map((payment, rowIdx) => {
-            const validationObj = currentProposalValidation.paymentsValidation?.find(
-              ({ paymentId }) => paymentId === payment.id,
-            )
-            const { symbol: selectedSymbol = 'MVK', address } =
-              whitelistTokens.find(({ address }) => address === payment.token_address) ?? whitelistTokens?.[0] ?? {}
+          <TableBody>
+            {proposalPayments.length ? (
+              proposalPayments.map((payment, rowIdx) => {
+                const validationObj = currentProposalValidation.paymentsValidation?.find(
+                  ({ paymentId }) => paymentId === payment.id,
+                )
 
-            if (payment.to__id === null || payment.title === null) return null
+                if (payment.to__id === null || payment.title === null || !payment.token_address) return null
 
-            return (
-              <TableRow className="editable-row">
-                <TableCell width="25%" className="hide-overflow tz-address-cell-center">
-                  {isTableDisabled ? (
-                    payment.to__id ? (
-                      <TzAddress tzAddress={String(payment.to__id)} type={BLUE} hasIcon />
-                    ) : (
-                      '-'
-                    )
-                  ) : (
-                    <Input
-                      settings={{
-                        inputStatus: validationObj?.to__id,
-                        inputSize: INPUT_SMALL,
-                      }}
-                      inputProps={{
-                        placeholder: 'Enter Receiver Address',
-                        value: String(payment.to__id),
-                        type: 'text',
-                        name: 'to__id',
-                        onChange: (e) => handleChange(e, rowIdx),
-                      }}
-                    />
-                  )}
-                </TableCell>
+                const token = treasuryTokens[payment.token_address]
 
-                <TableCell width="25%" className="hide-overflow">
-                  {isTableDisabled ? (
-                    String(payment.title)
-                  ) : (
-                    <Input
-                      settings={{
-                        inputStatus: validationObj?.title,
-                        inputSize: INPUT_SMALL,
-                      }}
-                      inputProps={{
-                        placeholder: 'Enter Payment Purpose',
-                        value: String(payment.title),
-                        type: 'text',
-                        name: 'title',
-                        onChange: (e) => handleChange(e, rowIdx),
-                      }}
-                    />
-                  )}
-                </TableCell>
+                if (!token) return null
 
-                <TableCell width="25%" className="hide-overflow">
-                  {isTableDisabled ? (
-                    <CommaNumber value={Number(payment.token_amount)} endingText={selectedSymbol} />
-                  ) : (
-                    <Input
-                      settings={{
-                        inputStatus: validationObj?.token_amount,
-                        inputSize: INPUT_SMALL,
-                      }}
-                      inputProps={{
-                        placeholder: 'Enter Tokens Amount',
-                        value: String(payment.token_amount),
-                        type: 'number',
-                        name: 'token_amount',
-                        onChange: (e) => handleChange(e, rowIdx),
-                      }}
-                    />
-                  )}
-                </TableCell>
+                const { name, tokenAddress, balance } = token
 
-                <TableCell width="25%">
-                  {isTableDisabled ? (
-                    selectedSymbol
-                  ) : (
-                    <DropDown
-                      placeholder={'Select payment method'}
-                      className="stage-3-dropDown"
-                      items={ddItems}
-                      activeItem={ddItems.find(({ id }) => address === id) ?? ddItems[0]}
-                      clickItem={(newSelectedAddress: DDItemId) => {
-                        handleChange(
-                          {
-                            target: { name: 'token_address', value: newSelectedAddress },
-                          },
-                          rowIdx,
+                return (
+                  <TableRow className="editable-row" key={payment.id}>
+                    <TableCell width="25%" className="hide-overflow tz-address-cell-center">
+                      {isTableDisabled ? (
+                        payment.to__id ? (
+                          <TzAddress tzAddress={String(payment.to__id)} type={BLUE} hasIcon />
+                        ) : (
+                          '-'
                         )
-                      }}
-                    />
-                  )}
-                </TableCell>
+                      ) : (
+                        <Input
+                          settings={{
+                            inputStatus: validationObj?.to__id,
+                            inputSize: INPUT_SMALL,
+                          }}
+                          inputProps={{
+                            placeholder: 'Enter Receiver Address',
+                            value: String(payment.to__id),
+                            type: 'text',
+                            name: 'to__id',
+                            onChange: (e) => handleChange(e, rowIdx),
+                          }}
+                        />
+                      )}
+                    </TableCell>
 
-                <RemoveRowBtn>
-                  <CustomTooltip text="Delete row" className="tooltip">
-                    <Button
-                      kind={BUTTON_SIMPLE_SMALL}
-                      onClick={() => handleDeleteRow(rowIdx)}
-                      disabled={isTableDisabled}
-                    >
-                      <Icon id="delete" />
-                    </Button>
-                  </CustomTooltip>
-                </RemoveRowBtn>
-              </TableRow>
-            )
-          })}
-        </TableBody>
-        <AddRowBtn>
-          <CustomTooltip text="Insert 1 row below" className="tooltip">
-            <Button kind={BUTTON_SIMPLE_SMALL} onClick={handleAddRow} disabled={isTableDisabled}>
-              <Icon id="plus" />
-            </Button>
-          </CustomTooltip>
-        </AddRowBtn>
-      </Table>
+                    <TableCell width="25%" className="hide-overflow">
+                      {isTableDisabled ? (
+                        String(payment.title)
+                      ) : (
+                        <Input
+                          settings={{
+                            inputStatus: validationObj?.title,
+                            inputSize: INPUT_SMALL,
+                          }}
+                          inputProps={{
+                            placeholder: 'Enter Payment Purpose',
+                            value: String(payment.title),
+                            type: 'text',
+                            name: 'title',
+                            onChange: (e) => handleChange(e, rowIdx, { maxLength: proposalMetadataTitleMaxLength }),
+                          }}
+                        />
+                      )}
+                    </TableCell>
+
+                    <TableCell width="25%" className="hide-overflow">
+                      {isTableDisabled ? (
+                        <CommaNumber value={Number(payment.token_amount)} endingText={name} />
+                      ) : (
+                        <Input
+                          settings={{
+                            inputStatus: validationObj?.token_amount,
+                            inputSize: INPUT_SMALL,
+                          }}
+                          inputProps={{
+                            placeholder: 'Enter Tokens Amount',
+                            value: String(payment.token_amount),
+                            type: 'number',
+                            name: 'token_amount',
+                            onChange: (e) => handleChange(e, rowIdx, { tokenBalance: balance }),
+                          }}
+                        />
+                      )}
+                    </TableCell>
+
+                    <TableCell width="25%">
+                      {isTableDisabled ? (
+                        name
+                      ) : (
+                        <DropDown
+                          placeholder={'Select payment method'}
+                          className="stage-3-dropDown"
+                          items={ddItems}
+                          activeItem={ddItems.find(({ id }) => tokenAddress === id)}
+                          clickItem={(newSelectedAddress: DDItemId) => {
+                            handleChange(
+                              {
+                                target: { name: 'token_address', value: newSelectedAddress },
+                              },
+                              rowIdx,
+                            )
+                          }}
+                        />
+                      )}
+                    </TableCell>
+
+                    <RemoveRowBtn>
+                      <CustomTooltip text="Delete row" className="tooltip">
+                        <Button
+                          kind={BUTTON_SIMPLE_SMALL}
+                          onClick={() => handleDeleteRow(rowIdx)}
+                          disabled={isTableDisabled}
+                        >
+                          <Icon id="delete" />
+                        </Button>
+                      </CustomTooltip>
+                    </RemoveRowBtn>
+                  </TableRow>
+                )
+              })
+            ) : (
+              <>
+                <TableRow className="plug-row" rowHeight={43}>
+                  <TableCell width="25%" />
+                  <TableCell width="25%" />
+                  <TableCell width="25%" />
+                  <TableCell width="25%" />
+                  <div className="plug-row-text">
+                    {locked ? 'Proposal is locked without payments' : 'Add payments to your proposal'}
+                  </div>
+                </TableRow>
+              </>
+            )}
+          </TableBody>
+          <AddRowBtn>
+            <CustomTooltip text="Insert 1 row below" className="tooltip">
+              <Button kind={BUTTON_SIMPLE_SMALL} onClick={handleAddRow} disabled={isTableDisabled}>
+                <Icon id="plus" />
+              </Button>
+            </CustomTooltip>
+          </AddRowBtn>
+        </Table>
+      </div>
     </>
   )
 }
