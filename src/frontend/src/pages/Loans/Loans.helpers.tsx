@@ -3,7 +3,7 @@ import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
-import { Lending_Controller_History_Data, Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
+import { Lending_Controller_History_Data } from 'utils/generated/graphqlTypes'
 import {
   LendingItemType,
   LoansChartsDataType,
@@ -16,7 +16,7 @@ import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Inp
 import { parseDate } from 'utils/time'
 import { convertNumberForClient, convertNumberForContractCall, getNumberInBounds } from '../../utils/calcFunctions'
 import { assetDecimalsToShow } from './Loans.const'
-import { Feed } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
+import { DataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 
 // CONST FOR HELPERS
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
@@ -35,7 +35,7 @@ export const getAssetMetadata = ({
   tokenName: string
   tokenAddress: string
   dipDupTokens: State['tokens']['dipDupTokens']
-  feeds: Array<Feed>
+  feeds: DataFeedsContext['feedsMapper']
   oracleId?: string
 }): (BaseLoansAssetDataType & { address: string }) | undefined => {
   const isXTZ = isTezosAsset(tokenName)
@@ -43,7 +43,9 @@ export const getAssetMetadata = ({
     ({ metadata: { name: dipDupName }, contract }) => tokenName === dipDupName || tokenAddress === contract,
   )
 
-  const { last_completed_data, decimals, icon } = feeds.find(({ address }) => address === oracleId) ?? {}
+  const { last_completed_data, decimals, icon } = oracleId
+    ? feeds[oracleId] ?? { last_completed_data: undefined, decimals: undefined, icon: undefined }
+    : { last_completed_data: undefined, decimals: undefined, icon: undefined }
 
   if (isXTZ && last_completed_data !== undefined && decimals !== undefined) {
     return {
@@ -92,7 +94,7 @@ type TransactionHistoryReduceType = {
 export const getTransactionHistory = (
   history_data: Lending_Controller_History_Data[],
   dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: any[],
+  feeds: DataFeedsContext['feedsMapper'],
 ) =>
   history_data.reduce<TransactionHistoryReduceType>(
     (acc, { type, amount, timestamp, sender_id, operation_hash, loan_token }) => {
@@ -198,7 +200,7 @@ export const getTransactionHistory = (
 export const getChartData = (
   history_data: Lending_Controller_History_Data[],
   dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: Array<Feed>,
+  feeds: DataFeedsContext['feedsMapper'],
 ) =>
   history_data?.reduce<LoansChartsDataType>(
     (acc, { type, amount, timestamp, loan_token }) => {

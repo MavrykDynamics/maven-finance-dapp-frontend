@@ -7,19 +7,15 @@ import { State } from 'reducers'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { LoansGQL, LoansVaultType, CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
 
-import {
-  getAssetMetadata,
-  calculateAccruedInterest,
-  calcCollateralRatio,
-  isTezosAsset,
-} from 'pages/Loans/Loans.helpers'
+import { getAssetMetadata, calculateAccruedInterest, calcCollateralRatio } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount, calculateLiquidationPrice } from './calcFunctionsForVault'
+import { DataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 
 type VaultsStorageProps = {
   lendingController: LoansGQL
   accountPkh?: string
-  feeds: any[] //State['dataFeeds']['feedsLedger']
+  feeds: DataFeedsContext['feedsMapper']
   dipDupTokens: State['tokens']['dipDupTokens']
 }
 
@@ -274,7 +270,7 @@ const normalizeCollateralAssets = ({
   dipDupTokens,
   collateralAssets,
 }: {
-  feeds: any[] //State['dataFeeds']['feedsLedger']
+  feeds: DataFeedsContext['feedsMapper']
   dipDupTokens: State['tokens']['dipDupTokens']
   collateralAssets: LoansGQL['vaults'][number]['collateral_balances']
 }): {

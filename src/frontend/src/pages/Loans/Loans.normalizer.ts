@@ -6,6 +6,7 @@ import { Mavryk_User } from 'utils/generated/graphqlTypes'
 
 import { convertNumberForClient, calcWithoutDecimals, getNumberInBounds } from 'utils/calcFunctions'
 import { calcLendingAPY, getAssetMetadata, getChartData, getLendingItem, getTransactionHistory } from './Loans.helpers'
+import { DataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 
 // Normalize user loans data
 export const normalizeUserLending = ({
@@ -15,7 +16,7 @@ export const normalizeUserLending = ({
   feeds,
 }: {
   dipDupTokens: State['tokens']['dipDupTokens']
-  feeds: any[] // State['dataFeeds']['feedsLedger']
+  feeds: DataFeedsContext['feedsMapper']
   userDataLoansHistoryGql: Mavryk_User['lending_controller_history_data_sender']
   userVaultsDataGql: Mavryk_User['lending_controller_vaults']
 }) => {
@@ -158,7 +159,7 @@ export const normalizeLoans = async ({
   mTokens: State['tokens']['mTokens']
   userMTokens: UserState['userMTokens']
   userAddres?: string
-  feeds: any[] //State['dataFeeds']['feedsLedger']
+  feeds: DataFeedsContext['feedsMapper']
 }) => {
   const interestTreasuryShare = calcWithoutDecimals(storage?.interest_treasury_share, storage.decimals)
   const interestRateDecimals = storage?.interest_rate_decimals ?? 0

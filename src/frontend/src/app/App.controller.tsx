@@ -36,6 +36,7 @@ import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
 import { getTokensForDAPP } from 'reducers/actions/getTokens.actions'
 import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
 export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
@@ -51,6 +52,8 @@ const AppContainer = () => {
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
 
   const [isIOS, setIsIOS] = useState(true)
+
+  const { feedsMapper } = useDataFeedsContext()
 
   // inital data load
   useInitializer()
@@ -75,7 +78,7 @@ const AppContainer = () => {
         dispatch(getSatellitesStorage()),
 
         dispatch(getTokensForDAPP()),
-        dispatch(getAvaliableCollaterals()),
+        dispatch(getAvaliableCollaterals(feedsMapper)),
       ])
 
       // For using Beacon wallet
@@ -83,7 +86,7 @@ const AppContainer = () => {
         localStorage.getItem('beacon:active-account') &&
         localStorage.getItem('beacon:active-account') !== 'undefined'
       ) {
-        await dispatch(connect())
+        await dispatch(connect(feedsMapper))
       }
 
       // Turn off loader

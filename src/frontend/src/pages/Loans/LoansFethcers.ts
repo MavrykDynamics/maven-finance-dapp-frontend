@@ -1,8 +1,9 @@
 import { getAssetMetadata } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 import { Lending_Controller_Collateral_Token } from 'utils/generated/graphqlTypes'
-import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
+import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { getSymbolAndNameFromCollaterealGqlname } from 'utils/parse'
+import { DataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 
 export type BakeryDelegateDataType = {
   balance: number
@@ -26,7 +27,7 @@ export const getBakeryDelegateData = async (bakerAddress: string): Promise<Baker
 export const getCollateralTokens = (
   collateralTokens: Array<Lending_Controller_Collateral_Token>,
   dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: any[], //State['dataFeeds']['feedsLedger'],
+  feeds: DataFeedsContext['feedsMapper'],
 ): Array<AvaliableCollateralType> => {
   try {
     return collateralTokens.reduce<AvaliableCollateralType[]>(

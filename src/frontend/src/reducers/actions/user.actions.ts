@@ -21,6 +21,7 @@ import {
 import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
 import { getAssetMetadata, isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { normalizeUserLending } from 'pages/Loans/Loans.normalizer'
+import { DataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 import { State } from 'reducers'
 import { UserState, DEFAULT_USER } from 'reducers/wallet'
 import { MTokenType, MavrykUserGraphQl } from 'utils/TypesAndInterfaces/User'
@@ -81,7 +82,7 @@ export function detectNewlyRegisteredSatellite(snapshots: SatelliteSnapshot[], c
 export const fetchUserData = async (
   accountPkh: string,
   dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: any[], //State['dataFeeds']['feedsLedger'],
+  feeds: DataFeedsContext['feedsMapper'],
   avaliableCollaterals: State['tokens']['avaliableCollaterals'],
   whitelistTokens: State['tokens']['whitelistTokens'],
   currentBlockLevel: number | undefined = 0,
@@ -382,7 +383,6 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
     tokens: { dipDupTokens, avaliableCollaterals, whitelistTokens },
   } = getState()
 
-  const feedsLedger = [] as any[]
   const userAddressToLoadData = newAccAddress ?? accountPkh
 
   try {
