@@ -1,4 +1,4 @@
-const getTimestampByLevel = async (level: number): Promise<string> => {
+const getTimestampByLevel = async (level: number, signal?: AbortSignal): Promise<string> => {
   if (level) {
     try {
       const timestamp = await (
@@ -8,6 +8,7 @@ const getTimestampByLevel = async (level: number): Promise<string> => {
             'Content-type': 'application/json',
             Accept: 'application/json',
           },
+          signal,
         })
       ).json()
 
