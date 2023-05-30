@@ -36,6 +36,7 @@ import {
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
+import { checkNan } from 'utils/checkNan'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -74,7 +75,7 @@ export const WithdrawCollateral = ({
     [avaliableCollaterals, selectedAsset],
   )
 
-  const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
+  const inputAmount = checkNan(parseFloat(inputData.amount))
   const collateralRate = Number(selectedAsset?.rate)
   const { futureCollateralRatio, futureCollateralWithdraw, futureVaultCollateralBalance, currentCollateralToWithdraw } =
     useMemo(() => {

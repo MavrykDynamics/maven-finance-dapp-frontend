@@ -64,11 +64,15 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
         </NoItemsInTabStyled>
       )}
 
-      <TransactionHistory
-        transactionHistory={transactionHistory}
-        lendingControllerAddress={lendingControllerAddress}
-        styleType={SECONDARY_TRANSACTION_HISTORY_STYLE}
-      />
+      {accountPkh && (
+        <TransactionHistory
+          transactionHistory={transactionHistory}
+          filterByDescriptions={['Liquidity Added', 'Liquidity Removed']}
+          userAddress={accountPkh}
+          lendingControllerAddress={lendingControllerAddress}
+          styleType={SECONDARY_TRANSACTION_HISTORY_STYLE}
+        />
+      )}
     </LendingTabStyled>
   )
 }

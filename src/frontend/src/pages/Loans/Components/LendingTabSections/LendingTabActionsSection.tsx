@@ -54,6 +54,11 @@ export const LendingTabActionsSection = ({ lendingItem, assetData, lendAPY }: Le
 
   const isSupplyActiveTab = activeTab?.id === loansTabNames.SUPPLY
 
+  const futureMBalance = useMemo(
+    () => (isSupplyActiveTab ? mBalance + Number(inputData.amount) : mBalance - Number(inputData.amount)),
+    [inputData.amount, isSupplyActiveTab, mBalance],
+  )
+
   const isDisabledButton = useMemo(() => {
     return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionActive
   }, [inputData.validationStatus, isActionActive])
@@ -123,16 +128,16 @@ export const LendingTabActionsSection = ({ lendingItem, assetData, lendAPY }: Le
     isSupplyActiveTab
       ? onChangeHandler(getLoansInputMaxAmount(tokenBalance, assetData.decimals), tokenBalance)
       : onChangeHandler(
-          getLoansInputMaxAmount(Math.min(mBalance, lendValue), assetData.decimals),
-          Math.min(mBalance, lendValue),
+          getLoansInputMaxAmount(Math.min(mBalance, tokenBalance), assetData.decimals),
+          Math.min(mBalance, tokenBalance),
         )
-  }, [assetData.decimals, isSupplyActiveTab, lendValue, mBalance, onChangeHandler, tokenBalance])
+  }, [assetData.decimals, isSupplyActiveTab, tokenBalance, mBalance, onChangeHandler])
 
   const inputOnChangeHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChangeHandler(e.target.value, isSupplyActiveTab ? tokenBalance : Math.min(mBalance, lendValue))
+      onChangeHandler(e.target.value, isSupplyActiveTab ? tokenBalance : Math.min(mBalance, tokenBalance))
     },
-    [isSupplyActiveTab, lendValue, mBalance, onChangeHandler, tokenBalance],
+    [isSupplyActiveTab, mBalance, onChangeHandler, tokenBalance],
   )
 
   const inputProps: InputProps = useMemo(
@@ -198,9 +203,9 @@ export const LendingTabActionsSection = ({ lendingItem, assetData, lendAPY }: Le
             <div className="name">{isSupplyActiveTab ? `m${assetData.symbol} Received` : 'Amount To Withdraw'}</div>
             <CommaNumber value={Number(inputData.amount)} className="value" />
           </ThreeLevelListItem>
-          <ThreeLevelListItem className='right'>
+          <ThreeLevelListItem className="right">
             <div className="name">New m{assetData.symbol} Balance</div>
-            <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
+            <CommaNumber value={futureMBalance} className="value" />
           </ThreeLevelListItem>
         </div>
       </div>

@@ -284,7 +284,10 @@ export const BorrowingExpandCard = ({
 
   useEffect(() => {
     if (expanded && (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE)) {
-      console.log(expanded)
+      // TODO: use abort api 
+      const controller = new AbortController()
+      const signal = controller.signal
+
       ;(async () => {
         if (!levelOfEarly || !levelOfLate) {
           setTimerTimestamp(undefined)
@@ -292,8 +295,8 @@ export const BorrowingExpandCard = ({
         }
 
         const [timestampOfEarly, timestampOfLate] = await Promise.all([
-          getTimestampByLevel(levelOfEarly),
-          getTimestampByLevel(levelOfLate),
+          getTimestampByLevel(levelOfEarly, signal),
+          getTimestampByLevel(levelOfLate, signal),
         ])
 
         const timestamp =
@@ -301,8 +304,14 @@ export const BorrowingExpandCard = ({
 
         setTimerTimestamp(timestamp)
       })()
+
+      return () => {
+        controller.abort()
+      }
     }
-  }, [vaultStatus, levelOfEarly, levelOfLate])
+
+    return () => {}
+  }, [vaultStatus, levelOfEarly, levelOfLate, expanded])
 
   useEffect(() => {
     setExpanded(Boolean(isOpenedVault))
