@@ -137,6 +137,7 @@ export const fetchUserData = async (
         SATELLITE_ACTIONS_COUNT_QUERY_VARIABLE(accountPkh),
       )
 
+      // TODO wait when will be added cycle_id per action
       satelliteActionsCount = satelliteActionsData.governance_satellite[0].actions.length
     }
 
