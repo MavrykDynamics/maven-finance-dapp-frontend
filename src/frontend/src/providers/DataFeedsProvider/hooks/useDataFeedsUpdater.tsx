@@ -4,7 +4,7 @@ import { useSubscription } from '@apollo/client'
 import { useDataFeedsContext } from '../dataFeeds.provider'
 
 // subs
-import { getOrcaleStorageAggregatorQuery } from 'gql/queries/getFeedsStorage'
+import { SUBSCRIBE_FEEDS } from 'gql/queries/getFeedsStorage'
 import { useEffect, useState } from 'react'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { FeedsSubscriptionSkipsType } from '../helpers/feeds.types'
@@ -12,14 +12,13 @@ import { SUB_SUBSCRIBE, SUB_SKIP, SUB_QUERY } from 'utils/api/apollo.consts'
 
 export const useDataFeedsUpdater = (
   { skipFeedsSubscription }: FeedsSubscriptionSkipsType = { skipFeedsSubscription: SUB_SUBSCRIBE },
-  feedAddress?: string,
 ) => {
   const { updateDataFeeds } = useDataFeedsContext()
   const { updateTokensPrices } = useTokensContext()
 
   const [shouldSkip, setShouldSkip] = useState<FeedsSubscriptionSkipsType>({ skipFeedsSubscription })
 
-  const { loading: aggregatorLoading } = useSubscription(getOrcaleStorageAggregatorQuery(feedAddress), {
+  const { loading: aggregatorLoading } = useSubscription(SUBSCRIBE_FEEDS, {
     skip: shouldSkip.skipFeedsSubscription === SUB_SKIP,
     shouldResubscribe: true,
     onData: ({ data: response }) => {

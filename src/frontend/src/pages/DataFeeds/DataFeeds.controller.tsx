@@ -23,8 +23,6 @@ import {
 // types, actions
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
-import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
-
 // styles
 import { Page } from 'styles'
 import { DataFeedsSearchFilter, DataFeedsStyled } from './DataFeeds.styles'

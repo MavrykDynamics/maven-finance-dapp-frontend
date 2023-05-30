@@ -49,7 +49,6 @@ import { parseDate } from 'utils/time'
 
 // actions
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
 
 const tabsList = [
   {
@@ -65,9 +64,6 @@ const tabsList = [
 const DataFeedDetails = () => {
   const { search } = useLocation()
   const { feedId } = useParams<{ feedId: string }>()
-
-  // TODO: mb remove, cuz we need to sub on all feeds on init
-  useDataFeedsUpdater({}, feedId)
 
   const { feedsMapper, registerFeedAction } = useDataFeedsContext()
 

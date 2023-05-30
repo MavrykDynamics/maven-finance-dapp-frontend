@@ -1,7 +1,4 @@
-import { OperationVariables, TypedDocumentNode, gql as apolloGql } from '@apollo/client'
-import { DocumentNode } from 'graphql'
 import { gql } from 'utils/__generated__/gql'
-import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 
 // feeds rewards subsciption
 export const SUBSCRIBE_FEEDS_REWARDS_COUNT = gql(`
@@ -16,31 +13,17 @@ export const SUBSCRIBE_FEEDS_REWARDS_COUNT = gql(`
   }
 `)
 
-// feeds addresses subsciption
-export const SUBSCRIBE_FEEDS_ADDRESSES = gql(`
-  subscription FeedsAddressesSubscription {
-    aggregator {
-      address
-    }
-  }
-`)
-
 // feeds subsciption
-export const getOrcaleStorageAggregatorQuery = (
-  address?: string,
-): DocumentNode | TypedDocumentNode<SubsribeOracleDataFeedSubscription, OperationVariables> => {
-  const filterCond = address ? `address: {_eq: ${address}}` : 'address: {_neq: ""}'
-
-  return apolloGql(`
+export const SUBSCRIBE_FEEDS = gql(`
   subscription subsribeOracleDataFeed {
-    aggregator(where: {admin: {_neq: ""}, ${filterCond}}, order_by: {creation_timestamp: desc}) {
+    aggregator(where: { admin: { _neq: "" } }, order_by: { creation_timestamp: desc }) {
       address
       admin
       decimals
       factory {
         address
       }
-      history_data(distinct_on: timestamp, order_by: {timestamp: desc}) {
+      history_data(distinct_on: timestamp, order_by: { timestamp: desc }) {
         data
         timestamp
         aggregator {
@@ -74,5 +57,4 @@ export const getOrcaleStorageAggregatorQuery = (
       }
     }
   }
-`) as DocumentNode | TypedDocumentNode<SubsribeOracleDataFeedSubscription, OperationVariables>
-}
+`)

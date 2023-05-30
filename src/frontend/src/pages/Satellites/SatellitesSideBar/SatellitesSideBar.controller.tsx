@@ -15,6 +15,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -65,7 +66,8 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
   const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
 
   // onChain data points subscription
-  const { feedsAddresses, rewardsAmount } = useFeedsStats()
+  const { rewardsAmount } = useFeedsStats()
+  const { feedsAddresses } = useDataFeedsContext()
 
   const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
 
