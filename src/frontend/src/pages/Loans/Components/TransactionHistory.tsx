@@ -24,7 +24,9 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 type TransactionHistoryPropsType = {
   transactionHistory: LoanMarketType['transactionHistory']
+  filterByDescriptions?: string[]
   vaultAddress?: string
+  userAddress?: string
   lendingControllerAddress?: string
   styleType?: typeof PRIMARY_TRANSACTION_HISTORY_STYLE | typeof SECONDARY_TRANSACTION_HISTORY_STYLE
 }
@@ -32,25 +34,43 @@ type TransactionHistoryPropsType = {
 /**
  *
  * @param transactionHistory - transaction list, if the array is empty, you get the text "No transaction history to show".
+ * @param filterByDescriptions - if you want to get a transaction history for certain descriptions, you can specify this option. For ex.: ['Liquidity Added', 'Liquidity Removed']
  * @param vaultAddress - if you want to get a transaction history for one vault, you can specify this option.
+ * @param userAddress - if you want to get a transaction history for one user, you can specify this option.
  * @param lendingControllerAddress - if you want the lending controller addressto appear at the bottom left, you can specify this option.
  * @param styleType - you can set one of several background options. Use the constant from Loans.const.tsx.
  */
 export const TransactionHistory = ({
   transactionHistory,
+  filterByDescriptions,
   vaultAddress,
+  userAddress,
   lendingControllerAddress,
   styleType = PRIMARY_TRANSACTION_HISTORY_STYLE,
 }: TransactionHistoryPropsType) => {
   const { search } = useLocation()
 
   const history = useMemo(() => {
-    const historyTransaction = vaultAddress
-      ? transactionHistory.filter((item) => item.vaultAddress === vaultAddress)
-      : transactionHistory
+    const historyTransaction =
+      vaultAddress || userAddress
+        ? transactionHistory.filter((item) => {
+            // check if there is description in filters, if there is then skip the condition
+            if (
+              item.descr &&
+              filterByDescriptions &&
+              filterByDescriptions.length !== 0 &&
+              !filterByDescriptions.includes(item.descr)
+            )
+              return false
+
+            return (
+              (vaultAddress && item.vaultAddress === vaultAddress) || (userAddress && item.userAddress === userAddress)
+            )
+          })
+        : transactionHistory
 
     return historyTransaction
-  }, [transactionHistory, vaultAddress])
+  }, [filterByDescriptions, transactionHistory, userAddress, vaultAddress])
 
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
 
@@ -117,11 +137,7 @@ export const TransactionHistory = ({
         )}
       </div>
 
-      <Pagination
-        itemsCount={history?.length ?? 0}
-        listName={TRANSACTION_HISTORY_TABLE_NAME}
-        side={PAGINATION_SIDE_CENTER}
-      />
+      <Pagination itemsCount={history.length} listName={TRANSACTION_HISTORY_TABLE_NAME} side={PAGINATION_SIDE_CENTER} />
 
       {lendingControllerAddress ? (
         <div className="lending-controller">
