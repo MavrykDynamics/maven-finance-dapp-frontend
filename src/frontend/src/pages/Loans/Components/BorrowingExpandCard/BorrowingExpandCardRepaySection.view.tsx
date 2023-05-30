@@ -33,7 +33,6 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import colors from 'styles/colors'
 import { TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import { mathRoundTwoDigit } from 'utils/validatorFunctions'
 import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT } from 'texts/banners/vault.text'
 import { AVALIABLE_TO_BORROW, FEES_DUE } from 'texts/tooltips/vault.text'
@@ -82,8 +81,10 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const isRepayInFull = activeRepayTab?.id === loansTabNames.REPAY_IN_FULL
   const isMinimumRepayWarning =
     inputData.validationStatus === INPUT_STATUS_ERROR && inputAmount <= minimumRepay && totalOutstanding !== 0
-  const isNotRepayInFullWarning = isRepayInFull && mathRoundTwoDigit(totalOutstanding) !== inputAmount
+  const isNotRepayInFullWarning = isRepayInFull && totalOutstanding !== inputAmount
 
+  const futureBorrowedAmount = borrowedAmount - inputAmount < 0 ? 0 : borrowedAmount - inputAmount
+  const futureTotalOutstanding = totalOutstanding - inputAmount < 0 ? 0 : totalOutstanding - inputAmount
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = borrowedAsset
       ? calcCollateralRatio(currentCollateralBalance, borrowedAmount - inputAmount, borrowedAsset.rate)
@@ -148,13 +149,13 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           : ''
 
       setInputData({
-        amount: String(mathRoundTwoDigit(totalOutstanding)),
+        amount: String(totalOutstanding),
         validationStatus,
       })
     } else {
       setInputData(DEFAULT_LOANS_INPUT_VALUE)
     }
-  }, [activeRepayTab, totalOutstanding])
+  }, [activeRepayTab, borrowedAsset?.decimals, isRepayInFull, minimumRepay, totalOutstanding, userAssetBalance])
 
   const inputProps: InputProps = useMemo(
     () => ({
@@ -224,7 +225,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           <div className="line">
             <ThreeLevelListItem>
               <div className="name">Borrowed</div>
-              <CommaNumber value={borrowedAmount} className="value" />
+              <CommaNumber value={futureBorrowedAmount} className="value" />
             </ThreeLevelListItem>
 
             <ThreeLevelListItem>
@@ -241,7 +242,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Total Outstanding</div>
-              <CommaNumber value={mathRoundTwoDigit(totalOutstanding) || 0} className="value" />
+              <CommaNumber value={futureTotalOutstanding} className="value" showDecimal decimalsToShow={2} />
             </ThreeLevelListItem>
             <ThreeLevelListItem className="right">
               <div className="name">Collateral Value</div>
