@@ -19,6 +19,7 @@ import { SatellitesTab } from './TabScreens/SatellitesTab.controller'
 import { TreasuryTab } from './TabScreens/TreasuryTab.controller'
 import { VaultsTab } from './TabScreens/VaultsTab.controller'
 import { StakingTab } from './TabScreens/StakingTab.controller'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 const TabById = ({ activeTab, isDataLoading }: { activeTab: TabId; isDataLoading: boolean }) => {
   switch (activeTab) {
@@ -50,8 +51,12 @@ export const DashboardView = ({
   activeTab: TabId
   isLoading: boolean
 }) => {
+  const { loading, info } = useToasterContext()
+
   return (
     <DashboardStyled>
+      <div onClick={() => loading('Loading', 'body')}>loading</div>
+      <div onClick={() => info('info', 'body')}>info</div>
       <div className="top">
         <div className="tvlBlock">
           <BGPrimaryTitleStyled>Mavryk TVL</BGPrimaryTitleStyled>

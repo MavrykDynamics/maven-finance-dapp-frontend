@@ -62,8 +62,10 @@ export const ToasterMessages = () => {
   useEffect(() => {
     if (messages.length > TOASTS_LIMIT) {
       const messagesToRemoveCount = messages.length - TOASTS_LIMIT
+      const _messages = messages.filter((m) => m.type !== TOASTER_LOADING)
       for (let i = 0; i < messagesToRemoveCount; i++) {
-        removeToasterMessage(messages[i].unique)
+        if (!_messages[i]) break
+        removeToasterMessage(_messages[i].unique)
       }
     }
   }, [messages, removeToasterMessage])
