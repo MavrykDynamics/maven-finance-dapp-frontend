@@ -56,20 +56,22 @@ export default function TimeRemaining() {
   }
 
   useEffect(() => {
-    const setTimerData = async () => {
+    const { abort, fetch } = getTimestampByLevel(currentRoundEndLevel)
+
+    ;(async () => {
       try {
-        const duration = await getTimestampByLevel(currentRoundEndLevel)
+        const { data: duration } = await fetch()
         const convertedToTimestamp = new Date(duration).getTime()
         const isTimestampValid = convertedToTimestamp > Date.now()
 
         setTimerActive(isTimestampValid)
         if (isTimestampValid) setTimerDeadline(convertedToTimestamp)
       } catch (e) {
-        console.error('TimeRemaining, setTimerData error: ', e)
+        console.error('getting timestamp by lvl error: ', e)
       }
-    }
+    })()
 
-    setTimerData()
+    return () => abort()
   }, [currentRoundEndLevel])
 
   return (

@@ -84,17 +84,18 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   // Loading voting till time for proposal
   const [votingTill, setVotingTill] = useState<null | number>(null)
   useEffect(() => {
-    let ignore = false
+    const { abort, fetch } = getTimestampByLevel(proposal.currentCycleEndLevel)
 
-    const handleGetTimestampByLevel = async () => {
-      const res = await getTimestampByLevel(proposal.currentCycleEndLevel)
-      if (!ignore) setVotingTill(new Date(res).getTime())
-    }
-    handleGetTimestampByLevel()
+    ;(async () => {
+      try {
+        const { data: votingEndTimestamp } = await fetch()
+        setVotingTill(new Date(votingEndTimestamp).getTime())
+      } catch (e) {
+        console.error('getting timestamp by lvl error: ', e)
+      }
+    })()
 
-    return () => {
-      ignore = true
-    }
+    return () => abort()
   }, [proposal.currentCycleEndLevel])
 
   // store bytes that are opened

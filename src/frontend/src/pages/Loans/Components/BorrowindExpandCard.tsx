@@ -153,23 +153,31 @@ export const BorrowingExpandCard = ({
 
   useEffect(() => {
     if (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE) {
+      if (!levelOfEarly || !levelOfLate) return
+
+      const { abort: abortEarly, fetch: fetchEarly } = getTimestampByLevel(levelOfEarly)
+      const { abort: abortLate, fetch: fetchLate } = getTimestampByLevel(levelOfLate)
+
       ;(async () => {
-        if (!levelOfEarly || !levelOfLate) {
-          setTimerTimestamp(undefined)
-          return
+        try {
+          const [{ data: timestampOfEarly }, { data: timestampOfLate }] = await Promise.all([fetchEarly(), fetchLate()])
+
+          const timestamp =
+            new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
+
+          setTimerTimestamp(timestamp)
+        } catch (e) {
+          console.error('getting timestamp by lvl error: ', e)
         }
-
-        const [timestampOfEarly, timestampOfLate] = await Promise.all([
-          getTimestampByLevel(levelOfEarly),
-          getTimestampByLevel(levelOfLate),
-        ])
-
-        const timestamp =
-          new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
-
-        setTimerTimestamp(timestamp)
       })()
+
+      return () => {
+        abortEarly()
+        abortLate()
+      }
     }
+
+    return
   }, [vaultStatus, levelOfEarly, levelOfLate])
 
   useEffect(() => {

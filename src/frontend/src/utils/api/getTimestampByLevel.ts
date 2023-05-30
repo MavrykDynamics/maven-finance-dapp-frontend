@@ -1,22 +1,24 @@
-const getTimestampByLevel = async (level: number): Promise<string> => {
-  if (level) {
-    try {
-      const timestamp = await (
-        await fetch(`https://api.ghostnet.tzkt.io/v1/blocks/${level}/timestamp`, {
-          method: 'GET',
-          headers: {
-            'Content-type': 'application/json',
-            Accept: 'application/json',
-          },
-        })
-      ).json()
+import { z } from 'zod'
+import { APIReturnType, api } from './api'
 
-      return timestamp
-    } catch (error) {
-      console.error('getTimestampByLevel', error)
-    }
+const getTimestampByLevelSchema = z.string()
+
+const getTimestampByLevel = (level: number): APIReturnType<string> => {
+  const { abort, fetch } = api(
+    `https://api.ghostnet.tzkt.io/v1/blocks/${level}/timestamp`,
+    {
+      headers: {
+        'Content-type': 'application/json',
+        Accept: 'application/json',
+      },
+    },
+    getTimestampByLevelSchema,
+  )
+
+  return {
+    abort,
+    fetch,
   }
-  return ''
 }
 
 export default getTimestampByLevel

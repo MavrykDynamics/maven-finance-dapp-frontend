@@ -134,39 +134,37 @@ export const VaultsCard = (props: Props) => {
 
   const isMarkStatus = vaultsStatuses.MARK === status
 
-  const getCountdownTimestamp = async (levelOfEarly: number, levelOfLate: number) => {
-    const [timestampOfEarly, timestampOfLate] = await Promise.all([
-      getTimestampByLevel(levelOfEarly),
-      getTimestampByLevel(levelOfLate),
-    ])
-
-    return {
-      timestampOfEarly,
-      timestampOfLate,
-    }
-  }
-
   const liquidateModalHandler = () => {
     openLiquidateVaultPopup({ ...props })
   }
 
   useEffect(() => {
     if (status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.LIQUIDATABLE) {
+      if (!levelOfEarly || !levelOfLate) return
+
+      const { abort: abortEarly, fetch: fetchEarly } = getTimestampByLevel(levelOfEarly)
+      const { abort: abortLate, fetch: fetchLate } = getTimestampByLevel(levelOfLate)
+
       ;(async () => {
-        if (!levelOfEarly || !levelOfLate) {
-          setTimerTimestamp(undefined)
-          return
+        try {
+          const [{ data: timestampOfEarly }, { data: timestampOfLate }] = await Promise.all([fetchEarly(), fetchLate()])
+
+          const timestamp =
+            new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
+
+          setTimerTimestamp(timestamp)
+        } catch (e) {
+          console.error('getting timestamp by lvl error: ', e)
         }
-
-        const response = await getCountdownTimestamp(levelOfEarly, levelOfLate)
-        const timestamp =
-          new Date(response.timestampOfEarly).getTime() -
-          new Date(response.timestampOfLate).getTime() +
-          new Date().getTime()
-
-        setTimerTimestamp(timestamp)
       })()
+
+      return () => {
+        abortEarly()
+        abortLate()
+      }
     }
+
+    return () => null
   }, [status, levelOfEarly, levelOfLate])
 
   const headerSufix = <StatusFlag status={statusColor} text={status} className="sufix" />
