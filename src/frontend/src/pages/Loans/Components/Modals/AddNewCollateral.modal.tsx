@@ -41,6 +41,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
+import { checkNan } from 'utils/checkNan'
 
 type InputState =
   | {
@@ -138,7 +139,7 @@ export const AddNewCollateral = ({
 
   const { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance } = useMemo(() => {
     if (inputData) {
-      const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
+      const inputAmount = checkNan(parseFloat(inputData.amount))
       const selectedAsset = avaliableCollaterals.find(({ id }) => id === inputData?.id)
       const collateralRate = Number(selectedAsset?.rate)
 

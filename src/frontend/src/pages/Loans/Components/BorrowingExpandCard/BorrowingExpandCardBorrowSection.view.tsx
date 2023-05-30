@@ -32,6 +32,7 @@ import {
   SELECT_THE_AMOUNT_YOU_WOULD_LIKE_TO_BORROW,
 } from 'texts/banners/vault.text'
 import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault.text'
+import { checkNan } from 'utils/checkNan'
 
 type Props = {
   borrowedAsset: LoansVaultType['borrowedAsset']
@@ -58,13 +59,13 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   } = props
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
-  const parsedAmount = parseFloat(inputData.amount)
-  const inputAmount = isNaN(parsedAmount) ? 0 : parsedAmount
+  const inputAmount = checkNan(parseFloat(inputData.amount))
   const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
 
   const balanceSymbol = isTezosAsset(borrowedAsset?.gqlName ?? '') ? 'tezos' : borrowedAsset?.symbol.toLowerCase() ?? ''
   const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
 
+  // TODO: incapsulate to the separate component
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = borrowedAsset
       ? calcCollateralRatio(currentCollateralBalance, currentBorrowedAmount + inputAmount, borrowedAsset.rate)

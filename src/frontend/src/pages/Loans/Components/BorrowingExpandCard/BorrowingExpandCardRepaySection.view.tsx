@@ -37,6 +37,7 @@ import { mathRoundTwoDigit } from 'utils/validatorFunctions'
 import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT } from 'texts/banners/vault.text'
 import { AVALIABLE_TO_BORROW, FEES_DUE } from 'texts/tooltips/vault.text'
+import { checkNan } from 'utils/checkNan'
 
 type Props = {
   vaultId: number
@@ -72,8 +73,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   } = props
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
-  const parsedAmount = parseFloat(inputData.amount)
-  const inputAmount = isNaN(parsedAmount) ? 0 : parsedAmount
+  const inputAmount = checkNan(parseFloat(inputData.amount))
 
   const totalOutstanding = feesAmount + Number(borrowedAmount)
   const balanceSymbol = isTezosAsset(borrowedAsset?.gqlName ?? '') ? 'tezos' : borrowedAsset?.symbol.toLowerCase() ?? ''

@@ -29,6 +29,7 @@ import { calcCollateralRatio, getCollateralRatioByPersentage, getLoansInputMaxAm
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
+import { checkNan } from 'utils/checkNan'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -66,7 +67,7 @@ export const AddCollateral = ({
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
-  const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
+  const inputAmount = checkNan(parseFloat(inputData.amount))
   const collateralRate = Number(selectedAsset?.rate)
 
   const { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance } = useMemo(() => {

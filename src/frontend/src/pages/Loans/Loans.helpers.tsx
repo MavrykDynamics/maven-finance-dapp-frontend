@@ -489,7 +489,7 @@ export const getLoansInputMaxAmount = (amount: number = 0, decimals: number = as
 }
 
 /**
- * @param collateralRatio it is number from 0 to 250. Which ussualy useing for displaying collateral ratio in persentage
+ * @param collateralRatio is a number from 0 to 250. Which usually used to display collateral ratio in persentage
  * @returns number from 1 to 100. Use this result for currentPersentage prop into GradientDiagram component
  */
 export const getCollateralRatioByPersentage = (collateralRatio: number) => {
