@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -10,7 +9,6 @@ import { BreakGlassCouncilForm, actions } from './BreakGlassCouncilForms/BreakGl
 import { FormUpdateCouncilMemberView } from './BreakGlassCouncilForms/FormUpdateCouncilMember.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -24,10 +22,10 @@ import {
   signAction,
 } from './BreakGlassCouncil.actions'
 import { getCouncilStorage } from 'pages/Council/Council.actions'
-import { getBreakGlassConfig } from 'pages/BreakGlass/BreakGlass.actions'
 
 // types
 import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
+import { useBreakGlassConfigInit } from 'providers/BreakGlassProvider/hooks/useBreakGlassConfigInit'
 
 const titles = {
   membersName: 'Break Glass Council',
@@ -44,7 +42,9 @@ export function BreakGlassCouncil() {
       userAvatars: { breakGlassAvatar },
     },
   } = useSelector((state: State) => state.wallet)
-  const { isConfigLoaded } = useSelector((state: State) => state.breakGlass.config)
+
+  const { isLoading: isConfigLoaded } = useBreakGlassConfigInit()
+
   const {
     config: { councilMaxLength },
     breakGlassCouncilMembers,
@@ -77,7 +77,6 @@ export function BreakGlassCouncil() {
     try {
       await Promise.all(
         [
-          (!isConfigLoaded || isDepsChanged) && dispatch(getBreakGlassConfig()),
           (!isStorageLoaded || isDepsChanged) && dispatch(getCouncilStorage()),
           (!isBreakGlassCouncilMembersLoaded || isDepsChanged) && dispatch(getBreakGlassCouncilMembers()),
           (!isBreakGlassCouncilPastActionsLoaded || isDepsChanged) && dispatch(getBreakGlassCouncilPastActions()),
@@ -108,7 +107,7 @@ export function BreakGlassCouncil() {
     <Page>
       <PageHeader page={'break glass council'} avatar={breakGlassAvatar} />
 
-      {isLoading ? (
+      {isLoading && isConfigLoaded ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading break glass counsil</div>

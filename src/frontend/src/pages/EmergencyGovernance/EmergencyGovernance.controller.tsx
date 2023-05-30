@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from '../../reducers'
 
 import { getEmergencyGovernanceStorage } from './EmergencyGovernance.actions'
-import { getBreakGlassConfig } from '../BreakGlass/BreakGlass.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
@@ -16,15 +15,19 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 // providers
 import { DOORMAN_STATS_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { useBreakGlassContext } from 'providers/BreakGlassProvider/breakGlass.provider'
+import { useBreakGlassConfigInit } from 'providers/BreakGlassProvider/hooks/useBreakGlassConfigInit'
 
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { eGovProposals, isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const { glassBroken, isConfigLoaded: isBreakGlassConfigLoaded } = useSelector(
-    (state: State) => state.breakGlass.config,
-  )
+  const {
+    config: { glassBroken },
+  } = useBreakGlassContext()
+
+  useBreakGlassConfigInit()
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 
@@ -32,12 +35,7 @@ export const EmergencyGovernance = () => {
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
-      await Promise.all(
-        [
-          (!isBreakGlassConfigLoaded || isDepsChanged) && dispatch(getBreakGlassConfig()),
-          (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
-        ].filter(Boolean),
-      )
+      await Promise.all([(!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage())].filter(Boolean))
     } catch (e) {}
   }, [])
 

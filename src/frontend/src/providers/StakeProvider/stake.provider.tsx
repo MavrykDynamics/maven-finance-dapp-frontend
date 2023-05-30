@@ -9,7 +9,6 @@ import { convertNumberForClient, convertNumberForContractCall } from 'utils/calc
 import {
   SubscribeSmvkHistoryDataSubscription,
   SubscribeAdressBalanceSubscription,
-  SubscribeDoormanAddressBalanceSubscription,
   SubscribeMvkTokenTotalSubscription,
 } from 'utils/__generated__/graphql'
 
@@ -99,7 +98,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
     })
   }
 
-  updateTotalStakedMvk = (storage: SubscribeDoormanAddressBalanceSubscription) => {
+  updateTotalStakedMvk = (storage: SubscribeAdressBalanceSubscription) => {
     this.setState({
       context: {
         ...this.state.context,

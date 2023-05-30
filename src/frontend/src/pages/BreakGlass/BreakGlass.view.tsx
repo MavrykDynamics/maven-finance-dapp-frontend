@@ -28,12 +28,12 @@ import {
   BGWhitelist,
 } from './BreakGlass.style'
 import { FAQLink } from '../Satellites/SatellitesSideBar/SatelliteSideBar.style'
-import { BreakGlassStatusStorage } from 'utils/TypesAndInterfaces/BreakGlass'
+import { BreakGlassStatusStorage } from 'providers/BreakGlassProvider/breakGlass.provider.type'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 type BreakGlassViewProps = {
   glassBroken: boolean
-  whitelistDev: string
+  whitelistDev: string[]
   pauseAllActive: boolean
   breakGlassStatuses: BreakGlassStatusStorage
 }
@@ -124,7 +124,11 @@ export const BreakGlassView = ({
           <BGWhitelist>
             Whitelist Developers
             <div className="adress-list">
-              {whitelistDev ? <TzAddress tzAddress={whitelistDev} hasIcon /> : <div>None</div>}
+              {whitelistDev.length > 0 ? (
+                whitelistDev.map((devAddress) => <TzAddress key={devAddress} tzAddress={devAddress} hasIcon />)
+              ) : (
+                <div>None</div>
+              )}
             </div>
           </BGWhitelist>
           <div className="line"></div>
