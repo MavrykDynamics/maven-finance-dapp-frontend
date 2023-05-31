@@ -31,6 +31,8 @@ export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme }>`
 
       width: 30px;
       height: 30px;
+
+      fill: ${({ theme }) => theme.valueColor};
     }
   }
 
@@ -39,12 +41,6 @@ export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme }>`
 
     p {
       font-size: 14px;
-    }
-  }
-
-  &.isGraph {
-    svg {
-      fill: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
     }
   }
 `

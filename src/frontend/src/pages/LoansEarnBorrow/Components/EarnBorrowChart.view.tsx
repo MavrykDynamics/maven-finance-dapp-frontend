@@ -33,7 +33,7 @@ export const EarnBorrowChart = ({ data }: Props) => {
   const showChart = chartData.plots.length >= numberOfItemsToDisplay
 
   return (
-    <EarnBorrowChartStyled className={isGraph ? 'isGraph' : ''}>
+    <EarnBorrowChartStyled>
       {showChart && (
         <div className="switchMenu">
           <span>Supply Vol / 14 Days</span>
