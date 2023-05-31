@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useLockBodyScroll } from 'react-use'
 import { State } from 'reducers'
 
-// helpers
+// helpers, consts
 import {
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
@@ -13,6 +14,7 @@ import {
 import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { isValidRPCNode } from 'utils/validatorFunctions'
+import { stopPropagation } from 'utils/eventsHelpers/stopPropagation'
 
 // actions
 import { selectNewRPCNode, setNewRPCNodes } from './SettingsPopup.actions'
@@ -24,18 +26,21 @@ import {
   ThemeType,
 } from '../DarkThemeProvider/DarkThemeProvider.actions'
 
-// styles
+// types
+import { InputStatusType } from 'app/App.components/Input/Input.constants'
+import { RPCNodeType } from 'reducers/preferences'
+
+// views
 import Button from '../Button/NewButton'
 import Icon from '../Icon/Icon.view'
+import { ImageWithPlug } from '../Icon/ImageWithPlug'
 import { Input } from '../Input/NewInput'
 
-// types
-import { RPCNodeType } from 'reducers/preferences'
-import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { ImageWithPlug } from '../Icon/ImageWithPlug'
+// styles
 import { PopupContainer, PopupContainerWrapper } from '../popup/PopupMain.style'
 import { ChangeNodeNodesList, ChangeNodeNodesListItem, SettingsPopupBase } from '../popup/bases/SettingsPopup.style'
-import { useLockBodyScroll } from 'react-use'
+
+const MAX_NODES_AMOUNT = 3
 
 export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boolean; closeModal: () => void }) => {
   useLockBodyScroll(isModalOpened)
@@ -99,20 +104,18 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
 
   return (
     <PopupContainer onClick={closeModal} show={isModalOpened}>
-      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="settings">
+      <PopupContainerWrapper onClick={stopPropagation} className="settings">
         <button onClick={closeModal} className="close-modal" />
 
         <SettingsPopupBase>
           <div className="title">Change RPC Node</div>
 
           <ChangeNodeNodesList>
-            {RPC_NODES.map(({ title, url, nodeLogoUrl, isUser }, idx) => (
-              <ChangeNodeNodesListItem
-                key={title + idx}
-                onClick={() => setSelectedNode(url)}
-                isSelected={selectedNode === url}
-              >
-                {nodeLogoUrl ? <ImageWithPlug imageLink={`/images/${nodeLogoUrl}`} alt="node logo" /> : null}
+            {RPC_NODES.map(({ title, url, nodeLogoUrl, isUser }) => (
+              <ChangeNodeNodesListItem key={url} onClick={() => setSelectedNode(url)} isSelected={selectedNode === url}>
+                {nodeLogoUrl ? (
+                  <ImageWithPlug imageLink={`/images/${nodeLogoUrl}`} alt={`${title ?? url} node logo`} />
+                ) : null}
                 <span className={isUser ? 'user-node' : ''}>{isUser ? `Link: ${url}` : title}</span>
                 {isUser ? (
                   <div className="remove-node">
@@ -124,7 +127,7 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
               </ChangeNodeNodesListItem>
             ))}
 
-            {RPC_NODES.length < 3 ? (
+            {RPC_NODES.length < MAX_NODES_AMOUNT ? (
               <ChangeNodeNodesListItem className={`add_node ${expandedInput ? 'expanded' : ''}`}>
                 <div className="add-new-node-title">Add New Node</div>
                 <Input
