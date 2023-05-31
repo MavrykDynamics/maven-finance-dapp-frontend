@@ -45,6 +45,8 @@ export const RemoveAssetsFromLending = ({
     rate = 0,
     symbol = '',
     currentLendedAmount = 0,
+    reserveAmount = 0,
+    availableLiquidity = 0,
     decimals = 0,
     lendingAPY = 0,
     icon = '',
@@ -160,14 +162,21 @@ export const RemoveAssetsFromLending = ({
                   type: 'number',
                   onBlur: inputOnBlurHandle,
                   onFocus: onFocusHandler,
-                  onChange: (e) => onChangeHandler(e.target.value, Math.min(mBalance, currentLendedAmount)),
+                  onChange: (e) =>
+                    onChangeHandler(
+                      e.target.value,
+                      Math.min(mBalance, currentLendedAmount, reserveAmount + availableLiquidity),
+                    ),
                 }}
                 settings={{
                   balance: tokenBalance,
                   balanceAsset: symbol,
                   useMaxHandler: () =>
                     onChangeHandler(
-                      getLoansInputMaxAmount(Math.min(mBalance, currentLendedAmount), decimals),
+                      getLoansInputMaxAmount(
+                        Math.min(mBalance, currentLendedAmount, reserveAmount + availableLiquidity),
+                        decimals,
+                      ),
                       Math.min(mBalance, currentLendedAmount),
                     ),
                   inputStatus: inputData.validationStatus,

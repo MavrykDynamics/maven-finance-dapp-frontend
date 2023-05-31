@@ -70,7 +70,7 @@ export const AddNewCollateral = ({
     currentCollateralRatio = 0,
     borrowedAmount = 0,
     borrowedAssetRate = 0,
-    avaliableLiq = 0,
+    availableLiquidity = 0,
     borrowCapacity = 0,
     existingCollaterals,
   } = data ?? {}
@@ -147,14 +147,14 @@ export const AddNewCollateral = ({
 
       const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
       const futureBorrowCapacity = Math.min(
-        avaliableLiq,
+        Math.max(availableLiquidity, 0),
         futureCollateralBalance / 2 - borrowedAmount * borrowedAssetRate,
       )
 
       return { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance }
     }
     return { futureCollateralRatio: 0, futureBorrowCapacity: 0, futureCollateralBalance: 0 }
-  }, [inputData, avaliableCollaterals, vaultCollateralBalance, borrowedAmount, borrowedAssetRate, avaliableLiq])
+  }, [inputData, avaliableCollaterals, vaultCollateralBalance, borrowedAmount, borrowedAssetRate, availableLiquidity])
 
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
@@ -308,7 +308,7 @@ export const AddNewCollateral = ({
               <div className="name">
                 Available to Borrow{' '}
                 <CustomTooltip
-                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
                   iconId="info"
                   defaultStrokeColor={silverColor}
                 />
@@ -417,7 +417,7 @@ export const AddNewCollateral = ({
               <div className="name">
                 Available to Borrow{' '}
                 <CustomTooltip
-                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
                   iconId="info"
                   defaultStrokeColor={silverColor}
                 />

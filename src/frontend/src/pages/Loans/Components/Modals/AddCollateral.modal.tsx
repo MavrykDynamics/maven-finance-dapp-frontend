@@ -48,7 +48,7 @@ export const AddCollateral = ({
     borrowedAmount = 0,
     borrowedAssetRate = 0,
     borrowCapacity = 0,
-    avaliableLiq = 0,
+    availableLiquidity = 0,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -76,7 +76,7 @@ export const AddCollateral = ({
 
     const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
     const futureBorrowCapacity = Math.min(
-      avaliableLiq,
+      Math.max(availableLiquidity, 0),
       futureCollateralBalance / 2 - borrowedAmount * borrowedAssetRate,
     )
     return { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance }
@@ -87,7 +87,7 @@ export const AddCollateral = ({
     collateralRate,
     borrowedAmount,
     borrowedAssetRate,
-    avaliableLiq,
+    availableLiquidity,
   ])
 
   useEffect(() => {
@@ -177,7 +177,7 @@ export const AddCollateral = ({
               <div className="name">
                 Available to Borrow{' '}
                 <CustomTooltip
-                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
                   iconId="info"
                   defaultStrokeColor={silverColor}
                 />
@@ -240,7 +240,7 @@ export const AddCollateral = ({
               <div className="name">
                 Available to Borrow{' '}
                 <CustomTooltip
-                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
                   iconId="info"
                   defaultStrokeColor={silverColor}
                 />

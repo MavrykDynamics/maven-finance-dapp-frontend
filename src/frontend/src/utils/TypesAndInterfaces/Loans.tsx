@@ -90,7 +90,7 @@ export type LoansVaultType = {
   collateralRatio: number
   minimumRepay: number
   borrowCapacity: number
-  avaliableLiq: number
+  availableLiquidity: number
   apr: number
   fee: number
   address: string
