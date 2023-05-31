@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -63,12 +63,12 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
     setRpcNodeError(isValidRPC.errorMsg)
     setInputData((prev) => ({
       ...prev,
-      nodeValidation: isValidRPC.status ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+      nodeValidation: enteredNode === '' ? '' : isValidRPC.status ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
     }))
   }
 
   const confirmHandler = () => {
-    if (inputData) {
+    if (inputData.node && inputData.nodeValidation !== INPUT_STATUS_ERROR) {
       const newRPCNodes: Array<RPCNodeType> = [
         ...RPC_NODES,
         { title: inputData.node, url: inputData.node, isUser: true },
@@ -85,7 +85,8 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
     }
   }
 
-  const removeUserNode = () => {
+  const removeUserNode = (e: React.MouseEvent) => {
+    e.stopPropagation()
     const filteredNodes = RPC_NODES.filter(({ isUser }) => !isUser)
     const newSelectedNode = filteredNodes[0].url
 
@@ -93,6 +94,8 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
     dispatch(setNewRPCNodes(filteredNodes, true))
     dispatch(selectNewRPCNode(newSelectedNode, true))
   }
+
+  const confirmDisabled = Boolean(inputData.node) && inputData.nodeValidation !== INPUT_STATUS_SUCCESS
 
   return (
     <PopupContainer onClick={closeModal} show={isModalOpened}>
@@ -145,12 +148,7 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
             Changing node can improve stability and speed when the network is saturated.
           </div>
 
-          <Button
-            onClick={confirmHandler}
-            kind={BUTTON_PRIMARY}
-            form={BUTTON_WIDE}
-            disabled={inputData.nodeValidation !== INPUT_STATUS_SUCCESS}
-          >
+          <Button onClick={confirmHandler} kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={confirmDisabled}>
             <Icon id="okIcon" /> Confirm
           </Button>
 
