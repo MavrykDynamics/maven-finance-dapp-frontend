@@ -43,9 +43,7 @@ export type LoansChartsDataType = {
   collateralChartData: Array<SingleValueData>
   lendingChartData: Array<SingleValueData>
   lendBorrow24hDiff: {
-    last48hLending: number
     last24hLending: number
-    last48hBorrowing: number
     last24hBorrowing: number
   }
 }
