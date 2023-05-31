@@ -69,21 +69,21 @@ export class StakeProviderClass extends React.Component<Props, State> {
   }
 
   updateStakeActionContext = (newAction: StakeContext['action']) => {
-    this.setState({
+    this.setState((prevState) => ({
       context: {
-        ...this.state.context,
+        ...prevState.context,
         action: newAction,
       },
-    })
+    }))
   }
 
   updateStakeActionLoaderContext = (newLoaderValue: boolean) => {
-    this.setState({
+    this.setState((prevState) => ({
       context: {
-        ...this.state.context,
+        ...prevState.context,
         turnOfActionLoader: newLoaderValue,
       },
-    })
+    }))
   }
 
   updateStakeHistoryData = (smvkStorage: SubscribeSmvkHistoryDataSubscription) => {
