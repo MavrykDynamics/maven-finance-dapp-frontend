@@ -36,6 +36,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
 
 const Satellites = () => {
   const dispatch = useDispatch()
@@ -43,7 +44,11 @@ const Satellites = () => {
   const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
 
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
+  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
+    skipAddressBalance: SUB_SKIP,
+    skipStakeHistory: SUB_SKIP,
+    skipMvkTokenTotal: SUB_SKIP,
+  })
   const {
     user: { isSatellite, userTokens },
   } = useSelector((state: State) => state.wallet)
