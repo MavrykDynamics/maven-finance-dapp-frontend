@@ -1,3 +1,4 @@
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import {
   GovernanceSatelliteGraphQL,
@@ -145,3 +146,5 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
     ...actions,
   }
 }
+
+export const getValidationStatus = (status: boolean) => (status ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR)
