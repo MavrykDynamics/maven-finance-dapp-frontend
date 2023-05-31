@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -33,10 +33,13 @@ import { Input } from '../Input/NewInput'
 import { RPCNodeType } from 'reducers/preferences'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { ImageWithPlug } from '../Icon/ImageWithPlug'
-import { PopupContainerWrapper } from '../popup/PopupMain.style'
+import { PopupContainer, PopupContainerWrapper } from '../popup/PopupMain.style'
 import { ChangeNodeNodesList, ChangeNodeNodesListItem, SettingsPopupBase } from '../popup/bases/SettingsPopup.style'
+import { useLockBodyScroll } from 'react-use'
 
-export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) => {
+export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boolean; closeModal: () => void }) => {
+  useLockBodyScroll(isModalOpened)
+
   const dispatch = useDispatch()
   const { RPC_NODES, REACT_APP_RPC_PROVIDER } = useSelector((state: State) => state.preferences)
 
@@ -45,7 +48,7 @@ export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) 
     nodeValidation: '',
   })
   const [expandedInput, setExpandedInput] = useState(false)
-  const [selectedNodeByClick, setSelectedNodeByClick] = useState(REACT_APP_RPC_PROVIDER)
+  const [selectedNode, setSelectedNode] = useState(REACT_APP_RPC_PROVIDER)
   const [rpcNodeError, setRpcNodeError] = useState<null | string>(null)
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,80 +75,89 @@ export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) 
       ]
       dispatch(setNewRPCNodes(newRPCNodes))
       dispatch(selectNewRPCNode(inputData.node))
-      setSelectedNodeByClick(inputData.node)
+      setSelectedNode(inputData.node)
       setInputData({
         node: '',
         nodeValidation: '',
       })
     } else {
-      dispatch(selectNewRPCNode(selectedNodeByClick))
+      dispatch(selectNewRPCNode(selectedNode))
     }
   }
 
-  const removeUserNode = (nodeUrl: string) => dispatch(setNewRPCNodes(RPC_NODES.filter(({ url }) => url !== nodeUrl)))
+  const removeUserNode = () => {
+    const filteredNodes = RPC_NODES.filter(({ isUser }) => !isUser)
+    const newSelectedNode = filteredNodes[0].url
+
+    setSelectedNode(newSelectedNode)
+    dispatch(setNewRPCNodes(filteredNodes, true))
+    dispatch(selectNewRPCNode(newSelectedNode, true))
+  }
 
   return (
-    <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="settings">
-      <button onClick={closeModal} className="close-modal" />
+    <PopupContainer onClick={closeModal} show={isModalOpened}>
+      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="settings">
+        <button onClick={closeModal} className="close-modal" />
 
-      <SettingsPopupBase>
-        <div className="title">Change RPC Node</div>
+        <SettingsPopupBase>
+          <div className="title">Change RPC Node</div>
 
-        <ChangeNodeNodesList>
-          {RPC_NODES.map(({ title, url, nodeLogoUrl, isUser }, idx) => (
-            <ChangeNodeNodesListItem
-              key={title + idx}
-              onClick={() => setSelectedNodeByClick(url)}
-              isSelected={selectedNodeByClick === url}
-            >
-              {nodeLogoUrl ? <ImageWithPlug imageLink={`/images/${nodeLogoUrl}`} alt="node logo" /> : null}
-              <span className={isUser ? 'user-node' : ''}>{isUser ? `Link: ${url}` : title}</span>
-              {isUser ? (
-                <div className="remove-node">
-                  <Button kind={BUTTON_SIMPLE} isThin onClick={() => removeUserNode(url)}>
-                    <Icon id="delete" />
-                  </Button>
-                </div>
-              ) : null}
-            </ChangeNodeNodesListItem>
-          ))}
+          <ChangeNodeNodesList>
+            {RPC_NODES.map(({ title, url, nodeLogoUrl, isUser }, idx) => (
+              <ChangeNodeNodesListItem
+                key={title + idx}
+                onClick={() => setSelectedNode(url)}
+                isSelected={selectedNode === url}
+              >
+                {nodeLogoUrl ? <ImageWithPlug imageLink={`/images/${nodeLogoUrl}`} alt="node logo" /> : null}
+                <span className={isUser ? 'user-node' : ''}>{isUser ? `Link: ${url}` : title}</span>
+                {isUser ? (
+                  <div className="remove-node">
+                    <Button kind={BUTTON_SIMPLE} isThin onClick={removeUserNode}>
+                      <Icon id="delete" />
+                    </Button>
+                  </div>
+                ) : null}
+              </ChangeNodeNodesListItem>
+            ))}
 
-          {RPC_NODES.length < 3 ? (
-            <ChangeNodeNodesListItem className={`add_node ${expandedInput ? 'expanded' : ''}`}>
-              <div className="add-new-node-title">Add New Node</div>
-              <Input
-                settings={{ inputStatus: inputData.nodeValidation }}
-                inputProps={{
-                  onFocus: () => setExpandedInput(true),
-                  onBlur: () => setExpandedInput(false),
-                  onChange: handleChange,
-                  placeholder: 'https://...',
-                  type: 'text',
-                  value: inputData.node,
-                }}
-              />
-            </ChangeNodeNodesListItem>
-          ) : null}
-        </ChangeNodeNodesList>
+            {RPC_NODES.length < 3 ? (
+              <ChangeNodeNodesListItem className={`add_node ${expandedInput ? 'expanded' : ''}`}>
+                <div className="add-new-node-title">Add New Node</div>
+                <Input
+                  settings={{ inputStatus: inputData.nodeValidation }}
+                  inputProps={{
+                    onFocus: () => setExpandedInput(true),
+                    onBlur: () => setExpandedInput(false),
+                    onChange: handleChange,
+                    placeholder: 'https://...',
+                    type: 'text',
+                    value: inputData.node,
+                  }}
+                />
+              </ChangeNodeNodesListItem>
+            ) : null}
+          </ChangeNodeNodesList>
 
-        {rpcNodeError ? <div className="error-msg">Error: {rpcNodeError}</div> : null}
+          {rpcNodeError ? <div className="error-msg">Error: {rpcNodeError}</div> : null}
 
-        <div className="change-node-descr">
-          Changing node can improve stability and speed when the network is saturated.
-        </div>
+          <div className="change-node-descr">
+            Changing node can improve stability and speed when the network is saturated.
+          </div>
 
-        <Button
-          onClick={confirmHandler}
-          kind={BUTTON_PRIMARY}
-          form={BUTTON_WIDE}
-          disabled={inputData.nodeValidation !== INPUT_STATUS_SUCCESS}
-        >
-          <Icon id="okIcon" /> Confirm
-        </Button>
+          <Button
+            onClick={confirmHandler}
+            kind={BUTTON_PRIMARY}
+            form={BUTTON_WIDE}
+            disabled={inputData.nodeValidation !== INPUT_STATUS_SUCCESS}
+          >
+            <Icon id="okIcon" /> Confirm
+          </Button>
 
-        <Themes />
-      </SettingsPopupBase>
-    </PopupContainerWrapper>
+          <Themes />
+        </SettingsPopupBase>
+      </PopupContainerWrapper>
+    </PopupContainer>
   )
 }
 

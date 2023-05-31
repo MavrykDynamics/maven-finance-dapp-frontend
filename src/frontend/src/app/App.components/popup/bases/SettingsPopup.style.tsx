@@ -53,16 +53,40 @@ export const ChangeNodeNodesList = styled.div`
 export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean }>`
   display: flex;
   align-items: center;
-  position: relative;
-  padding: 20px;
+
   font-weight: 600;
   font-size: 18px;
   line-height: 18px;
+
   color: ${({ theme }) => theme.textColor};
-  margin-top: 12px;
   border-radius: 10px;
-  cursor: pointer;
   border: ${({ isSelected }) => (isSelected ? `1px solid ${cyanColor}` : `1px solid ${royalPurpleColor};`)};
+
+  position: relative;
+  height: 75px;
+  padding: 20px;
+  margin-top: 10px;
+
+  cursor: pointer;
+
+  .img-wrapper {
+    height: 35px;
+    width: 35px;
+    margin-right: 18px;
+  }
+
+  span {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    color: ${({ theme }) => theme.textColor};
+    font-size: 18px;
+    line-height: 18px;
+
+    &.user-node {
+      color: #6a6a9b;
+    }
+  }
 
   &.add_node {
     justify-content: space-between;
@@ -90,28 +114,11 @@ export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean }>`
         display: none;
       }
     }
-
-    .img-wrapper {
-      height: 35px;
-      width: 35px;
-      margin-right: 18px;
-    }
-
-    span {
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-      color: ${({ theme }) => theme.textColor};
-
-      &.user-node {
-        color: #6a6a9b;
-      }
-    }
   }
 
   .remove-node {
     position: absolute;
-    right: 10px;
+    right: -25px;
     top: 50%;
     transform: translateY(-50%);
 
