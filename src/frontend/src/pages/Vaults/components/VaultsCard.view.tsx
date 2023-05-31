@@ -6,7 +6,6 @@ import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.co
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
@@ -36,6 +35,7 @@ import { calculateCollateralShare } from '../calcFunctionsForVault'
 import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { vaultTabs } from '../Vaults.view'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+import { Button } from 'app/App.components/Button/Button.controller'
 
 const findStatusInfo = (
   status: string,

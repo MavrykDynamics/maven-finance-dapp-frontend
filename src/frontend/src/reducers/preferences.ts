@@ -17,7 +17,7 @@ export type RPCNodeType = {
   url: string
   title: string
   nodeLogoUrl?: string
-  isUser?: boolean
+  isUser: boolean
 }
 
 export interface PreferencesState {
@@ -37,8 +37,8 @@ export const preferencesDefaultState: PreferencesState = {
   changeNodePopupOpen: false,
   sidebarOpened: false,
   RPC_NODES: [
-    { title: 'MARIGOLD', url: mariGoldUrl, nodeLogoUrl: 'marigold_logo.png' },
-    { title: 'ECADLABS', url: ecadLabSUrl, nodeLogoUrl: 'ECAD_logo.png' },
+    { title: 'MARIGOLD', url: mariGoldUrl, nodeLogoUrl: 'marigold_logo.png', isUser: false },
+    { title: 'ECADLABS', url: ecadLabSUrl, nodeLogoUrl: 'ECAD_logo.png', isUser: false },
   ],
   REACT_APP_RPC_PROVIDER: ecadLabSUrl,
 }
