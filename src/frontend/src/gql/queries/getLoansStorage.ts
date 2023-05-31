@@ -55,11 +55,10 @@ export const LOANS_QUERY = `
               address
             }
           } 
-          loan_token {
-            loan_token_name
-            loan_token_address
-            
+          collateral_token {
+            token_name
             oracle_id
+            token_address
           }
         }
 
