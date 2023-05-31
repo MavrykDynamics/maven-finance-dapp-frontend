@@ -28,6 +28,7 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from './Actions/getLoansData.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 export const Market = () => {
   const dispatch = useDispatch()
@@ -186,7 +187,13 @@ export const Market = () => {
                 <CommaNumber value={currentToken.totalBorrowed} className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Reserve Amount</div>
+                <div className="name">
+                  Reserve Amount{' '}
+                  <CustomTooltip
+                    iconId="info"
+                    text="The required reserve amount of this asset's lending pool which is available for providers to withdraw from. If available Liquidity < Reserve Amount, interest rates will increase significantly until the reserve factor is restored."
+                  />
+                </div>
                 <CommaNumber value={currentToken.reserveAmount} className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
