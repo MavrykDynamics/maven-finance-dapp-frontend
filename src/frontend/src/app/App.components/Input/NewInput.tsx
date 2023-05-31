@@ -35,6 +35,7 @@ export const Input = ({
     inputStatus,
     inputSize,
     errorMessage: errorMessageFromProps,
+    showErrorMessage = true,
   },
 }: InputViewProps) => {
   const { status, errorMessage, handleChange } = useInputValidator({
@@ -85,7 +86,7 @@ export const Input = ({
       ) : null}
 
       {children && <InputPinnedChild className="pinned-child">{children}</InputPinnedChild>}
-      {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
+      {errorMessage && showErrorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
     </InputWrapper>
   )
 }

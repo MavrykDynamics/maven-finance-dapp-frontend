@@ -128,7 +128,7 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
               <ChangeNodeNodesListItem className={`add_node ${expandedInput ? 'expanded' : ''}`}>
                 <div className="add-new-node-title">Add New Node</div>
                 <Input
-                  settings={{ inputStatus: inputData.nodeValidation }}
+                  settings={{ inputStatus: inputData.nodeValidation, showErrorMessage: false }}
                   inputProps={{
                     onFocus: () => setExpandedInput(true),
                     onBlur: () => setExpandedInput(false),
