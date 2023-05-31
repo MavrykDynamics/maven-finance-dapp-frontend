@@ -97,15 +97,15 @@ export const getTransactionHistory = (
   feeds: State['dataFeeds']['feedsLedger'],
 ) =>
   history_data.reduce<TransactionHistoryReduceType>(
-    (acc, { type, amount, timestamp, sender_id, operation_hash, loan_token, vault }) => {
-      if (!loan_token) return acc
+    (acc, { type, amount, timestamp, sender_id, operation_hash, collateral_token, vault }) => {
+      if (!collateral_token) return acc
 
       const assetMetadata = getAssetMetadata({
-        tokenAddress: loan_token.loan_token_address,
-        tokenName: loan_token.loan_token_name,
+        tokenAddress: collateral_token.token_address,
+        tokenName: collateral_token.token_name,
         dipDupTokens,
         feeds,
-        oracleId: String(loan_token.oracle_id),
+        oracleId: String(collateral_token.oracle_id),
       })
 
       if (assetMetadata) {
