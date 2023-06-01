@@ -11,7 +11,7 @@ import {
   BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from '../Button/Button.constants'
-import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { isValidRPCNode } from 'utils/validatorFunctions'
 import { stopPropagation } from 'utils/eventsHelpers/stopPropagation'
@@ -41,6 +41,10 @@ import { PopupContainer, PopupContainerWrapper } from '../popup/PopupMain.style'
 import { ChangeNodeNodesList, ChangeNodeNodesListItem, SettingsPopupBase } from '../popup/bases/SettingsPopup.style'
 
 const MAX_NODES_AMOUNT = 3
+const DEFAULT_NODE_INPUT_STATE: { node: string; nodeValidation: InputStatusType } = {
+  node: '',
+  nodeValidation: INPUT_STATUS_DEFAULT,
+}
 
 export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boolean; closeModal: () => void }) => {
   useLockBodyScroll(isModalOpened)
@@ -48,10 +52,7 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
   const dispatch = useDispatch()
   const { RPC_NODES, REACT_APP_RPC_PROVIDER } = useSelector((state: State) => state.preferences)
 
-  const [inputData, setInputData] = useState<{ node: string; nodeValidation: InputStatusType }>({
-    node: '',
-    nodeValidation: '',
-  })
+  const [inputData, setInputData] = useState(DEFAULT_NODE_INPUT_STATE)
   const [expandedInput, setExpandedInput] = useState(false)
   const [selectedNode, setSelectedNode] = useState(REACT_APP_RPC_PROVIDER)
   const [rpcNodeError, setRpcNodeError] = useState<null | string>(null)
@@ -68,7 +69,8 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
     setRpcNodeError(isValidRPC.errorMsg)
     setInputData((prev) => ({
       ...prev,
-      nodeValidation: enteredNode === '' ? '' : isValidRPC.status ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+      nodeValidation:
+        enteredNode === '' ? INPUT_STATUS_DEFAULT : isValidRPC.status ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
     }))
   }
 
@@ -81,17 +83,14 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
       dispatch(setNewRPCNodes(newRPCNodes))
       dispatch(selectNewRPCNode(inputData.node))
       setSelectedNode(inputData.node)
-      setInputData({
-        node: '',
-        nodeValidation: '',
-      })
+      setInputData(DEFAULT_NODE_INPUT_STATE)
     } else {
       dispatch(selectNewRPCNode(selectedNode))
     }
   }
 
   const removeUserNode = (e: React.MouseEvent) => {
-    e.stopPropagation()
+    stopPropagation(e)
     const filteredNodes = RPC_NODES.filter(({ isUser }) => !isUser)
     const newSelectedNode = filteredNodes[0].url
 
@@ -100,7 +99,15 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
     dispatch(selectNewRPCNode(newSelectedNode, true))
   }
 
-  const confirmDisabled = Boolean(inputData.node) && inputData.nodeValidation !== INPUT_STATUS_SUCCESS
+  const nodeClickHandler = (nodeUrl: string) => {
+    setSelectedNode(nodeUrl)
+    setInputData(DEFAULT_NODE_INPUT_STATE)
+    setRpcNodeError(null)
+  }
+
+  const confirmDisabled =
+    (Boolean(inputData.node) && inputData.nodeValidation !== INPUT_STATUS_SUCCESS) ||
+    (!inputData.node && REACT_APP_RPC_PROVIDER === selectedNode)
 
   return (
     <PopupContainer onClick={closeModal} show={isModalOpened}>
@@ -112,7 +119,11 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
 
           <ChangeNodeNodesList>
             {RPC_NODES.map(({ title, url, nodeLogoUrl, isUser }) => (
-              <ChangeNodeNodesListItem key={url} onClick={() => setSelectedNode(url)} isSelected={selectedNode === url}>
+              <ChangeNodeNodesListItem
+                key={url}
+                onClick={() => nodeClickHandler(url)}
+                isSelected={selectedNode === url}
+              >
                 {nodeLogoUrl ? (
                   <ImageWithPlug imageLink={`/images/${nodeLogoUrl}`} alt={`${title ?? url} node logo`} />
                 ) : null}
