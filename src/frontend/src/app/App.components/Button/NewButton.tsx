@@ -62,16 +62,17 @@ const Button = ({
         if (onClick) {
           const callResult = onClick(e)
           if (callResult && typeof callResult.then === 'function') {
-            setLoading(true)
+            if (!ignoreLoading) setLoading(true)
+
             await callResult
-            setLoading(false)
+            if (!ignoreLoading) setLoading(false)
           }
         }
       } catch (e) {
-        setLoading(false)
+        if (!ignoreLoading) setLoading(false)
       }
     },
-    [onClick],
+    [onClick, ignoreLoading],
   )
 
   const buttonClasses = classNames(kind, form, animation, size, {
@@ -84,7 +85,7 @@ const Button = ({
 
   return (
     <ButtonStyled className={buttonClasses} onClick={loadingWrappedClickHandler} type={type} disabled={isDisabled}>
-      {isLoading && !ignoreLoading ? (
+      {isLoading ? (
         <div className="circle-spinner">
           <SpinnerCircleLoaderStyled />
         </div>
