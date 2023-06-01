@@ -10,6 +10,7 @@ export interface LoansState {
   config: {
     DAOFee: number
     loansControllerAddress: string
+    mvkTokenOperators: { ownerId: string; operatorId: string }[]
   }
 
   isDataLoaded: boolean
@@ -37,6 +38,7 @@ const loansDefaultState: LoansState = {
   config: {
     DAOFee: 0,
     loansControllerAddress: '',
+    mvkTokenOperators: [],
   },
   isDataLoaded: false,
 }

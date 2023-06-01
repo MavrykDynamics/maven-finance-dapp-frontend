@@ -5,7 +5,12 @@ import { FIXED_POINT_ACCURACY, BLOCKS_PER_MINUTE } from 'utils/constants'
 
 import { State } from 'reducers'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { LoansGQL, LoansVaultType, CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
+import {
+  LendingControllerGQL,
+  LoansVaultType,
+  CollateralType,
+  DepositorsFlagType,
+} from 'utils/TypesAndInterfaces/Loans'
 
 import { getAssetMetadata, calculateAccruedInterest, calcCollateralRatio } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -13,7 +18,7 @@ import { calculateVaultMaxLiquidationAmount, calculateLiquidationPrice } from '.
 import { vaultsStatuses } from './Vaults.consts'
 
 type VaultsStorageProps = {
-  lendingController: LoansGQL
+  lendingController: LendingControllerGQL
   accountPkh?: string
   feeds: State['dataFeeds']['feedsLedger']
   dipDupTokens: State['tokens']['dipDupTokens']
@@ -272,7 +277,7 @@ const normalizeCollateralAssets = ({
 }: {
   feeds: State['dataFeeds']['feedsLedger']
   dipDupTokens: State['tokens']['dipDupTokens']
-  collateralAssets: LoansGQL['vaults'][number]['collateral_balances']
+  collateralAssets: LendingControllerGQL['vaults'][number]['collateral_balances']
 }): {
   normalizedCollaterals: Array<CollateralType>
   totalRow: CollateralType

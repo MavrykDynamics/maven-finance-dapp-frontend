@@ -1,5 +1,10 @@
 import { State } from 'reducers'
-import { LoanMarketType, LoansGQL, UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
+import {
+  LoanMarketType,
+  LendingControllerGQL,
+  UserLendObjType,
+  MvkTokenOperatorGQL,
+} from 'utils/TypesAndInterfaces/Loans'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { UserState } from 'reducers/wallet'
 import { Mavryk_User } from 'utils/generated/graphqlTypes'
@@ -146,29 +151,41 @@ export const normalizeUserLending = ({
 
 // Normalizing lend\borrow market
 export const normalizeLoans = async ({
-  storage,
+  lendingController,
+  mvkTokenOperators: mvkTokenOperatorsStorage,
   dipDupData,
   mTokens,
   userMTokens,
   userAddres,
   feeds,
 }: {
-  storage: LoansGQL
+  lendingController: LendingControllerGQL
+  mvkTokenOperators: MvkTokenOperatorGQL[]
   dipDupData: State['tokens']['dipDupTokens']
   mTokens: State['tokens']['mTokens']
   userMTokens: UserState['userMTokens']
   userAddres?: string
   feeds: State['dataFeeds']['feedsLedger']
 }) => {
-  const interestTreasuryShare = calcWithoutDecimals(storage?.interest_treasury_share, storage.decimals)
-  const interestRateDecimals = storage?.interest_rate_decimals ?? 0
+  const mvkTokenOperators = mvkTokenOperatorsStorage?.map((item) => ({
+    operatorId: item.operator_id,
+    ownerId: item.owner_id,
+  }))
+
+  const interestTreasuryShare = calcWithoutDecimals(
+    lendingController?.interest_treasury_share,
+    lendingController.decimals,
+  )
+  const interestRateDecimals = lendingController?.interest_rate_decimals ?? 0
+
   const config = {
-    DAOFee: (storage?.minimum_loan_fee_pct ?? 0) / 100,
-    loansControllerAddress: storage?.address,
+    DAOFee: (lendingController?.minimum_loan_fee_pct ?? 0) / 100,
+    loansControllerAddress: lendingController?.address,
+    mvkTokenOperators,
   }
 
   try {
-    const loanTokens = await storage?.loan_tokens?.reduce<Promise<Array<LoanMarketType>>>(
+    const loanTokens = await lendingController?.loan_tokens?.reduce<Promise<Array<LoanMarketType>>>(
       async (promiseAcc, loanToken) => {
         const acc: LoanMarketType[] = await promiseAcc
 
@@ -246,7 +263,7 @@ export const normalizeLoans = async ({
           borrowing24hVolume,
 
           totalFeesEarned: lendingItem?.interestEarned ?? 0,
-          collateralFactor: storage.collateral_ratio / 10,
+          collateralFactor: lendingController.collateral_ratio / 10,
           reserveFactor: reserve_ratio / 100,
           reserveAmount: reserveAmount,
           borrowAPR: borrowAPR,
@@ -260,13 +277,13 @@ export const normalizeLoans = async ({
 
     return {
       loanTokens,
-      chartsData: getChartData(storage?.history_data, dipDupData, feeds),
+      chartsData: getChartData(lendingController?.history_data, dipDupData, feeds),
       config,
     }
   } catch (e) {
     console.log('normalizeLoans error:', e)
     return {
-      chartsData: getChartData(storage?.history_data, dipDupData, feeds),
+      chartsData: getChartData(lendingController?.history_data, dipDupData, feeds),
       loanTokens: [],
       config,
     }

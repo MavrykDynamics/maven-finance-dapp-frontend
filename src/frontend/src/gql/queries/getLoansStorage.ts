@@ -180,3 +180,15 @@ export const USER_LENDING_DATA_QUERY_NAME = 'GetLendBorrowHistoryPerUser'
 export const USER_LENDING_DATA_QUERY_VARIABLE = (userAddress?: string) => {
   return { userAddress: userAddress ?? '' }
 }
+
+export const MVK_TOKEN_OPERATOR_QUERY = `
+  query GetMvkTokenOperator {
+    mvk_token_operator {
+      operator_id
+      owner_id
+    }
+  }
+`
+
+export const MVK_TOKEN_OPERATOR_QUERY_NAME = 'GetMvkTokenOperator'
+export const MVK_TOKEN_OPERATOR_QUERY_VARIABLE = {}
