@@ -1,7 +1,6 @@
 export const LOANS_QUERY = `
   query GetLoansStorage {
     lending_controller(where: {mock_time: {_eq: false}}) {
-      address
       collateral_ratio
       interest_treasury_share
       interest_rate_decimals

@@ -17,7 +17,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import colors from 'styles/colors'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'

@@ -21,7 +21,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from 'app/App.components/Icon/Icon.view'
 
 import { LoansModalBase } from './Modals.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { State } from 'reducers'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'

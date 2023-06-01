@@ -67,7 +67,7 @@ export const BorrowingExpandCard = ({
   borrowedAmount,
   collateralRatio,
   borrowCapacity,
-  avaliableLiq,
+  availableLiquidity,
   minimumRepay,
   DAOFee,
   hideTransactionHistory,
@@ -223,7 +223,7 @@ export const BorrowingExpandCard = ({
       existingCollaterals: collateralData,
       borrowedAssetRate: borrowedAsset.rate,
       borrowCapacity,
-      avaliableLiq,
+      availableLiquidity,
     })
   }
 
@@ -236,7 +236,7 @@ export const BorrowingExpandCard = ({
       borrowedAmount,
       borrowedAssetRate: borrowedAsset.rate,
       borrowCapacity,
-      avaliableLiq,
+      availableLiquidity,
     })
   }
 
@@ -284,7 +284,7 @@ export const BorrowingExpandCard = ({
 
   useEffect(() => {
     if (expanded && (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE)) {
-      // TODO: use abort api 
+      // TODO: use abort api
       const controller = new AbortController()
       const signal = controller.signal
 

@@ -11,7 +11,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 import { LoansModalBase } from './Modals.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { State } from 'reducers'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { changeVaultNameAction } from 'pages/Loans/Actions/vault.actions'

@@ -12,7 +12,7 @@ import { depositLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.acti
 
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { LENDING_APY } from 'texts/tooltips/loan.text'

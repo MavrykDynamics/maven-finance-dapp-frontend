@@ -22,7 +22,7 @@ import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/Gradien
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { calcCollateralRatio, getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
@@ -49,7 +49,7 @@ export const AddCollateral = ({
     borrowedAmount = 0,
     borrowedAssetRate = 0,
     borrowCapacity = 0,
-    avaliableLiq = 0,
+    availableLiquidity = 0,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -77,7 +77,7 @@ export const AddCollateral = ({
 
     const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
     const futureBorrowCapacity = Math.min(
-      avaliableLiq,
+      Math.max(availableLiquidity, 0),
       futureCollateralBalance / 2 - borrowedAmount * borrowedAssetRate,
     )
     return { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance }
@@ -88,7 +88,7 @@ export const AddCollateral = ({
     collateralRate,
     borrowedAmount,
     borrowedAssetRate,
-    avaliableLiq,
+    availableLiquidity,
   ])
 
   useEffect(() => {
@@ -178,7 +178,7 @@ export const AddCollateral = ({
               <div className="name">
                 Available to Borrow{' '}
                 <CustomTooltip
-                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
                   iconId="info"
                   defaultStrokeColor={silverColor}
                 />
@@ -241,7 +241,7 @@ export const AddCollateral = ({
               <div className="name">
                 Available to Borrow{' '}
                 <CustomTooltip
-                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
                   iconId="info"
                   defaultStrokeColor={silverColor}
                 />

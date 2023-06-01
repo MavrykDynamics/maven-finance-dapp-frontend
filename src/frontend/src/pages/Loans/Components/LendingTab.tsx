@@ -21,13 +21,22 @@ type LendingTabPropsType = {
   lendingControllerAddress: string
   assetData: LoanMarketType['loanTokenData']
   lendAPY: number
+  marketAvailableLiquidity: number
+  marketReserveAmount: number
 }
 
-export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, lendAPY }: LendingTabPropsType) => {
+export const LendingTab = ({
+  lendingItem,
+  lendingControllerAddress,
+  assetData,
+  lendAPY,
+  marketReserveAmount,
+  marketAvailableLiquidity,
+}: LendingTabPropsType) => {
   const { openAddLendingAssetPopup } = useContext(loansPopupsContext)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
   const { loanTokens } = useSelector((state: State) => state.loans)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const transactionHistory = useMemo(() => {
     return loanTokens.find(({ loanTokenData }) => loanTokenData.symbol === assetData.symbol)?.transactionHistory ?? []
@@ -38,7 +47,13 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
       {lendingItem ? (
         <div className="stats-and-actions">
           <LendingTabValuesSection lendingItem={lendingItem} assetData={assetData} lendAPY={lendAPY} />
-          <LendingTabActionsSection lendingItem={lendingItem} assetData={assetData} lendAPY={lendAPY} />
+          <LendingTabActionsSection
+            lendingItem={lendingItem}
+            assetData={assetData}
+            lendAPY={lendAPY}
+            marketReserveAmount={marketReserveAmount}
+            marketAvailableLiquidity={marketAvailableLiquidity}
+          />
         </div>
       ) : (
         <NoItemsInTabStyled>

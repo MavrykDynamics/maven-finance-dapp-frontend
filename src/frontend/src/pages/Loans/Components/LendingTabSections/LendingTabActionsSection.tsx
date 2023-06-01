@@ -31,9 +31,17 @@ type LendingTabPropsType = {
   lendingItem: LendingItemType
   assetData: LoanMarketType['loanTokenData']
   lendAPY: number
+  marketAvailableLiquidity: number
+  marketReserveAmount: number
 }
 
-export const LendingTabActionsSection = ({ lendingItem, assetData, lendAPY }: LendingTabPropsType) => {
+export const LendingTabActionsSection = ({
+  lendingItem,
+  assetData,
+  lendAPY,
+  marketAvailableLiquidity,
+  marketReserveAmount,
+}: LendingTabPropsType) => {
   const { openConfirmAddLendingAssetPopup, openConfirmRemoveLendingAssetPopup } = useContext(loansPopupsContext)
 
   const {
@@ -85,6 +93,8 @@ export const LendingTabActionsSection = ({ lendingItem, assetData, lendAPY }: Le
           mBalance,
           lendingAPY: lendAPY,
           currentLendedAmount: lendValue,
+          availableLiquidity: marketAvailableLiquidity,
+          reserveAmount: marketReserveAmount,
           ...assetData,
         })
         break

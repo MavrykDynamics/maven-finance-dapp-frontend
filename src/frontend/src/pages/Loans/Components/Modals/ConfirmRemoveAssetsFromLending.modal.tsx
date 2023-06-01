@@ -9,7 +9,7 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.component
 import { ConfirmRemoveLendingAssetDataType } from './Modals.helpers'
 import { withdrawLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
 
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'

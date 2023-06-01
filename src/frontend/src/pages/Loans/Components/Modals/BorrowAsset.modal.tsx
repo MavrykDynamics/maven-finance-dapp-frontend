@@ -15,7 +15,7 @@ import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/Gradien
 import Icon from 'app/App.components/Icon/Icon.view'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'

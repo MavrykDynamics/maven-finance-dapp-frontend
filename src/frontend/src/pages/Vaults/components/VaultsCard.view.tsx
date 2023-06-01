@@ -6,13 +6,13 @@ import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.co
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/BorrowingExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { OldBorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/OldBorrowingExpandCard'
 import { vaultTabs } from '../Vaults.view'
+import { Button } from 'app/App.components/Button/Button.controller'
 
 // styles
 import { VaultsCardDropDown } from './../Vaults.style'

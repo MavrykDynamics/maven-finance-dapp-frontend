@@ -254,7 +254,11 @@ export const Loans = () => {
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Available Liquidity</div>
-                        <CommaNumber value={availableLiquidity * rate} className="value" beginningText="$" />
+                        <CommaNumber
+                          value={Math.max(availableLiquidity, 0) * rate}
+                          className="value"
+                          beginningText="$"
+                        />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Borrowers</div>

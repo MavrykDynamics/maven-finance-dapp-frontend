@@ -20,7 +20,6 @@ import { assetDecimalsToShow } from './Loans.const'
 
 // CONST FOR HELPERS
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
-const ONE_WEEK_IN_MS = ONE_DAY_IN_MS * 7
 const TWO_WEEKS_IN_MS = ONE_DAY_IN_MS * 14
 
 // GET ASSET METADATA
@@ -216,9 +215,6 @@ export const getChartData = (
       if (assetMetadata) {
         const operationTimestampAndNowDiffInMs = new Date(Date.now()).getTime() - new Date(timestamp).getTime()
         const isLast24hOperation = operationTimestampAndNowDiffInMs <= ONE_DAY_IN_MS
-        const islast48hOperation =
-          operationTimestampAndNowDiffInMs <= ONE_DAY_IN_MS * 2 && operationTimestampAndNowDiffInMs >= ONE_DAY_IN_MS
-        const isLastWeekOperation = operationTimestampAndNowDiffInMs <= ONE_WEEK_IN_MS
 
         // Added liquidity (lended)
         if (type === 0) {
@@ -227,16 +223,10 @@ export const getChartData = (
             acc.lendBorrow24hDiff.last24hLending += lendedAmount
           }
 
-          if (islast48hOperation) {
-            acc.lendBorrow24hDiff.last48hLending += lendedAmount
-          }
-
-          if (isLastWeekOperation) {
-            acc.lendingChartData.push({
-              time: new Date(timestamp).getTime() as UTCTimestamp,
-              value: (acc.lendingChartData.at(-1)?.value ?? 0) + lendedAmount,
-            })
-          }
+          acc.lendingChartData.push({
+            time: new Date(timestamp).getTime() as UTCTimestamp,
+            value: (acc.lendingChartData.at(-1)?.value ?? 0) + lendedAmount,
+          })
         }
 
         // Removed liquidity (paid lended)
@@ -246,16 +236,10 @@ export const getChartData = (
             acc.lendBorrow24hDiff.last24hLending -= lendedAmount
           }
 
-          if (islast48hOperation) {
-            acc.lendBorrow24hDiff.last48hLending -= lendedAmount
-          }
-
-          if (isLastWeekOperation) {
-            acc.lendingChartData.push({
-              time: new Date(timestamp).getTime() as UTCTimestamp,
-              value: (acc.lendingChartData.at(-1)?.value ?? 0) - lendedAmount,
-            })
-          }
+          acc.lendingChartData.push({
+            time: new Date(timestamp).getTime() as UTCTimestamp,
+            value: (acc.lendingChartData.at(-1)?.value ?? 0) - lendedAmount,
+          })
         }
 
         // Borrowed
@@ -265,16 +249,10 @@ export const getChartData = (
             acc.lendBorrow24hDiff.last24hBorrowing += borrowedAmount
           }
 
-          if (islast48hOperation) {
-            acc.lendBorrow24hDiff.last48hBorrowing += borrowedAmount
-          }
-
-          if (isLastWeekOperation) {
-            acc.borrowingChartData.push({
-              time: new Date(timestamp).getTime() as UTCTimestamp,
-              value: (acc.borrowingChartData.at(-1)?.value ?? 0) + borrowedAmount,
-            })
-          }
+          acc.borrowingChartData.push({
+            time: new Date(timestamp).getTime() as UTCTimestamp,
+            value: (acc.borrowingChartData.at(-1)?.value ?? 0) + borrowedAmount,
+          })
         }
 
         // Paid borrowed (repaid)
@@ -284,40 +262,30 @@ export const getChartData = (
             acc.lendBorrow24hDiff.last24hBorrowing -= borrowedAmount
           }
 
-          if (islast48hOperation) {
-            acc.lendBorrow24hDiff.last48hBorrowing -= borrowedAmount
-          }
-
-          if (isLastWeekOperation) {
-            acc.borrowingChartData.push({
-              time: new Date(timestamp).getTime() as UTCTimestamp,
-              value: (acc.borrowingChartData.at(-1)?.value ?? 0) - borrowedAmount,
-            })
-          }
+          acc.borrowingChartData.push({
+            time: new Date(timestamp).getTime() as UTCTimestamp,
+            value: (acc.borrowingChartData.at(-1)?.value ?? 0) - borrowedAmount,
+          })
         }
 
         // Deposit collateral
         if (type === 4 || type === 6) {
           const collateralAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
 
-          if (isLastWeekOperation) {
-            acc.collateralChartData.push({
-              value: (acc.collateralChartData.at(-1)?.value ?? 0) + collateralAmount,
-              time: new Date(timestamp).getTime() as UTCTimestamp,
-            })
-          }
+          acc.collateralChartData.push({
+            value: (acc.collateralChartData.at(-1)?.value ?? 0) + collateralAmount,
+            time: new Date(timestamp).getTime() as UTCTimestamp,
+          })
         }
 
         // Withdraw collateral
         if (type === 5 || type === 7) {
           const collateralAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
 
-          if (isLastWeekOperation) {
-            acc.collateralChartData.push({
-              value: (acc.collateralChartData.at(-1)?.value ?? 0) - collateralAmount,
-              time: new Date(timestamp).getTime() as UTCTimestamp,
-            })
-          }
+          acc.collateralChartData.push({
+            value: (acc.collateralChartData.at(-1)?.value ?? 0) - collateralAmount,
+            time: new Date(timestamp).getTime() as UTCTimestamp,
+          })
         }
       }
 
@@ -328,9 +296,7 @@ export const getChartData = (
       collateralChartData: [],
       lendingChartData: [],
       lendBorrow24hDiff: {
-        last48hLending: 0,
         last24hLending: 0,
-        last48hBorrowing: 0,
         last24hBorrowing: 0,
       },
     },

@@ -4,7 +4,7 @@ import { Redirect, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 
 // const
-import { ACTION_SIMPLE, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 
 // view
@@ -37,9 +37,13 @@ export const Market = () => {
   const {
     loanTokens,
     isDataLoaded,
-    config: { loansControllerAddress },
     vaults: { allVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
+
+  const {
+    lendingController: { address: lendingControllerAddress },
+  } = useSelector((state: State) => state.contractAddresses)
+
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
@@ -134,17 +138,6 @@ export const Market = () => {
     </MarketPagination>
   )
 
-  const tabsNav = (
-    <div className="tabs-nav">
-      <Link to={`/loans/${assetId}/${LEND_TAB_ID}`}>
-        <Button text={'My Lending'} kind={ACTION_SIMPLE} className={`${tabId === LEND_TAB_ID ? 'active' : ''}`} />
-      </Link>
-      <Link to={`/loans/${assetId}/${BORROW_TAB_ID}`}>
-        <Button text={'My Borrowing'} kind={ACTION_SIMPLE} className={`${tabId === BORROW_TAB_ID ? 'active' : ''}`} />
-      </Link>
-    </div>
-  )
-
   return (
     <Page>
       <MarketPageHeader assetId={assetId} currentAsset={currentToken} />
@@ -186,7 +179,7 @@ export const Market = () => {
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Available Liquidity</div>
-                <CommaNumber value={currentToken.availableLiquidity} beginningText="$" className="value" />
+                <CommaNumber value={Math.max(currentToken.availableLiquidity, 0)} beginningText="$" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Collateral Factor</div>
@@ -239,13 +232,15 @@ export const Market = () => {
         {tabId === LEND_TAB_ID ? (
           <LendingTab
             lendingItem={currentToken.lendingItem}
-            lendingControllerAddress={loansControllerAddress}
+            lendingControllerAddress={lendingControllerAddress}
             assetData={currentToken.loanTokenData}
             lendAPY={currentToken.lendingAPY}
+            marketAvailableLiquidity={currentToken.availableLiquidity}
+            marketReserveAmount={currentToken.reserveAmount}
           />
         ) : null}
         {tabId === BORROW_TAB_ID ? (
-          <BorrowingTab lendingControllerAddress={loansControllerAddress} currentToken={currentToken} />
+          <BorrowingTab lendingControllerAddress={lendingControllerAddress} currentToken={currentToken} />
         ) : null}
       </MarketStyled>
     </Page>
