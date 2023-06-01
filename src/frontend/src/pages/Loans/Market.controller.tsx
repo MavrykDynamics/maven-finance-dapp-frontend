@@ -32,7 +32,10 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 export const Market = () => {
   const dispatch = useDispatch()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
-  const { loanTokens, loansControllerAddress, isDataLoaded } = useSelector((state: State) => state.loans)
+  const { loanTokens, isDataLoaded } = useSelector((state: State) => state.loans)
+  const {
+    lendingController: { address: lendingControllerAddress },
+  } = useSelector((state: State) => state.contractAddresses)
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const { isLoading } = useDataLoader(
@@ -206,14 +209,14 @@ export const Market = () => {
         {tabId === LEND_TAB_ID ? (
           <LendingTab
             lendingItem={currentToken.lendingItem}
-            lendingControllerAddress={loansControllerAddress}
+            lendingControllerAddress={lendingControllerAddress}
             assetData={currentToken.loanTokenData}
             lendAPY={currentToken.lendingAPY}
           />
         ) : null}
         {tabId === BORROW_TAB_ID ? (
           <BorrowingTab
-            lendingControllerAddress={loansControllerAddress}
+            lendingControllerAddress={lendingControllerAddress}
             currentMarketAsset={currentToken.loanTokenData.gqlName}
           />
         ) : null}
