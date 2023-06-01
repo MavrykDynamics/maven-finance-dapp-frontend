@@ -22,7 +22,7 @@ import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/Gradien
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'

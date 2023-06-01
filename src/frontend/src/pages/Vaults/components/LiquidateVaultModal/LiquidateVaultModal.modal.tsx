@@ -7,11 +7,10 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import Toggle from 'app/App.components/Toggle/Toggle.view'
-import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 
 // styles
 import { LiquidateVaultModalStyled } from './LiquidateVaultModal.styles'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 
 // helpers
@@ -27,6 +26,7 @@ import { InputProps } from 'app/App.components/Input/newInput.type'
 // actions
 import { liquidateVault } from 'pages/Vaults/Vaults.actions'
 import { State } from 'reducers'
+import { Button } from 'app/App.components/Button/Button.controller'
 
 const columnWidth = '33%'
 const rowHeight = 30
