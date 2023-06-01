@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useLockBodyScroll } from 'react-use'
+import { useClickAway, useLockBodyScroll } from 'react-use'
 import { State } from 'reducers'
 
 // helpers, consts
@@ -51,6 +51,11 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
 
   const dispatch = useDispatch()
   const { RPC_NODES, REACT_APP_RPC_PROVIDER } = useSelector((state: State) => state.preferences)
+
+  const inputRef = useRef<HTMLInputElement>(null)
+  const inputWrapperRef = useRef<HTMLDivElement>(null)
+
+  useClickAway(inputWrapperRef, () => setExpandedInput(false))
 
   const [inputData, setInputData] = useState(DEFAULT_NODE_INPUT_STATE)
   const [expandedInput, setExpandedInput] = useState(false)
@@ -127,7 +132,7 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
                 {nodeLogoUrl ? (
                   <ImageWithPlug imageLink={`/images/${nodeLogoUrl}`} alt={`${title ?? url} node logo`} />
                 ) : null}
-                <span className={isUser ? 'user-node' : ''}>{isUser ? `Link: ${url}` : title}</span>
+                <span className={isUser ? 'user-node' : ''}>{isUser ? url : title}</span>
                 {isUser ? (
                   <div className="remove-node">
                     <Button kind={BUTTON_SIMPLE} isThin onClick={removeUserNode}>
@@ -139,18 +144,22 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
             ))}
 
             {RPC_NODES.length < MAX_NODES_AMOUNT ? (
-              <ChangeNodeNodesListItem className={`add_node ${expandedInput ? 'expanded' : ''}`}>
+              <ChangeNodeNodesListItem
+                className={`add_node ${expandedInput ? 'expanded' : ''}`}
+                onClick={() => inputRef.current?.focus()}
+                ref={inputWrapperRef}
+              >
                 <div className="add-new-node-title">Add New Node</div>
                 <Input
                   settings={{ inputStatus: inputData.nodeValidation, showErrorMessage: false }}
                   inputProps={{
                     onFocus: () => setExpandedInput(true),
-                    onBlur: () => setExpandedInput(false),
                     onChange: handleChange,
                     placeholder: 'https://...',
                     type: 'text',
                     value: inputData.node,
                   }}
+                  ref={inputRef}
                 />
               </ChangeNodeNodesListItem>
             ) : null}

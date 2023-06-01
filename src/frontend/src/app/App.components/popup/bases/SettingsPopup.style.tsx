@@ -84,7 +84,8 @@ export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean }>`
     line-height: 18px;
 
     &.user-node {
-      color: #6a6a9b;
+      font-size: 16px;
+      line-height: 16px;
     }
   }
 
@@ -100,6 +101,7 @@ export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean }>`
       color: ${({ theme }) => theme.textColor};
       white-space: nowrap;
       margin-right: 10px;
+      pointer-events: none;
     }
 
     input {
