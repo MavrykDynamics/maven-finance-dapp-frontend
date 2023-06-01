@@ -195,7 +195,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           borrowedAmount,
           borrowCapacity: Math.min(
             vaultCollateral.totalRow.amount / 2 - borrowedAmount * loanTokenMetadata.rate,
-            availableLiquidity,
+            Math.max(availableLiquidity, 0),
           ),
           availableLiquidity,
           minimumRepay: convertNumberForClient({

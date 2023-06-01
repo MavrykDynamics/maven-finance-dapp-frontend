@@ -165,7 +165,7 @@ export const RemoveAssetsFromLending = ({
                   onChange: (e) =>
                     onChangeHandler(
                       e.target.value,
-                      Math.min(mBalance, currentLendedAmount, reserveAmount + availableLiquidity),
+                      Math.max(Math.min(mBalance, currentLendedAmount, reserveAmount + availableLiquidity), 0),
                     ),
                 }}
                 settings={{
@@ -174,10 +174,10 @@ export const RemoveAssetsFromLending = ({
                   useMaxHandler: () =>
                     onChangeHandler(
                       getLoansInputMaxAmount(
-                        Math.min(mBalance, currentLendedAmount, reserveAmount + availableLiquidity),
+                        Math.max(Math.min(mBalance, currentLendedAmount, reserveAmount + availableLiquidity), 0),
                         decimals,
                       ),
-                      Math.min(mBalance, currentLendedAmount),
+                      Math.max(Math.min(mBalance, currentLendedAmount, reserveAmount + availableLiquidity), 0),
                     ),
                   inputStatus: inputData.validationStatus,
                   convertedValue: Number(inputData.amount) * rate,
