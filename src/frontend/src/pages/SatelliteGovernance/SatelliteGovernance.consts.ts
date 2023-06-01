@@ -125,6 +125,30 @@ export const SATELLITE_GOVERNANCE_CONTENT_FORM = new Map([
   ],
 ])
 
+export const SATELLITE_GOVERNANCE_ACTIONS = [
+  'Suspend Satellite',
+  'Unsuspend Satellite',
+  'Ban Satellite',
+  'Unban Satellite',
+  'Remove Oracles',
+  'Remove from Aggregator',
+  'Add to Aggregator',
+  'Restore Satellite',
+  // TODO: commented according to [MAV-1404]
+  'Set Aggregator Maintainer',
+  'Update Aggregator Status',
+  'Register Aggregator',
+  'Fix Mistaken Transfer',
+] as const
+
+export const SATELLITE_GOVERNANCE_MENU_TABS = {
+  ONGOING: 'ongoing',
+  PAST: 'past',
+  MY: 'my',
+} as const
+
+export const SATELLITE_GOVERNANCE_PATHNAME = '/satellite-governance'
+
 export const SATELLITE_GOVERNANCE_TOKEN_TYPES: Array<TokenType> = ['fa12', 'fa2', 'tez']
 export const SATELLITE_GOVERNANCE_DEFAULT_TABLE: Array<SatelliteGovernanceTransfer> = [
   { to_: '', amount: 0, token: SATELLITE_GOVERNANCE_TOKEN_TYPES[0] },

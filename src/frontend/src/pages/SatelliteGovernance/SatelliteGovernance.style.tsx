@@ -1,11 +1,12 @@
 import styled from 'styled-components/macro'
-import { Card, royalPurpleColor, containerColor, skyColor, cyanColor, headerColor } from 'styles'
+import { Card } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const SatelliteGovernanceStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
   row-gap: 30px;
+  margin-top: 30px;
 `
 
 export const SatelliteGovernanceStats = styled.div<{ theme: MavrykTheme }>`
@@ -64,7 +65,7 @@ export const SatelliteGovernanceAvailableAction = styled.form<{ theme: MavrykThe
   row-gap: 30px;
   padding: 30px 20px 40px;
 
-  border-top: 1px solid ${royalPurpleColor};
+  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
 
   a {
     position: absolute;
@@ -73,7 +74,7 @@ export const SatelliteGovernanceAvailableAction = styled.form<{ theme: MavrykThe
     width: fit-content;
 
     svg {
-      fill: ${cyanColor};
+      fill: ${({ theme }) => theme.valueColor};
       width: 16px;
       height: 16px;
     }

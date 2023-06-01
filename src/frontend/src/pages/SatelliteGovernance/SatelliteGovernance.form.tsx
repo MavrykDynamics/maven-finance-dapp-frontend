@@ -33,6 +33,7 @@ import {
 
 // style
 import { SatelliteGovernanceAvailableAction } from './SatelliteGovernance.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // helpers
 import { validateFormAddress, validateFormField, validateTzAddress } from 'utils/validatorFunctions'
@@ -48,15 +49,12 @@ import {
   TableHeaderCell,
   TableRow,
 } from 'app/App.components/Table'
-
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import {
   SATELLITE_GOVERNANCE_CONTENT_FORM,
   SATELLITE_GOVERNANCE_DEFAULT_TABLE,
   SATELLITE_GOVERNANCE_DEFAULT_TABLE_VALIDATION,
   SATELLITE_GOVERNANCE_TOKEN_TYPES,
 } from './SatelliteGovernance.consts'
-import { getValidationStatus } from './SatelliteGovernance.helpers'
 
 const handleComparingValue = (value: string) => {
   return value.replaceAll(' ', '').toLowerCase()
