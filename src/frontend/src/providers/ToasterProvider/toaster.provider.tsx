@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 
 // types
 import type { ToasterContextType, ToasterTypes } from './toaster.provider.type'
-import type { ExtendedErrors } from '../../errors/error'
+import type { CustomErrors } from '../../errors/error'
 
 // consts
 import {
@@ -19,7 +19,7 @@ export const toasterContext = React.createContext<ToasterContextType>(undefined!
 // TODO add 404 page for critical errors
 type Props = {
   children: React.ReactNode
-  error?: ExtendedErrors
+  error?: CustomErrors
   pageNotFound?: JSX.Element
 }
 
@@ -79,7 +79,7 @@ export default class ToasterProvider extends React.Component<Props, State> {
     }
   }
 
-  fatal = (error: ExtendedErrors): void => {
+  fatal = (error: CustomErrors): void => {
     this.setError(error)
     console.error(error)
   }
@@ -101,7 +101,7 @@ export default class ToasterProvider extends React.Component<Props, State> {
     return this.addToasterMessage(title, message, TOASTER_LOADING)
   }
 
-  setError = (error: ExtendedErrors): void => {
+  setError = (error: CustomErrors): void => {
     this.setState((prevState) => ({
       context: {
         ...prevState.context,
