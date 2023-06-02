@@ -48,13 +48,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
       onChange: inputProps.onChange,
     })
 
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-      e.persist()
-      const trimmedValue = e.target.value.trim()
-      e.target.value = trimmedValue
-      inputProps?.onBlur?.(e)
-    }
-
     return (
       <InputWrapper className={`${className} ${status} ${inputSize}`} id={'inputStyled'}>
         {label ? (
@@ -67,7 +60,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
 
         <StyledInput
           {...inputProps}
-          onBlur={handleBlur}
           onChange={handleChange}
           className={`${status} ${children ? 'remove-right-border-radius' : ''}`}
           autoComplete={'off'}

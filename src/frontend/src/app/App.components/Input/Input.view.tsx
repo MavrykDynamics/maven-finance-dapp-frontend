@@ -50,13 +50,6 @@ export const InputView = ({
     onChange: inputProps.onChange,
   })
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.persist()
-    const trimmedValue = e.target.value.trim()
-    e.target.value = trimmedValue
-    inputProps?.onBlur?.(e)
-  }
-
   return (
     <InputStyled className={className} id={'inputStyled'}>
       {icon && (
@@ -65,13 +58,7 @@ export const InputView = ({
         </InputIcon>
       )}
       <InputComponentContainer>
-        <input
-          {...inputProps}
-          onBlur={handleBlur}
-          onChange={handleChange}
-          className={status}
-          autoComplete={inputProps.name}
-        />
+        <input {...inputProps} onChange={handleChange} className={status} autoComplete={inputProps.name} />
         <InputStatus className={`${status} ${pinnedText ? 'with-text' : ''}`} />
         {pinnedText && <InputLabel className={`${status} pinned-text`}>{pinnedText}</InputLabel>}
       </InputComponentContainer>

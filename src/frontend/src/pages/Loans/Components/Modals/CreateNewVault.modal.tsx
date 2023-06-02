@@ -34,6 +34,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
+import { containSpaces, INPUT_WHITE_SPACE_TEXT } from 'app/App.utils/input'
 
 export type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
 
@@ -88,7 +89,11 @@ export const CreateNewVault = ({
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<DDItemId, DropDownCollateralAssetType>>({})
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
-  const [vaultName, setVaultName] = useState<VaultNameInputStateType>({ name: '', validationStatus: '' })
+  const [vaultName, setVaultName] = useState<VaultNameInputStateType>({
+    name: '',
+    validationStatus: '',
+    errorMessage: '',
+  })
   const [isVaultCreating, setVaultCreating] = useState(false)
   const [newVaultAddress, setNewVaultAddress] = useState('')
 
@@ -219,14 +224,21 @@ export const CreateNewVault = ({
   //handle vaultName input TODO: mb add debounce cuz of find operation
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus =
+    let validationStatus: InputStatusType =
       value &&
       value.length <= 15 &&
       !myVaultsIds.find((vaultId) => vaultsMapper[vaultId].name.trim().toLowerCase() === value.trim().toLowerCase())
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
 
-    setVaultName({ name: value, validationStatus })
+    let errorMessage = ''
+
+    if (containSpaces(value)) {
+      validationStatus = INPUT_STATUS_ERROR
+      errorMessage = INPUT_WHITE_SPACE_TEXT
+    }
+
+    setVaultName({ name: value, validationStatus, errorMessage })
   }
 
   // stuff to handle collateral input dropdown
@@ -426,6 +438,7 @@ export const CreateNewVault = ({
                 settings={{
                   inputStatus: vaultName.validationStatus,
                   inputSize: INPUT_LARGE,
+                  errorMessage: vaultName.errorMessage,
                 }}
               />
               <div className="manage-btn">

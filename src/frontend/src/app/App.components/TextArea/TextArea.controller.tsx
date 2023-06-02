@@ -60,13 +60,6 @@ export const TextArea = ({
     onChange,
   })
 
-  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    e.persist()
-    const trimmedValue = e.target.value.trim()
-    e.target.value = trimmedValue
-    onBlur?.(e)
-  }
-
   return (
     <TextAreaStyled className={className} id={'textAreaContainer'}>
       {label ? <NewInputLabel>{label}</NewInputLabel> : null}
@@ -82,7 +75,7 @@ export const TextArea = ({
           onChange={handleChange}
           className={`textarea`}
           name={name}
-          onBlur={handleBlur}
+          onBlur={onBlur}
           autoComplete={name}
           disabled={disabled}
           ref={textareaRef}
