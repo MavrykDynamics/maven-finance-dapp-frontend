@@ -9,7 +9,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 import { UnregisterSatelliteModalBase } from '../BecomeSatellite.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 export const UnregisterPopup = ({

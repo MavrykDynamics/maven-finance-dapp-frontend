@@ -16,6 +16,7 @@ import { isValidLength, isValidHttpUrl } from '../../../utils/validatorFunctions
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 export const StageOneForm = ({
   proposalId,
@@ -175,9 +176,16 @@ export const StageOneForm = ({
         {isProposalSubmitted ? (
           <div className="submitted-data source-code">
             <div className="label">6 - Add an Invoice Image</div>
-            <a className="isCyan" href={currentProposal.invoice}>
-              {currentProposal.invoice}
-            </a>
+            {currentProposal.invoice ? (
+              <div className="invoice-content">
+                <ImageWithPlug imageLink={currentProposal.invoice} alt="invoice for the proposal" />{' '}
+                <a className="isCyan" href={currentProposal.invoice}>
+                  {currentProposal.invoice}
+                </a>
+              </div>
+            ) : (
+              <div className="value">No link for an invoice given</div>
+            )}
           </div>
         ) : (
           <div className="invoice">

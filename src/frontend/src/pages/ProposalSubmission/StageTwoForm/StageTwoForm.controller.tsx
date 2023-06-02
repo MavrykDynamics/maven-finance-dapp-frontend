@@ -33,14 +33,8 @@ export const StageTwoForm = ({
   updateLocalProposalValidation,
   updateLocalProposalData,
 }: StageTwoFormProps) => {
-  const {
-    governancePhase,
-    fee,
-    successReward,
-    proposalMetadataTitleMaxLength,
-    proposalDescriptionMaxLength,
-    proposalSourceCodeMaxLength,
-  } = useSelector((state: State) => state.governance.config)
+  const { governancePhase, fee, successReward, proposalMetadataTitleMaxLength, proposalDescriptionMaxLength } =
+    useSelector((state: State) => state.governance.config)
   const isProposalPeriod = governancePhase === 'PROPOSAL'
 
   // is no bytes pair on proposal change add empty pair on client
@@ -165,13 +159,8 @@ export const StageTwoForm = ({
   }
 
   // Drag & drop variables and event handlers
-  const [dndBytes, setdndBytes] = useState<Array<ProposalBytesType>>([])
   const [DnDSelectedProposal, setDnDSeletedProposal] = useState<ProposalBytesType | null>(null)
   const isDraggable = useMemo(() => proposalData?.length > 1, [proposalData])
-
-  useEffect(() => {
-    setdndBytes(proposalData)
-  }, [proposalData])
 
   // handling changing order of elements on drop event
   const dropHandler = (e: React.DragEvent<HTMLElement>, byteToDrop: ProposalBytesType) => {
@@ -192,8 +181,6 @@ export const StageTwoForm = ({
         })
         .sort((a, b) => a.order - b.order)
 
-      setdndBytes(updatedBytes)
-
       updateLocalProposalData(
         {
           proposalData: updatedBytes,
@@ -205,11 +192,14 @@ export const StageTwoForm = ({
 
   // removing classNames for under grad event cards
   const dragRemoveStyling = () => {
-    setdndBytes(
-      dndBytes.map((byte) => ({
-        ...byte,
-        isUnderTheDrop: false,
-      })),
+    updateLocalProposalData(
+      {
+        proposalData: proposalData.map((byte) => ({
+          ...byte,
+          isUnderTheDrop: false,
+        })),
+      },
+      proposalId,
     )
   }
 
@@ -221,11 +211,14 @@ export const StageTwoForm = ({
   // adding class names to under drag cards
   const dragOverHandler = (e: React.DragEvent<HTMLElement>, bytePairId: number) => {
     e.preventDefault()
-    setdndBytes(
-      dndBytes.map((byte) => ({
-        ...byte,
-        ...(bytePairId === byte.id && byte.id !== DnDSelectedProposal?.id ? { isUnderTheDrop: true } : {}),
-      })),
+    updateLocalProposalData(
+      {
+        proposalData: proposalData.map((byte) => ({
+          ...byte,
+          ...(bytePairId === byte.id && byte.id !== DnDSelectedProposal?.id ? { isUnderTheDrop: true } : {}),
+        })),
+      },
+      proposalId,
     )
   }
 
@@ -271,15 +264,16 @@ export const StageTwoForm = ({
       />
 
       <SubmitProposalBytes>
-        {dndBytes.map((item, i) => {
+        {proposalData.map((item, i) => {
           if (
             !checkBytesPairExists(item) ||
             !item ||
             typeof item.title !== 'string' ||
-            typeof item.encoded_code !== 'string'
+            typeof item.encoded_code !== 'string' ||
+            typeof item.code_description !== 'string'
           )
             return null
-          const { title = '', encoded_code = '', code_description } = item
+          const { title, encoded_code, code_description } = item
           const existInServer = Boolean(proposalData?.find(({ id }) => item.id === id && !item.isLocalBytes))
           const validityObject = currentProposalValidation.bytesValidation?.find(({ byteId }) => byteId === item.id)
 
@@ -350,7 +344,7 @@ export const StageTwoForm = ({
           )
         })}
 
-        {dndBytes.length >= 5 ? (
+        {proposalData.length >= 5 ? (
           <div className="bytes-restriction-banner">
             <Info
               text={

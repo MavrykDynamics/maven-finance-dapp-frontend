@@ -21,7 +21,7 @@ import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'page
 import { State } from 'reducers'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
@@ -45,6 +45,8 @@ export const RemoveAssetsFromLending = ({
     rate = 0,
     symbol = '',
     currentLendedAmount = 0,
+    reserveAmount = 0,
+    availableLiquidity = 0,
     decimals = 0,
     lendingAPY = 0,
     icon = '',
@@ -160,15 +162,22 @@ export const RemoveAssetsFromLending = ({
                   type: 'number',
                   onBlur: inputOnBlurHandle,
                   onFocus: onFocusHandler,
-                  onChange: (e) => onChangeHandler(e.target.value, Math.min(mBalance, currentLendedAmount)),
+                  onChange: (e) =>
+                    onChangeHandler(
+                      e.target.value,
+                      Math.max(Math.min(mBalance, currentLendedAmount, reserveAmount + availableLiquidity), 0),
+                    ),
                 }}
                 settings={{
                   balance: tokenBalance,
                   balanceAsset: symbol,
                   useMaxHandler: () =>
                     onChangeHandler(
-                      getLoansInputMaxAmount(Math.min(mBalance, currentLendedAmount), decimals),
-                      Math.min(mBalance, currentLendedAmount),
+                      getLoansInputMaxAmount(
+                        Math.max(Math.min(mBalance, currentLendedAmount, reserveAmount + availableLiquidity), 0),
+                        decimals,
+                      ),
+                      Math.max(Math.min(mBalance, currentLendedAmount, reserveAmount + availableLiquidity), 0),
                     ),
                   inputStatus: inputData.validationStatus,
                   convertedValue: Number(inputData.amount) * rate,

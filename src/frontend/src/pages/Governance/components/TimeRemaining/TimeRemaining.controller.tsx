@@ -11,7 +11,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 // Styled components
 import { MoveNextRoundModalBase, TimeLeftAreaWrap } from './TimeRemaining.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 
 // Consts
 import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'

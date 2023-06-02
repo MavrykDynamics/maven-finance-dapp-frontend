@@ -23,9 +23,18 @@ type LendingTabPropsType = {
   lendingControllerAddress: string
   assetData: LoanMarketType['loanTokenData']
   lendAPY: number
+  marketAvailableLiquidity: number
+  marketReserveAmount: number
 }
 
-export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, lendAPY }: LendingTabPropsType) => {
+export const LendingTab = ({
+  lendingItem,
+  lendingControllerAddress,
+  assetData,
+  lendAPY,
+  marketReserveAmount,
+  marketAvailableLiquidity,
+}: LendingTabPropsType) => {
   const { openAddLendingAssetPopup, openRemoveLendingAssetPopup } = useContext(loansPopupsContext)
   const {
     accountPkh,
@@ -105,6 +114,8 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
                   mBalance: lendingItem.mBalance,
                   lendingAPY: lendAPY,
                   currentLendedAmount: lendingItem.lendValue,
+                  availableLiquidity: marketAvailableLiquidity,
+                  reserveAmount: marketReserveAmount,
                   ...assetData,
                 })
               }}
