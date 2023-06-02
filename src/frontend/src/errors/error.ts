@@ -34,16 +34,15 @@ class ExtendedErrorClass extends Error {
   }
 }
 
+// bad api data when making rest call
 export class ValidationError extends ExtendedErrorClass {}
-export class PermissionError extends ExtendedErrorClass {}
+// when getting server error (f.e. 500 )
 export class ApiError extends ExtendedErrorClass {}
+// critiacal error, show 404 page
 export class FatalError extends ExtendedErrorClass {}
-export class PropertyError extends ExtendedErrorClass {
-  declare payload: InputPayload
-}
 
-export type ExtendedErrors = Error | PermissionError | ApiError | ValidationError | FatalError | null
-export type ExtendedError = FatalError | ApiError | PermissionError | ValidationError
+export type CustomErrors = Error | ApiError | ValidationError | FatalError | null
+export type ExtendedError = FatalError | ApiError | ValidationError
 
 /**
  * Function checks the error type based on payload similarity
@@ -52,9 +51,7 @@ export type ExtendedError = FatalError | ApiError | PermissionError | Validation
  * @returns true if this is extendedError
  */
 export function isExtendedError(e: unknown): e is ExtendedError {
-  return (
-    e instanceof FatalError || e instanceof ApiError || e instanceof PermissionError || e instanceof ValidationError
-  )
+  return e instanceof FatalError || e instanceof ApiError || e instanceof ValidationError
 }
 
 /**

@@ -63,10 +63,10 @@ export const ToasterMessages = () => {
     if (messages.length > TOASTS_LIMIT) {
       const messagesToRemoveCount = messages.length - TOASTS_LIMIT
       const _messages = messages.filter((m) => m.type !== TOASTER_LOADING)
-      for (let i = 0; i < messagesToRemoveCount; i++) {
-        if (!_messages[i]) break
-        removeToasterMessage(_messages[i].unique)
-      }
+      Array.from({ length: messagesToRemoveCount }).forEach((_, idx) => {
+        if (!_messages[idx]) return
+        removeToasterMessage(_messages[idx].unique)
+      })
     }
   }, [messages, removeToasterMessage])
 

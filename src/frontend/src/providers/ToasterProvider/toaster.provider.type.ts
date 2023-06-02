@@ -1,4 +1,4 @@
-import type { ExtendedErrors } from '../../errors/error'
+import type { CustomErrors } from '../../errors/error'
 import type ToasterProvider from './toaster.provider'
 import {
   TOASTER_ERROR,
@@ -43,7 +43,7 @@ export type ToasterContextType = {
   fatal: InstanceType<typeof ToasterProvider>['fatal']
   success: InstanceType<typeof ToasterProvider>['success']
   loading: InstanceType<typeof ToasterProvider>['loading']
-  error: ExtendedErrors | null
+  error: CustomErrors | null
   removeToasterMessage: InstanceType<typeof ToasterProvider>['removeToasterMessage']
   addToasterMessage?: InstanceType<typeof ToasterProvider>['addToasterMessage']
   setError: InstanceType<typeof ToasterProvider>['setError']

@@ -1,4 +1,4 @@
-import type { ApiError, FatalError, PermissionError, ValidationError } from './error'
+import type { ApiError, FatalError, ValidationError } from './error'
 
 export type InputPayload = {
   field?: string
@@ -18,5 +18,4 @@ export type ErrorType =
     })
   | FatalError
   | ValidationError
-  | PermissionError
   | ApiError
