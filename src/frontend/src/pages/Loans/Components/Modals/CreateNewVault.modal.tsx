@@ -129,7 +129,7 @@ export const CreateNewVault = ({
       setAssetChosenDdItem(undefined)
       setVaultCreating(false)
       setNewVaultAddress('')
-      setVaultName({ name: '', validationStatus: '' })
+      setVaultName({ name: '', validationStatus: '', errorMessage: '' })
     }
   }, [show])
 
@@ -231,14 +231,19 @@ export const CreateNewVault = ({
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
 
-    let errorMessage = ''
+    setVaultName({ name: value, validationStatus, errorMessage: '' })
+  }
 
-    if (containSpaces(value)) {
+  const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    let errorMessage = ''
+    let validationStatus: InputStatusType = INPUT_STATUS_SUCCESS
+
+    if (containSpaces(e.target.value)) {
       validationStatus = INPUT_STATUS_ERROR
       errorMessage = INPUT_WHITE_SPACE_TEXT
     }
 
-    setVaultName({ name: value, validationStatus, errorMessage })
+    setVaultName((prev) => ({ ...prev, validationStatus, errorMessage }))
   }
 
   // stuff to handle collateral input dropdown
@@ -433,6 +438,7 @@ export const CreateNewVault = ({
                   value: vaultName.name,
                   type: 'text',
                   onChange: handleVaultNameChange,
+                  onBlur: handleOnBlur,
                   placeholder: 'e.g. Satoshi’s Personal Vault',
                 }}
                 settings={{
