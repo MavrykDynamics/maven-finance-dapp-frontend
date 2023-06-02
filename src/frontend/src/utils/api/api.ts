@@ -5,34 +5,21 @@ type APIFetchReturnType<T> = objectOutputType<
   ZodTypeAny
 >
 
-export type APIReturnType<T> = {
-  abort: () => void
-  fetch: () => Promise<APIFetchReturnType<T>>
-}
-
-export const api = <T>(
+export const api = async <T>(
   url: string,
   options: RequestInit = { method: 'GET' },
   schema: ZodSchema<T> = z.any(),
-): APIReturnType<T> => {
-  const controller = new AbortController()
-  const signal = controller.signal
+): Promise<APIFetchReturnType<T>> => {
+  try {
+    const method = options?.method || 'GET'
+    const _schema = schema ?? z.any()
 
-  return {
-    abort: () => controller.abort(),
-    fetch: async () => {
-      try {
-        const method = options?.method || 'GET'
-        const _schema = schema ?? z.any()
+    const response = await fetch(url, { method, ...options })
+    const data = await response.json()
+    const parsedData = _schema.parse(data)
 
-        const response = await fetch(url, { method, signal, ...options })
-        const data = await response.json()
-        const parsedData = _schema.parse(data)
-
-        return { code: response.status, status: response.ok ? 'ok' : 'error', data: parsedData }
-      } catch (e) {
-        throw e
-      }
-    },
+    return { code: response.status, status: response.ok ? 'ok' : 'error', data: parsedData }
+  } catch (e) {
+    throw e
   }
 }

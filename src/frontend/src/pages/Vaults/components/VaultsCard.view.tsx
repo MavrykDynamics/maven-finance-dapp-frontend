@@ -32,10 +32,16 @@ import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
-import getTimestampByLevel from 'utils/api/getTimestampByLevel'
+import {
+  getTimestampByLevelHeaders,
+  getTimestampByLevelSchema,
+  getTimestampByLevelUrl,
+} from 'utils/api/api-helpers/getTimestampByLevel'
 import { vaultTabs } from '../Vaults.view'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { Button } from 'app/App.components/Button/Button.controller'
+import { isAbortionError } from 'errors/error'
+import { api } from 'utils/api/api'
 
 const findStatusInfo = (
   status: string,
@@ -142,25 +148,39 @@ export const VaultsCard = (props: Props) => {
     if (status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.LIQUIDATABLE) {
       if (!levelOfEarly || !levelOfLate) return
 
-      const { abort: abortEarly, fetch: fetchEarly } = getTimestampByLevel(levelOfEarly)
-      const { abort: abortLate, fetch: fetchLate } = getTimestampByLevel(levelOfLate)
+      const abortEarlyController = new AbortController()
+      const abortLatelyController = new AbortController()
 
       ;(async () => {
         try {
-          const [{ data: timestampOfEarly }, { data: timestampOfLate }] = await Promise.all([fetchEarly(), fetchLate()])
+          const [{ data: timestampOfEarly }, { data: timestampOfLate }] = await Promise.all([
+            api(
+              getTimestampByLevelUrl(levelOfEarly),
+              { signal: abortEarlyController.signal, headers: getTimestampByLevelHeaders },
+              getTimestampByLevelSchema,
+            ),
+            api(
+              getTimestampByLevelUrl(levelOfLate),
+              { signal: abortLatelyController.signal, headers: getTimestampByLevelHeaders },
+              getTimestampByLevelSchema,
+            ),
+          ])
 
           const timestamp =
             new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
 
           setTimerTimestamp(timestamp)
         } catch (e) {
-          console.error('getting timestamp by lvl error: ', e)
+          // TODO: handle fetch errors when error boundary will be ready
+          if (!isAbortionError(e)) {
+            console.error('getting timestamp by lvl error: ', e)
+          }
         }
       })()
 
       return () => {
-        abortEarly()
-        abortLate()
+        abortEarlyController.abort()
+        abortLatelyController.abort()
       }
     }
 

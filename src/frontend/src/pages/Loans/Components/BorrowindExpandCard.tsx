@@ -43,8 +43,14 @@ import { loansPopupsContext } from './Modals/LoansModals.provider'
 import { State } from 'reducers'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import { isTezosAsset } from '../Loans.helpers'
-import getTimestampByLevel from 'utils/api/getTimestampByLevel'
+import {
+  getTimestampByLevelHeaders,
+  getTimestampByLevelSchema,
+  getTimestampByLevelUrl,
+} from 'utils/api/api-helpers/getTimestampByLevel'
 import { getNumberInBounds } from 'utils/calcFunctions'
+import { isAbortionError } from 'errors/error'
+import { api } from 'utils/api/api'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -155,25 +161,39 @@ export const BorrowingExpandCard = ({
     if (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE) {
       if (!levelOfEarly || !levelOfLate) return
 
-      const { abort: abortEarly, fetch: fetchEarly } = getTimestampByLevel(levelOfEarly)
-      const { abort: abortLate, fetch: fetchLate } = getTimestampByLevel(levelOfLate)
+      const abortEarlyController = new AbortController()
+      const abortLatelyController = new AbortController()
 
       ;(async () => {
         try {
-          const [{ data: timestampOfEarly }, { data: timestampOfLate }] = await Promise.all([fetchEarly(), fetchLate()])
+          const [{ data: timestampOfEarly }, { data: timestampOfLate }] = await Promise.all([
+            api(
+              getTimestampByLevelUrl(levelOfEarly),
+              { signal: abortEarlyController.signal, headers: getTimestampByLevelHeaders },
+              getTimestampByLevelSchema,
+            ),
+            api(
+              getTimestampByLevelUrl(levelOfLate),
+              { signal: abortLatelyController.signal, headers: getTimestampByLevelHeaders },
+              getTimestampByLevelSchema,
+            ),
+          ])
 
           const timestamp =
             new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
 
           setTimerTimestamp(timestamp)
         } catch (e) {
-          console.error('getting timestamp by lvl error: ', e)
+          // TODO: handle fetch errors when error boundary will be ready
+          if (!isAbortionError(e)) {
+            console.error('getting timestamp by lvl error: ', e)
+          }
         }
       })()
 
       return () => {
-        abortEarly()
-        abortLate()
+        abortEarlyController.abort()
+        abortLatelyController.abort()
       }
     }
 

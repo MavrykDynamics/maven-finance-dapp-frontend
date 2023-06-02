@@ -19,8 +19,14 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.component
 import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
 
 // Actions, helpers
-import getTimestampByLevel from 'utils/api/getTimestampByLevel'
+import {
+  getTimestampByLevelHeaders,
+  getTimestampByLevelSchema,
+  getTimestampByLevelUrl,
+} from 'utils/api/api-helpers/getTimestampByLevel'
 import { startNextRound } from 'pages/Governance/actions/GovernanceInteraction.actions'
+import { api } from 'utils/api/api'
+import { isAbortionError } from 'errors/error'
 
 export default function TimeRemaining() {
   const dispatch = useDispatch()
@@ -56,22 +62,28 @@ export default function TimeRemaining() {
   }
 
   useEffect(() => {
-    const { abort, fetch } = getTimestampByLevel(currentRoundEndLevel)
+    const abortController = new AbortController()
 
     ;(async () => {
       try {
-        const { data: duration } = await fetch()
+        const { data: duration } = await api(
+          getTimestampByLevelUrl(currentRoundEndLevel),
+          { signal: abortController.signal, headers: getTimestampByLevelHeaders },
+          getTimestampByLevelSchema,
+        )
         const convertedToTimestamp = new Date(duration).getTime()
         const isTimestampValid = convertedToTimestamp > Date.now()
 
         setTimerActive(isTimestampValid)
-        if (isTimestampValid) setTimerDeadline(convertedToTimestamp)
       } catch (e) {
-        console.error('getting timestamp by lvl error: ', e)
+        // TODO: handle fetch errors when error boundary will be ready
+        if (!isAbortionError(e)) {
+          console.error('getting timestamp by lvl error: ', e)
+        }
       }
     })()
 
-    return () => abort()
+    return () => abortController.abort()
   }, [currentRoundEndLevel])
 
   return (

@@ -14,34 +14,31 @@ export const fetchGraphQL = (() => {
     variables: Record<string, object | string>,
     apiError = false,
   ) => {
-    const { fetch: fetchDipDupHeadCall } = api<DipDupGraphQLResponse>(gqlAPINetwork, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify({
-        query: DIP_DUP_HEAD_QUERY,
-        operationName: DIP_DUP_HEAD_QUERY_NAME,
-      }),
-    })
-
-    const { fetch: fetchquery } = api<any>(gqlAPINetwork, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify({
-        query: operationsDoc,
-        variables: variables,
-        operationName: operationName,
-      }),
-    })
     try {
-      const { data: dipdDupData } = await fetchDipDupHeadCall()
+      const { data: dipdDupData } = await api<DipDupGraphQLResponse>(gqlAPINetwork, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          query: DIP_DUP_HEAD_QUERY,
+          operationName: DIP_DUP_HEAD_QUERY_NAME,
+        }),
+      })
 
-      const { data, code, status } = await fetchquery()
+      const { data, code, status } = await api<any>(gqlAPINetwork, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          query: operationsDoc,
+          variables: variables,
+          operationName: operationName,
+        }),
+      })
 
       if (
         !apiError &&

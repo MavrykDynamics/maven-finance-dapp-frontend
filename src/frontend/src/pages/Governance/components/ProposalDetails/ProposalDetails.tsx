@@ -9,7 +9,11 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 // helpers & actions
 import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
 import { parseDate } from 'utils/time'
-import getTimestampByLevel from 'utils/api/getTimestampByLevel'
+import {
+  getTimestampByLevelHeaders,
+  getTimestampByLevelSchema,
+  getTimestampByLevelUrl,
+} from 'utils/api/api-helpers/getTimestampByLevel'
 import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
 import {
   executeProposal,
@@ -37,6 +41,8 @@ import { TzAddress, handleCopyToClipboard } from 'app/App.components/TzAddress/T
 import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.helpers'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
+import { api } from 'utils/api/api'
+import { isAbortionError } from 'errors/error'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
   const dispatch = useDispatch()
@@ -84,18 +90,25 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   // Loading voting till time for proposal
   const [votingTill, setVotingTill] = useState<null | number>(null)
   useEffect(() => {
-    const { abort, fetch } = getTimestampByLevel(proposal.currentCycleEndLevel)
+    const abortController = new AbortController()
 
     ;(async () => {
       try {
-        const { data: votingEndTimestamp } = await fetch()
+        const { data: votingEndTimestamp } = await api(
+          getTimestampByLevelUrl(proposal.currentCycleEndLevel),
+          { signal: abortController.signal, headers: getTimestampByLevelHeaders },
+          getTimestampByLevelSchema,
+        )
         setVotingTill(new Date(votingEndTimestamp).getTime())
       } catch (e) {
-        console.error('getting timestamp by lvl error: ', e)
+        // TODO: handle fetch errors when error boundary will be ready
+        if (!isAbortionError(e)) {
+          console.error('getting timestamp by lvl error: ', e)
+        }
       }
     })()
 
-    return () => abort()
+    return () => abortController.abort()
   }, [proposal.currentCycleEndLevel])
 
   // store bytes that are opened
