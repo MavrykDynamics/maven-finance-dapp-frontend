@@ -125,21 +125,23 @@ export const SATELLITE_GOVERNANCE_CONTENT_FORM = new Map([
   ],
 ])
 
-export const SATELLITE_GOVERNANCE_ACTIONS = [
-  'Suspend Satellite',
-  'Unsuspend Satellite',
-  'Ban Satellite',
-  'Unban Satellite',
-  'Remove Oracles',
-  'Remove from Aggregator',
-  'Add to Aggregator',
-  'Restore Satellite',
+export const SATELLITE_GOVERNANCE_ACTION_NAMES = {
+  SUSPEND_SATELLITE: 'Suspend Satellite',
+  UNSUSPEND_SATELLITE: 'Unsuspend Satellite',
+  BAN_SATELLITE: 'Ban Satellite',
+  UNBAN_SATELLITE: 'Unban Satellite',
+  REMOVE_ORACLES: 'Remove Oracles',
+  REMOVE_FROM_AGREGATOR: 'Remove from Aggregator',
+  ADD_TO_AGGREGATOR: 'Add to Aggregator',
+  RESTORE_SATELLITE: 'Restore Satellite',
   // TODO: commented according to [MAV-1404]
-  'Set Aggregator Maintainer',
-  'Update Aggregator Status',
-  'Register Aggregator',
-  'Fix Mistaken Transfer',
-] as const
+  SET_AGREGATOR_MANTAINER: 'Set Aggregator Maintainer',
+  UPDATE_AGREGATOR_STATUS: 'Update Aggregator Status',
+  REGISTER_AGGREGATOR: 'Register Aggregator',
+  FIX_MISTAKEN_TRANSFER: 'Fix Mistaken Transfer',
+} as const
+
+export const SATELLITE_GOVERNANCE_ACTIONS = Object.values(SATELLITE_GOVERNANCE_ACTION_NAMES)
 
 export const SATELLITE_GOVERNANCE_MENU_TABS = {
   ONGOING: 'ongoing',

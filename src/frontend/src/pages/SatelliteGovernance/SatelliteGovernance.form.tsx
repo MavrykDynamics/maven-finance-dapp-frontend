@@ -7,6 +7,17 @@ import { Input } from 'app/App.components/Input/NewInput'
 import Button from 'app/App.components/Button/NewButton'
 import { TextArea } from '../../app/App.components/TextArea/TextArea.controller'
 import { DDItemId, DropDown, getDdItem } from 'app/App.components/DropDown/NewDropdown'
+import {
+  AddRowBtn,
+  RemoveRowBtn,
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+} from 'app/App.components/Table'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // type
 import {
@@ -37,32 +48,14 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // helpers
 import { validateFormAddress, validateFormField, validateTzAddress } from 'utils/validatorFunctions'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
-import {
-  AddRowBtn,
-  RemoveRowBtn,
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableHeaderCell,
-  TableRow,
-} from 'app/App.components/Table'
 import {
   SATELLITE_GOVERNANCE_CONTENT_FORM,
   SATELLITE_GOVERNANCE_DEFAULT_TABLE,
   SATELLITE_GOVERNANCE_DEFAULT_TABLE_VALIDATION,
   SATELLITE_GOVERNANCE_TOKEN_TYPES,
+  SATELLITE_GOVERNANCE_ACTION_NAMES,
 } from './SatelliteGovernance.consts'
-
-const handleComparingValue = (value: string) => {
-  return value.replaceAll(' ', '').toLowerCase()
-}
-
-const compareValues = (a: string, b: string) => {
-  return handleComparingValue(a) === handleComparingValue(b)
-}
 
 type MaxLength = {
   purposeMaxLength: number
@@ -102,55 +95,58 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
   const { title, btnText, btnIcon, firstInputLabel, secondInputLabel } =
     SATELLITE_GOVERNANCE_CONTENT_FORM.get(variant) ?? {}
 
-  const isDisabledButton = Object.values(formInputStatus).some((item) => item === INPUT_STATUS_ERROR) || isActionActive
-  const isFixMistakenTransfer = compareValues(variant, 'fixMistakenTransfer')
-  const isFieldRegisterAggregator = compareValues(variant, 'registerAggregator')
+  const isDisabledButton = useMemo(
+    () => Object.values(formInputStatus).some((item) => item === INPUT_STATUS_ERROR) || isActionActive,
+    [formInputStatus, isActionActive],
+  )
+  const isFixMistakenTransfer = variant === SATELLITE_GOVERNANCE_ACTION_NAMES.FIX_MISTAKEN_TRANSFER
+  const isFieldRegisterAggregator = variant === SATELLITE_GOVERNANCE_ACTION_NAMES.REGISTER_AGGREGATOR
 
   const toShowPurpose = !isFieldRegisterAggregator && !isFixMistakenTransfer
   const toShowSecondInput =
-    compareValues(variant, 'setAggregatorMaintainer') ||
-    compareValues(variant, 'updateAggregatorStatus') ||
+    variant === SATELLITE_GOVERNANCE_ACTION_NAMES.SET_AGREGATOR_MANTAINER ||
+    variant === SATELLITE_GOVERNANCE_ACTION_NAMES.UPDATE_AGREGATOR_STATUS ||
     isFieldRegisterAggregator ||
     isFixMistakenTransfer
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    switch (handleComparingValue(variant)) {
-      case handleComparingValue('suspendSatellite'):
+    switch (variant) {
+      case SATELLITE_GOVERNANCE_ACTION_NAMES.SUSPEND_SATELLITE:
         await dispatch(suspendSatellite(firstInput, purpose))
         break
-      case handleComparingValue('unsuspendSatellite'):
+      case SATELLITE_GOVERNANCE_ACTION_NAMES.UNSUSPEND_SATELLITE:
         await dispatch(unsuspendSatellite(firstInput, purpose))
         break
-      case handleComparingValue('banSatellite'):
+      case SATELLITE_GOVERNANCE_ACTION_NAMES.BAN_SATELLITE:
         await dispatch(banSatellite(firstInput, purpose))
         break
-      case handleComparingValue('unbanSatellite'):
+      case SATELLITE_GOVERNANCE_ACTION_NAMES.UNBAN_SATELLITE:
         await dispatch(unbanSatellite(firstInput, purpose))
         break
-      case handleComparingValue('removeOracles'):
+      case SATELLITE_GOVERNANCE_ACTION_NAMES.REMOVE_ORACLES:
         await dispatch(removeOracles(firstInput, purpose))
         break
-      case handleComparingValue('restoreSatellite'):
+      case SATELLITE_GOVERNANCE_ACTION_NAMES.RESTORE_SATELLITE:
         await dispatch(restoreSatellite(firstInput, purpose))
         break
-      case handleComparingValue('removeFromAggregator'):
+      case SATELLITE_GOVERNANCE_ACTION_NAMES.REMOVE_FROM_AGREGATOR:
         await dispatch(removeOracleInAggregator(secondInput, firstInput, purpose))
         break
-      case handleComparingValue('addToAggregator'):
+      case SATELLITE_GOVERNANCE_ACTION_NAMES.ADD_TO_AGGREGATOR:
         await dispatch(addOracleToAggregator(secondInput, firstInput, purpose))
         break
-      case handleComparingValue('setAggregatorMaintainer'):
+      case SATELLITE_GOVERNANCE_ACTION_NAMES.SET_AGREGATOR_MANTAINER:
         await dispatch(setAggregatorMaintainer(secondInput, firstInput, purpose))
         break
-      case handleComparingValue('updateAggregatorStatus'):
+      case SATELLITE_GOVERNANCE_ACTION_NAMES.UPDATE_AGREGATOR_STATUS:
         await dispatch(updateAggregatorStatus(secondInput, firstInput, purpose))
         break
-      case handleComparingValue('registerAggregator'):
+      case SATELLITE_GOVERNANCE_ACTION_NAMES.REGISTER_AGGREGATOR:
         await dispatch(registerAggregator(secondInput, firstInput))
         break
-      case handleComparingValue('fixMistakenTransfer'):
+      case SATELLITE_GOVERNANCE_ACTION_NAMES.FIX_MISTAKEN_TRANSFER:
         await dispatch(fixMistakenTransfer(secondInput, firstInput, tableData))
         break
     }
