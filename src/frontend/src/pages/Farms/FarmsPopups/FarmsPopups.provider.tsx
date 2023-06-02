@@ -20,7 +20,6 @@ export const farmsPopupsContext = createContext<FarmsPopupsContextStateType>(und
  * and withdrawing from the farm.
  * @class
  * @augments {React.Component}
- * @returns {JSX.Element} JSX element containing all popups and child components.
  */
 export default class FarmsPopupsProvider extends React.Component<{}, FarmsPopupsContextStateType> {
   constructor(props: {}) {
