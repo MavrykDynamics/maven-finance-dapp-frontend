@@ -36,7 +36,7 @@ export const loansPopupsContext = createContext<LoansPopupsContextStateType>(und
 /**
  * LoansPopupsProvider - A provider component responsible for managing the state of loan interaction popups.
  * @class
- * @extends {React.Component}
+ * @augments {React.Component}
  * @returns {JSX.Element} JSX element containing all popups and child components.
  */
 export default class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextStateType> {

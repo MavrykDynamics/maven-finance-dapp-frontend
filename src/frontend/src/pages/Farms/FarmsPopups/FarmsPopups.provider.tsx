@@ -19,8 +19,8 @@ export const farmsPopupsContext = createContext<FarmsPopupsContextStateType>(und
  * It takes no props and manages the state for popups related to the ROI calculator, depositing to the farm,
  * and withdrawing from the farm.
  * @class
- * @extends {React.Component}
- * * @returns {JSX.Element} JSX element containing all popups and child components.
+ * @augments {React.Component}
+ * @returns {JSX.Element} JSX element containing all popups and child components.
  */
 export default class FarmsPopupsProvider extends React.Component<{}, FarmsPopupsContextStateType> {
   constructor(props: {}) {
