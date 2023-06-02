@@ -235,15 +235,16 @@ export const CreateNewVault = ({
   }
 
   const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    let errorMessage = ''
-    let validationStatus: InputStatusType = INPUT_STATUS_SUCCESS
-
     if (containSpaces(e.target.value)) {
-      validationStatus = INPUT_STATUS_ERROR
-      errorMessage = INPUT_WHITE_SPACE_TEXT
+      const trimmedValue = e.target.value.trim()
+      const validationStatus: InputStatusType =
+        trimmedValue &&
+        trimmedValue.length <= 15 &&
+        !myVaultsIds.find((vaultId) => vaultsMapper[vaultId].name.trim().toLowerCase() === trimmedValue.toLowerCase())
+          ? INPUT_STATUS_SUCCESS
+          : INPUT_STATUS_ERROR
+      setVaultName((prev) => ({ ...prev, validationStatus, name: trimmedValue }))
     }
-
-    setVaultName((prev) => ({ ...prev, validationStatus, errorMessage }))
   }
 
   // stuff to handle collateral input dropdown
