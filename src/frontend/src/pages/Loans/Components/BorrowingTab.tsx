@@ -1,4 +1,5 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
+import { useParams } from 'react-router'
 import { useSelector } from 'react-redux'
 import { useContext, useState } from 'react'
 
@@ -22,6 +23,8 @@ type BorrowingTabPropsType = {
 
 export const BorrowingTab = ({ lendingControllerAddress, currentToken }: BorrowingTabPropsType) => {
   const { openCreateVaultPopup } = useContext(loansPopupsContext)
+
+  const { cardId = null } = useParams<{ cardId: string }>()
 
   const {
     loanTokenData: { gqlName, symbol },
@@ -47,6 +50,10 @@ export const BorrowingTab = ({ lendingControllerAddress, currentToken }: Borrowi
       }),
     [gqlName, myVaultsIds, showZeroVaults, vaultsMapper],
   )
+
+  useEffect(() => {
+    setCreatedVaultAddress(cardId)
+  }, [cardId])
 
   return (
     <BorrowingTabStyled>

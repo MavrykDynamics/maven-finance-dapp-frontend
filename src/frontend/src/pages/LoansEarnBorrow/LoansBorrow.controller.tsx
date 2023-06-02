@@ -135,7 +135,10 @@ export const LoansBorrow = () => {
   // open borrow popup after getting new vault address
   useEffect(() => {
     if (!newVaultAddress) return
+
     const vault = vaultsMapper[newVaultAddress]
+
+    if (!vault) return
 
     openBorrowPopup?.({
       vaultId: vault.vaultId,
@@ -148,8 +151,9 @@ export const LoansBorrow = () => {
       currentBorrowedAmount: vault.borrowedAmount,
       DAOFee,
       scrollToCurrentVault: () => {
+        setNewVaultAddress('')
         // redirect to the market after borrowing
-        history.push(`/loans/${vault.borrowedAsset.symbol}/borrowTab`)
+        history.push(`/loans/${vault.borrowedAsset.symbol}/borrowTab/${newVaultAddress}`)
       },
     })
   }, [myVaultsIds, newVaultAddress])
