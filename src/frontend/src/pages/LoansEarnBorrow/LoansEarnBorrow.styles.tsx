@@ -133,6 +133,7 @@ export const EarnBorrowCardBody = styled.div<{ theme: MavrykTheme }>`
     align-items: center;
     row-gap: 20px;
     padding: 0 30px;
+    margin-top: 30px;
 
     span {
       text-transform: uppercase;
@@ -144,5 +145,9 @@ export const EarnBorrowCardBody = styled.div<{ theme: MavrykTheme }>`
 
       fill: ${({ theme }) => theme.dataColor};
     }
+  }
+
+  .hidden {
+    visibility: hidden;
   }
 `

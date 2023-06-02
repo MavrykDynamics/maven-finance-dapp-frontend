@@ -1,4 +1,5 @@
 import { useContext, useMemo } from 'react'
+import { useHistory } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -25,12 +26,15 @@ import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
   totalName: 'Total Earning',
+  leftValueName: 'Your Position',
+  rightValueName: 'Earned to Date',
   buttonName: 'Deposit & Earn',
   marketTabName: 'lendingTab',
 }
 
 export const LoansEarn = () => {
   const dispatch = useDispatch()
+  const history = useHistory()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
@@ -68,6 +72,8 @@ export const LoansEarn = () => {
         symbol: item.loanTokenData.symbol,
         annualRate: item.lendingAPY,
         annualRateName: 'APY',
+        leftValue: item.lendingItem?.lendValue ?? 0 * item.loanTokenData.rate,
+        rightValue: item.lendingItem?.interestEarned ?? 0 * item.loanTokenData.rate,
         totalAmount: item.totalLended,
         price: item.loanTokenData.rate,
         chartData: item.marketLiquidityChartData,
@@ -78,6 +84,12 @@ export const LoansEarn = () => {
   const handleEarn = (marketSymbol: string) => {
     const market = loanTokens.find((item) => item.loanTokenData.symbol === marketSymbol)
     if (!market) return
+
+    //  if the user has already supplied to the specific asset pool we will route to asset market
+    if (market.lendingItem?.lendValue) {
+      history.push(`/loans/${market.loanTokenData.symbol}/lendingTab`)
+      return
+    }
 
     openAddLendingAssetPopup({
       mBalance: market.lendingItem?.mBalance ?? 0,
@@ -94,7 +106,7 @@ export const LoansEarn = () => {
         }
       } catch (e) {}
     },
-    [isDataLoaded],
+    [accountPkh],
   )
 
   return (

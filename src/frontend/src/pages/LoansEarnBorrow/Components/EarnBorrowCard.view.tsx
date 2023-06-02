@@ -24,8 +24,8 @@ type Props = {
 }
 
 export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: Props) => {
-  const { priceName, totalName, buttonName, isButtonSymbol, marketTabName } = settings
-  const { icon, symbol, annualRate, annualRateName, totalAmount, price, chartData } = market
+  const { priceName, totalName, buttonName, leftValueName, rightValueName, isButtonSymbol, marketTabName } = settings
+  const { icon, symbol, annualRate, annualRateName, leftValue, rightValue, totalAmount, price, chartData } = market
 
   return (
     <EarnBorrowCardStyled>
@@ -52,6 +52,17 @@ export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: 
         </div>
 
         <EarnBorrowChart data={chartData} />
+
+        <div className={leftValue || rightValue ? '' : 'hidden'}>
+          <div className="info">
+            <span>{leftValueName}</span>
+            <span>{rightValueName}</span>
+          </div>
+          <div className="info">
+            <CommaNumber beginningText="$" value={leftValue} />
+            <CommaNumber beginningText="$" value={rightValue} />
+          </div>
+        </div>
 
         <div className="buttons">
           <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isDisabledButton} onClick={() => onClick(symbol)}>

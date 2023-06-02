@@ -28,6 +28,8 @@ export const CHART_COLORS = {
 export type MarketSettingsType = {
   priceName: string
   totalName: string
+  leftValueName: string
+  rightValueName: string
   buttonName: string
   isButtonSymbol?: boolean
   marketTabName: string
@@ -40,5 +42,7 @@ export type MarketType = {
   annualRateName: 'APR' | 'APY'
   totalAmount: number
   price: number
+  leftValue: number
+  rightValue: number
   chartData: AreaChartPlotType[]
 }
