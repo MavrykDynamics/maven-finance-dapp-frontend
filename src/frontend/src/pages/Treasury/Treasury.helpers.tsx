@@ -117,9 +117,8 @@ export const normalizeTreasuryStorage = (
     const sMVKAmount = parsedsMVKAmount.find(({ contract }: TreasuryBalanceType) => contract === treasuryData.address)
 
     const treasuryNormalizedTokens = treasuryData.balances
-      .reduce<Array<TreasuryBalanceType>>((acc, { balance, token }) => {
-        if (!token) return acc
-        const { metadata, token_address } = token ?? {}
+      .reduce<Array<TreasuryBalanceType>>((acc, { balance, token_address, metadata }) => {
+        if (!metadata) return acc
         // metadata has no type in indexer types so use 'as'
         const { symbol = '', decimals = '0', icon = '' } = (metadata ?? {}) as TreasuryAssetMapperType
         const parsedDecimals = parseInt(decimals)

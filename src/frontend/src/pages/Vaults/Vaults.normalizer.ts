@@ -52,12 +52,12 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         const acc = await promiseAcc
 
         // Check whether we have market & vault
-        if (!item.loan_token || !item.vault?.address || !item.loan_token.loan_token?.token_address) return acc
+        if (!item.loan_token || !item.vault?.address || !item.loan_token.loan_token_address) return acc
 
         // Get market asset metadata
         const loanTokenMetadata = getAssetMetadata({
           tokenName: item.loan_token.loan_token_name,
-          tokenAddress: item.loan_token.loan_token.token_address,
+          tokenAddress: item.loan_token.loan_token_address,
           dipDupTokens,
           feeds,
           oracleId: String(item.loan_token.oracle_id),
@@ -177,7 +177,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           borrowedAsset: {
             ...loanTokenMetadata,
             // TODO: token issue
-            tokenType: item.loan_token.loan_token?.token_standard as TokenType,
+            tokenType: item.loan_token.loan_token_contract_standard as TokenType,
           },
           name: item.vault.name,
           address: item.vault?.address,
@@ -287,11 +287,11 @@ const normalizeCollateralAssets = ({
     totalRow: CollateralType
   }>(
     (acc, collateral) => {
-      if (!collateral.token?.collateral_token) return acc
+      if (!collateral.token?.token_address) return acc
 
       const collateralAsset = getAssetMetadata({
         tokenName: collateral.token.token_name,
-        tokenAddress: collateral.token.collateral_token?.token_address,
+        tokenAddress: collateral.token.token_address,
         dipDupTokens,
         feeds,
         oracleId: String(collateral.token.oracle_id),

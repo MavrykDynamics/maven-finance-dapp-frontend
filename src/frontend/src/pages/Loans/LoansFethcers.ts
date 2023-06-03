@@ -113,11 +113,10 @@ export const getCollateralTokens = (
 ): Array<AvaliableCollateralType> => {
   try {
     return collateralTokens.reduce<AvaliableCollateralType[]>(
-      (acc, { collateral_token, token_name, protected: isProtected, oracle_id }) => {
-        if (!collateral_token) return acc
+      (acc, { token_address, token_contract_standard, token_name, protected: isProtected, oracle_id }) => {
         const assetMetadata = getAssetMetadata({
           tokenName: token_name,
-          tokenAddress: collateral_token.token_address,
+          tokenAddress: token_address,
           dipDupTokens,
           feeds,
           oracleId: String(oracle_id),
@@ -130,7 +129,7 @@ export const getCollateralTokens = (
             ...assetMetadata,
             name,
             symbol,
-            tokenType: collateral_token.token_standard as TokenType,
+            tokenType: token_contract_standard as TokenType,
             isProtected,
           })
         }

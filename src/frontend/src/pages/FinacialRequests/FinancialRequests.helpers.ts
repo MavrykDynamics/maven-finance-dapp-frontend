@@ -15,8 +15,7 @@ export const normalizeFinancialRequests = (
     frIds: number[]
   }>(
     (acc, item) => {
-      // TODO: it should not be optional
-      const tokenAddress = item.token?.token_address
+      const tokenAddress = item.token_address
       if (!tokenAddress) return acc
 
       const tokenName = dipDupTokens.find(({ contract }) => contract === tokenAddress)?.metadata.symbol ?? 'MVK'
