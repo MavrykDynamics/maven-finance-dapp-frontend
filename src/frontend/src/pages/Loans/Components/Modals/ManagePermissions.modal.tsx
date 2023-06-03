@@ -17,7 +17,7 @@ import { DDItemId, DropDown, DropDownItemType } from 'app/App.components/DropDow
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
 import { LoansModalBase } from './Modals.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { managePermissionsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 import {
   NONE_USER,

@@ -25,7 +25,7 @@ export type CollateralPopupCommonDataType = {
 export type AddCollateralPopupDataType =
   | (CollateralPopupCommonDataType & {
       borrowCapacity: number
-      avaliableLiq: number
+      availableLiquidity: number
     })
   | null
 
@@ -33,7 +33,7 @@ export type AddNewCollateralDataProps =
   | (CollateralPopupCommonDataType & {
       existingCollaterals: Array<CollateralType>
       borrowCapacity: number
-      avaliableLiq: number
+      availableLiquidity: number
     })
   | null
 
@@ -90,6 +90,8 @@ export type AddLendingAssetDataType =
 export type RemoveLendingAssetDataType =
   | (AddLendingAssetDataType & {
       currentLendedAmount: number
+      reserveAmount: number
+      availableLiquidity: number
     })
   | null
 
