@@ -69,21 +69,21 @@ export class StakeProviderClass extends React.Component<Props, State> {
   }
 
   updateStakeActionContext = (newAction: StakeContext['action']) => {
-    this.setState({
+    this.setState((prevState) => ({
       context: {
-        ...this.state.context,
+        ...prevState.context,
         action: newAction,
       },
-    })
+    }))
   }
 
   updateStakeActionLoaderContext = (newLoaderValue: boolean) => {
-    this.setState({
+    this.setState((prevState) => ({
       context: {
-        ...this.state.context,
+        ...prevState.context,
         turnOfActionLoader: newLoaderValue,
       },
-    })
+    }))
   }
 
   updateStakeHistoryData = (smvkStorage: SubscribeSmvkHistoryDataSubscription) => {
@@ -200,7 +200,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
       await batch?.send()
 
       this.updateStakeActionContext(STAKE_ACTION)
-      dispatch(actionStartToaster(STAKE_ACTION))
+      await dispatch(await actionStartToaster(STAKE_ACTION))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
@@ -232,7 +232,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
       await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
 
       this.updateStakeActionContext(UNSTAKE_ACTION)
-      dispatch(actionStartToaster(UNSTAKE_ACTION))
+      await dispatch(await actionStartToaster(UNSTAKE_ACTION))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)

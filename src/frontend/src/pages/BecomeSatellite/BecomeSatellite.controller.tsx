@@ -57,6 +57,7 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -86,7 +87,11 @@ export const BecomeSatellite = () => {
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
+  useStakeUpdater({
+    skipAddressBalance: SUB_SKIP,
+    skipMvkTokenTotal: SUB_SKIP,
+    skipStakeHistory: SUB_SKIP,
+  })
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
