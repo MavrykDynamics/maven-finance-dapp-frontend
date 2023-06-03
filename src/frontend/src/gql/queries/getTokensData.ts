@@ -19,6 +19,7 @@ export const GOVERNANCE_CONTRACT_ADDRESS_QUERY = `
 export const GOVERNANCE_CONTRACT_ADDRESS_NAME = 'GetContractAddress'
 export const GOVERNANCE_CONTRACT_ADDRESS_VARIABLE = {}
 
+// TODO: dipdup_token_metadata -> token
 export const DAPP_TOKENS_QUERY = `
 query DappTokens($_whitelistTokensAddress: String) {
   dipdup_token_metadata {
@@ -29,6 +30,13 @@ query DappTokens($_whitelistTokensAddress: String) {
     network
     update_id
     updated_at
+  }
+
+  token {
+    token_address
+    token_standard
+    token_id
+    metadata
   }
 
   treasury(where: {address: {_eq: $_whitelistTokensAddress}}) {

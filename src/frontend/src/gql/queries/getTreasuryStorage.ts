@@ -1,38 +1,38 @@
 export const GET_TREASURY_DATA = `
-  query GetTreasuryStorageQuery {
-    treasury(where: {admin: {_neq: ""}}) {
-      address
-      admin
-      creation_timestamp
-      governance_id
-      mint_mvk_and_transfer_paused
-      name
-      stake_mvk_paused
-      transfer_paused
-      unstake_mvk_paused
-
-      balances {
-        balance
-        id
+query GetTreasuryStorageQuery {
+  treasury(where: {admin: {_neq: ""}}) {
+    address
+    admin
+    creation_timestamp
+    governance_id
+    mint_mvk_and_transfer_paused
+    name
+    stake_mvk_paused
+    transfer_paused
+    unstake_mvk_paused
+    balances {
+      balance
+      id
+      token {
         metadata
         token_address
-        token_id
         token_standard
-        treasury_id
-        tzkt_token_id
       }
-    }
-    
-    treasury_factory {
-      address
-      admin
-      create_treasury_paused
-      governance_id
-      track_treasury_paused
-      treasury_name_max_length
-      untrack_treasury_paused
+      token_id
+      treasury_id
+      tzkt_token_id
     }
   }
+  treasury_factory {
+    address
+    admin
+    create_treasury_paused
+    governance_id
+    track_treasury_paused
+    treasury_name_max_length
+    untrack_treasury_paused
+  }
+}
 `
 
 export const TREASURY_STORAGE_QUERY_NAME = 'GetTreasuryStorageQuery'
