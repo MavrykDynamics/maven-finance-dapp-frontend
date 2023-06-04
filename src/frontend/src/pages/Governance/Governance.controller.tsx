@@ -191,7 +191,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
 
   // Generate proposal voters and paginate them
   const votersList = useMemo(() => {
-    const selectedProposalVotes = rightSideContentId ? proposalsMapper[rightSideContentId].votes : []
+    const selectedProposalVotes = rightSideContentId ? proposalsMapper[rightSideContentId]?.votes ?? [] : []
     return (
       selectedProposalVotes?.reduce<ProposalVotersType>((acc, { voter_id, round, vote }) => {
         const satelliteData = satelliteMapper[voter_id]
