@@ -107,7 +107,10 @@ export const StageTwoForm = ({
     }
   }
 
-  const handleOnBlur = (byte: ProposalBytesType, e: React.FocusEvent<HTMLInputElement>) => {
+  const handleOnBlur = (
+    byte: ProposalBytesType,
+    e: React.FocusEvent<HTMLInputElement> | React.FocusEvent<HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target
     if (containSpaces(value)) {
       const trimmedValue = value.trim()
@@ -341,6 +344,7 @@ export const StageTwoForm = ({
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                   handleOnChange(item, e.target.value, e.target.name)
                 }
+                onBlur={(e: React.FocusEvent<HTMLTextAreaElement>) => handleOnBlur(item, e)}
                 inputStatus={validityObject?.validDescr}
                 disabled={!isProposalPeriod || locked}
                 textAreaMaxLimit={proposalDescriptionMaxLength}
