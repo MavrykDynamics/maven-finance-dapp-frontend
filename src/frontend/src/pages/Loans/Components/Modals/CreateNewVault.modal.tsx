@@ -226,7 +226,7 @@ export const CreateNewVault = ({
     const { value } = e.target
     const validationStatus = validateVaultLength(value, myVaultsIds, vaultsMapper)
 
-    setVaultName({ name: value, validationStatus, errorMessage: '' })
+    setVaultName((prev) => ({ ...prev, name: value, validationStatus }))
   }
 
   const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
