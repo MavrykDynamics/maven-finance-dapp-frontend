@@ -22,7 +22,7 @@ type TextAreaProps = {
   value: string | number
   textAreaMaxLimit?: number
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
-  onBlur?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void
   inputStatus?: TextAreaStatusType
   errorMessage?: string
   label?: string
@@ -59,6 +59,7 @@ export const TextArea = ({
     status: inputStatus,
     onChange,
   })
+
   return (
     <TextAreaStyled className={className} id={'textAreaContainer'}>
       {label ? <NewInputLabel>{label}</NewInputLabel> : null}
