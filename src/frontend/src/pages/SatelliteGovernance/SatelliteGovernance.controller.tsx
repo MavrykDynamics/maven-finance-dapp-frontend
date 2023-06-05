@@ -36,6 +36,7 @@ import {
   SATELLITE_GOVERNANCE_MENU_TABS,
   SATELLITE_GOVERNANCE_PATHNAME,
 } from './SatelliteGovernance.consts'
+import { TOTAL_DELEGATED_MVK } from 'texts/tooltips/satellite'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -215,7 +216,7 @@ export const SatelliteGovernance = () => {
             <h3>Total Delegated MVK</h3>
             <div className="value">
               <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />
-              <CustomTooltip iconId="info" text="All staked MVK that is delegated to satellites by users" />
+              <CustomTooltip iconId="info" text={TOTAL_DELEGATED_MVK} />
             </div>
           </SatelliteGovernanceStatsInfo>
           <SatelliteGovernanceStatsInfo>
@@ -266,8 +267,6 @@ export const SatelliteGovernance = () => {
                         satelliteId={convertBytesAddressToAddress(action.parameters[0].value)}
                         initiatorId={action.initiatorId}
                         date={action.expirationDatetime}
-                        executed={action.executed}
-                        status={action.status}
                         statusFlag={action.statusFlag}
                         purpose={action.purpose}
                         governanceType={action.type}

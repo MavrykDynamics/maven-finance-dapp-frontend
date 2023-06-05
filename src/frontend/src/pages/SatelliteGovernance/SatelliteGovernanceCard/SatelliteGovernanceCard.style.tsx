@@ -8,13 +8,13 @@ export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavrykT
   align-items: flex-start;
   row-gap: 5px;
 
-  > h3 {
+  .name {
     font-weight: 600;
     font-size: 14px;
     color: ${({ theme }) => theme.textColor};
   }
 
-  .inner {
+  .value {
     margin-bottom: 0;
     margin-top: 0;
     color: ${({ theme }) => theme.dataColor};
@@ -28,7 +28,7 @@ export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavrykT
     }
 
     svg {
-      stroke: ${({ theme }) => theme.dataColor};
+      fill: ${({ theme }) => theme.dataColor};
     }
   }
 `
@@ -43,16 +43,13 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
   position: relative;
   padding: 30px 40px;
 
-  .purpose {
-    color: ${({ theme }) => theme.textColor};
-    font-weight: 500;
-    max-width: 520px;
-  }
-
-  .description {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 37px;
+  &::before {
+    content: '';
+    position: absolute;
+    border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+    width: 100%;
+    left: 0;
+    top: 1px;
   }
 
   h3 {
@@ -74,33 +71,39 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
     color: ${({ theme }) => theme.headerSkyColor};
     list-style: none;
   }
+`
 
-  &::before {
-    content: '';
-    position: absolute;
-    border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
-    width: 100%;
-    left: 0;
-    top: 1px;
+export const SatelliteGovernanceCardPurposeBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .purpose {
+    color: ${({ theme }) => theme.textColor};
+    font-weight: 500;
+    max-width: 520px;
   }
 
-  .accordion {
-    padding: 20px 40px;
-    text-align: left;
-    width: 100%;
-  }
-
-  .view-satellite {
+  .profile-details {
     font-weight: 500;
     font-size: 14px;
     text-decoration: underline;
     color: ${({ theme }) => theme.navLinkTextActive};
   }
 
-  .drop-btn {
+  .btn-wrapper {
     width: 250px;
     margin-top: 40px;
     display: block;
+  }
+`
+
+export const SatelliteGovernanceCardVotingBlock = styled.div`
+  width: 440px;
+  margin-left: auto;
+
+  article {
+    margin-bottom: 0;
   }
 
   .voting-ends {
@@ -121,20 +124,5 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
     button {
       width: 31%;
     }
-  }
-
-  .voting-block {
-    width: 440px;
-    margin-left: auto;
-
-    article {
-      margin-bottom: 0;
-    }
-  }
-
-  .purpose-block {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
   }
 `
