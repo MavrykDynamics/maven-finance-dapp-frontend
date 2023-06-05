@@ -33,6 +33,11 @@ import { LiquidateVaultModal } from 'pages/Vaults/components/LiquidateVaultModal
 
 export const loansPopupsContext = createContext<LoansPopupsContextStateType>(undefined!)
 
+/**
+ * LoansPopupsProvider - A provider component responsible for managing the state of loan interaction popups.
+ * @class
+ * @augments {React.Component}
+ */
 export default class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextStateType> {
   constructor(props: {}) {
     super(props)
@@ -340,6 +345,11 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
     })
   }
 
+  /**
+   * 
+   * Render method of LoansPopupsProvider component.
+   * @returns {object} A JSX element wrapping all popups and child components within the context provider.
+   */
   render() {
     const {
       changeBakerPopup,
