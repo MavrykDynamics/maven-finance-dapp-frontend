@@ -37,6 +37,14 @@ export const getFarmStorage = () => async (dispatch: AppDispatch, getState: GetS
   } = getState()
   // main try/catch to fetch endTime for farmsCards and farms cards from gql, if nested willl end up with error, it will set fetched card, of if this fail, will set []
   try {
+    if (process.env.REACT_APP_IS_DEMO === 'true') {
+      dispatch({
+        type: GET_FARM_STORAGE,
+        farms: [],
+      })
+      return
+    }
+
     const storage = await fetchFromIndexer(FARM_STORAGE_QUERY, FARM_STORAGE_QUERY_NAME, FARM_STORAGE_QUERY_VARIABLE)
     const farmCardEndsIn = await getEndsInTimestampForFarmCards(storage?.farm)
 
