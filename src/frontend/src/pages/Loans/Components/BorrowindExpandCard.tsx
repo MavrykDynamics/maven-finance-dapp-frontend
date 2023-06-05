@@ -49,8 +49,9 @@ import {
   getTimestampByLevelUrl,
 } from 'utils/api/api-helpers/getTimestampByLevel'
 import { getNumberInBounds } from 'utils/calcFunctions'
-import { isAbortionError } from 'errors/error'
+import { isAbortError } from 'errors/error'
 import { api } from 'utils/api/api'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -96,6 +97,8 @@ export const BorrowingExpandCard = ({
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
+
+  const { bug } = useToasterContext()
 
   const [expanded, setExpanded] = useState(false)
 
@@ -185,9 +188,10 @@ export const BorrowingExpandCard = ({
           setTimerTimestamp(timestamp)
         } catch (e) {
           // TODO: handle fetch errors when error boundary will be ready
-          if (!isAbortionError(e)) {
+          if (!isAbortError(e)) {
             console.error('getting timestamp by lvl error: ', e)
           }
+          bug('Unexpected error happened occured, please reload the page')
         }
       })()
 

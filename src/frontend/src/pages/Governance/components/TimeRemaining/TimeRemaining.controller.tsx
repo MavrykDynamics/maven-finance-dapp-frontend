@@ -26,7 +26,8 @@ import {
 } from 'utils/api/api-helpers/getTimestampByLevel'
 import { startNextRound } from 'pages/Governance/actions/GovernanceInteraction.actions'
 import { api } from 'utils/api/api'
-import { isAbortionError } from 'errors/error'
+import { isAbortError } from 'errors/error'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 export default function TimeRemaining() {
   const dispatch = useDispatch()
@@ -36,6 +37,7 @@ export default function TimeRemaining() {
   )
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
+  const { bug } = useToasterContext()
   const [timerDeadline, setTimerDeadline] = useState(0)
   const [timerActive, setTimerActive] = useState(false)
   const [showModal, setShowModal] = useState(false)
@@ -75,11 +77,13 @@ export default function TimeRemaining() {
         const isTimestampValid = convertedToTimestamp > Date.now()
 
         setTimerActive(isTimestampValid)
+        if (isTimestampValid) setTimerDeadline(convertedToTimestamp)
       } catch (e) {
         // TODO: handle fetch errors when error boundary will be ready
-        if (!isAbortionError(e)) {
+        if (!isAbortError(e)) {
           console.error('getting timestamp by lvl error: ', e)
         }
+        bug('Unexpected error happened occured, please reload the page')
       }
     })()
 

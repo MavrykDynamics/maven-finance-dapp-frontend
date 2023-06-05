@@ -42,10 +42,13 @@ import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.hel
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
 import { api } from 'utils/api/api'
-import { isAbortionError } from 'errors/error'
+import { isAbortError } from 'errors/error'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
   const dispatch = useDispatch()
+
+  const { bug } = useToasterContext()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -102,9 +105,10 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         setVotingTill(new Date(votingEndTimestamp).getTime())
       } catch (e) {
         // TODO: handle fetch errors when error boundary will be ready
-        if (!isAbortionError(e)) {
+        if (!isAbortError(e)) {
           console.error('getting timestamp by lvl error: ', e)
         }
+        bug('Unexpected error happened occured, please reload the page')
       }
     })()
 

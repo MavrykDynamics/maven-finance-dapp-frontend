@@ -40,8 +40,9 @@ import {
 import { vaultTabs } from '../Vaults.view'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { Button } from 'app/App.components/Button/Button.controller'
-import { isAbortionError } from 'errors/error'
+import { isAbortError } from 'errors/error'
 import { api } from 'utils/api/api'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 const findStatusInfo = (
   status: string,
@@ -123,6 +124,8 @@ export const VaultsCard = (props: Props) => {
     vaultTab,
   } = props
 
+  const { bug } = useToasterContext()
+
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { DAOFee } = useSelector((state: State) => state.loans.config)
 
@@ -172,9 +175,10 @@ export const VaultsCard = (props: Props) => {
           setTimerTimestamp(timestamp)
         } catch (e) {
           // TODO: handle fetch errors when error boundary will be ready
-          if (!isAbortionError(e)) {
+          if (!isAbortError(e)) {
             console.error('getting timestamp by lvl error: ', e)
           }
+          bug('Unexpected error happened occured, please reload the page')
         }
       })()
 
