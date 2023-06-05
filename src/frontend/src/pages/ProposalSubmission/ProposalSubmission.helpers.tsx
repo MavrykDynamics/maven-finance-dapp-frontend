@@ -133,7 +133,7 @@ export const checkStage1Validation = ({
     description === INPUT_STATUS_SUCCESS &&
     title === INPUT_STATUS_SUCCESS &&
     sourceCode === INPUT_STATUS_SUCCESS &&
-    invoice === INPUT_STATUS_SUCCESS
+    invoice !== INPUT_STATUS_ERROR
   )
 }
 

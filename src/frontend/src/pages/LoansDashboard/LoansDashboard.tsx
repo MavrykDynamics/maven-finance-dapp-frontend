@@ -58,16 +58,18 @@ export const LoansDashboard = () => {
     isDataLoaded: isLoansLoaded,
     loanTokens,
     chartsData: {
-      lendBorrow24hDiff: { last24hLending, last48hLending, last24hBorrowing, last48hBorrowing },
+      lendBorrow24hDiff: { last24hLending, last24hBorrowing },
     },
   } = useSelector((state: State) => state.loans)
 
   const {
     accountPkh,
-    user: { availableLoansRewards, userLoansData },
+    user: {
+      availableLoansRewards,
+      userLoansData,
+      userAvatars: { mainAvatar },
+    },
   } = useSelector((state: State) => state.wallet)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
 
   const { totalBorrowed, totalLended } = loanTokens.reduce<{
     totalLended: number
@@ -95,17 +97,6 @@ export const LoansDashboard = () => {
     [accountPkh],
   )
 
-  const userImage = useMemo(
-    () =>
-      getUserAvatar({
-        accountPkh,
-        satelliteMapper,
-        councilMembers,
-        breakGlassCouncilMembers,
-      }),
-    [accountPkh, breakGlassCouncilMembers, councilMembers, satelliteMapper],
-  )
-
   // Calcuating total lended and borrowed by user
   const { totalUserLended, totalUserBorrowed } = useMemo(() => {
     const totalUserLended = userLoansData.userLendings.reduce((acc, { usdAmount }) => (acc += usdAmount), 0)
@@ -115,8 +106,8 @@ export const LoansDashboard = () => {
   }, [userLoansData])
 
   // Calcuating persents of total lended and borrowed changed since last operation
-  const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hLending, last48hLending)
-  const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hBorrowing, last48hBorrowing)
+  const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(totalBorrowed, totalBorrowed - last24hLending)
+  const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(totalLended, totalLended - last24hBorrowing)
 
   // calc data for gauge chart
   const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {
@@ -190,7 +181,7 @@ export const LoansDashboard = () => {
 
   return (
     <Page>
-      <PageHeader page={'loansDashboard'} avatar={userImage} />
+      <PageHeader page={'loansDashboard'} avatar={mainAvatar} />
 
       <LoansDashboardStyled>
         {isLoading ? (

@@ -80,8 +80,10 @@ export const SatelliteGovernance = () => {
 
   const {
     accountPkh,
-    user: { isSatellite },
+    user: { isSatellite, govActionsCount },
   } = useSelector((state: State) => state.wallet)
+
+  const { maxActionsCount } = useSelector((state: State) => state.satelliteGovernance.config)
 
   const {
     isLoaded,
@@ -229,6 +231,9 @@ export const SatelliteGovernance = () => {
           <SatelliteGovernanceAvailableActions>
             <div className="navigation">
               <H2SimpleTitle>Available Actions</H2SimpleTitle>
+              <span>
+                {govActionsCount} from {maxActionsCount}
+              </span>
 
               <DropDown
                 placeholder="Choose action"

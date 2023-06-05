@@ -52,9 +52,17 @@ export const SatelliteGovernanceAvailableActions = styled(Card)`
 
   .navigation {
     display: grid;
-    grid-template-columns: auto 440px;
+    grid-template-columns: 195px auto 440px;
     align-items: center;
     padding: 17px 30px;
+
+    span {
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 24px;
+
+      color: ${({ theme }) => theme.textColor};
+    }
   }
 `
 

@@ -28,7 +28,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
   const {
     loanTokens,
     chartsData: {
-      lendBorrow24hDiff: { last24hLending, last48hLending, last24hBorrowing, last48hBorrowing },
+      lendBorrow24hDiff: { last24hLending, last24hBorrowing },
     },
   } = useSelector((state: State) => state.loans)
 
@@ -47,43 +47,57 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
     },
   )
 
-  const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset } = useMemo(() => {
-    return loanTokens.reduce<{
-      lendingSuppliers: number
-      borrowers: number
-      mostBorrowedAsset: LoanMarketType['loanTokenData'] | null
-      mostLendedAsset: LoanMarketType['loanTokenData'] | null
-      prevMostBorrowed: number
-      prevMostLended: number
-    }>(
-      (acc, { suppliers, borrowers, totalBorrowed, totalLended, loanTokenData }) => {
-        acc.lendingSuppliers += suppliers
-        acc.borrowers += borrowers
+  const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset, totalCurrentBorrowed, totalCurrentLended } =
+    useMemo(() => {
+      return loanTokens.reduce<{
+        lendingSuppliers: number
+        borrowers: number
+        mostBorrowedAsset: LoanMarketType['loanTokenData'] | null
+        mostLendedAsset: LoanMarketType['loanTokenData'] | null
+        prevMostBorrowed: number
+        totalCurrentLended: number
+        prevMostLended: number
+        totalCurrentBorrowed: number
+      }>(
+        (acc, { suppliers, borrowers, totalBorrowed, totalLended, loanTokenData }) => {
+          acc.lendingSuppliers += suppliers
+          acc.borrowers += borrowers
 
-        if (acc.prevMostBorrowed < totalBorrowed * loanTokenData.rate) {
-          acc.prevMostBorrowed = totalBorrowed * loanTokenData.rate
-          acc.mostBorrowedAsset = loanTokenData as LoanMarketType['loanTokenData']
-        }
+          if (acc.prevMostBorrowed < totalBorrowed * loanTokenData.rate) {
+            acc.prevMostBorrowed = totalBorrowed * loanTokenData.rate
+            acc.mostBorrowedAsset = loanTokenData as LoanMarketType['loanTokenData']
+          }
 
-        if (acc.prevMostLended < totalLended * loanTokenData.rate) {
-          acc.prevMostLended = totalLended * loanTokenData.rate
-          acc.mostLendedAsset = loanTokenData as LoanMarketType['loanTokenData']
-        }
-        return acc
-      },
-      {
-        lendingSuppliers: 0,
-        borrowers: 0,
-        prevMostBorrowed: 0,
-        prevMostLended: 0,
-        mostBorrowedAsset: null,
-        mostLendedAsset: null,
-      },
-    )
-  }, [loanTokens])
+          if (acc.prevMostLended < totalLended * loanTokenData.rate) {
+            acc.prevMostLended = totalLended * loanTokenData.rate
+            acc.mostLendedAsset = loanTokenData as LoanMarketType['loanTokenData']
+          }
 
-  const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hLending, last48hLending)
-  const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hBorrowing, last48hBorrowing)
+          acc.totalCurrentBorrowed += totalBorrowed * loanTokenData.rate
+          acc.totalCurrentLended += totalLended * loanTokenData.rate
+          return acc
+        },
+        {
+          lendingSuppliers: 0,
+          borrowers: 0,
+          prevMostBorrowed: 0,
+          prevMostLended: 0,
+          totalCurrentLended: 0,
+          totalCurrentBorrowed: 0,
+          mostBorrowedAsset: null,
+          mostLendedAsset: null,
+        },
+      )
+    }, [loanTokens])
+
+  const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(
+    totalCurrentBorrowed,
+    totalCurrentBorrowed - last24hLending,
+  )
+  const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(
+    totalCurrentLended,
+    totalCurrentLended - last24hBorrowing,
+  )
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
