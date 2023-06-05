@@ -10,7 +10,7 @@ import {
 } from 'app/App.components/Input/Input.constants'
 import { CreateVaultPopupDataType, VaultNameInputStateType } from './Modals.helpers'
 import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
-import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
+import { AvaliableCollateralType, LoansVaultType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton'
@@ -224,12 +224,7 @@ export const CreateNewVault = ({
   //handle vaultName input TODO: mb add debounce cuz of find operation
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    let validationStatus: InputStatusType =
-      value &&
-      value.length <= 15 &&
-      !myVaultsIds.find((vaultId) => vaultsMapper[vaultId].name.trim().toLowerCase() === value.trim().toLowerCase())
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR
+    const validationStatus = validateVaultLength(value, myVaultsIds, vaultsMapper)
 
     setVaultName({ name: value, validationStatus, errorMessage: '' })
   }
@@ -237,12 +232,7 @@ export const CreateNewVault = ({
   const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (containSpaces(e.target.value)) {
       const trimmedValue = e.target.value.trim()
-      const validationStatus: InputStatusType =
-        trimmedValue &&
-        trimmedValue.length <= 15 &&
-        !myVaultsIds.find((vaultId) => vaultsMapper[vaultId].name.trim().toLowerCase() === trimmedValue.toLowerCase())
-          ? INPUT_STATUS_SUCCESS
-          : INPUT_STATUS_ERROR
+      const validationStatus = validateVaultLength(trimmedValue, myVaultsIds, vaultsMapper)
       setVaultName((prev) => ({ ...prev, validationStatus, name: trimmedValue }))
     }
   }
@@ -706,4 +696,17 @@ export const CreateNewVault = ({
       </PopupContainerWrapper>
     </PopupContainer>
   )
+}
+
+// validation helper
+export function validateVaultLength(
+  value: string,
+  myVaultsIds: string[],
+  vaultsMapper: Record<string, LoansVaultType>,
+): InputStatusType {
+  return value &&
+    value.length <= 15 &&
+    !myVaultsIds.find((vaultId) => vaultsMapper[vaultId].name.trim().toLowerCase() === value.trim().toLowerCase())
+    ? INPUT_STATUS_SUCCESS
+    : INPUT_STATUS_ERROR
 }
