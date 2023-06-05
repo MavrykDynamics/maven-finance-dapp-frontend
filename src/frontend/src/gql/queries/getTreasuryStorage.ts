@@ -4,33 +4,22 @@ export const GET_TREASURY_DATA = `
       address
       admin
       creation_timestamp
-      governance_id
-      mint_mvk_and_transfer_paused
       name
-      stake_mvk_paused
-      transfer_paused
-      unstake_mvk_paused
 
       balances {
         balance
-        id
         metadata
         token_address
-        token_id
-        token_standard
         treasury_id
-        tzkt_token_id
+      }
+
+      whitelist_token_contracts {
+        contract_address
       }
     }
     
     treasury_factory {
       address
-      admin
-      create_treasury_paused
-      governance_id
-      track_treasury_paused
-      treasury_name_max_length
-      untrack_treasury_paused
     }
   }
 `
