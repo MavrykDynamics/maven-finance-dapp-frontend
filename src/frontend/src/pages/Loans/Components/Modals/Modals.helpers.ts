@@ -3,7 +3,7 @@ import { CollateralType, DepositorsFlagType, LoansAssetDataType, LoansVaultType 
 import LoansPopupsProvider from './LoansModals.provider'
 
 export type LoansPopupsInputStateType = { amount: string; validationStatus: InputStatusType }
-export type VaultNameInputStateType = { name: string; validationStatus: InputStatusType }
+export type VaultNameInputStateType = { name: string; validationStatus: InputStatusType; errorMessage: string }
 export type LoansPopupsAddressInputStateType = { address: string; validationStatus: InputStatusType }
 export const DEFAULT_LOANS_INPUT_VALUE: LoansPopupsInputStateType = {
   amount: '0',
