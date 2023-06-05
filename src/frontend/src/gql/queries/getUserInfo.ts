@@ -73,7 +73,7 @@ export function USER_INFO_QUERY_VARIABLES(address: string) {
 // cycle data
 export const SATELLITE_CYCLE_DATA_QUERY = `
 query GetCurrentCycleGovernanceSatelliteSnapshot($_eq: String = "") {
-	governance(where: {active: {_eq: true}}) {
+	governance {
 		cycle_id
 		satellite_snapshots(where: {user:  {address: {_eq: $_eq}}}, order_by: {cycle: desc}) {
 			cycle,

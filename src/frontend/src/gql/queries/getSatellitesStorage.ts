@@ -107,7 +107,7 @@ query SatellitesStorageQuery {
       executed
     }
   }
-     governance(where: {active: {_eq: true}}) {
+     governance {
       satellite_snapshots(order_by: {cycle: desc_nulls_last}) {
         user {
           address

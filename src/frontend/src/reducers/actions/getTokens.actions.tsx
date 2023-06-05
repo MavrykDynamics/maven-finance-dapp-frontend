@@ -6,7 +6,6 @@ import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import {
   normalizeDipDupTokens,
-  normalizeDipDupContracts,
   normalizeMTokens,
   normalizeWhitelistTokens,
 } from 'utils/normalizers/DAPPTokens.normalizers'
@@ -45,9 +44,9 @@ export const getTokensForDAPP = () => async (dispatch: AppDispatch, getState: Ge
       GOVERNANCE_CONTRACT_ADDRESS_VARIABLE,
     )
 
-    const address = govContract?.governance?.[0]?.general_contracts?.[0]?.contract_address
+    const address = govContract?.governance?.[0]?.general_contracts?.[0]?.contract_address ?? ''
 
-    if (!address) {
+    if (!address && address !== '') {
       throw new Error('No active governance contract')
     }
 

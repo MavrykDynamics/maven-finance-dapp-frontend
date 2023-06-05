@@ -142,46 +142,51 @@ export const NEW_VAULT_QUERY_NAME = 'GetUsersLastestCreatedVault'
 export const NEW_VAULT_QUERY_VARIABLE = (userAddress: string, vaultName: string) => ({ userAddress, vaultName })
 
 export const USER_LENDING_DATA_QUERY = `
-  query GetLendBorrowHistoryPerUser($userAddress: String = "", $_in: [smallint!] = ["0", "1", "2", "3"]) {
-    mavryk_user(where: {address: {_eq: $userAddress}}) {
-      lending_controller_history_data_sender(where: {lending_controller: {mock_time: {_eq: false}}, type: {_in: $_in}}, order_by: {type: asc, timestamp: asc}) {
-        type
-        timestamp
-        operation_hash
-        amount
-        loan_token {
-          oracle_id
-          loan_token_name
-          loan_token_address
-          loan_token_contract_standard
-          current_interest_rate
+query GetLendBorrowHistoryPerUser($userAddress: String = "", $_in: [smallint!] = ["0", "1", "2", "3"]) {
+  mavryk_user(where: {address: {_eq: $userAddress}}) {
+    lending_controller_history_data_sender(where: {lending_controller: {mock_time: {_eq: false}}, type: {_in: $_in}}, order_by: {type: asc, timestamp: asc}) {
+      type
+      timestamp
+      operation_hash
+      amount
+      loan_token {
+        oracle_id
+        loan_token_name
+        token {
+          token_address
+          token_standard
         }
-        lending_controller {
-          interest_rate_decimals
-          interest_treasury_share
-          decimals
+        current_interest_rate
+      }
+      lending_controller {
+        interest_rate_decimals
+        interest_treasury_share
+        decimals
+      }
+    }
+    lending_controller_vaults(where: {lending_controller: {mock_time: {_eq: false}}}) {
+      collateral_balances {
+        balance
+        token {
+          token_name
+          token {
+            token_address
+          }
+          oracle_id
         }
       }
-
-      lending_controller_vaults(where: {lending_controller: {mock_time: {_eq: false}}}) {
-        collateral_balances {
-          balance
-          token {
-            token_name
-            token_address
-            oracle_id
-          }
+      loan_decimals
+      loan_principal_total
+      loan_token {
+        loan_token_name
+        token {
+          token_address
         }
-        loan_decimals
-        loan_principal_total
-        loan_token {
-          loan_token_name
-          loan_token_address
-          oracle_id
-        }
+        oracle_id
       }
     }
   }
+}
 `
 
 export const USER_LENDING_DATA_QUERY_NAME = 'GetLendBorrowHistoryPerUser'

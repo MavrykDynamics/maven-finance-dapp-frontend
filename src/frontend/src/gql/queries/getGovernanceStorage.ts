@@ -1,6 +1,6 @@
 export const GOVERNANCE_CONFIG_QUERY = `
   query GetGovernanceConfigQuery {
-    governance(where: {active: {_eq: true}}) {
+    governance {
       address
       current_round
       success_reward

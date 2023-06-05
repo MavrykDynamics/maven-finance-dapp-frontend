@@ -9,9 +9,10 @@ export const MVK_FAUCET_QUERY_NAME = 'MVKFaucet'
 
 export const GOVERNANCE_CONTRACT_ADDRESS_QUERY = `
   query GetContractAddress {
-    governance(where: {active: {_eq: true}}) {
+    governance {
       general_contracts(where: {contract_name: {_eq: "paymentTreasury"}}) {
         contract_address
+        contract_name
       }
     }
   }
