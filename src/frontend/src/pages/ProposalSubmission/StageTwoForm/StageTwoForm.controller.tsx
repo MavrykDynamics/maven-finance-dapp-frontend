@@ -107,10 +107,10 @@ export const StageTwoForm = ({
     }
   }
 
-  const handleOnBlur = (
+  function handleOnBlur<G extends HTMLInputElement | HTMLTextAreaElement>(
     byte: ProposalBytesType,
-    e: React.FocusEvent<HTMLInputElement> | React.FocusEvent<HTMLTextAreaElement>,
-  ) => {
+    e: React.FocusEvent<G>,
+  ) {
     const { name, value } = e.target
     if (containSpaces(value)) {
       const trimmedValue = value.trim()
