@@ -68,6 +68,26 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
       font-weight: 700;
     }
 
+    .invoice-content {
+      display: flex;
+      align-items: center;
+      column-gap: 10px;
+    }
+
+    .img-wrapper {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid ${({ theme }) => theme.valueColor};
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
     .value {
       font-size: 16px;
       font-weight: 700;
@@ -205,12 +225,12 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>
 // Proposal submittion general styles
 export const ProposalSubmittionButtons = styled.div<{ theme: MavrykTheme }>`
   margin-top: 40px;
-  display: grid;
-  grid-template-columns: 220px 220px 220px;
+  display: flex;
   justify-content: flex-end;
   column-gap: 10px;
 
   .btn-wrapper {
+    width: 220px;
     position: relative;
 
     .tooltip {
