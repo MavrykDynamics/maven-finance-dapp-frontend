@@ -80,7 +80,7 @@ export const SATELLITE_GOVERNANCE_STORAGE_QUERY_VARIABLE = {}
 export const SATELLITE_ACTIONS_COUNT_QUERY = `
 query maxSatGovActionsPerSatellitePerCycle($address:String = "") {
   governance_satellite {
-    actions(where: {initiator_id: {_eq: $address}, status: {_eq: "0"}}, order_by: {expiration_datetime: desc}) {
+    actions(where: {initiator: {address: {_eq: $address}}, status: {_eq: "0"}}, order_by: {expiration_datetime: desc}) {
       status
     }
   }

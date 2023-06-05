@@ -267,7 +267,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                         title={title}
                         type={type}
                         listName={listName}
-                        key={`${proposalsIds.length}-${title}`}
+                        key={listName}
                       />
 
                       {/* Show this plug when we use cycle dd filter and some of the cycles don't have proposals in it */}
@@ -293,7 +293,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                   <H2Title>Satellite Voting History</H2Title>
                   {paginatedVotersList.map(({ vote, address, name, avatar }) => {
                     return (
-                      <VoterListItem>
+                      <VoterListItem key={address}>
                         <div className="left">
                           <ImageWithPlug imageLink={avatar} alt={`${name} avatar`} />
                           <div className="info">

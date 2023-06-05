@@ -44,9 +44,9 @@ export const getTokensForDAPP = () => async (dispatch: AppDispatch, getState: Ge
       GOVERNANCE_CONTRACT_ADDRESS_VARIABLE,
     )
 
-    const address = govContract?.governance?.[0]?.general_contracts?.[0]?.contract_address ?? ''
+    const address = govContract?.governance?.[0]?.general_contracts?.[0]?.contract_address
 
-    if (!address && address !== '') {
+    if (!address) {
       throw new Error('No active governance contract')
     }
 
