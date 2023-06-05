@@ -65,7 +65,7 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
 
     a {
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     .invoice-content {
@@ -90,7 +90,7 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
 
     .value {
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 600;
       color: ${({ theme }) => theme.textColor};
     }
   }
@@ -101,7 +101,7 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
     top: -20px;
     left: 0;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .description {
