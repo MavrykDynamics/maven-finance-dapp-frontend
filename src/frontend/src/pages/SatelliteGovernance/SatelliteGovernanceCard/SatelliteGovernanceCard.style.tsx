@@ -1,6 +1,4 @@
 import styled from 'styled-components/macro'
-import { royalPurpleColor } from 'styles'
-
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavrykTheme }>`
@@ -80,7 +78,7 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
   &::before {
     content: '';
     position: absolute;
-    border-top: 1px solid ${royalPurpleColor};
+    border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
     width: 100%;
     left: 0;
     top: 1px;

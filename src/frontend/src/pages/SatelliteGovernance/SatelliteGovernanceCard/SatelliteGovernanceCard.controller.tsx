@@ -9,7 +9,6 @@ import { getSeparateSnakeCase } from '../../../utils/parse'
 import { ProposalStatus, SatelliteGovernance } from '../../../utils/TypesAndInterfaces/Governance'
 import Expand from '../../../app/App.components/Expand/Expand.view'
 
-// action
 import { dropAction, voteForAction } from '../SatelliteGovernance.actions'
 
 import { SatelliteGovernanceCardDropDown, SatelliteGovernanceCardTitleTextGroup } from './SatelliteGovernanceCard.style'
@@ -59,20 +58,7 @@ export const SatelliteGovernanceCard = ({
 }: Props) => {
   const dispatch = useDispatch()
 
-  const [expanded, setExpanded] = useState(false)
-
   const myVote = useMemo(() => votes.find((item) => item.voterId === accountPkh)?.vote, [accountPkh, votes])
-  const open = () => setExpanded(!expanded)
-
-  const handleVotingRoundVote = (type: string) => {
-    dispatch(voteForAction(id, type, open))
-  }
-
-  const handleClick = async () => {
-    console.log('Logging is actionActive', isActionActive)
-    await dispatch(dropAction(id, open))
-  }
-
   const timeNow = Date.now()
   const expirationDatetime = new Date(date ?? 0).getTime()
   const isEndingVotingTime = expirationDatetime > timeNow
@@ -92,6 +78,14 @@ export const SatelliteGovernanceCard = ({
     }),
     [yayVotesSmvkTotal, nayVotesSmvkTotal, passVoteSmvkTotal, snapshotSmvkTotalSupply, smvkPercentageForApproval],
   )
+
+  const handleVotingRoundVote = (type: string) => {
+    dispatch(voteForAction(id, type))
+  }
+
+  const handleDropAction = async () => {
+    await dispatch(dropAction(id))
+  }
 
   return (
     <Expand
@@ -141,7 +135,7 @@ export const SatelliteGovernanceCard = ({
               className="drop-btn"
               icon="close-stroke"
               kind={'actionSecondary'}
-              onClick={handleClick}
+              onClick={handleDropAction}
               disabled={isActionActive}
             />
           ) : null}

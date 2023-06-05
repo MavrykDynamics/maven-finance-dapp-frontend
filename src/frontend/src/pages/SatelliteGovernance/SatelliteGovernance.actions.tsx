@@ -521,7 +521,7 @@ export const setAggregatorMaintainer =
 
 // Drop Action
 export const dropAction =
-  (actionId: number, callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
+  (actionId: number, callback?: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
@@ -534,7 +534,7 @@ export const dropAction =
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.dropAction(actionId).send()
 
-      callback()
+      callback?.()
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, 'Dropping Action...', ACTION_START_MESSAGE_TEXT))
@@ -569,7 +569,7 @@ export const dropAction =
       console.error('Drop Action error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-        callback()
+        callback?.()
       }
       dispatch(toggleActionFullScreenLoader(false))
       dispatch(toggleActionCompletion(false))
@@ -578,7 +578,7 @@ export const dropAction =
 
 // Vote YES
 export const voteForAction =
-  (actionId: number, voteType: string, callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
+  (actionId: number, voteType: string, callback?: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
@@ -591,7 +591,7 @@ export const voteForAction =
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.voteForAction(actionId, voteType).send()
 
-      callback()
+      callback?.()
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, `Voting ${voteType}...`, ACTION_START_MESSAGE_TEXT))
@@ -627,7 +627,7 @@ export const voteForAction =
       console.error(`${voteType} Vote For Action error:`, error)
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-        callback()
+        callback?.()
       }
       dispatch(toggleActionFullScreenLoader(false))
       dispatch(toggleActionCompletion(false))

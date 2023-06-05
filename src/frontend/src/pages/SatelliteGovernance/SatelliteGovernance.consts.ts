@@ -134,14 +134,19 @@ export const SATELLITE_GOVERNANCE_ACTION_NAMES = {
   REMOVE_FROM_AGREGATOR: 'Remove from Aggregator',
   ADD_TO_AGGREGATOR: 'Add to Aggregator',
   RESTORE_SATELLITE: 'Restore Satellite',
-  // TODO: commented according to [MAV-1404]
   SET_AGREGATOR_MANTAINER: 'Set Aggregator Maintainer',
   UPDATE_AGREGATOR_STATUS: 'Update Aggregator Status',
   REGISTER_AGGREGATOR: 'Register Aggregator',
   FIX_MISTAKEN_TRANSFER: 'Fix Mistaken Transfer',
 } as const
 
-export const SATELLITE_GOVERNANCE_ACTIONS = Object.values(SATELLITE_GOVERNANCE_ACTION_NAMES)
+// TODO: filtered according to [MAV-1404]. Remove filter for allow all actions
+export const SATELLITE_GOVERNANCE_ACTIONS = Object.values(SATELLITE_GOVERNANCE_ACTION_NAMES).filter(
+  (name) =>
+    name !== SATELLITE_GOVERNANCE_ACTION_NAMES.SET_AGREGATOR_MANTAINER &&
+    name !== SATELLITE_GOVERNANCE_ACTION_NAMES.REGISTER_AGGREGATOR &&
+    name !== SATELLITE_GOVERNANCE_ACTION_NAMES.UPDATE_AGREGATOR_STATUS,
+)
 
 export const SATELLITE_GOVERNANCE_MENU_TABS = {
   ONGOING: 'ongoing',
