@@ -100,6 +100,8 @@ export default class FarmsPopupsProvider extends React.Component<{}, FarmsPopups
 
   /**
    *
+   * Render method of FarmsPopupsProvider component.
+   * @returns {object} A JSX element wrapping all popups and child components within the context provider.
    */
   render() {
     const { roiPopup, depositPopup, withdrawPopup } = this.state
