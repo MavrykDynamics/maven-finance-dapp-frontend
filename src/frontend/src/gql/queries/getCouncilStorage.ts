@@ -66,7 +66,7 @@ export const COUNCIL_PAST_ACTIONS_VARIABLE = {}
 
 export const COUNCIL_PENDING_ACTIONS_QUERY = `
   query GetPendingCouncilActions($_gte: timestamptz = "", $userAddress: String = "", $userAddress2: String = "") {
-    council_action(where: {status: {_eq: "0"}, expiration_datetime: {_gte: $_gte}, _or: {executed: {_eq: false}}, signers: {signer: {address: {_neq: "userAddress2"}}}, initiator: {address: {_neq: "$userAddress2"}}}, order_by: {start_datetime: desc}) {
+    council_action(where: {status: {_eq: "0"}, expiration_datetime: {_gte: $_gte}, _or: {executed: {_eq: false}}, signers: {signer: {address: {_neq: $userAddress2}}}, initiator: {address: {_neq: $userAddress}}}, order_by: {start_datetime: desc}) {
       ${COUNCIL_ACTIONS_PARAMS}
     }
   }
