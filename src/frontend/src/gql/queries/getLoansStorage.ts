@@ -95,14 +95,18 @@ query GetAvaliableCollaterals {
       id
       token_name
       protected
-      oracle_id
+      oracle {
+        address
+      }
     }
     loan_tokens {
       loan_token_name
-      oracle_id
+      oracle {
+        address
+      }
       vaults {
         collateral_balances {
-          token {
+          collateral_token {
             token_name
             token {
               token_address
@@ -114,7 +118,9 @@ query GetAvaliableCollaterals {
             token_address
           }
           loan_token_name
-          oracle_id
+          oracle {
+            address
+          }
         }
       }
     }
@@ -150,7 +156,9 @@ query GetLendBorrowHistoryPerUser($userAddress: String = "", $_in: [smallint!] =
       operation_hash
       amount
       loan_token {
-        oracle_id
+        oracle {
+            address
+          }
         loan_token_name
         token {
           token_address
@@ -167,12 +175,14 @@ query GetLendBorrowHistoryPerUser($userAddress: String = "", $_in: [smallint!] =
     lending_controller_vaults(where: {lending_controller: {mock_time: {_eq: false}}}) {
       collateral_balances {
         balance
-        token {
+        collateral_token {
           token_name
+          oracle {
+            address
+          }
           token {
             token_address
           }
-          oracle_id
         }
       }
       loan_decimals
@@ -182,7 +192,9 @@ query GetLendBorrowHistoryPerUser($userAddress: String = "", $_in: [smallint!] =
         token {
           token_address
         }
-        oracle_id
+        oracle {
+            address
+          }
       }
     }
   }

@@ -41,7 +41,7 @@ export function normalizeCouncilActions(
   const normalizedActions = storage.reduce<CouncilActionsType>((acc, item) => {
     const action: CouncilActionType = {
       actionType: item.action_type,
-      councilId: item.council.address ?? item.break_glass.address,
+      councilId: item.council?.address ?? item.break_glass?.address,
       executed: item.executed,
       id: item.id,
       initiatorId: item.initiator.address,

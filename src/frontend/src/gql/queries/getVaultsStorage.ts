@@ -14,7 +14,7 @@ query GetAllVaultsStorage {
     vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}}) {
       collateral_balances {
         balance
-        token {
+        collateral_token {
           token {
             token_address
             token_standard

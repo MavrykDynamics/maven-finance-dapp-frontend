@@ -24,7 +24,11 @@ query SatellitesStorageQuery {
       mvk_balance
       aggregator_oracles {
         observations(order_by: {epoch: desc_nulls_last}, limit: 5) {
-          oracle_id
+          oracle {
+            user{
+              address
+            }
+          }
           epoch
           data
           round

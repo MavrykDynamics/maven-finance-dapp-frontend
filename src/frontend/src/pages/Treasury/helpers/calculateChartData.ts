@@ -3,6 +3,7 @@ import { TreasuryBalanceType, TreasuryChartType } from 'utils/TypesAndInterfaces
 import { calcPersent } from './treasury.utils'
 import { VaultAssetData } from 'pages/Vaults/Vaults.helpers'
 
+// TODO: check handling where 1 item here, with balance close to 0
 export const getPieChartData = (
   balances: Array<TreasuryBalanceType | VaultAssetData>,
   reducedBalance: number,
@@ -18,7 +19,7 @@ export const getPieChartData = (
   return balances.reduce<TreasuryChartType>((acc, item) => {
     // TODO: need this while some assets are test, and i can't fetch their rate
     const tokenUsdValue = item.usdValue || 0
-    const tokenPersent = calcPersent(tokenUsdValue, reducedBalance)
+    const tokenPersent = balances.length === 1 ? 100 : calcPersent(tokenUsdValue, reducedBalance)
 
     if (tokenPersent < 10 || !tokenUsdValue) {
       const smallValuesAccIdx = acc.findIndex((item) => item.groupedSmall)
@@ -37,11 +38,11 @@ export const getPieChartData = (
         groupedSectorsColor = item.chartColor
         acc.push({
           title: item.symbol,
-          value: smallSectorValue,
+          value: balances.length === 1 ? 1 : smallSectorValue,
           color: groupedSectorsColor,
           isHoveredPathAsset,
           segmentStroke: isHoveredPathAsset ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
-          labelPersent: calcPersent(tokenUsdValue, reducedBalance),
+          labelPersent: tokenPersent, //calcPersent(tokenUsdValue, reducedBalance),
           groupedSmall: true,
         })
 
@@ -56,8 +57,8 @@ export const getPieChartData = (
         ...(item.usdValue < 0.01 ? {} : { color: item.chartColor }),
         title: `${smallValuesAccObj.title}, ${item.symbol}`,
         isHoveredPathAsset,
-        value: smallSectorValue,
-        labelPersent: calcPersent(groupedSectorsValue, reducedBalance),
+        value: balances.length === 1 ? 1 : smallSectorValue,
+        labelPersent: balances.length === 1 ? 100 : calcPersent(groupedSectorsValue, reducedBalance),
         segmentStroke: isHoveredPathAsset ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
       }
 

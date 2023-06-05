@@ -20,7 +20,7 @@ export function normalizeWhitelistTokens(whitelistTokens: Array<Treasury>) {
       .map((tokenInfo) => ({
         symbol: tokenInfo.contract_name,
         address: tokenInfo.contract_address,
-        shortSymbol: tokenInfo.token_contract_standard,
+        shortSymbol: tokenInfo.token.token_standard,
         id: 0,
       }))
       // TODO: remove this filter when back-end is ready for this

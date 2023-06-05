@@ -48,7 +48,7 @@ export const normalizeFarmStorage = (
         lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] &&
         address === lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0],
     )
-    const dipDupToken = dipDupTokens.find(({ contract }) => farmItem.lp_token_address === contract)
+    const dipDupToken = dipDupTokens.find(({ contract }) => farmItem.lp_token.token_address === contract)
 
     return {
       address: farmItem.address,

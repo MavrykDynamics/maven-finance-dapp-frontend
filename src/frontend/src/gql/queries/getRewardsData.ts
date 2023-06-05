@@ -42,7 +42,9 @@ export const USER_REWARDS_QUERY = `
 
       loan_tokens {
         loan_token_name
-        oracle_id
+        oracle {
+            address
+          }
       }
     }
   }

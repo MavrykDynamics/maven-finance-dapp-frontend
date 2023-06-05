@@ -33,8 +33,8 @@ export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) 
 
     if (collateralBalances.length) {
       collateralBalances.map((collateral) => {
-        if (collateral.token?.oracle?.address) {
-          uniqueOracleAddresses.add(collateral.token.oracle?.address)
+        if (collateral.collateral_token?.oracle?.address) {
+          uniqueOracleAddresses.add(collateral.collateral_token.oracle?.address)
         }
       })
     }
