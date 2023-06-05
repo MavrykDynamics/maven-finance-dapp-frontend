@@ -148,19 +148,18 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         govPhase={governancePhase}
       />
 
-      {isExecuteProposal ? (
+      {isExecuteProposal || isPaymentProposal ? (
         <div className="proposal-button-action">
-          <Button onClick={handleClickExecuteProposal} disabled={isActionActive} kind={BUTTON_PRIMARY}>
-            Execute Proposal
-          </Button>
-        </div>
-      ) : null}
-
-      {isPaymentProposal ? (
-        <div className="proposal-button-action">
-          <Button onClick={handleClickProcessPayment} disabled={isActionActive} kind={BUTTON_PRIMARY}>
-            Process Payment
-          </Button>
+          {isExecuteProposal ? (
+            <Button onClick={handleClickExecuteProposal} disabled={isActionActive} kind={BUTTON_PRIMARY}>
+              Execute Proposal
+            </Button>
+          ) : null}
+          {isPaymentProposal ? (
+            <Button onClick={handleClickProcessPayment} disabled={isActionActive} kind={BUTTON_PRIMARY}>
+              Process Payment
+            </Button>
+          ) : null}
         </div>
       ) : null}
 
