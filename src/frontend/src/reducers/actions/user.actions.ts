@@ -130,7 +130,7 @@ export const fetchUserData = async (
     }
 
     let satelliteActionsCount = 0
-    if (Boolean(activeSatelliteRecord)) {
+    if (Boolean(activeSatelliteRecord) && accountPkh) {
       const satelliteActionsData = await fetchFromIndexer(
         SATELLITE_ACTIONS_COUNT_QUERY,
         SATELLITE_ACTIONS_COUNT_QUERY_NAME,

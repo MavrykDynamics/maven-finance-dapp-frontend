@@ -42,10 +42,6 @@ import {
   MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
 
-// consts
-// TODO move to consts | context after subs merge
-const MAX_ACTIONS_LIMIT = 10
-
 type ExtendedTabItem = TabItem & {
   path: string
 }
@@ -96,6 +92,8 @@ export const SatelliteGovernance = () => {
     accountPkh,
     user: { isSatellite, govActionsCount },
   } = useSelector((state: State) => state.wallet)
+
+  const { maxActionsCount } = useSelector((state: State) => state.satelliteGovernance.config)
 
   const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
@@ -241,7 +239,7 @@ export const SatelliteGovernance = () => {
               <div className="header">
                 <h2>Available Actions</h2>
                 <h3>
-                  {govActionsCount} from {MAX_ACTIONS_LIMIT}
+                  {govActionsCount} from {maxActionsCount}
                 </h3>
               </div>
 
@@ -259,7 +257,7 @@ export const SatelliteGovernance = () => {
             ) : (
               <SatelliteGovernanceForm
                 maxLength={maxLength}
-                isActionActive={isActionActive}
+                isActionActive={isActionActive || govActionsCount >= maxActionsCount}
                 variant={chosenDdItem || ''}
               />
             )}
@@ -304,7 +302,7 @@ export const SatelliteGovernance = () => {
               nayVotesSmvkTotal={action.nayVoteSmvkTotal}
               passVoteSmvkTotal={action.passVoteSmvkTotal}
               accountPkh={accountPkh}
-              isActionActive={isActionActive}
+              isActionActive={isActionActive || govActionsCount >= maxActionsCount}
               votes={action.votes}
             />
           )
