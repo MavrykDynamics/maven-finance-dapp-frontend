@@ -38,7 +38,7 @@ export const StageOneForm = ({
   const isProposalSubmitted = proposalId >= 0
   const isProposalPeriod = governancePhase === 'PROPOSAL'
 
-  const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  function handleOnBlur<G extends HTMLInputElement | HTMLTextAreaElement>(e: React.FocusEvent<G>) {
     if (containSpaces(e.target.value)) {
       const trimmedValue = e.target.value.trim()
       updateLocalProposalData({ [e.target.name]: trimmedValue }, proposalId)
@@ -151,6 +151,7 @@ export const StageOneForm = ({
             placeholder="Descriprion of the proposal"
             value={currentProposal.description}
             onChange={inputHandler}
+            onBlur={handleOnBlur}
             inputStatus={currentProposalValidation.description}
             disabled={isProposalSubmitted || !isProposalPeriod}
             textAreaMaxLimit={proposalDescriptionMaxLength}
