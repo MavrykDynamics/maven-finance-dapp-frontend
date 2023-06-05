@@ -26,6 +26,8 @@ export type ButtonProps = {
   isThin?: boolean
   isSquare?: boolean
   children?: React.ReactNode
+  // TODO: temp solution, cuz some actions do not return result, and it causes infinity loading
+  ignoreLoading?: boolean
 }
 
 /**
@@ -47,6 +49,7 @@ const Button = ({
   selected = false,
   isThin = false,
   isSquare = false,
+  ignoreLoading = false,
   size = BUTTON_REGULAR,
   type = BUTTON,
 }: ButtonProps) => {
@@ -59,16 +62,17 @@ const Button = ({
         if (onClick) {
           const callResult = onClick(e)
           if (callResult && typeof callResult.then === 'function') {
-            setLoading(true)
+            if (!ignoreLoading) setLoading(true)
+
             await callResult
-            setLoading(false)
+            if (!ignoreLoading) setLoading(false)
           }
         }
       } catch (e) {
-        setLoading(false)
+        if (!ignoreLoading) setLoading(false)
       }
     },
-    [onClick],
+    [onClick, ignoreLoading],
   )
 
   const buttonClasses = classNames(kind, form, animation, size, {

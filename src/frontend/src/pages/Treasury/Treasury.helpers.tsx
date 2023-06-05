@@ -92,7 +92,6 @@ export const normalizeTreasuryStorage = (
   treasury: TreasuryGraphQL[],
   mvkRate: number,
   tokenPrices: State['tokens']['tokensPrices'],
-  whitelistTokens: State['tokens']['whitelistTokens'],
 ) => {
   const treasuryAssetsColors: Record<string, string> = sMVKAmounts?.length ? { smvk: getAssetColor(0) } : {}
 
@@ -116,8 +115,13 @@ export const normalizeTreasuryStorage = (
   const mappedTreasuries = treasury.map((treasuryData) => {
     const sMVKAmount = parsedsMVKAmount.find(({ contract }: TreasuryBalanceType) => contract === treasuryData.address)
 
+    // XTZ is present by default for each treasury, and it can't be defined on back-end
+    const treasuryWhitelistTokens = ['XTZ'].concat(
+      treasuryData.whitelist_token_contracts.map(({ contract_address }) => contract_address),
+    )
+
     const treasuryNormalizedTokens = treasuryData.balances
-      .map(({ balance, metadata, token_address }): TreasuryBalanceType => {
+      .reduce<Array<TreasuryBalanceType>>((acc, { balance, metadata, token_address }) => {
         // metadata has no type in indexer types so use 'as'
         const { symbol = '', decimals = '0', icon = '' } = (metadata ?? {}) as TreasuryAssetMapperType
         const parsedDecimals = parseInt(decimals)
@@ -137,7 +141,16 @@ export const normalizeTreasuryStorage = (
           treasuryAssetsColors[symbol.toLowerCase()] = getAssetColor(Object.keys(treasuryAssetsColors).length)
         }
 
-        return {
+        // Filter zero balance assets in treasury and bad tokens that don't have info or not in whitelist for this treasury
+        if (
+          !symbol ||
+          balance <= 0 ||
+          balance.toString().includes('e') ||
+          !treasuryWhitelistTokens.includes(token_address)
+        )
+          return acc
+
+        acc.push({
           icon,
           rate,
           contract: treasuryData.address,
@@ -148,19 +161,12 @@ export const normalizeTreasuryStorage = (
           balance: coinsAmount,
           chartColor: treasuryAssetsColors[symbol.toLowerCase()],
           tokenAddress: token_address,
-        }
-      })
+        })
+
+        return acc
+      }, [])
       // Add sMVK treasury asset if has
       .concat(sMVKAmount ?? [])
-      // Filter zero balance assets in treasury
-      .filter(
-        ({ balance, symbol }: TreasuryBalanceType) =>
-          symbol &&
-          whitelistTokens.find(
-            ({ symbol: whitelistTokenSymbol }) => symbol.toLowerCase() === whitelistTokenSymbol.toLowerCase(),
-          ) &&
-          (balance > 0 || balance.toString().includes('e')),
-      )
       // Sort by most balance to top
       .sort((asset1, asset2) => asset2.balance * Number(asset2.rate) - asset1.balance * Number(asset1.rate))
 

@@ -58,7 +58,7 @@ export const LoansDashboard = () => {
     isDataLoaded: isLoansLoaded,
     loanTokens,
     chartsData: {
-      lendBorrow24hDiff: { last24hLending, last48hLending, last24hBorrowing, last48hBorrowing },
+      lendBorrow24hDiff: { last24hLending, last24hBorrowing },
     },
   } = useSelector((state: State) => state.loans)
 
@@ -106,8 +106,8 @@ export const LoansDashboard = () => {
   }, [userLoansData])
 
   // Calcuating persents of total lended and borrowed changed since last operation
-  const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hLending, last48hLending)
-  const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hBorrowing, last48hBorrowing)
+  const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(totalBorrowed, totalBorrowed - last24hLending)
+  const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(totalLended, totalLended - last24hBorrowing)
 
   // calc data for gauge chart
   const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {

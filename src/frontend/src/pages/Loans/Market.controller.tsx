@@ -28,11 +28,15 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from './Actions/getLoansData.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 export const Market = () => {
   const dispatch = useDispatch()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
-  const { loanTokens, loansControllerAddress, isDataLoaded } = useSelector((state: State) => state.loans)
+  const { loanTokens, isDataLoaded } = useSelector((state: State) => state.loans)
+  const {
+    lendingController: { address: lendingControllerAddress },
+  } = useSelector((state: State) => state.contractAddresses)
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const { isLoading } = useDataLoader(
@@ -154,7 +158,7 @@ export const Market = () => {
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Available Liquidity</div>
-                <CommaNumber value={currentToken.availableLiquidity} className="value" />
+                <CommaNumber value={Math.max(currentToken.availableLiquidity, 0)} className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Collateral Factor</div>
@@ -186,7 +190,13 @@ export const Market = () => {
                 <CommaNumber value={currentToken.totalBorrowed} className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Reserve Amount</div>
+                <div className="name">
+                  Reserve Amount{' '}
+                  <CustomTooltip
+                    iconId="info"
+                    text="The required reserve amount of this asset's lending pool which is available for providers to withdraw from. If available Liquidity < Reserve Amount, interest rates will increase significantly until the reserve factor is restored."
+                  />
+                </div>
                 <CommaNumber value={currentToken.reserveAmount} className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
@@ -206,14 +216,16 @@ export const Market = () => {
         {tabId === LEND_TAB_ID ? (
           <LendingTab
             lendingItem={currentToken.lendingItem}
-            lendingControllerAddress={loansControllerAddress}
+            lendingControllerAddress={lendingControllerAddress}
             assetData={currentToken.loanTokenData}
             lendAPY={currentToken.lendingAPY}
+            marketAvailableLiquidity={currentToken.availableLiquidity}
+            marketReserveAmount={currentToken.reserveAmount}
           />
         ) : null}
         {tabId === BORROW_TAB_ID ? (
           <BorrowingTab
-            lendingControllerAddress={loansControllerAddress}
+            lendingControllerAddress={lendingControllerAddress}
             currentMarketAsset={currentToken.loanTokenData.gqlName}
           />
         ) : null}

@@ -189,7 +189,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
         </div>
 
         <div className="action-btn-wrapper">
-          <Button onClick={handleChangeWallet} form={BUTTON_WIDE} kind={BUTTON_PRIMARY}>
+          <Button onClick={handleChangeWallet} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
             <Icon id="exchange" /> Change Wallet
           </Button>
 
@@ -378,7 +378,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
         </div>
 
         <div className="action-btn-wrapper">
-          <Button onClick={handleChangeWallet} form={BUTTON_WIDE} kind={BUTTON_PRIMARY}>
+          <Button onClick={handleChangeWallet} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
             <Icon id="exchange" /> Change Wallet
           </Button>
 

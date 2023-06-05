@@ -16,6 +16,8 @@ import { isValidLength, isValidHttpUrl } from '../../../utils/validatorFunctions
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { containSpaces } from 'app/App.utils/input'
 
 export const StageOneForm = ({
   proposalId,
@@ -35,6 +37,13 @@ export const StageOneForm = ({
 
   const isProposalSubmitted = proposalId >= 0
   const isProposalPeriod = governancePhase === 'PROPOSAL'
+
+  const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (containSpaces(e.target.value)) {
+      const trimmedValue = e.target.value.trim()
+      updateLocalProposalData({ [e.target.name]: trimmedValue }, proposalId)
+    }
+  }
 
   // update local state value and parent state due to inputted info
   const inputHandler = (
@@ -114,6 +123,7 @@ export const StageOneForm = ({
               placeholder: 'Proposal Title',
               name: 'title',
               onChange: inputHandler,
+              onBlur: handleOnBlur,
             }}
           />
         )}
@@ -175,9 +185,16 @@ export const StageOneForm = ({
         {isProposalSubmitted ? (
           <div className="submitted-data source-code">
             <div className="label">6 - Add an Invoice Image</div>
-            <a className="isCyan" href={currentProposal.invoice}>
-              {currentProposal.invoice}
-            </a>
+            {currentProposal.invoice ? (
+              <div className="invoice-content">
+                <ImageWithPlug imageLink={currentProposal.invoice} alt="invoice for the proposal" />{' '}
+                <a className="isCyan" href={currentProposal.invoice}>
+                  {currentProposal.invoice}
+                </a>
+              </div>
+            ) : (
+              <div className="value">No link for an invoice given</div>
+            )}
           </div>
         ) : (
           <div className="invoice">

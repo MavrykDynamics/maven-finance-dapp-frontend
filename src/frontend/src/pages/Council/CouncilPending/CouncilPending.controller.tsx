@@ -22,7 +22,7 @@ import { CouncilActionType } from 'utils/TypesAndInterfaces/Council'
 // styles
 import { CouncilPendingStyled, CouncilModalBase } from './CouncilPending.style'
 import { AvatarStyle } from '../../../app/App.components/Avatar/Avatar.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 

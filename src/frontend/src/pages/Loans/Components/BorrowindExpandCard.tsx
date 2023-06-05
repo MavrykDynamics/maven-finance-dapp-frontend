@@ -81,7 +81,7 @@ export const BorrowingExpandCard = ({
   borrowedAmount,
   collateralRatio,
   borrowCapacity,
-  avaliableLiq,
+  availableLiquidity,
   minimumRepay,
   DAOFee,
 }: BorrowingExpandCardPropsType) => {
@@ -397,7 +397,7 @@ export const BorrowingExpandCard = ({
                                         existingCollaterals: collateralData,
                                         borrowedAssetRate: borrowedAsset.rate,
                                         borrowCapacity,
-                                        avaliableLiq,
+                                        availableLiquidity,
                                       })
                                     }
                                     kind={BUTTON_PRIMARY}
@@ -426,7 +426,7 @@ export const BorrowingExpandCard = ({
                                       borrowedAmount,
                                       borrowedAssetRate: borrowedAsset.rate,
                                       borrowCapacity,
-                                      avaliableLiq,
+                                      availableLiquidity,
                                     })
                                   }
                                   form={BUTTON_WIDE}
@@ -474,7 +474,7 @@ export const BorrowingExpandCard = ({
                           borrowedAmount,
                           existingCollaterals: collateralData,
                           borrowedAssetRate: borrowedAsset.rate,
-                          avaliableLiq,
+                          availableLiquidity,
                           borrowCapacity,
                         })
                       }

@@ -17,7 +17,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
 import { LoansModalBase } from './Modals.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { updateOperatorsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17307%3A226700&t=Sx2aEpp3ifrGxBtQ-0
