@@ -122,6 +122,8 @@ export const getCollateralTokens = (
         })
 
         if (assetMetadata) {
+          // TODO: excluding smvk as collateral on demo
+          if (process.env.REACT_APP_IS_DEMO === 'true' && assetMetadata.gqlName === 'smvk') return acc
           const { name, symbol } = getSymbolAndNameFromCollaterealGqlname(assetMetadata.symbol, assetMetadata.gqlName)
 
           acc.push({
