@@ -4,7 +4,9 @@ import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFe
 import { useTokensUpdater } from 'providers/TokensProvider/hooks/useTokensUpdater'
 
 export const useInitializer = () => {
-  useDappInit()
-  useDataFeedsUpdater()
-  useTokensUpdater()
+  const { isLoading: isDappGeneralLoading } = useDappInit()
+  const { isLoading: isFeedsLoading } = useDataFeedsUpdater()
+  const { isLoading: isTokensLoading } = useTokensUpdater()
+
+  return { isLoading: isDappGeneralLoading || isFeedsLoading || isTokensLoading }
 }

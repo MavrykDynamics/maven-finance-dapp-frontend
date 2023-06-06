@@ -38,6 +38,7 @@ import {
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { reduceTreasuryAssets } from 'pages/Treasury/helpers/treasury.utils'
 
 export const StageThreeForm = ({
   proposalId,
@@ -56,7 +57,9 @@ export const StageThreeForm = ({
     },
   } = useDAPPConfigContext()
   const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
-  const { treasuryTokens } = useSelector((state: State) => state.treasury)
+
+  const { treasuryStorage } = useSelector((state: State) => state.treasury)
+  const treasuryTokens = useMemo(() => reduceTreasuryAssets(treasuryStorage), [])
 
   const isProposalRound = governancePhase === 'PROPOSAL'
 
@@ -219,7 +222,7 @@ export const StageThreeForm = ({
 
                 if (payment.to__id === null || payment.title === null || !payment.token_address) return null
 
-                const tokenBalance = treasuryTokens[payment.token_address]
+                const tokenBalance = treasuryTokens[payment.token_address].balance
                 const tokenAddress = payment.token_address
                 const tokenName = tokensMetadata[tokenAddress]?.symbol
 

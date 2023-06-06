@@ -1,10 +1,8 @@
-import { normalizeTreasuryStorage } from 'pages/Treasury/Treasury.helpers'
-import type { Treasury, Treasury_Factory } from '../generated/graphqlTypes'
+import { normalizeTreasuryStorage } from 'pages/Treasury/Treasury.normalizer'
+import type { Treasury } from '../generated/graphqlTypes'
 export type TreasuryGraphQL = Omit<Treasury, '__typename'>
-export type TreasuryFactoryGraphQL = Omit<Treasury_Factory, '__typename'>
 
-export type TreasuryType = ReturnType<typeof normalizeTreasuryStorage>['mappedTreasuries']
-export type TreasuryTokenBalanceMapper = ReturnType<typeof normalizeTreasuryStorage>['tokenBalanceMapper']
+export type TreasuryType = ReturnType<typeof normalizeTreasuryStorage>
 
 export type TreasuryBalanceType = {
   balance: number
@@ -13,9 +11,7 @@ export type TreasuryBalanceType = {
   tokenAddress: string
 }
 
-export type TreasuryChartType = Array<ChartSectorType>
-
-export type ChartSectorType = {
+export type TreasuryChartType = Array<{
   title: string
   value: number
   color: string
@@ -23,11 +19,4 @@ export type ChartSectorType = {
   segmentStroke: number
   isHoveredPathAsset: boolean
   groupedSmall: boolean
-}
-
-export type TreasuryAssetMapperType = {
-  icon: string
-  name: string
-  symbol: string
-  decimals: string
-}
+}>

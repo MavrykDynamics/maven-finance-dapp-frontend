@@ -68,27 +68,16 @@ export const normalizeProposal = (
       isLocalBytes: false,
     })),
 
-    // TODO: update token usage
     proposalPayments: item.payments
-      .map(({ to_, title, id, token_id, token_amount, token }) => {
-        const tokenAddress = token?.token_address
-        // TODO: remove this check with tokens reorganization
-        const decimals =
-          tokenAddress?.toLowerCase() === 'xtz'
-            ? 6
-            : dipDupTokens?.find(({ contract }) => contract === tokenAddress)?.metadata?.decimals ?? 0
-
-        return {
-          id,
-          to__id: to_?.address,
-          title,
-          token_address: tokenAddress,
-          token_id,
-          // we're getting amount * by 10 in decimals grage, need to parse it to initial user input
-          token_amount: Number(token_amount) / Math.pow(10, Number(decimals)) ?? 0,
-        }
-      })
-      .filter(({ token_address, to__id }) => token_address && to__id),
+      .map(({ to_, title, id, token_id, token_amount, token }) => ({
+        id,
+        to__id: to_?.address,
+        title,
+        token_address: token?.token_address,
+        token_id,
+        token_amount,
+      }))
+      .filter(({ token_address, to__id, token_amount }) => token_address && to__id && token_amount),
   }
 }
 

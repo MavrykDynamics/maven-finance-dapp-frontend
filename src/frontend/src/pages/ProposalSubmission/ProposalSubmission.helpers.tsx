@@ -294,7 +294,7 @@ export const getPaymentsDiff = (
       }
 
       // if we have more items on client than on server, when we reach end of the items that stored on client array, just add everything to the end
-      if (!item2) {
+      if (!item2 && typeof item1.token_amount === 'number') {
         return {
           addOrSetPaymentData: {
             title: item1.title ?? '',
@@ -315,9 +315,10 @@ export const getPaymentsDiff = (
 
       // if local is different frin back one, we update this element
       if (
-        (item2.title !== item1.title && item1.title !== null) ||
-        (item2.to__id !== item1.to__id && item1.to__id !== null) ||
-        (item2.token_address !== item1.token_address && item1.token_address !== null)
+        ((item2.title !== item1.title && item1.title !== null) ||
+          (item2.to__id !== item1.to__id && item1.to__id !== null) ||
+          (item2.token_address !== item1.token_address && item1.token_address !== null)) &&
+        typeof item1.token_amount === 'number'
       ) {
         return {
           addOrSetPaymentData: {

@@ -3,10 +3,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { TreasuryType } from 'utils/TypesAndInterfaces/Treasury'
 
-// actions
-import { fillTreasuryStorage } from './Treasury.actions'
-import { reduceTreasuryAssets } from './Treasury.helpers'
+// actions, helpers
+import { getTreasuryStorage } from './Treasury.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getTreasuryTVL, reduceTreasuryAssets } from './helpers/treasury.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -23,25 +24,26 @@ type TreasuryDDType = DropDownItemType & { treasury: TreasuryType[number] }
 
 export const Treasury = () => {
   const dispatch = useDispatch()
-  const { treasuryStorage, treasuryFactoryAddress, isLoaded } = useSelector((state: State) => state.treasury)
+
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { treasuryStorage, isLoaded } = useSelector((state: State) => state.treasury)
+  const {
+    treasuryFactoryAddress: { address: treasuryFactoryAddress },
+  } = useSelector((state: State) => state.contractAddresses)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       if (!isLoaded || isDepsChanged) {
-        await dispatch(fillTreasuryStorage())
+        await dispatch(getTreasuryStorage())
       }
     } catch (error) {}
   }, [])
 
-  const ddItems = useMemo(
-    () =>
-      treasuryStorage.map<TreasuryDDType>((treasury) => ({
-        content: treasury.name,
-        treasury,
-        id: treasury.address,
-      })),
-    [treasuryStorage],
-  )
+  const ddItems = treasuryStorage.map<TreasuryDDType>((treasury) => ({
+    content: treasury.name,
+    treasury,
+    id: treasury.address,
+  }))
 
   const [chosenDdItem, setChosenDdItem] = useState<TreasuryDDType | undefined>()
   const handleOnClickDropdownItem = (e: DDItemId) => {
@@ -49,7 +51,12 @@ export const Treasury = () => {
     setChosenDdItem(chosenItem)
   }
 
-  const { assetsBalances, globalTreasuryTVL } = useMemo(() => reduceTreasuryAssets(treasuryStorage), [treasuryStorage])
+  const assetsBalances = useMemo(() => Object.values(reduceTreasuryAssets(treasuryStorage)), [treasuryStorage])
+
+  const globalTreasuryTVL = useMemo(
+    () => treasuryStorage.reduce((acc, treasury) => (acc += getTreasuryTVL(treasury, tokensMetadata, tokensPrices)), 0),
+    [treasuryStorage, tokensMetadata, tokensPrices],
+  )
 
   const globalTreasury = {
     name: 'Global Treasury TVL',

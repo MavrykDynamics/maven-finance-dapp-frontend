@@ -1,44 +1,13 @@
 import { VestingRecord } from 'reducers/vesting'
 import { Mavryk_User, Vesting_Vestee } from 'utils/generated/graphqlTypes'
 import { VestingGraphQL } from 'utils/TypesAndInterfaces/Vesting'
-import type {
-  TreasuryGraphQL,
-  TreasuryFactoryGraphQL,
-  TreasuryType,
-  TreasuryBalanceType,
-  TreasuryAssetMapperType,
-} from '../../utils/TypesAndInterfaces/Treasury'
+import type { TreasuryGraphQL, TreasuryBalanceType } from '../../utils/TypesAndInterfaces/Treasury'
+
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
 import { getAssetColor } from './helpers/treasury.utils'
 
 export const MIN_TREASURY_PERSENT_TO_DISPLAY = 0.1
-
-export function normalizeTreasury(storage: {
-  treasury: TreasuryGraphQL[]
-  treasury_factory: TreasuryFactoryGraphQL[]
-}) {
-  return {
-    treasury: storage.treasury,
-    treasuryFactoryAddress: storage.treasury_factory[0].address,
-  }
-}
-
-export const reduceTreasuryAssets = (treasuryData: TreasuryType): Array<TreasuryBalanceType> => {
-  return Object.values(
-    treasuryData.reduce<Record<string, TreasuryBalanceType>>((acc, { balances }) => {
-      balances.forEach((balanceAsset) => {
-        if (acc[balanceAsset.tokenAddress]) {
-          acc[balanceAsset.tokenAddress].balance += balanceAsset.balance
-        } else {
-          acc[balanceAsset.tokenAddress] = { ...balanceAsset }
-        }
-      })
-
-      return acc
-    }, {}),
-  )
-}
 
 export function normalizeVestingStorage(storage?: VestingGraphQL | null) {
   const { vesteesMapper = {}, vesteeIds = [] } =
@@ -67,7 +36,7 @@ export function normalizeVestingStorage(storage?: VestingGraphQL | null) {
     ) ?? {}
 
   return {
-    address: storage?.address || '',
+    address: storage?.address ?? '',
     totalVestedAmount: storage?.total_vested_amount ?? 0,
     totalClaimedAmount: storage?.vestees_aggregate?.aggregate?.sum?.total_claimed ?? 0,
     vesteesMapper,
@@ -89,7 +58,7 @@ export const normalizeTreasuryStorage = (sMVKAmounts: Array<Mavryk_User>, treasu
   )
 
   // Map every treasury to combine treasury name, and divide balance by constant
-  const mappedTreasuries = treasury.map((treasuryData) => {
+  return treasury.map((treasuryData) => {
     const sMVKAmount = parsedsMVKAmount.find(({ contract }: TreasuryBalanceType) => contract === treasuryData.address)
 
     // XTZ is present by default for each treasury, and it can't be defined on back-end
@@ -99,19 +68,14 @@ export const normalizeTreasuryStorage = (sMVKAmounts: Array<Mavryk_User>, treasu
 
     const treasuryNormalizedTokens = treasuryData.balances
       .reduce<Array<TreasuryBalanceType>>((acc, { balance, token: { metadata, token_address } }) => {
-        // metadata has no type in indexer types so use 'as'
-        const { symbol = '', decimals = '0', icon = '' } = (metadata ?? {}) as TreasuryAssetMapperType
-        const parsedDecimals = parseInt(decimals)
-
-        const coinsAmount = convertNumberForClient({ number: balance, grade: parsedDecimals })
-
         // get color of the asset
-        if (!treasuryAssetsColors[symbol.toLowerCase()]) {
-          treasuryAssetsColors[symbol.toLowerCase()] = getAssetColor(Object.keys(treasuryAssetsColors).length)
+        if (!treasuryAssetsColors[token_address]) {
+          treasuryAssetsColors[token_address] = getAssetColor(Object.keys(treasuryAssetsColors).length)
         }
 
         // Filter zero balance assets in treasury and bad tokens that don't have info or not in whitelist for this treasury
         if (
+          !token_address ||
           !metadata ||
           balance <= 0 ||
           balance.toString().includes('e') ||
@@ -121,8 +85,8 @@ export const normalizeTreasuryStorage = (sMVKAmounts: Array<Mavryk_User>, treasu
 
         acc.push({
           contract: treasuryData.address,
-          balance: coinsAmount,
-          chartColor: treasuryAssetsColors[symbol.toLowerCase()],
+          balance,
+          chartColor: treasuryAssetsColors[token_address],
           tokenAddress: token_address,
         })
 
@@ -130,10 +94,6 @@ export const normalizeTreasuryStorage = (sMVKAmounts: Array<Mavryk_User>, treasu
       }, [])
       // Add sMVK treasury asset if has
       .concat(sMVKAmount ?? [])
-    // Sort by most balance to top
-    // .sort((asset1, asset2) => asset2.balance * Number(asset2.rate) - asset1.balance * Number(asset1.rate))
-
-    // const treasuryTVL = treasuryNormalizedTokens.reduce<number>((acc, { usdValue }) => (acc += usdValue), 0)
 
     return {
       address: treasuryData.address,
@@ -144,25 +104,6 @@ export const normalizeTreasuryStorage = (sMVKAmounts: Array<Mavryk_User>, treasu
           treasuryData.address.length,
         )}`,
       balances: treasuryNormalizedTokens,
-      // treasuryTVL,
     }
   })
-
-  const tokenBalanceMapper = mappedTreasuries
-    .map(({ balances }) => balances)
-    .flat()
-    .reduce<Record<string, number>>((acc, { balance, tokenAddress }) => {
-      if (!acc[tokenAddress]) {
-        acc[tokenAddress] = balance
-      } else {
-        acc[tokenAddress] += balance
-      }
-
-      return acc
-    }, {})
-
-  return {
-    tokenBalanceMapper,
-    mappedTreasuries,
-  }
 }

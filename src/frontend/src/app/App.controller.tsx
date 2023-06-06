@@ -52,7 +52,7 @@ const AppContainer = () => {
   const [isIOS, setIsIOS] = useState(true)
 
   // inital data load
-  useInitializer()
+  const { isLoading: isInitialCtxLoading } = useInitializer()
 
   useEffect(() => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))
@@ -95,7 +95,7 @@ const AppContainer = () => {
     setCookie('policyPopup', true)
   }, [])
 
-  return isInitialDataLoading ? (
+  return isInitialDataLoading || isInitialCtxLoading ? (
     <LoaderRocket />
   ) : (
     <Router>

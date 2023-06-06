@@ -27,6 +27,9 @@ import {
 import { Plug } from 'app/App.components/Chart/Chart.style'
 import { silverColor } from 'styles'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTreasuryTVL } from './helpers/treasury.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 type Props = {
   treasury: TreasuryType[number]
@@ -39,6 +42,8 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
   const [showZeroTreasuries, setShowZeroTreasuries] = useState<boolean>(false)
   const ref = useRef<HTMLDivElement | null>(null)
 
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const filteredBalance = useMemo(
     () =>
       isGlobal || !showZeroTreasuries
@@ -47,9 +52,14 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
     [isGlobal, showZeroTreasuries, treasury.balances],
   )
 
+  const treasuryTVL = useMemo(
+    () => getTreasuryTVL(treasury, tokensMetadata, tokensPrices),
+    [treasury, tokensMetadata, tokensPrices],
+  )
+
   const chartData = useMemo(
-    () => getPieChartData(filteredBalance, treasury.treasuryTVL, hoveredPath),
-    [hoveredPath, treasury.treasuryTVL, filteredBalance],
+    () => getPieChartData(filteredBalance, treasuryTVL, hoveredPath, tokensMetadata, tokensPrices),
+    [hoveredPath, treasuryTVL, filteredBalance],
   )
 
   useEffect(() => {
@@ -70,7 +80,9 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
       </a>
 
       <div className="content-wrapper">
-        <header>{treasury.name ? <h1 title={treasury.name}>{treasury.name}</h1> : null}</header>
+        <header>
+          <h1 title={treasury.name}>{treasury.name}</h1>
+        </header>
 
         <div>
           <div className="info-block">
@@ -83,7 +95,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
               />
             </p>
             <p className="value">
-              <CommaNumber beginningText="$" value={treasury.treasuryTVL} />
+              <CommaNumber beginningText="$" value={treasuryTVL} />
             </p>
             <div />
           </div>
@@ -92,9 +104,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
             <>
               <Checkbox
                 id={'treasury-zero-filter'}
-                onChangeHandler={() => {
-                  setShowZeroTreasuries(!showZeroTreasuries)
-                }}
+                onChangeHandler={() => setShowZeroTreasuries(!showZeroTreasuries)}
                 checked={showZeroTreasuries}
                 className={'treasury-checkbox'}
               >
@@ -115,21 +125,29 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
 
               {filteredBalance.length ? (
                 <TableBody className={`treasury`}>
-                  {filteredBalance.map(({ symbol, balance, usdValue, rate }) => {
+                  {filteredBalance.map(({ balance, tokenAddress }) => {
+                    const { symbol, decimals } = tokensMetadata[tokenAddress]
+                    const tokenRate = tokensPrices[symbol]
+                    const treasuryTokenBalance = convertNumberForClient({ number: balance, grade: decimals })
+
                     return (
                       <TableRow rowHeight={25} borderColor="dataColor" className="add-hover" key={symbol}>
                         <TableCell width="33%">{symbol}</TableCell>
                         <TableCell width="33%">
-                          {parseFloat(String(balance)) < 0.01 ? '<0.01' : <CommaNumber value={balance} showDecimal />}
+                          {parseFloat(String(treasuryTokenBalance)) < 0.01 ? (
+                            '<0.01'
+                          ) : (
+                            <CommaNumber value={treasuryTokenBalance} showDecimal />
+                          )}
                         </TableCell>
                         <TableCell width="33%" contentPosition="right">
-                          {parseFloat(String(usdValue)) < 0.01 ? (
-                            `<0.01 ${rate ? '$' : symbol}`
+                          {parseFloat(String(treasuryTokenBalance * tokenRate)) < 0.01 ? (
+                            `<0.01 ${tokenRate ? '$' : symbol}`
                           ) : (
                             <CommaNumber
-                              value={usdValue}
-                              endingText={rate ? '' : symbol}
-                              beginningText={rate ? '$' : ''}
+                              value={treasuryTokenBalance * tokenRate}
+                              endingText={tokenRate ? '' : symbol}
+                              beginningText={tokenRate ? '$' : ''}
                               showDecimal
                             />
                           )}
@@ -159,24 +177,24 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
       </div>
       <div>
         <div className="asset-lables scroll-block">
-          {filteredBalance.map((balanceValue) => (
-            <div
-              style={{
-                background: `linear-gradient(90deg,${
-                  chartData.find(({ title }) => title === balanceValue.symbol || title.includes(balanceValue.symbol))
-                    ?.color
-                } 0%,rgba(255,255,255,0) 100%)`,
-              }}
-              className="asset-lable"
-              onMouseEnter={() => {
-                setHoveredPath(balanceValue.symbol)
-              }}
-              onMouseLeave={() => setHoveredPath(null)}
-              key={balanceValue.contract + balanceValue.symbol}
-            >
-              <p className="asset-lable-text">{balanceValue.symbol}</p>
-            </div>
-          ))}
+          {filteredBalance.map(({ contract, tokenAddress }) => {
+            const { symbol } = tokensMetadata[tokenAddress]
+            return (
+              <div
+                style={{
+                  background: `linear-gradient(90deg,${
+                    chartData.find(({ title }) => title === symbol || title.includes(symbol))?.color
+                  } 0%,rgba(255,255,255,0) 100%)`,
+                }}
+                className="asset-lable"
+                onMouseEnter={() => setHoveredPath(symbol)}
+                onMouseLeave={() => setHoveredPath(null)}
+                key={contract + symbol}
+              >
+                <p className="asset-lable-text">{symbol}</p>
+              </div>
+            )
+          })}
         </div>
       </div>
       {(factoryAddress && isGlobal) || treasury.address ? (

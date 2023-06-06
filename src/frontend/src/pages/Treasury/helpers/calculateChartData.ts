@@ -13,17 +13,18 @@ export const getPieChartData = (
 ) => {
   // when we don't have data for chart
   if (!balances.length) return [{ title: '', value: 1, color: '#ccc' }]
+
   // if we have 1 asset, return this, cuz when value is so small it will not show properly chart, and sometimes in can be NaN
   if (balances.length === 1) {
-    const soloItemSymbol = tokensMetadata[balances[0].tokenAddress].symbol
+    const itemSymbol = tokensMetadata[balances[0].tokenAddress]?.symbol
     return [
       {
-        title: soloItemSymbol,
+        title: itemSymbol,
         value: 1,
         labelPersent: 100,
         color: '#FFC2C3',
-        isHoveredPathAsset: hoveredPath === soloItemSymbol,
-        segmentStroke: hoveredPath === soloItemSymbol ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
+        isHoveredPathAsset: hoveredPath === itemSymbol,
+        segmentStroke: hoveredPath === itemSymbol ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
       },
     ]
   }
@@ -33,7 +34,7 @@ export const getPieChartData = (
   let groupedSectorsColor: null | string = null
 
   return balances.reduce<TreasuryChartType>((acc, item) => {
-    const tokenSymbol = tokensMetadata[item.tokenAddress].symbol
+    const tokenSymbol = tokensMetadata[item.tokenAddress]?.symbol
     const tokenRate = tokensRates[tokenSymbol] ?? 0
     const tokenUsdValue = item.balance * tokenRate
     const tokenPersent = calcPersent(tokenUsdValue, reducedBalance)

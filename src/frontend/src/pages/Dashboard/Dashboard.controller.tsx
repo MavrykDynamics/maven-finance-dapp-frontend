@@ -13,7 +13,7 @@ import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
-import { fillTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
+import { getTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
@@ -97,7 +97,7 @@ export const Dashboard = () => {
         [
           (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
           (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
-          (!isTreasuryLoaded || isDepsChanged) && dispatch(fillTreasuryStorage()),
+          (!isTreasuryLoaded || isDepsChanged) && dispatch(getTreasuryStorage()),
           (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
           (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage()),
         ].filter(Boolean),
