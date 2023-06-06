@@ -2,7 +2,6 @@ import { M_Token } from './../utils/generated/graphqlTypes'
 import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 import { GET_DAPP_TOKENS } from './actions/getTokens.actions'
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
-import { GET_AVALIABLE_COLLATERALS } from 'pages/Loans/Actions/getLoansData.actions'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { AnyAction } from 'redux'
 
@@ -42,8 +41,6 @@ export function tokens(state = defaultTokensInfoState, action: AnyAction) {
         whitelistTokens: state.whitelistTokens.concat(action.whitelistTokens),
         mTokens: action.mTokens,
       }
-    case GET_AVALIABLE_COLLATERALS:
-      return { ...state, avaliableCollaterals: action.avaliableCollaterals }
     default:
       return state
   }

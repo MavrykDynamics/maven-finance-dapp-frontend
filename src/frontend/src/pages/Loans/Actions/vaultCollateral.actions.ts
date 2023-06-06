@@ -4,7 +4,7 @@ import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
+import { getLoansStorage } from './getLoansData.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 
 import {
@@ -75,7 +75,6 @@ export const withdrawCollateralAction =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(updateUserData())
-            await dispatch(getAvaliableCollaterals())
             await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())
@@ -237,7 +236,6 @@ export const depositCollateralAction =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(updateUserData())
-            await dispatch(getAvaliableCollaterals())
             await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())

@@ -58,12 +58,6 @@ const AppContainer = () => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))
   }, [showSidebarOpened])
 
-  /**
-   * dispatch(getTokensForDAPP())
-   * dispatch(getAvaliableCollaterals())
-   * will be removed after tokens reorganization, cuz it'll be in useInitializer and will be on context
-   */
-
   useEffect(() => {
     ;(async () => {
       // Needs to be fetched before promise all

@@ -17,11 +17,6 @@ export const SUBSCRIBE_TOKENS_METADATA = gql(`
         address
       }
 
-      # check whether tokens is market token (TODO: 99% we don't need this)
-      lending_controller_loan_tokens {
-        loan_token_name
-      }
-
       # check that it's real MVK token
       mvk_tokens {
         address

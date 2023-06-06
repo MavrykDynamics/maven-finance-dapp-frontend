@@ -5,16 +5,35 @@
  *
  * need to do this mapper cuz back-end can't send valid names and it can have token duplicates
  */
+// TODO: mb use only token symbols, and think how to handle 2 mvk coins
 export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
   switch (tokenGqlSymbol.toLowerCase()) {
     case 'usdt/usd':
+    case 'USDT':
       return { name: 'Tether', symbol: 'USDT' }
+    case 'mUSDT':
+      return { name: 'mUSDT', symbol: 'mUSDT' }
+
     case 'xtz/usd':
+    case 'XTZ':
       return { name: 'Tezos', symbol: 'XTZ' }
+    case 'mXTZ':
+      return { name: 'mXTZ', symbol: 'mXTZ' }
+
     case 'btc/usd':
+    case 'tzBTC':
       return { name: 'tzBTC', symbol: 'tzBTC' }
+    case 'mTzBTC':
+      return { name: 'mTzBTC', symbol: 'mTzBTC' }
+
     case 'euroc/usd':
-      return { name: 'Eurocoin', symbol: 'EUROC' }
+    case 'EURL':
+      return { name: 'Eurocoin', symbol: 'EUROL' }
+    case 'mEURL':
+      return { name: 'mEUROL', symbol: 'mEUROL' }
+
+    case 'MVK':
+      return { name: 'Mavryk', symbol: 'MVK' }
   }
 
   return null

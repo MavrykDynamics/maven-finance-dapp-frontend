@@ -23,7 +23,6 @@ import {
   USER_LENDING_DATA_QUERY_NAME,
   USER_LENDING_DATA_QUERY_VARIABLE,
 } from 'gql/queries/getLoansStorage'
-import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
 import { getAssetMetadata, isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { normalizeUserLending } from 'pages/Loans/Loans.normalizer'
 import { DataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
@@ -408,7 +407,8 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
       const userData = await fetchUserData(
         userAddressToLoadData,
         dipDupTokens,
-        feedsLedger,
+        // TODO: feeds usage
+        [] as any,
         avaliableCollaterals,
         whitelistTokens,
         level,
@@ -419,8 +419,6 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
         userData: userData,
         accountPkh: userAddressToLoadData,
       })
-
-      await dispatch(getAvaliableCollaterals())
     }
   } catch (error) {
     if (error instanceof Error) {

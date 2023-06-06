@@ -4,11 +4,11 @@ import React, { useContext } from 'react'
 import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 // helpers
-import { normalizeTokenPrices } from './hooks/tokens.normalizer'
+import { normalizeTokenPrices, normalizeTokensMetadata } from './hooks/tokens.normalizer'
 
 // types
 import { State, Props, TokensContext } from './tokens.provider.types'
-import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
+import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from 'utils/__generated__/graphql'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
@@ -38,13 +38,20 @@ export class TokensProvider extends React.Component<Props, State> {
     })
   }
 
-  updateTokensMetadata = () => {
-    const tokensMetadata = {}
+  updateTokensMetadata = (tokensGql: TokensMetadataSubscription['token']) => {
+    const tokensMetadata = normalizeTokensMetadata(tokensGql)
+
+    console.log({
+      tokensGql,
+      tokensMetadata,
+    })
 
     this.setState({
       context: {
         ...this.state.context,
-        tokensMetadata: { ...this.state.context.tokensMetadata, ...tokensMetadata },
+        tokensMetadata: { ...this.state.context.tokensMetadata, ...tokensMetadata.tokensMetadata },
+        collateralTokens: { ...this.state.context.collateralTokens, ...tokensMetadata.collateralTokens },
+        mTokens: { ...this.state.context.mTokens, ...tokensMetadata.mTokens },
       },
     })
   }
