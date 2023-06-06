@@ -7,7 +7,6 @@ query SatellitesStorageQuery {
     name
     status
     website
-    user_id
     currently_registered
     peer_id
     public_key
@@ -20,17 +19,23 @@ query SatellitesStorageQuery {
       delegation_ratio
     }
     user {
+      address
       smvk_balance
       mvk_balance
       aggregator_oracles {
-        aggregator_id
-        user_id
         observations(order_by: {epoch: desc_nulls_last}, limit: 5) {
-          oracle_id
+          oracle {
+            user{
+              address
+            }
+          }
           epoch
           data
           round
           timestamp
+        }
+        user {
+          address
         }
         aggregator {
           address
@@ -38,7 +43,9 @@ query SatellitesStorageQuery {
           last_completed_data_epoch
           last_completed_data_round
           oracles {
-            user_id
+            user {
+              address
+            }
             rewards {
               reward
               type
@@ -104,10 +111,13 @@ query SatellitesStorageQuery {
       executed
     }
   }
-  governance(where: {active: {_eq: true}}) {
+  governance {
     satellite_snapshots(order_by: {cycle: desc_nulls_last}) {
+      user {
+        address
+      }
+
       cycle
-      user_id
       total_voting_power
     }
     cycle_id
@@ -117,13 +127,17 @@ query SatellitesStorageQuery {
     id
   }
   aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {
+    address
     oracles {
       observations {
         epoch
         round
         timestamp
         oracle {
-          user_id
+          user {
+            address
+          }
+
           init_epoch
           init_round
         }

@@ -9,13 +9,21 @@ export const FINANCIAL_REQUESTS_STORAGE_QUERY = `
       request_type
       requested_datetime
       smvk_percentage_for_approval
-      requester_id
+      requester {
+        address
+      }
       snapshot_smvk_total_supply
       status
       token_amount
-      token_address
-      treasury_id
-      governance_financial_id
+      token {
+        token_address
+      }
+      governance_financial {
+        address
+      }
+      treasury {
+        address
+      }
       pass_vote_smvk_total
       nay_vote_smvk_total
       yay_vote_smvk_total
@@ -25,6 +33,9 @@ export const FINANCIAL_REQUESTS_STORAGE_QUERY = `
         timestamp
         vote
         voter_id
+        voter {
+          address
+        }
       }
       governance_financial {
         governance {
