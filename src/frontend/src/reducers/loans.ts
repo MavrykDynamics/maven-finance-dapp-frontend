@@ -6,11 +6,10 @@ export interface LoansState {
   loanTokens: LoansStorage['loanTokens']
   vaults: VaultsStorage
   chartsData: LoansChartsDataType
-
+  mvkTokenOperators: LoansStorage['mvkTokenOperators']
   config: {
     DAOFee: number
     loansControllerAddress: string
-    mvkTokenOperators: { ownerId: string; operatorId: string }[]
   }
 
   isDataLoaded: boolean
@@ -33,10 +32,10 @@ const loansDefaultState: LoansState = {
       last24hBorrowing: 0,
     },
   },
+  mvkTokenOperators: [],
   config: {
     DAOFee: 0,
     loansControllerAddress: '',
-    mvkTokenOperators: [],
   },
   isDataLoaded: false,
 }

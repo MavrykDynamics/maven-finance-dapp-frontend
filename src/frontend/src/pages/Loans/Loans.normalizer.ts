@@ -167,10 +167,7 @@ export const normalizeLoans = async ({
   userAddres?: string
   feeds: State['dataFeeds']['feedsLedger']
 }) => {
-  const mvkTokenOperators = mvkTokenOperatorsStorage?.map((item) => ({
-    operatorId: item.operator_id,
-    ownerId: item.owner_id,
-  }))
+  const mvkTokenOperators = mvkTokenOperatorsStorage?.map((item) => item.operator_id)
 
   const interestTreasuryShare = calcWithoutDecimals(
     lendingController?.interest_treasury_share,
@@ -181,7 +178,6 @@ export const normalizeLoans = async ({
   const config = {
     DAOFee: (lendingController?.minimum_loan_fee_pct ?? 0) / 100,
     loansControllerAddress: lendingController?.address,
-    mvkTokenOperators,
   }
 
   try {
@@ -278,6 +274,7 @@ export const normalizeLoans = async ({
     return {
       loanTokens,
       chartsData: getChartData(lendingController?.history_data, dipDupData, feeds),
+      mvkTokenOperators,
       config,
     }
   } catch (e) {
@@ -285,6 +282,7 @@ export const normalizeLoans = async ({
     return {
       chartsData: getChartData(lendingController?.history_data, dipDupData, feeds),
       loanTokens: [],
+      mvkTokenOperators,
       config,
     }
   }

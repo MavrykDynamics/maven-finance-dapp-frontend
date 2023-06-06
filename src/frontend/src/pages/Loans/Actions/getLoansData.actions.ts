@@ -33,15 +33,22 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
     dataFeeds: { feedsLedger },
   } = getState()
   try {
-    const [marketsStorage, vaultsStorage, mvkTokenOperatorStorage] = await Promise.all([
-      fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE),
-      fetchFromIndexer(VAULTS_STORAGE_QUERY, VAULTS_STORAGE_QUERY_NAME, VAULTS_STORAGE_QUERY_VARIABLE),
-      fetchFromIndexer(MVK_TOKEN_OPERATOR_QUERY, MVK_TOKEN_OPERATOR_QUERY_NAME, MVK_TOKEN_OPERATOR_QUERY_VARIABLE),
-    ])
+    const [marketsStorage, vaultsStorage, mvkTokenOperatorStorage] = await Promise.all(
+      [
+        fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE),
+        fetchFromIndexer(VAULTS_STORAGE_QUERY, VAULTS_STORAGE_QUERY_NAME, VAULTS_STORAGE_QUERY_VARIABLE),
+        accountPkh &&
+          fetchFromIndexer(
+            MVK_TOKEN_OPERATOR_QUERY,
+            MVK_TOKEN_OPERATOR_QUERY_NAME,
+            MVK_TOKEN_OPERATOR_QUERY_VARIABLE(accountPkh),
+          ),
+      ].filter(Boolean),
+    )
 
     const normalizedLoansStorage = await normalizeLoans({
       lendingController: marketsStorage?.lending_controller?.[0],
-      mvkTokenOperators: mvkTokenOperatorStorage?.mvk_token_operator,
+      mvkTokenOperators: mvkTokenOperatorStorage?.mvk_token_operator ?? [],
       dipDupData: dipDupTokens,
       mTokens,
       userMTokens,

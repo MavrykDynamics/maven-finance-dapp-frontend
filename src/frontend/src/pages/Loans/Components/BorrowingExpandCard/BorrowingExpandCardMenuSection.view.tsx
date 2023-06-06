@@ -82,13 +82,13 @@ export const BorrowingExpandCardMenuSection = ({
   hideTransactionHistory,
 }: Props) => {
   const {
-    config: { loansControllerAddress },
-  } = useSelector((state: State) => state.loans)
+    lendingController: { address: lendingControllerAddress },
+  } = useSelector((state: State) => state.contractAddresses)
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  const { transactionHistory } = currentToken 
+  const { transactionHistory } = currentToken
 
   const menuTabs = useMemo(
     () =>
@@ -249,7 +249,7 @@ export const BorrowingExpandCardMenuSection = ({
             <div className="useful-info-line">
               <div className="name">Lending Controller Address</div>
               <div className="value">
-                <TzAddress tzAddress={loansControllerAddress} type={BLUE} />
+                <TzAddress tzAddress={lendingControllerAddress} type={BLUE} />
               </div>
             </div>
           </div>
@@ -323,10 +323,14 @@ export const BorrowingExpandCardMenuSection = ({
                   />
                 </div>
                 <div className="value">
-                  {mappedMVKOperators.firstAddress
-                    ? <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={BLUE} /> +
-                      ` ${mappedMVKOperators.amount ?? ''}`
-                    : 'None'}
+                  {mappedMVKOperators.firstAddress ? (
+                    <>
+                      <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={BLUE} />
+                      {mappedMVKOperators.amount ?? ''}
+                    </>
+                  ) : (
+                    'None'
+                  )}
                 </div>
                 <Button kind={BUTTON_SIMPLE} disabled={true || isActionActive} onClick={openUpdateMvkOperatorsPopup}>
                   Update <Icon id="paginationArrowLeft" />

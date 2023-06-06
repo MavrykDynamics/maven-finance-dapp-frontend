@@ -224,7 +224,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
             Number(item.lending_controller?.liquidation_delay_in_minutes) * BLOCKS_PER_MINUTE,
 
           // Permissions
-          operators: [],
           sMVKDelegatedTo: '',
           depositors,
           deporsitorsFlag,

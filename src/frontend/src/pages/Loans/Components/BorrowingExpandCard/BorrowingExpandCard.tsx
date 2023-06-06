@@ -48,7 +48,6 @@ export const BorrowingExpandCard = ({
   borrowedAsset,
   collateralData,
   xtzDelegatedTo,
-  operators,
   sMVKDelegatedTo,
   vaultId,
   name,
@@ -74,7 +73,7 @@ export const BorrowingExpandCard = ({
 }: BorrowingExpandCardPropsType) => {
   const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
 
-  const { loanTokens } = useSelector((state: State) => state.loans)
+  const { loanTokens, mvkTokenOperators } = useSelector((state: State) => state.loans)
 
   const repayBorrowSlidingButtons = useMemo(
     () =>
@@ -147,8 +146,8 @@ export const BorrowingExpandCard = ({
   }
 
   const mappedMVKOperators = {
-    firstAddress: operators?.[0],
-    ...(operators ? { amount: operators.length - 1 } : {}),
+    firstAddress: mvkTokenOperators?.[0],
+    ...(mvkTokenOperators ? { amount: mvkTokenOperators.length } : {}),
   }
 
   const vaultStatus = status ?? getStatusByCollateralRatio(collateralRatio)
@@ -271,8 +270,7 @@ export const BorrowingExpandCard = ({
     openUpdateMvkOperatorsPopup?.({
       vaultAddress: address,
       tokenName: gqlName,
-      // TODO: add valid operators
-      operators: [],
+      operators: mvkTokenOperators,
     })
   }
 

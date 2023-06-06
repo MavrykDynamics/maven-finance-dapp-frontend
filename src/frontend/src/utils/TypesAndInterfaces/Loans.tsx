@@ -98,7 +98,6 @@ export type LoansVaultType = {
   name: string
   vaultId: number
   xtzDelegatedTo: string | null
-  operators?: Array<string>
   sMVKDelegatedTo?: string
   levelOfEarly?: number
   levelOfLate?: number

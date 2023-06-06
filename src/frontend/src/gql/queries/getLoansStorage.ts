@@ -181,8 +181,8 @@ export const USER_LENDING_DATA_QUERY_VARIABLE = (userAddress?: string) => {
 }
 
 export const MVK_TOKEN_OPERATOR_QUERY = `
-  query GetMvkTokenOperator {
-    mvk_token_operator {
+  query GetMvkTokenOperator($_userAddress: String) {
+    mvk_token_operator(where: {owner_id: {_eq: $_userAddress}}) {
       operator_id
       owner_id
     }
@@ -190,4 +190,4 @@ export const MVK_TOKEN_OPERATOR_QUERY = `
 `
 
 export const MVK_TOKEN_OPERATOR_QUERY_NAME = 'GetMvkTokenOperator'
-export const MVK_TOKEN_OPERATOR_QUERY_VARIABLE = {}
+export const MVK_TOKEN_OPERATOR_QUERY_VARIABLE = (address: string) => ({ _userAddress: address })

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
 import { Link } from 'react-router-dom'
@@ -61,7 +61,6 @@ export const OldBorrowingExpandCard = ({
   borrowedAsset,
   collateralData,
   xtzDelegatedTo,
-  operators,
   sMVKDelegatedTo,
   vaultId,
   name,
@@ -90,6 +89,7 @@ export const OldBorrowingExpandCard = ({
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
+  const { mvkTokenOperators } = useSelector((state: State) => state.loans)
 
   const [expanded, setExpanded] = useState(false)
 
@@ -139,8 +139,8 @@ export const OldBorrowingExpandCard = ({
   }
 
   const mappedMVKOperators = {
-    firstAddress: operators?.[0],
-    ...(operators ? { amount: operators.length - 1 } : {}),
+    firstAddress: mvkTokenOperators?.[0],
+    ...(mvkTokenOperators ? { amount: mvkTokenOperators.length } : {}),
   }
 
   const vaultStatus = status ?? getStatusByCollateralRatio(collateralRatio)
@@ -596,8 +596,7 @@ export const OldBorrowingExpandCard = ({
                         openUpdateMvkOperatorsPopup?.({
                           vaultAddress: address,
                           tokenName: gqlName,
-                          // TODO: add valid operators
-                          operators: [],
+                          operators: mvkTokenOperators,
                         })
                       }
                     >
