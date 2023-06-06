@@ -54,10 +54,13 @@ import {
 // helpers & actions
 import { getBytesDiff, getPaymentsDiff } from './ProposalSubmission.helpers'
 import { dropProposal, lockProposal, submitProposal, updateProposalData } from './ProposalSubmission.actions'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const dispatch = useDispatch()
   const history = useHistory()
+
+  const { tokensMetadata } = useTokensContext()
 
   const {
     accountPkh,
@@ -68,7 +71,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     proposalsMapper,
     config: { fee, governancePhase },
   } = useSelector((state: State) => state.governance)
-  const { whitelistTokens, dipDupTokens } = useSelector((state: State) => state.tokens)
+  const { dipDupTokens } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -192,8 +195,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       const payments = getPaymentsDiff(
         [],
         currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
-        whitelistTokens,
-        dipDupTokens,
+        tokensMetadata,
       )
 
       await dispatch(
@@ -220,8 +222,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       const paymentsDiff = getPaymentsDiff(
         currentProposalOnRemote.proposalPayments,
         currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
-        whitelistTokens,
-        dipDupTokens,
+        tokensMetadata,
       )
       await dispatch(updateProposalData(proposalId, bytesDiff, paymentsDiff))
     }

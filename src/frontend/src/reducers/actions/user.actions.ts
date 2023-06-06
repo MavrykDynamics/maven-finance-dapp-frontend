@@ -88,7 +88,6 @@ export const fetchUserData = async (
   dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: DataFeedsContext['feedsMapper'],
   avaliableCollaterals: State['tokens']['avaliableCollaterals'],
-  whitelistTokens: State['tokens']['whitelistTokens'],
   currentBlockLevel: number | undefined = 0,
 ) => {
   try {
@@ -261,46 +260,12 @@ export const fetchUserData = async (
       Promise.resolve({}),
     )
 
-    const whitelistTokensBalances = await whitelistTokens.reduce<Promise<UserState['userTokens']>>(
-      async (promiseAcc, { address, symbol: whitelistSymbol }) => {
-        const acc = await promiseAcc
-        const { name, symbol } = getSymbolAndNameFromCollaterealGqlname('', whitelistSymbol)
-        if (userTokenNames.has(symbol) || !symbol) return acc
-
-        // TODO: check whether actuall address is working to fetch balance (when here will be smth more exept mvk and xtz that are fetching by default)
-        const fetchedTokenData = await (
-          await fetch(
-            `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=${address}`,
-          )
-        ).json()
-
-        const fetchedBalance = Number(fetchedTokenData?.[0]?.balance ?? 0)
-        const fetchedDecimals = Number(fetchedTokenData?.[0]?.token?.metadata?.decimals ?? 0)
-        const balance =
-          fetchedBalance && fetchedDecimals
-            ? convertNumberForClient({ number: fetchedBalance, grade: fetchedDecimals })
-            : 0
-
-        acc[symbol] = {
-          balance,
-          name,
-          symbol,
-          type: USER_TOKEN_TYPE_WHITELIST,
-        }
-
-        userTokenNames.add(symbol)
-        return acc
-      },
-      Promise.resolve({}),
-    )
-
     const fetchedUserXtzBalance = await (
       await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
     ).json()
 
     userInfo.userTokens = {
       ...collateralTokens,
-      ...whitelistTokensBalances,
       ...mTokens,
       [MVK_TOKEN_SYMBOL]: {
         balance: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }),
@@ -397,7 +362,7 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
   const {
     preferences: { headData: { level = 0 } = {} },
     wallet: { accountPkh },
-    tokens: { dipDupTokens, avaliableCollaterals, whitelistTokens },
+    tokens: { dipDupTokens, avaliableCollaterals },
   } = getState()
 
   const userAddressToLoadData = newAccAddress ?? accountPkh
@@ -410,7 +375,6 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
         // TODO: feeds usage
         [] as any,
         avaliableCollaterals,
-        whitelistTokens,
         level,
       )
 

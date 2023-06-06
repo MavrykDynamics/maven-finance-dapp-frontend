@@ -18,6 +18,7 @@ import { State } from 'reducers'
 // helpers
 import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 
 // VALIDATION FN'S TODO: add some checking in future (no cond for it now)
 export const getBytesPairValidationStatus = (
@@ -249,8 +250,7 @@ export const getBytesDiff = (
 export const getPaymentsDiff = (
   originalData: ProposalRecordType['proposalPayments'],
   updatedData: ProposalRecordType['proposalPayments'],
-  paymentMethods: Array<{ symbol: string; address: string; shortSymbol: string; id: number }>,
-  dipDupTokens: State['tokens']['dipDupTokens'],
+  tokensMetadata: TokensContext['tokensMetadata'],
 ): PaymentsDataChangesType => {
   let originalIdx = 0
 
@@ -258,20 +258,13 @@ export const getPaymentsDiff = (
     .map<PaymentsDataChangesType[number] | null>((item1) => {
       const item2 = originalData?.[originalIdx]
 
-      // default decimals is 6 cuz 6 is xtz decimals, and dipDupTokens don't contain xtz asset
-      const decimals =
-        item1.token_address === 'XTZ'
-          ? 6
-          : dipDupTokens.find(({ contract }) => contract === item1.token_address)?.metadata?.decimals ?? 0
-
-      const symbol =
-        item1.token_address === 'XTZ'
-          ? 'tez'
-          : paymentMethods.find(({ address }) => address === item1.token_address)?.shortSymbol ?? 'fa2'
+      const { decimals, type } = item1.token_address
+        ? tokensMetadata[item1.token_address]
+        : { decimals: 0, type: 'fa2' }
 
       let token = {}
 
-      switch (symbol.toLowerCase()) {
+      switch (type) {
         case 'fa12':
           token = {
             fa12: item1.token_address,
