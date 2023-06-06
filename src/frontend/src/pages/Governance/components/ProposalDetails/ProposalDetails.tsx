@@ -182,9 +182,13 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Invoice</div>
         <div className="proposal-data-block-value">
-          <a href={proposal.invoice} target="_blank" rel="noreferrer" className="isCyan">
-            {proposal.invoice}
-          </a>
+          {proposal.invoice ? (
+            <a href={proposal.invoice} target="_blank" rel="noreferrer" className="isCyan">
+              {proposal.invoice}
+            </a>
+          ) : (
+            'No link for an invoice given'
+          )}
         </div>
       </div>
 

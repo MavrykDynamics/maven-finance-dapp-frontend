@@ -74,10 +74,14 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
       column-gap: 10px;
     }
 
-    .img-wrapper {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
+    .image-style {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 120px;
+      height: 133px;
+
+      border-radius: 10px;
       border: 1px solid ${({ theme }) => theme.valueColor};
       overflow: hidden;
 
@@ -85,6 +89,13 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
         width: 100%;
         height: 100%;
         object-fit: cover;
+      }
+
+      svg {
+        height: 20px;
+        width: 20px;
+
+        fill: ${({ theme }) => theme.textColor};
       }
     }
 
