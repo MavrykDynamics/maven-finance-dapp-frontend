@@ -164,7 +164,6 @@ export const normalizeLoans = async ({
   const interestRateDecimals = storage?.interest_rate_decimals ?? 0
   const config = {
     DAOFee: (storage?.minimum_loan_fee_pct ?? 0) / 100,
-    loansControllerAddress: storage?.address,
   }
 
   try {
@@ -224,6 +223,8 @@ export const normalizeLoans = async ({
         acc.push({
           loanTokenData: {
             ...loanTokenMetadata,
+            // TODO: remove condition after adding new token list
+            name: loanTokenMetadata.symbol === 'EURL' ? 'Lugh' : loanTokenMetadata.symbol,
             tokenType: loan_token_contract_standard as TokenType,
           },
           lendingItem,

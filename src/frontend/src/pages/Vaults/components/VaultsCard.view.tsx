@@ -6,7 +6,6 @@ import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.co
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
@@ -18,7 +17,14 @@ import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } f
 
 // types
 import { State } from 'reducers'
-import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
+import {
+  STATUS_FLAG_DOWN,
+  STATUS_FLAG_INFO,
+  STATUS_FLAG_UP,
+  STATUS_FLAG_WAITING,
+  STATUS_FLAG_WARNING,
+  StatusFlagKind,
+} from '../../../app/App.components/StatusFlag/StatusFlag.constants'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 
 // helpers
@@ -29,26 +35,32 @@ import { calculateCollateralShare } from '../calcFunctionsForVault'
 import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { vaultTabs } from '../Vaults.view'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+import { Button } from 'app/App.components/Button/Button.controller'
 
-const findStatusInfo = (status: string) => {
+const findStatusInfo = (
+  status: string,
+): {
+  color: StatusFlagKind
+  text: string
+} => {
   switch (status) {
     case vaultsStatuses.LIQUIDATABLE:
-      return { color: 'down', text: 'Liquidation Armed' }
+      return { color: STATUS_FLAG_DOWN, text: 'Liquidation Armed' }
     case vaultsStatuses.GRACE_PERIOD:
-      return { color: 'warning', text: 'Grace Period' }
+      return { color: STATUS_FLAG_WARNING, text: 'Grace Period' }
     case vaultsStatuses.MARK:
-      return { color: 'warning', text: 'Ready to Arm' }
+      return { color: STATUS_FLAG_WARNING, text: 'Ready to Arm' }
     case vaultsStatuses.AT_RISK:
-      return { color: 'waiting', text: 'At Risk' }
+      return { color: STATUS_FLAG_WAITING, text: 'At Risk' }
     case vaultsStatuses.ACTIVE:
-      return { color: 'up', text: 'Low Risk' }
+      return { color: STATUS_FLAG_UP, text: 'Low Risk' }
 
     default:
-      return { color: 'info', text: 'no data' }
+      return { color: STATUS_FLAG_INFO, text: 'no data' }
   }
 }
 
-const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?: number) => {
+const findFooterText = (status: string, statusColor: StatusFlagKind, timestamp?: number) => {
   const timer = timestamp ? (
     <div className="timer">
       <Timer timestamp={timestamp} options={{ defaultColor: '#77A4F2', negativeColor: '#77A4F2' }} />
@@ -112,8 +124,7 @@ export const VaultsCard = (props: Props) => {
 
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
-  const statusColor = findStatusInfo(status).color as StatusFlagStyle
-  const statusText = findStatusInfo(status).text
+  const { color: statusColor, text: statusText } = findStatusInfo(status)
   const footerText = findFooterText(status, statusColor, timerTimestamp)
 
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount

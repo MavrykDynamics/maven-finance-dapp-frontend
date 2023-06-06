@@ -81,11 +81,11 @@ export const BorrowingExpandCard = ({
   borrowedAmount,
   collateralRatio,
   borrowCapacity,
-  avaliableLiq,
+  availableLiquidity,
   minimumRepay,
   DAOFee,
 }: BorrowingExpandCardPropsType) => {
-  const { symbol, icon, rate = 1 } = borrowedAsset
+  const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
 
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
@@ -397,7 +397,7 @@ export const BorrowingExpandCard = ({
                                         existingCollaterals: collateralData,
                                         borrowedAssetRate: borrowedAsset.rate,
                                         borrowCapacity,
-                                        avaliableLiq,
+                                        availableLiquidity,
                                       })
                                     }
                                     kind={BUTTON_PRIMARY}
@@ -426,7 +426,7 @@ export const BorrowingExpandCard = ({
                                       borrowedAmount,
                                       borrowedAssetRate: borrowedAsset.rate,
                                       borrowCapacity,
-                                      avaliableLiq,
+                                      availableLiquidity,
                                     })
                                   }
                                   form={BUTTON_WIDE}
@@ -474,7 +474,7 @@ export const BorrowingExpandCard = ({
                           borrowedAmount,
                           existingCollaterals: collateralData,
                           borrowedAssetRate: borrowedAsset.rate,
-                          avaliableLiq,
+                          availableLiquidity,
                           borrowCapacity,
                         })
                       }
@@ -592,7 +592,14 @@ export const BorrowingExpandCard = ({
                     <Button
                       kind={BUTTON_SIMPLE}
                       disabled={true || isActionActive}
-                      onClick={() => openUpdateMvkOperatorsPopup?.({})}
+                      onClick={() =>
+                        openUpdateMvkOperatorsPopup?.({
+                          vaultAddress: address,
+                          tokenName: gqlName,
+                          // TODO: add valid operators
+                          operators: [],
+                        })
+                      }
                     >
                       Update <Icon id="paginationArrowLeft" />
                     </Button>

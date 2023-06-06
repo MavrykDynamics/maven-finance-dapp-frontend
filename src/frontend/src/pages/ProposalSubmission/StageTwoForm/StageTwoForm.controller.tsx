@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // types
-import { StageTwoFormProps, ProposalBytesType } from '../ProposalSybmittion.types'
+import { StageTwoFormProps, ProposalBytesType } from '../ProposalSubmission.types'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -15,20 +15,16 @@ import { Info } from 'app/App.components/Info/Info.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // const, helpers
-import {
-  checkBytesPairExists,
-  DEFAULT_PROPOSAL,
-  getBytesPairValidationStatus,
-  PROPOSAL_BYTE,
-} from '../ProposalSubmition.helpers'
+import { checkBytesPairExists, getBytesPairValidationStatus, PROPOSAL_BYTE } from '../ProposalSubmission.helpers'
+import { STAGE_2_DESCRIPTION } from 'texts/tooltips/governance'
 import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { isValidLength } from 'utils/validatorFunctions'
-import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
+import { INFO_DEFAULT, INFO_WARNING } from 'app/App.components/Info/info.constants'
 import { BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { isHexadecimal } from 'utils/validatorFunctions'
 
 // styles
 import { SubmitProposalBytes, SubmitProposalBytesPair, SubmitProposalGeneralData } from '../ProposalSubmission.style'
+import { containSpaces } from 'app/App.utils/input'
 
 // valid bytes text for testing: 0502000000c703200743036e0a000000160136047207da50aa1f751393d670b8810457c21d43000655076504620000001525757064617465436f6e6669674e657756616c75650864046c0000001925636f6e6669675661756c744e616d654d61784c656e677468046c0000000625656d7074790000001325757064617465436f6e666967416374696f6e0000000d25757064617465436f6e666967072f0200000008074303620000032702000000000743036a0000034f0533036c0743036200140342034d053d036d034c031b
 export const StageTwoForm = ({
@@ -38,11 +34,9 @@ export const StageTwoForm = ({
   updateLocalProposalValidation,
   updateLocalProposalData,
 }: StageTwoFormProps) => {
-  const { governancePhase, fee, successReward, proposalMetadataTitleMaxLength } = useSelector(
-    (state: State) => state.governance.config,
-  )
+  const { governancePhase, fee, successReward, proposalMetadataTitleMaxLength, proposalDescriptionMaxLength } =
+    useSelector((state: State) => state.governance.config)
   const isProposalPeriod = governancePhase === 'PROPOSAL'
-  const isDisabledActions = proposalId === DEFAULT_PROPOSAL.id
 
   // is no bytes pair on proposal change add empty pair on client
   useEffect(() => {
@@ -55,9 +49,7 @@ export const StageTwoForm = ({
     // update input value
     updateLocalProposalData(
       {
-        proposalData: proposalData.map((oldByte) =>
-          oldByte.id === byte.id ? { ...oldByte, [type === 'title' ? 'title' : 'encoded_code']: text } : oldByte,
-        ),
+        proposalData: proposalData.map((oldByte) => (oldByte.id === byte.id ? { ...oldByte, [type]: text } : oldByte)),
       },
       proposalId,
     )
@@ -71,11 +63,7 @@ export const StageTwoForm = ({
               byteValidity.byteId === byte.id
                 ? {
                     ...byteValidity,
-                    validTitle:
-                      isValidLength(text, 1, proposalMetadataTitleMaxLength) &&
-                      getBytesPairValidationStatus(text, 'validTitle') === INPUT_STATUS_SUCCESS
-                        ? INPUT_STATUS_SUCCESS
-                        : INPUT_STATUS_ERROR,
+                    validTitle: getBytesPairValidationStatus(text, proposalMetadataTitleMaxLength),
                   }
                 : byteValidity,
             ),
@@ -91,7 +79,7 @@ export const StageTwoForm = ({
                 ? {
                     ...byteValidity,
                     validBytes:
-                      isHexadecimal(text) && getBytesPairValidationStatus(text, 'validBytes') === INPUT_STATUS_SUCCESS
+                      isHexadecimal(text) && getBytesPairValidationStatus(text) === INPUT_STATUS_SUCCESS
                         ? INPUT_STATUS_SUCCESS
                         : INPUT_STATUS_ERROR,
                   }
@@ -101,6 +89,39 @@ export const StageTwoForm = ({
           proposalId,
         )
         break
+      case 'code_description':
+        updateLocalProposalValidation(
+          {
+            bytesValidation: currentProposalValidation.bytesValidation.map((byteValidity) =>
+              byteValidity.byteId === byte.id
+                ? {
+                    ...byteValidity,
+                    validDescr: getBytesPairValidationStatus(text, proposalDescriptionMaxLength),
+                  }
+                : byteValidity,
+            ),
+          },
+          proposalId,
+        )
+        break
+    }
+  }
+
+  function handleOnBlur<G extends HTMLInputElement | HTMLTextAreaElement>(
+    byte: ProposalBytesType,
+    e: React.FocusEvent<G>,
+  ) {
+    const { name, value } = e.target
+    if (containSpaces(value)) {
+      const trimmedValue = value.trim()
+      updateLocalProposalData(
+        {
+          proposalData: proposalData.map((oldByte) =>
+            oldByte.id === byte.id ? { ...oldByte, [name]: trimmedValue } : oldByte,
+          ),
+        },
+        proposalId,
+      )
     }
   }
 
@@ -128,6 +149,7 @@ export const StageTwoForm = ({
         bytesValidation: (currentProposalValidation.bytesValidation ?? []).concat({
           validBytes: '',
           validTitle: '',
+          validDescr: '',
           byteId: newId,
         }),
       },
@@ -156,13 +178,8 @@ export const StageTwoForm = ({
   }
 
   // Drag & drop variables and event handlers
-  const [dndBytes, setdndBytes] = useState<Array<ProposalBytesType>>([])
   const [DnDSelectedProposal, setDnDSeletedProposal] = useState<ProposalBytesType | null>(null)
   const isDraggable = useMemo(() => proposalData?.length > 1, [proposalData])
-
-  useEffect(() => {
-    setdndBytes(proposalData)
-  }, [proposalData])
 
   // handling changing order of elements on drop event
   const dropHandler = (e: React.DragEvent<HTMLElement>, byteToDrop: ProposalBytesType) => {
@@ -183,8 +200,6 @@ export const StageTwoForm = ({
         })
         .sort((a, b) => a.order - b.order)
 
-      setdndBytes(updatedBytes)
-
       updateLocalProposalData(
         {
           proposalData: updatedBytes,
@@ -196,11 +211,14 @@ export const StageTwoForm = ({
 
   // removing classNames for under grad event cards
   const dragRemoveStyling = () => {
-    setdndBytes(
-      dndBytes.map((byte) => ({
-        ...byte,
-        isUnderTheDrop: false,
-      })),
+    updateLocalProposalData(
+      {
+        proposalData: proposalData.map((byte) => ({
+          ...byte,
+          isUnderTheDrop: false,
+        })),
+      },
+      proposalId,
     )
   }
 
@@ -212,20 +230,25 @@ export const StageTwoForm = ({
   // adding class names to under drag cards
   const dragOverHandler = (e: React.DragEvent<HTMLElement>, bytePairId: number) => {
     e.preventDefault()
-    setdndBytes(
-      dndBytes.map((byte) => ({
-        ...byte,
-        ...(bytePairId === byte.id && byte.id !== DnDSelectedProposal?.id ? { isUnderTheDrop: true } : {}),
-      })),
+    updateLocalProposalData(
+      {
+        proposalData: proposalData.map((byte) => ({
+          ...byte,
+          ...(bytePairId === byte.id && byte.id !== DnDSelectedProposal?.id ? { isUnderTheDrop: true } : {}),
+        })),
+      },
+      proposalId,
     )
   }
 
   return (
     <>
+      <div className="stage-descr">{STAGE_2_DESCRIPTION}</div>
+
       <SubmitProposalGeneralData>
         <div className="submitted-data">
           <div className="label">1 - Proposal Title</div>
-          <div className="value">{title}</div>
+          <div className="value">{title || '–'}</div>
         </div>
 
         <div className="submitted-data">
@@ -239,23 +262,37 @@ export const StageTwoForm = ({
         </div>
       </SubmitProposalGeneralData>
 
+      <div className="bytes-label label">4 - Enter Proposal Bytes</div>
+
       <Info
         type={INFO_DEFAULT}
         text={
-          'Bytes are executed in FILO. If you want to change the order of execution of the bytes, drag the pair to thedesired position.'
+          <>
+            Bytes are executed in FILO. If you want to change the order of execution of the bytes, drag the pair to the
+            desired position. Learn more on how to create bytes for governance proposals in the{' '}
+            <a
+              href="https://www.npmjs.com/package/@mavrykdynamics/create-lambda-bytes"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Mavryk Docs
+            </a>
+            .
+          </>
         }
       />
 
       <SubmitProposalBytes>
-        {dndBytes.map((item, i) => {
+        {proposalData.map((item, i) => {
           if (
             !checkBytesPairExists(item) ||
             !item ||
             typeof item.title !== 'string' ||
-            typeof item.encoded_code !== 'string'
+            typeof item.encoded_code !== 'string' ||
+            typeof item.code_description !== 'string'
           )
             return null
-          const { title = '', encoded_code = '' } = item
+          const { title, encoded_code, code_description } = item
           const existInServer = Boolean(proposalData?.find(({ id }) => item.id === id && !item.isLocalBytes))
           const validityObject = currentProposalValidation.bytesValidation?.find(({ byteId }) => byteId === item.id)
 
@@ -279,10 +316,11 @@ export const StageTwoForm = ({
                   inputSize: INPUT_MEDIUM,
                 }}
                 inputProps={{
-                  disabled: existInServer || locked || isDisabledActions,
+                  disabled: existInServer || locked || !isProposalPeriod,
                   value: title,
                   type: 'text',
                   name: 'title',
+                  onBlur: (e: React.FocusEvent<HTMLInputElement>) => handleOnBlur(item, e),
                   onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
                     handleOnChange(item, e.target.value, e.target.name),
                 }}
@@ -296,12 +334,29 @@ export const StageTwoForm = ({
                   handleOnChange(item, e.target.value, e.target.name)
                 }
                 inputStatus={validityObject?.validBytes}
-                disabled={!isProposalPeriod || locked || isDisabledActions}
+                disabled={!isProposalPeriod || locked}
+              />
+
+              <TextArea
+                name="code_description"
+                label="Enter Proposal Bytes Description"
+                value={code_description ?? ''}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  handleOnChange(item, e.target.value, e.target.name)
+                }
+                onBlur={(e: React.FocusEvent<HTMLTextAreaElement>) => handleOnBlur(item, e)}
+                inputStatus={validityObject?.validDescr}
+                disabled={!isProposalPeriod || locked}
+                textAreaMaxLimit={proposalDescriptionMaxLength}
               />
 
               <div className={`remove-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
                 <CustomTooltip text="Delete bytes pair" className="tooltip">
-                  <Button kind={BUTTON_SIMPLE} onClick={() => handleDeletePair(item.id)} disabled={isDisabledActions}>
+                  <Button
+                    kind={BUTTON_SIMPLE}
+                    onClick={() => handleDeletePair(item.id)}
+                    disabled={!isProposalPeriod || locked}
+                  >
                     <Icon id="delete" />
                   </Button>
                 </CustomTooltip>
@@ -309,13 +364,21 @@ export const StageTwoForm = ({
             </SubmitProposalBytesPair>
           )
         })}
-        <div className="add-byte">
+
+        {proposalData.length >= 5 ? (
+          <div className="bytes-restriction-banner">
+            <Info
+              text={
+                'If you are adding a heavy load of bytes, such as bytes to create 20 farms, note that this can cause the operation size can be too large to execute successfully. We suggest to only create farms in batches of 5 per proposal'
+              }
+              type={INFO_WARNING}
+            />
+          </div>
+        ) : null}
+
+        <div className={`add-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
           <CustomTooltip text="Add bytes pair" className="tooltip">
-            <Button
-              kind={BUTTON_SIMPLE_SMALL}
-              disabled={!isProposalPeriod || locked || isDisabledActions}
-              onClick={handleCreateNewByte}
-            >
+            <Button kind={BUTTON_SIMPLE_SMALL} disabled={!isProposalPeriod || locked} onClick={handleCreateNewByte}>
               <Icon id="plus" /> Add New Bytes
             </Button>
           </CustomTooltip>

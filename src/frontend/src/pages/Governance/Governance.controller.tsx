@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
-import { useLocation } from 'react-router'
+import { Redirect, useHistory, useLocation } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
+import QueryString from 'qs'
 
 // types
 import { State } from 'reducers'
@@ -40,20 +41,23 @@ import { Page } from 'styles'
 import { GovernanceStyled, GovernanceLeftContainer } from './Governance.style'
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { VoterListItem, ProposalStatusFlag } from './components/Proposals/Proposals.style'
+import { VoterListItem } from './components/Proposals/Proposals.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
+import { STATUS_FLAG_DOWN, STATUS_FLAG_UP } from 'app/App.components/StatusFlag/StatusFlag.constants'
 
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const dispatch = useDispatch()
   const { search } = useLocation()
+  const history = useHistory()
 
   const {
     isLoaded: isGovernanceLoaded,
     config: { governancePhase, cycle },
-    currentRoundProposalsIds,
     pastProposalsIds,
+    currentRoundProposalsIds,
     waitingProposalsIdsToBeExecuted,
     waitingProposalsIdsToBePaid,
     proposalsMapper,
@@ -72,9 +76,35 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
     } catch (e) {}
   }, [])
 
+  // handle saving proposal id in query params
+  const parsedQp = QueryString.parse(search, { ignoreQueryPrefix: true }) as { proposalId: string }
+
+  // parse proposal id from url
+  const rightSideContentId = parsedQp.proposalId ? Number(parsedQp.proposalId) : null
+  // as this page used for history and non history proposals we need to specify array of id where we will validate selected proposalId whether it exists
+  const listOfProposalsToUseForRedirect = isHistory
+    ? pastProposalsIds
+    : currentRoundProposalsIds.concat(waitingProposalsIdsToBeExecuted, waitingProposalsIdsToBePaid)
+  const proposalPage = isHistory ? 'proposal-history' : 'governance'
+
+  // crete redirect, it we don't have proposal id, or we have but it's invalid, set first proposalId that we have to selected, or if we don't have proposals at all, don't show it
+  const redirect =
+    !rightSideContentId || (rightSideContentId && !listOfProposalsToUseForRedirect.includes(rightSideContentId)) ? (
+      <Redirect
+        to={`/${proposalPage}${
+          listOfProposalsToUseForRedirect.length
+            ? `?${QueryString.stringify({
+                proposalId: listOfProposalsToUseForRedirect[0],
+              })}`
+            : null
+        }`}
+      />
+    ) : null
+
   // Show details of the proposal
-  const [rightSideContentId, setRightSideContentId] = useState<number | undefined>(undefined)
-  const handleItemSelect = (chosenProposal: ProposalRecordType) => setRightSideContentId(chosenProposal.id)
+  // const [rightSideContentId, setRightSideContentId] = useState<number | undefined>(undefined)
+  const handleItemSelect = (chosenProposal: ProposalRecordType) =>
+    history.replace(`/${proposalPage}?${QueryString.stringify({ proposalId: chosenProposal.id })}`)
 
   // filters handlers TODO: add all cycles option
   const dropDownOptions = useMemo<Array<DropDownItemType>>(() => generateCyclesDdOptions(cycle), [cycle])
@@ -159,14 +189,9 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
     selectedCycle,
   ])
 
-  useEffect(() => {
-    const firstProposalId = prpoposalsListsToShow?.[0]?.proposalsIds?.[0]
-    setRightSideContentId(firstProposalId ? proposalsMapper[firstProposalId]?.id : undefined)
-  }, [proposalsMapper, prpoposalsListsToShow])
-
   // Generate proposal voters and paginate them
   const votersList = useMemo(() => {
-    const selectedProposalVotes = rightSideContentId ? proposalsMapper[rightSideContentId].votes : []
+    const selectedProposalVotes = rightSideContentId ? proposalsMapper[rightSideContentId]?.votes ?? [] : []
     return (
       selectedProposalVotes?.reduce<ProposalVotersType>((acc, { voter_id, round, vote }) => {
         const satelliteData = satelliteMapper[voter_id]
@@ -207,89 +232,90 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
           <div className="text">Loading proposals</div>
         </DataLoaderWrapper>
       ) : (
-        <GovernanceStyled>
-          <GovernanceLeftContainer className={!prpoposalsListsToShow.length ? 'full-width' : ''}>
-            {isHistory && prpoposalsListsToShow.length ? (
-              <>
-                <Checkbox
-                  id="dropped-proposals"
-                  onChangeHandler={() => setShowActive(!showActive)}
-                  checked={showActive}
-                  className={'proposal-history-checkbox'}
-                >
-                  <span>Hide dropped proposals</span>
-                </Checkbox>
+        redirect ?? (
+          <GovernanceStyled>
+            <GovernanceLeftContainer className={!prpoposalsListsToShow.length ? 'full-width' : ''}>
+              {isHistory && prpoposalsListsToShow.length ? (
+                <>
+                  <Checkbox
+                    id="dropped-proposals"
+                    onChangeHandler={() => setShowActive(!showActive)}
+                    checked={showActive}
+                    className={'proposal-history-checkbox'}
+                  >
+                    <span>Hide dropped proposals</span>
+                  </Checkbox>
 
-                <DropDown
-                  className="cycle-dropdown"
-                  placeholder={'Choose cycle number'}
-                  items={dropDownOptions}
-                  clickItem={(ddId: DDItemId) => setSelectedCycle(dropDownOptions.find(({ id }) => id === ddId))}
-                  activeItem={selectedCycle}
-                />
-              </>
-            ) : null}
+                  <DropDown
+                    className="cycle-dropdown"
+                    placeholder={'Choose cycle number'}
+                    items={dropDownOptions}
+                    clickItem={(ddId: DDItemId) => setSelectedCycle(dropDownOptions.find(({ id }) => id === ddId))}
+                    activeItem={selectedCycle}
+                  />
+                </>
+              ) : null}
 
-            {prpoposalsListsToShow.length ? (
-              prpoposalsListsToShow.map(({ title, proposalsIds, listName, type }) => {
-                return (
-                  <>
-                    <Proposals
-                      proposalsList={proposalsIds}
-                      handleItemSelect={handleItemSelect}
-                      selectedProposalId={rightSideContentId}
-                      title={title}
-                      type={type}
-                      listName={listName}
-                      key={`${proposalsIds.length}-${title}`}
-                    />
-
-                    {/* Show this plug when we use cycle dd filter and some of the cycles don't have proposals in it */}
-                    {isHistory && selectedCycle?.id !== NONE_CYCLE_SELECTED_OPTION.id && proposalsIds.length === 0 ? (
-                      <EmptyContainer className="empty">
-                        <img src="/images/not-found.svg" alt=" No proposals to show" />
-                        <figcaption>{`There is no propoposals on the cycle ${selectedCycle?.id}`}</figcaption>
-                      </EmptyContainer>
-                    ) : null}
-                  </>
-                )
-              })
-            ) : (
-              <EmptyContainer className="empty">
-                <img src="/images/not-found.svg" alt=" No proposals to show" />
-                <figcaption>There are no{isHistory ? ' history' : ''} proposals</figcaption>
-              </EmptyContainer>
-            )}
-
-            {/* Satellites who has voted for selected proposal */}
-            {!isHistory && governancePhase !== GovPhases.PROPOSAL && votersList?.length ? (
-              <div className="voters-list">
-                <H2Title>Satellite Voting History</H2Title>
-                {paginatedVotersList.map(({ vote, address, name, avatar }) => {
-                  const status = vote === 1 ? ProposalStatus.EXECUTED : vote === 2 ? ProposalStatus.DEFEATED : undefined
+              {prpoposalsListsToShow.length ? (
+                prpoposalsListsToShow.map(({ title, proposalsIds, listName, type }) => {
                   return (
-                    <VoterListItem>
-                      <div className="left">
-                        <ImageWithPlug imageLink={avatar} alt={`${name} avatar`} />
-                        <div className="info">
-                          <span>{name}</span>
-                          <TzAddress tzAddress={address} />
-                        </div>
-                      </div>
-                      <ProposalStatusFlag status={status}>{getVoteText(vote)}</ProposalStatusFlag>
-                    </VoterListItem>
-                  )
-                })}
-                <Pagination itemsCount={votersList.length} listName={GOVERNANCE_VOTERS_LIST_NAME} />
-              </div>
-            ) : null}
-          </GovernanceLeftContainer>
+                    <>
+                      <Proposals
+                        proposalsList={proposalsIds}
+                        handleItemSelect={handleItemSelect}
+                        selectedProposalId={rightSideContentId}
+                        title={title}
+                        type={type}
+                        listName={listName}
+                        key={`${proposalsIds.length}-${title}`}
+                      />
 
-          {/* Selected proposal */}
-          {rightSideContentId && rightSideContentId !== 0 ? (
-            <ProposalDetails proposal={proposalsMapper[rightSideContentId]} />
-          ) : null}
-        </GovernanceStyled>
+                      {/* Show this plug when we use cycle dd filter and some of the cycles don't have proposals in it */}
+                      {isHistory && selectedCycle?.id !== NONE_CYCLE_SELECTED_OPTION.id && proposalsIds.length === 0 ? (
+                        <EmptyContainer className="empty">
+                          <img src="/images/not-found.svg" alt=" No proposals to show" />
+                          <figcaption>{`There is no propoposals on the cycle ${selectedCycle?.id}`}</figcaption>
+                        </EmptyContainer>
+                      ) : null}
+                    </>
+                  )
+                })
+              ) : (
+                <EmptyContainer className="empty">
+                  <img src="/images/not-found.svg" alt=" No proposals to show" />
+                  <figcaption>There are no{isHistory ? ' history' : ''} proposals</figcaption>
+                </EmptyContainer>
+              )}
+
+              {/* Satellites who has voted for selected proposal */}
+              {!isHistory && governancePhase !== GovPhases.PROPOSAL && votersList?.length ? (
+                <div className="voters-list">
+                  <H2Title>Satellite Voting History</H2Title>
+                  {paginatedVotersList.map(({ vote, address, name, avatar }) => {
+                    return (
+                      <VoterListItem>
+                        <div className="left">
+                          <ImageWithPlug imageLink={avatar} alt={`${name} avatar`} />
+                          <div className="info">
+                            <span>{name}</span>
+                            <TzAddress tzAddress={address} />
+                          </div>
+                        </div>
+                        <StatusFlag status={vote === 1 ? STATUS_FLAG_UP : STATUS_FLAG_DOWN} text={getVoteText(vote)} />
+                      </VoterListItem>
+                    )
+                  })}
+                  <Pagination itemsCount={votersList.length} listName={GOVERNANCE_VOTERS_LIST_NAME} />
+                </div>
+              ) : null}
+            </GovernanceLeftContainer>
+
+            {/* Selected proposal */}
+            {rightSideContentId && rightSideContentId !== 0 ? (
+              <ProposalDetails proposal={proposalsMapper[rightSideContentId]} />
+            ) : null}
+          </GovernanceStyled>
+        )
       )}
     </Page>
   )

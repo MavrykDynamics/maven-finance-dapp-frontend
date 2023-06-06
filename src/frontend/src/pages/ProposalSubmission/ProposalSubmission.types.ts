@@ -20,14 +20,15 @@ export type ValidationResult = typeof INPUT_STATUS_ERROR | typeof INPUT_STATUS_S
 
 export type ProposalValidityObj = {
   title: ValidationResult
+  invoice: ValidationResult
   description: ValidationResult
-  ipfs: ValidationResult
   successMVKReward: ValidationResult
   invoiceTable: ValidationResult
   sourceCode: ValidationResult
   bytesValidation: Array<{
     validBytes: ValidationResult
     validTitle: ValidationResult
+    validDescr: ValidationResult
     byteId: number
   }>
   paymentsValidation: Array<{

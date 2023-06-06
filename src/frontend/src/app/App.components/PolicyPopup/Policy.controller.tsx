@@ -1,6 +1,6 @@
 import { useLockBodyScroll } from 'react-use'
 
-import { PopupContainer } from '../SettingsPopup/SettingsPopup.style'
+import { PopupContainer } from '../popup/PopupMain.style'
 import { PolicyPopupContent } from './PolicyPopupContent.controller'
 
 export const PolicyPopup = ({

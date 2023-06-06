@@ -16,14 +16,14 @@ export type AllValidFormTypes =
 export type SubmitProposalForm = {
   title: string
   description: string
-  ipfs: string
+  invoice: string
   sourceCode: string
 }
 
 export type ValidSubmitProposalForm = {
   title: boolean | undefined
   description: boolean | undefined
-  ipfs: boolean | undefined
+  invoice: boolean | undefined
   successMVKReward: boolean | undefined
   invoiceTable: boolean | undefined
   sourceCode: boolean | undefined
@@ -32,7 +32,7 @@ export type ValidSubmitProposalForm = {
 export type SubmitProposalFormInputStatus = {
   title: InputStatusType
   description: InputStatusType
-  ipfs: InputStatusType
+  invoice: InputStatusType
   successMVKReward: InputStatusType
   invoiceTable: InputStatusType
   sourceCode: InputStatusType

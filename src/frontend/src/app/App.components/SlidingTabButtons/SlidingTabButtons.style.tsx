@@ -12,15 +12,8 @@ export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
   justify-content: space-evenly;
   align-items: center;
   border-radius: 20px;
-
-  > * {
-    &:first-child {
-      margin-left: 1px;
-    }
-    &:last-child {
-      margin-right: 1px;
-    }
-  }
+  height: 40px;
+  padding: 1px;
 
   &.disabled {
     opacity: 0.7;
@@ -42,13 +35,13 @@ export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
 export const ButtonStyled = styled.button<{ disabled: boolean; theme: MavrykTheme }>`
   border: none;
   cursor: pointer;
-  height: 36px;
+  height: 100%;
   width: -webkit-fill-available;
   white-space: nowrap;
   padding: 0 22px;
   border-radius: ${BUTTON_RADIUS};
   user-select: none;
-  color: ${({ theme }) => theme.headerColor};
+  color: ${({ theme }) => theme.textColor};
   background: transparent;
 
   &.selected {

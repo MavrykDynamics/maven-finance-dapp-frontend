@@ -17,7 +17,7 @@ export type RPCNodeType = {
   url: string
   title: string
   nodeLogoUrl?: string
-  isUser?: boolean
+  isUser: boolean
 }
 
 export interface PreferencesState {
@@ -29,20 +29,16 @@ export interface PreferencesState {
   sidebarOpened: boolean
 }
 
-const mariGoldUrl =
-  process.env.REACT_APP_BUILD_ENV === 'development'
-    ? 'https://ghostnet.tezos.marigold.dev/'
-    : 'https://mainnet.tezos.marigold.dev/'
-const ecadLabSUrl =
-  process.env.REACT_APP_BUILD_ENV === 'development' ? 'https://ghostnet.ecadinfra.com' : 'https://mainnet.api.tez.ie/'
+const mariGoldUrl = 'https://ghostnet.tezos.marigold.dev/'
+const ecadLabSUrl = 'https://ghostnet.ecadinfra.com'
 
 export const preferencesDefaultState: PreferencesState = {
   themeSelected: getItemFromStorage('theme') || 'space',
   changeNodePopupOpen: false,
   sidebarOpened: false,
   RPC_NODES: [
-    { title: 'MARIGOLD', url: mariGoldUrl, nodeLogoUrl: 'marigold_logo.png' },
-    { title: 'ECADLABS', url: ecadLabSUrl, nodeLogoUrl: 'ECAD_logo.png' },
+    { title: 'ECADLABS', url: ecadLabSUrl, nodeLogoUrl: 'ECAD_logo.png', isUser: false },
+    { title: 'MARIGOLD', url: mariGoldUrl, nodeLogoUrl: 'marigold_logo.png', isUser: false },
   ],
   REACT_APP_RPC_PROVIDER: ecadLabSUrl,
 }

@@ -43,9 +43,7 @@ export type LoansChartsDataType = {
   collateralChartData: Array<SingleValueData>
   lendingChartData: Array<SingleValueData>
   lendBorrow24hDiff: {
-    last48hLending: number
     last24hLending: number
-    last48hBorrowing: number
     last24hBorrowing: number
   }
 }
@@ -92,7 +90,7 @@ export type LoansVaultType = {
   collateralRatio: number
   minimumRepay: number
   borrowCapacity: number
-  avaliableLiq: number
+  availableLiquidity: number
   apr: number
   fee: number
   address: string
@@ -143,4 +141,15 @@ export type LoanMarketType = {
   reserveAmount: number
   lending24hVolume: number
   borrowing24hVolume: number
+}
+
+type TokenOperator = {
+  owner: string
+  operator: string
+  token_id: number
+}
+
+export type UpdateTokenOperator = {
+  add_operator?: TokenOperator
+  remove_operator?: TokenOperator
 }

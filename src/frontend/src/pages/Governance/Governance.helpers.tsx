@@ -1,4 +1,5 @@
 import {
+  ProposalStatusType,
   ProposalStatus,
   GovernancePhaseType,
   GovPhases,
@@ -10,7 +11,7 @@ export const getProposalStatus = (
   governancePhase: GovernancePhaseType,
   cycleHighestVotedProposalId: number,
   timelockProposalId: number,
-): ProposalStatus => {
+): ProposalStatusType => {
   // if proposal is executed give it's executed status
   if (proposal.executed) return ProposalStatus.EXECUTED
 
@@ -20,9 +21,7 @@ export const getProposalStatus = (
   // if proposal is not in current round and it's matching with the timelockProposalId and it's not executed, or it has unpaind payments it's waiting proposal
   if (
     !proposal.current_round_proposal &&
-    proposal.id === timelockProposalId &&
-    !proposal.payment_processed &&
-    proposal.payments.length
+    (proposal.id === timelockProposalId || (!proposal.payment_processed && proposal.payments.length))
   )
     return ProposalStatus.WAITING
 

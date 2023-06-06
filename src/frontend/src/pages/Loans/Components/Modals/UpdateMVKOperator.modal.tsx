@@ -7,6 +7,7 @@ import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.co
 import { validateTzAddress } from 'utils/validatorFunctions'
 import { LoansPopupsAddressInputStateType, UpdateOperatorsPopupDataType } from './Modals.helpers'
 import { State } from 'reducers'
+import { UpdateTokenOperator } from 'utils/TypesAndInterfaces/Loans'
 
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
@@ -16,7 +17,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
 import { LoansModalBase } from './Modals.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { updateOperatorsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17307%3A226700&t=Sx2aEpp3ifrGxBtQ-0
@@ -29,7 +30,7 @@ export const UpdateMVKOperator = ({
   show: boolean
   data: UpdateOperatorsPopupDataType
 }) => {
-  const {} = data ?? {}
+  const { vaultAddress = '', tokenName = '', operators = [] } = data ?? {}
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
@@ -42,6 +43,13 @@ export const UpdateMVKOperator = ({
   useEffect(() => {
     if (!show) {
       setTableData([{ address: '', validationStatus: '' }])
+    } else {
+      const currentOperators: LoansPopupsAddressInputStateType[] = operators.map((item) => ({
+        address: item,
+        validationStatus: INPUT_STATUS_SUCCESS,
+      }))
+
+      setTableData([{ address: '', validationStatus: '' }, ...currentOperators])
     }
   }, [show])
 
@@ -62,7 +70,39 @@ export const UpdateMVKOperator = ({
     )
   }
 
-  const updateHandler = () => dispatch(updateOperatorsAction(closePopup))
+  const updateHandler = () => {
+    const updateOperators: UpdateTokenOperator[] = []
+    const tableAddresses = tableData.map((item) => item.address)
+
+    // get operators to add
+    tableData.forEach(({ address }) => {
+      if (!operators.includes(address)) {
+        updateOperators.push({
+          add_operator: {
+            owner: vaultAddress,
+            operator: address,
+            token_id: 0,
+          },
+        })
+      }
+    })
+
+    // get operators to remove
+    operators.forEach((address) => {
+      if (!tableAddresses.includes(address)) {
+        updateOperators.push({
+          remove_operator: {
+            owner: vaultAddress,
+            operator: address,
+            token_id: 0,
+          },
+        })
+      }
+    })
+
+    if (!updateOperators.length) return
+    dispatch(updateOperatorsAction(vaultAddress, tokenName, updateOperators, closePopup))
+  }
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -74,12 +114,8 @@ export const UpdateMVKOperator = ({
             <h2>Update MVK Operators</h2>
           </GovRightContainerTitleArea>
           <div className="modalDescr">
-            Manage permissions for depositing collateral to a selected vault. Note: these are advanced permissions and
-            should be used by experts.
-            <br />
-            <br />- Vault Owner: Only vault owner
-            <br />- Defined Accounts: Allow whitelisted addresses
-            <br />- Allow Any: Any user may deposit collateral
+            Add or remove operators from collateralized staked MVK in the vault. Note, this is an advanced feature and
+            should only be done by experienced DeFi users.
           </div>
 
           <Table className="editable-table one-column">
@@ -92,7 +128,7 @@ export const UpdateMVKOperator = ({
                         className={`table-input`}
                         inputProps={{
                           value: address,
-                          placeholder: 'Enter tz1 address',
+                          placeholder: 'Enter address',
                           type: 'text',
                           onChange: (e) => updateTableDataState(e.target.value, rowIdx),
                         }}

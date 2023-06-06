@@ -4,7 +4,7 @@ import { BUTTON_PRIMARY, BUTTON_WIDE } from '../Button/Button.constants'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../Icon/Icon.view'
 
-import { PopupContainerWrapper } from '../SettingsPopup/SettingsPopup.style'
+import { PopupContainerWrapper } from '../popup/PopupMain.style'
 import Checkbox from '../Checkbox/Checkbox.view'
 
 export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => void }) => {

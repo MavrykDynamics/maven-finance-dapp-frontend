@@ -13,6 +13,14 @@ import { FarmWithdrawModal } from './FarmWithdrawModal.controller'
 
 export const farmsPopupsContext = createContext<FarmsPopupsContextStateType>(undefined!)
 
+/**
+ * FarmsPopupsProvider - provides the context for managing popups in the Farm component of the application.
+ * It maintains the state of different popups and provides methods to open and close these popups.
+ * It takes no props and manages the state for popups related to the ROI calculator, depositing to the farm,
+ * and withdrawing from the farm.
+ * @class
+ * @augments {React.Component}
+ */
 export default class FarmsPopupsProvider extends React.Component<{}, FarmsPopupsContextStateType> {
   constructor(props: {}) {
     super(props)
@@ -90,6 +98,11 @@ export default class FarmsPopupsProvider extends React.Component<{}, FarmsPopups
     })
   }
 
+  /**
+   *
+   * Render method of FarmsPopupsProvider component.
+   * @returns {object} A JSX element wrapping all popups and child components within the context provider.
+   */
   render() {
     const { roiPopup, depositPopup, withdrawPopup } = this.state
     const { closeDepositFarmPopup, closeRoiCalculatorPopup, closeWithdrawFarmPopup } = this.state

@@ -28,6 +28,13 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    position: relative;
+
+    .tooltip {
+      position: absolute;
+      right: 0px;
+      top: -17px;
+    }
   }
 
   .voting-ends {
@@ -39,6 +46,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
   }
 
   .proposal-button-action {
+    margin-top: 20px;
     margin-left: auto;
     width: fit-content;
   }
@@ -67,6 +75,10 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     color: ${({ theme }) => theme.dataColor};
     font-weight: 500;
     font-size: 14px;
+
+    * {
+      word-break: break-all;
+    }
   }
 
   .proposal-data-block-address {
@@ -112,6 +124,10 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
         color: ${({ theme }) => theme.textColor};
         font-size: 16px;
         white-space: nowrap;
+      }
+
+      .byte-descr {
+        display: flex;
       }
 
       .byte {

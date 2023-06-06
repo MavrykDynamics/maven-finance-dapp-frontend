@@ -14,8 +14,8 @@ import { State } from '../reducers'
 // view, styles
 import { Toaster } from './App.components/Toaster/Toaster.controller'
 import { Menu } from './App.components/Menu/Menu.controller'
-import { PopupChangeNode } from './App.components/SettingsPopup/SettingsPopup.controller'
 import { ActionLoader, LoaderRocket, WertLoader } from './App.components/Loader/Loader.view'
+import { SettingPopup } from './App.components/SettingsPopup/SettingsPopup'
 import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
 import { AppStyled } from './App.style'
 import LoansPopupsProvider from 'pages/Loans/Components/Modals/LoansModals.provider'
@@ -30,8 +30,6 @@ import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
 import { getTokensForDAPP, getTokensPrices } from 'reducers/actions/getTokens.actions'
-import { getCouncilMembers } from 'pages/Council/Council.actions'
-import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 import { getAvaliableCollaterals, getXtzBakers } from 'pages/Loans/Actions/getLoansData.actions'
 
 // export const { store, persistor } = configureStore({})
@@ -60,6 +58,7 @@ const AppContainer = () => {
       await dispatch(getContractAddressesStorage())
       // Fetching initial&common data for DAPP
       await Promise.all([
+        // TODO: idk whether we still need this, but better to remove it after satellites live update task is done
         dispatch(getSatellitesStorage()),
         dispatch(getFeedsStorage()),
 
@@ -67,10 +66,6 @@ const AppContainer = () => {
         dispatch(getXtzBakers()),
         // TODO: uncomment it when contracts are updated
         // dispatch(getMvkFaucet()),
-
-        // Used to retrieve user avatar
-        dispatch(getCouncilMembers()),
-        dispatch(getBreakGlassCouncilMembers()),
       ])
 
       // Depends on data feeds (getFeedsStorage())
@@ -111,7 +106,7 @@ const AppContainer = () => {
         <WertLoader />
         <Menu />
 
-        <PopupChangeNode isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
+        <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
         <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
         <LoansPopupsProvider>

@@ -14,7 +14,7 @@ import { CouncilMemberView } from 'pages/Council/CouncilMember/CouncilMember.vie
 import { CouncilPending } from './CouncilPending/CouncilPending.controller'
 import { MyCouncilActions } from './CouncilActions/MyCouncilActions.view'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
 

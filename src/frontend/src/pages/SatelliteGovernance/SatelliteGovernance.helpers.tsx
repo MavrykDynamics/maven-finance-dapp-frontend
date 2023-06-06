@@ -1,3 +1,4 @@
+import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import {
   GovernanceSatelliteGraphQL,
   GovernanceSatelliteActionGraphQL,
@@ -10,7 +11,7 @@ type SatelliteGovernanceActionType = {
   purpose: string
   type: string
   status: number
-  statusFlag: ProposalStatus
+  statusFlag: StatusFlagKind
   satelliteId: string
   initiatorId: string
   expirationDatetime: string | null
@@ -61,6 +62,9 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
     durationInDays: governanceSatellite.gov_sat_duration_in_days,
     counter: governanceSatellite.governance_satellite_counter,
     governanceId: governanceSatellite.governance_id,
+    // TODO remove 10 when api will return proper value, right now it's 0 instead of 10
+    maxActionsCount:
+      governanceSatellite.max_actions_per_satellite === 0 ? 10 : governanceSatellite.max_actions_per_satellite,
   }
 
   const actions = governanceSatelliteActions.reduce<SatelliteGovernanceActionsType>(
