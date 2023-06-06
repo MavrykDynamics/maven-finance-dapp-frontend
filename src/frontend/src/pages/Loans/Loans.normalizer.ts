@@ -227,6 +227,8 @@ export const normalizeLoans = async ({
         acc.push({
           loanTokenData: {
             ...loanTokenMetadata,
+            // TODO: remove condition after adding new token list
+            name: loanTokenMetadata.symbol === 'EURL' ? 'Lugh' : loanTokenMetadata.symbol,
             tokenType: token_standard as TokenType,
           },
           lendingItem,
