@@ -17,6 +17,7 @@ import { fillTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.act
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -26,6 +27,7 @@ export const Dashboard = () => {
   const activeTab = isValidPersonalDashboardTabId(parsedQp.tab) ? parsedQp.tab : LENDING_TAB_ID
 
   const { totalStakedMvk, totalSupply, maximumTotalSupply } = useStakeContext()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const {
     tokensPrices: { mvk: mvkExchangeRate = 0 },
@@ -59,9 +61,12 @@ export const Dashboard = () => {
 
   const treasuryTVL = treasuryStorage.reduce((acc, { balances }) => {
     return (acc += balances.reduce((balanceAcc, balanceAsset) => {
-      return (balanceAcc += balanceAsset.usdValue || 0)
+      const tokenRate = tokensPrices[tokensMetadata[balanceAsset.tokenAddress].symbol]
+      return tokenRate ? balanceAcc + balanceAsset.balance * tokenRate : balanceAcc
     }, 0))
   }, 0)
+
+  console.log('Dashboard treasuryTVL: ', { treasuryTVL })
 
   const vaultsTvl = allVaultsIds.reduce<number>((acc, vaultId) => {
     const { collateralData } = vaultsMapper[vaultId]

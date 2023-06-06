@@ -7,14 +7,8 @@ export type TreasuryType = ReturnType<typeof normalizeTreasuryStorage>['mappedTr
 export type TreasuryTokenBalanceMapper = ReturnType<typeof normalizeTreasuryStorage>['tokenBalanceMapper']
 
 export type TreasuryBalanceType = {
-  rate: number | null
   balance: number
   contract: string
-  decimals: number
-  name: string
-  symbol: string
-  icon: string
-  usdValue: number
   chartColor: string
   tokenAddress: string
 }

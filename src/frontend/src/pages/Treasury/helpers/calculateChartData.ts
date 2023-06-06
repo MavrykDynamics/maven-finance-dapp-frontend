@@ -2,17 +2,20 @@ import { HIGHLIGHTED_STROKE_WIDTH, DEFAULT_STROKE_WIDTH } from 'app/App.componen
 import { TreasuryBalanceType, TreasuryChartType } from 'utils/TypesAndInterfaces/Treasury'
 import { calcPersent } from './treasury.utils'
 import { VaultAssetData } from 'pages/Vaults/Vaults.helpers'
+import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 
 export const getPieChartData = (
   balances: Array<TreasuryBalanceType | VaultAssetData>,
   reducedBalance: number,
   hoveredPath: string | null,
+  tokensMetadata: TokensContext['tokensMetadata'],
+  tokensRates: TokensContext['tokensPrices'],
 ) => {
   // when we don't have data for chart
   if (!balances.length) return [{ title: '', value: 1, color: '#ccc' }]
   // if we have 1 asset, return this, cuz when value is so small it will not show properly chart, and sometimes in can be NaN
   if (balances.length === 1) {
-    const soloItemSymbol = balances[0].symbol
+    const soloItemSymbol = tokensMetadata[balances[0].tokenAddress].symbol
     return [
       {
         title: soloItemSymbol,
@@ -30,8 +33,9 @@ export const getPieChartData = (
   let groupedSectorsColor: null | string = null
 
   return balances.reduce<TreasuryChartType>((acc, item) => {
-    // TODO: need this while some assets are test, and i can't fetch their rate
-    const tokenUsdValue = item.usdValue || 0
+    const tokenSymbol = tokensMetadata[item.tokenAddress].symbol
+    const tokenRate = tokensRates[tokenSymbol] ?? 0
+    const tokenUsdValue = item.balance * tokenRate
     const tokenPersent = calcPersent(tokenUsdValue, reducedBalance)
 
     if (tokenPersent < 10 || !tokenUsdValue) {
@@ -39,7 +43,7 @@ export const getPieChartData = (
       const smallValuesAccObj = acc?.[smallValuesAccIdx]
 
       // calculating hover effect on segment
-      const isHoveredPathAsset = smallValuesAccObj?.isHoveredPathAsset || hoveredPath === item.symbol
+      const isHoveredPathAsset = smallValuesAccObj?.isHoveredPathAsset || hoveredPath === tokenSymbol
 
       const smallSectorValue = isHoveredPathAsset
         ? (reducedBalance / 100) * 20
@@ -50,7 +54,7 @@ export const getPieChartData = (
         groupedSectorsValue += tokenUsdValue
         groupedSectorsColor = item.chartColor
         acc.push({
-          title: item.symbol,
+          title: tokenSymbol,
           value: smallSectorValue,
           color: groupedSectorsColor,
           isHoveredPathAsset,
@@ -67,8 +71,8 @@ export const getPieChartData = (
 
       const newSmallValuesObj = {
         ...smallValuesAccObj,
-        ...(item.usdValue < 0.01 ? {} : { color: item.chartColor }),
-        title: `${smallValuesAccObj.title}, ${item.symbol}`,
+        ...(tokenUsdValue < 0.01 ? {} : { color: item.chartColor }),
+        title: `${smallValuesAccObj.title}, ${tokenSymbol}`,
         isHoveredPathAsset,
         value: smallSectorValue,
         labelPersent: calcPersent(groupedSectorsValue, reducedBalance),
@@ -81,11 +85,11 @@ export const getPieChartData = (
 
     // if asset is > 10%
     acc.push({
-      title: item.symbol,
+      title: tokenSymbol,
       value: tokenUsdValue,
       color: item.chartColor,
-      isHoveredPathAsset: hoveredPath === item.symbol,
-      segmentStroke: hoveredPath === item.symbol ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
+      isHoveredPathAsset: hoveredPath === tokenSymbol,
+      segmentStroke: hoveredPath === tokenSymbol ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
       labelPersent: tokenPersent,
       groupedSmall: false,
     })

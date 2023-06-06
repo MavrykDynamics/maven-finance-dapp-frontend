@@ -37,6 +37,7 @@ import {
 } from 'app/App.components/Table'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const StageThreeForm = ({
   proposalId,
@@ -46,6 +47,8 @@ export const StageThreeForm = ({
   updateLocalProposalData,
 }: StageThreeFormProps) => {
   const { proposalPayments, locked, title } = currentProposal
+
+  const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const {
     maxLengths: {
@@ -59,7 +62,7 @@ export const StageThreeForm = ({
 
   const ddItems = useMemo(() => {
     return Object.keys(treasuryTokens).map((tokenAddress) => ({
-      content: <DropDownJsxChild>{treasuryTokens[tokenAddress].name}</DropDownJsxChild>,
+      content: <DropDownJsxChild>{tokensMetadata[tokenAddress].symbol}</DropDownJsxChild>,
       id: tokenAddress,
     }))
   }, [treasuryTokens])
@@ -105,7 +108,7 @@ export const StageThreeForm = ({
   }
 
   const handleAddRow = () => {
-    const paymentToken = Object.values(treasuryTokens)?.[0] ?? null
+    const paymentToken = Object.keys(treasuryTokens)?.[0] ?? null
 
     if (!paymentToken) return
 
@@ -119,7 +122,7 @@ export const StageThreeForm = ({
           token_amount: 0,
           // TODO: implement token id's when it's fixed on backend
           token_id: 0,
-          token_address: paymentToken.tokenAddress,
+          token_address: paymentToken,
         }),
       },
       proposalId,
@@ -216,11 +219,11 @@ export const StageThreeForm = ({
 
                 if (payment.to__id === null || payment.title === null || !payment.token_address) return null
 
-                const token = treasuryTokens[payment.token_address]
+                const tokenBalance = treasuryTokens[payment.token_address]
+                const tokenAddress = payment.token_address
+                const tokenName = tokensMetadata[tokenAddress]?.symbol
 
-                if (!token) return null
-
-                const { name, tokenAddress, balance } = token
+                if (!tokenBalance || !tokenAddress || !tokenName) return null
 
                 return (
                   <TableRow className="editable-row" key={payment.id}>
@@ -270,7 +273,7 @@ export const StageThreeForm = ({
 
                     <TableCell width="25%" className="hide-overflow">
                       {isTableDisabled ? (
-                        <CommaNumber value={Number(payment.token_amount)} endingText={name} />
+                        <CommaNumber value={Number(payment.token_amount)} endingText={tokenName} />
                       ) : (
                         <Input
                           settings={{
@@ -282,7 +285,7 @@ export const StageThreeForm = ({
                             value: String(payment.token_amount),
                             type: 'number',
                             name: 'token_amount',
-                            onChange: (e) => handleChange(e, rowIdx, { tokenBalance: balance }),
+                            onChange: (e) => handleChange(e, rowIdx, { tokenBalance }),
                           }}
                         />
                       )}
@@ -290,7 +293,7 @@ export const StageThreeForm = ({
 
                     <TableCell width="25%">
                       {isTableDisabled ? (
-                        name
+                        tokenName
                       ) : (
                         <DropDown
                           placeholder={'Select payment method'}

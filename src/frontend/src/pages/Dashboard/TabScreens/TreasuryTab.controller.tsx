@@ -26,27 +26,37 @@ import { BlockName, StatBlock } from '../Dashboard.style'
 import { TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
   const { treasuryStorage } = useSelector((state: State) => state.treasury)
   const { totalVestedAmount, totalClaimedAmount } = useSelector((state: State) => state.vesting)
 
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const amountOfTokens = totalVestedAmount + totalClaimedAmount
 
-  const { assetsBalances, globalTreasuryTVL } = useMemo(() => reduceTreasuryAssets(treasuryStorage), [treasuryStorage])
+  const treasuryAssets = useMemo(() => reduceTreasuryAssets(treasuryStorage), [treasuryStorage])
 
-  const mostAssetsTreasury = useMemo(
+  const { mostSuppliedTreasuryName, mostSuppliedTreasuryTVL, globalTreasuryTVL } = useMemo(
     () =>
       treasuryStorage.reduce(
         (acc, treasury) => {
-          if (treasury.treasuryTVL > acc.treasuryTVL) {
-            acc.treasuryName = treasury.name
-            acc.treasuryTVL = treasury.treasuryTVL
+          const treasuryTVL = treasury.balances.reduce((treasuryTVLacc, { balance, tokenAddress }) => {
+            const tokenSymbol = tokensMetadata[tokenAddress].symbol
+            return (treasuryTVLacc += balance * (tokensPrices[tokenSymbol] ?? 0))
+          }, 0)
+
+          if (treasuryTVL > acc.mostSuppliedTreasuryTVL) {
+            acc.mostSuppliedTreasuryName = treasury.name
+            acc.mostSuppliedTreasuryTVL = treasuryTVL
           }
+
+          acc.globalTreasuryTVL += treasuryTVL
 
           return acc
         },
-        { treasuryName: '', treasuryTVL: 0 },
+        { mostSuppliedTreasuryName: '', globalTreasuryTVL: 0, mostSuppliedTreasuryTVL: 0 },
       ),
     [treasuryStorage],
   )
@@ -74,11 +84,11 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                 <CommaNumber endingText="USD" value={globalTreasuryTVL} />
               </div>
             </StatBlock>
-            {mostAssetsTreasury.treasuryName && mostAssetsTreasury.treasuryTVL && (
+            {mostSuppliedTreasuryName && mostSuppliedTreasuryTVL && (
               <StatBlock>
-                <div className="name">{mostAssetsTreasury.treasuryName}</div>
+                <div className="name">{mostSuppliedTreasuryName}</div>
                 <div className="value">
-                  <CommaNumber endingText="USD" value={mostAssetsTreasury.treasuryTVL} />
+                  <CommaNumber endingText="USD" value={mostSuppliedTreasuryTVL} />
                 </div>
               </StatBlock>
             )}
@@ -105,10 +115,12 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                   </TableHeader>
 
                   <TableBody className="treasury">
-                    {assetsBalances.map(({ symbol, balance, usdValue, rate }) => {
+                    {treasuryAssets.map(({ balance, tokenAddress }) => {
+                      const tokenSymbol = tokensMetadata[tokenAddress].symbol
+                      const tokenRate = tokensPrices[tokenSymbol]
                       return (
-                        <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
-                          <TableCell width="33%">{symbol}</TableCell>
+                        <TableRow key={tokenSymbol} rowHeight={25} borderColor="dataColor" className="add-hover">
+                          <TableCell width="33%">{tokenSymbol}</TableCell>
                           <TableCell width="33%">
                             {parseFloat(String(balance)) < 0.01 ? (
                               '<0.01'
@@ -117,13 +129,13 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                             )}
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
-                            {parseFloat(String(usdValue)) < 0.01 ? (
-                              `<0.01 ${rate ? '$' : symbol}`
+                            {parseFloat(String(balance * tokenRate)) < 0.01 ? (
+                              `<0.01 ${tokenRate ? '$' : tokenSymbol}`
                             ) : (
                               <CommaNumber
-                                value={usdValue}
-                                endingText={rate ? '' : symbol}
-                                beginningText={rate ? '$' : ''}
+                                value={balance * tokenRate}
+                                endingText={tokenRate ? '' : tokenSymbol}
+                                beginningText={tokenRate ? '$' : ''}
                                 showDecimal
                                 decimalsToShow={2}
                               />
