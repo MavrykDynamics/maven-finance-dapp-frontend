@@ -34,6 +34,7 @@ import {
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
+/** */
 export class StakeProviderClass extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -59,7 +60,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
     }
   }
 
-  // Used only for action, on it's completion to turn of loading toaster and show success toaster
+  /** Used only for action, on it's completion to turn of loading toaster and show success toaster */
   componentDidUpdate(): void {
     if (this.state.context.turnOfActionLoader && this.state.context.action) {
       this.props.dispatch(actionEndToaster(this.state.context.action))
@@ -287,6 +288,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
     }
   }
 
+  /** */
   render(): React.ReactNode {
     return <stakeContext.Provider value={this.state.context}>{this.props.children}</stakeContext.Provider>
   }

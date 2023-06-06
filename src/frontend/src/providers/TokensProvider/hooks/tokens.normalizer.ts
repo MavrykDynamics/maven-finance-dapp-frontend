@@ -1,9 +1,10 @@
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from 'utils/__generated__/graphql'
 import { getTokenSymbolAndName } from './tokenNames'
-import { TokenAddress, TokenMetadata, TokensContext } from '../tokens.provider.types'
-import { z } from 'zod'
 import { isValidTokenType } from 'utils/TypesAndInterfaces/General'
+
+import { TokenAddress, TokenMetadata, TokensContext } from '../tokens.provider.types'
+import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from 'utils/__generated__/graphql'
+import { tokenMetadataSchema } from '../helpers/tokens.types'
 
 // Normalizing token rates
 export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscription['aggregator']) => {
@@ -18,12 +19,6 @@ export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscrip
 }
 
 // Normalizing tokens metadata
-const tokenMetadataSchema = z.object({
-  icon: z.string(),
-  symbol: z.string(),
-  decimals: z.string(),
-})
-
 export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscription['token']) => {
   return tokensFromGql.reduce<Pick<TokensContext, 'tokensMetadata' | 'collateralTokens' | 'mTokens'>>(
     (acc, { token_address, token_standard, metadata, lending_controller_collateral_tokens, m_tokens, mvk_tokens }) => {
@@ -39,11 +34,12 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         // parsing metadata schema, to have icon and decimals for token
         const parsedMetadata = tokenMetadataSchema.parse(metadata)
 
-        const { symbol, name } = getTokenSymbolAndName(parsedMetadata.symbol) ?? {}
+        const { symbol, name, icon } = getTokenSymbolAndName(parsedMetadata.symbol) ?? {}
 
-        // If token don't have name or symbol it can not be used
-        if (!symbol || !name) {
-          throw new Error('Token do not have valid symbol or name')
+        const tokenIcon = parsedMetadata.icon ?? icon
+        // If token don't have name or symbol or icon it can not be used
+        if (!symbol || !name || !tokenIcon) {
+          throw new Error('Token do not have valid symbol, name or icon')
         }
 
         // We can have multiple mvk tokens, but only 1 with mvk_tokens present is valid
@@ -53,7 +49,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
           address: tokenAddress,
           symbol,
           name,
-          icon: parsedMetadata.icon,
+          icon: tokenIcon,
           type: tokenType,
           decimals: Number(parsedMetadata.decimals),
         }
@@ -64,7 +60,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
 
         if (m_tokens?.[0]?.address) acc.mTokens.push(tokenAddress)
       } catch (e) {
-        console.error('normalizeTokensMetadata error: ', e)
+        console.error('normalizeTokensMetadata error: ')
       } finally {
         return acc
       }

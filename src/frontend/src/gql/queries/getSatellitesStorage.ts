@@ -1,4 +1,5 @@
 export const SATELLITES_STORAGE_QUERY = `
+
 query SatellitesStorageQuery {
   satellite(order_by: {currently_registered: desc}) {
     description
@@ -25,7 +26,7 @@ query SatellitesStorageQuery {
       aggregator_oracles {
         observations(order_by: {epoch: desc_nulls_last}, limit: 5) {
           oracle {
-            user{
+            user {
               address
             }
           }
@@ -111,16 +112,13 @@ query SatellitesStorageQuery {
       executed
     }
   }
-     governance {
-      satellite_snapshots(order_by: {cycle: desc_nulls_last}) {
-        user {
-          address
-        }
-
-        cycle
-        total_voting_power
+  governance {
+    satellite_snapshots(order_by: {cycle: desc_nulls_last}) {
+      user {
+        address
       }
-      cycle_id
+      cycle
+      total_voting_power
     }
     cycle_id
   }
@@ -139,7 +137,6 @@ query SatellitesStorageQuery {
           user {
             address
           }
-
           init_epoch
           init_round
         }
@@ -147,7 +144,6 @@ query SatellitesStorageQuery {
     }
   }
 }
-
 `
 
 export const SATELLITES_STORAGE_QUERY_NAME = 'SatellitesStorageQuery'

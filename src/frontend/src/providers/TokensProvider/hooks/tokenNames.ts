@@ -5,35 +5,34 @@
  *
  * need to do this mapper cuz back-end can't send valid names and it can have token duplicates
  */
-// TODO: mb use only token symbols, and think how to handle 2 mvk coins
 export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
   switch (tokenGqlSymbol.toLowerCase()) {
     case 'usdt/usd':
-    case 'USDT':
-      return { name: 'Tether', symbol: 'USDT' }
-    case 'mUSDT':
-      return { name: 'mUSDT', symbol: 'mUSDT' }
+    case 'usdt':
+      return { name: 'Tether', symbol: 'USDT', icon: '/images/usdt.png' }
+    case 'musdt':
+      return { name: 'mUSDT', symbol: 'mUSDT', icon: '/images/usdt.png' }
 
     case 'xtz/usd':
-    case 'XTZ':
-      return { name: 'Tezos', symbol: 'XTZ' }
-    case 'mXTZ':
-      return { name: 'mXTZ', symbol: 'mXTZ' }
+    case 'xtz':
+      return { name: 'Tezos', symbol: 'XTZ', icon: '/images/tezos.png' }
+    case 'mxtz':
+      return { name: 'mXTZ', symbol: 'mXTZ', icon: '/images/tezos.png' }
 
     case 'btc/usd':
-    case 'tzBTC':
-      return { name: 'tzBTC', symbol: 'tzBTC' }
-    case 'mTzBTC':
-      return { name: 'mTzBTC', symbol: 'mTzBTC' }
+    case 'tzbtc':
+      return { name: 'tzBTC', symbol: 'tzBTC', icon: '/images/tzBTC.png' }
+    case 'mtzbtc':
+      return { name: 'mTzBTC', symbol: 'mTzBTC', icon: '/images/tzBTC.png' }
 
     case 'euroc/usd':
-    case 'EURL':
-      return { name: 'Eurocoin', symbol: 'EUROL' }
-    case 'mEURL':
-      return { name: 'mEUROL', symbol: 'mEUROL' }
+    case 'eurl':
+      return { name: 'Eurocoin', symbol: 'EURL', icon: '/images/eurl.png' }
+    case 'meurl':
+      return { name: 'mEURL', symbol: 'mEURL', icon: '/images/eurl.png' }
 
-    case 'MVK':
-      return { name: 'Mavryk', symbol: 'MVK' }
+    case 'mvk':
+      return { name: 'Mavryk', symbol: 'MVK', icon: 'https://mavryk.finance/logo192.png' }
   }
 
   return null

@@ -12,6 +12,7 @@ import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from '
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
+/** */
 export class TokensProvider extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -41,10 +42,10 @@ export class TokensProvider extends React.Component<Props, State> {
   updateTokensMetadata = (tokensGql: TokensMetadataSubscription['token']) => {
     const tokensMetadata = normalizeTokensMetadata(tokensGql)
 
-    console.log({
-      tokensGql,
-      tokensMetadata,
-    })
+    console.info('tokens from gql: ', JSON.stringify(tokensGql, null, '  '))
+    console.info('all tokens: ', JSON.stringify(tokensMetadata.tokensMetadata, null, '  '))
+    console.info('collateral tokens: ', JSON.stringify(tokensMetadata.collateralTokens, null, '  '))
+    console.info('mTokens: ', JSON.stringify(tokensMetadata.mTokens, null, '  '))
 
     this.setState({
       context: {
@@ -56,6 +57,7 @@ export class TokensProvider extends React.Component<Props, State> {
     })
   }
 
+  /** */
   render(): React.ReactNode {
     return <tokensContext.Provider value={this.state.context}>{this.props.children}</tokensContext.Provider>
   }
