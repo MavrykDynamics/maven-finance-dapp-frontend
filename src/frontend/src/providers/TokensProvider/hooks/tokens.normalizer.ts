@@ -60,7 +60,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
 
         if (m_tokens?.[0]?.address) acc.mTokens.push(tokenAddress)
       } catch (e) {
-        console.error('normalizeTokensMetadata error: ')
+        console.error('normalizeTokensMetadata error: ', { e })
       } finally {
         return acc
       }

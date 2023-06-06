@@ -66,8 +66,6 @@ export const Dashboard = () => {
     }, 0))
   }, 0)
 
-  console.log('Dashboard treasuryTVL: ', { treasuryTVL })
-
   const vaultsTvl = allVaultsIds.reduce<number>((acc, vaultId) => {
     const { collateralData } = vaultsMapper[vaultId]
 
@@ -113,6 +111,7 @@ export const Dashboard = () => {
     circuatingSupply: totalSupply,
     maxSupply: maximumTotalSupply,
     livePrice: mvkExchangeRate,
+    // TODO: remove when mvk rate will be dynamic
     prevPrice: mvkExchangeRate - 0.1,
   }
 

@@ -122,14 +122,14 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                         <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
                           <TableCell width="33%">{symbol}</TableCell>
                           <TableCell width="33%">
-                            {parseFloat(String(treasuryTokenBalance)) < 0.01 ? (
+                            {treasuryTokenBalance < 0.01 ? (
                               '<0.01'
                             ) : (
                               <CommaNumber value={treasuryTokenBalance} showDecimal decimalsToShow={2} />
                             )}
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
-                            {parseFloat(String(treasuryTokenBalance * rate)) < 0.01 ? (
+                            {treasuryTokenBalance * rate < 0.01 ? (
                               `<0.01 ${rate ? '$' : symbol}`
                             ) : (
                               <CommaNumber

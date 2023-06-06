@@ -46,9 +46,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
 
   const filteredBalance = useMemo(
     () =>
-      isGlobal || !showZeroTreasuries
-        ? treasury.balances
-        : treasury.balances.filter((item) => parseFloat(String(item.balance)) > 0.01),
+      isGlobal || !showZeroTreasuries ? treasury.balances : treasury.balances.filter((item) => item.balance > 0.01),
     [isGlobal, showZeroTreasuries, treasury.balances],
   )
 
@@ -134,14 +132,14 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
                       <TableRow rowHeight={25} borderColor="dataColor" className="add-hover" key={symbol}>
                         <TableCell width="33%">{symbol}</TableCell>
                         <TableCell width="33%">
-                          {parseFloat(String(treasuryTokenBalance)) < 0.01 ? (
+                          {treasuryTokenBalance < 0.01 ? (
                             '<0.01'
                           ) : (
                             <CommaNumber value={treasuryTokenBalance} showDecimal />
                           )}
                         </TableCell>
                         <TableCell width="33%" contentPosition="right">
-                          {parseFloat(String(treasuryTokenBalance * tokenRate)) < 0.01 ? (
+                          {treasuryTokenBalance * tokenRate < 0.01 ? (
                             `<0.01 ${tokenRate ? '$' : symbol}`
                           ) : (
                             <CommaNumber
@@ -177,7 +175,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
       </div>
       <div>
         <div className="asset-lables scroll-block">
-          {filteredBalance.map(({ contract, tokenAddress }) => {
+          {filteredBalance.map(({ tokenAddress }) => {
             const { symbol } = tokensMetadata[tokenAddress]
             return (
               <div
@@ -189,7 +187,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
                 className="asset-lable"
                 onMouseEnter={() => setHoveredPath(symbol)}
                 onMouseLeave={() => setHoveredPath(null)}
-                key={contract + symbol}
+                key={symbol}
               >
                 <p className="asset-lable-text">{symbol}</p>
               </div>
