@@ -116,24 +116,23 @@ export const normalizeGovernanceProposals = (
       acc.proposalsMapper[id] = normalizedProposal
       acc.allProposalsIds.push(id)
 
+      const isPastProposal =
+        status === ProposalStatus.DROPPED || status === ProposalStatus.EXECUTED || status === ProposalStatus.DEFEATED
+
       // Add id of proposal to be executed proposal
-      if (isProposalRound && !executed && timelockProposalId === id && status !== ProposalStatus.DROPPED) {
+      if (isProposalRound && !executed && timelockProposalId === id && !isPastProposal) {
         acc.waitingProposalsIdsToBeExecuted.push(id)
         return acc
       }
 
       // Add id of proposal to be paid proposal
-      if (isProposalRound && executed && timelockProposalId === id && !paymentProcessed) {
+      if (isProposalRound && !executed && timelockProposalId === id && !paymentProcessed && !isPastProposal) {
         acc.waitingProposalsIdsToBePaid.push(id)
         return acc
       }
 
       // Add id of past proposal
-      if (
-        status === ProposalStatus.DROPPED ||
-        status === ProposalStatus.EXECUTED ||
-        status === ProposalStatus.DEFEATED
-      ) {
+      if (isPastProposal) {
         acc.pastProposalsIds.push(id)
         return acc
       }

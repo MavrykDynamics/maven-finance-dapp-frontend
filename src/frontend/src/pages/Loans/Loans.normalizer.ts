@@ -227,6 +227,8 @@ export const normalizeLoans = async ({
           loanTokenData: {
             ...loanTokenMetadata,
             tokenType: token_standard as TokenType,
+            // TODO: remove condition after adding new token list
+            name: loanTokenMetadata.symbol === 'EURL' ? 'Lugh' : loanTokenMetadata.symbol,
           },
           lendingItem,
           transactionHistory: [...transactionHistory].reverse(),
