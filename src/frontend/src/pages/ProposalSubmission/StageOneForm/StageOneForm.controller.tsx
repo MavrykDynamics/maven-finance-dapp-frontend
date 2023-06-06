@@ -185,10 +185,16 @@ export const StageOneForm = ({
 
         {isProposalSubmitted ? (
           <div className="submitted-data source-code">
-            <div className="label">6 - Add an Invoice Image</div>
+            <div className="label">6 - Add Invoice</div>
             {currentProposal.invoice ? (
               <div className="invoice-content">
-                <ImageWithPlug imageLink={currentProposal.invoice} alt="invoice for the proposal" />{' '}
+                <div className="image-style">
+                  <ImageWithPlug
+                    noImageIconId="image"
+                    imageLink={currentProposal.invoice}
+                    alt="invoice for the proposal"
+                  />
+                </div>{' '}
                 <a className="isCyan" href={currentProposal.invoice}>
                   {currentProposal.invoice}
                 </a>
