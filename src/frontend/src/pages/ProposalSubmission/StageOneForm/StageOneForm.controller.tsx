@@ -185,7 +185,7 @@ export const StageOneForm = ({
 
         {isProposalSubmitted ? (
           <div className="submitted-data source-code">
-            <div className="label">6 - Add Invoice</div>
+            <div className="label">6 - Invoice</div>
             {currentProposal.invoice ? (
               <div className="invoice-content">
                 <div className="image-style">
