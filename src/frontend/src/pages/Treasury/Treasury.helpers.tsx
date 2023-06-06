@@ -55,13 +55,13 @@ export const reduceTreasuryAssets = (
 export function normalizeVestingStorage(storage?: VestingGraphQL | null) {
   const { vesteesMapper = {}, vesteeIds = [] } =
     storage?.vestees.reduce<{
-      vesteesMapper: Record<Vesting_Vestee['vestee_id'], VestingRecord>
+      vesteesMapper: Record<Vesting_Vestee['vestee']['address'], VestingRecord>
       vesteeIds: Array<string>
     }>(
       (acc, vestee) => {
-        acc.vesteeIds.push(vestee.vestee_id)
-        acc.vesteesMapper[vestee.vestee_id] = {
-          address: vestee.vestee_id,
+        acc.vesteeIds.push(vestee.vestee.address)
+        acc.vesteesMapper[vestee.vestee.address] = {
+          address: vestee.vestee.address,
           totalRemainded: convertNumberForClient({ number: vestee.total_remainder, grade: MVK_DECIMALS }),
           totalAllocated: convertNumberForClient({ number: vestee.total_allocated_amount, grade: MVK_DECIMALS }),
           rewardPerMonth: vestee.claim_amount_per_month,
@@ -121,7 +121,7 @@ export const normalizeTreasuryStorage = (
     )
 
     const treasuryNormalizedTokens = treasuryData.balances
-      .reduce<Array<TreasuryBalanceType>>((acc, { balance, metadata, token_address }) => {
+      .reduce<Array<TreasuryBalanceType>>((acc, { balance, token: { metadata, token_address } }) => {
         // metadata has no type in indexer types so use 'as'
         const { symbol = '', decimals = '0', icon = '' } = (metadata ?? {}) as TreasuryAssetMapperType
         const parsedDecimals = parseInt(decimals)
@@ -143,7 +143,7 @@ export const normalizeTreasuryStorage = (
 
         // Filter zero balance assets in treasury and bad tokens that don't have info or not in whitelist for this treasury
         if (
-          !symbol ||
+          !metadata ||
           balance <= 0 ||
           balance.toString().includes('e') ||
           !treasuryWhitelistTokens.includes(token_address)

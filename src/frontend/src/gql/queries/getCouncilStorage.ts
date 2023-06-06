@@ -2,10 +2,12 @@ export const COUNCIL_MEMBERS_QUERY = `
   query GetCouncilMembers {
     council {
       members {
+        user {
+          address
+        }
         id
         name
         image
-        user_id
         website
       }
     }
@@ -15,12 +17,16 @@ export const COUNCIL_MEMBERS_QUERY_NAME = 'GetCouncilMembers'
 export const COUNCIL_MEMBERS_QUERY_VARIABLE = {}
 
 const COUNCIL_ACTIONS_PARAMS = `
-  action_type  
-  council_id
+  action_type
+  council {
+    address
+  }
   executed
   council_size_snapshot
   id
-  initiator_id
+  initiator {
+    address
+  }
   signers_count
   start_datetime
   parameters {
@@ -42,7 +48,7 @@ export const COUNCIL_PAST_ACTIONS_VARIABLE = {}
 
 export const COUNCIL_PENDING_ACTIONS_QUERY = `
   query GetPendingCouncilActions($_gte: timestamptz = "", $userAddress: String = "", $userAddress2: String = "") {
-    council_action(where: {status: {_eq: "0"}, expiration_datetime: {_gte: $_gte}, _or: {executed: {_eq: false}}, initiator_id: {_neq: $userAddress}, signers: { signer_id: {_neq: $userAddress2}}}, order_by: {start_datetime: desc}) {
+    council_action(where: {status: {_eq: "0"}, expiration_datetime: {_gte: $_gte}, _or: {executed: {_eq: false}}, signers: {signer: {address: {_neq: $userAddress2}}}, initiator: {address: {_neq: $userAddress}}}, order_by: {start_datetime: desc}) {
       ${COUNCIL_ACTIONS_PARAMS}
     }
   }

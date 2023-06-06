@@ -157,17 +157,17 @@ export const fetchUserData = async (
     const interestRateDecimals = userRewardsData?.lending_controller?.[0]?.interest_rate_decimals ?? 0
 
     const normalizedMTokens = m_token_accounts.reduce<Array<MTokenType>>((acc, tokenData) => {
-      const { oracle_id } =
+      const { oracle } =
         loanTokens?.find(({ loan_token_name }) => loan_token_name === tokenData.m_token.loan_token_name) ?? {}
 
-      if (!oracle_id) return acc
+      if (!oracle) return acc
 
       const loanTokenMetadata = getAssetMetadata({
         tokenName: tokenData.m_token.loan_token_name,
         tokenAddress: tokenData.m_token.address,
         dipDupTokens,
         feeds,
-        oracleId: String(oracle_id),
+        oracleId: String(oracle.address),
       })
 
       if (!loanTokenMetadata) return acc

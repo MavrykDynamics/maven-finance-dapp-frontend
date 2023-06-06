@@ -1,6 +1,6 @@
 export const GOVERNANCE_CONFIG_QUERY = `
   query GetGovernanceConfigQuery {
-    governance(where: {active: {_eq: true}}) {
+    governance {
       address
       current_round
       success_reward
@@ -29,60 +29,70 @@ export const GOVERNANCE_LATEST_USER_PROPOSAL_NAME = 'GetGovernanceLatestUserProp
 export const GOVERNANCE_LATEST_USER_PROPOSAL_VARIABLE = (userAddress: string) => ({ userAddress })
 
 export const GOVERNANCE_PROPOSALS_QUERY = `
-  query GetGovernanceProposalsQuery {
-    governance_proposal(order_by: {start_datetime: desc}) {
-      current_cycle_end_level
-      cycle
-      success_reward
-      
+query GetGovernanceProposalsQuery {
+  governance_proposal(order_by: {start_datetime: desc}) {
+    current_cycle_end_level
+    cycle
+    success_reward
+    
+    id
+    proposer {
+      address
+    }
+    governance {
+      address
+    }
+    
+    description
+    title
+    invoice
+    
+    current_round_proposal
+    locked
+    executed
+    status
+    payment_processed
+    
+    min_quorum_percentage
+    quorum_smvk_total
+    nay_vote_smvk_total
+    pass_vote_smvk_total
+    yay_vote_smvk_total
+    proposal_vote_smvk_total
+    
+    source_code
+
+    votes {
+      round
+      vote
+      voter {
+        address
+      }
+    }
+
+    data {
+      encoded_code
+      governance_proposal_id
+      code_description
       id
-      proposer_id
-      governance_id
-      
-      description
       title
-      invoice
-      
-      current_round_proposal
-      locked
-      executed
-      status
-      payment_processed
-      
-      min_quorum_percentage
-      quorum_smvk_total
-      nay_vote_smvk_total
-      pass_vote_smvk_total
-      yay_vote_smvk_total
-      proposal_vote_smvk_total
-      
-      source_code
+    }
 
-      votes {
-        round
-        vote
-        voter_id
+    payments {
+      governance_proposal_id
+      id
+      internal_id
+      title
+      to_ {
+        address
       }
-
-      data {
-        encoded_code
-        governance_proposal_id
-        code_description
-        id
-        title
-      }
-
-      payments {
-        governance_proposal_id
-        id
-        internal_id
-        title
-        to__id
-        token_amount
+      token_amount
+      token {
         token_address
       }
     }
   }
+}
 `
 
 export const GOVERNANCE_PROPOSALS_QUERY_NAME = 'GetGovernanceProposalsQuery'

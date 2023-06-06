@@ -27,7 +27,6 @@ import DelegationTab from './DashboardPersonalComponents/DelegationTab'
 import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
-import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 import { DashboardPersonalTabStyled } from './DashboardPersonalComponents/DashboardPersonalComponents.style'
 import { getVestingStorage } from 'pages/Treasury/Treasury.actions'

@@ -60,7 +60,7 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
     approvalPercentage: governanceSatellite.gov_sat_approval_percentage,
     durationInDays: governanceSatellite.gov_sat_duration_in_days,
     counter: governanceSatellite.governance_satellite_counter,
-    governanceId: governanceSatellite.governance_id,
+    governanceId: governanceSatellite.governance.address,
     // TODO remove 10 when api will return proper value, right now it's 0 instead of 10
     maxActionsCount:
       governanceSatellite.max_actions_per_satellite === 0 ? 10 : governanceSatellite.max_actions_per_satellite,
@@ -78,7 +78,7 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
         id: item.id,
         timestamp: item.timestamp ?? null,
         vote: item.vote,
-        voterId: item.voter_id,
+        voterId: item.voter.address,
       }))
 
       const timeNow = Date.now()
@@ -100,8 +100,8 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
         type: item.governance_type,
         status: item.status,
         statusFlag,
-        satelliteId: item.governance_satellite_id,
-        initiatorId: item.initiator_id,
+        satelliteId: item.governance_satellite.address,
+        initiatorId: item.initiator.address,
         expirationDatetime: item.expiration_datetime ?? null,
         startDatetime: item.start_datetime ?? null,
         smvkPercentageForApproval: item.smvk_percentage_for_approval,

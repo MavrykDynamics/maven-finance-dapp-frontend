@@ -1,27 +1,27 @@
 export const GET_TREASURY_DATA = `
-  query GetTreasuryStorageQuery {
-    treasury(where: {admin: {_neq: ""}}) {
-      address
-      admin
-      creation_timestamp
-      name
-
-      balances {
-        balance
+query GetTreasuryStorageQuery {
+  treasury(where: {admin: {_neq: ""}}) {
+    address
+    admin
+    creation_timestamp
+    name
+    balances {
+      balance
+      treasury_id
+      token {
         metadata
         token_address
-        treasury_id
-      }
-
-      whitelist_token_contracts {
-        contract_address
+        token_standard
       }
     }
-    
-    treasury_factory {
-      address
+    whitelist_token_contracts {
+      contract_address
     }
   }
+  treasury_factory {
+    address
+  }
+}
 `
 
 export const TREASURY_STORAGE_QUERY_NAME = 'GetTreasuryStorageQuery'
