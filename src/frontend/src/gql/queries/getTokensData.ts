@@ -1,5 +1,35 @@
 import { gql } from 'utils/__generated__'
 
+// feeds subsciption
+export const SUBSCRIBE_TOKENS_METADATA = gql(`
+  subscription tokensMetadata {
+    token {
+      metadata
+      token_address
+      token_standard
+
+      # check whether tokens is collateral token
+      lending_controller_collateral_tokens {
+        token_name
+      }
+      # check whether tokens is mToken
+      m_tokens {
+        address
+      }
+
+      # check whether tokens is market token (TODO: 99% we don't need this)
+      lending_controller_loan_tokens {
+        loan_token_name
+      }
+
+      # check that it's real MVK token
+      mvk_tokens {
+        address
+      }
+    }
+  }
+`)
+
 export const GET_MVK_FAUCET_QUERY = gql(`
 query MVKFaucet {
   mvk_faucet{

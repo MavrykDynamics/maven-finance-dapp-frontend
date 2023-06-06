@@ -1,9 +1,7 @@
 import React, { useContext } from 'react'
 
-// context
-import { dataFeedsContext } from '../DataFeedsProvider/dataFeeds.provider'
-
-// utils
+// consts
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 // helpers
 import { normalizeTokenPrices } from './hooks/tokens.normalizer'
@@ -11,21 +9,20 @@ import { normalizeTokenPrices } from './hooks/tokens.normalizer'
 // types
 import { State, Props, TokensContext } from './tokens.provider.types'
 import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
 export class TokensProvider extends React.Component<Props, State> {
-  static contextType = dataFeedsContext
-
-  feedsContext!: React.ContextType<typeof dataFeedsContext>
-
   constructor(props: Props) {
     super(props)
     this.state = {
       context: {
+        collateralTokens: [],
+        mTokens: [],
+        tokensMetadata: {},
         tokensPrices: { [MVK_TOKEN_SYMBOL]: 1, [SMVK_TOKEN_SYMBOL]: 1 },
         updateTokensPrices: this.updateTokensPrices,
+        updateTokensMetadata: this.updateTokensMetadata,
       },
     }
   }
@@ -37,6 +34,17 @@ export class TokensProvider extends React.Component<Props, State> {
       context: {
         ...this.state.context,
         tokensPrices: { ...this.state.context.tokensPrices, ...normalizedTokenPrices },
+      },
+    })
+  }
+
+  updateTokensMetadata = () => {
+    const tokensMetadata = {}
+
+    this.setState({
+      context: {
+        ...this.state.context,
+        tokensMetadata: { ...this.state.context.tokensMetadata, ...tokensMetadata },
       },
     })
   }

@@ -12,3 +12,5 @@ export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscrip
     return acc
   }, {})
 }
+
+export const normalizeTokensMetadata = () => {}

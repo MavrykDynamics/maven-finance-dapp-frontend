@@ -35,8 +35,6 @@ import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
 import { getTokensForDAPP } from 'reducers/actions/getTokens.actions'
-import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
-import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
 export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
@@ -76,7 +74,6 @@ const AppContainer = () => {
         dispatch(getSatellitesStorage()),
 
         dispatch(getTokensForDAPP()),
-        dispatch(getAvaliableCollaterals()),
       ])
 
       // For using Beacon wallet
