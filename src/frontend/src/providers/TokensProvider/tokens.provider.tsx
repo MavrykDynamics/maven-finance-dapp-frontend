@@ -42,10 +42,11 @@ export class TokensProvider extends React.Component<Props, State> {
   updateTokensMetadata = (tokensGql: TokensMetadataSubscription['token']) => {
     const tokensMetadata = normalizeTokensMetadata(tokensGql)
 
-    console.info('tokens from gql: ', JSON.stringify(tokensGql, null, '  '))
-    console.info('all tokens: ', JSON.stringify(tokensMetadata.tokensMetadata, null, '  '))
-    console.info('collateral tokens: ', JSON.stringify(tokensMetadata.collateralTokens, null, '  '))
-    console.info('mTokens: ', JSON.stringify(tokensMetadata.mTokens, null, '  '))
+    // Logs for debugging, TODO: remove when tokens update is done
+    // console.info('tokens from gql: ', JSON.stringify(tokensGql, null, '  '))
+    // console.info('all tokens: ', JSON.stringify(tokensMetadata.tokensMetadata, null, '  '))
+    // console.info('collateral tokens: ', JSON.stringify(tokensMetadata.collateralTokens, null, '  '))
+    // console.info('mTokens: ', JSON.stringify(tokensMetadata.mTokens, null, '  '))
 
     this.setState({
       context: {
