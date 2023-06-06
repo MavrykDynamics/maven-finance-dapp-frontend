@@ -62,6 +62,7 @@ export const dark = {
   dataColor: '#77a4f2',
   blockNameTitleColor: silverColor,
   textColor: '#CDCDCD',
+  lightTextColor: '#D0CFD9',
   upColor,
   downColor,
   neutralColor,
@@ -101,6 +102,7 @@ export const light = {
   actionPrimaryBtnColor: royalPurpleColor,
   stakedColor: darkColor,
   textColor: textColor,
+  lightTextColor,
 
   borderColor: '#4F457C',
   dataColor: '#77a4f2',

@@ -3,6 +3,11 @@ import { ERROR } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import {
+  SATELLITE_ACTIONS_COUNT_QUERY,
+  SATELLITE_ACTIONS_COUNT_QUERY_NAME,
+  SATELLITE_ACTIONS_COUNT_QUERY_VARIABLE,
+} from 'gql/queries/getSatelliteGovernanceStorage'
+import {
   USER_INFO_QUERY,
   USER_INFO_QUERY_NAME,
   USER_INFO_QUERY_VARIABLES,
@@ -125,6 +130,18 @@ export const fetchUserData = async (
       vesteeRecord: Array<Vesting>
     }
 
+    let satelliteActionsCount = 0
+    if (Boolean(activeSatelliteRecord) && accountPkh) {
+      const satelliteActionsData = await fetchFromIndexer(
+        SATELLITE_ACTIONS_COUNT_QUERY,
+        SATELLITE_ACTIONS_COUNT_QUERY_NAME,
+        SATELLITE_ACTIONS_COUNT_QUERY_VARIABLE(accountPkh),
+      )
+
+      // TODO wait when will be added cycle_id per action
+      satelliteActionsCount = satelliteActionsData.governance_satellite[0].actions.length
+    }
+
     // Getting user avatar
     const satelliteAvatar = satellites?.[0]?.image ?? null
     const counsilAvatar = council_council_members?.[0]?.image ?? null
@@ -187,6 +204,7 @@ export const fetchUserData = async (
       isSatellite: Boolean(activeSatelliteRecord),
       isVestee: Boolean(vesteeRecord),
       isNewlyRegisteredSatellite: isNewSatellite,
+      govActionsCount: satelliteActionsCount,
       userAvatars,
     }
 

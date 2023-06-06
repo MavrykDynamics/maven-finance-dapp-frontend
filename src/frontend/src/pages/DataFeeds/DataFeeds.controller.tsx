@@ -129,7 +129,11 @@ export const DataFeeds = () => {
               ))}
             </div>
 
-            <Pagination itemsCount={filteredFeeds.length} side={PAGINATION_SIDE_RIGHT} listName={FEEDS_ALL_LIST_NAME} />
+            <Pagination
+              itemsCount={feedsAddresses.length}
+              side={PAGINATION_SIDE_RIGHT}
+              listName={FEEDS_ALL_LIST_NAME}
+            />
           </>
         ) : (
           <EmptyContainer>

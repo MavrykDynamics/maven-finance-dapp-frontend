@@ -3,7 +3,7 @@ import { CollateralType, DepositorsFlagType, LoansAssetDataType, LoansVaultType 
 import LoansPopupsProvider from './LoansModals.provider'
 
 export type LoansPopupsInputStateType = { amount: string; validationStatus: InputStatusType }
-export type VaultNameInputStateType = { name: string; validationStatus: InputStatusType }
+export type VaultNameInputStateType = { name: string; validationStatus: InputStatusType; errorMessage: string }
 export type LoansPopupsAddressInputStateType = { address: string; validationStatus: InputStatusType }
 export const DEFAULT_LOANS_INPUT_VALUE: LoansPopupsInputStateType = {
   amount: '0',
@@ -25,7 +25,7 @@ export type CollateralPopupCommonDataType = {
 export type AddCollateralPopupDataType =
   | (CollateralPopupCommonDataType & {
       borrowCapacity: number
-      avaliableLiq: number
+      availableLiquidity: number
     })
   | null
 
@@ -33,7 +33,7 @@ export type AddNewCollateralDataProps =
   | (CollateralPopupCommonDataType & {
       existingCollaterals: Array<CollateralType>
       borrowCapacity: number
-      avaliableLiq: number
+      availableLiquidity: number
     })
   | null
 
@@ -90,6 +90,8 @@ export type AddLendingAssetDataType =
 export type RemoveLendingAssetDataType =
   | (AddLendingAssetDataType & {
       currentLendedAmount: number
+      reserveAmount: number
+      availableLiquidity: number
     })
   | null
 

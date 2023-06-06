@@ -13,7 +13,7 @@ import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { ExitFeeModalButtons, ExitFeeModalContent, ExitFeeModalStats } from './ExitFeeModal.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import { containerColor } from 'styles'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'

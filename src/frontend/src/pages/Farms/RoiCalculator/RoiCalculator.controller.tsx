@@ -31,7 +31,7 @@ import {
   TOP_INPUT,
 } from './RoiCalc.helpers'
 import { RoiCalculatorPopupDataType } from '../Farms.const'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { useLockBodyScroll } from 'react-use'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 

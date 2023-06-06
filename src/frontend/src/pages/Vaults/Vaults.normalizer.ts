@@ -161,7 +161,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         // }
 
         // Calc how much free tokens pool has
-        const avaliableLiq = convertNumberForClient({
+        const availableLiquidity = convertNumberForClient({
           number:
             item.loan_token.total_remaining -
             (item.loan_token.token_pool_total * item.loan_token.reserve_ratio) / 10000,
@@ -191,9 +191,9 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           borrowedAmount,
           borrowCapacity: Math.min(
             vaultCollateral.totalRow.amount / 2 - borrowedAmount * loanTokenMetadata.rate,
-            avaliableLiq,
+            Math.max(availableLiquidity, 0),
           ),
-          avaliableLiq,
+          availableLiquidity,
           minimumRepay: convertNumberForClient({
             number: item.loan_token.min_repayment_amount,
             grade: loanTokenMetadata.decimals,

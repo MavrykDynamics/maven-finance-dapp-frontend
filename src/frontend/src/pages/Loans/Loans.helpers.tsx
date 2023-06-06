@@ -216,8 +216,6 @@ export const getChartData = (
       if (assetMetadata) {
         const operationTimestampAndNowDiffInMs = new Date(Date.now()).getTime() - new Date(timestamp).getTime()
         const isLast24hOperation = operationTimestampAndNowDiffInMs <= ONE_DAY_IN_MS
-        const islast48hOperation =
-          operationTimestampAndNowDiffInMs <= ONE_DAY_IN_MS * 2 && operationTimestampAndNowDiffInMs >= ONE_DAY_IN_MS
 
         // Added liquidity (lended)
         if (type === 0) {
@@ -226,9 +224,6 @@ export const getChartData = (
             acc.lendBorrow24hDiff.last24hLending += lendedAmount
           }
 
-          if (islast48hOperation) {
-            acc.lendBorrow24hDiff.last48hLending += lendedAmount
-          }
           acc.lendingChartData.push({
             time: new Date(timestamp).getTime() as UTCTimestamp,
             value: (acc.lendingChartData.at(-1)?.value ?? 0) + lendedAmount,
@@ -242,9 +237,6 @@ export const getChartData = (
             acc.lendBorrow24hDiff.last24hLending -= lendedAmount
           }
 
-          if (islast48hOperation) {
-            acc.lendBorrow24hDiff.last48hLending -= lendedAmount
-          }
           acc.lendingChartData.push({
             time: new Date(timestamp).getTime() as UTCTimestamp,
             value: (acc.lendingChartData.at(-1)?.value ?? 0) - lendedAmount,
@@ -258,9 +250,6 @@ export const getChartData = (
             acc.lendBorrow24hDiff.last24hBorrowing += borrowedAmount
           }
 
-          if (islast48hOperation) {
-            acc.lendBorrow24hDiff.last48hBorrowing += borrowedAmount
-          }
           acc.borrowingChartData.push({
             time: new Date(timestamp).getTime() as UTCTimestamp,
             value: (acc.borrowingChartData.at(-1)?.value ?? 0) + borrowedAmount,
@@ -274,9 +263,6 @@ export const getChartData = (
             acc.lendBorrow24hDiff.last24hBorrowing -= borrowedAmount
           }
 
-          if (islast48hOperation) {
-            acc.lendBorrow24hDiff.last48hBorrowing -= borrowedAmount
-          }
           acc.borrowingChartData.push({
             time: new Date(timestamp).getTime() as UTCTimestamp,
             value: (acc.borrowingChartData.at(-1)?.value ?? 0) - borrowedAmount,
@@ -309,9 +295,7 @@ export const getChartData = (
       collateralChartData: [],
       lendingChartData: [],
       lendBorrow24hDiff: {
-        last48hLending: 0,
         last24hLending: 0,
-        last48hBorrowing: 0,
         last24hBorrowing: 0,
       },
     },

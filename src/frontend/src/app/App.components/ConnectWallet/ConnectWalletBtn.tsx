@@ -11,7 +11,7 @@ const ConnectWalletBtn = () => {
 
   return (
     <ConnectWalletBtnWrap>
-      <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={connectWalletHandler}>
+      <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} ignoreLoading onClick={connectWalletHandler}>
         <Icon id="wallet" /> Connect Wallet
       </Button>
     </ConnectWalletBtnWrap>
