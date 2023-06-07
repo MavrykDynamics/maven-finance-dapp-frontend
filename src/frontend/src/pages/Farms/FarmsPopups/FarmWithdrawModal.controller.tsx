@@ -55,7 +55,7 @@ export const FarmWithdrawModal = ({
   })
 
   const farmDepositedAmountByUser = useMemo(() => {
-    return Number(farmAccounts.find(({ user_id }) => accountPkh === user_id))
+    return Number(farmAccounts.find(({ user: { address } }) => accountPkh === address))
   }, [farmAccounts, accountPkh])
 
   const tokensNames = `${lpTokenOneSymbol}/${lpTokenTwoSymbol}`

@@ -249,11 +249,27 @@ export const DropdownWrap = styled.div<{ theme: MavrykTheme }>`
       margin-right: 0;
     }
   }
+
+  h3 {
+    font-weight: 500;
+    margin-left: 14px;
+    font-size: 14px;
+    line-height: 24px;
+    color: ${({ theme }) => theme.lightTextColor};
+  }
 `
 
 export const DropdownCard = styled(Card)`
   padding: 0;
   margin: 0;
+
+  .header {
+    min-width: 270px;
+    word-wrap: nowrap;
+    display: flex;
+    align-items: center;
+    margin-right: 50px;
+  }
 
   &.pending-dropdown {
     margin-bottom: 30px;

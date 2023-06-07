@@ -96,13 +96,25 @@ export const getTransactionHistory = (
   feeds: State['dataFeeds']['feedsLedger'],
 ) =>
   history_data.reduce<TransactionHistoryReduceType>(
-    (acc, { type, amount, timestamp, sender_id, operation_hash, loan_token, collateral_token, vault }) => {
-      if (!loan_token) return acc
+    (
+      acc,
+      {
+        type,
+        amount,
+        timestamp,
+        sender: { address: senderAddress },
+        operation_hash,
+        loan_token,
+        collateral_token,
+        vault,
+      },
+    ) => {
+      if (!loan_token?.token?.token_address) return acc
 
       const assetMetadata = getAssetMetadata({
         // if we have collateral_token, that means it’s a vault operation
         // if we do not have collateral_token, that means it’s a loan operation
-        tokenAddress: collateral_token?.token_address ?? loan_token.loan_token_address,
+        tokenAddress: collateral_token?.token?.token_address ?? loan_token.token.token_address,
         tokenName: collateral_token?.token_name ?? loan_token.loan_token_name,
         dipDupTokens,
         feeds,
@@ -117,8 +129,8 @@ export const getTransactionHistory = (
           acc.transactionHistory.push({
             amount: transformedAmount,
             date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
-            userAddress: sender_id,
             vaultAddress: vault?.vault?.address,
+            userAddress: senderAddress,
             operationHash: operation_hash,
             descr: descrByType,
             tokenSymbol: assetMetadata.symbol,
@@ -203,9 +215,9 @@ export const getChartData = (
 ) =>
   history_data?.reduce<LoansChartsDataType>(
     (acc, { type, amount, timestamp, loan_token }) => {
-      if (!loan_token) return acc
+      if (!loan_token?.token.token_address) return acc
       const assetMetadata = getAssetMetadata({
-        tokenAddress: loan_token.loan_token_address,
+        tokenAddress: loan_token.token.token_address,
         tokenName: loan_token.loan_token_name,
         dipDupTokens,
         feeds,

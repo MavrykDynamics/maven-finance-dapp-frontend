@@ -103,7 +103,6 @@ export const light = {
   actionPrimaryBtnColor: royalPurpleColor,
   stakedColor: darkColor,
   textColor: textColor,
-
   borderColor: '#4F457C',
   dataColor: '#77a4f2',
   subTextColor: '#7E8794',

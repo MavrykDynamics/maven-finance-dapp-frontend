@@ -43,8 +43,15 @@ import { loansPopupsContext } from '../Modals/LoansModals.provider'
 import { State } from 'reducers'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import { getCollateralRatioByPersentage, isTezosAsset } from '../../Loans.helpers'
-import getTimestampByLevel from 'utils/api/getTimestampByLevel'
+import {
+  getTimestampByLevelHeaders,
+  getTimestampByLevelSchema,
+  getTimestampByLevelUrl,
+} from 'utils/api/api-helpers/getTimestampByLevel'
 import { getNumberInBounds } from 'utils/calcFunctions'
+import { isAbortError } from 'errors/error'
+import { api } from 'utils/api/api'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -90,6 +97,8 @@ export const OldBorrowingExpandCard = ({
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { mvkTokenOperators } = useSelector((state: State) => state.loans)
+
+  const { bug } = useToasterContext()
 
   const [expanded, setExpanded] = useState(false)
 
@@ -153,23 +162,46 @@ export const OldBorrowingExpandCard = ({
 
   useEffect(() => {
     if (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE) {
+      if (!levelOfEarly || !levelOfLate) return
+
+      const abortEarlyController = new AbortController()
+      const abortLatelyController = new AbortController()
+
       ;(async () => {
-        if (!levelOfEarly || !levelOfLate) {
-          setTimerTimestamp(undefined)
-          return
+        try {
+          const [{ data: timestampOfEarly }, { data: timestampOfLate }] = await Promise.all([
+            api(
+              getTimestampByLevelUrl(levelOfEarly),
+              { signal: abortEarlyController.signal, headers: getTimestampByLevelHeaders },
+              getTimestampByLevelSchema,
+            ),
+            api(
+              getTimestampByLevelUrl(levelOfLate),
+              { signal: abortLatelyController.signal, headers: getTimestampByLevelHeaders },
+              getTimestampByLevelSchema,
+            ),
+          ])
+
+          const timestamp =
+            new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
+
+          setTimerTimestamp(timestamp)
+        } catch (e) {
+          // TODO: handle fetch errors when error boundary will be ready
+          if (!isAbortError(e)) {
+            console.error('getting timestamp by lvl error: ', e)
+          }
+          bug('Unexpected error happened occured, please reload the page')
         }
-
-        const [timestampOfEarly, timestampOfLate] = await Promise.all([
-          getTimestampByLevel(levelOfEarly),
-          getTimestampByLevel(levelOfLate),
-        ])
-
-        const timestamp =
-          new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
-
-        setTimerTimestamp(timestamp)
       })()
+
+      return () => {
+        abortEarlyController.abort()
+        abortLatelyController.abort()
+      }
     }
+
+    return
   }, [vaultStatus, levelOfEarly, levelOfLate])
 
   useEffect(() => {

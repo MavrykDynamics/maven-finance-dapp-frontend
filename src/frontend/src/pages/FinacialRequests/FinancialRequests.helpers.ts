@@ -15,17 +15,21 @@ export const normalizeFinancialRequests = (
     frIds: number[]
   }>(
     (acc, item) => {
-      const tokenName = dipDupTokens.find(({ contract }) => contract === item.token_address)?.metadata.symbol ?? 'MVK'
+      const tokenAddress = item.token.token_address
+      if (!tokenAddress) return acc
+
+      const tokenName = dipDupTokens.find(({ contract }) => contract === tokenAddress)?.metadata.symbol ?? 'MVK'
+
       const frItem = {
-        tokenAddress: item.token_address,
+        tokenAddress: tokenAddress,
         id: item.id,
         type: item.request_type,
         purpose: item.request_purpose,
-        requesterAddress: item.requester_id,
+        requesterAddress: item.requester.address,
         requestedTime: item.requested_datetime,
         governanceContract: item.governance_financial.governance.address,
-        governanceFinId: item.governance_financial_id,
-        treasuryContract: item.treasury_id,
+        governanceFinId: item.governance_financial.address,
+        treasuryContract: item.treasury.address,
         votingTillTime: item.execution_datetime ?? item.expiration_datetime,
         tokensAmount: tokenName === 'MVK' ? calcWithoutPrecision(item.token_amount) : calcWithoutMu(item.token_amount),
         tokenName: tokenName,
