@@ -1,6 +1,7 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
+import classNames from 'classnames'
 import { State } from 'reducers'
 
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
@@ -151,6 +152,7 @@ export const BorrowingExpandCard = ({
     isActionActive
 
   const ref = useRef<HTMLDivElement | null>(null)
+  // TODO: fix click outside
   useClickAway(ref, () => (notHandleClickAway ? null : () => {}))
 
   // use for borrow or repay
@@ -355,10 +357,10 @@ export const BorrowingExpandCard = ({
   return (
     <div ref={ref}>
       <ExpandSimple
-        expanded={isExpanded}
+        isExpanded={isExpanded}
         onClick={handleClickExpand}
-        className={`expand-borrow-tab  ${isExpanded ? 'expandedCard' : ''}`}
-        openButtonName={'View'}
+        openButtonName="View"
+        className={classNames('expand-borrow-tab', { 'expanded-card': isExpanded })}
         sufix={headerSufix}
         header={
           <>

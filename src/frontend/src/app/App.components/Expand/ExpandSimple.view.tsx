@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 // view
 import Button from '../Button/NewButton'
@@ -12,46 +12,47 @@ import { scrollToFullView } from '../../../utils/scrollToFullView'
 import { BUTTON_SIMPLE_SMALL } from '../Button/Button.constants'
 
 type Props = {
-  children: React.ReactNode
+  isExpanded: boolean
+  onClick: () => void
+
   header?: React.ReactNode
   sufix?: React.ReactNode
-  className?: string
-  expanded: boolean
-  showCustomText?: string
-  isExpandedByDefault?: boolean
-  onClick: () => void
+  children: React.ReactNode
+
   showText?: boolean
-  getExpandedStatus?: (arg: boolean) => void
+  showCustomText?: string
   openButtonName?: string
+  className?: string
 }
 
 export default function ExpandSimple({
-  children,
-  header = null,
-  expanded,
-  className = '',
-  showCustomText = '',
-  sufix = null,
+  isExpanded,
   onClick,
+
+  header = null,
+  sufix = null,
+  children,
+
   showText = false,
+  showCustomText = '',
   openButtonName = 'Details',
+  className = '',
 }: Props) {
   const ref = useRef<HTMLDivElement | null>(null)
 
   // if the children are not fully visible in the window,
   // move the scroll to fix it
   useEffect(() => {
-    if (expanded) {
-      scrollToFullView(ref.current, 'nearest')
-    }
-  }, [expanded])
+    if (!isExpanded) return
+    scrollToFullView(ref.current, 'nearest')
+  }, [isExpanded])
 
   return (
     <ExpandStyled ref={ref} className={className}>
       <header className="expand-header">
         {header}
-        <div className={`arrow-wrap ${expanded ? 'top' : 'bottom'}`}>
-          {showText ? <span>{expanded ? 'Hide' : 'Show'}</span> : null}
+        <div className={`arrow-wrap ${isExpanded ? 'top' : 'bottom'}`}>
+          {showText ? <span>{isExpanded ? 'Hide' : 'Show'}</span> : null}
           {showCustomText ? <span>{showCustomText}</span> : null}
           <Button onClick={onClick} kind={BUTTON_SIMPLE_SMALL}>
             {openButtonName} <Icon id="simple-arrow-down" />
@@ -59,7 +60,7 @@ export default function ExpandSimple({
         </div>
         {sufix}
       </header>
-      <ExpandArticleStyled show={expanded}>{children}</ExpandArticleStyled>
+      <ExpandArticleStyled show={isExpanded}>{children}</ExpandArticleStyled>
     </ExpandStyled>
   )
 }

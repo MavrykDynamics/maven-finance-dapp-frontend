@@ -116,10 +116,6 @@ export const LoansBorrow = () => {
     if (!validVaultId) {
       openCreateVaultPopup?.({
         currentMarketAsset: marketSymbol === 'XTZ' ? 'tez' : marketSymbol.toLowerCase(),
-        setCreatedVaultAddress: (address: string) => {
-          if (!address) return
-          history.push(`/loans/${marketSymbol}/borrowTab?vaultAddress=${address}`)
-        },
       })
 
       return
