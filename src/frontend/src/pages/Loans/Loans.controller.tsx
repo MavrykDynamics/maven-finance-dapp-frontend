@@ -207,7 +207,7 @@ export const Loans = () => {
                         <CommaNumber value={totalLended} className="rate" />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
-                        <div className="name">Lend APY</div>
+                        <div className="name">Earn APY</div>
                         <div className="value">
                           <CommaNumber value={lendingAPY} className="value" endingText="%" />{' '}
                           <CustomTooltip
@@ -219,7 +219,7 @@ export const Loans = () => {
                         </div>
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
-                        <div className="name">Total Fees Earned</div>
+                        <div className="name">Total Earned</div>
                         <CommaNumber value={totalFeesEarned} className="value" beginningText="$" />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>

@@ -21,6 +21,7 @@ type Props = {
   onClickCallback?: () => void
   showText?: boolean
   getExpandedStatus?: (arg: boolean) => void
+  openButtonName?: string
 }
 
 export default function Expand({
@@ -33,6 +34,7 @@ export default function Expand({
   onClickCallback,
   showText = false,
   getExpandedStatus,
+  openButtonName = 'Details',
 }: Props) {
   const [expanded, setExpanded] = useState<boolean>(false)
   const handleToggleExpand = () => {
@@ -70,7 +72,7 @@ export default function Expand({
             }}
             kind={BUTTON_SIMPLE_SMALL}
           >
-            Details <Icon id="simple-arrow-down" />
+            {openButtonName} <Icon id="simple-arrow-down" />
           </Button>
         </div>
         {sufix}

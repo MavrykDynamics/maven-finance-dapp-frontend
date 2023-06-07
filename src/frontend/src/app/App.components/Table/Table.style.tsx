@@ -32,20 +32,7 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
   border-collapse: collapse;
 
   &.borrowing-table {
-    margin-top: 5px;
     position: relative;
-    margin-bottom: 10px;
-
-    &.show-before {
-      &::before {
-        content: '';
-        position: absolute;
-        bottom: 0px;
-        height: 1px;
-        width: 100%;
-        background-color: ${({ theme }) => theme.cardBorderColor};
-      }
-    }
   }
 
   &.treasury-table {

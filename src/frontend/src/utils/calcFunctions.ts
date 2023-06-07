@@ -304,3 +304,5 @@ export const percentageDifference = (a: number, b: number): number => {
 export const getNumberInBounds = (minBound: number, maxBound: number, numberToPutInBound: number) => {
   return Math.max(minBound, Math.min(maxBound, numberToPutInBound))
 }
+
+export const generateUniqueId = () => Math.random().toString(36).substring(2) + Date.now().toString(36)
