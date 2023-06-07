@@ -81,7 +81,7 @@ export const BorrowingExpandCard = ({
   const history = useHistory()
   const location = useLocation()
 
-  const params = new URLSearchParams(location.search)
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search])
   const vaultAddress = params.get('vaultAddress')
 
   const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
@@ -152,8 +152,7 @@ export const BorrowingExpandCard = ({
     isActionActive
 
   const ref = useRef<HTMLDivElement | null>(null)
-  // TODO: fix click outside
-  useClickAway(ref, () => (notHandleClickAway ? null : () => {}))
+  useClickAway(ref, () => (notHandleClickAway ? null : handleCloseVault()))
 
   // use for borrow or repay
   // it scrolls until the current vault after the transaction and changing position
@@ -174,11 +173,15 @@ export const BorrowingExpandCard = ({
   }, [symbol, loanTokens])
 
   const handleOpenVault = () => {
+    if (isExpanded) return
+
     params.append('vaultAddress', address)
     history.replace({ ...location, search: params.toString() })
   }
 
   const handleCloseVault = () => {
+    if (!isExpanded) return
+
     params.delete('vaultAddress')
     history.replace({ ...location, search: params.toString() })
   }

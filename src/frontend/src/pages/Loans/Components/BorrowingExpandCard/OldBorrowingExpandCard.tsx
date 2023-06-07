@@ -145,9 +145,7 @@ export const OldBorrowingExpandCard = ({
     isActionActive
 
   const ref = useRef<HTMLDivElement | null>(null)
-
-  // TODO: fix click outside
-  useClickAway(ref, () => (notHandleClickAway ? null : () => {}))
+  useClickAway(ref, () => (notHandleClickAway ? null : handleCloseVault()))
 
   // use for borrow or repay
   // it scrolls until the current vault after the transaction and changing position
@@ -169,11 +167,15 @@ export const OldBorrowingExpandCard = ({
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
 
   const handleOpenVault = () => {
+    if (isExpanded) return
+
     params.append('vaultAddress', address)
     history.replace({ ...location, search: params.toString() })
   }
 
   const handleCloseVault = () => {
+    if (!isExpanded) return
+
     params.delete('vaultAddress')
     history.replace({ ...location, search: params.toString() })
   }
