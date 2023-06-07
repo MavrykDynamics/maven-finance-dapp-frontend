@@ -40,13 +40,13 @@ export const normalizeUserLending = ({
         lending_controller: { interest_rate_decimals, interest_treasury_share, decimals },
       },
     ) => {
-      if (!loan_token) return acc
+      if (!loan_token?.token.token_address || !loan_token.oracle) return acc
       const assetData = getAssetMetadata({
-        tokenAddress: loan_token.loan_token_address,
+        tokenAddress: loan_token.token.token_address,
         tokenName: loan_token.loan_token_name,
         dipDupTokens,
         feeds,
-        oracleId: String(loan_token.oracle_id),
+        oracleId: String(loan_token.oracle.address),
       })
 
       if (!assetData) return acc
@@ -102,33 +102,37 @@ export const normalizeUserLending = ({
   const userVaultsData =
     userVaultsDataGql?.reduce<Record<string, { borrowedAmount: number; collateralAmount: number }>>(
       (acc, { collateral_balances, loan_token, loan_principal_total }) => {
-        if (!loan_token) return acc
+        if (!loan_token?.token.token_address || !loan_token.oracle) return acc
         const vaultAssetData = getAssetMetadata({
-          tokenAddress: loan_token.loan_token_address,
+          tokenAddress: loan_token.token.token_address,
           tokenName: loan_token.loan_token_name,
           dipDupTokens,
           feeds,
-          oracleId: String(loan_token.oracle_id),
+          oracleId: String(loan_token.oracle.address),
         })
 
         if (!vaultAssetData) return acc
 
-        const collateralAmount = collateral_balances.reduce((acc, { balance, token }) => {
-          if (!token) return acc
-          const collateralAssetData = getAssetMetadata({
-            tokenAddress: token.token_address,
-            tokenName: token.token_name,
-            dipDupTokens,
-            feeds,
-            oracleId: String(token.oracle_id),
-          })
+        const collateralAmount = collateral_balances.reduce(
+          (acc, { balance, collateral_token: { token, token_name, oracle } }) => {
+            if (!token?.token_address || !oracle?.address) return acc
+            const collateralAssetData = getAssetMetadata({
+              tokenAddress: token.token_address,
+              tokenName: token_name,
+              dipDupTokens,
+              feeds,
+              oracleId: String(oracle.address),
+            })
 
-          if (!collateralAssetData) return acc
+            if (!collateralAssetData) return acc
 
-          acc +=
-            convertNumberForClient({ number: balance, grade: collateralAssetData.decimals }) * collateralAssetData.rate
-          return acc
-        }, 0)
+            acc +=
+              convertNumberForClient({ number: balance, grade: collateralAssetData.decimals }) *
+              collateralAssetData.rate
+            return acc
+          },
+          0,
+        )
 
         acc[loan_token.loan_token_name] = {
           borrowedAmount:
@@ -167,7 +171,7 @@ export const normalizeLoans = async ({
   userAddres?: string
   feeds: State['dataFeeds']['feedsLedger']
 }) => {
-  const mvkTokenOperators = mvkTokenOperatorsStorage?.map((item) => item.operator_id)
+  const mvkTokenOperators = mvkTokenOperatorsStorage?.map((item) => item.operator.address)
 
   const interestTreasuryShare = calcWithoutDecimals(
     lendingController?.interest_treasury_share,
@@ -193,19 +197,18 @@ export const normalizeLoans = async ({
           reserve_ratio,
           token_pool_total,
           total_borrowed,
-          loan_token_address,
-          loan_token_contract_standard,
-          oracle_id,
+          token: { token_address, token_standard },
+          oracle,
           m_token,
           vaults_aggregate: { aggregate },
         } = loanToken
 
         const loanTokenMetadata = getAssetMetadata({
           tokenName: loan_token_name,
-          tokenAddress: loan_token_address,
+          tokenAddress: token_address,
           dipDupTokens: dipDupData,
           feeds,
-          oracleId: String(oracle_id),
+          oracleId: String(oracle?.address),
         })
 
         const appropriateMtokenData = mTokens.find(
@@ -237,7 +240,9 @@ export const normalizeLoans = async ({
         acc.push({
           loanTokenData: {
             ...loanTokenMetadata,
-            tokenType: loan_token_contract_standard as TokenType,
+            tokenType: token_standard as TokenType,
+            // TODO: remove condition after adding new token list
+            name: loanTokenMetadata.symbol === 'EURL' ? 'Lugh' : loanTokenMetadata.symbol,
           },
           lendingItem,
           transactionHistory: [...transactionHistory].reverse(),

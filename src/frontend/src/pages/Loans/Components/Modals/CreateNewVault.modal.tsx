@@ -10,7 +10,7 @@ import {
 } from 'app/App.components/Input/Input.constants'
 import { CreateVaultPopupDataType, VaultNameInputStateType } from './Modals.helpers'
 import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
-import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
+import { AvaliableCollateralType, LoansVaultType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton'
@@ -34,6 +34,7 @@ import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { containSpaces } from 'app/App.utils/input'
 
 export type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
 
@@ -88,7 +89,11 @@ export const CreateNewVault = ({
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<DDItemId, DropDownCollateralAssetType>>({})
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
-  const [vaultName, setVaultName] = useState<VaultNameInputStateType>({ name: '', validationStatus: '' })
+  const [vaultName, setVaultName] = useState<VaultNameInputStateType>({
+    name: '',
+    validationStatus: '',
+    errorMessage: '',
+  })
   const [isVaultCreating, setVaultCreating] = useState(false)
   const [newVaultAddress, setNewVaultAddress] = useState('')
 
@@ -124,7 +129,7 @@ export const CreateNewVault = ({
       setAssetChosenDdItem(undefined)
       setVaultCreating(false)
       setNewVaultAddress('')
-      setVaultName({ name: '', validationStatus: '' })
+      setVaultName({ name: '', validationStatus: '', errorMessage: '' })
     }
   }, [show])
 
@@ -219,14 +224,17 @@ export const CreateNewVault = ({
   //handle vaultName input TODO: mb add debounce cuz of find operation
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus =
-      value &&
-      value.length <= 15 &&
-      !myVaultsIds.find((vaultId) => vaultsMapper[vaultId].name.trim().toLowerCase() === value.trim().toLowerCase())
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR
+    const validationStatus = validateVaultLength(value, myVaultsIds, vaultsMapper)
 
-    setVaultName({ name: value, validationStatus })
+    setVaultName((prev) => ({ ...prev, name: value, validationStatus }))
+  }
+
+  const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (containSpaces(e.target.value)) {
+      const trimmedValue = e.target.value.trim()
+      const validationStatus = validateVaultLength(trimmedValue, myVaultsIds, vaultsMapper)
+      setVaultName((prev) => ({ ...prev, validationStatus, name: trimmedValue }))
+    }
   }
 
   // stuff to handle collateral input dropdown
@@ -423,11 +431,13 @@ export const CreateNewVault = ({
                   value: vaultName.name,
                   type: 'text',
                   onChange: handleVaultNameChange,
+                  onBlur: handleOnBlur,
                   placeholder: 'e.g. Satoshi’s Personal Vault',
                 }}
                 settings={{
                   inputStatus: vaultName.validationStatus,
                   inputSize: INPUT_LARGE,
+                  errorMessage: vaultName.errorMessage,
                 }}
               />
               <div className="manage-btn">
@@ -688,4 +698,17 @@ export const CreateNewVault = ({
       </PopupContainerWrapper>
     </PopupContainer>
   )
+}
+
+// validation helper
+export function validateVaultLength(
+  value: string,
+  myVaultsIds: string[],
+  vaultsMapper: Record<string, LoansVaultType>,
+): InputStatusType {
+  return value &&
+    value.length <= 15 &&
+    !myVaultsIds.find((vaultId) => vaultsMapper[vaultId].name.trim().toLowerCase() === value.trim().toLowerCase())
+    ? INPUT_STATUS_SUCCESS
+    : INPUT_STATUS_ERROR
 }

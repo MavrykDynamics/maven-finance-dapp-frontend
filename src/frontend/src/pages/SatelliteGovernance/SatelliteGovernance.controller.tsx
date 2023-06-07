@@ -90,8 +90,10 @@ export const SatelliteGovernance = () => {
 
   const {
     accountPkh,
-    user: { isSatellite },
+    user: { isSatellite, govActionsCount },
   } = useSelector((state: State) => state.wallet)
+
+  const { maxActionsCount } = useSelector((state: State) => state.satelliteGovernance.config)
 
   const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
@@ -234,7 +236,12 @@ export const SatelliteGovernance = () => {
         {isSatellite ? (
           <DropdownCard className="satellite-governance-dropdown">
             <DropdownWrap>
-              <h2>Available Actions</h2>
+              <div className="header">
+                <h2>Available Actions</h2>
+                <h3>
+                  {govActionsCount} from {maxActionsCount}
+                </h3>
+              </div>
 
               <DropDown
                 placeholder="Choose action"
@@ -250,7 +257,7 @@ export const SatelliteGovernance = () => {
             ) : (
               <SatelliteGovernanceForm
                 maxLength={maxLength}
-                isActionActive={isActionActive}
+                isActionActive={isActionActive || govActionsCount >= maxActionsCount}
                 variant={chosenDdItem || ''}
               />
             )}
@@ -295,7 +302,7 @@ export const SatelliteGovernance = () => {
               nayVotesSmvkTotal={action.nayVoteSmvkTotal}
               passVoteSmvkTotal={action.passVoteSmvkTotal}
               accountPkh={accountPkh}
-              isActionActive={isActionActive}
+              isActionActive={isActionActive || govActionsCount >= maxActionsCount}
               votes={action.votes}
             />
           )

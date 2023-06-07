@@ -35,10 +35,17 @@ import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
-import getTimestampByLevel from 'utils/api/getTimestampByLevel'
-import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { LIQUIDATION_COST, LIQUIDATION_PRICE, VAULT_RISK } from 'texts/tooltips/vault.text'
 import { getStringWithoutUnderline } from 'utils/parse'
+import {
+  getTimestampByLevelHeaders,
+  getTimestampByLevelSchema,
+  getTimestampByLevelUrl,
+} from 'utils/api/api-helpers/getTimestampByLevel'
+import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+import { isAbortError } from 'errors/error'
+import { api } from 'utils/api/api'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 const findStatusInfo = (
   status: string,
@@ -120,6 +127,8 @@ export const VaultsCard = (props: Props) => {
     vaultTab,
   } = props
 
+  const { bug } = useToasterContext()
+
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { DAOFee } = useSelector((state: State) => state.loans.config)
 
@@ -137,39 +146,52 @@ export const VaultsCard = (props: Props) => {
 
   const isMarkStatus = vaultsStatuses.MARK === status
 
-  const getCountdownTimestamp = async (levelOfEarly: number, levelOfLate: number) => {
-    const [timestampOfEarly, timestampOfLate] = await Promise.all([
-      getTimestampByLevel(levelOfEarly),
-      getTimestampByLevel(levelOfLate),
-    ])
-
-    return {
-      timestampOfEarly,
-      timestampOfLate,
-    }
-  }
-
   const liquidateModalHandler = () => {
     openLiquidateVaultPopup({ ...props })
   }
 
   useEffect(() => {
     if (status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.LIQUIDATABLE) {
+      if (!levelOfEarly || !levelOfLate) return
+
+      const abortEarlyController = new AbortController()
+      const abortLatelyController = new AbortController()
+
       ;(async () => {
-        if (!levelOfEarly || !levelOfLate) {
-          setTimerTimestamp(undefined)
-          return
+        try {
+          const [{ data: timestampOfEarly }, { data: timestampOfLate }] = await Promise.all([
+            api(
+              getTimestampByLevelUrl(levelOfEarly),
+              { signal: abortEarlyController.signal, headers: getTimestampByLevelHeaders },
+              getTimestampByLevelSchema,
+            ),
+            api(
+              getTimestampByLevelUrl(levelOfLate),
+              { signal: abortLatelyController.signal, headers: getTimestampByLevelHeaders },
+              getTimestampByLevelSchema,
+            ),
+          ])
+
+          const timestamp =
+            new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
+
+          setTimerTimestamp(timestamp)
+        } catch (e) {
+          // TODO: handle fetch errors when error boundary will be ready
+          if (!isAbortError(e)) {
+            console.error('getting timestamp by lvl error: ', e)
+          }
+          bug('Unexpected error happened occured, please reload the page')
         }
-
-        const response = await getCountdownTimestamp(levelOfEarly, levelOfLate)
-        const timestamp =
-          new Date(response.timestampOfEarly).getTime() -
-          new Date(response.timestampOfLate).getTime() +
-          new Date().getTime()
-
-        setTimerTimestamp(timestamp)
       })()
+
+      return () => {
+        abortEarlyController.abort()
+        abortLatelyController.abort()
+      }
     }
+
+    return () => null
   }, [status, levelOfEarly, levelOfLate])
 
   const headerSufix = <StatusFlag status={statusColor} text={getStringWithoutUnderline(status)} className="sufix" />

@@ -16,6 +16,8 @@ import { State } from 'reducers'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { changeVaultNameAction } from 'pages/Loans/Actions/vault.actions'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { validateVaultLength } from './CreateNewVault.modal'
+import { containSpaces } from 'app/App.utils/input'
 
 export const ChangeVaultName = ({
   closePopup,
@@ -33,26 +35,24 @@ export const ChangeVaultName = ({
     vaults: { myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
-  const [newVaultName, setNewVaultName] = useState<VaultNameInputStateType>({ name: '', validationStatus: '' })
+  const [newVaultName, setNewVaultName] = useState<VaultNameInputStateType>({
+    name: '',
+    validationStatus: '',
+    errorMessage: '',
+  })
 
   useLockBodyScroll(show)
   useEffect(() => {
     if (!show) {
-      setNewVaultName({ name: '', validationStatus: '' })
+      setNewVaultName({ name: '', validationStatus: '', errorMessage: '' })
     }
   }, [show])
 
   // handle vaultName input TODO: mb add debounce cuz of find operation
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus =
-      value &&
-      value.length <= 15 &&
-      !myVaultsIds.find((vaultId) => vaultsMapper[vaultId].name.trim().toLowerCase() === value.trim().toLowerCase())
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR
-
-    setNewVaultName({ name: value, validationStatus })
+    const validationStatus = validateVaultLength(value, myVaultsIds, vaultsMapper)
+    setNewVaultName((prev) => ({ ...prev, name: value, validationStatus }))
   }
 
   const changeVaultNameHandler = async () => {
@@ -66,6 +66,14 @@ export const ChangeVaultName = ({
         closePopup,
       ),
     )
+  }
+
+  const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (containSpaces(e.target.value)) {
+      const trimmedValue = e.target.value.trim()
+      const validationStatus = validateVaultLength(trimmedValue, myVaultsIds, vaultsMapper)
+      setNewVaultName((prev) => ({ ...prev, validationStatus, name: trimmedValue }))
+    }
   }
 
   return (
@@ -92,6 +100,7 @@ export const ChangeVaultName = ({
               value: newVaultName.name,
               type: 'text',
               onChange: handleVaultNameChange,
+              onBlur: handleOnBlur,
               placeholder: 'e.g. Satoshi’s Personal Vault',
             }}
             settings={{

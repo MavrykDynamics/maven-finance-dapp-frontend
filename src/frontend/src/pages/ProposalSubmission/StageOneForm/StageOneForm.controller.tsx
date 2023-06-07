@@ -17,6 +17,7 @@ import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.c
 import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { containSpaces } from 'app/App.utils/input'
 
 export const StageOneForm = ({
   proposalId,
@@ -36,6 +37,13 @@ export const StageOneForm = ({
 
   const isProposalSubmitted = proposalId >= 0
   const isProposalPeriod = governancePhase === 'PROPOSAL'
+
+  function handleOnBlur<G extends HTMLInputElement | HTMLTextAreaElement>(e: React.FocusEvent<G>) {
+    if (containSpaces(e.target.value)) {
+      const trimmedValue = e.target.value.trim()
+      updateLocalProposalData({ [e.target.name]: trimmedValue }, proposalId)
+    }
+  }
 
   // update local state value and parent state due to inputted info
   const inputHandler = (
@@ -115,6 +123,7 @@ export const StageOneForm = ({
               placeholder: 'Proposal Title',
               name: 'title',
               onChange: inputHandler,
+              onBlur: handleOnBlur,
             }}
           />
         )}
@@ -142,6 +151,7 @@ export const StageOneForm = ({
             placeholder="Descriprion of the proposal"
             value={currentProposal.description}
             onChange={inputHandler}
+            onBlur={handleOnBlur}
             inputStatus={currentProposalValidation.description}
             disabled={isProposalSubmitted || !isProposalPeriod}
             textAreaMaxLimit={proposalDescriptionMaxLength}
@@ -175,10 +185,16 @@ export const StageOneForm = ({
 
         {isProposalSubmitted ? (
           <div className="submitted-data source-code">
-            <div className="label">6 - Add an Invoice Image</div>
+            <div className="label">6 - Invoice</div>
             {currentProposal.invoice ? (
               <div className="invoice-content">
-                <ImageWithPlug imageLink={currentProposal.invoice} alt="invoice for the proposal" />{' '}
+                <div className="image-style">
+                  <ImageWithPlug
+                    noImageIconId="image"
+                    imageLink={currentProposal.invoice}
+                    alt="invoice for the proposal"
+                  />
+                </div>{' '}
                 <a className="isCyan" href={currentProposal.invoice}>
                   {currentProposal.invoice}
                 </a>
