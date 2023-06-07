@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react'
-import { useHistory } from 'react-router'
+import { useHistory, useLocation } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -38,6 +38,7 @@ const marketSettings: MarketSettingsType = {
 export const LoansBorrow = () => {
   const dispatch = useDispatch()
   const history = useHistory()
+  const location = useLocation()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
@@ -106,6 +107,14 @@ export const LoansBorrow = () => {
     [loanTokens, tokenTotals],
   )
 
+  const handleCreatedVaultAddress = (address?: string) => {
+    if (!address) return
+
+    const params = new URLSearchParams(location.search)
+    params.append('vaultAddress', address)
+    history.replace({ ...location, search: params.toString() })
+  }
+
   const handleBorrow = (marketSymbol: string) => {
     const validVaultId = myVaultsIds.find((vaultId) => {
       const vault = vaultsMapper[vaultId]
@@ -116,6 +125,7 @@ export const LoansBorrow = () => {
     if (!validVaultId) {
       openCreateVaultPopup?.({
         currentMarketAsset: marketSymbol === 'XTZ' ? 'tez' : marketSymbol.toLowerCase(),
+        setCreatedVaultAddress: handleCreatedVaultAddress,
       })
 
       return

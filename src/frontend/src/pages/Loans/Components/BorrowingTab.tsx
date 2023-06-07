@@ -50,7 +50,7 @@ export const BorrowingTab = ({ currentToken }: BorrowingTabPropsType) => {
     [gqlName, myVaultsIds, showZeroVaults, vaultsMapper],
   )
 
-  const handleCreatedVaultAddress = (address: string) => {
+  const handleCreatedVaultAddress = (address?: string) => {
     if (!address) return
 
     const params = new URLSearchParams(location.search)
