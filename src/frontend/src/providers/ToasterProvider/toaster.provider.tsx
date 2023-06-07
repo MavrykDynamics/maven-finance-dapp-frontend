@@ -27,6 +27,9 @@ type State = {
   context: ToasterContextType
 }
 
+/**
+ *
+ */
 export default class ToasterProvider extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -46,6 +49,9 @@ export default class ToasterProvider extends React.Component<Props, State> {
     }
   }
 
+  /**
+   *
+   */
   componentDidCatch(error: Error): void {
     this.addToasterMessage('', error.message, TOASTER_ERROR)
   }
@@ -121,6 +127,9 @@ export default class ToasterProvider extends React.Component<Props, State> {
     }))
   }
 
+  /**
+   *
+   */
   render(): JSX.Element {
     // add 404 page when isCritical error
     return <toasterContext.Provider value={this.state.context}>{this.props.children}</toasterContext.Provider>

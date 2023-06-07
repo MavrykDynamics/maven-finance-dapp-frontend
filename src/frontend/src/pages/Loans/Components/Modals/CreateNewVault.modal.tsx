@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useDebounce, useLockBodyScroll } from 'react-use'
+import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
 import {
@@ -22,7 +22,6 @@ import Icon from 'app/App.components/Icon/Icon.view'
 
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { State } from 'reducers'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
@@ -34,7 +33,8 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
-import { containSpaces, INPUT_WHITE_SPACE_TEXT } from 'app/App.utils/input'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { containSpaces } from 'app/App.utils/input'
 
 export type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
 
@@ -70,7 +70,7 @@ export const CreateNewVault = ({
   show: boolean
   data: CreateVaultPopupDataType
 }) => {
-  const { currentMarketAsset, setCreatedVaultAddress } = data ?? {}
+  const { currentMarketAsset, setCreatedVaultAddress, showShortFlow } = data ?? {}
   const dispatch = useDispatch()
   const {
     xtzBakers: { otherBakers, dao, mavrykDynamics },
@@ -324,8 +324,12 @@ export const CreateNewVault = ({
   const createVaultAction = async () => {
     if (currentMarketAsset) {
       try {
+        showShortFlow && closePopup()
+
         setVaultCreating(true)
-        const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset, vaultName.name))
+        const newVaultData = await dispatch(
+          triggerInitialVaultCreation(currentMarketAsset, vaultName.name, showShortFlow),
+        )
         setCreatedVaultAddress?.(String(newVaultData))
         setNewVaultAddress(String(newVaultData))
       } catch (e) {
@@ -409,9 +413,7 @@ export const CreateNewVault = ({
         <LoansModalBase>
           <button onClick={closePopup} className="close-modal" />
 
-          <GovRightContainerTitleArea>
-            <h2>{titleText}</h2>
-          </GovRightContainerTitleArea>
+          <H2Title>{titleText}</H2Title>
           <div
             className="modalDescr"
             style={{

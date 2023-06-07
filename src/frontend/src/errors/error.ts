@@ -29,16 +29,17 @@ class ExtendedErrorClass extends Error {
     return this
   }
 
+  /**  */
   toString(): string {
     return `${this.name}: ${this.message} ${JSON.stringify(this.payload)}`
   }
 }
 
-// bad api data when making rest call
+/** bad api data when making rest call */
 export class ValidationError extends ExtendedErrorClass {}
-// when getting server error (f.e. 500 )
+/** when getting server error (f.e. 500 ) */
 export class ApiError extends ExtendedErrorClass {}
-// critiacal error, show 404 page
+/** critiacal error, show 404 page */
 export class FatalError extends ExtendedErrorClass {}
 
 export type CustomErrors = Error | ApiError | ValidationError | FatalError | null

@@ -28,6 +28,11 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     padding-bottom: 3px;
   }
 
+  .confirmation-btn {
+    margin: 55px auto 0;
+    width: 300px;
+  }
+
   .manage-btn {
     display: flex;
     width: 250px;
