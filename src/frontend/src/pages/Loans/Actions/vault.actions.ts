@@ -92,8 +92,7 @@ export const changeVaultNameAction =
 
 // trigger initial vault creation to get the id of future vault
 export const triggerInitialVaultCreation =
-  (loanTokenName: string, vaultName: string, showShortFlow?: boolean) =>
-  async (dispatch: AppDispatch, getState: GetState) => {
+  (loanTokenName: string, vaultName: string) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
     const userAddress = state.wallet.accountPkh
 
@@ -108,25 +107,6 @@ export const triggerInitialVaultCreation =
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.vaultFactory.address)
       const transaction = await contract?.methods.createVault(null, loanTokenName, vaultName, [], 'any').send()
-
-      if (showShortFlow) {
-        // show toaster
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
-        dispatch(showToaster(TOASTER_INFO, 'Creating vault...', ACTION_START_MESSAGE_TEXT))
-
-        await sleep(5000)
-
-        // turn off fs actions loader and start data updating after 5s after operation started
-        await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(
-          showToaster(
-            TOASTER_LOADING,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          ),
-        )
-      }
 
       // confirm query completion
       await transaction?.confirmation()
@@ -145,12 +125,6 @@ export const triggerInitialVaultCreation =
             NEW_VAULT_QUERY_VARIABLE(userAddress, vaultName),
           )
 
-          if (showShortFlow) {
-            await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Vault is created.', ACTION_COMPLETION_MESSAGE_TEXT))
-            await dispatch(toggleActionCompletion(false))
-          }
-
           return newVaultData.vault.at(-1)?.lending_controller_vaults?.[0]?.vault_id
         },
         currentOperationLevel,
@@ -163,10 +137,6 @@ export const triggerInitialVaultCreation =
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
 
-      if (showShortFlow) {
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
-      }
       return
     }
   }
