@@ -23,6 +23,7 @@ export const defaultSatelliteGovernanceStorage: SatelliteGovernanceState = {
     durationInDays: 0,
     counter: 0,
     governanceId: '',
+    maxActionsCount: 0,
   },
   ongoingSatelliteGovIds: [],
   pastSatelliteGovIds: [],

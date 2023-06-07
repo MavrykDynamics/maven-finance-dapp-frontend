@@ -12,7 +12,7 @@ import {
 } from 'app/App.components/Input/Input.constants'
 import { isValidLength } from '../../../utils/validatorFunctions'
 
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { Input } from 'app/App.components/Input/NewInput'
 import { TextArea } from 'app/App.components/TextArea/TextArea.controller'
 import { EmergencyGovProposalModalContent } from './EmergencyGovProposalModal.style'

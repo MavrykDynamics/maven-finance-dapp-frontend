@@ -110,7 +110,6 @@ export const StageThreeForm = ({
       {
         proposalPayments: (proposalPayments ?? []).concat({
           id: -(proposalPayments.length + 1),
-          internal_id: 0,
           title: '',
           to__id: '',
           token_amount: 0,

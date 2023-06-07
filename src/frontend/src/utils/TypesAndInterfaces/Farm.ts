@@ -10,7 +10,9 @@ export interface FarmAccountsType {
   farm_id: string
   id: number
   unclaimed_rewards: number
-  user_id: string
+  user: {
+    address: string
+  }
   participation_rewards_per_share: number
 }
 

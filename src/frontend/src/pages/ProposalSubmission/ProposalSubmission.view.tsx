@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import QueryString from 'qs'
 import { useHistory } from 'react-router'
@@ -287,13 +287,14 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     !isBytesValid ||
     !isPaymentsValid ||
     genProposalDisabledState ||
-    (currentProposal.id === DEFAULT_PROPOSAL.id
-      ? currentProposal?.proposalData?.filter(({ title, encoded_code }) => title || encoded_code).length < 1 ||
-        !isStageOneDataValid
-      : currentProposal.locked || !proposalHasChange)
+    (currentProposal.id === DEFAULT_PROPOSAL.id ? !isStageOneDataValid : currentProposal.locked || !proposalHasChange)
 
   const isSubmitDisabled =
-    !isProposalSubmitted || currentProposal.locked || proposalHasChange || genProposalDisabledState
+    !isProposalSubmitted ||
+    currentProposal.locked ||
+    proposalHasChange ||
+    genProposalDisabledState ||
+    currentProposal?.proposalData?.filter(({ title, encoded_code }) => title || encoded_code).length < 1
 
   const isDropDisabled = !isProposalSubmitted || genProposalDisabledState
 
@@ -388,25 +389,26 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             />
           </div>
 
-          {/* if we are on stage 3 show save changes btn (it creates if proposal is not created, or updates data if proposal exists), othervise show next step (navigating to thee next stage btn) */}
-          {activeTab === 3 ? (
-            <div className="btn-wrapper">
-              <Button
-                kind={BUTTON_PRIMARY}
-                form={BUTTON_WIDE}
-                disabled={isSaveProposalDisabled || isActionActive}
-                onClick={() => handleUpdateData(selectedUserProposalId)}
-              >
-                <Icon id="save" /> {isProposalSubmitted ? 'Save Changes' : 'Save Proposal'}
-              </Button>
-              <CustomTooltip
-                className="tooltip"
-                iconId="info"
-                text={SAVE_CHANGES_BUTTON_TOOLTIP}
-                defaultStrokeColor={colors[themeSelected]['valueColor']}
-              />
-            </div>
-          ) : (
+          {/* save changes btn (it creates if proposal is not created, or updates data if proposal exists) */}
+          <div className="btn-wrapper">
+            <Button
+              kind={activeTab !== 3 ? BUTTON_SECONDARY : BUTTON_PRIMARY}
+              form={BUTTON_WIDE}
+              disabled={isSaveProposalDisabled || isActionActive}
+              onClick={() => handleUpdateData(selectedUserProposalId)}
+            >
+              <Icon id="save" /> {isProposalSubmitted ? 'Save Changes' : 'Save Proposal'}
+            </Button>
+            <CustomTooltip
+              className="tooltip"
+              iconId="info"
+              text={SAVE_CHANGES_BUTTON_TOOLTIP}
+              defaultStrokeColor={colors[themeSelected]['valueColor']}
+            />
+          </div>
+
+          {/* if we are not on stage 3 show next step (navigating to thee next stage btn) */}
+          {activeTab !== 3 ? (
             <div className="btn-wrapper">
               <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={() => handleNextStep(activeTab + 1)}>
                 Next Step <Icon id="full-arrow-right" />
@@ -418,7 +420,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
                 defaultStrokeColor={colors[themeSelected]['valueColor']}
               />
             </div>
-          )}
+          ) : null}
         </ProposalSubmittionButtons>
       </ProposalSubmissionForm>
     </>
