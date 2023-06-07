@@ -1,20 +1,12 @@
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
-import { normalizeFeeds } from 'pages/DataFeeds/DataFeeds.helpers'
-import { Aggregator, Aggregator_History_Data } from 'utils/generated/graphqlTypes'
+import { normalizeFeed, normalizeFeeds } from 'pages/DataFeeds/DataFeeds.helpers'
+import { Aggregator } from 'utils/generated/graphqlTypes'
+
+// metadata has unknown type
+type FeedMetadataType = { metadata?: { category?: string; icon: string }; network?: string } | undefined
 
 export type DataFeedsStorageType = ReturnType<typeof normalizeFeeds>
 
-export type FeedGQL = Omit<Aggregator, '__typename' | 'history_data'> & {
-  category: string | null
-  network: string | null
-}
+export type FeedGqlType = Aggregator & FeedMetadataType
+export type Feed = ReturnType<typeof normalizeFeed>
 
-export type Feed = FeedGQL & {
-  dataFeedsHistory: Array<AreaChartPlotType>
-  dataFeedsVolatility: Array<AreaChartPlotType>
-  amount: number
-  oraclesResponces: number
-  icon?: string
-}
-
-export type DataFeedsHistoryGraphQL = Omit<Aggregator_History_Data, '__typename'>
+export type FeedHistoryData = Pick<Aggregator, 'history_data'>['history_data']

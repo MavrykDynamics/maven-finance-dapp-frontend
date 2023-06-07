@@ -34,7 +34,7 @@ export function normalizeBreakGlassStatus(storage: BreakGlassStatusGraphQL): Bre
               lastUpdated: item.last_updated_at,
               methods: {
                 compound: item.compound_paused,
-                'farm claimed': item.farm_claimed_paused,
+                'farm claimed': item.farm_claim_paused,
                 unstake: item.unstake_paused,
               },
             }

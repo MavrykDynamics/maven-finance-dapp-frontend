@@ -89,14 +89,15 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
 
   // crete redirect, it we don't have proposal id, or we have but it's invalid, set first proposalId that we have to selected, or if we don't have proposals at all, don't show it
   const redirect =
-    !rightSideContentId || (rightSideContentId && !listOfProposalsToUseForRedirect.includes(rightSideContentId)) ? (
+    (!rightSideContentId && listOfProposalsToUseForRedirect.length) ||
+    (rightSideContentId && !listOfProposalsToUseForRedirect.includes(rightSideContentId)) ? (
       <Redirect
         to={`/${proposalPage}${
           listOfProposalsToUseForRedirect.length
             ? `?${QueryString.stringify({
                 proposalId: listOfProposalsToUseForRedirect[0],
               })}`
-            : null
+            : ''
         }`}
       />
     ) : null
@@ -112,7 +113,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const [selectedCycle, setSelectedCycle] = useState<undefined | DropDownItemType>(NONE_CYCLE_SELECTED_OPTION)
 
   // Creating lists of proposals to show
-  const prpoposalsListsToShow = useMemo<ProposalsListType>(() => {
+  const proposalsListsToShow = useMemo<ProposalsListType>(() => {
     // If history page show only history proposals & apply filters to them
     if (isHistory)
       return [
@@ -145,7 +146,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
       ...(waitingProposalsIdsToBePaid?.length
         ? [
             {
-              title: 'Waiting to be paid',
+              title: 'Waiting for payment to be processed',
               type: 'waitingPaid',
               listName: WAITING_PAYMENT_PROPOSALS_LIST_NAME,
               proposalsIds: waitingProposalsIdsToBePaid,
@@ -191,17 +192,17 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
 
   // Generate proposal voters and paginate them
   const votersList = useMemo(() => {
-    const selectedProposalVotes = rightSideContentId ? proposalsMapper[rightSideContentId].votes : []
+    const selectedProposalVotes = rightSideContentId ? proposalsMapper[rightSideContentId]?.votes ?? [] : []
     return (
-      selectedProposalVotes?.reduce<ProposalVotersType>((acc, { voter_id, round, vote }) => {
-        const satelliteData = satelliteMapper[voter_id]
+      selectedProposalVotes?.reduce<ProposalVotersType>((acc, { voter, round, vote }) => {
+        const satelliteData = satelliteMapper[voter.address]
 
         if (satelliteData && round === 1) {
           acc.push({
             vote,
             name: satelliteData.name,
             avatar: satelliteData.image,
-            address: voter_id,
+            address: voter.address,
           })
         }
 
@@ -234,8 +235,8 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
       ) : (
         redirect ?? (
           <GovernanceStyled>
-            <GovernanceLeftContainer className={!prpoposalsListsToShow.length ? 'full-width' : ''}>
-              {isHistory && prpoposalsListsToShow.length ? (
+            <GovernanceLeftContainer className={!proposalsListsToShow.length ? 'full-width' : ''}>
+              {isHistory && proposalsListsToShow.length ? (
                 <>
                   <Checkbox
                     id="dropped-proposals"
@@ -256,8 +257,8 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                 </>
               ) : null}
 
-              {prpoposalsListsToShow.length ? (
-                prpoposalsListsToShow.map(({ title, proposalsIds, listName, type }) => {
+              {proposalsListsToShow.length ? (
+                proposalsListsToShow.map(({ title, proposalsIds, listName, type }) => {
                   return (
                     <>
                       <Proposals
@@ -267,7 +268,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                         title={title}
                         type={type}
                         listName={listName}
-                        key={`${proposalsIds.length}-${title}`}
+                        key={listName}
                       />
 
                       {/* Show this plug when we use cycle dd filter and some of the cycles don't have proposals in it */}
@@ -293,7 +294,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                   <H2Title>Satellite Voting History</H2Title>
                   {paginatedVotersList.map(({ vote, address, name, avatar }) => {
                     return (
-                      <VoterListItem>
+                      <VoterListItem key={address}>
                         <div className="left">
                           <ImageWithPlug imageLink={avatar} alt={`${name} avatar`} />
                           <div className="info">
