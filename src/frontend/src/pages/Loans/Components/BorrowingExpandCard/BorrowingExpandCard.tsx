@@ -4,7 +4,6 @@ import { useClickAway } from 'react-use'
 import { State } from 'reducers'
 
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
-import Expand from 'app/App.components/Expand/Expand.view'
 import { StatusMessage } from '../StatusMessage.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { BorrowingExpandCardMenuSection } from './BorrowingExpandCardMenuSection.view'
@@ -32,10 +31,11 @@ import {
   getStatusByCollateralRatio,
   loansTabNames,
 } from 'pages/Loans/Loans.const'
+import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
+import { useHistory, useLocation } from 'react-router'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
-  isOpenedVault?: boolean
   headerSufix?: React.ReactNode
   children?: React.ReactNode
   status?: string
@@ -59,7 +59,6 @@ export const BorrowingExpandCard = ({
   status,
   levelOfEarly,
   levelOfLate,
-  isOpenedVault,
   fee,
   apr,
   collateralBalance,
@@ -71,6 +70,12 @@ export const BorrowingExpandCard = ({
   DAOFee,
   hideTransactionHistory,
 }: BorrowingExpandCardPropsType) => {
+  const history = useHistory()
+  const location = useLocation()
+
+  const params = new URLSearchParams(location.search)
+  const vaultAddress = params.get('vaultAddress')
+
   const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
 
   const { loanTokens, mvkTokenOperators } = useSelector((state: State) => state.loans)
@@ -85,7 +90,7 @@ export const BorrowingExpandCard = ({
   )
 
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const [expanded, setExpanded] = useState(false)
+  const isExpanded = address === vaultAddress
 
   const [activeRepayBorrowTab, setActiveRepayBorrowTab] = useState(
     repayBorrowSlidingButtons.find((item) => item.active),
@@ -137,7 +142,7 @@ export const BorrowingExpandCard = ({
     isActionActive
 
   const ref = useRef<HTMLDivElement | null>(null)
-  useClickAway(ref, () => (notHandleClickAway ? null : setExpanded(false)))
+  useClickAway(ref, () => (notHandleClickAway ? null : () => {}))
 
   // use for borrow or repay
   // it scrolls until the current vault after the transaction and changing position
@@ -156,6 +161,20 @@ export const BorrowingExpandCard = ({
   const currentToken = useMemo(() => {
     return loanTokens.find(({ loanTokenData }) => loanTokenData.symbol === symbol)
   }, [symbol, loanTokens])
+
+  const handleOpenVault = () => {
+    params.append('vaultAddress', address)
+    history.replace({ ...location, search: params.toString() })
+  }
+
+  const handleCloseVault = () => {
+    params.delete('vaultAddress')
+    history.replace({ ...location, search: params.toString() })
+  }
+
+  const handleClickExpand = () => {
+    isExpanded ? handleCloseVault() : handleOpenVault()
+  }
 
   const handleSwitchTab = (switcher: 'repay' | 'repayAndBorrow') => (tabId: number) => {
     switch (switcher) {
@@ -281,7 +300,7 @@ export const BorrowingExpandCard = ({
   }, [activeRepayBorrowTab])
 
   useEffect(() => {
-    if (expanded && (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE)) {
+    if (isExpanded && (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE)) {
       // TODO: use abort api
       const controller = new AbortController()
       const signal = controller.signal
@@ -309,18 +328,14 @@ export const BorrowingExpandCard = ({
     }
 
     return () => {}
-  }, [vaultStatus, levelOfEarly, levelOfLate, expanded])
-
-  useEffect(() => {
-    setExpanded(Boolean(isOpenedVault))
-  }, [isOpenedVault])
+  }, [vaultStatus, levelOfEarly, levelOfLate, isExpanded])
 
   return (
     <div ref={ref}>
-      <Expand
-        getExpandedStatus={setExpanded}
-        isExpandedByDefault={expanded}
-        className={`expand-borrow-tab  ${expanded ? 'expandedCard' : ''}`}
+      <ExpandSimple
+        expanded={isExpanded}
+        onClick={handleClickExpand}
+        className={`expand-borrow-tab  ${isExpanded ? 'expandedCard' : ''}`}
         openButtonName={'View'}
         sufix={headerSufix}
         header={
@@ -457,7 +472,7 @@ export const BorrowingExpandCard = ({
             )}
           </BorrowingExpandedCard>
         )}
-      </Expand>
+      </ExpandSimple>
     </div>
   )
 }

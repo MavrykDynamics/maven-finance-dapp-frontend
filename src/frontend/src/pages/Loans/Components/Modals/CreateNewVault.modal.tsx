@@ -317,9 +317,7 @@ export const CreateNewVault = ({
     if (currentMarketAsset) {
       try {
         setVaultCreating(true)
-        const newVaultData = await dispatch(
-          triggerInitialVaultCreation(currentMarketAsset, vaultName.name),
-        )
+        const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset, vaultName.name))
         setCreatedVaultAddress?.(String(newVaultData))
         setNewVaultAddress(String(newVaultData))
       } catch (e) {

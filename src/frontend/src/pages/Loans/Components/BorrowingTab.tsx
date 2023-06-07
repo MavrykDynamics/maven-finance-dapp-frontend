@@ -26,7 +26,7 @@ export const BorrowingTab = ({ lendingControllerAddress, currentToken }: Borrowi
   const {
     loanTokenData: { gqlName, symbol },
   } = currentToken
-
+// TODO: use history push instead of this
   const [createdVaultId, setCreatedVaultAddress] = useState<null | string>(null)
   const [showZeroVaults, setShowZeroVaults] = useState(false)
   const { accountPkh } = useSelector((state: State) => state.wallet)
@@ -82,7 +82,6 @@ export const BorrowingTab = ({ lendingControllerAddress, currentToken }: Borrowi
                   isOwner
                   {...vault}
                   key={vault.borrowedAsset.symbol + '-' + idx}
-                  isOpenedVault={createdVaultId === vault.address}
                   DAOFee={DAOFee}
                 />
               )

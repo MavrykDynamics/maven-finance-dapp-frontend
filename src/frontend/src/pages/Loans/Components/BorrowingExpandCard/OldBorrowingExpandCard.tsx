@@ -23,7 +23,7 @@ import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
-import Expand from 'app/App.components/Expand/Expand.view'
+import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusMessage } from '../StatusMessage.view'
@@ -175,12 +175,12 @@ export const OldBorrowingExpandCard = ({
   useEffect(() => {
     setExpanded(Boolean(isOpenedVault))
   }, [isOpenedVault])
-
+// TODO: add valid expand data like in new component
   return (
     <div ref={ref}>
-      <Expand
-        getExpandedStatus={setExpanded}
-        isExpandedByDefault={expanded}
+      <ExpandSimple
+        expanded={expanded}
+        onClick={() => {}}
         className={`expand-borrow-tab  ${expanded ? 'expandedCard' : ''}`}
         sufix={headerSufix}
         header={
@@ -631,7 +631,7 @@ export const OldBorrowingExpandCard = ({
             ) : null}
           </BorrowingExpandedCard>
         )}
-      </Expand>
+      </ExpandSimple>
     </div>
   )
 }

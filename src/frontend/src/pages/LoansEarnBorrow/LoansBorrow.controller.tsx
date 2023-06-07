@@ -88,7 +88,7 @@ export const LoansBorrow = () => {
     [accountPkh, allVaultsIds, vaultsMapper],
   )
 
-  const { openBorrowPopup } = useContext(loansPopupsContext)
+  const { openBorrowPopup, openCreateVaultPopup } = useContext(loansPopupsContext)
 
   const markets: MarketType[] = useMemo(
     () =>
@@ -114,7 +114,14 @@ export const LoansBorrow = () => {
 
     // redirect specific asset market if user does not have vaults with collateral ratio > 200
     if (!validVaultId) {
-      history.push(`/loans/${marketSymbol}/borrowTab`)
+      openCreateVaultPopup?.({
+        currentMarketAsset: marketSymbol === 'XTZ' ? 'tez' : marketSymbol.toLowerCase(),
+        setCreatedVaultAddress: (address: string) => {
+          if (!address) return
+          history.push(`/loans/${marketSymbol}/borrowTab?vaultAddress=${address}`)
+        },
+      })
+
       return
     }
 
