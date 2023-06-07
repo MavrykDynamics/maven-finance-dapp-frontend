@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
 import { Link, useHistory, useLocation } from 'react-router-dom'
@@ -95,7 +95,7 @@ export const OldBorrowingExpandCard = ({
   const history = useHistory()
   const location = useLocation()
 
-  const params = new URLSearchParams(location.search)
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search])
   const vaultAddress = params.get('vaultAddress')
 
   const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
