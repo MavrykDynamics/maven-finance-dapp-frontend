@@ -66,3 +66,11 @@ export function unknownToError(rawError: unknown): Error | ExtendedError {
 
   return new Error('unknown Error with no message, stack and payload')
 }
+
+export function isAbortError(rawError: unknown): boolean {
+  const typedError = unknownToError(rawError)
+
+  if (typedError.name === 'AbortError') return true
+
+  return false
+}
