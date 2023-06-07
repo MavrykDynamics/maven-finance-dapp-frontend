@@ -20,20 +20,32 @@ import {
 
 const Toast = ({ toast }: { toast: ToasterMessage }) => {
   const [toastAnimation, setToastAnimation] = useState<ToasterAnimationType>(TOASTER_REVEAL)
-  const { removeToasterMessage } = useToasterContext()
-  const { title, message, type, unique } = toast
+  const { removeToasterMessage, deleteToasterFromArray } = useToasterContext()
+  const { title, message, type, unique, hide } = toast
 
+  // effect tu update toast property "hide" to 'true' for playing hide animation
   useEffect(() => {
     if (type !== TOASTER_LOADING) {
       ;(async () => {
         await sleep(TOAST_TIME_TO_LIVE)
-        setToastAnimation(TOASTER_HIDE)
-        // wait for animation finish
-        await sleep(ANIMATION_DURATION)
         removeToasterMessage(unique)
       })()
     }
   }, [removeToasterMessage, type, unique])
+
+  // play hide animation and complitely delete toast
+  useEffect(() => {
+    if (hide) {
+      ;(async () => {
+        setToastAnimation(TOASTER_HIDE)
+        // wait for animation finish
+        await sleep(ANIMATION_DURATION)
+        deleteToasterFromArray(unique)
+      })()
+    }
+  }, [deleteToasterFromArray, hide, unique])
+
+  console.log('render')
 
   return (
     <ToasterStyled animationType={toastAnimation} delay={ANIMATION_DURATION} distance={500}>
@@ -56,7 +68,7 @@ const Toast = ({ toast }: { toast: ToasterMessage }) => {
 }
 
 export const ToasterMessages = () => {
-  const { messages, removeToasterMessage } = useToasterContext()
+  const { messages, deleteToasterFromArray } = useToasterContext()
 
   // remove toasts starting from the oldest if messages limit was passed
   useEffect(() => {
@@ -65,10 +77,10 @@ export const ToasterMessages = () => {
       const _messages = messages.filter((m) => m.type !== TOASTER_LOADING)
       Array.from({ length: messagesToRemoveCount }).forEach((_, idx) => {
         if (!_messages[idx]) return
-        removeToasterMessage(_messages[idx].unique)
+        deleteToasterFromArray(_messages[idx].unique)
       })
     }
-  }, [messages, removeToasterMessage])
+  }, [messages, deleteToasterFromArray])
 
   if (!messages.length) return null
 

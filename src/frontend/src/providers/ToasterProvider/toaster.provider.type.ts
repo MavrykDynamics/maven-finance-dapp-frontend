@@ -24,6 +24,7 @@ export type ToasterMessage = {
   title: string
   message: string
   unique: string
+  hide: boolean
 }
 
 export interface ErrorTransfer {
@@ -45,6 +46,7 @@ export type ToasterContextType = {
   loading: InstanceType<typeof ToasterProvider>['loading']
   error: CustomErrors | null
   removeToasterMessage: InstanceType<typeof ToasterProvider>['removeToasterMessage']
+  deleteToasterFromArray: InstanceType<typeof ToasterProvider>['deleteToasterFromArray']
   addToasterMessage?: InstanceType<typeof ToasterProvider>['addToasterMessage']
   setError: InstanceType<typeof ToasterProvider>['setError']
   messages: ToasterMessage[]
