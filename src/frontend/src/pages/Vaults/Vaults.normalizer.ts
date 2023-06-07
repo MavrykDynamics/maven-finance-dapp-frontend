@@ -5,19 +5,20 @@ import { FIXED_POINT_ACCURACY, BLOCKS_PER_MINUTE } from 'utils/constants'
 
 import { State } from 'reducers'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { LoansGQL, LoansVaultType, CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
-
 import {
-  getAssetMetadata,
-  calculateAccruedInterest,
-  calcCollateralRatio,
-  isTezosAsset,
-} from 'pages/Loans/Loans.helpers'
+  LendingControllerGQL,
+  LoansVaultType,
+  CollateralType,
+  DepositorsFlagType,
+} from 'utils/TypesAndInterfaces/Loans'
+
+import { getAssetMetadata, calculateAccruedInterest, calcCollateralRatio } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount, calculateLiquidationPrice } from './calcFunctionsForVault'
+import { vaultsStatuses } from './Vaults.consts'
 
 type VaultsStorageProps = {
-  lendingController: LoansGQL
+  lendingController: LendingControllerGQL
   accountPkh?: string
   feeds: State['dataFeeds']['feedsLedger']
   dipDupTokens: State['tokens']['dipDupTokens']
@@ -130,7 +131,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         // Need one source to get status like vaults or loans.
         // Because at the moment the data is different for the same items
 
-        const status = getStatusByCollateralRatio(collateralRatio)
+        const status = borrowedAmount === 0 ? vaultsStatuses.ACTIVE : getStatusByCollateralRatio(collateralRatio)
 
         // gotStatusByCollateralRatio !== 'no status'
         //   ? gotStatusByCollateralRatio
@@ -224,7 +225,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
             Number(item.lending_controller?.liquidation_delay_in_minutes) * BLOCKS_PER_MINUTE,
 
           // Permissions
-          operators: [],
           sMVKDelegatedTo: '',
           depositors,
           deporsitorsFlag,
@@ -277,7 +277,7 @@ const normalizeCollateralAssets = ({
 }: {
   feeds: State['dataFeeds']['feedsLedger']
   dipDupTokens: State['tokens']['dipDupTokens']
-  collateralAssets: LoansGQL['vaults'][number]['collateral_balances']
+  collateralAssets: LendingControllerGQL['vaults'][number]['collateral_balances']
 }): {
   normalizedCollaterals: Array<CollateralType>
   totalRow: CollateralType

@@ -3,7 +3,7 @@ import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
-import { Lending_Controller_History_Data, Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
+import { Lending_Controller_History_Data } from 'utils/generated/graphqlTypes'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import {
   LendingItemType,
@@ -20,6 +20,7 @@ import { assetDecimalsToShow } from './Loans.const'
 
 // CONST FOR HELPERS
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
+const TWO_WEEKS_IN_MS = ONE_DAY_IN_MS * 14
 
 // GET ASSET METADATA
 export const isTezosAsset = (tokenName: string) =>
@@ -95,27 +96,43 @@ export const getTransactionHistory = (
   feeds: State['dataFeeds']['feedsLedger'],
 ) =>
   history_data.reduce<TransactionHistoryReduceType>(
-    (acc, { type, amount, timestamp, sender: { address: senderAddress }, operation_hash, loan_token }) => {
+    (
+      acc,
+      {
+        type,
+        amount,
+        timestamp,
+        sender: { address: senderAddress },
+        operation_hash,
+        loan_token,
+        collateral_token,
+        vault,
+      },
+    ) => {
       if (!loan_token?.token?.token_address) return acc
 
       const assetMetadata = getAssetMetadata({
-        tokenAddress: loan_token.token.token_address,
-        tokenName: loan_token.loan_token_name,
+        // if we have collateral_token, that means it’s a vault operation
+        // if we do not have collateral_token, that means it’s a loan operation
+        tokenAddress: collateral_token?.token?.token_address ?? loan_token.token.token_address,
+        tokenName: collateral_token?.token_name ?? loan_token.loan_token_name,
         dipDupTokens,
         feeds,
-        oracleId: String(loan_token.oracle_id),
+        oracleId: String(collateral_token?.oracle_id ?? loan_token.oracle_id),
       })
 
       if (assetMetadata) {
         const transformedAmount = amount / 10 ** assetMetadata.decimals
         const descrByType = getDescrByType(type)
+
         if (descrByType) {
           acc.transactionHistory.push({
             amount: transformedAmount,
             date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
+            vaultAddress: vault?.vault?.address,
             userAddress: senderAddress,
             operationHash: operation_hash,
-            descr: getDescrByType(type),
+            descr: descrByType,
             tokenSymbol: assetMetadata.symbol,
           })
         }
@@ -126,8 +143,7 @@ export const getTransactionHistory = (
             acc.lending24hVolume += transformedAmount * assetMetadata.rate
           }
 
-          // TODO: add valid time diff checking
-          if (dayjs().diff(timestamp) <= ONE_DAY_IN_MS) {
+          if (dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
             acc.marketLiquidityChartData.push({
               value: (acc.marketLiquidityChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
               time: new Date(timestamp).getTime() as UTCTimestamp,
@@ -141,8 +157,7 @@ export const getTransactionHistory = (
             acc.lending24hVolume -= transformedAmount * assetMetadata.rate
           }
 
-          // TODO: add valid time diff checking
-          if (dayjs().diff(timestamp) <= ONE_DAY_IN_MS) {
+          if (dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
             acc.marketCollateralChartData.push({
               value: (acc.marketLiquidityChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
               time: new Date(timestamp).getTime() as UTCTimestamp,
@@ -164,18 +179,16 @@ export const getTransactionHistory = (
           }
         }
 
-        // TODO: add valid time diff checking
         // Deposit collateral
-        if ((type === 4 || type === 6) && dayjs().diff(timestamp) <= ONE_DAY_IN_MS) {
+        if ((type === 4 || type === 6) && dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
           acc.marketCollateralChartData.push({
             value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
             time: new Date(timestamp).getTime() as UTCTimestamp,
           })
         }
 
-        // TODO: add valid time diff checking
         // Withdraw collateral
-        if ((type === 5 || type === 7) && dayjs().diff(timestamp) <= ONE_DAY_IN_MS) {
+        if ((type === 5 || type === 7) && dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
           acc.marketCollateralChartData.push({
             value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
             time: new Date(timestamp).getTime() as UTCTimestamp,
@@ -270,6 +283,7 @@ export const getChartData = (
         // Deposit collateral
         if (type === 4 || type === 6) {
           const collateralAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
+
           acc.collateralChartData.push({
             value: (acc.collateralChartData.at(-1)?.value ?? 0) + collateralAmount,
             time: new Date(timestamp).getTime() as UTCTimestamp,
@@ -279,6 +293,7 @@ export const getChartData = (
         // Withdraw collateral
         if (type === 5 || type === 7) {
           const collateralAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
+
           acc.collateralChartData.push({
             value: (acc.collateralChartData.at(-1)?.value ?? 0) - collateralAmount,
             time: new Date(timestamp).getTime() as UTCTimestamp,
@@ -452,4 +467,12 @@ export const getLoansInputMaxAmount = (amount: number = 0, decimals: number = as
   const blockchainNumberWithoutDecimals = Math.trunc(convertNumberForContractCall({ number: amount, grade: decimals }))
 
   return String(convertNumberForClient({ number: blockchainNumberWithoutDecimals, grade: decimals }))
+}
+
+/**
+ * @param collateralRatio is a number from 0 to 250. Which usually used to display collateral ratio in persentage
+ * @returns number from 1 to 100. Use this result for currentPersentage prop into GradientDiagram component
+ */
+export const getCollateralRatioByPersentage = (collateralRatio: number) => {
+  return Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))
 }

@@ -7,9 +7,12 @@ import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
+import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/BorrowingExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { OldBorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/OldBorrowingExpandCard'
+import { vaultTabs } from '../Vaults.view'
+import { Button } from 'app/App.components/Button/Button.controller'
 
 // styles
 import { VaultsCardDropDown } from './../Vaults.style'
@@ -32,10 +35,17 @@ import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
-import getTimestampByLevel from 'utils/api/getTimestampByLevel'
-import { vaultTabs } from '../Vaults.view'
+import { LIQUIDATION_COST, LIQUIDATION_PRICE, VAULT_RISK } from 'texts/tooltips/vault.text'
+import { getStringWithoutUnderline } from 'utils/parse'
+import {
+  getTimestampByLevelHeaders,
+  getTimestampByLevelSchema,
+  getTimestampByLevelUrl,
+} from 'utils/api/api-helpers/getTimestampByLevel'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
-import { Button } from 'app/App.components/Button/Button.controller'
+import { isAbortError } from 'errors/error'
+import { api } from 'utils/api/api'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 const findStatusInfo = (
   status: string,
@@ -117,6 +127,8 @@ export const VaultsCard = (props: Props) => {
     vaultTab,
   } = props
 
+  const { bug } = useToasterContext()
+
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { DAOFee } = useSelector((state: State) => state.loans.config)
 
@@ -134,42 +146,55 @@ export const VaultsCard = (props: Props) => {
 
   const isMarkStatus = vaultsStatuses.MARK === status
 
-  const getCountdownTimestamp = async (levelOfEarly: number, levelOfLate: number) => {
-    const [timestampOfEarly, timestampOfLate] = await Promise.all([
-      getTimestampByLevel(levelOfEarly),
-      getTimestampByLevel(levelOfLate),
-    ])
-
-    return {
-      timestampOfEarly,
-      timestampOfLate,
-    }
-  }
-
   const liquidateModalHandler = () => {
     openLiquidateVaultPopup({ ...props })
   }
 
   useEffect(() => {
     if (status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.LIQUIDATABLE) {
+      if (!levelOfEarly || !levelOfLate) return
+
+      const abortEarlyController = new AbortController()
+      const abortLatelyController = new AbortController()
+
       ;(async () => {
-        if (!levelOfEarly || !levelOfLate) {
-          setTimerTimestamp(undefined)
-          return
+        try {
+          const [{ data: timestampOfEarly }, { data: timestampOfLate }] = await Promise.all([
+            api(
+              getTimestampByLevelUrl(levelOfEarly),
+              { signal: abortEarlyController.signal, headers: getTimestampByLevelHeaders },
+              getTimestampByLevelSchema,
+            ),
+            api(
+              getTimestampByLevelUrl(levelOfLate),
+              { signal: abortLatelyController.signal, headers: getTimestampByLevelHeaders },
+              getTimestampByLevelSchema,
+            ),
+          ])
+
+          const timestamp =
+            new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
+
+          setTimerTimestamp(timestamp)
+        } catch (e) {
+          // TODO: handle fetch errors when error boundary will be ready
+          if (!isAbortError(e)) {
+            console.error('getting timestamp by lvl error: ', e)
+          }
+          bug('Unexpected error happened occured, please reload the page')
         }
-
-        const response = await getCountdownTimestamp(levelOfEarly, levelOfLate)
-        const timestamp =
-          new Date(response.timestampOfEarly).getTime() -
-          new Date(response.timestampOfLate).getTime() +
-          new Date().getTime()
-
-        setTimerTimestamp(timestamp)
       })()
+
+      return () => {
+        abortEarlyController.abort()
+        abortLatelyController.abort()
+      }
     }
+
+    return () => null
   }, [status, levelOfEarly, levelOfLate])
 
-  const headerSufix = <StatusFlag status={statusColor} text={status} className="sufix" />
+  const headerSufix = <StatusFlag status={statusColor} text={getStringWithoutUnderline(status)} className="sufix" />
 
   const generalExpand = (
     <VaultsCardDropDown>
@@ -183,43 +208,22 @@ export const VaultsCard = (props: Props) => {
               <TzAddress type={CYAN} tzAddress={ownerId} />
             </div>
             <div>
-              <div className="title">
-                Vault Risk
-                <CustomTooltip
-                  text="The level of risk of being liquidated your vault is at."
-                  iconId="info"
-                  className="info-icon"
-                />
-              </div>
-
+              Vault Risk
+              <CustomTooltip text={VAULT_RISK} iconId="info" className="tooltip" />
               <div className={statusColor}>{statusText}</div>
             </div>
           </div>
 
           <div className="group">
             <div>
-              <div className="title">
-                Liquidation Price
-                <CustomTooltip
-                  text="Price value of your vault’s collateral at which your vault can be liquidated."
-                  iconId="info"
-                  className="info-icon"
-                />
-              </div>
-
+              Liquidation Price
+              <CustomTooltip iconId="info" text={LIQUIDATION_PRICE} className="tooltip" />
               <CommaNumber value={liquidationPrice ?? 0} decimalsToShow={2} beginningText="$" className="value" />
             </div>
 
             <div>
-              <div className="title">
-                Liquidation Cost
-                <CustomTooltip
-                  text="How much it will cost to liquidated this vault."
-                  iconId="info"
-                  className="info-icon"
-                />
-              </div>
-
+              Liquidation Cost
+              <CustomTooltip text={LIQUIDATION_COST} iconId="info" className="tooltip" />
               <CommaNumber value={liquidationMax} decimalsToShow={2} beginningText="$" className="value" />
             </div>
           </div>
@@ -313,17 +317,36 @@ export const VaultsCard = (props: Props) => {
     </VaultsCardDropDown>
   )
 
-  return (
-    <>
-      {(vaultTab === vaultTabs.ALL || vaultTab === vaultTabs.MY) && (
-        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} isOwner={isOwner}>
-          {!isOwner && generalExpand}
-        </BorrowingExpandCard>
-      )}
+  switch (vaultTab) {
+    case vaultTabs.MY:
+      return (
+        <BorrowingExpandCard
+          {...props}
+          headerSufix={headerSufix}
+          DAOFee={DAOFee}
+          isOwner={isOwner}
+          hideTransactionHistory
+        />
+      )
 
-      {vaultTab === vaultTabs.PERMISSIONED && (
-        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
-      )}
-    </>
-  )
+    case vaultTabs.PERMISSIONED:
+      return (
+        // TODO: use old component, because need old view for permission vaults.
+        // After all redesign in the future, we will move everything into BorrowingExpandCard component
+        <OldBorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
+      )
+
+    default:
+      return (
+        <BorrowingExpandCard
+          {...props}
+          headerSufix={headerSufix}
+          DAOFee={DAOFee}
+          isOwner={isOwner}
+          hideTransactionHistory
+        >
+          {generalExpand}
+        </BorrowingExpandCard>
+      )
+  }
 }
