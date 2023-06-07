@@ -14,6 +14,8 @@ import Mobile from './app/App.components/Mobile/Mobile.view'
 
 import './styles/fonts.css'
 import './styles/animations.css'
+import ToasterProvider from 'providers/ToasterProvider/toaster.provider'
+import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
 
 export const Root = () => {
   const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
@@ -23,7 +25,10 @@ export const Root = () => {
         {/* <PersistGate loading={null} persistor={persistor}> */}
         <DarkThemeProvider>
           <GlobalStyle />
-          {isMobile ? <Mobile /> : <App />}
+          <ToasterProvider>
+            {isMobile ? <Mobile /> : <App />}
+            <ToasterMessages />
+          </ToasterProvider>
         </DarkThemeProvider>
         {/* </PersistGate> */}
       </Provider>
