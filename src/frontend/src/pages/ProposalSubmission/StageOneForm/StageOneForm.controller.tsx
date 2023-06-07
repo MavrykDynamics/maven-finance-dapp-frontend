@@ -18,6 +18,9 @@ import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.contr
 import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { containSpaces } from 'app/App.utils/input'
+import { Info } from 'app/App.components/Info/Info.view'
+import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
+import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 
 export const StageOneForm = ({
   proposalId,
@@ -34,6 +37,10 @@ export const StageOneForm = ({
     proposalSourceCodeMaxLength,
     governancePhase,
   } = useSelector((state: State) => state.governance.config)
+
+  const {
+    user: { isNewlyRegisteredSatellite },
+  } = useSelector((state: State) => state.wallet)
 
   const isProposalSubmitted = proposalId >= 0
   const isProposalPeriod = governancePhase === 'PROPOSAL'
@@ -102,6 +109,7 @@ export const StageOneForm = ({
   return (
     <>
       <div className="stage-descr">{STAGE_1_DESCRIPTION}</div>
+      {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
 
       <ProposalSubmittionStageOneBody isProposalSubmitted={isProposalSubmitted}>
         {isProposalSubmitted ? (
