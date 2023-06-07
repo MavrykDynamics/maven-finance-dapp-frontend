@@ -1,82 +1,57 @@
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
-import { defaultAggregatorNameMaxLength } from 'app/App.components/Input/Input.constants'
 import { UTCTimestamp } from 'lightweight-charts'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+
 import { percentageDifference } from 'utils/calcFunctions'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
-import {
-  AggregatorGraphQL,
-  AggregatorFactoryGraphQL,
-  DipdupContractMetadataGraphQL,
-} from 'utils/TypesAndInterfaces/Aggregator'
-import { DataFeedsHistoryGraphQL, Feed } from 'utils/TypesAndInterfaces/DataFeeds'
+import { Feed, FeedHistoryData, FeedGqlType } from 'utils/TypesAndInterfaces/DataFeeds'
+import { defaultAggregatorNameMaxLength } from 'app/App.components/Input/Input.constants'
+import { AggregatorFactoryGraphQL } from 'utils/TypesAndInterfaces/Aggregator'
 
-export function normalizeFeeds({
-  aggregator,
-  aggregator_factory,
-  dipdup_contract_metadata,
-}: {
-  aggregator: AggregatorGraphQL[]
-  aggregator_factory: AggregatorFactoryGraphQL[]
-  dipdup_contract_metadata: DipdupContractMetadataGraphQL[]
-}) {
+export const normalizeFeed = (feedGql: FeedGqlType) => {
+  const dataFeedsHistory = normalizeDataFeedsHistory(feedGql.history_data)
+  const dataFeedsVolatility = normalizeDataFeedsVolatility(feedGql.history_data)
+
+  const category = feedGql?.metadata?.category ?? null
+  const icon = feedGql?.metadata?.icon ?? null
+  const network = feedGql?.network ?? null
+
+  const { history_data, ...restOfTheItem } = feedGql
+
+  return {
+    ...restOfTheItem,
+    category,
+    network,
+    amount: feedGql.last_completed_data / 10 ** feedGql.decimals,
+    oraclesResponces: feedGql.last_completed_data_pct_oracle_resp / 100,
+    dataFeedsHistory: dataFeedsHistory,
+    dataFeedsVolatility: dataFeedsVolatility,
+    icon,
+  }
+}
+
+export function normalizeFeeds(feeds: Array<FeedGqlType>, aggregator_factory: AggregatorFactoryGraphQL[]) {
   const dataFeedUniqueCategories = new Set<string>()
 
-  const getCategoryAndNetwork = (address: string) => {
-    const foundItem = dipdup_contract_metadata?.find((element) => element.contract === address) as
-      | { metadata?: { category?: string }; network?: string }
-      | undefined
+  const feedsLedger = feeds.map((item) => {
+    const feed = normalizeFeed(item)
 
-    const category = foundItem?.metadata?.category
-    const network = foundItem?.network || null
-
-    if (!category) {
-      return {
-        category: null,
-        network,
-      }
+    if (feed.category) {
+      dataFeedUniqueCategories.add(feed.category)
     }
 
-    dataFeedUniqueCategories.add(category)
-
-    return {
-      category,
-      network,
-    }
-  }
-
-  const feedsLedger = aggregator.map<Feed>((item) => {
-    const dataFeedsHistory = normalizeDataFeedsHistory(item.history_data)
-    const dataFeedsVolatility = normalizeDataFeedsVolatility(item.history_data)
-
-    const { icon } =
-      (dipdup_contract_metadata?.find(({ contract }) => contract === item.address)?.metadata as {
-        icon?: string
-      }) ?? {}
-
-    const { history_data, ...restOfTheItem } = item
-
-    const feed = {
-      ...restOfTheItem,
-      ...getCategoryAndNetwork(item.address),
-      amount: item.last_completed_data / 10 ** item.decimals,
-      oraclesResponces: item.last_completed_data_pct_oracle_resp / 100,
-      dataFeedsHistory: dataFeedsHistory,
-      dataFeedsVolatility: dataFeedsVolatility,
-      icon,
-    }
     return feed
   })
 
   return {
     feedsLedger,
-    feedCategories: [...dataFeedUniqueCategories],
+    feedsCategories: [...dataFeedUniqueCategories],
     config: {
       feedNameMaxLength: aggregator_factory[0]?.aggregator_name_max_length || defaultAggregatorNameMaxLength,
     },
   }
 }
 
-export function normalizeDataFeedsHistory(historyData: DataFeedsHistoryGraphQL[]) {
+export function normalizeDataFeedsHistory(historyData: FeedHistoryData) {
   return historyData?.length
     ? historyData
         .map((item) => {
@@ -89,7 +64,7 @@ export function normalizeDataFeedsHistory(historyData: DataFeedsHistoryGraphQL[]
     : []
 }
 
-export function normalizeDataFeedsVolatility(historyData: DataFeedsHistoryGraphQL[]) {
+export function normalizeDataFeedsVolatility(historyData: FeedHistoryData) {
   return historyData?.length >= 2
     ? historyData
         .reduce<Array<AreaChartPlotType>>((acc, { data, aggregator: { decimals }, timestamp }, idx, arr) => {

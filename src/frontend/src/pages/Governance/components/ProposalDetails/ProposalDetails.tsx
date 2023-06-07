@@ -141,26 +141,25 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         handleProposalVote={handleProposalRoundVote}
         selectedProposal={proposal}
         vote={proposal.votes.find(
-          ({ voter_id, round }) =>
-            voter_id === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
+          ({ voter: { address }, round }) =>
+            address === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
         )}
         isVoteActive={(votingTill ?? 0) >= Date.now()}
         govPhase={governancePhase}
       />
 
-      {isExecuteProposal ? (
+      {isExecuteProposal || isPaymentProposal ? (
         <div className="proposal-button-action">
-          <Button onClick={handleClickExecuteProposal} disabled={isActionActive} kind={BUTTON_PRIMARY}>
-            Execute Proposal
-          </Button>
-        </div>
-      ) : null}
-
-      {isPaymentProposal ? (
-        <div className="proposal-button-action">
-          <Button onClick={handleClickProcessPayment} disabled={isActionActive} kind={BUTTON_PRIMARY}>
-            Process Payment
-          </Button>
+          {isExecuteProposal ? (
+            <Button onClick={handleClickExecuteProposal} disabled={isActionActive} kind={BUTTON_PRIMARY}>
+              Execute Proposal
+            </Button>
+          ) : null}
+          {isPaymentProposal ? (
+            <Button onClick={handleClickProcessPayment} disabled={isActionActive} kind={BUTTON_PRIMARY}>
+              Process Payment
+            </Button>
+          ) : null}
         </div>
       ) : null}
 
@@ -183,9 +182,13 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Invoice</div>
         <div className="proposal-data-block-value">
-          <a href={proposal.invoice} target="_blank" rel="noreferrer" className="isCyan">
-            {proposal.invoice}
-          </a>
+          {proposal.invoice ? (
+            <a href={proposal.invoice} target="_blank" rel="noreferrer" className="isCyan">
+              {proposal.invoice}
+            </a>
+          ) : (
+            'No link for an invoice given'
+          )}
         </div>
       </div>
 

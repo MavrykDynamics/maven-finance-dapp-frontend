@@ -16,7 +16,9 @@ export const VESTING_STORAGE_QUERY = `
       }
 
       vestees {
-        vestee_id
+        vestee {
+          address
+        }
         total_remainder
         total_allocated_amount
         claim_amount_per_month

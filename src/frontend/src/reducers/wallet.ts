@@ -37,6 +37,7 @@ export interface UserState {
   isSatellite: boolean
   isVestee: boolean
   isNewlyRegisteredSatellite: boolean
+  govActionsCount: number
 
   // loans data
   userLoansData: {
@@ -104,6 +105,7 @@ export const DEFAULT_USER: UserState = {
   isSatellite: false,
   isVestee: false,
   isNewlyRegisteredSatellite: false,
+  govActionsCount: 0,
 
   userLoansData: {
     userLendings: [],

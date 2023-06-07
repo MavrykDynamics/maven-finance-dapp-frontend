@@ -18,7 +18,7 @@ import { ProposalListContainer, ProposalListItem, ProposalItemLeftSide } from '.
 type ProposalsProps = {
   proposalsList: Array<number>
   handleItemSelect: (proposalListItem: ProposalRecordType) => void
-  selectedProposalId: number | undefined
+  selectedProposalId: number | null
   title: string
   type: string
   listName: string

@@ -46,6 +46,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
   }
 
   .proposal-button-action {
+    margin-top: 20px;
     margin-left: auto;
     width: fit-content;
   }

@@ -107,7 +107,13 @@ export const getNewSatelliteMetrics = ({
       const filteredSatellitesObservations = oracles
         .map(({ observations }) => observations)
         .flat()
-        .filter(({ oracle: { user_id } }) => user_id === satelliteAddress)
+        .filter(
+          ({
+            oracle: {
+              user: { address },
+            },
+          }) => address === satelliteAddress,
+        )
       return acc.concat(filteredSatellitesObservations)
     }, [])
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
@@ -125,35 +131,37 @@ export const getNewSatelliteMetrics = ({
 }
 
 export const getSatelliteOracleRecords = ({ user: { aggregator_oracles = [] } }: SatelliteRecordGraphQl) => {
-  return aggregator_oracles.map(({ aggregator: { oracles, address: feedAddress }, user_id: oracleAddress }) => {
-    // getting rewards for oracle per feed
-    const { sMVKReward, XTZReward } = oracles.reduce(
-      (acc, { rewards, user_id: rewardUserId }) => {
-        rewards.forEach(({ type, reward }) => {
-          if (type === 0 && rewardUserId === oracleAddress) {
-            acc.XTZReward += calcWithoutMu(reward)
-          }
+  return aggregator_oracles.map(
+    ({ aggregator: { oracles, address: feedAddress }, user: { address: oracleAddress } }) => {
+      // getting rewards for oracle per feed
+      const { sMVKReward, XTZReward } = oracles.reduce(
+        (acc, { rewards, user: { address: rewardUserId } }) => {
+          rewards.forEach(({ type, reward }) => {
+            if (type === 0 && rewardUserId === oracleAddress) {
+              acc.XTZReward += calcWithoutMu(reward)
+            }
 
-          if (type === 1 && rewardUserId === oracleAddress) {
-            acc.sMVKReward += calcWithoutPrecision(reward)
-          }
-        })
+            if (type === 1 && rewardUserId === oracleAddress) {
+              acc.sMVKReward += calcWithoutPrecision(reward)
+            }
+          })
 
-        return acc
-      },
-      {
-        sMVKReward: 0,
-        XTZReward: 0,
-      },
-    )
+          return acc
+        },
+        {
+          sMVKReward: 0,
+          XTZReward: 0,
+        },
+      )
 
-    return {
-      feedAddress,
-      oracleAddress,
-      sMVKReward,
-      XTZReward,
-    }
-  })
+      return {
+        feedAddress,
+        oracleAddress,
+        sMVKReward,
+        XTZReward,
+      }
+    },
+  )
 }
 
 export const getSatelliteVotings = ({
@@ -217,7 +225,7 @@ export const getSatelliteVotings = ({
   }
 }
 
-type Snapshot = Pick<Governance_Satellite_Snapshot, 'user_id' | 'total_voting_power'>
+type Snapshot = Pick<Governance_Satellite_Snapshot, 'user' | 'total_voting_power'>
 /**
  * @param snapshots array of objects with user_id and total_voting_power
  * @param cycle current active cycle (can be 0 if cycle hadn't started yet)
@@ -230,14 +238,14 @@ export const createSatelliteSnapshotsByIds = (snapshots: Snapshot[], cycle: numb
   const snapshotsWithoutDuplicates: Snapshot[] = []
 
   for (const obj of snapshots) {
-    if (!uniqueIds.has(obj.user_id)) {
+    if (!uniqueIds.has(obj.user.address)) {
       snapshotsWithoutDuplicates.push(obj)
-      uniqueIds.add(obj.user_id)
+      uniqueIds.add(obj.user.address)
     }
   }
 
   return snapshotsWithoutDuplicates.reduce((acc: { [key: string]: Snapshot }, s) => {
-    acc[s.user_id] = { ...s }
+    acc[s.user.address] = { ...s }
     return acc
   }, {})
 }
@@ -262,7 +270,7 @@ export const normallizeSatellite = (
 
   const satelliteMetrics = getNewSatelliteMetrics({
     ...metricsData,
-    satelliteAddress: satelliteRecord.user_id,
+    satelliteAddress: satelliteRecord.user.address,
     satelliteVotings: { proposalVotingHistory, financialRequestsVotes, emergencyGovernanceVotes, satelliteActionVotes },
   })
 
@@ -296,7 +304,7 @@ export const normallizeSatellite = (
   }
 
   return {
-    address: satelliteRecord.user_id,
+    address: satelliteRecord.user.address,
     description: satelliteRecord.description,
     website: satelliteRecord.website,
     image: satelliteRecord.image,

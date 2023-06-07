@@ -22,7 +22,9 @@ export const EMERGENCY_GOVERNANCE_STORAGE_QUERY = `
         execution_datetime
         expiration_timestamp
         id
-        proposer_id
+        proposer {
+          address
+        }
         smvk_percentage_required
         smvk_required_for_trigger
         start_timestamp
@@ -32,7 +34,9 @@ export const EMERGENCY_GOVERNANCE_STORAGE_QUERY = `
           id
           smvk_amount
           timestamp
-          voter_id
+          voter {
+            address
+          }
         }
         start_level
         total_smvk_votes

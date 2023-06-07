@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import AvatarEditor from 'react-avatar-editor'
-import { PopupContainer, PopupContainerWrapper } from '../SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from '../popup/PopupMain.style'
 import {
   UserProfileEditorStyled,
   UserProfileEditorRotate,
@@ -9,7 +9,7 @@ import {
 } from './UserProfileEditor.style'
 import Icon from '../Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
-import { PRIMARY, BUTTON_SIMPLE, BUTTON_ROUND, BUTTON_WIDE, BUTTON_THIRD } from '../Button/Button.constants'
+import { PRIMARY, BUTTON_ROUND, BUTTON_WIDE, BUTTON_THIRD } from '../Button/Button.constants'
 
 const rotateSides = {
   LEFT: 'left',

@@ -41,14 +41,14 @@ export function normalizeCouncilActions(
   const normalizedActions = storage.reduce<CouncilActionsType>((acc, item) => {
     const action: CouncilActionType = {
       actionType: item.action_type,
-      councilId: item.council_id ?? item.break_glass_id,
+      councilId: item.council?.address ?? item.break_glass?.address,
       executed: item.executed,
       id: item.id,
-      initiatorId: item.initiator_id,
+      initiatorId: item.initiator.address,
       signersCount: item.signers_count,
       startDatetime: item.start_datetime ?? '',
       parameters: item.parameters,
-      councilSize: item.council_size_snapshot
+      councilSize: item.council_size_snapshot,
     }
 
     acc.actionsMapper[action.id] = action
@@ -83,7 +83,7 @@ export function normalizeCouncilMembers(storage: CouncilMemberGraphQL[]) {
       id: item.id,
       name: item.name,
       image: item.image,
-      userId: item.user_id,
+      userId: item.user.address,
       website: item.website,
     }
   })
