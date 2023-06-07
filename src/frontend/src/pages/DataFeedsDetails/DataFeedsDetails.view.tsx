@@ -73,7 +73,6 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
   const dispatch = useDispatch()
   const { search } = useLocation()
 
-  const { dipDupContracts } = useSelector((state: State) => state.tokens)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
@@ -82,8 +81,6 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
   const [activeTab, setActiveTab] = useState(tabsList[0].id)
 
   const isTrustedAnswer = feed && feed.oraclesResponces >= feed.pct_oracle_threshold
-
-  const imageLink = dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
 
   const chartPlots = (activeTab === 1 ? feed?.dataFeedsHistory : feed?.dataFeedsVolatility) ?? []
 
@@ -111,7 +108,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
               <FeedInfo>
                 <div className="top">
                   <div className="name-part">
-                    <ImageWithPlug imageLink={imageLink} alt={`${feed.name} logo`} />
+                    <ImageWithPlug imageLink={feed.icon} alt={`${feed.name} logo`} />
                     <div className="text">
                       <div className="name">{feed.name}</div>
                       <a href="https://mavryk.finance/litepaper" target="_blank" rel="noreferrer">

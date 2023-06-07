@@ -6,11 +6,11 @@ export type DataFeedsState = DataFeedsStorageType & { isLoaded: boolean }
 
 const dataFeedsDefaultState: DataFeedsState = {
   feedsLedger: [],
+  feedsCategories: [],
   config: {
     feedsFactoryAddress: '',
     feedNameMaxLength: 0,
   },
-  feedCategories: [],
   isLoaded: false,
 }
 

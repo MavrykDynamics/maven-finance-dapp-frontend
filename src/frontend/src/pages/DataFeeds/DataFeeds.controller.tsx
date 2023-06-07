@@ -37,7 +37,7 @@ import { useLocation } from 'react-router'
 export const DataFeeds = () => {
   const dispatch = useDispatch()
   const { search } = useLocation()
-  const { feedsLedger, feedCategories, isLoaded: isDataFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { feedsLedger, feedsCategories, isLoaded: isDataFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
@@ -48,7 +48,7 @@ export const DataFeeds = () => {
     } catch (e) {}
   }, [])
 
-  const ddItems = useMemo(() => ['all', ...feedCategories], [feedCategories])
+  const ddItems = useMemo(() => ['all', ...feedsCategories], [feedsCategories])
 
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [searchInputValue, setSearchInput] = useState('')

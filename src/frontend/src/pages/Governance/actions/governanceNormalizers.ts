@@ -38,8 +38,8 @@ export const normalizeProposal = (
 
   return {
     id: item.id,
-    proposerId: item.proposer_id,
-    governanceId: item.governance_id,
+    proposerId: item.proposer.address,
+    governanceId: item.governance.address,
 
     status: proposalConvertedStatus,
     anyCanExecute,
@@ -75,19 +75,27 @@ export const normalizeProposal = (
       isLocalBytes: false,
     })),
 
-    proposalPayments: item.payments.map(({ governance_proposal, governance_proposal_id, ...paymentData }) => {
-      // TODO: remove this check with tokens reorganization
-      const decimals =
-        paymentData.token_address?.toLowerCase() === 'xtz'
-          ? 6
-          : dipDupTokens?.find(({ contract }) => contract === paymentData.token_address)?.metadata?.decimals ?? 0
+    // TODO: update token usage
+    proposalPayments: item.payments
+      .map(({ to_, title, id, token_id, token_amount, token }) => {
+        const tokenAddress = token?.token_address
+        // TODO: remove this check with tokens reorganization
+        const decimals =
+          tokenAddress?.toLowerCase() === 'xtz'
+            ? 6
+            : dipDupTokens?.find(({ contract }) => contract === tokenAddress)?.metadata?.decimals ?? 0
 
-      return {
-        ...paymentData,
-        // we're getting amount * by 10 in decimals grage, need to parse it to initial user input
-        token_amount: Number(paymentData.token_amount) / Math.pow(10, Number(decimals)) ?? 0,
-      }
-    }),
+        return {
+          id,
+          to__id: to_?.address,
+          title,
+          token_address: tokenAddress,
+          token_id,
+          // we're getting amount * by 10 in decimals grage, need to parse it to initial user input
+          token_amount: Number(token_amount) / Math.pow(10, Number(decimals)) ?? 0,
+        }
+      })
+      .filter(({ token_address, to__id }) => token_address && to__id),
   }
 }
 

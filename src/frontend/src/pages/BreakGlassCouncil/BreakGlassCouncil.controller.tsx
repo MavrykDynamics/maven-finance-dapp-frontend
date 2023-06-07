@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -10,7 +9,6 @@ import { BreakGlassCouncilForm, actions } from './BreakGlassCouncilForms/BreakGl
 import { FormUpdateCouncilMemberView } from './BreakGlassCouncilForms/FormUpdateCouncilMember.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'

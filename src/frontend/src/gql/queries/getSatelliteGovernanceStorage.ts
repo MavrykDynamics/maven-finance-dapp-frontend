@@ -6,7 +6,9 @@ export const SATELLITE_GOVERNANCE_STORAGE_QUERY = `
       gov_purpose_max_length
       gov_sat_approval_percentage
       gov_sat_duration_in_days
-      governance_id
+      governance {
+        address
+      }
       governance_satellite_counter
       max_actions_per_satellite
     }
@@ -15,10 +17,14 @@ export const SATELLITE_GOVERNANCE_STORAGE_QUERY = `
       executed
       expiration_datetime
       governance_purpose
-      governance_satellite_id
+      governance_satellite {
+        address
+      }
       governance_type
       id
-      initiator_id
+      initiator {
+        address
+      }
       nay_vote_smvk_total
       pass_vote_smvk_total
       smvk_percentage_for_approval
@@ -58,7 +64,9 @@ export const SATELLITE_GOVERNANCE_STORAGE_QUERY = `
         id
         timestamp
         vote
-        voter_id
+        voter {
+          address
+        }
       }
     }
   }
@@ -72,7 +80,7 @@ export const SATELLITE_GOVERNANCE_STORAGE_QUERY_VARIABLE = {}
 export const SATELLITE_ACTIONS_COUNT_QUERY = `
 query maxSatGovActionsPerSatellitePerCycle($address:String = "") {
   governance_satellite {
-    actions(where: {initiator_id: {_eq: $address}, status: {_eq: "0"}}, order_by: {expiration_datetime: desc}) {
+    actions(where: {initiator: {address: {_eq: $address}}, status: {_eq: "0"}}, order_by: {expiration_datetime: desc}) {
       status
     }
   }
