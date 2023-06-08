@@ -8,7 +8,7 @@ import { DoormanList, DoormanStatsHeader, DoormanStatsStyled } from './DoormanSt
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 type DoormanStatsPropsType = {
-  MVK_exchangeRate: number
+  mvkExchangeRate: number
   maximumTotalSupply: number
   totalStakedMvk: number
   totalSupply: number
@@ -17,7 +17,7 @@ type DoormanStatsPropsType = {
 }
 
 export const DoormanStats = ({
-  MVK_exchangeRate,
+  mvkExchangeRate,
   maximumTotalSupply,
   totalStakedMvk,
   totalSupply,
@@ -26,7 +26,7 @@ export const DoormanStats = ({
 }: DoormanStatsPropsType) => {
   const mli = calcMLI(totalSupply, totalStakedMvk)
   const fee = calcExitFee(totalSupply, totalStakedMvk)
-  const marketCapValue = MVK_exchangeRate ? MVK_exchangeRate * totalSupply : 0
+  const marketCapValue = mvkExchangeRate ? mvkExchangeRate * totalSupply : 0
 
   return (
     <DoormanStatsStyled>
@@ -41,7 +41,7 @@ export const DoormanStats = ({
             />
           </h4>
           <var>
-            <CommaNumber value={MVK_exchangeRate} beginningText={'$'} />
+            <CommaNumber value={mvkExchangeRate} beginningText={'$'} />
           </var>
         </div>
 

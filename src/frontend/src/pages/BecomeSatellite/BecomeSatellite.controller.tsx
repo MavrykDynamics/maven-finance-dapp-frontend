@@ -19,6 +19,7 @@ import {
 // providers
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { SUB_SKIP } from 'utils/api/apollo.consts'
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 
 // Actions
 import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
@@ -57,7 +58,6 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>

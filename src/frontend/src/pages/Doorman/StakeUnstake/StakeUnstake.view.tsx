@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // context
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -12,9 +13,17 @@ import { Input } from 'app/App.components/Input/NewInput'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { InputErrorMessage, InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
-// helpers, consts
-import { State } from 'reducers'
+// helpers
+import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
+import { rewardsCompound } from '../Doorman.actions'
+import { stakingInputValidation } from '../Doorman.converter'
+import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
+import { unknownToError } from 'errors/error'
+import { sleep } from 'utils/api/sleep'
+
+// consts
 import {
   BUTTON_PRIMARY,
   BUTTON_PULSE,
@@ -22,10 +31,13 @@ import {
   BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from '../../../app/App.components/Button/Button.constants'
-import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
-import { rewardsCompound } from '../Doorman.actions'
+import { STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { InputStatusType, INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
-import { stakingInputValidation } from '../Doorman.converter'
+import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
+import colors from 'styles/colors'
 
 // style
 import {
@@ -44,22 +56,28 @@ import {
   StakeDelegatedUser,
   StakeUnstakeAmount,
 } from './StakeUnstake.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import colors from 'styles/colors'
-import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 // types
+import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 
 type StakeUnstakeViewProps = {
-  unstakeCallback: (amount: number) => void
-  MVK_exchangeRate: number
+  openExitFeePopup: () => void
+  mvkExchangeRate: number
+  inputData: typeof DEFAULT_STAKE_UNSTAKE_INPUT
+  setInputData: (data: typeof DEFAULT_STAKE_UNSTAKE_INPUT) => void
 }
 
-export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUnstakeViewProps) => {
+export const StakeUnstakeView = ({
+  openExitFeePopup,
+  mvkExchangeRate,
+  inputData,
+  setInputData,
+}: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
-  const { stakeMVK } = useStakeContext()
+  const { stakeMVK, updateStakeActionContext, updateStakeLoadingToasterId, loadingToasterId } = useStakeContext()
+  const { info, loading, hideToasterMessage, bug } = useToasterContext()
 
   const {
     accountPkh,
@@ -77,26 +95,17 @@ export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUns
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
+  const {
+    doormanAddress: { address: doormanAddress },
+    mvkTokenAddress: { address: mvkTokenAddress },
+  } = useSelector((state: State) => state.contractAddresses)
+
   const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
   const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
     myMvkTokenBalance = userTokens[MVK_TOKEN_SYMBOL].balance
 
-  const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType; errorMessage: string }>({
-    amount: '0',
-    validation: '',
-    errorMessage: '',
-  })
-
-  useEffect(() => {
-    setInputData({
-      amount: '0',
-      validation: '',
-      errorMessage: '',
-    })
-  }, [myMvkTokenBalance, mySMvkTokenBalance])
-
   const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
-  const exchangeValue = MVK_exchangeRate && inputData.amount ? Number(inputData.amount) * MVK_exchangeRate : 0
+  const exchangeValue = mvkExchangeRate && inputData.amount ? Number(inputData.amount) * mvkExchangeRate : 0
   const rewardsToClaim =
     availableDoormanRewards +
     availableSatellitesRewards +
@@ -122,41 +131,8 @@ export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUns
     setInputData({ ...inputData, amount: value, validation: validationStatus })
   }
 
-  const handleStake = () => {
-    const canStakeAmount = Number(inputData.amount) <= Number(myMvkTokenBalance)
-
-    if (canStakeAmount) {
-      setInputData({
-        ...inputData,
-        errorMessage: '',
-      })
-      stakeMVK(Number(inputData.amount))
-    } else {
-      setInputData({
-        ...inputData,
-        errorMessage: "You don't have enought MVK to stake",
-      })
-    }
-  }
-
-  const handleUnStake = () => {
-    const canUnstakeAmount = Number(inputData.amount) <= Number(mySMvkTokenBalance)
-
-    if (canUnstakeAmount) {
-      setInputData({
-        ...inputData,
-        errorMessage: '',
-      })
-      unstakeCallback(Number(inputData.amount))
-    } else {
-      setInputData({
-        ...inputData,
-        errorMessage: "You don't have enought sMVK to unstake",
-      })
-    }
-  }
-
-  const handleStakeAll = () => {
+  // Stake actions
+  const handleStakeAll = async () => {
     if (!myMvkTokenBalance) return
 
     setInputData({
@@ -164,7 +140,62 @@ export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUns
       amount: String(mathRoundTwoDigit(myMvkTokenBalance)),
       validation: INPUT_STATUS_SUCCESS,
     })
-    stakeMVK(myMvkTokenBalance)
+
+    await handleStake(myMvkTokenBalance)
+  }
+
+  const handleStake = async (stakeAmount: number) => {
+    const canStakeAmount = stakeAmount <= Number(myMvkTokenBalance)
+
+    if (!canStakeAmount) {
+      setInputData({
+        ...inputData,
+        errorMessage: "You don't have enought MVK to stake",
+      })
+    }
+
+    if (!accountPkh) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+
+    if (stakeAmount <= 0) {
+      bug('Please enter an amount superior to zero', 'Incorrect amount')
+      return
+    }
+
+    setInputData({
+      ...inputData,
+      errorMessage: '',
+    })
+
+    const { actionSuccess, error } = await stakeMVK(stakeAmount, accountPkh, doormanAddress, mvkTokenAddress)
+
+    if (actionSuccess && !error) {
+      updateStakeActionContext(STAKE_ACTION)
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+
+      info(
+        TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
+        TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['title'],
+      )
+
+      await sleep(5000)
+
+      // show toaster loader after 5000ms after operation started
+      const loadingToasterId = loading(
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+      )
+      updateStakeLoadingToasterId(loadingToasterId)
+    } else {
+      if (loadingToasterId) hideToasterMessage(loadingToasterId)
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
+      const parsedError = unknownToError(error)
+      bug(parsedError.message)
+    }
   }
 
   const handleUnstakeAll = () => {
@@ -175,7 +206,7 @@ export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUns
       amount: String(mathRoundTwoDigit(mySMvkTokenBalance)),
       validation: INPUT_STATUS_SUCCESS,
     })
-    unstakeCallback(mySMvkTokenBalance)
+    openExitFeePopup()
   }
 
   const handleCompound = async () => {
@@ -353,15 +384,20 @@ export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUns
         <StakeUnstakeRate onClick={onUseMaxBalance('smvk')}>
           <span>1 MVK =</span>
           &nbsp;
-          <CommaNumber value={MVK_exchangeRate} beginningText={'$'} />
+          <CommaNumber value={mvkExchangeRate} beginningText={'$'} />
         </StakeUnstakeRate>
 
         <StakeUnstakeButtonGrid>
-          <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE} disabled={isActionActive}>
+          <NewButton
+            kind={BUTTON_PRIMARY}
+            onClick={() => handleStake(Number(inputData.amount))}
+            form={BUTTON_WIDE}
+            disabled={isActionActive}
+          >
             <Icon id="in" /> Stake
           </NewButton>
 
-          <NewButton kind={BUTTON_SECONDARY} onClick={handleUnStake} form={BUTTON_WIDE} disabled={isActionActive}>
+          <NewButton kind={BUTTON_SECONDARY} onClick={openExitFeePopup} form={BUTTON_WIDE} disabled={isActionActive}>
             <Icon id="out" /> Unstake
           </NewButton>
         </StakeUnstakeButtonGrid>

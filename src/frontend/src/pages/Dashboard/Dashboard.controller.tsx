@@ -63,10 +63,10 @@ export const Dashboard = () => {
     }, 0))
   }, 0)
 
-  const vaultsTvl = allVaultsIds.reduce<number>((acc, vaultId) => {
+  const vaultsTvl = allVaultsIds.reduce((acc, vaultId) => {
     const { collateralData } = vaultsMapper[vaultId]
 
-    return (acc += collateralData.reduce<number>(
+    return (acc += collateralData.reduce(
       (collateralAcc, { amount, rate }, idx) =>
         (collateralAcc += idx !== collateralData.length - 1 ? amount * rate : 0),
       0,

@@ -14,15 +14,16 @@ import { isMobile } from './utils/device-info'
 import Mobile from './app/App.components/Mobile/Mobile.view'
 
 // providers
-import DAPPConfigProvider, { dappContext } from 'providers/DAPPConfig/dappConfig.provider'
+import DAPPConfigProvider from 'providers/DAPPConfig/dappConfig.provider'
 import DataFeedsProvider from 'providers/DataFeedsProvider/dataFeeds.provider'
 import TokensProvider from 'providers/TokensProvider/tokens.provider'
 import DarkThemeProvider from './app/App.components/DarkThemeProvider/DarkThemeProvider.view'
 
 import './styles/fonts.css'
 import './styles/animations.css'
+import ToasterProvider from 'providers/ToasterProvider/toaster.provider'
+import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
 
-// TODO: implement tokens context while tokens reorganization task
 export const Root = () => {
   const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
   return (
@@ -34,7 +35,10 @@ export const Root = () => {
               <TokensProvider>
                 <DarkThemeProvider>
                   <GlobalStyle />
-                  {isMobile ? <Mobile /> : <App />}
+                  <ToasterProvider>
+                    {isMobile ? <Mobile /> : <App />}
+                    <ToasterMessages />
+                  </ToasterProvider>
                 </DarkThemeProvider>
               </TokensProvider>
             </DataFeedsProvider>

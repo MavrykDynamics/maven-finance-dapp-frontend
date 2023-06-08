@@ -38,6 +38,7 @@ export const dropDownColor = '#0000007a'
 export const modalsBackdropColor = 'rgba(0, 0, 0, 0.5)'
 
 export const dark = {
+  lightTextColor,
   backgroundColor: darkColor,
   containerColor,
   navTitleColor: cyanColor,
@@ -62,7 +63,6 @@ export const dark = {
   dataColor: '#77a4f2',
   blockNameTitleColor: silverColor,
   textColor: '#CDCDCD',
-  lightTextColor: '#D0CFD9',
   upColor,
   downColor,
   neutralColor,
@@ -87,6 +87,7 @@ export const dark = {
 }
 
 export const light = {
+  lightTextColor,
   backgroundColor: lightColor,
   containerColor: whiteColor,
   navTitleColor: cyanColor,
@@ -102,8 +103,6 @@ export const light = {
   actionPrimaryBtnColor: royalPurpleColor,
   stakedColor: darkColor,
   textColor: textColor,
-  lightTextColor,
-
   borderColor: '#4F457C',
   dataColor: '#77a4f2',
   subTextColor: '#7E8794',

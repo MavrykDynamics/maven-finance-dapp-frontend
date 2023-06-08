@@ -74,6 +74,7 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
     setRpcNodeError(isValidRPC.errorMsg)
     setInputData((prev) => ({
       ...prev,
+      node: enteredNode,
       nodeValidation:
         enteredNode === '' ? INPUT_STATUS_DEFAULT : isValidRPC.status ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
     }))
