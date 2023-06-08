@@ -5,31 +5,25 @@ import { Dispatch } from 'redux'
 // helpers
 import { normalizeDoormanChartsData } from './helpers/normalizer'
 import { convertNumberForClient, convertNumberForContractCall } from 'utils/calcFunctions'
+import { unknownToError } from 'errors/error'
 
 import {
   SubscribeSmvkHistoryDataSubscription,
-  SubscribeAdressBalanceSubscription,
-  SubscribeDoormanAddressBalanceSubscription,
   SubscribeMvkTokenTotalSubscription,
+  SubscribeAdressBalanceSubscription,
 } from 'utils/__generated__/graphql'
 
 // types
 import { State, Props, StakeContext } from './stake.provider.types'
 
 // consts
-import { TOASTER_ERROR } from 'app/App.components/Toaster/Toaster.constants'
-import { STAKE_ACTION, UNSTAKE_ACTION } from './helpers/stake.consts'
 import { MVK_DECIMALS, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { UPDATE_USER_DATA } from 'reducers/actions/user.actions'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 // TODO move wallet to context to avoid redux logic inside Stake Context
 // redux
 import { State as ReduxState } from 'reducers'
-import { UPDATE_USER_DATA } from 'reducers/actions/user.actions'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { actionStartToaster } from 'app/App.components/Toaster/builtActions/actions-helpers.notifications'
-import { unknownToError } from 'errors/error'
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
@@ -90,7 +84,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
     })
   }
 
-  updateTotalStakedMvk = (storage: SubscribeDoormanAddressBalanceSubscription) => {
+  updateTotalStakedMvk = (storage: SubscribeAdressBalanceSubscription) => {
     this.setState({
       context: {
         ...this.state.context,
