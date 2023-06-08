@@ -1,9 +1,13 @@
+import { OpKind, Wallet } from '@taquito/taquito'
 import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
+import { GetState } from 'app/App.controller'
 import {
   GovernanceSatelliteGraphQL,
   GovernanceSatelliteActionGraphQL,
   ProposalStatus,
 } from 'utils/TypesAndInterfaces/Governance'
+
+import { UnwrapPromise } from 'types/general'
 
 type SatelliteGovernanceActionType = {
   id: number
@@ -151,4 +155,30 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
     config,
     ...actions,
   }
+}
+
+export function createBatchForExpiredActions(getState: GetState, contract: UnwrapPromise<ReturnType<Wallet['at']>>) {
+  const state = getState()
+
+  const { mySatelliteGovIds, satelliteGovIdsMapper } = state.satelliteGovernance
+
+  const expriredActionIds: number[] = []
+
+  mySatelliteGovIds.forEach((id) => {
+    const { expirationDatetime } = satelliteGovIdsMapper[id]
+    const timeNow = Date.now()
+    const convertedExpirationDatetime = new Date(expirationDatetime ?? 0).getTime()
+    const expired = convertedExpirationDatetime > timeNow
+
+    if (expired) expriredActionIds.push(id)
+  })
+
+  if (expriredActionIds.length === 0) return []
+
+  const batchedArray = expriredActionIds.map((actionId) => ({
+    kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+    ...contract.methods.dropAction(actionId).toTransferParams(),
+  }))
+
+  return batchedArray
 }

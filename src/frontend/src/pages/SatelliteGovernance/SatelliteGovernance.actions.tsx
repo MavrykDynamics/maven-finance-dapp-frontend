@@ -5,7 +5,7 @@ import { SatelliteGovernanceTransfer } from '../../utils/TypesAndInterfaces/Sate
 
 // helpers
 import { fetchFromIndexerWithPromise } from '../../gql/fetchGraphQL'
-import { normalizerSatelliteGovernance } from './SatelliteGovernance.helpers'
+import { normalizerSatelliteGovernance, createBatchForExpiredActions } from './SatelliteGovernance.helpers'
 import {
   ACTION_COMPLETION_MESSAGE_TEXT,
   ACTION_START_MESSAGE_TEXT,
@@ -61,34 +61,7 @@ export const getSatelliteGovernanceStorage = () => async (dispatch: AppDispatch,
   }
 }
 
-type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
-
 // hepers
-export function createBatchForExpiredActions(getState: GetState, contract: UnwrapPromise<ReturnType<Wallet['at']>>) {
-  const state = getState()
-
-  const { mySatelliteGovIds, satelliteGovIdsMapper } = state.satelliteGovernance
-
-  const expriredActionIds: number[] = []
-
-  mySatelliteGovIds.forEach((id) => {
-    const { expirationDatetime } = satelliteGovIdsMapper[id]
-    const timeNow = Date.now()
-    const convertedExpirationDatetime = new Date(expirationDatetime ?? 0).getTime()
-    const expired = convertedExpirationDatetime > timeNow
-
-    if (expired) expriredActionIds.push(id)
-  })
-
-  if (expriredActionIds.length === 0) return []
-
-  const batchedArray = expriredActionIds.map((actionId) => ({
-    kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-    ...contract.methods.dropAction(actionId).toTransferParams(),
-  }))
-
-  return batchedArray
-}
 
 // Suspend Satellite
 export const suspendSatellite =
