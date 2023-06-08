@@ -42,7 +42,7 @@ export default class ToasterProvider extends React.Component<Props, State> {
         success: this.success,
         loading: this.loading,
         error: props.error || null,
-        removeToasterMessage: this.removeToasterMessage,
+        hideToasterMessage: this.hideToasterMessage,
         deleteToasterFromArray: this.deleteToasterFromArray,
         messages: [],
         setError: this.setError,
@@ -50,6 +50,9 @@ export default class ToasterProvider extends React.Component<Props, State> {
     }
   }
 
+  /**
+   *
+   */
   componentDidCatch(error: Error): void {
     this.addToasterMessage('', error.message, TOASTER_ERROR)
   }
@@ -118,9 +121,8 @@ export default class ToasterProvider extends React.Component<Props, State> {
   /**
    * sets hide property for toast to 'true' to play hide animation
    * @param unique toaster id
-   * @returns void
    */
-  removeToasterMessage = (unique: string): void => {
+  hideToasterMessage = (unique: string): void => {
     const { messages } = this.state.context
     const message = messages.find((m) => m.unique === unique)
 

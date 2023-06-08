@@ -45,7 +45,7 @@ export type ToasterContextType = {
   success: InstanceType<typeof ToasterProvider>['success']
   loading: InstanceType<typeof ToasterProvider>['loading']
   error: CustomErrors | null
-  removeToasterMessage: InstanceType<typeof ToasterProvider>['removeToasterMessage']
+  hideToasterMessage: InstanceType<typeof ToasterProvider>['hideToasterMessage']
   deleteToasterFromArray: InstanceType<typeof ToasterProvider>['deleteToasterFromArray']
   addToasterMessage?: InstanceType<typeof ToasterProvider>['addToasterMessage']
   setError: InstanceType<typeof ToasterProvider>['setError']

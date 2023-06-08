@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 // style
@@ -21,6 +21,13 @@ import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 // actions
 import { State } from 'reducers'
 import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { InputStatusType } from 'app/App.components/Input/Input.constants'
+
+export const DEFAULT_STAKE_UNSTAKE_INPUT: { amount: string; validation: InputStatusType; errorMessage: string } = {
+  amount: '0',
+  validation: '',
+  errorMessage: '',
+}
 
 export const Doorman = () => {
   const { totalStakedMvk, maximumTotalSupply, totalSupply } = useStakeContext()
@@ -34,9 +41,17 @@ export const Doorman = () => {
 
   const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
     myMvkTokenBalance = userTokens[MVK_TOKEN_SYMBOL].balance
-  const [amount, setAmount] = useState<null | number>(null)
+
+  const [unstakePopupActive, setUnstakePopupActive] = useState(false)
+
+  const [stakeUnstakeInput, setStakeUnstakeInput] = useState(DEFAULT_STAKE_UNSTAKE_INPUT)
+
+  const { isInitialLoading: isDoormanLoading } = useStakeUpdater()
+
+  const closeExitFeePopup = () => setUnstakePopupActive(false)
+  const openExitFeePopup = () => setUnstakePopupActive(true)
+
   const exitFeeModal = {
-    amount: Number(amount),
     mvkExchangeRate,
     totalMVKSupply: totalSupply,
     mySMvkTokenBalance,
@@ -45,10 +60,13 @@ export const Doorman = () => {
     accountPkh,
   }
 
-  const { isInitialLoading: isDoormanLoading } = useStakeUpdater()
-
-  const unstakeCallback = (amount: number) => setAmount(amount)
-  const closeExitFeePopup = () => setAmount(null)
+  useEffect(() => {
+    setStakeUnstakeInput({
+      amount: '0',
+      validation: '',
+      errorMessage: '',
+    })
+  }, [accountPkh])
 
   return (
     <Page>
@@ -61,12 +79,23 @@ export const Doorman = () => {
         </DataLoaderWrapper>
       ) : (
         <>
-          <ExitFeeModal show={amount !== null} data={exitFeeModal} closePopup={closeExitFeePopup} />
-          <StakeUnstakeView MVK_exchangeRate={mvkExchangeRate} unstakeCallback={unstakeCallback} />
+          <ExitFeeModal
+            show={unstakePopupActive}
+            data={exitFeeModal}
+            inputData={stakeUnstakeInput}
+            setInputData={setStakeUnstakeInput}
+            closePopup={closeExitFeePopup}
+          />
+          <StakeUnstakeView
+            mvkExchangeRate={mvkExchangeRate}
+            openExitFeePopup={openExitFeePopup}
+            inputData={stakeUnstakeInput}
+            setInputData={setStakeUnstakeInput}
+          />
           <DoormanInfoStyled>
             <DoormanChart />
             <DoormanStats
-              MVK_exchangeRate={mvkExchangeRate}
+              mvkExchangeRate={mvkExchangeRate}
               maximumTotalSupply={maximumTotalSupply}
               totalStakedMvk={totalStakedMvk}
               totalSupply={totalSupply}

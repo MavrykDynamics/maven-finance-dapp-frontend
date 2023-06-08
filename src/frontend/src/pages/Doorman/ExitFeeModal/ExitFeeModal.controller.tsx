@@ -1,12 +1,17 @@
-import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // helpers
-import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
-import { InputStatusType, INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
 import { stakingInputValidation } from '../Doorman.converter'
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
+import { unknownToError } from 'errors/error'
+import { STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+import { sleep } from 'utils/api/sleep'
+import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 
 // components
 import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
@@ -19,16 +24,18 @@ import { containerColor } from 'styles'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 
+// context
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { State } from 'reducers'
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
   show: boolean
   data: {
-    amount: number
     mvkExchangeRate: number
     mySMvkTokenBalance: number
     myMvkTokenBalance: number
@@ -36,48 +43,74 @@ type ExitFeeModalPropsType = {
     totalMVKSupply: number
     accountPkh?: string
   }
+  inputData: typeof DEFAULT_STAKE_UNSTAKE_INPUT
+  setInputData: (data: typeof DEFAULT_STAKE_UNSTAKE_INPUT) => void
 }
 
 export const ExitFeeModal = ({
   closePopup,
   show,
-  data: { amount, mvkExchangeRate, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, accountPkh, totalMVKSupply },
+  data: { mvkExchangeRate, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, accountPkh, totalMVKSupply },
+  inputData,
+  setInputData,
 }: ExitFeeModalPropsType) => {
-  const { unstakeMVK } = useStakeContext()
+  const dispatch = useDispatch()
 
+  const { unstakeMVK, updateStakeActionContext, updateStakeLoadingToasterId, loadingToasterId } = useStakeContext()
+  const { bug, info, loading, hideToasterMessage } = useToasterContext()
+
+  const {
+    doormanAddress: { address: doormanAddress },
+  } = useSelector((state: State) => state.contractAddresses)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType }>({
-    amount: '0',
-    validation: '',
-  })
-
-  const convertedValue = mvkExchangeRate && inputData.amount ? Number(inputData.amount) * mvkExchangeRate : 0
+  const parsedInputAmount = Number(inputData.amount)
+  const convertedValue = mvkExchangeRate ? parsedInputAmount * mvkExchangeRate : 0
 
   const mli = calcMLI(totalMVKSupply, totalStakedMvk)
   const fee = calcExitFee(totalMVKSupply, totalStakedMvk)
 
-  const unstakeCallback = async (amount: number) => await unstakeMVK(amount)
-
-  // Validating initial amount came from props
-  useEffect(() => {
-    setInputData({
-      amount: String(mathRoundTwoDigit(amount)),
-      validation: stakingInputValidation({
-        amount,
-        myMvkTokenBalance,
-        mySMvkTokenBalance,
-        accountPkh,
-      }),
-    })
-
-    return () => {
-      setInputData({
-        amount: '',
-        validation: '',
-      })
+  const handleUnstake = async (unstakeAmount: number) => {
+    if (!accountPkh) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
     }
-  }, [show])
+
+    if (unstakeAmount <= 0) {
+      bug('Please enter an amount superior to zero', 'Incorrect amount')
+      return
+    }
+
+    const { actionSuccess, error } = await unstakeMVK(unstakeAmount, doormanAddress)
+
+    closePopup()
+
+    if (actionSuccess && !error) {
+      updateStakeActionContext(STAKE_ACTION)
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+
+      info(
+        TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
+        TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['title'],
+      )
+
+      await sleep(5000)
+
+      // show toaster loader after 5000ms after operation started
+      const loadingToasterId = loading(
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+      )
+      updateStakeLoadingToasterId(loadingToasterId)
+    } else {
+      if (loadingToasterId) hideToasterMessage(loadingToasterId)
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
+      const parsedError = unknownToError(error)
+      bug(parsedError.message)
+    }
+  }
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
@@ -89,7 +122,9 @@ export const ExitFeeModal = ({
       accountPkh,
     })
 
-    setInputData({ ...inputData, amount: value, validation: validationStatus })
+    const errorMessage = Number(value) > Number(mySMvkTokenBalance) ? "You don't have enought sMVK to unstake" : ''
+
+    setInputData({ ...inputData, amount: value, validation: validationStatus, errorMessage })
   }
   const handleFocus = () => {
     if (inputData.amount === '0') {
@@ -174,10 +209,7 @@ export const ExitFeeModal = ({
               kind={BUTTON_PRIMARY}
               form={BUTTON_WIDE}
               disabled={inputData.validation !== INPUT_STATUS_SUCCESS || isActionActive}
-              onClick={() => {
-                unstakeCallback(Number(inputData.amount))
-                closePopup()
-              }}
+              onClick={() => handleUnstake(Number(inputData.amount))}
             >
               <Icon id="success-fill" fill={containerColor} /> Proceed
             </NewButton>

@@ -181,7 +181,6 @@ export class StakeProviderClass extends React.Component<Props, State> {
           .withContractCall(doormanContract.methods.stake(convertNumberForContractCall({ number: amount })))
           .withContractCall(mvkTokenContract.methods.update_operators(removeOperators)))
       await batch?.send()
-      this.updateStakeActionContext(STAKE_ACTION)
 
       return { actionSuccess: true, error: null }
     } catch (error) {
@@ -189,35 +188,16 @@ export class StakeProviderClass extends React.Component<Props, State> {
     }
   }
 
-  unstakeMVK = async (amount: number) => {
-    const { dispatch, doormanAddress } = this.props
-
-    // check whether we can send transaction
-    if (!this.props.accountPkh) {
-      dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (!(amount > 0)) {
-      dispatch(showToaster(TOASTER_ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
-      return
-    }
-
+  unstakeMVK = async (amount: number, doormanAddress: string) => {
     try {
       // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(doormanAddress)
       await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
 
-      this.updateStakeActionContext(UNSTAKE_ACTION)
-      await dispatch(await actionStartToaster(UNSTAKE_ACTION))
+      return { actionSuccess: true, error: null }
     } catch (error) {
-      if (error instanceof Error) {
-        console.error(error)
-        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-      }
-      dispatch(toggleActionFullScreenLoader(false))
-      dispatch(toggleActionCompletion(false))
+      return { actionSuccess: false, error: unknownToError(error) }
     }
   }
 

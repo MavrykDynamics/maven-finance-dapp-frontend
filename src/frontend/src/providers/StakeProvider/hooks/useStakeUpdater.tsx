@@ -72,7 +72,7 @@ export const useStakeUpdater = (
     action,
   } = useStakeContext()
 
-  const { success, removeToasterMessage, bug } = useToasterContext()
+  const { success, hideToasterMessage, bug } = useToasterContext()
 
   const { loading: historyLoading } = useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
     skip: shouldSkip.skipStakeHistory === SUB_SKIP,
@@ -171,9 +171,9 @@ export const useStakeUpdater = (
         actionLoaderState.loadingStateUpdatedForAction === action
       ) {
         // removing loader toaster and showing success toaster
-        // success(TOASTER_ACTIONS_TEXTS[action]['end']['message'], TOASTER_ACTIONS_TEXTS[action]['end']['title'])
-        // await sleep(2000)
-        removeToasterMessage(loadingToasterId)
+        hideToasterMessage(loadingToasterId)
+        await sleep(300)
+        success(TOASTER_ACTIONS_TEXTS[action]['end']['message'], TOASTER_ACTIONS_TEXTS[action]['end']['title'])
 
         // renewing context and internal state
         updateStakeLoadingToasterId(null)

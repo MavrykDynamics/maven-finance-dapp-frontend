@@ -20,20 +20,20 @@ import {
 
 const Toast = ({ toast }: { toast: ToasterMessage }) => {
   const [toastAnimation, setToastAnimation] = useState<ToasterAnimationType>(TOASTER_REVEAL)
-  const { removeToasterMessage, deleteToasterFromArray } = useToasterContext()
+  const { hideToasterMessage, deleteToasterFromArray } = useToasterContext()
   const { title, message, type, unique, hide } = toast
 
-  // effect tu update toast property "hide" to 'true' for playing hide animation
+  // effect to update toast property "hide" to 'true' for playing hide animation
   useEffect(() => {
     if (type !== TOASTER_LOADING) {
       ;(async () => {
         await sleep(TOAST_TIME_TO_LIVE)
-        removeToasterMessage(unique)
+        hideToasterMessage(unique)
       })()
     }
-  }, [removeToasterMessage, type, unique])
+  }, [hideToasterMessage, type, unique])
 
-  // play hide animation and complitely delete toast
+  // play hide animation and completely delete toast
   useEffect(() => {
     if (hide) {
       ;(async () => {
@@ -44,8 +44,6 @@ const Toast = ({ toast }: { toast: ToasterMessage }) => {
       })()
     }
   }, [deleteToasterFromArray, hide, unique])
-
-  console.log('render')
 
   return (
     <ToasterStyled animationType={toastAnimation} delay={ANIMATION_DURATION} distance={500}>

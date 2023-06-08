@@ -36,6 +36,7 @@ import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { InputStatusType, INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 import colors from 'styles/colors'
 
 // style
@@ -61,15 +62,22 @@ import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 
 type StakeUnstakeViewProps = {
-  unstakeCallback: (amount: number) => void
-  MVK_exchangeRate: number
+  openExitFeePopup: () => void
+  mvkExchangeRate: number
+  inputData: typeof DEFAULT_STAKE_UNSTAKE_INPUT
+  setInputData: (data: typeof DEFAULT_STAKE_UNSTAKE_INPUT) => void
 }
 
-export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUnstakeViewProps) => {
+export const StakeUnstakeView = ({
+  openExitFeePopup,
+  mvkExchangeRate,
+  inputData,
+  setInputData,
+}: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { stakeMVK, updateStakeActionContext, updateStakeLoadingToasterId, loadingToasterId } = useStakeContext()
-  const { info, loading, removeToasterMessage, bug } = useToasterContext()
+  const { info, loading, hideToasterMessage, bug } = useToasterContext()
 
   const {
     accountPkh,
@@ -96,22 +104,8 @@ export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUns
   const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
     myMvkTokenBalance = userTokens[MVK_TOKEN_SYMBOL].balance
 
-  const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType; errorMessage: string }>({
-    amount: '0',
-    validation: '',
-    errorMessage: '',
-  })
-
-  useEffect(() => {
-    setInputData({
-      amount: '0',
-      validation: '',
-      errorMessage: '',
-    })
-  }, [accountPkh])
-
   const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
-  const exchangeValue = MVK_exchangeRate && inputData.amount ? Number(inputData.amount) * MVK_exchangeRate : 0
+  const exchangeValue = mvkExchangeRate && inputData.amount ? Number(inputData.amount) * mvkExchangeRate : 0
   const rewardsToClaim =
     availableDoormanRewards +
     availableSatellitesRewards +
@@ -165,7 +159,7 @@ export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUns
       return
     }
 
-    if (!(stakeAmount > 0)) {
+    if (stakeAmount <= 0) {
       bug('Please enter an amount superior to zero', 'Incorrect amount')
       return
     }
@@ -196,7 +190,7 @@ export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUns
       )
       updateStakeLoadingToasterId(loadingToasterId)
     } else {
-      if (loadingToasterId) removeToasterMessage(loadingToasterId)
+      if (loadingToasterId) hideToasterMessage(loadingToasterId)
       dispatch(toggleActionFullScreenLoader(false))
       dispatch(toggleActionCompletion(false))
       const parsedError = unknownToError(error)
@@ -204,8 +198,7 @@ export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUns
     }
   }
 
-  // Unstake Actions
-  const handleUnstakeAll = async () => {
+  const handleUnstakeAll = () => {
     if (!mySMvkTokenBalance) return
 
     setInputData({
@@ -213,24 +206,7 @@ export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUns
       amount: String(mathRoundTwoDigit(mySMvkTokenBalance)),
       validation: INPUT_STATUS_SUCCESS,
     })
-    unstakeCallback(mySMvkTokenBalance)
-  }
-
-  const handleUnStake = async () => {
-    const canUnstakeAmount = Number(inputData.amount) <= Number(mySMvkTokenBalance)
-
-    if (canUnstakeAmount) {
-      setInputData({
-        ...inputData,
-        errorMessage: '',
-      })
-      unstakeCallback(Number(inputData.amount))
-    } else {
-      setInputData({
-        ...inputData,
-        errorMessage: "You don't have enought sMVK to unstake",
-      })
-    }
+    openExitFeePopup()
   }
 
   const handleCompound = async () => {
@@ -408,7 +384,7 @@ export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUns
         <StakeUnstakeRate onClick={onUseMaxBalance('smvk')}>
           <span>1 MVK =</span>
           &nbsp;
-          <CommaNumber value={MVK_exchangeRate} beginningText={'$'} />
+          <CommaNumber value={mvkExchangeRate} beginningText={'$'} />
         </StakeUnstakeRate>
 
         <StakeUnstakeButtonGrid>
@@ -421,7 +397,7 @@ export const StakeUnstakeView = ({ unstakeCallback, MVK_exchangeRate }: StakeUns
             <Icon id="in" /> Stake
           </NewButton>
 
-          <NewButton kind={BUTTON_SECONDARY} onClick={handleUnStake} form={BUTTON_WIDE} disabled={isActionActive}>
+          <NewButton kind={BUTTON_SECONDARY} onClick={openExitFeePopup} form={BUTTON_WIDE} disabled={isActionActive}>
             <Icon id="out" /> Unstake
           </NewButton>
         </StakeUnstakeButtonGrid>
