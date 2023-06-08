@@ -72,23 +72,6 @@ export const getDynamicDecimalsAmountForOutput = (number: number): number => {
   return matchesForLeadingZeroes ? matchesForLeadingZeroes[0].length + 2 : DECIMALS_TO_SHOW
 }
 
-export const getTokenDecimals = ({
-  tokenType,
-  tokenAddress,
-  dipDupTokens,
-}: {
-  tokenType?: TokenType
-  tokenAddress: string
-  dipDupTokens: State['tokens']['dipDupTokens']
-}): number | null => {
-  if (tokenType === 'tez') return XTZ_DECIMALS
-
-  const { metadata: { decimals = null } = {} } =
-    dipDupTokens.find(({ token_address }) => tokenAddress === token_address) ?? {}
-
-  return decimals ? Number(decimals) : null
-}
-
 export function calcTimeToBlock(currentBlockLevel?: number, endBlockLevel?: number) {
   if (!currentBlockLevel || !endBlockLevel) return 0
 
