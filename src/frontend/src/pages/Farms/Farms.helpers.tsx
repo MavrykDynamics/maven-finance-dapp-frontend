@@ -48,7 +48,9 @@ export const normalizeFarmStorage = (
         lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] &&
         address === lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0],
     )
-    const dipDupToken = dipDupTokens.find(({ contract }) => farmItem.lp_token.token_address === contract)
+    const dipDupToken = dipDupTokens.find(
+      ({ token_address }) => farmItem.lp_token.token_address === token_address,
+    )?.metadata
 
     return {
       address: farmItem.address,
@@ -68,7 +70,7 @@ export const normalizeFarmStorage = (
       lastBlockUpdate: farmItem.last_block_update,
       lpTokenUserBalance,
       lpTokenAddress: lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] ?? '',
-      lpBalance: farmItem.lp_token_balance / Math.pow(10, Number(dipDupToken?.metadata.decimals)),
+      lpBalance: farmItem.lp_token_balance / Math.pow(10, Number(dipDupToken?.decimals ?? 0)),
       lpToken1: {
         symbol: lpTokenInfo?.liquidityPairToken?.token0?.symbol?.[0],
         address: lpTokenInfo?.liquidityPairToken?.token0?.tokenAddress?.[0],

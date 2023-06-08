@@ -9,10 +9,19 @@ import {
   getInitialLoadingStateForFiredAction,
   StakeActionsLoaderState,
 } from '../helpers/stake.consts'
-
-// types
 import { State } from 'reducers'
 import { StakingSubsSkipsType } from '../stake.provider.types'
+
+// helpers
+import { sleep } from 'utils/api/sleep'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
+
+// consts
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { SUB_QUERY, SUB_SKIP, SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
+import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
+import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 // queries
 import {
@@ -20,12 +29,13 @@ import {
   SUBSCRIPTION_ADDRESS_BALANCE_DATA,
   SUBSCRIPTION_MVK_TOKEN_TOTAL,
 } from 'gql/subscriptions/stakingData'
-import { subsciptionErrorToaster } from 'app/App.components/Toaster/builtActions/actions-helpers.notifications'
-import { SUB_QUERY, SUB_SKIP, SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
 
 /**
  * Subscriptions are canceled on component unmount!
- * @param skip boolean, if you pass this param, the hook will be triggered only one time
+ * @param skipAddressBalance boolean, if you pass this param, the hook will ignore general mvk data sub
+ * @param skipMvkTokenTotal boolean, if you pass this param, the hook will ignore general mvk total values sub
+ * @param skipStakeHistory boolean, if you pass this param, the hook will ignore general sMVK & MVK history data sub
+ * @param skipUserBalance boolean, if you pass this param, the hook will ignore general user mvk & smvk balance sub
  * @returns {isInitialLoading: boolean, isActionLoading: boolean} isInitialLoading is false if initial data is still loading, true if it's loaded
  * isActionLoading is false if action update is done, true if it's in progress
  */
@@ -50,13 +60,19 @@ export const useStakeUpdater = (
   const { doormanAddress } = useSelector((state: State) => state.contractAddresses)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
+    // Methods to update data in context
     updateStakeHistoryData,
     updateTotalStakedMvk,
     updateUserStakeData,
     updateTotalMvkToken,
-    updateStakeActionLoaderContext,
+    // manage toaster after action proceed methods
+    updateStakeLoadingToasterId,
+    updateStakeActionContext,
+    loadingToasterId,
     action,
   } = useStakeContext()
+
+  const { success, hideToasterMessage, bug } = useToasterContext()
 
   const { loading: historyLoading } = useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
     skip: shouldSkip.skipStakeHistory === SUB_SKIP,
@@ -64,7 +80,7 @@ export const useStakeUpdater = (
       const { data, error } = result
       if (error) {
         console.error('SUBSCRIPTION_STAKE_HISTORY query error: ', error)
-        dispatch(subsciptionErrorToaster())
+        bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
       }
       if (data) {
         updateStakeHistoryData(data)
@@ -82,7 +98,7 @@ export const useStakeUpdater = (
       const { data, error } = result
       if (error) {
         console.error('SUBSCRIPTION_ADDRESS_BALANCE_DATA query error: ', error)
-        dispatch(subsciptionErrorToaster())
+        bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
       }
       if (data) {
         updateTotalStakedMvk(data)
@@ -98,7 +114,7 @@ export const useStakeUpdater = (
       const { data, error } = result
       if (error) {
         console.error('SUBSCRIPTION_MVK_TOKEN_TOTAL query error: ', error)
-        dispatch(subsciptionErrorToaster())
+        bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
       }
       if (data) {
         updateTotalMvkToken(data)
@@ -107,7 +123,7 @@ export const useStakeUpdater = (
     shouldResubscribe: true,
   })
 
-  // TODO: will be moved to user context when user data will be transfered to context
+  // TODO: move to user context when user data will be transfered to context
   const { loading: userBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
     skip: shouldSkip.skipUserBalance === SUB_SKIP,
     variables: {
@@ -117,7 +133,7 @@ export const useStakeUpdater = (
       const { data, error } = result
       if (error) {
         console.error('SUBSCRIPTION_ADDRESS_BALANCE_DATA query error: ', error)
-        dispatch(subsciptionErrorToaster())
+        bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
       }
       if (data) {
         updateUserStakeData(data)
@@ -130,33 +146,48 @@ export const useStakeUpdater = (
   const isInitialLoading = historyLoading || userBalanceLoading || doormanBalanceLoading || mvkStatsloading
 
   /**
-   * Effect to turn off loader toaster and show success loader
+   * Effect to manage toasters after sending action and it's sended correct
    * @action action that user performing
-   * @actionLoaderState loading state for action, cuz apollo shows correctly only initial loading state, then all loadings are false
+   * @actionLoaderState state that consist of subs that we need to track for certain action to show loaders
    *
    * in 1st cond we check whether we have fired an action and if yes, set loading initial state for action we fired, and
    * @loadingStateUpdatedForAction means that loading state is updated to the fired action
    *
-   * in 2nd cond we check whether action state is updated to the current action and all loading indicators are set to false (means all subs are performed), and then
-   * change action loadingFinish to true, and in provider in componentDidUpdate turn off loader
+   * in 2nd cond we check whether all subs that needs for certain action have updated, and turn off loading toaster, show success toaster,
+   * unlocks action buttons and renewing part of context that responsible for actions update toasters
    */
   useEffect(() => {
     if (action && !actionLoaderState.loadingStateUpdatedForAction) {
       setActionLoaderState({ ...getInitialLoadingStateForFiredAction(action), loadingStateUpdatedForAction: action })
     }
 
-    if (
-      action &&
-      !actionLoaderState.doormanBalance &&
-      !actionLoaderState.history &&
-      !actionLoaderState.userBalance &&
-      actionLoaderState.loadingStateUpdatedForAction === action
-    ) {
-      updateStakeActionLoaderContext(true)
-      setActionLoaderState(STAKE_DEFAULT_LOADINGS)
-    }
+    ;(async () => {
+      if (
+        action &&
+        loadingToasterId &&
+        !actionLoaderState.doormanBalance &&
+        !actionLoaderState.history &&
+        !actionLoaderState.userBalance &&
+        actionLoaderState.loadingStateUpdatedForAction === action
+      ) {
+        // removing loader toaster and showing success toaster
+        hideToasterMessage(loadingToasterId)
+        await sleep(300)
+        success(TOASTER_ACTIONS_TEXTS[action]['end']['message'], TOASTER_ACTIONS_TEXTS[action]['end']['title'])
+
+        // renewing context and internal state
+        updateStakeLoadingToasterId(null)
+        updateStakeActionContext('')
+        setActionLoaderState(STAKE_DEFAULT_LOADINGS)
+
+        // unlocking action buttons
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
+      }
+    })()
   }, [
     action,
+    loadingToasterId,
     actionLoaderState.doormanBalance,
     actionLoaderState.history,
     actionLoaderState.userBalance,

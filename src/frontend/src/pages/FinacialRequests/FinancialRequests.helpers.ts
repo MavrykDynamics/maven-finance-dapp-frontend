@@ -18,7 +18,8 @@ export const normalizeFinancialRequests = (
       const tokenAddress = item.token.token_address
       if (!tokenAddress) return acc
 
-      const tokenName = dipDupTokens.find(({ contract }) => contract === tokenAddress)?.metadata.symbol ?? 'MVK'
+      const tokenName =
+        dipDupTokens.find(({ token_address }) => token_address === tokenAddress)?.metadata.symbol ?? 'MVK'
 
       const frItem = {
         tokenAddress: tokenAddress,

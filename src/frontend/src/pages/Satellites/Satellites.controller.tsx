@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // providers
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 // types
@@ -35,21 +36,19 @@ import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
-import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
 const Satellites = () => {
-  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
-    skipAddressBalance: SUB_SKIP,
-    skipStakeHistory: SUB_SKIP,
-    skipMvkTokenTotal: SUB_SKIP,
-  })
-
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
 
   const dispatch = useDispatch()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
+  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
+    skipAddressBalance: SUB_SKIP,
+    skipStakeHistory: SUB_SKIP,
+    skipMvkTokenTotal: SUB_SKIP,
+  })
   const {
     user: { isSatellite, userTokens },
   } = useSelector((state: State) => state.wallet)

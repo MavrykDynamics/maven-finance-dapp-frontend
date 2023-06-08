@@ -77,3 +77,34 @@ export const dropShadow = (color: string) => keyframes`
     box-shadow: 0 0 10px 0 ${color};
   }
 `
+
+// toasts animation
+/**
+ *
+ * @param distance how many pixles (f.e. 200 | 500 etc.)
+ * @returns animation keyframe
+ */
+export const revealFromRight = (distance: number) => keyframes`
+  0% {
+    transform: translateX(${distance}px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+`
+
+/**
+ *
+ * @param distance how many pixles (f.e. 200 | 500 etc.)
+ * @returns animation keyframe
+ */
+export const hideToRight = (distance: number) => keyframes`
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(${distance}px);
+  }
+`

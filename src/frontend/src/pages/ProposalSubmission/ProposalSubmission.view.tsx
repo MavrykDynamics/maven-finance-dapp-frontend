@@ -18,7 +18,6 @@ import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { Info } from 'app/App.components/Info/Info.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // types
@@ -41,8 +40,7 @@ import {
   BUTTON_NAVIGATION,
   BUTTON_WIDE,
 } from 'app/App.components/Button/Button.constants'
-import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
-import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
+
 import colors from 'styles/colors'
 import {
   DROP_PROPOSAL_BUTTON_TOOLTIP,
@@ -322,8 +320,6 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
           <H2Title>Step {activeTab}</H2Title>
           <StatusFlag text={currentProposal.status} status={currentProposal.status} />
         </SubmitProposalHeader>
-
-        {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
 
         {activeTab === 1 && (
           <StageOneForm

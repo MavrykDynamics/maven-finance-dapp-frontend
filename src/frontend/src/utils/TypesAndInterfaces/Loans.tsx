@@ -7,12 +7,13 @@ import {
   VAULT_ALLOWANCE_ANY,
   WHITELIST_USERS,
 } from 'pages/Loans/Loans.const'
-import { Lending_Controller } from 'utils/generated/graphqlTypes'
+import { Lending_Controller, Mvk_Token_Operator } from 'utils/generated/graphqlTypes'
 import { TokenType } from './General'
 import { normalizeLoans } from 'pages/Loans/Loans.normalizer'
 import { normalizeVaultsStorage } from 'pages/Vaults/Vaults.normalizer'
 
-export type LoansGQL = Omit<Lending_Controller, '__typename'>
+export type MvkTokenOperatorGQL = Omit<Mvk_Token_Operator, '__typename'>
+export type LendingControllerGQL = Omit<Lending_Controller, '__typename'>
 export type LoansStorage = Awaited<ReturnType<typeof normalizeLoans>>
 export type VaultsStorage = Awaited<ReturnType<typeof normalizeVaultsStorage>>
 
@@ -100,7 +101,6 @@ export type LoansVaultType = {
   name: string
   vaultId: number
   xtzDelegatedTo: string | null
-  operators?: Array<string>
   sMVKDelegatedTo?: string
   levelOfEarly?: number
   levelOfLate?: number
@@ -124,6 +124,7 @@ export type LoanMarketType = {
     amount: number
     date: string | null
     userAddress: string
+    vaultAddress?: string
     operationHash: string
     tokenSymbol: string | undefined
   }>

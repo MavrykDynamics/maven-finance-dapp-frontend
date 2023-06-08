@@ -1,11 +1,17 @@
-import { M_Token } from './../utils/generated/graphqlTypes'
-import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
+import { M_Token, Token } from './../utils/generated/graphqlTypes'
 import { GET_DAPP_TOKENS } from './actions/getTokens.actions'
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { AnyAction } from 'redux'
 
+export type TokenMetadataType = {
+  decimals: string
+  name?: string
+  symbol: string
+  icon?: string
+}
+
 export type TokensType = {
-  dipDupTokens: Array<DipDupTokensGraphQl>
+  dipDupTokens: Array<Token & { metadata: TokenMetadataType }>
   tokensPrices: Record<string, number>
   avaliableCollaterals: Array<AvaliableCollateralType>
   mTokens: Array<M_Token>

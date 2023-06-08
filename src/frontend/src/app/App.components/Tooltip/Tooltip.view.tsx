@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import { cyanColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 import Icon from '../Icon/Icon.view'
 
@@ -63,7 +62,6 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
     }
 
     > svg {
-      fill: ${cyanColor};
       opacity: 0.8;
     }
   }
