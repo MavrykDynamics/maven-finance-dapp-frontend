@@ -20,11 +20,8 @@ import {
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // type
-import {
-  INPUT_STATUS_ERROR,
-  INPUT_STATUS_SUCCESS,
-  InputStatusType,
-} from '../../app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from '../../app/App.components/Input/Input.constants'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // actions
 import {
@@ -47,34 +44,20 @@ import { SatelliteGovernanceAvailableAction } from './SatelliteGovernance.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // helpers
-import { validateFormAddress, validateFormField, validateTzAddress } from 'utils/validatorFunctions'
+import { validateText, validateTzAddress } from 'utils/validatorFunctions'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import {
   SATELLITE_GOVERNANCE_CONTENT_FORM,
-  SATELLITE_GOVERNANCE_DEFAULT_TABLE,
-  SATELLITE_GOVERNANCE_DEFAULT_TABLE_VALIDATION,
   SATELLITE_GOVERNANCE_TOKEN_TYPES,
   SATELLITE_GOVERNANCE_ACTION_NAMES,
+  SATELLITE_GOVERNANCE_INITIAL_DATA,
+  SATELLITE_GOVERNANCE_INITIAL_VALIDATION_DATA,
 } from './SatelliteGovernance.consts'
 
 type MaxLength = {
   purposeMaxLength: number
   aggregatorNameMaxLength: number
 }
-
-type InputStatus = Record<string, InputStatusType>
-
-type InputValue = {
-  firstInput: string
-  secondInput: string
-  purpose: string
-}
-
-const initialData = {
-  firstInput: '',
-  secondInput: '',
-  purpose: '',
-} as InputValue & InputStatus
 
 type Props = {
   variant?: keyof typeof SATELLITE_GOVERNANCE_CONTENT_FORM
@@ -86,13 +69,11 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
   const dispatch = useDispatch()
 
   const dropDownItems = useMemo(() => SATELLITE_GOVERNANCE_TOKEN_TYPES.map((item) => getDdItem(item.toUpperCase())), [])
-  const [tableData, setTableData] = useState(SATELLITE_GOVERNANCE_DEFAULT_TABLE)
-  const [tableValidation, setTableValidation] = useState(SATELLITE_GOVERNANCE_DEFAULT_TABLE_VALIDATION)
 
-  const [form, setForm] = useState<InputValue>(initialData)
-  const [formInputStatus, setFormInputStatus] = useState<InputStatus>(initialData)
+  const [data, setData] = useState(SATELLITE_GOVERNANCE_INITIAL_DATA)
+  const [validation, setValidation] = useState(SATELLITE_GOVERNANCE_INITIAL_VALIDATION_DATA)
 
-  const { firstInput, secondInput, purpose } = form
+  const { firstInput, secondInput, purpose, table } = data
   const {
     title = '',
     btnText = '',
@@ -102,8 +83,11 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
   } = variant ? SATELLITE_GOVERNANCE_CONTENT_FORM[variant] : {}
 
   const isDisabledButton = useMemo(
-    () => Object.values(formInputStatus).some((item) => item === INPUT_STATUS_ERROR) || isActionActive,
-    [formInputStatus, isActionActive],
+    () =>
+      Object.values(validation).some((item) => item === INPUT_STATUS_ERROR) ||
+      validation.table.some((item) => item.amount === INPUT_STATUS_ERROR || item.to_ === INPUT_STATUS_ERROR) ||
+      isActionActive,
+    [validation, isActionActive],
   )
   const isFixMistakenTransfer = variant === SATELLITE_GOVERNANCE_ACTION_NAMES.FIX_MISTAKEN_TRANSFER
   const isFieldRegisterAggregator = variant === SATELLITE_GOVERNANCE_ACTION_NAMES.REGISTER_AGGREGATOR
@@ -153,42 +137,56 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
         await dispatch(registerAggregator(secondInput, firstInput))
         break
       case SATELLITE_GOVERNANCE_ACTION_NAMES.FIX_MISTAKEN_TRANSFER:
-        await dispatch(fixMistakenTransfer(secondInput, firstInput, tableData))
+        // get only filled table data
+        const validatedTableData = table.filter((item) => Boolean(item.amount) && Boolean(item.to_))
+        await dispatch(fixMistakenTransfer(firstInput, secondInput, validatedTableData))
         break
     }
 
-    setForm({
-      secondInput: '',
-      firstInput: '',
-      purpose: '',
-    })
+    setData(SATELLITE_GOVERNANCE_INITIAL_DATA)
+    setValidation(SATELLITE_GOVERNANCE_INITIAL_VALIDATION_DATA)
+  }
 
-    setFormInputStatus({
-      secondInput: '',
-      firstInput: '',
-      purpose: '',
+  const validationText = (
+    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>,
+    maxLength?: number,
+  ) => {
+    const { value, name } = e.target
+
+    setValidation((prev) => {
+      return { ...prev, [name]: validateText(value, maxLength) }
     })
   }
 
-  const validationText = validateFormField(setFormInputStatus)
-  const validationAddress = validateFormAddress(setFormInputStatus)
+  const validationAddress = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { value, name } = e.target
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
-    setForm((prev) => {
-      return { ...prev, [e.target.name]: e.target.value }
+    setValidation((prev) => {
+      return { ...prev, [name]: validateTzAddress(value) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR }
     })
   }
 
-  const updateTableDataState = (
-    e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: string | number } },
-    rowIdx: number,
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>,
+    rowIdx?: number,
   ) => {
     const { name, value } = e.target
 
+    // validation
     switch (name) {
+      case 'firstInput':
+        isFieldRegisterAggregator ? validationText(e, maxLength.aggregatorNameMaxLength) : validationAddress(e)
+        break
+      case 'secondInput':
+        isFixMistakenTransfer ? validationText(e, maxLength.purposeMaxLength) : validationAddress(e)
+        break
+      case 'purpose':
+        validationText(e, maxLength.purposeMaxLength)
+        break
       case 'to_':
-        setTableValidation(
-          tableValidation.map((item, idx) =>
+        setValidation((prev) => ({
+          ...prev,
+          table: prev.table.map((item, idx) =>
             idx === rowIdx
               ? {
                   ...item,
@@ -196,11 +194,12 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
                 }
               : item,
           ),
-        )
+        }))
         break
       case 'amount':
-        setTableValidation(
-          tableValidation.map((item, idx) =>
+        setValidation((prev) => ({
+          ...prev,
+          table: prev.table.map((item, idx) =>
             idx === rowIdx
               ? {
                   ...item,
@@ -208,44 +207,79 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
                 }
               : item,
           ),
-        )
+        }))
         break
     }
 
-    setTableData(
-      tableData.map((item, idx) =>
-        idx === rowIdx
-          ? {
-              ...item,
-              [name]: value,
-            }
-          : item,
-      ),
-    )
+    // set data
+    switch (name) {
+      case 'firstInput':
+      case 'secondInput':
+      case 'purpose':
+        setData((prev) => {
+          return { ...prev, [e.target.name]: e.target.value }
+        })
+        break
+      case 'to_':
+      case 'amount':
+        setData((prev) => {
+          return {
+            ...prev,
+            table: prev.table.map((item, idx) =>
+              idx === rowIdx
+                ? {
+                    ...item,
+                    [name]: value,
+                  }
+                : item,
+            ),
+          }
+        })
+        break
+    }
   }
 
   const handleAddRow = () => {
-    setTableData(tableData.concat({ to_: '', amount: 0, token: SATELLITE_GOVERNANCE_TOKEN_TYPES[0] }))
-    setTableValidation(tableValidation.concat({ to_: '', amount: '' }))
+    setData((prev) => ({
+      ...prev,
+      table: prev.table.concat({ to_: '', amount: 0, token: SATELLITE_GOVERNANCE_TOKEN_TYPES[0] }),
+    }))
+
+    setValidation((prev) => ({
+      ...prev,
+      table: prev.table.concat({ to_: '', amount: '' }),
+    }))
   }
 
   const handleDeleteRow = (rowId: number) => {
-    setTableData(tableData.filter((_, idx) => idx !== rowId))
-    setTableValidation(tableValidation.filter((_, idx) => idx !== rowId))
+    setData((prev) => ({
+      ...prev,
+      table: prev.table.filter((_, idx) => idx !== rowId),
+    }))
+
+    setValidation((prev) => ({
+      ...prev,
+      table: prev.table.filter((_, idx) => idx !== rowId),
+    }))
   }
 
   const handleTableClickDropdown = (rowIdx: number) => (newSelectedSymbol: DDItemId) => {
-    updateTableDataState(
-      {
-        target: { name: 'token', value: newSelectedSymbol },
-      },
-      rowIdx,
-    )
+    setData((prev) => ({
+      ...prev,
+      table: prev.table.map((item, idx) =>
+        idx === rowIdx
+          ? {
+              ...item,
+              token: newSelectedSymbol as TokenType,
+            }
+          : item,
+      ),
+    }))
   }
 
   useEffect(() => {
-    setForm(initialData)
-    setFormInputStatus(initialData)
+    setData(SATELLITE_GOVERNANCE_INITIAL_DATA)
+    setValidation(SATELLITE_GOVERNANCE_INITIAL_VALIDATION_DATA)
   }, [variant])
 
   if (!variant) return null
@@ -275,12 +309,9 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
               value: firstInput,
               required: true,
 
-              onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                handleChange(e)
-                isFieldRegisterAggregator ? validationText(e, maxLength.aggregatorNameMaxLength) : validationAddress(e)
-              },
+              onChange: handleChange,
             }}
-            settings={{ inputStatus: formInputStatus.firstInput }}
+            settings={{ inputStatus: validation.firstInput }}
           />
         </div>
 
@@ -294,12 +325,9 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
                 value: secondInput,
                 required: true,
 
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                  handleChange(e)
-                  isFixMistakenTransfer ? validationText(e, maxLength.purposeMaxLength) : validationAddress(e)
-                },
+                onChange: handleChange,
               }}
-              settings={{ inputStatus: formInputStatus.secondInput }}
+              settings={{ inputStatus: validation.secondInput }}
             />
           </div>
         )}
@@ -313,11 +341,8 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
             value={purpose}
             name="purpose"
             required
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-              handleChange(e)
-              validationText(e, maxLength.purposeMaxLength)
-            }}
-            inputStatus={formInputStatus.purpose}
+            onChange={handleChange}
+            inputStatus={validation.purpose}
             textAreaMaxLimit={maxLength.purposeMaxLength}
           />
         </div>
@@ -336,7 +361,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
               </TableRow>
             </TableHeader>
             <TableBody className="editable-body">
-              {tableData.map(({ to_, token, amount }, rowIdx) => {
+              {table.map(({ to_, token, amount }, rowIdx) => {
                 return (
                   <TableRow className="editable-row">
                     <TableCell width="33.3%">
@@ -345,9 +370,9 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
                           type: 'text',
                           name: 'to_',
                           value: String(to_),
-                          onChange: (e) => updateTableDataState(e, rowIdx),
+                          onChange: (e) => handleChange(e, rowIdx),
                         }}
-                        settings={{ inputStatus: tableValidation[rowIdx]?.to_ }}
+                        settings={{ inputStatus: validation.table[rowIdx]?.to_ }}
                       />
                     </TableCell>
                     <TableCell width="33.3%">
@@ -356,9 +381,9 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
                           type: 'number',
                           name: 'amount',
                           value: Number(amount),
-                          onChange: (e) => updateTableDataState(e, rowIdx),
+                          onChange: (e) => handleChange(e, rowIdx),
                         }}
-                        settings={{ inputStatus: tableValidation[rowIdx]?.amount }}
+                        settings={{ inputStatus: validation.table[rowIdx]?.amount }}
                       />
                     </TableCell>
                     <TableCell className="no-right-border" width="33.3%">

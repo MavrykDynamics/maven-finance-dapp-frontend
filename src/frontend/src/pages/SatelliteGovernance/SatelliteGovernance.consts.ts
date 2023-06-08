@@ -1,3 +1,4 @@
+import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { ValidationResult } from 'pages/ProposalSubmission/ProposalSubmission.types'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { SatelliteGovernanceTransfer } from 'utils/TypesAndInterfaces/Satellites'
@@ -133,10 +134,31 @@ export const SATELLITE_GOVERNANCE_PATHNAME = '/satellite-governance'
 
 // TODO: delete after updating tokens data
 export const SATELLITE_GOVERNANCE_TOKEN_TYPES: Array<TokenType> = ['fa12', 'fa2', 'tez']
-export const SATELLITE_GOVERNANCE_DEFAULT_TABLE: Array<SatelliteGovernanceTransfer> = [
-  { to_: '', amount: 0, token: SATELLITE_GOVERNANCE_TOKEN_TYPES[0] },
-]
-export const SATELLITE_GOVERNANCE_DEFAULT_TABLE_VALIDATION: Array<{
-  to_: ValidationResult
-  amount: ValidationResult
-}> = [{ to_: '', amount: '' }]
+
+type InitialDataType = {
+  firstInput: string
+  secondInput: string
+  purpose: string
+  table: SatelliteGovernanceTransfer[]
+}
+
+type ValidationDataType = {
+  firstInput: InputStatusType
+  secondInput: InputStatusType
+  purpose: InputStatusType
+  table: { to_: ValidationResult; amount: ValidationResult }[]
+}
+
+export const SATELLITE_GOVERNANCE_INITIAL_VALIDATION_DATA: ValidationDataType = {
+  firstInput: '',
+  secondInput: '',
+  purpose: '',
+  table: [{ to_: '', amount: '' }],
+}
+
+export const SATELLITE_GOVERNANCE_INITIAL_DATA: InitialDataType = {
+  firstInput: '',
+  secondInput: '',
+  purpose: '',
+  table: [{ to_: '', amount: 0, token: SATELLITE_GOVERNANCE_TOKEN_TYPES[0] }],
+}
