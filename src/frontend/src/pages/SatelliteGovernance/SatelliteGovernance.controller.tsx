@@ -246,7 +246,7 @@ export const SatelliteGovernance = () => {
             <SatelliteGovernanceForm
               maxLength={maxLength}
               isActionActive={isActionActive}
-              variant={chosenDdItem?.id ?? ''}
+              variant={chosenDdItem?.id}
             />
           </SatelliteGovernanceAvailableActions>
         ) : null}
@@ -254,7 +254,7 @@ export const SatelliteGovernance = () => {
         {isLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
-            <div className="text">Loading vaults</div>
+            <div className="text">Loading satellite governance actions...</div>
           </DataLoaderWrapper>
         ) : (
           <SatelliteGovernanceMenuCards>

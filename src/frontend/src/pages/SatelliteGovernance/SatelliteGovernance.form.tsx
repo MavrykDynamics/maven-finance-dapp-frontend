@@ -63,6 +63,7 @@ type MaxLength = {
 }
 
 type InputStatus = Record<string, InputStatusType>
+
 type InputValue = {
   firstInput: string
   secondInput: string
@@ -76,7 +77,7 @@ const initialData = {
 } as InputValue & InputStatus
 
 type Props = {
-  variant: string
+  variant?: keyof typeof SATELLITE_GOVERNANCE_CONTENT_FORM
   maxLength: MaxLength
   isActionActive: boolean
 }
@@ -92,8 +93,13 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
   const [formInputStatus, setFormInputStatus] = useState<InputStatus>(initialData)
 
   const { firstInput, secondInput, purpose } = form
-  const { title, btnText, btnIcon, firstInputLabel, secondInputLabel } =
-    SATELLITE_GOVERNANCE_CONTENT_FORM.get(variant) ?? {}
+  const {
+    title = '',
+    btnText = '',
+    btnIcon = '',
+    firstInputLabel = '',
+    secondInputLabel = '',
+  } = variant ? SATELLITE_GOVERNANCE_CONTENT_FORM[variant] : {}
 
   const isDisabledButton = useMemo(
     () => Object.values(formInputStatus).some((item) => item === INPUT_STATUS_ERROR) || isActionActive,
