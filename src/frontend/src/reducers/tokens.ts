@@ -1,5 +1,4 @@
-import { M_Token } from './../utils/generated/graphqlTypes'
-import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
+import { M_Token, Token } from './../utils/generated/graphqlTypes'
 import { GET_DAPP_TOKENS, GET_MVK_FAUCET, GET_TOKENS_PRICES } from './actions/getTokens.actions'
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { GET_AVALIABLE_COLLATERALS, GET_XTZ_BAKERS } from 'pages/Loans/Actions/getLoansData.actions'
@@ -7,8 +6,15 @@ import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { AnyAction } from 'redux'
 
+export type TokenMetadataType = {
+  decimals: string
+  name?: string
+  symbol: string
+  icon?: string
+}
+
 export type TokensType = {
-  dipDupTokens: Array<DipDupTokensGraphQl>
+  dipDupTokens: Array<Token & { metadata: TokenMetadataType }>
   tokensPrices: Record<string, number>
   avaliableCollaterals: Array<AvaliableCollateralType>
   xtzBakers: {

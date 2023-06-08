@@ -40,9 +40,7 @@ export const getAssetMetadata = ({
   oracleId?: string
 }): (BaseLoansAssetDataType & { address: string }) | undefined => {
   const isXTZ = isTezosAsset(tokenName)
-  const foundAssetInDipDup = dipDupTokens.find(
-    ({ metadata: { name: dipDupName }, contract }) => tokenName === dipDupName || tokenAddress === contract,
-  )
+  const foundAssetInDipDup = dipDupTokens.find(({ token_address }) => tokenAddress === token_address)
 
   const { last_completed_data, decimals, icon } = feeds.find(({ address }) => address === oracleId) ?? {}
 
@@ -64,14 +62,14 @@ export const getAssetMetadata = ({
     return {
       decimals: Number(foundAssetInDipDup.metadata.decimals),
       gqlName: tokenName,
-      name: foundAssetInDipDup.metadata.name,
+      name: foundAssetInDipDup.metadata.name ?? '',
       symbol: foundAssetInDipDup.metadata.symbol,
       icon:
         tokenName === 'eurl'
           ? '/images/eurl.png'
           : tokenName === 'tzbtc'
           ? '/images/tzBTC.png'
-          : icon ?? foundAssetInDipDup.metadata.icon,
+          : icon ?? foundAssetInDipDup.metadata.icon ?? '',
       rate: last_completed_data / 10 ** decimals,
       address: tokenAddress,
       id: foundAssetInDipDup.id,

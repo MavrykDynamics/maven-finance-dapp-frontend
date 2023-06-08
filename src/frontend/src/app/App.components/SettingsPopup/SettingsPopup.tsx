@@ -71,8 +71,6 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
     const enteredNode = e.target.value.trim()
     const isValidRPC = await isValidRPCNode(enteredNode, RPC_NODES)
 
-    console.log({ enteredNode, isValidRPC })
-
     setRpcNodeError(isValidRPC.errorMsg)
     setInputData((prev) => ({
       ...prev,
@@ -112,12 +110,6 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
     setInputData(DEFAULT_NODE_INPUT_STATE)
     setRpcNodeError(null)
   }
-
-  console.log({
-    inputData,
-    REACT_APP_RPC_PROVIDER,
-    selectedNode,
-  })
 
   const confirmDisabled =
     (Boolean(inputData.node) && inputData.nodeValidation !== INPUT_STATUS_SUCCESS) ||

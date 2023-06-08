@@ -83,7 +83,8 @@ export const getTokenDecimals = ({
 }): number | null => {
   if (tokenType === 'tez') return XTZ_DECIMALS
 
-  const { metadata: { decimals = null } = {} } = dipDupTokens.find(({ contract }) => tokenAddress === contract) ?? {}
+  const { metadata: { decimals = null } = {} } =
+    dipDupTokens.find(({ token_address }) => tokenAddress === token_address) ?? {}
 
   return decimals ? Number(decimals) : null
 }
