@@ -68,7 +68,7 @@ export const normalizeFarmStorage = (
       lastBlockUpdate: farmItem.last_block_update,
       lpTokenUserBalance,
       lpTokenAddress: lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] ?? '',
-      lpBalance: farmItem.lp_token_balance / Math.pow(10, Number(dipDupToken?.metadata.decimals)),
+      lpBalance: farmItem.lp_token_balance / Math.pow(10, Number(dipDupToken?.metadata.decimals ?? 0)),
       lpToken1: {
         symbol: lpTokenInfo?.liquidityPairToken?.token0?.symbol?.[0],
         address: lpTokenInfo?.liquidityPairToken?.token0?.tokenAddress?.[0],
