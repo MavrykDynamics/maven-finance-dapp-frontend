@@ -69,7 +69,6 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     proposalsMapper,
     config: { fee, governancePhase },
   } = useSelector((state: State) => state.governance)
-  const { dipDupTokens } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
 

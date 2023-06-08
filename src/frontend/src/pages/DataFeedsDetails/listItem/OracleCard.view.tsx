@@ -1,17 +1,20 @@
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { FeedsListItem, FeedsOraclesCardStyled, DataFeedListItemTextTruncated } from 'pages/DataFeeds/DataFeeds.styles'
-import { ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { State } from 'reducers'
+
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+
+import { ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { FeedsListItem, FeedsOraclesCardStyled, DataFeedListItemTextTruncated } from 'pages/DataFeeds/DataFeeds.styles'
 import { SatelliteOracleStatusComponent } from '../../Satellites/listItem/SatelliteCard.style'
+import { XTZ_TOKEN_SYMBOL } from 'utils/constants'
 
 export const OracleCard = ({ oracle }: { oracle: SatelliteRecordType }) => {
-  const { tezos: xtzExchangeRate = 0, mvk: mvkExchangeRate = 0 } = useSelector(
-    (state: State) => state.tokens.tokensPrices,
-  )
+  const { tokensPrices } = useTokensContext()
+  const xtzExchangeRate = tokensPrices[XTZ_TOKEN_SYMBOL] ?? 0
+  const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
 
   const smvkReward = oracle.oracleRecords.reduce<number>((acc, { sMVKReward }) => (acc += sMVKReward), 0)
   const xtzReward = oracle.oracleRecords.reduce<number>((acc, { XTZReward }) => (acc += XTZReward), 0)

@@ -11,7 +11,6 @@ import { MVK_DECIMALS } from 'utils/constants'
 
 export const normalizeProposal = (
   item: GovernanceProposalGraphQL,
-  dipDupTokens: State['tokens']['dipDupTokens'],
   { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: State['governance']['config'],
 ) => {
   const proposalConvertedStatus = getProposalStatus(
@@ -83,7 +82,6 @@ export const normalizeProposal = (
 
 export const normalizeGovernanceProposals = (
   proposals: Array<GovernanceProposalGraphQL>,
-  dipDupTokens: State['tokens']['dipDupTokens'],
   governanceConfig: State['governance']['config'],
 ): Omit<Omit<State['governance'], 'isLoaded'>, 'config'> => {
   const { governancePhase, timelockProposalId } = governanceConfig
@@ -91,7 +89,7 @@ export const normalizeGovernanceProposals = (
 
   return proposals.reduce<Omit<Omit<State['governance'], 'isLoaded'>, 'config'>>(
     (acc, proposalFromGQL) => {
-      const normalizedProposal = normalizeProposal(proposalFromGQL, dipDupTokens, governanceConfig)
+      const normalizedProposal = normalizeProposal(proposalFromGQL, governanceConfig)
 
       const { id, executed, status, currentRoundProposal, paymentProcessed } = normalizedProposal
 

@@ -8,16 +8,20 @@ import { Page } from 'styles'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
-import { State } from '../../reducers'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+// const & types
 import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
+import { MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { State } from '../../reducers'
+
+// actions
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -29,9 +33,8 @@ export const Dashboard = () => {
   const { totalStakedMvk, totalSupply, maximumTotalSupply } = useStakeContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
-  const {
-    tokensPrices: { mvk: mvkExchangeRate = 0 },
-  } = useSelector((state: State) => state.tokens)
+  const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
+
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)

@@ -12,7 +12,6 @@ import { vesting, VestingState } from './vesting'
 import { farm, FarmState } from './farm'
 import { preferences, PreferencesState } from './preferences'
 import { contractAddresses, ContractAddressesState } from './contractAddresses'
-import { tokens, TokensType } from './tokens'
 import { loans, LoansState } from './loans'
 import { financialRequest, FinancialRequestStoreType } from './financialRequests'
 import { satellites, SatellitesState } from './satellites'
@@ -22,7 +21,6 @@ export const reducers = combineReducers({
   loading,
   toaster,
   wallet,
-  tokens,
   preferences,
   contractAddresses,
 
@@ -55,7 +53,6 @@ export interface State {
   farm: FarmState
   preferences: PreferencesState
   contractAddresses: ContractAddressesState
-  tokens: TokensType
   loans: LoansState
   satellites: SatellitesState
   satelliteGovernance: SatelliteGovernanceState

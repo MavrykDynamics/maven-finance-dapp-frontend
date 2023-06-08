@@ -26,9 +26,6 @@ import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLev
 
 export const GET_FINANCIAL_REQUEST_STORAGE = 'GET_FINANCIAL_REQUEST_STORAGE'
 export const getFinancialRequestStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const {
-    tokens: { dipDupTokens },
-  } = getState()
   try {
     const storage = await fetchFromIndexer(
       FINANCIAL_REQUESTS_STORAGE_QUERY,
@@ -36,7 +33,7 @@ export const getFinancialRequestStorage = () => async (dispatch: AppDispatch, ge
       FINANCIAL_REQUESTS_STORAGE_QUERY_VARIABLE,
     )
 
-    const { financialRequestMapper, financialRequestsIds } = normalizeFinancialRequests(storage, dipDupTokens)
+    const { financialRequestMapper, financialRequestsIds } = normalizeFinancialRequests(storage)
 
     dispatch({
       type: GET_FINANCIAL_REQUEST_STORAGE,
