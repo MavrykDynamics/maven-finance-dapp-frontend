@@ -50,6 +50,8 @@ type SatelliteGovernanceType = {
   userAddress?: string
 }
 
+const DEFAULT_ACTIONS_PER_CYCLE = 10
+
 export const normalizerSatelliteGovernance = ({ storage, userAddress }: SatelliteGovernanceType) => {
   const { governance_satellite, governance_satellite_action: governanceSatelliteActions } = storage
   const [governanceSatellite] = governance_satellite
@@ -64,7 +66,9 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
     governanceId: governanceSatellite.governance.address,
     // TODO remove 10 when api will return proper value, right now it's 0 instead of 10
     maxActionsCount:
-      governanceSatellite.max_actions_per_satellite === 0 ? 10 : governanceSatellite.max_actions_per_satellite,
+      governanceSatellite.max_actions_per_satellite === 0
+        ? DEFAULT_ACTIONS_PER_CYCLE
+        : governanceSatellite.max_actions_per_satellite,
   }
 
   const actions = governanceSatelliteActions.reduce<SatelliteGovernanceActionsType>(
