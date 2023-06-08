@@ -42,7 +42,8 @@ export default class ToasterProvider extends React.Component<Props, State> {
         success: this.success,
         loading: this.loading,
         error: props.error || null,
-        removeToasterMessage: this.removeToasterMessage,
+        hideToasterMessage: this.hideToasterMessage,
+        deleteToasterFromArray: this.deleteToasterFromArray,
         messages: [],
         setError: this.setError,
       },
@@ -67,6 +68,7 @@ export default class ToasterProvider extends React.Component<Props, State> {
             title,
             message,
             unique,
+            hide: false,
           },
         ]),
       },
@@ -116,13 +118,45 @@ export default class ToasterProvider extends React.Component<Props, State> {
     }))
   }
 
-  removeToasterMessage = (unique: string): void => {
+  /**
+   * sets hide property for toast to 'true' to play hide animation
+   * @param unique toaster id
+   */
+  hideToasterMessage = (unique: string): void => {
+    const { messages } = this.state.context
+    const message = messages.find((m) => m.unique === unique)
+
+    if (!message) return
+
+    const hidedMessage = { ...message, hide: true }
+
+    const _messages = messages.map((m) => {
+      if (m.unique === unique) {
+        return hidedMessage
+      }
+      return m
+    })
+
+    this.setState((prevState) => ({
+      context: {
+        ...prevState.context,
+        messages: _messages,
+      },
+    }))
+  }
+
+  /**
+   * completely deletes toast from messages
+   * should be used only within ToasterMessages component
+   * @param unique toast id
+   */
+  deleteToasterFromArray = (unique: string): void => {
     const { messages } = this.state.context
 
     this.setState((prevState) => ({
       context: {
         ...prevState.context,
-        messages: messages.filter((message) => unique !== message.unique),
+        messages: messages.filter((m) => m.unique !== unique),
       },
     }))
   }

@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux'
 
-import { doorman, DoormanState } from './doorman'
 import { loading, LoadingState } from './loading'
 import { toaster, ToasterState } from './toaster'
 import { wallet, WalletState } from './wallet'
@@ -38,7 +37,6 @@ export const reducers = combineReducers({
   satellites,
   dataFeeds,
 
-  doorman,
   loans,
   treasury,
   farm,
@@ -49,7 +47,6 @@ export interface State {
   loading: LoadingState
   toaster: ToasterState
   wallet: WalletState
-  doorman: DoormanState
   governance: GovernanceState
   financialRequest: FinancialRequestStoreType
   emergencyGovernance: EmergencyGovernanceState

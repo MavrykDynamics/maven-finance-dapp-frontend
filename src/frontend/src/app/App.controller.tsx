@@ -8,6 +8,9 @@ import { useCookies } from 'react-cookie'
 
 import { configureStore } from './App.store'
 
+// providers
+import { StakeProvider } from 'providers/StakeProvider/stake.provider'
+
 // types
 import { State } from '../reducers'
 
@@ -109,9 +112,11 @@ const AppContainer = () => {
         <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
         <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
-        <LoansPopupsProvider>
-          <AppRoutes />
-        </LoansPopupsProvider>
+        <StakeProvider>
+          <LoansPopupsProvider>
+            <AppRoutes />
+          </LoansPopupsProvider>
+        </StakeProvider>
       </AppStyled>
     </Router>
   )

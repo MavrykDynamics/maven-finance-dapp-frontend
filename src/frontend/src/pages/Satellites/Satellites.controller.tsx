@@ -2,6 +2,9 @@ import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
+// providers
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+
 // types
 import { State } from 'reducers'
 
@@ -16,7 +19,6 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
-import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
@@ -33,23 +35,29 @@ import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
 
 const Satellites = () => {
   const dispatch = useDispatch()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+
+  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
+    skipAddressBalance: SUB_SKIP,
+    skipStakeHistory: SUB_SKIP,
+    skipMvkTokenTotal: SUB_SKIP,
+  })
   const {
     user: { isSatellite, userTokens },
   } = useSelector((state: State) => state.wallet)
-  const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
           (!isFeedsLoaded || isDepsChanged) && dispatch(getFeedsStorage()),
-          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
           (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
         ].filter(Boolean),
       )
@@ -95,7 +103,7 @@ const Satellites = () => {
             </SmallInfoBlock>
           </InfoBlockWrapper>
 
-          {isLoading ? (
+          {isLoading || isDoormanLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellites and data feeds data</div>
