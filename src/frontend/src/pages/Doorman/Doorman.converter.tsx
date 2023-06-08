@@ -34,7 +34,7 @@ type SmvkHistoryDataProps = {
   smvk_history_data: SmvkHistoryDataGraphQl[]
 }
 
-export function normalizeSmvkHistoryData(storage: SmvkHistoryDataProps) {
+export function normalizeDoormanChartsData(storage: SmvkHistoryDataProps) {
   const { smvk_history_data = [] } = storage
 
   const history = smvk_history_data.reduce<{

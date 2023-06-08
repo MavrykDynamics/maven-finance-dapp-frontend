@@ -1,4 +1,5 @@
 export const LOANS_QUERY = `
+
 query GetLoansStorage {
   lending_controller(where: {mock_time: {_eq: false}}) {
     collateral_ratio
@@ -60,6 +61,11 @@ query GetLoansStorage {
         sender {
           address
         }
+        vault {
+          vault {
+            address
+          }
+        }
         loan_token {
           loan_token_name
           token {
@@ -70,7 +76,15 @@ query GetLoansStorage {
             address
           }
         }
+        collateral_token {
+          token_name
+          token {
+            token_address
+          }
+          oracle_id
+        }
       }
+
       vaults_aggregate(where: {loan_outstanding_total: {_neq: "0"}}) {
         aggregate {
           count(distinct: true, columns: owner_id)
@@ -205,3 +219,20 @@ export const USER_LENDING_DATA_QUERY_NAME = 'GetLendBorrowHistoryPerUser'
 export const USER_LENDING_DATA_QUERY_VARIABLE = (userAddress?: string) => {
   return { userAddress: userAddress ?? '' }
 }
+
+export const MVK_TOKEN_OPERATOR_QUERY = `
+  query GetMvkTokenOperator($_userAddress: String) {
+    mvk_token_operator(where: {owner: {address: {_eq: $_userAddress}}}) {
+      operator {
+        address
+      }
+      
+      owner {
+        address
+      }
+    }
+  }
+`
+
+export const MVK_TOKEN_OPERATOR_QUERY_NAME = 'GetMvkTokenOperator'
+export const MVK_TOKEN_OPERATOR_QUERY_VARIABLE = (address: string) => ({ _userAddress: address })

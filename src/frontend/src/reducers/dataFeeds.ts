@@ -8,7 +8,6 @@ const dataFeedsDefaultState: DataFeedsState = {
   feedsLedger: [],
   feedsCategories: [],
   config: {
-    feedsFactoryAddress: '',
     feedNameMaxLength: 0,
   },
   isLoaded: false,

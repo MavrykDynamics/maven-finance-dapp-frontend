@@ -1,7 +1,5 @@
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { State } from 'reducers'
 import { PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // utils
@@ -24,6 +22,7 @@ import {
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -33,7 +32,7 @@ export const emptyContainer = (
 )
 
 export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { totalStakedMvk, totalSupply, smvkHistoryData } = useSelector((state: State) => state.doorman)
+  const { totalSupply, totalStakedMvk, smvkHistoryData } = useStakeContext()
 
   const mli = calcMLI(totalSupply, totalStakedMvk)
   const fee = calcExitFee(totalSupply, totalStakedMvk)

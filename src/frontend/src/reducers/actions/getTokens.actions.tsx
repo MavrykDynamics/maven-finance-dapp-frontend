@@ -56,11 +56,12 @@ export const getTokensForDAPP = () => async (dispatch: AppDispatch, getState: Ge
       DAPP_TOKENS_VARIABLE(address),
     )
 
-    const dipDupTokensStorage = storageTokens.dipdup_token_metadata
+    const dipDupTokensStorage = storageTokens.token
     const whitelistTokensStorage = storageTokens.treasury
     const mTokensStorage = storageTokens.m_token
 
     const dipDupTokens = normalizeDipDupTokens(dipDupTokensStorage)
+    console.log({ dipDupTokens, dipDupTokensStorage })
     const mTokens = normalizeMTokens(mTokensStorage)
     const whitelistTokens = normalizeWhitelistTokens(whitelistTokensStorage)
 

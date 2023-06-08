@@ -47,7 +47,6 @@ export function normalizeFeeds(feeds: Array<FeedGqlType>, aggregator_factory: Ag
     feedsCategories: [...dataFeedUniqueCategories],
     config: {
       feedNameMaxLength: aggregator_factory[0]?.aggregator_name_max_length || defaultAggregatorNameMaxLength,
-      feedsFactoryAddress: aggregator_factory?.[0]?.address || '',
     },
   }
 }

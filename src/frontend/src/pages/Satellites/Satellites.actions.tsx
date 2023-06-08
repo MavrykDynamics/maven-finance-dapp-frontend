@@ -1,6 +1,5 @@
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 
 import { State } from 'reducers'
@@ -124,7 +123,6 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(getSatellitesStorage())
-          await dispatch(getDoormanStorage())
           await dispatch(updateUserData())
 
           // Add here call for update data actions
@@ -181,7 +179,6 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(getSatellitesStorage())
-          await dispatch(getDoormanStorage())
           await dispatch(updateUserData())
 
           // Add here call for update data actions
@@ -239,7 +236,6 @@ export const distributeProposalRewards =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(getSatellitesStorage())
-            await dispatch(getDoormanStorage())
             await dispatch(updateUserData())
 
             // Add here call for update data actions

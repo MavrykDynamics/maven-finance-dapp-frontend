@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // consts, helpers, actions
+import { getVoteText, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
-import { getOracleStatus, getVoteText, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
   ACTION_PRIMARY,
@@ -89,7 +89,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const lastSupportedgProposalId = satellite.proposalVotingHistory?.at(0)?.proposalId ?? null
 
   // Satellite status data
-  const oracleStatusType = getOracleStatus(satellite, feedsLedger)
   const satelliteStatusColor =
     satellite.status === SatelliteStatus.BANNED || !currentlyRegistered ? STATUS_FLAG_DOWN : STATUS_FLAG_WARNING
   // if satellite is unregistered, show inactive status
@@ -216,8 +215,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup className="oracle-status">
               <SatelliteMainText>Oracle Status</SatelliteMainText>
               <SatelliteSubText>
-                <SatelliteOracleStatusComponent statusType={oracleStatusType}>
-                  {ORACLE_STATUSES_MAPPER[oracleStatusType]}
+                <SatelliteOracleStatusComponent statusType={satellite.oracleStatus}>
+                  {ORACLE_STATUSES_MAPPER[satellite.oracleStatus]}
                 </SatelliteOracleStatusComponent>
               </SatelliteSubText>
             </SatelliteTextGroup>

@@ -5,11 +5,15 @@ import { DashboardView } from './Dashboard.view'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { Page } from 'styles'
 
+// providers
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { DOORMAN_HISTORY_SUB, DOORMAN_STATS_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+
 import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
 import { fillTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
-import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
@@ -22,15 +26,11 @@ export const Dashboard = () => {
   const parsedQp = QueryString.parse(search, { ignoreQueryPrefix: true }) as { tab: string }
   const activeTab = isValidPersonalDashboardTabId(parsedQp.tab) ? parsedQp.tab : LENDING_TAB_ID
 
+  const { totalStakedMvk, totalSupply, maximumTotalSupply } = useStakeContext()
+
   const {
     tokensPrices: { mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
-  const {
-    totalStakedMvk,
-    totalSupply,
-    maximumTotalSupply,
-    isLoaded: isDoormanLoaded,
-  } = useSelector((state: State) => state.doorman)
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
@@ -84,6 +84,8 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
+  const { isInitialLoading: isDoormanLoading } = useStakeUpdater()
+
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
@@ -93,7 +95,6 @@ export const Dashboard = () => {
           (!isTreasuryLoaded || isDepsChanged) && dispatch(fillTreasuryStorage()),
           (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
           (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage()),
-          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
         ].filter(Boolean),
       )
     } catch (e) {}

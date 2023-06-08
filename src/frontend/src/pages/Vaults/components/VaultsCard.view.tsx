@@ -7,9 +7,12 @@ import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
+import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/BorrowingExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { OldBorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/OldBorrowingExpandCard'
+import { vaultTabs } from '../Vaults.view'
+import { Button } from 'app/App.components/Button/Button.controller'
 
 // styles
 import { VaultsCardDropDown } from './../Vaults.style'
@@ -32,14 +35,14 @@ import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
+import { LIQUIDATION_COST, LIQUIDATION_PRICE, VAULT_RISK } from 'texts/tooltips/vault.text'
+import { getStringWithoutUnderline } from 'utils/parse'
 import {
   getTimestampByLevelHeaders,
   getTimestampByLevelSchema,
   getTimestampByLevelUrl,
 } from 'utils/api/api-helpers/getTimestampByLevel'
-import { vaultTabs } from '../Vaults.view'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
-import { Button } from 'app/App.components/Button/Button.controller'
 import { isAbortError } from 'errors/error'
 import { api } from 'utils/api/api'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -191,7 +194,7 @@ export const VaultsCard = (props: Props) => {
     return () => null
   }, [status, levelOfEarly, levelOfLate])
 
-  const headerSufix = <StatusFlag status={statusColor} text={status} className="sufix" />
+  const headerSufix = <StatusFlag status={statusColor} text={getStringWithoutUnderline(status)} className="sufix" />
 
   const generalExpand = (
     <VaultsCardDropDown>
@@ -205,43 +208,22 @@ export const VaultsCard = (props: Props) => {
               <TzAddress type={CYAN} tzAddress={ownerId} />
             </div>
             <div>
-              <div className="title">
-                Vault Risk
-                <CustomTooltip
-                  text="The level of risk of being liquidated your vault is at."
-                  iconId="info"
-                  className="info-icon"
-                />
-              </div>
-
+              Vault Risk
+              <CustomTooltip text={VAULT_RISK} iconId="info" className="tooltip" />
               <div className={statusColor}>{statusText}</div>
             </div>
           </div>
 
           <div className="group">
             <div>
-              <div className="title">
-                Liquidation Price
-                <CustomTooltip
-                  text="Price value of your vault’s collateral at which your vault can be liquidated."
-                  iconId="info"
-                  className="info-icon"
-                />
-              </div>
-
+              Liquidation Price
+              <CustomTooltip iconId="info" text={LIQUIDATION_PRICE} className="tooltip" />
               <CommaNumber value={liquidationPrice ?? 0} decimalsToShow={2} beginningText="$" className="value" />
             </div>
 
             <div>
-              <div className="title">
-                Liquidation Cost
-                <CustomTooltip
-                  text="How much it will cost to liquidated this vault."
-                  iconId="info"
-                  className="info-icon"
-                />
-              </div>
-
+              Liquidation Cost
+              <CustomTooltip text={LIQUIDATION_COST} iconId="info" className="tooltip" />
               <CommaNumber value={liquidationMax} decimalsToShow={2} beginningText="$" className="value" />
             </div>
           </div>
@@ -335,17 +317,36 @@ export const VaultsCard = (props: Props) => {
     </VaultsCardDropDown>
   )
 
-  return (
-    <>
-      {(vaultTab === vaultTabs.ALL || vaultTab === vaultTabs.MY) && (
-        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} isOwner={isOwner}>
-          {!isOwner && generalExpand}
-        </BorrowingExpandCard>
-      )}
+  switch (vaultTab) {
+    case vaultTabs.MY:
+      return (
+        <BorrowingExpandCard
+          {...props}
+          headerSufix={headerSufix}
+          DAOFee={DAOFee}
+          isOwner={isOwner}
+          hideTransactionHistory
+        />
+      )
 
-      {vaultTab === vaultTabs.PERMISSIONED && (
-        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
-      )}
-    </>
-  )
+    case vaultTabs.PERMISSIONED:
+      return (
+        // TODO: use old component, because need old view for permission vaults.
+        // After all redesign in the future, we will move everything into BorrowingExpandCard component
+        <OldBorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
+      )
+
+    default:
+      return (
+        <BorrowingExpandCard
+          {...props}
+          headerSufix={headerSufix}
+          DAOFee={DAOFee}
+          isOwner={isOwner}
+          hideTransactionHistory
+        >
+          {generalExpand}
+        </BorrowingExpandCard>
+      )
+  }
 }

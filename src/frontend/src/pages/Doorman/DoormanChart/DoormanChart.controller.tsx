@@ -21,6 +21,7 @@ import colors from 'styles/colors'
 import { SingleValueData, Time } from 'lightweight-charts'
 import { calcExitFee, calcMLI } from 'utils/calcFunctions'
 import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 const tabsList: TabItem[] = [
   {
@@ -65,7 +66,7 @@ const findExitFeeClosestTimePlot = (exitFeePlots: Array<AreaChartPlotType>, exit
 }
 
 export function DoormanChart() {
-  const { smvkHistoryData, mvkHistoryData, totalStakedMvk, totalSupply } = useSelector((state: State) => state.doorman)
+  const { smvkHistoryData, mvkHistoryData, totalStakedMvk, totalSupply } = useStakeContext()
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const currentExitFee = calcExitFee(totalSupply, totalStakedMvk)

@@ -40,8 +40,7 @@ export const getColorByToasterStatus = ({
   }
 }
 
-// COMMONT TEXTS ACROSS LOADERS
-
+// COMMON TEXTS ACROSS LOADERS
 export const TOASTER_UPDATE_DATA_AFTER_ACTION_DATA = {
   title: 'Processing',
   message: 'Waiting for transaction confirmation...',
@@ -49,3 +48,6 @@ export const TOASTER_UPDATE_DATA_AFTER_ACTION_DATA = {
 
 export const ACTION_START_MESSAGE_TEXT = 'Please wait 30s'
 export const ACTION_COMPLETION_MESSAGE_TEXT = 'All good :)'
+
+// TOASTER TEXTS IDS
+export const TOASTER_SUBSCRIPTION_ERROR = 'TOASTER_SUBSCRIPTION_ERROR'

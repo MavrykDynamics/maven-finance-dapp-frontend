@@ -35,8 +35,11 @@ import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import { DOORMAN_STATS_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -66,6 +69,12 @@ const DashboardPersonal = () => {
   } = useSelector((state: State) => state.wallet)
 
   const claimRewards = async () => await dispatch(claimAllRewardsAction())
+
+  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
+    skipAddressBalance: SUB_SKIP,
+    skipStakeHistory: SUB_SKIP,
+    skipUserBalance: SUB_SKIP,
+  })
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {

@@ -16,8 +16,11 @@ import {
   getInputValidationStatus,
 } from './BecomeSatellite.conts'
 
+// providers
+import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+
 // Actions
-import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
 import { getSatelliteConfig } from 'pages/Satellites/Satellites.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -54,6 +57,7 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -79,20 +83,22 @@ export const BecomeSatellite = () => {
     satelliteMapper,
     config: { minimumStakedMvkBalance, isConfigLoaded, ...restSatelliteConfig },
   } = useSelector((state: State) => state.satellites)
-  const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
+  useStakeUpdater({
+    skipAddressBalance: SUB_SKIP,
+    skipMvkTokenTotal: SUB_SKIP,
+    skipStakeHistory: SUB_SKIP,
+  })
+
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
       try {
-        await Promise.all(
-          [
-            (!isConfigLoaded || isDepsChanged) && dispatch(getSatelliteConfig()),
-            (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
-          ].filter(Boolean),
-        )
+        if (!isConfigLoaded || isDepsChanged) {
+          await dispatch(getSatelliteConfig())
+        }
       } catch (error) {}
     },
     [accountPkh],

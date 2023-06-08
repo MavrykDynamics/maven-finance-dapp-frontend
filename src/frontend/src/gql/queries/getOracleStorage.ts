@@ -45,14 +45,6 @@ export const ORACLE_STORAGE_QUERY = `
       }
     }
     aggregator_factory {
-      address
-      admin
-      create_aggregator_paused
-      distribute_reward_smvk_paused
-      distribute_reward_xtz_paused
-      governance_id
-      track_aggregator_paused
-      untrack_aggregator_paused
       aggregator_name_max_length
     }
   }

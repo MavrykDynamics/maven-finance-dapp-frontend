@@ -83,7 +83,7 @@ export const normalizeProposal = (
         const decimals =
           tokenAddress?.toLowerCase() === 'xtz'
             ? 6
-            : dipDupTokens?.find(({ contract }) => contract === tokenAddress)?.metadata?.decimals ?? 0
+            : dipDupTokens?.find(({ token_address }) => token_address === tokenAddress)?.metadata?.decimals ?? 0
 
         return {
           id,
