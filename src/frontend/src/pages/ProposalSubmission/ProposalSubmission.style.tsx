@@ -14,7 +14,7 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
     font-size: 14px;
     line-height: 24px;
     color: ${({ theme }) => theme.textColor};
-    margin-bottom: 50px;
+    margin-bottom: 30px;
   }
 
   .bytes-label {
