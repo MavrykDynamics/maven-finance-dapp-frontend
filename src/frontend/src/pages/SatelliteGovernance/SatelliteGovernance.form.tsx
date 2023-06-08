@@ -94,9 +94,13 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
 
   const toShowPurpose = !isFieldRegisterAggregator && !isFixMistakenTransfer
   const toShowSecondInput =
+    // show if available action === Set Aggregator Maintainer
     variant === SATELLITE_GOVERNANCE_ACTION_NAMES.SET_AGREGATOR_MANTAINER ||
+    // show if available action === Update Aggregator Status
     variant === SATELLITE_GOVERNANCE_ACTION_NAMES.UPDATE_AGREGATOR_STATUS ||
+    // show if available action === Register Aggregator
     isFieldRegisterAggregator ||
+    // show if available action === Fix Mistaken Transfer
     isFixMistakenTransfer
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
