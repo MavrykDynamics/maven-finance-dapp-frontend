@@ -161,16 +161,16 @@ export function createBatchForExpiredActions(getState: GetState, contract: Unwra
   const state = getState()
 
   const { mySatelliteGovIds, satelliteGovIdsMapper } = state.satelliteGovernance
-
+  console.log(mySatelliteGovIds)
   const expriredActionIds: number[] = []
 
+  const timeNow = Date.now()
   mySatelliteGovIds.forEach((id) => {
-    const { expirationDatetime } = satelliteGovIdsMapper[id]
-    const timeNow = Date.now()
+    const { expirationDatetime, status } = satelliteGovIdsMapper[id]
     const convertedExpirationDatetime = new Date(expirationDatetime ?? 0).getTime()
-    const expired = convertedExpirationDatetime > timeNow
+    const expired = convertedExpirationDatetime < timeNow
 
-    if (expired) expriredActionIds.push(id)
+    if (expired && status === 0) expriredActionIds.push(id)
   })
 
   if (expriredActionIds.length === 0) return []
