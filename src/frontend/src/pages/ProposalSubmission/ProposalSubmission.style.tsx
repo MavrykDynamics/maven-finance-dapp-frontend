@@ -21,6 +21,15 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
     position: unset;
     margin-bottom: 20px;
   }
+
+  .payments-table {
+    position: relative;
+  }
+
+  .label,
+  label {
+    color: ${({ theme }) => theme.textColor};
+  }
 `
 
 // Proposal submittion stage 1 styles
@@ -30,7 +39,7 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
   display: grid;
   grid-template-columns: ${({ isProposalSubmitted }) => (isProposalSubmitted ? '35% 35% 15%' : '50% 25% 15%')};
   column-gap: ${({ isProposalSubmitted }) => (isProposalSubmitted ? '30px' : '0')};
-  grid-template-rows: minmax(40px, max-content) minmax(40px, 2fr) 40px minmax(40px, 2fr);
+  grid-template-rows: minmax(40px, max-content) minmax(40px, max-content) 40px minmax(40px, max-content);
 
   justify-content: space-between;
   row-gap: 50px;
@@ -56,12 +65,43 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
 
     a {
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 600;
+    }
+
+    .invoice-content {
+      display: flex;
+      align-items: center;
+      column-gap: 10px;
+    }
+
+    .image-style {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 120px;
+      height: 133px;
+
+      border-radius: 10px;
+      border: 1px solid ${({ theme }) => theme.valueColor};
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      svg {
+        height: 20px;
+        width: 20px;
+
+        fill: ${({ theme }) => theme.textColor};
+      }
     }
 
     .value {
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 600;
       color: ${({ theme }) => theme.textColor};
     }
   }
@@ -72,8 +112,7 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
     top: -20px;
     left: 0;
     font-size: 14px;
-    font-weight: 700;
-    color: ${({ theme }) => theme.textColor};
+    font-weight: 600;
   }
 
   .description {
@@ -90,6 +129,10 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
     position: relative;
     grid-column-start: 1;
     grid-column-end: 4;
+
+    > div {
+      margin: 0;
+    }
   }
 `
 
@@ -132,10 +175,10 @@ export const SubmitProposalBytes = styled.div<{ theme: MavrykTheme }>`
 export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
-  row-gap: 40px;
+  row-gap: 50px;
 
   margin-top: 30px;
-  padding: 40px 20px 30px 20px;
+  padding: 40px 20px 40px 20px;
 
   background: ${({ theme }) => theme.backgroundColor};
   position: relative;
@@ -193,12 +236,12 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>
 // Proposal submittion general styles
 export const ProposalSubmittionButtons = styled.div<{ theme: MavrykTheme }>`
   margin-top: 40px;
-  display: grid;
-  grid-template-columns: 220px 220px 220px;
+  display: flex;
   justify-content: flex-end;
   column-gap: 10px;
 
   .btn-wrapper {
+    width: 220px;
     position: relative;
 
     .tooltip {

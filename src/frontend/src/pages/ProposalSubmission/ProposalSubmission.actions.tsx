@@ -130,34 +130,34 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     dispatch(toggleActionCompletion(true))
     dispatch(showToaster(TOASTER_INFO, 'Drop proposal...', ACTION_START_MESSAGE_TEXT))
 
+    await sleep(5000)
+
     // turn off fs actions loader and start data updating after 5s after operation started
-    setTimeout(async () => {
-      await dispatch(toggleActionFullScreenLoader(false))
-      await dispatch(
-        showToaster(
-          TOASTER_LOADING,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        ),
-      )
+    await dispatch(toggleActionFullScreenLoader(false))
+    await dispatch(
+      showToaster(
+        TOASTER_LOADING,
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+      ),
+    )
 
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
+    // @ts-ignore don't have proper type to acees data, type has only methods
+    const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(getGovernanceStorage())
-          await dispatch(getSatellitesStorage())
+    // refetch data we need
+    await checkIndexerLevelAndRunDataUpdateCallback({
+      callback: async () => {
+        await dispatch(getGovernanceStorage())
+        await dispatch(getSatellitesStorage())
 
-          // Add here call for update data actions
-          await dispatch(hideToaster())
-          await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal dropped.', ACTION_COMPLETION_MESSAGE_TEXT))
-          await dispatch(toggleActionCompletion(false))
-        },
-        currentOperationLevel,
-      })
-    }, 5000)
+        // Add here call for update data actions
+        await dispatch(hideToaster())
+        await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal dropped.', ACTION_COMPLETION_MESSAGE_TEXT))
+        await dispatch(toggleActionCompletion(false))
+      },
+      currentOperationLevel,
+    })
   } catch (error) {
     console.error('dropProposal error:', error)
     if (error instanceof Error) {
@@ -186,34 +186,34 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     dispatch(toggleActionCompletion(true))
     dispatch(showToaster(TOASTER_INFO, 'Locking proposal...', ACTION_START_MESSAGE_TEXT))
 
+    await sleep(5000)
+
     // turn off fs actions loader and start data updating after 5s after operation started
-    setTimeout(async () => {
-      await dispatch(toggleActionFullScreenLoader(false))
-      await dispatch(
-        showToaster(
-          TOASTER_LOADING,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        ),
-      )
+    await dispatch(toggleActionFullScreenLoader(false))
+    await dispatch(
+      showToaster(
+        TOASTER_LOADING,
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+      ),
+    )
 
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
+    // @ts-ignore don't have proper type to acees data, type has only methods
+    const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(getGovernanceStorage())
-          await dispatch(getSatellitesStorage())
+    // refetch data we need
+    await checkIndexerLevelAndRunDataUpdateCallback({
+      callback: async () => {
+        await dispatch(getGovernanceStorage())
+        await dispatch(getSatellitesStorage())
 
-          // Add here call for update data actions
-          await dispatch(hideToaster())
-          await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal locked.', ACTION_COMPLETION_MESSAGE_TEXT))
-          await dispatch(toggleActionCompletion(false))
-        },
-        currentOperationLevel,
-      })
-    }, 5000)
+        // Add here call for update data actions
+        await dispatch(hideToaster())
+        await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal locked.', ACTION_COMPLETION_MESSAGE_TEXT))
+        await dispatch(toggleActionCompletion(false))
+      },
+      currentOperationLevel,
+    })
   } catch (error) {
     console.error('lockProposal error:', error)
     if (error instanceof Error) {
@@ -261,34 +261,34 @@ export const updateProposalData =
       //   console.log('estimate error', e)
       // }
 
+      await sleep(5000)
+
       // turn off fs actions loader and start data updating after 5s after operation started
-      setTimeout(async () => {
-        await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(
-          showToaster(
-            TOASTER_LOADING,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          ),
-        )
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
 
-        // @ts-ignore don't have proper type to acees data, type has only methods
-        const currentOperationLevel = transaction?.lastHead?.header?.level
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
 
-        // refetch data we need
-        await checkIndexerLevelAndRunDataUpdateCallback({
-          callback: async () => {
-            await dispatch(getGovernanceStorage())
-            await dispatch(getSatellitesStorage())
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getGovernanceStorage())
+          await dispatch(getSatellitesStorage())
 
-            // Add here call for update data actions
-            await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal updated.', ACTION_COMPLETION_MESSAGE_TEXT))
-            await dispatch(toggleActionCompletion(false))
-          },
-          currentOperationLevel,
-        })
-      }, 5000)
+          // Add here call for update data actions
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal updated.', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)

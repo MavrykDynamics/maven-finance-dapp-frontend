@@ -11,7 +11,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 // Styled components
 import { MoveNextRoundModalBase, TimeLeftAreaWrap } from './TimeRemaining.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 
 // Consts
 import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
@@ -19,8 +19,15 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.component
 import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
 
 // Actions, helpers
-import getTimestampByLevel from 'utils/api/getTimestampByLevel'
+import {
+  getTimestampByLevelHeaders,
+  getTimestampByLevelSchema,
+  getTimestampByLevelUrl,
+} from 'utils/api/api-helpers/getTimestampByLevel'
 import { startNextRound } from 'pages/Governance/actions/GovernanceInteraction.actions'
+import { api } from 'utils/api/api'
+import { isAbortError } from 'errors/error'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 export default function TimeRemaining() {
   const dispatch = useDispatch()
@@ -30,6 +37,7 @@ export default function TimeRemaining() {
   )
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
+  const { bug } = useToasterContext()
   const [timerDeadline, setTimerDeadline] = useState(0)
   const [timerActive, setTimerActive] = useState(false)
   const [showModal, setShowModal] = useState(false)
@@ -56,20 +64,30 @@ export default function TimeRemaining() {
   }
 
   useEffect(() => {
-    const setTimerData = async () => {
+    const abortController = new AbortController()
+
+    ;(async () => {
       try {
-        const duration = await getTimestampByLevel(currentRoundEndLevel)
+        const { data: duration } = await api(
+          getTimestampByLevelUrl(currentRoundEndLevel),
+          { signal: abortController.signal, headers: getTimestampByLevelHeaders },
+          getTimestampByLevelSchema,
+        )
         const convertedToTimestamp = new Date(duration).getTime()
         const isTimestampValid = convertedToTimestamp > Date.now()
 
         setTimerActive(isTimestampValid)
         if (isTimestampValid) setTimerDeadline(convertedToTimestamp)
       } catch (e) {
-        console.error('TimeRemaining, setTimerData error: ', e)
+        // TODO: handle fetch errors when error boundary will be ready
+        if (!isAbortError(e)) {
+          console.error('getting timestamp by lvl error: ', e)
+        }
+        bug('Unexpected error happened occured, please reload the page')
       }
-    }
+    })()
 
-    setTimerData()
+    return () => abortController.abort()
   }, [currentRoundEndLevel])
 
   return (

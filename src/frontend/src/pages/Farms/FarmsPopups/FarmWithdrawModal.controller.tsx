@@ -21,7 +21,7 @@ import {
 
 // styles
 import { useLockBodyScroll } from 'react-use'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { FarmLpActionsPopupsContent } from '../Farms.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { farm } from 'reducers/farm'
@@ -55,7 +55,7 @@ export const FarmWithdrawModal = ({
   })
 
   const farmDepositedAmountByUser = useMemo(() => {
-    return Number(farmAccounts.find(({ user_id }) => accountPkh === user_id))
+    return Number(farmAccounts.find(({ user: { address } }) => accountPkh === address))
   }, [farmAccounts, accountPkh])
 
   const tokensNames = `${lpTokenOneSymbol}/${lpTokenTwoSymbol}`

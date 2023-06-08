@@ -46,6 +46,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
   }
 
   .proposal-button-action {
+    margin-top: 20px;
     margin-left: auto;
     width: fit-content;
   }
@@ -123,6 +124,10 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
         color: ${({ theme }) => theme.textColor};
         font-size: 16px;
         white-space: nowrap;
+      }
+
+      .byte-descr {
+        display: flex;
       }
 
       .byte {

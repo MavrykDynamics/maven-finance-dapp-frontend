@@ -27,7 +27,6 @@ import DelegationTab from './DashboardPersonalComponents/DelegationTab'
 import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
-import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 import { DashboardPersonalTabStyled } from './DashboardPersonalComponents/DashboardPersonalComponents.style'
 import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
@@ -44,8 +43,6 @@ const DashboardPersonal = () => {
   const { tabId } = useParams<{ tabId: string }>()
 
   const { tokensPrices } = useSelector((state: State) => state.tokens)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
@@ -64,6 +61,7 @@ const DashboardPersonal = () => {
       isSatellite,
       isVestee,
       isLoaded: isUserDataLoaded,
+      userAvatars: { mainAvatar },
     },
   } = useSelector((state: State) => state.wallet)
 
@@ -131,20 +129,9 @@ const DashboardPersonal = () => {
 
   const activeTab = useMemo(() => (isValidPersonalDashboardTabId(tabId) ? tabId : PORTFOLIO_TAB_ID), [tabId])
 
-  const userImage = useMemo(
-    () =>
-      getUserAvatar({
-        accountPkh,
-        satelliteMapper,
-        councilMembers,
-        breakGlassCouncilMembers,
-      }),
-    [accountPkh, breakGlassCouncilMembers, councilMembers, satelliteMapper],
-  )
-
   return (
     <Page>
-      <PageHeader page={'dashboard'} avatar={userImage} />
+      <PageHeader page={'dashboard'} avatar={mainAvatar} />
 
       <DashboardPersonalStyled>
         <div className="top">

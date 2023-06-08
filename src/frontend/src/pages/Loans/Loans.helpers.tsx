@@ -95,11 +95,11 @@ export const getTransactionHistory = (
   feeds: State['dataFeeds']['feedsLedger'],
 ) =>
   history_data.reduce<TransactionHistoryReduceType>(
-    (acc, { type, amount, timestamp, sender_id, operation_hash, loan_token }) => {
-      if (!loan_token) return acc
+    (acc, { type, amount, timestamp, sender: { address: senderAddress }, operation_hash, loan_token }) => {
+      if (!loan_token?.token?.token_address) return acc
 
       const assetMetadata = getAssetMetadata({
-        tokenAddress: loan_token.loan_token_address,
+        tokenAddress: loan_token.token.token_address,
         tokenName: loan_token.loan_token_name,
         dipDupTokens,
         feeds,
@@ -113,7 +113,7 @@ export const getTransactionHistory = (
           acc.transactionHistory.push({
             amount: transformedAmount,
             date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
-            userAddress: sender_id,
+            userAddress: senderAddress,
             operationHash: operation_hash,
             descr: getDescrByType(type),
             tokenSymbol: assetMetadata.symbol,
@@ -202,9 +202,9 @@ export const getChartData = (
 ) =>
   history_data?.reduce<LoansChartsDataType>(
     (acc, { type, amount, timestamp, loan_token }) => {
-      if (!loan_token) return acc
+      if (!loan_token?.token.token_address) return acc
       const assetMetadata = getAssetMetadata({
-        tokenAddress: loan_token.loan_token_address,
+        tokenAddress: loan_token.token.token_address,
         tokenName: loan_token.loan_token_name,
         dipDupTokens,
         feeds,
@@ -214,8 +214,6 @@ export const getChartData = (
       if (assetMetadata) {
         const operationTimestampAndNowDiffInMs = new Date(Date.now()).getTime() - new Date(timestamp).getTime()
         const isLast24hOperation = operationTimestampAndNowDiffInMs <= ONE_DAY_IN_MS
-        const islast48hOperation =
-          operationTimestampAndNowDiffInMs <= ONE_DAY_IN_MS * 2 && operationTimestampAndNowDiffInMs >= ONE_DAY_IN_MS
 
         // Added liquidity (lended)
         if (type === 0) {
@@ -224,9 +222,6 @@ export const getChartData = (
             acc.lendBorrow24hDiff.last24hLending += lendedAmount
           }
 
-          if (islast48hOperation) {
-            acc.lendBorrow24hDiff.last48hLending += lendedAmount
-          }
           acc.lendingChartData.push({
             time: new Date(timestamp).getTime() as UTCTimestamp,
             value: (acc.lendingChartData.at(-1)?.value ?? 0) + lendedAmount,
@@ -240,9 +235,6 @@ export const getChartData = (
             acc.lendBorrow24hDiff.last24hLending -= lendedAmount
           }
 
-          if (islast48hOperation) {
-            acc.lendBorrow24hDiff.last48hLending -= lendedAmount
-          }
           acc.lendingChartData.push({
             time: new Date(timestamp).getTime() as UTCTimestamp,
             value: (acc.lendingChartData.at(-1)?.value ?? 0) - lendedAmount,
@@ -256,9 +248,6 @@ export const getChartData = (
             acc.lendBorrow24hDiff.last24hBorrowing += borrowedAmount
           }
 
-          if (islast48hOperation) {
-            acc.lendBorrow24hDiff.last48hBorrowing += borrowedAmount
-          }
           acc.borrowingChartData.push({
             time: new Date(timestamp).getTime() as UTCTimestamp,
             value: (acc.borrowingChartData.at(-1)?.value ?? 0) + borrowedAmount,
@@ -272,9 +261,6 @@ export const getChartData = (
             acc.lendBorrow24hDiff.last24hBorrowing -= borrowedAmount
           }
 
-          if (islast48hOperation) {
-            acc.lendBorrow24hDiff.last48hBorrowing -= borrowedAmount
-          }
           acc.borrowingChartData.push({
             time: new Date(timestamp).getTime() as UTCTimestamp,
             value: (acc.borrowingChartData.at(-1)?.value ?? 0) - borrowedAmount,
@@ -307,9 +293,7 @@ export const getChartData = (
       collateralChartData: [],
       lendingChartData: [],
       lendBorrow24hDiff: {
-        last48hLending: 0,
         last24hLending: 0,
-        last48hBorrowing: 0,
         last24hBorrowing: 0,
       },
     },

@@ -116,7 +116,7 @@ export const FinancialRequestsView = ({
               : { forBtn: undefined, againsBtn: undefined }
           }
           className={'fr-voting'}
-          disableVotingButtons={Boolean(rightSideContent?.votes?.find(({ voter_id }) => voter_id === accountPkh))}
+          disableVotingButtons={Boolean(rightSideContent?.votes?.find(({ voter }) => voter.address === accountPkh))}
         />
 
         <hr />

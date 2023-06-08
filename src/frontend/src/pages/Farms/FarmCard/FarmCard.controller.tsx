@@ -154,7 +154,7 @@ const FarmingBlock = ({
   accountPhk?: string
   farmAccounts: FarmStorage[number]['farmAccounts']
 }) => {
-  const depositedAmount = farmAccounts.find(({ user_id }) => accountPhk === user_id)?.deposited_amount ?? 0
+  const depositedAmount = farmAccounts.find(({ user: { address } }) => accountPhk === address)?.deposited_amount ?? 0
   return (
     <>
       {!accountPhk ? (

@@ -37,6 +37,7 @@ export interface UserState {
   isSatellite: boolean
   isVestee: boolean
   isNewlyRegisteredSatellite: boolean
+  govActionsCount: number
 
   // loans data
   userLoansData: {
@@ -53,6 +54,13 @@ export interface UserState {
   availableFarmRewards: Record<string, UserFarmRewardsData>
   availableSatellitesRewards: number
   availableLoansRewards: number
+
+  userAvatars: {
+    mainAvatar: string | null
+    satelliteAvatar: string | null
+    counsilAvatar: string | null
+    breakGlassAvatar: string | null
+  }
 
   // user's actions history
   actionsHistory: Array<{
@@ -97,6 +105,7 @@ export const DEFAULT_USER: UserState = {
   isSatellite: false,
   isVestee: false,
   isNewlyRegisteredSatellite: false,
+  govActionsCount: 0,
 
   userLoansData: {
     userLendings: [],
@@ -112,6 +121,13 @@ export const DEFAULT_USER: UserState = {
   gatheredFarmRewards: 0,
   gatheredSatellitesRewards: 0,
   gatheredDoormanRewards: 0,
+
+  userAvatars: {
+    mainAvatar: null,
+    satelliteAvatar: null,
+    counsilAvatar: null,
+    breakGlassAvatar: null,
+  },
 
   actionsHistory: [],
 }

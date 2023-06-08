@@ -1,15 +1,15 @@
 import { z, ZodSchema, objectOutputType, ZodNumber, ZodType, ZodTypeAny } from 'zod'
 
-export type APIReturnType<T> = objectOutputType<
+type APIFetchReturnType<T> = objectOutputType<
   { code: ZodNumber; status: ZodType<'ok' | 'error'>; data: ZodType<T> },
   ZodTypeAny
 >
 
 export const api = async <T>(
   url: string,
-  options?: RequestInit | null,
-  schema?: ZodSchema<T> | null,
-): Promise<APIReturnType<T>> => {
+  options: RequestInit = { method: 'GET' },
+  schema: ZodSchema<T> = z.any(),
+): Promise<APIFetchReturnType<T>> => {
   try {
     const method = options?.method || 'GET'
     const _schema = schema ?? z.any()

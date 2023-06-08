@@ -22,7 +22,7 @@ type TextAreaProps = {
   value: string | number
   textAreaMaxLimit?: number
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
-  onBlur?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void
   inputStatus?: TextAreaStatusType
   errorMessage?: string
   label?: string
@@ -43,7 +43,7 @@ export const TextArea = ({
   disabled,
   required,
   label,
-  textAreaMaxLimit = 1000,
+  textAreaMaxLimit,
 }: TextAreaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -59,6 +59,7 @@ export const TextArea = ({
     status: inputStatus,
     onChange,
   })
+
   return (
     <TextAreaStyled className={className} id={'textAreaContainer'}>
       {label ? <NewInputLabel>{label}</NewInputLabel> : null}
@@ -83,9 +84,11 @@ export const TextArea = ({
       </div>
       <div className="info-error">
         {errorMessage && <TextAreaErrorMessage>{errorMessage}</TextAreaErrorMessage>}
-        <TextAreaCounter className={status}>
-          {String(value).length}/{textAreaMaxLimit}
-        </TextAreaCounter>
+        {textAreaMaxLimit ? (
+          <TextAreaCounter className={status}>
+            {String(value).length}/{textAreaMaxLimit}
+          </TextAreaCounter>
+        ) : null}
       </div>
       <TextAreaStatus className={status} />
     </TextAreaStyled>

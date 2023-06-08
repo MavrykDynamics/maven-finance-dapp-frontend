@@ -10,6 +10,20 @@ export const getPieChartData = (
 ) => {
   // when we don't have data for chart
   if (!balances.length) return [{ title: '', value: 1, color: '#ccc' }]
+  // if we have 1 asset, return this, cuz when value is so small it will not show properly chart, and sometimes in can be NaN
+  if (balances.length === 1) {
+    const soloItemSymbol = balances[0].symbol
+    return [
+      {
+        title: soloItemSymbol,
+        value: 1,
+        labelPersent: 100,
+        color: '#FFC2C3',
+        isHoveredPathAsset: hoveredPath === soloItemSymbol,
+        segmentStroke: hoveredPath === soloItemSymbol ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
+      },
+    ]
+  }
 
   // need this flag to properly calculate segment value and highlight segment
   let groupedSectorsValue = 0
@@ -41,7 +55,7 @@ export const getPieChartData = (
           color: groupedSectorsColor,
           isHoveredPathAsset,
           segmentStroke: isHoveredPathAsset ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
-          labelPersent: calcPersent(tokenUsdValue, reducedBalance),
+          labelPersent: tokenPersent,
           groupedSmall: true,
         })
 
@@ -72,7 +86,7 @@ export const getPieChartData = (
       color: item.chartColor,
       isHoveredPathAsset: hoveredPath === item.symbol,
       segmentStroke: hoveredPath === item.symbol ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
-      labelPersent: calcPersent(tokenUsdValue, reducedBalance),
+      labelPersent: tokenPersent,
       groupedSmall: false,
     })
     return acc

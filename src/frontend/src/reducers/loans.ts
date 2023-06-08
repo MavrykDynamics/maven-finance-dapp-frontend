@@ -7,7 +7,6 @@ export interface LoansState {
   vaults: VaultsStorage
 
   chartsData: LoansChartsDataType
-  loansControllerAddress: string
   config: {
     DAOFee: number
   }
@@ -23,15 +22,12 @@ const loansDefaultState: LoansState = {
     allVaultsIds: [],
     vaultsMapper: {},
   },
-  loansControllerAddress: '',
   chartsData: {
     borrowingChartData: [],
     collateralChartData: [],
     lendingChartData: [],
     lendBorrow24hDiff: {
-      last48hLending: 0,
       last24hLending: 0,
-      last48hBorrowing: 0,
       last24hBorrowing: 0,
     },
   },

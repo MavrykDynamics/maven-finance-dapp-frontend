@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -10,7 +9,6 @@ import { CouncilForm, actions } from './CouncilForms/CouncilForm.controller'
 import { CouncilFormUpdateCouncilMemberInfo } from './CouncilForms/CouncilFormUpdateCouncilMemberInfo.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -37,7 +35,12 @@ const titles = {
 export const Council = () => {
   const dispatch = useDispatch()
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    accountPkh,
+    user: {
+      userAvatars: { counsilAvatar },
+    },
+  } = useSelector((state: State) => state.wallet)
   const {
     config: { councilMaxLength },
     councilMembers,
@@ -53,9 +56,7 @@ export const Council = () => {
     isCouncilMembersLoaded,
     isCouncilPendingActionsLoaded,
     isCouncilPastActionsLoaded,
-    breakGlassCouncilMembers,
   } = useSelector((state: State) => state.council)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const handleSignAction = (id: number) => {
     dispatch(sign(id))
@@ -64,22 +65,6 @@ export const Council = () => {
   const handleDropAction = (id: number) => {
     dispatch(dropRequest(id))
   }
-
-  const isCouncilMember = Boolean(councilMembers.find((item) => item.userId === accountPkh))
-
-  const userImage = useMemo(
-    () =>
-      getUserAvatar({
-        accountPkh,
-        satelliteMapper,
-        councilMembers,
-        breakGlassCouncilMembers,
-        priorityImage: 'council',
-      }),
-    [accountPkh, breakGlassCouncilMembers, councilMembers, satelliteMapper],
-  )
-
-  const councilUserImage = useMemo(() => (isCouncilMember ? userImage : undefined), [isCouncilMember, userImage])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
@@ -111,7 +96,7 @@ export const Council = () => {
 
   return (
     <Page>
-      <PageHeader page={'council'} avatar={councilUserImage} />
+      <PageHeader page={'council'} avatar={counsilAvatar} />
 
       {isLoading ? (
         <DataLoaderWrapper>

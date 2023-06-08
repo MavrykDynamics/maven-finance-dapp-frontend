@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import QueryString from 'qs'
 import { useHistory } from 'react-router'
@@ -70,6 +70,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   } = useSelector((state: State) => state.governance)
   const { whitelistTokens, dipDupTokens } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [activeTab, setActiveTab] = useState(1)
 
@@ -87,6 +88,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             bytesValidation: proposal.proposalData.map((bytesPair) => ({
               validBytes: '',
               validTitle: '',
+              validDescr: '',
               byteId: bytesPair.id,
             })),
             paymentsValidation: proposal.proposalPayments.map((payment) => ({
@@ -102,7 +104,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         { keys: [], mapper: {}, validityObj: {} },
       )
 
-    if (keys.length < 2 && governancePhase === 'PROPOSAL') {
+    if (keys.length < 2) {
       return [
         keys.concat(DEFAULT_PROPOSAL.id),
         { ...mapper, [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL },
@@ -110,7 +112,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       ]
     }
     return [keys, mapper, validityObj]
-  }, [accountPkh, currentRoundProposalsIds, governancePhase, proposalsMapper])
+  }, [accountPkh, currentRoundProposalsIds, proposalsMapper])
 
   // mapping user created proposals to tabs buttons data
   const usersProposalsToSwitch = useMemo(
@@ -147,31 +149,25 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
   }
 
-  const updateLocalProposalData = useCallback(
-    (newProposalData: Partial<ProposalRecordType>, proposalId: number) => {
-      setProposalsState({
-        ...proposalState,
-        [proposalId]: {
-          ...proposalState[proposalId],
-          ...newProposalData,
-        },
-      })
-    },
-    [proposalState],
-  )
+  const updateLocalProposalData = (newProposalData: Partial<ProposalRecordType>, proposalId: number) => {
+    setProposalsState({
+      ...proposalState,
+      [proposalId]: {
+        ...proposalState[proposalId],
+        ...newProposalData,
+      },
+    })
+  }
 
-  const updateLocalProposalValidation = useCallback(
-    (newProposalValidation: Partial<ProposalValidityObj>, proposalId: number) => {
-      setProposalsValidation({
-        ...proposalsValidation,
-        [proposalId]: {
-          ...proposalsValidation[proposalId],
-          ...newProposalValidation,
-        },
-      })
-    },
-    [proposalsValidation],
-  )
+  const updateLocalProposalValidation = (newProposalValidation: Partial<ProposalValidityObj>, proposalId: number) => {
+    setProposalsValidation({
+      ...proposalsValidation,
+      [proposalId]: {
+        ...proposalsValidation[proposalId],
+        ...newProposalValidation,
+      },
+    })
+  }
 
   const handleNextStep = (tabId: number) => setActiveTab(tabId)
   const handleLockProposal = async (proposalId: number) => await dispatch(lockProposal(proposalId))
@@ -188,7 +184,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     if (!currentProposalOnRemote) {
       const bytes = getBytesDiff(
         [],
-        currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code),
+        currentProposal.proposalData.filter(
+          ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
+        ),
       )
 
       const payments = getPaymentsDiff(
@@ -215,7 +213,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     } else {
       const bytesDiff = getBytesDiff(
         currentProposalOnRemote.proposalData,
-        currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code),
+        currentProposal.proposalData.filter(
+          ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
+        ),
       )
       const paymentsDiff = getPaymentsDiff(
         currentProposalOnRemote.proposalPayments,
@@ -287,13 +287,14 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     !isBytesValid ||
     !isPaymentsValid ||
     genProposalDisabledState ||
-    (currentProposal.id === DEFAULT_PROPOSAL.id
-      ? currentProposal?.proposalData?.filter(({ title, encoded_code }) => title || encoded_code).length < 1 ||
-        !isStageOneDataValid
-      : currentProposal.locked || !proposalHasChange)
+    (currentProposal.id === DEFAULT_PROPOSAL.id ? !isStageOneDataValid : currentProposal.locked || !proposalHasChange)
 
   const isSubmitDisabled =
-    !isProposalSubmitted || currentProposal.locked || proposalHasChange || genProposalDisabledState
+    !isProposalSubmitted ||
+    currentProposal.locked ||
+    proposalHasChange ||
+    genProposalDisabledState ||
+    currentProposal?.proposalData?.filter(({ title, encoded_code }) => title || encoded_code).length < 1
 
   const isDropDisabled = !isProposalSubmitted || genProposalDisabledState
 
@@ -357,7 +358,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             <Button
               kind={BUTTON_SECONDARY}
               form={BUTTON_WIDE}
-              disabled={isDropDisabled}
+              disabled={isDropDisabled || isActionActive}
               onClick={() => handleDropProposal(selectedUserProposalId)}
             >
               <Icon id="navigation-menu_close" /> Drop Proposal
@@ -375,7 +376,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             <Button
               kind={BUTTON_SECONDARY}
               form={BUTTON_WIDE}
-              disabled={isSubmitDisabled}
+              disabled={isSubmitDisabled || isActionActive}
               onClick={() => handleLockProposal(selectedUserProposalId)}
             >
               <Icon id="submit" /> Submit Proposal
@@ -388,25 +389,26 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             />
           </div>
 
-          {/* if we are on stage 3 show save changes btn (it creates if proposal is not created, or updates data if proposal exists), othervise show next step (navigating to thee next stage btn) */}
-          {activeTab === 3 ? (
-            <div className="btn-wrapper">
-              <Button
-                kind={BUTTON_PRIMARY}
-                form={BUTTON_WIDE}
-                disabled={isSaveProposalDisabled}
-                onClick={() => handleUpdateData(selectedUserProposalId)}
-              >
-                <Icon id="save" /> {isProposalSubmitted ? 'Save Changes' : 'Save Proposal'}
-              </Button>
-              <CustomTooltip
-                className="tooltip"
-                iconId="info"
-                text={SAVE_CHANGES_BUTTON_TOOLTIP}
-                defaultStrokeColor={colors[themeSelected]['valueColor']}
-              />
-            </div>
-          ) : (
+          {/* save changes btn (it creates if proposal is not created, or updates data if proposal exists) */}
+          <div className="btn-wrapper">
+            <Button
+              kind={activeTab !== 3 ? BUTTON_SECONDARY : BUTTON_PRIMARY}
+              form={BUTTON_WIDE}
+              disabled={isSaveProposalDisabled || isActionActive}
+              onClick={() => handleUpdateData(selectedUserProposalId)}
+            >
+              <Icon id="save" /> {isProposalSubmitted ? 'Save Changes' : 'Save Proposal'}
+            </Button>
+            <CustomTooltip
+              className="tooltip"
+              iconId="info"
+              text={SAVE_CHANGES_BUTTON_TOOLTIP}
+              defaultStrokeColor={colors[themeSelected]['valueColor']}
+            />
+          </div>
+
+          {/* if we are not on stage 3 show next step (navigating to thee next stage btn) */}
+          {activeTab !== 3 ? (
             <div className="btn-wrapper">
               <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={() => handleNextStep(activeTab + 1)}>
                 Next Step <Icon id="full-arrow-right" />
@@ -418,7 +420,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
                 defaultStrokeColor={colors[themeSelected]['valueColor']}
               />
             </div>
-          )}
+          ) : null}
         </ProposalSubmittionButtons>
       </ProposalSubmissionForm>
     </>

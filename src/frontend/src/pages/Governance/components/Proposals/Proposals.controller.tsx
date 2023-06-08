@@ -3,6 +3,7 @@ import {
   getPageNumber,
   calculateSlicePositions,
   LIST_NAMES_MAPPER,
+  HISTORY_PROPOSALS_LIST_NAME,
 } from 'app/App.components/Pagination/pagination.consts'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
@@ -17,7 +18,7 @@ import { ProposalListContainer, ProposalListItem, ProposalItemLeftSide } from '.
 type ProposalsProps = {
   proposalsList: Array<number>
   handleItemSelect: (proposalListItem: ProposalRecordType) => void
-  selectedProposalId: number | undefined
+  selectedProposalId: number | null
   title: string
   type: string
   listName: string
@@ -33,7 +34,10 @@ export const Proposals = ({
 }: ProposalsProps) => {
   const { search } = useLocation()
 
-  const { proposalsMapper } = useSelector((state: State) => state.governance)
+  const {
+    proposalsMapper,
+    config: { governancePhase },
+  } = useSelector((state: State) => state.governance)
 
   const currentPage = getPageNumber(search, listName)
   const paginatedItemsList = useMemo(() => {
@@ -48,6 +52,15 @@ export const Proposals = ({
       <div className="proposals-list-wrapper">
         {paginatedItemsList.map((proposalId, index) => {
           const proposal = proposalsMapper[proposalId]
+          const proposalVotedMvk =
+            // if proposal is history show voting round or if it's 0 show proposal round votes
+            listName === HISTORY_PROPOSALS_LIST_NAME
+              ? proposal.quorumMvkTotal || proposal.passVoteMvkTotal
+              : // if it's alive round proposal and phase is Proposal show proposals round votes
+              governancePhase === GovPhases.PROPOSAL
+              ? proposal.passVoteMvkTotal
+              : // if round is more than proposal show voting round votes
+                proposal.quorumMvkTotal
 
           return (
             <ProposalListItem
@@ -61,7 +74,7 @@ export const Proposals = ({
               </ProposalItemLeftSide>
               <CommaNumber
                 className="proposal-voted-mvk"
-                value={proposal.quorumMvkTotal}
+                value={proposalVotedMvk}
                 endingText={'voted MVK'}
                 showDecimal={false}
               />
