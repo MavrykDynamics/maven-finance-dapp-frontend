@@ -1,10 +1,6 @@
 import { z } from 'zod'
 
-export const tezosContractErrorPayloadErrorItemSchema = z.object({
-  kind: z.string(),
-  id: z.string(),
-  additionalProperties: z.record(z.unknown()),
-})
+export const tezosContractErrorPayloadErrorItemSchema = z.record(z.string(), z.unknown())
 
 export const tezosContractErrorPayload = z.object({
   errors: z.array(tezosContractErrorPayloadErrorItemSchema).optional(),

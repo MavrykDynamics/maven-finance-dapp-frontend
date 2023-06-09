@@ -7,7 +7,7 @@ import { OpKind } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { GET_GOVERNANCE_CONFIG } from 'pages/Governance/actions/GovernanseData.actions'
 import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { estimateExecution } from '../Governance/actions/Proposals.actions'
+import { estimateExecution } from 'errors/helpers/contractError.helper'
 
 export const adminChangeGovernancePeriod =
   (chosenPeriod: string, accountPkh?: string) => async (dispatch: AppDispatch, getState: GetState) => {
@@ -704,9 +704,8 @@ export const testErrorCodesChangeAdmin = (accountPkh?: string) => async (dispatc
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
     console.log('contract', contract)
-    const operationEstimate = await estimateExecution(
-      contract.methods.setAdmin('tz1byTGaUKjJqkwSXPnM3dpf9N39pYwRfnTm').toTransferParams(),
-    )
+
+    const operationEstimate = await estimateExecution(contract.methods.setAdmin('tz1byTGaUKjJqkwSXPnM3dpf9N39pYwRfnTm'))
 
     //If there is an error code here, show the error code popup
     if (operationEstimate.error !== undefined) {

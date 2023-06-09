@@ -16,46 +16,6 @@ import {
 import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
-import { CONTRACT_ERROR_CODES } from '../../../utils/error_codes'
-import { toSentenceCase } from '../../../utils/toSentenceCase'
-import { TezosOperationError, isTezosContractError } from 'errors/error'
-
-const DEFAULT_TEZOS_ERROR = {
-  message: 'Something went wrong',
-  description: 'Something went wrong, you are not allowed to continue current operation',
-}
-
-//TODO: finish implementing execution estimation
-export const estimateExecution = async (
-  tezosOperation: any,
-): Promise<{ minimalFeeMutez: number; totalCost: number; error?: any }> => {
-  try {
-    const tezos = await DAPP_INSTANCE.tezos()
-    // @ts-ignore
-    const operationEstimate = await tezos?.estimate.transfer(tezosOperation)
-    return operationEstimate
-  } catch (e) {
-    const _error = e as TezosOperationError
-    const isTezosError = isTezosContractError(e)
-    if (isTezosError) {
-      const errorCode = Number(_error.message) ? Number(_error.message) : null
-      let error = errorCode !== null ? CONTRACT_ERROR_CODES.get(errorCode) : null
-      if (error) error.description = toSentenceCase(error.description)
-
-      return {
-        minimalFeeMutez: 0,
-        totalCost: 0,
-        error,
-      }
-    }
-
-    return {
-      minimalFeeMutez: 0,
-      totalCost: 0,
-      error: DEFAULT_TEZOS_ERROR,
-    }
-  }
-}
 
 export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
