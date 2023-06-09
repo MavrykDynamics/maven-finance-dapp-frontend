@@ -1,4 +1,6 @@
 import type { ApiError, FatalError, ValidationError, TezosOperationError } from './error'
+import { z } from 'zod'
+import { tezosContractErrorPayload, tezosContractErrorPayloadErrorItemSchema } from './error.schema'
 
 export type InputPayload = {
   field?: string
@@ -13,26 +15,8 @@ export type Payload = {
 }
 
 // tezos contracts
-
-export type TezosContractErrorPayloadErrorItem = {
-  kind: string
-  id: string
-  contract_handle?: string
-  contract_code?: string
-  location?: number
-  with?: {
-    [key: string]: string
-  }
-}
-export type TezosContractErrorPayload = {
-  errors?: TezosContractErrorPayloadErrorItem[]
-  errorDetails?: string
-  id: string
-  kind: string
-  name: string
-  message: string
-  scope?: string
-}
+export type TezosContractErrorPayloadErrorItem = z.infer<typeof tezosContractErrorPayloadErrorItemSchema>
+export type TezosContractErrorPayload = z.infer<typeof tezosContractErrorPayload>
 
 export type ErrorType =
   | (Error & {

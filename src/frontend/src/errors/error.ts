@@ -1,5 +1,5 @@
 import type { InputPayload, Payload, TezosContractErrorPayload, TezosContractErrorPayloadErrorItem } from './error.type'
-
+import { tezosContractErrorPayload } from './error.schema'
 /**
  * ExtendedErrorClass as base class. Contains all essential information
  * for error. You can create another extened class from it. See examples below (ValidationError, PropertyError etc.)
@@ -63,6 +63,12 @@ export function isExtendedError(e: unknown): e is ExtendedError {
   return (
     e instanceof FatalError || e instanceof ApiError || e instanceof ValidationError || e instanceof TezosOperationError
   )
+}
+
+export function isTezosContractError(e: unknown) {
+  const result = tezosContractErrorPayload.safeParse(Object.assign({}, e))
+  console.log(Object.assign({}, e), result)
+  return result.success
 }
 
 /**
