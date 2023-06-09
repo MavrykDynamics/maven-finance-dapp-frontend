@@ -14,22 +14,21 @@ import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { BorrowingTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
-import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
+import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 type BorrowingTabPropsType = {
-  lendingControllerAddress: string
-  currentToken: LoanMarketType
+  loanTokenAddress: TokenAddress
 }
 
-export const BorrowingTab = ({ lendingControllerAddress, currentToken }: BorrowingTabPropsType) => {
+export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {
   const history = useHistory()
   const { cardId = null } = useParams<{ cardId: string }>()
 
   const { openCreateVaultPopup } = useContext(loansPopupsContext)
+  const { tokensMetadata } = useTokensContext()
 
-  const {
-    loanTokenData: { gqlName, symbol },
-  } = currentToken
+  const { symbol } = tokensMetadata[loanTokenAddress]
 
   const [createdVaultId, setCreatedVaultAddress] = useState<null | string>(null)
   const [showZeroVaults, setShowZeroVaults] = useState(false)
@@ -45,11 +44,13 @@ export const BorrowingTab = ({ lendingControllerAddress, currentToken }: Borrowi
       myVaultsIds.filter((vaultId) => {
         const vault = vaultsMapper[vaultId]
 
-        return showZeroVaults
-          ? gqlName === vault.borrowedAsset.gqlName && (vault.collateralBalance || vault.borrowedAmount)
-          : gqlName === vault.borrowedAsset.gqlName
+        const vaultHasBalance = vault.collateralData.find(({ amount }) => amount) || vault.borrowedAmount
+
+        const isVaultValidForMarket = vault.borrowedTokenAddress === loanTokenAddress
+
+        return isVaultValidForMarket && (showZeroVaults ? vaultHasBalance : true)
       }),
-    [gqlName, myVaultsIds, showZeroVaults, vaultsMapper],
+    [loanTokenAddress, myVaultsIds, showZeroVaults, vaultsMapper],
   )
 
   useEffect(() => {
@@ -69,7 +70,7 @@ export const BorrowingTab = ({ lendingControllerAddress, currentToken }: Borrowi
               text="New Vault"
               icon="plus"
               disabled={!Boolean(accountPkh) || isActionActive}
-              onClick={() => openCreateVaultPopup({ currentMarketAsset: gqlName, setCreatedVaultAddress })}
+              onClick={() => openCreateVaultPopup({ loanTokenAddress, setCreatedVaultAddress })}
               kind={ACTION_PRIMARY}
               className="lending-tab-no-items-btn has-items-borrow-btn"
             />
@@ -85,13 +86,13 @@ export const BorrowingTab = ({ lendingControllerAddress, currentToken }: Borrowi
           </Checkbox>
 
           <VaultsList>
-            {userMarketVaultsIds.map((vaultId, idx) => {
+            {userMarketVaultsIds.map((vaultId) => {
               const vault = vaultsMapper[vaultId]
               return (
                 <BorrowingExpandCard
                   isOwner
                   {...vault}
-                  key={vault.borrowedAsset.symbol + '-' + idx}
+                  key={vault.address}
                   isOpenedVault={createdVaultId === vault.address}
                   DAOFee={DAOFee}
                 />
@@ -107,7 +108,7 @@ export const BorrowingTab = ({ lendingControllerAddress, currentToken }: Borrowi
             icon="plus"
             kind={ACTION_PRIMARY}
             disabled={!Boolean(accountPkh)}
-            onClick={() => openCreateVaultPopup({ currentMarketAsset: gqlName, setCreatedVaultAddress })}
+            onClick={() => openCreateVaultPopup({ loanTokenAddress, setCreatedVaultAddress })}
             className="lending-tab-no-items-btn"
           />
         </NoItemsInTabStyled>

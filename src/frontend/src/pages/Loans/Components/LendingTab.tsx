@@ -1,8 +1,7 @@
 import { useSelector } from 'react-redux'
-import { useContext, useMemo } from 'react'
+import { useContext } from 'react'
 
 import { State } from 'reducers'
-import { LendingItemType, LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
 import { SECONDARY_TRANSACTION_HISTORY_STYLE } from '../Loans.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -16,7 +15,6 @@ import { LendingTabActionsSection } from './LendingTabSections/LendingTabActions
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 
 type LendingTabPropsType = {
@@ -35,7 +33,6 @@ export const LendingTab = ({
   marketAvailableLiquidity,
 }: LendingTabPropsType) => {
   const { openAddLendingAssetPopup } = useContext(loansPopupsContext)
-  const { tokensMetadata } = useTokensContext()
 
   const {
     accountPkh,
@@ -49,10 +46,10 @@ export const LendingTab = ({
     <LendingTabStyled>
       {lendingItem ? (
         <div className="stats-and-actions">
-          <LendingTabValuesSection lendingItem={lendingItem} assetData={assetData} lendAPY={lendAPY} />
+          <LendingTabValuesSection lendingItem={lendingItem} loanTokenAddress={loanTokenAddress} lendAPY={lendAPY} />
           <LendingTabActionsSection
             lendingItem={lendingItem}
-            assetData={assetData}
+            loanTokenAddress={loanTokenAddress}
             lendAPY={lendAPY}
             marketReserveAmount={marketReserveAmount}
             marketAvailableLiquidity={marketAvailableLiquidity}
