@@ -22,6 +22,8 @@ import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.pr
 
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -36,13 +38,20 @@ export const LoansEarn = () => {
   const dispatch = useDispatch()
   const history = useHistory()
 
+  const {
+    isLoading: isChartsLoading,
+    chartsData: { totalBorrowingChart, totalLendingChart, marketLendingChart },
+  } = useLoansCharts({
+    calcTotalBorrowingChart: true,
+    calcTotalLendingChart: true,
+    calcMarketLendingChart: true,
+  })
+
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const {
-    isDataLoaded,
-    loanTokens,
-    chartsData: { lendingChartData, borrowingChartData },
-  } = useSelector((state: State) => state.loans)
+  const { isDataLoaded, loanTokens } = useSelector((state: State) => state.loans)
 
   const { totalBorrowed, totalLended } = useMemo(
     () =>
@@ -67,18 +76,24 @@ export const LoansEarn = () => {
 
   const markets: MarketType[] = useMemo(
     () =>
-      loanTokens.map((item) => ({
-        icon: item.loanTokenData.icon,
-        symbol: item.loanTokenData.symbol,
-        annualRate: item.lendingAPY,
-        annualRateName: 'APY',
-        leftValue: item.lendingItem?.lendValue ?? 0 * item.loanTokenData.rate,
-        rightValue: item.lendingItem?.interestEarned ?? 0 * item.loanTokenData.rate,
-        totalAmount: item.totalLended,
-        price: item.loanTokenData.rate,
-        chartData: item.marketLiquidityChartData,
-      })),
-    [loanTokens],
+      loanTokens.map((item) => {
+        const chartData = marketLendingChart[item.loanTokenAddress] ?? []
+        const { symbol, icon } = tokensMetadata[item.loanTokenAddress]
+        const price = tokensPrices[symbol]
+
+        return {
+          icon,
+          symbol,
+          annualRate: item.lendingAPY,
+          annualRateName: 'APY',
+          leftValue: item.lendingItem?.lendValue ?? 0 * price,
+          rightValue: item.lendingItem?.interestEarned ?? 0 * price,
+          totalAmount: item.totalLended,
+          price,
+          chartData,
+        }
+      }),
+    [loanTokens, marketLendingChart, tokensMetadata, tokensPrices],
   )
 
   const handleEarn = (marketSymbol: string) => {
@@ -122,11 +137,11 @@ export const LoansEarn = () => {
         <>
           <EarnBorrowTotalCharts
             // left chart
-            leftChartData={lendingChartData}
+            leftChartData={totalLendingChart}
             leftChartTitle="Total Earning"
             leftTotalAmount={totalLended}
             // right chart
-            rightChartData={borrowingChartData}
+            rightChartData={totalBorrowingChart}
             rightChartTitle="Total Borrowing"
             rightTotalAmount={totalBorrowed}
           />

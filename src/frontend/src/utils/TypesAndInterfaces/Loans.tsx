@@ -1,5 +1,3 @@
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
-import { SingleValueData } from 'lightweight-charts'
 import {
   ANY_USER,
   NONE_USER,
@@ -22,12 +20,6 @@ export type LoanVaultAllowanceType = typeof VAULT_ALLOWANCE_ANY | typeof VAULT_A
 export type CollateralType = {
   amount: number
   tokenAddress: TokenAddress
-}
-
-export type LoansChartsDataType = {
-  borrowingChartData: Array<SingleValueData>
-  collateralChartData: Array<SingleValueData>
-  lendingChartData: Array<SingleValueData>
 }
 
 export type LendingItemType = {
@@ -75,26 +67,10 @@ export type LoansVaultType = {
   liquidationPrice?: number
 }
 
-export type MarketTransactionHistoryType = Array<{
-  descr: string | null
-  amount: number
-  date: string | null
-  userAddress: string
-  vaultAddress?: string
-  operationHash: string
-  tokenAddress: TokenAddress
-}>
-
 // Market Type
 export type LoanMarketType = {
   loanTokenAddress: TokenAddress
   loanMTokenAddress: TokenAddress
-
-  // TODO: extract to custom hook?
-  marketCollateralChartData: Array<AreaChartPlotType>
-  marketLiquidityChartData: Array<AreaChartPlotType>
-
-  transactionHistory: MarketTransactionHistoryType
 
   utilisationRate: number
   borrowers: number

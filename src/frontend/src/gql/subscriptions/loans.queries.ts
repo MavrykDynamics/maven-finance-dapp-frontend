@@ -48,3 +48,60 @@ query getCurrentLendBorrow {
   }
 }
 `)
+
+// Loans history data
+export const GET_LOANS_HISTORY_DATA = gql(`
+query getLoansHistoryData {
+  lending_controller(where: {mock_time: {_eq: false}}) {
+    history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
+      type
+      amount
+      timestamp
+      loan_token {
+        loan_token_name
+        token {
+          token_address
+        }
+      }
+      collateral_token {
+        token {
+          token_address
+        }
+      }
+    }
+  }
+}
+`)
+
+// Loans market transaction history
+export const GET_LOANS_HISTORY_FOR_MARKET_DATA = gql(`
+query getLoansHistoryForMarketData($marketTokenAddress: String) {
+  lending_controller(where: {mock_time: {_eq: false}}) {
+    history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
+      type
+      amount
+      timestamp
+      loan_token {
+        loan_token_name
+        token {
+          token_address
+        }
+      }
+      collateral_token {
+        token {
+          token_address
+        }
+      }
+      operation_hash
+      sender {
+        address
+      }
+      vault {
+        vault {
+          address
+        }
+      }
+    }
+  }
+}
+`)

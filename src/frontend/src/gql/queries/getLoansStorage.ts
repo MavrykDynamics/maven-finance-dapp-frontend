@@ -1,7 +1,4 @@
-import { gql } from 'utils/__generated__'
-
 export const LOANS_QUERY = `
-
 query GetLoansStorage {
   lending_controller(where: {mock_time: {_eq: false}}) {
     collateral_ratio
@@ -9,33 +6,7 @@ query GetLoansStorage {
     interest_rate_decimals
     minimum_loan_fee_pct
     decimals
-    history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
-      type
-      amount
-      timestamp
-      loan_token {
-        loan_token_name
-        oracle {
-          address
-        }
-        token {
-          token_address
-          token_standard
-        }
-      }
-    }
-    collateral_tokens {
-      token {
-        token_address
-        token_standard
-      }
-      id
-      token_name
-      protected
-      oracle {
-        address
-      }
-    }
+    
     loan_tokens {
       loan_token_name
       id
@@ -54,37 +25,6 @@ query GetLoansStorage {
       }
       m_token {
         address
-      }
-      history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
-        type
-        amount
-        timestamp
-        operation_hash
-        sender {
-          address
-        }
-        vault {
-          vault {
-            address
-          }
-        }
-        loan_token {
-          loan_token_name
-          token {
-            token_address
-            token_standard
-          }
-          oracle {
-            address
-          }
-        }
-        collateral_token {
-          token_name
-          token {
-            token_address
-          }
-          oracle_id
-        }
       }
 
       vaults_aggregate(where: {loan_outstanding_total: {_neq: "0"}}) {

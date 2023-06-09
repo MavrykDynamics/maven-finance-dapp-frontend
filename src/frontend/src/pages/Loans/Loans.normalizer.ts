@@ -8,7 +8,7 @@ import { UserState } from 'reducers/wallet'
 import { Mavryk_User } from 'utils/generated/graphqlTypes'
 
 import { convertNumberForClient, calcWithoutDecimals, getNumberInBounds } from 'utils/calcFunctions'
-import { calcLendingAPY, getChartData, getLendingItem, getTransactionHistory } from './Loans.helpers'
+import { calcLendingAPY, getLendingItem } from './Loans.helpers'
 
 // Normalize user loans data
 export const normalizeUserLending = ({
@@ -172,9 +172,6 @@ export const normalizeLoans = async ({
         // (convertNumberForClient({ number: total_remaining, grade: loanTokenMetadata.decimals }) - reserveAmount) *
         // loanTokenMetadata.rate
 
-        const { transactionHistory, marketCollateralChartData, marketLiquidityChartData } =
-          getTransactionHistory(history_data)
-
         const lendingItem = getLendingItem(m_token?.address ?? null, userMTokens, userAddres)
 
         const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
@@ -185,9 +182,6 @@ export const normalizeLoans = async ({
           loanTokenAddress: token_address,
           loanMTokenAddress: m_token.token.token_address,
           lendingItem,
-          transactionHistory: [...transactionHistory].reverse(),
-          marketCollateralChartData,
-          marketLiquidityChartData,
           utilisationRate: getNumberInBounds(
             0,
             100,
@@ -215,14 +209,12 @@ export const normalizeLoans = async ({
 
     return {
       loanTokens,
-      chartsData: getChartData(lendingController?.history_data),
       mvkTokenOperators,
       config,
     }
   } catch (e) {
     console.log('normalizeLoans error:', e)
     return {
-      chartsData: getChartData(lendingController?.history_data),
       loanTokens: [],
       mvkTokenOperators,
       config,
