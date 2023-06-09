@@ -231,9 +231,8 @@ export const Market = () => {
 
         {tabId === LEND_TAB_ID ? (
           <LendingTab
-            lendingItem={currentToken.lendingItem}
-            lendingControllerAddress={lendingControllerAddress}
-            assetData={currentToken.loanTokenData}
+            loanMtokenAddress={currentToken.loanMTokenAddress}
+            loanTokenAddress={currentToken.loanTokenAddress}
             lendAPY={currentToken.lendingAPY}
             marketAvailableLiquidity={currentToken.availableLiquidity}
             marketReserveAmount={currentToken.reserveAmount}

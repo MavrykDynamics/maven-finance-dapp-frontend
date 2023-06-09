@@ -4,11 +4,10 @@ import {
   UserLendObjType,
   MvkTokenOperatorGQL,
 } from 'utils/TypesAndInterfaces/Loans'
-import { UserState } from 'reducers/wallet'
 import { Mavryk_User } from 'utils/generated/graphqlTypes'
 
 import { convertNumberForClient, calcWithoutDecimals, getNumberInBounds } from 'utils/calcFunctions'
-import { calcLendingAPY, getLendingItem } from './Loans.helpers'
+import { calcLendingAPY } from './Loans.helpers'
 
 // Normalize user loans data
 export const normalizeUserLending = ({
@@ -118,19 +117,13 @@ export const normalizeUserLending = ({
 }
 
 // Normalizing lend\borrow market
-export const normalizeLoans = async ({
+export const normalizeLoans = ({
   lendingController,
   mvkTokenOperators: mvkTokenOperatorsStorage,
-  userMTokens,
-  userAddres,
 }: {
   lendingController: LendingControllerGQL
   mvkTokenOperators: MvkTokenOperatorGQL[]
-  userMTokens: UserState['userMTokens']
-  userAddres?: string
 }) => {
-  const mvkTokenOperators = mvkTokenOperatorsStorage?.map((item) => item.operator.address)
-
   const interestTreasuryShare = calcWithoutDecimals(
     lendingController?.interest_treasury_share,
     lendingController.decimals,
@@ -142,82 +135,60 @@ export const normalizeLoans = async ({
     loansControllerAddress: lendingController?.address,
   }
 
-  try {
-    const loanTokens = await lendingController?.loan_tokens?.reduce<Promise<Array<LoanMarketType>>>(
-      async (promiseAcc, loanToken) => {
-        const acc: LoanMarketType[] = await promiseAcc
+  const loanTokens = lendingController?.loan_tokens?.reduce<Array<LoanMarketType>>((acc, loanToken) => {
+    const {
+      utilisation_rate,
+      total_remaining,
+      reserve_ratio,
+      token_pool_total,
+      total_borrowed,
+      token: { token_address },
+      m_token,
+      vaults_aggregate: { aggregate },
+    } = loanToken
 
-        const {
-          loan_token_name,
-          utilisation_rate,
-          total_remaining,
-          history_data,
-          reserve_ratio,
-          token_pool_total,
-          total_borrowed,
-          token: { token_address },
-          m_token,
-          vaults_aggregate: { aggregate },
-        } = loanToken
+    if (!token_address) return acc
 
-        if (!token_address) return acc
+    // TODO: add calcs
+    const reserveAmount = (token_pool_total * reserve_ratio) / 10000
+    // const reserveAmount = convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }) * (reserve_ratio / 10000)
 
-        // TODO: add calcs
-        const reserveAmount = 0
-        // convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }) *
-        // (reserve_ratio / 10000)
+    // TODO: check calcs
+    const availableLiquidity = total_remaining - reserveAmount
+    // const availableLiquidity = (convertNumberForClient({ number: total_remaining, grade: loanTokenMetadata.decimals }) - reserveAmount) * loanTokenMetadata.rate
 
-        // todo: add calcs
-        const availableLiquidity = 0
-        // (convertNumberForClient({ number: total_remaining, grade: loanTokenMetadata.decimals }) - reserveAmount) *
-        // loanTokenMetadata.rate
+    const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
+    const lendAPY = calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare)
+    const borrowAPR = tokenCurrentInterestRate * 100
 
-        const lendingItem = getLendingItem(m_token?.address ?? null, userMTokens, userAddres)
+    acc.push({
+      loanTokenAddress: token_address,
+      loanMTokenAddress: m_token.token.token_address,
+      utilisationRate: getNumberInBounds(
+        0,
+        100,
+        convertNumberForClient({ number: utilisation_rate, grade: interestRateDecimals }) * 100,
+      ),
 
-        const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
-        const lendAPY = calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare)
-        const borrowAPR = tokenCurrentInterestRate * 100
+      availableLiquidity,
+      totalLended: token_pool_total,
+      totalBorrowed: total_borrowed,
 
-        acc.push({
-          loanTokenAddress: token_address,
-          loanMTokenAddress: m_token.token.token_address,
-          lendingItem,
-          utilisationRate: getNumberInBounds(
-            0,
-            100,
-            convertNumberForClient({ number: utilisation_rate, grade: interestRateDecimals }) * 100,
-          ),
+      borrowers: aggregate?.count ?? 0,
 
-          availableLiquidity,
-          totalLended: token_pool_total,
-          totalBorrowed: total_borrowed,
+      collateralFactor: lendingController.collateral_ratio / 10,
+      reserveFactor: reserve_ratio / 100,
+      reserveAmount,
+      borrowAPR: borrowAPR,
+      lendingAPY: lendAPY,
+    })
 
-          borrowers: aggregate?.count ?? 0,
+    return acc
+  }, [])
 
-          totalFeesEarned: lendingItem?.interestEarned ?? 0,
-          collateralFactor: lendingController.collateral_ratio / 10,
-          reserveFactor: reserve_ratio / 100,
-          reserveAmount: reserveAmount,
-          borrowAPR: borrowAPR,
-          lendingAPY: lendAPY,
-        })
-
-        return acc
-      },
-      Promise.resolve([]),
-    )
-
-    return {
-      loanTokens,
-      mvkTokenOperators,
-      config,
-    }
-  } catch (e) {
-    console.log('normalizeLoans error:', e)
-    return {
-      loanTokens: [],
-      mvkTokenOperators,
-      config,
-    }
+  return {
+    loanTokens,
+    mvkTokenOperators: mvkTokenOperatorsStorage?.map((item) => item.operator.address) ?? [],
+    config,
   }
 }

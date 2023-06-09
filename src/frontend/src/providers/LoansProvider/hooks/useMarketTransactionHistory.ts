@@ -18,7 +18,7 @@ import { COLLATERAL_HISTORY_DATA_TYPES } from '../helpers/loans.const'
  *
  * @param param0.marketTokenAddress – market token address to get transactions for
  */
-const useLoansCharts = ({ marketTokenAddress }: LoansMarketTransactionHistoryArgs) => {
+const useMarketTransactionHistory = ({ marketTokenAddress }: LoansMarketTransactionHistoryArgs) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const [transactionHistory, setTransactionHistory] = useState<Array<LoansMarketTransactionHistoryType>>([])
@@ -65,6 +65,7 @@ const useLoansCharts = ({ marketTokenAddress }: LoansMarketTransactionHistoryArg
             amount: convertedAmount,
             usdValue: amountInUsd,
             tokenAddress,
+            symbol,
             date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
             vaultAddress: vault?.vault?.address,
             userAddress: senderAddress,
@@ -91,4 +92,4 @@ const useLoansCharts = ({ marketTokenAddress }: LoansMarketTransactionHistoryArg
   return { isLoading: loading, transactionHistory }
 }
 
-export default useLoansCharts
+export default useMarketTransactionHistory

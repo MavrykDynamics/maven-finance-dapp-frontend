@@ -16,12 +16,8 @@ query GetLoansStorage {
       total_remaining
       reserve_ratio
       current_interest_rate
-      oracle {
-        address
-      }
       token {
         token_address
-        token_standard
       }
       m_token {
         address

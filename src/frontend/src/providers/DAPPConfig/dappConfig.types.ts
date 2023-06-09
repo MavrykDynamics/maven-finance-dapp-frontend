@@ -1,5 +1,5 @@
 import DAPPConfigProvider from './dappConfig.provider'
-import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
+import { XtzBakerType } from './helpers/getXtzBakers'
 
 export type CouncilMaxLength = {
   councilMemberImageMaxLength: number

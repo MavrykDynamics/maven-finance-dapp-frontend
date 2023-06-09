@@ -1,14 +1,7 @@
 import TokensProvider from './tokens.provider'
 
-import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { normalizeTokenPrices } from './hooks/tokens.normalizer'
-
-export type XtxBakersType = {
-  otherBakers: Array<XtzBakerType>
-  dao: (XtzBakerType & { description: string; isDisabled: boolean }) | null
-  mavrykDynamics: (XtzBakerType & { description: string; isDisabled: boolean }) | null
-}
 
 export type WhiteListTokensType = Array<{
   symbol: string

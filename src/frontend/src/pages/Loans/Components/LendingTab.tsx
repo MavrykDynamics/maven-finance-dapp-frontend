@@ -15,32 +15,35 @@ import { LendingTabValuesSection } from './LendingTabSections/LendingTabValuesSe
 import { LendingTabActionsSection } from './LendingTabSections/LendingTabActionsSection'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 
 type LendingTabPropsType = {
-  lendingItem: LendingItemType
-  lendingControllerAddress: string
-  assetData: LoanMarketType['loanTokenData']
+  loanTokenAddress: TokenAddress
+  loanMtokenAddress: TokenAddress
   lendAPY: number
   marketAvailableLiquidity: number
   marketReserveAmount: number
 }
 
 export const LendingTab = ({
-  lendingItem,
-  lendingControllerAddress,
-  assetData,
+  loanTokenAddress,
+  loanMtokenAddress,
   lendAPY,
   marketReserveAmount,
   marketAvailableLiquidity,
 }: LendingTabPropsType) => {
   const { openAddLendingAssetPopup } = useContext(loansPopupsContext)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { loanTokens } = useSelector((state: State) => state.loans)
+  const { tokensMetadata } = useTokensContext()
+
+  const {
+    accountPkh,
+    user: { userMTokens },
+  } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  const transactionHistory = useMemo(() => {
-    return loanTokens.find(({ loanTokenData }) => loanTokenData.symbol === assetData.symbol)?.transactionHistory ?? []
-  }, [assetData, loanTokens])
+  const lendingItem = getMarketUserLengingItem(userMTokens, loanMtokenAddress)
 
   return (
     <LendingTabStyled>
@@ -81,10 +84,9 @@ export const LendingTab = ({
 
       {accountPkh && (
         <TransactionHistory
-          transactionHistory={transactionHistory}
+          loanTokenAddress={loanTokenAddress}
           filterByDescriptions={['Liquidity Added', 'Liquidity Removed']}
           userAddress={accountPkh}
-          lendingControllerAddress={lendingControllerAddress}
           styleType={SECONDARY_TRANSACTION_HISTORY_STYLE}
         />
       )}

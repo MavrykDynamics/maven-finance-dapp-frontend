@@ -19,9 +19,12 @@ import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
+import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+
+// providers
 import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
@@ -49,7 +52,10 @@ export const LoansEarn = () => {
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    accountPkh,
+    user: { userMTokens },
+  } = useSelector((state: State) => state.wallet)
 
   const { isDataLoaded, loanTokens } = useSelector((state: State) => state.loans)
 
@@ -59,7 +65,10 @@ export const LoansEarn = () => {
         totalLended: number
         totalBorrowed: number
       }>(
-        (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
+        (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
+          const { symbol } = tokensMetadata[loanTokenAddress]
+          const rate = tokensPrices[symbol]
+
           acc.totalBorrowed += totalBorrowed * rate
           acc.totalLended += totalLended * rate
           return acc
@@ -69,7 +78,7 @@ export const LoansEarn = () => {
           totalBorrowed: 0,
         },
       ),
-    [loanTokens],
+    [loanTokens, tokensMetadata, tokensPrices],
   )
 
   const { openAddLendingAssetPopup } = useContext(loansPopupsContext)
@@ -80,14 +89,16 @@ export const LoansEarn = () => {
         const chartData = marketLendingChart[item.loanTokenAddress] ?? []
         const { symbol, icon } = tokensMetadata[item.loanTokenAddress]
         const price = tokensPrices[symbol]
+        const { lendValue = 0, interestEarned = 0 } =
+          getMarketUserLengingItem(userMTokens, item.loanMTokenAddress) ?? {}
 
         return {
           icon,
           symbol,
           annualRate: item.lendingAPY,
           annualRateName: 'APY',
-          leftValue: item.lendingItem?.lendValue ?? 0 * price,
-          rightValue: item.lendingItem?.interestEarned ?? 0 * price,
+          leftValue: lendValue * price,
+          rightValue: interestEarned * price,
           totalAmount: item.totalLended,
           price,
           chartData,
@@ -96,21 +107,25 @@ export const LoansEarn = () => {
     [loanTokens, marketLendingChart, tokensMetadata, tokensPrices],
   )
 
-  const handleEarn = (marketSymbol: string) => {
-    const market = loanTokens.find((item) => item.loanTokenData.symbol === marketSymbol)
+  // TODO: pass address here
+  const handleEarn = (marketTokenAddress: string) => {
+    const market = loanTokens.find((item) => item.loanMTokenAddress === marketTokenAddress)
     if (!market) return
 
+    const { lendValue, mBalance = 0 } = getMarketUserLengingItem(userMTokens, market.loanMTokenAddress) ?? {}
+
     //  if the user has already supplied to the specific asset pool we will route to asset market
-    if (market.lendingItem?.lendValue) {
-      history.push(`/loans/${market.loanTokenData.symbol}/lendingTab`)
+    if (lendValue) {
+      history.push(`/loans/${market.loanMTokenAddress}/lendingTab`)
       return
     }
 
-    openAddLendingAssetPopup({
-      mBalance: market.lendingItem?.mBalance ?? 0,
-      lendingAPY: market.lendingAPY,
-      ...market.loanTokenData,
-    })
+    // TODO: update popups usage
+    // openAddLendingAssetPopup({
+    //   mBalance,
+    //   lendingAPY: market.lendingAPY,
+    //   ...market.loanTokenData,
+    // })
   }
 
   const { isLoading } = useDataLoader(

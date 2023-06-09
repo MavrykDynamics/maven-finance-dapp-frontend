@@ -1,17 +1,46 @@
-import { BakeryDelegateDataType, getBakeryDelegateData } from 'pages/Loans/LoansFethcers'
-
 import { convertNumberForClient } from 'utils/calcFunctions'
-
-import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 
 import BakersMocked from './bakers.json'
 import { XTZ_DECIMALS } from 'utils/constants'
 
-export const getFreeSpace = (data: BakeryDelegateDataType) => {
+// types
+export type XtzBakerType = {
+  logo: string
+  name: string
+  address: string
+  fee: number
+  yield: number
+  freespace: number
+  efficiency?: number
+  isDisabled?: boolean
+  description?: string
+}
+
+export type BakeryDelegateDataType = {
+  balance: number
+  delegatedBalance: number
+}
+
+// helpers
+const getFreeSpace = (data: BakeryDelegateDataType) => {
   if (data.balance === -1) return -1
 
   const freeSpace = data.balance * 9 - data.delegatedBalance
   return Number(convertNumberForClient({ number: freeSpace, grade: XTZ_DECIMALS }).toFixed(2))
+}
+
+const getBakeryDelegateData = async (bakerAddress: string): Promise<BakeryDelegateDataType> => {
+  try {
+    const response = await fetch(`https://api.tzkt.io/v1/delegates/${bakerAddress}`)
+    const result = await response.json()
+
+    return result
+  } catch {
+    return {
+      balance: -1,
+      delegatedBalance: -1,
+    }
+  }
 }
 
 export const getXTZBakers = async (): Promise<{

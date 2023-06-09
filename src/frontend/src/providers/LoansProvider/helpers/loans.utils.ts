@@ -1,3 +1,5 @@
+import { MTokenType } from 'utils/TypesAndInterfaces/User'
+
 // HELPER TO GET OPERATION NAME BY ITS TYPE
 export const getDescrByType = (type: number) => {
   switch (type) {
@@ -28,4 +30,19 @@ export const getDescrByType = (type: number) => {
     default:
       return null
   }
+}
+
+//
+export const getMarketUserLengingItem = (userMTokens: Array<MTokenType>, loanMtokenAddress: string) => {
+  const mTokenAsset = userMTokens?.find(({ tokenAddress }) => tokenAddress === loanMtokenAddress)
+
+  if (mTokenAsset) {
+    return {
+      lendValue: mTokenAsset.balance,
+      interestEarned: mTokenAsset.rewards_earned,
+      mBalance: mTokenAsset.balance + mTokenAsset.rewards_earned,
+    }
+  }
+
+  return null
 }

@@ -76,7 +76,6 @@ export type LoanMarketType = {
   borrowers: number
   borrowAPR: number
   lendingAPY: number
-  totalFeesEarned: number
   collateralFactor: number
 
   availableLiquidity: number
@@ -85,9 +84,6 @@ export type LoanMarketType = {
 
   reserveFactor: number
   reserveAmount: number
-
-  // TODO: store mTokens for market and get it on view part
-  lendingItem: LendingItemType
 }
 
 type TokenOperator = {

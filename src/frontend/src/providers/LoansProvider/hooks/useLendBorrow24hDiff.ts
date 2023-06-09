@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useQuery, useSubscription } from '@apollo/client'
 import dayjs from 'dayjs'
 
 import {
@@ -74,8 +74,10 @@ const useLendBorrow24hDiff = (): {
     },
   })
 
-  const { loading: isTotalLoading } = useQuery(GET_CURRENT_LOANS_TOTAL_LEND_BORROW, {
-    onCompleted: (data) => {
+  const { loading: isTotalLoading } = useSubscription(GET_CURRENT_LOANS_TOTAL_LEND_BORROW, {
+    onData: ({ data: { data } }) => {
+      if (!data) return
+
       const { currentTotalLended, currentTotalBorrowed } = data.lending_controller[0].loan_tokens.reduce(
         (acc, { token, total_borrowed, token_pool_total }) => {
           const tokenAddress = token.token_address

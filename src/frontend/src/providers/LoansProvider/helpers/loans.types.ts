@@ -25,6 +25,7 @@ export type LoansMarketTransactionHistoryType = {
   usdValue: number
   date: string | null
   userAddress: string
+  symbol: string
   vaultAddress?: string
   operationHash: string
   tokenAddress: TokenAddress
