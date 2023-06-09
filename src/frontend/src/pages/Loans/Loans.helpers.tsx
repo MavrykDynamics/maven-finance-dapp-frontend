@@ -1,22 +1,15 @@
 import dayjs from 'dayjs'
 import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 
-import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
 import { Lending_Controller_History_Data } from 'utils/generated/graphqlTypes'
-import {
-  LendingItemType,
-  LoansChartsDataType,
-  LoanMarketType,
-  BaseLoansAssetDataType,
-} from 'utils/TypesAndInterfaces/Loans'
+import { LendingItemType, LoansChartsDataType, LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 import { parseDate } from 'utils/time'
 import { convertNumberForClient, convertNumberForContractCall, getNumberInBounds } from '../../utils/calcFunctions'
 import { assetDecimalsToShow } from './Loans.const'
-import { DataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 
 // CONST FOR HELPERS
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
@@ -26,75 +19,14 @@ const TWO_WEEKS_IN_MS = ONE_DAY_IN_MS * 14
 export const isTezosAsset = (tokenName: string) =>
   tokenName.toLowerCase() === 'tez' || tokenName.toLowerCase() === 'tezos' || tokenName.toLowerCase() === 'xtz'
 
-export const getAssetMetadata = ({
-  tokenName,
-  tokenAddress,
-  dipDupTokens,
-  feeds,
-  oracleId,
-}: {
-  tokenName: string
-  tokenAddress: string
-  dipDupTokens: State['tokens']['dipDupTokens']
-  feeds: DataFeedsContext['feedsMapper']
-  oracleId?: string
-}): (BaseLoansAssetDataType & { address: string }) | undefined => {
-  const isXTZ = isTezosAsset(tokenName)
-  const foundAssetInDipDup = dipDupTokens.find(({ token_address }) => tokenAddress === token_address)
-
-  const { last_completed_data, decimals, icon } = oracleId
-    ? feeds[oracleId] ?? { last_completed_data: undefined, decimals: undefined, icon: undefined }
-    : { last_completed_data: undefined, decimals: undefined, icon: undefined }
-
-  if (isXTZ && last_completed_data !== undefined && decimals !== undefined) {
-    return {
-      decimals: 6,
-      gqlName: tokenName,
-      name: 'Tezos',
-      symbol: 'XTZ',
-      icon: '/images/tezos.png',
-      rate: last_completed_data / 10 ** decimals,
-      address: tokenAddress,
-      // TODO: ensure it's really 3
-      id: 3,
-    }
-  }
-
-  if (foundAssetInDipDup && last_completed_data !== undefined && decimals !== undefined) {
-    return {
-      decimals: Number(foundAssetInDipDup.metadata.decimals),
-      gqlName: tokenName,
-      name: foundAssetInDipDup.metadata.name ?? '',
-      symbol: foundAssetInDipDup.metadata.symbol,
-      icon:
-        tokenName === 'eurl'
-          ? '/images/eurl.png'
-          : tokenName === 'tzbtc'
-          ? '/images/tzBTC.png'
-          : icon ?? foundAssetInDipDup.metadata.icon ?? '',
-      rate: last_completed_data / 10 ** decimals,
-      address: tokenAddress,
-      id: foundAssetInDipDup.id,
-    }
-  }
-
-  return
-}
-
 // NORMALIZE TRANSACTION HISTORY FOR LEND/BORROW MARKET
 type TransactionHistoryReduceType = {
   transactionHistory: LoanMarketType['transactionHistory']
-  lending24hVolume: number
-  borrowing24hVolume: number
   marketCollateralChartData: Array<SingleValueData>
   marketLiquidityChartData: Array<SingleValueData>
 }
 
-export const getTransactionHistory = (
-  history_data: Lending_Controller_History_Data[],
-  dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: DataFeedsContext['feedsMapper'],
-) =>
+export const getTransactionHistory = (history_data: Lending_Controller_History_Data[]) =>
   history_data.reduce<TransactionHistoryReduceType>(
     (
       acc,
@@ -109,91 +41,58 @@ export const getTransactionHistory = (
         vault,
       },
     ) => {
-      if (!loan_token?.token?.token_address) return acc
+      const tokenAddress = collateral_token?.token?.token_address ?? loan_token?.token?.token_address
 
-      const assetMetadata = getAssetMetadata({
-        // if we have collateral_token, that means it’s a vault operation
-        // if we do not have collateral_token, that means it’s a loan operation
-        tokenAddress: collateral_token?.token?.token_address ?? loan_token.token.token_address,
-        tokenName: collateral_token?.token_name ?? loan_token.loan_token_name,
-        dipDupTokens,
-        feeds,
-        oracleId: String(collateral_token?.oracle_id ?? loan_token.oracle_id),
-      })
+      if (!tokenAddress) return acc
 
-      if (assetMetadata) {
-        const transformedAmount = amount / 10 ** assetMetadata.decimals
-        const descrByType = getDescrByType(type)
+      const descrByType = getDescrByType(type)
 
-        if (descrByType) {
-          acc.transactionHistory.push({
-            amount: transformedAmount,
-            date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
-            vaultAddress: vault?.vault?.address,
-            userAddress: senderAddress,
-            operationHash: operation_hash,
-            descr: descrByType,
-            tokenSymbol: assetMetadata.symbol,
-          })
-        }
+      if (descrByType) {
+        acc.transactionHistory.push({
+          amount,
+          tokenAddress,
+          date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
+          vaultAddress: vault?.vault?.address,
+          userAddress: senderAddress,
+          operationHash: operation_hash,
+          descr: descrByType,
+        })
+      }
 
-        // Added liquidity (lended)
-        if (type === 0) {
-          if (dayjs().diff(timestamp) <= ONE_DAY_IN_MS) {
-            acc.lending24hVolume += transformedAmount * assetMetadata.rate
-          }
-
-          if (dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
-            acc.marketLiquidityChartData.push({
-              value: (acc.marketLiquidityChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
-              time: new Date(timestamp).getTime() as UTCTimestamp,
-            })
-          }
-        }
-
-        // Removed liquidity (paid lended)
-        if (type === 1) {
-          if (dayjs().diff(timestamp) <= ONE_DAY_IN_MS) {
-            acc.lending24hVolume -= transformedAmount * assetMetadata.rate
-          }
-
-          if (dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
-            acc.marketCollateralChartData.push({
-              value: (acc.marketLiquidityChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
-              time: new Date(timestamp).getTime() as UTCTimestamp,
-            })
-          }
-        }
-
-        // Borrowed
-        if (type === 2) {
-          if (dayjs().diff(timestamp) <= ONE_DAY_IN_MS) {
-            acc.borrowing24hVolume += transformedAmount * assetMetadata.rate
-          }
-        }
-
-        // Paid borrowed (repaid)
-        if (type === 3) {
-          if (dayjs().diff(timestamp) <= ONE_DAY_IN_MS) {
-            acc.borrowing24hVolume -= transformedAmount * assetMetadata.rate
-          }
-        }
-
-        // Deposit collateral
-        if ((type === 4 || type === 6) && dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
-          acc.marketCollateralChartData.push({
-            value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
+      // Added liquidity (lended)
+      if (type === 0) {
+        if (dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
+          acc.marketLiquidityChartData.push({
+            value: (acc.marketLiquidityChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
             time: new Date(timestamp).getTime() as UTCTimestamp,
           })
         }
+      }
 
-        // Withdraw collateral
-        if ((type === 5 || type === 7) && dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
+      // Removed liquidity (paid lended)
+      if (type === 1) {
+        if (dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
           acc.marketCollateralChartData.push({
-            value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
+            value: (acc.marketLiquidityChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
             time: new Date(timestamp).getTime() as UTCTimestamp,
           })
         }
+      }
+
+      // Deposit collateral
+      if ((type === 4 || type === 6) && dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
+        acc.marketCollateralChartData.push({
+          value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
+          time: new Date(timestamp).getTime() as UTCTimestamp,
+        })
+      }
+
+      // Withdraw collateral
+      if ((type === 5 || type === 7) && dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
+        acc.marketCollateralChartData.push({
+          value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
+          time: new Date(timestamp).getTime() as UTCTimestamp,
+        })
       }
 
       return acc
@@ -202,103 +101,90 @@ export const getTransactionHistory = (
       transactionHistory: [],
       marketCollateralChartData: [],
       marketLiquidityChartData: [],
-      lending24hVolume: 0,
-      borrowing24hVolume: 0,
     },
   )
 
 // NORMALIZE CHART DATA FOR LEND/BORROW MARKETS
-export const getChartData = (
-  history_data: Lending_Controller_History_Data[],
-  dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: DataFeedsContext['feedsMapper'],
-) =>
+export const getChartData = (history_data: Lending_Controller_History_Data[]) =>
   history_data?.reduce<LoansChartsDataType>(
     (acc, { type, amount, timestamp, loan_token }) => {
-      if (!loan_token?.token.token_address) return acc
-      const assetMetadata = getAssetMetadata({
-        tokenAddress: loan_token.token.token_address,
-        tokenName: loan_token.loan_token_name,
-        dipDupTokens,
-        feeds,
-        oracleId: String(loan_token.oracle_id),
-      })
+      const tokenAddress = loan_token?.token.token_address
 
-      if (assetMetadata) {
-        const operationTimestampAndNowDiffInMs = new Date(Date.now()).getTime() - new Date(timestamp).getTime()
-        const isLast24hOperation = operationTimestampAndNowDiffInMs <= ONE_DAY_IN_MS
+      if (!tokenAddress) return acc
 
-        // Added liquidity (lended)
-        if (type === 0) {
-          const lendedAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
-          if (isLast24hOperation) {
-            acc.lendBorrow24hDiff.last24hLending += lendedAmount
-          }
+      const operationTimestampAndNowDiffInMs = new Date(Date.now()).getTime() - new Date(timestamp).getTime()
+      const isLast24hOperation = operationTimestampAndNowDiffInMs <= ONE_DAY_IN_MS
 
-          acc.lendingChartData.push({
-            time: new Date(timestamp).getTime() as UTCTimestamp,
-            value: (acc.lendingChartData.at(-1)?.value ?? 0) + lendedAmount,
-          })
+      // Added liquidity (lended)
+      if (type === 0) {
+        const lendedAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
+        if (isLast24hOperation) {
+          acc.lendBorrow24hDiff.last24hLending += lendedAmount
         }
 
-        // Removed liquidity (paid lended)
-        if (type === 1) {
-          const lendedAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
-          if (isLast24hOperation) {
-            acc.lendBorrow24hDiff.last24hLending -= lendedAmount
-          }
+        acc.lendingChartData.push({
+          time: new Date(timestamp).getTime() as UTCTimestamp,
+          value: (acc.lendingChartData.at(-1)?.value ?? 0) + lendedAmount,
+        })
+      }
 
-          acc.lendingChartData.push({
-            time: new Date(timestamp).getTime() as UTCTimestamp,
-            value: (acc.lendingChartData.at(-1)?.value ?? 0) - lendedAmount,
-          })
+      // Removed liquidity (paid lended)
+      if (type === 1) {
+        const lendedAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
+        if (isLast24hOperation) {
+          acc.lendBorrow24hDiff.last24hLending -= lendedAmount
         }
 
-        // Borrowed
-        if (type === 2) {
-          const borrowedAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
-          if (isLast24hOperation) {
-            acc.lendBorrow24hDiff.last24hBorrowing += borrowedAmount
-          }
+        acc.lendingChartData.push({
+          time: new Date(timestamp).getTime() as UTCTimestamp,
+          value: (acc.lendingChartData.at(-1)?.value ?? 0) - lendedAmount,
+        })
+      }
 
-          acc.borrowingChartData.push({
-            time: new Date(timestamp).getTime() as UTCTimestamp,
-            value: (acc.borrowingChartData.at(-1)?.value ?? 0) + borrowedAmount,
-          })
+      // Borrowed
+      if (type === 2) {
+        const borrowedAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
+        if (isLast24hOperation) {
+          acc.lendBorrow24hDiff.last24hBorrowing += borrowedAmount
         }
 
-        // Paid borrowed (repaid)
-        if (type === 3) {
-          const borrowedAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
-          if (isLast24hOperation) {
-            acc.lendBorrow24hDiff.last24hBorrowing -= borrowedAmount
-          }
+        acc.borrowingChartData.push({
+          time: new Date(timestamp).getTime() as UTCTimestamp,
+          value: (acc.borrowingChartData.at(-1)?.value ?? 0) + borrowedAmount,
+        })
+      }
 
-          acc.borrowingChartData.push({
-            time: new Date(timestamp).getTime() as UTCTimestamp,
-            value: (acc.borrowingChartData.at(-1)?.value ?? 0) - borrowedAmount,
-          })
+      // Paid borrowed (repaid)
+      if (type === 3) {
+        const borrowedAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
+        if (isLast24hOperation) {
+          acc.lendBorrow24hDiff.last24hBorrowing -= borrowedAmount
         }
 
-        // Deposit collateral
-        if (type === 4 || type === 6) {
-          const collateralAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
+        acc.borrowingChartData.push({
+          time: new Date(timestamp).getTime() as UTCTimestamp,
+          value: (acc.borrowingChartData.at(-1)?.value ?? 0) - borrowedAmount,
+        })
+      }
 
-          acc.collateralChartData.push({
-            value: (acc.collateralChartData.at(-1)?.value ?? 0) + collateralAmount,
-            time: new Date(timestamp).getTime() as UTCTimestamp,
-          })
-        }
+      // Deposit collateral
+      if (type === 4 || type === 6) {
+        const collateralAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
 
-        // Withdraw collateral
-        if (type === 5 || type === 7) {
-          const collateralAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
+        acc.collateralChartData.push({
+          value: (acc.collateralChartData.at(-1)?.value ?? 0) + collateralAmount,
+          time: new Date(timestamp).getTime() as UTCTimestamp,
+        })
+      }
 
-          acc.collateralChartData.push({
-            value: (acc.collateralChartData.at(-1)?.value ?? 0) - collateralAmount,
-            time: new Date(timestamp).getTime() as UTCTimestamp,
-          })
-        }
+      // Withdraw collateral
+      if (type === 5 || type === 7) {
+        const collateralAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
+
+        acc.collateralChartData.push({
+          value: (acc.collateralChartData.at(-1)?.value ?? 0) - collateralAmount,
+          time: new Date(timestamp).getTime() as UTCTimestamp,
+        })
       }
 
       return acc

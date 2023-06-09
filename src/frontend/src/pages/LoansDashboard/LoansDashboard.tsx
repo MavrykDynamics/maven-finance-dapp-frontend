@@ -6,7 +6,6 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
 
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
 import { getGaugeVaultRiskSimpleStatus } from './helpers/position.helpers'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
@@ -26,6 +25,7 @@ import colors from 'styles/colors'
 import { connect } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import useLendBorrow24hDiff from 'utils/hooks/useLendBorrow24hDiff'
 
 export type GaugeChartStateType = {
   maxValue: number
@@ -53,13 +53,9 @@ export const GAUGE_STATE_APY_PART = {
 export const LoansDashboard = () => {
   const dispatch = useDispatch()
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const {
-    isDataLoaded: isLoansLoaded,
-    loanTokens,
-    chartsData: {
-      lendBorrow24hDiff: { last24hLending, last24hBorrowing },
-    },
-  } = useSelector((state: State) => state.loans)
+  const { isDataLoaded: isLoansLoaded, loanTokens } = useSelector((state: State) => state.loans)
+
+  const { lending24hPersentChange, borrowing24hPersentChange } = useLendBorrow24hDiff()
 
   const {
     accountPkh,
@@ -103,10 +99,6 @@ export const LoansDashboard = () => {
 
     return { totalUserLended, totalUserBorrowed }
   }, [userLoansData])
-
-  // Calcuating persents of total lended and borrowed changed since last operation
-  const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(totalBorrowed, totalBorrowed - last24hLending)
-  const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(totalLended, totalLended - last24hBorrowing)
 
   // calc data for gauge chart
   const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {

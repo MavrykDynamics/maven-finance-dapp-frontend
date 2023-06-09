@@ -8,9 +8,9 @@ import {
   WHITELIST_USERS,
 } from 'pages/Loans/Loans.const'
 import { Lending_Controller, Mvk_Token_Operator } from 'utils/generated/graphqlTypes'
-import { TokenType } from './General'
 import { normalizeLoans } from 'pages/Loans/Loans.normalizer'
 import { normalizeVaultsStorage } from 'pages/Vaults/Vaults.normalizer'
+import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
 
 export type MvkTokenOperatorGQL = Omit<Mvk_Token_Operator, '__typename'>
 export type LendingControllerGQL = Omit<Lending_Controller, '__typename'>
@@ -19,35 +19,15 @@ export type VaultsStorage = Awaited<ReturnType<typeof normalizeVaultsStorage>>
 
 export type LoanVaultAllowanceType = typeof VAULT_ALLOWANCE_ANY | typeof VAULT_ALLOWANCE_ACCOUNTS
 
-export type BaseLoansAssetDataType = {
-  gqlName: string
-  name: string
-  rate: number
-  decimals: number
-  id: number
-  symbol: string
-  icon: string
-}
-
-export type LoansAssetDataType = BaseLoansAssetDataType & {
-  tokenType: TokenType
-  address: string
-}
-
-export type CollateralType = BaseLoansAssetDataType & {
+export type CollateralType = {
   amount: number
-  collateralShare?: number
-  address: string
+  tokenAddress: TokenAddress
 }
 
 export type LoansChartsDataType = {
   borrowingChartData: Array<SingleValueData>
   collateralChartData: Array<SingleValueData>
   lendingChartData: Array<SingleValueData>
-  lendBorrow24hDiff: {
-    last24hLending: number
-    last24hBorrowing: number
-  }
 }
 
 export type LendingItemType = {
@@ -56,44 +36,23 @@ export type LendingItemType = {
   mBalance: number
 } | null
 
-export type AvaliableCollateralType = LoansAssetDataType & {
-  address: string
-  isProtected: boolean
-  tokenType: 'tez' | 'fa12' | 'fa2'
-}
-
-export type XtzBakerType = {
-  logo: string
-  name: string
-  address: string
-  fee: number
-  yield: number
-  freespace: number
-  efficiency?: number
-  isDisabled?: boolean
-  description?: string
-}
-
 export type UserLendObjType = {
-  icon: string
   amount: number
-  usdAmount: number
   id: number
   annualPecentage: number
-  symbol: string
   date: string
   operationHash: string
+  tokenAddress: TokenAddress
 }
 
 export type DepositorsFlagType = typeof ANY_USER | typeof NONE_USER | typeof WHITELIST_USERS
+
+// Vault type
 export type LoansVaultType = {
-  borrowedAsset: LoansAssetDataType
+  borrowedTokenAddress: TokenAddress
   collateralData: Array<CollateralType>
   borrowedAmount: number
-  collateralBalance: number
-  collateralRatio: number
   minimumRepay: number
-  borrowCapacity: number
   availableLiquidity: number
   apr: number
   fee: number
@@ -108,7 +67,6 @@ export type LoansVaultType = {
   deporsitorsFlag: DepositorsFlagType
 
   // Additional fields for vaults page
-  status: string
   ownerId: string
   creationTimestamp?: string
   liquidationMax: number
@@ -117,34 +75,43 @@ export type LoansVaultType = {
   liquidationPrice?: number
 }
 
+export type MarketTransactionHistoryType = Array<{
+  descr: string | null
+  amount: number
+  date: string | null
+  userAddress: string
+  vaultAddress?: string
+  operationHash: string
+  tokenAddress: TokenAddress
+}>
+
+// Market Type
 export type LoanMarketType = {
-  loanTokenData: LoansAssetDataType & { address: string }
-  transactionHistory: Array<{
-    descr: string | null
-    amount: number
-    date: string | null
-    userAddress: string
-    vaultAddress?: string
-    operationHash: string
-    tokenSymbol: string | undefined
-  }>
-  lendingItem: LendingItemType
+  loanTokenAddress: TokenAddress
+  loanMTokenAddress: TokenAddress
+
+  // TODO: extract to custom hook?
   marketCollateralChartData: Array<AreaChartPlotType>
   marketLiquidityChartData: Array<AreaChartPlotType>
+
+  transactionHistory: MarketTransactionHistoryType
+
   utilisationRate: number
   borrowers: number
-  suppliers: number
-  totalBorrowed: number
-  availableLiquidity: number
-  totalLended: number
   borrowAPR: number
-  totalFeesEarned: number
   lendingAPY: number
+  totalFeesEarned: number
   collateralFactor: number
+
+  availableLiquidity: number
+  totalBorrowed: number
+  totalLended: number
+
   reserveFactor: number
   reserveAmount: number
-  lending24hVolume: number
-  borrowing24hVolume: number
+
+  // TODO: store mTokens for market and get it on view part
+  lendingItem: LendingItemType
 }
 
 type TokenOperator = {

@@ -27,10 +27,6 @@ const loansDefaultState: LoansState = {
     borrowingChartData: [],
     collateralChartData: [],
     lendingChartData: [],
-    lendBorrow24hDiff: {
-      last24hLending: 0,
-      last24hBorrowing: 0,
-    },
   },
   mvkTokenOperators: [],
   config: {

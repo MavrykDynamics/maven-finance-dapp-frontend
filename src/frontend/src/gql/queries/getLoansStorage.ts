@@ -1,3 +1,5 @@
+import { gql } from 'utils/__generated__'
+
 export const LOANS_QUERY = `
 
 query GetLoansStorage {

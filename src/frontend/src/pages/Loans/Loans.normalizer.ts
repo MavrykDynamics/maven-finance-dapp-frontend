@@ -1,27 +1,20 @@
-import { State } from 'reducers'
 import {
   LoanMarketType,
   LendingControllerGQL,
   UserLendObjType,
   MvkTokenOperatorGQL,
 } from 'utils/TypesAndInterfaces/Loans'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { UserState } from 'reducers/wallet'
 import { Mavryk_User } from 'utils/generated/graphqlTypes'
 
 import { convertNumberForClient, calcWithoutDecimals, getNumberInBounds } from 'utils/calcFunctions'
-import { calcLendingAPY, getAssetMetadata, getChartData, getLendingItem, getTransactionHistory } from './Loans.helpers'
-import { DataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
+import { calcLendingAPY, getChartData, getLendingItem, getTransactionHistory } from './Loans.helpers'
 
 // Normalize user loans data
 export const normalizeUserLending = ({
-  dipDupTokens,
   userDataLoansHistoryGql,
   userVaultsDataGql,
-  feeds,
 }: {
-  dipDupTokens: State['tokens']['dipDupTokens']
-  feeds: DataFeedsContext['feedsMapper']
   userDataLoansHistoryGql: Mavryk_User['lending_controller_history_data_sender']
   userVaultsDataGql: Mavryk_User['lending_controller_vaults']
 }) => {
@@ -41,22 +34,13 @@ export const normalizeUserLending = ({
         lending_controller: { interest_rate_decimals, interest_treasury_share, decimals },
       },
     ) => {
-      if (!loan_token?.token.token_address || !loan_token.oracle) return acc
-      const assetData = getAssetMetadata({
-        tokenAddress: loan_token.token.token_address,
-        tokenName: loan_token.loan_token_name,
-        dipDupTokens,
-        feeds,
-        oracleId: String(loan_token.oracle.address),
-      })
+      const tokenAddress = loan_token?.token.token_address
+      if (!tokenAddress) return acc
 
-      if (!assetData) return acc
-      const convertedAmount = convertNumberForClient({ number: amount, grade: assetData.decimals })
       const commonUserData = {
-        icon: assetData.icon,
         id,
         date: timestamp,
-        symbol: assetData.symbol,
+        tokenAddress,
         operationHash: operation_hash,
         annualPecentage: calcLendingAPY(
           calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals),
@@ -68,29 +52,25 @@ export const normalizeUserLending = ({
         case 0:
           acc.userLendings.push({
             ...commonUserData,
-            amount: convertedAmount,
-            usdAmount: convertedAmount * assetData.rate,
+            amount,
           })
           break
         case 1:
           acc.userLendings.push({
             ...commonUserData,
-            amount: -convertedAmount,
-            usdAmount: -(convertedAmount * assetData.rate),
+            amount: -amount,
           })
           break
         case 2:
           acc.userBorrowing.push({
             ...commonUserData,
-            amount: convertedAmount,
-            usdAmount: convertedAmount * assetData.rate,
+            amount,
           })
           break
         case 3:
           acc.userBorrowing.push({
             ...commonUserData,
-            amount: convertedAmount,
-            usdAmount: -(convertedAmount * assetData.rate),
+            amount: -amount,
           })
           break
       }
@@ -103,42 +83,25 @@ export const normalizeUserLending = ({
   const userVaultsData =
     userVaultsDataGql?.reduce<Record<string, { borrowedAmount: number; collateralAmount: number }>>(
       (acc, { collateral_balances, loan_token, loan_principal_total }) => {
-        if (!loan_token?.token.token_address || !loan_token.oracle) return acc
-        const vaultAssetData = getAssetMetadata({
-          tokenAddress: loan_token.token.token_address,
-          tokenName: loan_token.loan_token_name,
-          dipDupTokens,
-          feeds,
-          oracleId: String(loan_token.oracle.address),
-        })
+        const tokenAddress = loan_token?.token.token_address
 
-        if (!vaultAssetData) return acc
+        if (!tokenAddress) return acc
 
         const collateralAmount = collateral_balances.reduce(
           (acc, { balance, collateral_token: { token, token_name, oracle } }) => {
-            if (!token?.token_address || !oracle?.address) return acc
-            const collateralAssetData = getAssetMetadata({
-              tokenAddress: token.token_address,
-              tokenName: token_name,
-              dipDupTokens,
-              feeds,
-              oracleId: String(oracle.address),
-            })
+            const collateralTokenAddress = token?.token_address
+            if (!collateralTokenAddress) return acc
 
-            if (!collateralAssetData) return acc
-
-            acc +=
-              convertNumberForClient({ number: balance, grade: collateralAssetData.decimals }) *
-              collateralAssetData.rate
+            // TODO: needs to be balance in usd
+            acc += balance
             return acc
           },
           0,
         )
 
         acc[loan_token.loan_token_name] = {
-          borrowedAmount:
-            convertNumberForClient({ number: loan_principal_total, grade: vaultAssetData.decimals }) *
-            vaultAssetData.rate,
+          // TODO: needs to be loan_principal_total in usd
+          borrowedAmount: loan_principal_total,
           collateralAmount,
         }
 
@@ -158,19 +121,13 @@ export const normalizeUserLending = ({
 export const normalizeLoans = async ({
   lendingController,
   mvkTokenOperators: mvkTokenOperatorsStorage,
-  dipDupData,
-  mTokens,
   userMTokens,
   userAddres,
-  feeds,
 }: {
   lendingController: LendingControllerGQL
   mvkTokenOperators: MvkTokenOperatorGQL[]
-  dipDupData: State['tokens']['dipDupTokens']
-  mTokens: State['tokens']['mTokens']
   userMTokens: UserState['userMTokens']
   userAddres?: string
-  feeds: DataFeedsContext['feedsMapper']
 }) => {
   const mvkTokenOperators = mvkTokenOperatorsStorage?.map((item) => item.operator.address)
 
@@ -198,39 +155,25 @@ export const normalizeLoans = async ({
           reserve_ratio,
           token_pool_total,
           total_borrowed,
-          token: { token_address, token_standard },
-          oracle,
+          token: { token_address },
           m_token,
           vaults_aggregate: { aggregate },
         } = loanToken
 
-        const loanTokenMetadata = getAssetMetadata({
-          tokenName: loan_token_name,
-          tokenAddress: token_address,
-          dipDupTokens: dipDupData,
-          feeds,
-          oracleId: String(oracle?.address),
-        })
+        if (!token_address) return acc
 
-        const appropriateMtokenData = mTokens.find(
-          ({ loan_token_name: m_token_name }) => loan_token_name === m_token_name,
-        )
+        // TODO: add calcs
+        const reserveAmount = 0
+        // convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }) *
+        // (reserve_ratio / 10000)
 
-        if (!loanTokenMetadata) return acc
-        const reserveAmount =
-          convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }) *
-          (reserve_ratio / 10000)
-        const availableLiquidity =
-          (convertNumberForClient({ number: total_remaining, grade: loanTokenMetadata.decimals }) - reserveAmount) *
-          loanTokenMetadata.rate
+        // todo: add calcs
+        const availableLiquidity = 0
+        // (convertNumberForClient({ number: total_remaining, grade: loanTokenMetadata.decimals }) - reserveAmount) *
+        // loanTokenMetadata.rate
 
-        const {
-          transactionHistory,
-          lending24hVolume,
-          borrowing24hVolume,
-          marketCollateralChartData,
-          marketLiquidityChartData,
-        } = getTransactionHistory(history_data, dipDupData, feeds)
+        const { transactionHistory, marketCollateralChartData, marketLiquidityChartData } =
+          getTransactionHistory(history_data)
 
         const lendingItem = getLendingItem(m_token?.address ?? null, userMTokens, userAddres)
 
@@ -239,12 +182,8 @@ export const normalizeLoans = async ({
         const borrowAPR = tokenCurrentInterestRate * 100
 
         acc.push({
-          loanTokenData: {
-            ...loanTokenMetadata,
-            tokenType: token_standard as TokenType,
-            // TODO: remove condition after adding new token list
-            name: loanTokenMetadata.symbol === 'EURL' ? 'Lugh' : loanTokenMetadata.symbol,
-          },
+          loanTokenAddress: token_address,
+          loanMTokenAddress: m_token.token.token_address,
           lendingItem,
           transactionHistory: [...transactionHistory].reverse(),
           marketCollateralChartData,
@@ -256,13 +195,10 @@ export const normalizeLoans = async ({
           ),
 
           availableLiquidity,
-          totalLended: convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }),
-          totalBorrowed: convertNumberForClient({ number: total_borrowed, grade: loanTokenMetadata.decimals }),
+          totalLended: token_pool_total,
+          totalBorrowed: total_borrowed,
 
           borrowers: aggregate?.count ?? 0,
-          suppliers: appropriateMtokenData?.accounts.length ?? 0,
-          lending24hVolume,
-          borrowing24hVolume,
 
           totalFeesEarned: lendingItem?.interestEarned ?? 0,
           collateralFactor: lendingController.collateral_ratio / 10,
@@ -279,14 +215,14 @@ export const normalizeLoans = async ({
 
     return {
       loanTokens,
-      chartsData: getChartData(lendingController?.history_data, dipDupData, feeds),
+      chartsData: getChartData(lendingController?.history_data),
       mvkTokenOperators,
       config,
     }
   } catch (e) {
     console.log('normalizeLoans error:', e)
     return {
-      chartsData: getChartData(lendingController?.history_data, dipDupData, feeds),
+      chartsData: getChartData(lendingController?.history_data),
       loanTokens: [],
       mvkTokenOperators,
       config,

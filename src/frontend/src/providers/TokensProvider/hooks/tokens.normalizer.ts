@@ -45,6 +45,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         // We can have multiple mvk tokens, but only 1 with mvk_tokens present is valid
         if (symbol === 'MVK' && !mvk_tokens?.[0]?.address) return acc
 
+        // TODO: Add is protected to collaterals?
         const tokenMetadata: TokenMetadata = {
           address: tokenAddress,
           symbol,
