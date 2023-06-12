@@ -3,14 +3,12 @@ import { MavrykTheme } from 'styles/interfaces'
 
 export const FooterStyled = styled.div<{ theme: MavrykTheme }>`
   position: relative;
-  bottom: 30px;
-
   display: flex;
-  align-items: center;
+  align-items: end;
   justify-content: center;
-  height: 50px;
   max-width: 1090px;
   margin: 0 auto;
+  padding-bottom: 12px;
 
   font-weight: 400;
   font-size: 12px;
@@ -27,6 +25,9 @@ export const FooterStyled = styled.div<{ theme: MavrykTheme }>`
   .additional-links {
     position: absolute;
     right: 0;
+
+    display: flex;
+    column-gap: 20px;
 
     a {
       color: ${({ theme }) => theme.textColor};

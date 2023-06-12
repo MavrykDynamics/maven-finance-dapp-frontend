@@ -22,7 +22,7 @@ export const Footer = () => {
         >
           Privacy Policy
         </a>
-        &nbsp;
+
         <a
           href="https://docs.google.com/document/d/1R0LA7CmVQjH7vr-FvWOy96LRxJ_XU3HXLXnqNZjZlJQ/edit"
           target="_blank"
