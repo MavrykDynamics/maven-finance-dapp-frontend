@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -44,11 +44,7 @@ export const AddLendingAsset = ({
   show: boolean
   data: AddLendingAssetDataType
 }) => {
-  const { mBalance = 0, lendingAPY = 0, tokenAddress = '' } = data ?? {}
-
   const { tokensMetadata, tokensPrices } = useTokensContext()
-
-  const loanToken = tokensMetadata[tokenAddress]
 
   useLockBodyScroll(show)
 
@@ -63,16 +59,18 @@ export const AddLendingAsset = ({
     }
   }, [show])
 
-  const isDepositDisabled = useMemo(() => {
-    return inputData.validationStatus !== INPUT_STATUS_SUCCESS
-  }, [inputData.validationStatus])
+  if (!data) return null
 
-  if (!data || !checkWhetherTokenIsLoanToken(loanToken)) return null
+  const { mBalance, lendingAPY, tokenAddress } = data
+
+  const loanToken = tokensMetadata[tokenAddress]
+  const { symbol, icon, decimals } = loanToken
+  const tokenRate = tokensPrices[symbol]
+
+  const isDepositDisabled = inputData.validationStatus !== INPUT_STATUS_SUCCESS
 
   // TODO: handle user balances
   const tokenBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
-  const { symbol, icon, decimals } = loanToken
-  const tokenRate = tokensPrices[symbol]
 
   const onChangeHandler = (inputAmount: string, userBalance: number) => {
     const validationStatus = loansInputValidation({
@@ -105,7 +103,9 @@ export const AddLendingAsset = ({
   }
 
   const depositHandler = () => {
-    dispatch(depositLendingAssetAction(loanToken, Number(inputData.amount), closePopup))
+    if (checkWhetherTokenIsLoanToken(loanToken)) {
+      dispatch(depositLendingAssetAction(loanToken, Number(inputData.amount), closePopup))
+    }
   }
 
   return (

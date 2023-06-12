@@ -23,8 +23,6 @@ import {
   ConfirmRepayFullPopupDataType,
   ChangeBakerPopupDataType,
   BorrowPopupDataType,
-  RepayPartPopupDataType,
-  RepayFullPopupDataType,
   WithdrawCollateralPopupDataType,
   AddCollateralPopupDataType,
   AddNewCollateralDataProps,
@@ -33,12 +31,8 @@ import {
   ChangeVaultNamePopupDataType,
   CreateVaultPopupDataType,
   AddLendingAssetDataType,
-  RemoveLendingAssetDataType,
   LiquidateVaultDataType,
 } from 'providers/LoansProvider/helpers/LoansModals.types'
-import { RemoveAssetsFromLending } from 'pages/Loans/Components/Modals/RemoveAssetsFromLending.modal'
-import { Repay } from 'pages/Loans/Components/Modals/Repay.modal'
-import { RepayFull } from 'pages/Loans/Components/Modals/RepayFull.modal'
 import { UpdateMVKOperator } from 'pages/Loans/Components/Modals/UpdateMVKOperator.modal'
 import { WithdrawCollateral } from 'pages/Loans/Components/Modals/WithdrawCollateral.modal'
 import { LiquidateVaultModal } from 'pages/Vaults/components/LiquidateVaultModal/LiquidateVaultModal.modal'
@@ -86,12 +80,6 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
       openManagePermissionsPopup: this.openManagePermissionsPopup,
       closeManagePermissionsPopup: this.closeManagePermissionsPopup,
 
-      openRepayFullPopup: this.openRepayFullPopup,
-      closeRepayFullPopup: this.closeRepayFullPopup,
-
-      openRepayPopup: this.openRepayPopup,
-      closeRepayPopup: this.closeRepayPopup,
-
       openUpdateMvkOperatorsPopup: this.openUpdateMvkOperatorsPopup,
       closeUpdateMvkOperatorsPopup: this.closeUpdateMvkOperatorsPopup,
 
@@ -106,9 +94,6 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
 
       openAddLendingAssetPopup: this.openAddLendingAssetPopup,
       closeAddLendingAssetPopup: this.closeAddLendingAssetPopup,
-
-      openRemoveLendingAssetPopup: this.openRemoveLendingAssetPopup,
-      closeRemoveLendingAssetPopup: this.closeRemoveLendingAssetPopup,
 
       openLiquidateVaultPopup: this.openLiquidateVaultPopup,
       closeLiquidateVaultPopup: this.closeLiquidateVaultPopup,
@@ -250,46 +235,6 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
       ...this.state,
       borrowAssetPopup: {
         ...this.state.borrowAssetPopup,
-        showModal: false,
-      },
-    })
-  }
-
-  openRepayPopup = (popupData: RepayPartPopupDataType) => {
-    this.setState({
-      ...this.state,
-      repayPartPopup: {
-        showModal: true,
-        data: popupData,
-      },
-    })
-  }
-
-  closeRepayPopup = () => {
-    this.setState({
-      ...this.state,
-      repayPartPopup: {
-        ...this.state.repayPartPopup,
-        showModal: false,
-      },
-    })
-  }
-
-  openRepayFullPopup = (popupData: RepayFullPopupDataType) => {
-    this.setState({
-      ...this.state,
-      repayFullPopup: {
-        showModal: true,
-        data: popupData,
-      },
-    })
-  }
-
-  closeRepayFullPopup = () => {
-    this.setState({
-      ...this.state,
-      repayFullPopup: {
-        ...this.state.repayFullPopup,
         showModal: false,
       },
     })
@@ -455,26 +400,6 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
     })
   }
 
-  openRemoveLendingAssetPopup = (popupData: RemoveLendingAssetDataType) => {
-    this.setState({
-      ...this.state,
-      removeLendingAssetPopup: {
-        showModal: true,
-        data: popupData,
-      },
-    })
-  }
-
-  closeRemoveLendingAssetPopup = () => {
-    this.setState({
-      ...this.state,
-      removeLendingAssetPopup: {
-        ...this.state.removeLendingAssetPopup,
-        showModal: false,
-      },
-    })
-  }
-
   openLiquidateVaultPopup = (popupData: LiquidateVaultDataType) => {
     this.setState({
       ...this.state,
@@ -508,8 +433,6 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
       confirmRepayFullPopup,
       confirmBorrowAssetPopup,
       changeBakerPopup,
-      repayPartPopup,
-      repayFullPopup,
       borrowAssetPopup,
       addExistingCollateralPopup,
       addNewCollateralPopup,
@@ -519,7 +442,6 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
       changeVaultNamePopup,
       createVaultPopup,
       addLendingAssetPopup,
-      removeLendingAssetPopup,
       liquidateVaultPopup,
     } = this.state
 
@@ -533,15 +455,12 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
       closeAddExistingCollateralPopup,
       closeAddNewCollateralPopup,
       closeBorrowPopup,
-      closeRepayFullPopup,
-      closeRepayPopup,
       closeWithdrawCollateralPopup,
       closeManagePermissionsPopup,
       closeUpdateMvkOperatorsPopup,
       closeChangeVaultNamePopup,
       closeCreateVaultPopup,
       closeAddLendingAssetPopup,
-      closeRemoveLendingAssetPopup,
       closeLiquidateVaultPopup,
     } = this.state
     return (
@@ -611,10 +530,6 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
           data={managePermissionsPopup.data}
         />
 
-        <Repay closePopup={closeRepayPopup} show={repayPartPopup.showModal} data={repayPartPopup.data} />
-
-        <RepayFull closePopup={closeRepayFullPopup} show={repayFullPopup.showModal} data={repayFullPopup.data} />
-
         <ChangeVaultName
           closePopup={closeChangeVaultNamePopup}
           show={changeVaultNamePopup.showModal}
@@ -631,12 +546,6 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
           closePopup={closeAddLendingAssetPopup}
           show={addLendingAssetPopup.showModal}
           data={addLendingAssetPopup.data}
-        />
-
-        <RemoveAssetsFromLending
-          closePopup={closeRemoveLendingAssetPopup}
-          show={removeLendingAssetPopup.showModal}
-          data={removeLendingAssetPopup.data}
         />
 
         <LiquidateVaultModal

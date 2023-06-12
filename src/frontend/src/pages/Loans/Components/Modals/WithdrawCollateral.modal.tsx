@@ -1,10 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
   INPUT_LARGE,
-  INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
   getOnBlurValue,
   getOnFocusValue,
@@ -53,16 +52,6 @@ export const WithdrawCollateral = ({
   show: boolean
   data: WithdrawCollateralPopupDataType
 }) => {
-  const {
-    tokenAddress = '',
-    borrowedAssetRate = 0,
-    currentCollateralBalance = 0,
-    vaultCollateralBalance = 0,
-    vaultAddress,
-    currentCollateralRatio = 0,
-    borrowedAmount = 0,
-  } = data ?? {}
-
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   useLockBodyScroll(show)
@@ -70,9 +59,6 @@ export const WithdrawCollateral = ({
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { userTokens } = useSelector((state: State) => state.wallet.user)
-
-  // TODO: use users balance
-  const collateralBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
@@ -84,28 +70,38 @@ export const WithdrawCollateral = ({
     }
   }, [show])
 
-  const collateralData = tokensMetadata[tokenAddress]
+  if (!data) return null
 
-  if (!data || !checkWhetherTokenIsCollateralToken(collateralData)) return null
+  const {
+    collateralTokenAddress,
+    borrowedTokenRate,
+    vaultAddress,
+    collateralBalance,
+    collateralRatio,
+    borrowedAmount,
+  } = data ?? {}
 
-  const collateralRate = tokensPrices[collateralData.symbol]
+  // TODO: use users balance
+  const userCollateralBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
+  const collateralToken = tokensMetadata[collateralTokenAddress]
+  const collateralRate = tokensPrices[collateralToken.symbol]
 
   const futureCollateralRatio = calcCollateralRatio(
-    vaultCollateralBalance - inputAmount * collateralRate,
+    collateralBalance - inputAmount * collateralRate,
     borrowedAmount,
-    borrowedAssetRate,
+    borrowedTokenRate,
   )
 
   const currentCollateralToWithdraw = getMaxCollateralWithdraw(
-    currentCollateralBalance,
-    vaultCollateralBalance,
+    collateralBalance - inputAmount * collateralRate,
+    collateralBalance,
     borrowedAmount,
-    borrowedAssetRate,
+    borrowedTokenRate,
     collateralRate,
   )
 
   const futureCollateralWithdraw = currentCollateralToWithdraw - inputAmount
-  const futureVaultCollateralBalance = vaultCollateralBalance - inputAmount * collateralRate
+  const futureVaultCollateralBalance = collateralBalance - inputAmount * collateralRate
 
   const isActionBtnDisabled =
     isActionActive || inputData.validationStatus !== INPUT_STATUS_SUCCESS || futureCollateralRatio <= 200
@@ -115,7 +111,7 @@ export const WithdrawCollateral = ({
       inputAmount: newInputAmount,
       maxAmount,
       options: {
-        byDecimalPlaces: collateralData?.decimals || assetDecimalsToShow,
+        byDecimalPlaces: collateralToken.decimals || assetDecimalsToShow,
       },
     })
 
@@ -141,8 +137,8 @@ export const WithdrawCollateral = ({
   }
 
   const withdrawHandler = () => {
-    if (vaultAddress) {
-      dispatch(withdrawCollateralAction(Number(inputData.amount), collateralData, vaultAddress, closePopup))
+    if (vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
+      dispatch(withdrawCollateralAction(Number(inputData.amount), collateralToken, vaultAddress, closePopup))
     }
   }
 
@@ -160,21 +156,20 @@ export const WithdrawCollateral = ({
           <VaultModalOverview>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(currentCollateralRatio)}
+              customColor={getCollateralRationPersent(collateralRatio)}
             >
               <div className={`percentage`}>
-                Collateral Ratio:{' '}
-                <CommaNumber value={currentCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+                Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
               </div>
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={getCollateralRatioByPersentage(currentCollateralRatio)}
+                currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral Value</div>
-              <CommaNumber value={vaultCollateralBalance} className="value" beginningText="$" />
+              <CommaNumber value={collateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">
@@ -190,7 +185,7 @@ export const WithdrawCollateral = ({
           </VaultModalOverview>
 
           <hr />
-          {collateralData ? (
+          {collateralToken ? (
             <Input
               className={`${collateralRate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
               inputProps={{
@@ -201,11 +196,11 @@ export const WithdrawCollateral = ({
                 onChange: (e) => inputOnChangeHandle(e.target.value, currentCollateralToWithdraw),
               }}
               settings={{
-                balance: collateralBalance,
-                balanceAsset: collateralData.name,
+                balance: userCollateralBalance,
+                balanceAsset: collateralToken.name,
                 useMaxHandler: () =>
                   inputOnChangeHandle(
-                    getLoansInputMaxAmount(currentCollateralToWithdraw, collateralData.decimals),
+                    getLoansInputMaxAmount(currentCollateralToWithdraw, collateralToken.decimals),
                     currentCollateralToWithdraw,
                   ),
                 inputStatus: inputData.validationStatus,
@@ -214,8 +209,8 @@ export const WithdrawCollateral = ({
               }}
             >
               <InputPinnedTokenInfo>
-                <ImageWithPlug imageLink={collateralData.icon} alt={`${collateralData.name} icon`} />{' '}
-                {collateralData.name}
+                <ImageWithPlug imageLink={collateralToken.icon} alt={`${collateralToken.name} icon`} />{' '}
+                {collateralToken.name}
               </InputPinnedTokenInfo>
             </Input>
           ) : null}

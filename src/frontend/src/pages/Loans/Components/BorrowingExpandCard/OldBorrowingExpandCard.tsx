@@ -1,16 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
-import { Link } from 'react-router-dom'
 
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent, getStatusByCollateralRatio } from '../../Loans.const'
-import {
-  BUTTON_PRIMARY,
-  BUTTON_SECONDARY,
-  BUTTON_SIMPLE,
-  BUTTON_WIDE,
-} from 'app/App.components/Button/Button.constants'
+import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import colors from 'styles/colors'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
@@ -24,7 +17,6 @@ import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/Gradien
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { scrollToFullView } from 'utils/scrollToFullView'
 import { assetDecimalsToShow } from '../../Loans.const'
 
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
@@ -77,6 +69,7 @@ export const OldBorrowingExpandCard = ({
     borrowedTokenMetadata,
     borrowedTokenRate,
     collateralBalance,
+    borrowCapacity,
   } = fullVault
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
@@ -84,7 +77,6 @@ export const OldBorrowingExpandCard = ({
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { mvkTokenOperators } = useSelector((state: State) => state.loans)
 
   const { bug } = useToasterContext()
 
@@ -93,8 +85,6 @@ export const OldBorrowingExpandCard = ({
   const {
     openAddExistingCollateralPopup,
     changeBakerPopup,
-    repayPartPopup,
-    repayFullPopup,
     borrowAssetPopup,
     addExistingCollateralPopup,
     addNewCollateralPopup,
@@ -105,9 +95,7 @@ export const OldBorrowingExpandCard = ({
   } = useLoansPopupsContext()
 
   const notHandleClickAway =
-    repayPartPopup.showModal ||
     changeBakerPopup.showModal ||
-    repayFullPopup.showModal ||
     borrowAssetPopup.showModal ||
     addExistingCollateralPopup.showModal ||
     addNewCollateralPopup.showModal ||
@@ -120,17 +108,6 @@ export const OldBorrowingExpandCard = ({
   const ref = useRef<HTMLDivElement | null>(null)
 
   useClickAway(ref, () => (notHandleClickAway ? null : setExpanded(false)))
-
-  // use for borrow or repay
-  // it scrolls until the current vault after the transaction and changing position
-  const scrollToCurrentVault = () => {
-    scrollToFullView(ref.current, 'nearest')
-  }
-
-  const mappedMVKOperators = {
-    firstAddress: mvkTokenOperators?.[0],
-    ...(mvkTokenOperators ? { amount: mvkTokenOperators.length } : {}),
-  }
 
   const vaultStatus = status ?? getStatusByCollateralRatio(collateralRatio)
   const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
@@ -385,7 +362,13 @@ export const OldBorrowingExpandCard = ({
                                 <Button
                                   onClick={() =>
                                     openAddExistingCollateralPopup?.({
-                                      vault,
+                                      vaultAddress: vault.address,
+                                      borrowedAmount,
+                                      collateralBalance,
+                                      collateralRatio,
+                                      borrowedTokenRate,
+                                      availableLiquidity: vault.availableLiquidity,
+                                      borrowCapacity,
                                       collateralTokenAddress: collateralData[idx].tokenAddress,
                                     })
                                   }

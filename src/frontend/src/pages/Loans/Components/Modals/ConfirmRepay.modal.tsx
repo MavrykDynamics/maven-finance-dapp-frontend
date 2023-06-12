@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
-import { useMemo } from 'react'
 
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { ConfirmRepayPartPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
@@ -21,6 +20,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 import { State } from 'reducers'
 import colors from 'styles/colors'
+import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
 
 export const ConfirmRepay = ({
   closePopup,
@@ -31,40 +31,37 @@ export const ConfirmRepay = ({
   show: boolean
   data: ConfirmRepayPartPopupDataType
 }) => {
-  const {
-    inputAmount = 0,
-    vaultId,
-    vaultAddress,
-    borrowedAsset,
-    currentCollateralBalance = 0,
-    borrowCapacity = 0,
-    borrowedAmount = 0,
-    scrollToCurrentVault,
-  } = data ?? {}
-
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = borrowedAsset
-      ? calcCollateralRatio(currentCollateralBalance, borrowedAmount - inputAmount, borrowedAsset.rate)
-      : 0
+  if (!data) return null
 
-    const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
-    return { futureCollateralRatio, futureBorrowCapacity }
-  }, [borrowedAsset, currentCollateralBalance, borrowCapacity, inputAmount, borrowedAmount])
+  const {
+    vaultId,
+    vaultAddress,
+    borrowedTokenMetadata,
+    borrowedTokenRate,
+    collateralBalance,
+    borrowCapacity,
+    borrowedAmount,
+    inputAmount,
+    scrollToCurrentVault,
+  } = data
+
+  const { symbol } = borrowedTokenMetadata
+
+  const futureCollateralRatio = calcCollateralRatio(collateralBalance, borrowedAmount - inputAmount, borrowedTokenRate)
+  const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
 
   const repayBtnHandler = async () => {
-    if (vaultId && borrowedAsset && vaultAddress) {
+    if (vaultId && vaultAddress && checkWhetherTokenIsLoanToken(borrowedTokenMetadata)) {
       await dispatch(
         repayPartOfVaultAction(
           vaultId,
           vaultAddress,
           inputAmount,
-          borrowedAsset.decimals,
-          borrowedAsset.tokenType,
-          borrowedAsset.address,
+          borrowedTokenMetadata,
           closePopup,
           scrollToCurrentVault,
         ),
@@ -86,7 +83,7 @@ export const ConfirmRepay = ({
           <div className="lending-stats" style={{ marginBottom: '25px' }}>
             <ThreeLevelListItem>
               <div className="name">Asset</div>
-              <div className="value">{borrowedAsset?.symbol}</div>
+              <div className="value">{symbol}</div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Amount</div>
@@ -94,7 +91,7 @@ export const ConfirmRepay = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem className="right">
               <div className="name">USD Value</div>
-              <CommaNumber value={inputAmount * Number(borrowedAsset?.rate)} className="value" beginningText="$" />
+              <CommaNumber value={inputAmount * borrowedTokenRate} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </div>
 
@@ -116,7 +113,7 @@ export const ConfirmRepay = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral Value</div>
-              <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
+              <CommaNumber value={collateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">

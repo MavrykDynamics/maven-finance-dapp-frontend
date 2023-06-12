@@ -16,6 +16,8 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { LENDING_APY } from 'texts/tooltips/loan.text'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
 
 export const ConfirmAddLendingAsset = ({
   closePopup,
@@ -26,26 +28,21 @@ export const ConfirmAddLendingAsset = ({
   show: boolean
   data: ConfirmAddLendingAssetDataType
 }) => {
-  const {
-    inputAmount = 0,
-    mBalance = 0,
-    rate = 0,
-    decimals = 0,
-    symbol = '',
-    address = '',
-    lendingAPY = 0,
-    icon = '',
-    gqlName = '',
-    tokenType = '',
-    id = 0,
-  } = data ?? {}
+  const { tokensMetadata } = useTokensContext()
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()
 
+  if (!data) return null
+
+  const { tokenAddress, mBalance, inputAmount, lendingAPY } = data
+
+  const loanToken = tokensMetadata[tokenAddress]
+  const { symbol } = loanToken
+
   const depositHandler = () => {
-    if (tokenType && address) {
-      dispatch(depositLendingAssetAction(gqlName, inputAmount, address, id, tokenType, decimals, closePopup))
+    if (checkWhetherTokenIsLoanToken(loanToken)) {
+      dispatch(depositLendingAssetAction(loanToken, inputAmount, closePopup))
     }
   }
 

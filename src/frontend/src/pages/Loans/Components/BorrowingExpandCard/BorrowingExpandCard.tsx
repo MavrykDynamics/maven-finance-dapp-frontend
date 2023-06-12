@@ -63,6 +63,8 @@ export const BorrowingExpandCard = ({
   DAOFee,
   hideTransactionHistory,
 }: BorrowingExpandCardPropsType) => {
+  const fullVault = useVault(vault)
+
   const {
     borrowedTokenAddress,
     collateralData,
@@ -82,13 +84,15 @@ export const BorrowingExpandCard = ({
     collateralRatio,
     borrowCapacity,
     minimumRepay,
-  } = useVault(vault)
+    totalOutstanding,
+  } = fullVault
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { bug } = useToasterContext()
 
-  const { symbol, decimals, icon } = tokensMetadata[borrowedTokenAddress]
-  const rate = tokensPrices[symbol]
+  const borrowedToken = tokensMetadata[borrowedTokenAddress]
+  const { symbol, decimals, icon } = borrowedToken
+  const borrowedTokenRate = tokensPrices[symbol]
 
   const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
 
@@ -127,8 +131,6 @@ export const BorrowingExpandCard = ({
     confirmRepayPartPopup,
     changeVaultNamePopup,
     changeBakerPopup,
-    repayPartPopup,
-    repayFullPopup,
     borrowAssetPopup,
     addExistingCollateralPopup,
     addNewCollateralPopup,
@@ -143,9 +145,7 @@ export const BorrowingExpandCard = ({
     confirmBorrowAssetPopup.showModal ||
     confirmRepayFullPopup.showModal ||
     confirmRepayPartPopup.showModal ||
-    repayPartPopup.showModal ||
     changeBakerPopup.showModal ||
-    repayFullPopup.showModal ||
     borrowAssetPopup.showModal ||
     addExistingCollateralPopup.showModal ||
     addNewCollateralPopup.showModal ||
@@ -195,44 +195,74 @@ export const BorrowingExpandCard = ({
   }
 
   const handleClickOpenConfirmBorrowPopup = (inputAmount: number) => {
-    openConfirmBorrowPopup?.({
+    openConfirmBorrowPopup({
       inputAmount,
-      vault,
+      vaultId: vault.vaultId,
+      borrowedTokenMetadata: borrowedToken,
+      borrowedAmount: borrowedAmount,
+      collateralBalance,
+      borrowCapacity,
+      borrowedTokenRate,
       DAOFee,
       scrollToCurrentVault,
     })
   }
 
   const handleClickOpenConfirmRepayPopup = (inputAmount: number) => {
-    openConfirmRepayPopup?.({
+    openConfirmRepayPopup({
       inputAmount,
-      vault,
+      vaultId: vault.vaultId,
+      vaultAddress: vault.address,
+      borrowedTokenMetadata: borrowedToken,
+      borrowedAmount: borrowedAmount,
+      collateralBalance,
+      borrowCapacity,
+      totalOutstanding,
+      borrowedTokenRate,
       scrollToCurrentVault,
     })
   }
 
   const handleClickOpenConfirmRepayFullPopup = () => {
-    openConfirmRepayFullPopup?.({
-      vault,
+    openConfirmRepayFullPopup({
+      vaultId: vault.vaultId,
+      vaultAddress: vault.address,
+      borrowedTokenMetadata: borrowedToken,
+      borrowedAmount,
+      collateralBalance,
+      borrowCapacity,
+      totalOutstanding,
+      borrowedTokenRate,
     })
   }
 
   const handleClickOpenAddNewCollateralPopup = () => {
-    openAddNewCollateralPopup?.({
+    openAddNewCollateralPopup({
       vault,
     })
   }
 
   const handleClickOpenAddExistingCollateralPopup = (idx: number) => {
-    openAddExistingCollateralPopup?.({
-      vault,
+    openAddExistingCollateralPopup({
+      vaultAddress: vault.address,
+      borrowedAmount,
+      collateralBalance,
+      collateralRatio,
+      borrowedTokenRate,
+      availableLiquidity: vault.availableLiquidity,
+      borrowCapacity,
       collateralTokenAddress: collateralData[idx].tokenAddress,
     })
   }
 
   const handleClickOpenWithdrawCollateralPopup = ({ amount, idx }: { amount: number; idx: number }) => {
-    openWithdrawCollateralPopup?.({
-      vault,
+    openWithdrawCollateralPopup({
+      vaultAddress: vault.address,
+      borrowedAmount,
+      collateralBalance,
+      collateralRatio,
+      borrowedTokenRate,
+      amountToWitdraw: amount,
       collateralTokenAddress: collateralData[idx].tokenAddress,
     })
   }
@@ -349,7 +379,7 @@ export const BorrowingExpandCard = ({
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
               <CommaNumber
-                value={(borrowedAmount + fee) * rate}
+                value={(borrowedAmount + fee) * borrowedTokenRate}
                 beginningText="$"
                 className="value"
                 showDecimal
@@ -382,7 +412,7 @@ export const BorrowingExpandCard = ({
                 decimals={decimals}
                 fee={fee}
                 apr={apr}
-                rate={rate}
+                rate={borrowedTokenRate}
               />
 
               <LoansActionsSection className="borrowing-tab">
@@ -416,14 +446,7 @@ export const BorrowingExpandCard = ({
 
                 {activeRepayBorrowTab?.id === loansTabNames.REPAY && (
                   <BorrowingExpandCardRepaySection
-                    vaultId={vaultId}
-                    borrowedAssetAddress={borrowedTokenAddress}
-                    currentCollateralBalance={collateralData.at(-1)?.amount ?? 0}
-                    borrowCapacity={borrowCapacity}
-                    vaultAddress={address}
-                    borrowedAmount={borrowedAmount}
-                    feesAmount={fee}
-                    minimumRepay={minimumRepay}
+                    vault={fullVault}
                     activeRepayTab={activeRepayTab}
                     openConfirmRepayPopup={handleClickOpenConfirmRepayPopup}
                     openConfirmRepayFullPopup={handleClickOpenConfirmRepayFullPopup}

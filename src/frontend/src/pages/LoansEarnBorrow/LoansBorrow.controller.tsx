@@ -26,6 +26,8 @@ import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { getVaultCollateralBalance } from 'pages/Vaults/Vaults.helpers'
+import { getCollateralRatio, getVaultBorrowCapacity } from 'providers/LoansProvider/helpers/vaults.utils'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -176,8 +178,30 @@ export const LoansBorrow = () => {
     )?.borrowAPR
     if (!borrowAPR) return
 
-    openBorrowPopup?.({
-      vault,
+    const borrowedToken = tokensMetadata[vault.borrowedTokenAddress],
+      borrowedTokenRate = tokensPrices[borrowedToken.symbol],
+      convertedBorrowedAmount = convertNumberForClient({
+        number: vault.borrowedAmount,
+        grade: borrowedToken.decimals,
+      }),
+      collateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices),
+      collateralRatio = getCollateralRatio(collateralBalance, convertedBorrowedAmount, borrowedTokenRate),
+      borrowCapacity = getVaultBorrowCapacity({
+        availableLiquidity: vault.availableLiquidity,
+        collateralBalance,
+        borrowedAmount: vault.availableLiquidity,
+        borrowedTokenRate,
+        borrowedTokenDecimals: borrowedToken.decimals,
+      })
+
+    openBorrowPopup({
+      vaultId: vault.vaultId,
+      borrowedTokenMetadata: borrowedToken,
+      borrowedAmount: convertedBorrowedAmount,
+      collateralBalance,
+      borrowCapacity,
+      collateralRatio,
+      borrowedTokenRate,
       DAOFee,
       borrowAPR,
       scrollToCurrentVault: () => {

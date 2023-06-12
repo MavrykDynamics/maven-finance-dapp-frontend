@@ -41,10 +41,7 @@ import { StatusMessageStyled } from '../LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import colors from 'styles/colors'
 import { checkNan } from 'utils/checkNan'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getVaultCollateralBalance } from 'pages/Vaults/Vaults.helpers'
-import { getCollateralRatio, getVaultBorrowCapacity } from 'providers/LoansProvider/helpers/vaults.utils'
 import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
@@ -59,7 +56,6 @@ export const BorrowAsset = ({
 }) => {
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { tokensMetadata, tokensPrices } = useTokensContext()
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { userTokens } = useSelector((state: State) => state.wallet.user)
 
@@ -76,26 +72,21 @@ export const BorrowAsset = ({
   if (!data) return null
 
   const {
-    vault: { vaultId, borrowedAmount, borrowedTokenAddress, collateralData, availableLiquidity },
+    vaultId,
+    borrowedAmount,
+    borrowCapacity,
+    collateralRatio,
+    collateralBalance,
+    borrowedTokenMetadata,
+    borrowedTokenRate,
     scrollToCurrentVault,
     borrowAPR,
     DAOFee,
   } = data
 
-  const borrowedToken = tokensMetadata[borrowedTokenAddress]
-  const { symbol, decimals, icon } = borrowedToken
-  const borrowedTokenRate = tokensPrices[symbol]
+  const { symbol, decimals, icon } = borrowedTokenMetadata
 
   const convertedBorrowedAmount = convertNumberForClient({ number: borrowedAmount, grade: decimals }),
-    collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices),
-    collateralRatio = getCollateralRatio(collateralBalance, convertedBorrowedAmount, borrowedTokenRate),
-    borrowCapacity = getVaultBorrowCapacity({
-      availableLiquidity,
-      collateralBalance,
-      borrowedAmount,
-      borrowedTokenRate: borrowedTokenRate,
-      borrowedTokenDecimals: decimals,
-    }),
     inputAmount = checkNan(parseFloat(inputData.amount))
 
   // TODO: use user balances
@@ -143,9 +134,9 @@ export const BorrowAsset = ({
   const backBtnHandler = () => setShownScreen('initial')
 
   const borrowAsserHandler = async () => {
-    if (vaultId && checkWhetherTokenIsLoanToken(borrowedToken)) {
+    if (vaultId && checkWhetherTokenIsLoanToken(borrowedTokenMetadata)) {
       await dispatch(
-        borrowVaultAssetAction(vaultId, Number(inputData.amount), borrowedToken, closePopup, scrollToCurrentVault),
+        borrowVaultAssetAction(vaultId, inputAmount, borrowedTokenMetadata, closePopup, scrollToCurrentVault),
       )
     }
   }

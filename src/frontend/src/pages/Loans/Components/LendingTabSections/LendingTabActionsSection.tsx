@@ -98,11 +98,7 @@ export const LendingTabActionsSection = ({
       case loansTabNames.WITHDRAW:
         openConfirmRemoveLendingAssetPopup({
           inputAmount: Number(inputData.amount),
-          mBalance,
-          lendingAPY: lendAPY,
           currentLendedAmount: lendValue,
-          availableLiquidity: marketAvailableLiquidity,
-          reserveAmount: marketReserveAmount,
           tokenAddress: loanTokenAddress,
         })
         break

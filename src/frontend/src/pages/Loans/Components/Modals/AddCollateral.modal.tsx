@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
 import { State } from 'reducers'
 import { useDispatch, useSelector } from 'react-redux'
@@ -51,54 +51,17 @@ export const AddCollateral = ({
   show: boolean
   data: AddCollateralPopupDataType
 }) => {
-  const {
-    tokenAddress = '',
-    vaultCollateralBalance = 0,
-    vaultAddress,
-    currentCollateralRatio = 0,
-    borrowedAmount = 0,
-    borrowedAssetRate = 0,
-    borrowCapacity = 0,
-    availableLiquidity = 0,
-  } = data ?? {}
-
   useLockBodyScroll(show)
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
-
-  const collateralToken = tokensMetadata[tokenAddress]
-  const collateralRate = tokensPrices[collateralToken.symbol]
 
   const dispatch = useDispatch()
   const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   // TODO: add user balance
-  const collateralBalance = 0 //userTokens[collateralToken?.symbol.toLowerCase() ?? '']?.balance ?? 0
+  const userCollateralBalance = 0 //userTokens[collateralToken?.symbol.toLowerCase() ?? '']?.balance ?? 0
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
-
-  const inputAmount = checkNan(parseFloat(inputData.amount))
-
-  const { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance } = useMemo(() => {
-    const futureCollateralRatio = tokenAddress
-      ? calcCollateralRatio(vaultCollateralBalance + inputAmount * collateralRate, borrowedAmount, borrowedAssetRate)
-      : 0
-
-    const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
-    const futureBorrowCapacity = Math.min(
-      Math.max(availableLiquidity, 0),
-      futureCollateralBalance / 2 - borrowedAmount * borrowedAssetRate,
-    )
-    return { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance }
-  }, [
-    tokenAddress,
-    vaultCollateralBalance,
-    inputAmount,
-    collateralRate,
-    borrowedAmount,
-    borrowedAssetRate,
-    availableLiquidity,
-  ])
 
   useEffect(() => {
     if (!show) {
@@ -106,7 +69,34 @@ export const AddCollateral = ({
     }
   }, [show])
 
-  if (!data || !checkWhetherTokenIsCollateralToken(collateralToken)) return null
+  if (!data) return null
+
+  const {
+    collateralTokenAddress,
+    collateralBalance,
+    vaultAddress,
+    collateralRatio,
+    borrowedAmount,
+    borrowedTokenRate,
+    borrowCapacity,
+    availableLiquidity,
+  } = data
+
+  const collateralToken = tokensMetadata[collateralTokenAddress]
+  const collateralRate = tokensPrices[collateralToken.symbol]
+
+  const inputAmount = checkNan(parseFloat(inputData.amount))
+  const futureCollateralRatio = calcCollateralRatio(
+    collateralBalance + inputAmount * collateralRate,
+    borrowedAmount,
+    borrowedTokenRate,
+  )
+
+  const futureCollateralBalance = collateralBalance + inputAmount * collateralRate
+  const futureBorrowCapacity = Math.min(
+    Math.max(availableLiquidity, 0),
+    futureCollateralBalance / 2 - borrowedAmount * borrowedTokenRate,
+  )
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
@@ -140,7 +130,7 @@ export const AddCollateral = ({
   }
 
   const depositCollateralHandler = async () => {
-    if (vaultAddress) {
+    if (vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
       await dispatch(depositCollateralAction(vaultAddress, inputAmount, collateralToken, closePopup))
     }
   }
@@ -158,21 +148,20 @@ export const AddCollateral = ({
           <VaultModalOverview>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(currentCollateralRatio)}
+              customColor={getCollateralRationPersent(collateralRatio)}
             >
               <div className={`percentage`}>
-                Collateral Ratio:{' '}
-                <CommaNumber value={currentCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+                Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
               </div>
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={getCollateralRatioByPersentage(currentCollateralRatio)}
+                currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral Value</div>
-              <CommaNumber value={vaultCollateralBalance} className="value" beginningText="$" />
+              <CommaNumber value={collateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">
@@ -199,12 +188,12 @@ export const AddCollateral = ({
               onChange: (e) => inputOnChangeHandle(e.target.value, collateralBalance),
             }}
             settings={{
-              balance: collateralBalance,
+              balance: userCollateralBalance,
               balanceAsset: collateralToken?.name,
               useMaxHandler: () =>
                 inputOnChangeHandle(
-                  getLoansInputMaxAmount(collateralBalance, collateralToken?.decimals),
-                  collateralBalance,
+                  getLoansInputMaxAmount(userCollateralBalance, collateralToken?.decimals),
+                  userCollateralBalance,
                 ),
               inputStatus: inputData.validationStatus,
               convertedValue: inputAmount * (collateralRate ?? 1),

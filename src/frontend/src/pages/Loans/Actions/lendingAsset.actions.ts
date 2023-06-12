@@ -157,7 +157,7 @@ export const depositLendingAssetAction =
   }
 
 export const withdrawLendingAssetAction =
-  (loanTokenName: string, removeLiquidityAmount: number, assetDecimals: number, callback: () => void) =>
+  (removeLiquidityAmount: number, loanToken: LoansTokenMetadataType, callback: () => void) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -168,11 +168,15 @@ export const withdrawLendingAssetAction =
     }
 
     try {
+      const {
+        decimals,
+        loanData: { indexerName },
+      } = loanToken
       // prepare and send transaction
-      const convertedAssetAmount = convertNumberForContractCall({ number: removeLiquidityAmount, grade: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: removeLiquidityAmount, grade: decimals })
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
-      const transaction = await contract?.methods.removeLiquidity(loanTokenName, convertedAssetAmount).send()
+      const transaction = await contract?.methods.removeLiquidity(indexerName, convertedAssetAmount).send()
 
       // close popup
       callback()
