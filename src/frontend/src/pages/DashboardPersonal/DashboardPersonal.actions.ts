@@ -1,7 +1,6 @@
 import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
 
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
@@ -96,7 +95,6 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
         callback: async () => {
           await dispatch(getSatellitesStorage())
           await dispatch(updateUserData())
-          await dispatch(getDoormanStorage())
           await dispatch(getFarmStorage())
 
           // Add here call for update data actions

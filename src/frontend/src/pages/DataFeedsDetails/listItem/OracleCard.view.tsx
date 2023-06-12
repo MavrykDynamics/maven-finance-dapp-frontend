@@ -1,8 +1,6 @@
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { FeedsListItem, FeedsOraclesCardStyled, DataFeedListItemTextTruncated } from 'pages/DataFeeds/DataFeeds.styles'
-import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+import { ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { State } from 'reducers'
@@ -11,11 +9,9 @@ import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 import { SatelliteOracleStatusComponent } from '../../Satellites/listItem/SatelliteCard.style'
 
 export const OracleCard = ({ oracle }: { oracle: SatelliteRecordType }) => {
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const { tezos: xtzExchangeRate = 0, mvk: mvkExchangeRate = 0 } = useSelector(
     (state: State) => state.tokens.tokensPrices,
   )
-  const oracleStatusType = getOracleStatus(oracle, feedsLedger)
 
   const smvkReward = oracle.oracleRecords.reduce<number>((acc, { sMVKReward }) => (acc += sMVKReward), 0)
   const xtzReward = oracle.oracleRecords.reduce<number>((acc, { XTZReward }) => (acc += XTZReward), 0)
@@ -58,8 +54,8 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecordType }) => {
         </FeedsListItem>
 
         <FeedsListItem className="vertical-center">
-          <SatelliteOracleStatusComponent statusType={oracleStatusType}>
-            {ORACLE_STATUSES_MAPPER[oracleStatusType]}
+          <SatelliteOracleStatusComponent statusType={oracle.oracleStatus}>
+            {ORACLE_STATUSES_MAPPER[oracle.oracleStatus]}
           </SatelliteOracleStatusComponent>
         </FeedsListItem>
 

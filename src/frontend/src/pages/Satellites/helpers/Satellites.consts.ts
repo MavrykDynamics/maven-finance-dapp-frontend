@@ -1,6 +1,6 @@
 import { State } from 'reducers'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteRecordGraphQl, SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const ORACLE_STATUSES_MAPPER = {
@@ -31,36 +31,6 @@ export function getTotalDelegatedMVK(
       Number(satellitesMapper[currentAddress].totalDelegatedAmount + satellitesMapper[currentAddress].sMvkBalance),
     0,
   )
-}
-
-export const getOracleStatus = (oracle: SatelliteRecordType, feeds: Feed[]): OracleStatusTypes => {
-  let status: OracleStatusTypes = 'notAnOracle'
-
-  // check if satellite is an oracle
-  if (oracle?.oracleRecords?.length > 0) {
-    // check whether oracle is active, if true status can be responded or awaiting
-    if (oracle.status === 0) {
-      const currentOracleFeeds = feeds.filter(({ admin }) => oracle.oracleRecords[0].oracleAddress === admin)
-
-      // if timestamp or all feeds from this satellite is >= than 30m ago, feed is not active, if all feeds are not active oracle status is responded, if at least 1 feed is still active, satellite status is awaiting
-      if (
-        currentOracleFeeds.every(
-          ({ last_completed_data_last_updated_at, heart_beat_seconds }) =>
-            (Number(Date.now()) - Number(new Date(last_completed_data_last_updated_at || Date.now()))) / 1000 >=
-            heart_beat_seconds,
-        )
-      ) {
-        status = 'responded'
-      } else {
-        status = 'awaiting'
-      }
-      // if oracle is not active, status should be "no response"
-    } else {
-      status = 'noResponse'
-    }
-  }
-
-  return status
 }
 
 export const VOTE_NUM_MAPPER: Record<number, string> = {

@@ -57,12 +57,9 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     accountPkh,
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
-  const {
-    config: { feedsFactoryAddress },
-    feedsLedger,
-  } = useSelector((state: State) => state.dataFeeds)
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { delegationAddress } = useSelector((state: State) => state.contractAddresses)
+  const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
 
   const dataPointsCount = useMemo(
     () =>
@@ -98,13 +95,17 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <h2>Info</h2>
         <SideBarItem>
           <h3>Satellite Contract</h3>
-          <var>
-            {delegationAddress.address ? <TzAddress tzAddress={delegationAddress.address} hasIcon={true} /> : '-'}
-          </var>
+          <var>{delegationAddress.address ? <TzAddress tzAddress={delegationAddress.address} hasIcon /> : '-'}</var>
         </SideBarItem>
         <SideBarItem>
           <h3>Oracles Contract</h3>
-          <var>{feedsFactoryAddress ? <TzAddress tzAddress={feedsFactoryAddress} hasIcon={true} /> : '-'}</var>
+          <var>
+            {aggregatorFactoryAddress.address ? (
+              <TzAddress tzAddress={aggregatorFactoryAddress.address} hasIcon />
+            ) : (
+              '-'
+            )}
+          </var>
         </SideBarItem>
       </SideBarSection>
 

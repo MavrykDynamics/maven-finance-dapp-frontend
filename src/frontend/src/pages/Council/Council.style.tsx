@@ -42,7 +42,7 @@ export const CouncilStyled = styled.div<{ theme: MavrykTheme }>`
       width: 750px;
     }
 
-    .tabSwitcher {
+    .primary-switcher {
       margin: 0;
     }
   }

@@ -3,7 +3,7 @@ import { MavrykTheme } from 'styles/interfaces'
 
 export const FooterStyled = styled.div<{ theme: MavrykTheme }>`
   position: relative;
-  bottom: 40px;
+  bottom: 30px;
 
   display: flex;
   align-items: center;

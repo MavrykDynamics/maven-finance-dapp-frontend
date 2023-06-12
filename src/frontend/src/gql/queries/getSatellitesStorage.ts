@@ -111,17 +111,17 @@ query SatellitesStorageQuery {
       executed
     }
   }
-     governance {
-      satellite_snapshots(order_by: {cycle: desc_nulls_last}) {
-        user {
-          address
-        }
-
-        cycle
-        total_voting_power
+  governance {
+    satellite_snapshots(order_by: {cycle: desc_nulls_last}) {
+      user {
+        address
       }
-      cycle_id
+
+      cycle
+      total_voting_power
     }
+    cycle_id
+  }
   governance_financial_request {
     executed
     id

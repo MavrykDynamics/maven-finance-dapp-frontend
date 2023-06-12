@@ -4,7 +4,6 @@ import { State } from '../../reducers'
 
 import { getEmergencyGovernanceStorage } from './EmergencyGovernance.actions'
 import { getBreakGlassConfig } from '../BreakGlass/BreakGlass.actions'
-import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
@@ -14,6 +13,11 @@ import { EmergencyGovProposalModal } from './EmergencyGovProposalModal/Emergency
 import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
+// providers
+import { DOORMAN_STATS_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
+
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
 
@@ -22,16 +26,20 @@ export const EmergencyGovernance = () => {
   const { glassBroken, isConfigLoaded: isBreakGlassConfigLoaded } = useSelector(
     (state: State) => state.breakGlass.config,
   )
-  const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
+
+  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
+    skipAddressBalance: SUB_SKIP,
+    skipStakeHistory: SUB_SKIP,
+    skipUserBalance: SUB_SKIP,
+  })
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
           (!isBreakGlassConfigLoaded || isDepsChanged) && dispatch(getBreakGlassConfig()),
-          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
           (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
         ].filter(Boolean),
       )
@@ -49,7 +57,7 @@ export const EmergencyGovernance = () => {
   return (
     <Page>
       <PageHeader page={'emergency governance'} />
-      {isLoading ? (
+      {isLoading || isDoormanLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading emergency governance proposals</div>
