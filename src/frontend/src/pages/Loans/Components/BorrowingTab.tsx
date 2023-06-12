@@ -91,7 +91,7 @@ export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {
               return (
                 <BorrowingExpandCard
                   isOwner
-                  {...vault}
+                  vault={vault}
                   key={vault.address}
                   isOpenedVault={createdVaultId === vault.address}
                   DAOFee={DAOFee}

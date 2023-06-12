@@ -47,6 +47,7 @@ import { api } from 'utils/api/api'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getVaultStatus } from 'providers/LoansProvider/helpers/vaults.utils'
 
 const findStatusInfo = (
   status: string,
@@ -107,26 +108,17 @@ const findFooterText = (status: string, statusColor: StatusFlagKind, timestamp?:
   }
 }
 
-type Props = LoansVaultType & {
+type Props = {
+  vault: LoansVaultType
   isOwner: boolean
   handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
   vaultTab: string
 }
 
-export const VaultsCard = (props: Props) => {
-  const {
-    ownerId,
-    vaultId,
-    status,
-    levelOfEarly,
-    levelOfLate,
-    collateralData,
-    isOwner,
-    liquidationMax,
-    liquidationPrice,
-    handleMarkForLiquidation,
-    vaultTab,
-  } = props
+export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab }: Props) => {
+  const { ownerId, vaultId, levelOfEarly, levelOfLate, collateralData, liquidationMax, liquidationPrice } = vault
+
+  const status = getVaultStatus()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { bug } = useToasterContext()
@@ -326,7 +318,7 @@ export const VaultsCard = (props: Props) => {
     case vaultTabs.MY:
       return (
         <BorrowingExpandCard
-          {...props}
+          vault={vault}
           headerSufix={headerSufix}
           DAOFee={DAOFee}
           isOwner={isOwner}
@@ -338,13 +330,13 @@ export const VaultsCard = (props: Props) => {
       return (
         // TODO: use old component, because need old view for permission vaults.
         // After all redesign in the future, we will move everything into BorrowingExpandCard component
-        <OldBorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
+        <OldBorrowingExpandCard vault={vault} headerSufix={headerSufix} DAOFee={DAOFee} />
       )
 
     default:
       return (
         <BorrowingExpandCard
-          {...props}
+          vault={vault}
           headerSufix={headerSufix}
           DAOFee={DAOFee}
           isOwner={isOwner}

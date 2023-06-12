@@ -41,8 +41,10 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getVaultCollateralBalance } from 'pages/Vaults/Vaults.helpers'
+import useVault from 'providers/LoansProvider/hooks/useVault'
 
-type BorrowingExpandCardPropsType = LoansVaultType & {
+type BorrowingExpandCardPropsType = {
+  vault: LoansVaultType
   isOwner?: boolean
   isOpenedVault?: boolean
   headerSufix?: React.ReactNode
@@ -52,9 +54,16 @@ type BorrowingExpandCardPropsType = LoansVaultType & {
   hideTransactionHistory?: boolean
 }
 
-export const BorrowingExpandCard = (vault: BorrowingExpandCardPropsType) => {
+export const BorrowingExpandCard = ({
+  vault,
+  isOwner = false,
+  isOpenedVault,
+  headerSufix,
+  children,
+  DAOFee,
+  hideTransactionHistory,
+}: BorrowingExpandCardPropsType) => {
   const {
-    isOwner = false,
     borrowedTokenAddress,
     collateralData,
     xtzDelegatedTo,
@@ -63,22 +72,17 @@ export const BorrowingExpandCard = (vault: BorrowingExpandCardPropsType) => {
     name,
     depositors,
     deporsitorsFlag,
-    headerSufix,
     address,
-    children,
     status,
     levelOfEarly,
     levelOfLate,
-    isOpenedVault,
     fee,
     apr,
     borrowedAmount,
     collateralRatio,
     borrowCapacity,
     minimumRepay,
-    DAOFee,
-    hideTransactionHistory,
-  } = vault
+  } = useVault(vault)
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { bug } = useToasterContext()

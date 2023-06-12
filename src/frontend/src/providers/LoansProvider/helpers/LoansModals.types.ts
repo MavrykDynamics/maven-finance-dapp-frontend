@@ -1,3 +1,4 @@
+import { FullLoansVaultType } from './vaults.types'
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 
 import { DepositorsFlagType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
@@ -43,7 +44,7 @@ export type WithdrawCollateralPopupDataType = {
 } | null
 
 export type RepayPartPopupDataType = {
-  vault: LoansVaultType
+  vault: FullLoansVaultType
   scrollToCurrentVault?: () => void
 } | null
 

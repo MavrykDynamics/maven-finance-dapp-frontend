@@ -46,9 +46,10 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getVaultCollateralBalance } from 'pages/Vaults/Vaults.helpers'
+import useVault from 'providers/LoansProvider/hooks/useVault'
 
-type BorrowingExpandCardPropsType = LoansVaultType & {
+type BorrowingExpandCardPropsType = {
+  vault: LoansVaultType
   isOwner?: boolean
   isOpenedVault?: boolean
   headerSufix?: React.ReactNode
@@ -58,33 +59,36 @@ type BorrowingExpandCardPropsType = LoansVaultType & {
   DAOFee: number
 }
 
-export const OldBorrowingExpandCard = (vault: BorrowingExpandCardPropsType) => {
+export const OldBorrowingExpandCard = ({
+  DAOFee,
+  isOpenedVault,
+  isOwner = false,
+  headerSufix,
+  children,
+  vault,
+}: BorrowingExpandCardPropsType) => {
+  const fullVault = useVault(vault)
+
   const {
-    isOwner = false,
-    borrowedTokenAddress,
     collateralData,
     xtzDelegatedTo,
     sMVKDelegatedTo,
     name,
-    headerSufix,
     address,
-    children,
     status,
     levelOfEarly,
     levelOfLate,
-    isOpenedVault,
     fee,
     apr,
     borrowedAmount,
     collateralRatio,
-    DAOFee,
-  } = vault
+    borrowedTokenMetadata,
+    borrowedTokenRate,
+    collateralBalance,
+  } = fullVault
 
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
-  const { symbol, decimals, icon } = tokensMetadata[borrowedTokenAddress]
-  const rate = tokensPrices[symbol]
-
-  const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
+  const { symbol, decimals, icon } = borrowedTokenMetadata
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -233,11 +237,11 @@ export const OldBorrowingExpandCard = (vault: BorrowingExpandCardPropsType) => {
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
               <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={decimals} />
-              {rate ? (
+              {borrowedTokenRate ? (
                 <CommaNumber
-                  value={(borrowedAmount + fee) * rate}
+                  value={(borrowedAmount + fee) * borrowedTokenRate}
                   beginningText="$"
-                  className="rate"
+                  className="borrowedTokenRate"
                   showDecimal
                   decimalsToShow={decimals}
                 />
@@ -276,8 +280,13 @@ export const OldBorrowingExpandCard = (vault: BorrowingExpandCardPropsType) => {
               <ThreeLevelListItem>
                 <div className="name">Principal</div>
                 <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
-                {rate ? (
-                  <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
+                {borrowedTokenRate ? (
+                  <CommaNumber
+                    value={borrowedAmount * borrowedTokenRate}
+                    decimalsToShow={2}
+                    beginningText="$"
+                    className="borrowedTokenRate"
+                  />
                 ) : null}
               </ThreeLevelListItem>
               <ThreeLevelListItem>
@@ -290,7 +299,14 @@ export const OldBorrowingExpandCard = (vault: BorrowingExpandCardPropsType) => {
                   />
                 </div>
                 <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
-                {rate ? <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" /> : null}
+                {borrowedTokenRate ? (
+                  <CommaNumber
+                    value={fee * borrowedTokenRate}
+                    decimalsToShow={2}
+                    beginningText="$"
+                    className="borrowedTokenRate"
+                  />
+                ) : null}
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">APR</div>
@@ -315,7 +331,7 @@ export const OldBorrowingExpandCard = (vault: BorrowingExpandCardPropsType) => {
                   <Button
                     onClick={() =>
                       openRepayPopup?.({
-                        vault,
+                        vault: fullVault,
                         scrollToCurrentVault,
                       })
                     }
@@ -396,10 +412,10 @@ export const OldBorrowingExpandCard = (vault: BorrowingExpandCardPropsType) => {
                                 decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
                                 beginningText={isTotalRow ? '$' : ''}
                               />
-                              {rate ? (
+                              {borrowedTokenRate ? (
                                 <CommaNumber
                                   value={convertedCollalteralAmount * collateralRate}
-                                  className="rate"
+                                  className="borrowedTokenRate"
                                   beginningText="$"
                                   showDecimal
                                 />
