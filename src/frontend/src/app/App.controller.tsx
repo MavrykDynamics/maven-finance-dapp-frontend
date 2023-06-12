@@ -31,6 +31,7 @@ import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
 import { getTokensForDAPP, getTokensPrices } from 'reducers/actions/getTokens.actions'
 import { getAvaliableCollaterals, getXtzBakers } from 'pages/Loans/Actions/getLoansData.actions'
+import { Footer } from './App.components/Footer/Footer'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
@@ -112,6 +113,8 @@ const AppContainer = () => {
         <LoansPopupsProvider>
           <AppRoutes />
         </LoansPopupsProvider>
+        
+        <Footer />
       </AppStyled>
     </Router>
   )
