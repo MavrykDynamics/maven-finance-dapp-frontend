@@ -9,6 +9,7 @@ type Props = {
   showIcon?: boolean
   isLarge?: boolean
   children?: React.ReactNode
+  className?: string
 }
 
 // TODO: add close banner btn and store it's id in sessionStorage that it's closed
@@ -26,10 +27,10 @@ type Props = {
  * }
  * @returns
  */
-export const Info = ({ children, text, type, showIcon = true, isLarge = false }: Props) => {
+export const Info = ({ children, text, type, showIcon = true, isLarge = false, className = '' }: Props) => {
   const iconToUse = getIconForInfoTyType(type)
 
-  const bannerClasses = classNames(type, {
+  const bannerClasses = classNames(type, className, {
     isLarge,
     hasBorder: showIcon,
     hasChild: Boolean(children),

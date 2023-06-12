@@ -4,12 +4,12 @@ import { isTezosContractError } from 'errors/error'
 import { CONTRACT_ERROR_CODES } from 'utils/error_codes'
 import { toSentenceCase } from 'utils/toSentenceCase'
 
-type ContractErrorPayload = {
+export type ContractErrorPayload = {
   message: string
   description: string
 }
 
-const DEFAULT_TEZOS_ERROR = {
+export const DEFAULT_TEZOS_ERROR: ContractErrorPayload = {
   message: 'Something went wrong',
   description: 'Something went wrong, you are not allowed to continue current operation',
 }
@@ -44,4 +44,15 @@ export const estimateExecution = async (
       error: getContractErrorMessage(e),
     }
   }
+}
+
+export const isContractErrorPayload = (obj: any) => {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'message' in obj &&
+    'description' in obj &&
+    typeof obj.message === 'string' &&
+    typeof obj.description === 'string'
+  )
 }

@@ -10,6 +10,14 @@ export const StakeUnstakeStyled = styled.div`
   display: grid;
   grid-template-columns: auto 500px;
   grid-gap: 30px;
+
+  .errorWrapper {
+    margin: 15px auto;
+  }
+
+  .infoBlockSmall {
+    padding: 0 20px;
+  }
 `
 
 export const StakeUnstakeCard = styled.div<{ theme: MavrykTheme }>`
@@ -47,10 +55,8 @@ export const StakeUnstakeActionCard = styled(Card)<{ theme: MavrykTheme }>`
   font-weight: 600;
   color: ${({ theme }) => theme.subTextColor};
   margin: 0;
-  padding-top: 34px;
-  padding-bottom: 34px;
-  padding-left: 30px;
-  padding-right: 30px;
+
+  padding: 18px 30px;
 `
 export const StakeUnstakeInputColumn = styled.div`
   position: relative;
@@ -148,8 +154,8 @@ export const StakeUnstakeInputLabel = styled.div<{ theme: MavrykTheme }>`
   font-weight: 600;
 `
 
-export const StakeUnstakeButtonGrid = styled.div`
-  margin: 65px auto 0 auto;
+export const StakeUnstakeButtonGrid = styled.div<{ hasMargin: boolean }>`
+  margin: ${({ hasMargin }) => (hasMargin ? '65px auto 0 auto' : '0 auto')};
   display: flex;
   justify-content: space-between;
   column-gap: 10px;

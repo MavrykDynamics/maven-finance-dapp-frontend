@@ -60,6 +60,8 @@ import {
 // types
 import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
+import { ContractErrorPayload, isContractErrorPayload } from 'errors/helpers/contractError.helper'
+import { Info } from 'app/App.components/Info/Info.view'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -99,6 +101,10 @@ export const StakeUnstakeView = ({
     doormanAddress: { address: doormanAddress },
     mvkTokenAddress: { address: mvkTokenAddress },
   } = useSelector((state: State) => state.contractAddresses)
+
+  const [contractError, setContractError] = useState<ContractErrorPayload | null>(null)
+
+  console.log(contractError, 'contractError')
 
   const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
   const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
@@ -189,6 +195,8 @@ export const StakeUnstakeView = ({
         TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
       )
       updateStakeLoadingToasterId(loadingToasterId)
+    } else if (isContractErrorPayload(error)) {
+      setContractError(error as ContractErrorPayload)
     } else {
       if (loadingToasterId) hideToasterMessage(loadingToasterId)
       dispatch(toggleActionFullScreenLoader(false))
@@ -387,7 +395,13 @@ export const StakeUnstakeView = ({
           <CommaNumber value={mvkExchangeRate} beginningText={'$'} />
         </StakeUnstakeRate>
 
-        <StakeUnstakeButtonGrid>
+        {contractError && (
+          <div className="errorWrapper">
+            <Info type="error" text={contractError.description} className="infoBlockSmall" />
+          </div>
+        )}
+
+        <StakeUnstakeButtonGrid hasMargin={!Boolean(contractError)}>
           <NewButton
             kind={BUTTON_PRIMARY}
             onClick={() => handleStake(Number(inputData.amount))}

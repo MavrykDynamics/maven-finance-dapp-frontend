@@ -24,6 +24,7 @@ import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.ac
 // TODO move wallet to context to avoid redux logic inside Stake Context
 // redux
 import { State as ReduxState } from 'reducers'
+import { DEFAULT_TEZOS_ERROR, estimateExecution } from 'errors/helpers/contractError.helper'
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
@@ -166,6 +167,20 @@ export class StakeProviderClass extends React.Component<Props, State> {
           },
         ]
 
+      const addOperatorsOperation = mvkTokenContract.methods.update_operators(addOperators)
+      const stakeOperation = doormanContract.methods.stake(convertNumberForContractCall({ number: amount }))
+      const removeOperatorsOperation = mvkTokenContract.methods.update_operators(removeOperators)
+
+      // const op1 = await estimateExecution(addOperatorsOperation)
+      // const op2 = await estimateExecution(stakeOperation)
+      // const op3 = await estimateExecution(removeOperatorsOperation)
+
+      // if (op1?.error || op2?.error || op3?.error) {
+      //   return { actionSuccess: false, error: op1?.error ?? op2?.error ?? op3?.error }
+      // }
+
+      if (true) return { actionSuccess: false, error: DEFAULT_TEZOS_ERROR }
+
       const batch =
         mvkTokenContract &&
         doormanContract &&
@@ -174,6 +189,8 @@ export class StakeProviderClass extends React.Component<Props, State> {
           .withContractCall(mvkTokenContract.methods.update_operators(addOperators))
           .withContractCall(doormanContract.methods.stake(convertNumberForContractCall({ number: amount })))
           .withContractCall(mvkTokenContract.methods.update_operators(removeOperators)))
+
+      // const batchOperations = batch?.withTransfer()
       await batch?.send()
 
       return { actionSuccess: true, error: null }
