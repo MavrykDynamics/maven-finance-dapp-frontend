@@ -35,6 +35,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -70,7 +71,10 @@ export const Loans = () => {
   } = useSelector((state: State) => state.loans)
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    accountPkh,
+    user: { userMTokens },
+  } = useSelector((state: State) => state.wallet)
 
   const { totalBorrowed, totalLended } = loanTokens.reduce<{
     totalLended: number
@@ -166,6 +170,7 @@ export const Loans = () => {
             {loanTokens.map((loanAsset) => {
               const {
                 loanTokenAddress,
+                loanMTokenAddress,
                 utilisationRate,
                 availableLiquidity,
                 borrowers,
@@ -173,9 +178,12 @@ export const Loans = () => {
                 suppliers,
                 totalLended,
                 borrowAPR,
-                totalFeesEarned,
                 lendingAPY,
               } = loanAsset
+
+              const { interestEarned: totalFeesEarned } = getMarketUserLengingItem(userMTokens, loanMTokenAddress) ?? {
+                interestEarned: 0,
+              }
 
               const { name, symbol, decimals, icon } = tokensMetadata[loanTokenAddress]
               const rate = tokensPrices[symbol]

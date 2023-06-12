@@ -169,12 +169,17 @@ export const LoansBorrow = () => {
     if (!newVaultAddress) return
 
     const vault = vaultsMapper[newVaultAddress]
-
     if (!vault) return
+
+    const borrowAPR = loanTokens.find(
+      ({ loanTokenAddress }) => loanTokenAddress === vault.borrowedTokenAddress,
+    )?.borrowAPR
+    if (!borrowAPR) return
 
     openBorrowPopup?.({
       vault,
       DAOFee,
+      borrowAPR,
       scrollToCurrentVault: () => {
         setNewVaultAddress('')
         // redirect to the market after borrowing

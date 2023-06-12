@@ -49,11 +49,12 @@ export type RepayPartPopupDataType = {
 } | null
 
 export type RepayFullPopupDataType = {
-  vault: LoansVaultType
+  vault: FullLoansVaultType
 } | null
 
 export type BorrowPopupDataType = {
   vault: LoansVaultType
+  borrowAPR: number
   DAOFee: number
   scrollToCurrentVault?: () => void
 } | null

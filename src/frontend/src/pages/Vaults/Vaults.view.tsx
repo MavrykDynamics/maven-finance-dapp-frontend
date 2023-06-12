@@ -162,11 +162,11 @@ export const VaultsView = () => {
 
             return (
               <VaultsCard
+                vault={vaultsMapper[item]}
                 key={item}
                 isOwner={isOwner}
                 handleMarkForLiquidation={handleMarkForLiquidation}
                 vaultTab={tabId}
-                {...vaultsMapper[item]}
               />
             )
           })}

@@ -328,9 +328,9 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
 
     case vaultTabs.PERMISSIONED:
       return (
-        // TODO: use old component, because need old view for permission vaults.
+        // TODO: use old component, because need old view for permission vaults. add borrow apr to it
         // After all redesign in the future, we will move everything into BorrowingExpandCard component
-        <OldBorrowingExpandCard vault={vault} headerSufix={headerSufix} DAOFee={DAOFee} />
+        <OldBorrowingExpandCard vault={vault} headerSufix={headerSufix} />
       )
 
     default:

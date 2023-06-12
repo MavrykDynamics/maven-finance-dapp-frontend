@@ -17,9 +17,11 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { calcCollateralRatio, getCollateralRatioByPersentage, isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { Info } from 'app/App.components/Info/Info.view'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
+import { getCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
+import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17953%3A224221&t=Sx2aEpp3ifrGxBtQ-0
 export const RepayFull = ({
@@ -31,28 +33,9 @@ export const RepayFull = ({
   show: boolean
   data: RepayFullPopupDataType
 }) => {
-  const {
-    vaultId,
-    vaultAddress,
-    borrowedAsset,
-    feesAmount = 0,
-    currentCollateralBalance = 0,
-    collateralRatio = 0,
-    minimumRepay = 0,
-    borrowCapacity = 0,
-    borrowedAmount = 0,
-  } = data ?? {}
-
-  const totalOutstanding = feesAmount + Number(borrowedAmount)
-
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { userTokens } = useSelector((state: State) => state.wallet.user)
-
-  const balanceSymbol = isTezosAsset(borrowedAsset?.gqlName ?? '') ? 'tezos' : borrowedAsset?.symbol.toLowerCase() ?? ''
-  const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
-
-  const canRepay = totalOutstanding <= userAssetBalance && totalOutstanding > minimumRepay
 
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
 
@@ -62,30 +45,40 @@ export const RepayFull = ({
     }
   }, [show])
 
+  if (!data) return null
+
+  const {
+    vault: {
+      vaultId,
+      minimumRepay,
+      borrowedAmount,
+      address: vaultAddress,
+      fee,
+      collateralBalance,
+      totalOutstanding,
+      borrowCapacity,
+      borrowedTokenRate,
+      borrowedTokenMetadata,
+      collateralRatio,
+    },
+  } = data
+
+  const { symbol } = borrowedTokenMetadata
+
+  const futureCollateralRatio = getCollateralRatio(collateralBalance, 0, borrowedTokenRate),
+    futureBorrowCapacity = Math.max(borrowCapacity + borrowedAmount, 0)
+
+  // TODO: use user tokens balances
+  const userAssetBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
+  const canRepay = totalOutstanding <= userAssetBalance && totalOutstanding > minimumRepay
+
   const continueBtnHandler = () => setShownScreen('confitmation')
   const backBtnHandler = () => setShownScreen('initial')
 
-  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = borrowedAsset
-      ? calcCollateralRatio(currentCollateralBalance, 0, borrowedAsset.rate)
-      : 0
-
-    const futureBorrowCapacity = Math.max(borrowCapacity + borrowedAmount, 0)
-    return { futureCollateralRatio, futureBorrowCapacity }
-  }, [borrowedAsset, currentCollateralBalance, borrowCapacity, borrowedAmount])
-
   const repayBtnHandler = async () => {
-    if (vaultId && borrowedAsset && vaultAddress) {
+    if (vaultId && vaultAddress && checkWhetherTokenIsLoanToken(borrowedTokenMetadata)) {
       await dispatch(
-        repayFullAndCloseVaultAction(
-          vaultId,
-          vaultAddress,
-          totalOutstanding,
-          borrowedAsset.decimals,
-          borrowedAsset.tokenType,
-          borrowedAsset.address,
-          closePopup,
-        ),
+        repayFullAndCloseVaultAction(vaultId, vaultAddress, totalOutstanding, borrowedTokenMetadata, closePopup),
       )
     }
   }
@@ -109,25 +102,17 @@ export const RepayFull = ({
                 <ThreeLevelListItem>
                   <div className="name">Borrowed</div>
                   <CommaNumber value={borrowedAmount} className="value" />
-                  <CommaNumber
-                    value={borrowedAmount * Number(borrowedAsset?.rate)}
-                    className="rate"
-                    beginningText="$"
-                  />
+                  <CommaNumber value={borrowedAmount * borrowedTokenRate} className="rate" beginningText="$" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Fees Due</div>
-                  <CommaNumber value={feesAmount} className="value" />
-                  <CommaNumber value={feesAmount * Number(borrowedAsset?.rate)} className="rate" beginningText="$" />
+                  <CommaNumber value={fee} className="value" />
+                  <CommaNumber value={fee * borrowedTokenRate} className="rate" beginningText="$" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem className="left-divider">
                   <div className="name">Total Outstanding</div>
                   <CommaNumber value={totalOutstanding} className="value" />
-                  <CommaNumber
-                    value={totalOutstanding * Number(borrowedAsset?.rate)}
-                    className="rate"
-                    beginningText="$"
-                  />
+                  <CommaNumber value={totalOutstanding * borrowedTokenRate} className="rate" beginningText="$" />
                 </ThreeLevelListItem>
               </div>
 
@@ -136,7 +121,7 @@ export const RepayFull = ({
                 <CommaNumber
                   value={userAssetBalance}
                   className={`value ${canRepay ? 'up' : 'down'}`}
-                  endingText={borrowedAsset?.symbol}
+                  endingText={symbol}
                 />
               </ThreeLevelListItem>
 
@@ -156,7 +141,7 @@ export const RepayFull = ({
                         decimalsToShow: 2,
                         number: totalOutstanding - userAssetBalance,
                       })} 
-                      ${borrowedAsset?.symbol ?? ''} on your balance`}
+                      ${symbol ?? ''} on your balance`}
                       type={INFO_ERROR}
                     />
                   </div>
@@ -181,7 +166,7 @@ export const RepayFull = ({
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Collateral Value</div>
-                      <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
+                      <CommaNumber value={collateralBalance} className="value" beginningText="$" />
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Borrow Capacity</div>
@@ -202,7 +187,7 @@ export const RepayFull = ({
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Asset</div>
-                  <div className="value">{borrowedAsset?.symbol}</div>
+                  <div className="value">{symbol}</div>
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Amount</div>
@@ -210,11 +195,7 @@ export const RepayFull = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem className="right">
                   <div className="name">USD Value</div>
-                  <CommaNumber
-                    value={totalOutstanding * Number(borrowedAsset?.rate)}
-                    className="value"
-                    beginningText="$"
-                  />
+                  <CommaNumber value={totalOutstanding * borrowedTokenRate} className="value" beginningText="$" />
                 </ThreeLevelListItem>
               </div>
 
@@ -236,7 +217,7 @@ export const RepayFull = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Collateral Value</div>
-                  <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
+                  <CommaNumber value={collateralBalance} className="value" beginningText="$" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Available To Borrow</div>

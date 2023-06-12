@@ -5,7 +5,6 @@ import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 import { getOracleAggregatorLatestPrice } from './Vaults.actions'
 import { statusSortPriority } from './Vaults.consts'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
-import TokensProvider from 'providers/TokensProvider/tokens.provider'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
@@ -124,6 +123,8 @@ export type VaultAssetData = {
   balance: number
   chartColor: string
   tokenAddress: string
+  rate: number
+  symbol: string
 }
 
 export type VaultAssetBalances = {
@@ -172,6 +173,8 @@ export const reduceVaultsAssets = (
         } else {
           assets[tokenAddress] = {
             balance: convertedAmount,
+            rate: collateralRate,
+            symbol: collateralSymbol,
             chartColor: getAssetColor(colorIdx),
             tokenAddress,
           }
