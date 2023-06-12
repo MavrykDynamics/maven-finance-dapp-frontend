@@ -86,7 +86,7 @@ const Satellites = () => {
           <InfoBlockWrapper>
             <SatelliteGovernanceStatsInfo>
               <h3>Total Delegated MVK</h3>
-              <div className="info-content">
+              <div className="value">
                 {tabsInfo.totalDelegetedMVK}
                 <a href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle">
                   <CustomTooltip iconId="info" text="All staked MVK that is delegated to satellites by users" />
@@ -95,11 +95,11 @@ const Satellites = () => {
             </SatelliteGovernanceStatsInfo>
             <SatelliteGovernanceStatsInfo>
               <h3>Total Satellites & Oracles</h3>
-              <div className="info-content">{tabsInfo.totalSatelliteOracles}</div>
+              <div className="value">{tabsInfo.totalSatelliteOracles}</div>
             </SatelliteGovernanceStatsInfo>
             <SatelliteGovernanceStatsInfo>
               <h3>Number of Data Feeds</h3>
-              <div className="info-content">{tabsInfo.numberOfDataFeeds}</div>
+              <div className="value">{tabsInfo.numberOfDataFeeds}</div>
             </SatelliteGovernanceStatsInfo>
           </InfoBlockWrapper>
 
