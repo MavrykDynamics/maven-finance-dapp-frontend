@@ -23,6 +23,7 @@ import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
 import { AppStyled } from './App.style'
 import LoansPopupsProvider from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { PolicyPopup } from 'app/App.components/PolicyPopup/Policy.controller'
+import { Footer } from './App.components/Footer/Footer'
 
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
@@ -34,7 +35,6 @@ import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
 import { getTokensForDAPP, getTokensPrices } from 'reducers/actions/getTokens.actions'
 import { getAvaliableCollaterals, getXtzBakers } from 'pages/Loans/Actions/getLoansData.actions'
-import { Footer } from './App.components/Footer/Footer'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
