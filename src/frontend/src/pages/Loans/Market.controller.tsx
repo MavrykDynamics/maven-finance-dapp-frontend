@@ -240,7 +240,7 @@ export const Market = () => {
           />
         ) : null}
         {tabId === BORROW_TAB_ID ? (
-          <BorrowingTab lendingControllerAddress={lendingControllerAddress} currentToken={currentToken} />
+          <BorrowingTab currentToken={currentToken} />
         ) : null}
       </MarketStyled>
     </Page>

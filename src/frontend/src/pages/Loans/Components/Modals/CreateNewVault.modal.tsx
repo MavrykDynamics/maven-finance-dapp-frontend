@@ -70,7 +70,7 @@ export const CreateNewVault = ({
   show: boolean
   data: CreateVaultPopupDataType
 }) => {
-  const { currentMarketAsset, setCreatedVaultAddress, showShortFlow } = data ?? {}
+  const { currentMarketAsset, setCreatedVaultAddress } = data ?? {}
   const dispatch = useDispatch()
   const {
     xtzBakers: { otherBakers, dao, mavrykDynamics },
@@ -324,12 +324,8 @@ export const CreateNewVault = ({
   const createVaultAction = async () => {
     if (currentMarketAsset) {
       try {
-        showShortFlow && closePopup()
-
         setVaultCreating(true)
-        const newVaultData = await dispatch(
-          triggerInitialVaultCreation(currentMarketAsset, vaultName.name, showShortFlow),
-        )
+        const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset, vaultName.name))
         setCreatedVaultAddress?.(String(newVaultData))
         setNewVaultAddress(String(newVaultData))
       } catch (e) {
