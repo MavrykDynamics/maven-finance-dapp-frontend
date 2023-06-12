@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { useCallback, useContext, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import classNames from 'classnames'
 
 import { State } from 'reducers'
@@ -13,7 +13,6 @@ import { LENDING_TAB_SUPPLY_TEXT, LENDING_TAB_WITHDRAW_TEXT } from 'texts/banner
 import { LENDING_APY } from 'texts/tooltips/loan.text'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './../Modals/Modals.helpers'
 import { INPUT_LARGE, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { loansPopupsContext } from './../Modals/LoansModals.provider'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from '../../Loans.style'
@@ -28,6 +27,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -44,7 +44,7 @@ export const LendingTabActionsSection = ({
   marketAvailableLiquidity,
   marketReserveAmount,
 }: LendingTabPropsType) => {
-  const { openConfirmAddLendingAssetPopup, openConfirmRemoveLendingAssetPopup } = useContext(loansPopupsContext)
+  const { openConfirmAddLendingAssetPopup, openConfirmRemoveLendingAssetPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const { symbol, decimals, icon } = tokensMetadata[loanTokenAddress]

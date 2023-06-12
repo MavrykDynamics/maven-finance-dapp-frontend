@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 // components
@@ -33,7 +33,6 @@ import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 // helpers
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
-import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
 import { LIQUIDATION_COST, LIQUIDATION_PRICE, VAULT_RISK } from 'texts/tooltips/vault.text'
 import { getStringWithoutUnderline } from 'utils/parse'
@@ -46,6 +45,7 @@ import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { isAbortError } from 'errors/error'
 import { api } from 'utils/api/api'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 
 const findStatusInfo = (
   status: string,
@@ -132,7 +132,7 @@ export const VaultsCard = (props: Props) => {
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { DAOFee } = useSelector((state: State) => state.loans.config)
 
-  const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
+  const { openLiquidateVaultPopup } = useLoansPopupsContext()
 
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 

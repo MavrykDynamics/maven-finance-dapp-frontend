@@ -1,6 +1,5 @@
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import type { MTokenType, UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
-import type { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
 
 import { DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import {
@@ -38,13 +37,6 @@ export interface UserState {
   isVestee: boolean
   isNewlyRegisteredSatellite: boolean
   govActionsCount: number
-
-  // loans data
-  userLoansData: {
-    userLendings: Array<UserLendObjType>
-    userBorrowing: Array<UserLendObjType>
-    userVaultsData: Record<string, { borrowedAmount: number; collateralAmount: number }>
-  }
 
   // user rewards
   gatheredFarmRewards: number
@@ -106,12 +98,6 @@ export const DEFAULT_USER: UserState = {
   isVestee: false,
   isNewlyRegisteredSatellite: false,
   govActionsCount: 0,
-
-  userLoansData: {
-    userLendings: [],
-    userBorrowing: [],
-    userVaultsData: {},
-  },
 
   availableLoansRewards: 0,
   availableDoormanRewards: 0,

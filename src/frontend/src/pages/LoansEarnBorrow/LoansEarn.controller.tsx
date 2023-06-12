@@ -18,7 +18,6 @@ import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 
 // actions
@@ -27,6 +26,7 @@ import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 // providers
 import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -81,7 +81,7 @@ export const LoansEarn = () => {
     [loanTokens, tokensMetadata, tokensPrices],
   )
 
-  const { openAddLendingAssetPopup } = useContext(loansPopupsContext)
+  const { openAddLendingAssetPopup } = useLoansPopupsContext()
 
   const markets: MarketType[] = useMemo(
     () =>
@@ -120,12 +120,11 @@ export const LoansEarn = () => {
       return
     }
 
-    // TODO: update popups usage
-    // openAddLendingAssetPopup({
-    //   mBalance,
-    //   lendingAPY: market.lendingAPY,
-    //   ...market.loanTokenData,
-    // })
+    openAddLendingAssetPopup({
+      mBalance,
+      lendingAPY: market.lendingAPY,
+      tokenAddress: market.loanTokenAddress,
+    })
   }
 
   const { isLoading } = useDataLoader(

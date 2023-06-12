@@ -23,20 +23,28 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { Plug } from 'app/App.components/Chart/Chart.style'
 import { PositionTableStyled } from '../LoansDashboard.styles'
-import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { getGaugeVaultRiskSimpleStatus } from '../helpers/position.helpers'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
+import { UserLoansDataStateType } from 'providers/UserProvider/helpers/user.types'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const LoansPositionTable = ({
   markets,
   userVaultsData,
 }: {
   markets: State['loans']['loanTokens']
-  userVaultsData: State['wallet']['user']['userLoansData']['userVaultsData']
+  userVaultsData: UserLoansDataStateType['userVaultsData']
 }) => {
+  const { openCreateVaultPopup, openAddLendingAssetPopup } = useLoansPopupsContext()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { openCreateVaultPopup, openAddLendingAssetPopup } = useContext(loansPopupsContext)
+  const {
+    accountPkh,
+    user: { userMTokens },
+  } = useSelector((state: State) => state.wallet)
 
   const { search, pathname } = useLocation()
   const currentPage = getPageNumber(search, LOANS_POSITION_TABLE)
@@ -92,10 +100,14 @@ export const LoansPositionTable = ({
 
             {accountPkh ? (
               <TableBody className={`treasury dashboard-loans-table`}>
-                {paginatedTableRows.map(({ lendingItem, loanTokenData, borrowAPR, lendingAPY }) => {
-                  const { lendValue = 0, interestEarned = 0 } = lendingItem ?? {}
+                {paginatedTableRows.map(({ loanMTokenAddress, loanTokenAddress, borrowAPR, lendingAPY }) => {
+                  const { lendValue = 0, interestEarned = 0 } =
+                    getMarketUserLengingItem(userMTokens, loanMTokenAddress) ?? {}
 
-                  const marketVaultsUserData = userVaultsData[loanTokenData.gqlName.toLowerCase()]
+                  const { symbol, icon } = tokensMetadata[loanTokenAddress]
+                  const rate = tokensPrices[symbol]
+
+                  const marketVaultsUserData = userVaultsData[loanTokenAddress]
 
                   const averageVaultStatus = getGaugeVaultRiskSimpleStatus(
                     marketVaultsUserData?.collateralAmount
@@ -104,46 +116,41 @@ export const LoansPositionTable = ({
                   )
 
                   return (
-                    <TableRow
-                      rowHeight={60}
-                      borderColor="cardBorderColor"
-                      className="add-hover"
-                      key={loanTokenData.symbol}
-                    >
+                    <TableRow rowHeight={60} borderColor="cardBorderColor" className="add-hover" key={symbol}>
                       <TableCell width="15%">
                         <div className="cell-content row with-icon asset-name">
-                          <ImageWithPlug imageLink={loanTokenData.icon} alt={`${loanTokenData.symbol} logo`} />
-                          {loanTokenData.symbol}
+                          <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
+                          {symbol}
                         </div>
                       </TableCell>
 
                       <TableCell
                         width="43%"
-                        className={`position-multy-cell lending ${!lendingItem ? 'one-item' : ''}`}
+                        className={`position-multy-cell lending ${!loanMTokenAddress ? 'one-item' : ''}`}
                       >
                         <div className="cell-content" style={{ marginRight: '20px' }}>
-                          {lendingItem ? (
+                          {loanMTokenAddress ? (
                             <>
                               <CommaNumber value={lendingAPY} endingText="%" />
-                              <CommaNumber value={lendValue * loanTokenData.rate} beginningText="$" />
+                              <CommaNumber value={lendValue * rate} beginningText="$" />
                               <CommaNumber value={interestEarned} />
-                              <Link to={`/loans/${loanTokenData.symbol}/${LEND_TAB_ID}`}>
+                              <Link to={`/loans/${symbol}/${LEND_TAB_ID}`}>
                                 <Button kind={BUTTON_SIMPLE}>View</Button>
                               </Link>
                             </>
                           ) : (
-                            <Link to={`/loans/${loanTokenData.symbol}/${LEND_TAB_ID}`}>
+                            <Link to={`/loans/${symbol}/${LEND_TAB_ID}`}>
                               <Button
                                 kind={BUTTON_SIMPLE}
                                 onClick={() => {
                                   openAddLendingAssetPopup({
                                     mBalance: 0,
                                     lendingAPY: lendingAPY,
-                                    ...loanTokenData,
+                                    tokenAddress: loanTokenAddress,
                                   })
                                 }}
                               >
-                                Supply {loanTokenData.symbol} and start Earning
+                                Supply {symbol} and start Earning
                               </Button>
                             </Link>
                           )}
@@ -162,17 +169,17 @@ export const LoansPositionTable = ({
                               <div className={`vault-status ${averageVaultStatus.status}`}>
                                 {averageVaultStatus.text}
                               </div>
-                              <Link to={`/loans/${loanTokenData.symbol}/${BORROW_TAB_ID}`}>
+                              <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`}>
                                 <Button kind={BUTTON_SIMPLE}>View</Button>
                               </Link>
                             </>
                           ) : (
-                            <Link to={`/loans/${loanTokenData.symbol}/${BORROW_TAB_ID}`}>
+                            <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`}>
                               <Button
                                 kind={BUTTON_SIMPLE}
                                 onClick={() =>
                                   openCreateVaultPopup({
-                                    currentMarketAsset: loanTokenData.symbol,
+                                    tokenAddress: loanTokenAddress,
                                   })
                                 }
                               >

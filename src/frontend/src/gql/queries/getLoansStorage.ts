@@ -21,6 +21,11 @@ query GetLoansStorage {
       }
       m_token {
         address
+        accounts_aggregate(where: {balance: {_gte: 0}}) {
+          aggregate {
+            count
+          }
+        }
       }
 
       vaults_aggregate(where: {loan_outstanding_total: {_neq: "0"}}) {
@@ -98,65 +103,6 @@ export const NEW_VAULT_QUERY = `
 
 export const NEW_VAULT_QUERY_NAME = 'GetUsersLastestCreatedVault'
 export const NEW_VAULT_QUERY_VARIABLE = (userAddress: string, vaultName: string) => ({ userAddress, vaultName })
-
-export const USER_LENDING_DATA_QUERY = `
-query GetLendBorrowHistoryPerUser($userAddress: String = "", $_in: [smallint!] = ["0", "1", "2", "3"]) {
-  mavryk_user(where: {address: {_eq: $userAddress}}) {
-    lending_controller_history_data_sender(where: {lending_controller: {mock_time: {_eq: false}}, type: {_in: $_in}}, order_by: {type: asc, timestamp: asc}) {
-      type
-      timestamp
-      operation_hash
-      amount
-      loan_token {
-        oracle {
-            address
-          }
-        loan_token_name
-        token {
-          token_address
-          token_standard
-        }
-        current_interest_rate
-      }
-      lending_controller {
-        interest_rate_decimals
-        interest_treasury_share
-        decimals
-      }
-    }
-    lending_controller_vaults(where: {lending_controller: {mock_time: {_eq: false}}}) {
-      collateral_balances {
-        balance
-        collateral_token {
-          token_name
-          oracle {
-            address
-          }
-          token {
-            token_address
-          }
-        }
-      }
-      loan_decimals
-      loan_principal_total
-      loan_token {
-        loan_token_name
-        token {
-          token_address
-        }
-        oracle {
-            address
-          }
-      }
-    }
-  }
-}
-`
-
-export const USER_LENDING_DATA_QUERY_NAME = 'GetLendBorrowHistoryPerUser'
-export const USER_LENDING_DATA_QUERY_VARIABLE = (userAddress?: string) => {
-  return { userAddress: userAddress ?? '' }
-}
 
 export const MVK_TOKEN_OPERATOR_QUERY = `
   query GetMvkTokenOperator($_userAddress: String) {

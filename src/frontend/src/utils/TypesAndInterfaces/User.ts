@@ -1,3 +1,4 @@
+import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
 import type { M_Token, Mavryk_User } from '../generated/graphqlTypes'
 
 export interface UserFarmRewardsData {
@@ -14,28 +15,13 @@ export interface UserFarmRewardsData {
   myAvailableFarmRewards: number
 }
 
-export type UserType = {
-  id: string
-  name: string
-  descr: string
-  website: string
-  valueLocked: string
-  creationDate: number | string
-  feeds: string[]
-}
-
 export type MTokenType = {
   lendedAmount: number
   balance: number
-  usdBalance: number
-  icon: string | null
-  // TODO: abjust to get it from tokenPrices in store
-  tokenRate: number
-  tokenSymbol: string
-  tokenName: string
-  tokenAddress: M_Token['address']
+  tokenAddress: TokenAddress
   reward_index: number
   rewards_earned: number
+  interestRateDecimals: number
 }
 
 export type MavrykUserGraphQl = Omit<Mavryk_User, '__typename'>

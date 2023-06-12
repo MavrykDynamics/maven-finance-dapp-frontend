@@ -1,47 +1,47 @@
-import React from 'react'
-import { createContext } from 'react'
-import { AddCollateral } from './AddCollateral.modal'
-import { AddLendingAsset } from './AddLendingAsset.modal'
-import { AddNewCollateral } from './AddNewCollateral.modal'
-import { BorrowAsset } from './BorrowAsset.modal'
-import { ChangeBaker } from './ChangeBaker'
-import { CreateNewVault } from './CreateNewVault.modal'
-import { ManagePermissions } from './ManagePermissions.modal'
+import React, { createContext, useContext } from 'react'
+
+import { AddCollateral } from 'pages/Loans/Components/Modals/AddCollateral.modal'
+import { AddLendingAsset } from 'pages/Loans/Components/Modals/AddLendingAsset.modal'
+import { AddNewCollateral } from 'pages/Loans/Components/Modals/AddNewCollateral.modal'
+import { BorrowAsset } from 'pages/Loans/Components/Modals/BorrowAsset.modal'
+import { ChangeBaker } from 'pages/Loans/Components/Modals/ChangeBaker'
+import { ChangeVaultName } from 'pages/Loans/Components/Modals/ChangeVaultName.modal'
+import { ConfirmAddLendingAsset } from 'pages/Loans/Components/Modals/ConfirmAddLendingAsset.modal'
+import { ConfirmBorrowAsset } from 'pages/Loans/Components/Modals/ConfirmBorrowAsset.modal'
+import { ConfirmRemoveAssetsFromLending } from 'pages/Loans/Components/Modals/ConfirmRemoveAssetsFromLending.modal'
+import { ConfirmRepay } from 'pages/Loans/Components/Modals/ConfirmRepay.modal'
+import { ConfirmRepayFull } from 'pages/Loans/Components/Modals/ConfirmRepayFull.modal'
+import { CreateNewVault } from 'pages/Loans/Components/Modals/CreateNewVault.modal'
+import { ManagePermissions } from 'pages/Loans/Components/Modals/ManagePermissions.modal'
 import {
-  AddCollateralPopupDataType,
-  AddLendingAssetDataType,
-  AddNewCollateralDataProps,
-  BorrowPopupDataType,
-  ChangeBakerPopupDataType,
-  CreateVaultPopupDataType,
-  DEFAULT_LOANS_POPUPS_STATE,
   LoansPopupsContextStateType,
-  ManagePermissionsPopupDataType,
-  RemoveLendingAssetDataType,
-  RepayFullPopupDataType,
-  RepayPartPopupDataType,
-  UpdateOperatorsPopupDataType,
-  WithdrawCollateralPopupDataType,
-  LiquidateVaultDataType,
+  DEFAULT_LOANS_POPUPS_STATE,
+  ConfirmAddLendingAssetDataType,
+  ConfirmRemoveLendingAssetDataType,
   ConfirmBorrowPopupDataType,
   ConfirmRepayPartPopupDataType,
   ConfirmRepayFullPopupDataType,
+  ChangeBakerPopupDataType,
+  BorrowPopupDataType,
+  RepayPartPopupDataType,
+  RepayFullPopupDataType,
+  WithdrawCollateralPopupDataType,
+  AddCollateralPopupDataType,
+  AddNewCollateralDataProps,
+  UpdateOperatorsPopupDataType,
+  ManagePermissionsPopupDataType,
   ChangeVaultNamePopupDataType,
-  ConfirmAddLendingAssetDataType,
-  ConfirmRemoveLendingAssetDataType,
-} from './Modals.helpers'
-import { RemoveAssetsFromLending } from './RemoveAssetsFromLending.modal'
-import { Repay } from './Repay.modal'
-import { RepayFull } from './RepayFull.modal'
-import { UpdateMVKOperator } from './UpdateMVKOperator.modal'
-import { WithdrawCollateral } from './WithdrawCollateral.modal'
+  CreateVaultPopupDataType,
+  AddLendingAssetDataType,
+  RemoveLendingAssetDataType,
+  LiquidateVaultDataType,
+} from 'pages/Loans/Components/Modals/Modals.helpers'
+import { RemoveAssetsFromLending } from 'pages/Loans/Components/Modals/RemoveAssetsFromLending.modal'
+import { Repay } from 'pages/Loans/Components/Modals/Repay.modal'
+import { RepayFull } from 'pages/Loans/Components/Modals/RepayFull.modal'
+import { UpdateMVKOperator } from 'pages/Loans/Components/Modals/UpdateMVKOperator.modal'
+import { WithdrawCollateral } from 'pages/Loans/Components/Modals/WithdrawCollateral.modal'
 import { LiquidateVaultModal } from 'pages/Vaults/components/LiquidateVaultModal/LiquidateVaultModal.modal'
-import { ConfirmBorrowAsset } from './ConfirmBorrowAsset.modal'
-import { ConfirmRepay } from './ConfirmRepay.modal'
-import { ConfirmRepayFull } from './ConfirmRepayFull.modal'
-import { ChangeVaultName } from './ChangeVaultName.modal'
-import { ConfirmAddLendingAsset } from './ConfirmAddLendingAsset.modal'
-import { ConfirmRemoveAssetsFromLending } from './ConfirmRemoveAssetsFromLending.modal'
 
 export const loansPopupsContext = createContext<LoansPopupsContextStateType>(undefined!)
 
@@ -50,7 +50,7 @@ export const loansPopupsContext = createContext<LoansPopupsContextStateType>(und
  * @class
  * @augments {React.Component}
  */
-export default class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextStateType> {
+export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextStateType> {
   constructor(props: {}) {
     super(props)
 
@@ -496,7 +496,7 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
   }
 
   /**
-   * 
+   *
    * Render method of LoansPopupsProvider component.
    * @returns {object} A JSX element wrapping all popups and child components within the context provider.
    */
@@ -650,3 +650,15 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
     )
   }
 }
+
+export const useLoansPopupsContext = () => {
+  const context = useContext(loansPopupsContext)
+
+  if (!context) {
+    throw new Error('loansPopupsContext should be used withing LoansPopupsProvider provider')
+  }
+
+  return context
+}
+
+export default LoansPopupsProvider

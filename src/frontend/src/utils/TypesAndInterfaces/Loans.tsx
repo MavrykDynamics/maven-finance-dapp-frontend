@@ -74,6 +74,7 @@ export type LoanMarketType = {
 
   utilisationRate: number
   borrowers: number
+  suppliers: number
   borrowAPR: number
   lendingAPY: number
   collateralFactor: number

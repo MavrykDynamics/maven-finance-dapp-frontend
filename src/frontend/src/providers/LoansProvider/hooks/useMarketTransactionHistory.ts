@@ -27,6 +27,7 @@ const useMarketTransactionHistory = ({ marketTokenAddress }: LoansMarketTransact
     variables: {
       marketTokenAddress,
     },
+    shouldResubscribe: true,
     onData: ({ data: { data } }) => {
       if (!data) return
 

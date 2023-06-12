@@ -10,26 +10,6 @@ import { assetDecimalsToShow } from './Loans.const'
 export const isTezosAsset = (tokenName: string) =>
   tokenName.toLowerCase() === 'tez' || tokenName.toLowerCase() === 'tezos' || tokenName.toLowerCase() === 'xtz'
 
-// GET LENDING ITEM FOR MARKET
-export const getLendingItem = (
-  mTokenAddress: string | null,
-  userMTokens: UserState['userMTokens'],
-  accountPkh?: string,
-): LendingItemType => {
-  if (userMTokens && mTokenAddress && accountPkh) {
-    const mTokenAsset = userMTokens?.find(({ tokenAddress }) => tokenAddress === mTokenAddress)
-
-    if (mTokenAsset) {
-      return {
-        lendValue: mTokenAsset.balance,
-        interestEarned: mTokenAsset.rewards_earned,
-        mBalance: mTokenAsset.balance + mTokenAsset.rewards_earned,
-      }
-    }
-  }
-  return null
-}
-
 // HELPER FOR LENDING APY
 export const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): number => {
   const secondsPerYear = 60 * 60 * 24 * 365

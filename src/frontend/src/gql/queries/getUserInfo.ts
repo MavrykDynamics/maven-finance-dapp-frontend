@@ -15,22 +15,14 @@ query GetUserInfo ($_eq: String = "") {
 
     m_token_accounts {
       balance
-      id
-      m_token_id
       rewards_earned
       reward_index
-      user_id
       m_token {
         address
-        admin
-        governance_id
-        is_scaled_token
-        last_updated_at
         loan_token_name
         token_reward_index
       }
     }
-
 
     stakes_history_data(where: {type: {_in: ["0", "1", "2", "3", "4"]}}) {
       type

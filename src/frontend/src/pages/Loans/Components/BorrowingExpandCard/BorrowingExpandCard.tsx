@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
 import { State } from 'reducers'
@@ -18,7 +18,6 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 import { ThreeLevelListItem } from '../../Loans.style'
 import { LoansActionsSection, BorrowingExpandedCard } from '../LoansComponents.style'
-import { loansPopupsContext } from '../Modals/LoansModals.provider'
 
 import { scrollToFullView } from 'utils/scrollToFullView'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
@@ -39,6 +38,7 @@ import {
 } from 'utils/api/api-helpers/getTimestampByLevel'
 import { isAbortError } from 'errors/error'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -126,7 +126,7 @@ export const BorrowingExpandCard = ({
     updateMvkOperatorPopup,
     managePermissionsPopup,
     liquidateVaultPopup,
-  } = useContext(loansPopupsContext)
+  } = useLoansPopupsContext()
 
   const notHandleClickAway =
     changeVaultNamePopup.showModal ||

@@ -1,11 +1,9 @@
 import { useSelector } from 'react-redux'
-import { useContext } from 'react'
 
 import { State } from 'reducers'
 
 import { SECONDARY_TRANSACTION_HISTORY_STYLE } from '../Loans.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { loansPopupsContext } from './Modals/LoansModals.provider'
 
 import { LendingTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
 
@@ -16,6 +14,7 @@ import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
 import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 
 type LendingTabPropsType = {
   loanTokenAddress: TokenAddress
@@ -32,7 +31,7 @@ export const LendingTab = ({
   marketReserveAmount,
   marketAvailableLiquidity,
 }: LendingTabPropsType) => {
-  const { openAddLendingAssetPopup } = useContext(loansPopupsContext)
+  const { openAddLendingAssetPopup } = useLoansPopupsContext()
 
   const {
     accountPkh,
@@ -68,7 +67,7 @@ export const LendingTab = ({
                 openAddLendingAssetPopup({
                   mBalance: 0,
                   lendingAPY: lendAPY,
-                  ...assetData,
+                  tokenAddress: loanTokenAddress,
                 })
               }
             >

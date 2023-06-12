@@ -1,7 +1,11 @@
-import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { CollateralType, DepositorsFlagType, LoansAssetDataType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
-import LoansPopupsProvider from './LoansModals.provider'
+import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 
+import { InputStatusType } from 'app/App.components/Input/Input.constants'
+import { CollateralType, DepositorsFlagType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
+import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
+
+// TODO: move types to loansPopups.types.ts in LoansProvider/
+// TODO: move consts & helpers to loansPopups.utils | const.ts in LoansProvider/
 export type LoansPopupsInputStateType = { amount: string; validationStatus: InputStatusType }
 export type VaultNameInputStateType = { name: string; validationStatus: InputStatusType; errorMessage: string }
 export type LoansPopupsAddressInputStateType = { address: string; validationStatus: InputStatusType }
@@ -13,22 +17,11 @@ export const DEFAULT_LOANS_INPUT_VALUE: LoansPopupsInputStateType = {
 export const getOnBlurValue = (inputValue: string) => (inputValue === '' ? '0' : inputValue)
 export const getOnFocusValue = (inputValue: string) => (inputValue === '0' ? '' : inputValue)
 
-export type ConfirmAddLendingAssetDataType =
-  | (AddLendingAssetDataType & {
-      inputAmount: number
-    })
-  | null
-
-export type ConfirmRemoveLendingAssetDataType =
-  | (RemoveLendingAssetDataType & {
-      inputAmount: number
-    })
-  | null
-
+// Vaults actions popups data types
 export type ConfirmBorrowPopupDataType = {
   inputAmount: number
   vaultId: number
-  borrowedAsset: LoansVaultType['borrowedAsset']
+  tokenAddress: TokenAddress
   borrowCapacity: number
   currentCollateralBalance: number
   DAOFee: number
@@ -39,7 +32,7 @@ export type ConfirmBorrowPopupDataType = {
 export type ConfirmRepayPartPopupDataType = {
   vaultId: number
   vaultAddress: string
-  borrowedAsset: LoansVaultType['borrowedAsset']
+  tokenAddress: TokenAddress
   borrowedAmount: number
   currentCollateralBalance: number
   borrowCapacity: number
@@ -50,7 +43,7 @@ export type ConfirmRepayPartPopupDataType = {
 export type ConfirmRepayFullPopupDataType = {
   vaultId: number
   vaultAddress: string
-  borrowedAsset: LoansVaultType['borrowedAsset']
+  tokenAddress: TokenAddress
   feesAmount: number
   borrowedAmount: number
   currentCollateralBalance: number
@@ -66,53 +59,66 @@ export type CollateralPopupCommonDataType = {
   borrowedAssetRate: number
 }
 
-export type AddCollateralPopupDataType =
-  | (CollateralPopupCommonDataType & {
-      borrowCapacity: number
-      availableLiquidity: number
-    })
-  | null
+export type AddCollateralPopupDataType = {
+  vaultAddress: string
+  vaultCollateralBalance: number
+  selectedAsset?: LoansVaultType['collateralData'][number]
+  currentCollateralRatio: number
+  borrowedAmount: number
+  borrowedAssetRate: number
+  borrowCapacity: number
+  availableLiquidity: number
+} | null
 
-export type AddNewCollateralDataProps =
-  | (CollateralPopupCommonDataType & {
-      existingCollaterals: Array<CollateralType>
-      borrowCapacity: number
-      availableLiquidity: number
-    })
-  | null
+export type AddNewCollateralDataProps = {
+  vaultAddress: string
+  vaultCollateralBalance: number
+  selectedAsset?: LoansVaultType['collateralData'][number]
+  currentCollateralRatio: number
+  borrowedAmount: number
+  borrowedAssetRate: number
+  existingCollaterals: Array<CollateralType>
+  borrowCapacity: number
+  availableLiquidity: number
+} | null
 
-export type WithdrawCollateralPopupDataType =
-  | (CollateralPopupCommonDataType & {
-      currentCollateralBalance: number
-    })
-  | null
+export type WithdrawCollateralPopupDataType = {
+  vaultAddress: string
+  vaultCollateralBalance: number
+  selectedAsset?: LoansVaultType['collateralData'][number]
+  currentCollateralRatio: number
+  borrowedAmount: number
+  borrowedAssetRate: number
+  currentCollateralBalance: number
+} | null
 
-export type RepayCollateralPopupDataBaseType = {
+export type RepayPartPopupDataType = {
   vaultId: number
   vaultAddress: string
-  borrowedAsset: LoansVaultType['borrowedAsset']
+  tokenAddress: TokenAddress
   feesAmount: number
   borrowedAmount: number
   minimumRepay: number
   currentCollateralBalance: number
   borrowCapacity: number
-}
+  scrollToCurrentVault?: () => void
+} | null
 
-export type RepayPartPopupDataType =
-  | (RepayCollateralPopupDataBaseType & {
-      scrollToCurrentVault?: () => void
-    })
-  | null
-
-export type RepayFullPopupDataType =
-  | (RepayCollateralPopupDataBaseType & {
-      collateralRatio: number
-    })
-  | null
+export type RepayFullPopupDataType = {
+  vaultId: number
+  vaultAddress: string
+  tokenAddress: TokenAddress
+  feesAmount: number
+  borrowedAmount: number
+  minimumRepay: number
+  currentCollateralBalance: number
+  borrowCapacity: number
+  collateralRatio: number
+} | null
 
 export type BorrowPopupDataType = {
   vaultId: number
-  borrowedAsset: LoansVaultType['borrowedAsset']
+  tokenAddress: TokenAddress
   borrowCapacity: number
   collateralRatio: number
   borrowAPR: number
@@ -123,22 +129,37 @@ export type BorrowPopupDataType = {
   scrollToCurrentVault?: () => void
 } | null
 
-export type AddLendingAssetDataType =
-  | (LoansAssetDataType & {
-      lendingAPY: number
-      mBalance: number
-      address: string
-    })
-  | null
+// Liquidity popups data types
+export type AddLendingAssetDataType = {
+  tokenAddress: TokenAddress
+  lendingAPY: number
+  mBalance: number
+} | null
 
-export type RemoveLendingAssetDataType =
-  | (AddLendingAssetDataType & {
-      currentLendedAmount: number
-      reserveAmount: number
-      availableLiquidity: number
-    })
-  | null
+export type RemoveLendingAssetDataType = {
+  tokenAddress: TokenAddress
+  lendingAPY: number
+  mBalance: number
+  currentLendedAmount: number
+  reserveAmount: number
+  availableLiquidity: number
+} | null
 
+export type ConfirmAddLendingAssetDataType = {
+  tokenAddress: TokenAddress
+  lendingAPY: number
+  mBalance: number
+  inputAmount: number
+} | null
+
+export type ConfirmRemoveLendingAssetDataType = {
+  tokenAddress: TokenAddress
+  lendingAPY: number
+  mBalance: number
+  inputAmount: number
+} | null
+
+// Vaults manage popups data types
 export type ChangeBakerPopupDataType = {
   bakerAddress: string | null
   vaultAddress: string
@@ -150,12 +171,10 @@ export type ChangeVaultNamePopupDataType = {
 } | null
 
 export type CreateVaultPopupDataType = {
-  currentMarketAsset: string
+  tokenAddress: TokenAddress
   setCreatedVaultAddress?: (address: string) => void
   showShortFlow?: boolean
 } | null
-
-export type LiquidateVaultDataType = LoansVaultType | null
 
 export type ManagePermissionsPopupDataType = {
   vaultAddress: string
@@ -164,7 +183,7 @@ export type ManagePermissionsPopupDataType = {
 } | null
 export type UpdateOperatorsPopupDataType = {
   vaultAddress: string
-  tokenName: string
+  tokenAddress: TokenAddress
   operators: string[]
 } | null
 
@@ -172,6 +191,8 @@ export type ModalStateType<T = {}> = {
   showModal: boolean
   data: T
 }
+
+export type LiquidateVaultDataType = LoansVaultType | null
 
 export type LoansPopupsContextStateType = {
   confirmAddLendingAssetPopup: ModalStateType<ConfirmAddLendingAssetDataType>

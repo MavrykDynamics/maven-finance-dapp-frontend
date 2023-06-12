@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
 import { Link } from 'react-router-dom'
@@ -38,8 +38,6 @@ import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } f
 import { ThreeLevelListItem } from '../../Loans.style'
 import { BorrowingExpandedCard } from '../LoansComponents.style'
 
-import { loansPopupsContext } from '../Modals/LoansModals.provider'
-
 import { State } from 'reducers'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import { getCollateralRatioByPersentage, isTezosAsset } from '../../Loans.helpers'
@@ -52,6 +50,7 @@ import { getNumberInBounds } from 'utils/calcFunctions'
 import { isAbortError } from 'errors/error'
 import { api } from 'utils/api/api'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -122,7 +121,7 @@ export const OldBorrowingExpandCard = ({
     updateMvkOperatorPopup,
     managePermissionsPopup,
     liquidateVaultPopup,
-  } = useContext(loansPopupsContext)
+  } = useLoansPopupsContext()
 
   const notHandleClickAway =
     repayPartPopup.showModal ||

@@ -35,6 +35,7 @@ const useLoansCharts = ({
   const [chartsData, setChartsData] = useState<UseLoansChartsStateType>(DEFAULT_LOANS_CHARTS_STATE)
 
   const { loading } = useSubscription(GET_LOANS_HISTORY_DATA, {
+    shouldResubscribe: true,
     onData: ({ data: { data } }) => {
       if (!data) return
 

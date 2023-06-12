@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
@@ -18,10 +18,10 @@ import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 
 type TokenTypes = 'XTZ' | 'EURL' | 'USDT'
 
@@ -90,7 +90,7 @@ export const LoansBorrow = () => {
     [accountPkh, allVaultsIds, vaultsMapper],
   )
 
-  const { openBorrowPopup, openCreateVaultPopup } = useContext(loansPopupsContext)
+  const { openBorrowPopup, openCreateVaultPopup } = useLoansPopupsContext()
 
   const markets: MarketType[] = useMemo(
     () =>

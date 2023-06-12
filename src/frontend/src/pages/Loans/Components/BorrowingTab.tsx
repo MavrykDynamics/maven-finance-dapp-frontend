@@ -1,11 +1,11 @@
 import { useEffect, useMemo } from 'react'
 import { useHistory, useParams } from 'react-router'
 import { useSelector } from 'react-redux'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { loansPopupsContext } from './Modals/LoansModals.provider'
 import { State } from 'reducers'
+import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { BorrowingExpandCard } from './BorrowingExpandCard/BorrowingExpandCard'
@@ -14,8 +14,8 @@ import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { BorrowingTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
-import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 
 type BorrowingTabPropsType = {
   loanTokenAddress: TokenAddress
@@ -25,7 +25,7 @@ export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {
   const history = useHistory()
   const { cardId = null } = useParams<{ cardId: string }>()
 
-  const { openCreateVaultPopup } = useContext(loansPopupsContext)
+  const { openCreateVaultPopup } = useLoansPopupsContext()
   const { tokensMetadata } = useTokensContext()
 
   const { symbol } = tokensMetadata[loanTokenAddress]
@@ -70,7 +70,7 @@ export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {
               text="New Vault"
               icon="plus"
               disabled={!Boolean(accountPkh) || isActionActive}
-              onClick={() => openCreateVaultPopup({ loanTokenAddress, setCreatedVaultAddress })}
+              onClick={() => openCreateVaultPopup({ tokenAddress: loanTokenAddress, setCreatedVaultAddress })}
               kind={ACTION_PRIMARY}
               className="lending-tab-no-items-btn has-items-borrow-btn"
             />
@@ -108,7 +108,7 @@ export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {
             icon="plus"
             kind={ACTION_PRIMARY}
             disabled={!Boolean(accountPkh)}
-            onClick={() => openCreateVaultPopup({ loanTokenAddress, setCreatedVaultAddress })}
+            onClick={() => openCreateVaultPopup({ tokenAddress: loanTokenAddress, setCreatedVaultAddress })}
             className="lending-tab-no-items-btn"
           />
         </NoItemsInTabStyled>
