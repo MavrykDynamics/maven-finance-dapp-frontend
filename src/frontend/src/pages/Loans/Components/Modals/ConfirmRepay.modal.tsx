@@ -3,7 +3,7 @@ import { useLockBodyScroll } from 'react-use'
 import { useMemo } from 'react'
 
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { ConfirmRepayPartPopupDataType } from './Modals.helpers'
+import { ConfirmRepayPartPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
 

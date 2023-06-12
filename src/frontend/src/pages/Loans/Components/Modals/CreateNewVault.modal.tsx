@@ -85,11 +85,13 @@ export const CreateNewVault = ({
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<DDItemId, DropDownCollateralAssetType>>({})
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
-  const [vaultName, setVaultName] = useState<VaultNameInputStateType>({
-    name: '',
-    validationStatus: '',
-    errorMessage: '',
-  })
+  const [vaultName, setVaultName] = useState<{ name: string; validationStatus: InputStatusType; errorMessage: string }>(
+    {
+      name: '',
+      validationStatus: '',
+      errorMessage: '',
+    },
+  )
   const [isVaultCreating, setVaultCreating] = useState(false)
   const [newVaultAddress, setNewVaultAddress] = useState('')
 

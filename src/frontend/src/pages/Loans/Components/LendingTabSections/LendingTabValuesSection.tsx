@@ -10,13 +10,13 @@ import { LendingItemType } from 'utils/TypesAndInterfaces/Loans'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { EARN_APY, INTEREST_EARNED, M_TOKEN_BALANCE, SUPPLIED_AMOUNT } from 'texts/tooltips/loan.text'
-import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 type Props = {
   lendingItem: LendingItemType
   lendAPY: number
-  loanTokenAddress: TokenAddress
+  loanTokenAddress: TokenAddressType
 }
 
 export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY }: Props) => {

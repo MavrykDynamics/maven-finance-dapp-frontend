@@ -6,7 +6,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
-import { ConfirmAddLendingAssetDataType } from './Modals.helpers'
+import { ConfirmAddLendingAssetDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { depositLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
 

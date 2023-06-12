@@ -13,7 +13,9 @@ import { calcDiffBetweenTwoNumbersInPersentage, convertNumberForClient } from 'u
 
 // TODO: use useSubscriptions
 const useLendBorrow24hDiff = (): {
+  last24hLendingVol: number
   lending24hPersentChange: number
+  last24hBorrowingVol: number
   borrowing24hPersentChange: number
   isLoading: boolean
 } => {
@@ -54,7 +56,7 @@ const useLendBorrow24hDiff = (): {
       currentTimestamp: dayjs().toISOString(),
     },
     onCompleted: (data) => {
-      const last24hLending = data.lending_controller[0].history_data.reduce((acc, operation) => {
+      const last24hBorrowing = data.lending_controller[0].history_data.reduce((acc, operation) => {
         const tokenAddress = operation.loan_token?.token.token_address
 
         if (!tokenAddress) return acc
@@ -67,7 +69,7 @@ const useLendBorrow24hDiff = (): {
           rate *
           ([3, 5, 7].includes(operation.type) ? -1 : 1))
       }, 0)
-      setLast24hBorrowing(last24hLending)
+      setLast24hBorrowing(last24hBorrowing)
     },
     onError: (error) => {
       console.error('BORROWING_24H_OPERATIONS_QUERY error: ', { error })
@@ -111,12 +113,14 @@ const useLendBorrow24hDiff = (): {
   )
   const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(
     currentTotalLended,
-    currentTotalLended - last24hBorrowing,
+    currentTotalLended - last24hLending,
   )
 
   return {
     lending24hPersentChange,
     borrowing24hPersentChange,
+    last24hBorrowingVol: currentTotalBorrowed - (currentTotalBorrowed - last24hBorrowing),
+    last24hLendingVol: currentTotalLended - (currentTotalLended - last24hLending),
     isLoading: isTotalLoading || isLending24hLoading || isBorrowing24hLoading,
   }
 }

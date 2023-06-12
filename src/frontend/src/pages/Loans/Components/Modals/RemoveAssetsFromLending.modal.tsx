@@ -9,14 +9,18 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  INPUT_LARGE,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+  getOnBlurValue,
+  getOnFocusValue,
+} from 'app/App.components/Input/Input.constants'
 import { silverColor } from 'styles'
 import {
   DEFAULT_LOANS_INPUT_VALUE,
-  getOnBlurValue,
-  getOnFocusValue,
   RemoveLendingAssetDataType,
-} from './Modals.helpers'
+} from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 

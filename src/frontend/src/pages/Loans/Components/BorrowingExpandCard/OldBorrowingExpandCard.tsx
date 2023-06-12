@@ -1,17 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
 import { Link } from 'react-router-dom'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import {
-  ANY_USER,
-  COLLATERAL_RATIO_GRADIENT,
-  getCollateralRationPersent,
-  getStatusByCollateralRatio,
-  NONE_USER,
-  WHITELIST_USERS,
-} from '../../Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent, getStatusByCollateralRatio } from '../../Loans.const'
 import {
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
@@ -40,17 +33,20 @@ import { BorrowingExpandedCard } from '../LoansComponents.style'
 
 import { State } from 'reducers'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
-import { getCollateralRatioByPersentage, isTezosAsset } from '../../Loans.helpers'
+import { getCollateralRatioByPersentage } from '../../Loans.helpers'
 import {
   getTimestampByLevelHeaders,
   getTimestampByLevelSchema,
   getTimestampByLevelUrl,
 } from 'utils/api/api-helpers/getTimestampByLevel'
-import { getNumberInBounds } from 'utils/calcFunctions'
+import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
 import { isAbortError } from 'errors/error'
 import { api } from 'utils/api/api'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getVaultCollateralBalance } from 'pages/Vaults/Vaults.helpers'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -62,37 +58,34 @@ type BorrowingExpandCardPropsType = LoansVaultType & {
   DAOFee: number
 }
 
-export const OldBorrowingExpandCard = ({
-  isOwner = false,
-  borrowedAsset,
-  collateralData,
-  xtzDelegatedTo,
-  sMVKDelegatedTo,
-  vaultId,
-  name,
-  depositors,
-  deporsitorsFlag,
-  headerSufix,
-  className,
-  address,
-  children,
-  status,
-  levelOfEarly,
-  levelOfLate,
-  isOpenedVault,
-  fee,
-  apr,
-  collateralBalance,
-  borrowedAmount,
-  collateralRatio,
-  borrowCapacity,
-  availableLiquidity,
-  minimumRepay,
-  DAOFee,
-}: BorrowingExpandCardPropsType) => {
-  const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
+export const OldBorrowingExpandCard = (vault: BorrowingExpandCardPropsType) => {
+  const {
+    isOwner = false,
+    borrowedTokenAddress,
+    collateralData,
+    xtzDelegatedTo,
+    sMVKDelegatedTo,
+    name,
+    headerSufix,
+    address,
+    children,
+    status,
+    levelOfEarly,
+    levelOfLate,
+    isOpenedVault,
+    fee,
+    apr,
+    borrowedAmount,
+    collateralRatio,
+    DAOFee,
+  } = vault
 
-  const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
+  const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
+  const { symbol, decimals, icon } = tokensMetadata[borrowedTokenAddress]
+  const rate = tokensPrices[symbol]
+
+  const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
+
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { mvkTokenOperators } = useSelector((state: State) => state.loans)
@@ -106,7 +99,6 @@ export const OldBorrowingExpandCard = ({
     openAddExistingCollateralPopup,
     openAddNewCollateralPopup,
     openBorrowPopup,
-    openManagePermissionsPopup,
     openRepayFullPopup,
     openRepayPopup,
     openUpdateMvkOperatorsPopup,
@@ -152,9 +144,9 @@ export const OldBorrowingExpandCard = ({
   }
 
   const vaultStatus = status ?? getStatusByCollateralRatio(collateralRatio)
-  const vaultHasXtzCollateral = collateralData.find(({ gqlName }) => isTezosAsset(gqlName))
-  // TODO: test it when sMVK will be avaliable as collateral
-  const vaultHasSmvkCollateral = collateralData.find(({ gqlName }) => gqlName === 'smvk')
+  const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
+  // TODO: find a method to check whether it's smvk collateral
+  const vaultHasSmvkCollateral = false //collateralData.find(({ gqlName }) => gqlName === 'smvk')
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
@@ -219,7 +211,7 @@ export const OldBorrowingExpandCard = ({
             <ThreeLevelListItem className="borrow-asset-header">
               <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
               <div className="data">
-                <div className="value">{name ? name : borrowedAsset.symbol}</div>
+                <div className="value">{name ? name : symbol}</div>
                 <div className="value">
                   <TzAddress tzAddress={address} shouldCopy hasIcon amountFromStart={4} amountFromEnd={4} />
                 </div>
@@ -240,19 +232,14 @@ export const OldBorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
-              <CommaNumber
-                value={borrowedAmount + fee}
-                className="value"
-                showDecimal
-                decimalsToShow={borrowedAsset.decimals}
-              />
+              <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={decimals} />
               {rate ? (
                 <CommaNumber
                   value={(borrowedAmount + fee) * rate}
                   beginningText="$"
                   className="rate"
                   showDecimal
-                  decimalsToShow={borrowedAsset.decimals}
+                  decimalsToShow={decimals}
                 />
               ) : null}
             </ThreeLevelListItem>
@@ -283,12 +270,12 @@ export const OldBorrowingExpandCard = ({
                 <div className="name">Asset</div>
                 <div className="value">
                   <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
-                  {borrowedAsset.symbol}
+                  {symbol}
                 </div>
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Principal</div>
-                <CommaNumber value={borrowedAmount} decimalsToShow={borrowedAsset.decimals} className="value" />
+                <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
                 {rate ? (
                   <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
                 ) : null}
@@ -302,7 +289,7 @@ export const OldBorrowingExpandCard = ({
                     defaultStrokeColor={colors[themeSelected].textColor}
                   />
                 </div>
-                <CommaNumber value={fee} decimalsToShow={borrowedAsset.decimals} className="value" />
+                <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
                 {rate ? <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" /> : null}
               </ThreeLevelListItem>
               <ThreeLevelListItem>
@@ -314,14 +301,7 @@ export const OldBorrowingExpandCard = ({
                   <Button
                     onClick={() =>
                       openBorrowPopup?.({
-                        vaultId,
-                        borrowedAsset: borrowedAsset,
-                        collateralRatio,
-                        borrowAPR: apr,
-                        currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                        hasUserBorrowed: Boolean(borrowedAmount),
-                        borrowCapacity,
-                        currentBorrowedAmount: borrowedAmount,
+                        vault,
                         DAOFee,
                         scrollToCurrentVault,
                       })
@@ -335,14 +315,7 @@ export const OldBorrowingExpandCard = ({
                   <Button
                     onClick={() =>
                       openRepayPopup?.({
-                        vaultId,
-                        vaultAddress: address,
-                        borrowedAsset: borrowedAsset,
-                        borrowedAmount,
-                        feesAmount: fee,
-                        minimumRepay,
-                        currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                        borrowCapacity,
+                        vault,
                         scrollToCurrentVault,
                       })
                     }
@@ -373,23 +346,42 @@ export const OldBorrowingExpandCard = ({
                   ) : null}
 
                   <TableBody>
-                    {collateralData.map(({ icon, amount, rate, gqlName, symbol }, idx) => {
+                    {collateralData.map(({ tokenAddress, amount }, idx) => {
                       const isTotalRow = collateralData.length - 1 === idx
-
-                      const collateralShare = isTotalRow
-                        ? 100
-                        : getNumberInBounds(0, 100, calculateCollateralShare(amount * rate, collateralTotalBalance))
 
                       if (isTotalRow && collateralData.length < 3) return null
 
+                      const {
+                        symbol: collateralSymbol,
+                        decimals: collateralDecimals,
+                        icon: collateralIcon,
+                      } = tokensMetadata[tokenAddress]
+                      const collateralRate = tokensPrices[symbol]
+
+                      const convertedCollalteralAmount = convertNumberForClient({
+                        number: amount,
+                        grade: collateralDecimals,
+                      })
+
+                      const collateralShare = isTotalRow
+                        ? 100
+                        : getNumberInBounds(
+                            0,
+                            100,
+                            calculateCollateralShare(
+                              convertedCollalteralAmount * collateralRate,
+                              collateralTotalBalance,
+                            ),
+                          )
+
                       return (
-                        <TableRow rowHeight={65} key={gqlName + '-' + idx}>
+                        <TableRow rowHeight={65} key={collateralSymbol}>
                           <TableCell width={'22%'} className="vert-middle">
                             {isTotalRow ? (
                               'Total'
                             ) : (
                               <div className="cell-content row with-icon">
-                                <ImageWithPlug imageLink={icon} alt={`${gqlName} icon`} />
+                                <ImageWithPlug imageLink={collateralIcon} alt={`${collateralSymbol} icon`} />
                                 {symbol}
                               </div>
                             )}
@@ -398,14 +390,19 @@ export const OldBorrowingExpandCard = ({
                           <TableCell width={'22%'}>
                             <div className="cell-content">
                               <CommaNumber
-                                value={amount}
+                                value={convertedCollalteralAmount}
                                 className="value"
                                 showDecimal
                                 decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
                                 beginningText={isTotalRow ? '$' : ''}
                               />
                               {rate ? (
-                                <CommaNumber value={amount * rate} className="rate" beginningText="$" showDecimal />
+                                <CommaNumber
+                                  value={convertedCollalteralAmount * collateralRate}
+                                  className="rate"
+                                  beginningText="$"
+                                  showDecimal
+                                />
                               ) : null}
                             </div>
                           </TableCell>
@@ -421,21 +418,14 @@ export const OldBorrowingExpandCard = ({
                                   <Button
                                     onClick={() =>
                                       openAddNewCollateralPopup?.({
-                                        vaultAddress: address,
-                                        vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                                        currentCollateralRatio: collateralRatio,
-                                        borrowedAmount,
-                                        existingCollaterals: collateralData,
-                                        borrowedAssetRate: borrowedAsset.rate,
-                                        borrowCapacity,
-                                        availableLiquidity,
+                                        vault,
                                       })
                                     }
                                     kind={BUTTON_PRIMARY}
                                     form={BUTTON_WIDE}
                                     disabled={
-                                      avaliableCollaterals.length === 0 ||
-                                      avaliableCollaterals.length === collateralData.length - 1 ||
+                                      collateralTokens.length === 0 ||
+                                      collateralTokens.length === collateralData.length - 1 ||
                                       isActionActive
                                     }
                                   >
@@ -450,14 +440,8 @@ export const OldBorrowingExpandCard = ({
                                 <Button
                                   onClick={() =>
                                     openAddExistingCollateralPopup?.({
-                                      vaultAddress: address,
-                                      vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                                      selectedAsset: collateralData[idx],
-                                      currentCollateralRatio: collateralRatio,
-                                      borrowedAmount,
-                                      borrowedAssetRate: borrowedAsset.rate,
-                                      borrowCapacity,
-                                      availableLiquidity,
+                                      vault,
+                                      collateralTokenAddress: collateralData[idx].tokenAddress,
                                     })
                                   }
                                   form={BUTTON_WIDE}
@@ -470,13 +454,8 @@ export const OldBorrowingExpandCard = ({
                                   <Button
                                     onClick={() =>
                                       openWithdrawCollateralPopup?.({
-                                        vaultAddress: address,
-                                        currentCollateralBalance: amount,
-                                        vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                                        selectedAsset: collateralData[idx],
-                                        currentCollateralRatio: collateralRatio,
-                                        borrowedAmount,
-                                        borrowedAssetRate: borrowedAsset.rate,
+                                        vault,
+                                        collateralTokenAddress: collateralData[idx].tokenAddress,
                                       })
                                     }
                                     form={BUTTON_WIDE}
@@ -499,22 +478,15 @@ export const OldBorrowingExpandCard = ({
                     <Button
                       onClick={() =>
                         openAddNewCollateralPopup?.({
-                          vaultAddress: address,
-                          vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                          currentCollateralRatio: collateralRatio,
-                          borrowedAmount,
-                          existingCollaterals: collateralData,
-                          borrowedAssetRate: borrowedAsset.rate,
-                          availableLiquidity,
-                          borrowCapacity,
+                          vault,
                         })
                       }
                       kind={BUTTON_PRIMARY}
                       form={BUTTON_WIDE}
                       isThin
                       disabled={
-                        avaliableCollaterals.length === 0 ||
-                        avaliableCollaterals.length === collateralData.length - 1 ||
+                        collateralTokens.length === 0 ||
+                        collateralTokens.length === collateralData.length - 1 ||
                         isActionActive
                       }
                     >
@@ -539,7 +511,7 @@ export const OldBorrowingExpandCard = ({
                     </div>
                     <Button
                       kind={BUTTON_SIMPLE}
-                      disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName)) || isActionActive}
+                      disabled={!vaultHasXtzCollateral || isActionActive}
                       onClick={() =>
                         openChangeBakerPopup?.({
                           bakerAddress: xtzDelegatedTo,
@@ -626,7 +598,8 @@ export const OldBorrowingExpandCard = ({
                       onClick={() =>
                         openUpdateMvkOperatorsPopup?.({
                           vaultAddress: address,
-                          tokenName: gqlName,
+                          // TODO: add address here
+                          tokenAddress: '',
                           operators: mvkTokenOperators,
                         })
                       }
@@ -643,15 +616,7 @@ export const OldBorrowingExpandCard = ({
                     kind={BUTTON_SECONDARY}
                     onClick={() =>
                       openRepayFullPopup?.({
-                        vaultId,
-                        vaultAddress: address,
-                        borrowedAsset: borrowedAsset,
-                        collateralRatio,
-                        borrowedAmount,
-                        feesAmount: fee,
-                        minimumRepay,
-                        currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                        borrowCapacity,
+                        vault,
                       })
                     }
                   >

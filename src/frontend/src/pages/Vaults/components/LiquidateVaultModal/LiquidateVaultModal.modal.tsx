@@ -19,7 +19,7 @@ import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from 'app/App.components/Inp
 import { calculateAdminLiquidationFee, calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 
 // types
-import { LiquidateVaultDataType } from 'pages/Loans/Components/Modals/Modals.helpers'
+import { LiquidateVaultDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 

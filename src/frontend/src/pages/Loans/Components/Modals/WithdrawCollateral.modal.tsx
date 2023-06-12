@@ -2,16 +2,20 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  INPUT_LARGE,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+  getOnBlurValue,
+  getOnFocusValue,
+} from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import {
   DEFAULT_LOANS_INPUT_VALUE,
-  getOnBlurValue,
-  getOnFocusValue,
   WithdrawCollateralPopupDataType,
-} from './Modals.helpers'
+} from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { withdrawCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 
 import { Input } from 'app/App.components/Input/NewInput'
@@ -30,13 +34,14 @@ import {
   getCollateralRatioByPersentage,
   getLoansInputMaxAmount,
   getMaxCollateralWithdraw,
-  isTezosAsset,
   loansInputValidation,
 } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
 import { checkNan } from 'utils/checkNan'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { checkWhetherTokenIsCollateralToken } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -49,7 +54,7 @@ export const WithdrawCollateral = ({
   data: WithdrawCollateralPopupDataType
 }) => {
   const {
-    selectedAsset,
+    tokenAddress = '',
     borrowedAssetRate = 0,
     currentCollateralBalance = 0,
     vaultCollateralBalance = 0,
@@ -58,69 +63,52 @@ export const WithdrawCollateral = ({
     borrowedAmount = 0,
   } = data ?? {}
 
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const { userTokens } = useSelector((state: State) => state.wallet.user)
 
-  const balanceSymbol = isTezosAsset(selectedAsset?.gqlName ?? '') ? 'tezos' : selectedAsset?.symbol.toLowerCase() ?? ''
-  const collateralBalance = userTokens[balanceSymbol]?.balance ?? 0
+  // TODO: use users balance
+  const collateralBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
-  const [isActionPerforming, setIsActionPerforming] = useState(false)
-
-  const collateralData = useMemo(
-    () => avaliableCollaterals.find(({ gqlName }) => selectedAsset?.gqlName === gqlName),
-    [avaliableCollaterals, selectedAsset],
-  )
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
-  const collateralRate = Number(selectedAsset?.rate)
-  const { futureCollateralRatio, futureCollateralWithdraw, futureVaultCollateralBalance, currentCollateralToWithdraw } =
-    useMemo(() => {
-      const futureCollateralRatio = selectedAsset
-        ? calcCollateralRatio(vaultCollateralBalance - inputAmount * collateralRate, borrowedAmount, borrowedAssetRate)
-        : 0
-
-      const currentCollateralToWithdraw = getMaxCollateralWithdraw(
-        currentCollateralBalance,
-        vaultCollateralBalance,
-        borrowedAmount,
-        borrowedAssetRate,
-        collateralRate,
-      )
-
-      const futureCollateralWithdraw = currentCollateralToWithdraw - inputAmount
-      const futureVaultCollateralBalance = vaultCollateralBalance - inputAmount * collateralRate
-
-      return {
-        futureCollateralRatio,
-        futureCollateralWithdraw,
-        futureVaultCollateralBalance,
-        currentCollateralToWithdraw,
-      }
-    }, [
-      selectedAsset,
-      vaultCollateralBalance,
-      inputAmount,
-      borrowedAmount,
-      borrowedAssetRate,
-      currentCollateralBalance,
-      collateralRate,
-    ])
-
-  const isActionBtnDisabled = useMemo(
-    () => isActionPerforming || inputData.validationStatus !== INPUT_STATUS_SUCCESS || futureCollateralRatio <= 200,
-    [isActionPerforming, inputData.validationStatus, futureCollateralRatio],
-  )
 
   useEffect(() => {
     if (!show) {
       setInputData(DEFAULT_LOANS_INPUT_VALUE)
-      setIsActionPerforming(false)
     }
   }, [show])
+
+  const collateralData = tokensMetadata[tokenAddress]
+
+  if (!data || !checkWhetherTokenIsCollateralToken(collateralData)) return null
+
+  const collateralRate = tokensPrices[collateralData.symbol]
+
+  const futureCollateralRatio = calcCollateralRatio(
+    vaultCollateralBalance - inputAmount * collateralRate,
+    borrowedAmount,
+    borrowedAssetRate,
+  )
+
+  const currentCollateralToWithdraw = getMaxCollateralWithdraw(
+    currentCollateralBalance,
+    vaultCollateralBalance,
+    borrowedAmount,
+    borrowedAssetRate,
+    collateralRate,
+  )
+
+  const futureCollateralWithdraw = currentCollateralToWithdraw - inputAmount
+  const futureVaultCollateralBalance = vaultCollateralBalance - inputAmount * collateralRate
+
+  const isActionBtnDisabled =
+    isActionActive || inputData.validationStatus !== INPUT_STATUS_SUCCESS || futureCollateralRatio <= 200
 
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
     const validationStatus = loansInputValidation({
@@ -152,19 +140,9 @@ export const WithdrawCollateral = ({
     })
   }
 
-  const withdrawHandler = async () => {
-    if (vaultAddress && collateralData?.gqlName) {
-      setIsActionPerforming(true)
-      await dispatch(
-        withdrawCollateralAction(
-          Number(inputData.amount),
-          collateralData.gqlName,
-          vaultAddress,
-          collateralData.decimals,
-          closePopup,
-        ),
-      )
-      setIsActionPerforming(false)
+  const withdrawHandler = () => {
+    if (vaultAddress) {
+      dispatch(withdrawCollateralAction(Number(inputData.amount), collateralData, vaultAddress, closePopup))
     }
   }
 
@@ -214,7 +192,7 @@ export const WithdrawCollateral = ({
           <hr />
           {collateralData ? (
             <Input
-              className={`${collateralData?.rate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
+              className={`${collateralRate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
               inputProps={{
                 value: inputData.amount,
                 type: 'number',

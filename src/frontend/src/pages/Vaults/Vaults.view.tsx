@@ -33,6 +33,7 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 // actions
 import { markForLiquidation } from './Vaults.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 const pathname = '/vaults'
 
@@ -46,6 +47,8 @@ export const VaultsView = () => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()
+
+  const { tokensMetadata } = useTokensContext()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
@@ -66,7 +69,7 @@ export const VaultsView = () => {
   )
   const [tabsList, setTabsList] = useState<TabItem[]>([])
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
-  const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
+  const assets = useMemo(() => getVaultAssets(vaultsMapper, tokensMetadata), [vaultsMapper, tokensMetadata])
 
   const currentListName =
     tabId === vaultTabs.ALL

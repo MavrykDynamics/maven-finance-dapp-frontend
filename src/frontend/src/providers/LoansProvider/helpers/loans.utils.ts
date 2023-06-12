@@ -32,7 +32,7 @@ export const getDescrByType = (type: number) => {
   }
 }
 
-//
+// get lending item for user
 export const getMarketUserLengingItem = (userMTokens: Array<MTokenType>, loanMtokenAddress: string) => {
   const mTokenAsset = userMTokens?.find(({ tokenAddress }) => tokenAddress === loanMtokenAddress)
 

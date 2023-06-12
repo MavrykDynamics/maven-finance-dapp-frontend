@@ -12,13 +12,13 @@ import { LendingTabValuesSection } from './LendingTabSections/LendingTabValuesSe
 import { LendingTabActionsSection } from './LendingTabSections/LendingTabActionsSection'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 
 type LendingTabPropsType = {
-  loanTokenAddress: TokenAddress
-  loanMtokenAddress: TokenAddress
+  loanTokenAddress: TokenAddressType
+  loanMtokenAddress: TokenAddressType
   lendAPY: number
   marketAvailableLiquidity: number
   marketReserveAmount: number

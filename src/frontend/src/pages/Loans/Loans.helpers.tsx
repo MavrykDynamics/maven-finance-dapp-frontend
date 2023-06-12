@@ -1,14 +1,7 @@
-import { UserState } from 'reducers/wallet'
-import { LendingItemType } from 'utils/TypesAndInterfaces/Loans'
-
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 import { convertNumberForClient, convertNumberForContractCall, getNumberInBounds } from '../../utils/calcFunctions'
 import { assetDecimalsToShow } from './Loans.const'
-
-// GET ASSET METADATA
-export const isTezosAsset = (tokenName: string) =>
-  tokenName.toLowerCase() === 'tez' || tokenName.toLowerCase() === 'tezos' || tokenName.toLowerCase() === 'xtz'
 
 // HELPER FOR LENDING APY
 export const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): number => {

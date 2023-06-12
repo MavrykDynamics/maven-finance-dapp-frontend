@@ -22,8 +22,10 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
-
-type TokenTypes = 'XTZ' | 'EURL' | 'USDT'
+import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -39,6 +41,8 @@ export const LoansBorrow = () => {
   const dispatch = useDispatch()
   const history = useHistory()
 
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const {
@@ -46,24 +50,59 @@ export const LoansBorrow = () => {
     loanTokens,
     config: { DAOFee },
     vaults: { allVaultsIds, myVaultsIds, vaultsMapper },
-    chartsData: { collateralChartData, borrowingChartData },
   } = useSelector((state: State) => state.loans)
+
+  const {
+    isLoading: isChartsLoading,
+    chartsData: { totalBorrowingChart, totalCollateralChart, marketCollateralChart },
+  } = useLoansCharts({
+    calcTotalBorrowingChart: true,
+    calcTotalCollateralChart: true,
+    calcMarketCollateralChart: true,
+  })
 
   const [newVaultAddress, setNewVaultAddress] = useState('')
 
   const { totalCollaterals, totalBorrowed, tokenTotals } = useMemo(
     () =>
-      allVaultsIds.reduce(
+      allVaultsIds.reduce<{
+        totalCollaterals: 0
+        totalBorrowed: 0
+        tokenTotals: Record<
+          TokenAddressType,
+          {
+            userTotalBorrowed: number
+            userTotalCollateral: number
+          }
+        >
+      }>(
         (acc, vaultId) => {
-          const vault = vaultsMapper[vaultId]
-          const token = vault.borrowedAsset.symbol as TokenTypes
+          const { ownerId, borrowedTokenAddress, borrowedAmount, collateralData } = vaultsMapper[vaultId]
 
-          acc.totalCollaterals += vault.collateralBalance
-          acc.totalBorrowed += vault.borrowedAmount * vault.borrowedAsset.rate
+          const { symbol: borrowedAssetSymbol, decimals: borrowedAssetDecimals } = tokensMetadata[borrowedTokenAddress]
+          const borrowedAssetRate = tokensPrices[borrowedAssetSymbol]
 
-          if (vault.ownerId === accountPkh) {
-            acc.tokenTotals[token].userTotalBorrowed += vault.borrowedAmount * vault.borrowedAsset.rate
-            acc.tokenTotals[token].userTotalCollateral += vault.collateralBalance
+          const vaultBorrowedInUsd =
+            convertNumberForClient({ number: borrowedAmount, grade: borrowedAssetDecimals }) * borrowedAssetRate
+          const vaultCollateralInUsd = collateralData.reduce((acc, { amount, tokenAddress }) => {
+            const { symbol: collateralAssetSymbol, decimals: collateralAssetDecimals } = tokensMetadata[tokenAddress]
+            const collateralRate = tokensPrices[collateralAssetSymbol]
+            return (acc += convertNumberForClient({ number: amount, grade: collateralAssetDecimals }) * collateralRate)
+          }, 0)
+
+          acc.totalCollaterals += vaultCollateralInUsd
+          acc.totalBorrowed += vaultBorrowedInUsd
+
+          if (ownerId === accountPkh) {
+            if (!acc.tokenTotals[borrowedTokenAddress]) {
+              acc.tokenTotals[borrowedTokenAddress] = {
+                userTotalBorrowed: vaultBorrowedInUsd,
+                userTotalCollateral: vaultCollateralInUsd,
+              }
+            } else {
+              acc.tokenTotals[borrowedTokenAddress].userTotalBorrowed += vaultBorrowedInUsd
+              acc.tokenTotals[borrowedTokenAddress].userTotalCollateral += vaultCollateralInUsd
+            }
           }
 
           return acc
@@ -71,54 +110,47 @@ export const LoansBorrow = () => {
         {
           totalCollaterals: 0,
           totalBorrowed: 0,
-          tokenTotals: {
-            XTZ: {
-              userTotalBorrowed: 0,
-              userTotalCollateral: 0,
-            },
-            EURL: {
-              userTotalBorrowed: 0,
-              userTotalCollateral: 0,
-            },
-            USDT: {
-              userTotalBorrowed: 0,
-              userTotalCollateral: 0,
-            },
-          },
+          tokenTotals: {},
         },
       ),
-    [accountPkh, allVaultsIds, vaultsMapper],
+    [accountPkh, allVaultsIds, tokensMetadata, tokensPrices, vaultsMapper],
   )
 
   const { openBorrowPopup, openCreateVaultPopup } = useLoansPopupsContext()
 
   const markets: MarketType[] = useMemo(
     () =>
-      loanTokens.map((item) => ({
-        icon: item.loanTokenData.icon,
-        symbol: item.loanTokenData.symbol,
-        annualRate: item.borrowAPR,
-        annualRateName: 'APR',
-        leftValue: tokenTotals[item.loanTokenData.symbol as TokenTypes].userTotalBorrowed ?? 0,
-        rightValue: tokenTotals[item.loanTokenData.symbol as TokenTypes].userTotalCollateral ?? 0,
-        totalAmount: item.totalBorrowed,
-        price: item.loanTokenData.rate,
-        chartData: item.marketCollateralChartData,
-      })),
-    [loanTokens, tokenTotals],
+      loanTokens.map((item) => {
+        const chartData = marketCollateralChart[item.loanTokenAddress] ?? []
+        const { symbol, icon } = tokensMetadata[item.loanTokenAddress]
+        const price = tokensPrices[symbol]
+
+        return {
+          icon,
+          symbol,
+          annualRate: item.borrowAPR,
+          annualRateName: 'APR',
+          leftValue: tokenTotals[item.loanTokenAddress].userTotalBorrowed ?? 0,
+          rightValue: tokenTotals[item.loanTokenAddress].userTotalCollateral ?? 0,
+          totalAmount: item.totalBorrowed,
+          price,
+          chartData,
+        }
+      }),
+    [loanTokens, marketCollateralChart, tokenTotals, tokensMetadata, tokensPrices],
   )
 
-  const handleBorrow = (marketSymbol: string) => {
+  const handleBorrow = (marketTokenAddress: string) => {
     const validVaultId = myVaultsIds.find((vaultId) => {
       const vault = vaultsMapper[vaultId]
-      return marketSymbol === vault.borrowedAsset.symbol
+      return marketTokenAddress === vault.borrowedTokenAddress
     })
 
     // create vault if user does not have vaults
     if (!validVaultId) {
       openCreateVaultPopup?.({
         showShortFlow: true,
-        currentMarketAsset: marketSymbol === 'XTZ' ? 'tez' : marketSymbol.toLowerCase(),
+        tokenAddress: marketTokenAddress,
         setCreatedVaultAddress: (address: string) => {
           if (!address) return
           setNewVaultAddress(address)
@@ -129,7 +161,7 @@ export const LoansBorrow = () => {
     }
 
     //  if the user has already borrowed to the specific asset pool we will route to asset market
-    history.push(`/loans/${marketSymbol}/borrowTab`)
+    history.push(`/loans/${marketTokenAddress}/borrowTab`)
   }
 
   // open borrow popup after getting new vault address
@@ -141,22 +173,15 @@ export const LoansBorrow = () => {
     if (!vault) return
 
     openBorrowPopup?.({
-      vaultId: vault.vaultId,
-      borrowedAsset: vault.borrowedAsset,
-      collateralRatio: vault.collateralRatio,
-      borrowAPR: vault.apr,
-      currentCollateralBalance: vault.collateralData.at(-1)?.amount ?? 0,
-      hasUserBorrowed: Boolean(vault.borrowedAmount),
-      borrowCapacity: vault.borrowCapacity,
-      currentBorrowedAmount: vault.borrowedAmount,
+      vault,
       DAOFee,
       scrollToCurrentVault: () => {
         setNewVaultAddress('')
         // redirect to the market after borrowing
-        history.push(`/loans/${vault.borrowedAsset.symbol}/borrowTab/${newVaultAddress}`)
+        history.push(`/loans/${vault.borrowedTokenAddress}/borrowTab/${newVaultAddress}`)
       },
     })
-  }, [myVaultsIds, newVaultAddress])
+  }, [DAOFee, history, myVaultsIds, newVaultAddress, openBorrowPopup, vaultsMapper])
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -182,11 +207,11 @@ export const LoansBorrow = () => {
         <>
           <EarnBorrowTotalCharts
             // left chart
-            leftChartData={collateralChartData}
+            leftChartData={totalCollateralChart}
             leftChartTitle="Total Collateral"
             leftTotalAmount={totalCollaterals}
             // right chart
-            rightChartData={borrowingChartData}
+            rightChartData={totalBorrowingChart}
             rightChartTitle="Total Borrowing"
             rightTotalAmount={totalBorrowed}
           />

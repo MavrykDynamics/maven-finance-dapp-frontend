@@ -5,13 +5,16 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import {
+  INPUT_LARGE,
+  INPUT_STATUS_ERROR,
+  getOnBlurValue,
+  getOnFocusValue,
+} from 'app/App.components/Input/Input.constants'
 import {
   AddCollateralPopupDataType,
   DEFAULT_LOANS_INPUT_VALUE,
-  getOnBlurValue,
-  getOnFocusValue,
-} from './Modals.helpers'
+} from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -25,11 +28,18 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import { calcCollateralRatio, getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import {
+  calcCollateralRatio,
+  getCollateralRatioByPersentage,
+  getLoansInputMaxAmount,
+  loansInputValidation,
+} from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
 import { checkNan } from 'utils/checkNan'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { checkWhetherTokenIsCollateralToken } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -42,7 +52,7 @@ export const AddCollateral = ({
   data: AddCollateralPopupDataType
 }) => {
   const {
-    selectedAsset,
+    tokenAddress = '',
     vaultCollateralBalance = 0,
     vaultAddress,
     currentCollateralRatio = 0,
@@ -54,24 +64,23 @@ export const AddCollateral = ({
 
   useLockBodyScroll(show)
 
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
+  const collateralToken = tokensMetadata[tokenAddress]
+  const collateralRate = tokensPrices[collateralToken.symbol]
+
   const dispatch = useDispatch()
-  const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { userTokens } = useSelector((state: State) => state.wallet.user)
 
-  const collateralData = useMemo(
-    () => avaliableCollaterals.find(({ gqlName }) => selectedAsset?.gqlName === gqlName),
-    [avaliableCollaterals, selectedAsset],
-  )
-
-  const collateralBalance = userTokens[collateralData?.symbol.toLowerCase() ?? '']?.balance ?? 0
+  // TODO: add user balance
+  const collateralBalance = 0 //userTokens[collateralToken?.symbol.toLowerCase() ?? '']?.balance ?? 0
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
-  const collateralRate = Number(selectedAsset?.rate)
 
   const { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance } = useMemo(() => {
-    const futureCollateralRatio = selectedAsset
+    const futureCollateralRatio = tokenAddress
       ? calcCollateralRatio(vaultCollateralBalance + inputAmount * collateralRate, borrowedAmount, borrowedAssetRate)
       : 0
 
@@ -82,7 +91,7 @@ export const AddCollateral = ({
     )
     return { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance }
   }, [
-    selectedAsset,
+    tokenAddress,
     vaultCollateralBalance,
     inputAmount,
     collateralRate,
@@ -97,13 +106,15 @@ export const AddCollateral = ({
     }
   }, [show])
 
+  if (!data || !checkWhetherTokenIsCollateralToken(collateralToken)) return null
+
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
     const validationStatus = loansInputValidation({
       inputAmount: newInputAmount,
       maxAmount,
       options: {
-        byDecimalPlaces: collateralData?.decimals || assetDecimalsToShow,
+        byDecimalPlaces: collateralToken?.decimals || assetDecimalsToShow,
       },
     })
 
@@ -129,19 +140,8 @@ export const AddCollateral = ({
   }
 
   const depositCollateralHandler = async () => {
-    if (collateralData) {
-      const collaretalToDeposit = {
-        collateralName: collateralData.gqlName,
-        assetId: collateralData.id,
-        tokenType: collateralData.tokenType,
-        decimals: collateralData.decimals,
-        amount: Number(inputData.amount),
-        assetAddress: collateralData.address,
-      }
-
-      if (vaultAddress) {
-        await dispatch(depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup))
-      }
+    if (vaultAddress) {
+      await dispatch(depositCollateralAction(vaultAddress, inputAmount, collateralToken, closePopup))
     }
   }
 
@@ -190,7 +190,7 @@ export const AddCollateral = ({
           <hr />
 
           <Input
-            className={`${collateralData?.rate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
+            className={`${collateralRate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
             inputProps={{
               value: inputData.amount,
               type: 'number',
@@ -200,20 +200,20 @@ export const AddCollateral = ({
             }}
             settings={{
               balance: collateralBalance,
-              balanceAsset: collateralData?.name,
+              balanceAsset: collateralToken?.name,
               useMaxHandler: () =>
                 inputOnChangeHandle(
-                  getLoansInputMaxAmount(collateralBalance, collateralData?.decimals),
+                  getLoansInputMaxAmount(collateralBalance, collateralToken?.decimals),
                   collateralBalance,
                 ),
               inputStatus: inputData.validationStatus,
-              convertedValue: inputAmount * (collateralData?.rate ?? 1),
+              convertedValue: inputAmount * (collateralRate ?? 1),
               inputSize: INPUT_LARGE,
             }}
           >
             <InputPinnedTokenInfo>
-              <ImageWithPlug imageLink={collateralData?.icon} alt={`${collateralData?.name} icon`} />{' '}
-              {collateralData?.name}
+              <ImageWithPlug imageLink={collateralToken?.icon} alt={`${collateralToken?.name} icon`} />{' '}
+              {collateralToken?.name}
             </InputPinnedTokenInfo>
           </Input>
 

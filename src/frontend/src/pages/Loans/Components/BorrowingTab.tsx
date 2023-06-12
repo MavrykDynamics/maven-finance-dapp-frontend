@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { State } from 'reducers'
-import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { BorrowingExpandCard } from './BorrowingExpandCard/BorrowingExpandCard'
@@ -18,7 +18,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 
 type BorrowingTabPropsType = {
-  loanTokenAddress: TokenAddress
+  loanTokenAddress: TokenAddressType
 }
 
 export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {

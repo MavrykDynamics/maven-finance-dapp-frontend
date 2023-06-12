@@ -6,7 +6,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from 'app/App.components/Icon/Icon.view'
 
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { ConfirmRemoveLendingAssetDataType } from './Modals.helpers'
+import { ConfirmRemoveLendingAssetDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { withdrawLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
 
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
@@ -70,11 +70,7 @@ export const ConfirmRemoveAssetsFromLending = ({
               </ThreeLevelListItem>
               <ThreeLevelListItem className="right">
                 <div className="name">New USD Value</div>
-                <CommaNumber
-                  value={(currentLendedAmount - inputAmount) * rate}
-                  className="value"
-                  beginningText="$"
-                />
+                <CommaNumber value={(currentLendedAmount - inputAmount) * rate} className="value" beginningText="$" />
               </ThreeLevelListItem>
             </div>
           </div>

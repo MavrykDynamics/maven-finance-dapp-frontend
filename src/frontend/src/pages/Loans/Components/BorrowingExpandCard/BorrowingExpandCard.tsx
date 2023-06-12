@@ -39,6 +39,8 @@ import {
 import { isAbortError } from 'errors/error'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getVaultCollateralBalance } from 'pages/Vaults/Vaults.helpers'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -50,37 +52,41 @@ type BorrowingExpandCardPropsType = LoansVaultType & {
   hideTransactionHistory?: boolean
 }
 
-export const BorrowingExpandCard = ({
-  isOwner = false,
-  borrowedAsset,
-  collateralData,
-  xtzDelegatedTo,
-  sMVKDelegatedTo,
-  vaultId,
-  name,
-  depositors,
-  deporsitorsFlag,
-  headerSufix,
-  address,
-  children,
-  status,
-  levelOfEarly,
-  levelOfLate,
-  isOpenedVault,
-  fee,
-  apr,
-  collateralBalance,
-  borrowedAmount,
-  collateralRatio,
-  borrowCapacity,
-  availableLiquidity,
-  minimumRepay,
-  DAOFee,
-  hideTransactionHistory,
-}: BorrowingExpandCardPropsType) => {
-  const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
+export const BorrowingExpandCard = (vault: BorrowingExpandCardPropsType) => {
+  const {
+    isOwner = false,
+    borrowedTokenAddress,
+    collateralData,
+    xtzDelegatedTo,
+    sMVKDelegatedTo,
+    vaultId,
+    name,
+    depositors,
+    deporsitorsFlag,
+    headerSufix,
+    address,
+    children,
+    status,
+    levelOfEarly,
+    levelOfLate,
+    isOpenedVault,
+    fee,
+    apr,
+    borrowedAmount,
+    collateralRatio,
+    borrowCapacity,
+    minimumRepay,
+    DAOFee,
+    hideTransactionHistory,
+  } = vault
 
+  const { tokensMetadata, tokensPrices } = useTokensContext()
   const { bug } = useToasterContext()
+
+  const { symbol, decimals, icon } = tokensMetadata[borrowedTokenAddress]
+  const rate = tokensPrices[symbol]
+
+  const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
 
   const { loanTokens, mvkTokenOperators } = useSelector((state: State) => state.loans)
 
@@ -88,9 +94,9 @@ export const BorrowingExpandCard = ({
     () =>
       VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS.map((item) => ({
         ...item,
-        text: `${item.text} ${borrowedAsset?.symbol}`,
+        text: `${item.text} ${symbol}`,
       })),
-    [borrowedAsset?.symbol],
+    [symbol],
   )
 
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -163,8 +169,8 @@ export const BorrowingExpandCard = ({
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   const currentToken = useMemo(() => {
-    return loanTokens.find(({ loanTokenData }) => loanTokenData.symbol === symbol)
-  }, [symbol, loanTokens])
+    return loanTokens.find(({ loanTokenAddress }) => loanTokenAddress === borrowedTokenAddress)
+  }, [borrowedTokenAddress, loanTokens])
 
   const handleSwitchTab = (switcher: 'repay' | 'repayAndBorrow') => (tabId: number) => {
     switch (switcher) {
@@ -187,11 +193,7 @@ export const BorrowingExpandCard = ({
   const handleClickOpenConfirmBorrowPopup = (inputAmount: number) => {
     openConfirmBorrowPopup?.({
       inputAmount,
-      vaultId,
-      borrowedAsset: borrowedAsset,
-      currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-      borrowCapacity,
-      currentBorrowedAmount: borrowedAmount,
+      vault,
       DAOFee,
       scrollToCurrentVault,
     })
@@ -200,63 +202,34 @@ export const BorrowingExpandCard = ({
   const handleClickOpenConfirmRepayPopup = (inputAmount: number) => {
     openConfirmRepayPopup?.({
       inputAmount,
-      vaultId,
-      vaultAddress: address,
-      borrowedAsset: borrowedAsset,
-      borrowedAmount,
-      currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-      borrowCapacity,
+      vault,
       scrollToCurrentVault,
     })
   }
 
   const handleClickOpenConfirmRepayFullPopup = () => {
     openConfirmRepayFullPopup?.({
-      vaultId,
-      vaultAddress: address,
-      borrowedAsset: borrowedAsset,
-      borrowedAmount,
-      feesAmount: fee,
-      currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-      borrowCapacity,
+      vault,
     })
   }
 
   const handleClickOpenAddNewCollateralPopup = () => {
     openAddNewCollateralPopup?.({
-      vaultAddress: address,
-      vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-      currentCollateralRatio: collateralRatio,
-      borrowedAmount,
-      existingCollaterals: collateralData,
-      borrowedAssetRate: borrowedAsset.rate,
-      borrowCapacity,
-      availableLiquidity,
+      vault,
     })
   }
 
   const handleClickOpenAddExistingCollateralPopup = (idx: number) => {
     openAddExistingCollateralPopup?.({
-      vaultAddress: address,
-      vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-      selectedAsset: collateralData[idx],
-      currentCollateralRatio: collateralRatio,
-      borrowedAmount,
-      borrowedAssetRate: borrowedAsset.rate,
-      borrowCapacity,
-      availableLiquidity,
+      vault,
+      collateralTokenAddress: collateralData[idx].tokenAddress,
     })
   }
 
   const handleClickOpenWithdrawCollateralPopup = ({ amount, idx }: { amount: number; idx: number }) => {
     openWithdrawCollateralPopup?.({
-      vaultAddress: address,
-      currentCollateralBalance: amount,
-      vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-      selectedAsset: collateralData[idx],
-      currentCollateralRatio: collateralRatio,
-      borrowedAmount,
-      borrowedAssetRate: borrowedAsset.rate,
+      vault,
+      collateralTokenAddress: collateralData[idx].tokenAddress,
     })
   }
 
@@ -278,7 +251,7 @@ export const BorrowingExpandCard = ({
   const handleClickOpenUpdateMvkOperatorsPopup = () => {
     openUpdateMvkOperatorsPopup?.({
       vaultAddress: address,
-      tokenName: gqlName,
+      tokenAddress: borrowedTokenAddress,
       operators: mvkTokenOperators,
     })
   }
@@ -350,7 +323,7 @@ export const BorrowingExpandCard = ({
             <ThreeLevelListItem className="borrow-asset-header">
               <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
               <div className="data">
-                <div className="value">{name ? name : borrowedAsset.symbol}</div>
+                <div className="value">{name ? name : symbol}</div>
                 <div className="value">
                   <TzAddress tzAddress={address} shouldCopy hasIcon />
                 </div>
@@ -376,7 +349,7 @@ export const BorrowingExpandCard = ({
                 beginningText="$"
                 className="value"
                 showDecimal
-                decimalsToShow={borrowedAsset.decimals}
+                decimalsToShow={decimals}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -402,7 +375,7 @@ export const BorrowingExpandCard = ({
                 collateralBalance={collateralBalance}
                 borrowedAmount={borrowedAmount}
                 borrowCapacity={borrowCapacity}
-                decimals={borrowedAsset.decimals}
+                decimals={decimals}
                 fee={fee}
                 apr={apr}
                 rate={rate}
@@ -426,7 +399,7 @@ export const BorrowingExpandCard = ({
 
                 {activeRepayBorrowTab?.id === loansTabNames.BORROW && (
                   <BorrowingExpandCardBorrowSection
-                    borrowedAsset={borrowedAsset}
+                    borrowedAssetAddress={borrowedTokenAddress}
                     borrowAPR={apr}
                     currentCollateralBalance={collateralData.at(-1)?.amount ?? 0}
                     hasUserBorrowed={Boolean(borrowedAmount)}
@@ -440,7 +413,7 @@ export const BorrowingExpandCard = ({
                 {activeRepayBorrowTab?.id === loansTabNames.REPAY && (
                   <BorrowingExpandCardRepaySection
                     vaultId={vaultId}
-                    borrowedAsset={borrowedAsset}
+                    borrowedAssetAddress={borrowedTokenAddress}
                     currentCollateralBalance={collateralData.at(-1)?.amount ?? 0}
                     borrowCapacity={borrowCapacity}
                     vaultAddress={address}

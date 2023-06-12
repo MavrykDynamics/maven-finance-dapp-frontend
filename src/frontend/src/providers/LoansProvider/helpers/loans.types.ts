@@ -1,5 +1,5 @@
 import { SingleValueData } from 'lightweight-charts'
-import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 // Loans chart custom hook types
 export type LoansChartsType = {
@@ -14,8 +14,8 @@ export type UseLoansChartsStateType = {
   totalLendingChart: Array<SingleValueData>
   totalBorrowingChart: Array<SingleValueData>
   totalCollateralChart: Array<SingleValueData>
-  marketCollateralChart: Record<TokenAddress, Array<SingleValueData>>
-  marketLendingChart: Record<TokenAddress, Array<SingleValueData>>
+  marketCollateralChart: Record<TokenAddressType, Array<SingleValueData>>
+  marketLendingChart: Record<TokenAddressType, Array<SingleValueData>>
 }
 
 // Loans market transaction history custom hook type
@@ -28,9 +28,9 @@ export type LoansMarketTransactionHistoryType = {
   symbol: string
   vaultAddress?: string
   operationHash: string
-  tokenAddress: TokenAddress
+  tokenAddress: TokenAddressType
 }
 
 export type LoansMarketTransactionHistoryArgs = {
-  marketTokenAddress: TokenAddress
+  marketTokenAddress: TokenAddressType
 }

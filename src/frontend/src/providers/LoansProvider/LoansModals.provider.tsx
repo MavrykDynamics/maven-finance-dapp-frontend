@@ -35,7 +35,7 @@ import {
   AddLendingAssetDataType,
   RemoveLendingAssetDataType,
   LiquidateVaultDataType,
-} from 'pages/Loans/Components/Modals/Modals.helpers'
+} from 'providers/LoansProvider/helpers/LoansModals.types'
 import { RemoveAssetsFromLending } from 'pages/Loans/Components/Modals/RemoveAssetsFromLending.modal'
 import { Repay } from 'pages/Loans/Components/Modals/Repay.modal'
 import { RepayFull } from 'pages/Loans/Components/Modals/RepayFull.modal'

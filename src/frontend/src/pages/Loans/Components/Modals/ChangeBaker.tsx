@@ -6,7 +6,7 @@ import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.co
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { State } from 'reducers'
 import { changeBakerAction } from 'pages/Loans/Actions/vaultPermissions.actions'
-import { ChangeBakerPopupDataType } from './Modals.helpers'
+import { ChangeBakerPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'

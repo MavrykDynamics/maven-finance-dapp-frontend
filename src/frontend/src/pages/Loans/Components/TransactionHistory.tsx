@@ -20,13 +20,13 @@ import { TransactionHistoryStyled } from '../Loans.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { EmptyContainer } from 'app/App.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { State } from 'reducers'
 import { useSelector } from 'react-redux'
 import useMarketTransactionHistory from 'providers/LoansProvider/hooks/useMarketTransactionHistory'
 
 type TransactionHistoryPropsType = {
-  loanTokenAddress: TokenAddress
+  loanTokenAddress: TokenAddressType
   filterByDescriptions?: string[]
   vaultAddress?: string
   userAddress?: string

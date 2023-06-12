@@ -8,11 +8,16 @@ import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { LENDING_TAB_SLIDING_BUTTONS, assetDecimalsToShow, loansTabNames } from '../../Loans.const'
-import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from '../../Loans.helpers'
+import { getLoansInputMaxAmount, loansInputValidation } from '../../Loans.helpers'
 import { LENDING_TAB_SUPPLY_TEXT, LENDING_TAB_WITHDRAW_TEXT } from 'texts/banners/loan.text'
 import { LENDING_APY } from 'texts/tooltips/loan.text'
-import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './../Modals/Modals.helpers'
-import { INPUT_LARGE, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { DEFAULT_LOANS_INPUT_VALUE } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+import {
+  INPUT_LARGE,
+  INPUT_STATUS_SUCCESS,
+  getOnBlurValue,
+  getOnFocusValue,
+} from 'app/App.components/Input/Input.constants'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from '../../Loans.style'
@@ -25,13 +30,13 @@ import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingT
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
-  loanTokenAddress: TokenAddress
+  loanTokenAddress: TokenAddressType
   lendAPY: number
   marketAvailableLiquidity: number
   marketReserveAmount: number
@@ -60,10 +65,8 @@ export const LendingTabActionsSection = ({
   const [activeTab, setActiveTab] = useState(LENDING_TAB_SLIDING_BUTTONS.find((item) => item.active))
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
-  // TODO: use just symbol, requires user tokens refactor
-  const balanceSymbol = isTezosAsset(symbol.toLowerCase() ?? '') ? 'tezos' : symbol.toLowerCase() ?? ''
-
-  const tokenBalance = userTokens[balanceSymbol]?.balance ?? 0
+  // TODO: use user balances
+  const tokenBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
 
   const isSupplyActiveTab = activeTab?.id === loansTabNames.SUPPLY
 
@@ -88,7 +91,7 @@ export const LendingTabActionsSection = ({
           inputAmount: Number(inputData.amount),
           mBalance,
           lendingAPY: lendAPY,
-          ...assetData,
+          tokenAddress: loanTokenAddress,
         })
 
         break
@@ -100,7 +103,7 @@ export const LendingTabActionsSection = ({
           currentLendedAmount: lendValue,
           availableLiquidity: marketAvailableLiquidity,
           reserveAmount: marketReserveAmount,
-          ...assetData,
+          tokenAddress: loanTokenAddress,
         })
         break
     }
@@ -122,7 +125,7 @@ export const LendingTabActionsSection = ({
         validationStatus: validationStatus,
       })
     },
-    [assetData, inputData],
+    [inputData, decimals],
   )
 
   const inputOnBlurHandle = useCallback(() => {
@@ -176,7 +179,7 @@ export const LendingTabActionsSection = ({
       inputSize: INPUT_LARGE,
       ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
     }),
-    [assetData, inputData.amount, inputData.validationStatus, tokenBalance, useMaxHandler],
+    [tokenBalance, symbol, useMaxHandler, inputData.validationStatus, inputData.amount, rate],
   )
 
   return (

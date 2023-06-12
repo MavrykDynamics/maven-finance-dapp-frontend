@@ -1,4 +1,4 @@
-import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 // Use User Loans Data Types
 export type UserLendBorrowItem = {
@@ -7,7 +7,7 @@ export type UserLendBorrowItem = {
   annualPecentage: number
   date: string
   operationHash: string
-  tokenAddress: TokenAddress
+  tokenAddress: TokenAddressType
 }
 
 export type UserLoansDataStateType = {

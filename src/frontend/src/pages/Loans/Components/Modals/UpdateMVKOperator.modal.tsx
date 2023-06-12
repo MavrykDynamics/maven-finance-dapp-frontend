@@ -2,10 +2,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { validateTzAddress } from 'utils/validatorFunctions'
-import { LoansPopupsAddressInputStateType, UpdateOperatorsPopupDataType } from './Modals.helpers'
+import { UpdateOperatorsPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { State } from 'reducers'
 import { UpdateTokenOperator } from 'utils/TypesAndInterfaces/Loans'
 
@@ -19,6 +19,8 @@ import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from '
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { updateOperatorsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17307%3A226700&t=Sx2aEpp3ifrGxBtQ-0
 export const UpdateMVKOperator = ({
@@ -30,13 +32,16 @@ export const UpdateMVKOperator = ({
   show: boolean
   data: UpdateOperatorsPopupDataType
 }) => {
-  const { vaultAddress = '', tokenName = '', operators = [] } = data ?? {}
+  const { vaultAddress = '', tokenAddress = '', operators = [] } = data ?? {}
+
+  const { tokensMetadata } = useTokensContext()
+  const loanToken = tokensMetadata[tokenAddress]
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const [tableData, setTableData] = useState<Array<LoansPopupsAddressInputStateType>>([
+  const [tableData, setTableData] = useState<Array<{ address: string; validationStatus: InputStatusType }>>([
     { address: '', validationStatus: '' },
   ])
 
@@ -44,7 +49,7 @@ export const UpdateMVKOperator = ({
     if (!show) {
       setTableData([{ address: '', validationStatus: '' }])
     } else {
-      const currentOperators: LoansPopupsAddressInputStateType[] = operators.map((item) => ({
+      const currentOperators: { address: string; validationStatus: InputStatusType }[] = operators.map((item) => ({
         address: item,
         validationStatus: INPUT_STATUS_SUCCESS,
       }))
@@ -100,8 +105,10 @@ export const UpdateMVKOperator = ({
   }, [operators, tableData, vaultAddress])
 
   const updateHandler = () => {
-    const updateOperators = getUpdatedOperators()
-    dispatch(updateOperatorsAction(vaultAddress, tokenName, updateOperators, closePopup))
+    if (checkWhetherTokenIsLoanToken(loanToken)) {
+      const updateOperators = getUpdatedOperators()
+      dispatch(updateOperatorsAction(vaultAddress, loanToken.loanData.indexerName, updateOperators, closePopup))
+    }
   }
 
   const isActionDisabled = useMemo(() => {

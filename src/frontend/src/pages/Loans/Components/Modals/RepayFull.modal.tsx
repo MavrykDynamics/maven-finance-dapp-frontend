@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { RepayFullPopupDataType } from './Modals.helpers'
+import { RepayFullPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { State } from 'reducers'
 import { repayFullAndCloseVaultAction } from 'pages/Loans/Actions/vault.actions'
 import { BUTTON_SECONDARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'

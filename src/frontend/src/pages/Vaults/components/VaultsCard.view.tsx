@@ -46,6 +46,7 @@ import { isAbortError } from 'errors/error'
 import { api } from 'utils/api/api'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 const findStatusInfo = (
   status: string,
@@ -127,6 +128,7 @@ export const VaultsCard = (props: Props) => {
     vaultTab,
   } = props
 
+  const { tokensMetadata, tokensPrices } = useTokensContext()
   const { bug } = useToasterContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -243,15 +245,18 @@ export const VaultsCard = (props: Props) => {
               </TableHeader>
 
               <TableBody>
-                {collateralData.map(({ symbol, icon, rate, amount }, index) => {
+                {collateralData.map(({ tokenAddress, amount }, index) => {
                   const columnWidth = '33%'
                   const isTotalRow = collateralData.length - 1 === index
+
+                  if (isTotalRow && collateralData.length < 3) return null
+
+                  const { symbol, icon } = tokensMetadata[tokenAddress]
+                  const rate = tokensPrices[symbol]
 
                   const collateralShare = isTotalRow
                     ? 100
                     : calculateCollateralShare(amount * rate, collateralTotalBalance)
-
-                  if (isTotalRow && collateralData.length < 3) return null
 
                   return (
                     <TableRow rowHeight={44} key={symbol + '-' + index}>

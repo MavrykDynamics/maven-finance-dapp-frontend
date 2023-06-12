@@ -1,143 +1,71 @@
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 
+import { DepositorsFlagType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { CollateralType, DepositorsFlagType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
-import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
 
-// TODO: move types to loansPopups.types.ts in LoansProvider/
-// TODO: move consts & helpers to loansPopups.utils | const.ts in LoansProvider/
-export type LoansPopupsInputStateType = { amount: string; validationStatus: InputStatusType }
-export type VaultNameInputStateType = { name: string; validationStatus: InputStatusType; errorMessage: string }
-export type LoansPopupsAddressInputStateType = { address: string; validationStatus: InputStatusType }
-export const DEFAULT_LOANS_INPUT_VALUE: LoansPopupsInputStateType = {
+// TODO: move it out or don't even use it
+export const DEFAULT_LOANS_INPUT_VALUE = {
   amount: '0',
-  validationStatus: '',
+  validationStatus: '' as InputStatusType,
 }
-
-export const getOnBlurValue = (inputValue: string) => (inputValue === '' ? '0' : inputValue)
-export const getOnFocusValue = (inputValue: string) => (inputValue === '0' ? '' : inputValue)
 
 // Vaults actions popups data types
 export type ConfirmBorrowPopupDataType = {
+  vault: LoansVaultType
   inputAmount: number
-  vaultId: number
-  tokenAddress: TokenAddress
-  borrowCapacity: number
-  currentCollateralBalance: number
   DAOFee: number
-  currentBorrowedAmount: number
   scrollToCurrentVault?: () => void
 } | null
 
 export type ConfirmRepayPartPopupDataType = {
-  vaultId: number
-  vaultAddress: string
-  tokenAddress: TokenAddress
-  borrowedAmount: number
-  currentCollateralBalance: number
-  borrowCapacity: number
+  vault: LoansVaultType
   inputAmount: number
   scrollToCurrentVault?: () => void
 } | null
 
 export type ConfirmRepayFullPopupDataType = {
-  vaultId: number
-  vaultAddress: string
-  tokenAddress: TokenAddress
-  feesAmount: number
-  borrowedAmount: number
-  currentCollateralBalance: number
-  borrowCapacity: number
+  vault: LoansVaultType
 } | null
 
-export type CollateralPopupCommonDataType = {
-  vaultAddress: string
-  vaultCollateralBalance: number
-  selectedAsset?: LoansVaultType['collateralData'][number]
-  currentCollateralRatio: number
-  borrowedAmount: number
-  borrowedAssetRate: number
-}
-
 export type AddCollateralPopupDataType = {
-  vaultAddress: string
-  vaultCollateralBalance: number
-  selectedAsset?: LoansVaultType['collateralData'][number]
-  currentCollateralRatio: number
-  borrowedAmount: number
-  borrowedAssetRate: number
-  borrowCapacity: number
-  availableLiquidity: number
+  vault: LoansVaultType
+  collateralTokenAddress: TokenAddressType
 } | null
 
 export type AddNewCollateralDataProps = {
-  vaultAddress: string
-  vaultCollateralBalance: number
-  selectedAsset?: LoansVaultType['collateralData'][number]
-  currentCollateralRatio: number
-  borrowedAmount: number
-  borrowedAssetRate: number
-  existingCollaterals: Array<CollateralType>
-  borrowCapacity: number
-  availableLiquidity: number
+  vault: LoansVaultType
 } | null
 
 export type WithdrawCollateralPopupDataType = {
-  vaultAddress: string
-  vaultCollateralBalance: number
-  selectedAsset?: LoansVaultType['collateralData'][number]
-  currentCollateralRatio: number
-  borrowedAmount: number
-  borrowedAssetRate: number
-  currentCollateralBalance: number
+  vault: LoansVaultType
+  collateralTokenAddress: TokenAddressType
 } | null
 
 export type RepayPartPopupDataType = {
-  vaultId: number
-  vaultAddress: string
-  tokenAddress: TokenAddress
-  feesAmount: number
-  borrowedAmount: number
-  minimumRepay: number
-  currentCollateralBalance: number
-  borrowCapacity: number
+  vault: LoansVaultType
   scrollToCurrentVault?: () => void
 } | null
 
 export type RepayFullPopupDataType = {
-  vaultId: number
-  vaultAddress: string
-  tokenAddress: TokenAddress
-  feesAmount: number
-  borrowedAmount: number
-  minimumRepay: number
-  currentCollateralBalance: number
-  borrowCapacity: number
-  collateralRatio: number
+  vault: LoansVaultType
 } | null
 
 export type BorrowPopupDataType = {
-  vaultId: number
-  tokenAddress: TokenAddress
-  borrowCapacity: number
-  collateralRatio: number
-  borrowAPR: number
-  hasUserBorrowed: boolean
-  currentCollateralBalance: number
+  vault: LoansVaultType
   DAOFee: number
-  currentBorrowedAmount: number
   scrollToCurrentVault?: () => void
 } | null
 
 // Liquidity popups data types
 export type AddLendingAssetDataType = {
-  tokenAddress: TokenAddress
+  tokenAddress: TokenAddressType
   lendingAPY: number
   mBalance: number
 } | null
 
 export type RemoveLendingAssetDataType = {
-  tokenAddress: TokenAddress
+  tokenAddress: TokenAddressType
   lendingAPY: number
   mBalance: number
   currentLendedAmount: number
@@ -146,16 +74,19 @@ export type RemoveLendingAssetDataType = {
 } | null
 
 export type ConfirmAddLendingAssetDataType = {
-  tokenAddress: TokenAddress
+  tokenAddress: TokenAddressType
   lendingAPY: number
   mBalance: number
   inputAmount: number
 } | null
 
 export type ConfirmRemoveLendingAssetDataType = {
-  tokenAddress: TokenAddress
+  tokenAddress: TokenAddressType
   lendingAPY: number
   mBalance: number
+  currentLendedAmount: number
+  reserveAmount: number
+  availableLiquidity: number
   inputAmount: number
 } | null
 
@@ -171,7 +102,7 @@ export type ChangeVaultNamePopupDataType = {
 } | null
 
 export type CreateVaultPopupDataType = {
-  tokenAddress: TokenAddress
+  tokenAddress: TokenAddressType
   setCreatedVaultAddress?: (address: string) => void
   showShortFlow?: boolean
 } | null
@@ -181,9 +112,10 @@ export type ManagePermissionsPopupDataType = {
   depositors: Array<string>
   deporsitorsFlag: DepositorsFlagType
 } | null
+
 export type UpdateOperatorsPopupDataType = {
   vaultAddress: string
-  tokenAddress: TokenAddress
+  tokenAddress: TokenAddressType
   operators: string[]
 } | null
 

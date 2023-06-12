@@ -4,8 +4,17 @@ import { useEffect, useMemo, useState } from 'react'
 import { State } from 'reducers'
 
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
-import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue, RepayPartPopupDataType } from './Modals.helpers'
+import {
+  INPUT_STATUS_SUCCESS,
+  INPUT_STATUS_ERROR,
+  INPUT_LARGE,
+  getOnBlurValue,
+  getOnFocusValue,
+} from 'app/App.components/Input/Input.constants'
+import {
+  DEFAULT_LOANS_INPUT_VALUE,
+  RepayPartPopupDataType,
+} from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
 

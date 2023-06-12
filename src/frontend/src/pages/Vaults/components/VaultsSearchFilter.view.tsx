@@ -11,7 +11,7 @@ import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { VaultsSearchFilterStyled, VaultsSearchFilterWrapper, VaultsFilters } from './../Vaults.style'
 
 // helpers
-import { sortByVaultCategory } from '../Vaults.helpers'
+import { getVaultCollateralBalance, sortByVaultCategory } from '../Vaults.helpers'
 import {
   sortVaultItems,
   sortingList,
@@ -25,6 +25,7 @@ import { stringFullCharsCompare } from 'utils/stringFullCharsCompare'
 
 // types
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 type Filters = Record<string, string>
 type AssetCategory = 'loanAssets' | 'collateralAssets'
@@ -40,6 +41,8 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
   const history = useHistory()
   const { search } = useLocation()
   const { tabId } = useParams<{ tabId: string }>()
+
+  const { tokensMetadata, tokensPrices } = useTokensContext()
 
   // use MOST_RECENT and ALL_VAULTS_FILTER as the default filters value
   const {
@@ -136,15 +139,15 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
         filteredVaultsIds = data.sort((a, b) => {
           // by collateral amount high > low
           if (sortIsCollateralHighToLow) {
-            const vaultA = vaultsMapper[a].collateralBalance
-            const vaultB = vaultsMapper[b].collateralBalance
+            const vaultA = getVaultCollateralBalance(vaultsMapper[a].collateralData, tokensMetadata, tokensPrices)
+            const vaultB = getVaultCollateralBalance(vaultsMapper[b].collateralData, tokensMetadata, tokensPrices)
 
             return vaultB - vaultA
           }
           // by collateral amount low > high
           if (sortIsCollateralLowToHigh) {
-            const vaultA = vaultsMapper[a].collateralBalance
-            const vaultB = vaultsMapper[b].collateralBalance
+            const vaultA = getVaultCollateralBalance(vaultsMapper[a].collateralData, tokensMetadata, tokensPrices)
+            const vaultB = getVaultCollateralBalance(vaultsMapper[b].collateralData, tokensMetadata, tokensPrices)
 
             return vaultA - vaultB
           }
@@ -188,8 +191,9 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
         filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
           if (vault.collateralData.length) {
-            const isFound = vault.collateralData.some(({ symbol }) => {
-              return stringFullCharsCompare(symbol, assetIcon)
+            const isFound = vault.collateralData.some(({ tokenAddress }) => {
+              // TODO: test it
+              return stringFullCharsCompare(tokensMetadata[tokenAddress].symbol, assetIcon)
             })
 
             return isFound
@@ -203,8 +207,9 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
       if (filtersList[vaultsFilters.ASSETS] && !isCollateralAsset && assetIcon) {
         filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
-          if (vault.borrowedAsset.symbol) {
-            return stringFullCharsCompare(vault.borrowedAsset.symbol, assetIcon)
+          if (vault.borrowedTokenAddress) {
+            // TODO: test it
+            return stringFullCharsCompare(tokensMetadata[vault.borrowedTokenAddress].symbol, assetIcon)
           }
 
           return false
@@ -214,8 +219,8 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
       // filter by 0 balance
       if (filtersList[vaultsFilters.ZERO]) {
         filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
-          const { borrowedAmount, collateralBalance } = vaultsMapper[vaultId]
-          return borrowedAmount || collateralBalance
+          const { borrowedAmount, collateralData } = vaultsMapper[vaultId]
+          return borrowedAmount || getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
         })
       }
 

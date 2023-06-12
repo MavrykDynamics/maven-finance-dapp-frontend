@@ -1,4 +1,4 @@
-import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import type { M_Token, Mavryk_User } from '../generated/graphqlTypes'
 
 export interface UserFarmRewardsData {
@@ -18,7 +18,7 @@ export interface UserFarmRewardsData {
 export type MTokenType = {
   lendedAmount: number
   balance: number
-  tokenAddress: TokenAddress
+  tokenAddress: TokenAddressType
   reward_index: number
   rewards_earned: number
   interestRateDecimals: number

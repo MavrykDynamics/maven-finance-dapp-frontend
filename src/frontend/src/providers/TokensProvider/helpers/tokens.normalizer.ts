@@ -1,10 +1,10 @@
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getTokenSymbolAndName } from './tokenNames'
+import { getTokenSymbolAndName } from '../hooks/tokenNames'
 import { isValidTokenType } from 'utils/TypesAndInterfaces/General'
 
-import { TokenAddress, TokenMetadata, TokensContext } from '../tokens.provider.types'
+import { TokenAddressType, TokenMetadataType, TokensContext } from '../tokens.provider.types'
 import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from 'utils/__generated__/graphql'
-import { tokenMetadataSchema } from '../helpers/tokens.types'
+import { tokenMetadataSchema } from './tokens.types'
 
 // Normalizing token rates
 export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscription['aggregator']) => {
@@ -21,8 +21,20 @@ export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscrip
 // Normalizing tokens metadata
 export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscription['token']) => {
   return tokensFromGql.reduce<Pick<TokensContext, 'tokensMetadata' | 'collateralTokens' | 'mTokens'>>(
-    (acc, { token_address, token_standard, metadata, lending_controller_collateral_tokens, m_tokens, mvk_tokens }) => {
-      const tokenAddress: TokenAddress = token_address
+    (
+      acc,
+      {
+        token_id,
+        token_address,
+        token_standard,
+        metadata,
+        lending_controller_collateral_tokens,
+        lending_controller_loan_tokens,
+        m_tokens,
+        mvk_tokens,
+      },
+    ) => {
+      const tokenAddress: TokenAddressType = token_address
 
       try {
         // Validating token type, it should be one of tez | fa2 | fa12
@@ -45,8 +57,8 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         // We can have multiple mvk tokens, but only 1 with mvk_tokens present is valid
         if (symbol === 'MVK' && !mvk_tokens?.[0]?.address) return acc
 
-        // TODO: Add is protected to collaterals?
-        const tokenMetadata: TokenMetadata = {
+        const tokenMetadata: TokenMetadataType = {
+          id: token_id,
           address: tokenAddress,
           symbol,
           name,
@@ -55,11 +67,26 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
           decimals: Number(parsedMetadata.decimals),
         }
 
-        acc.tokensMetadata[tokenAddress] = tokenMetadata
+        // if token is collateral
+        if (lending_controller_collateral_tokens?.[0]) {
+          acc.collateralTokens.push(tokenAddress)
+          tokenMetadata.loanData = {
+            indexerName: lending_controller_collateral_tokens[0].token_name,
+            isProtectedCollateral: lending_controller_collateral_tokens[0].protected,
+          }
+        }
 
-        if (lending_controller_collateral_tokens?.[0]?.token_name) acc.collateralTokens.push(tokenAddress)
+        // if token is loan token
+        if (lending_controller_loan_tokens?.[0]) {
+          tokenMetadata.loanData = {
+            indexerName: lending_controller_loan_tokens[0].loan_token_name,
+          }
+        }
 
+        // if token is mToken
         if (m_tokens?.[0]?.address) acc.mTokens.push(tokenAddress)
+
+        acc.tokensMetadata[tokenAddress] = tokenMetadata
       } catch (e) {
         console.error('normalizeTokensMetadata error: ', { e })
       } finally {

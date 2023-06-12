@@ -177,7 +177,7 @@ export const Loans = () => {
                 lendingAPY,
               } = loanAsset
 
-              const { symbol, decimals, icon } = tokensMetadata[loanTokenAddress]
+              const { name, symbol, decimals, icon } = tokensMetadata[loanTokenAddress]
               const rate = tokensPrices[symbol]
 
               const { loanTokenTotalCollaterals, loanTokenVaultsTotalBorrowed } = allVaultsIds.reduce<{
@@ -214,7 +214,7 @@ export const Loans = () => {
                     : 'down'
                   : 'neutral'
               return (
-                <MarketOverview key={`${name}-${symbol}`}>
+                <MarketOverview key={symbol}>
                   <div className="asset-info">
                     <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
                     <div className="name">{symbol}</div>

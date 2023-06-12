@@ -8,7 +8,7 @@ import {
 import { Lending_Controller, Mvk_Token_Operator } from 'utils/generated/graphqlTypes'
 import { normalizeLoans } from 'pages/Loans/Loans.normalizer'
 import { normalizeVaultsStorage } from 'pages/Vaults/Vaults.normalizer'
-import { TokenAddress } from 'providers/TokensProvider/tokens.provider.types'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 export type MvkTokenOperatorGQL = Omit<Mvk_Token_Operator, '__typename'>
 export type LendingControllerGQL = Omit<Lending_Controller, '__typename'>
@@ -19,7 +19,7 @@ export type LoanVaultAllowanceType = typeof VAULT_ALLOWANCE_ANY | typeof VAULT_A
 
 export type CollateralType = {
   amount: number
-  tokenAddress: TokenAddress
+  tokenAddress: TokenAddressType
 }
 
 export type LendingItemType = {
@@ -34,14 +34,14 @@ export type UserLendObjType = {
   annualPecentage: number
   date: string
   operationHash: string
-  tokenAddress: TokenAddress
+  tokenAddress: TokenAddressType
 }
 
 export type DepositorsFlagType = typeof ANY_USER | typeof NONE_USER | typeof WHITELIST_USERS
 
 // Vault type
 export type LoansVaultType = {
-  borrowedTokenAddress: TokenAddress
+  borrowedTokenAddress: TokenAddressType
   collateralData: Array<CollateralType>
   borrowedAmount: number
   minimumRepay: number
@@ -69,8 +69,8 @@ export type LoansVaultType = {
 
 // Market Type
 export type LoanMarketType = {
-  loanTokenAddress: TokenAddress
-  loanMTokenAddress: TokenAddress
+  loanTokenAddress: TokenAddressType
+  loanMTokenAddress: TokenAddressType
 
   utilisationRate: number
   borrowers: number

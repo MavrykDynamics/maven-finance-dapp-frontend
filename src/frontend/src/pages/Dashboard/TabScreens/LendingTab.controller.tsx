@@ -15,7 +15,8 @@ import { StatBlock } from '../Dashboard.style'
 import { LendingContentStyled, TabWrapperStyled, EmptyContainer } from './DashboardTabs.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import useLendBorrow24hDiff from 'utils/hooks/useLendBorrow24hDiff'
+import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24hDiff'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -25,9 +26,12 @@ export const emptyContainer = (
 )
 
 export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const { loanTokens } = useSelector((state: State) => state.loans)
 
-  const { lending24hPersentChange, borrowing24hPersentChange } = useLendBorrow24hDiff()
+  const { lending24hPersentChange, borrowing24hPersentChange, last24hBorrowingVol, last24hLendingVol } =
+    useLendBorrow24hDiff()
 
   const { totalBorrowed, totalLended } = loanTokens.reduce<{
     totalLended: number
@@ -48,23 +52,26 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
     return loanTokens.reduce<{
       lendingSuppliers: number
       borrowers: number
-      mostBorrowedAsset: LoanMarketType['loanTokenData'] | null
-      mostLendedAsset: LoanMarketType['loanTokenData'] | null
+      mostBorrowedAsset: { icon: string; symbol: string } | null
+      mostLendedAsset: { icon: string; symbol: string } | null
       prevMostBorrowed: number
       prevMostLended: number
     }>(
-      (acc, { suppliers, borrowers, totalBorrowed, totalLended, loanTokenData }) => {
+      (acc, { suppliers, borrowers, totalBorrowed, totalLended, loanTokenAddress }) => {
+        const { symbol, decimals, icon } = tokensMetadata[loanTokenAddress]
+        const rate = tokensPrices[symbol]
+
         acc.lendingSuppliers += suppliers
         acc.borrowers += borrowers
 
-        if (acc.prevMostBorrowed < totalBorrowed * loanTokenData.rate) {
-          acc.prevMostBorrowed = totalBorrowed * loanTokenData.rate
-          acc.mostBorrowedAsset = loanTokenData as LoanMarketType['loanTokenData']
+        if (acc.prevMostBorrowed < totalBorrowed * rate) {
+          acc.prevMostBorrowed = totalBorrowed * rate
+          acc.mostBorrowedAsset = { symbol, icon }
         }
 
-        if (acc.prevMostLended < totalLended * loanTokenData.rate) {
-          acc.prevMostLended = totalLended * loanTokenData.rate
-          acc.mostLendedAsset = loanTokenData as LoanMarketType['loanTokenData']
+        if (acc.prevMostLended < totalLended * rate) {
+          acc.prevMostLended = totalLended * rate
+          acc.mostLendedAsset = { symbol, icon }
         }
         return acc
       },
@@ -77,7 +84,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
         mostLendedAsset: null,
       },
     )
-  }, [loanTokens])
+  }, [loanTokens, tokensMetadata, tokensPrices])
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
@@ -127,7 +134,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <StatBlock>
                 <div className="name">24H Supply Vol</div>
                 <div className="value">
-                  <CommaNumber beginningText="$" value={last24hLending} />
+                  <CommaNumber beginningText="$" value={last24hLendingVol} />
                 </div>
               </StatBlock>
               <StatBlock>
@@ -176,7 +183,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <StatBlock>
                 <div className="name">24H Borrow Vol</div>
                 <div className="value">
-                  <CommaNumber beginningText="$" value={last24hBorrowing} />
+                  <CommaNumber beginningText="$" value={last24hBorrowingVol} />
                 </div>
               </StatBlock>
               <StatBlock>

@@ -18,7 +18,6 @@ import {
   SATELLITE_CYCLE_DATA_QUERY_NAME,
   SATELLITE_CYCLE_DATA_QUERY_VARIABLE,
 } from 'gql/queries'
-import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { DataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 import { State } from 'reducers'
 import { UserState, DEFAULT_USER } from 'reducers/wallet'
@@ -42,7 +41,6 @@ import {
   XTZ_TOKEN_SYMBOL,
 } from 'utils/constants'
 import { Lending_Controller_Loan_Token, Satellite, Vesting } from 'utils/generated/graphqlTypes'
-import { getSymbolAndNameFromCollaterealGqlname } from 'utils/parse'
 
 export type SatelliteSnapshot = {
   cycle: number
