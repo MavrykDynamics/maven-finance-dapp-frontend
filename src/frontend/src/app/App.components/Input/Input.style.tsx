@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 import { zoomIn, slideDown } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
 import {
@@ -249,7 +249,7 @@ export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
+export const InputWrapper = styled.div<{ isFocused: boolean; theme: MavrykTheme }>`
   position: relative;
   display: flex;
   border: 1px solid ${({ theme }) => theme.cardBorderColor};
@@ -327,15 +327,17 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
       &::placeholder {
         color: ${({ theme }) => theme.downColor};
       }
-
-      &:focus {
-        box-shadow: 0 0 0 2px ${({ theme }) => theme.downColor}7F;
-      }
     }
 
     .pinned-child {
       border-left: 1px solid ${({ theme }) => theme.downColor};
     }
+
+    ${({ isFocused }) =>
+      isFocused &&
+      css`
+        box-shadow: 0 0 0 1.5px ${({ theme }) => theme.downColor}7F;
+      `}
   }
 
   &.${INPUT_STATUS_SUCCESS} {
@@ -346,15 +348,17 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
       &::placeholder {
         color: ${({ theme }) => theme.upColor};
       }
-
-      &:focus {
-        box-shadow: 0 0 0 2px ${({ theme }) => theme.upColor}7F;
-      }
     }
 
     .pinned-child {
       border-left: 1px solid ${({ theme }) => theme.upColor};
     }
+
+    ${({ isFocused }) =>
+      isFocused &&
+      css`
+        box-shadow: 0 0 0 1.5px ${({ theme }) => theme.upColor}7F;
+      `}
   }
 
   &.mb-45 {
