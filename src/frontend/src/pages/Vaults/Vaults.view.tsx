@@ -141,7 +141,7 @@ export const VaultsView = () => {
 
   return (
     <VaultsStyled>
-      <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="tabSwitcher" />
+      <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="primary-switcher" />
 
       <VaultsSearchFilter
         assets={assets}

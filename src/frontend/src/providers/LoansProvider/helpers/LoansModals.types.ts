@@ -138,7 +138,6 @@ export type ChangeVaultNamePopupDataType = {
 export type CreateVaultPopupDataType = {
   tokenAddress: TokenAddressType
   setCreatedVaultAddress?: (address: string) => void
-  showShortFlow?: boolean
 } | null
 
 export type ManagePermissionsPopupDataType = {

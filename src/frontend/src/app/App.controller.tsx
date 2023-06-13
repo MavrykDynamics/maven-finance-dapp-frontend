@@ -26,6 +26,7 @@ import { SettingPopup } from './App.components/SettingsPopup/SettingsPopup'
 import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
 import { AppStyled } from './App.style'
 import { PolicyPopup } from 'app/App.components/PolicyPopup/Policy.controller'
+import { Footer } from './App.components/Footer/Footer'
 
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
@@ -112,6 +113,8 @@ const AppContainer = () => {
           <LoansPopupsProvider>
             <AppRoutes />
           </LoansPopupsProvider>
+
+          <Footer />
         </AppStyled>
       </StakeProvider>
     </Router>

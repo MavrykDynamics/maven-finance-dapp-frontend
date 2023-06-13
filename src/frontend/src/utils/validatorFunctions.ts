@@ -113,17 +113,20 @@ export const isValidRPCNode = async (
   }
 }
 
+export const validateText = (text: string, maxLength?: number) => {
+  // if maxLength is missing, we check only for an empty field
+  const checkMaxLengthField = maxLength ? (isValidLength(text, 1, maxLength) ? 'success' : 'error') : 'success'
+  const checkEmptyField = isNotAllWhitespace(text) ? checkMaxLengthField : 'error'
+
+  return checkEmptyField
+}
+
 export const validateFormField =
   (setFormInputStatus: (value: React.SetStateAction<Record<string, InputStatusType>>) => void) =>
   (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>, maxLength?: number) => {
     setFormInputStatus((prev) => {
       const { value, name } = e.target
-
-      // if maxLength is missing, we check only for an empty field
-      const checkMaxLengthField = maxLength ? (isValidLength(value, 1, maxLength) ? 'success' : 'error') : 'success'
-      const checkEmptyField = isNotAllWhitespace(value) ? checkMaxLengthField : 'error'
-
-      return { ...prev, [name]: checkEmptyField }
+      return { ...prev, [name]: validateText(value, maxLength) }
     })
   }
 

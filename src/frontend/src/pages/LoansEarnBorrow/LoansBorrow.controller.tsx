@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useHistory } from 'react-router'
+import { useHistory, useLocation } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -42,6 +42,7 @@ const marketSettings: MarketSettingsType = {
 export const LoansBorrow = () => {
   const dispatch = useDispatch()
   const history = useHistory()
+  const location = useLocation()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
@@ -145,13 +146,13 @@ export const LoansBorrow = () => {
   const handleBorrow = (marketTokenAddress: string) => {
     const validVaultId = myVaultsIds.find((vaultId) => {
       const vault = vaultsMapper[vaultId]
-      return marketTokenAddress === vault.borrowedTokenAddress
+      // TODO: add collateral check
+      return marketTokenAddress === vault.borrowedTokenAddress // && vault.collateralRatio > 200
     })
 
-    // create vault if user does not have vaults
+    // redirect specific asset market if user does not have vaults with collateral ratio > 200
     if (!validVaultId) {
       openCreateVaultPopup?.({
-        showShortFlow: true,
         tokenAddress: marketTokenAddress,
         setCreatedVaultAddress: (address: string) => {
           if (!address) return
@@ -162,15 +163,8 @@ export const LoansBorrow = () => {
       return
     }
 
-    //  if the user has already borrowed to the specific asset pool we will route to asset market
-    history.push(`/loans/${marketTokenAddress}/borrowTab`)
-  }
+    const vault = vaultsMapper[validVaultId]
 
-  // open borrow popup after getting new vault address
-  useEffect(() => {
-    if (!newVaultAddress) return
-
-    const vault = vaultsMapper[newVaultAddress]
     if (!vault) return
 
     const borrowAPR = loanTokens.find(
@@ -204,13 +198,8 @@ export const LoansBorrow = () => {
       borrowedTokenRate,
       DAOFee,
       borrowAPR,
-      scrollToCurrentVault: () => {
-        setNewVaultAddress('')
-        // redirect to the market after borrowing
-        history.push(`/loans/${vault.borrowedTokenAddress}/borrowTab/${newVaultAddress}`)
-      },
     })
-  }, [DAOFee, history, myVaultsIds, newVaultAddress, openBorrowPopup, vaultsMapper])
+  }
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {

@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
+import { useHistory, useLocation } from 'react-router-dom'
+import classNames from 'classnames'
 
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent, getStatusByCollateralRatio } from '../../Loans.const'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -9,7 +11,7 @@ import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
-import Expand from 'app/App.components/Expand/Expand.view'
+import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusMessage } from '../StatusMessage.view'
@@ -47,12 +49,7 @@ type BorrowingExpandCardPropsType = {
   children?: React.ReactNode
 }
 
-export const OldBorrowingExpandCard = ({
-  isOpenedVault,
-  headerSufix,
-  children,
-  vault,
-}: BorrowingExpandCardPropsType) => {
+export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: BorrowingExpandCardPropsType) => {
   const fullVault = useVault(vault)
 
   const {
@@ -74,13 +71,18 @@ export const OldBorrowingExpandCard = ({
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { symbol, decimals, icon } = borrowedTokenMetadata
+  const history = useHistory()
+  const location = useLocation()
+
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search])
+  const vaultAddress = params.get('vaultAddress')
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const { bug } = useToasterContext()
 
-  const [expanded, setExpanded] = useState(false)
+  const isExpanded = address === vaultAddress
 
   const {
     openAddExistingCollateralPopup,
@@ -106,8 +108,7 @@ export const OldBorrowingExpandCard = ({
     isActionActive
 
   const ref = useRef<HTMLDivElement | null>(null)
-
-  useClickAway(ref, () => (notHandleClickAway ? null : setExpanded(false)))
+  useClickAway(ref, () => (notHandleClickAway ? null : handleCloseVault()))
 
   const vaultStatus = status ?? getStatusByCollateralRatio(collateralRatio)
   const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
@@ -116,6 +117,24 @@ export const OldBorrowingExpandCard = ({
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
+
+  const handleOpenVault = () => {
+    if (isExpanded) return
+
+    params.append('vaultAddress', address)
+    history.replace({ ...location, search: params.toString() })
+  }
+
+  const handleCloseVault = () => {
+    if (!isExpanded) return
+
+    params.delete('vaultAddress')
+    history.replace({ ...location, search: params.toString() })
+  }
+
+  const handleClickExpand = () => {
+    isExpanded ? handleCloseVault() : handleOpenVault()
+  }
 
   useEffect(() => {
     if (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE) {
@@ -161,16 +180,13 @@ export const OldBorrowingExpandCard = ({
     return
   }, [vaultStatus, levelOfEarly, levelOfLate])
 
-  useEffect(() => {
-    setExpanded(Boolean(isOpenedVault))
-  }, [isOpenedVault])
-
   return (
     <div ref={ref}>
-      <Expand
-        getExpandedStatus={setExpanded}
-        isExpandedByDefault={expanded}
-        className={`expand-borrow-tab  ${expanded ? 'expandedCard' : ''}`}
+      <ExpandSimple
+        isExpanded={isExpanded}
+        onClick={handleClickExpand}
+        openButtonName="View"
+        className={classNames('expand-borrow-tab', { 'expanded-card': isExpanded })}
         sufix={headerSufix}
         header={
           <>
@@ -390,7 +406,7 @@ export const OldBorrowingExpandCard = ({
             ) : null}
           </BorrowingExpandedCard>
         )}
-      </Expand>
+      </ExpandSimple>
     </div>
   )
 }

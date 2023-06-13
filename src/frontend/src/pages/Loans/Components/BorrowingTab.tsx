@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from 'react'
-import { useHistory, useParams } from 'react-router'
+import { useHistory, useLocation } from 'react-router'
+import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useState } from 'react'
 
@@ -23,14 +23,13 @@ type BorrowingTabPropsType = {
 
 export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {
   const history = useHistory()
-  const { cardId = null } = useParams<{ cardId: string }>()
+  const location = useLocation()
 
   const { openCreateVaultPopup } = useLoansPopupsContext()
   const { tokensMetadata } = useTokensContext()
 
   const { symbol } = tokensMetadata[loanTokenAddress]
 
-  const [createdVaultId, setCreatedVaultAddress] = useState<null | string>(null)
   const [showZeroVaults, setShowZeroVaults] = useState(false)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -53,11 +52,13 @@ export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {
     [loanTokenAddress, myVaultsIds, showZeroVaults, vaultsMapper],
   )
 
-  useEffect(() => {
-    if (!cardId) return
-    setCreatedVaultAddress(cardId)
-    history.push(`/loans/${symbol}/borrowTab`)
-  }, [cardId])
+  const handleCreatedVaultAddress = (address?: string) => {
+    if (!address) return
+
+    const params = new URLSearchParams(location.search)
+    params.append('vaultAddress', address)
+    history.replace({ ...location, search: params.toString() })
+  }
 
   return (
     <BorrowingTabStyled>
@@ -70,7 +71,12 @@ export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {
               text="New Vault"
               icon="plus"
               disabled={!Boolean(accountPkh) || isActionActive}
-              onClick={() => openCreateVaultPopup({ tokenAddress: loanTokenAddress, setCreatedVaultAddress })}
+              onClick={() =>
+                openCreateVaultPopup({
+                  tokenAddress: loanTokenAddress,
+                  setCreatedVaultAddress: handleCreatedVaultAddress,
+                })
+              }
               kind={ACTION_PRIMARY}
               className="lending-tab-no-items-btn has-items-borrow-btn"
             />
@@ -88,15 +94,7 @@ export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {
           <VaultsList>
             {userMarketVaultsIds.map((vaultId) => {
               const vault = vaultsMapper[vaultId]
-              return (
-                <BorrowingExpandCard
-                  isOwner
-                  vault={vault}
-                  key={vault.address}
-                  isOpenedVault={createdVaultId === vault.address}
-                  DAOFee={DAOFee}
-                />
-              )
+              return <BorrowingExpandCard isOwner vault={vault} key={vault.address} DAOFee={DAOFee} />
             })}
           </VaultsList>
         </>
@@ -108,7 +106,12 @@ export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {
             icon="plus"
             kind={ACTION_PRIMARY}
             disabled={!Boolean(accountPkh)}
-            onClick={() => openCreateVaultPopup({ tokenAddress: loanTokenAddress, setCreatedVaultAddress })}
+            onClick={() =>
+              openCreateVaultPopup({
+                tokenAddress: loanTokenAddress,
+                setCreatedVaultAddress: handleCreatedVaultAddress,
+              })
+            }
             className="lending-tab-no-items-btn"
           />
         </NoItemsInTabStyled>
