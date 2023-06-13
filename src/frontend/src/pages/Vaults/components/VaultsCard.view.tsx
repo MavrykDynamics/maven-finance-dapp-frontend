@@ -48,6 +48,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getVaultStatus } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getVaultCollateralBalance } from '../Vaults.helpers'
 
 const findStatusInfo = (
   status: string,
@@ -116,7 +117,17 @@ type Props = {
 }
 
 export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab }: Props) => {
-  const { ownerId, vaultId, levelOfEarly, levelOfLate, collateralData, liquidationMax, liquidationPrice } = vault
+  const {
+    ownerId,
+    vaultId,
+    levelOfEarly,
+    levelOfLate,
+    collateralData,
+    liquidationMax,
+    liquidationPrice,
+    liquidationReward,
+    adminLiquidateFee,
+  } = vault
 
   const status = getVaultStatus()
 
@@ -133,7 +144,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
   const { color: statusColor, text: statusText } = findStatusInfo(status)
   const footerText = findFooterText(status, statusColor, timerTimestamp)
 
-  const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
+  const collateralTotalBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
 
   const isActiveFooter =
     status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
@@ -141,7 +152,19 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
   const isMarkStatus = vaultsStatuses.MARK === status
 
   const liquidateModalHandler = () => {
-    openLiquidateVaultPopup({ ...props })
+    const borrowedTokenMetadata = tokensMetadata[vault.borrowedTokenAddress]
+    const borrowedTokenRate = tokensPrices[borrowedTokenMetadata.symbol]
+    openLiquidateVaultPopup({
+      vaultId,
+      ownerAddress: ownerId,
+      borrowedTokenMetadata: borrowedTokenMetadata,
+      borrowedTokenRate: borrowedTokenRate,
+      collateralBalance: collateralTotalBalance,
+      collateralData,
+      liquidationMax,
+      liquidationReward,
+      adminLiquidateFee,
+    })
   }
 
   useEffect(() => {

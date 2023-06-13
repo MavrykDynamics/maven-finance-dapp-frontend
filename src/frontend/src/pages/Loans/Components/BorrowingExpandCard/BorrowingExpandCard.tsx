@@ -238,7 +238,14 @@ export const BorrowingExpandCard = ({
 
   const handleClickOpenAddNewCollateralPopup = () => {
     openAddNewCollateralPopup({
-      vault,
+      vaultAddress: vault.address,
+      borrowedAmount,
+      collateralBalance,
+      collateralRatio,
+      borrowedTokenRate,
+      availableLiquidity: vault.availableLiquidity,
+      borrowCapacity,
+      collateralData: vault.collateralData,
     })
   }
 

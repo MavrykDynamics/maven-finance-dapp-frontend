@@ -45,7 +45,7 @@ const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
-  const { tokensPrices } = useTokensContext()
+  const { tokensPrices, tokensMetadata } = useTokensContext()
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
@@ -69,7 +69,7 @@ const DashboardPersonal = () => {
     },
   } = useSelector((state: State) => state.wallet)
 
-  const claimRewards = async () => await dispatch(claimAllRewardsAction())
+  const claimRewards = async () => await dispatch(claimAllRewardsAction(tokensMetadata))
 
   const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
     skipAddressBalance: SUB_SKIP,

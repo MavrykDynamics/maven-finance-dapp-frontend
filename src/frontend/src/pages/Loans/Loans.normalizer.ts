@@ -50,7 +50,7 @@ export const normalizeLoans = ({
 
     acc.push({
       loanTokenAddress: token_address,
-      loanMTokenAddress: m_token.token.token_address,
+      loanMTokenAddress: m_token.address,
       utilisationRate: getNumberInBounds(
         0,
         100,

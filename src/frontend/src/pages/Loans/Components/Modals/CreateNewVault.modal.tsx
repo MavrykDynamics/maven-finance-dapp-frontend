@@ -8,9 +8,8 @@ import {
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
-import { CreateVaultPopupDataType, VaultNameInputStateType } from './Modals.helpers'
-import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
-import { AvaliableCollateralType, LoansVaultType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
+import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton'
@@ -36,8 +35,7 @@ import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { containSpaces } from 'app/App.utils/input'
-
-export type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
+import { CreateVaultPopupDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
 
 export type DropDownXTZBakerType = DropDownItemType & {
   bakerName: string
@@ -71,6 +69,9 @@ export const CreateNewVault = ({
   show: boolean
   data: CreateVaultPopupDataType
 }) => {
+  return null
+
+  /*
   const { currentMarketAsset, setCreatedVaultAddress, showShortFlow } = data ?? {}
   const dispatch = useDispatch()
 
@@ -424,7 +425,7 @@ export const CreateNewVault = ({
             {descrText}
           </div>
 
-          {/* showing initial screen */}
+          {/* showing initial screen }
           {shownScreen === 'initial' ? (
             <>
               <Input
@@ -458,7 +459,7 @@ export const CreateNewVault = ({
             </>
           ) : null}
 
-          {/* showing add collateral screen */}
+          {/* showing add collateral screen }
           {shownScreen === 'addCollateral' ? (
             <>
               <div className="collateral-list">
@@ -541,7 +542,7 @@ export const CreateNewVault = ({
                 })}
               </div>
 
-              {/* button for despositting more than 1 collateral */}
+              {/* button for despositting more than 1 collateral }
               {/* <NewButton
                 kind={BUTTON_SIMPLE}
                 disabled={!Boolean(nextAvaliableCollateralToAdd)}
@@ -549,7 +550,7 @@ export const CreateNewVault = ({
                 className="add-collateral-inline"
               >
                 + Add more assets as collateral
-              </NewButton> */}
+              </NewButton> }
 
               <div className="manage-btn">
                 <NewButton
@@ -572,7 +573,7 @@ export const CreateNewVault = ({
             </>
           ) : null}
 
-          {/* showing confirmation screen */}
+          {/* showing confirmation screen }
           {shownScreen === 'confirmation' ? (
             <>
               {collaterals.length === 1 ? (
@@ -699,6 +700,7 @@ export const CreateNewVault = ({
       </PopupContainerWrapper>
     </PopupContainer>
   )
+  */
 }
 
 // validation helper

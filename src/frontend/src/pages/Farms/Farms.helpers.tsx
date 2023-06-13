@@ -4,8 +4,8 @@ import { FarmAccountsType, FarmContractType, FarmGraphQL, Normalizedfarm } from 
 // helpers
 import { getContractBigmapKeys, network } from 'utils/blockchainApi'
 import { STAKED } from './Farms.const'
-import { State } from 'reducers'
 import { Farm_Account } from 'utils/generated/graphqlTypes'
+import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 
 type EndsInType = {
   endsIn: any
@@ -33,7 +33,7 @@ type TokensInfoType = {
 
 export const normalizeFarmStorage = (
   farmList: FarmGraphQL[],
-  dipDupTokens: State['tokens']['dipDupTokens'],
+  tokens: TokensContext['tokensMetadata'],
   farmCardEndsIn: EndsInType,
   farmLPTokensInfo: TokensInfoType,
   farmContracts: FarmContractType[],
@@ -48,9 +48,7 @@ export const normalizeFarmStorage = (
         lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] &&
         address === lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0],
     )
-    const dipDupToken = dipDupTokens.find(
-      ({ token_address }) => farmItem.lp_token.token_address === token_address,
-    )?.metadata
+    const dipDupToken = tokens[farmItem.lp_token.token_address]
 
     return {
       address: farmItem.address,

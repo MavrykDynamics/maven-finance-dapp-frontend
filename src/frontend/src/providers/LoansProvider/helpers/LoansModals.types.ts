@@ -59,7 +59,14 @@ export type AddCollateralPopupDataType = {
 } | null
 
 export type AddNewCollateralDataProps = {
-  vault: LoansVaultType
+  vaultAddress: string
+  collateralBalance: number
+  borrowCapacity: number
+  borrowedAmount: number
+  collateralRatio: number
+  borrowedTokenRate: number
+  availableLiquidity: number
+  collateralData: LoansVaultType['collateralData']
 } | null
 
 export type WithdrawCollateralPopupDataType = {
@@ -83,6 +90,18 @@ export type BorrowPopupDataType = {
   borrowAPR: number
   DAOFee: number
   scrollToCurrentVault?: () => void
+} | null
+
+export type LiquidateVaultDataType = {
+  vaultId: number
+  ownerAddress: string
+  borrowedTokenMetadata: TokenMetadataType
+  borrowedTokenRate: number
+  collateralBalance: number
+  collateralData: LoansVaultType['collateralData']
+  liquidationMax: number
+  liquidationReward: number
+  adminLiquidateFee: number
 } | null
 
 // Liquidity popups data types
@@ -138,8 +157,6 @@ export type ModalStateType<T = {}> = {
   showModal: boolean
   data: T
 }
-
-export type LiquidateVaultDataType = LoansVaultType | null
 
 export type LoansPopupsContextStateType = {
   confirmAddLendingAssetPopup: ModalStateType<ConfirmAddLendingAssetDataType>

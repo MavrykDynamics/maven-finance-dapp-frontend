@@ -1,10 +1,10 @@
 import { gql } from 'utils/__generated__'
 
 // Cals 24h diffs
-export const LENDING_24H_OPERATIONS_QUERY = gql(`
+export const LEND_BORROW_24H_DIFF = gql(`
 subscription getLendingDiff($currentTimestamp: timestamptz) {
   lending_controller(where: {mock_time: {_eq: false}}) {
-    history_data(where: {type: {_in: ["0", "1"]}, timestamp: {_gte: $currentTimestamp}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
+    history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}, timestamp: {_gte: $currentTimestamp}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
       type
       amount
       timestamp
@@ -14,30 +14,7 @@ subscription getLendingDiff($currentTimestamp: timestamptz) {
         }
       }
     }
-  }
-}
-`)
-
-export const BORROWING_24H_OPERATIONS_QUERY = gql(`
-subscription getBorrowingDiff($currentTimestamp: timestamptz) {
-  lending_controller(where: {mock_time: {_eq: false}}) {
-    history_data(where: {type: {_in: ["2", "3", "4", "5", "6", "7"]}, timestamp: {_gte: $currentTimestamp}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
-      type
-      amount
-      timestamp
-      loan_token {
-        token {
-          token_address
-        }
-      }
-    }
-  }
-}
-`)
-
-export const GET_CURRENT_LOANS_TOTAL_LEND_BORROW = gql(`
-subscription getCurrentLendBorrow {
-  lending_controller(where: {mock_time: {_eq: false}}) {
+  
     loan_tokens {
       total_borrowed
       token_pool_total

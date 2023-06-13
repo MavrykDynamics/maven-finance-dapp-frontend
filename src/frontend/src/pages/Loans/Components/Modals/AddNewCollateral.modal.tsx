@@ -4,12 +4,12 @@ import { State } from 'reducers'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { DDItemId, DropDown, DropdownInputCustomChild } from 'app/App.components/DropDown/NewDropdown'
+import { DDItemId, DropDown, DropDownItemType, DropdownInputCustomChild } from 'app/App.components/DropDown/NewDropdown'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Input } from 'app/App.components/Input/NewInput'
-import { DropDownCollateralAssetType, DropDownXTZBakerType } from './CreateNewVault.modal'
+import { DropDownXTZBakerType } from './CreateNewVault.modal'
 import NewButton from 'app/App.components/Button/NewButton'
 
 import {
@@ -48,6 +48,7 @@ import { checkWhetherTokenIsCollateralToken, isTezosAsset } from 'providers/Toke
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
+// TODO: redo it
 export const AddNewCollateral = ({
   closePopup,
   show,
@@ -57,17 +58,6 @@ export const AddNewCollateral = ({
   show: boolean
   data: AddNewCollateralDataProps
 }) => {
-  const {
-    vaultCollateralBalance = 0,
-    vaultAddress,
-    currentCollateralRatio = 0,
-    borrowedAmount = 0,
-    borrowedAssetRate = 0,
-    availableLiquidity = 0,
-    borrowCapacity = 0,
-    existingCollaterals,
-  } = data ?? {}
-
   const { xtzBakers } = useDAPPConfigContext()
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
 
@@ -84,80 +74,9 @@ export const AddNewCollateral = ({
     amount: '0',
     validationStatus: '',
   })
+
   const [selectedCollateral, setSelectedCollateral] = useState<TokenAddressType | undefined>()
-
-  const collateralToken = tokensMetadata[selectedCollateral ?? '']
-  const { symbol = '', decimals = assetDecimalsToShow } = collateralToken
-  const rate = tokensPrices[symbol] ?? 0
-
-  const collateralsToUse = useMemo(() => {
-    if (collateralTokens.length === 0) return {}
-
-    const mappedAvaliableCollaterals = collateralTokens.reduce<Record<DDItemId, DropDownCollateralAssetType>>(
-      (acc, collateralTokenAddress) => {
-        const collateralData = tokensMetadata[collateralTokenAddress]
-        if (checkWhetherTokenIsCollateralToken(collateralData)) {
-          acc[collateralData.address] = {
-            id: collateralData.address,
-            tokenAddress: collateralData.address,
-            content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.name} />,
-            disabled: Boolean(
-              collateralData.loanData.isProtectedCollateral ||
-                existingCollaterals?.find(({ tokenAddress }) => collateralData.address === tokenAddress) ||
-                selectedCollateral === collateralTokenAddress,
-            ),
-          }
-        }
-        return acc
-      },
-      {},
-    )
-
-    const firstNotDisabledCollateralAddress = Object.values(mappedAvaliableCollaterals).find(
-      ({ disabled }) => !disabled,
-    )?.tokenAddress
-
-    if (firstNotDisabledCollateralAddress) mappedAvaliableCollaterals[firstNotDisabledCollateralAddress].disabled = true
-
-    setSelectedCollateral(
-      firstNotDisabledCollateralAddress
-        ? firstNotDisabledCollateralAddress
-        : Object.keys(mappedAvaliableCollaterals)[0],
-    )
-
-    return mappedAvaliableCollaterals
-  }, [collateralTokens, existingCollaterals, tokensMetadata, selectedCollateral])
-
-  // resetting popup state, when toggling it off
-  useEffect(() => {
-    if (!show) {
-      setInputData({
-        amount: '0',
-        validationStatus: '',
-      })
-    }
-  }, [show])
-
-  // TODO: handle user balance
-  const collateralBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
-
-  const { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance } = useMemo(() => {
-    const inputAmount = checkNan(parseFloat(inputData.amount))
-
-    const futureCollateralRatio = calcCollateralRatio(
-      vaultCollateralBalance + inputAmount,
-      borrowedAmount,
-      borrowedAssetRate,
-    )
-    const futureCollateralBalance = vaultCollateralBalance + inputAmount * rate
-    const futureBorrowCapacity = Math.min(
-      Math.max(availableLiquidity, 0),
-      futureCollateralBalance / 2 - borrowedAmount * borrowedAssetRate,
-    )
-
-    return { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance }
-    // return { futureCollateralRatio: 0, futureBorrowCapacity: 0, futureCollateralBalance: 0 }
-  }, [inputData.amount, vaultCollateralBalance, borrowedAmount, borrowedAssetRate, rate, availableLiquidity])
+  const [bakerChosenDdItem, setAssetChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
 
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(() => {
@@ -185,10 +104,94 @@ export const AddNewCollateral = ({
         disabled: isDisabled,
       }))
   }, [xtzBakers])
-  const [bakerChosenDdItem, setAssetChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
+
+  // resetting popup state, when toggling it off
+  useEffect(() => {
+    if (!show) {
+      setInputData({
+        amount: '0',
+        validationStatus: '',
+      })
+    }
+  }, [show])
+
+  if (!data) return null
+
+  const {
+    collateralBalance = 0,
+    vaultAddress,
+    collateralRatio = 0,
+    borrowedAmount = 0,
+    borrowedTokenRate = 0,
+    availableLiquidity = 0,
+    borrowCapacity = 0,
+    collateralData,
+  } = data
+
+  const collateralToken = tokensMetadata[selectedCollateral ?? '']
+  const { symbol = '', decimals = assetDecimalsToShow } = collateralToken
+  const rate = tokensPrices[symbol] ?? 0
+
+  // TODO: handle user balance
+  const userCollateralBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
+
+  const inputAmount = checkNan(parseFloat(inputData.amount))
+
+  const futureCollateralRatio = calcCollateralRatio(collateralBalance + inputAmount, borrowedAmount, borrowedTokenRate)
+  const futureCollateralBalance = collateralBalance + inputAmount * rate
+  const futureBorrowCapacity = Math.min(
+    Math.max(availableLiquidity, 0),
+    futureCollateralBalance / 2 - borrowedAmount * borrowedTokenRate,
+  )
+
+  const mappedAvaliableCollaterals = collateralTokens.reduce<
+    Record<DDItemId, DropDownItemType & { tokenAddress: TokenAddressType }>
+  >((acc, collateralTokenAddress) => {
+    const collateral = tokensMetadata[collateralTokenAddress]
+    const { address, icon, symbol } = collateral
+
+    if (checkWhetherTokenIsCollateralToken(collateral)) {
+      acc[address] = {
+        id: address,
+        tokenAddress: address,
+        content: <DropdownInputCustomChild iconSrc={icon} symbol={symbol} />,
+        disabled: Boolean(
+          collateral.loanData.isProtectedCollateral ||
+            collateralData?.find(({ tokenAddress }) => address === tokenAddress) ||
+            selectedCollateral === collateralTokenAddress,
+        ),
+      }
+    }
+    return acc
+  }, {})
+
+  const firstNotDisabledCollateralAddress = Object.values(mappedAvaliableCollaterals).find(
+    ({ disabled }) => !disabled,
+  )?.tokenAddress
+
+  if (firstNotDisabledCollateralAddress) mappedAvaliableCollaterals[firstNotDisabledCollateralAddress].disabled = true
+
+  setSelectedCollateral(
+    firstNotDisabledCollateralAddress ? firstNotDisabledCollateralAddress : Object.keys(mappedAvaliableCollaterals)[0],
+  )
+
   const showBakerAddress = isTezosAsset(selectedCollateral)
   const handleOnClickDropdownBakerItem = (itemId: DDItemId) =>
     setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
+
+  const depositCollateralHandler = () => {
+    if (vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
+      dispatch(
+        depositCollateralAction(
+          vaultAddress,
+          Number(inputData.amount),
+          collateralToken,
+          closePopup,
+          bakerChosenDdItem?.bakerAddress,
+        ),
+      )
+    }
+  }
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
@@ -256,25 +259,8 @@ export const AddNewCollateral = ({
     // }
   }
 
-  const isDepositBtnDisabled = useMemo(
-    () =>
-      (isTezosAsset(selectedCollateral) && !bakerChosenDdItem) || inputData?.validationStatus === INPUT_STATUS_ERROR,
-    [bakerChosenDdItem, selectedCollateral, inputData?.validationStatus],
-  )
-
-  const depositCollateralHandler = () => {
-    if (vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
-      dispatch(
-        depositCollateralAction(
-          vaultAddress,
-          Number(inputData.amount),
-          collateralToken,
-          closePopup,
-          bakerChosenDdItem?.bakerAddress,
-        ),
-      )
-    }
-  }
+  const isDepositBtnDisabled =
+    (isTezosAsset(selectedCollateral) && !bakerChosenDdItem) || inputData?.validationStatus === INPUT_STATUS_ERROR
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -290,21 +276,20 @@ export const AddNewCollateral = ({
           <VaultModalOverview style={{ marginBottom: '45px' }}>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(currentCollateralRatio)}
+              customColor={getCollateralRationPersent(collateralRatio)}
             >
               <div className={`percentage`}>
-                Collateral Ratio:{' '}
-                <CommaNumber value={currentCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+                Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
               </div>
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={getCollateralRatioByPersentage(currentCollateralRatio)}
+                currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral Value</div>
-              <CommaNumber value={vaultCollateralBalance} beginningText="$" className="value" />
+              <CommaNumber value={collateralBalance} beginningText="$" className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">
@@ -328,15 +313,15 @@ export const AddNewCollateral = ({
                   type: 'number',
                   onBlur: inputOnBlurHandle,
                   onFocus: onFocusHandler,
-                  onChange: (e) => inputOnChangeHandle(e.target.value, collateralBalance),
+                  onChange: (e) => inputOnChangeHandle(e.target.value, userCollateralBalance),
                 }}
                 settings={{
-                  balance: collateralBalance,
+                  balance: userCollateralBalance,
                   balanceAsset: symbol,
                   useMaxHandler: () =>
                     setInputData({
                       ...inputData,
-                      amount: getLoansInputMaxAmount(collateralBalance, decimals),
+                      amount: getLoansInputMaxAmount(userCollateralBalance, decimals),
                       validationStatus: INPUT_STATUS_SUCCESS,
                     }),
                   inputSize: INPUT_LARGE,
@@ -347,8 +332,8 @@ export const AddNewCollateral = ({
                 <InputPinnedDropDown>
                   <DropDown
                     placeholder="Select Bakery"
-                    activeItem={selectedCollateral ? collateralsToUse[selectedCollateral] : undefined}
-                    items={Object.values(collateralsToUse)}
+                    activeItem={selectedCollateral ? mappedAvaliableCollaterals[selectedCollateral] : undefined}
+                    items={Object.values(mappedAvaliableCollaterals)}
                     clickItem={clickOnInputDDItem}
                     className="input-dropdown not-capitalized"
                   />

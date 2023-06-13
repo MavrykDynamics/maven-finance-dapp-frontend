@@ -1,12 +1,8 @@
 import { useState } from 'react'
-import { useQuery, useSubscription } from '@apollo/client'
+import { useSubscription } from '@apollo/client'
 import dayjs from 'dayjs'
 
-import {
-  LENDING_24H_OPERATIONS_QUERY,
-  BORROWING_24H_OPERATIONS_QUERY,
-  GET_CURRENT_LOANS_TOTAL_LEND_BORROW,
-} from 'gql/subscriptions/loans.queries'
+import { LEND_BORROW_24H_DIFF } from 'gql/subscriptions/loans.queries'
 
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { calcDiffBetweenTwoNumbersInPersentage, convertNumberForClient } from 'utils/calcFunctions'
@@ -26,59 +22,43 @@ const useLendBorrow24hDiff = (): {
   const [last24hLending, setLast24hLending] = useState(0)
   const [last24hBorrowing, setLast24hBorrowing] = useState(0)
 
-  const { loading: isLending24hLoading } = useQuery(LENDING_24H_OPERATIONS_QUERY, {
+  console.log('rerender useLendBorrow24hDiff')
+
+  const { loading: isLoading, data } = useSubscription(LEND_BORROW_24H_DIFF, {
     variables: {
       currentTimestamp: dayjs().toISOString(),
     },
-    onCompleted: (data) => {
-      const last24hLending = data.lending_controller[0].history_data.reduce((acc, operation) => {
-        const tokenAddress = operation.loan_token?.token.token_address
-
-        if (!tokenAddress) return acc
-
-        const { decimals, symbol } = tokensMetadata[tokenAddress]
-        const rate = tokensPrices[symbol]
-
-        return (acc +=
-          convertNumberForClient({ number: operation.amount, grade: decimals }) *
-          rate *
-          (operation.type === 1 ? -1 : 1))
-      }, 0)
-      setLast24hLending(last24hLending)
-    },
-    onError: (error) => {
-      console.error('LENDING_24H_OPERATIONS_QUERY error: ', { error })
-    },
-  })
-
-  const { loading: isBorrowing24hLoading } = useQuery(BORROWING_24H_OPERATIONS_QUERY, {
-    variables: {
-      currentTimestamp: dayjs().toISOString(),
-    },
-    onCompleted: (data) => {
-      const last24hBorrowing = data.lending_controller[0].history_data.reduce((acc, operation) => {
-        const tokenAddress = operation.loan_token?.token.token_address
-
-        if (!tokenAddress) return acc
-
-        const { decimals, symbol } = tokensMetadata[tokenAddress]
-        const rate = tokensPrices[symbol]
-
-        return (acc +=
-          convertNumberForClient({ number: operation.amount, grade: decimals }) *
-          rate *
-          ([3, 5, 7].includes(operation.type) ? -1 : 1))
-      }, 0)
-      setLast24hBorrowing(last24hBorrowing)
-    },
-    onError: (error) => {
-      console.error('BORROWING_24H_OPERATIONS_QUERY error: ', { error })
-    },
-  })
-
-  const { loading: isTotalLoading } = useSubscription(GET_CURRENT_LOANS_TOTAL_LEND_BORROW, {
+    shouldResubscribe: true,
     onData: ({ data: { data } }) => {
       if (!data) return
+
+      const { last24hLending, last24hBorrowing } = data.lending_controller[0].history_data.reduce(
+        (acc, operation) => {
+          const tokenAddress = operation.loan_token?.token.token_address
+
+          if (!tokenAddress) return acc
+
+          const isLending = [0, 1].includes(operation.type)
+
+          const { decimals, symbol } = tokensMetadata[tokenAddress]
+          const rate = tokensPrices[symbol]
+
+          if (isLending) {
+            acc.last24hLending +=
+              convertNumberForClient({ number: operation.amount, grade: decimals }) *
+              rate *
+              (operation.type === 1 ? -1 : 1)
+          } else {
+            acc.last24hBorrowing +=
+              convertNumberForClient({ number: operation.amount, grade: decimals }) *
+              rate *
+              ([3, 5, 7].includes(operation.type) ? -1 : 1)
+          }
+
+          return acc
+        },
+        { last24hLending: 0, last24hBorrowing: 0 },
+      )
 
       const { currentTotalLended, currentTotalBorrowed } = data.lending_controller[0].loan_tokens.reduce(
         (acc, { token, total_borrowed, token_pool_total }) => {
@@ -99,11 +79,15 @@ const useLendBorrow24hDiff = (): {
         },
       )
 
+      setLast24hBorrowing(last24hBorrowing)
+      setLast24hLending(last24hLending)
       setCurrentTotalBorrowed(currentTotalBorrowed)
       setCurrentTotalLended(currentTotalLended)
+
+      return { last24hBorrowing, last24hLending, currentTotalBorrowed, currentTotalLended }
     },
     onError: (error) => {
-      console.error('GET_CURRENT_LOANS_TOTAL_LEND_BORROW error: ', { error })
+      console.error('LENDING_24H_OPERATIONS_QUERY error: ', { error })
     },
   })
 
@@ -121,7 +105,7 @@ const useLendBorrow24hDiff = (): {
     borrowing24hPersentChange,
     last24hBorrowingVol: currentTotalBorrowed - (currentTotalBorrowed - last24hBorrowing),
     last24hLendingVol: currentTotalLended - (currentTotalLended - last24hLending),
-    isLoading: isTotalLoading || isLending24hLoading || isBorrowing24hLoading,
+    isLoading,
   }
 }
 

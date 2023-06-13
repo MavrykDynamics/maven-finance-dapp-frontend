@@ -4,8 +4,6 @@ import { State } from 'reducers'
 import { LoansValuesSectionInfo, LoansValuesSection } from './../LoansComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
-import { isTezosAsset } from '../../Loans.helpers'
-
 import { LendingItemType } from 'utils/TypesAndInterfaces/Loans'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
@@ -31,8 +29,7 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
   const { lendValue = 0, interestEarned = 0, mBalance = 0 } = lendingItem || {}
 
   // TODO: use just symbol, requires user tokens refactor
-  const balanceSymbol = isTezosAsset(symbol.toLowerCase() ?? '') ? 'tezos' : symbol.toLowerCase().toLowerCase() ?? ''
-  const tokenBalance = userTokens[balanceSymbol]?.balance ?? 0
+  const tokenBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
 
   return (
     <LoansValuesSection className="lending-tab">
