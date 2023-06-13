@@ -39,12 +39,14 @@ import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { SUB_SKIP } from 'utils/api/apollo.consts'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
-  const { tokensPrices } = useSelector((state: State) => state.tokens)
+  const { tokensPrices } = useTokensContext()
+
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)

@@ -2,14 +2,18 @@ import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+import { silverColor } from 'styles'
 import { State } from 'reducers'
-import { reduceTreasuryAssets } from 'pages/Treasury/Treasury.helpers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTreasuryTVL, reduceTreasuryAssets } from 'pages/Treasury/helpers/treasury.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { emptyContainer } from './LendingTab.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 import {
   Table,
@@ -24,29 +28,33 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { BlockName, StatBlock } from '../Dashboard.style'
 import { TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { silverColor } from 'styles'
 
 export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
   const { treasuryStorage } = useSelector((state: State) => state.treasury)
   const { totalVestedAmount, totalClaimedAmount } = useSelector((state: State) => state.vesting)
 
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const amountOfTokens = totalVestedAmount + totalClaimedAmount
 
-  const { assetsBalances, globalTreasuryTVL } = useMemo(() => reduceTreasuryAssets(treasuryStorage), [treasuryStorage])
+  const treasuryTokens = useMemo(() => Object.values(reduceTreasuryAssets(treasuryStorage)), [treasuryStorage])
 
-  const mostAssetsTreasury = useMemo(
+  const { mostSuppliedTreasuryName, mostSuppliedTreasuryTVL, globalTreasuryTVL } = useMemo(
     () =>
       treasuryStorage.reduce(
         (acc, treasury) => {
-          if (treasury.treasuryTVL > acc.treasuryTVL) {
-            acc.treasuryName = treasury.name
-            acc.treasuryTVL = treasury.treasuryTVL
+          const treasuryTVL = getTreasuryTVL(treasury, tokensMetadata, tokensPrices)
+
+          if (treasuryTVL > acc.mostSuppliedTreasuryTVL) {
+            acc.mostSuppliedTreasuryName = treasury.name
+            acc.mostSuppliedTreasuryTVL = treasuryTVL
           }
+
+          acc.globalTreasuryTVL += treasuryTVL
 
           return acc
         },
-        { treasuryName: '', treasuryTVL: 0 },
+        { mostSuppliedTreasuryName: '', globalTreasuryTVL: 0, mostSuppliedTreasuryTVL: 0 },
       ),
     [treasuryStorage],
   )
@@ -74,11 +82,11 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                 <CommaNumber endingText="USD" value={globalTreasuryTVL} />
               </div>
             </StatBlock>
-            {mostAssetsTreasury.treasuryName && mostAssetsTreasury.treasuryTVL && (
+            {mostSuppliedTreasuryName && mostSuppliedTreasuryTVL && (
               <StatBlock>
-                <div className="name">{mostAssetsTreasury.treasuryName}</div>
+                <div className="name">{mostSuppliedTreasuryName}</div>
                 <div className="value">
-                  <CommaNumber endingText="USD" value={mostAssetsTreasury.treasuryTVL} />
+                  <CommaNumber endingText="USD" value={mostSuppliedTreasuryTVL} />
                 </div>
               </StatBlock>
             )}
@@ -105,23 +113,27 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                   </TableHeader>
 
                   <TableBody className="treasury">
-                    {assetsBalances.map(({ symbol, balance, usdValue, rate }) => {
+                    {treasuryTokens.map(({ tokenAddress, balance }) => {
+                      const { symbol, decimals } = tokensMetadata[tokenAddress]
+                      const rate = tokensPrices[symbol] ?? 0
+                      const treasuryTokenBalance = convertNumberForClient({ number: balance, grade: decimals })
+
                       return (
                         <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
                           <TableCell width="33%">{symbol}</TableCell>
                           <TableCell width="33%">
-                            {parseFloat(String(balance)) < 0.01 ? (
+                            {treasuryTokenBalance < 0.01 ? (
                               '<0.01'
                             ) : (
-                              <CommaNumber value={balance} showDecimal decimalsToShow={2} />
+                              <CommaNumber value={treasuryTokenBalance} showDecimal decimalsToShow={2} />
                             )}
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
-                            {parseFloat(String(usdValue)) < 0.01 ? (
+                            {treasuryTokenBalance * rate < 0.01 ? (
                               `<0.01 ${rate ? '$' : symbol}`
                             ) : (
                               <CommaNumber
-                                value={usdValue}
+                                value={treasuryTokenBalance * rate}
                                 endingText={rate ? '' : symbol}
                                 beginningText={rate ? '$' : ''}
                                 showDecimal

@@ -8,13 +8,31 @@
 export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
   switch (tokenGqlSymbol.toLowerCase()) {
     case 'usdt/usd':
-      return { name: 'Tether', symbol: 'USDT' }
+    case 'usdt':
+      return { name: 'Tether', symbol: 'USDT', icon: '/images/usdt.png' }
+    case 'musdt':
+      return { name: 'mUSDT', symbol: 'mUSDT', icon: '/images/usdt.png' }
+
     case 'xtz/usd':
-      return { name: 'Tezos', symbol: 'XTZ' }
+    case 'xtz':
+      return { name: 'Tezos', symbol: 'XTZ', icon: '/images/tezos.png' }
+    case 'mxtz':
+      return { name: 'mXTZ', symbol: 'mXTZ', icon: '/images/tezos.png' }
+
     case 'btc/usd':
-      return { name: 'tzBTC', symbol: 'tzBTC' }
+    case 'tzbtc':
+      return { name: 'tzBTC', symbol: 'tzBTC', icon: '/images/tzBTC.png' }
+    case 'mtzbtc':
+      return { name: 'mTzBTC', symbol: 'mTzBTC', icon: '/images/tzBTC.png' }
+
     case 'euroc/usd':
-      return { name: 'Eurocoin', symbol: 'EUROC' }
+    case 'eurl':
+      return { name: 'Eurocoin', symbol: 'EURL', icon: '/images/eurl.png' }
+    case 'meurl':
+      return { name: 'mEURL', symbol: 'mEURL', icon: '/images/eurl.png' }
+
+    case 'mvk':
+      return { name: 'Mavryk', symbol: 'MVK', icon: 'https://mavryk.finance/logo192.png' }
   }
 
   return null

@@ -13,6 +13,8 @@ const propomitionAddresses = [
   'KT1C1sYNxacr8LPZimA512gAfWajdGah75nq',
   'KT1BYGLiHStMzdv2WCikKKDtFtvUjxzZ8WB9',
 ]
+
+/** */
 export class DataFeedsProvider extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -46,6 +48,7 @@ export class DataFeedsProvider extends React.Component<Props, State> {
     console.info('Unimplemented')
   }
 
+  /** */
   render(): React.ReactNode {
     return <dataFeedsContext.Provider value={this.state.context}>{this.props.children}</dataFeedsContext.Provider>
   }

@@ -8,12 +8,17 @@ import { Page } from 'styles'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
-import { State } from '../../reducers'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+// const & types
 import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
-import { fillTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
+import { MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { State } from '../../reducers'
+
+// actions
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
@@ -26,10 +31,10 @@ export const Dashboard = () => {
   const activeTab = isValidPersonalDashboardTabId(parsedQp.tab) ? parsedQp.tab : LENDING_TAB_ID
 
   const { totalStakedMvk, totalSupply, maximumTotalSupply } = useStakeContext()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
 
-  const {
-    tokensPrices: { mvk: mvkExchangeRate = 0 },
-  } = useSelector((state: State) => state.tokens)
+  const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
+
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
@@ -59,7 +64,8 @@ export const Dashboard = () => {
 
   const treasuryTVL = treasuryStorage.reduce((acc, { balances }) => {
     return (acc += balances.reduce((balanceAcc, balanceAsset) => {
-      return (balanceAcc += balanceAsset.usdValue || 0)
+      const tokenRate = tokensPrices[tokensMetadata[balanceAsset.tokenAddress].symbol]
+      return tokenRate ? balanceAcc + balanceAsset.balance * tokenRate : balanceAcc
     }, 0))
   }, 0)
 
@@ -92,7 +98,7 @@ export const Dashboard = () => {
         [
           (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
           (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
-          (!isTreasuryLoaded || isDepsChanged) && dispatch(fillTreasuryStorage()),
+          (!isTreasuryLoaded || isDepsChanged) && dispatch(getTreasuryStorage()),
           (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
           (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage()),
         ].filter(Boolean),
@@ -108,6 +114,7 @@ export const Dashboard = () => {
     circuatingSupply: totalSupply,
     maxSupply: maximumTotalSupply,
     livePrice: mvkExchangeRate,
+    // TODO: remove when mvk rate will be dynamic
     prevPrice: mvkExchangeRate - 0.1,
   }
 

@@ -35,8 +35,6 @@ import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
 import { getTokensForDAPP } from 'reducers/actions/getTokens.actions'
-import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
-import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
 export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
@@ -54,17 +52,11 @@ const AppContainer = () => {
   const [isIOS, setIsIOS] = useState(true)
 
   // inital data load
-  useInitializer()
+  const { isLoading: isInitialCtxLoading } = useInitializer()
 
   useEffect(() => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))
   }, [showSidebarOpened])
-
-  /**
-   * dispatch(getTokensForDAPP())
-   * dispatch(getAvaliableCollaterals())
-   * will be removed after tokens reorganization, cuz it'll be in useInitializer and will be on context
-   */
 
   useEffect(() => {
     ;(async () => {
@@ -76,7 +68,6 @@ const AppContainer = () => {
         dispatch(getSatellitesStorage()),
 
         dispatch(getTokensForDAPP()),
-        dispatch(getAvaliableCollaterals()),
       ])
 
       // For using Beacon wallet
@@ -104,7 +95,7 @@ const AppContainer = () => {
     setCookie('policyPopup', true)
   }, [])
 
-  return isInitialDataLoading ? (
+  return isInitialDataLoading || isInitialCtxLoading ? (
     <LoaderRocket />
   ) : (
     <Router>

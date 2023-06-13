@@ -318,6 +318,7 @@ const normalizeCollateralAssets = ({
         rate: 0,
         name: '',
         gqlName: '',
+        address: '',
         icon: '',
         id: 0,
         decimals: 0,

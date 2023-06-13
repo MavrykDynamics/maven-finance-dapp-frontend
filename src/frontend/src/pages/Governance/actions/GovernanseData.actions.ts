@@ -15,9 +15,6 @@ import { normalizeGovernanceConfig, normalizeGovernanceProposals } from './gover
 export const GET_PROPOSALS = 'GET_PROPOSALS'
 export const GET_GOVERNANCE_CONFIG = 'GET_GOVERNANCE_CONFIG'
 export const getGovernanceStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const {
-    tokens: { dipDupTokens },
-  } = getState()
   try {
     const [configStorage, proposalStorage] = await Promise.all([
       fetchFromIndexer(GOVERNANCE_CONFIG_QUERY, GOVERNANCE_CONFIG_QUERY_NAME, GOVERNANCE_CONFIG_QUERY_VARIABLE),
@@ -32,7 +29,7 @@ export const getGovernanceStorage = () => async (dispatch: AppDispatch, getState
     const normalizedConfig = normalizeGovernanceConfig(currentGov)
 
     const proposalsFromGql = proposalStorage.governance_proposal
-    const normalizedProposals = normalizeGovernanceProposals(proposalsFromGql, dipDupTokens, normalizedConfig)
+    const normalizedProposals = normalizeGovernanceProposals(proposalsFromGql, normalizedConfig)
 
     dispatch({
       type: GET_PROPOSALS,

@@ -10,8 +10,6 @@ export type XtxBakersType = {
   mavrykDynamics: (XtzBakerType & { description: string; isDisabled: boolean }) | null
 }
 
-type TokensPricesType = ReturnType<typeof normalizeTokenPrices>
-
 export type WhiteListTokensType = Array<{
   symbol: string
   address: string
@@ -19,19 +17,26 @@ export type WhiteListTokensType = Array<{
   id: number
 }>
 
+// Tokens Types
+export type TokenAddress = string
+export type TokenMetadata = {
+  address: TokenAddress
+  name: string
+  symbol: string
+  decimals: number
+  icon: string
+  type: TokenType
+}
+
+type TokensPricesType = ReturnType<typeof normalizeTokenPrices>
+
+// Context types
 export type TokensContext = {
-  // TODO: implement later
-  // data
-  // dipDupTokens: Array<DipDupTokensGraphQl>
-  // avaliableCollaterals: Array<AvaliableCollateralType> | null
-  // whitelistTokens: WhiteListTokensType
-  // mTokens: Array<M_Token>
-  // internal helper state
-  // collateralData: GetAvaliableCollateralsQuery | null
-  // actions
-  // initializeDAPPTokens: InstanceType<typeof TokensProvider>['initializeDAPPTokens']
-  // updateCollateralsData: InstanceType<typeof TokensProvider>['updateCollateralsData']
-  // updateAvaliableCollaterals: InstanceType<typeof TokensProvider>['updateAvaliableCollaterals']
+  // 3 bottom fields updates from updateTokensMetadata
+  collateralTokens: Array<TokenAddress>
+  mTokens: Array<TokenAddress>
+  tokensMetadata: Record<TokenAddress, TokenMetadata>
+  updateTokensMetadata: InstanceType<typeof TokensProvider>['updateTokensMetadata']
 
   tokensPrices: TokensPricesType
   updateTokensPrices: InstanceType<typeof TokensProvider>['updateTokensPrices']

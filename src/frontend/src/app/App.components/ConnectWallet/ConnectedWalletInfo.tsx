@@ -19,6 +19,7 @@ import {
   WalletDetailsStyled,
   WalletDetailsVisiblePart,
 } from './ConnectWallet.style'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 type ConnectWalletProps = {
   mountWertWiget: (commodity: string) => void
@@ -27,11 +28,16 @@ type ConnectWalletProps = {
 export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
+
+  const { tokensPrices } = useTokensContext()
+
+  const mvkTokenRate = tokensPrices[MVK_TOKEN_SYMBOL]
+  const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
+
   const {
     accountPkh,
     user: { userTokens },
   } = useSelector((state: State) => state.wallet)
-  const { tokensPrices } = useSelector((state: State) => state.tokens)
 
   const { pathname } = useLocation()
 
@@ -87,7 +93,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
                 className="asset-amount"
               />
               <CommaNumber
-                value={userTokens[MVK_TOKEN_SYMBOL].balance * tokensPrices[MVK_TOKEN_SYMBOL]}
+                value={userTokens[MVK_TOKEN_SYMBOL].balance * mvkTokenRate}
                 endingText={'USD'}
                 showDecimal
                 className="converted-amount"
@@ -134,7 +140,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
                 className="asset-amount"
               />
               <CommaNumber
-                value={userTokens[XTZ_TOKEN_SYMBOL].balance * tokensPrices[XTZ_TOKEN_SYMBOL]}
+                value={userTokens[XTZ_TOKEN_SYMBOL].balance * xtzTokenRate}
                 endingText={'USD'}
                 showDecimal
                 className="converted-amount"
@@ -209,11 +215,16 @@ type MobileConnectWalletProps = ConnectWalletProps & {
 export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileConnectWalletProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
+
+  const { tokensPrices } = useTokensContext()
+
+  const mvkTokenRate = tokensPrices[MVK_TOKEN_SYMBOL]
+  const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
+
   const {
     accountPkh,
     user: { userTokens },
   } = useSelector((state: State) => state.wallet)
-  const { tokensPrices } = useSelector((state: State) => state.tokens)
 
   const { pathname } = useLocation()
 
@@ -276,7 +287,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
                 className="asset-amount"
               />
               <CommaNumber
-                value={userTokens[MVK_TOKEN_SYMBOL].balance * tokensPrices[MVK_TOKEN_SYMBOL]}
+                value={userTokens[MVK_TOKEN_SYMBOL].balance * mvkTokenRate}
                 endingText={'USD'}
                 showDecimal
                 className="converted-amount"
@@ -323,7 +334,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
                 className="asset-amount"
               />
               <CommaNumber
-                value={userTokens[XTZ_TOKEN_SYMBOL].balance * tokensPrices[XTZ_TOKEN_SYMBOL]}
+                value={userTokens[XTZ_TOKEN_SYMBOL].balance * xtzTokenRate}
                 endingText={'USD'}
                 showDecimal
                 className="converted-amount"

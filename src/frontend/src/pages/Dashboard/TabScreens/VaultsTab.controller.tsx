@@ -27,9 +27,12 @@ import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { StatBlock, BlockName } from '../Dashboard.style'
 import { TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
+
+  const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const { allVaultsIds, vaultsMapper } = useSelector((state: State) => state.loans.vaults)
   const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio } = useMemo(
@@ -38,7 +41,7 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   )
 
   const chartData = useMemo(() => {
-    return getPieChartData(assetsBalances, globalVaultTVL, hoveredPath)
+    return getPieChartData(assetsBalances, globalVaultTVL, hoveredPath, tokensMetadata, tokensPrices)
   }, [hoveredPath, assetsBalances, globalVaultTVL])
 
   return (

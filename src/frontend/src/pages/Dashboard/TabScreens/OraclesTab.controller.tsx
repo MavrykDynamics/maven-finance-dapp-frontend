@@ -33,7 +33,6 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const { satelliteMapper, oraclesIds } = useSelector((state: State) => state.satellites)
 
   const oracleFeeds = feedsAddresses.length
-  // TODO: consider add limitation filter and popularity sorting to the sub
   const popularFeeds = feedsAddresses.slice(0, 3)
 
   const oracleRewardsTotal = useMemo(

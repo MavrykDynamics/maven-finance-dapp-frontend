@@ -9,7 +9,7 @@ query getMaxlenghtsQuery {
       request_purpose_max_length
       request_token_name_max_length
     }
-    governance(order_by: {active: desc}) {
+    governance {
       proposal_description_max_length
       proposal_invoice_max_length
       proposal_metadata_title_max_length

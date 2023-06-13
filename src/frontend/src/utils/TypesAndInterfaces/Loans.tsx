@@ -37,6 +37,7 @@ export type LoansAssetDataType = BaseLoansAssetDataType & {
 export type CollateralType = BaseLoansAssetDataType & {
   amount: number
   collateralShare?: number
+  address: string
 }
 
 export type LoansChartsDataType = {

@@ -1,28 +1,22 @@
-import { State } from 'reducers'
-import { calcWithoutMu, calcWithoutPrecision } from 'utils/calcFunctions'
+import { calcWithoutPrecision } from 'utils/calcFunctions'
 import { FinancialRequestRecord, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import { GovernanceFinancialRequestGraphQL } from '../../utils/TypesAndInterfaces/Governance'
 import { FinancialRequestStoreType } from 'reducers/financialRequests'
 
-export const normalizeFinancialRequests = (
-  storage: {
-    governance_financial_request: Array<GovernanceFinancialRequestGraphQL>
-  },
-  dipDupTokens: State['tokens']['dipDupTokens'],
-) => {
+export const normalizeFinancialRequests = (storage: {
+  governance_financial_request: Array<GovernanceFinancialRequestGraphQL>
+}) => {
   const { financialRequestMapper, frIds } = storage?.governance_financial_request.reduce<{
     financialRequestMapper: Record<number, FinancialRequestRecord>
     frIds: number[]
   }>(
     (acc, item) => {
-      const tokenAddress = item.token.token_address
-      if (!tokenAddress) return acc
+      const { token_address } = item.token
 
-      const tokenName =
-        dipDupTokens.find(({ token_address }) => token_address === tokenAddress)?.metadata.symbol ?? 'MVK'
+      if (!token_address) return acc
 
       const frItem = {
-        tokenAddress: tokenAddress,
+        tokenAddress: token_address,
         id: item.id,
         type: item.request_type,
         purpose: item.request_purpose,
@@ -32,8 +26,7 @@ export const normalizeFinancialRequests = (
         governanceFinId: item.governance_financial.address,
         treasuryContract: item.treasury.address,
         votingTillTime: item.execution_datetime ?? item.expiration_datetime,
-        tokensAmount: tokenName === 'MVK' ? calcWithoutPrecision(item.token_amount) : calcWithoutMu(item.token_amount),
-        tokenName: tokenName,
+        tokensAmount: item.token_amount,
         executed: item.executed,
         status: item.status,
 

@@ -111,6 +111,7 @@ export type VaultAssetData = {
   name: string
   chartColor: string
   symbol: string
+  tokenAddress: string
 }
 
 export type VaultAssetBalances = {
@@ -154,6 +155,7 @@ export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<stri
               symbol: collateral.symbol,
               chartColor: getAssetColor(colorIdx),
               decimals: 0,
+              tokenAddress: collateral.address,
             }
             colorIdx++
           }

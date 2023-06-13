@@ -30,8 +30,9 @@ export const SUBSCRIBE_FEEDS = gql(`
           decimals
         }
       }
+      metadata
+      network
       creation_timestamp
-      governance_id
       last_completed_data
       last_completed_data_last_updated_at
       last_completed_data_pct_oracle_resp
