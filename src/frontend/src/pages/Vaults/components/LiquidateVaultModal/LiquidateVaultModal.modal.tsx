@@ -19,7 +19,7 @@ import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from 'app/App.components/Inp
 import { calculateAdminLiquidationFee, calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 
 // types
-import { LiquidateVaultDataType } from 'pages/Loans/Components/Modals/Modals.helpers'
+import { LiquidateVaultDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 
@@ -27,6 +27,7 @@ import { InputProps } from 'app/App.components/Input/newInput.type'
 import { liquidateVault } from 'pages/Vaults/Vaults.actions'
 import { State } from 'reducers'
 import { Button } from 'app/App.components/Button/Button.controller'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 const columnWidth = '33%'
 const rowHeight = 30
@@ -41,27 +42,34 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { userTokens } = useSelector((state: State) => state.wallet.user)
 
-  const {
-    vaultId,
-    ownerId,
-    borrowedAsset,
-    collateralData = [],
-    liquidationMax = 0,
-    liquidationReward = 0,
-    adminLiquidateFee = 0,
-  } = data ?? {}
-  const { symbol = '', icon = '', rate = 0 } = borrowedAsset ?? {}
-  const userBalance = userTokens[symbol]?.balance ?? 0
+  const { tokensMetadata } = useTokensContext()
 
   const dispatch = useDispatch()
 
   const [showAsPercentage, setShowAsPercentage] = useState(true)
-  const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
 
   const [inputAmount, setInputAmount] = useState('0')
   const amount = Number(inputAmount)
 
-  const liquidationMaxTokens = liquidationMax / rate
+  if (!data) return null
+
+  const {
+    vaultId,
+    ownerAddress,
+    borrowedTokenMetadata,
+    borrowedTokenRate,
+    collateralData,
+    liquidationMax,
+    liquidationReward,
+    adminLiquidateFee,
+    collateralBalance,
+  } = data
+
+  const { symbol, icon, decimals } = borrowedTokenMetadata ?? {}
+
+  const userBalance = 0 //userTokens[symbol]?.balance ?? 0
+
+  const liquidationMaxTokens = liquidationMax / borrowedTokenRate
   const liquidationRewardPercentage = liquidationReward * 100
   const maxProfit = liquidationMax * liquidationReward
 
@@ -72,7 +80,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     : userBalance
 
   const costToLiquidatePercentage = (liquidationMax / 100) * amount
-  const costToLiquidateAsset = amount * rate
+  const costToLiquidateAsset = amount * borrowedTokenRate
 
   const costToLiquidate = showAsPercentage ? costToLiquidatePercentage : costToLiquidateAsset
   const returnedToLiquidator = costToLiquidate + costToLiquidate * liquidationReward
@@ -93,14 +101,14 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   }
 
   const handleLiquidateVault = async () => {
-    if (!vaultId || !ownerId || !borrowedAsset?.decimals) return
+    if (!vaultId || !ownerAddress || !decimals) return
 
     await dispatch(
       liquidateVault({
         vaultId,
-        vaultOwner: ownerId,
+        vaultOwner: ownerAddress,
         liquidateAmount: costToLiquidate,
-        decimals: borrowedAsset.decimals,
+        decimals: decimals,
       }),
     )
   }
@@ -268,12 +276,13 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                 </TableHeader>
 
                 <TableBody>
-                  {collateralData.slice(0, -1).map(({ symbol, amount, rate }, index) => {
+                  {collateralData.slice(0, -1).map(({ tokenAddress, amount }, index) => {
+                    const { symbol } = tokensMetadata[tokenAddress]
                     const isTotalRow = collateralData.length - 1 === index
 
                     const collateralShare = isTotalRow
                       ? 100
-                      : calculateCollateralShare(amount * rate, collateralTotalBalance)
+                      : calculateCollateralShare(amount * borrowedTokenRate, collateralBalance)
 
                     return (
                       <TableRow rowHeight={rowHeight} key={symbol + '-' + index}>
@@ -288,7 +297,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
                         <TableCell width={columnWidth} contentPosition="right">
                           <CommaNumber
-                            value={rate ? amount * rate : 0}
+                            value={borrowedTokenRate ? amount * borrowedTokenRate : 0}
                             decimalsToShow={2}
                             showDecimal
                             beginningText="$"

@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -21,34 +20,45 @@ import { TransactionHistoryStyled } from '../Loans.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { EmptyContainer } from 'app/App.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { State } from 'reducers'
+import { useSelector } from 'react-redux'
+import useMarketTransactionHistory from 'providers/LoansProvider/hooks/useMarketTransactionHistory'
 
 type TransactionHistoryPropsType = {
-  transactionHistory: LoanMarketType['transactionHistory']
+  loanTokenAddress: TokenAddressType
   filterByDescriptions?: string[]
   vaultAddress?: string
   userAddress?: string
-  lendingControllerAddress?: string
   styleType?: typeof PRIMARY_TRANSACTION_HISTORY_STYLE | typeof SECONDARY_TRANSACTION_HISTORY_STYLE
 }
 
 /**
  *
- * @param transactionHistory - transaction list, if the array is empty, you get the text "No transaction history to show".
+ * @param loanTokenAddress - token addres by which take transaction history
  * @param filterByDescriptions - if you want to get a transaction history for certain descriptions, you can specify this option. For ex.: ['Liquidity Added', 'Liquidity Removed']
  * @param vaultAddress - if you want to get a transaction history for one vault, you can specify this option.
  * @param userAddress - if you want to get a transaction history for one user, you can specify this option.
- * @param lendingControllerAddress - if you want the lending controller addressto appear at the bottom left, you can specify this option.
  * @param styleType - you can set one of several background options. Use the constant from Loans.const.tsx.
+ *
+ * TODO: add loader when loading
  */
 export const TransactionHistory = ({
-  transactionHistory,
+  loanTokenAddress,
   filterByDescriptions,
   vaultAddress,
   userAddress,
-  lendingControllerAddress,
   styleType = PRIMARY_TRANSACTION_HISTORY_STYLE,
 }: TransactionHistoryPropsType) => {
   const { search } = useLocation()
+
+  const {
+    lendingController: { address: lendingControllerAddress },
+  } = useSelector((state: State) => state.contractAddresses)
+
+  const { isLoading: isTransactionHistoryLoading, transactionHistory } = useMarketTransactionHistory({
+    marketTokenAddress: loanTokenAddress,
+  })
 
   const history = useMemo(() => {
     const historyTransaction =
@@ -99,7 +109,7 @@ export const TransactionHistory = ({
               </TableHeader>
 
               <TableBody className="transaction-history">
-                {paginatedTableRows?.map(({ descr, amount, date, userAddress, operationHash, tokenSymbol = '' }) => {
+                {paginatedTableRows?.map(({ descr, amount, date, userAddress, operationHash, symbol }) => {
                   if (!descr) return null
 
                   return (
@@ -108,7 +118,7 @@ export const TransactionHistory = ({
                         <span className="descr">{descr}</span>
                       </TableCell>
                       <TableCell width={`30%`}>
-                        <CommaNumber value={amount} className="value" endingText={tokenSymbol} />
+                        <CommaNumber value={amount} className="value" endingText={symbol} />
                       </TableCell>
                       <TableCell width={`30%`}>{date}</TableCell>
                       {/* <TableCell width={`11%`}>

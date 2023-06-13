@@ -30,6 +30,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTreasuryTVL } from './helpers/treasury.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 type Props = {
   treasury: TreasuryType[number]
@@ -57,7 +58,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
 
   const chartData = useMemo(
     () => getPieChartData(filteredBalance, treasuryTVL, hoveredPath, tokensMetadata, tokensPrices),
-    [hoveredPath, treasuryTVL, filteredBalance],
+    [hoveredPath, treasuryTVL, filteredBalance, tokensMetadata, tokensPrices],
   )
 
   useEffect(() => {
@@ -124,8 +125,9 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
               {filteredBalance.length ? (
                 <TableBody className={`treasury`}>
                   {filteredBalance.map(({ balance, tokenAddress }) => {
-                    const { symbol, decimals } = tokensMetadata[tokenAddress]
-                    const tokenRate = tokensPrices[symbol]
+                    const treasuryToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                    if (!treasuryToken || !treasuryToken.rate) return null
+                    const { symbol, decimals, rate } = treasuryToken
                     const treasuryTokenBalance = convertNumberForClient({ number: balance, grade: decimals })
 
                     return (
@@ -139,13 +141,13 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
                           )}
                         </TableCell>
                         <TableCell width="33%" contentPosition="right">
-                          {treasuryTokenBalance * tokenRate < 0.01 ? (
-                            `<0.01 ${tokenRate ? '$' : symbol}`
+                          {treasuryTokenBalance * rate < 0.01 ? (
+                            `<0.01 ${rate ? '$' : symbol}`
                           ) : (
                             <CommaNumber
-                              value={treasuryTokenBalance * tokenRate}
-                              endingText={tokenRate ? '' : symbol}
-                              beginningText={tokenRate ? '$' : ''}
+                              value={treasuryTokenBalance * rate}
+                              endingText={rate ? '' : symbol}
+                              beginningText={rate ? '$' : ''}
                               showDecimal
                             />
                           )}
@@ -176,7 +178,9 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
       <div>
         <div className="asset-lables scroll-block">
           {filteredBalance.map(({ tokenAddress }) => {
-            const { symbol } = tokensMetadata[tokenAddress]
+            const treasuryToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+            if (!treasuryToken) return null
+            const { symbol } = treasuryToken
             return (
               <div
                 style={{

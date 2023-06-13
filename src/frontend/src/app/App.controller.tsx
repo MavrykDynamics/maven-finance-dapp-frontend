@@ -9,6 +9,7 @@ import { useCookies } from 'react-cookie'
 import { configureStore } from './App.store'
 
 // providers
+import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 import { StakeProvider } from 'providers/StakeProvider/stake.provider'
 
 // hooks
@@ -24,7 +25,6 @@ import { ActionLoader, LoaderRocket, WertLoader } from './App.components/Loader/
 import { SettingPopup } from './App.components/SettingsPopup/SettingsPopup'
 import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
 import { AppStyled } from './App.style'
-import LoansPopupsProvider from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { PolicyPopup } from 'app/App.components/PolicyPopup/Policy.controller'
 
 // actions

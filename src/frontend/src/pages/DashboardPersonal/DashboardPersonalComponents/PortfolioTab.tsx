@@ -24,6 +24,7 @@ import { PortfolioWalletStyled, PortfolioChartStyled } from './DashboardPersonal
 import { LendBorrowPosition } from './LendBorrowPosition'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
 
 type PortfolioTabProps = {
   xtzAmount: number
@@ -55,10 +56,12 @@ const PortfolioTab = ({
   )
 
   const {
-    user: { userLoansData, availableLoansRewards },
+    user: { availableLoansRewards },
     accountPkh,
   } = useSelector((state: State) => state.wallet)
   const { loanTokens } = useSelector((state: State) => state.loans)
+  const { userBorrowings, totalUserBorrowed, totalUserLended, userVaultsData, userLendings, isLoading } =
+    useUserLoansData({ userAddress: accountPkh })
 
   const [toggleItems, setToggleItems] = useState<TabItem[]>(TOGGLE_VALUES)
   const lastSeria = CHART_TEST_DATA.at(-1)?.value ?? 0
@@ -166,15 +169,17 @@ const PortfolioTab = ({
         <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
           <LendBorrowPosition
             markets={loanTokens}
-            userLoansData={userLoansData}
+            totalUserBorrowed={totalUserBorrowed}
+            totalUserLended={totalUserLended}
+            userVaultsData={userVaultsData}
             userLoansRewards={availableLoansRewards}
           />
         </Route>
         <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
-          <LoansTxTab txVariant="lending" userLoansData={userLoansData} isUserLoansLoading={isUserLoansLoading} />
+          <LoansTxTab txVariant="lending" userLoansData={userLendings} isUserLoansLoading={isUserLoansLoading} />
         </Route>
         <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}>
-          <LoansTxTab txVariant="borrowing" userLoansData={userLoansData} isUserLoansLoading={isUserLoansLoading} />
+          <LoansTxTab txVariant="borrowing" userLoansData={userBorrowings} isUserLoansLoading={isUserLoansLoading} />
         </Route>
 
         <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />

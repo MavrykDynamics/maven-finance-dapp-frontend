@@ -18,10 +18,15 @@ import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
+import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+
+// providers
+import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -36,13 +41,23 @@ export const LoansEarn = () => {
   const dispatch = useDispatch()
   const history = useHistory()
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    isLoading: isChartsLoading,
+    chartsData: { totalBorrowingChart, totalLendingChart, marketLendingChart },
+  } = useLoansCharts({
+    calcTotalBorrowingChart: true,
+    calcTotalLendingChart: true,
+    calcMarketLendingChart: true,
+  })
+
+  const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const {
-    isDataLoaded,
-    loanTokens,
-    chartsData: { lendingChartData, borrowingChartData },
-  } = useSelector((state: State) => state.loans)
+    accountPkh,
+    user: { userMTokens },
+  } = useSelector((state: State) => state.wallet)
+
+  const { isDataLoaded, loanTokens } = useSelector((state: State) => state.loans)
 
   const { totalBorrowed, totalLended } = useMemo(
     () =>
@@ -50,7 +65,10 @@ export const LoansEarn = () => {
         totalLended: number
         totalBorrowed: number
       }>(
-        (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
+        (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
+          const { symbol } = tokensMetadata[loanTokenAddress]
+          const rate = tokensPrices[symbol]
+
           acc.totalBorrowed += totalBorrowed * rate
           acc.totalLended += totalLended * rate
           return acc
@@ -60,41 +78,52 @@ export const LoansEarn = () => {
           totalBorrowed: 0,
         },
       ),
-    [loanTokens],
+    [loanTokens, tokensMetadata, tokensPrices],
   )
 
-  const { openAddLendingAssetPopup } = useContext(loansPopupsContext)
+  const { openAddLendingAssetPopup } = useLoansPopupsContext()
 
   const markets: MarketType[] = useMemo(
     () =>
-      loanTokens.map((item) => ({
-        icon: item.loanTokenData.icon,
-        symbol: item.loanTokenData.symbol,
-        annualRate: item.lendingAPY,
-        annualRateName: 'APY',
-        leftValue: item.lendingItem?.lendValue ?? 0 * item.loanTokenData.rate,
-        rightValue: item.lendingItem?.interestEarned ?? 0 * item.loanTokenData.rate,
-        totalAmount: item.totalLended,
-        price: item.loanTokenData.rate,
-        chartData: item.marketLiquidityChartData,
-      })),
-    [loanTokens],
+      loanTokens.map((item) => {
+        const chartData = marketLendingChart[item.loanTokenAddress] ?? []
+        const { symbol, icon } = tokensMetadata[item.loanTokenAddress]
+        const price = tokensPrices[symbol]
+        const { lendValue = 0, interestEarned = 0 } =
+          getMarketUserLengingItem(userMTokens, item.loanMTokenAddress) ?? {}
+
+        return {
+          icon,
+          symbol,
+          annualRate: item.lendingAPY,
+          annualRateName: 'APY',
+          leftValue: lendValue * price,
+          rightValue: interestEarned * price,
+          totalAmount: item.totalLended,
+          price,
+          chartData,
+        }
+      }),
+    [loanTokens, marketLendingChart, tokensMetadata, tokensPrices],
   )
 
-  const handleEarn = (marketSymbol: string) => {
-    const market = loanTokens.find((item) => item.loanTokenData.symbol === marketSymbol)
+  // TODO: pass address here
+  const handleEarn = (marketTokenAddress: string) => {
+    const market = loanTokens.find((item) => item.loanMTokenAddress === marketTokenAddress)
     if (!market) return
 
+    const { lendValue, mBalance = 0 } = getMarketUserLengingItem(userMTokens, market.loanMTokenAddress) ?? {}
+
     //  if the user has already supplied to the specific asset pool we will route to asset market
-    if (market.lendingItem?.lendValue) {
-      history.push(`/loans/${market.loanTokenData.symbol}/lendingTab`)
+    if (lendValue) {
+      history.push(`/loans/${market.loanMTokenAddress}/lendingTab`)
       return
     }
 
     openAddLendingAssetPopup({
-      mBalance: market.lendingItem?.mBalance ?? 0,
+      mBalance,
       lendingAPY: market.lendingAPY,
-      ...market.loanTokenData,
+      tokenAddress: market.loanTokenAddress,
     })
   }
 
@@ -122,11 +151,11 @@ export const LoansEarn = () => {
         <>
           <EarnBorrowTotalCharts
             // left chart
-            leftChartData={lendingChartData}
+            leftChartData={totalLendingChart}
             leftChartTitle="Total Earning"
             leftTotalAmount={totalLended}
             // right chart
-            rightChartData={borrowingChartData}
+            rightChartData={totalBorrowingChart}
             rightChartTitle="Total Borrowing"
             rightTotalAmount={totalBorrowed}
           />

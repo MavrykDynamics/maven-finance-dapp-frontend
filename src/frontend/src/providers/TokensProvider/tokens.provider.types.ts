@@ -1,14 +1,7 @@
 import TokensProvider from './tokens.provider'
 
-import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { normalizeTokenPrices } from './hooks/tokens.normalizer'
-
-export type XtxBakersType = {
-  otherBakers: Array<XtzBakerType>
-  dao: (XtzBakerType & { description: string; isDisabled: boolean }) | null
-  mavrykDynamics: (XtzBakerType & { description: string; isDisabled: boolean }) | null
-}
+import { normalizeTokenPrices } from './helpers/tokens.normalizer'
 
 export type WhiteListTokensType = Array<{
   symbol: string
@@ -17,15 +10,33 @@ export type WhiteListTokensType = Array<{
   id: number
 }>
 
+// TODO: udpate tokens types with utility types
 // Tokens Types
-export type TokenAddress = string
-export type TokenMetadata = {
-  address: TokenAddress
+export type TokenAddressType = string
+
+// regular token
+export type TokenMetadataType = {
+  id: number
+  address: TokenAddressType
   name: string
   symbol: string
   decimals: number
   icon: string
   type: TokenType
+  loanData?: {
+    indexerName: string
+    isProtectedCollateral?: boolean
+  }
+}
+
+// loan token (market)
+export type LoansTokenMetadataType = WithRequiredProperty<TokenMetadataType, 'loanData'>
+// collareral token
+export type LoansCollateralTokenMetadataType = LoansTokenMetadataType & {
+  loanData: {
+    indexerName: string
+    isProtectedCollateral: boolean
+  }
 }
 
 type TokensPricesType = ReturnType<typeof normalizeTokenPrices>
@@ -33,9 +44,9 @@ type TokensPricesType = ReturnType<typeof normalizeTokenPrices>
 // Context types
 export type TokensContext = {
   // 3 bottom fields updates from updateTokensMetadata
-  collateralTokens: Array<TokenAddress>
-  mTokens: Array<TokenAddress>
-  tokensMetadata: Record<TokenAddress, TokenMetadata>
+  collateralTokens: Array<TokenAddressType>
+  mTokens: Array<TokenAddressType>
+  tokensMetadata: Record<TokenAddressType, TokenMetadataType>
   updateTokensMetadata: InstanceType<typeof TokensProvider>['updateTokensMetadata']
 
   tokensPrices: TokensPricesType

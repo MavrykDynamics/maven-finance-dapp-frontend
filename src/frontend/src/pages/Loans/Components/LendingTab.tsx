@@ -1,12 +1,9 @@
 import { useSelector } from 'react-redux'
-import { useContext, useMemo } from 'react'
 
 import { State } from 'reducers'
-import { LendingItemType, LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
 import { SECONDARY_TRANSACTION_HISTORY_STYLE } from '../Loans.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { loansPopupsContext } from './Modals/LoansModals.provider'
 
 import { LendingTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
 
@@ -15,41 +12,43 @@ import { LendingTabValuesSection } from './LendingTabSections/LendingTabValuesSe
 import { LendingTabActionsSection } from './LendingTabSections/LendingTabActionsSection'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 
 type LendingTabPropsType = {
-  lendingItem: LendingItemType
-  lendingControllerAddress: string
-  assetData: LoanMarketType['loanTokenData']
+  loanTokenAddress: TokenAddressType
+  loanMtokenAddress: TokenAddressType
   lendAPY: number
   marketAvailableLiquidity: number
   marketReserveAmount: number
 }
 
 export const LendingTab = ({
-  lendingItem,
-  lendingControllerAddress,
-  assetData,
+  loanTokenAddress,
+  loanMtokenAddress,
   lendAPY,
   marketReserveAmount,
   marketAvailableLiquidity,
 }: LendingTabPropsType) => {
-  const { openAddLendingAssetPopup } = useContext(loansPopupsContext)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { loanTokens } = useSelector((state: State) => state.loans)
+  const { openAddLendingAssetPopup } = useLoansPopupsContext()
+
+  const {
+    accountPkh,
+    user: { userMTokens },
+  } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  const transactionHistory = useMemo(() => {
-    return loanTokens.find(({ loanTokenData }) => loanTokenData.symbol === assetData.symbol)?.transactionHistory ?? []
-  }, [assetData, loanTokens])
+  const lendingItem = getMarketUserLengingItem(userMTokens, loanMtokenAddress)
 
   return (
     <LendingTabStyled>
       {lendingItem ? (
         <div className="stats-and-actions">
-          <LendingTabValuesSection lendingItem={lendingItem} assetData={assetData} lendAPY={lendAPY} />
+          <LendingTabValuesSection lendingItem={lendingItem} loanTokenAddress={loanTokenAddress} lendAPY={lendAPY} />
           <LendingTabActionsSection
             lendingItem={lendingItem}
-            assetData={assetData}
+            loanTokenAddress={loanTokenAddress}
             lendAPY={lendAPY}
             marketReserveAmount={marketReserveAmount}
             marketAvailableLiquidity={marketAvailableLiquidity}
@@ -68,7 +67,7 @@ export const LendingTab = ({
                 openAddLendingAssetPopup({
                   mBalance: 0,
                   lendingAPY: lendAPY,
-                  ...assetData,
+                  tokenAddress: loanTokenAddress,
                 })
               }
             >
@@ -81,10 +80,9 @@ export const LendingTab = ({
 
       {accountPkh && (
         <TransactionHistory
-          transactionHistory={transactionHistory}
+          loanTokenAddress={loanTokenAddress}
           filterByDescriptions={['Liquidity Added', 'Liquidity Removed']}
           userAddress={accountPkh}
-          lendingControllerAddress={lendingControllerAddress}
           styleType={SECONDARY_TRANSACTION_HISTORY_STYLE}
         />
       )}

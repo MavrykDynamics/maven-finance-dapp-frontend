@@ -30,7 +30,7 @@ export const getTreasuryStorage = () => async (dispatch: AppDispatch, getState: 
     const sMVKAmounts = await fetchFromIndexer(
       TREASURY_SMVK_QUERY,
       TREASURY_SMVK_QUERY_NAME,
-      TREASURY_SMVK_QUERY_VARIABLES(treasuryAddresses.treasury.map(({ address }: { address: string }) => address)),
+      TREASURY_SMVK_QUERY_VARIABLES(treasuryAddresses.map(({ address }: { address: string }) => address)),
     )
 
     const normalizedTreasuryWithBalances = normalizeTreasuryStorage(sMVKAmounts?.mavryk_user, treasuryAddresses)

@@ -33,6 +33,9 @@ import {
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -50,21 +53,37 @@ const CHART_COLORS = {
 
 export const Loans = () => {
   const dispatch = useDispatch()
+
+  const {
+    isLoading: isChartsLoading,
+    chartsData: { totalLendingChart, totalBorrowingChart },
+  } = useLoansCharts({
+    calcTotalBorrowingChart: true,
+    calcTotalLendingChart: true,
+  })
+
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const {
     isDataLoaded,
     loanTokens,
-    chartsData,
     vaults: { allVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    accountPkh,
+    user: { userMTokens },
+  } = useSelector((state: State) => state.wallet)
 
   const { totalBorrowed, totalLended } = loanTokens.reduce<{
     totalLended: number
     totalBorrowed: number
   }>(
-    (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
+    (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
+      const { symbol, decimals } = tokensMetadata[loanTokenAddress]
+      const rate = tokensPrices[symbol]
+
       acc.totalBorrowed += totalBorrowed * rate
       acc.totalLended += totalLended * rate
       return acc
@@ -98,7 +117,7 @@ export const Loans = () => {
       </div>
       <div className="chart">
         <Chart
-          data={{ type: AREA_CHART_TYPE, plots: chartsData.lendingChartData }}
+          data={{ type: AREA_CHART_TYPE, plots: totalLendingChart }}
           colors={CHART_COLORS}
           settings={CHART_SETTINGS}
           numberOfItemsToDisplay={3}
@@ -118,7 +137,7 @@ export const Loans = () => {
       </div>
       <div className="chart">
         <Chart
-          data={{ type: AREA_CHART_TYPE, plots: chartsData.borrowingChartData }}
+          data={{ type: AREA_CHART_TYPE, plots: totalBorrowingChart }}
           colors={CHART_COLORS}
           settings={CHART_SETTINGS}
           numberOfItemsToDisplay={3}
@@ -150,7 +169,8 @@ export const Loans = () => {
             <H2Title>Markets</H2Title>
             {loanTokens.map((loanAsset) => {
               const {
-                loanTokenData: { name, symbol, icon, rate, gqlName },
+                loanTokenAddress,
+                loanMTokenAddress,
                 utilisationRate,
                 availableLiquidity,
                 borrowers,
@@ -158,9 +178,15 @@ export const Loans = () => {
                 suppliers,
                 totalLended,
                 borrowAPR,
-                totalFeesEarned,
                 lendingAPY,
               } = loanAsset
+
+              const { interestEarned: totalFeesEarned } = getMarketUserLengingItem(userMTokens, loanMTokenAddress) ?? {
+                interestEarned: 0,
+              }
+
+              const { name, symbol, decimals, icon } = tokensMetadata[loanTokenAddress]
+              const rate = tokensPrices[symbol]
 
               const { loanTokenTotalCollaterals, loanTokenVaultsTotalBorrowed } = allVaultsIds.reduce<{
                 loanTokenTotalCollaterals: number
@@ -169,10 +195,18 @@ export const Loans = () => {
                 (acc, vaultId) => {
                   const vault = vaultsMapper[vaultId]
 
-                  if (vault.borrowedAsset.gqlName !== gqlName) return acc
+                  if (vault.borrowedTokenAddress !== loanTokenAddress) return acc
 
-                  acc.loanTokenTotalCollaterals += vault.collateralBalance
-                  acc.loanTokenVaultsTotalBorrowed += vault.borrowedAmount * vault.borrowedAsset.rate
+                  acc.loanTokenTotalCollaterals += vault.collateralData.reduce(
+                    (acc, { amount, tokenAddress: collateralTokenAddress }) => {
+                      const { symbol } = tokensMetadata[collateralTokenAddress]
+                      const rate = tokensPrices[symbol]
+                      return (acc += amount * rate)
+                    },
+                    0,
+                  )
+
+                  acc.loanTokenVaultsTotalBorrowed += vault.borrowedAmount * rate
                   return acc
                 },
                 {
@@ -188,7 +222,7 @@ export const Loans = () => {
                     : 'down'
                   : 'neutral'
               return (
-                <MarketOverview key={`${name}-${symbol}`}>
+                <MarketOverview key={symbol}>
                   <div className="asset-info">
                     <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
                     <div className="name">{symbol}</div>

@@ -22,6 +22,7 @@ import { getTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.acti
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -49,7 +50,9 @@ export const Dashboard = () => {
     totalLended: number
     totalBorrowed: number
   }>(
-    (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
+    (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
+      const { symbol } = tokensMetadata[loanTokenAddress]
+      const rate = tokensPrices[symbol]
       acc.totalBorrowed += totalBorrowed * rate
       acc.totalLended += totalLended * rate
       return acc
@@ -63,20 +66,19 @@ export const Dashboard = () => {
   const marketCapValue = mvkExchangeRate ? mvkExchangeRate * totalSupply : 0
 
   const treasuryTVL = treasuryStorage.reduce((acc, { balances }) => {
-    return (acc += balances.reduce((balanceAcc, balanceAsset) => {
-      const tokenRate = tokensPrices[tokensMetadata[balanceAsset.tokenAddress].symbol]
-      return tokenRate ? balanceAcc + balanceAsset.balance * tokenRate : balanceAcc
+    return (acc += balances.reduce((balanceAcc, { tokenAddress, balance }) => {
+      const { rate } = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices }) ?? {}
+      return rate ? balanceAcc + balance * rate : balanceAcc
     }, 0))
   }, 0)
 
   const vaultsTvl = allVaultsIds.reduce((acc, vaultId) => {
     const { collateralData } = vaultsMapper[vaultId]
 
-    return (acc += collateralData.reduce(
-      (collateralAcc, { amount, rate }, idx) =>
-        (collateralAcc += idx !== collateralData.length - 1 ? amount * rate : 0),
-      0,
-    ))
+    return (acc += collateralData.reduce((collateralAcc, { amount, tokenAddress }) => {
+      const { rate } = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices }) ?? {}
+      return rate ? collateralAcc + amount * rate : 0
+    }, 0))
   }, 0)
 
   // TODO: check this calculation with sam
@@ -100,7 +102,7 @@ export const Dashboard = () => {
           (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
           (!isTreasuryLoaded || isDepsChanged) && dispatch(getTreasuryStorage()),
           (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
-          (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage()),
+          (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage(tokensMetadata)),
         ].filter(Boolean),
       )
     } catch (e) {}

@@ -22,6 +22,7 @@ import { FarmCardStyled, FarmHarvestStyled, FarmStakeStyled } from './FarmCard.s
 import { FarmStorage, Normalizedfarm } from 'utils/TypesAndInterfaces/Farm'
 import { UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
 import { farmsPopupsContext } from '../FarmsPopups/FarmsPopups.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 const QuestionLinkBlock = () => (
   <a className="info-link" href="https://mavryk.finance/litepaper#yield-farming" target="_blank" rel="noreferrer">
@@ -314,6 +315,7 @@ type FarmCardProps = {
 
 export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, expandCallback }: FarmCardProps) => {
   const dispatch = useDispatch()
+  const { tokensMetadata } = useTokensContext()
   const { openDepositFarmPopup, openRoiCalculatorPopup, openWithdrawFarmPopup } = useContext(farmsPopupsContext)
   const {
     accountPkh,
@@ -324,7 +326,7 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
   const userReward = availableFarmRewards[farm.address]
 
   const harvestRewards = () => {
-    dispatch(harvest(farm.address))
+    dispatch(harvest(farm.address, tokensMetadata))
   }
 
   const openROI = () =>

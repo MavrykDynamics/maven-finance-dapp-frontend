@@ -113,13 +113,6 @@ export const REPAY_AND_CLOSE_MODAL_ID = 'repayAndCloseVault'
 export const UPDATE_MVK_OPERATORS_MODAL_ID = 'updateMVKOperators'
 export const WITHDRAW_COLLATERAL_MODAL_ID = 'withdrawCollateral'
 
-export const BORROWIND_MOCK = [{}, {}]
-export const COLLATERAL_MOCK = [
-  { assetSymbol: 'xtz', balance: 1, assetRate: 1, maxWithdraw: 1, assetIcon: undefined },
-  // { assetSymbol: 'xtz', balance: 1, assetRate: 1, maxWithdraw: 1, assetIcon: undefined },
-  { assetSymbol: 'Total', balance: 1, assetRate: 1, maxWithdraw: 1, assetIcon: undefined },
-]
-
 export const getCollateralRationPersent = (persentage: number) => {
   if (persentage === 0) return lightTextColor
 

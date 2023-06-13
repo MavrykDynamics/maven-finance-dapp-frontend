@@ -8,17 +8,20 @@ import {
   getCollateralRationPersent,
   loansTabNames,
 } from 'pages/Loans/Loans.const'
-import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import {
   calcCollateralRatio,
   getCollateralRatioByPersentage,
   getLoansInputMaxAmount,
-  isTezosAsset,
   loansInputValidation,
 } from 'pages/Loans/Loans.helpers'
-import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from '../Modals/Modals.helpers'
+import { DEFAULT_LOANS_INPUT_VALUE } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { State } from 'reducers'
-import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import {
+  INPUT_LARGE,
+  INPUT_STATUS_ERROR,
+  getOnBlurValue,
+  getOnFocusValue,
+} from 'app/App.components/Input/Input.constants'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Input } from 'app/App.components/Input/NewInput'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -37,16 +40,20 @@ import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT } from 'texts/banners/vault.text'
 import { AVALIABLE_TO_BORROW, FEES_DUE } from 'texts/tooltips/vault.text'
 import { checkNan } from 'utils/checkNan'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { FullLoansVaultType } from 'providers/LoansProvider/helpers/vaults.types'
 
 type Props = {
-  vaultId: number
-  vaultAddress: string
-  borrowedAsset: LoansVaultType['borrowedAsset']
-  feesAmount: number
-  borrowedAmount: number
-  minimumRepay: number
-  currentCollateralBalance: number
-  borrowCapacity: number
+  vault: FullLoansVaultType
+  // vaultId: number
+  // vaultAddress: string
+  // borrowedAssetAddress: TokenAddressType
+  // fee: number
+  // borrowedAmount: number
+  // minimumRepay: number
+  // collateralData: number
+  // borrowCapacity: number
   activeRepayTab?: TabItem
   openConfirmRepayPopup: (inputAmount: number) => void
   openConfirmRepayFullPopup: () => void
@@ -58,25 +65,31 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {
-    vaultId,
-    vaultAddress,
-    borrowedAsset,
-    feesAmount = 0,
-    currentCollateralBalance = 0,
-    borrowCapacity = 0,
-    minimumRepay = 0,
-    borrowedAmount = 0,
+    vault: {
+      vaultId,
+      address: vaultAddress,
+      fee,
+      borrowedTokenAddress,
+      borrowedTokenRate,
+      borrowedTokenMetadata,
+      collateralBalance,
+      borrowCapacity,
+      minimumRepay,
+      borrowedAmount,
+    },
     activeRepayTab,
     openConfirmRepayPopup,
     openConfirmRepayFullPopup,
   } = props
 
+  const { symbol, decimals, icon } = borrowedTokenMetadata
+
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const inputAmount = checkNan(parseFloat(inputData.amount))
 
-  const totalOutstanding = feesAmount + Number(borrowedAmount)
-  const balanceSymbol = isTezosAsset(borrowedAsset?.gqlName ?? '') ? 'tezos' : borrowedAsset?.symbol.toLowerCase() ?? ''
-  const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
+  const totalOutstanding = fee + Number(borrowedAmount)
+  // TODO: use user balance
+  const userAssetBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
 
   const isRepayInFull = activeRepayTab?.id === loansTabNames.REPAY_IN_FULL
   const isMinimumRepayWarning =
@@ -86,13 +99,15 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const futureBorrowedAmount = borrowedAmount - inputAmount < 0 ? 0 : borrowedAmount - inputAmount
   const futureTotalOutstanding = totalOutstanding - inputAmount < 0 ? 0 : totalOutstanding - inputAmount
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = borrowedAsset
-      ? calcCollateralRatio(currentCollateralBalance, borrowedAmount - inputAmount, borrowedAsset.rate)
-      : 0
+    const futureCollateralRatio = calcCollateralRatio(
+      collateralBalance,
+      borrowedAmount - inputAmount,
+      borrowedTokenRate,
+    )
 
     const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
     return { futureCollateralRatio, futureBorrowCapacity }
-  }, [borrowedAsset, currentCollateralBalance, borrowCapacity, inputAmount, borrowedAmount])
+  }, [collateralBalance, borrowedAmount, inputAmount, borrowedTokenRate, borrowCapacity])
 
   const inputOnChangeHandle = useCallback(
     (newInputAmount: string, maxAmount: number) => {
@@ -101,7 +116,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         maxAmount,
         minAmount: minimumRepay,
         options: {
-          byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
+          byDecimalPlaces: decimals || assetDecimalsToShow,
         },
       })
 
@@ -111,7 +126,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         validationStatus: validationStatus,
       })
     },
-    [borrowedAsset?.decimals, inputData, minimumRepay],
+    [decimals, inputData, minimumRepay],
   )
 
   const inputOnBlurHandle = useCallback(() => {
@@ -129,7 +144,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   }, [inputData])
 
   const handleClickRepay = async () => {
-    if (vaultId && borrowedAsset && vaultAddress) {
+    if (vaultId && vaultAddress) {
       isRepayInFull && !isNotRepayInFullWarning ? openConfirmRepayFullPopup() : openConfirmRepayPopup(inputAmount)
     }
   }
@@ -143,7 +158,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
               maxAmount: Math.min(userAssetBalance, totalOutstanding),
               minAmount: minimumRepay,
               options: {
-                byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
+                byDecimalPlaces: decimals || assetDecimalsToShow,
               },
             })
           : ''
@@ -155,7 +170,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     } else {
       setInputData(DEFAULT_LOANS_INPUT_VALUE)
     }
-  }, [activeRepayTab, borrowedAsset?.decimals, isRepayInFull, minimumRepay, totalOutstanding, userAssetBalance])
+  }, [activeRepayTab, decimals, isRepayInFull, minimumRepay, totalOutstanding, userAssetBalance])
 
   const inputProps: InputProps = useMemo(
     () => ({
@@ -172,18 +187,26 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const settings: Settings = useMemo(
     () => ({
       balance: userAssetBalance,
-      balanceAsset: borrowedAsset?.symbol,
+      balanceAsset: symbol,
       balanceName: 'Wallet Balance',
       useMaxHandler: () =>
         inputOnChangeHandle(
-          getLoansInputMaxAmount(Math.min(userAssetBalance, totalOutstanding), borrowedAsset.decimals),
+          getLoansInputMaxAmount(Math.min(userAssetBalance, totalOutstanding), decimals),
           Math.min(userAssetBalance, totalOutstanding),
         ),
       inputStatus: inputData.validationStatus,
-      convertedValue: inputAmount * borrowedAsset.rate,
+      convertedValue: inputAmount * borrowedTokenRate,
       inputSize: INPUT_LARGE,
     }),
-    [borrowedAsset, inputAmount, inputData.validationStatus, inputOnChangeHandle, totalOutstanding, userAssetBalance],
+    [
+      symbol,
+      inputData.validationStatus,
+      inputAmount,
+      borrowedTokenRate,
+      inputOnChangeHandle,
+      totalOutstanding,
+      decimals,
+    ],
   )
 
   return (
@@ -194,13 +217,12 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         <div className="tab-text">Select Amount to Repay</div>
 
         <Input
-          className={classNames('pinned-dropdown', { 'input-with-rate': borrowedAsset.rate })}
+          className={classNames('pinned-dropdown', { 'input-with-borrowedTokenRate': borrowedTokenRate })}
           inputProps={inputProps}
           settings={settings}
         >
           <InputPinnedTokenInfo>
-            <ImageWithPlug imageLink={borrowedAsset.icon} alt={`${borrowedAsset.symbol} icon`} />{' '}
-            {borrowedAsset?.symbol}
+            <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
           </InputPinnedTokenInfo>
         </Input>
       </div>
@@ -220,7 +242,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       ) : null}
 
       <div className={!isMinimumRepayWarning ? 'mt-25' : ''}>
-        <div className="tab-text mb-10">Updated Repay {borrowedAsset?.symbol} Stats</div>
+        <div className="tab-text mb-10">Updated Repay {symbol} Stats</div>
         <VaultOverview>
           <div className="line">
             <ThreeLevelListItem>
@@ -234,11 +256,11 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
                 <CustomTooltip
                   iconId="info"
                   defaultStrokeColor={colors[themeSelected].textColor}
-                  text={FEES_DUE(feesAmount)}
+                  text={FEES_DUE(fee)}
                   className="tooltip"
                 />
               </div>
-              <CommaNumber value={Math.ceil(feesAmount)} decimalsToShow={0} className="value" />
+              <CommaNumber value={Math.ceil(fee)} decimalsToShow={0} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Total Outstanding</div>
@@ -246,7 +268,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
             </ThreeLevelListItem>
             <ThreeLevelListItem className="right">
               <div className="name">Collateral Value</div>
-              <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
+              <CommaNumber value={collateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </div>
 

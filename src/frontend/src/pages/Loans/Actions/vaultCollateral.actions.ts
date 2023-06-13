@@ -19,18 +19,17 @@ import {
 
 import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
+import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 
 // remove collateral from the vault
 export const withdrawCollateralAction =
   (
     withdrawAmount: number,
-    collateralAssetName: string,
+    collateralToken: LoansCollateralTokenMetadataType,
     vaultAddress: string,
-    assetDecimals: number,
     callback: () => void,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
@@ -43,13 +42,15 @@ export const withdrawCollateralAction =
     }
 
     try {
+      const {
+        decimals,
+        loanData: { indexerName },
+      } = collateralToken
       // prepare and send transaction
-      const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grade: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grade: decimals })
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(vaultAddress)
-      const transaction = await contract.methods
-        .initVaultAction('withdraw', convertedAssetAmount, collateralAssetName)
-        .send()
+      const transaction = await contract.methods.initVaultAction('withdraw', convertedAssetAmount, indexerName).send()
 
       // close popup
       callback()
@@ -99,14 +100,8 @@ export const withdrawCollateralAction =
 export const depositCollateralAction =
   (
     vaultAddress: string,
-    collateralAssets: {
-      collateralName: string
-      assetAddress: string
-      amount: number
-      decimals: number
-      assetId: number
-      tokenType: TokenType
-    },
+    tokenAmount: number,
+    collateralToken: LoansCollateralTokenMetadataType,
     callback: () => void,
     bakerAddress?: string | null,
   ) =>
@@ -121,13 +116,19 @@ export const depositCollateralAction =
 
     try {
       // prepare and send transaction
-      const { amount, assetAddress, assetId, collateralName, tokenType, decimals } = collateralAssets
-      const convertedAssetAmount = convertNumberForContractCall({ number: amount, grade: decimals })
+      const {
+        loanData: { indexerName },
+        id,
+        type,
+        decimals,
+        address,
+      } = collateralToken
+      const convertedAssetAmount = convertNumberForContractCall({ number: tokenAmount, grade: decimals })
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(vaultAddress)
       let transaction: BatchWalletOperation | null = null
 
-      if (tokenType === 'tez') {
+      if (type === 'tez') {
         const delegateToBakerBatchPart: Array<WalletParamsWithKind> = bakerAddress
           ? [
               {
@@ -149,8 +150,8 @@ export const depositCollateralAction =
         transaction = await batch.send()
       }
 
-      if (tokenType === 'fa12') {
-        const assetContract = await tezos.wallet.at(assetAddress)
+      if (type === 'fa12') {
+        const assetContract = await tezos.wallet.at(address)
         const batchArr = [
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -162,7 +163,7 @@ export const depositCollateralAction =
           },
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract.methods.initVaultAction('deposit', convertedAssetAmount, collateralName).toTransferParams(),
+            ...contract.methods.initVaultAction('deposit', convertedAssetAmount, indexerName).toTransferParams(),
           },
         ]
 
@@ -170,8 +171,8 @@ export const depositCollateralAction =
         transaction = await batch.send()
       }
 
-      if (tokenType === 'fa2') {
-        const assetContract = await tezos.wallet.at(assetAddress)
+      if (type === 'fa2') {
+        const assetContract = await tezos.wallet.at(address)
 
         const batchArr = [
           {
@@ -190,7 +191,7 @@ export const depositCollateralAction =
           },
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract.methods.initVaultAction('deposit', convertedAssetAmount, collateralName).toTransferParams(),
+            ...contract.methods.initVaultAction('deposit', convertedAssetAmount, indexerName).toTransferParams(),
           },
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,

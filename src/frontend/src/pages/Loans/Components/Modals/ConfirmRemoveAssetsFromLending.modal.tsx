@@ -6,13 +6,15 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from 'app/App.components/Icon/Icon.view'
 
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { ConfirmRemoveLendingAssetDataType } from './Modals.helpers'
+import { ConfirmRemoveLendingAssetDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { withdrawLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
 
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const ConfirmRemoveAssetsFromLending = ({
   closePopup,
@@ -23,23 +25,24 @@ export const ConfirmRemoveAssetsFromLending = ({
   show: boolean
   data?: ConfirmRemoveLendingAssetDataType
 }) => {
-  const {
-    inputAmount = 0,
-    mBalance = 0,
-    rate = 0,
-    symbol = '',
-    currentLendedAmount = 0,
-    decimals = 0,
-    lendingAPY = 0,
-    icon = '',
-    gqlName = '',
-  } = data ?? {}
-
+  const { tokensMetadata, tokensPrices } = useTokensContext()
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()
 
-  const withdrawHandler = () => dispatch(withdrawLendingAssetAction(gqlName, inputAmount, decimals, closePopup))
+  if (!data) return null
+
+  const { tokenAddress, currentLendedAmount, inputAmount } = data
+
+  const loanToken = tokensMetadata[tokenAddress]
+  const { symbol } = loanToken
+  const rate = tokensPrices[symbol]
+
+  const withdrawHandler = () => {
+    if (checkWhetherTokenIsLoanToken(loanToken)) {
+      dispatch(withdrawLendingAssetAction(inputAmount, loanToken, closePopup))
+    }
+  }
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -70,11 +73,7 @@ export const ConfirmRemoveAssetsFromLending = ({
               </ThreeLevelListItem>
               <ThreeLevelListItem className="right">
                 <div className="name">New USD Value</div>
-                <CommaNumber
-                  value={(currentLendedAmount - inputAmount) * rate}
-                  className="value"
-                  beginningText="$"
-                />
+                <CommaNumber value={(currentLendedAmount - inputAmount) * rate} className="value" beginningText="$" />
               </ThreeLevelListItem>
             </div>
           </div>

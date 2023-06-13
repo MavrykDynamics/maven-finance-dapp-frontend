@@ -4,7 +4,7 @@ import React, { useContext } from 'react'
 import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 // helpers
-import { normalizeTokenPrices, normalizeTokensMetadata } from './hooks/tokens.normalizer'
+import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.normalizer'
 
 // types
 import { State, Props, TokensContext } from './tokens.provider.types'

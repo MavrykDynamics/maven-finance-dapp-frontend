@@ -34,6 +34,8 @@ import { RoiCalculatorPopupDataType } from '../Farms.const'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { useLockBodyScroll } from 'react-use'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export default function RoiCalculator({
   closeHandler,
@@ -50,7 +52,9 @@ export default function RoiCalculator({
   useLockBodyScroll(show)
   const { farms } = useSelector((state: State) => state.farm)
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { mvk: mvkExchangeRate = 0 } = useSelector((state: State) => state.tokens.tokensPrices)
+
+  const { tokensPrices } = useTokensContext()
+  const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL]
 
   const farm = farms.find(({ address }) => selectedFarmAddress === address)
 

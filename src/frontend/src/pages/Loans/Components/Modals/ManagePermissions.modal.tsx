@@ -2,9 +2,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { LoansPopupsAddressInputStateType, ManagePermissionsPopupDataType } from './Modals.helpers'
+import { ManagePermissionsPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { State } from 'reducers'
 import { validateTzAddress } from 'utils/validatorFunctions'
 
@@ -51,7 +51,7 @@ export const ManagePermissions = ({
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const [tableData, setTableData] = useState<Array<LoansPopupsAddressInputStateType>>([
+  const [tableData, setTableData] = useState<Array<{ address: string; validationStatus: InputStatusType }>>([
     { address: '', validationStatus: '' },
   ])
 

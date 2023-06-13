@@ -5,6 +5,10 @@ import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 import { getOracleAggregatorLatestPrice } from './Vaults.actions'
 import { statusSortPriority } from './Vaults.consts'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
+import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { getVaultStatus } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 type OracleLatestProps = {
   aggregator: Aggregator[]
@@ -54,32 +58,47 @@ export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) 
   return result
 }
 
-export const getVaultAssets = (vaultsMapper: Record<string, LoansVaultType>) => {
+export const getVaultCollateralBalance = (
+  collateralData: LoansVaultType['collateralData'],
+  tokensMetadata: TokensContext['tokensMetadata'],
+  tokensPrices: TokensContext['tokensPrices'],
+) => {
+  return collateralData.reduce((acc, { amount, tokenAddress }) => {
+    const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+    if (!token || !token.rate) return acc
+    const { decimals: collateralDecimals, rate: collateralRate } = token
+
+    return (acc += convertNumberForClient({ number: amount, grade: collateralDecimals }) * collateralRate)
+  }, 0)
+}
+
+export const getVaultAssets = (
+  vaultsMapper: Record<string, LoansVaultType>,
+  tokensMetadata: TokensContext['tokensMetadata'],
+) => {
   const list = Object.values(vaultsMapper)
 
-  const collateralAssets = new Set<string>()
-  const loanAssets = new Set<string>()
+  return list.reduce<{
+    collateralAssets: string[]
+    loanAssets: string[]
+  }>(
+    (acc, { borrowedTokenAddress, collateralData }) => {
+      const { symbol: borrowSymbol } = tokensMetadata[borrowedTokenAddress]
 
-  list.map(({ borrowedAsset, collateralData }) => {
-    const { symbol = '' } = borrowedAsset
+      if (borrowSymbol) acc.loanAssets.push(borrowSymbol)
 
-    if (symbol) {
-      loanAssets.add(symbol)
-    }
-
-    if (collateralData.length) {
-      collateralData.slice(0, -1).map(({ symbol }) => {
-        if (symbol) {
-          collateralAssets.add(symbol)
-        }
+      Array.from({ length: collateralData.length }, (_, idx) => {
+        const { symbol: collateralSymbol } = tokensMetadata[collateralData[idx].tokenAddress]
+        if (collateralSymbol) acc.loanAssets.push(collateralSymbol)
       })
-    }
-  })
 
-  return {
-    collateralAssets: [...collateralAssets],
-    loanAssets: [...loanAssets],
-  }
+      return acc
+    },
+    {
+      collateralAssets: [],
+      loanAssets: [],
+    },
+  )
 }
 
 // VAULTS SORTINGS HELPER
@@ -95,8 +114,8 @@ export const sortByVaultCategory = ({ vaultsMapper, vaultsIds, status }: SortByV
   const updatedPriority = status ? { ...statusSortPriority, [status]: 0 } : statusSortPriority
 
   return dataToSort.sort((a, b) => {
-    const firstItem = vaultsMapper[a].status
-    const secondItem = vaultsMapper[b].status
+    const firstItem = getVaultStatus() //vaultsMapper[a].status
+    const secondItem = getVaultStatus() //vaultsMapper[b].status
 
     return updatedPriority[firstItem] - updatedPriority[secondItem]
   })
@@ -105,12 +124,7 @@ export const sortByVaultCategory = ({ vaultsMapper, vaultsIds, status }: SortByV
 // DASHBOARD VAULTS TAB HELPER
 export type VaultAssetData = {
   balance: number
-  usdValue: number
-  rate: number
-  decimals: number
-  name: string
   chartColor: string
-  symbol: string
   tokenAddress: string
 }
 
@@ -121,7 +135,12 @@ export type VaultAssetBalances = {
   assets: Record<string, VaultAssetData>
 }
 
-export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<string, LoansVaultType>) => {
+export const reduceVaultsAssets = (
+  vaultIds: string[],
+  vaultsMapper: Record<string, LoansVaultType>,
+  tokensMetadata: TokensContext['tokensMetadata'],
+  tokensPrices: TokensContext['tokensPrices'],
+) => {
   let vaultWithBalances = 0
   let totalBorrowedAmounts = 0
   let totalCollateralBalances = 0
@@ -130,37 +149,42 @@ export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<stri
   const { assets, globalVaultTVL } = vaultIds.reduce<VaultAssetBalances>(
     (acc, vaultId) => {
       const { assets } = acc
-      const { collateralData, borrowedAmount, collateralBalance } = vaultsMapper[vaultId]
+      const { collateralData, borrowedAmount, borrowedTokenAddress } = vaultsMapper[vaultId]
 
-      totalBorrowedAmounts += borrowedAmount
+      const token = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
+      if (!token || !token.rate) return acc
+      const { decimals: borrowedTokenDecimals, rate: borrowedTokenRate } = token
+
+      const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
+
+      totalBorrowedAmounts +=
+        convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals }) * borrowedTokenRate
       totalCollateralBalances += collateralBalance
 
       if (borrowedAmount && collateralBalance) {
         vaultWithBalances++
       }
 
-      if (collateralData.length !== 0) {
-        collateralData.slice(0, -1).forEach((collateral) => {
-          acc.globalVaultTVL += collateral.amount * collateral.rate
+      collateralData.forEach(({ amount, tokenAddress }) => {
+        const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+        if (!token || !token.rate) return
+        const { decimals: collateralDecimals, rate: collateralRate } = token
 
-          if (collateral.symbol && assets[collateral.symbol]) {
-            assets[collateral.symbol].balance += collateral.amount
-            assets[collateral.symbol].usdValue += collateral.amount * collateral.rate
-          } else if (collateral.symbol) {
-            assets[collateral.symbol] = {
-              balance: collateral.amount,
-              usdValue: collateral.amount * collateral.rate,
-              rate: collateral.rate,
-              name: collateral.symbol,
-              symbol: collateral.symbol,
-              chartColor: getAssetColor(colorIdx),
-              decimals: 0,
-              tokenAddress: collateral.address,
-            }
-            colorIdx++
+        const convertedAmount = convertNumberForClient({ number: amount, grade: collateralDecimals })
+
+        acc.globalVaultTVL += convertedAmount * collateralRate
+
+        if (assets[tokenAddress]) {
+          assets[tokenAddress].balance += amount
+        } else {
+          assets[tokenAddress] = {
+            balance: amount,
+            chartColor: getAssetColor(colorIdx),
+            tokenAddress,
           }
-        })
-      }
+          colorIdx++
+        }
+      })
 
       return acc
     },

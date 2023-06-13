@@ -46,6 +46,7 @@ import {
   FarmsFiltersStateType,
 } from './Farms.const'
 import FarmsPopupsProvider from './FarmsPopups/FarmsPopups.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 const EmptyContainer = () => (
   <EmptyList>
@@ -66,13 +67,13 @@ export const Farms = () => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { search, pathname } = useLocation()
-
+  const { tokensMetadata } = useTokensContext()
   const { farms, isLoaded } = useSelector((state: State) => state.farm)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       if (!isLoaded || isDepsChanged) {
-        await dispatch(getFarmStorage())
+        await dispatch(getFarmStorage(tokensMetadata))
       }
     } catch (error) {}
   }, [])

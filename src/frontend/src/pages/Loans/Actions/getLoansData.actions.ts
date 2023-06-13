@@ -21,11 +21,7 @@ export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
 export const GET_MVK_TOKEN_OPERATOR_STORAGE = 'GET_MVK_TOKEN_OPERATOR_STORAGE'
 export const getLoansStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
-    tokens: { dipDupTokens, mTokens },
-    wallet: {
-      accountPkh,
-      user: { userMTokens },
-    },
+    wallet: { accountPkh },
   } = getState()
   try {
     const [marketsStorage, vaultsStorage, mvkTokenOperatorStorage] = await Promise.all(
@@ -41,23 +37,14 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
       ].filter(Boolean),
     )
 
-    const normalizedLoansStorage = await normalizeLoans({
+    const normalizedLoansStorage = normalizeLoans({
       lendingController: marketsStorage?.lending_controller?.[0],
       mvkTokenOperators: mvkTokenOperatorStorage?.mvk_token_operator ?? [],
-      dipDupData: dipDupTokens,
-      mTokens,
-      userMTokens,
-      userAddres: accountPkh,
-      // TODO: feeds usage
-      feeds: [] as any,
     })
 
     const normallaziedVaultsStorage = await normalizeVaultsStorage({
       lendingController: vaultsStorage?.lending_controller[0],
       accountPkh,
-      dipDupTokens,
-      // TODO: feeds usage
-      feeds: [] as any,
     })
 
     dispatch({

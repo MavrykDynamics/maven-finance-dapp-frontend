@@ -2,8 +2,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useState } from 'react'
 
-import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { ChangeVaultNamePopupDataType, VaultNameInputStateType } from './Modals.helpers'
+import { INPUT_LARGE, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
+import { ChangeVaultNamePopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton'
@@ -35,7 +35,11 @@ export const ChangeVaultName = ({
     vaults: { myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
-  const [newVaultName, setNewVaultName] = useState<VaultNameInputStateType>({
+  const [newVaultName, setNewVaultName] = useState<{
+    name: string
+    validationStatus: InputStatusType
+    errorMessage: string
+  }>({
     name: '',
     validationStatus: '',
     errorMessage: '',
