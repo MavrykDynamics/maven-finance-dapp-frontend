@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSubscription } from '@apollo/client'
 import dayjs from 'dayjs'
 
@@ -6,8 +6,10 @@ import { LEND_BORROW_24H_DIFF } from 'gql/subscriptions/loans.queries'
 
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { calcDiffBetweenTwoNumbersInPersentage, convertNumberForClient } from 'utils/calcFunctions'
+import { GetLendingDiffSubscription } from 'utils/__generated__/graphql'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
-// TODO: use useSubscriptions
+// TODO: think about timestamp cond in query
 const useLendBorrow24hDiff = (): {
   last24hLendingVol: number
   lending24hPersentChange: number
@@ -22,26 +24,25 @@ const useLendBorrow24hDiff = (): {
   const [last24hLending, setLast24hLending] = useState(0)
   const [last24hBorrowing, setLast24hBorrowing] = useState(0)
 
-  console.log('rerender useLendBorrow24hDiff')
+  const [ISOTimestamp, setISOTimestamp] = useState(dayjs().toISOString())
+  useEffect(() => {
+    const intervalId = setInterval(() => setISOTimestamp(dayjs().toISOString()), 10000)
+    return clearInterval(intervalId)
+  }, [])
 
-  const { loading: isLoading, data } = useSubscription(LEND_BORROW_24H_DIFF, {
-    variables: {
-      currentTimestamp: dayjs().toISOString(),
-    },
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
-
+  const dataHandler = useCallback(
+    (data: GetLendingDiffSubscription) => {
       const { last24hLending, last24hBorrowing } = data.lending_controller[0].history_data.reduce(
         (acc, operation) => {
           const tokenAddress = operation.loan_token?.token.token_address
 
           if (!tokenAddress) return acc
 
-          const isLending = [0, 1].includes(operation.type)
+          const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+          if (!token || !token.rate) return acc
+          const { decimals, rate } = token
 
-          const { decimals, symbol } = tokensMetadata[tokenAddress]
-          const rate = tokensPrices[symbol]
+          const isLending = [0, 1].includes(operation.type)
 
           if (isLending) {
             acc.last24hLending +=
@@ -83,8 +84,18 @@ const useLendBorrow24hDiff = (): {
       setLast24hLending(last24hLending)
       setCurrentTotalBorrowed(currentTotalBorrowed)
       setCurrentTotalLended(currentTotalLended)
+    },
+    [tokensMetadata, tokensPrices],
+  )
 
-      return { last24hBorrowing, last24hLending, currentTotalBorrowed, currentTotalLended }
+  const { loading: isLoading } = useSubscription(LEND_BORROW_24H_DIFF, {
+    variables: {
+      currentTimestamp: ISOTimestamp,
+    },
+    shouldResubscribe: true,
+    onData: ({ data: { data } }) => {
+      if (!data) return
+      dataHandler(data)
     },
     onError: (error) => {
       console.error('LENDING_24H_OPERATIONS_QUERY error: ', { error })

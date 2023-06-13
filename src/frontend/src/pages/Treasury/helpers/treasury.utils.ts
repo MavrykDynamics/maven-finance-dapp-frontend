@@ -1,4 +1,5 @@
 import { TREASURYS_COLORS } from 'app/App.components/PieСhart/pieChart.const'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
 
@@ -41,7 +42,9 @@ export const getTreasuryTVL = (
   tokensPrices: TokensContext['tokensPrices'],
 ) =>
   treasury.balances.reduce((treasuryTVLacc, { balance, tokenAddress }) => {
-    const { symbol, decimals } = tokensMetadata[tokenAddress]
-    const rate = tokensPrices[symbol] ?? 0
+    const treasuryToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+    if (!treasuryToken || !treasuryToken.rate) return treasuryTVLacc
+
+    const { decimals, rate } = treasuryToken
     return (treasuryTVLacc += convertNumberForClient({ number: balance, grade: decimals }) * rate)
   }, 0)

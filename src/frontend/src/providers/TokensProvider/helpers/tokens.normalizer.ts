@@ -42,7 +42,6 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         if (!tokenType) {
           throw new Error('Token is invalid token type, not in range tez | fa2 | fa12')
         }
-
         // parsing metadata schema, to have icon and decimals for token
         const parsedMetadata = tokenMetadataSchema.parse(metadata)
 
@@ -51,7 +50,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         const tokenIcon = parsedMetadata.icon ?? icon
         // If token don't have name or symbol or icon it can not be used
         if (!symbol || !name || !tokenIcon) {
-          throw new Error('Token do not have valid symbol, name or icon')
+          throw new Error(`Token do not have valid symbol, name or icon ${symbol}, ${name}, ${tokenIcon}`)
         }
 
         // We can have multiple mvk tokens, but only 1 with mvk_tokens present is valid

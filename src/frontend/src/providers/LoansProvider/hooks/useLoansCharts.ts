@@ -13,6 +13,7 @@ import { LoansChartsType, UseLoansChartsStateType } from '../helpers/loans.types
 import { COLLATERAL_HISTORY_DATA_TYPES, DEFAULT_LOANS_CHARTS_STATE, ONE_DAY_IN_MS } from '../helpers/loans.const'
 import { GET_LOANS_HISTORY_DATA } from 'gql/subscriptions/loans.queries'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 /**
  *
@@ -50,8 +51,10 @@ const useLoansCharts = ({
               ? collateralTokenAddress
               : loanTokenAddress
 
-          const { symbol, decimals } = tokensMetadata[tokenAddress]
-          const rate = tokensPrices[symbol]
+          const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+          if (!token || !token.rate) return acc
+
+          const { decimals, rate } = token
 
           const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
           const amountInUsd = convertedAmount * rate

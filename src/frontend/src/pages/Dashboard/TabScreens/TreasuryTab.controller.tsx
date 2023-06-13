@@ -28,6 +28,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { BlockName, StatBlock } from '../Dashboard.style'
 import { TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
   const { treasuryStorage } = useSelector((state: State) => state.treasury)
@@ -56,7 +57,7 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
         },
         { mostSuppliedTreasuryName: '', globalTreasuryTVL: 0, mostSuppliedTreasuryTVL: 0 },
       ),
-    [treasuryStorage],
+    [tokensMetadata, tokensPrices, treasuryStorage],
   )
 
   return (
@@ -102,7 +103,7 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                 />
               </BlockName>
 
-              <TableScrollable bodyHeight={90} className="treasury-table scroll-block">
+              <TableScrollable bodyHeight={120} className="treasury-table scroll-block">
                 <Table>
                   <TableHeader className="treasury">
                     <TableRow>
@@ -114,8 +115,10 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
 
                   <TableBody className="treasury">
                     {treasuryTokens.map(({ tokenAddress, balance }) => {
-                      const { symbol, decimals } = tokensMetadata[tokenAddress]
-                      const rate = tokensPrices[symbol] ?? 0
+                      const treasuryToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                      if (!treasuryToken || !treasuryToken.rate) return null
+
+                      const { symbol, decimals, rate } = treasuryToken
                       const treasuryTokenBalance = convertNumberForClient({ number: balance, grade: decimals })
 
                       return (

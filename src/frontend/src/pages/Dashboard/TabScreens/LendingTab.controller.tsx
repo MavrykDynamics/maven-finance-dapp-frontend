@@ -17,6 +17,8 @@ import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24hDiff'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -33,58 +35,55 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
   const { lending24hPersentChange, borrowing24hPersentChange, last24hBorrowingVol, last24hLendingVol } =
     useLendBorrow24hDiff()
 
-  const { totalBorrowed, totalLended } = loanTokens.reduce<{
-    totalLended: number
-    totalBorrowed: number
-  }>(
-    (acc, { totalBorrowed, totalLended }) => {
-      acc.totalBorrowed += totalBorrowed
-      acc.totalLended += totalLended
-      return acc
-    },
-    {
-      totalLended: 0,
-      totalBorrowed: 0,
-    },
-  )
+  const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset, totalBorrowed, totalLended } =
+    useMemo(() => {
+      return loanTokens.reduce<{
+        lendingSuppliers: number
+        borrowers: number
+        mostBorrowedAsset: { icon: string; symbol: string } | null
+        mostLendedAsset: { icon: string; symbol: string } | null
+        prevMostBorrowed: number
+        prevMostLended: number
+        totalBorrowed: number
+        totalLended: number
+      }>(
+        (acc, { suppliers, borrowers, totalBorrowed, totalLended, loanTokenAddress }) => {
+          const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
+          if (!token || !token.rate) return acc
+          const { symbol, decimals, icon, rate } = token
 
-  const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset } = useMemo(() => {
-    return loanTokens.reduce<{
-      lendingSuppliers: number
-      borrowers: number
-      mostBorrowedAsset: { icon: string; symbol: string } | null
-      mostLendedAsset: { icon: string; symbol: string } | null
-      prevMostBorrowed: number
-      prevMostLended: number
-    }>(
-      (acc, { suppliers, borrowers, totalBorrowed, totalLended, loanTokenAddress }) => {
-        const { symbol, decimals, icon } = tokensMetadata[loanTokenAddress]
-        const rate = tokensPrices[symbol]
+          const convetedTotalBorrowed = convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
+          const convetedTotalLended = convertNumberForClient({ number: totalLended, grade: decimals }) * rate
 
-        acc.lendingSuppliers += suppliers
-        acc.borrowers += borrowers
+          acc.lendingSuppliers += suppliers
+          acc.borrowers += borrowers
 
-        if (acc.prevMostBorrowed < totalBorrowed * rate) {
-          acc.prevMostBorrowed = totalBorrowed * rate
-          acc.mostBorrowedAsset = { symbol, icon }
-        }
+          acc.totalBorrowed += convetedTotalBorrowed
+          acc.totalLended += convetedTotalLended
 
-        if (acc.prevMostLended < totalLended * rate) {
-          acc.prevMostLended = totalLended * rate
-          acc.mostLendedAsset = { symbol, icon }
-        }
-        return acc
-      },
-      {
-        lendingSuppliers: 0,
-        borrowers: 0,
-        prevMostBorrowed: 0,
-        prevMostLended: 0,
-        mostBorrowedAsset: null,
-        mostLendedAsset: null,
-      },
-    )
-  }, [loanTokens, tokensMetadata, tokensPrices])
+          if (acc.prevMostBorrowed < convetedTotalBorrowed) {
+            acc.prevMostBorrowed = convetedTotalBorrowed
+            acc.mostBorrowedAsset = { symbol, icon }
+          }
+
+          if (acc.prevMostLended < convetedTotalLended) {
+            acc.prevMostLended = convetedTotalLended
+            acc.mostLendedAsset = { symbol, icon }
+          }
+          return acc
+        },
+        {
+          lendingSuppliers: 0,
+          borrowers: 0,
+          prevMostBorrowed: 0,
+          prevMostLended: 0,
+          totalBorrowed: 0,
+          totalLended: 0,
+          mostBorrowedAsset: null,
+          mostLendedAsset: null,
+        },
+      )
+    }, [loanTokens, tokensMetadata, tokensPrices])
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">

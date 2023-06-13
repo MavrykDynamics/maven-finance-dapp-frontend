@@ -3,28 +3,31 @@ import { TreasuryBalanceType, TreasuryChartType } from 'utils/TypesAndInterfaces
 import { calcPersent } from './treasury.utils'
 import { VaultAssetData } from 'pages/Vaults/Vaults.helpers'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 export const getPieChartData = (
   balances: Array<TreasuryBalanceType | VaultAssetData>,
   reducedBalance: number,
   hoveredPath: string | null,
   tokensMetadata: TokensContext['tokensMetadata'],
-  tokensRates: TokensContext['tokensPrices'],
+  tokensPrices: TokensContext['tokensPrices'],
 ) => {
   // when we don't have data for chart
   if (!balances.length) return [{ title: '', value: 1, color: '#ccc' }]
 
   // if we have 1 asset, return this, cuz when value is so small it will not show properly chart, and sometimes in can be NaN
   if (balances.length === 1) {
-    const itemSymbol = tokensMetadata[balances[0].tokenAddress]?.symbol
+    const token = getTokenDataByAddress({ tokenAddress: balances[0].tokenAddress, tokensMetadata, tokensPrices })
+    if (!token) return []
     return [
       {
-        title: itemSymbol,
+        title: token.symbol,
         value: 1,
         labelPersent: 100,
         color: '#FFC2C3',
-        isHoveredPathAsset: hoveredPath === itemSymbol,
-        segmentStroke: hoveredPath === itemSymbol ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
+        isHoveredPathAsset: hoveredPath === token.symbol,
+        segmentStroke: hoveredPath === token.symbol ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
       },
     ]
   }
@@ -34,9 +37,12 @@ export const getPieChartData = (
   let groupedSectorsColor: null | string = null
 
   return balances.reduce<TreasuryChartType>((acc, item) => {
-    const tokenSymbol = tokensMetadata[item.tokenAddress]?.symbol
-    const tokenRate = tokensRates[tokenSymbol] ?? 0
-    const tokenUsdValue = item.balance * tokenRate
+    const token = getTokenDataByAddress({ tokenAddress: item.tokenAddress, tokensMetadata, tokensPrices })
+    if (!token || !token.rate) return acc
+
+    const { symbol, rate, decimals } = token
+
+    const tokenUsdValue = convertNumberForClient({ number: item.balance, grade: decimals }) * rate
     const tokenPersent = calcPersent(tokenUsdValue, reducedBalance)
 
     if (tokenPersent < 10 || !tokenUsdValue) {
@@ -44,7 +50,7 @@ export const getPieChartData = (
       const smallValuesAccObj = acc?.[smallValuesAccIdx]
 
       // calculating hover effect on segment
-      const isHoveredPathAsset = smallValuesAccObj?.isHoveredPathAsset || hoveredPath === tokenSymbol
+      const isHoveredPathAsset = smallValuesAccObj?.isHoveredPathAsset || hoveredPath === symbol
 
       const smallSectorValue = isHoveredPathAsset
         ? (reducedBalance / 100) * 20
@@ -55,7 +61,7 @@ export const getPieChartData = (
         groupedSectorsValue += tokenUsdValue
         groupedSectorsColor = item.chartColor
         acc.push({
-          title: tokenSymbol,
+          title: symbol,
           value: smallSectorValue,
           color: groupedSectorsColor,
           isHoveredPathAsset,
@@ -73,7 +79,7 @@ export const getPieChartData = (
       const newSmallValuesObj = {
         ...smallValuesAccObj,
         ...(tokenUsdValue < 0.01 ? {} : { color: item.chartColor }),
-        title: `${smallValuesAccObj.title}, ${tokenSymbol}`,
+        title: `${smallValuesAccObj.title}, ${symbol}`,
         isHoveredPathAsset,
         value: smallSectorValue,
         labelPersent: calcPersent(groupedSectorsValue, reducedBalance),
@@ -86,11 +92,11 @@ export const getPieChartData = (
 
     // if asset is > 10%
     acc.push({
-      title: tokenSymbol,
+      title: symbol,
       value: tokenUsdValue,
       color: item.chartColor,
-      isHoveredPathAsset: hoveredPath === tokenSymbol,
-      segmentStroke: hoveredPath === tokenSymbol ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
+      isHoveredPathAsset: hoveredPath === symbol,
+      segmentStroke: hoveredPath === symbol ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
       labelPersent: tokenPersent,
       groupedSmall: false,
     })

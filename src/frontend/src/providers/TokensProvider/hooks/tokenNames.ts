@@ -15,6 +15,7 @@ export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
 
     case 'xtz/usd':
     case 'xtz':
+    case null:
       return { name: 'Tezos', symbol: 'XTZ', icon: '/images/tezos.png' }
     case 'mxtz':
       return { name: 'mXTZ', symbol: 'mXTZ', icon: '/images/tezos.png' }

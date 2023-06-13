@@ -28,6 +28,8 @@ import { StatBlock, BlockName } from '../Dashboard.style'
 import { TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
@@ -95,16 +97,27 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
                   </TableHeader>
 
                   <TableBody className="treasury">
-                    {assetsBalances.map(({ balance, symbol, rate }) => {
+                    {assetsBalances.map(({ balance, tokenAddress }) => {
+                      const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                      if (!token || !token.rate) return null
+
+                      const { symbol, rate, decimals } = token
+
+                      const convertedBalance = convertNumberForClient({ number: balance, grade: decimals })
+
                       return (
                         <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
                           <TableCell width="33%">{symbol}</TableCell>
                           <TableCell width="33%">
-                            <CommaNumber value={balance} decimalsToShow={assetDecimalsToShow} useAccurateParsing />
+                            <CommaNumber
+                              value={convertedBalance}
+                              decimalsToShow={assetDecimalsToShow}
+                              useAccurateParsing
+                            />
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
                             <CommaNumber
-                              value={balance * rate}
+                              value={convertedBalance * rate}
                               beginningText={rate ? '$' : symbol}
                               useAccurateParsing
                             />
@@ -127,7 +140,11 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
               <PieChartView chartData={chartData} />
 
               <div className="asset-lables scroll-block">
-                {assetsBalances.map(({ symbol }) => {
+                {assetsBalances.map(({ tokenAddress }) => {
+                  const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                  if (!token || !token.rate) return null
+
+                  const { symbol } = token
                   return (
                     <div
                       style={{

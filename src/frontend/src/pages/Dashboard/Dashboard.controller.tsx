@@ -67,7 +67,7 @@ export const Dashboard = () => {
 
   const treasuryTVL = treasuryStorage.reduce((acc, { balances }) => {
     return (acc += balances.reduce((balanceAcc, { tokenAddress, balance }) => {
-      const { rate } = getTokenDataByAddress(tokenAddress, tokensMetadata, tokensPrices) ?? {}
+      const { rate } = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices }) ?? {}
       return rate ? balanceAcc + balance * rate : balanceAcc
     }, 0))
   }, 0)
@@ -75,8 +75,8 @@ export const Dashboard = () => {
   const vaultsTvl = allVaultsIds.reduce((acc, vaultId) => {
     const { collateralData } = vaultsMapper[vaultId]
 
-    return (acc += collateralData.reduce((collateralAcc, { amount, tokenAddress }, idx) => {
-      const { rate } = getTokenDataByAddress(tokenAddress, tokensMetadata, tokensPrices) ?? {}
+    return (acc += collateralData.reduce((collateralAcc, { amount, tokenAddress }) => {
+      const { rate } = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices }) ?? {}
       return rate ? collateralAcc + amount * rate : 0
     }, 0))
   }, 0)

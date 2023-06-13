@@ -16,11 +16,17 @@ export const checkWhetherTokenIsCollateralToken = (
 
 export const isTezosAsset = (tokenAddress?: TokenAddressType) => tokenAddress === 'XTZ'
 
-export const getTokenDataByAddress = (
-  tokenAddress: string,
-  tokensMetadata: TokensContext['tokensMetadata'],
-  tokensPrices: TokensContext['tokensPrices'],
-): (TokenMetadataType & { rate: number | null }) | null => {
+export const getTokenDataByAddress = ({
+  tokenAddress,
+  tokensMetadata,
+  tokensPrices,
+}: {
+  tokenAddress?: string
+  tokensMetadata: TokensContext['tokensMetadata']
+  tokensPrices: TokensContext['tokensPrices']
+}): (TokenMetadataType & { rate: number | null }) | null => {
+  if (!tokenAddress) return null
+
   const tokenMetadata = tokensMetadata[tokenAddress]
 
   if (!tokenMetadata) return null

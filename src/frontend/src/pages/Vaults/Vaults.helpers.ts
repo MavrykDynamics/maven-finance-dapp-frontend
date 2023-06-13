@@ -8,6 +8,7 @@ import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getVaultStatus } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 type OracleLatestProps = {
   aggregator: Aggregator[]
@@ -60,11 +61,12 @@ export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) 
 export const getVaultCollateralBalance = (
   collateralData: LoansVaultType['collateralData'],
   tokensMetadata: TokensContext['tokensMetadata'],
-  tokensRates: TokensContext['tokensPrices'],
+  tokensPrices: TokensContext['tokensPrices'],
 ) => {
   return collateralData.reduce((acc, { amount, tokenAddress }) => {
-    const { symbol: collateralSymbol, decimals: collateralDecimals } = tokensMetadata[tokenAddress]
-    const collateralRate = tokensRates[collateralSymbol]
+    const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+    if (!token || !token.rate) return acc
+    const { decimals: collateralDecimals, rate: collateralRate } = token
 
     return (acc += convertNumberForClient({ number: amount, grade: collateralDecimals }) * collateralRate)
   }, 0)
@@ -124,8 +126,6 @@ export type VaultAssetData = {
   balance: number
   chartColor: string
   tokenAddress: string
-  rate: number
-  symbol: string
 }
 
 export type VaultAssetBalances = {
@@ -135,12 +135,11 @@ export type VaultAssetBalances = {
   assets: Record<string, VaultAssetData>
 }
 
-// TODO: test it
 export const reduceVaultsAssets = (
   vaultIds: string[],
   vaultsMapper: Record<string, LoansVaultType>,
   tokensMetadata: TokensContext['tokensMetadata'],
-  tokensRates: TokensContext['tokensPrices'],
+  tokensPrices: TokensContext['tokensPrices'],
 ) => {
   let vaultWithBalances = 0
   let totalBorrowedAmounts = 0
@@ -150,11 +149,16 @@ export const reduceVaultsAssets = (
   const { assets, globalVaultTVL } = vaultIds.reduce<VaultAssetBalances>(
     (acc, vaultId) => {
       const { assets } = acc
-      const { collateralData, borrowedAmount } = vaultsMapper[vaultId]
+      const { collateralData, borrowedAmount, borrowedTokenAddress } = vaultsMapper[vaultId]
 
-      const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensRates)
+      const token = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
+      if (!token || !token.rate) return acc
+      const { decimals: borrowedTokenDecimals, rate: borrowedTokenRate } = token
 
-      totalBorrowedAmounts += borrowedAmount
+      const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
+
+      totalBorrowedAmounts +=
+        convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals }) * borrowedTokenRate
       totalCollateralBalances += collateralBalance
 
       if (borrowedAmount && collateralBalance) {
@@ -162,20 +166,19 @@ export const reduceVaultsAssets = (
       }
 
       collateralData.forEach(({ amount, tokenAddress }) => {
-        const { symbol: collateralSymbol, decimals: collateralDecimals } = tokensMetadata[tokenAddress]
-        const collateralRate = tokensRates[collateralSymbol]
+        const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+        if (!token || !token.rate) return
+        const { decimals: collateralDecimals, rate: collateralRate } = token
 
         const convertedAmount = convertNumberForClient({ number: amount, grade: collateralDecimals })
 
         acc.globalVaultTVL += convertedAmount * collateralRate
 
         if (assets[tokenAddress]) {
-          assets[tokenAddress].balance += convertedAmount
+          assets[tokenAddress].balance += amount
         } else {
           assets[tokenAddress] = {
-            balance: convertedAmount,
-            rate: collateralRate,
-            symbol: collateralSymbol,
+            balance: amount,
             chartColor: getAssetColor(colorIdx),
             tokenAddress,
           }
