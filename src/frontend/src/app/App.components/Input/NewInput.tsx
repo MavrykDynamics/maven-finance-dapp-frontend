@@ -42,9 +42,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
     }: InputViewProps,
     ref,
   ) => {
-    const { onChange, onBlur, onFocus } = inputProps
-    const [isFocused, setIsFocused] = useState(false)
-
+    const { onChange } = inputProps
     const { status, errorMessage, handleChange } = useInputValidator({
       originalErrorMessage: errorMessageFromProps,
       status: inputStatus,
@@ -52,7 +50,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
     })
 
     return (
-      <InputWrapper isFocused={isFocused} className={`${className} ${status} ${inputSize}`} id={'inputStyled'}>
+      <InputWrapper className={`${className} ${status} ${inputSize}`} id={'inputStyled'}>
         {label ? (
           <NewInputLabel>
             {label}
@@ -63,14 +61,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
 
         <StyledInput
           {...inputProps}
-          onFocus={(e: React.ChangeEvent<HTMLInputElement>) => {
-            onFocus?.(e)
-            setIsFocused(true)
-          }}
-          onBlur={(e: React.ChangeEvent<HTMLInputElement>) => {
-            onBlur?.(e)
-            setIsFocused(false)
-          }}
           onChange={handleChange}
           className={`${status} ${children ? 'remove-right-border-radius' : ''}`}
           autoComplete={'off'}

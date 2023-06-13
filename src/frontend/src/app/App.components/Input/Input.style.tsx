@@ -249,7 +249,7 @@ export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const InputWrapper = styled.div<{ isFocused: boolean; theme: MavrykTheme }>`
+export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   position: relative;
   display: flex;
   border: 1px solid ${({ theme }) => theme.cardBorderColor};
@@ -315,7 +315,7 @@ export const InputWrapper = styled.div<{ isFocused: boolean; theme: MavrykTheme 
   }
 
   &:focus-within {
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.primaryColor}19;
+    box-shadow: 0 0 0 1.5px ${({ theme }) => theme.primaryColor}19;
     border-color: ${({ theme }) => theme.primaryColor}7F;
   }
 
@@ -333,11 +333,9 @@ export const InputWrapper = styled.div<{ isFocused: boolean; theme: MavrykTheme 
       border-left: 1px solid ${({ theme }) => theme.downColor};
     }
 
-    ${({ isFocused }) =>
-      isFocused &&
-      css`
-        box-shadow: 0 0 0 1.5px ${({ theme }) => theme.downColor}7F;
-      `}
+    &:focus-within {
+      box-shadow: 0 0 0 1.5px ${({ theme }) => theme.downColor}7F;
+    }
   }
 
   &.${INPUT_STATUS_SUCCESS} {
@@ -354,11 +352,9 @@ export const InputWrapper = styled.div<{ isFocused: boolean; theme: MavrykTheme 
       border-left: 1px solid ${({ theme }) => theme.upColor};
     }
 
-    ${({ isFocused }) =>
-      isFocused &&
-      css`
-        box-shadow: 0 0 0 1.5px ${({ theme }) => theme.upColor}7F;
-      `}
+    &:focus-within {
+      box-shadow: 0 0 0 1.5px ${({ theme }) => theme.upColor}7F;
+    }
   }
 
   &.mb-45 {
