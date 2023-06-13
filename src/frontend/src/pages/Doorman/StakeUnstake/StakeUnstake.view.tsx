@@ -104,8 +104,6 @@ export const StakeUnstakeView = ({
 
   const [contractError, setContractError] = useState<ContractErrorPayload | null>(null)
 
-  console.log(contractError, 'contractError')
-
   const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
   const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
     myMvkTokenBalance = userTokens[MVK_TOKEN_SYMBOL].balance

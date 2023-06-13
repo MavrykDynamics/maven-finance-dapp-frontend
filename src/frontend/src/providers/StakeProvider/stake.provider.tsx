@@ -171,24 +171,27 @@ export class StakeProviderClass extends React.Component<Props, State> {
       const stakeOperation = doormanContract.methods.stake(convertNumberForContractCall({ number: amount }))
       const removeOperatorsOperation = mvkTokenContract.methods.update_operators(removeOperators)
 
-      // const op1 = await estimateExecution(addOperatorsOperation)
-      // const op2 = await estimateExecution(stakeOperation)
-      // const op3 = await estimateExecution(removeOperatorsOperation)
+      // const [op1, op2, op3] = await Promise.all([
+      //   await estimateExecution(addOperatorsOperation),
+      //   await estimateExecution(stakeOperation),
+      //   await estimateExecution(removeOperatorsOperation),
+      // ])
+
+      const test = await estimateExecution(stakeOperation)
+      console.log(test, 'test---------------')
 
       // if (op1?.error || op2?.error || op3?.error) {
       //   return { actionSuccess: false, error: op1?.error ?? op2?.error ?? op3?.error }
       // }
-
-      if (true) return { actionSuccess: false, error: DEFAULT_TEZOS_ERROR }
 
       const batch =
         mvkTokenContract &&
         doormanContract &&
         (await tezos.wallet
           .batch()
-          .withContractCall(mvkTokenContract.methods.update_operators(addOperators))
-          .withContractCall(doormanContract.methods.stake(convertNumberForContractCall({ number: amount })))
-          .withContractCall(mvkTokenContract.methods.update_operators(removeOperators)))
+          .withContractCall(addOperatorsOperation)
+          .withContractCall(stakeOperation)
+          .withContractCall(removeOperatorsOperation))
 
       // const batchOperations = batch?.withTransfer()
       await batch?.send()

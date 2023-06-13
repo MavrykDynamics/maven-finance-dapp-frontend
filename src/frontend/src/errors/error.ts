@@ -67,7 +67,6 @@ export function isExtendedError(e: unknown): e is ExtendedError {
 
 export function isTezosContractError(e: unknown) {
   const result = tezosContractErrorPayload.safeParse(Object.assign({}, e))
-  console.log(Object.assign({}, e), result)
   return result.success
 }
 

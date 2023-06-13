@@ -16,7 +16,8 @@ export const DEFAULT_TEZOS_ERROR: ContractErrorPayload = {
 
 export const getContractErrorMessage = (e: unknown): ContractErrorPayload => {
   const isTezosError = isTezosContractError(e)
-
+  console.log(isTezosError, 'isTezosError')
+  console.log(Object.assign({}, e))
   if (isTezosError) {
     const error = e as TezosOperationError
     const errorCode = Number(error.message) ? Number(error.message) : null
@@ -34,7 +35,6 @@ export const estimateExecution = async (
 ): Promise<{ minimalFeeMutez: number; totalCost: number; error?: ContractErrorPayload }> => {
   try {
     const tezos = await DAPP_INSTANCE.tezos()
-    // @ts-ignore
     const operationEstimate = await tezos?.estimate.transfer(tezosOperation.toTransferParams())
     return operationEstimate
   } catch (e) {
