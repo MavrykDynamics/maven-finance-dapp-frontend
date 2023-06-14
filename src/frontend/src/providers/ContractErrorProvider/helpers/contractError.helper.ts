@@ -1,7 +1,8 @@
 import { ContractMethod, TezosOperationError, Wallet } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { isTezosContractError } from 'errors/error'
-import { CONTRACT_ERROR_CODES } from 'utils/error_codes'
+import { CONTRACT_ERROR_CODES } from '../consts/contractErrorCodes'
+import { SPECIFIC_CONTRACT_ERROR_CODES } from '../consts/specificErrorCodes'
 import { toSentenceCase } from 'utils/toSentenceCase'
 import { ContractErrorPayload } from '../contractError.type'
 import { DEFAULT_TEZOS_ERROR } from '../contractError.const'
@@ -12,10 +13,20 @@ export const getContractErrorMessage = (e: unknown): ContractErrorPayload => {
   console.log(Object.assign({}, e))
   if (isTezosError) {
     const error = e as TezosOperationError
-    const errorCode = Number(error.message) ? Number(error.message) : null
-    let _error = errorCode !== null ? CONTRACT_ERROR_CODES.get(errorCode) : null
-    if (_error) _error.description = toSentenceCase(_error.description)
+    const errorCode = Number(error.message) ? Number(error.message) : error.message ? error.message : null
 
+    const isNumberKey = typeof errorCode === 'number'
+    let _error = null
+
+    if (errorCode !== null) {
+      if (isNumberKey) {
+        _error = CONTRACT_ERROR_CODES.get(errorCode)
+      } else {
+        _error = SPECIFIC_CONTRACT_ERROR_CODES.get(errorCode)
+      }
+    }
+
+    if (_error) _error.description = toSentenceCase(_error.description)
     return _error ?? DEFAULT_TEZOS_ERROR
   }
 

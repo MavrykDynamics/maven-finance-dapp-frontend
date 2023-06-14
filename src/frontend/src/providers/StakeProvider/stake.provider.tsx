@@ -171,6 +171,10 @@ export class StakeProviderClass extends React.Component<Props, State> {
       const stakeOperation = doormanContract.methods.stake(convertNumberForContractCall({ number: amount }))
       const removeOperatorsOperation = mvkTokenContract.methods.update_operators(removeOperators)
 
+      // const op1 = await estimateExecution(addOperatorsOperation)
+      // const op2 = await estimateExecution(stakeOperation)
+      // const op3 = await estimateExecution(removeOperatorsOperation)
+
       const [op1, op2, op3] = await Promise.all([
         await estimateExecution(addOperatorsOperation),
         await estimateExecution(stakeOperation),
@@ -178,9 +182,6 @@ export class StakeProviderClass extends React.Component<Props, State> {
       ])
 
       console.log([op1, op2, op3])
-
-      // const test = await estimateExecution(stakeOperation)
-      // console.log(test, 'test---------------')
 
       if (op1?.error || op2?.error || op3?.error) {
         return { actionSuccess: false, error: op1?.error ?? op2?.error ?? op3?.error }
@@ -195,7 +196,6 @@ export class StakeProviderClass extends React.Component<Props, State> {
           .withContractCall(stakeOperation)
           .withContractCall(removeOperatorsOperation))
 
-      // const batchOperations = batch?.withTransfer()
       await batch?.send()
 
       return { actionSuccess: true, error: null }
