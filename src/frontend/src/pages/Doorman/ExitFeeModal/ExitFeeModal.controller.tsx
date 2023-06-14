@@ -31,6 +31,10 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { State } from 'reducers'
+import { isContractErrorPayload } from 'providers/ContractErrorProvider/helpers/contractError.helper'
+import { useContractErrorContext } from 'providers/ContractErrorProvider/contractError.provider'
+import { STAKING_FIELD } from 'providers/ContractErrorProvider/contractError.const'
+import { ContractErrorPayload } from 'providers/ContractErrorProvider/contractError.type'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -58,6 +62,7 @@ export const ExitFeeModal = ({
 
   const { unstakeMVK, updateStakeActionContext, updateStakeLoadingToasterId, loadingToasterId } = useStakeContext()
   const { bug, info, loading, hideToasterMessage } = useToasterContext()
+  const { errors, addContractError, removeContractError } = useContractErrorContext()
 
   const {
     doormanAddress: { address: doormanAddress },
@@ -86,6 +91,8 @@ export const ExitFeeModal = ({
     closePopup()
 
     if (actionSuccess && !error) {
+      if (errors[STAKING_FIELD]) removeContractError(STAKING_FIELD)
+
       updateStakeActionContext(STAKE_ACTION)
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
@@ -103,6 +110,8 @@ export const ExitFeeModal = ({
         TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
       )
       updateStakeLoadingToasterId(loadingToasterId)
+    } else if (isContractErrorPayload(error)) {
+      addContractError(STAKING_FIELD, error as ContractErrorPayload)
     } else {
       if (loadingToasterId) hideToasterMessage(loadingToasterId)
       dispatch(toggleActionFullScreenLoader(false))

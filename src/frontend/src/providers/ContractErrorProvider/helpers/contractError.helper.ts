@@ -3,16 +3,8 @@ import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.ac
 import { isTezosContractError } from 'errors/error'
 import { CONTRACT_ERROR_CODES } from 'utils/error_codes'
 import { toSentenceCase } from 'utils/toSentenceCase'
-
-export type ContractErrorPayload = {
-  message: string
-  description: string
-}
-
-export const DEFAULT_TEZOS_ERROR: ContractErrorPayload = {
-  message: 'Something went wrong',
-  description: 'Something went wrong, you are not allowed to continue current operation',
-}
+import { ContractErrorPayload } from '../contractError.type'
+import { DEFAULT_TEZOS_ERROR } from '../contractError.const'
 
 export const getContractErrorMessage = (e: unknown): ContractErrorPayload => {
   const isTezosError = isTezosContractError(e)

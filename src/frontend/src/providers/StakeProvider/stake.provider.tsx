@@ -24,7 +24,7 @@ import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.ac
 // TODO move wallet to context to avoid redux logic inside Stake Context
 // redux
 import { State as ReduxState } from 'reducers'
-import { DEFAULT_TEZOS_ERROR, estimateExecution } from 'errors/helpers/contractError.helper'
+import { estimateExecution } from 'providers/ContractErrorProvider/helpers/contractError.helper'
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
@@ -171,18 +171,20 @@ export class StakeProviderClass extends React.Component<Props, State> {
       const stakeOperation = doormanContract.methods.stake(convertNumberForContractCall({ number: amount }))
       const removeOperatorsOperation = mvkTokenContract.methods.update_operators(removeOperators)
 
-      // const [op1, op2, op3] = await Promise.all([
-      //   await estimateExecution(addOperatorsOperation),
-      //   await estimateExecution(stakeOperation),
-      //   await estimateExecution(removeOperatorsOperation),
-      // ])
+      const [op1, op2, op3] = await Promise.all([
+        await estimateExecution(addOperatorsOperation),
+        await estimateExecution(stakeOperation),
+        await estimateExecution(removeOperatorsOperation),
+      ])
 
-      const test = await estimateExecution(stakeOperation)
-      console.log(test, 'test---------------')
+      console.log([op1, op2, op3])
 
-      // if (op1?.error || op2?.error || op3?.error) {
-      //   return { actionSuccess: false, error: op1?.error ?? op2?.error ?? op3?.error }
-      // }
+      // const test = await estimateExecution(stakeOperation)
+      // console.log(test, 'test---------------')
+
+      if (op1?.error || op2?.error || op3?.error) {
+        return { actionSuccess: false, error: op1?.error ?? op2?.error ?? op3?.error }
+      }
 
       const batch =
         mvkTokenContract &&
@@ -207,7 +209,14 @@ export class StakeProviderClass extends React.Component<Props, State> {
       // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(doormanAddress)
-      await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
+      const unstakeOperation = contract?.methods.unstake(convertNumberForContractCall({ number: amount }))
+      const op = await estimateExecution(unstakeOperation)
+
+      if (op?.error) {
+        return { actionSuccess: false, error: op.error }
+      }
+
+      await unstakeOperation.send()
 
       return { actionSuccess: true, error: null }
     } catch (error) {
