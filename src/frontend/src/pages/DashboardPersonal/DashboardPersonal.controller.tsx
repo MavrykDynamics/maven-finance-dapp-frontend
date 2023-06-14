@@ -106,8 +106,6 @@ const DashboardPersonal = () => {
   }
 
   const earnings = {
-    mvkRate: tokensPrices[MVK_TOKEN_SYMBOL],
-    xtzRate: tokensPrices[XTZ_TOKEN_SYMBOL],
     satelliteRewards: gatheredSatellitesRewards,
     farmsRewards: gatheredFarmRewards,
     exitRewards: gatheredDoormanRewards,

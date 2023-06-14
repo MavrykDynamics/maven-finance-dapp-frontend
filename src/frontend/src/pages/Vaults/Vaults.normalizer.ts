@@ -55,23 +55,12 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
         // Calculating Fee of the vault
         const currentLoanInterest = item.loan_interest_total
-
         const fee =
           borrowedAmount === 0
             ? currentLoanInterest
             : currentLoanInterest +
               calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
                 FIXED_POINT_ACCURACY
-
-        // TODO: calc value
-        const liquidationPrice = 0
-        // item.loan_token?.oracle?.address
-        //   ? calculateLiquidationPrice(
-        //       item.loan_outstanding_total / 10 ** item.loan_decimals,
-        //       lendingController.liquidation_ratio,
-        //       loanTokenMetadata.rate,
-        //     )
-        //   : 0
 
         // Convert deep structure of depositors to array of depositrors addresses (strings)
         const depositors = (item.vault?.depositors.map(({ depositor }) => depositor?.address).filter(Boolean) ??
@@ -83,27 +72,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
             : item.vault.allowance === 1 && depositors.length !== 0
             ? WHITELIST_USERS
             : NONE_USER
-
-        // TODO: check data below
-        // Need one source to get status like vaults or loans.
-        // Because at the moment the data is different for the same items
-
-        // gotStatusByCollateralRatio !== 'no status'
-        //   ? gotStatusByCollateralRatio
-        //   : item.loan_token?.oracle_id
-        //   ? vaultStatusChecker({
-        //       currentBlockLevel: currentBlock?.level ?? 0,
-        //       liquidationEndLevel: item.liquidation_end_level,
-        //       markedForLiquidationLevel: item.marked_for_liquidation_level,
-        //       liquidationDelayInMinutes: lendingController.liquidation_delay_in_minutes,
-        //       loanOutstandingTotal: item.loan_outstanding_total / 10 ** item.loan_decimals,
-        //       loanTokenOracleAddress: item.loan_token.oracle_id,
-        //       liquidationRatio: lendingController.liquidation_ratio,
-        //       vaultCollateralTokens: normalizeCollateralTokens,
-        //       collateralRatio: lendingController.collateral_ratio,
-        //       oracleLatestPrices,
-        //     })
-        //   : 'no status'
 
         // Need one source to get levelOfEarly and levelOfLate like vaults or loans.
         // Because at the moment the data is different for the same items
@@ -157,7 +125,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           ),
           liquidationReward: lendingController.liquidation_fee_pct / 10 ** lendingController.decimals,
           adminLiquidateFee: lendingController.admin_liquidation_fee_pct,
-          liquidationPrice,
+          liquidationRatio: lendingController.liquidation_ratio,
           levelOfEarly: currentBlock?.level ?? 0,
           levelOfLate:
             item.marked_for_liquidation_level +

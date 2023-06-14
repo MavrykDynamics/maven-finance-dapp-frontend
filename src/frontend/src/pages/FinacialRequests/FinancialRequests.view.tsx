@@ -37,6 +37,8 @@ import {
   InfoBlockName,
 } from './FinancialRequests.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 export const FinancialRequestsView = ({
   financialRequestsIds,
@@ -96,7 +98,10 @@ export const FinancialRequestsView = ({
   const RightSideBlock = () => {
     if (!rightSideContent) return null
 
-    const requestTokenName = tokensMetadata[rightSideContent.tokenAddress].name
+    const requestedToken = getTokenDataByAddress({ tokenAddress: rightSideContent.tokenAddress, tokensMetadata })
+    if (!requestedToken) return null
+
+    const { decimals, symbol } = requestedToken
 
     return (
       <FinancialRequestsRightContainer>
@@ -153,13 +158,16 @@ export const FinancialRequestsView = ({
             <div className="list_item">
               <InfoBlockName>Amount Requested</InfoBlockName>
               <InfoBlockValue>
-                <CommaNumber value={rightSideContent.tokensAmount} endingText={requestTokenName} />
+                <CommaNumber
+                  value={convertNumberForClient({ number: rightSideContent.tokensAmount, grade: decimals })}
+                  endingText={symbol}
+                />
               </InfoBlockValue>
             </div>
 
             <div className="list_item">
               <InfoBlockName>Type</InfoBlockName>
-              <InfoBlockValue>{requestTokenName}</InfoBlockValue>
+              <InfoBlockValue>{symbol}</InfoBlockValue>
             </div>
           </div>
         </div>

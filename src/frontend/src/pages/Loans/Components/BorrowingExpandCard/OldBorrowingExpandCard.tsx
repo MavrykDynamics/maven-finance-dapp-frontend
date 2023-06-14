@@ -4,7 +4,7 @@ import { useClickAway } from 'react-use'
 import { useHistory, useLocation } from 'react-router-dom'
 import classNames from 'classnames'
 
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent, getStatusByCollateralRatio } from '../../Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from '../../Loans.const'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import colors from 'styles/colors'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
@@ -38,9 +38,14 @@ import { isAbortError } from 'errors/error'
 import { api } from 'utils/api/api'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
-import { isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import useVault from 'providers/LoansProvider/hooks/useVault'
+import {
+  getVaultBorrowCapacity,
+  getVaultCollateralBalance,
+  getVaultCollateralRatio,
+  getVaultStatus,
+} from 'providers/LoansProvider/helpers/vaults.utils'
 
 type BorrowingExpandCardPropsType = {
   vault: LoansVaultType
@@ -50,94 +55,100 @@ type BorrowingExpandCardPropsType = {
 }
 
 export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: BorrowingExpandCardPropsType) => {
-  const fullVault = useVault(vault)
-
-  const {
-    collateralData,
-    name,
-    address,
-    status,
-    levelOfEarly,
-    levelOfLate,
-    fee,
-    apr,
-    borrowedAmount,
-    collateralRatio,
-    borrowedTokenMetadata,
-    borrowedTokenRate,
-    collateralBalance,
-    borrowCapacity,
-  } = fullVault
-
+  const { bug } = useToasterContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { symbol, decimals, icon } = borrowedTokenMetadata
-  const history = useHistory()
-  const location = useLocation()
-
-  const params = useMemo(() => new URLSearchParams(location.search), [location.search])
-  const vaultAddress = params.get('vaultAddress')
+  const {
+    openAddExistingCollateralPopup,
+    // changeBakerPopup,
+    // borrowAssetPopup,
+    addExistingCollateralPopup,
+    // addNewCollateralPopup,
+    // withdrawCollateralPopup,
+    // updateMvkOperatorPopup,
+    // managePermissionsPopup,
+    // liquidateVaultPopup,
+  } = useLoansPopupsContext()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  const { bug } = useToasterContext()
+  const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
-  const isExpanded = address === vaultAddress
-
-  const {
-    openAddExistingCollateralPopup,
-    changeBakerPopup,
-    borrowAssetPopup,
-    addExistingCollateralPopup,
-    addNewCollateralPopup,
-    withdrawCollateralPopup,
-    updateMvkOperatorPopup,
-    managePermissionsPopup,
-    liquidateVaultPopup,
-  } = useLoansPopupsContext()
-
+  // TODO: test how it works with only 1 popup
   const notHandleClickAway =
-    changeBakerPopup.showModal ||
-    borrowAssetPopup.showModal ||
+    // changeBakerPopup.showModal ||
+    // borrowAssetPopup.showModal ||
     addExistingCollateralPopup.showModal ||
-    addNewCollateralPopup.showModal ||
-    withdrawCollateralPopup.showModal ||
-    updateMvkOperatorPopup.showModal ||
-    managePermissionsPopup.showModal ||
-    liquidateVaultPopup.showModal ||
+    // addNewCollateralPopup.showModal ||
+    // withdrawCollateralPopup.showModal ||
+    // updateMvkOperatorPopup.showModal ||
+    // managePermissionsPopup.showModal ||
+    // liquidateVaultPopup.showModal ||
     isActionActive
 
   const ref = useRef<HTMLDivElement | null>(null)
   useClickAway(ref, () => (notHandleClickAway ? null : handleCloseVault()))
 
-  const vaultStatus = status ?? getStatusByCollateralRatio(collateralRatio)
-  const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
-  // TODO: find a method to check whether it's smvk collateral
-  const vaultHasSmvkCollateral = false //collateralData.find(({ gqlName }) => gqlName === 'smvk')
-  const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
+  const history = useHistory()
+  const location = useLocation()
 
-  const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search])
+  const vaultAddress = params.get('vaultAddress')
+  const isExpanded = vault.address === vaultAddress
 
-  const handleOpenVault = () => {
-    if (isExpanded) return
+  const vaultData = useMemo(() => {
+    const {
+      borrowedTokenAddress,
+      collateralData,
+      borrowedAmount,
+      fee,
+      liquidationRatio,
+      availableLiquidity,
+      ...restVault
+    } = vault
 
-    params.append('vaultAddress', address)
-    history.replace({ ...location, search: params.toString() })
-  }
+    const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
 
-  const handleCloseVault = () => {
-    if (!isExpanded) return
+    if (!borrowedToken || !borrowedToken.rate) return null
 
-    params.delete('vaultAddress')
-    history.replace({ ...location, search: params.toString() })
-  }
+    const { rate: borrowedTokenRate, decimals: borrowedTokenDecimals } = borrowedToken
 
-  const handleClickExpand = () => {
-    isExpanded ? handleCloseVault() : handleOpenVault()
-  }
+    const convertedBorrowedAmount = convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals })
+    const convertedFee = convertNumberForClient({ number: fee, grade: borrowedTokenDecimals })
+    const convertedAvailableLiquidity = convertNumberForClient({
+      number: availableLiquidity,
+      grade: borrowedTokenDecimals,
+    })
+    const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
+    const borrowCapacity = getVaultBorrowCapacity(
+      convertedAvailableLiquidity * borrowedTokenRate,
+      convertedBorrowedAmount * borrowedTokenRate,
+      collateralBalance,
+    )
+    const collateralRatio = getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * borrowedTokenRate)
+    const status = getVaultStatus(collateralRatio)
+
+    return {
+      status,
+      collateralRatio,
+      collateralBalance,
+      collateralData,
+      convertedBorrowedAmount,
+      borrowedTokenRate,
+      borrowedTokenAddress,
+      borrowedToken,
+      borrowCapacity,
+      convertedFee,
+      ...restVault,
+    }
+  }, [vault, tokensMetadata, tokensPrices])
 
   useEffect(() => {
-    if (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE) {
+    if (!vaultData) return
+
+    const { status, levelOfEarly, levelOfLate } = vaultData
+
+    if (status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.LIQUIDATABLE) {
       if (!levelOfEarly || !levelOfLate) return
 
       const abortEarlyController = new AbortController()
@@ -178,7 +189,50 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
     }
 
     return
-  }, [vaultStatus, levelOfEarly, levelOfLate])
+  }, [bug, vaultData])
+
+  if (!vaultData) return null
+
+  const {
+    collateralData,
+    address,
+    borrowedToken,
+    borrowedTokenRate,
+    name,
+    collateralRatio,
+    convertedBorrowedAmount,
+    convertedFee,
+    collateralBalance,
+    apr,
+    borrowCapacity,
+    status,
+  } = vaultData
+
+  const { symbol, decimals, icon } = borrowedToken
+
+  const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
+  // TODO: find a method to check whether it's smvk collateral
+  const vaultHasSmvkCollateral = false //collateralData.find(({ gqlName }) => gqlName === 'smvk')
+
+  const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
+
+  const handleOpenVault = () => {
+    if (isExpanded) return
+
+    params.append('vaultAddress', address)
+    history.replace({ ...location, search: params.toString() })
+  }
+
+  const handleCloseVault = () => {
+    if (!isExpanded) return
+
+    params.delete('vaultAddress')
+    history.replace({ ...location, search: params.toString() })
+  }
+
+  const handleClickExpand = () => {
+    isExpanded ? handleCloseVault() : handleOpenVault()
+  }
 
   return (
     <div ref={ref}>
@@ -214,10 +268,15 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
-              <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={decimals} />
+              <CommaNumber
+                value={convertedBorrowedAmount + convertedFee}
+                className="value"
+                showDecimal
+                decimalsToShow={decimals}
+              />
               {borrowedTokenRate ? (
                 <CommaNumber
-                  value={(borrowedAmount + fee) * borrowedTokenRate}
+                  value={(convertedBorrowedAmount + convertedFee) * borrowedTokenRate}
                   beginningText="$"
                   className="borrowedTokenRate"
                   showDecimal
@@ -244,7 +303,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               vaultHasXtzCollateral || vaultHasSmvkCollateral ? '' : 'more-padding'
             }`}
           >
-            {vaultStatus && <StatusMessage status={vaultStatus} timestamp={timerTimestamp} />}
+            {status && <StatusMessage status={status} timestamp={timerTimestamp} />}
 
             <div className="block-name">Borrowed</div>
             <div className="borrowed-data">
@@ -257,10 +316,10 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Principal</div>
-                <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
+                <CommaNumber value={convertedBorrowedAmount} decimalsToShow={decimals} className="value" />
                 {borrowedTokenRate ? (
                   <CommaNumber
-                    value={borrowedAmount * borrowedTokenRate}
+                    value={convertedBorrowedAmount * borrowedTokenRate}
                     decimalsToShow={2}
                     beginningText="$"
                     className="borrowedTokenRate"
@@ -276,10 +335,10 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                     defaultStrokeColor={colors[themeSelected].textColor}
                   />
                 </div>
-                <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
+                <CommaNumber value={convertedFee} decimalsToShow={decimals} className="value" />
                 {borrowedTokenRate ? (
                   <CommaNumber
-                    value={fee * borrowedTokenRate}
+                    value={convertedFee * borrowedTokenRate}
                     decimalsToShow={2}
                     beginningText="$"
                     className="borrowedTokenRate"
@@ -309,15 +368,16 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                   <TableBody>
                     {collateralData.map(({ tokenAddress, amount }, idx) => {
                       const isTotalRow = collateralData.length - 1 === idx
+                      const collateral = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
 
-                      if (isTotalRow && collateralData.length < 3) return null
+                      if ((isTotalRow && collateralData.length < 3) || !collateral || !collateral.rate) return null
 
                       const {
                         symbol: collateralSymbol,
                         decimals: collateralDecimals,
                         icon: collateralIcon,
-                      } = tokensMetadata[tokenAddress]
-                      const collateralRate = tokensPrices[symbol]
+                        rate: collateralRate,
+                      } = collateral
 
                       const convertedCollalteralAmount = convertNumberForClient({
                         number: amount,
@@ -379,7 +439,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                                   onClick={() =>
                                     openAddExistingCollateralPopup?.({
                                       vaultAddress: vault.address,
-                                      borrowedAmount,
+                                      borrowedAmount: convertedBorrowedAmount,
                                       collateralBalance,
                                       collateralRatio,
                                       borrowedTokenRate,

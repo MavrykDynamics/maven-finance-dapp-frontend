@@ -131,13 +131,6 @@ export const getCollateralRationPersent = (persentage: number) => {
   return color ? `rgb(${color.r}, ${color.g}, ${color.b})` : placeholderColor
 }
 
-export const getStatusByCollateralRatio = (collateralRatio: number) => {
-  if (collateralRatio <= 200 && collateralRatio > 150) return vaultsStatuses.AT_RISK
-  if (collateralRatio <= 150) return vaultsStatuses.GRACE_PERIOD
-
-  return vaultsStatuses.ACTIVE
-}
-
 export const COLLATERAL_RATIO_GRADIENT: Array<ColorBreakpoint> = [
   {
     persentage: 0,

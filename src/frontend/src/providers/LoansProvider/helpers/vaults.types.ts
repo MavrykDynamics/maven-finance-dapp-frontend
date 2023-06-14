@@ -1,4 +1,3 @@
-import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 
 export type FullLoansVaultType = LoansVaultType & {
@@ -6,8 +5,6 @@ export type FullLoansVaultType = LoansVaultType & {
   collateralBalance: number
   borrowCapacity: number
   collateralRatio: number
-  borrowedTokenRate: number
-  borrowedTokenMetadata: TokenMetadataType
-  // TODO: implement
+  // TODO: implement & add types
   status: string
 }

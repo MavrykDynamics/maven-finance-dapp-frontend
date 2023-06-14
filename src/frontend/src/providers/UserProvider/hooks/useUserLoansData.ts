@@ -8,6 +8,7 @@ import { calcLendingAPY } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 import { UserLoansDataStateType } from '../helpers/user.types'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 const useUserLoansData = ({ userAddress }: { userAddress?: string }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
@@ -48,16 +49,19 @@ const useUserLoansData = ({ userAddress }: { userAddress?: string }) => {
               lending_controller: { interest_rate_decimals, interest_treasury_share, decimals },
             },
           ) => {
-            const tokenAddress = loan_token?.token.token_address
-            if (!tokenAddress) return acc
+            const token = getTokenDataByAddress({
+              tokenAddress: loan_token?.token.token_address,
+              tokensMetadata,
+              tokensPrices,
+            })
+            if (!token || !token.rate || !loan_token) return acc
 
-            const { symbol, decimals: tokenDecimals } = tokensMetadata[tokenAddress]
-            const rate = tokensPrices[symbol]
+            const { decimals: tokenDecimals, address, rate } = token
 
             const commonUserData = {
               id,
               date: timestamp,
-              tokenAddress,
+              tokenAddress: address,
               operationHash: operation_hash,
               annualPecentage: calcLendingAPY(
                 convertNumberForClient({ number: loan_token.current_interest_rate, grade: interest_rate_decimals }),
@@ -106,24 +110,29 @@ const useUserLoansData = ({ userAddress }: { userAddress?: string }) => {
       const userVaultsData =
         data.mavryk_user[0].lending_controller_vaults?.reduce<UserLoansDataStateType['userVaultsData']>(
           (acc, { collateral_balances, loan_token, loan_principal_total }) => {
-            const vaultTokenAddress = loan_token?.token.token_address
+            const borrowedToken = getTokenDataByAddress({
+              tokenAddress: loan_token?.token.token_address,
+              tokensMetadata,
+              tokensPrices,
+            })
+            if (!borrowedToken || !borrowedToken.rate) return acc
 
-            if (!vaultTokenAddress) return acc
-            const { symbol: vaultTokenSymbol, decimals: vaultTokenDecimals } = tokensMetadata[vaultTokenAddress]
-            const vaultTokenRate = tokensPrices[vaultTokenSymbol]
+            const { decimals: vaultTokenDecimals, rate: vaultTokenRate } = borrowedToken
 
             const collateralAmount = collateral_balances.reduce((acc, { balance, collateral_token: { token } }) => {
-              const collateralTokenAddress = token?.token_address
-              if (!collateralTokenAddress) return acc
-              const { symbol: collateralTokenSymbol, decimals: collateralTokenDecimals } =
-                tokensMetadata[collateralTokenAddress]
-              const collateralTokenRate = tokensPrices[collateralTokenSymbol]
+              const collateralToken = getTokenDataByAddress({
+                tokenAddress: token?.token_address,
+                tokensMetadata,
+                tokensPrices,
+              })
+              if (!collateralToken || !collateralToken.rate) return acc
+              const { decimals: collateralTokenDecimals, rate: collateralTokenRate } = collateralToken
 
               acc += convertNumberForClient({ number: balance, grade: collateralTokenDecimals }) * collateralTokenRate
               return acc
             }, 0)
 
-            acc[vaultTokenAddress] = {
+            acc[borrowedToken.address] = {
               borrowedAmount:
                 convertNumberForClient({ number: loan_principal_total, grade: vaultTokenDecimals }) * vaultTokenRate,
               collateralAmount,

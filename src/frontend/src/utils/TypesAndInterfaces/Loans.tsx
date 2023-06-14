@@ -64,7 +64,7 @@ export type LoansVaultType = {
   liquidationMax: number
   liquidationReward: number
   adminLiquidateFee: number
-  liquidationPrice?: number
+  liquidationRatio: number
 }
 
 // Market Type

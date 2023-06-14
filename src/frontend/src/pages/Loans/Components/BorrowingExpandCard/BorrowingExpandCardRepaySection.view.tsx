@@ -40,20 +40,18 @@ import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT } from 'texts/banners/vault.text'
 import { AVALIABLE_TO_BORROW, FEES_DUE } from 'texts/tooltips/vault.text'
 import { checkNan } from 'utils/checkNan'
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { FullLoansVaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 
 type Props = {
-  vault: FullLoansVaultType
-  // vaultId: number
-  // vaultAddress: string
-  // borrowedAssetAddress: TokenAddressType
-  // fee: number
-  // borrowedAmount: number
-  // minimumRepay: number
-  // collateralData: number
-  // borrowCapacity: number
+  vaultId: number
+  vaultAddress: string
+  borrowedToken: TokenMetadataType
+  borrowedTokenRate: number
+  fee: number
+  borrowedAmount: number
+  minimumRepay: number
+  collateralBalance: number
+  borrowCapacity: number
   activeRepayTab?: TabItem
   openConfirmRepayPopup: (inputAmount: number) => void
   openConfirmRepayFullPopup: () => void
@@ -65,24 +63,21 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {
-    vault: {
-      vaultId,
-      address: vaultAddress,
-      fee,
-      borrowedTokenAddress,
-      borrowedTokenRate,
-      borrowedTokenMetadata,
-      collateralBalance,
-      borrowCapacity,
-      minimumRepay,
-      borrowedAmount,
-    },
+    vaultId,
+    vaultAddress,
+    fee,
+    borrowedToken,
+    collateralBalance,
+    borrowedTokenRate,
+    borrowCapacity,
+    minimumRepay,
+    borrowedAmount,
     activeRepayTab,
     openConfirmRepayPopup,
     openConfirmRepayFullPopup,
   } = props
 
-  const { symbol, decimals, icon } = borrowedTokenMetadata
+  const { decimals, symbol, icon } = borrowedToken
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const inputAmount = checkNan(parseFloat(inputData.amount))

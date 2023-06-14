@@ -23,7 +23,7 @@ export const getTokenDataByAddress = ({
 }: {
   tokenAddress?: string
   tokensMetadata: TokensContext['tokensMetadata']
-  tokensPrices: TokensContext['tokensPrices']
+  tokensPrices?: TokensContext['tokensPrices']
 }): (TokenMetadataType & { rate: number | null }) | null => {
   if (!tokenAddress) return null
 
@@ -31,7 +31,7 @@ export const getTokenDataByAddress = ({
 
   if (!tokenMetadata) return null
 
-  const tokenRate = tokensPrices[tokenMetadata.symbol]
+  const tokenRate = tokensPrices?.[tokenMetadata.symbol]
 
   if (!tokenRate) return { ...tokenMetadata, rate: null }
 

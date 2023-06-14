@@ -266,13 +266,10 @@ export const fetchUserData = async (accountPkh: string, currentBlockLevel: numbe
      * and general decimal places for loans in general, and if we have all decimals we can calc correct number, the formula is:
      * (reward amount in blockchain number) / (10 ** decimals for loanasset + decimals for loans in general) * (rate of the loan asset to convert it all to $)
      */
-    userInfo.availableLoansRewards = 0
-    // TODO: update this calc, should be moved to the view part
-    // normalizedMTokens.reduce((acc, { rewards_earned }) => {
-    //   acc += rewards_earned
-
-    //   return acc
-    // }, 0) ?? 0
+    userInfo.availableLoansRewards =
+      normalizedMTokens.reduce((acc, { rewards_earned, interestRateDecimals }) => {
+        return (acc += convertNumberForClient({ number: rewards_earned, grade: interestRateDecimals + XTZ_DECIMALS }))
+      }, 0) ?? 0
 
     const { actionsHistory, gatheredDoormanRewards, gatheredFarmRewards, gatheredSatellitesRewards } =
       calcUsersRewardsToDate(stakes_history_data)

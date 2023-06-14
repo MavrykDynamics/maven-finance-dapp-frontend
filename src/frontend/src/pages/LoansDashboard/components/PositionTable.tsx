@@ -29,6 +29,8 @@ import { UserLoansDataStateType } from 'providers/UserProvider/helpers/user.type
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 export const LoansPositionTable = ({
   markets,
@@ -104,10 +106,17 @@ export const LoansPositionTable = ({
                   const { lendValue = 0, interestEarned = 0 } =
                     getMarketUserLengingItem(userMTokens, loanMTokenAddress) ?? {}
 
-                  const { symbol, icon } = tokensMetadata[loanTokenAddress]
-                  const rate = tokensPrices[symbol]
+                  const loanToken = getTokenDataByAddress({
+                    tokenAddress: loanTokenAddress,
+                    tokensMetadata,
+                    tokensPrices,
+                  })
 
                   const marketVaultsUserData = userVaultsData[loanTokenAddress]
+
+                  if (!loanToken || !loanToken.rate || !marketVaultsUserData) return null
+
+                  const { symbol, icon, rate, decimals } = loanToken
 
                   const averageVaultStatus = getGaugeVaultRiskSimpleStatus(
                     marketVaultsUserData?.collateralAmount
@@ -132,8 +141,13 @@ export const LoansPositionTable = ({
                           {loanMTokenAddress ? (
                             <>
                               <CommaNumber value={lendingAPY} endingText="%" />
-                              <CommaNumber value={lendValue * rate} beginningText="$" />
-                              <CommaNumber value={interestEarned} />
+                              <CommaNumber
+                                value={convertNumberForClient({ number: lendValue, grade: decimals }) * rate}
+                                beginningText="$"
+                              />
+                              <CommaNumber
+                                value={convertNumberForClient({ number: interestEarned, grade: decimals })}
+                              />
                               <Link to={`/loans/${symbol}/${LEND_TAB_ID}`}>
                                 <Button kind={BUTTON_SIMPLE}>View</Button>
                               </Link>

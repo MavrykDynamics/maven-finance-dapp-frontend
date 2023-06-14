@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 // components
@@ -47,8 +47,15 @@ import { api } from 'utils/api/api'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getVaultStatus } from 'providers/LoansProvider/helpers/vaults.utils'
-import { getVaultCollateralBalance } from '../Vaults.helpers'
+import {
+  getVaultBorrowCapacity,
+  getVaultCollateralBalance,
+  getVaultCollateralRatio,
+  getVaultLiquidationPrice,
+  getVaultStatus,
+} from 'providers/LoansProvider/helpers/vaults.utils'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 const findStatusInfo = (
   status: string,
@@ -117,57 +124,51 @@ type Props = {
 }
 
 export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab }: Props) => {
-  const {
-    ownerId,
-    vaultId,
-    levelOfEarly,
-    levelOfLate,
-    collateralData,
-    liquidationMax,
-    liquidationPrice,
-    liquidationReward,
-    adminLiquidateFee,
-  } = vault
-
-  const status = getVaultStatus()
-
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { bug } = useToasterContext()
+  const { openLiquidateVaultPopup } = useLoansPopupsContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { DAOFee } = useSelector((state: State) => state.loans.config)
 
-  const { openLiquidateVaultPopup } = useLoansPopupsContext()
-
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
-  const { color: statusColor, text: statusText } = findStatusInfo(status)
-  const footerText = findFooterText(status, statusColor, timerTimestamp)
+  const vaultData = useMemo(() => {
+    const { borrowedTokenAddress, collateralData, borrowedAmount, fee, liquidationRatio, ...restVault } = vault
 
-  const collateralTotalBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
+    const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
 
-  const isActiveFooter =
-    status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
+    if (!borrowedToken || !borrowedToken.rate) return null
 
-  const isMarkStatus = vaultsStatuses.MARK === status
+    const { rate: borrowedTokenRate, decimals: borrowedTokenDecimals } = borrowedToken
 
-  const liquidateModalHandler = () => {
-    const borrowedTokenMetadata = tokensMetadata[vault.borrowedTokenAddress]
-    const borrowedTokenRate = tokensPrices[borrowedTokenMetadata.symbol]
-    openLiquidateVaultPopup({
-      vaultId,
-      ownerAddress: ownerId,
-      borrowedTokenMetadata: borrowedTokenMetadata,
-      borrowedTokenRate: borrowedTokenRate,
-      collateralBalance: collateralTotalBalance,
+    const convertedBorrowedAmount = convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals })
+    const convertedFee = convertNumberForClient({ number: fee, grade: borrowedTokenDecimals })
+    const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
+    const collateralRatio = getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * borrowedTokenRate)
+    const status = getVaultStatus(collateralRatio)
+    const liquidationPrice = getVaultLiquidationPrice(
+      (convertedFee + convertedBorrowedAmount) * borrowedTokenRate,
+      liquidationRatio,
+    )
+
+    return {
+      status,
+      collateralRatio,
+      collateralBalance,
       collateralData,
-      liquidationMax,
-      liquidationReward,
-      adminLiquidateFee,
-    })
-  }
+      convertedBorrowedAmount,
+      borrowedTokenRate,
+      borrowedTokenDecimals,
+      liquidationPrice,
+      ...restVault,
+    }
+  }, [vault, tokensMetadata, tokensPrices])
 
   useEffect(() => {
+    if (!vaultData) return
+
+    const { status, levelOfEarly, levelOfLate } = vaultData
     if (status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.LIQUIDATABLE) {
       if (!levelOfEarly || !levelOfLate) return
 
@@ -209,7 +210,45 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     }
 
     return () => null
-  }, [status, levelOfEarly, levelOfLate])
+  }, [bug, vaultData])
+
+  if (!vaultData) return null
+
+  const {
+    status,
+    vaultId,
+    collateralBalance,
+    ownerId,
+    collateralData,
+    liquidationMax,
+    liquidationReward,
+    adminLiquidateFee,
+    liquidationPrice,
+  } = vaultData ?? {}
+
+  const isActiveFooter =
+    status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
+
+  const isMarkStatus = vaultsStatuses.MARK === status
+
+  const { color: statusColor, text: statusText } = findStatusInfo(status)
+  const footerText = findFooterText(status, statusColor, timerTimestamp)
+
+  const liquidateModalHandler = () => {
+    const borrowedTokenMetadata = tokensMetadata[vault.borrowedTokenAddress]
+    const borrowedTokenRate = tokensPrices[borrowedTokenMetadata.symbol]
+    openLiquidateVaultPopup({
+      vaultId,
+      ownerAddress: ownerId,
+      borrowedTokenMetadata: borrowedTokenMetadata,
+      borrowedTokenRate: borrowedTokenRate,
+      collateralBalance,
+      collateralData,
+      liquidationMax,
+      liquidationReward,
+      adminLiquidateFee,
+    })
+  }
 
   const headerSufix = <StatusFlag status={statusColor} text={getStringWithoutUnderline(status)} className="sufix" />
 
@@ -269,9 +308,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
                   const { symbol, icon } = tokensMetadata[tokenAddress]
                   const rate = tokensPrices[symbol]
 
-                  const collateralShare = isTotalRow
-                    ? 100
-                    : calculateCollateralShare(amount * rate, collateralTotalBalance)
+                  const collateralShare = isTotalRow ? 100 : calculateCollateralShare(amount * rate, collateralBalance)
 
                   return (
                     <TableRow rowHeight={44} key={symbol + '-' + index}>

@@ -5,6 +5,7 @@ import { isValidTokenType } from 'utils/TypesAndInterfaces/General'
 import { TokenAddressType, TokenMetadataType, TokensContext } from '../tokens.provider.types'
 import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from 'utils/__generated__/graphql'
 import { tokenMetadataSchema } from './tokens.types'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 // Normalizing token rates
 export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscription['aggregator']) => {
@@ -19,6 +20,7 @@ export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscrip
 }
 
 // Normalizing tokens metadata
+// TODO: farms tokens
 export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscription['token']) => {
   return tokensFromGql.reduce<Pick<TokensContext, 'tokensMetadata' | 'collateralTokens' | 'mTokens'>>(
     (
@@ -34,8 +36,6 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         mvk_tokens,
       },
     ) => {
-      const tokenAddress: TokenAddressType = token_address
-
       try {
         // Validating token type, it should be one of tez | fa2 | fa12
         const tokenType = isValidTokenType(token_standard) ? token_standard : null
@@ -45,7 +45,11 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         // parsing metadata schema, to have icon and decimals for token
         const parsedMetadata = tokenMetadataSchema.parse(metadata)
 
-        const { symbol, name, icon } = getTokenSymbolAndName(parsedMetadata.symbol) ?? {}
+        // handling sMVK token, cuz it's not actuall token that exist, it's platform token (staked MVK)
+        const isSMVKToken = parsedMetadata.symbol === 'MVK' && !mvk_tokens?.[0]?.address
+
+        const symbolFromIndexer = isSMVKToken ? SMVK_TOKEN_SYMBOL : parsedMetadata.symbol
+        const { symbol, name, icon } = getTokenSymbolAndName(symbolFromIndexer) ?? {}
 
         const tokenIcon = parsedMetadata.icon ?? icon
         // If token don't have name or symbol or icon it can not be used
@@ -53,8 +57,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
           throw new Error(`Token do not have valid symbol, name or icon ${symbol}, ${name}, ${tokenIcon}`)
         }
 
-        // We can have multiple mvk tokens, but only 1 with mvk_tokens present is valid
-        if (symbol === 'MVK' && !mvk_tokens?.[0]?.address) return acc
+        const tokenAddress = isSMVKToken ? SMVK_TOKEN_SYMBOL : token_address
 
         const tokenMetadata: TokenMetadataType = {
           id: token_id,

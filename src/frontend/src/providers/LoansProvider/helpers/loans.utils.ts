@@ -1,4 +1,5 @@
 import { MTokenType } from 'utils/TypesAndInterfaces/User'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 // HELPER TO GET OPERATION NAME BY ITS TYPE
 export const getDescrByType = (type: number) => {
@@ -37,10 +38,15 @@ export const getMarketUserLengingItem = (userMTokens: Array<MTokenType>, loanMto
   const mTokenAsset = userMTokens?.find(({ tokenAddress }) => tokenAddress === loanMtokenAddress)
 
   if (mTokenAsset) {
+    const interestRateDecimals = mTokenAsset.interestRateDecimals
+
+    const convertedRewards = convertNumberForClient({ number: mTokenAsset.rewards_earned, grade: interestRateDecimals })
+    const convertedBalance = convertNumberForClient({ number: mTokenAsset.balance, grade: interestRateDecimals })
+
     return {
-      lendValue: mTokenAsset.balance,
-      interestEarned: mTokenAsset.rewards_earned,
-      mBalance: mTokenAsset.balance + mTokenAsset.rewards_earned,
+      lendValue: mTokenAsset.lendedAmount,
+      interestEarned: convertedRewards,
+      mBalance: convertedBalance + convertedRewards,
     }
   }
 

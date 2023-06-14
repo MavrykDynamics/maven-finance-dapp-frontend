@@ -7,7 +7,7 @@ import { statusSortPriority } from './Vaults.consts'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getVaultStatus } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 type OracleLatestProps = {
@@ -58,20 +58,6 @@ export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) 
   return result
 }
 
-export const getVaultCollateralBalance = (
-  collateralData: LoansVaultType['collateralData'],
-  tokensMetadata: TokensContext['tokensMetadata'],
-  tokensPrices: TokensContext['tokensPrices'],
-) => {
-  return collateralData.reduce((acc, { amount, tokenAddress }) => {
-    const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
-    if (!token || !token.rate) return acc
-    const { decimals: collateralDecimals, rate: collateralRate } = token
-
-    return (acc += convertNumberForClient({ number: amount, grade: collateralDecimals }) * collateralRate)
-  }, 0)
-}
-
 export const getVaultAssets = (
   vaultsMapper: Record<string, LoansVaultType>,
   tokensMetadata: TokensContext['tokensMetadata'],
@@ -114,8 +100,8 @@ export const sortByVaultCategory = ({ vaultsMapper, vaultsIds, status }: SortByV
   const updatedPriority = status ? { ...statusSortPriority, [status]: 0 } : statusSortPriority
 
   return dataToSort.sort((a, b) => {
-    const firstItem = getVaultStatus() //vaultsMapper[a].status
-    const secondItem = getVaultStatus() //vaultsMapper[b].status
+    const firstItem = '' //getVaultStatus() //vaultsMapper[a].status
+    const secondItem = '' //getVaultStatus() //vaultsMapper[b].status
 
     return updatedPriority[firstItem] - updatedPriority[secondItem]
   })

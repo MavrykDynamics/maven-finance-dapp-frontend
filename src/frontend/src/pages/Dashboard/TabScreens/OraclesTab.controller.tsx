@@ -22,11 +22,12 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
   const {
-    tokensPrices: { MVK_TOKEN_SYMBOL: mvkExchangeRate = 0 },
+    tokensPrices: { [MVK_TOKEN_SYMBOL]: mvkExchangeRate = 0 },
   } = useTokensContext()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)

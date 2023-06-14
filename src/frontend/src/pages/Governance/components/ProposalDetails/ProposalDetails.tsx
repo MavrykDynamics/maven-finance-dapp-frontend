@@ -46,6 +46,7 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { api } from 'utils/api/api'
 import { isAbortError } from 'errors/error'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
   const dispatch = useDispatch()
@@ -290,7 +291,11 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
                 )
                   return null
 
-                const { symbol, decimals } = tokensMetadata[payment.token_address]
+                const allowedToken = getTokenDataByAddress({ tokenAddress: payment.token_address, tokensMetadata })
+
+                if (!allowedToken) return null
+
+                const { symbol, decimals } = allowedToken
                 const tokenAmount = convertNumberForClient({ number: Number(payment.token_amount), grade: decimals })
 
                 return (

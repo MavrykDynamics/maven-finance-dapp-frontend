@@ -11,7 +11,7 @@ import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { VaultsSearchFilterStyled, VaultsSearchFilterWrapper, VaultsFilters } from './../Vaults.style'
 
 // helpers
-import { getVaultCollateralBalance, sortByVaultCategory } from '../Vaults.helpers'
+import { sortByVaultCategory } from '../Vaults.helpers'
 import {
   sortVaultItems,
   sortingList,
@@ -26,6 +26,7 @@ import { stringFullCharsCompare } from 'utils/stringFullCharsCompare'
 // types
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
 
 type Filters = Record<string, string>
 type AssetCategory = 'loanAssets' | 'collateralAssets'

@@ -4,7 +4,7 @@ import { VestingGraphQL } from 'utils/TypesAndInterfaces/Vesting'
 import type { TreasuryGraphQL, TreasuryBalanceType } from '../../utils/TypesAndInterfaces/Treasury'
 
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { MVK_DECIMALS } from 'utils/constants'
+import { MVK_DECIMALS, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { getAssetColor } from './helpers/treasury.utils'
 
 export const MIN_TREASURY_PERSENT_TO_DISPLAY = 0.1
@@ -53,7 +53,7 @@ export const normalizeTreasuryStorage = (sMVKAmounts: Array<Mavryk_User>, treasu
       balance: smvk_balance,
       contract: address,
       chartColor: treasuryAssetsColors['smvk'],
-      tokenAddress: '',
+      tokenAddress: SMVK_TOKEN_SYMBOL,
     }),
   )
 

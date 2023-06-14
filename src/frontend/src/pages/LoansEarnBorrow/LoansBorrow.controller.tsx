@@ -26,8 +26,12 @@ import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { getVaultCollateralBalance } from 'pages/Vaults/Vaults.helpers'
-import { getCollateralRatio, getVaultBorrowCapacity } from 'providers/LoansProvider/helpers/vaults.utils'
+import {
+  getVaultCollateralRatio,
+  getVaultBorrowCapacity,
+  getVaultCollateralBalance,
+} from 'providers/LoansProvider/helpers/vaults.utils'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -146,8 +150,25 @@ export const LoansBorrow = () => {
   const handleBorrow = (marketTokenAddress: string) => {
     const validVaultId = myVaultsIds.find((vaultId) => {
       const vault = vaultsMapper[vaultId]
-      // TODO: add collateral check
-      return marketTokenAddress === vault.borrowedTokenAddress // && vault.collateralRatio > 200
+
+      const borrowToken = getTokenDataByAddress({
+        tokenAddress: vault.borrowedTokenAddress,
+        tokensMetadata,
+        tokensPrices,
+      })
+
+      if (!borrowToken || !borrowToken.rate) return false
+
+      const convertedBorrowedAmount = convertNumberForClient({
+          number: vault.borrowedAmount,
+          grade: borrowToken.decimals,
+        }),
+        collateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices)
+
+      return (
+        marketTokenAddress === vault.borrowedTokenAddress &&
+        getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * borrowToken.rate) > 200
+      )
     })
 
     // redirect specific asset market if user does not have vaults with collateral ratio > 200
@@ -167,37 +188,42 @@ export const LoansBorrow = () => {
 
     if (!vault) return
 
-    const borrowAPR = loanTokens.find(
-      ({ loanTokenAddress }) => loanTokenAddress === vault.borrowedTokenAddress,
-    )?.borrowAPR
-    if (!borrowAPR) return
+    const borrowToken = getTokenDataByAddress({
+      tokenAddress: vault.borrowedTokenAddress,
+      tokensMetadata,
+      tokensPrices,
+    })
 
-    const borrowedToken = tokensMetadata[vault.borrowedTokenAddress],
-      borrowedTokenRate = tokensPrices[borrowedToken.symbol],
-      convertedBorrowedAmount = convertNumberForClient({
+    if (!borrowToken || !borrowToken.rate) return
+
+    const { decimals, rate } = borrowToken
+
+    const convertedBorrowedAmount = convertNumberForClient({
         number: vault.borrowedAmount,
-        grade: borrowedToken.decimals,
+        grade: decimals,
+      }),
+      convetedAvailableLiq = convertNumberForClient({
+        number: vault.availableLiquidity,
+        grade: decimals,
       }),
       collateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices),
-      collateralRatio = getCollateralRatio(collateralBalance, convertedBorrowedAmount, borrowedTokenRate),
-      borrowCapacity = getVaultBorrowCapacity({
-        availableLiquidity: vault.availableLiquidity,
+      collateralRatio = getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * rate),
+      borrowCapacity = getVaultBorrowCapacity(
+        convetedAvailableLiq * rate,
+        convertedBorrowedAmount * rate,
         collateralBalance,
-        borrowedAmount: vault.availableLiquidity,
-        borrowedTokenRate,
-        borrowedTokenDecimals: borrowedToken.decimals,
-      })
+      )
 
     openBorrowPopup({
       vaultId: vault.vaultId,
-      borrowedTokenMetadata: borrowedToken,
+      borrowedTokenMetadata: borrowToken,
       borrowedAmount: convertedBorrowedAmount,
       collateralBalance,
       borrowCapacity,
       collateralRatio,
-      borrowedTokenRate,
+      borrowedTokenRate: rate,
       DAOFee,
-      borrowAPR,
+      borrowAPR: vault.apr,
     })
   }
 
