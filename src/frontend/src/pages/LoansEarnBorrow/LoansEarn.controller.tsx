@@ -27,6 +27,8 @@ import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -66,11 +68,18 @@ export const LoansEarn = () => {
         totalBorrowed: number
       }>(
         (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
-          const { symbol } = tokensMetadata[loanTokenAddress]
-          const rate = tokensPrices[symbol]
+          const token = getTokenDataByAddress({
+            tokenAddress: loanTokenAddress,
+            tokensPrices,
+            tokensMetadata,
+          })
 
-          acc.totalBorrowed += totalBorrowed * rate
-          acc.totalLended += totalLended * rate
+          if (!token || !token.rate) return acc
+
+          const { rate, decimals } = token
+
+          acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
+          acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
           return acc
         },
         {
@@ -85,26 +94,37 @@ export const LoansEarn = () => {
 
   const markets: MarketType[] = useMemo(
     () =>
-      loanTokens.map((item) => {
+      loanTokens.reduce<MarketType[]>((acc, item) => {
         const chartData = marketLendingChart[item.loanTokenAddress] ?? []
-        const { symbol, icon } = tokensMetadata[item.loanTokenAddress]
-        const price = tokensPrices[symbol]
+
+        const token = getTokenDataByAddress({
+          tokenAddress: item.loanTokenAddress,
+          tokensPrices,
+          tokensMetadata,
+        })
+
+        if (!token || !token.rate) return acc
+
+        const { rate: price, decimals, icon, symbol } = token
+
         const { lendValue = 0, interestEarned = 0 } =
           getMarketUserLengingItem(userMTokens, item.loanMTokenAddress) ?? {}
 
-        return {
+        acc.push({
           icon,
           symbol,
           annualRate: item.lendingAPY,
           annualRateName: 'APY',
-          leftValue: lendValue * price,
-          rightValue: interestEarned * price,
-          totalAmount: item.totalLended,
+          leftValue: convertNumberForClient({ number: lendValue, grade: decimals }) * price,
+          rightValue: convertNumberForClient({ number: interestEarned, grade: decimals }) * price,
+          totalAmount: convertNumberForClient({ number: item.totalLended, grade: decimals }),
           price,
           chartData,
-        }
-      }),
-    [loanTokens, marketLendingChart, tokensMetadata, tokensPrices],
+        })
+
+        return acc
+      }, []),
+    [loanTokens, marketLendingChart, tokensMetadata, tokensPrices, userMTokens],
   )
 
   // TODO: pass address here

@@ -86,14 +86,28 @@ export const LoansBorrow = () => {
         (acc, vaultId) => {
           const { ownerId, borrowedTokenAddress, borrowedAmount, collateralData } = vaultsMapper[vaultId]
 
-          const { symbol: borrowedAssetSymbol, decimals: borrowedAssetDecimals } = tokensMetadata[borrowedTokenAddress]
-          const borrowedAssetRate = tokensPrices[borrowedAssetSymbol]
+          const borrowToken = getTokenDataByAddress({
+            tokenAddress: borrowedTokenAddress,
+            tokensPrices,
+            tokensMetadata,
+          })
+
+          if (!borrowToken || !borrowToken.rate) return acc
+
+          const { decimals: borrowTokenDecimals, rate: borrowTokenRate } = borrowToken
 
           const vaultBorrowedInUsd =
-            convertNumberForClient({ number: borrowedAmount, grade: borrowedAssetDecimals }) * borrowedAssetRate
+            convertNumberForClient({ number: borrowedAmount, grade: borrowTokenDecimals }) * borrowTokenRate
           const vaultCollateralInUsd = collateralData.reduce((acc, { amount, tokenAddress }) => {
-            const { symbol: collateralAssetSymbol, decimals: collateralAssetDecimals } = tokensMetadata[tokenAddress]
-            const collateralRate = tokensPrices[collateralAssetSymbol]
+            const collateralToken = getTokenDataByAddress({
+              tokenAddress,
+              tokensPrices,
+              tokensMetadata,
+            })
+
+            if (!collateralToken || !collateralToken.rate) return acc
+
+            const { decimals: collateralAssetDecimals, rate: collateralRate } = collateralToken
             return (acc += convertNumberForClient({ number: amount, grade: collateralAssetDecimals }) * collateralRate)
           }, 0)
 
@@ -125,25 +139,41 @@ export const LoansBorrow = () => {
 
   const { openBorrowPopup, openCreateVaultPopup } = useLoansPopupsContext()
 
-  const markets: MarketType[] = useMemo(
+  const markets = useMemo(
     () =>
-      loanTokens.map((item) => {
+      loanTokens.reduce<MarketType[]>((acc, item) => {
         const chartData = marketCollateralChart[item.loanTokenAddress] ?? []
-        const { symbol, icon } = tokensMetadata[item.loanTokenAddress]
-        const price = tokensPrices[symbol]
 
-        return {
+        const token = getTokenDataByAddress({
+          tokenAddress: item.loanTokenAddress,
+          tokensPrices,
+          tokensMetadata,
+        })
+
+        if (!token || !token.rate) return acc
+
+        const { symbol, icon, rate: price, decimals } = token
+
+        acc.push({
           icon,
           symbol,
           annualRate: item.borrowAPR,
           annualRateName: 'APR',
-          leftValue: tokenTotals[item.loanTokenAddress].userTotalBorrowed ?? 0,
-          rightValue: tokenTotals[item.loanTokenAddress].userTotalCollateral ?? 0,
-          totalAmount: item.totalBorrowed,
+          leftValue: convertNumberForClient({
+            number: tokenTotals[item.loanTokenAddress].userTotalBorrowed ?? 0,
+            grade: decimals,
+          }),
+          rightValue: convertNumberForClient({
+            number: tokenTotals[item.loanTokenAddress].userTotalCollateral ?? 0,
+            grade: decimals,
+          }),
+          totalAmount: convertNumberForClient({ number: item.totalBorrowed, grade: decimals }),
           price,
           chartData,
-        }
-      }),
+        })
+
+        return acc
+      }, []),
     [loanTokens, marketCollateralChart, tokenTotals, tokensMetadata, tokensPrices],
   )
 
