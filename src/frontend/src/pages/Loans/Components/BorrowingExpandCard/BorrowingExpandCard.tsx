@@ -130,27 +130,6 @@ export const BorrowingExpandCard = ({
   const ref = useRef<HTMLDivElement | null>(null)
   useClickAway(ref, () => (notHandleClickAway ? null : handleCloseVault()))
 
-  // const {
-  //   borrowedTokenAddress,
-  //   collateralData,
-  //   xtzDelegatedTo,
-  //   sMVKDelegatedTo,
-  //   name,
-  //   depositors,
-  //   deporsitorsFlag,
-  //   address,
-  //   status,
-  //   levelOfEarly,
-  //   levelOfLate,
-  //   fee,
-  //   apr,
-  //   borrowedAmount,
-  //   collateralRatio,
-  //   borrowCapacity,
-  //   collateralBalance,
-  //   totalOutstanding,
-  // } = fullVault
-
   const vaultData = useMemo(() => {
     const {
       borrowedTokenAddress,
@@ -181,7 +160,7 @@ export const BorrowingExpandCard = ({
       collateralBalance,
     )
     const collateralRatio = getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * borrowedTokenRate)
-    const status = getVaultStatus(collateralRatio)
+    const status = getVaultStatus(collateralRatio, convertedBorrowedAmount)
 
     return {
       status,
@@ -569,6 +548,7 @@ export const BorrowingExpandCard = ({
                 xtzDelegatedTo={xtzDelegatedTo}
                 sMVKDelegatedTo={sMVKDelegatedTo}
                 collateralRatio={collateralRatio}
+                collateralBalance={collateralBalance}
                 deporsitorsFlag={deporsitorsFlag}
                 mappedMVKOperators={mappedMVKOperators}
                 hideTransactionHistory={hideTransactionHistory}

@@ -126,7 +126,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
       collateralBalance,
     )
     const collateralRatio = getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * borrowedTokenRate)
-    const status = getVaultStatus(collateralRatio)
+    const status = getVaultStatus(collateralRatio, convertedBorrowedAmount)
 
     return {
       status,

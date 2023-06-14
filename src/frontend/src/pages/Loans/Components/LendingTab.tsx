@@ -20,17 +20,9 @@ type LendingTabPropsType = {
   loanTokenAddress: TokenAddressType
   loanMtokenAddress: TokenAddressType
   lendAPY: number
-  marketAvailableLiquidity: number
-  marketReserveAmount: number
 }
 
-export const LendingTab = ({
-  loanTokenAddress,
-  loanMtokenAddress,
-  lendAPY,
-  marketReserveAmount,
-  marketAvailableLiquidity,
-}: LendingTabPropsType) => {
+export const LendingTab = ({ loanTokenAddress, loanMtokenAddress, lendAPY }: LendingTabPropsType) => {
   const { openAddLendingAssetPopup } = useLoansPopupsContext()
 
   const {
@@ -46,13 +38,7 @@ export const LendingTab = ({
       {lendingItem ? (
         <div className="stats-and-actions">
           <LendingTabValuesSection lendingItem={lendingItem} loanTokenAddress={loanTokenAddress} lendAPY={lendAPY} />
-          <LendingTabActionsSection
-            lendingItem={lendingItem}
-            loanTokenAddress={loanTokenAddress}
-            lendAPY={lendAPY}
-            marketReserveAmount={marketReserveAmount}
-            marketAvailableLiquidity={marketAvailableLiquidity}
-          />
+          <LendingTabActionsSection lendingItem={lendingItem} loanTokenAddress={loanTokenAddress} lendAPY={lendAPY} />
         </div>
       ) : (
         <NoItemsInTabStyled>

@@ -34,7 +34,7 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { State } from 'reducers'
 import useMarketTransactionHistory from 'providers/LoansProvider/hooks/useMarketTransactionHistory'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 
 type Props = {
   openAddNewCollateralPopup: () => void
@@ -54,6 +54,7 @@ type Props = {
   xtzDelegatedTo: string | null
   sMVKDelegatedTo?: string
   collateralRatio: number
+  collateralBalance: number
   deporsitorsFlag: DepositorsFlagType
   mappedMVKOperators: {
     amount?: number
@@ -79,6 +80,7 @@ export const BorrowingExpandCardMenuSection = ({
   xtzDelegatedTo,
   sMVKDelegatedTo,
   collateralRatio,
+  collateralBalance,
   deporsitorsFlag,
   mappedMVKOperators,
   hideTransactionHistory,
@@ -106,10 +108,10 @@ export const BorrowingExpandCardMenuSection = ({
 
   const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
   // TODO: test it when sMVK will be avaliable as collateral
-  const vaultHasSmvkCollateral = collateralData.find(
-    ({ tokenAddress }) => tokensMetadata[tokenAddress].symbol === 'smvk',
-  )
-  const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
+  const vaultHasSmvkCollateral = false
+  //collateralData.find(
+  // ({ tokenAddress }) => tokensMetadata[tokenAddress].symbol === 'smvk',
+  // )
 
   const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (tabId: number) => {
     setActiveTab(menuTabs.find((item) => item.id === tabId))
@@ -152,24 +154,25 @@ export const BorrowingExpandCardMenuSection = ({
               {collateralData.map(({ amount, tokenAddress }, idx) => {
                 const isTotalRow = collateralData.length - 1 === idx
 
-                if (isTotalRow && collateralData.length < 3) return null
+                const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
 
-                const { symbol: collateralSymbol, icon: collateralIcon } = tokensMetadata[tokenAddress]
-                const collateralRate = tokensPrices[collateralSymbol]
+                if ((isTotalRow && collateralData.length < 3) || !collateralToken || !collateralToken.rate) return null
+
+                const { symbol, icon, rate } = collateralToken
 
                 const collateralShare = isTotalRow
                   ? 100
-                  : getNumberInBounds(0, 100, calculateCollateralShare(amount * collateralRate, collateralTotalBalance))
+                  : getNumberInBounds(0, 100, calculateCollateralShare(amount * rate, collateralBalance))
 
                 return (
-                  <TableRow rowHeight={65} key={collateralSymbol}>
+                  <TableRow rowHeight={65} key={symbol}>
                     <TableCell width={'22%'} className="vert-middle">
                       {isTotalRow ? (
                         'Total'
                       ) : (
                         <div className="cell-content row with-icon">
-                          <ImageWithPlug imageLink={collateralIcon} alt={`${collateralSymbol} icon`} />
-                          {collateralSymbol}
+                          <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+                          {symbol}
                         </div>
                       )}
                     </TableCell>
@@ -183,9 +186,7 @@ export const BorrowingExpandCardMenuSection = ({
                           decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
                           beginningText={isTotalRow ? '$' : ''}
                         />
-                        {collateralRate ? (
-                          <CommaNumber value={amount * collateralRate} className="rate" beginningText="$" showDecimal />
-                        ) : null}
+                        <CommaNumber value={amount * rate} className="rate" beginningText="$" showDecimal />
                       </div>
                     </TableCell>
                     <TableCell width={'22%'}>

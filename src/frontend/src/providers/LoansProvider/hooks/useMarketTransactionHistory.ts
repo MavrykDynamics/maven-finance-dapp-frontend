@@ -13,12 +13,14 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { parseDate } from 'utils/time'
 import { getDescrByType } from '../helpers/loans.utils'
 import { COLLATERAL_HISTORY_DATA_TYPES } from '../helpers/loans.const'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 /**
  *
  * @param param0.marketTokenAddress – market token address to get transactions for
+ * TODO: implement getting transaction history for certain user
  */
-const useMarketTransactionHistory = ({ marketTokenAddress }: LoansMarketTransactionHistoryArgs) => {
+const useMarketTransactionHistory = ({ marketTokenAddress, userAddress }: LoansMarketTransactionHistoryArgs) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const [transactionHistory, setTransactionHistory] = useState<Array<LoansMarketTransactionHistoryType>>([])
@@ -56,8 +58,11 @@ const useMarketTransactionHistory = ({ marketTokenAddress }: LoansMarketTransact
               ? collateralTokenAddress
               : loanTokenAddress
 
-          const { symbol, decimals } = tokensMetadata[tokenAddress]
-          const rate = tokensPrices[symbol]
+          const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+
+          if (!token || !token.rate) return acc
+
+          const { symbol, decimals, rate } = token
 
           const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
           const amountInUsd = convertedAmount * rate

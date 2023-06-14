@@ -33,4 +33,5 @@ export type LoansMarketTransactionHistoryType = {
 
 export type LoansMarketTransactionHistoryArgs = {
   marketTokenAddress: TokenAddressType
+  userAddress?: string
 }

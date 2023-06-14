@@ -7,11 +7,12 @@ import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
 /**
  *
  * @param collateralRatio collateral ratio of the vault
+ * @param borrowedAmount how much borrowed from the vault
  * @returns status of the vault one of vaultsStatuses
  */
-export const getVaultStatus = (collateralRatio: number) => {
-  if (collateralRatio <= 200 && collateralRatio > 150) return vaultsStatuses.AT_RISK
-  if (collateralRatio <= 150) return vaultsStatuses.GRACE_PERIOD
+export const getVaultStatus = (collateralRatio: number, borrowedAmount: number) => {
+  if (collateralRatio <= 200 && collateralRatio > 150 && borrowedAmount > 0) return vaultsStatuses.AT_RISK
+  if (collateralRatio <= 150 && borrowedAmount > 0) return vaultsStatuses.GRACE_PERIOD
 
   return vaultsStatuses.ACTIVE
 

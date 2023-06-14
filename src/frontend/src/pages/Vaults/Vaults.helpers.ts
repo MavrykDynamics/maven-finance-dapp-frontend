@@ -69,13 +69,16 @@ export const getVaultAssets = (
     loanAssets: string[]
   }>(
     (acc, { borrowedTokenAddress, collateralData }) => {
-      const { symbol: borrowSymbol } = tokensMetadata[borrowedTokenAddress]
+      const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata })
 
-      if (borrowSymbol) acc.loanAssets.push(borrowSymbol)
+      if (borrowedToken?.symbol) acc.loanAssets.push(borrowedToken.symbol)
 
       Array.from({ length: collateralData.length }, (_, idx) => {
-        const { symbol: collateralSymbol } = tokensMetadata[collateralData[idx].tokenAddress]
-        if (collateralSymbol) acc.loanAssets.push(collateralSymbol)
+        const collateralToken = getTokenDataByAddress({
+          tokenAddress: collateralData[idx].tokenAddress,
+          tokensMetadata,
+        })
+        if (collateralToken?.symbol) acc.loanAssets.push(collateralToken.symbol)
       })
 
       return acc

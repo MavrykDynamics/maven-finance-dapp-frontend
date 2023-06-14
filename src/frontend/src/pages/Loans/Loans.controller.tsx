@@ -36,6 +36,8 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -81,11 +83,14 @@ export const Loans = () => {
     totalBorrowed: number
   }>(
     (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
-      const { symbol, decimals } = tokensMetadata[loanTokenAddress]
-      const rate = tokensPrices[symbol]
+      const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
 
-      acc.totalBorrowed += totalBorrowed * rate
-      acc.totalLended += totalLended * rate
+      if (!loanToken || !loanToken.rate) return acc
+
+      const { decimals, rate } = loanToken
+
+      acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
+      acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
       return acc
     },
     {
@@ -181,12 +186,15 @@ export const Loans = () => {
                 lendingAPY,
               } = loanAsset
 
+              const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
+
+              if (!loanToken || !loanToken.rate) return null
+
               const { interestEarned: totalFeesEarned } = getMarketUserLengingItem(userMTokens, loanMTokenAddress) ?? {
                 interestEarned: 0,
               }
 
-              const { name, symbol, decimals, icon } = tokensMetadata[loanTokenAddress]
-              const rate = tokensPrices[symbol]
+              const { symbol, decimals, icon, rate } = loanToken
 
               const { loanTokenTotalCollaterals, loanTokenVaultsTotalBorrowed } = allVaultsIds.reduce<{
                 loanTokenTotalCollaterals: number
@@ -199,9 +207,15 @@ export const Loans = () => {
 
                   acc.loanTokenTotalCollaterals += vault.collateralData.reduce(
                     (acc, { amount, tokenAddress: collateralTokenAddress }) => {
-                      const { symbol } = tokensMetadata[collateralTokenAddress]
-                      const rate = tokensPrices[symbol]
-                      return (acc += amount * rate)
+                      const collateralToken = getTokenDataByAddress({
+                        tokenAddress: collateralTokenAddress,
+                        tokensPrices,
+                        tokensMetadata,
+                      })
+
+                      if (!collateralToken || !collateralToken.rate) return acc
+                      const { decimals, rate } = collateralToken
+                      return (acc += convertNumberForClient({ number: amount, grade: decimals }) * rate)
                     },
                     0,
                   )
@@ -215,6 +229,9 @@ export const Loans = () => {
                 },
               )
 
+              const convertedTotalLended = convertNumberForClient({ number: totalLended, grade: decimals })
+              const convertedTotalBorrowed = convertNumberForClient({ number: totalBorrowed, grade: decimals })
+
               const totalCorratealColor =
                 loanTokenTotalCollaterals && loanTokenVaultsTotalBorrowed
                   ? loanTokenTotalCollaterals / loanTokenVaultsTotalBorrowed > 2
@@ -226,19 +243,17 @@ export const Loans = () => {
                   <div className="asset-info">
                     <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
                     <div className="name">{symbol}</div>
-                    {rate ? (
-                      <div className="rate">
-                        <CommaNumber beginningText="$" value={rate} decimalsToShow={4} showDecimal />
-                      </div>
-                    ) : null}
+                    <div className="rate">
+                      <CommaNumber beginningText="$" value={rate} decimalsToShow={4} showDecimal />
+                    </div>
                   </div>
 
                   <div className="content-wrapper">
                     <div className="row">
                       <ThreeLevelListItem>
                         <div className="name">Total Lending</div>
-                        {rate ? <CommaNumber beginningText="$" value={totalLended * rate} className="value" /> : null}
-                        <CommaNumber value={totalLended} className="rate" />
+                        <CommaNumber beginningText="$" value={convertedTotalLended * rate} className="value" />
+                        <CommaNumber value={convertedTotalLended} className="rate" />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Earn APY</div>
@@ -254,7 +269,11 @@ export const Loans = () => {
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Total Earned</div>
-                        <CommaNumber value={totalFeesEarned} className="value" beginningText="$" />
+                        <CommaNumber
+                          value={convertNumberForClient({ number: totalFeesEarned, grade: decimals })}
+                          className="value"
+                          beginningText="$"
+                        />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Suppliers</div>
@@ -271,8 +290,8 @@ export const Loans = () => {
                     <div className="row">
                       <ThreeLevelListItem>
                         <div className="name">Total Borrowed</div>
-                        {rate ? <CommaNumber beginningText="$" value={totalBorrowed * rate} className="value" /> : null}
-                        <CommaNumber value={totalBorrowed} className="rate" />
+                        <CommaNumber beginningText="$" value={convertedTotalBorrowed * rate} className="value" />
+                        <CommaNumber value={convertedTotalBorrowed} className="rate" />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Borrow APR</div>
@@ -289,7 +308,9 @@ export const Loans = () => {
                       <ThreeLevelListItem>
                         <div className="name">Available Liquidity</div>
                         <CommaNumber
-                          value={Math.max(availableLiquidity, 0) * rate}
+                          value={
+                            Math.max(convertNumberForClient({ number: availableLiquidity, grade: decimals }), 0) * rate
+                          }
                           className="value"
                           beginningText="$"
                         />

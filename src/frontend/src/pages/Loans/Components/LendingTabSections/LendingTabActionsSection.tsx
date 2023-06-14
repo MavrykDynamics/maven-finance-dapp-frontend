@@ -33,27 +33,20 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
   loanTokenAddress: TokenAddressType
   lendAPY: number
-  marketAvailableLiquidity: number
-  marketReserveAmount: number
 }
 
-export const LendingTabActionsSection = ({
-  lendingItem,
-  loanTokenAddress,
-  lendAPY,
-  marketAvailableLiquidity,
-  marketReserveAmount,
-}: LendingTabPropsType) => {
+export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAPY }: LendingTabPropsType) => {
   const { openConfirmAddLendingAssetPopup, openConfirmRemoveLendingAssetPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
-  const { symbol, decimals, icon } = tokensMetadata[loanTokenAddress]
-  const rate = tokensPrices[symbol]
+  const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
 
   const {
     user: { userTokens },
@@ -70,14 +63,18 @@ export const LendingTabActionsSection = ({
 
   const isSupplyActiveTab = activeTab?.id === loansTabNames.SUPPLY
 
-  const futureMBalance = useMemo(
-    () => (isSupplyActiveTab ? mBalance + Number(inputData.amount) : mBalance - Number(inputData.amount)),
-    [inputData.amount, isSupplyActiveTab, mBalance],
-  )
+  if (!loanToken || !loanToken.rate) return null
 
-  const isDisabledButton = useMemo(() => {
-    return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionActive
-  }, [inputData.validationStatus, isActionActive])
+  const { symbol, decimals, icon, rate } = loanToken
+
+  const convertedMbalance = convertNumberForClient({ number: mBalance, grade: decimals })
+  const convertedLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
+
+  const futureMBalance = isSupplyActiveTab
+    ? convertedMbalance + Number(inputData.amount)
+    : convertedMbalance - Number(inputData.amount)
+
+  const isDisabledButton = inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionActive
 
   const handleSwitchTab = (tabId: number) => {
     setInputData(DEFAULT_LOANS_INPUT_VALUE)
@@ -89,7 +86,7 @@ export const LendingTabActionsSection = ({
       case loansTabNames.SUPPLY:
         openConfirmAddLendingAssetPopup({
           inputAmount: Number(inputData.amount),
-          mBalance,
+          mBalance: convertedMbalance,
           lendingAPY: lendAPY,
           tokenAddress: loanTokenAddress,
         })
@@ -98,85 +95,70 @@ export const LendingTabActionsSection = ({
       case loansTabNames.WITHDRAW:
         openConfirmRemoveLendingAssetPopup({
           inputAmount: Number(inputData.amount),
-          currentLendedAmount: lendValue,
+          currentLendedAmount: convertedLendValue,
           tokenAddress: loanTokenAddress,
         })
         break
     }
   }
 
-  const onChangeHandler = useCallback(
-    (inputAmount: string, maxAmount: number) => {
-      const validationStatus = loansInputValidation({
-        inputAmount,
-        maxAmount,
-        options: {
-          byDecimalPlaces: decimals || assetDecimalsToShow,
-        },
-      })
+  const onChangeHandler = (inputAmount: string, maxAmount: number) => {
+    const validationStatus = loansInputValidation({
+      inputAmount,
+      maxAmount,
+      options: {
+        byDecimalPlaces: decimals || assetDecimalsToShow,
+      },
+    })
 
-      setInputData({
-        ...inputData,
-        amount: inputAmount,
-        validationStatus: validationStatus,
-      })
-    },
-    [inputData, decimals],
-  )
+    setInputData({
+      ...inputData,
+      amount: inputAmount,
+      validationStatus: validationStatus,
+    })
+  }
 
-  const inputOnBlurHandle = useCallback(() => {
+  const inputOnBlurHandle = () =>
     setInputData({
       ...inputData,
       amount: getOnBlurValue(inputData.amount),
     })
-  }, [inputData])
 
-  const onFocusHandler = useCallback(() => {
+  const onFocusHandler = () =>
     setInputData({
       ...inputData,
       amount: getOnFocusValue(inputData.amount),
     })
-  }, [inputData])
 
-  const useMaxHandler = useCallback(() => {
+  const useMaxHandler = () =>
     isSupplyActiveTab
       ? onChangeHandler(getLoansInputMaxAmount(tokenBalance, decimals), tokenBalance)
       : onChangeHandler(
           getLoansInputMaxAmount(Math.min(mBalance, tokenBalance), decimals),
           Math.min(mBalance, tokenBalance),
         )
-  }, [decimals, isSupplyActiveTab, tokenBalance, mBalance, onChangeHandler])
 
-  const inputOnChangeHandler = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChangeHandler(e.target.value, isSupplyActiveTab ? tokenBalance : Math.min(mBalance, tokenBalance))
-    },
-    [isSupplyActiveTab, mBalance, onChangeHandler, tokenBalance],
-  )
+  const inputOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChangeHandler(e.target.value, isSupplyActiveTab ? tokenBalance : Math.min(mBalance, tokenBalance))
+  }
 
-  const inputProps: InputProps = useMemo(
-    () => ({
-      value: inputData.amount,
-      type: 'number',
-      onChange: inputOnChangeHandler,
-      onBlur: inputOnBlurHandle,
-      onFocus: onFocusHandler,
-    }),
-    [inputData.amount, inputOnChangeHandler, inputOnBlurHandle, onFocusHandler],
-  )
+  const inputProps: InputProps = {
+    value: inputData.amount,
+    type: 'number',
+    onChange: inputOnChangeHandler,
+    onBlur: inputOnBlurHandle,
+    onFocus: onFocusHandler,
+  }
 
-  const settings: Settings = useMemo(
-    () => ({
-      balance: tokenBalance,
-      balanceAsset: symbol,
-      balanceName: 'Wallet Balance',
-      useMaxHandler,
-      inputStatus: inputData.validationStatus,
-      inputSize: INPUT_LARGE,
-      ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
-    }),
-    [tokenBalance, symbol, useMaxHandler, inputData.validationStatus, inputData.amount, rate],
-  )
+  const settings: Settings = {
+    balance: tokenBalance,
+    balanceAsset: symbol,
+    balanceName: 'Wallet Balance',
+    useMaxHandler,
+    inputStatus: inputData.validationStatus,
+    inputSize: INPUT_LARGE,
+    ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
+  }
 
   return (
     <LoansActionsSection className="lending-tab">

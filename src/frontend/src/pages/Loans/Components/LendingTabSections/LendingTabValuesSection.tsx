@@ -10,6 +10,8 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { EARN_APY, INTEREST_EARNED, M_TOKEN_BALANCE, SUPPLIED_AMOUNT } from 'texts/tooltips/loan.text'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 type Props = {
   lendingItem: LendingItemType
@@ -23,13 +25,20 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
   } = useSelector((state: State) => state.wallet)
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { symbol, decimals } = tokensMetadata[loanTokenAddress]
-  const rate = tokensPrices[symbol]
+
+  const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
+
+  if (!loanToken || !loanToken.rate) return null
+
+  const { symbol, decimals, rate } = loanToken
 
   const { lendValue = 0, interestEarned = 0, mBalance = 0 } = lendingItem || {}
 
   // TODO: use just symbol, requires user tokens refactor
   const tokenBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
+
+  const convertedLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
+  const convertedInterestEarned = convertNumberForClient({ number: interestEarned, grade: decimals })
 
   return (
     <LoansValuesSection className="lending-tab">
@@ -37,9 +46,9 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
 
       <div className="stats">
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber value={lendValue} className="value" showDecimal decimalsToShow={decimals} />
+          <CommaNumber value={convertedLendValue} className="value" showDecimal decimalsToShow={decimals} />
 
-          <CommaNumber value={lendValue * rate} beginningText="$" className="rate" showDecimal />
+          <CommaNumber value={convertedLendValue * rate} beginningText="$" className="rate" showDecimal />
 
           <div className="name">
             Supplied Amount
@@ -48,9 +57,9 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber value={interestEarned} className="value" showDecimal decimalsToShow={decimals} />
+          <CommaNumber value={convertedInterestEarned} className="value" showDecimal decimalsToShow={decimals} />
 
-          <CommaNumber value={interestEarned * rate} beginningText="$" className="rate" showDecimal />
+          <CommaNumber value={convertedInterestEarned * rate} beginningText="$" className="rate" showDecimal />
 
           <div className="name">
             Interest Earned
@@ -68,7 +77,12 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo>
-          <CommaNumber value={mBalance} className="value" showDecimal decimalsToShow={decimals} />
+          <CommaNumber
+            value={convertNumberForClient({ number: mBalance, grade: decimals })}
+            className="value"
+            showDecimal
+            decimalsToShow={decimals}
+          />
 
           <div className="name margin-top">
             m{symbol} Balance

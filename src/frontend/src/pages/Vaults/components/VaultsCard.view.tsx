@@ -146,7 +146,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     const convertedFee = convertNumberForClient({ number: fee, grade: borrowedTokenDecimals })
     const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
     const collateralRatio = getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * borrowedTokenRate)
-    const status = getVaultStatus(collateralRatio)
+    const status = getVaultStatus(collateralRatio, convertedBorrowedAmount)
     const liquidationPrice = getVaultLiquidationPrice(
       (convertedFee + convertedBorrowedAmount) * borrowedTokenRate,
       liquidationRatio,
@@ -159,7 +159,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
       collateralData,
       convertedBorrowedAmount,
       borrowedTokenRate,
-      borrowedTokenDecimals,
+      borrowedToken,
       liquidationPrice,
       ...restVault,
     }
@@ -224,7 +224,11 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     liquidationReward,
     adminLiquidateFee,
     liquidationPrice,
-  } = vaultData ?? {}
+    borrowedToken,
+    borrowedTokenRate,
+  } = vaultData
+
+  console.log({ status })
 
   const isActiveFooter =
     status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
@@ -235,12 +239,10 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
   const footerText = findFooterText(status, statusColor, timerTimestamp)
 
   const liquidateModalHandler = () => {
-    const borrowedTokenMetadata = tokensMetadata[vault.borrowedTokenAddress]
-    const borrowedTokenRate = tokensPrices[borrowedTokenMetadata.symbol]
     openLiquidateVaultPopup({
       vaultId,
       ownerAddress: ownerId,
-      borrowedTokenMetadata: borrowedTokenMetadata,
+      borrowedTokenMetadata: borrowedToken,
       borrowedTokenRate: borrowedTokenRate,
       collateralBalance,
       collateralData,
@@ -303,10 +305,12 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
                   const columnWidth = '33%'
                   const isTotalRow = collateralData.length - 1 === index
 
-                  if (isTotalRow && collateralData.length < 3) return null
+                  const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
 
-                  const { symbol, icon } = tokensMetadata[tokenAddress]
-                  const rate = tokensPrices[symbol]
+                  if ((isTotalRow && collateralData.length < 3) || !collateralToken || !collateralToken.rate)
+                    return null
+
+                  const { symbol, icon, rate } = collateralToken
 
                   const collateralShare = isTotalRow ? 100 : calculateCollateralShare(amount * rate, collateralBalance)
 

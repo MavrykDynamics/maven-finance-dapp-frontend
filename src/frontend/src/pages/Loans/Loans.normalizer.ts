@@ -36,8 +36,8 @@ export const normalizeLoans = ({
 
     if (!token_address) return acc
 
-    // TODO: add calcs
-    const reserveAmount = (token_pool_total * reserve_ratio) / 10000
+    // TODO: check calcs
+    const reserveAmount = token_pool_total * (reserve_ratio / 10000)
     // const reserveAmount = convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }) * (reserve_ratio / 10000)
 
     // TODO: check calcs
