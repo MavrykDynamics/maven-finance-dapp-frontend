@@ -1,4 +1,4 @@
-import { ContractMethod, Estimate, OpKind, TezosOperationError, TransferParams, Wallet } from '@taquito/taquito'
+import { ContractMethod, OpKind, TezosOperationError, TransferParams, Wallet } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { isTezosContractError } from 'errors/error'
 import { CONTRACT_ERROR_CODES } from '../consts/contractErrorCodes'
@@ -9,8 +9,6 @@ import { DEFAULT_TEZOS_ERROR } from '../contractError.const'
 
 export const getContractErrorMessage = (e: unknown): ContractErrorPayload => {
   const isTezosError = isTezosContractError(e)
-  // console.log(isTezosError, 'isTezosError')
-  console.log(Object.assign({}, e))
   if (isTezosError) {
     const error = e as TezosOperationError
     const errorCode = Number(error.message) ? Number(error.message) : error.message ? error.message : null
@@ -83,14 +81,11 @@ export const estimateBatchOperation = async (
 
     return estimatedBatchCalls
   } catch (e) {
-    // console.log(Object.assign({}, e, '------------'))
     return { ...defaultEstimatedBatchCalls, error: getContractErrorMessage(e) }
   }
 }
 
 export const isContractErrorPayload = (obj: any) => {
-  console.log(obj, '_____________________________')
-
   return (
     typeof obj === 'object' &&
     obj !== null &&
