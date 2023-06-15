@@ -24,3 +24,23 @@ export type Props = {
 export type State = {
   context: ContractErrorContextType
 }
+
+// estimate & bathch operations
+export type EstimatedOperation = {
+  gasLimit: number
+  minimalFeeMutez: number
+  storageLimit: number
+  suggestedFeeMutez: number
+  totalCost: number
+  usingBaseFeeMutez: number
+  error?: ContractErrorPayload
+}
+
+export type EstimatedBatchCall = {
+  batchOperations?: EstimatedOperation[]
+  totalGasLimit: number
+  totalCost: number
+  totalMinimalFeeMutez: number
+  totalSuggestedFeeMutez: number
+  error?: ContractErrorPayload
+}
