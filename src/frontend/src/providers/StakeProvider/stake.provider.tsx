@@ -176,12 +176,12 @@ export class StakeProviderClass extends React.Component<Props, State> {
       // const op3 = await estimateExecution(removeOperatorsOperation)
 
       const [op1, op2, op3] = await Promise.all([
-        await estimateExecution(addOperatorsOperation),
-        await estimateExecution(stakeOperation),
-        await estimateExecution(removeOperatorsOperation),
+        await estimateExecution(addOperatorsOperation), // this one is ok
+        await estimateExecution(stakeOperation), // this one is failed
+        await estimateExecution(removeOperatorsOperation), // ok
       ])
 
-      console.log([op1, op2, op3])
+      console.log([op1, op2, op3]) // check logs of estimation results
 
       if (op1?.error || op2?.error || op3?.error) {
         return { actionSuccess: false, error: op1?.error ?? op2?.error ?? op3?.error }
