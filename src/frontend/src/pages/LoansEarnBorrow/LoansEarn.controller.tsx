@@ -105,7 +105,7 @@ export const LoansEarn = () => {
 
         if (!token || !token.rate) return acc
 
-        const { rate: price, decimals, icon, symbol } = token
+        const { rate: price, decimals, icon, symbol, address } = token
 
         const { lendValue = 0, interestEarned = 0 } =
           getMarketUserLengingItem(userMTokens, item.loanMTokenAddress) ?? {}
@@ -113,6 +113,7 @@ export const LoansEarn = () => {
         acc.push({
           icon,
           symbol,
+          address,
           annualRate: item.lendingAPY,
           annualRateName: 'APY',
           leftValue: convertNumberForClient({ number: lendValue, grade: decimals }) * price,

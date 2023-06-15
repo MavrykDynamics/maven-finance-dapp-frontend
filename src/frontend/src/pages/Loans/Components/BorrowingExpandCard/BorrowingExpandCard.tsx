@@ -168,6 +168,7 @@ export const BorrowingExpandCard = ({
       collateralBalance,
       collateralData,
       convertedBorrowedAmount,
+      convertedAvailableLiquidity,
       borrowedTokenRate,
       borrowedTokenAddress,
       borrowedToken,
@@ -249,6 +250,7 @@ export const BorrowingExpandCard = ({
     collateralData,
     convertedFee,
     borrowedTokenRate,
+    convertedAvailableLiquidity,
     status,
     apr,
     minimumRepay,
@@ -358,7 +360,7 @@ export const BorrowingExpandCard = ({
       collateralBalance,
       collateralRatio,
       borrowedTokenRate,
-      availableLiquidity: vault.availableLiquidity,
+      availableLiquidity: convertedAvailableLiquidity,
       borrowCapacity,
       collateralData: vault.collateralData,
     })
@@ -371,7 +373,7 @@ export const BorrowingExpandCard = ({
       collateralBalance,
       collateralRatio,
       borrowedTokenRate,
-      availableLiquidity: vault.availableLiquidity,
+      availableLiquidity: convertedAvailableLiquidity,
       borrowCapacity,
       collateralTokenAddress: collateralData[idx].tokenAddress,
     })

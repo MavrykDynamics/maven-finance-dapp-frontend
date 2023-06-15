@@ -37,6 +37,7 @@ export type MarketSettingsType = {
 
 export type MarketType = {
   icon: string
+  address: string
   symbol: string
   annualRate: number
   annualRateName: 'APR' | 'APY'

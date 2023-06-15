@@ -16,19 +16,22 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 type BorrowingTabPropsType = {
   loanTokenAddress: TokenAddressType
+  marketAvaliableLiquidity: number
 }
 
-export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {
+export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: BorrowingTabPropsType) => {
   const history = useHistory()
   const location = useLocation()
 
   const { openCreateVaultPopup } = useLoansPopupsContext()
-  const { tokensMetadata } = useTokensContext()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
 
-  const { symbol } = tokensMetadata[loanTokenAddress]
+  const loanToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: loanTokenAddress })
 
   const [showZeroVaults, setShowZeroVaults] = useState(false)
   const { accountPkh } = useSelector((state: State) => state.wallet)
@@ -52,6 +55,10 @@ export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {
     [loanTokenAddress, myVaultsIds, showZeroVaults, vaultsMapper],
   )
 
+  if (!loanToken || !loanToken.rate) return null
+
+  const { symbol, rate, decimals } = loanToken
+
   const handleCreatedVaultAddress = (address?: string) => {
     if (!address) return
 
@@ -73,8 +80,10 @@ export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {
               disabled={!Boolean(accountPkh) || isActionActive}
               onClick={() =>
                 openCreateVaultPopup({
-                  tokenAddress: loanTokenAddress,
+                  marketTokenAddress: loanTokenAddress,
                   setCreatedVaultAddress: handleCreatedVaultAddress,
+                  avaliableLiquidity:
+                    convertNumberForClient({ number: marketAvaliableLiquidity, grade: decimals }) * rate,
                 })
               }
               kind={ACTION_PRIMARY}
@@ -108,8 +117,10 @@ export const BorrowingTab = ({ loanTokenAddress }: BorrowingTabPropsType) => {
             disabled={!Boolean(accountPkh)}
             onClick={() =>
               openCreateVaultPopup({
-                tokenAddress: loanTokenAddress,
+                marketTokenAddress: loanTokenAddress,
                 setCreatedVaultAddress: handleCreatedVaultAddress,
+                avaliableLiquidity:
+                  convertNumberForClient({ number: marketAvaliableLiquidity, grade: decimals }) * rate,
               })
             }
             className="lending-tab-no-items-btn"

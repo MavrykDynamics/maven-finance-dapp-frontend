@@ -35,7 +35,7 @@ type DropDownProps = {
   clickItem: (id: DDItemId) => void
   placeholder: string
   disabled?: boolean
-  activeItem?: DropDownItemType
+  activeItem?: DropDownItemType | null
   items: readonly DropDownItemType[]
   className?: string
 }

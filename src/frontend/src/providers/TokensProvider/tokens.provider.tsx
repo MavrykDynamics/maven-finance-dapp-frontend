@@ -52,8 +52,8 @@ export class TokensProvider extends React.Component<Props, State> {
       context: {
         ...this.state.context,
         tokensMetadata: { ...this.state.context.tokensMetadata, ...tokensMetadata.tokensMetadata },
-        collateralTokens: { ...this.state.context.collateralTokens, ...tokensMetadata.collateralTokens },
-        mTokens: { ...this.state.context.mTokens, ...tokensMetadata.mTokens },
+        collateralTokens: [...this.state.context.collateralTokens, ...tokensMetadata.collateralTokens],
+        mTokens: [...this.state.context.mTokens, ...tokensMetadata.mTokens],
       },
     })
   }

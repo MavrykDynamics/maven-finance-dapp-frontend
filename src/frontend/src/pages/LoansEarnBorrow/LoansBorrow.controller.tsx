@@ -152,11 +152,12 @@ export const LoansBorrow = () => {
 
         if (!token || !token.rate) return acc
 
-        const { symbol, icon, rate: price, decimals } = token
+        const { symbol, icon, rate: price, decimals, address } = token
 
         acc.push({
           icon,
           symbol,
+          address,
           annualRate: item.borrowAPR,
           annualRateName: 'APR',
           leftValue: convertNumberForClient({
@@ -201,14 +202,26 @@ export const LoansBorrow = () => {
       )
     })
 
+    const marketAvaliableLiquidity = loanTokens.find(
+      ({ loanTokenAddress }) => marketTokenAddress === loanTokenAddress,
+    )?.availableLiquidity
+
+    const marketToken = getTokenDataByAddress({
+      tokenAddress: marketTokenAddress,
+      tokensMetadata,
+      tokensPrices,
+    })
+
+    if (!validVaultId || !marketToken || !marketToken.rate) return
+
+    const { decimals, rate } = marketToken
+
     // redirect specific asset market if user does not have vaults with collateral ratio > 200
-    if (!validVaultId) {
+    if (marketAvaliableLiquidity) {
       openCreateVaultPopup?.({
-        tokenAddress: marketTokenAddress,
-        setCreatedVaultAddress: (address: string) => {
-          if (!address) return
-          setNewVaultAddress(address)
-        },
+        marketTokenAddress: marketTokenAddress,
+        setCreatedVaultAddress: (address: string) => (address ? setNewVaultAddress(address) : null),
+        avaliableLiquidity: convertNumberForClient({ number: marketAvaliableLiquidity, grade: decimals }) * rate,
       })
 
       return
@@ -217,16 +230,6 @@ export const LoansBorrow = () => {
     const vault = vaultsMapper[validVaultId]
 
     if (!vault) return
-
-    const borrowToken = getTokenDataByAddress({
-      tokenAddress: vault.borrowedTokenAddress,
-      tokensMetadata,
-      tokensPrices,
-    })
-
-    if (!borrowToken || !borrowToken.rate) return
-
-    const { decimals, rate } = borrowToken
 
     const convertedBorrowedAmount = convertNumberForClient({
         number: vault.borrowedAmount,
@@ -246,7 +249,7 @@ export const LoansBorrow = () => {
 
     openBorrowPopup({
       vaultId: vault.vaultId,
-      borrowedTokenMetadata: borrowToken,
+      borrowedTokenMetadata: marketToken,
       borrowedAmount: convertedBorrowedAmount,
       collateralBalance,
       borrowCapacity,

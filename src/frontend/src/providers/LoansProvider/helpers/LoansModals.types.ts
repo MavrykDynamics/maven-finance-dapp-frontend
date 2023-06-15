@@ -136,7 +136,8 @@ export type ChangeVaultNamePopupDataType = {
 } | null
 
 export type CreateVaultPopupDataType = {
-  tokenAddress: TokenAddressType
+  marketTokenAddress: TokenAddressType
+  avaliableLiquidity: number
   setCreatedVaultAddress?: (address: string) => void
 } | null
 

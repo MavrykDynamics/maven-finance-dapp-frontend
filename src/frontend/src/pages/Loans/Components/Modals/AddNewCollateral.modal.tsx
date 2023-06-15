@@ -9,7 +9,6 @@ import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/Gradien
 import Icon from 'app/App.components/Icon/Icon.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Input } from 'app/App.components/Input/NewInput'
-import { DropDownXTZBakerType } from './CreateNewVault.modal'
 import NewButton from 'app/App.components/Button/NewButton'
 
 import {
@@ -20,8 +19,8 @@ import {
 } from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
+import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { depositCollateralsAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { AddNewCollateralDataProps } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import {
   InputStatusType,
@@ -37,15 +36,18 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 import { checkNan } from 'utils/checkNan'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { checkWhetherTokenIsCollateralToken, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
+import {
+  checkWhetherTokenIsCollateralToken,
+  getTokenDataByAddress,
+  isTezosAsset,
+} from 'providers/TokensProvider/helpers/tokens.utils'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import useXtzBakersForDD from 'providers/DAPPConfig/helpers/useDDXtzBakers'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 // TODO: redo it
@@ -58,15 +60,16 @@ export const AddNewCollateral = ({
   show: boolean
   data: AddNewCollateralDataProps
 }) => {
-  const { xtzBakers } = useDAPPConfigContext()
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
 
-  useLockBodyScroll(show)
+  const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
 
+  useLockBodyScroll(show)
   const dispatch = useDispatch()
 
   const { userTokens } = useSelector((state: State) => state.wallet.user)
 
+  const [selectedCollateral, setSelectedCollateral] = useState<TokenAddressType | undefined>()
   const [inputData, setInputData] = useState<{
     amount: string
     validationStatus: InputStatusType
@@ -74,36 +77,6 @@ export const AddNewCollateral = ({
     amount: '0',
     validationStatus: '',
   })
-
-  const [selectedCollateral, setSelectedCollateral] = useState<TokenAddressType | undefined>()
-  const [bakerChosenDdItem, setAssetChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
-
-  // select baker for an xtz collateral, used only when we selected one collateral XTZ
-  const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(() => {
-    const { otherBakers = [], dao, mavrykDynamics } = xtzBakers ?? {}
-
-    return otherBakers
-      .concat(dao ? dao : [])
-      .concat(mavrykDynamics ? mavrykDynamics : [])
-      .map(({ name, fee, logo, address, yield: bakerYield, freespace, isDisabled }, idx) => ({
-        content: (
-          <DropDownJsxChild>
-            <div className="flex-row with-image">
-              <ImageWithPlug imageLink={logo} alt={`${name} icon`} /> {name}
-            </div>
-            <div className="baker-fee">
-              <CommaNumber value={fee} endingText="%" />
-            </div>
-          </DropDownJsxChild>
-        ),
-        bakerName: name,
-        id: idx,
-        bakerAddress: address,
-        bakerYield,
-        bakerFreeSpace: freespace,
-        disabled: isDisabled,
-      }))
-  }, [xtzBakers])
 
   // resetting popup state, when toggling it off
   useEffect(() => {
@@ -115,6 +88,50 @@ export const AddNewCollateral = ({
     }
   }, [show])
 
+  const mappedAvaliableCollaterals = useMemo(() => {
+    if (!data) return {}
+
+    const { collateralData } = data
+
+    let firstNotDisabledCollateralAddress: string | null = null
+
+    const reducedCollaterals = collateralTokens.reduce<
+      Record<DDItemId, DropDownItemType & { tokenAddress: TokenAddressType }>
+    >((acc, collateralTokenAddress) => {
+      const collateral = getTokenDataByAddress({ tokenAddress: collateralTokenAddress, tokensMetadata, tokensPrices })
+
+      if (collateral && checkWhetherTokenIsCollateralToken(collateral)) {
+        const { address, icon, symbol } = collateral
+
+        const isCollateralDisabled = Boolean(
+          collateral.loanData.isProtectedCollateral ||
+            collateralData?.find(({ tokenAddress }) => address === tokenAddress) ||
+            selectedCollateral === collateralTokenAddress,
+        )
+
+        if (!isCollateralDisabled && !firstNotDisabledCollateralAddress)
+          firstNotDisabledCollateralAddress = collateralTokenAddress
+
+        acc[address] = {
+          id: address,
+          tokenAddress: address,
+          content: <DropdownInputCustomChild iconSrc={icon} symbol={symbol} />,
+          disabled: isCollateralDisabled,
+        }
+      }
+      return acc
+    }, {})
+
+    if (!selectedCollateral && firstNotDisabledCollateralAddress) {
+      if (firstNotDisabledCollateralAddress) {
+        reducedCollaterals[firstNotDisabledCollateralAddress].disabled = true
+        setSelectedCollateral(firstNotDisabledCollateralAddress)
+      }
+    }
+
+    return reducedCollaterals
+  }, [collateralTokens, data, selectedCollateral, tokensMetadata, tokensPrices])
+
   if (!data) return null
 
   const {
@@ -125,18 +142,17 @@ export const AddNewCollateral = ({
     borrowedTokenRate = 0,
     availableLiquidity = 0,
     borrowCapacity = 0,
-    collateralData,
   } = data
 
-  const collateralToken = tokensMetadata[selectedCollateral ?? '']
-  const { symbol = '', decimals = assetDecimalsToShow } = collateralToken
-  const rate = tokensPrices[symbol] ?? 0
+  const collateralToken = getTokenDataByAddress({ tokenAddress: selectedCollateral, tokensMetadata, tokensPrices })
+
+  if (!collateralToken || !collateralToken.rate) return null
+
+  const { symbol, decimals, rate } = collateralToken
 
   // TODO: handle user balance
   const userCollateralBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
-
   const inputAmount = checkNan(parseFloat(inputData.amount))
-
   const futureCollateralRatio = calcCollateralRatio(collateralBalance + inputAmount, borrowedAmount, borrowedTokenRate)
   const futureCollateralBalance = collateralBalance + inputAmount * rate
   const futureBorrowCapacity = Math.min(
@@ -144,50 +160,25 @@ export const AddNewCollateral = ({
     futureCollateralBalance / 2 - borrowedAmount * borrowedTokenRate,
   )
 
-  const mappedAvaliableCollaterals = collateralTokens.reduce<
-    Record<DDItemId, DropDownItemType & { tokenAddress: TokenAddressType }>
-  >((acc, collateralTokenAddress) => {
-    const collateral = tokensMetadata[collateralTokenAddress]
-    const { address, icon, symbol } = collateral
-
-    if (checkWhetherTokenIsCollateralToken(collateral)) {
-      acc[address] = {
-        id: address,
-        tokenAddress: address,
-        content: <DropdownInputCustomChild iconSrc={icon} symbol={symbol} />,
-        disabled: Boolean(
-          collateral.loanData.isProtectedCollateral ||
-            collateralData?.find(({ tokenAddress }) => address === tokenAddress) ||
-            selectedCollateral === collateralTokenAddress,
-        ),
-      }
-    }
-    return acc
-  }, {})
-
-  const firstNotDisabledCollateralAddress = Object.values(mappedAvaliableCollaterals).find(
-    ({ disabled }) => !disabled,
-  )?.tokenAddress
-
-  if (firstNotDisabledCollateralAddress) mappedAvaliableCollaterals[firstNotDisabledCollateralAddress].disabled = true
-
-  setSelectedCollateral(
-    firstNotDisabledCollateralAddress ? firstNotDisabledCollateralAddress : Object.keys(mappedAvaliableCollaterals)[0],
-  )
-
-  const showBakerAddress = isTezosAsset(selectedCollateral)
-  const handleOnClickDropdownBakerItem = (itemId: DDItemId) =>
-    setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
-
   const depositCollateralHandler = () => {
     if (vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
       dispatch(
-        depositCollateralAction(
+        depositCollateralsAction(
           vaultAddress,
-          Number(inputData.amount),
-          collateralToken,
+          [
+            {
+              collateralName: collateralToken.loanData.indexerName,
+              address: collateralToken.address,
+              id: collateralToken.id,
+              type: collateralToken.type,
+              amount: convertNumberForContractCall({
+                number: Number(inputData.amount),
+                grade: collateralToken.decimals,
+              }),
+            },
+          ],
           closePopup,
-          bakerChosenDdItem?.bakerAddress,
+          choosenBaker?.bakerAddress,
         ),
       )
     }
@@ -212,55 +203,23 @@ export const AddNewCollateral = ({
     }
   }
 
-  const inputOnBlurHandle = () => {
-    if (inputData) {
-      setInputData({
-        ...inputData,
-        amount: getOnBlurValue(inputData.amount),
-      })
-    }
-  }
+  const inputOnBlurHandle = () =>
+    setInputData({
+      ...inputData,
+      amount: getOnBlurValue(inputData.amount),
+    })
 
-  const onFocusHandler = () => {
-    if (inputData) {
-      setInputData({
-        ...inputData,
-        amount: getOnFocusValue(inputData.amount),
-      })
-    }
-  }
+  const onFocusHandler = () =>
+    setInputData({
+      ...inputData,
+      amount: getOnFocusValue(inputData.amount),
+    })
 
   // TODO: test it
-  const clickOnInputDDItem = (id: DDItemId) => {
-    if (typeof id === 'string') {
-      setSelectedCollateral(id)
-    }
-    // if (inputData) {
-    //   // resetting disabled flags for item we had selected before, and enabling disabled, we have selected now
-    //   const newDDItems = {
-    //     ...inputData.ddItems,
-    //     [inputData.id]: {
-    //       ...inputData.ddItems[inputData.id],
-    //       disabled: false,
-    //     },
-    //     [id]: {
-    //       ...inputData.ddItems[id],
-    //       disabled: true,
-    //     },
-    //   }
-
-    //   setInputData({
-    //     ...inputData,
-    //     assetName: inputData.ddItems[id].gqlName,
-    //     selectedDdItem: inputData.ddItems[id],
-    //     ddItems: newDDItems,
-    //     id,
-    //   })
-    // }
-  }
+  const clickOnInputDDItem = (id: DDItemId) => (typeof id === 'string' ? setSelectedCollateral(id) : null)
 
   const isDepositBtnDisabled =
-    (isTezosAsset(selectedCollateral) && !bakerChosenDdItem) || inputData?.validationStatus === INPUT_STATUS_ERROR
+    (isTezosAsset(selectedCollateral) && !choosenBaker) || inputData.validationStatus === INPUT_STATUS_ERROR
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -340,36 +299,38 @@ export const AddNewCollateral = ({
                 </InputPinnedDropDown>
               </Input>
 
-              {showBakerAddress ? (
+              {isTezosAsset(selectedCollateral) ? (
                 <>
                   <div className="block-name">Select Baker</div>
                   <DropDown
                     placeholder="Select Bakery"
-                    activeItem={bakerChosenDdItem}
-                    items={bakerItemsForDropDown}
-                    clickItem={handleOnClickDropdownBakerItem}
+                    activeItem={choosenBaker}
+                    items={bakers}
+                    clickItem={(bakerAddress: DDItemId) =>
+                      typeof bakerAddress === 'string' ? setChoosenBaker(bakerAddress) : null
+                    }
                   />
                   <div className="lending-stats" style={{ margin: '30px 0' }}>
                     <ThreeLevelListItem>
                       <div className="name">Bakery Address</div>
-                      {bakerChosenDdItem?.bakerAddress ? (
-                        <TzAddress className="value" tzAddress={bakerChosenDdItem.bakerAddress} type={BLUE} />
+                      {choosenBaker?.bakerAddress ? (
+                        <TzAddress className="value" tzAddress={choosenBaker.bakerAddress} type={BLUE} />
                       ) : (
                         <div className="value">-</div>
                       )}
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Yield</div>
-                      {bakerChosenDdItem?.bakerYield ? (
-                        <CommaNumber value={bakerChosenDdItem.bakerYield} className="value" endingText="%" />
+                      {choosenBaker?.bakerYield ? (
+                        <CommaNumber value={choosenBaker.bakerYield} className="value" endingText="%" />
                       ) : (
                         <div className="value">-</div>
                       )}
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Free Capacity</div>
-                      {bakerChosenDdItem?.bakerFreeSpace ? (
-                        <CommaNumber value={bakerChosenDdItem.bakerFreeSpace} className="value" endingText="XTZ" />
+                      {choosenBaker?.bakerFreeSpace ? (
+                        <CommaNumber value={choosenBaker.bakerFreeSpace} className="value" endingText="XTZ" />
                       ) : (
                         <div className="value">-</div>
                       )}

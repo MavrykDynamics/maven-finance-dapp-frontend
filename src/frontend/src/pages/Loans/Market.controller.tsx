@@ -265,7 +265,12 @@ export const Market = () => {
             lendAPY={currentToken.lendingAPY}
           />
         ) : null}
-        {tabId === BORROW_TAB_ID ? <BorrowingTab loanTokenAddress={currentToken.loanTokenAddress} /> : null}
+        {tabId === BORROW_TAB_ID ? (
+          <BorrowingTab
+            loanTokenAddress={currentToken.loanTokenAddress}
+            marketAvaliableLiquidity={currentToken.availableLiquidity}
+          />
+        ) : null}
       </MarketStyled>
     </Page>
   )

@@ -1,5 +1,5 @@
 import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
-import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
+import { OpKind, TransactionWalletOperation, WalletOperationBatch, WalletParamsWithKind } from '@taquito/taquito'
 
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
@@ -23,6 +23,7 @@ import { State } from 'reducers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import { DepositCollateralType } from 'providers/LoansProvider/helpers/vaults.types'
 
 // remove collateral from the vault
 export const withdrawCollateralAction =
@@ -96,12 +97,11 @@ export const withdrawCollateralAction =
     }
   }
 
-// deposit new & existing collateral to the vault
-export const depositCollateralAction =
+// deposit collateral to the vault
+export const depositCollateralsAction =
   (
     vaultAddress: string,
-    tokenAmount: number,
-    collateralToken: LoansCollateralTokenMetadataType,
+    collateralTokens: Array<DepositCollateralType>,
     callback: () => void,
     bakerAddress?: string | null,
   ) =>
@@ -116,102 +116,92 @@ export const depositCollateralAction =
 
     try {
       // prepare and send transaction
-      const {
-        loanData: { indexerName },
-        id,
-        type,
-        decimals,
-        address,
-      } = collateralToken
-      const convertedAssetAmount = convertNumberForContractCall({ number: tokenAmount, grade: decimals })
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(vaultAddress)
-      let transaction: BatchWalletOperation | null = null
 
-      if (type === 'tez') {
-        const delegateToBakerBatchPart: Array<WalletParamsWithKind> = bakerAddress
-          ? [
-              {
-                kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+      const operationKind = OpKind.TRANSACTION as OpKind.TRANSACTION
+
+      const batchArr = await collateralTokens.reduce<Promise<Array<WalletParamsWithKind>>>(
+        async (promiseAcc, { collateralName, amount, id, address, type }) => {
+          const acc = await promiseAcc
+
+          if (type === 'tez') {
+            acc.push({
+              kind: operationKind,
+              ...contract.methods.initVaultAction('deposit', amount, 'tez').toTransferParams(),
+              amount,
+              mutez: true,
+            })
+
+            if (bakerAddress) {
+              acc.push({
+                kind: operationKind,
                 ...contract.methods.initVaultAction('setBaker', bakerAddress).toTransferParams(),
-              },
-            ]
-          : []
-        const batch = tezos.wallet.batch([
-          {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract.methods.initVaultAction('deposit', convertedAssetAmount, 'tez').toTransferParams(),
-            amount: convertedAssetAmount,
-            mutez: true,
-          },
-          ...delegateToBakerBatchPart,
-        ])
+              })
+            }
+          }
 
-        transaction = await batch.send()
-      }
+          if (type === 'fa12') {
+            const assetContract = await tezos.wallet.at(address)
 
-      if (type === 'fa12') {
-        const assetContract = await tezos.wallet.at(address)
-        const batchArr = [
-          {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...assetContract.methods.approve(vaultAddress, 0).toTransferParams(),
-          },
-          {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...assetContract.methods.approve(vaultAddress, convertedAssetAmount).toTransferParams(),
-          },
-          {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract.methods.initVaultAction('deposit', convertedAssetAmount, indexerName).toTransferParams(),
-          },
-        ]
+            acc.push({
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...assetContract.methods.approve(vaultAddress, 0).toTransferParams(),
+            })
+            acc.push({
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...assetContract.methods.approve(vaultAddress, amount).toTransferParams(),
+            })
+            acc.push({
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...contract.methods.initVaultAction('deposit', amount, collateralName).toTransferParams(),
+            })
+          }
 
-        const batch = await tezos.wallet.batch(batchArr)
-        transaction = await batch.send()
-      }
+          if (type === 'fa2') {
+            const assetContract = await tezos.wallet.at(address)
 
-      if (type === 'fa2') {
-        const assetContract = await tezos.wallet.at(address)
-
-        const batchArr = [
-          {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...assetContract.methods
-              .update_operators([
-                {
-                  add_operator: {
-                    owner: state.wallet.accountPkh,
-                    operator: vaultAddress,
-                    token_id: 0, // Should be a number, usually 0
+            acc.push({
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...assetContract.methods
+                .update_operators([
+                  {
+                    add_operator: {
+                      owner: state.wallet.accountPkh,
+                      operator: vaultAddress,
+                      token_id: id,
+                    },
                   },
-                },
-              ])
-              .toTransferParams(),
-          },
-          {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract.methods.initVaultAction('deposit', convertedAssetAmount, indexerName).toTransferParams(),
-          },
-          {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...assetContract.methods
-              .update_operators([
-                {
-                  remove_operator: {
-                    owner: state.wallet.accountPkh,
-                    operator: vaultAddress,
-                    token_id: 0, // Should be a number, usually 0
+                ])
+                .toTransferParams(),
+            })
+            acc.push({
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...contract.methods.initVaultAction('deposit', amount, collateralName).toTransferParams(),
+            })
+            acc.push({
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...assetContract.methods
+                .update_operators([
+                  {
+                    remove_operator: {
+                      owner: state.wallet.accountPkh,
+                      operator: vaultAddress,
+                      token_id: id,
+                    },
                   },
-                },
-              ])
-              .toTransferParams(),
-          },
-        ]
+                ])
+                .toTransferParams(),
+            })
+          }
 
-        const batch = await tezos.wallet.batch(batchArr)
-        transaction = await batch.send()
-      }
+          return acc
+        },
+        Promise.resolve([]),
+      )
+
+      const batch = await tezos.wallet.batch(batchArr)
+      await batch.send()
 
       // close popup
       callback()

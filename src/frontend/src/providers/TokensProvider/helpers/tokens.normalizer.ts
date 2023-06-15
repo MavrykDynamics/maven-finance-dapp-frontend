@@ -2,7 +2,7 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenSymbolAndName } from '../hooks/tokenNames'
 import { isValidTokenType } from 'utils/TypesAndInterfaces/General'
 
-import { TokenAddressType, TokenMetadataType, TokensContext } from '../tokens.provider.types'
+import { TokenMetadataType, TokensContext } from '../tokens.provider.types'
 import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from 'utils/__generated__/graphql'
 import { tokenMetadataSchema } from './tokens.types'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
@@ -71,16 +71,31 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
 
         // if token is collateral
         if (lending_controller_collateral_tokens?.[0]) {
-          acc.collateralTokens.push(tokenAddress)
-          tokenMetadata.loanData = {
-            indexerName: lending_controller_collateral_tokens[0].token_name,
-            isProtectedCollateral: lending_controller_collateral_tokens[0].protected,
+          // if mvk_tokens?.[0]?.address present and token is collateral that means, that sMVK is collateral, but smvk don't really exist in indexer and we need to manually change it's collateral data
+          if (mvk_tokens?.[0]?.address) {
+            acc.collateralTokens.push(SMVK_TOKEN_SYMBOL)
+
+            acc.tokensMetadata[SMVK_TOKEN_SYMBOL] = {
+              ...acc.tokensMetadata[SMVK_TOKEN_SYMBOL],
+              loanData: {
+                indexerName: lending_controller_collateral_tokens[0].token_name,
+                isProtectedCollateral: lending_controller_collateral_tokens[0].protected,
+              },
+            }
+          } else {
+            acc.collateralTokens.push(tokenAddress)
+
+            tokenMetadata.loanData = {
+              indexerName: lending_controller_collateral_tokens[0].token_name,
+              isProtectedCollateral: lending_controller_collateral_tokens[0].protected,
+            }
           }
         }
 
         // if token is loan token
         if (lending_controller_loan_tokens?.[0]) {
           tokenMetadata.loanData = {
+            ...tokenMetadata.loanData,
             indexerName: lending_controller_loan_tokens[0].loan_token_name,
           }
         }
@@ -88,7 +103,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         // if token is mToken
         if (m_tokens?.[0]?.address) acc.mTokens.push(tokenAddress)
 
-        acc.tokensMetadata[tokenAddress] = tokenMetadata
+        acc.tokensMetadata[tokenAddress] = { ...acc.tokensMetadata[tokenAddress], ...tokenMetadata }
       } catch (e) {
         console.error('normalizeTokensMetadata error: ', { e })
       } finally {

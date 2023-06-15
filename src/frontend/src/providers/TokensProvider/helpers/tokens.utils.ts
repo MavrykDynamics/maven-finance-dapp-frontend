@@ -14,7 +14,7 @@ export const checkWhetherTokenIsCollateralToken = (
 ): token is LoansCollateralTokenMetadataType =>
   Boolean(token.loanData) && typeof token.loanData?.isProtectedCollateral === 'boolean'
 
-export const isTezosAsset = (tokenAddress?: TokenAddressType) => tokenAddress === 'XTZ'
+export const isTezosAsset = (tokenAddress?: TokenAddressType) => tokenAddress === 'tz1ZZZZZZZZZZZZZZZZZZZZZZZZZZZZNkiRg'
 
 export const getTokenDataByAddress = ({
   tokenAddress,

@@ -25,7 +25,8 @@ type Props = {
 
 export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: Props) => {
   const { priceName, totalName, buttonName, leftValueName, rightValueName, isButtonSymbol, marketTabName } = settings
-  const { icon, symbol, annualRate, annualRateName, leftValue, rightValue, totalAmount, price, chartData } = market
+  const { icon, symbol, address, annualRate, annualRateName, leftValue, rightValue, totalAmount, price, chartData } =
+    market
 
   return (
     <EarnBorrowCardStyled>
@@ -70,7 +71,7 @@ export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: 
             {`${buttonName} ${isButtonSymbol ? symbol : ''}`}
           </Button>
 
-          <Link to={`/loans/${symbol}/${marketTabName}`}>
+          <Link to={`/loans/${address}/${marketTabName}`}>
             <Button kind={BUTTON_SIMPLE}>
               View Stats
               <Icon id="arrow" className="arrowIcon" />

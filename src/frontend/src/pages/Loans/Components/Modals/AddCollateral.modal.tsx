@@ -27,7 +27,7 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
+import { depositCollateralsAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import {
   calcCollateralRatio,
   getCollateralRatioByPersentage,
@@ -40,6 +40,7 @@ import { silverColor } from 'styles'
 import { checkNan } from 'utils/checkNan'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { checkWhetherTokenIsCollateralToken } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -131,7 +132,24 @@ export const AddCollateral = ({
 
   const depositCollateralHandler = async () => {
     if (vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
-      await dispatch(depositCollateralAction(vaultAddress, inputAmount, collateralToken, closePopup))
+      dispatch(
+        depositCollateralsAction(
+          vaultAddress,
+          [
+            {
+              collateralName: collateralToken.loanData.indexerName,
+              address: collateralToken.address,
+              id: collateralToken.id,
+              type: collateralToken.type,
+              amount: convertNumberForContractCall({
+                number: Number(inputData.amount),
+                grade: collateralToken.decimals,
+              }),
+            },
+          ],
+          closePopup,
+        ),
+      )
     }
   }
 

@@ -1,10 +1,9 @@
 import { useLockBodyScroll } from 'react-use'
 import { useState, useMemo, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { State } from 'reducers'
 import { changeBakerAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 import { ChangeBakerPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 
@@ -13,7 +12,6 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
-import { DropDownXTZBakerType } from './CreateNewVault.modal'
 
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
@@ -22,6 +20,7 @@ import { LoansModalBase } from './Modals.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { DropDownXTZBakerType } from 'providers/DAPPConfig/helpers/useDDXtzBakers'
 
 const MAVRYK_DYNAMICS_BAKERY = 1
 const DAO_BAKERY = 2

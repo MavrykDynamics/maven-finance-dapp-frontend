@@ -102,110 +102,114 @@ export const LoansPositionTable = ({
 
             {accountPkh ? (
               <TableBody className={`treasury dashboard-loans-table`}>
-                {paginatedTableRows.map(({ loanMTokenAddress, loanTokenAddress, borrowAPR, lendingAPY }) => {
-                  const { lendValue = 0, interestEarned = 0 } =
-                    getMarketUserLengingItem(userMTokens, loanMTokenAddress) ?? {}
+                {paginatedTableRows.map(
+                  ({ loanMTokenAddress, loanTokenAddress, borrowAPR, lendingAPY, availableLiquidity }) => {
+                    const { lendValue = 0, interestEarned = 0 } =
+                      getMarketUserLengingItem(userMTokens, loanMTokenAddress) ?? {}
 
-                  const loanToken = getTokenDataByAddress({
-                    tokenAddress: loanTokenAddress,
-                    tokensMetadata,
-                    tokensPrices,
-                  })
+                    const loanToken = getTokenDataByAddress({
+                      tokenAddress: loanTokenAddress,
+                      tokensMetadata,
+                      tokensPrices,
+                    })
 
-                  const marketVaultsUserData = userVaultsData[loanTokenAddress]
+                    const marketVaultsUserData = userVaultsData[loanTokenAddress]
 
-                  if (!loanToken || !loanToken.rate || !marketVaultsUserData) return null
+                    if (!loanToken || !loanToken.rate || !marketVaultsUserData) return null
 
-                  const { symbol, icon, rate, decimals } = loanToken
+                    const { symbol, icon, rate, decimals, address } = loanToken
 
-                  const averageVaultStatus = getGaugeVaultRiskSimpleStatus(
-                    marketVaultsUserData?.collateralAmount
-                      ? (marketVaultsUserData.borrowedAmount / (marketVaultsUserData.collateralAmount / 2)) * 100
-                      : 0,
-                  )
+                    const averageVaultStatus = getGaugeVaultRiskSimpleStatus(
+                      marketVaultsUserData?.collateralAmount
+                        ? (marketVaultsUserData.borrowedAmount / (marketVaultsUserData.collateralAmount / 2)) * 100
+                        : 0,
+                    )
 
-                  return (
-                    <TableRow rowHeight={60} borderColor="cardBorderColor" className="add-hover" key={symbol}>
-                      <TableCell width="15%">
-                        <div className="cell-content row with-icon asset-name">
-                          <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
-                          {symbol}
-                        </div>
-                      </TableCell>
+                    return (
+                      <TableRow rowHeight={60} borderColor="cardBorderColor" className="add-hover" key={symbol}>
+                        <TableCell width="15%">
+                          <div className="cell-content row with-icon asset-name">
+                            <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
+                            {symbol}
+                          </div>
+                        </TableCell>
 
-                      <TableCell
-                        width="43%"
-                        className={`position-multy-cell lending ${!loanMTokenAddress ? 'one-item' : ''}`}
-                      >
-                        <div className="cell-content" style={{ marginRight: '20px' }}>
-                          {loanMTokenAddress ? (
-                            <>
-                              <CommaNumber value={lendingAPY} endingText="%" />
-                              <CommaNumber
-                                value={convertNumberForClient({ number: lendValue, grade: decimals }) * rate}
-                                beginningText="$"
-                              />
-                              <CommaNumber
-                                value={convertNumberForClient({ number: interestEarned, grade: decimals })}
-                              />
-                              <Link to={`/loans/${symbol}/${LEND_TAB_ID}`}>
-                                <Button kind={BUTTON_SIMPLE}>View</Button>
+                        <TableCell
+                          width="43%"
+                          className={`position-multy-cell lending ${!loanMTokenAddress ? 'one-item' : ''}`}
+                        >
+                          <div className="cell-content" style={{ marginRight: '20px' }}>
+                            {loanMTokenAddress ? (
+                              <>
+                                <CommaNumber value={lendingAPY} endingText="%" />
+                                <CommaNumber
+                                  value={convertNumberForClient({ number: lendValue, grade: decimals }) * rate}
+                                  beginningText="$"
+                                />
+                                <CommaNumber
+                                  value={convertNumberForClient({ number: interestEarned, grade: decimals })}
+                                />
+                                <Link to={`/loans/${address}/${LEND_TAB_ID}`}>
+                                  <Button kind={BUTTON_SIMPLE}>View</Button>
+                                </Link>
+                              </>
+                            ) : (
+                              <Link to={`/loans/${address}/${LEND_TAB_ID}`}>
+                                <Button
+                                  kind={BUTTON_SIMPLE}
+                                  onClick={() => {
+                                    openAddLendingAssetPopup({
+                                      mBalance: 0,
+                                      lendingAPY: lendingAPY,
+                                      tokenAddress: loanTokenAddress,
+                                    })
+                                  }}
+                                >
+                                  Supply {symbol} and start Earning
+                                </Button>
                               </Link>
-                            </>
-                          ) : (
-                            <Link to={`/loans/${symbol}/${LEND_TAB_ID}`}>
-                              <Button
-                                kind={BUTTON_SIMPLE}
-                                onClick={() => {
-                                  openAddLendingAssetPopup({
-                                    mBalance: 0,
-                                    lendingAPY: lendingAPY,
-                                    tokenAddress: loanTokenAddress,
-                                  })
-                                }}
-                              >
-                                Supply {symbol} and start Earning
-                              </Button>
-                            </Link>
-                          )}
-                        </div>
-                      </TableCell>
+                            )}
+                          </div>
+                        </TableCell>
 
-                      <TableCell
-                        width="41%"
-                        className={`position-multy-cell borrowing ${!marketVaultsUserData ? 'one-item' : ''}`}
-                      >
-                        <div className="cell-content">
-                          {marketVaultsUserData ? (
-                            <>
-                              <CommaNumber value={borrowAPR} endingText="%" />
-                              <CommaNumber value={marketVaultsUserData.borrowedAmount} beginningText="$" />
-                              <div className={`vault-status ${averageVaultStatus.status}`}>
-                                {averageVaultStatus.text}
-                              </div>
-                              <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`}>
-                                <Button kind={BUTTON_SIMPLE}>View</Button>
+                        <TableCell
+                          width="41%"
+                          className={`position-multy-cell borrowing ${!marketVaultsUserData ? 'one-item' : ''}`}
+                        >
+                          <div className="cell-content">
+                            {marketVaultsUserData ? (
+                              <>
+                                <CommaNumber value={borrowAPR} endingText="%" />
+                                <CommaNumber value={marketVaultsUserData.borrowedAmount} beginningText="$" />
+                                <div className={`vault-status ${averageVaultStatus.status}`}>
+                                  {averageVaultStatus.text}
+                                </div>
+                                <Link to={`/loans/${address}/${BORROW_TAB_ID}`}>
+                                  <Button kind={BUTTON_SIMPLE}>View</Button>
+                                </Link>
+                              </>
+                            ) : (
+                              <Link to={`/loans/${address}/${BORROW_TAB_ID}`}>
+                                <Button
+                                  kind={BUTTON_SIMPLE}
+                                  onClick={() =>
+                                    openCreateVaultPopup({
+                                      marketTokenAddress: loanTokenAddress,
+                                      avaliableLiquidity:
+                                        convertNumberForClient({ number: availableLiquidity, grade: decimals }) * rate,
+                                    })
+                                  }
+                                >
+                                  Create a vault and start borrowing
+                                </Button>
                               </Link>
-                            </>
-                          ) : (
-                            <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`}>
-                              <Button
-                                kind={BUTTON_SIMPLE}
-                                onClick={() =>
-                                  openCreateVaultPopup({
-                                    tokenAddress: loanTokenAddress,
-                                  })
-                                }
-                              >
-                                Create a vault and start borrowing
-                              </Button>
-                            </Link>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  },
+                )}
               </TableBody>
             ) : (
               <TableBody>

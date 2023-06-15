@@ -74,11 +74,18 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
   }
 
   .collateral-list {
-    padding-bottom: 20px;
+    overflow-y: auto;
     overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
-    row-gap: 45px;
+    row-gap: 40px;
+    max-height: 250px;
+    margin-bottom: 20px;
+    min-height: 100px;
+  }
+
+  .xtz-baker {
+    margin: 20px 0;
   }
 
   .creating-vault-loader-wrapper {
