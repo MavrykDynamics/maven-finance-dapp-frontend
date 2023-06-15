@@ -22,7 +22,8 @@ import { calcCollateralRatio, getCollateralRatioByPersentage } from 'pages/Loans
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 import { State } from 'reducers'
 import colors from 'styles/colors'
-import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const ConfirmBorrowAsset = ({
   closePopup,
@@ -33,33 +34,29 @@ export const ConfirmBorrowAsset = ({
   show: boolean
   data: ConfirmBorrowPopupDataType
 }) => {
-  useLockBodyScroll(show)
-  const dispatch = useDispatch()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  if (!data) return null
+  useLockBodyScroll(show)
+  const dispatch = useDispatch()
 
-  const {
-    vaultId,
-    borrowedTokenMetadata,
-    borrowCapacity,
-    inputAmount,
-    borrowedAmount,
-    collateralBalance,
-    borrowedTokenRate,
-    DAOFee,
-    scrollToCurrentVault,
-  } = data ?? {}
+  const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
-  const { symbol } = borrowedTokenMetadata
+  if (!data || !borrowedToken || !borrowedToken.rate) return null
 
-  const futureCollateralRatio = calcCollateralRatio(collateralBalance, borrowedAmount + inputAmount, borrowedTokenRate)
+  const { vaultId, borrowCapacity, inputAmount, borrowedAmount, collateralBalance, DAOFee, scrollToCurrentVault } =
+    data ?? {}
 
-  const futureBorrowCapacity = borrowCapacity - inputAmount * borrowedTokenRate
+  const { symbol, rate } = borrowedToken
+
+  const futureCollateralRatio = calcCollateralRatio(collateralBalance, borrowedAmount + inputAmount, rate)
+
+  const futureBorrowCapacity = borrowCapacity - inputAmount * rate
 
   const borrowAsserHandler = () => {
-    if (vaultId && checkWhetherTokenIsLoanToken(borrowedTokenMetadata)) {
-      dispatch(borrowVaultAssetAction(vaultId, inputAmount, borrowedTokenMetadata, closePopup, scrollToCurrentVault))
+    if (vaultId && checkWhetherTokenIsLoanToken(borrowedToken)) {
+      dispatch(borrowVaultAssetAction(vaultId, inputAmount, borrowedToken, closePopup, scrollToCurrentVault))
     }
   }
 
@@ -114,7 +111,7 @@ export const ConfirmBorrowAsset = ({
             <ThreeLevelListItem>
               <div className="name">USD Value</div>
               <CommaNumber
-                value={(inputAmount - inputAmount * (DAOFee / 100)) * borrowedTokenRate}
+                value={(inputAmount - inputAmount * (DAOFee / 100)) * rate}
                 className="value"
                 beginningText="$"
               />

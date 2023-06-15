@@ -8,7 +8,7 @@ import {
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
-import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import {
@@ -40,7 +40,10 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
 import { checkNan } from 'utils/checkNan'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { checkWhetherTokenIsCollateralToken } from 'providers/TokensProvider/helpers/tokens.utils'
+import {
+  checkWhetherTokenIsCollateralToken,
+  getTokenDataByAddress,
+} from 'providers/TokensProvider/helpers/tokens.utils'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -54,11 +57,12 @@ export const WithdrawCollateral = ({
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
-  useLockBodyScroll(show)
-  const dispatch = useDispatch()
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { userTokens } = useSelector((state: State) => state.wallet.user)
+
+  useLockBodyScroll(show)
+  const dispatch = useDispatch()
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
@@ -70,21 +74,26 @@ export const WithdrawCollateral = ({
     }
   }, [show])
 
-  if (!data) return null
+  const borrowedToken = getTokenDataByAddress({
+    tokenAddress: data?.borrowedTokenAddress,
+    tokensMetadata,
+    tokensPrices,
+  })
+  const collateralToken = getTokenDataByAddress({
+    tokenAddress: data?.collateralTokenAddress,
+    tokensMetadata,
+    tokensPrices,
+  })
 
-  const {
-    collateralTokenAddress,
-    borrowedTokenRate,
-    vaultAddress,
-    collateralBalance,
-    collateralRatio,
-    borrowedAmount,
-  } = data ?? {}
+  if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
+
+  const { vaultAddress, collateralBalance, collateralRatio, borrowedAmount } = data ?? {}
+
+  const { rate: collateralRate, decimals, symbol, name, icon } = collateralToken
+  const { rate: borrowedTokenRate } = borrowedToken
 
   // TODO: use users balance
   const userCollateralBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
-  const collateralToken = tokensMetadata[collateralTokenAddress]
-  const collateralRate = tokensPrices[collateralToken.symbol]
 
   const futureCollateralRatio = calcCollateralRatio(
     collateralBalance - inputAmount * collateralRate,
@@ -111,7 +120,7 @@ export const WithdrawCollateral = ({
       inputAmount: newInputAmount,
       maxAmount,
       options: {
-        byDecimalPlaces: collateralToken.decimals || assetDecimalsToShow,
+        byDecimalPlaces: decimals,
       },
     })
 
@@ -197,10 +206,10 @@ export const WithdrawCollateral = ({
               }}
               settings={{
                 balance: userCollateralBalance,
-                balanceAsset: collateralToken.name,
+                balanceAsset: name,
                 useMaxHandler: () =>
                   inputOnChangeHandle(
-                    getLoansInputMaxAmount(currentCollateralToWithdraw, collateralToken.decimals),
+                    getLoansInputMaxAmount(currentCollateralToWithdraw, decimals),
                     currentCollateralToWithdraw,
                   ),
                 inputStatus: inputData.validationStatus,
@@ -209,8 +218,7 @@ export const WithdrawCollateral = ({
               }}
             >
               <InputPinnedTokenInfo>
-                <ImageWithPlug imageLink={collateralToken.icon} alt={`${collateralToken.name} icon`} />{' '}
-                {collateralToken.name}
+                <ImageWithPlug imageLink={icon} alt={`${name} icon`} /> {name}
               </InputPinnedTokenInfo>
             </Input>
           ) : null}

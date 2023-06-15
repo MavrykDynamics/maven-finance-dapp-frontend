@@ -64,10 +64,10 @@ export const AddNewCollateral = ({
 
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
 
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
+
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-
-  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   const [selectedCollateral, setSelectedCollateral] = useState<TokenAddressType | undefined>()
   const [inputData, setInputData] = useState<{
@@ -88,6 +88,7 @@ export const AddNewCollateral = ({
     }
   }, [show])
 
+  // TODO: consider esctract to hook, cuz it's repeated twice (2nd create vault)
   const mappedAvaliableCollaterals = useMemo(() => {
     if (!data) return {}
 
@@ -132,6 +133,19 @@ export const AddNewCollateral = ({
     return reducedCollaterals
   }, [collateralTokens, data, selectedCollateral, tokensMetadata, tokensPrices])
 
+  const borrowedToken = getTokenDataByAddress({
+    tokenAddress: data?.borrowedTokenAddress,
+    tokensMetadata,
+    tokensPrices,
+  })
+  const collateralToken = getTokenDataByAddress({
+    tokenAddress: selectedCollateral,
+    tokensMetadata,
+    tokensPrices,
+  })
+
+  if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
+
   if (!data) return null
 
   const {
@@ -139,16 +153,12 @@ export const AddNewCollateral = ({
     vaultAddress,
     collateralRatio = 0,
     borrowedAmount = 0,
-    borrowedTokenRate = 0,
     availableLiquidity = 0,
     borrowCapacity = 0,
   } = data
 
-  const collateralToken = getTokenDataByAddress({ tokenAddress: selectedCollateral, tokensMetadata, tokensPrices })
-
-  if (!collateralToken || !collateralToken.rate) return null
-
   const { symbol, decimals, rate } = collateralToken
+  const { rate: borrowedTokenRate } = borrowedToken
 
   // TODO: handle user balance
   const userCollateralBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
@@ -215,7 +225,6 @@ export const AddNewCollateral = ({
       amount: getOnFocusValue(inputData.amount),
     })
 
-  // TODO: test it
   const clickOnInputDDItem = (id: DDItemId) => (typeof id === 'string' ? setSelectedCollateral(id) : null)
 
   const isDepositBtnDisabled =

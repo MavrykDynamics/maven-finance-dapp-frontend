@@ -20,8 +20,8 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 import { State } from 'reducers'
 import colors from 'styles/colors'
-import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const ConfirmRepayFull = ({
   closePopup,
@@ -32,35 +32,27 @@ export const ConfirmRepayFull = ({
   show: boolean
   data: ConfirmRepayFullPopupDataType
 }) => {
-  useLockBodyScroll(show)
-  const dispatch = useDispatch()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  if (!data) return null
+  useLockBodyScroll(show)
+  const dispatch = useDispatch()
 
-  const {
-    vaultId,
-    vaultAddress,
-    borrowedTokenMetadata,
-    borrowedTokenRate,
-    borrowedAmount,
-    collateralBalance,
-    borrowCapacity,
-    totalOutstanding,
-  } = data
+  const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
-  const { symbol } = borrowedTokenMetadata
+  if (!data || !borrowedToken || !borrowedToken.rate) return null
 
-  const convertedBorrowedAmount = convertNumberForClient
+  const { vaultId, vaultAddress, collateralBalance, borrowCapacity, borrowedAmount, totalOutstanding } = data
 
-  const futureCollateralRatio = calcCollateralRatio(collateralBalance, 0, borrowedTokenRate)
+  const { symbol, rate } = borrowedToken
+
+  const futureCollateralRatio = calcCollateralRatio(collateralBalance, 0, rate)
   const futureBorrowCapacity = Math.max(borrowCapacity + borrowedAmount, 0)
 
   const repayBtnHandler = async () => {
-    if (vaultId && vaultAddress && checkWhetherTokenIsLoanToken(borrowedTokenMetadata)) {
-      await dispatch(
-        repayFullAndCloseVaultAction(vaultId, vaultAddress, totalOutstanding, borrowedTokenMetadata, closePopup),
-      )
+    if (vaultId && vaultAddress && checkWhetherTokenIsLoanToken(borrowedToken)) {
+      await dispatch(repayFullAndCloseVaultAction(vaultId, vaultAddress, totalOutstanding, borrowedToken, closePopup))
     }
   }
 
@@ -88,7 +80,7 @@ export const ConfirmRepayFull = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem className="right">
               <div className="name">USD Value</div>
-              <CommaNumber value={totalOutstanding * borrowedTokenRate} className="value" beginningText="$" />
+              <CommaNumber value={totalOutstanding * rate} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </div>
 

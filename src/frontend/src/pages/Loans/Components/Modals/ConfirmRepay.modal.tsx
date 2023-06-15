@@ -20,7 +20,8 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 import { State } from 'reducers'
 import colors from 'styles/colors'
-import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const ConfirmRepay = ({
   closePopup,
@@ -32,16 +33,17 @@ export const ConfirmRepay = ({
   data: ConfirmRepayPartPopupDataType
 }) => {
   useLockBodyScroll(show)
+  const { tokensMetadata, tokensPrices } = useTokensContext()
   const dispatch = useDispatch()
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  if (!data) return null
+  const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
+
+  if (!data || !borrowedToken || !borrowedToken.rate) return null
 
   const {
     vaultId,
     vaultAddress,
-    borrowedTokenMetadata,
-    borrowedTokenRate,
     collateralBalance,
     borrowCapacity,
     borrowedAmount,
@@ -49,22 +51,15 @@ export const ConfirmRepay = ({
     scrollToCurrentVault,
   } = data
 
-  const { symbol } = borrowedTokenMetadata
+  const { symbol, rate } = borrowedToken
 
-  const futureCollateralRatio = calcCollateralRatio(collateralBalance, borrowedAmount - inputAmount, borrowedTokenRate)
+  const futureCollateralRatio = calcCollateralRatio(collateralBalance, borrowedAmount - inputAmount, rate)
   const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
 
   const repayBtnHandler = async () => {
-    if (vaultId && vaultAddress && checkWhetherTokenIsLoanToken(borrowedTokenMetadata)) {
+    if (vaultId && vaultAddress && checkWhetherTokenIsLoanToken(borrowedToken)) {
       await dispatch(
-        repayPartOfVaultAction(
-          vaultId,
-          vaultAddress,
-          inputAmount,
-          borrowedTokenMetadata,
-          closePopup,
-          scrollToCurrentVault,
-        ),
+        repayPartOfVaultAction(vaultId, vaultAddress, inputAmount, borrowedToken, closePopup, scrollToCurrentVault),
       )
     }
   }
@@ -91,7 +86,7 @@ export const ConfirmRepay = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem className="right">
               <div className="name">USD Value</div>
-              <CommaNumber value={inputAmount * borrowedTokenRate} className="value" beginningText="$" />
+              <CommaNumber value={inputAmount * rate} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </div>
 

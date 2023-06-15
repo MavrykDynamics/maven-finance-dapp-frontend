@@ -20,7 +20,17 @@ export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscrip
 }
 
 // Normalizing tokens metadata
-// TODO: farms tokens
+/**
+ *
+ * @param tokensFromGql list from tokens from indexer containing all metadata for token and fields to check whether token is
+ * loan token, collateral token, m token,
+ *
+ * TODO: add farm tokens here, lack of info now
+ * TODO: add more details for how tokens normalization works
+ * @returns tokensMetadata – dictionary of tokens where key token address, value token metadata
+ * collateralTokens – array of addresses of collateral tokens
+ * mTokens – array of addresses of mTokens
+ */
 export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscription['token']) => {
   return tokensFromGql.reduce<Pick<TokensContext, 'tokensMetadata' | 'collateralTokens' | 'mTokens'>>(
     (
@@ -42,6 +52,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         if (!tokenType) {
           throw new Error('Token is invalid token type, not in range tez | fa2 | fa12')
         }
+
         // parsing metadata schema, to have icon and decimals for token
         const parsedMetadata = tokenMetadataSchema.parse(metadata)
 

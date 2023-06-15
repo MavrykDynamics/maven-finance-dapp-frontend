@@ -4,7 +4,7 @@ import { State } from 'reducers'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import {
   INPUT_LARGE,
   INPUT_STATUS_ERROR,
@@ -39,7 +39,10 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
 import { checkNan } from 'utils/checkNan'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { checkWhetherTokenIsCollateralToken } from 'providers/TokensProvider/helpers/tokens.utils'
+import {
+  checkWhetherTokenIsCollateralToken,
+  getTokenDataByAddress,
+} from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
@@ -52,12 +55,12 @@ export const AddCollateral = ({
   show: boolean
   data: AddCollateralPopupDataType
 }) => {
-  useLockBodyScroll(show)
-
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
-  const dispatch = useDispatch()
   const { userTokens } = useSelector((state: State) => state.wallet.user)
+
+  const dispatch = useDispatch()
+  useLockBodyScroll(show)
 
   // TODO: add user balance
   const userCollateralBalance = 0 //userTokens[collateralToken?.symbol.toLowerCase() ?? '']?.balance ?? 0
@@ -70,21 +73,23 @@ export const AddCollateral = ({
     }
   }, [show])
 
-  if (!data) return null
+  const borrowedToken = getTokenDataByAddress({
+    tokenAddress: data?.borrowedTokenAddress,
+    tokensMetadata,
+    tokensPrices,
+  })
+  const collateralToken = getTokenDataByAddress({
+    tokenAddress: data?.collateralTokenAddress,
+    tokensMetadata,
+    tokensPrices,
+  })
 
-  const {
-    collateralTokenAddress,
-    collateralBalance,
-    vaultAddress,
-    collateralRatio,
-    borrowedAmount,
-    borrowedTokenRate,
-    borrowCapacity,
-    availableLiquidity,
-  } = data
+  if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
 
-  const collateralToken = tokensMetadata[collateralTokenAddress]
-  const collateralRate = tokensPrices[collateralToken.symbol]
+  const { collateralBalance, vaultAddress, collateralRatio, borrowedAmount, borrowCapacity, availableLiquidity } = data
+
+  const { rate: collateralRate, decimals, symbol, name, icon } = collateralToken
+  const { rate: borrowedTokenRate } = borrowedToken
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const futureCollateralRatio = calcCollateralRatio(
@@ -105,7 +110,7 @@ export const AddCollateral = ({
       inputAmount: newInputAmount,
       maxAmount,
       options: {
-        byDecimalPlaces: collateralToken?.decimals || assetDecimalsToShow,
+        byDecimalPlaces: decimals,
       },
     })
 
@@ -143,7 +148,7 @@ export const AddCollateral = ({
               type: collateralToken.type,
               amount: convertNumberForContractCall({
                 number: Number(inputData.amount),
-                grade: collateralToken.decimals,
+                grade: decimals,
               }),
             },
           ],
@@ -197,7 +202,7 @@ export const AddCollateral = ({
           <hr />
 
           <Input
-            className={`${collateralRate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
+            className={`input-with-rate pinned-dropdown mb-45`}
             inputProps={{
               value: inputData.amount,
               type: 'number',
@@ -207,20 +212,16 @@ export const AddCollateral = ({
             }}
             settings={{
               balance: userCollateralBalance,
-              balanceAsset: collateralToken?.name,
+              balanceAsset: symbol,
               useMaxHandler: () =>
-                inputOnChangeHandle(
-                  getLoansInputMaxAmount(userCollateralBalance, collateralToken?.decimals),
-                  userCollateralBalance,
-                ),
+                inputOnChangeHandle(getLoansInputMaxAmount(userCollateralBalance, decimals), userCollateralBalance),
               inputStatus: inputData.validationStatus,
               convertedValue: inputAmount * (collateralRate ?? 1),
               inputSize: INPUT_LARGE,
             }}
           >
             <InputPinnedTokenInfo>
-              <ImageWithPlug imageLink={collateralToken?.icon} alt={`${collateralToken?.name} icon`} />{' '}
-              {collateralToken?.name}
+              <ImageWithPlug imageLink={icon} alt={`${name} icon`} /> {name}
             </InputPinnedTokenInfo>
           </Input>
 

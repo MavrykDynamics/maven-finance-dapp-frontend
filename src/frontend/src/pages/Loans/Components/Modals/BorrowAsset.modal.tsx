@@ -42,7 +42,8 @@ import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import colors from 'styles/colors'
 import { checkNan } from 'utils/checkNan'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
 export const BorrowAsset = ({
@@ -54,10 +55,13 @@ export const BorrowAsset = ({
   show: boolean
   data: BorrowPopupDataType
 }) => {
-  useLockBodyScroll(show)
-  const dispatch = useDispatch()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { userTokens } = useSelector((state: State) => state.wallet.user)
+
+  useLockBodyScroll(show)
+  const dispatch = useDispatch()
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
@@ -69,7 +73,9 @@ export const BorrowAsset = ({
     }
   }, [show])
 
-  if (!data) return null
+  const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
+
+  if (!data || !borrowedToken || !borrowedToken.rate) return null
 
   const {
     vaultId,
@@ -77,14 +83,12 @@ export const BorrowAsset = ({
     borrowCapacity,
     collateralRatio,
     collateralBalance,
-    borrowedTokenMetadata,
-    borrowedTokenRate,
     scrollToCurrentVault,
     borrowAPR,
     DAOFee,
   } = data
 
-  const { symbol, decimals, icon } = borrowedTokenMetadata
+  const { symbol, decimals, icon, rate } = borrowedToken
 
   const convertedBorrowedAmount = convertNumberForClient({ number: borrowedAmount, grade: decimals }),
     inputAmount = checkNan(parseFloat(inputData.amount))
@@ -92,12 +96,8 @@ export const BorrowAsset = ({
   // TODO: use user balances
   const userAssetBalance = 0 // userTokens[balanceSymbol]?.balance ?? 0
 
-  const futureCollateralRatio = calcCollateralRatio(
-    collateralBalance,
-    convertedBorrowedAmount + inputAmount,
-    borrowedTokenRate,
-  )
-  const futureBorrowCapacity = borrowCapacity - inputAmount * borrowedTokenRate
+  const futureCollateralRatio = calcCollateralRatio(collateralBalance, convertedBorrowedAmount + inputAmount, rate)
+  const futureBorrowCapacity = borrowCapacity - inputAmount * rate
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
@@ -134,10 +134,8 @@ export const BorrowAsset = ({
   const backBtnHandler = () => setShownScreen('initial')
 
   const borrowAsserHandler = async () => {
-    if (vaultId && checkWhetherTokenIsLoanToken(borrowedTokenMetadata)) {
-      await dispatch(
-        borrowVaultAssetAction(vaultId, inputAmount, borrowedTokenMetadata, closePopup, scrollToCurrentVault),
-      )
+    if (vaultId && checkWhetherTokenIsLoanToken(borrowedToken)) {
+      await dispatch(borrowVaultAssetAction(vaultId, inputAmount, borrowedToken, closePopup, scrollToCurrentVault))
     }
   }
 
@@ -189,24 +187,21 @@ export const BorrowAsset = ({
 
               <div className="block-name">Select the amount to borrow</div>
               <Input
-                className={`${borrowedTokenRate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
+                className={`input-with-rate pinned-dropdown mb-45`}
                 inputProps={{
                   value: inputData.amount,
                   type: 'number',
                   onBlur: inputOnBlurHandle,
                   onFocus: onFocusHandler,
-                  onChange: (e) => inputOnChangeHandle(e.target.value, borrowCapacity / borrowedTokenRate),
+                  onChange: (e) => inputOnChangeHandle(e.target.value, borrowCapacity / rate),
                 }}
                 settings={{
                   balance: userAssetBalance,
                   balanceAsset: symbol,
                   useMaxHandler: () =>
-                    inputOnChangeHandle(
-                      getLoansInputMaxAmount(borrowCapacity / borrowedTokenRate, decimals),
-                      borrowCapacity / borrowedTokenRate,
-                    ),
+                    inputOnChangeHandle(getLoansInputMaxAmount(borrowCapacity / rate, decimals), borrowCapacity / rate),
                   inputStatus: inputData.validationStatus,
-                  convertedValue: inputAmount * borrowedTokenRate,
+                  convertedValue: inputAmount * rate,
                   inputSize: INPUT_LARGE,
                 }}
               >
@@ -241,7 +236,7 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
               </VaultModalOverview>
 
-              {inputAmount > borrowCapacity / borrowedTokenRate || futureCollateralRatio < 200 ? (
+              {inputAmount > borrowCapacity / rate || futureCollateralRatio < 200 ? (
                 <StatusMessageStyled className={`${vaultsStatuses.LIQUIDATABLE} borrow-message`}>
                   <Icon id="error-triangle" />
                   {futureCollateralRatio < 200
@@ -309,7 +304,7 @@ export const BorrowAsset = ({
                 <ThreeLevelListItem>
                   <div className="name">USD Value</div>
                   <CommaNumber
-                    value={(inputAmount - inputAmount * (DAOFee / 100)) * borrowedTokenRate}
+                    value={(inputAmount - inputAmount * (DAOFee / 100)) * rate}
                     className="value"
                     beginningText="$"
                   />

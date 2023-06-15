@@ -17,7 +17,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { LENDING_APY } from 'texts/tooltips/loan.text'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 export const ConfirmAddLendingAsset = ({
   closePopup,
@@ -33,11 +33,11 @@ export const ConfirmAddLendingAsset = ({
 
   const dispatch = useDispatch()
 
-  if (!data) return null
+  const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata })
 
-  const { tokenAddress, mBalance, inputAmount, lendingAPY } = data
+  if (!data || !loanToken || !loanToken.rate) return null
 
-  const loanToken = tokensMetadata[tokenAddress]
+  const { mBalance, inputAmount, lendingAPY } = data
   const { symbol } = loanToken
 
   const depositHandler = () => {

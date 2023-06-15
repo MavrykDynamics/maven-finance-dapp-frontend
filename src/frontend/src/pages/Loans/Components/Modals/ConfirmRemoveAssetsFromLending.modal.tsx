@@ -13,7 +13,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const ConfirmRemoveAssetsFromLending = ({
@@ -30,13 +30,12 @@ export const ConfirmRemoveAssetsFromLending = ({
 
   const dispatch = useDispatch()
 
-  if (!data) return null
+  const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
-  const { tokenAddress, currentLendedAmount, inputAmount } = data
+  if (!data || !loanToken || !loanToken.rate) return null
 
-  const loanToken = tokensMetadata[tokenAddress]
-  const { symbol } = loanToken
-  const rate = tokensPrices[symbol]
+  const { currentLendedAmount, inputAmount } = data
+  const { symbol, rate } = loanToken
 
   const withdrawHandler = () => {
     if (checkWhetherTokenIsLoanToken(loanToken)) {

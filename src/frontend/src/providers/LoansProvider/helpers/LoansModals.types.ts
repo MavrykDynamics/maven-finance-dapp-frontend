@@ -13,13 +13,12 @@ export const DEFAULT_LOANS_INPUT_VALUE = {
 // Vaults actions popups data types
 export type ConfirmBorrowPopupDataType = {
   vaultId: number
-  borrowedTokenMetadata: TokenMetadataType
+  tokenAddress: TokenAddressType
   borrowedAmount: number
   collateralBalance: number
   borrowCapacity: number
   inputAmount: number
   DAOFee: number
-  borrowedTokenRate: number
   scrollToCurrentVault?: () => void
 } | null
 
@@ -27,30 +26,28 @@ export type ConfirmRepayPartPopupDataType = {
   inputAmount: number
   vaultId: number
   vaultAddress: string
-  borrowedTokenMetadata: TokenMetadataType
+  tokenAddress: TokenAddressType
   borrowedAmount: number
   collateralBalance: number
   borrowCapacity: number
   totalOutstanding: number
-  borrowedTokenRate: number
   scrollToCurrentVault?: () => void
 } | null
 
 export type ConfirmRepayFullPopupDataType = {
   vaultId: number
   vaultAddress: string
-  borrowedTokenMetadata: TokenMetadataType
+  tokenAddress: TokenAddressType
   borrowedAmount: number
   collateralBalance: number
   borrowCapacity: number
   totalOutstanding: number
-  borrowedTokenRate: number
 } | null
 
 export type AddCollateralPopupDataType = {
   vaultAddress: string
   availableLiquidity: number
-  borrowedTokenRate: number
+  borrowedTokenAddress: TokenAddressType
   collateralBalance: number
   borrowCapacity: number
   borrowedAmount: number
@@ -64,7 +61,7 @@ export type AddNewCollateralDataProps = {
   borrowCapacity: number
   borrowedAmount: number
   collateralRatio: number
-  borrowedTokenRate: number
+  borrowedTokenAddress: TokenAddressType
   availableLiquidity: number
   collateralData: LoansVaultType['collateralData']
 } | null
@@ -73,7 +70,7 @@ export type WithdrawCollateralPopupDataType = {
   vaultAddress: string
   amountToWitdraw: number
   borrowedAmount: number
-  borrowedTokenRate: number
+  borrowedTokenAddress: TokenAddressType
   collateralBalance: number
   collateralRatio: number
   collateralTokenAddress: TokenAddressType
@@ -81,12 +78,11 @@ export type WithdrawCollateralPopupDataType = {
 
 export type BorrowPopupDataType = {
   vaultId: number
-  borrowedTokenMetadata: TokenMetadataType
+  tokenAddress: TokenAddressType
   borrowedAmount: number
   collateralBalance: number
   borrowCapacity: number
   collateralRatio: number
-  borrowedTokenRate: number
   borrowAPR: number
   DAOFee: number
   scrollToCurrentVault?: () => void

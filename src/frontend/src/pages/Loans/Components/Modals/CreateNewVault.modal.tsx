@@ -75,16 +75,15 @@ export const CreateNewVault = ({
 
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
 
-  useLockBodyScroll(show)
-
-  const dispatch = useDispatch()
-
   const {
     vaults: { myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
   const { userTokens } = useSelector((state: State) => state.wallet.user)
 
-  const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(ADD_COLLATERAL_SCREEN_ID)
+  useLockBodyScroll(show)
+  const dispatch = useDispatch()
+
+  const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [vaultName, setVaultName] = useState<{ name: string; validationStatus: InputStatusType; errorMessage: string }>(
     {
       name: '',
@@ -101,13 +100,14 @@ export const CreateNewVault = ({
 
   useEffect(() => {
     if (!show) {
-      // setShownScreen(INITIAL_SCREEN_ID)
+      setShownScreen(INITIAL_SCREEN_ID)
       setVaultCreating(false)
       setNewVaultAddress('')
       setVaultName({ name: '', validationStatus: '', errorMessage: '' })
     }
   }, [show])
 
+  // TODO: consider esctract to hook, cuz it's repeated twice (2nd create vault)
   const mappedAvaliableCollaterals = useMemo(() => {
     let firstNotDisabledCollateralAddress: string | null = null
 
@@ -163,7 +163,6 @@ export const CreateNewVault = ({
       ),
   )
 
-  // stuff to handle add collateral btn
   const nextAvaliableCollateralToAdd = Object.values(mappedAvaliableCollaterals).find(
     ({ disabled, tokenAddress }) => disabled === false && !selectedCollateralsAddresses.includes(tokenAddress),
   )
@@ -195,7 +194,6 @@ export const CreateNewVault = ({
     }
   }
 
-  //handle vaultName input TODO: mb add debounce cuz of find operation
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     const validationStatus = validateVaultLength(value, myVaultsIds, vaultsMapper)

@@ -178,6 +178,7 @@ export const LoansBorrow = () => {
     [loanTokens, marketCollateralChart, tokenTotals, tokensMetadata, tokensPrices],
   )
 
+  // TODO: check this method with @CasualJackie
   const handleBorrow = (marketTokenAddress: string) => {
     const validVaultId = myVaultsIds.find((vaultId) => {
       const vault = vaultsMapper[vaultId]
@@ -249,12 +250,11 @@ export const LoansBorrow = () => {
 
     openBorrowPopup({
       vaultId: vault.vaultId,
-      borrowedTokenMetadata: marketToken,
+      tokenAddress: marketTokenAddress,
       borrowedAmount: convertedBorrowedAmount,
       collateralBalance,
       borrowCapacity,
       collateralRatio,
-      borrowedTokenRate: rate,
       DAOFee,
       borrowAPR: vault.apr,
     })

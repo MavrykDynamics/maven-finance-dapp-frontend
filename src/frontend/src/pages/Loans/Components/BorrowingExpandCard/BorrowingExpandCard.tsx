@@ -315,11 +315,10 @@ export const BorrowingExpandCard = ({
     openConfirmBorrowPopup({
       inputAmount,
       vaultId: vault.vaultId,
-      borrowedTokenMetadata: borrowedToken,
+      tokenAddress: borrowedTokenAddress,
       borrowedAmount: convertedBorrowedAmount,
       collateralBalance,
       borrowCapacity,
-      borrowedTokenRate,
       DAOFee,
       scrollToCurrentVault,
     })
@@ -330,12 +329,11 @@ export const BorrowingExpandCard = ({
       inputAmount,
       vaultId: vault.vaultId,
       vaultAddress: vault.address,
-      borrowedTokenMetadata: borrowedToken,
+      tokenAddress: borrowedTokenAddress,
       borrowedAmount: convertedBorrowedAmount,
       collateralBalance,
       borrowCapacity,
       totalOutstanding: convertedFee + convertedBorrowedAmount,
-      borrowedTokenRate,
       scrollToCurrentVault,
     })
   }
@@ -344,12 +342,11 @@ export const BorrowingExpandCard = ({
     openConfirmRepayFullPopup({
       vaultId: vault.vaultId,
       vaultAddress: vault.address,
-      borrowedTokenMetadata: borrowedToken,
+      tokenAddress: borrowedTokenAddress,
       borrowedAmount: convertedBorrowedAmount,
       collateralBalance,
       borrowCapacity,
       totalOutstanding: convertedBorrowedAmount + convertedFee,
-      borrowedTokenRate,
     })
   }
 
@@ -359,7 +356,7 @@ export const BorrowingExpandCard = ({
       borrowedAmount: convertedBorrowedAmount,
       collateralBalance,
       collateralRatio,
-      borrowedTokenRate,
+      borrowedTokenAddress,
       availableLiquidity: convertedAvailableLiquidity,
       borrowCapacity,
       collateralData: vault.collateralData,
@@ -372,7 +369,7 @@ export const BorrowingExpandCard = ({
       borrowedAmount: convertedBorrowedAmount,
       collateralBalance,
       collateralRatio,
-      borrowedTokenRate,
+      borrowedTokenAddress,
       availableLiquidity: convertedAvailableLiquidity,
       borrowCapacity,
       collateralTokenAddress: collateralData[idx].tokenAddress,
@@ -385,7 +382,7 @@ export const BorrowingExpandCard = ({
       borrowedAmount: convertedBorrowedAmount,
       collateralBalance,
       collateralRatio,
-      borrowedTokenRate,
+      borrowedTokenAddress,
       amountToWitdraw: amount,
       collateralTokenAddress: collateralData[idx].tokenAddress,
     })

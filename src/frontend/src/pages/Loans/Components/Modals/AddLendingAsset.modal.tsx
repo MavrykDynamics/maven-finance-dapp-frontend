@@ -32,7 +32,7 @@ import { depositLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.acti
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
@@ -59,13 +59,12 @@ export const AddLendingAsset = ({
     }
   }, [show])
 
-  if (!data) return null
+  const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
-  const { mBalance, lendingAPY, tokenAddress } = data
+  if (!data || !loanToken || !loanToken.rate) return null
 
-  const loanToken = tokensMetadata[tokenAddress]
-  const { symbol, icon, decimals } = loanToken
-  const tokenRate = tokensPrices[symbol]
+  const { mBalance, lendingAPY } = data
+  const { symbol, icon, decimals, rate } = loanToken
 
   const isDepositDisabled = inputData.validationStatus !== INPUT_STATUS_SUCCESS
 
@@ -88,19 +87,17 @@ export const AddLendingAsset = ({
     })
   }
 
-  const inputOnBlurHandle = () => {
+  const inputOnBlurHandle = () =>
     setInputData({
       ...inputData,
       amount: getOnBlurValue(inputData.amount),
     })
-  }
 
-  const onFocusHandler = () => {
+  const onFocusHandler = () =>
     setInputData({
       ...inputData,
       amount: getOnFocusValue(inputData.amount),
     })
-  }
 
   const depositHandler = () => {
     if (checkWhetherTokenIsLoanToken(loanToken)) {
@@ -123,7 +120,7 @@ export const AddLendingAsset = ({
           </div>
 
           <Input
-            className={`${tokenRate ? 'input-with-tokenRate' : ''} pinned-dropdown`}
+            className={`input-with-tokenRate pinned-dropdown`}
             inputProps={{
               value: inputData.amount,
               type: 'number',
@@ -137,7 +134,7 @@ export const AddLendingAsset = ({
               useMaxHandler: () => onChangeHandler(getLoansInputMaxAmount(tokenBalance, decimals), tokenBalance),
               inputStatus: inputData.validationStatus,
               inputSize: INPUT_LARGE,
-              ...(tokenRate ? { convertedValue: tokenRate * Number(inputData.amount) } : {}),
+              convertedValue: rate * Number(inputData.amount),
             }}
           >
             <InputPinnedTokenInfo>
