@@ -35,7 +35,6 @@ import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.
 import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
-import { getTokensForDAPP } from 'reducers/actions/getTokens.actions'
 
 export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
@@ -64,12 +63,7 @@ const AppContainer = () => {
       // Needs to be fetched before promise all
       await dispatch(getContractAddressesStorage())
       // Fetching initial&common data for DAPP
-      await Promise.all([
-        // TODO: idk whether we still need this, but better to remove it after satellites live update task is done
-        dispatch(getSatellitesStorage()),
-
-        dispatch(getTokensForDAPP()),
-      ])
+      await dispatch(getSatellitesStorage())
 
       // For using Beacon wallet
       if (
