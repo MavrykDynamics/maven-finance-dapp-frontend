@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useSubscription } from '@apollo/client'
 import dayjs from 'dayjs'
 
-import { LEND_BORROW_24H_DIFF } from 'gql/subscriptions/loans.queries'
+import { LEND_BORROW_24H_DIFF } from 'providers/LoansProvider/queries/loansHistory.query'
 
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { calcDiffBetweenTwoNumbersInPersentage, convertNumberForClient } from 'utils/calcFunctions'

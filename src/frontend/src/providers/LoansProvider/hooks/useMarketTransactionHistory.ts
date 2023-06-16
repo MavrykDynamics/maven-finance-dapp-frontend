@@ -8,7 +8,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { LoansMarketTransactionHistoryArgs, LoansMarketTransactionHistoryType } from '../helpers/loans.types'
 
 // consts & helpers
-import { GET_LOANS_HISTORY_FOR_MARKET_DATA } from 'gql/subscriptions/loans.queries'
+import { GET_LOANS_HISTORY_FOR_MARKET_DATA } from 'providers/LoansProvider/queries/loansHistory.query'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { parseDate } from 'utils/time'
 import { getDescrByType } from '../helpers/loans.utils'

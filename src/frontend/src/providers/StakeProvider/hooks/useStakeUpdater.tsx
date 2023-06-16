@@ -28,7 +28,7 @@ import {
   SUBSCRIPTION_STAKE_HISTORY,
   SUBSCRIPTION_ADDRESS_BALANCE_DATA,
   SUBSCRIPTION_MVK_TOKEN_TOTAL,
-} from 'gql/subscriptions/stakingData'
+} from 'providers/StakeProvider/queries/doorman.query'
 
 /**
  * Subscriptions are canceled on component unmount!

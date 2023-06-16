@@ -11,7 +11,7 @@ import { LoansChartsType, UseLoansChartsStateType } from '../helpers/loans.types
 
 // consts & helpers
 import { COLLATERAL_HISTORY_DATA_TYPES, DEFAULT_LOANS_CHARTS_STATE, ONE_DAY_IN_MS } from '../helpers/loans.const'
-import { GET_LOANS_HISTORY_DATA } from 'gql/subscriptions/loans.queries'
+import { GET_LOANS_HISTORY_DATA } from 'providers/LoansProvider/queries/loansHistory.query'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
