@@ -1,7 +1,10 @@
 import { useEffect } from 'react'
-import { useDAPPConfigContext } from '../dappConfig.provider'
 import { useQuery } from '@apollo/client'
-import { GET_MAX_LENGTHS_QUERY, GET_MVK_FAUCET_QUERY } from 'gql/queries'
+
+import { useDAPPConfigContext } from '../dappConfig.provider'
+
+import { GET_MVK_FAUCET_QUERY } from 'providers/TokensProvider/queries/mvkFauset.query'
+import { GET_MAX_LENGTHS_QUERY } from '../queries/maxLenghts.query'
 
 /**
  * @useDappInit loand data that is considered as needed across the whole DAPP

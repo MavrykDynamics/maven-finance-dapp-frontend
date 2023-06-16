@@ -6,7 +6,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useEffect, useState } from 'react'
 import { SUB_SUBSCRIBE, SUB_SKIP, SUB_QUERY } from 'utils/api/apollo.consts'
 import { TokensSubscriptionSkipsType } from '../helpers/tokens.types'
-import { SUBSCRIBE_TOKENS_METADATA } from 'gql/queries'
+import { SUBSCRIBE_TOKENS_METADATA } from '../queries/tokens.query'
 
 export const useTokensUpdater = (
   { skipTokensMetadataSubscription }: TokensSubscriptionSkipsType = { skipTokensMetadataSubscription: SUB_SUBSCRIBE },

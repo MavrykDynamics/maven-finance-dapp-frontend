@@ -4,7 +4,7 @@ import { useSubscription } from '@apollo/client'
 import { useDataFeedsContext } from '../dataFeeds.provider'
 
 // subs
-import { SUBSCRIBE_FEEDS } from 'gql/queries/getFeedsStorage'
+import { SUBSCRIBE_FEEDS } from 'providers/DataFeedsProvider/queries/feeds.query'
 import { useEffect, useState } from 'react'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { FeedsSubscriptionSkipsType } from '../helpers/feeds.types'

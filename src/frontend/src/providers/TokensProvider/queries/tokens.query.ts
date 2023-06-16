@@ -32,11 +32,3 @@ export const SUBSCRIBE_TOKENS_METADATA = gql(`
     }
   }
 `)
-
-export const GET_MVK_FAUCET_QUERY = gql(`
-query MVKFaucet {
-  mvk_faucet{
-    address
-  }
-}
-`)

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useSubscription } from '@apollo/client'
 
-import { SUBSCRIBE_FEEDS_REWARDS_COUNT } from 'gql/queries'
 import { FeedsStatsSubsSkipsType } from '../helpers/feeds.types'
 import { SUB_QUERY, SUB_SKIP, SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
+import { SUBSCRIBE_FEEDS_REWARDS_COUNT } from '../queries/feeds.query'
 
 export const useFeedsStats = (
   { skipFeedsRewardsSubsciption }: FeedsStatsSubsSkipsType = {
