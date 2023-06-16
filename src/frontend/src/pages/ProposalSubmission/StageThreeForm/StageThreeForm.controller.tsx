@@ -71,12 +71,12 @@ export const StageThreeForm = ({
 
   const allowedTokensForDD = useMemo(() => {
     return Object.keys(treasuryTokens).reduce<Array<DropDownItemType>>((acc, tokenAddress) => {
-      const allowedToken = getTokenDataByAddress({ tokenAddress: tokenAddress, tokensMetadata })
+      const allowedToken = getTokenDataByAddress({ tokenAddress, tokensMetadata })
 
       if (!allowedToken) return acc
 
       acc.push({
-        content: <DropDownJsxChild>{tokensMetadata[tokenAddress].symbol}</DropDownJsxChild>,
+        content: <DropDownJsxChild>{allowedToken.symbol}</DropDownJsxChild>,
         id: tokenAddress,
       })
 

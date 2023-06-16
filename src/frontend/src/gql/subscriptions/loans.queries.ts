@@ -52,9 +52,9 @@ subscription getLoansHistoryData {
 
 // Loans market transaction history
 export const GET_LOANS_HISTORY_FOR_MARKET_DATA = gql(`
-subscription getLoansHistoryForMarketData($marketTokenAddress: String) {
+subscription getLoansHistoryForMarketData($marketTokenAddress: String, $userAddress: String) {
   lending_controller(where: {mock_time: {_eq: false}}) {
-    history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
+    history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, sender: {address: {_eq: $userAddress}}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
       type
       amount
       timestamp

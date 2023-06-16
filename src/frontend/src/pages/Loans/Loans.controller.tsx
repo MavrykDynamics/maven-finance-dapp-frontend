@@ -220,7 +220,8 @@ export const Loans = () => {
                     0,
                   )
 
-                  acc.loanTokenVaultsTotalBorrowed += vault.borrowedAmount * rate
+                  acc.loanTokenVaultsTotalBorrowed +=
+                    convertNumberForClient({ number: vault.borrowedAmount, grade: decimals }) * rate
                   return acc
                 },
                 {

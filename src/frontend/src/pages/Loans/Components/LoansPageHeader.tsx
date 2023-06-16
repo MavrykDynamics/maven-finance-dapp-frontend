@@ -11,6 +11,7 @@ import {
 
 import { ASSETS_WE_HAVE_BG_TO } from '../Loans.const'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 type MarketPageHeaderPropsType = {
   assetAddress: string
@@ -22,7 +23,11 @@ export const MarketPageHeader = ({ assetAddress }: MarketPageHeaderPropsType) =>
 
   const { tokensMetadata } = useTokensContext()
 
-  const { symbol, icon } = tokensMetadata[assetAddress]
+  const token = getTokenDataByAddress({ tokensMetadata, tokenAddress: assetAddress })
+
+  if (!token) return null
+
+  const { symbol, icon } = token
 
   // TODO: handle images we can display in header, by name
   const foregroundImageSrc = ASSETS_WE_HAVE_BG_TO.includes(symbol)

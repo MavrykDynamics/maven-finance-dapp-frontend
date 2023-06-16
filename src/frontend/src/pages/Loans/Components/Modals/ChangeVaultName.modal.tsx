@@ -28,12 +28,12 @@ export const ChangeVaultName = ({
   show: boolean
   data: ChangeVaultNamePopupDataType
 }) => {
-  const dispatch = useDispatch()
-  const { vaultAddress, vaultName } = data ?? {}
-
   const {
     vaults: { myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
+
+  const dispatch = useDispatch()
+  useLockBodyScroll(show)
 
   const [newVaultName, setNewVaultName] = useState<{
     name: string
@@ -45,31 +45,26 @@ export const ChangeVaultName = ({
     errorMessage: '',
   })
 
-  useLockBodyScroll(show)
   useEffect(() => {
     if (!show) {
       setNewVaultName({ name: '', validationStatus: '', errorMessage: '' })
     }
   }, [show])
 
-  // handle vaultName input TODO: mb add debounce cuz of find operation
+  if (!data) return null
+
+  const { vaultAddress, vaultName } = data
+
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     const validationStatus = validateVaultLength(value, myVaultsIds, vaultsMapper)
     setNewVaultName((prev) => ({ ...prev, name: value, validationStatus }))
   }
 
-  const changeVaultNameHandler = async () => {
-    if (!vaultAddress) return
-
-    await dispatch(
-      changeVaultNameAction(
-        newVaultName.name,
-        vaultAddress,
-
-        closePopup,
-      ),
-    )
+  const changeVaultNameHandler = () => {
+    if (!vaultAddress) {
+      dispatch(changeVaultNameAction(newVaultName.name, vaultAddress, closePopup))
+    }
   }
 
   const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -118,7 +113,7 @@ export const ChangeVaultName = ({
               kind={BUTTON_PRIMARY}
               form={BUTTON_WIDE}
               onClick={changeVaultNameHandler}
-              disabled={newVaultName.validationStatus !== INPUT_STATUS_SUCCESS}
+              disabled={newVaultName.validationStatus !== INPUT_STATUS_SUCCESS || !vaultAddress}
             >
               <Icon id="doubleCheckmark" />
               Change

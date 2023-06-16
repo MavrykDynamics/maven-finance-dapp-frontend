@@ -4,7 +4,7 @@ import { AddCollateral } from 'pages/Loans/Components/Modals/AddCollateral.modal
 import { AddLendingAsset } from 'pages/Loans/Components/Modals/AddLendingAsset.modal'
 import { AddNewCollateral } from 'pages/Loans/Components/Modals/AddNewCollateral.modal'
 import { BorrowAsset } from 'pages/Loans/Components/Modals/BorrowAsset.modal'
-import { ChangeBaker } from 'pages/Loans/Components/Modals/ChangeBaker'
+import { ChangeBaker } from 'pages/Loans/Components/Modals/ChangeBaker.modal'
 import { ChangeVaultName } from 'pages/Loans/Components/Modals/ChangeVaultName.modal'
 import { ConfirmAddLendingAsset } from 'pages/Loans/Components/Modals/ConfirmAddLendingAsset.modal'
 import { ConfirmBorrowAsset } from 'pages/Loans/Components/Modals/ConfirmBorrowAsset.modal'

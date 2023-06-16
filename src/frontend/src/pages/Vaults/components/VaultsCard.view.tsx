@@ -158,8 +158,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
       collateralBalance,
       collateralData,
       convertedBorrowedAmount,
-      borrowedTokenRate,
-      borrowedToken,
+      borrowedTokenAddress,
       liquidationPrice,
       ...restVault,
     }
@@ -223,12 +222,9 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     liquidationMax,
     liquidationReward,
     adminLiquidateFee,
+    borrowedTokenAddress,
     liquidationPrice,
-    borrowedToken,
-    borrowedTokenRate,
   } = vaultData
-
-  console.log({ status })
 
   const isActiveFooter =
     status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
@@ -242,8 +238,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     openLiquidateVaultPopup({
       vaultId,
       ownerAddress: ownerId,
-      borrowedTokenMetadata: borrowedToken,
-      borrowedTokenRate: borrowedTokenRate,
+      tokenAddress: borrowedTokenAddress,
       collateralBalance,
       collateralData,
       liquidationMax,

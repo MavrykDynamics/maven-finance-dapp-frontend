@@ -28,6 +28,7 @@ import { liquidateVault } from 'pages/Vaults/Vaults.actions'
 import { State } from 'reducers'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 const columnWidth = '33%'
 const rowHeight = 30
@@ -42,7 +43,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { userTokens } = useSelector((state: State) => state.wallet.user)
 
-  const { tokensMetadata } = useTokensContext()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const dispatch = useDispatch()
 
@@ -51,13 +52,13 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const [inputAmount, setInputAmount] = useState('0')
   const amount = Number(inputAmount)
 
-  if (!data) return null
+  const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
+
+  if (!data || !borrowedToken || !borrowedToken.rate) return null
 
   const {
     vaultId,
     ownerAddress,
-    borrowedTokenMetadata,
-    borrowedTokenRate,
     collateralData,
     liquidationMax,
     liquidationReward,
@@ -65,7 +66,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     collateralBalance,
   } = data
 
-  const { symbol, icon, decimals } = borrowedTokenMetadata ?? {}
+  const { symbol, icon, decimals, rate: borrowedTokenRate } = borrowedToken
 
   const userBalance = 0 //userTokens[symbol]?.balance ?? 0
 
@@ -100,10 +101,10 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     setShowAsPercentage(!showAsPercentage)
   }
 
-  const handleLiquidateVault = async () => {
+  const handleLiquidateVault = () => {
     if (!vaultId || !ownerAddress || !decimals) return
 
-    await dispatch(
+    dispatch(
       liquidateVault({
         vaultId,
         vaultOwner: ownerAddress,

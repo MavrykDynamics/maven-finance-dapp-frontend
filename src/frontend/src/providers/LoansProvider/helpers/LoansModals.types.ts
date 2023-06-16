@@ -91,8 +91,7 @@ export type BorrowPopupDataType = {
 export type LiquidateVaultDataType = {
   vaultId: number
   ownerAddress: string
-  borrowedTokenMetadata: TokenMetadataType
-  borrowedTokenRate: number
+  tokenAddress: TokenAddressType
   collateralBalance: number
   collateralData: LoansVaultType['collateralData']
   liquidationMax: number

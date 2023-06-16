@@ -58,6 +58,7 @@ export const TransactionHistory = ({
 
   const { isLoading: isTransactionHistoryLoading, transactionHistory } = useMarketTransactionHistory({
     marketTokenAddress: loanTokenAddress,
+    userAddress,
   })
 
   const history = useMemo(() => {

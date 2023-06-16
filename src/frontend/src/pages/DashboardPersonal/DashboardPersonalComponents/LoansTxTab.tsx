@@ -25,6 +25,7 @@ import { useSelector } from 'react-redux'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 import { UserLoansDataStateType } from 'providers/UserProvider/helpers/user.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 export const LoansTxTab = ({
   txVariant,
@@ -62,7 +63,10 @@ export const LoansTxTab = ({
 
             <TableBody className="dashboard-loans treasury">
               {userLoansData.map(({ amount, annualPecentage, operationHash, date, id, tokenAddress }) => {
-                const { icon, symbol } = tokensMetadata[tokenAddress]
+                const token = getTokenDataByAddress({ tokenAddress, tokensMetadata })
+                if (!token) return null
+
+                const { icon, symbol } = token
                 return (
                   <TableRow rowHeight={55} borderColor="cardBorderColor" className="add-hover" key={id + operationHash}>
                     <TableCell width="20%">

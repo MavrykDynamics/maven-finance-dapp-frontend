@@ -18,7 +18,7 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 /**
  *
  * @param param0.marketTokenAddress – market token address to get transactions for
- * TODO: implement getting transaction history for certain user
+ * @param param0.userAddress – user address for which get transaction history
  */
 const useMarketTransactionHistory = ({ marketTokenAddress, userAddress }: LoansMarketTransactionHistoryArgs) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
@@ -26,8 +26,10 @@ const useMarketTransactionHistory = ({ marketTokenAddress, userAddress }: LoansM
   const [transactionHistory, setTransactionHistory] = useState<Array<LoansMarketTransactionHistoryType>>([])
 
   const { loading } = useSubscription(GET_LOANS_HISTORY_FOR_MARKET_DATA, {
+    skip: !userAddress,
     variables: {
       marketTokenAddress,
+      userAddress,
     },
     shouldResubscribe: true,
     onData: ({ data: { data } }) => {

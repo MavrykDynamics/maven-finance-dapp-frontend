@@ -19,6 +19,7 @@ import { State } from 'reducers'
 import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // VALIDATION FN'S TODO: add some checking in future (no cond for it now)
 export const getBytesPairValidationStatus = (
@@ -255,12 +256,14 @@ export const getPaymentsDiff = (
   let originalIdx = 0
 
   const changes = updatedData
-    .map<PaymentsDataChangesType[number] | null>((item1) => {
+    .reduce<PaymentsDataChangesType>((acc, item1) => {
       const item2 = originalData?.[originalIdx]
 
-      const { decimals, type } = item1.token_address
-        ? tokensMetadata[item1.token_address]
-        : { decimals: 0, type: 'fa2' }
+      const token1Metadata = getTokenDataByAddress({ tokensMetadata, tokenAddress: item1.token_address })
+
+      if (!token1Metadata) return acc
+
+      const { type, decimals } = token1Metadata
 
       let token = {}
 
@@ -288,7 +291,7 @@ export const getPaymentsDiff = (
 
       // if we have more items on client than on server, when we reach end of the items that stored on client array, just add everything to the end
       if (!item2 && typeof item1.token_amount === 'number') {
-        return {
+        acc.push({
           addOrSetPaymentData: {
             title: item1.title ?? '',
             transaction: {
@@ -299,12 +302,10 @@ export const getPaymentsDiff = (
               ),
             },
           },
-        }
+        })
       }
 
-      if (!checkPaymentExists(item1)) {
-        return null
-      }
+      if (!checkPaymentExists(item1)) return acc
 
       // if local is different frin back one, we update this element
       if (
@@ -313,7 +314,7 @@ export const getPaymentsDiff = (
           (item2.token_address !== item1.token_address && item1.token_address !== null)) &&
         typeof item1.token_amount === 'number'
       ) {
-        return {
+        acc.push({
           addOrSetPaymentData: {
             title: item1.title ?? '',
             transaction: {
@@ -325,17 +326,17 @@ export const getPaymentsDiff = (
             },
             index: String(originalIdx++),
           },
-        }
+        })
       }
       originalIdx++
-      return null
-    })
+
+      return acc
+    }, [])
     .concat(
       Array.from({ length: originalData.length - updatedData.length }, (_, idx) => ({
         removePaymentData: String(Number(updatedData.length) + Number(idx)),
       })),
     )
-    .filter(Boolean) as PaymentsDataChangesType
 
   return changes
 }

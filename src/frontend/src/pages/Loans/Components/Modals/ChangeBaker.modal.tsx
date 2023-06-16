@@ -17,14 +17,13 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
-import { DropDownXTZBakerType } from 'providers/DAPPConfig/helpers/useDDXtzBakers'
+import useXtzBakersForDD from 'providers/DAPPConfig/helpers/useDDXtzBakers'
 
 const MAVRYK_DYNAMICS_BAKERY = 1
 const DAO_BAKERY = 2
 const OTHER_BAKERY = 3
+type BakersSlidingButtonTab = typeof MAVRYK_DYNAMICS_BAKERY | typeof DAO_BAKERY | typeof OTHER_BAKERY
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238629&t=Sx2aEpp3ifrGxBtQ-0
 export const ChangeBaker = ({
@@ -40,57 +39,34 @@ export const ChangeBaker = ({
 
   const { xtzBakers } = useDAPPConfigContext()
   const { otherBakers = [], dao, mavrykDynamics } = xtzBakers ?? {}
+  const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD(true)
 
   const dispatch = useDispatch()
-  const [activeTab, setActiveSliding] = useState(MAVRYK_DYNAMICS_BAKERY)
+
+  const [activeTab, setActiveSliding] = useState<BakersSlidingButtonTab>(MAVRYK_DYNAMICS_BAKERY)
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
 
   useLockBodyScroll(show)
-
-  useEffect(() => {
-    // reset fields after closing the popup
-    if (!show) {
-      setBakerChosenDdItem(undefined)
-      setSelectedAddress(null)
-    } else {
-      // open tab that corresponds to the delegated bakery
-      setSelectedAddress(bakerAddress)
-
-      const vaultBaker = bakerySlidingButtons.find(
-        ({ bakeryAddresses }) => bakerAddress && bakeryAddresses.includes(bakerAddress),
-      )
-
-      // vault is delegated to
-      if (vaultBaker) {
-        setActiveSliding(vaultBaker.id)
-
-        // delegated to other bakery, need to select
-        if (vaultBaker.id === OTHER_BAKERY) {
-          setBakerChosenDdItem(bakerItemsForDropDown.find(({ bakerAddress: ddAddress }) => ddAddress === bakerAddress))
-        }
-      }
-    }
-  }, [bakerAddress, show])
 
   const bakerySlidingButtons = useMemo(
     () => [
       {
         text: mavrykDynamics?.name ?? 'Mavryk Dynamics',
-        id: MAVRYK_DYNAMICS_BAKERY,
+        id: MAVRYK_DYNAMICS_BAKERY as BakersSlidingButtonTab,
         active: activeTab === MAVRYK_DYNAMICS_BAKERY,
         bakeryAddresses: [mavrykDynamics?.address ?? ''],
         isDisabled: mavrykDynamics?.isDisabled,
       },
       {
         text: dao?.name ?? 'The DAO',
-        id: DAO_BAKERY,
+        id: DAO_BAKERY as BakersSlidingButtonTab,
         active: activeTab === DAO_BAKERY,
         bakeryAddresses: [dao?.address ?? ''],
         isDisabled: dao?.isDisabled,
       },
       {
         text: 'Other',
-        id: OTHER_BAKERY,
+        id: OTHER_BAKERY as BakersSlidingButtonTab,
         active: activeTab === OTHER_BAKERY,
         bakeryAddresses: otherBakers.map(({ address }) => address),
       },
@@ -107,27 +83,29 @@ export const ChangeBaker = ({
     ],
   )
 
-  const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
-    () =>
-      otherBakers.map(({ name, fee, logo, address, yield: bakerYield, freespace }, idx) => ({
-        content: (
-          <DropDownJsxChild>
-            <div className="flex-row with-image">
-              <ImageWithPlug imageLink={logo} alt={`${name} icon`} /> {name}
-            </div>
-            <div className="baker-fee">
-              <CommaNumber value={fee} endingText="%" />
-            </div>
-          </DropDownJsxChild>
-        ),
-        bakerName: name,
-        id: idx,
-        bakerAddress: address,
-        bakerYield,
-        bakerFreeSpace: freespace,
-      })),
-    [otherBakers],
-  )
+  useEffect(() => {
+    // reset fields after closing the popup
+    if (!show) {
+      setSelectedAddress(null)
+    } else {
+      // open tab that corresponds to the delegated bakery
+      setSelectedAddress(bakerAddress)
+
+      const vaultBaker = bakerySlidingButtons.find(
+        ({ bakeryAddresses }) => bakerAddress && bakeryAddresses.includes(bakerAddress),
+      )
+
+      // vault is delegated to
+      if (vaultBaker && bakerAddress) {
+        setActiveSliding(vaultBaker.id)
+
+        // delegated to other bakery, need to select
+        if (vaultBaker.id === OTHER_BAKERY) {
+          setChoosenBaker(bakerAddress)
+        }
+      }
+    }
+  }, [bakerAddress, bakerySlidingButtons, setChoosenBaker, show])
 
   // click on tab btn
   const handleSlidingButtonClick = (tabId: number) => {
@@ -135,17 +113,9 @@ export const ChangeBaker = ({
     setActiveSliding(selectedBakeryTab?.id ?? MAVRYK_DYNAMICS_BAKERY)
     setSelectedAddress(
       selectedBakeryTab?.id === OTHER_BAKERY
-        ? bakerChosenDdItem?.bakerAddress ?? null
+        ? choosenBaker?.bakerAddress ?? null
         : selectedBakeryTab?.bakeryAddresses?.[0] ?? null,
     )
-  }
-
-  // select baker for an xtz collateral, used only when we selected one collateral XTZ
-  const [bakerChosenDdItem, setBakerChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
-  const handleOnClickDropdownBakerItem = (itemId: DDItemId) => {
-    const ddChoosenItem = bakerItemsForDropDown.find(({ id }) => id === itemId)
-    setBakerChosenDdItem(ddChoosenItem)
-    setSelectedAddress(ddChoosenItem?.bakerAddress ?? null)
   }
 
   const updateBakerHandler = () => {
@@ -182,9 +152,16 @@ export const ChangeBaker = ({
           {activeTab === 3 ? (
             <DropDown
               placeholder="Select Bakery"
-              activeItem={bakerChosenDdItem}
-              items={bakerItemsForDropDown}
-              clickItem={handleOnClickDropdownBakerItem}
+              activeItem={choosenBaker}
+              items={bakers}
+              clickItem={(itemId: DDItemId) => {
+                const ddChoosenItemAddress = bakers.find(({ id }) => id === itemId)?.bakerAddress
+
+                if (ddChoosenItemAddress) {
+                  setChoosenBaker(ddChoosenItemAddress)
+                }
+                setSelectedAddress(ddChoosenItemAddress ?? null)
+              }}
               className="change-bakery "
             />
           ) : null}
@@ -201,8 +178,8 @@ export const ChangeBaker = ({
               ) : null}
 
               {activeTab === 3 ? (
-                bakerChosenDdItem?.bakerAddress ? (
-                  <TzAddress className="value" tzAddress={bakerChosenDdItem.bakerAddress} type={BLUE} hasIcon={false} />
+                choosenBaker ? (
+                  <TzAddress className="value" tzAddress={choosenBaker.bakerAddress} type={BLUE} hasIcon={false} />
                 ) : (
                   <div className="value">-</div>
                 )
@@ -239,8 +216,8 @@ export const ChangeBaker = ({
               {activeTab === 2 ? <CommaNumber value={dao?.yield ?? 0} className="value" endingText="%" /> : null}
 
               {activeTab === 3 ? (
-                bakerChosenDdItem?.bakerYield ? (
-                  <CommaNumber value={bakerChosenDdItem.bakerYield} className="value" endingText="%" />
+                choosenBaker ? (
+                  <CommaNumber value={choosenBaker.bakerYield} className="value" endingText="%" />
                 ) : (
                   <div className="value">-</div>
                 )
@@ -255,8 +232,8 @@ export const ChangeBaker = ({
               {activeTab === 2 ? <CommaNumber value={dao?.freespace ?? 0} className="value" endingText="XTZ" /> : null}
 
               {activeTab === 3 ? (
-                bakerChosenDdItem?.bakerFreeSpace ? (
-                  <CommaNumber value={bakerChosenDdItem.bakerFreeSpace} className="value" endingText="XTZ" />
+                choosenBaker ? (
+                  <CommaNumber value={choosenBaker.bakerFreeSpace} className="value" endingText="XTZ" />
                 ) : (
                   <div className="value">-</div>
                 )

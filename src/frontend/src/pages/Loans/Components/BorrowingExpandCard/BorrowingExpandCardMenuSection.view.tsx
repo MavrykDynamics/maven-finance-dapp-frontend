@@ -32,7 +32,6 @@ import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import colors from 'styles/colors'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { State } from 'reducers'
-import useMarketTransactionHistory from 'providers/LoansProvider/hooks/useMarketTransactionHistory'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 
