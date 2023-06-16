@@ -1,8 +1,6 @@
 import styled, { css } from 'styled-components/macro'
 import { Card } from 'styles'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { ImageWithPlug } from '../Icon/ImageWithPlug'
-import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 
 export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
   width: 100%;
