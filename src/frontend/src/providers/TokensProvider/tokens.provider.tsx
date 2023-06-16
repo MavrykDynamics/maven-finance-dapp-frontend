@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 
 // consts
-import { MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 // helpers
 import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.normalizer'
@@ -21,7 +21,7 @@ export class TokensProvider extends React.Component<Props, State> {
         collateralTokens: [],
         mTokens: [],
         tokensMetadata: {},
-        tokensPrices: { [MVK_TOKEN_SYMBOL]: 1 },
+        tokensPrices: { [MVK_TOKEN_SYMBOL]: 1, [SMVK_TOKEN_SYMBOL]: 1 },
         updateTokensPrices: this.updateTokensPrices,
         updateTokensMetadata: this.updateTokensMetadata,
       },

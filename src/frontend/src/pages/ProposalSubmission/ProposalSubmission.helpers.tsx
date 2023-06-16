@@ -248,6 +248,7 @@ export const getBytesDiff = (
   return changes
 }
 
+// TODO: review it & add docs for it
 export const getPaymentsDiff = (
   originalData: ProposalRecordType['proposalPayments'],
   updatedData: ProposalRecordType['proposalPayments'],

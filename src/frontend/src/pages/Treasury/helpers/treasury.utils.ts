@@ -5,8 +5,10 @@ import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
 
 import { TreasuryType, TreasuryBalanceType } from 'utils/TypesAndInterfaces/Treasury'
 
-export const calcPersent = (number: number, wholeSum: number) =>
-  getNumberInBounds(0, 100, number / Math.max(wholeSum / 100, 1))
+export const calcPersent = (number: number, wholeSum: number) => {
+  const divider = wholeSum / 100
+  return divider === 0 ? 0 : getNumberInBounds(0, 100, number / divider)
+}
 
 export const getAssetColor = (assetIdx: number) =>
   assetIdx < TREASURYS_COLORS.length ? TREASURYS_COLORS[assetIdx] : Math.random().toString(36).slice(5, 7)
@@ -34,7 +36,7 @@ export const reduceTreasuryAssets = (treasuryData: TreasuryType) => {
  * @param treasury treasury obj
  * @param tokensMetadata mapper of tokens metadata
  * @param tokensPrices mapper of token prices
- * @returns sum of all tokens in $ for all passed treasury, SUM is converted to client format
+ * @returns sum of all tokens in $ for all passed treasury, SUM is converted to USD
  */
 export const getTreasuryTVL = (
   treasury: TreasuryType[number],

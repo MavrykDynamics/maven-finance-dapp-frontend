@@ -181,11 +181,12 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
             const treasuryToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
             if (!treasuryToken) return null
             const { symbol } = treasuryToken
+
             return (
               <div
                 style={{
                   background: `linear-gradient(90deg,${
-                    chartData.find(({ title }) => title === symbol || title.includes(symbol))?.color
+                    chartData.find(({ title }) => title === symbol || title.split(',').includes(symbol))?.color
                   } 0%,rgba(255,255,255,0) 100%)`,
                 }}
                 className="asset-lable"

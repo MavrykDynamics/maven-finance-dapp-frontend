@@ -291,11 +291,11 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
                 )
                   return null
 
-                const allowedToken = getTokenDataByAddress({ tokenAddress: payment.token_address, tokensMetadata })
+                const token = getTokenDataByAddress({ tokenAddress: payment.token_address, tokensMetadata })
 
-                if (!allowedToken) return null
+                if (!token) return null
 
-                const { symbol, decimals } = allowedToken
+                const { symbol, decimals } = token
                 const tokenAmount = convertNumberForClient({ number: Number(payment.token_amount), grade: decimals })
 
                 return (

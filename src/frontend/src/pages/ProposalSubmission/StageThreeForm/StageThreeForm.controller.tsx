@@ -64,7 +64,8 @@ export const StageThreeForm = ({
   const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
 
   const { treasuryStorage } = useSelector((state: State) => state.treasury)
-  const treasuryTokens = useMemo(() => reduceTreasuryAssets(treasuryStorage), [])
+  const treasuryTokens = useMemo(() => reduceTreasuryAssets(treasuryStorage), [treasuryStorage])
+
   const { isNewlyRegisteredSatellite } = useSelector((state: State) => state.wallet.user)
 
   const isProposalRound = governancePhase === 'PROPOSAL'
@@ -235,10 +236,10 @@ export const StageThreeForm = ({
 
                 if (payment.to__id === null || payment.title === null || !payment.token_address) return null
 
-                const tokenBalance = treasuryTokens[payment.token_address].balance
                 const tokenAddress = payment.token_address
 
                 const allowedToken = getTokenDataByAddress({ tokenAddress, tokensMetadata })
+                const tokenBalance = treasuryTokens[tokenAddress].balance
 
                 if (!tokenBalance || !tokenAddress || !allowedToken) return null
 
