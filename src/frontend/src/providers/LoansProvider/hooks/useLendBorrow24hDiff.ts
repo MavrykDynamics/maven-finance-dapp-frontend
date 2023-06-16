@@ -62,12 +62,11 @@ const useLendBorrow24hDiff = (): {
       )
 
       const { currentTotalLended, currentTotalBorrowed } = data.lending_controller[0].loan_tokens.reduce(
-        (acc, { token, total_borrowed, token_pool_total }) => {
-          const tokenAddress = token.token_address
-          if (!tokenAddress) return acc
+        (acc, { token: { token_address }, total_borrowed, token_pool_total }) => {
+          const token = getTokenDataByAddress({ tokenAddress: token_address, tokensMetadata, tokensPrices })
+          if (!token || !token.rate) return acc
 
-          const { decimals, symbol } = tokensMetadata[tokenAddress]
-          const rate = tokensPrices[symbol]
+          const { decimals, rate } = token
 
           acc.currentTotalBorrowed += convertNumberForClient({ number: total_borrowed, grade: decimals }) * rate
           acc.currentTotalLended += convertNumberForClient({ number: token_pool_total, grade: decimals }) * rate

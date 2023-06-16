@@ -19,6 +19,8 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { UserLoansDataStateType } from 'providers/UserProvider/helpers/user.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 export const LendBorrowPosition = ({
   markets,
@@ -54,9 +56,15 @@ export const LendBorrowPosition = ({
       }>(
         (acc, { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress }) => {
           let borrowedPerMarket = 0
-          const { symbol } = tokensMetadata[loanTokenAddress]
-          const rate = tokensPrices[symbol]
+
+          const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
+          if (!token || !token.rate) return acc
+
+          const { decimals, rate } = token
+
           const { lendValue = 0 } = getMarketUserLengingItem(userMTokens, loanMTokenAddress) ?? {}
+
+          const conveterLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
 
           const { borrowedAmount = 0, collateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
 
@@ -66,9 +74,9 @@ export const LendBorrowPosition = ({
           borrowedPerMarket += borrowedAmount
 
           // calculating net APY supplied & borrowed ratio's
-          acc.sumOfRatioSuppliedToAPY += lendValue * rate * lendingAPY
+          acc.sumOfRatioSuppliedToAPY += conveterLendValue * rate * lendingAPY
           acc.sumOfRatioBorrowedToAPR += borrowedPerMarket * borrowAPR
-          acc.totalSuppliedValue += lendValue * rate
+          acc.totalSuppliedValue += conveterLendValue * rate
           return acc
         },
         {

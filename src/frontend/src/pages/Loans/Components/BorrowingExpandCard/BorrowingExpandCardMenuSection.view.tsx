@@ -34,6 +34,7 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { State } from 'reducers'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 type Props = {
   openAddNewCollateralPopup: () => void
@@ -107,10 +108,7 @@ export const BorrowingExpandCardMenuSection = ({
 
   const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
   // TODO: test it when sMVK will be avaliable as collateral
-  const vaultHasSmvkCollateral = false
-  //collateralData.find(
-  // ({ tokenAddress }) => tokensMetadata[tokenAddress].symbol === 'smvk',
-  // )
+  const vaultHasSmvkCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVK_TOKEN_SYMBOL)
 
   const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (tabId: number) => {
     setActiveTab(menuTabs.find((item) => item.id === tabId))

@@ -23,6 +23,7 @@ import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -51,10 +52,13 @@ export const Dashboard = () => {
     totalBorrowed: number
   }>(
     (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
-      const { symbol } = tokensMetadata[loanTokenAddress]
-      const rate = tokensPrices[symbol]
-      acc.totalBorrowed += totalBorrowed * rate
-      acc.totalLended += totalLended * rate
+      const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
+      if (!token || !token.rate) return acc
+
+      const { decimals, rate } = token
+
+      acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
+      acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
       return acc
     },
     {
@@ -67,8 +71,8 @@ export const Dashboard = () => {
 
   const treasuryTVL = treasuryStorage.reduce((acc, { balances }) => {
     return (acc += balances.reduce((balanceAcc, { tokenAddress, balance }) => {
-      const { rate } = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices }) ?? {}
-      return rate ? balanceAcc + balance * rate : balanceAcc
+      const { rate, decimals } = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices }) ?? {}
+      return rate ? balanceAcc + convertNumberForClient({ number: balance, grade: decimals }) * rate : balanceAcc
     }, 0))
   }, 0)
 
@@ -76,8 +80,8 @@ export const Dashboard = () => {
     const { collateralData } = vaultsMapper[vaultId]
 
     return (acc += collateralData.reduce((collateralAcc, { amount, tokenAddress }) => {
-      const { rate } = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices }) ?? {}
-      return rate ? collateralAcc + amount * rate : 0
+      const { rate, decimals } = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices }) ?? {}
+      return rate ? collateralAcc + convertNumberForClient({ number: amount, grade: decimals }) * rate : 0
     }, 0))
   }, 0)
 

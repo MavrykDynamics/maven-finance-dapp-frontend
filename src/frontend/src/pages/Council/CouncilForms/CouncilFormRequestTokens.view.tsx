@@ -27,6 +27,7 @@ import { InputProps } from 'app/App.components/Input/newInput.type'
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 const INIT_FORM = {
   treasuryAddress: '',
@@ -116,14 +117,14 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   const handleBlurTokenAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value: tokenAddress, name } = e.target
 
-    const decimals = tokensMetadata[tokenAddress].decimals
+    const token = getTokenDataByAddress({ tokenAddress, tokensMetadata })
 
     setFormInputStatus((prev) => {
-      const isValidAddress = decimals ? 'success' : 'error'
+      const isValidAddress = token ? 'success' : 'error'
       return { ...prev, [name]: isValidAddress }
     })
 
-    setTokenDecimals(decimals)
+    if (token) setTokenDecimals(token.decimals)
   }
 
   const handleClickDropdownItem = (itemId: DDItemId) => {

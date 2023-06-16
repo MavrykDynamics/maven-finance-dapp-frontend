@@ -29,6 +29,8 @@ import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24h
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
 import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 export type GaugeChartStateType = {
   maxValue: number
@@ -77,11 +79,13 @@ export const LoansDashboard = () => {
     totalBorrowed: number
   }>(
     (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
-      const { symbol } = tokensMetadata[loanTokenAddress]
-      const rate = tokensPrices[symbol]
+      const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
+      if (!token || !token.rate) return acc
 
-      acc.totalBorrowed += totalBorrowed * rate
-      acc.totalLended += totalLended * rate
+      const { decimals, rate } = token
+
+      acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
+      acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
       return acc
     },
     {
@@ -122,12 +126,16 @@ export const LoansDashboard = () => {
         sumOfRatioBorrowedToAPR: number
       }>(
         (acc, { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress }) => {
+          const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
+          if (!token || !token.rate) return acc
+
           let borrowedPerMarket = 0
 
           const { lendValue } = getMarketUserLengingItem(userMTokens, loanMTokenAddress) ?? { lendValue: 0 }
 
-          const { symbol, decimals } = tokensMetadata[loanTokenAddress]
-          const rate = tokensPrices[symbol]
+          const { decimals, rate } = token
+
+          const conveterLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
 
           const { borrowedAmount = 0, collateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
 
@@ -137,9 +145,9 @@ export const LoansDashboard = () => {
           borrowedPerMarket += borrowedAmount
 
           // calculating net APY supplied & borrowed ratio's
-          acc.sumOfRatioSuppliedToAPY += lendValue * rate * lendingAPY
+          acc.sumOfRatioSuppliedToAPY += conveterLendValue * rate * lendingAPY
           acc.sumOfRatioBorrowedToAPR += borrowedPerMarket * borrowAPR
-          acc.totalSuppliedValue += lendValue * rate
+          acc.totalSuppliedValue += conveterLendValue * rate
           return acc
         },
         {
