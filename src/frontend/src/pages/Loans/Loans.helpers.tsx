@@ -116,7 +116,7 @@ export const getTransactionHistory = (
         tokenName: collateral_token?.token_name ?? loan_token.loan_token_name,
         dipDupTokens,
         feeds,
-        oracleId: String(collateral_token?.oracle_id ?? loan_token.oracle_id),
+        oracleId: String(collateral_token?.oracle?.address ?? loan_token.oracle.address),
       })
 
       if (assetMetadata) {
