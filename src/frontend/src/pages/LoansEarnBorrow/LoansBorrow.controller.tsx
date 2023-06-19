@@ -121,7 +121,6 @@ export const LoansBorrow = () => {
       return marketSymbol === vault.borrowedAsset.symbol && vault.collateralRatio > 200
     })
 
-    // redirect specific asset market if user does not have vaults with collateral ratio > 200
     if (!validVaultId) {
       openCreateVaultPopup?.({
         currentMarketAsset: marketSymbol === 'XTZ' ? 'tez' : marketSymbol.toLowerCase(),
@@ -133,19 +132,10 @@ export const LoansBorrow = () => {
 
     const vault = vaultsMapper[validVaultId]
 
-    if (!vault) return
-
-    openBorrowPopup?.({
-      vaultId: vault.vaultId,
-      borrowedAsset: vault.borrowedAsset,
-      collateralRatio: vault.collateralRatio,
-      borrowAPR: vault.apr,
-      currentCollateralBalance: vault.collateralData.at(-1)?.amount ?? 0,
-      hasUserBorrowed: Boolean(vault.borrowedAmount),
-      borrowCapacity: vault.borrowCapacity,
-      currentBorrowedAmount: vault.borrowedAmount,
-      DAOFee,
-    })
+    // if the user has already borrowing from the specific asset pool we will route to asset market
+    if (vault) {
+      history.push(`/loans/${vault.borrowedAsset.symbol}/borrowTab`)
+    }
   }
 
   const { isLoading } = useDataLoader(
