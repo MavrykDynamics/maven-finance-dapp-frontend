@@ -1,36 +1,27 @@
 import React, { useContext } from 'react'
 
 // types
-import type { ToasterContextType, ToasterTypes } from './toaster.provider.type'
+import type { ErrorContextType, ToasterTypes, State, Props, ContractErrorPayload } from './error.provider.type'
 import type { CustomErrors } from '../../errors/error'
 
 // consts
 import {
+  ContractErrorKeys,
+  STAKING_FIELD,
   TOASTER_ERROR,
   TOASTER_INFO,
   TOASTER_LOADING,
   TOASTER_SUCCESS,
   TOASTER_WARNING,
-} from './toaster.provider.const'
+} from './consts/error.provider.const'
 import { generateUniqueId } from 'utils/calcFunctions'
 
-export const toasterContext = React.createContext<ToasterContextType>(undefined!)
-
-// TODO add 404 page for critical errors
-type Props = {
-  children: React.ReactNode
-  error?: CustomErrors
-  pageNotFound?: JSX.Element
-}
-
-type State = {
-  context: ToasterContextType
-}
+export const errorContext = React.createContext<ErrorContextType>(undefined!)
 
 /**
  *
  */
-export default class ToasterProvider extends React.Component<Props, State> {
+export default class ErrorProvider extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
@@ -44,15 +35,17 @@ export default class ToasterProvider extends React.Component<Props, State> {
         error: props.error || null,
         hideToasterMessage: this.hideToasterMessage,
         deleteToasterFromArray: this.deleteToasterFromArray,
-        messages: [],
         setError: this.setError,
+        messages: [],
+        errors: {
+          [STAKING_FIELD]: null,
+        },
+        addContractError: this.addContractError,
+        removeContractError: this.removeContractError,
       },
     }
   }
 
-  /**
-   *
-   */
   componentDidCatch(error: Error): void {
     this.addToasterMessage('', error.message, TOASTER_ERROR)
   }
@@ -161,13 +154,27 @@ export default class ToasterProvider extends React.Component<Props, State> {
     }))
   }
 
-  /**
-   *
-   */
+  addContractError = (type: ContractErrorKeys, error: ContractErrorPayload) => {
+    this.setState({
+      context: {
+        ...this.state.context,
+        errors: { ...this.state.context.errors, [type]: error },
+      },
+    })
+  }
+
+  removeContractError = (type: ContractErrorKeys) => {
+    this.setState({
+      context: {
+        ...this.state.context,
+        errors: { ...this.state.context.errors, [type]: null },
+      },
+    })
+  }
   render(): JSX.Element {
     // add 404 page when isCritical error
-    return <toasterContext.Provider value={this.state.context}>{this.props.children}</toasterContext.Provider>
+    return <errorContext.Provider value={this.state.context}>{this.props.children}</errorContext.Provider>
   }
 }
 
-export const useToasterContext = () => useContext(toasterContext)
+export const useErrorContext = () => useContext(errorContext)

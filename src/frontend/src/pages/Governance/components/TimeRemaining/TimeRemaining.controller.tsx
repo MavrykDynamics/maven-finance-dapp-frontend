@@ -27,7 +27,7 @@ import {
 import { startNextRound } from 'pages/Governance/actions/GovernanceInteraction.actions'
 import { api } from 'utils/api/api'
 import { isAbortError } from 'errors/error'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useErrorContext } from 'providers/ErrorProvider/error.provider'
 
 export default function TimeRemaining() {
   const dispatch = useDispatch()
@@ -37,7 +37,7 @@ export default function TimeRemaining() {
   )
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const { bug } = useToasterContext()
+  const { bug } = useErrorContext()
   const [timerDeadline, setTimerDeadline] = useState(0)
   const [timerActive, setTimerActive] = useState(false)
   const [showModal, setShowModal] = useState(false)

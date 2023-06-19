@@ -1,5 +1,5 @@
 import { dark } from 'styles'
-import { ToasterTypes } from './toaster.provider.type'
+import { ToasterTypes, ContractErrorPayload } from '../error.provider.type'
 
 // Toaster statuses
 export const TOASTER_SUCCESS = 'success'
@@ -60,3 +60,15 @@ export const ACTION_COMPLETION_MESSAGE_TEXT = 'All good :)'
 
 // TOASTER TEXTS IDS
 export const TOASTER_SUBSCRIPTION_ERROR = 'TOASTER_SUBSCRIPTION_ERROR'
+
+// Contract error const ----------------------------------
+
+export const DEFAULT_TEZOS_ERROR: ContractErrorPayload = {
+  message: 'Something went wrong',
+  description: 'Something went wrong, you are not allowed to continue current operation',
+}
+
+// fields
+export const STAKING_FIELD = 'staking'
+
+export type ContractErrorKeys = typeof STAKING_FIELD

@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components/macro'
 import { decreaseBar } from 'styles/animations'
-import { MavrykTheme } from '../../../styles/interfaces'
-import { TOASTER_LOADING, TOASTER_REVEAL, getColorByToasterStatus } from '../toaster.provider.const'
-import { ToasterAnimationType, ToasterTypes } from '../toaster.provider.type'
+import { MavrykTheme } from '../../../../styles/interfaces'
+import { TOASTER_LOADING, TOASTER_REVEAL, getColorByToasterStatus } from '../../consts/error.provider.const'
+import { ToasterAnimationType, ToasterTypes } from '../../error.provider.type'
 // animations
 import { revealFromRight, hideToRight } from 'styles/animations'
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
 import { sleep } from 'utils/api/sleep'
-import { useToasterContext } from '../toaster.provider'
-import { ToasterAnimationType, ToasterMessage } from '../toaster.provider.type'
+import { useErrorContext } from '../../error.provider'
+import { ToasterAnimationType, ToasterMessage } from '../../error.provider.type'
 
 import { ToasterContainer, ToasterContent, ToasterCountdown, ToasterIcon, ToasterStyled } from './Toaster.style'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
@@ -16,11 +16,11 @@ import {
   TOASTS_LIMIT,
   TOAST_ICON_MAPPER,
   TOAST_TIME_TO_LIVE,
-} from '../toaster.provider.const'
+} from '../../consts/error.provider.const'
 
 const Toast = ({ toast }: { toast: ToasterMessage }) => {
   const [toastAnimation, setToastAnimation] = useState<ToasterAnimationType>(TOASTER_REVEAL)
-  const { hideToasterMessage, deleteToasterFromArray } = useToasterContext()
+  const { hideToasterMessage, deleteToasterFromArray } = useErrorContext()
   const { title, message, type, unique, hide } = toast
 
   // effect to update toast property "hide" to 'true' for playing hide animation
@@ -66,7 +66,7 @@ const Toast = ({ toast }: { toast: ToasterMessage }) => {
 }
 
 export const ToasterMessages = () => {
-  const { messages, deleteToasterFromArray } = useToasterContext()
+  const { messages, deleteToasterFromArray } = useErrorContext()
 
   // remove toasts starting from the oldest if messages limit was passed
   useEffect(() => {

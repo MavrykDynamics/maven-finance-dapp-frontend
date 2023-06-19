@@ -14,14 +14,14 @@ import { StakingSubsSkipsType } from '../stake.provider.types'
 
 // helpers
 import { sleep } from 'utils/api/sleep'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useErrorContext } from 'providers/ErrorProvider/error.provider'
 import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
 
 // consts
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { SUB_QUERY, SUB_SKIP, SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ErrorProvider/consts/error.provider.const'
 
 // queries
 import {
@@ -72,7 +72,7 @@ export const useStakeUpdater = (
     action,
   } = useStakeContext()
 
-  const { success, hideToasterMessage, bug } = useToasterContext()
+  const { success, hideToasterMessage, bug } = useErrorContext()
 
   const { loading: historyLoading } = useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
     skip: shouldSkip.skipStakeHistory === SUB_SKIP,

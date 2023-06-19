@@ -9,7 +9,7 @@ import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterA
 import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
 import { unknownToError } from 'errors/error'
 import { STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ErrorProvider/consts/error.provider.const'
 import { sleep } from 'utils/api/sleep'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 
@@ -26,12 +26,12 @@ import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 
 // context
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useErrorContext } from 'providers/ErrorProvider/error.provider'
 
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { State } from 'reducers'
-import { isContractErrorPayload } from 'providers/ContractErrorProvider/helpers/contractError.helper'
+import { isContractErrorPayload } from 'providers/ErrorProvider/helpers/contractError.helper'
 import { useContractErrorContext } from 'providers/ContractErrorProvider/contractError.provider'
 import { STAKING_FIELD } from 'providers/ContractErrorProvider/contractError.const'
 import { ContractErrorPayload } from 'providers/ContractErrorProvider/contractError.type'
@@ -61,7 +61,7 @@ export const ExitFeeModal = ({
   const dispatch = useDispatch()
 
   const { unstakeMVK, updateStakeActionContext, updateStakeLoadingToasterId, loadingToasterId } = useStakeContext()
-  const { bug, info, loading, hideToasterMessage } = useToasterContext()
+  const { bug, info, loading, hideToasterMessage } = useErrorContext()
   const { errors, addContractError, removeContractError } = useContractErrorContext()
 
   const {

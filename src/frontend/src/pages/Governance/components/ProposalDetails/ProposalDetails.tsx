@@ -43,12 +43,12 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
 import { api } from 'utils/api/api'
 import { isAbortError } from 'errors/error'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useErrorContext } from 'providers/ErrorProvider/error.provider'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
   const dispatch = useDispatch()
 
-  const { bug } = useToasterContext()
+  const { bug } = useErrorContext()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)

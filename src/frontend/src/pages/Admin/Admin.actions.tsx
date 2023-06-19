@@ -7,7 +7,7 @@ import { OpKind } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { GET_GOVERNANCE_CONFIG } from 'pages/Governance/actions/GovernanseData.actions'
 import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { estimateExecution } from 'providers/ContractErrorProvider/helpers/contractError.helper'
+import { estimateExecution } from 'providers/ErrorProvider/helpers/contractError.helper'
 
 export const adminChangeGovernancePeriod =
   (chosenPeriod: string, accountPkh?: string) => async (dispatch: AppDispatch, getState: GetState) => {

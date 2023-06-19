@@ -45,7 +45,7 @@ import {
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { isAbortError } from 'errors/error'
 import { api } from 'utils/api/api'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useErrorContext } from 'providers/ErrorProvider/error.provider'
 
 const findStatusInfo = (
   status: string,
@@ -127,7 +127,7 @@ export const VaultsCard = (props: Props) => {
     vaultTab,
   } = props
 
-  const { bug } = useToasterContext()
+  const { bug } = useErrorContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { DAOFee } = useSelector((state: State) => state.loans.config)

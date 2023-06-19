@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // context
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useErrorContext } from 'providers/ErrorProvider/error.provider'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -31,7 +31,7 @@ import {
   BUTTON_WIDE,
 } from '../../../app/App.components/Button/Button.constants'
 import { STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ErrorProvider/consts/error.provider.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
@@ -59,8 +59,8 @@ import {
 // types
 import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
-import { isContractErrorPayload } from 'providers/ContractErrorProvider/helpers/contractError.helper'
-import { ContractErrorBlock } from 'providers/ContractErrorProvider/components/ContractErrorBlock'
+import { isContractErrorPayload } from 'providers/ErrorProvider/helpers/contractError.helper'
+import { ContractErrorBlock } from 'providers/ErrorProvider/components/ContractErrorBlock/ContractErrorBlock'
 import { STAKING_FIELD } from 'providers/ContractErrorProvider/contractError.const'
 import { ContractErrorPayload } from 'providers/ContractErrorProvider/contractError.type'
 import { useContractErrorContext } from 'providers/ContractErrorProvider/contractError.provider'
@@ -81,7 +81,7 @@ export const StakeUnstakeView = ({
   const dispatch = useDispatch()
   const history = useHistory()
   const { stakeMVK, updateStakeActionContext, updateStakeLoadingToasterId, loadingToasterId } = useStakeContext()
-  const { info, loading, hideToasterMessage, bug } = useToasterContext()
+  const { info, loading, hideToasterMessage, bug } = useErrorContext()
 
   const {
     accountPkh,

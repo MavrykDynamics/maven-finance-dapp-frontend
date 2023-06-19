@@ -38,7 +38,7 @@ import {
   getTimestampByLevelUrl,
 } from 'utils/api/api-helpers/getTimestampByLevel'
 import { isAbortError } from 'errors/error'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useErrorContext } from 'providers/ErrorProvider/error.provider'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -80,7 +80,7 @@ export const BorrowingExpandCard = ({
 }: BorrowingExpandCardPropsType) => {
   const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
 
-  const { bug } = useToasterContext()
+  const { bug } = useErrorContext()
 
   const { loanTokens, mvkTokenOperators } = useSelector((state: State) => state.loans)
 

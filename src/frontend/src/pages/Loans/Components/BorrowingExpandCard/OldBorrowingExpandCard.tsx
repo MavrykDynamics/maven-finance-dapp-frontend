@@ -51,7 +51,7 @@ import {
 import { getNumberInBounds } from 'utils/calcFunctions'
 import { isAbortError } from 'errors/error'
 import { api } from 'utils/api/api'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useErrorContext } from 'providers/ErrorProvider/error.provider'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -98,7 +98,7 @@ export const OldBorrowingExpandCard = ({
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { mvkTokenOperators } = useSelector((state: State) => state.loans)
 
-  const { bug } = useToasterContext()
+  const { bug } = useErrorContext()
 
   const [expanded, setExpanded] = useState(false)
 

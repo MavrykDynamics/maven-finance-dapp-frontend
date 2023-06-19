@@ -1,14 +1,14 @@
 import { Info } from 'app/App.components/Info/Info.view'
-import { useContractErrorContext } from '../contractError.provider'
+import { useErrorContext } from '../../error.provider'
 import { ContractErrorBlockStyled } from './ContractErrorBlock.styles'
-import { ContractErrorKeys } from '../contractError.const'
+import { ContractErrorKeys } from '../../consts/error.provider.const'
 
 type ContractErrorBlockProps = {
   type: ContractErrorKeys
 }
 
 export const ContractErrorBlock = ({ type }: ContractErrorBlockProps): JSX.Element | null => {
-  const { errors } = useContractErrorContext()
+  const { errors } = useErrorContext()
   const error = errors[type]
 
   return error ? (

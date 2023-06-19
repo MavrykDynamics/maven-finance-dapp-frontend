@@ -24,7 +24,7 @@ import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.ac
 // TODO move wallet to context to avoid redux logic inside Stake Context
 // redux
 import { State as ReduxState } from 'reducers'
-import { estimateBatchOperation, estimateExecution } from 'providers/ContractErrorProvider/helpers/contractError.helper'
+import { estimateBatchOperation, estimateExecution } from 'providers/ErrorProvider/helpers/contractError.helper'
 import { OpKind } from '@taquito/taquito'
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
