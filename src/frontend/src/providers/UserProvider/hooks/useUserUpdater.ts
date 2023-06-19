@@ -1,11 +1,17 @@
 import { useSubscription } from '@apollo/client'
 import * as signalR from '@microsoft/signalr'
+import { useEffect, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
 
+// context
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from '../user.provider'
 
 // subs
-import { useEffect, useRef, useState } from 'react'
 import { SUB_SUBSCRIBE, SUB_SKIP, SUB_QUERY } from 'utils/api/apollo.consts'
+import { SUBSCRIBE_USER_MVK_SMVK_BALANCE } from '../queries/userTokens.query'
+
+// types
 import {
   UserSubscriptionSkipsType,
   UserTokenBalancesParsedResponce,
@@ -13,18 +19,17 @@ import {
   userTzktAccountSchema,
   userTzktWSAccountSchema,
 } from '../helpers/user.types'
-import { useUserContext } from '../user.provider'
-// import { getUserBalances } from '../helpers/getUserBalances'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
-import { SUBSCRIBE_USER_MVK_SMVK_BALANCE } from '../queries/userTokens.query'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { MVK_DECIMALS, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 import { UserContext } from '../user.provider.types'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { State } from 'reducers'
+
+// consts
+import { MVK_DECIMALS, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
+
+// helpers
+import { convertNumberForClient } from 'utils/calcFunctions'
 import { normalizerUserBalances } from '../helpers/userBalances.helpers'
 import { api } from 'utils/api/api'
-import { z } from 'zod'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 export const useUserUpdater = (
   { skipUserBalancesUpdate }: UserSubscriptionSkipsType = { skipUserBalancesUpdate: SUB_SUBSCRIBE },

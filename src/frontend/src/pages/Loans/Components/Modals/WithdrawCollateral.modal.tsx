@@ -4,17 +4,16 @@ import { useEffect, useState } from 'react'
 
 import {
   INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
   INPUT_STATUS_SUCCESS,
+  InputStatusType,
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import {
-  DEFAULT_LOANS_INPUT_VALUE,
-  WithdrawCollateralPopupDataType,
-} from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+import { WithdrawCollateralPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { withdrawCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 
 import { Input } from 'app/App.components/Input/NewInput'
@@ -66,13 +65,22 @@ export const WithdrawCollateral = ({
   useLockBodyScroll(show)
   const dispatch = useDispatch()
 
-  const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
+  const [inputData, setInputData] = useState<{
+    amount: string
+    validationStatus: InputStatusType
+  }>({
+    amount: '0',
+    validationStatus: INPUT_STATUS_DEFAULT,
+  })
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
 
   useEffect(() => {
     if (!show) {
-      setInputData(DEFAULT_LOANS_INPUT_VALUE)
+      setInputData({
+        amount: '0',
+        validationStatus: INPUT_STATUS_DEFAULT,
+      })
     }
   }, [show])
 

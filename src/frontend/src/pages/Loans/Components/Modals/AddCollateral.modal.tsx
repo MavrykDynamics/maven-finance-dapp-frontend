@@ -6,14 +6,13 @@ import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.co
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import {
   INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
+  InputStatusType,
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
-import {
-  AddCollateralPopupDataType,
-  DEFAULT_LOANS_INPUT_VALUE,
-} from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+import { AddCollateralPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -62,11 +61,20 @@ export const AddCollateral = ({
   const dispatch = useDispatch()
   useLockBodyScroll(show)
 
-  const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
+  const [inputData, setInputData] = useState<{
+    amount: string
+    validationStatus: InputStatusType
+  }>({
+    amount: '0',
+    validationStatus: INPUT_STATUS_DEFAULT,
+  })
 
   useEffect(() => {
     if (!show) {
-      setInputData(DEFAULT_LOANS_INPUT_VALUE)
+      setInputData({
+        amount: '0',
+        validationStatus: INPUT_STATUS_DEFAULT,
+      })
     }
   }, [show])
 

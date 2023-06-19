@@ -88,8 +88,6 @@ const useMarketTransactionHistory = ({ marketTokenAddress, userAddress }: LoansM
         [],
       )
 
-      console.log({ newTransactionHistory })
-
       setTransactionHistory(newTransactionHistory)
     },
     onError: (error) => {

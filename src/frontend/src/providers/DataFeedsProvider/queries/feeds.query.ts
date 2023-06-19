@@ -50,7 +50,9 @@ export const SUBSCRIBE_FEEDS = gql(`
           round
           timestamp
           oracle {
-            user_id
+            user {
+              address
+            }
             init_epoch
             init_round
           }

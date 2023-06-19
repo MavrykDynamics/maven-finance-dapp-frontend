@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { useCallback, useMemo, useState } from 'react'
+import { useState } from 'react'
 import classNames from 'classnames'
 
 import { State } from 'reducers'
@@ -11,10 +11,11 @@ import { LENDING_TAB_SLIDING_BUTTONS, assetDecimalsToShow, loansTabNames } from 
 import { getLoansInputMaxAmount, loansInputValidation } from '../../Loans.helpers'
 import { LENDING_TAB_SUPPLY_TEXT, LENDING_TAB_WITHDRAW_TEXT } from 'texts/banners/loan.text'
 import { LENDING_APY } from 'texts/tooltips/loan.text'
-import { DEFAULT_LOANS_INPUT_VALUE } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import {
   INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
   INPUT_STATUS_SUCCESS,
+  InputStatusType,
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
@@ -57,7 +58,13 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   const { lendValue = 0, mBalance = 0 } = lendingItem || {}
 
   const [activeTab, setActiveTab] = useState(LENDING_TAB_SLIDING_BUTTONS.find((item) => item.active))
-  const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
+  const [inputData, setInputData] = useState<{
+    amount: string
+    validationStatus: InputStatusType
+  }>({
+    amount: '0',
+    validationStatus: INPUT_STATUS_DEFAULT,
+  })
 
   const isSupplyActiveTab = activeTab?.id === loansTabNames.SUPPLY
 
@@ -76,7 +83,10 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   const isDisabledButton = inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionActive
 
   const handleSwitchTab = (tabId: number) => {
-    setInputData(DEFAULT_LOANS_INPUT_VALUE)
+    setInputData({
+      amount: '0',
+      validationStatus: INPUT_STATUS_DEFAULT,
+    })
     setActiveTab(LENDING_TAB_SLIDING_BUTTONS.find((item) => item.id === tabId))
   }
 

@@ -3,19 +3,10 @@ import TokensProvider from './tokens.provider'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { normalizeTokenPrices } from './helpers/tokens.normalizer'
 
-export type WhiteListTokensType = Array<{
-  symbol: string
-  address: string
-  shortSymbol: TokenType
-  id: number
-}>
-
-// TODO: udpate tokens types with utility types
-// Tokens Types
 export type TokenAddressType = string
 
 // regular token
-export type TokenMetadataType = {
+export interface TokenMetadataType {
   id: number
   address: TokenAddressType
   name: string
@@ -30,15 +21,21 @@ export type TokenMetadataType = {
 }
 
 // loan token (market)
-export type LoansTokenMetadataType = WithRequiredProperty<TokenMetadataType, 'loanData'>
+export interface LoansTokenMetadataType extends TokenMetadataType {
+  loanData: {
+    indexerName: string
+  }
+}
+
 // collareral token
-export type LoansCollateralTokenMetadataType = LoansTokenMetadataType & {
+export interface LoansCollateralTokenMetadataType extends LoansTokenMetadataType {
   loanData: {
     indexerName: string
     isProtectedCollateral: boolean
   }
 }
 
+// mToken in user store type
 export type UserMTokenType = {
   lendedAmount: number
   balance: number

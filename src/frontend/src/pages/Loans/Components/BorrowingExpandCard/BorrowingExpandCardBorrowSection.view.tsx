@@ -9,11 +9,12 @@ import {
   getLoansInputMaxAmount,
   loansInputValidation,
 } from 'pages/Loans/Loans.helpers'
-import { DEFAULT_LOANS_INPUT_VALUE } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { State } from 'reducers'
 import {
   INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
+  InputStatusType,
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
@@ -70,7 +71,13 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const { symbol, decimals, icon } = tokensMetadata[borrowedAssetAddress]
   const rate = tokensPrices[symbol]
 
-  const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
+  const [inputData, setInputData] = useState<{
+    amount: string
+    validationStatus: InputStatusType
+  }>({
+    amount: '0',
+    validationStatus: INPUT_STATUS_DEFAULT,
+  })
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
 

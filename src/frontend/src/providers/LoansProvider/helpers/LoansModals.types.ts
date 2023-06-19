@@ -1,14 +1,7 @@
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 
 import { DepositorsFlagType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
-import { TokenAddressType, TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { InputStatusType } from 'app/App.components/Input/Input.constants'
-
-// TODO: move it out or don't even use it
-export const DEFAULT_LOANS_INPUT_VALUE = {
-  amount: '0',
-  validationStatus: '' as InputStatusType,
-}
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 // Vaults actions popups data types
 export type ConfirmBorrowPopupDataType = {

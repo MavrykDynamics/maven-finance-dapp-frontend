@@ -10,6 +10,11 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { UserLoansDataStateType } from '../helpers/user.types'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
+/**
+ *
+ * @param param0.userAddress – address of the current user to get his lend/borrow data
+ * @returns returns user's loans data, all values are converted, this data is used to show his loans stats
+ */
 const useUserLoansData = ({ userAddress }: { userAddress?: string }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
@@ -72,6 +77,7 @@ const useUserLoansData = ({ userAddress }: { userAddress?: string }) => {
             const convetredAmount = convertNumberForClient({ number: amount, grade: tokenDecimals })
 
             switch (type) {
+              // add liquidity
               case 0:
                 acc.userLendings.push({
                   ...commonUserData,
@@ -79,6 +85,7 @@ const useUserLoansData = ({ userAddress }: { userAddress?: string }) => {
                 })
                 acc.totalUserLended += convetredAmount * rate
                 break
+              // remove liquidity
               case 1:
                 acc.userLendings.push({
                   ...commonUserData,
@@ -86,6 +93,7 @@ const useUserLoansData = ({ userAddress }: { userAddress?: string }) => {
                 })
                 acc.totalUserLended -= convetredAmount * rate
                 break
+              // borrow
               case 2:
                 acc.userBorrowings.push({
                   ...commonUserData,
@@ -93,6 +101,7 @@ const useUserLoansData = ({ userAddress }: { userAddress?: string }) => {
                 })
                 acc.totalUserBorrowed += convetredAmount * rate
                 break
+              // repay
               case 3:
                 acc.userBorrowings.push({
                   ...commonUserData,

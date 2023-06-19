@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSubscription } from '@apollo/client'
 import dayjs from 'dayjs'
 
@@ -6,10 +6,12 @@ import { LEND_BORROW_24H_DIFF } from 'providers/LoansProvider/queries/loansHisto
 
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { calcDiffBetweenTwoNumbersInPersentage, convertNumberForClient } from 'utils/calcFunctions'
-import { GetLendingDiffSubscription } from 'utils/__generated__/graphql'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
-// TODO: think about timestamp cond in query
+/**
+ *
+ * @returns last 24h volume change in $ and in %
+ */
 const useLendBorrow24hDiff = (): {
   last24hLendingVol: number
   lending24hPersentChange: number
@@ -23,15 +25,22 @@ const useLendBorrow24hDiff = (): {
   const [currentTotalBorrowed, setCurrentTotalBorrowed] = useState(0)
   const [last24hLending, setLast24hLending] = useState(0)
   const [last24hBorrowing, setLast24hBorrowing] = useState(0)
+  const [ISOTimestamp, setISOTimestamp] = useState(dayjs().subtract(1, 'day').toISOString())
 
-  const [ISOTimestamp, setISOTimestamp] = useState(dayjs().toISOString())
+  // need this interval cuz we need to get all operations for last 24h, and we need to pass timestamp of this time but previous day
   useEffect(() => {
-    const intervalId = setInterval(() => setISOTimestamp(dayjs().toISOString()), 10000)
+    const intervalId = setInterval(() => setISOTimestamp(dayjs().subtract(1, 'day').toISOString()), 10000)
     return clearInterval(intervalId)
   }, [])
 
-  const dataHandler = useCallback(
-    (data: GetLendingDiffSubscription) => {
+  const { loading: isLoading } = useSubscription(LEND_BORROW_24H_DIFF, {
+    variables: {
+      currentTimestamp: ISOTimestamp,
+    },
+    shouldResubscribe: true,
+    onData: ({ data: { data } }) => {
+      if (!data) return
+
       const { last24hLending, last24hBorrowing } = data.lending_controller[0].history_data.reduce(
         (acc, operation) => {
           const tokenAddress = operation.loan_token?.token.token_address
@@ -83,18 +92,6 @@ const useLendBorrow24hDiff = (): {
       setLast24hLending(last24hLending)
       setCurrentTotalBorrowed(currentTotalBorrowed)
       setCurrentTotalLended(currentTotalLended)
-    },
-    [tokensMetadata, tokensPrices],
-  )
-
-  const { loading: isLoading } = useSubscription(LEND_BORROW_24H_DIFF, {
-    variables: {
-      currentTimestamp: ISOTimestamp,
-    },
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
-      dataHandler(data)
     },
     onError: (error) => {
       console.error('LENDING_24H_OPERATIONS_QUERY error: ', { error })

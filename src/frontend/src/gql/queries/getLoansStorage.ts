@@ -41,53 +41,6 @@ query GetLoansStorage {
 export const LOANS_QUERY_NAME = 'GetLoansStorage'
 export const LOANS_QUERY_VARIABLE = {}
 
-export const AVALIABLE_COLLATERALS_QUERY = `
-query GetAvaliableCollaterals {
-  lending_controller(where: {mock_time: {_eq: false}}) {
-    collateral_tokens {
-      token {
-        token_address
-        token_standard
-      }
-      id
-      token_name
-      protected
-      oracle {
-        address
-      }
-    }
-    loan_tokens {
-      loan_token_name
-      oracle {
-        address
-      }
-      vaults {
-        collateral_balances {
-          collateral_token {
-            token_name
-            token {
-              token_address
-            }
-          }
-        }
-        loan_token {
-          token {
-            token_address
-          }
-          loan_token_name
-          oracle {
-            address
-          }
-        }
-      }
-    }
-  }
-}
-`
-
-export const AVALIABLE_COLLATERALS_QUERY_NAME = 'GetAvaliableCollaterals'
-export const AVALIABLE_COLLATERALS_QUERY_VARIABLE = {}
-
 export const NEW_VAULT_QUERY = `
   query GetUsersLastestCreatedVault($userAddress: String = "", $vaultName: String = "") {
     vault(order_by: {creation_timestamp: desc}, limit: 1, where: {name: {_eq: $vaultName}}) {

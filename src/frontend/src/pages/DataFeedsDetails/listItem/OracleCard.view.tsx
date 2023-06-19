@@ -62,6 +62,7 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecordType }) => {
           </SatelliteOracleStatusComponent>
         </FeedsListItem>
 
+        {/* TODO: what this should do? */}
         <FeedsListItem className="open-full vertical-center">
           <svg>
             <use xlinkHref="/icons/sprites.svg#openLink" />

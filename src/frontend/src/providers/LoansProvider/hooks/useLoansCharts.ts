@@ -160,20 +160,10 @@ const useLoansCharts = ({
           }
 
           if (type === 5 && calcMarketCollateralChart) {
-            // TODO: check whether we need if part, cuz technically you can't withdraw, if you haven't deposited
-            if (!acc.marketCollateralChart[tokenAddress]) {
-              acc.marketCollateralChart[tokenAddress] = [
-                {
-                  value: -amountInUsd,
-                  time: operationTime,
-                },
-              ]
-            } else {
-              acc.marketCollateralChart[tokenAddress].push({
-                value: (acc.marketCollateralChart[tokenAddress].at(-1)?.value ?? 0) - amountInUsd,
-                time: operationTime,
-              })
-            }
+            acc.marketCollateralChart[tokenAddress].push({
+              value: (acc.marketCollateralChart[tokenAddress].at(-1)?.value ?? 0) - amountInUsd,
+              time: operationTime,
+            })
           }
 
           // deposit sMVK collateral operation TODO: check rate find for sMVK
@@ -184,7 +174,6 @@ const useLoansCharts = ({
             })
           }
 
-          // TODO: check whether we need if part, cuz technically you can't withdraw, if you haven't deposited
           if (type === 6 && calcMarketCollateralChart) {
             if (!acc.marketCollateralChart[tokenAddress]) {
               acc.marketCollateralChart[tokenAddress] = [
@@ -209,29 +198,17 @@ const useLoansCharts = ({
             })
           }
 
-          // TODO: check whether we need if part, cuz technically you can't withdraw, if you haven't deposited
           if (type === 6 && calcMarketCollateralChart) {
-            if (!acc.marketCollateralChart[tokenAddress]) {
-              acc.marketCollateralChart[tokenAddress] = [
-                {
-                  value: -amountInUsd,
-                  time: operationTime,
-                },
-              ]
-            } else {
-              acc.marketCollateralChart[tokenAddress].push({
-                value: (acc.marketCollateralChart[tokenAddress].at(-1)?.value ?? 0) - amountInUsd,
-                time: operationTime,
-              })
-            }
+            acc.marketCollateralChart[tokenAddress].push({
+              value: (acc.marketCollateralChart[tokenAddress].at(-1)?.value ?? 0) - amountInUsd,
+              time: operationTime,
+            })
           }
 
           return acc
         },
         DEFAULT_LOANS_CHARTS_STATE,
       )
-
-      console.log({ newChartsData })
 
       setChartsData(newChartsData)
     },
