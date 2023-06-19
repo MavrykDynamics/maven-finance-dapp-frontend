@@ -105,7 +105,7 @@ export const BorrowAsset = ({
       inputAmount: newInputAmount,
       maxAmount,
       options: {
-        byDecimalPlaces: decimals || assetDecimalsToShow,
+        byDecimalPlaces: decimals,
       },
     })
 

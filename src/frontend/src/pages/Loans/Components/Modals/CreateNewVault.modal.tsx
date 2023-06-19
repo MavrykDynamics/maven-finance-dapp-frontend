@@ -109,7 +109,7 @@ export const CreateNewVault = ({
     }
   }, [show])
 
-  // TODO: consider esctract to hook, cuz it's repeated twice (2nd create vault)
+  // TODO: consider esctract to hook, cuz it's repeated twice (2nd add new collateral)
   const mappedAvaliableCollaterals = useMemo(() => {
     let firstNotDisabledCollateralAddress: string | null = null
 
@@ -386,7 +386,7 @@ export const CreateNewVault = ({
           {shownScreen === 'addCollateral' ? (
             <>
               <div className="collateral-list">
-                {selectedCollateralsAddresses.map((collateralAddress, idx) => {
+                {selectedCollateralsAddresses.map((collateralAddress) => {
                   const collateralToken = getTokenDataByAddress({
                     tokenAddress: collateralAddress,
                     tokensMetadata,
@@ -481,7 +481,7 @@ export const CreateNewVault = ({
                 </div>
               ) : null}
 
-              {/* button for despositting more than 1 collateral */}
+              {/* button for depositting more than 1 collateral */}
               <NewButton
                 kind={BUTTON_SIMPLE}
                 disabled={!Boolean(nextAvaliableCollateralToAdd)}

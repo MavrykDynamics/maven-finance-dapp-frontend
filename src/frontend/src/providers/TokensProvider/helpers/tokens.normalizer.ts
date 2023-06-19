@@ -83,15 +83,15 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         // if token is collateral
         if (lending_controller_collateral_tokens?.[0]) {
           // if mvk_tokens?.[0]?.address present and token is collateral that means, that sMVK is collateral, but smvk don't really exist in indexer and we need to manually change it's collateral data
-          // sMVK collateral is disabled on demo
-          if (mvk_tokens?.[0]?.address && process.env.REACT_APP_IS_DEMO === 'false') {
+          // sMVK collateral is disabled on demo, so we set isProtectedCollateral true when it's demo env
+          if (mvk_tokens?.[0]?.address) {
             acc.collateralTokens.push(SMVK_TOKEN_ADDRESS)
 
             acc.tokensMetadata[SMVK_TOKEN_ADDRESS] = {
               ...acc.tokensMetadata[SMVK_TOKEN_ADDRESS],
               loanData: {
                 indexerName: lending_controller_collateral_tokens[0].token_name,
-                isProtectedCollateral: lending_controller_collateral_tokens[0].protected,
+                isProtectedCollateral: process.env.REACT_APP_IS_DEMO === 'true',
               },
             }
           } else if (!mvk_tokens?.[0]?.address) {

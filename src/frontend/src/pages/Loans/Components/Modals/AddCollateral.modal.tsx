@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
-import { State } from 'reducers'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
@@ -218,7 +217,7 @@ export const AddCollateral = ({
               type: 'number',
               onFocus: onFocusHandler,
               onBlur: inputOnBlurHandle,
-              onChange: (e) => inputOnChangeHandle(e.target.value, collateralBalance),
+              onChange: (e) => inputOnChangeHandle(e.target.value, userCollateralBalance),
             }}
             settings={{
               balance: userCollateralBalance,

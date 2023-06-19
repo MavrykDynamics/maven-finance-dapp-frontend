@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
-import { State } from 'reducers'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { DDItemId, DropDown, DropDownItemType, DropdownInputCustomChild } from 'app/App.components/DropDown/NewDropdown'
@@ -52,7 +51,6 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
-// TODO: redo it
 export const AddNewCollateral = ({
   closePopup,
   show,

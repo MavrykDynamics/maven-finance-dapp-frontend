@@ -48,25 +48,33 @@ export const ChangeBaker = ({
 
   useLockBodyScroll(show)
 
-  const bakerySlidingButtons = useMemo(
+  const bakerySlidingButtons = useMemo<
+    Array<{
+      text: string
+      id: BakersSlidingButtonTab
+      active: boolean
+      bakeryAddresses: Array<string>
+      isDisabled?: boolean
+    }>
+  >(
     () => [
       {
         text: mavrykDynamics?.name ?? 'Mavryk Dynamics',
-        id: MAVRYK_DYNAMICS_BAKERY as BakersSlidingButtonTab,
+        id: MAVRYK_DYNAMICS_BAKERY,
         active: activeTab === MAVRYK_DYNAMICS_BAKERY,
         bakeryAddresses: [mavrykDynamics?.address ?? ''],
         isDisabled: mavrykDynamics?.isDisabled,
       },
       {
         text: dao?.name ?? 'The DAO',
-        id: DAO_BAKERY as BakersSlidingButtonTab,
+        id: DAO_BAKERY,
         active: activeTab === DAO_BAKERY,
         bakeryAddresses: [dao?.address ?? ''],
         isDisabled: dao?.isDisabled,
       },
       {
         text: 'Other',
-        id: OTHER_BAKERY as BakersSlidingButtonTab,
+        id: OTHER_BAKERY,
         active: activeTab === OTHER_BAKERY,
         bakeryAddresses: otherBakers.map(({ address }) => address),
       },

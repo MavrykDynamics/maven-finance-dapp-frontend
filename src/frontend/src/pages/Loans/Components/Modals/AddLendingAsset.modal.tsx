@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useState } from 'react'
 
@@ -14,7 +14,6 @@ import {
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
-import { State } from 'reducers'
 import {
   AddLendingAssetDataType,
   DEFAULT_LOANS_INPUT_VALUE,
