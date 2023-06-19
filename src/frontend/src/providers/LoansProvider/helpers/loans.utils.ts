@@ -1,4 +1,4 @@
-import { MTokenType } from 'utils/TypesAndInterfaces/User'
+import { UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 // HELPER TO GET OPERATION NAME BY ITS TYPE
@@ -34,7 +34,7 @@ export const getDescrByType = (type: number) => {
 }
 
 // get lending item of user
-export const getMarketUserLengingItem = (userMTokens: Array<MTokenType>, loanMtokenAddress: string) => {
+export const getMarketUserLengingItem = (userMTokens: Array<UserMTokenType>, loanMtokenAddress: string) => {
   const mTokenAsset = userMTokens?.find(({ tokenAddress }) => tokenAddress === loanMtokenAddress)
 
   if (mTokenAsset) {

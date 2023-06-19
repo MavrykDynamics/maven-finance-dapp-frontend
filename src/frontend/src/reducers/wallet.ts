@@ -1,20 +1,12 @@
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import type { MTokenType, UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
+import type { UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
+import { UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
 
 import { DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import {
-  MVK_TOKEN_SYMBOL,
-  SMVK_TOKEN_ADDRESS,
-  USER_TOKEN_TYPE_COLLATERAL,
-  USER_TOKEN_TYPE_DEFAULT,
-  USER_TOKEN_TYPE_MTOKEN,
-  USER_TOKEN_TYPE_WHITELIST,
-  XTZ_TOKEN_SYMBOL,
-} from 'utils/constants'
 import { UPDATE_USER_DATA } from './actions/user.actions'
 
 export interface UserState {
-  userMTokens: Array<MTokenType>
+  userMTokens: Array<UserMTokenType>
 
   satelliteMvkIsDelegatedTo: string
   isLoaded: boolean

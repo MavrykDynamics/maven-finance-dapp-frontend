@@ -19,7 +19,7 @@ import {
   SATELLITE_CYCLE_DATA_QUERY_VARIABLE,
 } from 'gql/queries'
 import { UserState, DEFAULT_USER } from 'reducers/wallet'
-import { MTokenType, MavrykUserGraphQl } from 'utils/TypesAndInterfaces/User'
+import { MavrykUserGraphQl } from 'utils/TypesAndInterfaces/User'
 import {
   calcUsersRewardsToDate,
   calcUsersDoormanRewards,
@@ -29,6 +29,7 @@ import {
 } from 'utils/calcFunctions'
 import { MVK_DECIMALS, XTZ_DECIMALS } from 'utils/constants'
 import { Satellite, Vesting } from 'utils/generated/graphqlTypes'
+import { UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
 
 export type SatelliteSnapshot = {
   cycle: number
@@ -125,7 +126,7 @@ export const fetchUserData = async (accountPkh: string, currentBlockLevel: numbe
     }
 
     const interestRateDecimals = userRewardsData?.lending_controller?.[0]?.interest_rate_decimals ?? 0
-    const normalizedMTokens = m_token_accounts.reduce<Array<MTokenType>>((acc, tokenData) => {
+    const normalizedMTokens = m_token_accounts.reduce<Array<UserMTokenType>>((acc, tokenData) => {
       acc.push({
         lendedAmount: tokenData.balance,
         balance: tokenData.balance + tokenData.rewards_earned,

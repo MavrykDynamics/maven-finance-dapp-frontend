@@ -10,7 +10,6 @@ import { configureStore } from './App.store'
 
 // providers
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
-import { StakeProvider } from 'providers/StakeProvider/stake.provider'
 
 // hooks
 import { useInitializer } from './App.hooks/useInitializer'
@@ -94,23 +93,21 @@ const AppContainer = () => {
     <LoaderRocket />
   ) : (
     <Router>
-      <StakeProvider>
-        <AppStyled isExpandedMenu={sidebarOpened}>
-          <ActionLoader />
-          <Toaster />
-          <WertLoader />
-          <Menu />
+      <AppStyled isExpandedMenu={sidebarOpened}>
+        <ActionLoader />
+        <Toaster />
+        <WertLoader />
+        <Menu />
 
-          <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
-          <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
+        <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
+        <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
-          <LoansPopupsProvider>
-            <AppRoutes />
-          </LoansPopupsProvider>
+        <LoansPopupsProvider>
+          <AppRoutes />
+        </LoansPopupsProvider>
 
-          <Footer />
-        </AppStyled>
-      </StakeProvider>
+        <Footer />
+      </AppStyled>
     </Router>
   )
 }

@@ -4,7 +4,7 @@ import { VestingGraphQL } from 'utils/TypesAndInterfaces/Vesting'
 import type { TreasuryGraphQL, TreasuryBalanceType } from '../../utils/TypesAndInterfaces/Treasury'
 
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { MVK_DECIMALS, SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { MVK_DECIMALS, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 import { getAssetColor } from './helpers/treasury.utils'
 
 export const MIN_TREASURY_PERSENT_TO_DISPLAY = 0.1
@@ -52,7 +52,7 @@ export const normalizeTreasuryStorage = (sMVKAmounts: Array<Mavryk_User>, treasu
     ({ smvk_balance, address }: { smvk_balance: number; address: string }): TreasuryBalanceType => ({
       balance: smvk_balance,
       contract: address,
-      chartColor: treasuryAssetsColors['smvk'],
+      chartColor: treasuryAssetsColors[SMVK_TOKEN_ADDRESS],
       tokenAddress: SMVK_TOKEN_ADDRESS,
     }),
   )
@@ -62,7 +62,7 @@ export const normalizeTreasuryStorage = (sMVKAmounts: Array<Mavryk_User>, treasu
     const sMVKAmount = parsedsMVKAmount.find(({ contract }: TreasuryBalanceType) => contract === treasuryData.address)
 
     // XTZ is present by default for each treasury, and it can't be defined on back-end
-    const treasuryWhitelistTokens = ['XTZ'].concat(
+    const treasuryWhitelistTokens = [XTZ_TOKEN_ADDRESS].concat(
       treasuryData.whitelist_token_contracts.map(({ contract_address }) => contract_address),
     )
 

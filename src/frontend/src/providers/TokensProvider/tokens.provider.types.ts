@@ -39,6 +39,15 @@ export type LoansCollateralTokenMetadataType = LoansTokenMetadataType & {
   }
 }
 
+export type UserMTokenType = {
+  lendedAmount: number
+  balance: number
+  tokenAddress: TokenAddressType
+  reward_index: number
+  rewards_earned: number
+  interestRateDecimals: number
+}
+
 type TokensPricesType = ReturnType<typeof normalizeTokenPrices>
 
 // Context types

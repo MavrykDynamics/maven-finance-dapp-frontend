@@ -24,6 +24,7 @@ import './styles/animations.css'
 import ToasterProvider from 'providers/ToasterProvider/toaster.provider'
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
 import UserProvider from 'providers/UserProvider/user.provider'
+import StakeProvider from 'providers/StakeProvider/stake.provider'
 
 export const Root = () => {
   const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
@@ -35,13 +36,15 @@ export const Root = () => {
             <DataFeedsProvider>
               <TokensProvider>
                 <UserProvider>
-                  <DarkThemeProvider>
-                    <GlobalStyle />
-                    <ToasterProvider>
-                      {isMobile ? <Mobile /> : <App />}
-                      <ToasterMessages />
-                    </ToasterProvider>
-                  </DarkThemeProvider>
+                  <StakeProvider>
+                    <DarkThemeProvider>
+                      <GlobalStyle />
+                      <ToasterProvider>
+                        {isMobile ? <Mobile /> : <App />}
+                        <ToasterMessages />
+                      </ToasterProvider>
+                    </DarkThemeProvider>
+                  </StakeProvider>
                 </UserProvider>
               </TokensProvider>
             </DataFeedsProvider>
