@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { State } from '../../../reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_WIDE } from '../Button/Button.constants'
 import { BLUE } from '../TzAddress/TzAddress.constants'
-import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { changeWallet, disconnect } from './ConnectWallet.actions'
 
 import Icon from '../Icon/Icon.view'
@@ -113,7 +113,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             </div>
             <div className="values">
               <CommaNumber
-                value={userTokens[SMVK_TOKEN_SYMBOL].balance}
+                value={userTokens[SMVK_TOKEN_ADDRESS].balance}
                 endingText={'SMVK'}
                 showDecimal
                 className="asset-amount"
@@ -158,7 +158,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
           {/* {tokensSymbols.map((tokenSymbol) => {
             if (
               tokenSymbol === MVK_TOKEN_SYMBOL ||
-              tokenSymbol === SMVK_TOKEN_SYMBOL ||
+              tokenSymbol === SMVK_TOKEN_ADDRESS ||
               tokenSymbol === XTZ_TOKEN_SYMBOL
             )
               return null
@@ -307,7 +307,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             </div>
             <div className="values">
               <CommaNumber
-                value={userTokens[SMVK_TOKEN_SYMBOL].balance}
+                value={userTokens[SMVK_TOKEN_ADDRESS].balance}
                 endingText={'SMVK'}
                 showDecimal
                 className="asset-amount"
@@ -352,7 +352,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
           {/* {tokensSymbols.map((tokenSymbol) => {
             if (
               tokenSymbol === MVK_TOKEN_SYMBOL ||
-              tokenSymbol === SMVK_TOKEN_SYMBOL ||
+              tokenSymbol === SMVK_TOKEN_ADDRESS ||
               tokenSymbol === XTZ_TOKEN_SYMBOL
             )
               return null

@@ -20,7 +20,7 @@ import { toggleSidebarCollapsing } from './Menu.actions'
 import { mainNavigationLinks } from './NavigationLink/MainNavigationLinks'
 import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
 import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
 
@@ -82,7 +82,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     setCanGetInitThouthand(
       Boolean(
         accountPkh &&
-          (user.userTokens[MVK_TOKEN_SYMBOL].balance === 0 || user.userTokens[SMVK_TOKEN_SYMBOL].balance === 0),
+          (user.userTokens[MVK_TOKEN_SYMBOL].balance === 0 || user.userTokens[SMVK_TOKEN_ADDRESS].balance === 0),
       ),
     )
   }, [accountPkh, user.userTokens])

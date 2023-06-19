@@ -25,7 +25,7 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { SUB_SKIP } from 'utils/api/apollo.consts'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
 // styles
 import { SatelliteGovernanceStatsInfo } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
@@ -75,7 +75,7 @@ const Satellites = () => {
   return (
     <Page>
       <PageHeader page={'satellites'} />
-      {!isSatellite && userTokens[SMVK_TOKEN_SYMBOL].balance === 0 ? (
+      {!isSatellite && userTokens[SMVK_TOKEN_ADDRESS].balance === 0 ? (
         <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
       ) : null}
       <PageContent>

@@ -5,7 +5,7 @@ import { isValidTokenType } from 'utils/TypesAndInterfaces/General'
 import { TokenMetadataType, TokensContext } from '../tokens.provider.types'
 import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from 'utils/__generated__/graphql'
 import { tokenMetadataSchema } from './tokens.types'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
 // Normalizing token rates
 export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscription['aggregator']) => {
@@ -59,7 +59,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         // handling sMVK token, cuz it's not actuall token that exist, it's platform token (staked MVK)
         const isSMVKToken = parsedMetadata.symbol === 'MVK' && !mvk_tokens?.[0]?.address
 
-        const symbolFromIndexer = isSMVKToken ? SMVK_TOKEN_SYMBOL : parsedMetadata.symbol
+        const symbolFromIndexer = isSMVKToken ? SMVK_TOKEN_ADDRESS : parsedMetadata.symbol
         const { symbol, name, icon } = getTokenSymbolAndName(symbolFromIndexer) ?? {}
 
         const tokenIcon = parsedMetadata.icon ?? icon
@@ -68,7 +68,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
           throw new Error(`Token do not have valid symbol, name or icon ${symbol}, ${name}, ${tokenIcon}`)
         }
 
-        const tokenAddress = isSMVKToken ? SMVK_TOKEN_SYMBOL : token_address
+        const tokenAddress = isSMVKToken ? SMVK_TOKEN_ADDRESS : token_address
 
         const tokenMetadata: TokenMetadataType = {
           id: token_id,
@@ -85,10 +85,10 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
           // if mvk_tokens?.[0]?.address present and token is collateral that means, that sMVK is collateral, but smvk don't really exist in indexer and we need to manually change it's collateral data
           // sMVK collateral is disabled on demo
           if (mvk_tokens?.[0]?.address && process.env.REACT_APP_IS_DEMO === 'false') {
-            acc.collateralTokens.push(SMVK_TOKEN_SYMBOL)
+            acc.collateralTokens.push(SMVK_TOKEN_ADDRESS)
 
-            acc.tokensMetadata[SMVK_TOKEN_SYMBOL] = {
-              ...acc.tokensMetadata[SMVK_TOKEN_SYMBOL],
+            acc.tokensMetadata[SMVK_TOKEN_ADDRESS] = {
+              ...acc.tokensMetadata[SMVK_TOKEN_ADDRESS],
               loanData: {
                 indexerName: lending_controller_collateral_tokens[0].token_name,
                 isProtectedCollateral: lending_controller_collateral_tokens[0].protected,

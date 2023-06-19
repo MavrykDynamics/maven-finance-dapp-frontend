@@ -29,7 +29,7 @@ import {
   SatelliteGovernanceCardDropDown,
   SatelliteGovernanceCardTitleTextGroup,
 } from 'pages/SatelliteGovernance/SatelliteGovernanceCard/SatelliteGovernanceCard.style'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
 type EGovCardProps = {
   emergencyGovernance: EmergergencyGovernanceItem
@@ -101,7 +101,7 @@ export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
           isVotingActive={true}
           disableVotingButtons={
             Boolean(emergencyGovernance.voters.find((voter) => accountPkh === voter.voterId)) ||
-            userTokens[SMVK_TOKEN_SYMBOL].balance < minStakedMvkRequiredToVote
+            userTokens[SMVK_TOKEN_ADDRESS].balance < minStakedMvkRequiredToVote
           }
           handleVote={handleProposalVote}
           buttonsToShow={{ forBtn: { text: 'Vote to Trigger' } }}

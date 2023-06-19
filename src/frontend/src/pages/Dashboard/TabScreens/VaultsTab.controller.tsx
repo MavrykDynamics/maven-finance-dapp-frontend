@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { State } from 'reducers'
-import { getPieChartData } from 'pages/Treasury/helpers/calculateChartData'
 import { reduceVaultsAssets } from 'pages/Vaults/Vaults.helpers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
@@ -30,6 +29,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'
 
 export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)

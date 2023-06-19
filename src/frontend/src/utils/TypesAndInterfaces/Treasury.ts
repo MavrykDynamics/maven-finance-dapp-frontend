@@ -10,13 +10,3 @@ export type TreasuryBalanceType = {
   chartColor: string
   tokenAddress: string
 }
-
-export type TreasuryChartType = Array<{
-  title: string
-  value: number
-  color: string
-  labelPersent: number
-  segmentStroke: number
-  isHoveredPathAsset: boolean
-  groupedSmall: boolean
-}>

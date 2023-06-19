@@ -43,7 +43,7 @@ import {
   SatelliteCardButtons,
   SatelliteCardRow,
 } from './SatelliteCard.style'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 import colors from 'styles/colors'
 
@@ -80,7 +80,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   const freesMVKSpace = Math.max(satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satellite.address === satelliteMvkIsDelegatedTo
-  const balanceOver1SMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= 1
+  const balanceOver1SMvk = userTokens[SMVK_TOKEN_ADDRESS].balance >= 1
   const { currentlyRegistered } = satellite
 
   // Latest vote data

@@ -4,7 +4,7 @@ import type { MTokenType, UserFarmRewardsData } from 'utils/TypesAndInterfaces/U
 import { DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import {
   MVK_TOKEN_SYMBOL,
-  SMVK_TOKEN_SYMBOL,
+  SMVK_TOKEN_ADDRESS,
   USER_TOKEN_TYPE_COLLATERAL,
   USER_TOKEN_TYPE_DEFAULT,
   USER_TOKEN_TYPE_MTOKEN,
@@ -77,7 +77,7 @@ export const DEFAULT_USER: UserState = {
       symbol: MVK_TOKEN_SYMBOL,
       type: USER_TOKEN_TYPE_DEFAULT,
     },
-    [SMVK_TOKEN_SYMBOL]: {
+    [SMVK_TOKEN_ADDRESS]: {
       balance: 0,
       name: 'sMVK',
       symbol: MVK_TOKEN_SYMBOL,

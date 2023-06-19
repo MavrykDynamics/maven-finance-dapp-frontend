@@ -20,7 +20,7 @@ import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 // actions
 import { State } from 'reducers'
-import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS, MVK_TOKEN_SYMBOL } from 'utils/constants'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
@@ -41,7 +41,7 @@ export const Doorman = () => {
   } = useSelector((state: State) => state.wallet)
 
   const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
-  const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
+  const mySMvkTokenBalance = userTokens[SMVK_TOKEN_ADDRESS].balance,
     myMvkTokenBalance = userTokens[MVK_TOKEN_SYMBOL].balance
 
   const [unstakePopupActive, setUnstakePopupActive] = useState(false)

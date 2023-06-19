@@ -10,7 +10,6 @@ import { scrollToFullView } from 'utils/scrollToFullView'
 
 // style
 import { TreasuryViewStyle } from './Treasury.style'
-import { getPieChartData } from './helpers/calculateChartData'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
@@ -31,6 +30,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTreasuryTVL } from './helpers/treasury.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'
 
 type Props = {
   treasury: TreasuryType[number]

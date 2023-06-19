@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { INFO_DEFAULT, INFO_ERROR } from 'app/App.components/Info/info.constants'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
 import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
@@ -108,7 +108,7 @@ export const BecomeSatellite = () => {
     [accountPkh],
   )
 
-  const balanceOverMinStakedMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= minimumStakedMvkBalance
+  const balanceOverMinStakedMvk = userTokens[SMVK_TOKEN_ADDRESS].balance >= minimumStakedMvkBalance
   const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
@@ -312,7 +312,7 @@ export const BecomeSatellite = () => {
                   <BecomeSatelliteFormBalanceCheck balanceOk={balanceOverMinStakedMvk}>
                     <Icon id={balanceOverMinStakedMvk ? 'check-stroke' : 'close-stroke'} />
                     <CommaNumber
-                      value={userTokens[SMVK_TOKEN_SYMBOL].balance}
+                      value={userTokens[SMVK_TOKEN_ADDRESS].balance}
                       beginningText={'Currently staking'}
                       endingText={'MVK'}
                     />

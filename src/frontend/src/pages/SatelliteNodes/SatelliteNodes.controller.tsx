@@ -26,7 +26,7 @@ import { SatelliteSearchFilter } from 'pages/Satellites/Satellites.style'
 import { SatelliteNodesStyled } from './SatelliteNodes.style'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
 import { NotStakingBanner } from 'pages/Satellites/components/NotStakingBanner.view'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
 const itemsForDropDown = [
   { text: 'Lowest Fee', value: 'satelliteFee' },
@@ -77,7 +77,7 @@ const SatelliteNodes = () => {
     <Page>
       <PageHeader page={'satellites'} />
 
-      {!isSatellite && userTokens[SMVK_TOKEN_SYMBOL].balance === 0 ? (
+      {!isSatellite && userTokens[SMVK_TOKEN_ADDRESS].balance === 0 ? (
         <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
       ) : null}
 

@@ -101,7 +101,7 @@ export const LendBorrowPosition = ({
         currentValue: apyNet,
       },
     }
-  }, [markets, userVaultsData])
+  }, [markets, tokensMetadata, tokensPrices, userMTokens, userVaultsData])
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({

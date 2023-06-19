@@ -64,6 +64,17 @@ export const convertNumberForClient = ({
   return number / Math.pow(10, grade)
 }
 
+/**
+ *
+ * @param number number we want to get it's persent
+ * @param wholeSum number we wan't to get persent from
+ * @returns persent of number in whole sum
+ */
+export const calcPersent = (number: number, wholeSum: number) => {
+  const divider = wholeSum / 100
+  return divider === 0 ? 0 : getNumberInBounds(0, 100, number / divider)
+}
+
 export const getDynamicDecimalsAmountForOutput = (number: number): number => {
   const decimalPart = String(number).split('.')[1]
   if (!decimalPart) return DECIMALS_TO_SHOW

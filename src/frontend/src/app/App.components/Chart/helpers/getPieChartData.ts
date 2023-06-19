@@ -1,10 +1,11 @@
-import { HIGHLIGHTED_STROKE_WIDTH, DEFAULT_STROKE_WIDTH } from 'app/App.components/PieСhart/pieChart.const'
-import { TreasuryBalanceType, TreasuryChartType } from 'utils/TypesAndInterfaces/Treasury'
-import { calcPersent } from './treasury.utils'
-import { VaultAssetData } from 'pages/Vaults/Vaults.helpers'
+import { TreasuryBalanceType } from 'utils/TypesAndInterfaces/Treasury'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+import { PieChartDataType } from 'app/App.components/Chart/helpers/Chart.types'
+
+import { HIGHLIGHTED_STROKE_WIDTH, DEFAULT_STROKE_WIDTH } from 'app/App.components/PieСhart/pieChart.const'
+import { VaultAssetData } from 'pages/Vaults/Vaults.helpers'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
+import { calcPersent, convertNumberForClient } from 'utils/calcFunctions'
 
 export const getPieChartData = (
   balances: Array<TreasuryBalanceType | VaultAssetData>,
@@ -36,7 +37,7 @@ export const getPieChartData = (
   let groupedSectorsValue = 0
   let groupedSectorsColor: null | string = null
 
-  return balances.reduce<TreasuryChartType>((acc, item) => {
+  return balances.reduce<PieChartDataType>((acc, item) => {
     const token = getTokenDataByAddress({ tokenAddress: item.tokenAddress, tokensMetadata, tokensPrices })
     if (!token || !token.rate) return acc
 

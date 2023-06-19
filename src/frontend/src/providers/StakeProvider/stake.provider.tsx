@@ -19,7 +19,7 @@ import { State, Props, StakeContext } from './stake.provider.types'
 // consts
 import { TOASTER_ERROR } from 'app/App.components/Toaster/Toaster.constants'
 import { GET_MVK_FROM_FAUCET_ACTION } from './helpers/stake.consts'
-import { MVK_DECIMALS, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { MVK_DECIMALS, MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { UPDATE_USER_DATA } from 'reducers/actions/user.actions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
@@ -130,8 +130,8 @@ export class StakeProviderClass extends React.Component<Props, State> {
             ...this.props.user.userTokens[MVK_TOKEN_SYMBOL],
             balance: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }),
           },
-          [SMVK_TOKEN_SYMBOL]: {
-            ...this.props.user.userTokens[SMVK_TOKEN_SYMBOL],
+          [SMVK_TOKEN_ADDRESS]: {
+            ...this.props.user.userTokens[SMVK_TOKEN_ADDRESS],
             balance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
           },
         },
@@ -217,7 +217,7 @@ export class StakeProviderClass extends React.Component<Props, State> {
       return
     }
 
-    if (user.userTokens[MVK_TOKEN_SYMBOL].balance > 0 || user.userTokens[SMVK_TOKEN_SYMBOL].balance > 0) {
+    if (user.userTokens[MVK_TOKEN_SYMBOL].balance > 0 || user.userTokens[SMVK_TOKEN_ADDRESS].balance > 0) {
       dispatch(
         showToaster(
           TOASTER_ERROR,
