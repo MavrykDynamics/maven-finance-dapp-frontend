@@ -27,6 +27,8 @@ import { SatelliteNodesStyled } from './SatelliteNodes.style'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
 import { NotStakingBanner } from 'pages/Satellites/components/NotStakingBanner.view'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const itemsForDropDown = [
   { text: 'Lowest Fee', value: 'satelliteFee' },
@@ -40,9 +42,11 @@ const ddItems = itemsForDropDown.map(({ text }) => text)
 const SatelliteNodes = () => {
   const { pathname, search } = useLocation()
 
+  const { userTokensBalances } = useUserContext()
+
   const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const {
-    user: { isSatellite, userTokens },
+    user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
 
   const [filteredSatelliteList, setFilteredSatelliteList] = useState(allSatellitesIds)
@@ -77,7 +81,7 @@ const SatelliteNodes = () => {
     <Page>
       <PageHeader page={'satellites'} />
 
-      {!isSatellite && userTokens[SMVK_TOKEN_ADDRESS].balance === 0 ? (
+      {!isSatellite && getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 ? (
         <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
       ) : null}
 

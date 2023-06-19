@@ -37,16 +37,23 @@ import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { updateUserData } from 'reducers/actions/user.actions'
-import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 import { SUB_SKIP } from 'utils/api/apollo.consts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
-  const { tokensPrices, tokensMetadata } = useTokensContext()
+  const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
+  const { userTokensBalances } = useUserContext()
 
+  const {
+    mvkTokenAddress: { address: mvkTokenAddress },
+  } = useSelector((state: State) => state.contractAddresses)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
@@ -54,7 +61,6 @@ const DashboardPersonal = () => {
   const {
     accountPkh,
     user: {
-      userTokens,
       availableDoormanRewards,
       availableSatellitesRewards,
       availableFarmRewards,
@@ -74,7 +80,6 @@ const DashboardPersonal = () => {
   const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
     skipAddressBalance: SUB_SKIP,
     skipStakeHistory: SUB_SKIP,
-    skipUserBalance: SUB_SKIP,
   })
 
   const { isLoading } = useDataLoader(
@@ -112,29 +117,61 @@ const DashboardPersonal = () => {
     lendingIncome: availableLoansRewards,
   }
 
-  const userTokensList = Object.values(userTokens)
-  const mostSuppliedUserTokenSymbol = userTokensList.reduce((acc, { symbol, balance, type }) => {
+  const mostSuppliedUserToken = (userTokensBalances ? Object.keys(userTokensBalances) : []).reduce<null | {
+    address: string
+    symbol: string
+    balance: number
+  }>((acc, tokenAddress) => {
+    // If token is mToken or shown by default return acc, we skip such tokens
     if (
-      symbol === MVK_TOKEN_SYMBOL ||
-      symbol === SMVK_TOKEN_ADDRESS ||
-      symbol === XTZ_TOKEN_SYMBOL ||
-      type === 'mToken'
+      tokenAddress === mvkTokenAddress ||
+      tokenAddress === SMVK_TOKEN_ADDRESS ||
+      tokenAddress === XTZ_TOKEN_ADDRESS ||
+      mTokens.includes(tokenAddress)
     )
       return acc
-    const accAssetBalanceInUSD = Number(userTokens[acc]?.balance ?? 0) * (tokensPrices[acc] ?? 1)
-    const assetToCompareBalanceInUSD = Number(balance) * (tokensPrices[symbol] ?? 1)
-    return accAssetBalanceInUSD > assetToCompareBalanceInUSD ? acc : symbol
-  }, '')
+
+    const tokenToCheck = getTokenDataByAddress({ tokensMetadata, tokenAddress, tokensPrices })
+    const tokenToCheckBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress })
+
+    // If token to compare is not valid skip check
+    if (!tokenToCheck || !tokenToCheck.rate) return acc
+
+    // if we don't have acc, make acc current token, cuz it's valid
+    if (!acc)
+      return {
+        address: tokenAddress,
+        balance: tokenToCheckBalance,
+        symbol: tokenToCheck.symbol,
+      }
+
+    const accToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: acc.address, tokensPrices })
+
+    // check for acc token exist to make ts satisfied, cuz it's 100% valid token inside acc
+    if (!accToken || !accToken.rate) return acc
+
+    const { rate: checkTokenRate } = tokenToCheck
+    const { rate: accTokenRate } = accToken
+    const accTokenBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: acc.address })
+
+    return accTokenBalance * accTokenRate > tokenToCheckBalance * checkTokenRate
+      ? acc
+      : {
+          address: tokenToCheck.address,
+          balance: tokenToCheckBalance,
+          symbol: tokenToCheck.symbol,
+        }
+  }, null)
 
   const walletData = {
-    xtzAmount: userTokens[XTZ_TOKEN_SYMBOL].balance,
-    sMVKAmount: userTokens[SMVK_TOKEN_ADDRESS].balance,
-    MVKAmount: userTokens[MVK_TOKEN_SYMBOL].balance,
-    ...(mostSuppliedUserTokenSymbol
+    xtzAmount: getUserBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }),
+    sMVKAmount: getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+    MVKAmount: getUserBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
+    ...(mostSuppliedUserToken
       ? {
           mostSuppliedUserToken: {
-            name: userTokens[mostSuppliedUserTokenSymbol].name,
-            amount: userTokens[mostSuppliedUserTokenSymbol].balance,
+            name: mostSuppliedUserToken.symbol,
+            amount: mostSuppliedUserToken.balance,
           },
         }
       : {}),

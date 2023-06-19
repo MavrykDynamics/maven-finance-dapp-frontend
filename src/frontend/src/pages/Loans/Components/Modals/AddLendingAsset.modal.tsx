@@ -33,6 +33,8 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
@@ -45,10 +47,9 @@ export const AddLendingAsset = ({
   data: AddLendingAssetDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userTokensBalances } = useUserContext()
 
   useLockBodyScroll(show)
-
-  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   const dispatch = useDispatch()
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -63,13 +64,13 @@ export const AddLendingAsset = ({
 
   if (!data || !loanToken || !loanToken.rate) return null
 
-  const { mBalance, lendingAPY } = data
+  const { mBalance, lendingAPY, tokenAddress } = data
   const { symbol, icon, decimals, rate } = loanToken
+  const tokenBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: tokenAddress })
 
   const isDepositDisabled = inputData.validationStatus !== INPUT_STATUS_SUCCESS
 
   // TODO: handle user balances
-  const tokenBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
 
   const onChangeHandler = (inputAmount: string, userBalance: number) => {
     const validationStatus = loansInputValidation({

@@ -51,6 +51,8 @@ import {
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type CurrentActiveModalScreen =
   | typeof INITIAL_SCREEN_ID
@@ -72,13 +74,13 @@ export const CreateNewVault = ({
   data: CreateVaultPopupDataType
 }) => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
+  const { userTokensBalances } = useUserContext()
 
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
 
   const {
     vaults: { myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
-  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
@@ -396,7 +398,10 @@ export const CreateNewVault = ({
                   const { amount, validation } = selectedCollaterals[collateralAddress]
                   const { symbol, rate, decimals, icon } = collateralToken
 
-                  const userAssetBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
+                  const userAssetBalance = getUserBalanceByAddress({
+                    userTokensBalances,
+                    tokenAddress: collateralAddress,
+                  })
 
                   return (
                     <div className="collateral-block" key={symbol}>

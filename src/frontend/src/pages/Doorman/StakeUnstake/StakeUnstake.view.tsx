@@ -60,6 +60,8 @@ import {
 // types
 import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -78,11 +80,11 @@ export const StakeUnstakeView = ({
   const history = useHistory()
   const { stakeMVK, updateStakeActionContext, updateStakeLoadingToasterId, loadingToasterId } = useStakeContext()
   const { info, loading, hideToasterMessage, bug } = useToasterContext()
+  const { userTokensBalances } = useUserContext()
 
   const {
     accountPkh,
     user: {
-      userTokens,
       availableDoormanRewards,
       availableSatellitesRewards,
       availableFarmRewards,
@@ -101,8 +103,8 @@ export const StakeUnstakeView = ({
   } = useSelector((state: State) => state.contractAddresses)
 
   const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
-  const mySMvkTokenBalance = userTokens[SMVK_TOKEN_ADDRESS].balance,
-    myMvkTokenBalance = userTokens[MVK_TOKEN_SYMBOL].balance
+  const mySMvkTokenBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+    myMvkTokenBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
 
   const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
   const exchangeValue = mvkExchangeRate && inputData.amount ? Number(inputData.amount) * mvkExchangeRate : 0

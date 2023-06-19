@@ -33,7 +33,7 @@ import { actionStartToaster } from 'app/App.components/Toaster/builtActions/acti
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
 /** */
-export class StakeProviderClass extends React.Component<Props, State> {
+export class StakeProvider extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
@@ -50,7 +50,6 @@ export class StakeProviderClass extends React.Component<Props, State> {
         smvkHistoryData: [],
         updateStakeHistoryData: this.updateStakeHistoryData,
         updateTotalStakedMvk: this.updateTotalStakedMvk,
-        updateUserStakeData: this.updateUserStakeData,
         updateTotalMvkToken: this.updateTotalMvkToken,
         stakeMVK: this.stakeMVK,
         unstakeMVK: this.unstakeMVK,
@@ -113,30 +112,6 @@ export class StakeProviderClass extends React.Component<Props, State> {
         totalSupply: convertNumberForClient({ number: mvkTokenItem.total_supply ?? 0, grade: MVK_DECIMALS }),
         maximumTotalSupply: convertNumberForClient({ number: mvkTokenItem.maximum_supply ?? 0, grade: MVK_DECIMALS }),
       },
-    })
-  }
-
-  // TODO move wallet from redux to context
-  updateUserStakeData = (userData: SubscribeAdressBalanceSubscription) => {
-    const { mvk_balance = 0, smvk_balance = 0 } = userData.mavryk_user[0]
-
-    this.props.dispatch({
-      type: UPDATE_USER_DATA,
-      userData: {
-        ...this.props.user,
-        userTokens: {
-          ...this.props.user.userTokens,
-          [MVK_TOKEN_SYMBOL]: {
-            ...this.props.user.userTokens[MVK_TOKEN_SYMBOL],
-            balance: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }),
-          },
-          [SMVK_TOKEN_ADDRESS]: {
-            ...this.props.user.userTokens[SMVK_TOKEN_ADDRESS],
-            balance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
-          },
-        },
-      },
-      accountPkh: this.props.accountPkh,
     })
   }
 
@@ -203,46 +178,45 @@ export class StakeProviderClass extends React.Component<Props, State> {
 
   // TODO: update action as stake / unstake
   getMVKTokensFromFaucet = async (mvkFaucetAddress: string | null) => {
-    const { accountPkh, dispatch, user } = this.props
+    // const { accountPkh, dispatch, user } = this.props
 
     // check whether we can send transaction
-    if (!mvkFaucetAddress) {
-      dispatch(showToaster(TOASTER_ERROR, 'Cannot send transaction', 'No faucet address provided'))
-      return
-    }
+    // if (!mvkFaucetAddress) {
+    //   dispatch(showToaster(TOASTER_ERROR, 'Cannot send transaction', 'No faucet address provided'))
+    //   return
+    // }
 
     // check whether we can send transaction
-    if (!accountPkh) {
-      dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
+    // if (!accountPkh) {
+    //   dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+    //   return
+    // }
 
-    if (user.userTokens[MVK_TOKEN_SYMBOL].balance > 0 || user.userTokens[SMVK_TOKEN_ADDRESS].balance > 0) {
-      dispatch(
-        showToaster(
-          TOASTER_ERROR,
-          'You have already claimed MVK',
-          'You are unable to claim MVK, you have already claimed',
-        ),
-      )
-      return
-    }
+    // if (user.userTokens[MVK_TOKEN_SYMBOL].balance > 0 || user.userTokens[SMVK_TOKEN_ADDRESS].balance > 0) {
+    //   dispatch(
+    //     showToaster(
+    //       TOASTER_ERROR,
+    //       'You have already claimed MVK',
+    //       'You are unable to claim MVK, you have already claimed',
+    //     ),
+    //   )
+    //   return
+    // }
 
     try {
       // prepare and send transaction
-      const tezos = await DAPP_INSTANCE.tezos()
-      const contract = await tezos.wallet.at(mvkFaucetAddress)
-      await contract.methods.requestMvk().send()
-
-      this.updateStakeActionContext(GET_MVK_FROM_FAUCET_ACTION)
-      dispatch(await actionStartToaster(GET_MVK_FROM_FAUCET_ACTION))
+      // const tezos = await DAPP_INSTANCE.tezos()
+      // const contract = await tezos.wallet.at(mvkFaucetAddress)
+      // await contract.methods.requestMvk().send()
+      // this.updateStakeActionContext(GET_MVK_FROM_FAUCET_ACTION)
+      // dispatch(await actionStartToaster(GET_MVK_FROM_FAUCET_ACTION))
     } catch (error) {
-      if (error instanceof Error) {
-        console.error(error)
-        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-      }
-      dispatch(toggleActionFullScreenLoader(false))
-      dispatch(toggleActionCompletion(false))
+      // if (error instanceof Error) {
+      //   console.error(error)
+      //   dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
+      // }
+      // dispatch(toggleActionFullScreenLoader(false))
+      // dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -251,19 +225,6 @@ export class StakeProviderClass extends React.Component<Props, State> {
     return <stakeContext.Provider value={this.state.context}>{this.props.children}</stakeContext.Provider>
   }
 }
-
-const mapStateToProps = (state: ReduxState) => ({
-  doormanAddress: state.contractAddresses.doormanAddress.address,
-  mvkTokenAddress: state.contractAddresses.mvkTokenAddress.address,
-  accountPkh: state.wallet.accountPkh,
-  user: state.wallet.user,
-})
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  dispatch,
-})
-
-export const StakeProvider = connect(mapStateToProps, mapDispatchToProps)(StakeProviderClass)
 
 export const useStakeContext = () => {
   const context = useContext(stakeContext)

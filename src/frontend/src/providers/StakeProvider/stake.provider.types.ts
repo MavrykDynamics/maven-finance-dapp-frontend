@@ -2,9 +2,7 @@ import React from 'react'
 
 import { normalizeDoormanChartsData } from './helpers/normalizer'
 
-import { StakeProviderClass } from './stake.provider'
-import { UserState } from 'reducers/wallet'
-import { AppDispatch } from 'app/App.controller'
+import StakeProvider from './stake.provider'
 import { GET_MVK_FROM_FAUCET_ACTION, STAKE_ACTION, UNSTAKE_ACTION } from './helpers/stake.consts'
 
 export type SmvkHistoryData = ReturnType<typeof normalizeDoormanChartsData>
@@ -12,9 +10,9 @@ export type SmvkHistoryData = ReturnType<typeof normalizeDoormanChartsData>
 export interface StakeContext {
   // action update managers
   action: typeof STAKE_ACTION | typeof UNSTAKE_ACTION | typeof GET_MVK_FROM_FAUCET_ACTION | ''
-  updateStakeActionContext: InstanceType<typeof StakeProviderClass>['updateStakeActionContext']
+  updateStakeActionContext: InstanceType<typeof StakeProvider>['updateStakeActionContext']
   loadingToasterId: null | string
-  updateStakeLoadingToasterId: InstanceType<typeof StakeProviderClass>['updateStakeLoadingToasterId']
+  updateStakeLoadingToasterId: InstanceType<typeof StakeProvider>['updateStakeLoadingToasterId']
   // data
   mvkHistoryData: SmvkHistoryData['mvkHistoryData']
   smvkHistoryData: SmvkHistoryData['smvkHistoryData']
@@ -22,14 +20,13 @@ export interface StakeContext {
   totalSupply: number
   maximumTotalSupply: number
   // methods
-  updateStakeHistoryData: InstanceType<typeof StakeProviderClass>['updateStakeHistoryData']
-  updateTotalStakedMvk: InstanceType<typeof StakeProviderClass>['updateTotalStakedMvk']
-  updateUserStakeData: InstanceType<typeof StakeProviderClass>['updateUserStakeData']
-  updateTotalMvkToken: InstanceType<typeof StakeProviderClass>['updateTotalMvkToken']
+  updateStakeHistoryData: InstanceType<typeof StakeProvider>['updateStakeHistoryData']
+  updateTotalStakedMvk: InstanceType<typeof StakeProvider>['updateTotalStakedMvk']
+  updateTotalMvkToken: InstanceType<typeof StakeProvider>['updateTotalMvkToken']
   // actions
-  stakeMVK: InstanceType<typeof StakeProviderClass>['stakeMVK']
-  unstakeMVK: InstanceType<typeof StakeProviderClass>['unstakeMVK']
-  getMVKTokensFromFaucet: InstanceType<typeof StakeProviderClass>['getMVKTokensFromFaucet']
+  stakeMVK: InstanceType<typeof StakeProvider>['stakeMVK']
+  unstakeMVK: InstanceType<typeof StakeProvider>['unstakeMVK']
+  getMVKTokensFromFaucet: InstanceType<typeof StakeProvider>['getMVKTokensFromFaucet']
 }
 
 export type State = {
@@ -38,16 +35,10 @@ export type State = {
 
 export type Props = {
   children: React.ReactNode
-  doormanAddress: string
-  mvkTokenAddress: string
-  user: UserState
-  accountPkh?: string
-  dispatch: AppDispatch
 }
 
 export type StakingSubsSkipsType = {
   skipStakeHistory?: string
   skipAddressBalance?: string
   skipMvkTokenTotal?: string
-  skipUserBalance?: string
 }

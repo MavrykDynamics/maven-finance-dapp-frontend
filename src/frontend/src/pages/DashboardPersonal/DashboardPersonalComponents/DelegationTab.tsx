@@ -18,11 +18,17 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const DelegationTab = () => {
   const dispatch = useDispatch()
+  const { userTokensBalances } = useUserContext()
+
+  const userSmvkBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+
   const {
-    user: { satelliteMvkIsDelegatedTo, userTokens, availableSatellitesRewards },
+    user: { satelliteMvkIsDelegatedTo, availableSatellitesRewards },
     accountPkh,
   } = useSelector((state: State) => state.wallet)
   const { themeSelected } = useSelector((state: State) => state.preferences)
@@ -115,7 +121,7 @@ const DelegationTab = () => {
             </div>
             <Link to="/satellites">Satellites Overview</Link>
           </>
-        ) : userTokens[SMVK_TOKEN_ADDRESS].balance === 0 && accountPkh ? (
+        ) : userSmvkBalance === 0 && accountPkh ? (
           <div className="no-data">
             <span>You don't have SMVK</span>
             <div className="nav-button">
@@ -126,7 +132,7 @@ const DelegationTab = () => {
               </Link>
             </div>
           </div>
-        ) : accountPkh && userTokens[SMVK_TOKEN_ADDRESS].balance ? (
+        ) : accountPkh && userSmvkBalance ? (
           <div className="no-data">
             <span>You are not delegated at this time</span>
             <div className="nav-button">

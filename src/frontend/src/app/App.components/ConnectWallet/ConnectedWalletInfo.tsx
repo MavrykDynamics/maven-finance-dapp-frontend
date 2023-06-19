@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { State } from '../../../reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_WIDE } from '../Button/Button.constants'
 import { BLUE } from '../TzAddress/TzAddress.constants'
-import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 import { changeWallet, disconnect } from './ConnectWallet.actions'
 
 import Icon from '../Icon/Icon.view'
@@ -20,6 +20,8 @@ import {
   WalletDetailsVisiblePart,
 } from './ConnectWallet.style'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type ConnectWalletProps = {
   mountWertWiget: (commodity: string) => void
@@ -30,14 +32,15 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   const history = useHistory()
 
   const { tokensPrices } = useTokensContext()
+  const { userTokensBalances } = useUserContext()
 
   const mvkTokenRate = tokensPrices[MVK_TOKEN_SYMBOL]
   const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
 
+  const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    accountPkh,
-    user: { userTokens },
-  } = useSelector((state: State) => state.wallet)
+    mvkTokenAddress: { address: mvkTokenAddress },
+  } = useSelector((state: State) => state.contractAddresses)
 
   const { pathname } = useLocation()
 
@@ -87,13 +90,13 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             </div>
             <div className="values">
               <CommaNumber
-                value={userTokens[MVK_TOKEN_SYMBOL].balance}
+                value={getUserBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })}
                 endingText={'MVK'}
                 showDecimal
                 className="asset-amount"
               />
               <CommaNumber
-                value={userTokens[MVK_TOKEN_SYMBOL].balance * mvkTokenRate}
+                value={getUserBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }) * mvkTokenRate}
                 endingText={'USD'}
                 showDecimal
                 className="converted-amount"
@@ -113,7 +116,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             </div>
             <div className="values">
               <CommaNumber
-                value={userTokens[SMVK_TOKEN_ADDRESS].balance}
+                value={getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })}
                 endingText={'SMVK'}
                 showDecimal
                 className="asset-amount"
@@ -134,13 +137,13 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             </div>
             <div className="values">
               <CommaNumber
-                value={userTokens[XTZ_TOKEN_SYMBOL].balance}
+                value={getUserBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS })}
                 endingText={'XTZ'}
                 showDecimal
                 className="asset-amount"
               />
               <CommaNumber
-                value={userTokens[XTZ_TOKEN_SYMBOL].balance * xtzTokenRate}
+                value={getUserBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }) * xtzTokenRate}
                 endingText={'USD'}
                 showDecimal
                 className="converted-amount"
@@ -217,14 +220,15 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
   const history = useHistory()
 
   const { tokensPrices } = useTokensContext()
+  const { userTokensBalances } = useUserContext()
 
   const mvkTokenRate = tokensPrices[MVK_TOKEN_SYMBOL]
   const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
 
+  const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    accountPkh,
-    user: { userTokens },
-  } = useSelector((state: State) => state.wallet)
+    mvkTokenAddress: { address: mvkTokenAddress },
+  } = useSelector((state: State) => state.contractAddresses)
 
   const { pathname } = useLocation()
 
@@ -281,13 +285,13 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             </div>
             <div className="values">
               <CommaNumber
-                value={userTokens[MVK_TOKEN_SYMBOL].balance}
+                value={getUserBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })}
                 endingText={'MVK'}
                 showDecimal
                 className="asset-amount"
               />
               <CommaNumber
-                value={userTokens[MVK_TOKEN_SYMBOL].balance * mvkTokenRate}
+                value={getUserBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }) * mvkTokenRate}
                 endingText={'USD'}
                 showDecimal
                 className="converted-amount"
@@ -307,7 +311,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             </div>
             <div className="values">
               <CommaNumber
-                value={userTokens[SMVK_TOKEN_ADDRESS].balance}
+                value={getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })}
                 endingText={'SMVK'}
                 showDecimal
                 className="asset-amount"
@@ -328,13 +332,13 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             </div>
             <div className="values">
               <CommaNumber
-                value={userTokens[XTZ_TOKEN_SYMBOL].balance}
+                value={getUserBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS })}
                 endingText={'XTZ'}
                 showDecimal
                 className="asset-amount"
               />
               <CommaNumber
-                value={userTokens[XTZ_TOKEN_SYMBOL].balance * xtzTokenRate}
+                value={getUserBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }) * xtzTokenRate}
                 endingText={'USD'}
                 showDecimal
                 className="converted-amount"

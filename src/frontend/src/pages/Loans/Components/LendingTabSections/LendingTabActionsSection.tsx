@@ -35,6 +35,8 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -45,12 +47,11 @@ type LendingTabPropsType = {
 export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAPY }: LendingTabPropsType) => {
   const { openConfirmAddLendingAssetPopup, openConfirmRemoveLendingAssetPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userTokensBalances } = useUserContext()
 
   const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
 
-  const {
-    user: { userTokens },
-  } = useSelector((state: State) => state.wallet)
+  const {} = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const { lendValue = 0, mBalance = 0 } = lendingItem || {}
@@ -58,14 +59,12 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   const [activeTab, setActiveTab] = useState(LENDING_TAB_SLIDING_BUTTONS.find((item) => item.active))
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
-  // TODO: use user balances
-  const tokenBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
-
   const isSupplyActiveTab = activeTab?.id === loansTabNames.SUPPLY
 
   if (!loanToken || !loanToken.rate) return null
 
   const { symbol, decimals, icon, rate } = loanToken
+  const tokenBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: loanToken.address })
 
   const convertedMbalance = convertNumberForClient({ number: mBalance, grade: decimals })
   const convertedLendValue = convertNumberForClient({ number: lendValue, grade: decimals })

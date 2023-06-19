@@ -18,8 +18,6 @@ import {
   SATELLITE_CYCLE_DATA_QUERY_NAME,
   SATELLITE_CYCLE_DATA_QUERY_VARIABLE,
 } from 'gql/queries'
-import { DataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
-import { State } from 'reducers'
 import { UserState, DEFAULT_USER } from 'reducers/wallet'
 import { MTokenType, MavrykUserGraphQl } from 'utils/TypesAndInterfaces/User'
 import {
@@ -29,18 +27,8 @@ import {
   calcUsersFarmRewards,
   convertNumberForClient,
 } from 'utils/calcFunctions'
-import {
-  MVK_DECIMALS,
-  MVK_TOKEN_SYMBOL,
-  SMVK_TOKEN_SYMBOL,
-  USER_TOKEN_TYPE_COLLATERAL,
-  USER_TOKEN_TYPE_DEFAULT,
-  USER_TOKEN_TYPE_MTOKEN,
-  USER_TOKEN_TYPE_WHITELIST,
-  XTZ_DECIMALS,
-  XTZ_TOKEN_SYMBOL,
-} from 'utils/constants'
-import { Lending_Controller_Loan_Token, Satellite, Vesting } from 'utils/generated/graphqlTypes'
+import { MVK_DECIMALS, XTZ_DECIMALS } from 'utils/constants'
+import { Satellite, Vesting } from 'utils/generated/graphqlTypes'
 
 export type SatelliteSnapshot = {
   cycle: number
@@ -99,7 +87,6 @@ export const fetchUserData = async (accountPkh: string, currentBlockLevel: numbe
     const isNewSatellite = detectNewlyRegisteredSatellite(satellite_snapshots, currentCycle)
 
     const {
-      mvk_balance = 0,
       smvk_balance = 0,
       m_token_accounts = [],
       delegations = [],
@@ -161,96 +148,13 @@ export const fetchUserData = async (accountPkh: string, currentBlockLevel: numbe
       userAvatars,
     }
 
-    // ----- GETTING USER'S TOKENS BALANCES, THAT ARE USED ACROSS DAPP *START* -----
-    // We 100% should have are mvk and smvk, need this set to not make 2+ same calls for balance
-    // const userTokenNames = new Set<string>([XTZ_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL])
-
-    // const collateralTokens = await avaliableCollaterals.reduce<Promise<UserState['userTokens']>>(
-    //   async (promiseAcc, { address, symbol: collateralSymbol, gqlName }) => {
-    //     const acc = await promiseAcc
-    //     const { name, symbol } = getSymbolAndNameFromCollaterealGqlname(collateralSymbol, gqlName)
-    //     if (userTokenNames.has(symbol)) return acc
-
-    //     const fetchedTokenData = await (
-    //       await fetch(
-    //         `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=${address}`,
-    //       )
-    //     ).json()
-
-    //     const fetchedBalance = Number(fetchedTokenData?.[0]?.balance ?? 0)
-    //     const fetchedDecimals = Number(fetchedTokenData?.[0]?.token?.metadata?.decimals ?? 0)
-    //     const balance =
-    //       fetchedBalance && fetchedDecimals
-    //         ? convertNumberForClient({ number: fetchedBalance, grade: fetchedDecimals })
-    //         : 0
-
-    //     acc[symbol] = {
-    //       balance,
-    //       name,
-    //       symbol,
-    //       type: USER_TOKEN_TYPE_COLLATERAL,
-    //     }
-
-    //     userTokenNames.add(symbol)
-    //     return acc
-    //   },
-    //   Promise.resolve({}),
-    // )
-
-    // const mTokens = await normalizedMTokens.reduce<Promise<UserState['userTokens']>>(
-    //   async (promiseAcc, { tokenSymbol, tokenName, balance, icon }) => {
-    //     const acc = await promiseAcc
-    //     if (userTokenNames.has(tokenName)) return acc
-
-    //     acc[tokenName] = {
-    //       balance,
-    //       name: tokenName,
-    //       symbol: tokenSymbol,
-    //       type: USER_TOKEN_TYPE_MTOKEN,
-    //     }
-
-    //     userTokenNames.add(tokenName)
-    //     return acc
-    //   },
-    //   Promise.resolve({}),
-    // )
-
-    const fetchedUserXtzBalance = await (
-      await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
-    ).json()
-
-    userInfo.userTokens = {
-      // TODO: add collateral tokens and mTokens here
-      // ...collateralTokens,
-      // ...mTokens,
-      [MVK_TOKEN_SYMBOL]: {
-        balance: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }),
-        name: 'MVK',
-        symbol: MVK_TOKEN_SYMBOL,
-        type: USER_TOKEN_TYPE_DEFAULT,
-      },
-      [SMVK_TOKEN_SYMBOL]: {
-        balance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
-        name: 'sMVK',
-        symbol: MVK_TOKEN_SYMBOL,
-        type: USER_TOKEN_TYPE_DEFAULT,
-      },
-      [XTZ_TOKEN_SYMBOL]: {
-        balance: convertNumberForClient({ number: fetchedUserXtzBalance, grade: XTZ_DECIMALS }),
-        name: 'XTZ',
-        symbol: XTZ_TOKEN_SYMBOL,
-        type: USER_TOKEN_TYPE_DEFAULT,
-      },
-    }
-    // ----- GETTING USER'S TOKENS BALANCES, THAT ARE USED ACROSS DAPP *END* -----
-
     // ----- GETTING USER'S REWARDS *START* -----
     userInfo.availableDoormanRewards = calcUsersDoormanRewards({
-      mySMvkTokenBalance: userInfo.userTokens[SMVK_TOKEN_SYMBOL].balance ?? 0,
+      mySMvkTokenBalance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
       userDoormanRewardsFromGQL: userRewardsData?.doorman?.[0],
     })
     userInfo.availableSatellitesRewards = calcUsersSatelliteRewards({
-      mySMvkTokenBalance: userInfo.userTokens[SMVK_TOKEN_SYMBOL].balance ?? 0,
+      mySMvkTokenBalance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
       userSatelliteRewardsFromGQL: userRewardsData?.satellite_rewards?.[0],
     })
     userInfo.availableFarmRewards = calcUsersFarmRewards({

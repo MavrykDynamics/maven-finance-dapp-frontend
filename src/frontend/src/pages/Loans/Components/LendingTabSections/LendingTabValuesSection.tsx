@@ -1,6 +1,3 @@
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
-
 import { LoansValuesSectionInfo, LoansValuesSection } from './../LoansComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
@@ -20,10 +17,6 @@ type Props = {
 }
 
 export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY }: Props) => {
-  const {
-    user: { userTokens },
-  } = useSelector((state: State) => state.wallet)
-
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })

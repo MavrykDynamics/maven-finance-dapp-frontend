@@ -36,9 +36,12 @@ import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const Satellites = () => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
+  const { userTokensBalances } = useUserContext()
 
   const dispatch = useDispatch()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
@@ -50,7 +53,7 @@ const Satellites = () => {
     skipMvkTokenTotal: SUB_SKIP,
   })
   const {
-    user: { isSatellite, userTokens },
+    user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
@@ -75,7 +78,7 @@ const Satellites = () => {
   return (
     <Page>
       <PageHeader page={'satellites'} />
-      {!isSatellite && userTokens[SMVK_TOKEN_ADDRESS].balance === 0 ? (
+      {!isSatellite && getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 ? (
         <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
       ) : null}
       <PageContent>

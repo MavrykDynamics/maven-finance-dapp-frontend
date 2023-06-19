@@ -44,6 +44,8 @@ import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
 } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -56,10 +58,10 @@ export const WithdrawCollateral = ({
   data: WithdrawCollateralPopupDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userTokensBalances } = useUserContext()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
@@ -87,13 +89,11 @@ export const WithdrawCollateral = ({
 
   if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
 
-  const { vaultAddress, collateralBalance, collateralRatio, borrowedAmount } = data ?? {}
+  const { vaultAddress, collateralBalance, collateralRatio, borrowedAmount, collateralTokenAddress } = data
 
-  const { rate: collateralRate, decimals, symbol, name, icon } = collateralToken
+  const { rate: collateralRate, decimals, name, icon } = collateralToken
+  const userCollateralBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: collateralTokenAddress })
   const { rate: borrowedTokenRate } = borrowedToken
-
-  // TODO: use users balance
-  const userCollateralBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
 
   const futureCollateralRatio = calcCollateralRatio(
     collateralBalance - inputAmount * collateralRate,

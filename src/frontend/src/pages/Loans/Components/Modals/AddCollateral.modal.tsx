@@ -44,6 +44,8 @@ import {
   getTokenDataByAddress,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -56,14 +58,10 @@ export const AddCollateral = ({
   data: AddCollateralPopupDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
-
-  const { userTokens } = useSelector((state: State) => state.wallet.user)
+  const { userTokensBalances } = useUserContext()
 
   const dispatch = useDispatch()
   useLockBodyScroll(show)
-
-  // TODO: add user balance
-  const userCollateralBalance = 0 //userTokens[collateralToken?.symbol.toLowerCase() ?? '']?.balance ?? 0
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
@@ -86,9 +84,18 @@ export const AddCollateral = ({
 
   if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
 
-  const { collateralBalance, vaultAddress, collateralRatio, borrowedAmount, borrowCapacity, availableLiquidity } = data
+  const {
+    collateralBalance,
+    vaultAddress,
+    collateralRatio,
+    borrowedAmount,
+    borrowCapacity,
+    availableLiquidity,
+    collateralTokenAddress,
+  } = data
 
   const { rate: collateralRate, decimals, symbol, name, icon } = collateralToken
+  const userCollateralBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: collateralTokenAddress })
   const { rate: borrowedTokenRate } = borrowedToken
 
   const inputAmount = checkNan(parseFloat(inputData.amount))

@@ -44,6 +44,8 @@ import { checkNan } from 'utils/checkNan'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
 export const BorrowAsset = ({
@@ -56,9 +58,9 @@ export const BorrowAsset = ({
   data: BorrowPopupDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userTokensBalances } = useUserContext()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
@@ -89,12 +91,10 @@ export const BorrowAsset = ({
   } = data
 
   const { symbol, decimals, icon, rate } = borrowedToken
+  const userAssetBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: borrowedToken.address })
 
   const convertedBorrowedAmount = convertNumberForClient({ number: borrowedAmount, grade: decimals }),
     inputAmount = checkNan(parseFloat(inputData.amount))
-
-  // TODO: use user balances
-  const userAssetBalance = 0 // userTokens[balanceSymbol]?.balance ?? 0
 
   const futureCollateralRatio = calcCollateralRatio(collateralBalance, convertedBorrowedAmount + inputAmount, rate)
   const futureBorrowCapacity = borrowCapacity - inputAmount * rate

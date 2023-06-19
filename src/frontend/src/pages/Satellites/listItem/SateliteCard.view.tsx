@@ -46,6 +46,8 @@ import {
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 import colors from 'styles/colors'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -61,13 +63,15 @@ const renderVotingHistoryItem = (vote: number) => {
 }
 
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
+  const { userTokensBalances } = useUserContext()
+
   const dispatch = useDispatch()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     accountPkh,
-    user: { isSatellite, userTokens, satelliteMvkIsDelegatedTo, availableSatellitesRewards },
+    user: { isSatellite, satelliteMvkIsDelegatedTo, availableSatellitesRewards },
   } = useSelector((state: State) => state.wallet)
   const { proposalsMapper } = useSelector((state: State) => state.governance)
 
@@ -80,7 +84,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   const freesMVKSpace = Math.max(satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satellite.address === satelliteMvkIsDelegatedTo
-  const balanceOver1SMvk = userTokens[SMVK_TOKEN_ADDRESS].balance >= 1
+  const balanceOver1SMvk = getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) >= 1
   const { currentlyRegistered } = satellite
 
   // Latest vote data

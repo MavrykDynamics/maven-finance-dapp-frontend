@@ -26,8 +26,8 @@ import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.pr
 // queries
 import {
   SUBSCRIPTION_STAKE_HISTORY,
-  SUBSCRIPTION_ADDRESS_BALANCE_DATA,
   SUBSCRIPTION_MVK_TOKEN_TOTAL,
+  SUBSCRIPTION_ADDRESS_BALANCE_DATA,
 } from 'providers/StakeProvider/queries/doorman.query'
 
 /**
@@ -35,35 +35,30 @@ import {
  * @param skipAddressBalance boolean, if you pass this param, the hook will ignore general mvk data sub
  * @param skipMvkTokenTotal boolean, if you pass this param, the hook will ignore general mvk total values sub
  * @param skipStakeHistory boolean, if you pass this param, the hook will ignore general sMVK & MVK history data sub
- * @param skipUserBalance boolean, if you pass this param, the hook will ignore general user mvk & smvk balance sub
  * @returns {isInitialLoading: boolean, isActionLoading: boolean} isInitialLoading is false if initial data is still loading, true if it's loaded
  * isActionLoading is false if action update is done, true if it's in progress
  */
 export const useStakeUpdater = (
-  { skipAddressBalance, skipMvkTokenTotal, skipStakeHistory, skipUserBalance }: StakingSubsSkipsType = {
+  { skipAddressBalance, skipMvkTokenTotal, skipStakeHistory }: StakingSubsSkipsType = {
     skipAddressBalance: SUB_SUBSCRIBE,
     skipMvkTokenTotal: SUB_SUBSCRIBE,
     skipStakeHistory: SUB_SUBSCRIBE,
-    skipUserBalance: SUB_SUBSCRIBE,
   },
 ) => {
   const [shouldSkip, setShouldSkip] = useState<StakingSubsSkipsType>({
     skipAddressBalance,
     skipMvkTokenTotal,
     skipStakeHistory,
-    skipUserBalance,
   })
 
   const [actionLoaderState, setActionLoaderState] = useState<StakeActionsLoaderState>(STAKE_DEFAULT_LOADINGS)
 
   const dispatch = useDispatch()
   const { doormanAddress } = useSelector((state: State) => state.contractAddresses)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
     // Methods to update data in context
     updateStakeHistoryData,
     updateTotalStakedMvk,
-    updateUserStakeData,
     updateTotalMvkToken,
     // manage toaster after action proceed methods
     updateStakeLoadingToasterId,
@@ -123,27 +118,7 @@ export const useStakeUpdater = (
     shouldResubscribe: true,
   })
 
-  // TODO: move to user context when user data will be transfered to context
-  const { loading: userBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
-    skip: shouldSkip.skipUserBalance === SUB_SKIP,
-    variables: {
-      _eq: accountPkh,
-    },
-    onData: ({ data: result }) => {
-      const { data, error } = result
-      if (error) {
-        console.error('SUBSCRIPTION_ADDRESS_BALANCE_DATA query error: ', error)
-        bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-      }
-      if (data) {
-        updateUserStakeData(data)
-        setActionLoaderState({ ...actionLoaderState, userBalance: false })
-      }
-    },
-    shouldResubscribe: true,
-  })
-
-  const isInitialLoading = historyLoading || userBalanceLoading || doormanBalanceLoading || mvkStatsloading
+  const isInitialLoading = historyLoading || doormanBalanceLoading || mvkStatsloading
 
   /**
    * Effect to manage toasters after sending action and it's sended correct
@@ -167,7 +142,6 @@ export const useStakeUpdater = (
         loadingToasterId &&
         !actionLoaderState.doormanBalance &&
         !actionLoaderState.history &&
-        !actionLoaderState.userBalance &&
         actionLoaderState.loadingStateUpdatedForAction === action
       ) {
         // removing loader toaster and showing success toaster
@@ -209,26 +183,19 @@ export const useStakeUpdater = (
       }))
     }
 
-    if (isInitialLoading && skipUserBalance === SUB_QUERY) {
-      setShouldSkip((prevSkip) => ({
-        ...prevSkip,
-        skipUserBalance: SUB_SKIP,
-      }))
-    }
-
     if (isInitialLoading && skipStakeHistory === SUB_QUERY) {
       setShouldSkip((prevSkip) => ({
         ...prevSkip,
         skipStakeHistory: SUB_SKIP,
       }))
     }
-  }, [isInitialLoading, skipAddressBalance, skipMvkTokenTotal, skipStakeHistory, skipUserBalance])
+  }, [isInitialLoading, skipAddressBalance, skipMvkTokenTotal, skipStakeHistory])
 
   return {
     isInitialLoading,
     isActionLoading:
       action &&
       actionLoaderState.loadingStateUpdatedForAction === action &&
-      (actionLoaderState.doormanBalance || !actionLoaderState.history || !actionLoaderState.userBalance),
+      (actionLoaderState.doormanBalance || !actionLoaderState.history),
   }
 }

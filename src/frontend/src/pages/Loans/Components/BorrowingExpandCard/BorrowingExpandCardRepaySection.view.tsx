@@ -41,6 +41,8 @@ import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT 
 import { AVALIABLE_TO_BORROW, FEES_DUE } from 'texts/tooltips/vault.text'
 import { checkNan } from 'utils/checkNan'
 import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type Props = {
   vaultId: number
@@ -58,7 +60,8 @@ type Props = {
 }
 
 export const BorrowingExpandCardRepaySection = (props: Props) => {
-  const { userTokens } = useSelector((state: State) => state.wallet.user)
+  const { userTokensBalances } = useUserContext()
+
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -83,8 +86,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const inputAmount = checkNan(parseFloat(inputData.amount))
 
   const totalOutstanding = fee + Number(borrowedAmount)
-  // TODO: use user balance
-  const userAssetBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
+  const userAssetBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: borrowedToken.address })
 
   const isRepayInFull = activeRepayTab?.id === loansTabNames.REPAY_IN_FULL
   const isMinimumRepayWarning =

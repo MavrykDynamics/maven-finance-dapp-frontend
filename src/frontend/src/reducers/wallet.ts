@@ -14,21 +14,6 @@ import {
 import { UPDATE_USER_DATA } from './actions/user.actions'
 
 export interface UserState {
-  // user balances
-  userTokens: Record<
-    string,
-    {
-      balance: number
-      symbol: string
-      name: string
-      type:
-        | typeof USER_TOKEN_TYPE_COLLATERAL
-        | typeof USER_TOKEN_TYPE_WHITELIST
-        | typeof USER_TOKEN_TYPE_MTOKEN
-        | typeof USER_TOKEN_TYPE_DEFAULT
-    }
-  >
-
   userMTokens: Array<MTokenType>
 
   satelliteMvkIsDelegatedTo: string
@@ -70,26 +55,6 @@ export interface WalletState {
 }
 
 export const DEFAULT_USER: UserState = {
-  userTokens: {
-    [MVK_TOKEN_SYMBOL]: {
-      balance: 0,
-      name: 'MVK',
-      symbol: MVK_TOKEN_SYMBOL,
-      type: USER_TOKEN_TYPE_DEFAULT,
-    },
-    [SMVK_TOKEN_ADDRESS]: {
-      balance: 0,
-      name: 'sMVK',
-      symbol: MVK_TOKEN_SYMBOL,
-      type: USER_TOKEN_TYPE_DEFAULT,
-    },
-    [XTZ_TOKEN_SYMBOL]: {
-      balance: 0,
-      name: 'XTZ',
-      symbol: XTZ_TOKEN_SYMBOL,
-      type: USER_TOKEN_TYPE_DEFAULT,
-    },
-  },
   userMTokens: [],
 
   satelliteMvkIsDelegatedTo: '',

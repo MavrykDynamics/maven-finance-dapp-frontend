@@ -23,6 +23,8 @@ import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app
 import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type MenuViewProps = {
   openChangeNodePopupHandler: () => void
@@ -58,12 +60,16 @@ export const SocialIcons = () => (
 export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const { getMVKTokensFromFaucet } = useStakeContext()
   const { mvkFaucetAddress } = useDAPPConfigContext()
+  const { userTokensBalances } = useUserContext()
 
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const { sidebarOpened } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { user, accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    mvkTokenAddress: { address: mvkTokenAddress },
+  } = useSelector((state: State) => state.contractAddresses)
   const [canGetInitThouthand, setCanGetInitThouthand] = useState(false)
 
   useEffect(() => {
@@ -82,10 +88,11 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     setCanGetInitThouthand(
       Boolean(
         accountPkh &&
-          (user.userTokens[MVK_TOKEN_SYMBOL].balance === 0 || user.userTokens[SMVK_TOKEN_ADDRESS].balance === 0),
+          (getUserBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }) === 0 ||
+            getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0),
       ),
     )
-  }, [accountPkh, user.userTokens])
+  }, [accountPkh, mvkTokenAddress, userTokensBalances])
 
   const [selectedMainLink, setSelectedMainLink] = useState<number>(0)
 

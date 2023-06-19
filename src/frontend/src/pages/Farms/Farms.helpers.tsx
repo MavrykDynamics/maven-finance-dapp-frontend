@@ -137,7 +137,7 @@ export const getLPTokensInfo = async (farmList: FarmGraphQL[]) => {
 
         const lpTokenUserBalance =
           typeof parsedLpTokenInfo === 'object'
-            ? Number(await getUserBalanceByAddress(parsedLpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]))
+            ? Number(await getUserBalanceByAddressOld(parsedLpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]))
             : 0
         return {
           lpTokenInfo: parsedLpTokenInfo,
@@ -179,7 +179,7 @@ export async function getFarmMetadata(farmAddress: string) {
 }
 
 // get user tokens balance
-export const getUserBalanceByAddress = async (tokenAddress?: string) => {
+export const getUserBalanceByAddressOld = async (tokenAddress?: string) => {
   if (!tokenAddress) return 0
 
   return await (await fetch(`https://api.${network}.tzkt.io/v1/accounts/${tokenAddress}/balance`)).json()

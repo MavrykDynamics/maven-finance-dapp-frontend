@@ -38,6 +38,8 @@ import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault
 import { checkNan } from 'utils/checkNan'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type Props = {
   borrowedAssetAddress: TokenAddressType
@@ -51,7 +53,8 @@ type Props = {
 }
 
 export const BorrowingExpandCardBorrowSection = (props: Props) => {
-  const { userTokens } = useSelector((state: State) => state.wallet.user)
+  const { userTokensBalances } = useUserContext()
+
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {
@@ -71,7 +74,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
 
-  const userAssetBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
+  const userAssetBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: borrowedAssetAddress })
 
   // TODO: incapsulate to the separate component
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {

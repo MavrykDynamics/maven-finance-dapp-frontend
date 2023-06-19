@@ -58,6 +58,8 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -73,7 +75,6 @@ export const BecomeSatellite = () => {
   const {
     accountPkh = '',
     user: {
-      userTokens,
       isSatellite,
       satelliteMvkIsDelegatedTo,
       userAvatars: { mainAvatar = '/images/default-avatar.png' },
@@ -90,6 +91,9 @@ export const BecomeSatellite = () => {
   const {
     maxLengths: { satelliteDelegation },
   } = useDAPPConfigContext()
+  const { userTokensBalances } = useUserContext()
+
+  const userSmvkBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
   useStakeUpdater({
     skipAddressBalance: SUB_SKIP,
@@ -108,7 +112,7 @@ export const BecomeSatellite = () => {
     [accountPkh],
   )
 
-  const balanceOverMinStakedMvk = userTokens[SMVK_TOKEN_ADDRESS].balance >= minimumStakedMvkBalance
+  const balanceOverMinStakedMvk = userSmvkBalance >= minimumStakedMvkBalance
   const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
@@ -311,11 +315,7 @@ export const BecomeSatellite = () => {
                 {accountPkh ? (
                   <BecomeSatelliteFormBalanceCheck balanceOk={balanceOverMinStakedMvk}>
                     <Icon id={balanceOverMinStakedMvk ? 'check-stroke' : 'close-stroke'} />
-                    <CommaNumber
-                      value={userTokens[SMVK_TOKEN_ADDRESS].balance}
-                      beginningText={'Currently staking'}
-                      endingText={'MVK'}
-                    />
+                    <CommaNumber value={userSmvkBalance} beginningText={'Currently staking'} endingText={'MVK'} />
                   </BecomeSatelliteFormBalanceCheck>
                 ) : (
                   connectWalletMessage

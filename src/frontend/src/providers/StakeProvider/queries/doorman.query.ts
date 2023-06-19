@@ -1,6 +1,6 @@
 import { gql } from 'utils/__generated__/gql'
 
-export const SUBSCRIPTION_STAKE_HISTORY = gql(/* GraphQL */ `
+export const SUBSCRIPTION_STAKE_HISTORY = gql(`
   subscription subscribeSmvkHistoryData {
     smvk_history_data(distinct_on: timestamp) {
       mvk_total_supply
@@ -10,7 +10,7 @@ export const SUBSCRIPTION_STAKE_HISTORY = gql(/* GraphQL */ `
   }
 `)
 
-export const SUBSCRIPTION_ADDRESS_BALANCE_DATA = gql(/* GraphQL */ `
+export const SUBSCRIPTION_ADDRESS_BALANCE_DATA = gql(`
   subscription subscribeAdressBalance($_eq: String) {
     mavryk_user(where: { address: { _eq: $_eq } }) {
       address

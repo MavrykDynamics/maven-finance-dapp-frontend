@@ -6,6 +6,7 @@ export const WERT_IO_LOADER = 'wert-loader'
 export const MVK_TOKEN_SYMBOL = 'MVK'
 export const XTZ_TOKEN_SYMBOL = 'XTZ'
 export const SMVK_TOKEN_ADDRESS = 'sMVK'
+export const XTZ_TOKEN_ADDRESS = 'tz1ZZZZZZZZZZZZZZZZZZZZZZZZZZZZNkiRg'
 
 // User token types
 export const USER_TOKEN_TYPE_COLLATERAL = 'collateralToken'

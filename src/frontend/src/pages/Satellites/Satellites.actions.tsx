@@ -82,18 +82,19 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
     return
   }
 
-  if (
-    state.wallet.user.userTokens[SMVK_TOKEN_ADDRESS].balance === 0 &&
-    state.wallet.user.userTokens[MVK_TOKEN_SYMBOL].balance === 0
-  ) {
-    dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please buy MVK and stake it'))
-    return
-  }
+  // TODO: those checks will be moved to component where user balances are accessible in satellites update (next pr right after it)
+  // if (
+  //   state.wallet.user.userTokens[SMVK_TOKEN_ADDRESS].balance === 0 &&
+  //   state.wallet.user.userTokens[MVK_TOKEN_SYMBOL].balance === 0
+  // ) {
+  //   dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please buy MVK and stake it'))
+  //   return
+  // }
 
-  if (state.wallet.user.userTokens[SMVK_TOKEN_ADDRESS].balance === 0) {
-    dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please stake your MVK'))
-    return
-  }
+  // if (state.wallet.user.userTokens[SMVK_TOKEN_ADDRESS].balance === 0) {
+  //   dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please stake your MVK'))
+  //   return
+  // }
 
   try {
     // prepare and send transaction

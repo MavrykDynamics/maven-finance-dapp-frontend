@@ -29,6 +29,8 @@ import { State } from 'reducers'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 const columnWidth = '33%'
 const rowHeight = 30
@@ -40,10 +42,10 @@ type Props = {
 }
 
 export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
-  const { isActionActive } = useSelector((state: State) => state.loading)
-  const { userTokens } = useSelector((state: State) => state.wallet.user)
-
+  const { userTokensBalances } = useUserContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
+
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const dispatch = useDispatch()
 
@@ -64,11 +66,12 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     liquidationReward,
     adminLiquidateFee,
     collateralBalance,
+    tokenAddress,
   } = data
 
   const { symbol, icon, decimals, rate: borrowedTokenRate } = borrowedToken
 
-  const userBalance = 0 //userTokens[symbol]?.balance ?? 0
+  const userBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress })
 
   const liquidationMaxTokens = liquidationMax / borrowedTokenRate
   const liquidationRewardPercentage = liquidationReward * 100

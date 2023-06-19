@@ -18,7 +18,7 @@ import { RoiCalculatorStyled, RoiExpandStyled } from './RoiCalculator.style'
 import { InputStatusesType, InputValuesType, SelectedTabsStateType } from './RoiCalc.types'
 
 // consts, helpers
-import { calculateAPR, calculateAPY, getUserBalanceByAddress } from '../Farms.helpers'
+import { calculateAPR, calculateAPY, getUserBalanceByAddressOld } from '../Farms.helpers'
 import {
   BOTTOM_INPUT,
   COMPOUNDING_ITEMS,
@@ -84,7 +84,7 @@ export default function RoiCalculator({
 
   useEffect(() => {
     ;(async () => {
-      const userBalanceFetched = Number(await getUserBalanceByAddress(farm?.lpTokenAddress))
+      const userBalanceFetched = Number(await getUserBalanceByAddressOld(farm?.lpTokenAddress))
       setUserBalance(userBalanceFetched)
     })().catch((e) => console.error('fetching user balance in ROI calc error: ', e))
   }, [farm?.lpTokenAddress])

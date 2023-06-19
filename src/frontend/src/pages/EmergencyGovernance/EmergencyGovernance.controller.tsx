@@ -31,7 +31,6 @@ export const EmergencyGovernance = () => {
   const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
     skipAddressBalance: SUB_SKIP,
     skipStakeHistory: SUB_SKIP,
-    skipUserBalance: SUB_SKIP,
   })
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {

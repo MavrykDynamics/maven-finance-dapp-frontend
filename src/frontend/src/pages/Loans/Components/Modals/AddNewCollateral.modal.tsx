@@ -48,6 +48,8 @@ import {
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import useXtzBakersForDD from 'providers/DAPPConfig/helpers/useDDXtzBakers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 // TODO: redo it
@@ -61,10 +63,9 @@ export const AddNewCollateral = ({
   data: AddNewCollateralDataProps
 }) => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
+  const { userTokensBalances } = useUserContext()
 
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
-
-  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
@@ -146,22 +147,12 @@ export const AddNewCollateral = ({
 
   if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
 
-  if (!data) return null
-
-  const {
-    collateralBalance = 0,
-    vaultAddress,
-    collateralRatio = 0,
-    borrowedAmount = 0,
-    availableLiquidity = 0,
-    borrowCapacity = 0,
-  } = data
+  const { collateralBalance, vaultAddress, collateralRatio, borrowedAmount, availableLiquidity, borrowCapacity } = data
 
   const { symbol, decimals, rate } = collateralToken
+  const userCollateralBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: selectedCollateral })
   const { rate: borrowedTokenRate } = borrowedToken
 
-  // TODO: handle user balance
-  const userCollateralBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const futureCollateralRatio = calcCollateralRatio(collateralBalance + inputAmount, borrowedAmount, borrowedTokenRate)
   const futureCollateralBalance = collateralBalance + inputAmount * rate
