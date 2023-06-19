@@ -21,7 +21,6 @@ import { NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE } from 
 
 import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import { convertNumberForContractCall } from 'utils/calcFunctions'

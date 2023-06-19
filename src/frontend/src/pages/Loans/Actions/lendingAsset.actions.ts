@@ -19,7 +19,6 @@ import {
 
 import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'

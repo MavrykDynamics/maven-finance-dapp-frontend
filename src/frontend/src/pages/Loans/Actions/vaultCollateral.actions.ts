@@ -1,5 +1,4 @@
-import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
-import { OpKind, TransactionWalletOperation, WalletOperationBatch, WalletParamsWithKind } from '@taquito/taquito'
+import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
 
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
@@ -97,7 +96,7 @@ export const withdrawCollateralAction =
     }
   }
 
-// deposit collateral to the vault
+// deposit collaterals to the vault
 export const depositCollateralsAction =
   (
     vaultAddress: string,

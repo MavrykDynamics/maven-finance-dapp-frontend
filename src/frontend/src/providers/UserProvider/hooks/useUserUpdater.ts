@@ -30,45 +30,60 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { normalizerUserBalances } from '../helpers/userBalances.helpers'
 import { api } from 'utils/api/api'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
+/**
+ *
+ * @param param0.skipUserBalancesUpdate – specify whether skip loading user balances
+ * @returns
+ */
 export const useUserUpdater = (
   { skipUserBalancesUpdate }: UserSubscriptionSkipsType = { skipUserBalancesUpdate: SUB_SUBSCRIBE },
 ) => {
+  const { tokensMetadata, mTokens } = useTokensContext()
+  const { updateUserTokenBalances, userTokensBalances } = useUserContext()
+  const { bug, success } = useToasterContext()
+
   const ws = useRef<null | signalR.HubConnection>(null)
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { tokensMetadata, mTokens } = useTokensContext()
-  const { updateUserTokenBalances, userTokensBalances } = useUserContext()
 
   const [shouldSkip, setShouldSkip] = useState<UserSubscriptionSkipsType>({ skipUserBalancesUpdate })
   const [isInitialTokenBalancesLoading, setIsInitialTokenBalancesLoading] = useState(userTokensBalances === null)
   const [socketBalances, setSocketBalances] = useState<UserTokenBalancesParsedResponce>([])
 
+  const fetchUserBalances = async () => {
+    try {
+      const [tokens, xtzTokenBalance] = await Promise.all([
+        api(`https://api.ghostnet.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}`, {}, userTokenBalanceSchema),
+        api(`https://api.ghostnet.tzkt.io/v1/accounts/${accountPkh}`, {}, userTzktAccountSchema),
+      ])
+
+      setSocketBalances(
+        tokens.data.concat([
+          { token: { contract: { address: XTZ_TOKEN_ADDRESS } }, balance: xtzTokenBalance.data.balance.toString() },
+        ]),
+      )
+    } catch (e) {
+      bug('Error occured while loading your balances, try to reload the page', 'Tokens balances')
+      console.error('tzkt loading initial balances error: ', e)
+    } finally {
+      setIsInitialTokenBalancesLoading(false)
+    }
+  }
+
   /**
-   * set up subscibe to user account tokens, and set it to the state after it's received
-   * TODO: handle user change
+   * load with fetch balances if they have not been loaded
+   * if balances are loaded set up ws to update them
+   *
+   * TODO: test user change
    */
   useEffect(() => {
-    if (!accountPkh) return
+    if (!accountPkh || shouldSkip.skipUserBalancesUpdate) return
     ;(async () => {
       // if we haven't loaded token balances, load it by fetch
       if (isInitialTokenBalancesLoading) {
-        try {
-          const [tokens, xtzTokenBalance] = await Promise.all([
-            api(`https://api.ghostnet.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}`, {}, userTokenBalanceSchema),
-            api(`https://api.ghostnet.tzkt.io/v1/accounts/${accountPkh}`, {}, userTzktAccountSchema),
-          ])
-
-          setSocketBalances(
-            tokens.data.concat([
-              { token: { contract: { address: XTZ_TOKEN_ADDRESS } }, balance: xtzTokenBalance.data.balance.toString() },
-            ]),
-          )
-        } catch (e) {
-          console.error('tzkt loading initial balances error: ', e)
-        } finally {
-          setIsInitialTokenBalancesLoading(false)
-        }
+        fetchUserBalances()
       }
 
       // if we have loaded token balances, open socket to observe token balances on tzkt
@@ -82,11 +97,10 @@ export const useUserUpdater = (
         // handle tokens balances update message
         tzktSocket.on('token_balances', (msg) => {
           if (!msg.data) {
-            console.log(`%c message received`, 'color: #bada55', msg)
+            console.log(`%c tokens balances message received:`, 'color: #bada55', msg)
             return
           }
 
-          console.log(`%c tokens balances message`, 'color: #cf63c2', msg)
           setSocketBalances(msg.data)
         })
 
@@ -98,18 +112,15 @@ export const useUserUpdater = (
         // handle xtz token balance update message
         tzktSocket.on('accounts', (msg) => {
           if (!msg.data) {
-            console.log(`%c message received`, 'color: #bada55', msg)
+            console.log(`%c xtz balance message received:`, 'color: #bada55', msg)
             return
           }
 
-          console.log(`%c tokens balances XTZ message`, 'color: #b89000', msg)
-
           try {
             const [{ balance }] = userTzktWSAccountSchema.parse(msg.data)
-
             setSocketBalances([{ token: { contract: { address: XTZ_TOKEN_ADDRESS } }, balance: balance.toString() }])
           } catch (e) {
-            console.error('tzkt token balance parse error: ', e)
+            console.error('tzkt xtz token balance parse error: ', e, msg.data)
           }
         })
 
@@ -117,13 +128,34 @@ export const useUserUpdater = (
         await tzktSocket.invoke('SubscribeToAccounts', {
           addresses: [accountPkh],
         })
+
+        tzktSocket.onreconnecting((error) => {
+          bug(
+            'Connection to your token balances has lost, your balances will not be updated, reconnecting...',
+            'Web Sockets',
+          )
+          console.error('user balances socket reconnectig', error)
+        })
+
+        tzktSocket.onreconnected(() => {
+          success(
+            'Connection to your token balances has been resumed, your balances will be updated now...',
+            'Web Sockets',
+          )
+          fetchUserBalances()
+        })
+
+        tzktSocket.onclose((error) => {
+          bug('Connection to your token balances has closed', 'Web Sockets')
+          console.error('user balances socket closed', error)
+        })
       }
     })()
 
     return () => {
       ws?.current?.stop()
     }
-  }, [accountPkh, isInitialTokenBalancesLoading])
+  }, [accountPkh, isInitialTokenBalancesLoading, shouldSkip.skipUserBalancesUpdate])
 
   /**
    * effect to normalize and update context with user token balances from tzkt
@@ -135,10 +167,9 @@ export const useUserUpdater = (
 
       const normalizedTokensBalances = normalizerUserBalances(tokensData, tokensMetadata, mTokens)
 
-      console.log({ tokensData, normalizedTokensBalances })
       updateUserTokenBalances(normalizedTokensBalances)
     } catch (e) {
-      console.error('tzkt token balance parse error: ', e, socketBalances)
+      console.error('tzkt tokens balances parse error: ', e, socketBalances)
     }
   }, [mTokens, socketBalances, tokensMetadata, updateUserTokenBalances])
 
