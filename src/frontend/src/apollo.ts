@@ -17,13 +17,13 @@ const backuphttpLink = new HttpLink({
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: process.env.REACT_APP_BACKUP_GRAPHQL_WSS_API ?? '',
+    url: process.env.REACT_APP_GRAPHQL_WSS_API ?? '',
   }),
 )
 
 const backupwsLink = new GraphQLWsLink(
   createClient({
-    url: process.env.REACT_APP_GRAPHQL_WSS_API ?? '',
+    url: process.env.REACT_APP_BACKUP_GRAPHQL_WSS_API ?? '',
   }),
 )
 

@@ -2,6 +2,8 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 
 import BakersMocked from './bakers.json'
 import { XTZ_DECIMALS } from 'utils/constants'
+import { api } from 'utils/api/api'
+import { z } from 'zod'
 
 // types
 export type XtzBakerType = {
@@ -16,10 +18,12 @@ export type XtzBakerType = {
   description?: string
 }
 
-export type BakeryDelegateDataType = {
-  balance: number
-  delegatedBalance: number
-}
+const bakeryDelegateDataSchema = z.object({
+  balance: z.number(),
+  delegatedBalance: z.number(),
+})
+
+type BakeryDelegateDataType = z.infer<typeof bakeryDelegateDataSchema>
 
 // helpers
 const getFreeSpace = (data: BakeryDelegateDataType) => {
@@ -27,20 +31,6 @@ const getFreeSpace = (data: BakeryDelegateDataType) => {
 
   const freeSpace = data.balance * 9 - data.delegatedBalance
   return Number(convertNumberForClient({ number: freeSpace, grade: XTZ_DECIMALS }).toFixed(2))
-}
-
-const getBakeryDelegateData = async (bakerAddress: string): Promise<BakeryDelegateDataType> => {
-  try {
-    const response = await fetch(`https://api.tzkt.io/v1/delegates/${bakerAddress}`)
-    const result = await response.json()
-
-    return result
-  } catch {
-    return {
-      balance: -1,
-      delegatedBalance: -1,
-    }
-  }
 }
 
 export const getXTZBakers = async (): Promise<{
@@ -54,21 +44,28 @@ export const getXTZBakers = async (): Promise<{
 
     const otherBakers = process.env.REACT_APP_NETWORK === 'ghostnet' ? GHOSTNET_BAKERS : BakersMocked
 
-    // TODO: use api with zod
-    const values = await Promise.all([
-      getBakeryDelegateData(DAO_BAKER_STATIC_DATA.address),
-      getBakeryDelegateData(MAVRYK_DYNAMICS_BAKER_STATIC_DATA.address),
+    const [{ data: daoBakerData }, { data: mavrykDynamicsBakerData }] = await Promise.all([
+      api<BakeryDelegateDataType>(
+        `https://api.tzkt.io/v1/delegates/${DAO_BAKER_STATIC_DATA.address}`,
+        {},
+        bakeryDelegateDataSchema,
+      ),
+      api<BakeryDelegateDataType>(
+        `https://api.tzkt.io/v1/delegates/${MAVRYK_DYNAMICS_BAKER_STATIC_DATA.address}`,
+        {},
+        bakeryDelegateDataSchema,
+      ),
     ])
 
     return {
       otherBakers,
       dao: {
         ...DAO_BAKER_STATIC_DATA,
-        freespace: getFreeSpace(values[0] as BakeryDelegateDataType),
+        freespace: getFreeSpace(daoBakerData),
       },
       mavrykDynamics: {
         ...MAVRYK_DYNAMICS_BAKER_STATIC_DATA,
-        freespace: getFreeSpace(values[1] as BakeryDelegateDataType),
+        freespace: getFreeSpace(mavrykDynamicsBakerData),
       },
     }
   } catch (e) {

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
-    "start:evenlop": "export NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
+    "start:evenlop": "DISABLE_ESLINT_PLUGIN=true export NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "analyze": "react-scripts build && source-map-explorer 'build/static/js/*.js'",
@@ -86,7 +86,57 @@
     "typescript": "^5.0.4"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "plugins": [
+      "jsdoc"
+    ],
+    "settings": {
+      "jsdoc": {
+        "mode": "typescript"
+      }
+    },
+    "rules": {
+      "jsdoc/check-alignment": 1,
+      "jsdoc/check-indentation": 1,
+      "jsdoc/check-param-names": 1,
+      "jsdoc/check-tag-names": 1,
+      "jsdoc/check-types": 1,
+      "jsdoc/empty-tags": 1,
+      "jsdoc/multiline-blocks": 1,
+      "jsdoc/no-multi-asterisks": 1,
+      "jsdoc/no-undefined-types": 1,
+      "jsdoc/require-asterisk-prefix": [
+        "error",
+        "always"
+      ],
+      "jsdoc/require-jsdoc": [
+        "error",
+        {
+          "require": {
+            "ClassDeclaration": true,
+            "ClassExpression": true,
+            "MethodDefinition": true,
+            "ArrowFunctionExpression": false,
+            "FunctionDeclaration": false,
+            "FunctionExpression": false
+          },
+          "checkConstructors": false
+        }
+      ],
+      "jsdoc/require-param-description": 1,
+      "jsdoc/require-param-name": 1,
+      "jsdoc/require-param-type": 0,
+      "jsdoc/require-param": 1,
+      "jsdoc/require-property": 1,
+      "jsdoc/require-property-description": 1,
+      "jsdoc/require-property-name": 1,
+      "jsdoc/require-property-type": 1,
+      "jsdoc/require-returns-check": 1,
+      "jsdoc/require-returns-description": 1,
+      "jsdoc/require-returns-type": 0,
+      "jsdoc/require-returns": 1,
+      "jsdoc/require-throws": 1
+    }
   },
   "browserslist": {
     "production": [
