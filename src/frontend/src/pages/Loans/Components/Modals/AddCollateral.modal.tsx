@@ -45,7 +45,7 @@ import {
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -95,7 +95,10 @@ export const AddCollateral = ({
   } = data
 
   const { rate: collateralRate, decimals, symbol, name, icon } = collateralToken
-  const userCollateralBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: collateralTokenAddress })
+  const userCollateralBalance = getUserTokenBalanceByAddress({
+    userTokensBalances,
+    tokenAddress: collateralTokenAddress,
+  })
   const { rate: borrowedTokenRate } = borrowedToken
 
   const inputAmount = checkNan(parseFloat(inputData.amount))

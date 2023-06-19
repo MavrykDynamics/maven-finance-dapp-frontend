@@ -32,7 +32,7 @@ export const normalizerUserBalances = (
   )
 }
 
-export const getUserBalanceByAddress = ({
+export const getUserTokenBalanceByAddress = ({
   userTokensBalances,
   tokenAddress,
 }: {

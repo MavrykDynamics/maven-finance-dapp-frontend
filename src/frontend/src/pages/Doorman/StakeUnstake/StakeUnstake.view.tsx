@@ -61,7 +61,7 @@ import {
 import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -103,8 +103,8 @@ export const StakeUnstakeView = ({
   } = useSelector((state: State) => state.contractAddresses)
 
   const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
-  const mySMvkTokenBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
-    myMvkTokenBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
+  const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+    myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
 
   const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
   const exchangeValue = mvkExchangeRate && inputData.amount ? Number(inputData.amount) * mvkExchangeRate : 0

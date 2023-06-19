@@ -36,7 +36,7 @@ import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provi
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -64,7 +64,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   if (!loanToken || !loanToken.rate) return null
 
   const { symbol, decimals, icon, rate } = loanToken
-  const tokenBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: loanToken.address })
+  const tokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: loanToken.address })
 
   const convertedMbalance = convertNumberForClient({ number: mBalance, grade: decimals })
   const convertedLendValue = convertNumberForClient({ number: lendValue, grade: decimals })

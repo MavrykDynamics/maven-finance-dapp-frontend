@@ -23,7 +23,7 @@ import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app
 import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
-import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type MenuViewProps = {
@@ -88,8 +88,8 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     setCanGetInitThouthand(
       Boolean(
         accountPkh &&
-          (getUserBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }) === 0 ||
-            getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0),
+          (getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }) === 0 ||
+            getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0),
       ),
     )
   }, [accountPkh, mvkTokenAddress, userTokensBalances])

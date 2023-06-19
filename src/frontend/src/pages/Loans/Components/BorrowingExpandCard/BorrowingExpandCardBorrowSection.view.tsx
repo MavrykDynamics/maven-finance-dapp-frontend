@@ -39,7 +39,7 @@ import { checkNan } from 'utils/checkNan'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type Props = {
   borrowedAssetAddress: TokenAddressType
@@ -74,7 +74,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
 
-  const userAssetBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: borrowedAssetAddress })
+  const userAssetBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: borrowedAssetAddress })
 
   // TODO: incapsulate to the separate component
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {

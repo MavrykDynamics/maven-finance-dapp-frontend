@@ -59,7 +59,7 @@ import {
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -93,7 +93,7 @@ export const BecomeSatellite = () => {
   } = useDAPPConfigContext()
   const { userTokensBalances } = useUserContext()
 
-  const userSmvkBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+  const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
   useStakeUpdater({
     skipAddressBalance: SUB_SKIP,

@@ -52,7 +52,7 @@ import {
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type CurrentActiveModalScreen =
   | typeof INITIAL_SCREEN_ID
@@ -398,7 +398,7 @@ export const CreateNewVault = ({
                   const { amount, validation } = selectedCollaterals[collateralAddress]
                   const { symbol, rate, decimals, icon } = collateralToken
 
-                  const userAssetBalance = getUserBalanceByAddress({
+                  const userAssetBalance = getUserTokenBalanceByAddress({
                     userTokensBalances,
                     tokenAddress: collateralAddress,
                   })

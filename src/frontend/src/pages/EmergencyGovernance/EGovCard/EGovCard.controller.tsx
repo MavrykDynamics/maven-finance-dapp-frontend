@@ -31,7 +31,7 @@ import {
 } from 'pages/SatelliteGovernance/SatelliteGovernanceCard/SatelliteGovernanceCard.style'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type EGovCardProps = {
   emergencyGovernance: EmergergencyGovernanceItem
@@ -102,7 +102,7 @@ export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
           isVotingActive={true}
           disableVotingButtons={
             Boolean(emergencyGovernance.voters.find((voter) => accountPkh === voter.voterId)) ||
-            getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) <
+            getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) <
               minStakedMvkRequiredToVote
           }
           handleVote={handleProposalVote}

@@ -42,7 +42,7 @@ import { AVALIABLE_TO_BORROW, FEES_DUE } from 'texts/tooltips/vault.text'
 import { checkNan } from 'utils/checkNan'
 import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type Props = {
   vaultId: number
@@ -86,7 +86,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const inputAmount = checkNan(parseFloat(inputData.amount))
 
   const totalOutstanding = fee + Number(borrowedAmount)
-  const userAssetBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: borrowedToken.address })
+  const userAssetBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: borrowedToken.address })
 
   const isRepayInFull = activeRepayTab?.id === loansTabNames.REPAY_IN_FULL
   const isMinimumRepayWarning =

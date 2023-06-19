@@ -45,7 +45,7 @@ import {
   getTokenDataByAddress,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -92,7 +92,10 @@ export const WithdrawCollateral = ({
   const { vaultAddress, collateralBalance, collateralRatio, borrowedAmount, collateralTokenAddress } = data
 
   const { rate: collateralRate, decimals, name, icon } = collateralToken
-  const userCollateralBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: collateralTokenAddress })
+  const userCollateralBalance = getUserTokenBalanceByAddress({
+    userTokensBalances,
+    tokenAddress: collateralTokenAddress,
+  })
   const { rate: borrowedTokenRate } = borrowedToken
 
   const futureCollateralRatio = calcCollateralRatio(

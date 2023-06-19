@@ -24,7 +24,7 @@ import { SMVK_TOKEN_ADDRESS, MVK_TOKEN_SYMBOL } from 'utils/constants'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 export const DEFAULT_STAKE_UNSTAKE_INPUT: { amount: string; validation: InputStatusType; errorMessage: string } = {
   amount: '0',
@@ -41,8 +41,8 @@ export const Doorman = () => {
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
-  const mySMvkTokenBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
-    myMvkTokenBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress.address })
+  const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+    myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress.address })
 
   const [unstakePopupActive, setUnstakePopupActive] = useState(false)
 

@@ -49,7 +49,7 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import useXtzBakersForDD from 'providers/DAPPConfig/helpers/useDDXtzBakers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 // TODO: redo it
@@ -150,7 +150,7 @@ export const AddNewCollateral = ({
   const { collateralBalance, vaultAddress, collateralRatio, borrowedAmount, availableLiquidity, borrowCapacity } = data
 
   const { symbol, decimals, rate } = collateralToken
-  const userCollateralBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: selectedCollateral })
+  const userCollateralBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: selectedCollateral })
   const { rate: borrowedTokenRate } = borrowedToken
 
   const inputAmount = checkNan(parseFloat(inputData.amount))

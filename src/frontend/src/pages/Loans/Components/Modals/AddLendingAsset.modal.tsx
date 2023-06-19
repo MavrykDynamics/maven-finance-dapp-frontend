@@ -34,7 +34,7 @@ import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
@@ -66,7 +66,7 @@ export const AddLendingAsset = ({
 
   const { mBalance, lendingAPY, tokenAddress } = data
   const { symbol, icon, decimals, rate } = loanToken
-  const tokenBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: tokenAddress })
+  const tokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: tokenAddress })
 
   const isDepositDisabled = inputData.validationStatus !== INPUT_STATUS_SUCCESS
 

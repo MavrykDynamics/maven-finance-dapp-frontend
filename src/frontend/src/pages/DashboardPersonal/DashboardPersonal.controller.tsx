@@ -42,7 +42,7 @@ import { SUB_SKIP } from 'utils/api/apollo.consts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { getUserBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -132,7 +132,7 @@ const DashboardPersonal = () => {
       return acc
 
     const tokenToCheck = getTokenDataByAddress({ tokensMetadata, tokenAddress, tokensPrices })
-    const tokenToCheckBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress })
+    const tokenToCheckBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress })
 
     // If token to compare is not valid skip check
     if (!tokenToCheck || !tokenToCheck.rate) return acc
@@ -152,7 +152,7 @@ const DashboardPersonal = () => {
 
     const { rate: checkTokenRate } = tokenToCheck
     const { rate: accTokenRate } = accToken
-    const accTokenBalance = getUserBalanceByAddress({ userTokensBalances, tokenAddress: acc.address })
+    const accTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: acc.address })
 
     return accTokenBalance * accTokenRate > tokenToCheckBalance * checkTokenRate
       ? acc
@@ -164,9 +164,9 @@ const DashboardPersonal = () => {
   }, null)
 
   const walletData = {
-    xtzAmount: getUserBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }),
-    sMVKAmount: getUserBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
-    MVKAmount: getUserBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
+    xtzAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }),
+    sMVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+    MVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
     ...(mostSuppliedUserToken
       ? {
           mostSuppliedUserToken: {
