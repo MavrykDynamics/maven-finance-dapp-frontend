@@ -219,7 +219,7 @@ export const getChartData = (
         tokenName: loan_token.loan_token_name,
         dipDupTokens,
         feeds,
-        oracleId: String(loan_token.oracle_id),
+        oracleId: String(loan_token.oracle.address),
       })
 
       if (assetMetadata) {

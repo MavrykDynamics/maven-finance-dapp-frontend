@@ -73,6 +73,11 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
     .chart {
       height: fit-content;
     }
+
+    .chartPlug {
+      width: 372px;
+      height: 182px;
+    }
   }
 `
 
