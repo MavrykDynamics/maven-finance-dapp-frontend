@@ -32,9 +32,8 @@ import { useErrorContext } from 'providers/ErrorProvider/error.provider'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { State } from 'reducers'
 import { isContractErrorPayload } from 'providers/ErrorProvider/helpers/contractError.helper'
-import { useContractErrorContext } from 'providers/ContractErrorProvider/contractError.provider'
-import { STAKING_FIELD } from 'providers/ContractErrorProvider/contractError.const'
-import { ContractErrorPayload } from 'providers/ContractErrorProvider/contractError.type'
+import { STAKING_FIELD } from 'providers/ErrorProvider/consts/error.provider.const'
+import { ContractErrorPayload } from 'providers/ErrorProvider/error.provider.type'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -61,8 +60,7 @@ export const ExitFeeModal = ({
   const dispatch = useDispatch()
 
   const { unstakeMVK, updateStakeActionContext, updateStakeLoadingToasterId, loadingToasterId } = useStakeContext()
-  const { bug, info, loading, hideToasterMessage } = useErrorContext()
-  const { errors, addContractError, removeContractError } = useContractErrorContext()
+  const { bug, info, loading, hideToasterMessage, errors, addContractError, removeContractError } = useErrorContext()
 
   const {
     doormanAddress: { address: doormanAddress },

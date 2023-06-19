@@ -61,9 +61,8 @@ import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { isContractErrorPayload } from 'providers/ErrorProvider/helpers/contractError.helper'
 import { ContractErrorBlock } from 'providers/ErrorProvider/components/ContractErrorBlock/ContractErrorBlock'
-import { STAKING_FIELD } from 'providers/ContractErrorProvider/contractError.const'
-import { ContractErrorPayload } from 'providers/ContractErrorProvider/contractError.type'
-import { useContractErrorContext } from 'providers/ContractErrorProvider/contractError.provider'
+import { STAKING_FIELD } from 'providers/ErrorProvider/consts/error.provider.const'
+import { ContractErrorPayload } from 'providers/ErrorProvider/error.provider.type'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -81,7 +80,7 @@ export const StakeUnstakeView = ({
   const dispatch = useDispatch()
   const history = useHistory()
   const { stakeMVK, updateStakeActionContext, updateStakeLoadingToasterId, loadingToasterId } = useStakeContext()
-  const { info, loading, hideToasterMessage, bug } = useErrorContext()
+  const { info, loading, hideToasterMessage, bug, errors, addContractError, removeContractError } = useErrorContext()
 
   const {
     accountPkh,
@@ -103,8 +102,6 @@ export const StakeUnstakeView = ({
     doormanAddress: { address: doormanAddress },
     mvkTokenAddress: { address: mvkTokenAddress },
   } = useSelector((state: State) => state.contractAddresses)
-
-  const { errors, addContractError, removeContractError } = useContractErrorContext()
 
   const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
   const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
