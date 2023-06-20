@@ -33,6 +33,7 @@ import colors from 'styles/colors'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { State } from 'reducers'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { EmptyContainer } from 'app/App.style'
 
 type Props = {
   openAddNewCollateralPopup: () => void
@@ -146,7 +147,16 @@ export const BorrowingExpandCardMenuSection = ({
                   <TableHeaderCell>Collateral Share</TableHeaderCell>
                 </TableRow>
               </TableHeader>
-            ) : null}
+            ) : (
+              <EmptyContainer
+                style={{
+                  padding: '30px 0 20px 0',
+                }}
+              >
+                <img src="/images/not-found.svg" alt=" No Transaction History to show" />
+                <figcaption>No Collateralized Assets to show</figcaption>
+              </EmptyContainer>
+            )}
 
             <TableBody>
               {collateralData.map(({ icon, amount, rate, gqlName, symbol }, idx) => {
