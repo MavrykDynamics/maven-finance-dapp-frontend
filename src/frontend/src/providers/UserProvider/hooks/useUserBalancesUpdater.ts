@@ -28,7 +28,7 @@ import { api } from 'utils/api/api'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
-export const useUserBalancesUpdater = (userAddress: string | null, isTokensLoaded: boolean) => {
+export const useUserBalancesUpdater = (userAddress: string | null, isTokensLoading: boolean) => {
   const { tokensMetadata, mTokens } = useTokensContext()
   const { updateUserTokenBalances } = useUserContext()
   const { bug, success } = useToasterContext()
@@ -65,7 +65,8 @@ export const useUserBalancesUpdater = (userAddress: string | null, isTokensLoade
    * TODO: test user change
    */
   useEffect(() => {
-    if (!userAddress || !isTokensLoaded) return
+    console.log({ userAddress, isTokensLoading, isInitialTokenBalancesLoading })
+    if (!userAddress || isTokensLoading) return
     ;(async () => {
       // if we haven't loaded token balances, load it by fetch
       if (isInitialTokenBalancesLoading) fetchUserBalances()
@@ -133,7 +134,7 @@ export const useUserBalancesUpdater = (userAddress: string | null, isTokensLoade
     return () => {
       ws?.current?.stop()
     }
-  }, [userAddress, isInitialTokenBalancesLoading, isTokensLoaded])
+  }, [userAddress, isInitialTokenBalancesLoading, isTokensLoading])
 
   /**
    * effect to normalize and update context with user token balances from tzkt
@@ -152,7 +153,7 @@ export const useUserBalancesUpdater = (userAddress: string | null, isTokensLoade
   }, [mTokens, socketBalances, tokensMetadata, updateUserTokenBalances])
 
   const { loading: userBalancesFromIndexerLoading } = useSubscription(SUBSCRIBE_USER_MVK_SMVK_BALANCE, {
-    skip: !userAddress || !isTokensLoaded,
+    skip: !userAddress || isTokensLoading,
     variables: {
       userAddress: userAddress,
     },
