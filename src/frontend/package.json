@@ -4,6 +4,8 @@
   "scripts": {
     "start": "PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
     "start:evenlop": "export NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
+    "start-no-lint": "DISABLE_ESLINT_PLUGIN=true PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
+    "start-no-lint:evenlop": "DISABLE_ESLINT_PLUGIN=true export NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
     "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
     "test": "react-scripts test",
     "analyze": "react-scripts build && source-map-explorer 'build/static/js/*.js'",
