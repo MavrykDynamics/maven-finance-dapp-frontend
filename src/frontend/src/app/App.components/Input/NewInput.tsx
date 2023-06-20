@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { BUTTON_SIMPLE } from '../Button/Button.constants'
 import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
@@ -42,10 +42,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
     }: InputViewProps,
     ref,
   ) => {
+    const { onChange } = inputProps
     const { status, errorMessage, handleChange } = useInputValidator({
       originalErrorMessage: errorMessageFromProps,
       status: inputStatus,
-      onChange: inputProps.onChange,
+      onChange,
     })
 
     return (
