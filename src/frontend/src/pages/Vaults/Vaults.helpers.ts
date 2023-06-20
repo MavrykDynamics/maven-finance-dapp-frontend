@@ -1,8 +1,4 @@
 import { getAssetColor } from './../Treasury/helpers/treasury.utils'
-import { Aggregator } from 'utils/generated/graphqlTypes'
-import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
-import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
-import { getOracleAggregatorLatestPrice } from './Vaults.actions'
 import { statusSortPriority } from './Vaults.consts'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -14,53 +10,8 @@ import {
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { VaultAssetData, VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 
-// TODO: check whether i need this
-export const normalizeOracleLatestPrice = (storage: { aggregator: Aggregator[] }) => {
-  const { aggregator = [] } = storage
-
-  if (!aggregator.length) return 0
-
-  const [item] = aggregator
-
-  return symbolsAfterDecimalPoint(item.last_completed_data / 10 ** item.decimals)
-}
-
-export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) => {
-  const uniqueOracleAddresses = new Set<string>()
-
-  vaults.map((item) => {
-    const loanTokenOracleAddress = item.loan_token?.oracle?.address
-    const collateralBalances = item.collateral_balances
-
-    if (loanTokenOracleAddress) {
-      uniqueOracleAddresses.add(loanTokenOracleAddress)
-    }
-
-    if (collateralBalances.length) {
-      collateralBalances.map((collateral) => {
-        if (collateral.collateral_token?.oracle?.address) {
-          uniqueOracleAddresses.add(collateral.collateral_token.oracle?.address)
-        }
-      })
-    }
-  })
-
-  const arrayUniqueOracleAddresses = [...uniqueOracleAddresses]
-  const prices = await Promise.all(arrayUniqueOracleAddresses.map((item) => getOracleAggregatorLatestPrice(item)))
-
-  const result: Record<string, number> = {}
-
-  prices.map((item, index) => {
-    if (typeof item === 'number') {
-      result[arrayUniqueOracleAddresses[index]] = item
-    }
-  })
-
-  return result
-}
-
 /**
- *
+ * used for vaults filter
  * @param vaultsMapper dictionary of <vaultAddress, vault data>
  * @param tokensMetadata dictionary of <tokenAddress, token metadata>
  * @returns list of addresses for: borrwed assets & collateral assets
@@ -111,11 +62,9 @@ export const sortByVaultCategory = ({
   tokensPrices: TokensContext['tokensPrices']
   status?: string
 }) => {
-  const dataToSort = vaultsIds ? [...vaultsIds] : []
-
   const updatedPriority = status ? { ...statusSortPriority, [status]: 0 } : statusSortPriority
 
-  return dataToSort.sort((a, b) => {
+  return [...vaultsIds].sort((a, b) => {
     const vaultAToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: a })
     const vaultBToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: b })
 

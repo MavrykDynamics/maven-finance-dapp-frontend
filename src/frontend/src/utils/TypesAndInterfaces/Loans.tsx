@@ -1,10 +1,4 @@
-import {
-  ANY_USER,
-  NONE_USER,
-  VAULT_ALLOWANCE_ACCOUNTS,
-  VAULT_ALLOWANCE_ANY,
-  WHITELIST_USERS,
-} from 'pages/Loans/Loans.const'
+import { VAULT_ALLOWANCE_ACCOUNTS, VAULT_ALLOWANCE_ANY } from 'pages/Loans/Loans.const'
 import { Lending_Controller, Mvk_Token_Operator } from 'utils/generated/graphqlTypes'
 import { normalizeLoans } from 'pages/Loans/Loans.normalizer'
 import { normalizeVaultsStorage } from 'pages/Vaults/Vaults.normalizer'
@@ -22,15 +16,6 @@ export type LendingItemType = {
   interestEarned: number
   mBalance: number
 } | null
-
-export type UserLendObjType = {
-  amount: number
-  id: number
-  annualPecentage: number
-  date: string
-  operationHash: string
-  tokenAddress: TokenAddressType
-}
 
 // Market Type
 export type LoanMarketType = {

@@ -2,23 +2,22 @@ import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
-import { VaultType } from './vaults.types'
-import dayjs from 'dayjs'
-import { api } from 'utils/api/api'
+import { FullLoansVaultType, VaultType } from './vaults.types'
 
 /**
  *
  * @param collateralRatio collateral ratio of the vault
  * @param borrowedAmount how much borrowed from the vault
  * @returns status of the vault one of vaultsStatuses
+ *
+ * TODO: clarify whether to get status by colalteralRatio or via other calcs
  */
-export const getVaultStatus = (collateralRatio: number, borrowedAmount: number) => {
+export const getVaultStatus = (collateralRatio: number, borrowedAmount: number): FullLoansVaultType['status'] => {
   if (collateralRatio <= 200 && collateralRatio > 150 && borrowedAmount > 0) return vaultsStatuses.AT_RISK
   if (collateralRatio <= 150 && borrowedAmount > 0) return vaultsStatuses.GRACE_PERIOD
 
   return vaultsStatuses.ACTIVE
 
-  // TODO: clarify whether to get status by colalteralRatio or via other calcs
   // old more complicated cals for vault status
   // gotStatusByCollateralRatio !== 'no status'
   //         ? gotStatusByCollateralRatio
@@ -45,15 +44,11 @@ export const getVaultStatus = (collateralRatio: number, borrowedAmount: number) 
  * @param collateralBalance – collateral amount of the vault in USD
  * @returns how much user can borrow in USD in that vault
  */
-export const getVaultBorrowCapacity = (
-  availableLiquidity: number,
-  borrowedAmount: number,
-  collateralBalance: number,
-) => {
-  return Math.min(collateralBalance / 2 - borrowedAmount, Math.max(availableLiquidity, 0))
-}
+export const getVaultBorrowCapacity = (availableLiquidity: number, borrowedAmount: number, collateralBalance: number) =>
+  Math.min(collateralBalance / 2 - borrowedAmount, Math.max(availableLiquidity, 0))
 
 /**
+ *
  * @param collateralData – array of collaterals of the vault
  * @param tokensMetadata – metadata of all tokens
  * @param tokensPrices – list of token prices
@@ -63,20 +58,27 @@ export const getVaultCollateralBalance = (
   collateralData: VaultType['collateralData'],
   tokensMetadata: TokensContext['tokensMetadata'],
   tokensPrices: TokensContext['tokensPrices'],
-) => {
-  return collateralData.reduce((acc, { amount, tokenAddress }) => {
+) =>
+  collateralData.reduce((acc, { amount, tokenAddress }) => {
     const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
     if (!token || !token.rate) return acc
     const { decimals: collateralDecimals, rate: collateralRate } = token
 
     return (acc += convertNumberForClient({ number: amount, grade: collateralDecimals }) * collateralRate)
   }, 0)
-}
 
 /**
+ *
  * @param collateralAmount – USD amount of collaterals in the vault
  * @param borrowedAmount – USD amount of borrowed number for the vault
  * @returns collateral ratio for the vault
+ *
+ * collateral ratio – is the relation of the borrowed amount to collaterals amount:
+ * if vault has borrowAmount 0, collateral ratio 0 if we don't have collaterals, or 250, if we have some
+ *
+ * if this relation > 200% -> vault can be borrowed
+ * if this relation <= 200% & > 150% -> vault is at risk
+ * if this relation <= 150% -> vault in grace period (time to repay of deposit collaterals, to improve collateral ratio of the vault)
  */
 export const getVaultCollateralRatio = (collateralAmount: number, borrowedAmount: number) => {
   // means we haven't borrowed anything
@@ -94,6 +96,5 @@ export const getVaultCollateralRatio = (collateralAmount: number, borrowedAmount
  * @param liquidationRatio – ratio? TODO: add description
  * @returns liquidation price in USD
  */
-export const getVaultLiquidationPrice = (totalOutstanding: number, liquidationRatio: number) => {
-  return totalOutstanding * (liquidationRatio / 1000)
-}
+export const getVaultLiquidationPrice = (totalOutstanding: number, liquidationRatio: number) =>
+  totalOutstanding * (liquidationRatio / 1000)

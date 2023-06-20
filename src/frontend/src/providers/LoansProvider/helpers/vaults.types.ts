@@ -1,4 +1,5 @@
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 
@@ -11,43 +12,44 @@ export type CollateralType = {
 
 export type VaultType = {
   // vault tokens data
-  borrowedTokenAddress: TokenAddressType
-  borrowedAmount: number
-  fee: number
-  collateralData: Array<CollateralType>
+  borrowedTokenAddress: TokenAddressType // address of borrowed token
+  borrowedAmount: number // amount of token that user/s have borrowed from the vault *after normalizer it's not converted to client format*
+  fee: number // amount of token that user will have to pay after he has borrowed from the vault *after normalizer it's not converted to client format*
+  collateralData: Array<CollateralType> // collaterals of the vault in format {amount, tokenAddress} *after normalizer amount is not converted to the client format*
 
   // vault metadata
-  name: string
-  address: string
-  vaultId: number
+  name: string // name of the vault
+  address: string // address of the vault
+  vaultId: number // id of the vault
 
   // liquidation data
-  liquidationLvl: number
+  liquidationLvl: number // level when vault will be able to liquidate (liquidation delay + liquidation block), to use it we need to convert it to timestamp
   liquidationMax: number
   liquidationReward: number
   liquidationRatio: number
   adminLiquidateFee: number
 
   // permissions
-  xtzDelegatedTo: string | null
-  sMVKDelegatedTo?: string
-  ownerId: string
-  depositors: Array<string>
-  deporsitorsFlag: DepositorsFlagType
+  xtzDelegatedTo: string | null // if vault has xtz, as collateral, those xtz can be delegated to baker, here's the address of the delegated baker
+  sMVKDelegatedTo?: string // if vault has smvk, as collateral, those smvk can be delegated to satellite, here's the address of the delegated satellite
+  ownerId: string // address of the vault owner
+  depositors: Array<string> // list of people who are allowed to deposit in the vault
+  deporsitorsFlag: DepositorsFlagType // vault has 3 permissions states any -≥ anyone can deposit in it, none -> only owner can, whitelist -> only allowed users can deposit
 
   // Additional fields for vaults page
-  minimumRepay: number
+  minimumRepay: number // minimun amount of token that user can repay
   apr: number
-  availableLiquidity: number
-  creationTimestamp?: number
+  availableLiquidity: number // how much token avaliable in a pool, user to calc borrowCapacity of the vault *after normalizer it's not converted to client format*
+  creationTimestamp: number // creation timestamp of the vault
 }
 
+// those additional fields can be only calculated after normalization stage, cuz those calcs requiring tokensDecimals & tokensRates
 export type FullLoansVaultType = VaultType & {
-  totalOutstanding: number // fee + borrowed amount
+  totalOutstanding: number // fee + borrowed amount in USD
   collateralBalance: number // sum of collaterals in USD
-  borrowCapacity: number // how mush user can borrow from vault
+  borrowCapacity: number // how mush user can borrow from vault (avaliable liq | amount of token while collateral ration >= 200%)
   collateralRatio: number // relation of collaterals in vault to borrowed amount
-  status: string // status of the vault, depends on collateralRatio
+  status: (typeof vaultsStatuses)[keyof typeof vaultsStatuses] // status of the vault, depends on collateralRatio
 }
 
 export type DepositCollateralType = {
