@@ -45,7 +45,6 @@ export const LoansBorrow = () => {
   const {
     isDataLoaded,
     loanTokens,
-    config: { DAOFee },
     vaults: { allVaultsIds, myVaultsIds, vaultsMapper },
     chartsData: { collateralChartData, borrowingChartData },
   } = useSelector((state: State) => state.loans)
@@ -89,7 +88,7 @@ export const LoansBorrow = () => {
     [accountPkh, allVaultsIds, vaultsMapper],
   )
 
-  const { openBorrowPopup, openCreateVaultPopup } = useContext(loansPopupsContext)
+  const { openCreateVaultPopup } = useContext(loansPopupsContext)
 
   const markets: MarketType[] = useMemo(
     () =>
