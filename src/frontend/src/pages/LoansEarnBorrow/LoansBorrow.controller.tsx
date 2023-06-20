@@ -45,7 +45,6 @@ export const LoansBorrow = () => {
   const {
     isDataLoaded,
     loanTokens,
-    config: { DAOFee },
     vaults: { allVaultsIds, myVaultsIds, vaultsMapper },
     chartsData: { collateralChartData, borrowingChartData },
   } = useSelector((state: State) => state.loans)
@@ -89,7 +88,7 @@ export const LoansBorrow = () => {
     [accountPkh, allVaultsIds, vaultsMapper],
   )
 
-  const { openBorrowPopup, openCreateVaultPopup } = useContext(loansPopupsContext)
+  const { openCreateVaultPopup } = useContext(loansPopupsContext)
 
   const markets: MarketType[] = useMemo(
     () =>
@@ -121,7 +120,6 @@ export const LoansBorrow = () => {
       return marketSymbol === vault.borrowedAsset.symbol && vault.collateralRatio > 200
     })
 
-    // redirect specific asset market if user does not have vaults with collateral ratio > 200
     if (!validVaultId) {
       openCreateVaultPopup?.({
         currentMarketAsset: marketSymbol === 'XTZ' ? 'tez' : marketSymbol.toLowerCase(),
@@ -133,19 +131,10 @@ export const LoansBorrow = () => {
 
     const vault = vaultsMapper[validVaultId]
 
-    if (!vault) return
-
-    openBorrowPopup?.({
-      vaultId: vault.vaultId,
-      borrowedAsset: vault.borrowedAsset,
-      collateralRatio: vault.collateralRatio,
-      borrowAPR: vault.apr,
-      currentCollateralBalance: vault.collateralData.at(-1)?.amount ?? 0,
-      hasUserBorrowed: Boolean(vault.borrowedAmount),
-      borrowCapacity: vault.borrowCapacity,
-      currentBorrowedAmount: vault.borrowedAmount,
-      DAOFee,
-    })
+    // if the user has already borrowing from the specific asset pool we will route to asset market
+    if (vault) {
+      history.push(`/loans/${vault.borrowedAsset.symbol}/borrowTab`)
+    }
   }
 
   const { isLoading } = useDataLoader(

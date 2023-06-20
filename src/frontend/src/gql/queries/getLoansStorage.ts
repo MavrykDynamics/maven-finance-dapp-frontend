@@ -81,7 +81,9 @@ query GetLoansStorage {
           token {
             token_address
           }
-          oracle_id
+          oracle {
+            address
+          }
         }
       }
 
