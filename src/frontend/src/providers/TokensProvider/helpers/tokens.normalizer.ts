@@ -7,7 +7,11 @@ import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from '
 import { tokenMetadataSchema } from './tokens.types'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
-// Normalizing token rates
+/**
+ * normalizing token prices
+ * @param feedsLedger feeds
+ * @returns dictionary <tokenSymbol, rate>
+ */
 export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscription['aggregator']) => {
   return feedsLedger.reduce<Record<string, number>>((acc, feed) => {
     const { symbol } = getTokenSymbolAndName(feed.name) ?? {}
@@ -19,17 +23,16 @@ export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscrip
   }, {})
 }
 
-// Normalizing tokens metadata
 /**
- *
+ * Normalizing tokens metadata
  * @param tokensFromGql list from tokens from indexer containing all metadata for token and fields to check whether token is
  * loan token, collateral token, m token,
  *
+ * @returns tokensMetadata – dictionary <tokenAddress, token metadata>
+ * collateralTokens – array of collateral tokens addresses
+ * mTokens – array of mTokens addresses
+ *
  * TODO: add farm tokens here, lack of info now
- * TODO: add more details for how tokens normalization works
- * @returns tokensMetadata – dictionary of tokens where key token address, value token metadata
- * collateralTokens – array of addresses of collateral tokens
- * mTokens – array of addresses of mTokens
  */
 export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscription['token']) => {
   return tokensFromGql.reduce<Pick<TokensContext, 'tokensMetadata' | 'collateralTokens' | 'mTokens'>>(
@@ -56,18 +59,20 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         // parsing metadata schema, to have icon and decimals for token
         const parsedMetadata = tokenMetadataSchema.parse(metadata)
 
-        // handling sMVK token, cuz it's not actuall token that exist, it's platform token (staked MVK)
+        // check whether token is sMVK cuz it's token that don't really exists, and it's special case
         const isSMVKToken = parsedMetadata.symbol === 'MVK' && !mvk_tokens?.[0]?.address
-
         const symbolFromIndexer = isSMVKToken ? SMVK_TOKEN_ADDRESS : parsedMetadata.symbol
+
+        // getting symbol, name, icon from tokens mapper, cuz metadata from indexer is not valid for display
         const { symbol, name, icon } = getTokenSymbolAndName(symbolFromIndexer) ?? {}
 
         const tokenIcon = parsedMetadata.icon ?? icon
-        // If token don't have name or symbol or icon it can not be used
+        // token should at least have symbol, name and icon to be able to use it on front
         if (!symbol || !name || !tokenIcon) {
           throw new Error(`Token do not have valid symbol, name or icon ${symbol}, ${name}, ${tokenIcon}`)
         }
 
+        // sMVK don't have it's address so we hardcode it on frontend
         const tokenAddress = isSMVKToken ? SMVK_TOKEN_ADDRESS : token_address
 
         const tokenMetadata: TokenMetadataType = {
@@ -82,8 +87,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
 
         // if token is collateral
         if (lending_controller_collateral_tokens?.[0]) {
-          // if mvk_tokens?.[0]?.address present and token is collateral that means, that sMVK is collateral, but smvk don't really exist in indexer and we need to manually change it's collateral data
-          // sMVK collateral is disabled on demo, so we set isProtectedCollateral true when it's demo env
+          // if mvk_tokens?.[0]?.address present and token is collateral that means, that sMVK is collateral, but for smvk we need to manually change it's collateral data
           if (mvk_tokens?.[0]?.address) {
             acc.collateralTokens.push(SMVK_TOKEN_ADDRESS)
 
@@ -91,10 +95,12 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
               ...acc.tokensMetadata[SMVK_TOKEN_ADDRESS],
               loanData: {
                 indexerName: lending_controller_collateral_tokens[0].token_name,
+                // sMVK collateral is disabled on demo, so we set isProtectedCollateral true when it's demo env
                 isProtectedCollateral: process.env.REACT_APP_IS_DEMO === 'true',
               },
             }
-          } else if (!mvk_tokens?.[0]?.address) {
+          } else {
+            // handling all another collateral tokens
             acc.collateralTokens.push(tokenAddress)
 
             tokenMetadata.loanData = {
@@ -104,7 +110,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
           }
         }
 
-        // if token is loan token
+        // if token is loan token (market token)
         if (lending_controller_loan_tokens?.[0]) {
           tokenMetadata.loanData = {
             ...tokenMetadata.loanData,
