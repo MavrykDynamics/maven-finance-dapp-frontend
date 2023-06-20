@@ -408,7 +408,6 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
       align-items: center;
       column-gap: 6px;
 
-      font-size: 16px;
       color: ${({ theme }) => theme.dataColor};
     }
 
