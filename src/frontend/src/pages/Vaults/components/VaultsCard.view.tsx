@@ -32,7 +32,6 @@ import {
 // helpers
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
-import { calculateCollateralShare } from '../calcFunctionsForVault'
 import { LIQUIDATION_COST, LIQUIDATION_PRICE, VAULT_RISK } from 'texts/tooltips/vault.text'
 import { getStringWithoutUnderline } from 'utils/parse'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
@@ -41,6 +40,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
+import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
 
 const findStatusInfo = (
   status: string,

@@ -16,7 +16,6 @@ import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } f
 // helpers
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
-import { calculateAdminLiquidationFee, calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 
 // types
 import { LiquidateVaultDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
@@ -31,6 +30,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { calculateAdminLiquidationFee, calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
 
 const columnWidth = '33%'
 const rowHeight = 30
@@ -41,6 +41,7 @@ type Props = {
   show: boolean
 }
 
+// TODO: need to test values here, don't have valid vault for it
 export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const { userTokensBalances } = useUserContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()

@@ -25,16 +25,15 @@ import { ThreeLevelListItem } from '../../Loans.style'
 import { BorrowingExpandedCard } from '../LoansComponents.style'
 
 import { State } from 'reducers'
-import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import { getCollateralRatioByPersentage } from '../../Loans.helpers'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
 
 type BorrowingExpandCardPropsType = {
   vault: VaultType
@@ -98,7 +97,6 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
   const { symbol, decimals, icon, rate } = borrowedToken
 
   const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
-  // TODO: find a method to check whether it's smvk collateral
   const vaultHasSmvkCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVK_TOKEN_ADDRESS)
 
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
@@ -257,14 +255,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
 
                       const collateralShare = isTotalRow
                         ? 100
-                        : getNumberInBounds(
-                            0,
-                            100,
-                            calculateCollateralShare(
-                              convertedCollalteralAmount * collateralRate,
-                              collateralTotalBalance,
-                            ),
-                          )
+                        : calculateCollateralShare(convertedCollalteralAmount * collateralRate, collateralTotalBalance)
 
                       return (
                         <TableRow rowHeight={65} key={collateralSymbol}>

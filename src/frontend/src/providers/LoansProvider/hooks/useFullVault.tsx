@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react'
-import { FullLoansVaultType, VaultType } from '../helpers/vaults.types'
-import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+import { FullLoansVaultType, VaultType } from '../helpers/vaults.types'
+
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import {
   getVaultBorrowCapacity,
   getVaultCollateralBalance,
   getVaultCollateralRatio,
+  getVaultLiquidationPrice,
   getVaultStatus,
 } from '../helpers/vaults.utils'
 import {
@@ -15,7 +20,6 @@ import {
   getTimestampByLevelUrl,
 } from 'utils/api/api-helpers/getTimestampByLevel'
 import { isAbortError } from 'errors/error'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { api } from 'utils/api/api'
 
 export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
@@ -30,6 +34,7 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
     availableLiquidity,
     liquidationLvl,
     address,
+    liquidationMax,
     ...restVault
   } = vault
 
@@ -49,10 +54,8 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
 
           setLiquidationTimestamp(new Date(liquidationTimestamp).getTime())
         } catch (e) {
-          // TODO: handle fetch errors when error boundary will be ready
-          if (!isAbortError(e)) {
-            console.error('getting timestamp by lvl error: ', e)
-          }
+          if (!isAbortError(e)) console.error('getting timestamp by lvl error: ', e)
+
           bug('Unexpected error happened occured, please reload the page')
         }
       })()
@@ -105,8 +108,8 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
     borrowCapacity,
     liquidationLvl,
     liquidationTimestamp,
-    // TODO: implement it
-    liquidationPrice: 0,
+    liquidationPrice: getVaultLiquidationPrice(convertedBorrowedAmount + convertedFee, restVault.liquidationRatio),
+    liquidationMax: convertNumberForClient({ number: liquidationMax, grade: borrowedTokenDecimals }),
     ...restVault,
   }
 }

@@ -6,7 +6,7 @@ import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Loans'
 import { CollateralType, DepositorsFlagType, VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 import { calculateAccruedInterest } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { calculateVaultMaxLiquidationAmount } from './calcFunctionsForVault'
+import { calculateVaultMaxLiquidationAmount } from 'providers/LoansProvider/helpers/vaults.utils'
 
 /**
  * @param storage vaults data from indexer

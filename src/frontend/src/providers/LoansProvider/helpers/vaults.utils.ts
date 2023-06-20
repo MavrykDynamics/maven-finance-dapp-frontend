@@ -167,10 +167,6 @@ export const getVaultCollateralBalance = (
  *
  * collateral ratio – is the relation of the borrowed amount to collaterals amount:
  * if vault has borrowAmount 0, collateral ratio 0 if we don't have collaterals, or 250, if we have some
- *
- * if this relation > 200% -> vault can be borrowed
- * if this relation <= 200% & > 150% -> vault is at risk
- * if this relation <= 150% -> vault in grace period (time to repay of deposit collaterals, to improve collateral ratio of the vault)
  */
 export const getVaultCollateralRatio = (collateralAmount: number, borrowedAmount: number) => {
   // means we haven't borrowed anything
@@ -185,8 +181,39 @@ export const getVaultCollateralRatio = (collateralAmount: number, borrowedAmount
 
 /**
  * @param totalOutstanding – USD amount of borrowed amount and fee of the vault
- * @param liquidationRatio – ratio? TODO: add description
+ * @param liquidationRatio – ??? TODO: add description
  * @returns liquidation price in USD
  */
 export const getVaultLiquidationPrice = (totalOutstanding: number, liquidationRatio: number) =>
   totalOutstanding * (liquidationRatio / 1000)
+
+/**
+ * @param loanOutstandingTotal – USD amount of borrowed amount and fee of the vault
+ * @param maxVaultLiquidationPercent – ??? TODO: add description
+ * @returns ???
+ */
+export const calculateVaultMaxLiquidationAmount = (
+  loanOutstandingTotal: number,
+  maxVaultLiquidationPercent: number,
+) => {
+  return Math.trunc((loanOutstandingTotal * maxVaultLiquidationPercent) / 10000)
+}
+
+/**
+ * @param adminLiquidationFeePercent – ??? TODO: add description
+ * @param liquidationAmount – ??? TODO: add description
+ * @returns ???
+ */
+export const calculateAdminLiquidationFee = (adminLiquidationFeePercent: number, liquidationAmount: number) => {
+  return Math.trunc((adminLiquidationFeePercent * liquidationAmount) / 10000)
+}
+
+/**
+ * @param collateralAmount – amount of 1 of the collateral tokens in USD
+ * @param totalAmount – total collateralAmount in USD
+ * @returns % of 1 token from all tokens
+ */
+export const calculateCollateralShare = (collateralAmount: number, totalAmount: number) => {
+  if (totalAmount === 0) return 100
+  return getNumberInBounds(0, 100, Number(((collateralAmount / totalAmount) * 100).toFixed(2)))
+}

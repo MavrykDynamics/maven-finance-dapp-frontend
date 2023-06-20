@@ -28,7 +28,6 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 import { getNumberInBounds } from 'utils/calcFunctions'
-import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import colors from 'styles/colors'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { State } from 'reducers'
@@ -36,6 +35,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { CollateralType, DepositorsFlagType } from 'providers/LoansProvider/helpers/vaults.types'
+import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
 
 type Props = {
   openAddNewCollateralPopup: () => void
@@ -158,9 +158,7 @@ export const BorrowingExpandCardMenuSection = ({
 
                 const { symbol, icon, rate } = collateralToken
 
-                const collateralShare = isTotalRow
-                  ? 100
-                  : getNumberInBounds(0, 100, calculateCollateralShare(amount * rate, collateralBalance))
+                const collateralShare = isTotalRow ? 100 : calculateCollateralShare(amount * rate, collateralBalance)
 
                 return (
                   <TableRow rowHeight={65} key={symbol}>
