@@ -8,7 +8,13 @@ import {
   getVaultStatus,
 } from 'providers/LoansProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { VaultAssetData, VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { FullLoansVaultType, VaultAssetData, VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { api } from 'utils/api/api'
+import {
+  getTimestampByLevelUrl,
+  getTimestampByLevelHeaders,
+  getTimestampByLevelSchema,
+} from 'utils/api/api-helpers/getTimestampByLevel'
 
 /**
  * used for vaults filter
@@ -46,53 +52,6 @@ export const getVaultAssets = (
       loanAssets: [],
     },
   )
-}
-
-// VAULTS SORTINGS HELPER
-export const sortByVaultCategory = ({
-  vaultsMapper,
-  vaultsIds,
-  tokensMetadata,
-  tokensPrices,
-  status,
-}: {
-  vaultsMapper: Record<string, VaultType>
-  vaultsIds: string[]
-  tokensMetadata: TokensContext['tokensMetadata']
-  tokensPrices: TokensContext['tokensPrices']
-  status?: string
-}) => {
-  const updatedPriority = status ? { ...statusSortPriority, [status]: 0 } : statusSortPriority
-
-  return [...vaultsIds].sort((a, b) => {
-    const vaultAToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: a })
-    const vaultBToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: b })
-
-    if (!vaultAToken || !vaultAToken.rate || !vaultBToken || !vaultBToken.rate) return 0
-
-    const vaultABorrowedAmount =
-      convertNumberForClient({ number: vaultsMapper[a].borrowedAmount, grade: vaultAToken.decimals }) * vaultAToken.rate
-    const vaultBBorrowedAmount =
-      convertNumberForClient({ number: vaultsMapper[b].borrowedAmount, grade: vaultBToken.decimals }) * vaultBToken.rate
-
-    const vaultACollateralRatio = getVaultStatus(
-      getVaultCollateralRatio(
-        getVaultCollateralBalance(vaultsMapper[a].collateralData, tokensMetadata, tokensPrices),
-        vaultABorrowedAmount,
-      ),
-      vaultABorrowedAmount,
-    )
-
-    const vaultBCollateralRatio = getVaultStatus(
-      getVaultCollateralRatio(
-        getVaultCollateralBalance(vaultsMapper[b].collateralData, tokensMetadata, tokensPrices),
-        vaultBBorrowedAmount,
-      ),
-      vaultBBorrowedAmount,
-    )
-
-    return updatedPriority[vaultACollateralRatio] - updatedPriority[vaultBCollateralRatio]
-  })
 }
 
 /**

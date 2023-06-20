@@ -1,6 +1,6 @@
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { LoansTokenMetadataType, TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 export type DepositorsFlagType = typeof ANY_USER | typeof NONE_USER | typeof WHITELIST_USERS
@@ -23,7 +23,7 @@ export type VaultType = {
   vaultId: number // id of the vault
 
   // liquidation data
-  liquidationLvl: number // level when vault will be able to liquidate (liquidation delay + liquidation block), to use it we need to convert it to timestamp
+  liquidationLvl: number | null // level when vault will be able to liquidate (liquidation delay + liquidation block), to use it we need to convert it to timestamp, if null vault is not liquidatable
   liquidationMax: number
   liquidationReward: number
   liquidationRatio: number
@@ -45,11 +45,14 @@ export type VaultType = {
 
 // those additional fields can be only calculated after normalization stage, cuz those calcs requiring tokensDecimals & tokensRates
 export type FullLoansVaultType = VaultType & {
+  liquidationTimestamp: number | null // same as liquidationLvl but converted to timestamp
   totalOutstanding: number // fee + borrowed amount in USD
   collateralBalance: number // sum of collaterals in USD
   borrowCapacity: number // how mush user can borrow from vault (avaliable liq | amount of token while collateral ration >= 200%)
+  liquidationPrice: number
   collateralRatio: number // relation of collaterals in vault to borrowed amount
   status: (typeof vaultsStatuses)[keyof typeof vaultsStatuses] // status of the vault, depends on collateralRatio
+  borrowedToken: LoansTokenMetadataType & { rate: number } // metadata of borrowed token
 }
 
 export type DepositCollateralType = {

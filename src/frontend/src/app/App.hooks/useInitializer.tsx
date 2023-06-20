@@ -14,12 +14,5 @@ export const useInitializer = () => {
   const { isLoading: isFeedsLoading } = useDataFeedsUpdater()
   const { isLoading: isUserTokensLoading } = useUserBalancesUpdater(accountPkh, isTokensLoading)
 
-  console.log({
-    isTokensLoading,
-    isDappGeneralLoading,
-    isFeedsLoading,
-    isUserTokensLoading,
-  })
-
   return { isLoading: isDappGeneralLoading || isFeedsLoading || isTokensLoading || isUserTokensLoading }
 }

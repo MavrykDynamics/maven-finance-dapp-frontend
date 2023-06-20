@@ -110,8 +110,10 @@ export const normalizeVaultsStorage = async (storage: {
           adminLiquidateFee: lendingController.admin_liquidation_fee_pct,
           liquidationRatio: lendingController.liquidation_ratio,
           liquidationLvl:
-            item.marked_for_liquidation_level +
-            Number(item.lending_controller?.liquidation_delay_in_minutes) * BLOCKS_PER_MINUTE,
+            item.marked_for_liquidation_level === 0
+              ? null
+              : item.marked_for_liquidation_level +
+                Number(item.lending_controller?.liquidation_delay_in_minutes) * BLOCKS_PER_MINUTE,
 
           // Permissions
           sMVKDelegatedTo: '',

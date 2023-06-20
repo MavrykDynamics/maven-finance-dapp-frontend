@@ -30,25 +30,9 @@ import {
 } from 'pages/Loans/Loans.const'
 import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 import { useHistory, useLocation } from 'react-router'
-import { api } from 'utils/api/api'
-import {
-  getTimestampByLevelHeaders,
-  getTimestampByLevelSchema,
-  getTimestampByLevelUrl,
-} from 'utils/api/api-helpers/getTimestampByLevel'
-import { isAbortError } from 'errors/error'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import {
-  getVaultBorrowCapacity,
-  getVaultCollateralBalance,
-  getVaultCollateralRatio,
-  getVaultStatus,
-} from 'providers/LoansProvider/helpers/vaults.utils'
 import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
 
 type BorrowingExpandCardPropsType = {
   vault: VaultType
@@ -68,8 +52,6 @@ export const BorrowingExpandCard = ({
   DAOFee,
   hideTransactionHistory,
 }: BorrowingExpandCardPropsType) => {
-  const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { bug } = useToasterContext()
   const {
     openChangeVaultNamePopup,
     openConfirmBorrowPopup,
@@ -105,8 +87,8 @@ export const BorrowingExpandCard = ({
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   const params = useMemo(() => new URLSearchParams(location.search), [location.search])
-  const vaultAddress = params.get('vaultAddress')
-  const isExpanded = vault.address === vaultAddress
+  const paramsVaultAddress = params.get('vaultAddress')
+  const isExpanded = vault.address === paramsVaultAddress
 
   const [activeRepayBorrowTabId, setActiveRepayBorrowTabId] = useState(
     VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS.find((item) => item.active)?.id,
@@ -130,53 +112,7 @@ export const BorrowingExpandCard = ({
   const ref = useRef<HTMLDivElement | null>(null)
   useClickAway(ref, () => (notHandleClickAway ? null : handleCloseVault()))
 
-  const vaultData = useMemo(() => {
-    const {
-      borrowedTokenAddress,
-      collateralData,
-      borrowedAmount,
-      fee,
-      liquidationRatio,
-      availableLiquidity,
-      ...restVault
-    } = vault
-
-    const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
-
-    if (!borrowedToken || !borrowedToken.rate) return null
-
-    const { rate: borrowedTokenRate, decimals: borrowedTokenDecimals } = borrowedToken
-
-    const convertedBorrowedAmount = convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals })
-    const convertedFee = convertNumberForClient({ number: fee, grade: borrowedTokenDecimals })
-    const convertedAvailableLiquidity = convertNumberForClient({
-      number: availableLiquidity,
-      grade: borrowedTokenDecimals,
-    })
-    const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
-    const borrowCapacity = getVaultBorrowCapacity(
-      convertedAvailableLiquidity * borrowedTokenRate,
-      convertedBorrowedAmount * borrowedTokenRate,
-      collateralBalance,
-    )
-    const collateralRatio = getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * borrowedTokenRate)
-    const status = getVaultStatus(collateralRatio, convertedBorrowedAmount)
-
-    return {
-      status,
-      collateralRatio,
-      collateralBalance,
-      collateralData,
-      convertedBorrowedAmount,
-      convertedAvailableLiquidity,
-      borrowedTokenRate,
-      borrowedTokenAddress,
-      borrowedToken,
-      borrowCapacity,
-      convertedFee,
-      ...restVault,
-    }
-  }, [vault, tokensMetadata, tokensPrices])
+  const vaultData = useFullVault(vault)
 
   useEffect(() => {
     if (activeRepayBorrowTabId !== loansTabNames.REPAY) return
@@ -186,36 +122,12 @@ export const BorrowingExpandCard = ({
 
   useEffect(() => {
     if (
-      vaultData &&
+      vaultData?.liquidationTimestamp &&
       isExpanded &&
       (vaultData.status === vaultsStatuses.GRACE_PERIOD || vaultData.status === vaultsStatuses.LIQUIDATABLE)
     ) {
-      const abortLiquidationController = new AbortController()
-
-      ;(async () => {
-        try {
-          const { data: liquidationTimestamp } = await api(
-            getTimestampByLevelUrl(vaultData.liquidationLvl),
-            { signal: abortLiquidationController.signal, headers: getTimestampByLevelHeaders },
-            getTimestampByLevelSchema,
-          )
-
-          setTimerTimestamp(new Date(liquidationTimestamp).getTime())
-        } catch (e) {
-          // TODO: handle fetch errors when error boundary will be ready
-          if (!isAbortError(e)) {
-            console.error('getting timestamp by lvl error: ', e)
-          }
-          bug('Unexpected error happened occured, please reload the page')
-        }
-      })()
-
-      return () => {
-        abortLiquidationController.abort()
-      }
+      setTimerTimestamp(new Date(vaultData?.liquidationTimestamp).getTime())
     }
-
-    return () => {}
   }, [vaultData, isExpanded])
 
   if (!vaultData) return null
@@ -223,9 +135,9 @@ export const BorrowingExpandCard = ({
   const {
     borrowedToken,
     borrowedTokenAddress,
-    address,
+    address: vaultAddress,
     name: vaultName,
-    convertedBorrowedAmount,
+    borrowedAmount,
     collateralBalance,
     borrowCapacity,
     collateralRatio,
@@ -234,16 +146,21 @@ export const BorrowingExpandCard = ({
     xtzDelegatedTo,
     sMVKDelegatedTo,
     collateralData,
-    convertedFee,
-    borrowedTokenRate,
-    convertedAvailableLiquidity,
+    fee,
+    availableLiquidity,
+    totalOutstanding,
     status,
     apr,
     minimumRepay,
     vaultId,
   } = vaultData
 
-  const { symbol: borrowedTokenSymbol, icon: borrowedTokenIcon, decimals: borrowedTokenDecimals } = borrowedToken
+  const {
+    symbol: borrowedTokenSymbol,
+    icon: borrowedTokenIcon,
+    decimals: borrowedTokenDecimals,
+    rate: borrowedTokenRate,
+  } = borrowedToken
 
   const repayBorrowSlidingButtons = VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS.map((item) => ({
     ...item,
@@ -264,7 +181,7 @@ export const BorrowingExpandCard = ({
   const handleOpenVault = () => {
     if (isExpanded) return
 
-    params.append('vaultAddress', address)
+    params.append('vaultAddress', vaultAddress)
     history.replace({ ...location, search: params.toString() })
   }
 
@@ -293,16 +210,16 @@ export const BorrowingExpandCard = ({
   const handleClickOpenChangeVaultNamePopup = () => {
     openChangeVaultNamePopup?.({
       vaultName,
-      vaultAddress: address,
+      vaultAddress,
     })
   }
 
   const handleClickOpenConfirmBorrowPopup = (inputAmount: number) => {
     openConfirmBorrowPopup({
       inputAmount,
-      vaultId: vault.vaultId,
+      vaultId,
       tokenAddress: borrowedTokenAddress,
-      borrowedAmount: convertedBorrowedAmount,
+      borrowedAmount,
       collateralBalance,
       borrowCapacity,
       DAOFee,
@@ -313,37 +230,37 @@ export const BorrowingExpandCard = ({
   const handleClickOpenConfirmRepayPopup = (inputAmount: number) => {
     openConfirmRepayPopup({
       inputAmount,
-      vaultId: vault.vaultId,
-      vaultAddress: vault.address,
+      vaultId,
+      vaultAddress,
       tokenAddress: borrowedTokenAddress,
-      borrowedAmount: convertedBorrowedAmount,
+      borrowedAmount,
       collateralBalance,
       borrowCapacity,
-      totalOutstanding: convertedFee + convertedBorrowedAmount,
+      totalOutstanding,
       scrollToCurrentVault,
     })
   }
 
   const handleClickOpenConfirmRepayFullPopup = () => {
     openConfirmRepayFullPopup({
-      vaultId: vault.vaultId,
-      vaultAddress: vault.address,
+      vaultId,
+      vaultAddress,
       tokenAddress: borrowedTokenAddress,
-      borrowedAmount: convertedBorrowedAmount,
+      borrowedAmount,
       collateralBalance,
       borrowCapacity,
-      totalOutstanding: convertedBorrowedAmount + convertedFee,
+      totalOutstanding,
     })
   }
 
   const handleClickOpenAddNewCollateralPopup = () => {
     openAddNewCollateralPopup({
-      vaultAddress: vault.address,
-      borrowedAmount: convertedBorrowedAmount,
+      vaultAddress,
+      borrowedAmount,
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
-      availableLiquidity: convertedAvailableLiquidity,
+      availableLiquidity,
       borrowCapacity,
       collateralData: vault.collateralData,
     })
@@ -351,12 +268,12 @@ export const BorrowingExpandCard = ({
 
   const handleClickOpenAddExistingCollateralPopup = (idx: number) => {
     openAddExistingCollateralPopup({
-      vaultAddress: vault.address,
-      borrowedAmount: convertedBorrowedAmount,
+      vaultAddress,
+      borrowedAmount,
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
-      availableLiquidity: convertedAvailableLiquidity,
+      availableLiquidity,
       borrowCapacity,
       collateralTokenAddress: collateralData[idx].tokenAddress,
     })
@@ -364,8 +281,8 @@ export const BorrowingExpandCard = ({
 
   const handleClickOpenWithdrawCollateralPopup = ({ amount, idx }: { amount: number; idx: number }) => {
     openWithdrawCollateralPopup({
-      vaultAddress: vault.address,
-      borrowedAmount: convertedBorrowedAmount,
+      vaultAddress,
+      borrowedAmount,
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
@@ -377,13 +294,13 @@ export const BorrowingExpandCard = ({
   const handleClickOpenChangeBakerPopup = () => {
     openChangeBakerPopup?.({
       bakerAddress: xtzDelegatedTo,
-      vaultAddress: address,
+      vaultAddress,
     })
   }
 
   const handleClickOpenManagePermissionsPopup = () => {
     openManagePermissionsPopup?.({
-      vaultAddress: address,
+      vaultAddress,
       deporsitorsFlag,
       depositors,
     })
@@ -391,7 +308,7 @@ export const BorrowingExpandCard = ({
 
   const handleClickOpenUpdateMvkOperatorsPopup = () => {
     openUpdateMvkOperatorsPopup?.({
-      vaultAddress: address,
+      vaultAddress,
       tokenAddress: borrowedTokenAddress,
       operators: mvkTokenOperators,
     })
@@ -412,7 +329,7 @@ export const BorrowingExpandCard = ({
               <div className="data">
                 <div className="value">{vaultName ? vaultName : borrowedTokenSymbol}</div>
                 <div className="value">
-                  <TzAddress tzAddress={address} shouldCopy hasIcon />
+                  <TzAddress tzAddress={vaultAddress} shouldCopy hasIcon />
                 </div>
               </div>
             </ThreeLevelListItem>
@@ -432,7 +349,7 @@ export const BorrowingExpandCard = ({
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
               <CommaNumber
-                value={(convertedBorrowedAmount + convertedFee) * borrowedTokenRate}
+                value={totalOutstanding * borrowedTokenRate}
                 beginningText="$"
                 className="value"
                 showDecimal
@@ -460,10 +377,10 @@ export const BorrowingExpandCard = ({
               <BorrowingExpandCardValuesSection
                 collateralRatio={collateralRatio}
                 collateralBalance={collateralBalance}
-                borrowedAmount={convertedBorrowedAmount}
+                borrowedAmount={borrowedAmount}
                 borrowCapacity={borrowCapacity}
                 decimals={borrowedTokenDecimals}
-                fee={convertedFee}
+                fee={fee}
                 apr={apr}
                 rate={borrowedTokenRate}
               />
@@ -489,9 +406,9 @@ export const BorrowingExpandCard = ({
                     borrowedAssetAddress={borrowedTokenAddress}
                     borrowAPR={apr}
                     currentCollateralBalance={collateralBalance}
-                    hasUserBorrowed={Boolean(convertedBorrowedAmount)}
+                    hasUserBorrowed={Boolean(borrowedAmount)}
                     borrowCapacity={borrowCapacity}
-                    currentBorrowedAmount={convertedBorrowedAmount}
+                    currentBorrowedAmount={borrowedAmount}
                     DAOFee={DAOFee}
                     openConfirmBorrowPopup={handleClickOpenConfirmBorrowPopup}
                   />
@@ -503,11 +420,11 @@ export const BorrowingExpandCard = ({
                     openConfirmRepayPopup={handleClickOpenConfirmRepayPopup}
                     openConfirmRepayFullPopup={handleClickOpenConfirmRepayFullPopup}
                     vaultId={vaultId}
-                    vaultAddress={address}
+                    vaultAddress={vaultAddress}
                     borrowedToken={borrowedToken}
                     borrowedTokenRate={borrowedTokenRate}
-                    fee={convertedFee}
-                    borrowedAmount={convertedBorrowedAmount}
+                    fee={fee}
+                    borrowedAmount={borrowedAmount}
                     minimumRepay={minimumRepay}
                     collateralBalance={collateralBalance}
                     borrowCapacity={borrowCapacity}
@@ -529,7 +446,7 @@ export const BorrowingExpandCard = ({
                 currentToken={currentToken}
                 isOwner={isOwner}
                 vaultName={vaultName}
-                vaultAddress={address}
+                vaultAddress={vaultAddress}
                 xtzDelegatedTo={xtzDelegatedTo}
                 sMVKDelegatedTo={sMVKDelegatedTo}
                 collateralRatio={collateralRatio}

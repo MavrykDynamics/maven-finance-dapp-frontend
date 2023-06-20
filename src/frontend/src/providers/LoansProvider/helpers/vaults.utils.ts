@@ -1,40 +1,132 @@
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import { statusSortPriority, vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
 import { FullLoansVaultType, VaultType } from './vaults.types'
+import dayjs from 'dayjs'
+import { api } from 'utils/api/api'
+import {
+  getTimestampByLevelUrl,
+  getTimestampByLevelHeaders,
+  getTimestampByLevelSchema,
+  TimestampByLevelResponceType,
+} from 'utils/api/api-helpers/getTimestampByLevel'
+
+// sort vaults by status
+export const sortVaultsByStatus = async ({
+  vaultsMapper,
+  vaultsIds,
+  tokensMetadata,
+  tokensPrices,
+}: {
+  vaultsMapper: Record<string, VaultType>
+  vaultsIds: string[]
+  tokensMetadata: TokensContext['tokensMetadata']
+  tokensPrices: TokensContext['tokensPrices']
+}) => {
+  try {
+    const vaultsLiquidationTimestamps = await vaultsIds.reduce<Promise<Record<string, number | null>>>(
+      async (promiseAcc, vaultAddress) => {
+        const acc = await promiseAcc
+        const { liquidationLvl } = vaultsMapper[vaultAddress]
+
+        if (!liquidationLvl) {
+          acc[vaultAddress] = null
+          return acc
+        }
+
+        const { data: liquidationTimestamp } = await api<TimestampByLevelResponceType>(
+          getTimestampByLevelUrl(liquidationLvl),
+          { headers: getTimestampByLevelHeaders },
+          getTimestampByLevelSchema,
+        )
+
+        acc[vaultAddress] = new Date(liquidationTimestamp).getTime()
+
+        return acc
+      },
+      Promise.resolve({}),
+    )
+
+    return [...vaultsIds].sort((a, b) => {
+      const vaultAToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: a })
+      const vaultBToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: b })
+
+      if (!vaultAToken || !vaultAToken.rate || !vaultBToken || !vaultBToken.rate) return 0
+
+      const vaultABorrowedAmount =
+        convertNumberForClient({ number: vaultsMapper[a].borrowedAmount, grade: vaultAToken.decimals }) *
+        vaultAToken.rate
+      const vaultBBorrowedAmount =
+        convertNumberForClient({ number: vaultsMapper[b].borrowedAmount, grade: vaultBToken.decimals }) *
+        vaultBToken.rate
+
+      const vaultACollateralRatio = getVaultStatus({
+        collateralRatio: getVaultCollateralRatio(
+          getVaultCollateralBalance(vaultsMapper[a].collateralData, tokensMetadata, tokensPrices),
+          vaultABorrowedAmount,
+        ),
+        borrowedAmount: vaultABorrowedAmount,
+        liquidationTimestamp: vaultsLiquidationTimestamps[a],
+      })
+
+      const vaultBCollateralRatio = getVaultStatus({
+        collateralRatio: getVaultCollateralRatio(
+          getVaultCollateralBalance(vaultsMapper[b].collateralData, tokensMetadata, tokensPrices),
+          vaultBBorrowedAmount,
+        ),
+        borrowedAmount: vaultBBorrowedAmount,
+        liquidationTimestamp: vaultsLiquidationTimestamps[b],
+      })
+
+      return statusSortPriority[vaultACollateralRatio] - statusSortPriority[vaultBCollateralRatio]
+    })
+  } catch (e) {
+    console.error('vaults sorting by status error')
+
+    return vaultsIds
+  }
+}
 
 /**
  *
  * @param collateralRatio collateral ratio of the vault
  * @param borrowedAmount how much borrowed from the vault
+ * @param liquidationTimestamp when vault can be liquidated
  * @returns status of the vault one of vaultsStatuses
- *
- * TODO: clarify whether to get status by colalteralRatio or via other calcs
  */
-export const getVaultStatus = (collateralRatio: number, borrowedAmount: number): FullLoansVaultType['status'] => {
-  if (collateralRatio <= 200 && collateralRatio > 150 && borrowedAmount > 0) return vaultsStatuses.AT_RISK
-  if (collateralRatio <= 150 && borrowedAmount > 0) return vaultsStatuses.GRACE_PERIOD
+export const getVaultStatus = ({
+  collateralRatio,
+  borrowedAmount,
+  liquidationTimestamp,
+}: {
+  collateralRatio: number
+  borrowedAmount: number
+  liquidationTimestamp: number | null
+}): FullLoansVaultType['status'] => {
+  try {
+    if (collateralRatio < 200 && collateralRatio > 150 && borrowedAmount > 0) return vaultsStatuses.AT_RISK
+    if (collateralRatio <= 150 && borrowedAmount > 0 && !liquidationTimestamp) return vaultsStatuses.MARK
+
+    if (
+      collateralRatio <= 150 &&
+      borrowedAmount > 0 &&
+      liquidationTimestamp &&
+      dayjs().unix() < dayjs(liquidationTimestamp).unix()
+    )
+      return vaultsStatuses.GRACE_PERIOD
+    if (
+      collateralRatio <= 150 &&
+      borrowedAmount > 0 &&
+      liquidationTimestamp &&
+      dayjs().unix() >= dayjs(liquidationTimestamp).unix()
+    )
+      return vaultsStatuses.LIQUIDATABLE
+  } catch (e) {
+    return vaultsStatuses.ACTIVE
+  }
 
   return vaultsStatuses.ACTIVE
-
-  // old more complicated cals for vault status
-  // gotStatusByCollateralRatio !== 'no status'
-  //         ? gotStatusByCollateralRatio
-  //         : item.loan_token?.oracle_id
-  //         ? vaultStatusChecker({
-  //             currentBlockLevel: currentBlock?.level ?? 0,
-  //             liquidationEndLevel: item.liquidation_end_level,
-  //             markedForLiquidationLevel: item.marked_for_liquidation_level,
-  //             liquidationDelayInMinutes: lendingController.liquidation_delay_in_minutes,
-  //             loanOutstandingTotal: item.loan_outstanding_total / 10 ** item.loan_decimals,
-  //             loanTokenOracleAddress: item.loan_token.oracle_id,
-  //             liquidationRatio: lendingController.liquidation_ratio,
-  //             vaultCollateralTokens: normalizeCollateralTokens,
-  //             collateralRatio: lendingController.collateral_ratio,
-  //             oracleLatestPrices,
-  //           })
-  //         : 'no status'
 }
 
 /**

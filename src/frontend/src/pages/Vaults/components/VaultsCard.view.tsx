@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 // components
@@ -35,26 +35,12 @@ import { vaultsStatuses } from '../Vaults.consts'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
 import { LIQUIDATION_COST, LIQUIDATION_PRICE, VAULT_RISK } from 'texts/tooltips/vault.text'
 import { getStringWithoutUnderline } from 'utils/parse'
-import {
-  getTimestampByLevelHeaders,
-  getTimestampByLevelSchema,
-  getTimestampByLevelUrl,
-} from 'utils/api/api-helpers/getTimestampByLevel'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
-import { isAbortError } from 'errors/error'
-import { api } from 'utils/api/api'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import {
-  getVaultCollateralBalance,
-  getVaultCollateralRatio,
-  getVaultLiquidationPrice,
-  getVaultStatus,
-} from 'providers/LoansProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
 import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
 
 const findStatusInfo = (
   status: string,
@@ -124,7 +110,6 @@ type Props = {
 
 export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab }: Props) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { bug } = useToasterContext()
   const { openLiquidateVaultPopup } = useLoansPopupsContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -132,68 +117,15 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
 
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
-  const vaultData = useMemo(() => {
-    const { borrowedTokenAddress, collateralData, borrowedAmount, fee, liquidationRatio, ...restVault } = vault
-
-    const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
-
-    if (!borrowedToken || !borrowedToken.rate) return null
-
-    const { rate: borrowedTokenRate, decimals: borrowedTokenDecimals } = borrowedToken
-
-    const convertedBorrowedAmount = convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals })
-    const convertedFee = convertNumberForClient({ number: fee, grade: borrowedTokenDecimals })
-    const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
-    const collateralRatio = getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * borrowedTokenRate)
-    const status = getVaultStatus(collateralRatio, convertedBorrowedAmount)
-    const liquidationPrice = getVaultLiquidationPrice(
-      (convertedFee + convertedBorrowedAmount) * borrowedTokenRate,
-      liquidationRatio,
-    )
-
-    return {
-      status,
-      collateralRatio,
-      collateralBalance,
-      collateralData,
-      convertedBorrowedAmount,
-      borrowedTokenAddress,
-      liquidationPrice,
-      ...restVault,
-    }
-  }, [vault, tokensMetadata, tokensPrices])
+  const vaultData = useFullVault(vault)
 
   useEffect(() => {
     if (
-      vaultData &&
+      vaultData?.liquidationTimestamp &&
       (vaultData.status === vaultsStatuses.GRACE_PERIOD || vaultData.status === vaultsStatuses.LIQUIDATABLE)
     ) {
-      const abortLiquidationController = new AbortController()
-
-      ;(async () => {
-        try {
-          const { data: liquidationTimestamp } = await api(
-            getTimestampByLevelUrl(vaultData.liquidationLvl),
-            { signal: abortLiquidationController.signal, headers: getTimestampByLevelHeaders },
-            getTimestampByLevelSchema,
-          )
-
-          setTimerTimestamp(new Date(liquidationTimestamp).getTime())
-        } catch (e) {
-          // TODO: handle fetch errors when error boundary will be ready
-          if (!isAbortError(e)) {
-            console.error('getting timestamp by lvl error: ', e)
-          }
-          bug('Unexpected error happened occured, please reload the page')
-        }
-      })()
-
-      return () => {
-        abortLiquidationController.abort()
-      }
+      setTimerTimestamp(new Date(vaultData?.liquidationTimestamp).getTime())
     }
-
-    return () => null
   }, [vaultData])
 
   if (!vaultData) return null

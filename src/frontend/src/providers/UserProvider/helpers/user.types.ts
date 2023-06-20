@@ -28,6 +28,9 @@ export const userTokenBalanceSchema = z.array(
         address: z.string(),
       }),
     }),
+    account: z.object({
+      address: z.string(),
+    }),
     balance: z.string(),
   }),
 )
@@ -35,6 +38,7 @@ export type UserTokenBalancesParsedResponce = z.infer<typeof userTokenBalanceSch
 
 export const userTzktAccountSchema = z.object({
   balance: z.number(),
+  address: z.string(),
 })
 export type UserTzktAccountParsedResponce = z.infer<typeof userTokenBalanceSchema>
 

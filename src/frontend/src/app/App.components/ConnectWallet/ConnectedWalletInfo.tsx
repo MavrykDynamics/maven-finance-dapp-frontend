@@ -22,6 +22,8 @@ import {
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
+import { ImageWithPlug } from '../Icon/ImageWithPlug'
 
 type ConnectWalletProps = {
   mountWertWiget: (commodity: string) => void
@@ -31,7 +33,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
 
-  const { tokensPrices } = useTokensContext()
+  const { tokensPrices, tokensMetadata } = useTokensContext()
   const { userTokensBalances } = useUserContext()
 
   const mvkTokenRate = tokensPrices[MVK_TOKEN_SYMBOL]
@@ -58,7 +60,9 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   const closeDetailsHandler = () => setDetailsShown(false)
   const mouseOverHanlder = () => setDetailsShown(true)
 
-  if (!accountPkh) return null
+  if (!accountPkh || !userTokensBalances) return null
+
+  const userTokens = Object.keys(userTokensBalances)
 
   return (
     <WalletDetailsStyled onMouseOver={mouseOverHanlder} onMouseLeave={closeDetailsHandler}>
@@ -161,44 +165,36 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             </div>
           </div>
 
-          {/* TODO: uncomment when tokens metadata & other stuff can be stored in 1 place */}
-          {/* {tokensSymbols.map((tokenSymbol) => {
-            if (
-              tokenSymbol === MVK_TOKEN_SYMBOL ||
-              tokenSymbol === SMVK_TOKEN_ADDRESS ||
-              tokenSymbol === XTZ_TOKEN_SYMBOL
-            )
+          {userTokens.map((tokenAddress) => {
+            if (tokenAddress === mvkTokenAddress || tokenAddress === SMVK_TOKEN_ADDRESS || isTezosAsset(tokenAddress))
               return null
-            const tokenData = userTokens[tokenSymbol]
-            const tokenRate = tokensPrices[tokenSymbol]
+
+            const tokenBalance = userTokensBalances[tokenAddress]
+            const tokenMetadata = getTokenDataByAddress({ tokenAddress, tokensPrices, tokensMetadata })
+
+            if (!tokenMetadata) return null
+
+            const { symbol, rate, icon } = tokenMetadata
 
             return (
               <div className="row">
-                <div className="icon">{tokenData.icon ? <Icon id={tokenData.icon} /> : <Icon id={'noImage'} />}</div>
+                <div className="icon">
+                  {icon ? <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> : <Icon id={'noImage'} />}
+                </div>
                 <div className="values">
-                  <CommaNumber
-                    value={tokenData.balance}
-                    endingText={tokenData.name}
-                    showDecimal
-                    className="asset-amount"
-                  />
-                  {tokenRate ? (
+                  <CommaNumber value={tokenBalance} endingText={symbol} showDecimal className="asset-amount" />
+                  {rate ? (
                     <CommaNumber
-                      value={tokenData.balance * tokenRate}
+                      value={tokenBalance * rate}
                       endingText={'USD'}
                       showDecimal
                       className="converted-amount"
                     />
                   ) : null}
                 </div>
-                <div className="action">
-                <Button onClick={disconnectWallet} kind={BUTTON_SIMPLE} disabled>
-                  Buy MVK <Icon id="paginationArrowRight" />
-                </Button>
-              </div> 
               </div>
             )
-          })} */}
+          })}
         </div>
 
         <div className="action-btn-wrapper">
@@ -223,7 +219,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
   const dispatch = useDispatch()
   const history = useHistory()
 
-  const { tokensPrices } = useTokensContext()
+  const { tokensPrices, tokensMetadata } = useTokensContext()
   const { userTokensBalances } = useUserContext()
 
   const mvkTokenRate = tokensPrices[MVK_TOKEN_SYMBOL]
@@ -253,7 +249,9 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
   const disconnectWallet = async () => await dispatch(disconnect())
   const clickHander = () => setDetailsShown(!detailsShown)
 
-  if (!accountPkh) return null
+  if (!accountPkh || !userTokensBalances) return null
+
+  const userTokens = Object.keys(userTokensBalances)
 
   return (
     <MobileWalletDetailsStyled>
@@ -360,44 +358,36 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             </div>
           </div>
 
-          {/* TODO: uncomment when tokens metadata & other stuff can be stored in 1 place */}
-          {/* {tokensSymbols.map((tokenSymbol) => {
-            if (
-              tokenSymbol === MVK_TOKEN_SYMBOL ||
-              tokenSymbol === SMVK_TOKEN_ADDRESS ||
-              tokenSymbol === XTZ_TOKEN_SYMBOL
-            )
+          {userTokens.map((tokenAddress) => {
+            if (tokenAddress === mvkTokenAddress || tokenAddress === SMVK_TOKEN_ADDRESS || isTezosAsset(tokenAddress))
               return null
-            const tokenData = userTokens[tokenSymbol]
-            const tokenRate = tokensPrices[tokenSymbol]
+
+            const tokenBalance = userTokensBalances[tokenAddress]
+            const tokenMetadata = getTokenDataByAddress({ tokenAddress, tokensPrices, tokensMetadata })
+
+            if (!tokenMetadata) return null
+
+            const { symbol, rate, icon } = tokenMetadata
 
             return (
               <div className="row">
-                <div className="icon">{tokenData.icon ? <Icon id={tokenData.icon} /> : <Icon id={'noImage'} />}</div>
+                <div className="icon">
+                  {icon ? <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> : <Icon id={'noImage'} />}
+                </div>
                 <div className="values">
-                  <CommaNumber
-                    value={tokenData.balance}
-                    endingText={tokenData.name}
-                    showDecimal
-                    className="asset-amount"
-                  />
-                  {tokenRate ? (
+                  <CommaNumber value={tokenBalance} endingText={symbol} showDecimal className="asset-amount" />
+                  {rate ? (
                     <CommaNumber
-                      value={tokenData.balance * tokenRate}
+                      value={tokenBalance * rate}
                       endingText={'USD'}
                       showDecimal
                       className="converted-amount"
                     />
                   ) : null}
                 </div>
-                <div className="action">
-                <Button onClick={disconnectWallet} kind={BUTTON_SIMPLE} disabled>
-                  Buy MVK <Icon id="paginationArrowRight" />
-                </Button>
-              </div> 
               </div>
             )
-          })} */}
+          })}
         </div>
 
         <div className="action-btn-wrapper">

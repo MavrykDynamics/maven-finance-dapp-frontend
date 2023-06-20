@@ -30,15 +30,18 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 export const useUserBalancesUpdater = (userAddress: string | null, isTokensLoading: boolean) => {
   const { tokensMetadata, mTokens } = useTokensContext()
-  const { updateUserTokenBalances } = useUserContext()
+  const { updateUserTokenBalances, userTokensBalances } = useUserContext()
   const { bug, success } = useToasterContext()
 
   const ws = useRef<null | signalR.HubConnection>(null)
+  const prevUserAddress = useRef<null | string>(userAddress)
 
-  const [isInitialTokenBalancesLoading, setIsInitialTokenBalancesLoading] = useState(true)
+  const [isInitialTokenBalancesLoading, setIsInitialTokenBalancesLoading] = useState(false)
   const [socketBalances, setSocketBalances] = useState<UserTokenBalancesParsedResponce>([])
 
+  // loading user balaces
   const fetchUserBalances = async () => {
+    if (!userAddress) return
     try {
       const [tokens, xtzTokenBalance] = await Promise.all([
         api(`https://api.ghostnet.tzkt.io/v1/tokens/balances?account.eq=${userAddress}`, {}, userTokenBalanceSchema),
@@ -47,7 +50,11 @@ export const useUserBalancesUpdater = (userAddress: string | null, isTokensLoadi
 
       setSocketBalances(
         tokens.data.concat([
-          { token: { contract: { address: XTZ_TOKEN_ADDRESS } }, balance: xtzTokenBalance.data.balance.toString() },
+          {
+            token: { contract: { address: XTZ_TOKEN_ADDRESS } },
+            balance: xtzTokenBalance.data.balance.toString(),
+            account: { address: xtzTokenBalance.data.address },
+          },
         ]),
       )
     } catch (e) {
@@ -58,55 +65,25 @@ export const useUserBalancesUpdater = (userAddress: string | null, isTokensLoadi
     }
   }
 
-  /**
-   * load balances with fetch if they have not been loaded
-   * if balances are loaded set up ws to update them
-   *
-   * TODO: test user change
-   */
+  // if we don't have balances loaded & tokens metadata is ready, load them via fetch to have all tokens balances
   useEffect(() => {
-    console.log({ userAddress, isTokensLoading, isInitialTokenBalancesLoading })
-    if (!userAddress || isTokensLoading) return
-    ;(async () => {
-      // if we haven't loaded token balances, load it by fetch
-      if (isInitialTokenBalancesLoading) fetchUserBalances()
+    if (!userTokensBalances && !isTokensLoading) fetchUserBalances()
+  }, [isTokensLoading])
 
-      // if we have loaded token balances, open socket to observe token balances on tzkt
-      if (!isInitialTokenBalancesLoading && !ws.current) {
-        const tzktSocket = new signalR.HubConnectionBuilder().withUrl('https://api.ghostnet.tzkt.io/v1/ws').build()
+  // set up tzkt webSocket to live update user tzkt tokens balances
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const tzktSocket = new signalR.HubConnectionBuilder()
+          .withUrl('https://api.ghostnet.tzkt.io/v1/ws', {
+            skipNegotiation: true,
+            transport: signalR.HttpTransportType.WebSockets,
+          })
+          .build()
         ws.current = tzktSocket
 
         // open connection
         await tzktSocket.start()
-
-        // handle tokens balances update message
-        tzktSocket.on('token_balances', (msg) => {
-          if (!msg.data) return
-
-          setSocketBalances(msg.data)
-        })
-
-        // subscribe to account token balances
-        await tzktSocket.invoke('SubscribeToTokenBalances', {
-          account: userAddress,
-        })
-
-        // handle xtz token balance update message
-        tzktSocket.on('accounts', (msg) => {
-          if (!msg.data) return
-
-          try {
-            const [{ balance }] = userTzktWSAccountSchema.parse(msg.data)
-            setSocketBalances([{ token: { contract: { address: XTZ_TOKEN_ADDRESS } }, balance: balance.toString() }])
-          } catch (e) {
-            console.error('tzkt xtz token balance parse error: ', { e, msg })
-          }
-        })
-
-        // subscribe to account data to get xtz balance ):
-        await tzktSocket.invoke('SubscribeToAccounts', {
-          addresses: [userAddress],
-        })
 
         tzktSocket.onreconnecting((error) => {
           bug(
@@ -123,34 +100,87 @@ export const useUserBalancesUpdater = (userAddress: string | null, isTokensLoadi
           )
           fetchUserBalances()
         })
-
-        tzktSocket.onclose((error) => {
-          bug('Connection to your token balances has closed', 'Web Sockets')
-          console.error('user balances socket closed', { error })
-        })
+      } catch (e) {
+        bug("DAPP can't connect to your user, try to reload page...", 'Web Sockets')
+        console.error('user balances socket reconnectig', { e })
       }
     })()
 
     return () => {
       ws?.current?.stop()
     }
-  }, [userAddress, isInitialTokenBalancesLoading, isTokensLoading])
+  }, [])
+
+  useEffect(() => {
+    // if user has changed account we need to reset all balances, and load them again, also need to update socket for new user
+    if (userAddress !== prevUserAddress.current) {
+      updateUserTokenBalances(null)
+      fetchUserBalances()
+
+      // also on user account change we need to change subscribtion on socket
+      if (ws.current && userAddress) {
+        // handle tokens balances update message
+        ws.current.on('token_balances', (msg) => {
+          if (!msg.data) return
+
+          setSocketBalances(msg.data)
+        })
+
+        // handle xtz token balance update message
+        ws.current.on('accounts', (msg) => {
+          if (!msg.data) return
+
+          try {
+            const [{ balance, address }] = userTzktWSAccountSchema.parse(msg.data)
+            setSocketBalances([
+              {
+                token: { contract: { address: XTZ_TOKEN_ADDRESS } },
+                balance: balance.toString(),
+                account: { address },
+              },
+            ])
+          } catch (e) {
+            console.error('tzkt xtz token balance parse error: ', { e, msg })
+          }
+        })
+
+        /**
+         * TODO: need to cancel prev invoke filters and update it with new account address, couldn't find it in docs,
+         * so in balances normalizer we check also token owner address, to not update context with not current user token
+         */
+
+        // subscribe to account token balances
+        ws.current.invoke('SubscribeToTokenBalances', {
+          account: userAddress,
+        })
+
+        // subscribe to account data to get xtz balance ):
+        ws.current.invoke('SubscribeToAccounts', {
+          addresses: [userAddress],
+        })
+      }
+    }
+
+    prevUserAddress.current = userAddress
+  }, [userAddress])
 
   /**
    * effect to normalize and update context with user token balances from tzkt
    */
   useEffect(() => {
-    if (!socketBalances) return
+    if (!socketBalances || !socketBalances.length) return
     try {
       const tokensData = userTokenBalanceSchema.parse(socketBalances)
 
-      const normalizedTokensBalances = normalizerUserBalances(tokensData, tokensMetadata, mTokens)
+      const normalizedTokensBalances = normalizerUserBalances(tokensData, tokensMetadata, mTokens, userAddress)
 
       updateUserTokenBalances(normalizedTokensBalances)
     } catch (e) {
       console.error('tzkt tokens balances parse error: ', e, socketBalances)
+    } finally {
+      setSocketBalances([])
     }
-  }, [mTokens, socketBalances, tokensMetadata, updateUserTokenBalances])
+  }, [mTokens, socketBalances, tokensMetadata, userAddress])
 
   const { loading: userBalancesFromIndexerLoading } = useSubscription(SUBSCRIBE_USER_MVK_SMVK_BALANCE, {
     skip: !userAddress || isTokensLoading,
@@ -168,7 +198,6 @@ export const useUserBalancesUpdater = (userAddress: string | null, isTokensLoadi
       // TODO: find a way to 100% have mvk token address here
       const mvkTokenAddress = mvk_transfer_receiver[0]?.mvk_token.address ?? mvk_transfer_sender[0]?.mvk_token.address
 
-      // TODO: do i need mToken balances here?
       const mTokenBalances = m_token_accounts.reduce<NonNullable<UserContext['userTokensBalances']>>(
         (acc, { balance, m_token: { address } }) => {
           const mToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: address })
@@ -177,6 +206,7 @@ export const useUserBalancesUpdater = (userAddress: string | null, isTokensLoadi
 
           const { decimals } = mToken
 
+          // TODO: should mToken balance include rewards?
           acc[address] = convertNumberForClient({ number: balance, grade: decimals })
 
           return acc

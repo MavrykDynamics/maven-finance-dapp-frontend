@@ -22,13 +22,17 @@ export class UserProvider extends React.Component<Props, State> {
   }
 
   updateUserTokenBalances = (newUserTokensBalances: UserContext['userTokensBalances']) => {
+    console.log({ newUserTokensBalances })
+
     this.setState({
       context: {
         ...this.state.context,
-        userTokensBalances: {
-          ...this.state.context.userTokensBalances,
-          ...newUserTokensBalances,
-        },
+        userTokensBalances: newUserTokensBalances
+          ? {
+              ...this.state.context.userTokensBalances,
+              ...newUserTokensBalances,
+            }
+          : null,
       },
     })
   }

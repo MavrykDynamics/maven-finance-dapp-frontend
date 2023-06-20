@@ -27,25 +27,14 @@ import { BorrowingExpandedCard } from '../LoansComponents.style'
 import { State } from 'reducers'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import { getCollateralRatioByPersentage } from '../../Loans.helpers'
-import {
-  getTimestampByLevelHeaders,
-  getTimestampByLevelSchema,
-  getTimestampByLevelUrl,
-} from 'utils/api/api-helpers/getTimestampByLevel'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
-import { isAbortError } from 'errors/error'
-import { api } from 'utils/api/api'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import {
-  getVaultBorrowCapacity,
-  getVaultCollateralBalance,
-  getVaultCollateralRatio,
-  getVaultStatus,
-} from 'providers/LoansProvider/helpers/vaults.utils'
 import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
 type BorrowingExpandCardPropsType = {
   vault: VaultType
@@ -55,7 +44,6 @@ type BorrowingExpandCardPropsType = {
 }
 
 export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: BorrowingExpandCardPropsType) => {
-  const { bug } = useToasterContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { openAddExistingCollateralPopup, addExistingCollateralPopup } = useLoansPopupsContext()
 
@@ -77,85 +65,17 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
   const vaultAddress = params.get('vaultAddress')
   const isExpanded = vault.address === vaultAddress
 
-  const vaultData = useMemo(() => {
-    const {
-      borrowedTokenAddress,
-      collateralData,
-      borrowedAmount,
-      fee,
-      liquidationRatio,
-      availableLiquidity,
-      ...restVault
-    } = vault
-
-    const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
-
-    if (!borrowedToken || !borrowedToken.rate) return null
-
-    const { rate: borrowedTokenRate, decimals: borrowedTokenDecimals } = borrowedToken
-
-    const convertedBorrowedAmount = convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals })
-    const convertedFee = convertNumberForClient({ number: fee, grade: borrowedTokenDecimals })
-    const convertedAvailableLiquidity = convertNumberForClient({
-      number: availableLiquidity,
-      grade: borrowedTokenDecimals,
-    })
-    const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
-    const borrowCapacity = getVaultBorrowCapacity(
-      convertedAvailableLiquidity * borrowedTokenRate,
-      convertedBorrowedAmount * borrowedTokenRate,
-      collateralBalance,
-    )
-    const collateralRatio = getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * borrowedTokenRate)
-    const status = getVaultStatus(collateralRatio, convertedBorrowedAmount)
-
-    return {
-      status,
-      collateralRatio,
-      collateralBalance,
-      collateralData,
-      convertedBorrowedAmount,
-      borrowedTokenRate,
-      borrowedTokenAddress,
-      borrowedToken,
-      borrowCapacity,
-      convertedFee,
-      ...restVault,
-    }
-  }, [vault, tokensMetadata, tokensPrices])
+  const vaultData = useFullVault(vault)
 
   useEffect(() => {
     if (
-      vaultData &&
+      vaultData?.liquidationTimestamp &&
+      isExpanded &&
       (vaultData.status === vaultsStatuses.GRACE_PERIOD || vaultData.status === vaultsStatuses.LIQUIDATABLE)
     ) {
-      const abortLiquidationController = new AbortController()
-
-      ;(async () => {
-        try {
-          const { data: liquidationTimestamp } = await api(
-            getTimestampByLevelUrl(vaultData.liquidationLvl),
-            { signal: abortLiquidationController.signal, headers: getTimestampByLevelHeaders },
-            getTimestampByLevelSchema,
-          )
-
-          setTimerTimestamp(new Date(liquidationTimestamp).getTime())
-        } catch (e) {
-          // TODO: handle fetch errors when error boundary will be ready
-          if (!isAbortError(e)) {
-            console.error('getting timestamp by lvl error: ', e)
-          }
-          bug('Unexpected error happened occured, please reload the page')
-        }
-      })()
-
-      return () => {
-        abortLiquidationController.abort()
-      }
+      setTimerTimestamp(new Date(vaultData?.liquidationTimestamp).getTime())
     }
-
-    return () => null
-  }, [vaultData])
+  }, [vaultData, isExpanded])
 
   if (!vaultData) return null
 
@@ -163,23 +83,23 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
     collateralData,
     address,
     borrowedToken,
-    borrowedTokenRate,
     name,
     collateralRatio,
-    convertedBorrowedAmount,
+    borrowedAmount,
     borrowedTokenAddress,
-    convertedFee,
+    fee,
+    totalOutstanding,
     collateralBalance,
     apr,
     borrowCapacity,
     status,
   } = vaultData
 
-  const { symbol, decimals, icon } = borrowedToken
+  const { symbol, decimals, icon, rate } = borrowedToken
 
   const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
   // TODO: find a method to check whether it's smvk collateral
-  const vaultHasSmvkCollateral = false //collateralData.find(({ gqlName }) => gqlName === 'smvk')
+  const vaultHasSmvkCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVK_TOKEN_ADDRESS)
 
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
 
@@ -235,21 +155,14 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
+              <CommaNumber value={totalOutstanding} className="value" showDecimal decimalsToShow={decimals} />
               <CommaNumber
-                value={convertedBorrowedAmount + convertedFee}
-                className="value"
+                value={totalOutstanding * rate}
+                beginningText="$"
+                className="borrowedTokenRate"
                 showDecimal
                 decimalsToShow={decimals}
               />
-              {borrowedTokenRate ? (
-                <CommaNumber
-                  value={(convertedBorrowedAmount + convertedFee) * borrowedTokenRate}
-                  beginningText="$"
-                  className="borrowedTokenRate"
-                  showDecimal
-                  decimalsToShow={decimals}
-                />
-              ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral amount</div>
@@ -283,15 +196,13 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Principal</div>
-                <CommaNumber value={convertedBorrowedAmount} decimalsToShow={decimals} className="value" />
-                {borrowedTokenRate ? (
-                  <CommaNumber
-                    value={convertedBorrowedAmount * borrowedTokenRate}
-                    decimalsToShow={2}
-                    beginningText="$"
-                    className="borrowedTokenRate"
-                  />
-                ) : null}
+                <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
+                <CommaNumber
+                  value={borrowedAmount * rate}
+                  decimalsToShow={2}
+                  beginningText="$"
+                  className="borrowedTokenRate"
+                />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">
@@ -302,15 +213,8 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                     defaultStrokeColor={colors[themeSelected].textColor}
                   />
                 </div>
-                <CommaNumber value={convertedFee} decimalsToShow={decimals} className="value" />
-                {borrowedTokenRate ? (
-                  <CommaNumber
-                    value={convertedFee * borrowedTokenRate}
-                    decimalsToShow={2}
-                    beginningText="$"
-                    className="borrowedTokenRate"
-                  />
-                ) : null}
+                <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
+                <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="borrowedTokenRate" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">APR</div>
@@ -384,14 +288,12 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                                 decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
                                 beginningText={isTotalRow ? '$' : ''}
                               />
-                              {borrowedTokenRate ? (
-                                <CommaNumber
-                                  value={convertedCollalteralAmount * collateralRate}
-                                  className="borrowedTokenRate"
-                                  beginningText="$"
-                                  showDecimal
-                                />
-                              ) : null}
+                              <CommaNumber
+                                value={convertedCollalteralAmount * collateralRate}
+                                className="borrowedTokenRate"
+                                beginningText="$"
+                                showDecimal
+                              />
                             </div>
                           </TableCell>
                           <TableCell width={'22%'}>
@@ -406,7 +308,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                                   onClick={() =>
                                     openAddExistingCollateralPopup?.({
                                       vaultAddress: vault.address,
-                                      borrowedAmount: convertedBorrowedAmount,
+                                      borrowedAmount,
                                       collateralBalance,
                                       collateralRatio,
                                       borrowedTokenAddress,

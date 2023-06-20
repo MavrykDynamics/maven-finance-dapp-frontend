@@ -11,7 +11,6 @@ import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { VaultsSearchFilterStyled, VaultsSearchFilterWrapper, VaultsFilters } from './../Vaults.style'
 
 // helpers
-import { sortByVaultCategory } from '../Vaults.helpers'
 import {
   sortVaultItems,
   sortingList,
@@ -25,7 +24,7 @@ import { stringFullCharsCompare } from 'utils/stringFullCharsCompare'
 
 // types
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getVaultCollateralBalance, sortVaultsByStatus } from 'providers/LoansProvider/helpers/vaults.utils'
 import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 
 type Filters = Record<string, string>
@@ -110,18 +109,17 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
   }
 
   const applyFilters = useCallback(
-    (filtersList: Filters) => {
+    async (filtersList: Filters) => {
       const data = searchInputValue ? handleSearch(searchInputValue, currentVaultsIds) : [...currentVaultsIds]
       let filteredVaultsIds: string[] = data
 
       // sort by statuses
       if (filtersList[vaultsFilters.SORT] === sortVaultItems.STATUSES) {
-        filteredVaultsIds = sortByVaultCategory({
+        filteredVaultsIds = await sortVaultsByStatus({
           vaultsIds: data,
           vaultsMapper,
           tokensMetadata,
           tokensPrices,
-          status: filtersList[vaultsFilters.SORT],
         })
       }
 
