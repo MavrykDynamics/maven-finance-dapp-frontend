@@ -1,7 +1,7 @@
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 
-import { DepositorsFlagType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { VaultType, DepositorsFlagType } from './vaults.types'
 
 // Vaults actions popups data types
 export type ConfirmBorrowPopupDataType = {
@@ -56,7 +56,7 @@ export type AddNewCollateralDataProps = {
   collateralRatio: number
   borrowedTokenAddress: TokenAddressType
   availableLiquidity: number
-  collateralData: LoansVaultType['collateralData']
+  collateralData: VaultType['collateralData']
 } | null
 
 export type WithdrawCollateralPopupDataType = {
@@ -86,7 +86,7 @@ export type LiquidateVaultDataType = {
   ownerAddress: string
   tokenAddress: TokenAddressType
   collateralBalance: number
-  collateralData: LoansVaultType['collateralData']
+  collateralData: VaultType['collateralData']
   liquidationMax: number
   liquidationReward: number
   adminLiquidateFee: number

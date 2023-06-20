@@ -1,8 +1,10 @@
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
-import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
+import { VaultType } from './vaults.types'
+import dayjs from 'dayjs'
+import { api } from 'utils/api/api'
 
 /**
  *
@@ -58,7 +60,7 @@ export const getVaultBorrowCapacity = (
  * @returns sum in USD of all collaterals in the vault
  */
 export const getVaultCollateralBalance = (
-  collateralData: LoansVaultType['collateralData'],
+  collateralData: VaultType['collateralData'],
   tokensMetadata: TokensContext['tokensMetadata'],
   tokensPrices: TokensContext['tokensPrices'],
 ) => {

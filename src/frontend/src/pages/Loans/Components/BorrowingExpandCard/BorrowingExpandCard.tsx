@@ -4,7 +4,6 @@ import { useClickAway } from 'react-use'
 import classNames from 'classnames'
 import { State } from 'reducers'
 
-import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { StatusMessage } from '../StatusMessage.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { BorrowingExpandCardMenuSection } from './BorrowingExpandCardMenuSection.view'
@@ -49,9 +48,10 @@ import {
   getVaultCollateralRatio,
   getVaultStatus,
 } from 'providers/LoansProvider/helpers/vaults.utils'
+import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 
 type BorrowingExpandCardPropsType = {
-  vault: LoansVaultType
+  vault: VaultType
   isOwner?: boolean
   headerSufix?: React.ReactNode
   children?: React.ReactNode
@@ -185,35 +185,22 @@ export const BorrowingExpandCard = ({
   }, [activeRepayBorrowTabId])
 
   useEffect(() => {
-    if (!vaultData) return
-
-    const { status, levelOfEarly, levelOfLate } = vaultData
-
-    if (isExpanded && (status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.LIQUIDATABLE)) {
-      if (!levelOfEarly || !levelOfLate) return
-
-      const abortEarlyController = new AbortController()
-      const abortLatelyController = new AbortController()
+    if (
+      vaultData &&
+      isExpanded &&
+      (vaultData.status === vaultsStatuses.GRACE_PERIOD || vaultData.status === vaultsStatuses.LIQUIDATABLE)
+    ) {
+      const abortLiquidationController = new AbortController()
 
       ;(async () => {
         try {
-          const [{ data: timestampOfEarly }, { data: timestampOfLate }] = await Promise.all([
-            api(
-              getTimestampByLevelUrl(levelOfEarly),
-              { signal: abortEarlyController.signal, headers: getTimestampByLevelHeaders },
-              getTimestampByLevelSchema,
-            ),
-            api(
-              getTimestampByLevelUrl(levelOfLate),
-              { signal: abortLatelyController.signal, headers: getTimestampByLevelHeaders },
-              getTimestampByLevelSchema,
-            ),
-          ])
+          const { data: liquidationTimestamp } = await api(
+            getTimestampByLevelUrl(vaultData.liquidationLvl),
+            { signal: abortLiquidationController.signal, headers: getTimestampByLevelHeaders },
+            getTimestampByLevelSchema,
+          )
 
-          const timestamp =
-            new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
-
-          setTimerTimestamp(timestamp)
+          setTimerTimestamp(new Date(liquidationTimestamp).getTime())
         } catch (e) {
           // TODO: handle fetch errors when error boundary will be ready
           if (!isAbortError(e)) {
@@ -224,13 +211,12 @@ export const BorrowingExpandCard = ({
       })()
 
       return () => {
-        abortEarlyController.abort()
-        abortLatelyController.abort()
+        abortLiquidationController.abort()
       }
     }
 
     return () => {}
-  }, [vaultData, isExpanded, bug])
+  }, [vaultData, isExpanded])
 
   if (!vaultData) return null
 

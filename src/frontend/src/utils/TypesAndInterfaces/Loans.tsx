@@ -17,11 +17,6 @@ export type VaultsStorage = Awaited<ReturnType<typeof normalizeVaultsStorage>>
 
 export type LoanVaultAllowanceType = typeof VAULT_ALLOWANCE_ANY | typeof VAULT_ALLOWANCE_ACCOUNTS
 
-export type CollateralType = {
-  amount: number
-  tokenAddress: TokenAddressType
-}
-
 export type LendingItemType = {
   lendValue: number
   interestEarned: number
@@ -35,36 +30,6 @@ export type UserLendObjType = {
   date: string
   operationHash: string
   tokenAddress: TokenAddressType
-}
-
-export type DepositorsFlagType = typeof ANY_USER | typeof NONE_USER | typeof WHITELIST_USERS
-
-// Vault type
-export type LoansVaultType = {
-  borrowedTokenAddress: TokenAddressType
-  collateralData: Array<CollateralType>
-  borrowedAmount: number
-  minimumRepay: number
-  availableLiquidity: number
-  apr: number
-  fee: number
-  address: string
-  name: string
-  vaultId: number
-  xtzDelegatedTo: string | null
-  sMVKDelegatedTo?: string
-  levelOfEarly?: number
-  levelOfLate?: number
-  depositors: Array<string>
-  deporsitorsFlag: DepositorsFlagType
-
-  // Additional fields for vaults page
-  ownerId: string
-  creationTimestamp?: string
-  liquidationMax: number
-  liquidationReward: number
-  adminLiquidateFee: number
-  liquidationRatio: number
 }
 
 // Market Type

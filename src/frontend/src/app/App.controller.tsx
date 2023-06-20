@@ -50,32 +50,28 @@ const AppContainer = () => {
 
   const [isIOS, setIsIOS] = useState(true)
 
+  useEffect(() => {
+    ;(async () => {
+      await Promise.all([
+        dispatch(getContractAddressesStorage()),
+        dispatch(getSatellitesStorage()),
+        ...(localStorage.getItem('beacon:active-account') &&
+        localStorage.getItem('beacon:active-account') !== 'undefined'
+          ? [dispatch(connect())]
+          : []),
+      ])
+
+      // Turn off loader
+      await dispatch(toggleInitialDataLoading(false))
+    })()
+  }, [dispatch])
+
   // inital data load
   const { isLoading: isInitialCtxLoading } = useInitializer()
 
   useEffect(() => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))
   }, [showSidebarOpened])
-
-  useEffect(() => {
-    ;(async () => {
-      // Needs to be fetched before promise all
-      await dispatch(getContractAddressesStorage())
-      // Fetching initial&common data for DAPP
-      await dispatch(getSatellitesStorage())
-
-      // For using Beacon wallet
-      if (
-        localStorage.getItem('beacon:active-account') &&
-        localStorage.getItem('beacon:active-account') !== 'undefined'
-      ) {
-        await dispatch(connect())
-      }
-
-      // Turn off loader
-      await dispatch(toggleInitialDataLoading(false))
-    })()
-  }, [dispatch])
 
   useEffect(() => {
     setIsIOS(

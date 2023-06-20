@@ -12,7 +12,6 @@ import {
   getOnBlurValue,
 } from 'app/App.components/Input/Input.constants'
 import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
-import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import {
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
@@ -53,6 +52,7 @@ import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 
 type CurrentActiveModalScreen =
   | typeof INITIAL_SCREEN_ID
@@ -637,7 +637,7 @@ export const CreateNewVault = ({
 export function validateVaultLength(
   value: string,
   myVaultsIds: string[],
-  vaultsMapper: Record<string, LoansVaultType>,
+  vaultsMapper: Record<string, VaultType>,
 ): InputStatusType {
   return value &&
     value.length <= 15 &&

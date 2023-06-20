@@ -4,17 +4,18 @@ import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 import { getOracleAggregatorLatestPrice } from './Vaults.actions'
 import { statusSortPriority } from './Vaults.consts'
-import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
+import {
+  getVaultCollateralBalance,
+  getVaultCollateralRatio,
+  getVaultStatus,
+} from 'providers/LoansProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { VaultAssetData, VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 
-type OracleLatestProps = {
-  aggregator: Aggregator[]
-}
-
-export const normalizeOracleLatestPrice = (storage: OracleLatestProps) => {
+// TODO: check whether i need this
+export const normalizeOracleLatestPrice = (storage: { aggregator: Aggregator[] }) => {
   const { aggregator = [] } = storage
 
   if (!aggregator.length) return 0
@@ -58,8 +59,14 @@ export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) 
   return result
 }
 
+/**
+ *
+ * @param vaultsMapper dictionary of <vaultAddress, vault data>
+ * @param tokensMetadata dictionary of <tokenAddress, token metadata>
+ * @returns list of addresses for: borrwed assets & collateral assets
+ */
 export const getVaultAssets = (
-  vaultsMapper: Record<string, LoansVaultType>,
+  vaultsMapper: Record<string, VaultType>,
   tokensMetadata: TokensContext['tokensMetadata'],
 ) => {
   const list = Object.values(vaultsMapper)
@@ -91,42 +98,65 @@ export const getVaultAssets = (
 }
 
 // VAULTS SORTINGS HELPER
-type SortByVaultCategoryProps = {
-  vaultsMapper: Record<string, LoansVaultType>
+export const sortByVaultCategory = ({
+  vaultsMapper,
+  vaultsIds,
+  tokensMetadata,
+  tokensPrices,
+  status,
+}: {
+  vaultsMapper: Record<string, VaultType>
   vaultsIds: string[]
+  tokensMetadata: TokensContext['tokensMetadata']
+  tokensPrices: TokensContext['tokensPrices']
   status?: string
-}
-
-export const sortByVaultCategory = ({ vaultsMapper, vaultsIds, status }: SortByVaultCategoryProps) => {
+}) => {
   const dataToSort = vaultsIds ? [...vaultsIds] : []
 
   const updatedPriority = status ? { ...statusSortPriority, [status]: 0 } : statusSortPriority
 
   return dataToSort.sort((a, b) => {
-    const firstItem = '' //getVaultStatus() //vaultsMapper[a].status
-    const secondItem = '' //getVaultStatus() //vaultsMapper[b].status
+    const vaultAToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: a })
+    const vaultBToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: b })
 
-    return updatedPriority[firstItem] - updatedPriority[secondItem]
+    if (!vaultAToken || !vaultAToken.rate || !vaultBToken || !vaultBToken.rate) return 0
+
+    const vaultABorrowedAmount =
+      convertNumberForClient({ number: vaultsMapper[a].borrowedAmount, grade: vaultAToken.decimals }) * vaultAToken.rate
+    const vaultBBorrowedAmount =
+      convertNumberForClient({ number: vaultsMapper[b].borrowedAmount, grade: vaultBToken.decimals }) * vaultBToken.rate
+
+    const vaultACollateralRatio = getVaultStatus(
+      getVaultCollateralRatio(
+        getVaultCollateralBalance(vaultsMapper[a].collateralData, tokensMetadata, tokensPrices),
+        vaultABorrowedAmount,
+      ),
+      vaultABorrowedAmount,
+    )
+
+    const vaultBCollateralRatio = getVaultStatus(
+      getVaultCollateralRatio(
+        getVaultCollateralBalance(vaultsMapper[b].collateralData, tokensMetadata, tokensPrices),
+        vaultBBorrowedAmount,
+      ),
+      vaultBBorrowedAmount,
+    )
+
+    return updatedPriority[vaultACollateralRatio] - updatedPriority[vaultBCollateralRatio]
   })
 }
 
-// DASHBOARD VAULTS TAB HELPER
-export type VaultAssetData = {
-  balance: number
-  chartColor: string
-  tokenAddress: string
-}
-
-export type VaultAssetBalances = {
-  globalVaultTVL: number
-  collateralRatio: number
-  avgCollateralRatio: number
-  assets: Record<string, VaultAssetData>
-}
-
+/**
+ * Used on dashboard overview vautls tab
+ * @param vaultIds array of vaults addresses
+ * @param vaultsMapper dictionary <vaultAddress, vault data>
+ * @param tokensMetadata dictionary <tokenAddress, token metadata>
+ * @param tokensPrices dictionary <tokenSymbol, token rate>
+ * @returns global TVL for vault, general collateral ratio, average collateral ratio, and list of collareral tokens that consist from balance, represent color and its address
+ */
 export const reduceVaultsAssets = (
   vaultIds: string[],
-  vaultsMapper: Record<string, LoansVaultType>,
+  vaultsMapper: Record<string, VaultType>,
   tokensMetadata: TokensContext['tokensMetadata'],
   tokensPrices: TokensContext['tokensPrices'],
 ) => {
@@ -135,7 +165,12 @@ export const reduceVaultsAssets = (
   let totalCollateralBalances = 0
   let colorIdx = 0
 
-  const { assets, globalVaultTVL } = vaultIds.reduce<VaultAssetBalances>(
+  const { assets, globalVaultTVL } = vaultIds.reduce<{
+    globalVaultTVL: number
+    collateralRatio: number
+    avgCollateralRatio: number
+    assets: Record<string, VaultAssetData>
+  }>(
     (acc, vaultId) => {
       const { assets } = acc
       const { collateralData, borrowedAmount, borrowedTokenAddress } = vaultsMapper[vaultId]

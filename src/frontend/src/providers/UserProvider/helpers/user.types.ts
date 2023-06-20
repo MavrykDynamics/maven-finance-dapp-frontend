@@ -1,6 +1,6 @@
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { SubscriptionSkipType } from 'utils/api/apollo.consts'
 import { z } from 'zod'
+
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 // Use User Loans Data Types
 export type UserLendBorrowItem = {
@@ -18,10 +18,6 @@ export type UserLoansDataStateType = {
   totalUserLended: number
   userLendings: Array<UserLendBorrowItem>
   userVaultsData: Record<string, { borrowedAmount: number; collateralAmount: number }>
-}
-
-export type UserSubscriptionSkipsType = {
-  skipUserBalancesUpdate?: Omit<SubscriptionSkipType, 'query'>
 }
 
 // user tokens Types

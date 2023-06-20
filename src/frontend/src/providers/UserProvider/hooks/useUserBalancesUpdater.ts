@@ -1,26 +1,22 @@
 import { useSubscription } from '@apollo/client'
 import * as signalR from '@microsoft/signalr'
 import { useEffect, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
 
 // context
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from '../user.provider'
 
 // subs
-import { SUB_SUBSCRIBE, SUB_SKIP, SUB_QUERY } from 'utils/api/apollo.consts'
 import { SUBSCRIBE_USER_MVK_SMVK_BALANCE } from '../queries/userTokens.query'
 
 // types
 import {
-  UserSubscriptionSkipsType,
   UserTokenBalancesParsedResponce,
   userTokenBalanceSchema,
   userTzktAccountSchema,
   userTzktWSAccountSchema,
 } from '../helpers/user.types'
 import { UserContext } from '../user.provider.types'
-import { State } from 'reducers'
 
 // consts
 import { MVK_DECIMALS, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
@@ -32,31 +28,21 @@ import { api } from 'utils/api/api'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
-/**
- *
- * @param param0.skipUserBalancesUpdate – specify whether skip loading user balances
- * @returns
- */
-export const useUserUpdater = (
-  { skipUserBalancesUpdate }: UserSubscriptionSkipsType = { skipUserBalancesUpdate: SUB_SUBSCRIBE },
-) => {
+export const useUserBalancesUpdater = (userAddress: string | null, isTokensLoaded: boolean) => {
   const { tokensMetadata, mTokens } = useTokensContext()
-  const { updateUserTokenBalances, userTokensBalances } = useUserContext()
+  const { updateUserTokenBalances } = useUserContext()
   const { bug, success } = useToasterContext()
 
   const ws = useRef<null | signalR.HubConnection>(null)
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-
-  const [shouldSkip, setShouldSkip] = useState<UserSubscriptionSkipsType>({ skipUserBalancesUpdate })
-  const [isInitialTokenBalancesLoading, setIsInitialTokenBalancesLoading] = useState(userTokensBalances === null)
+  const [isInitialTokenBalancesLoading, setIsInitialTokenBalancesLoading] = useState(true)
   const [socketBalances, setSocketBalances] = useState<UserTokenBalancesParsedResponce>([])
 
   const fetchUserBalances = async () => {
     try {
       const [tokens, xtzTokenBalance] = await Promise.all([
-        api(`https://api.ghostnet.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}`, {}, userTokenBalanceSchema),
-        api(`https://api.ghostnet.tzkt.io/v1/accounts/${accountPkh}`, {}, userTzktAccountSchema),
+        api(`https://api.ghostnet.tzkt.io/v1/tokens/balances?account.eq=${userAddress}`, {}, userTokenBalanceSchema),
+        api(`https://api.ghostnet.tzkt.io/v1/accounts/${userAddress}`, {}, userTzktAccountSchema),
       ])
 
       setSocketBalances(
@@ -73,18 +59,16 @@ export const useUserUpdater = (
   }
 
   /**
-   * load with fetch balances if they have not been loaded
+   * load balances with fetch if they have not been loaded
    * if balances are loaded set up ws to update them
    *
    * TODO: test user change
    */
   useEffect(() => {
-    if (!accountPkh || shouldSkip.skipUserBalancesUpdate) return
+    if (!userAddress || !isTokensLoaded) return
     ;(async () => {
       // if we haven't loaded token balances, load it by fetch
-      if (isInitialTokenBalancesLoading) {
-        fetchUserBalances()
-      }
+      if (isInitialTokenBalancesLoading) fetchUserBalances()
 
       // if we have loaded token balances, open socket to observe token balances on tzkt
       if (!isInitialTokenBalancesLoading && !ws.current) {
@@ -96,37 +80,31 @@ export const useUserUpdater = (
 
         // handle tokens balances update message
         tzktSocket.on('token_balances', (msg) => {
-          if (!msg.data) {
-            console.log(`%c tokens balances message received:`, 'color: #bada55', msg)
-            return
-          }
+          if (!msg.data) return
 
           setSocketBalances(msg.data)
         })
 
         // subscribe to account token balances
         await tzktSocket.invoke('SubscribeToTokenBalances', {
-          account: accountPkh,
+          account: userAddress,
         })
 
         // handle xtz token balance update message
         tzktSocket.on('accounts', (msg) => {
-          if (!msg.data) {
-            console.log(`%c xtz balance message received:`, 'color: #bada55', msg)
-            return
-          }
+          if (!msg.data) return
 
           try {
             const [{ balance }] = userTzktWSAccountSchema.parse(msg.data)
             setSocketBalances([{ token: { contract: { address: XTZ_TOKEN_ADDRESS } }, balance: balance.toString() }])
           } catch (e) {
-            console.error('tzkt xtz token balance parse error: ', e, msg.data)
+            console.error('tzkt xtz token balance parse error: ', { e, msg })
           }
         })
 
         // subscribe to account data to get xtz balance ):
         await tzktSocket.invoke('SubscribeToAccounts', {
-          addresses: [accountPkh],
+          addresses: [userAddress],
         })
 
         tzktSocket.onreconnecting((error) => {
@@ -134,7 +112,7 @@ export const useUserUpdater = (
             'Connection to your token balances has lost, your balances will not be updated, reconnecting...',
             'Web Sockets',
           )
-          console.error('user balances socket reconnectig', error)
+          console.error('user balances socket reconnectig', { error })
         })
 
         tzktSocket.onreconnected(() => {
@@ -147,7 +125,7 @@ export const useUserUpdater = (
 
         tzktSocket.onclose((error) => {
           bug('Connection to your token balances has closed', 'Web Sockets')
-          console.error('user balances socket closed', error)
+          console.error('user balances socket closed', { error })
         })
       }
     })()
@@ -155,7 +133,7 @@ export const useUserUpdater = (
     return () => {
       ws?.current?.stop()
     }
-  }, [accountPkh, isInitialTokenBalancesLoading, shouldSkip.skipUserBalancesUpdate])
+  }, [userAddress, isInitialTokenBalancesLoading, isTokensLoaded])
 
   /**
    * effect to normalize and update context with user token balances from tzkt
@@ -174,9 +152,9 @@ export const useUserUpdater = (
   }, [mTokens, socketBalances, tokensMetadata, updateUserTokenBalances])
 
   const { loading: userBalancesFromIndexerLoading } = useSubscription(SUBSCRIBE_USER_MVK_SMVK_BALANCE, {
-    skip: shouldSkip.skipUserBalancesUpdate === SUB_SKIP || !accountPkh,
+    skip: !userAddress || !isTokensLoaded,
     variables: {
-      userAddress: accountPkh,
+      userAddress: userAddress,
     },
     shouldResubscribe: true,
     onData: ({ data: response }) => {
@@ -214,19 +192,10 @@ export const useUserUpdater = (
       })
     },
     onError: (error) => {
-      console.log({ error })
+      bug('Please reload page', 'Web Sockets')
+      console.error('SUBSCRIBE_USER_MVK_SMVK_BALANCE error: ', { error })
     },
   })
-
-  // Effect to load data 1 time and then skip loading, cuz loading returned from useSubscription si only for initial loading
-  useEffect(() => {
-    if (skipUserBalancesUpdate === SUB_QUERY) {
-      setShouldSkip((prevSkip) => ({
-        ...prevSkip,
-        skipTokensMetadataSubscription: SUB_SKIP,
-      }))
-    }
-  }, [skipUserBalancesUpdate])
 
   return { isLoading: isInitialTokenBalancesLoading || userBalancesFromIndexerLoading }
 }

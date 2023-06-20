@@ -28,7 +28,6 @@ import {
   STATUS_FLAG_WARNING,
   StatusFlagKind,
 } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
-import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 
 // helpers
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -48,7 +47,6 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import {
-  getVaultBorrowCapacity,
   getVaultCollateralBalance,
   getVaultCollateralRatio,
   getVaultLiquidationPrice,
@@ -56,6 +54,7 @@ import {
 } from 'providers/LoansProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 
 const findStatusInfo = (
   status: string,
@@ -117,7 +116,7 @@ const findFooterText = (status: string, statusColor: StatusFlagKind, timestamp?:
 }
 
 type Props = {
-  vault: LoansVaultType
+  vault: VaultType
   isOwner: boolean
   handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
   vaultTab: string
@@ -165,34 +164,21 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
   }, [vault, tokensMetadata, tokensPrices])
 
   useEffect(() => {
-    if (!vaultData) return
-
-    const { status, levelOfEarly, levelOfLate } = vaultData
-    if (status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.LIQUIDATABLE) {
-      if (!levelOfEarly || !levelOfLate) return
-
-      const abortEarlyController = new AbortController()
-      const abortLatelyController = new AbortController()
+    if (
+      vaultData &&
+      (vaultData.status === vaultsStatuses.GRACE_PERIOD || vaultData.status === vaultsStatuses.LIQUIDATABLE)
+    ) {
+      const abortLiquidationController = new AbortController()
 
       ;(async () => {
         try {
-          const [{ data: timestampOfEarly }, { data: timestampOfLate }] = await Promise.all([
-            api(
-              getTimestampByLevelUrl(levelOfEarly),
-              { signal: abortEarlyController.signal, headers: getTimestampByLevelHeaders },
-              getTimestampByLevelSchema,
-            ),
-            api(
-              getTimestampByLevelUrl(levelOfLate),
-              { signal: abortLatelyController.signal, headers: getTimestampByLevelHeaders },
-              getTimestampByLevelSchema,
-            ),
-          ])
+          const { data: liquidationTimestamp } = await api(
+            getTimestampByLevelUrl(vaultData.liquidationLvl),
+            { signal: abortLiquidationController.signal, headers: getTimestampByLevelHeaders },
+            getTimestampByLevelSchema,
+          )
 
-          const timestamp =
-            new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
-
-          setTimerTimestamp(timestamp)
+          setTimerTimestamp(new Date(liquidationTimestamp).getTime())
         } catch (e) {
           // TODO: handle fetch errors when error boundary will be ready
           if (!isAbortError(e)) {
@@ -203,13 +189,12 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
       })()
 
       return () => {
-        abortEarlyController.abort()
-        abortLatelyController.abort()
+        abortLiquidationController.abort()
       }
     }
 
     return () => null
-  }, [bug, vaultData])
+  }, [vaultData])
 
   if (!vaultData) return null
 

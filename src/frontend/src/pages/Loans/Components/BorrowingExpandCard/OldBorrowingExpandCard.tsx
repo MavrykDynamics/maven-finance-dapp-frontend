@@ -10,7 +10,6 @@ import colors from 'styles/colors'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -46,9 +45,10 @@ import {
   getVaultCollateralRatio,
   getVaultStatus,
 } from 'providers/LoansProvider/helpers/vaults.utils'
+import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 
 type BorrowingExpandCardPropsType = {
-  vault: LoansVaultType
+  vault: VaultType
   isOpenedVault?: boolean
   headerSufix?: React.ReactNode
   children?: React.ReactNode
@@ -57,17 +57,7 @@ type BorrowingExpandCardPropsType = {
 export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: BorrowingExpandCardPropsType) => {
   const { bug } = useToasterContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const {
-    openAddExistingCollateralPopup,
-    // changeBakerPopup,
-    // borrowAssetPopup,
-    addExistingCollateralPopup,
-    // addNewCollateralPopup,
-    // withdrawCollateralPopup,
-    // updateMvkOperatorPopup,
-    // managePermissionsPopup,
-    // liquidateVaultPopup,
-  } = useLoansPopupsContext()
+  const { openAddExistingCollateralPopup, addExistingCollateralPopup } = useLoansPopupsContext()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -75,16 +65,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   // TODO: test how it works with only 1 popup
-  const notHandleClickAway =
-    // changeBakerPopup.showModal ||
-    // borrowAssetPopup.showModal ||
-    addExistingCollateralPopup.showModal ||
-    // addNewCollateralPopup.showModal ||
-    // withdrawCollateralPopup.showModal ||
-    // updateMvkOperatorPopup.showModal ||
-    // managePermissionsPopup.showModal ||
-    // liquidateVaultPopup.showModal ||
-    isActionActive
+  const notHandleClickAway = addExistingCollateralPopup.showModal || isActionActive
 
   const ref = useRef<HTMLDivElement | null>(null)
   useClickAway(ref, () => (notHandleClickAway ? null : handleCloseVault()))
@@ -144,35 +125,21 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
   }, [vault, tokensMetadata, tokensPrices])
 
   useEffect(() => {
-    if (!vaultData) return
-
-    const { status, levelOfEarly, levelOfLate } = vaultData
-
-    if (status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.LIQUIDATABLE) {
-      if (!levelOfEarly || !levelOfLate) return
-
-      const abortEarlyController = new AbortController()
-      const abortLatelyController = new AbortController()
+    if (
+      vaultData &&
+      (vaultData.status === vaultsStatuses.GRACE_PERIOD || vaultData.status === vaultsStatuses.LIQUIDATABLE)
+    ) {
+      const abortLiquidationController = new AbortController()
 
       ;(async () => {
         try {
-          const [{ data: timestampOfEarly }, { data: timestampOfLate }] = await Promise.all([
-            api(
-              getTimestampByLevelUrl(levelOfEarly),
-              { signal: abortEarlyController.signal, headers: getTimestampByLevelHeaders },
-              getTimestampByLevelSchema,
-            ),
-            api(
-              getTimestampByLevelUrl(levelOfLate),
-              { signal: abortLatelyController.signal, headers: getTimestampByLevelHeaders },
-              getTimestampByLevelSchema,
-            ),
-          ])
+          const { data: liquidationTimestamp } = await api(
+            getTimestampByLevelUrl(vaultData.liquidationLvl),
+            { signal: abortLiquidationController.signal, headers: getTimestampByLevelHeaders },
+            getTimestampByLevelSchema,
+          )
 
-          const timestamp =
-            new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
-
-          setTimerTimestamp(timestamp)
+          setTimerTimestamp(new Date(liquidationTimestamp).getTime())
         } catch (e) {
           // TODO: handle fetch errors when error boundary will be ready
           if (!isAbortError(e)) {
@@ -183,13 +150,12 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
       })()
 
       return () => {
-        abortEarlyController.abort()
-        abortLatelyController.abort()
+        abortLiquidationController.abort()
       }
     }
 
-    return
-  }, [bug, vaultData])
+    return () => null
+  }, [vaultData])
 
   if (!vaultData) return null
 

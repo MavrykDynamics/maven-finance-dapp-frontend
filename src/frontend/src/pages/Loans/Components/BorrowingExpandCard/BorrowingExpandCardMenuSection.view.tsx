@@ -26,7 +26,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { TransactionHistory } from '../TransactionHistory'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { CollateralType, DepositorsFlagType, LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
+import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 import { getNumberInBounds } from 'utils/calcFunctions'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import colors from 'styles/colors'
@@ -35,6 +35,7 @@ import { State } from 'reducers'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { CollateralType, DepositorsFlagType } from 'providers/LoansProvider/helpers/vaults.types'
 
 type Props = {
   openAddNewCollateralPopup: () => void
