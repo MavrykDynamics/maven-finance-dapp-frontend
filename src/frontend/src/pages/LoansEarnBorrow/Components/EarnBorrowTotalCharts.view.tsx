@@ -75,7 +75,7 @@ export const EarnBorrowTotalCharts = ({
   )
 
   return (
-    <MarketChartsContainer className="earn-borrow-chart">
+    <MarketChartsContainer>
       {leftPart}
       {rightPart}
     </MarketChartsContainer>
