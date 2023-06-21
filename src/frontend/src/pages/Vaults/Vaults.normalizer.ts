@@ -43,13 +43,10 @@ export const normalizeVaultsStorage = async (storage: {
         const borrowedAmount = item.loan_principal_total
 
         // Calculating Fee of the vault
-        const currentLoanInterest = item.loan_interest_total
-        const fee =
-          borrowedAmount === 0
-            ? currentLoanInterest
-            : currentLoanInterest +
-              calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
-                FIXED_POINT_ACCURACY
+        const fee = Math.abs(
+          calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) -
+            borrowedAmount,
+        )
 
         // Convert deep structure of depositors to array of depositrors addresses (strings)
         const depositors = (vault.depositors.map(({ depositor }) => depositor?.address).filter(Boolean) ??

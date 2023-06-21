@@ -18,19 +18,19 @@ export type LendingItemType = {
 
 // Market Type
 export type LoanMarketType = {
-  loanTokenAddress: TokenAddressType
-  loanMTokenAddress: TokenAddressType
+  loanTokenAddress: TokenAddressType // address of the market token
+  loanMTokenAddress: TokenAddressType // address of the market mToken
 
   utilisationRate: number
-  borrowers: number
-  suppliers: number
+  borrowers: number // amount of vaults for market
+  suppliers: number // amount of people who hold market mToken
   borrowAPR: number
   lendingAPY: number
   collateralFactor: number
 
-  availableLiquidity: number
-  totalBorrowed: number
-  totalLended: number
+  availableLiquidity: number // how much tokens left in the market pool
+  totalBorrowed: number // how much borrowed per market
+  totalLended: number // now much supplied to market pool
 
   reserveFactor: number
   reserveAmount: number

@@ -27,7 +27,7 @@ export const calculateAccruedInterest = (
 
   if (currentLoanOutstandingTotal > 0) {
     if (vBorrowIndex > 0) {
-      newLoanOutstandingTotal = Math.trunc((currentLoanOutstandingTotal * loanTokenBorrowIndex) / vBorrowIndex)
+      newLoanOutstandingTotal = (currentLoanOutstandingTotal * loanTokenBorrowIndex) / vBorrowIndex
     }
   }
 
