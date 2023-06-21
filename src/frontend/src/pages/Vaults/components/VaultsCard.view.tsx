@@ -41,6 +41,9 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
 import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+
+const columnWidth = '33%'
 
 const findStatusInfo = (
   status: string,
@@ -214,59 +217,80 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
 
               <TableBody>
                 {collateralData.map(({ tokenAddress, amount }, index) => {
-                  const columnWidth = '33%'
-                  const isTotalRow = collateralData.length - 1 === index
-
                   const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
 
-                  if ((isTotalRow && collateralData.length < 3) || !collateralToken || !collateralToken.rate)
-                    return null
+                  if (!collateralToken || !collateralToken.rate) return null
 
-                  const { symbol, icon, rate } = collateralToken
+                  const { symbol, icon, rate, decimals } = collateralToken
 
-                  const collateralShare = isTotalRow ? 100 : calculateCollateralShare(amount * rate, collateralBalance)
+                  const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
+                  const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                   return (
                     <TableRow rowHeight={44} key={symbol + '-' + index}>
                       <TableCell width={columnWidth} className="vert-middle">
-                        {isTotalRow ? (
-                          'Total'
-                        ) : (
-                          <div className="cell-content row">
-                            {icon ? (
-                              <div className="img-wrapper">
-                                <img src={icon} alt={`${symbol} logo`} />
-                              </div>
-                            ) : (
-                              <div className="no-icon">
-                                <Icon id="noImage" />
-                              </div>
-                            )}
-                            {symbol}
-                          </div>
-                        )}
+                        <div className="cell-content row">
+                          {icon ? (
+                            <div className="img-wrapper">
+                              <img src={icon} alt={`${symbol} logo`} />
+                            </div>
+                          ) : (
+                            <div className="no-icon">
+                              <Icon id="noImage" />
+                            </div>
+                          )}
+                          {symbol}
+                        </div>
                       </TableCell>
 
                       <TableCell width={columnWidth}>
                         <div className="cell-content">
                           <CommaNumber
-                            value={amount}
-                            decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
-                            beginningText={isTotalRow ? '$' : ''}
+                            value={convertedAmount}
+                            decimalsToShow={assetDecimalsToShow}
                             className="balance"
                           />
                           {rate ? (
-                            <CommaNumber value={amount * rate} decimalsToShow={2} beginningText="~$" className="rate" />
+                            <CommaNumber
+                              value={convertedAmount * rate}
+                              decimalsToShow={2}
+                              beginningText="~$"
+                              className="rate"
+                            />
                           ) : null}
                         </div>
                       </TableCell>
 
                       <TableCell width={columnWidth}>
-                        <CommaNumber value={isTotalRow ? 100 : collateralShare} decimalsToShow={2} endingText="%" />
+                        <CommaNumber value={collateralShare} decimalsToShow={2} endingText="%" />
                       </TableCell>
                     </TableRow>
                   )
                 })}
+
+                {/* Total row */}
+                {collateralData.length >= 2 ? (
+                  <TableRow rowHeight={44}>
+                    <TableCell width={columnWidth} className="vert-middle">
+                      Total
+                    </TableCell>
+
+                    <TableCell width={columnWidth}>
+                      <div className="cell-content">
+                        <CommaNumber
+                          value={collateralBalance}
+                          decimalsToShow={2}
+                          beginningText="$"
+                          className="balance"
+                        />
+                      </div>
+                    </TableCell>
+
+                    <TableCell width={columnWidth}>
+                      <CommaNumber value={100} endingText="%" />
+                    </TableCell>
+                  </TableRow>
+                ) : null}
               </TableBody>
             </Table>
           </div>

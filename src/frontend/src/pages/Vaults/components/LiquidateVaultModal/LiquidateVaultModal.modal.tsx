@@ -31,6 +31,7 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { calculateAdminLiquidationFee, calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 const columnWidth = '33%'
 const rowHeight = 30
@@ -282,12 +283,14 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
                 <TableBody>
                   {collateralData.slice(0, -1).map(({ tokenAddress, amount }, index) => {
-                    const { symbol } = tokensMetadata[tokenAddress]
-                    const isTotalRow = collateralData.length - 1 === index
+                    const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
 
-                    const collateralShare = isTotalRow
-                      ? 100
-                      : calculateCollateralShare(amount * borrowedTokenRate, collateralBalance)
+                    if (!collateralToken || !collateralToken.rate) return null
+
+                    const { symbol, icon, rate, decimals } = collateralToken
+
+                    const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
+                    const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                     return (
                       <TableRow rowHeight={rowHeight} key={symbol + '-' + index}>
@@ -296,13 +299,13 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                         <TableCell width={columnWidth}>
                           <div className="table-amount-group">
                             <div>{collateralShare}%</div>
-                            <CommaNumber value={amount} decimalsToShow={2} showDecimal />
+                            <CommaNumber value={convertedAmount} decimalsToShow={2} showDecimal />
                           </div>
                         </TableCell>
 
                         <TableCell width={columnWidth} contentPosition="right">
                           <CommaNumber
-                            value={borrowedTokenRate ? amount * borrowedTokenRate : 0}
+                            value={convertedAmount * rate}
                             decimalsToShow={2}
                             showDecimal
                             beginningText="$"
@@ -317,7 +320,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                     <TableCell width={columnWidth}></TableCell>
                     <TableCell width={columnWidth} contentPosition="right">
                       <CommaNumber
-                        value={collateralData[collateralData.length - 1].amount}
+                        value={collateralBalance}
                         decimalsToShow={2}
                         showDecimal
                         beginningText="$"

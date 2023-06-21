@@ -26,7 +26,7 @@ import { BorrowingExpandedCard } from '../LoansComponents.style'
 
 import { State } from 'reducers'
 import { getCollateralRatioByPersentage } from '../../Loans.helpers'
-import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
+import { convertNumberForClient } from 'utils/calcFunctions'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -157,7 +157,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               <CommaNumber
                 value={totalOutstanding * rate}
                 beginningText="$"
-                className="borrowedTokenRate"
+                className="rate"
                 showDecimal
                 decimalsToShow={decimals}
               />
@@ -195,12 +195,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               <ThreeLevelListItem>
                 <div className="name">Principal</div>
                 <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
-                <CommaNumber
-                  value={borrowedAmount * rate}
-                  decimalsToShow={2}
-                  beginningText="$"
-                  className="borrowedTokenRate"
-                />
+                <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">
@@ -212,7 +207,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                   />
                 </div>
                 <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
-                <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="borrowedTokenRate" />
+                <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">APR</div>
@@ -236,51 +231,34 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
 
                   <TableBody>
                     {collateralData.map(({ tokenAddress, amount }, idx) => {
-                      const isTotalRow = collateralData.length - 1 === idx
-                      const collateral = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                      const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
 
-                      if ((isTotalRow && collateralData.length < 3) || !collateral || !collateral.rate) return null
+                      if (!collateralToken || !collateralToken.rate) return null
 
-                      const {
-                        symbol: collateralSymbol,
-                        decimals: collateralDecimals,
-                        icon: collateralIcon,
-                        rate: collateralRate,
-                      } = collateral
+                      const { symbol, icon, rate, decimals } = collateralToken
 
-                      const convertedCollalteralAmount = convertNumberForClient({
-                        number: amount,
-                        grade: collateralDecimals,
-                      })
-
-                      const collateralShare = isTotalRow
-                        ? 100
-                        : calculateCollateralShare(convertedCollalteralAmount * collateralRate, collateralTotalBalance)
+                      const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
+                      const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                       return (
-                        <TableRow rowHeight={65} key={collateralSymbol}>
+                        <TableRow rowHeight={65} key={symbol}>
                           <TableCell width={'22%'} className="vert-middle">
-                            {isTotalRow ? (
-                              'Total'
-                            ) : (
-                              <div className="cell-content row with-icon">
-                                <ImageWithPlug imageLink={collateralIcon} alt={`${collateralSymbol} icon`} />
-                                {symbol}
-                              </div>
-                            )}
+                            <div className="cell-content row with-icon">
+                              <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+                              {symbol}
+                            </div>
                           </TableCell>
 
                           <TableCell width={'22%'}>
                             <div className="cell-content">
                               <CommaNumber
-                                value={convertedCollalteralAmount}
+                                value={convertedAmount}
                                 className="value"
                                 showDecimal
-                                decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
-                                beginningText={isTotalRow ? '$' : ''}
+                                decimalsToShow={assetDecimalsToShow}
                               />
                               <CommaNumber
-                                value={convertedCollalteralAmount * collateralRate}
+                                value={convertedAmount * rate}
                                 className="borrowedTokenRate"
                                 beginningText="$"
                                 showDecimal
@@ -292,34 +270,56 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                               <CommaNumber value={collateralShare} className="value" endingText="%" />
                             </div>
                           </TableCell>
-                          {isTotalRow ? null : (
-                            <TableCell className={`buttons borrowing single-btn`}>
-                              <div className="cell-content row">
-                                <Button
-                                  onClick={() =>
-                                    openAddExistingCollateralPopup?.({
-                                      vaultAddress: vault.address,
-                                      borrowedAmount,
-                                      collateralBalance,
-                                      collateralRatio,
-                                      borrowedTokenAddress,
-                                      availableLiquidity: vault.availableLiquidity,
-                                      borrowCapacity,
-                                      collateralTokenAddress: collateralData[idx].tokenAddress,
-                                    })
-                                  }
-                                  form={BUTTON_WIDE}
-                                  kind={BUTTON_SECONDARY}
-                                  disabled={isActionActive}
-                                >
-                                  <Icon id="plus" /> Add
-                                </Button>
-                              </div>
-                            </TableCell>
-                          )}
+                          <TableCell className={`buttons borrowing single-btn`}>
+                            <div className="cell-content row">
+                              <Button
+                                onClick={() =>
+                                  openAddExistingCollateralPopup?.({
+                                    vaultAddress: vault.address,
+                                    borrowedAmount,
+                                    collateralBalance,
+                                    collateralRatio,
+                                    borrowedTokenAddress,
+                                    availableLiquidity: vault.availableLiquidity,
+                                    borrowCapacity,
+                                    collateralTokenAddress: collateralData[idx].tokenAddress,
+                                  })
+                                }
+                                form={BUTTON_WIDE}
+                                kind={BUTTON_SECONDARY}
+                                disabled={isActionActive}
+                              >
+                                <Icon id="plus" /> Add
+                              </Button>
+                            </div>
+                          </TableCell>
                         </TableRow>
                       )
                     })}
+
+                    {/* Total row */}
+                    {collateralData.length >= 2 ? (
+                      <TableRow rowHeight={44}>
+                        <TableCell width={'22%'} className="vert-middle">
+                          Total
+                        </TableCell>
+
+                        <TableCell width={'22%'}>
+                          <div className="cell-content">
+                            <CommaNumber
+                              value={collateralBalance}
+                              decimalsToShow={2}
+                              beginningText="$"
+                              className="balance"
+                            />
+                          </div>
+                        </TableCell>
+
+                        <TableCell width={'22%'}>
+                          <CommaNumber value={100} endingText="%" />
+                        </TableCell>
+                      </TableRow>
+                    ) : null}
                   </TableBody>
                 </Table>
               </>

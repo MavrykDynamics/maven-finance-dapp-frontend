@@ -2,7 +2,7 @@ import { statusSortPriority, vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
-import { FullLoansVaultType, VaultType } from './vaults.types'
+import { FullLoansVaultType, VaultAssetData, VaultType } from './vaults.types'
 import dayjs from 'dayjs'
 import { api } from 'utils/api/api'
 import {
@@ -11,6 +11,7 @@ import {
   getTimestampByLevelSchema,
   TimestampByLevelResponceType,
 } from 'utils/api/api-helpers/getTimestampByLevel'
+import { getAssetColor } from 'pages/Treasury/helpers/treasury.utils'
 
 // sort vaults by status
 export const sortVaultsByStatus = async ({
@@ -49,8 +50,16 @@ export const sortVaultsByStatus = async ({
     )
 
     return [...vaultsIds].sort((a, b) => {
-      const vaultAToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: a })
-      const vaultBToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: b })
+      const vaultAToken = getTokenDataByAddress({
+        tokensMetadata,
+        tokensPrices,
+        tokenAddress: vaultsMapper[a].borrowedTokenAddress,
+      })
+      const vaultBToken = getTokenDataByAddress({
+        tokensMetadata,
+        tokensPrices,
+        tokenAddress: vaultsMapper[b].borrowedTokenAddress,
+      })
 
       if (!vaultAToken || !vaultAToken.rate || !vaultBToken || !vaultBToken.rate) return 0
 
@@ -61,7 +70,7 @@ export const sortVaultsByStatus = async ({
         convertNumberForClient({ number: vaultsMapper[b].borrowedAmount, grade: vaultBToken.decimals }) *
         vaultBToken.rate
 
-      const vaultACollateralRatio = getVaultStatus({
+      const vaultAStatus = getVaultStatus({
         collateralRatio: getVaultCollateralRatio(
           getVaultCollateralBalance(vaultsMapper[a].collateralData, tokensMetadata, tokensPrices),
           vaultABorrowedAmount,
@@ -70,7 +79,7 @@ export const sortVaultsByStatus = async ({
         liquidationTimestamp: vaultsLiquidationTimestamps[a],
       })
 
-      const vaultBCollateralRatio = getVaultStatus({
+      const vaultBStatus = getVaultStatus({
         collateralRatio: getVaultCollateralRatio(
           getVaultCollateralBalance(vaultsMapper[b].collateralData, tokensMetadata, tokensPrices),
           vaultBBorrowedAmount,
@@ -79,7 +88,7 @@ export const sortVaultsByStatus = async ({
         liquidationTimestamp: vaultsLiquidationTimestamps[b],
       })
 
-      return statusSortPriority[vaultACollateralRatio] - statusSortPriority[vaultBCollateralRatio]
+      return statusSortPriority[vaultAStatus] - statusSortPriority[vaultBStatus]
     })
   } catch (e) {
     console.error('vaults sorting by status error')
@@ -179,6 +188,7 @@ export const getVaultCollateralRatio = (collateralAmount: number, borrowedAmount
   return getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1)))
 }
 
+// TODO: add descr to liquidation utils while testing liquidation functionality and popup
 /**
  * @param totalOutstanding – USD amount of borrowed amount and fee of the vault
  * @param liquidationRatio – ??? TODO: add description
@@ -192,21 +202,16 @@ export const getVaultLiquidationPrice = (totalOutstanding: number, liquidationRa
  * @param maxVaultLiquidationPercent – ??? TODO: add description
  * @returns ???
  */
-export const calculateVaultMaxLiquidationAmount = (
-  loanOutstandingTotal: number,
-  maxVaultLiquidationPercent: number,
-) => {
-  return Math.trunc((loanOutstandingTotal * maxVaultLiquidationPercent) / 10000)
-}
+export const calculateVaultMaxLiquidationAmount = (loanOutstandingTotal: number, maxVaultLiquidationPercent: number) =>
+  Math.trunc((loanOutstandingTotal * maxVaultLiquidationPercent) / 10000)
 
 /**
  * @param adminLiquidationFeePercent – ??? TODO: add description
  * @param liquidationAmount – ??? TODO: add description
  * @returns ???
  */
-export const calculateAdminLiquidationFee = (adminLiquidationFeePercent: number, liquidationAmount: number) => {
-  return Math.trunc((adminLiquidationFeePercent * liquidationAmount) / 10000)
-}
+export const calculateAdminLiquidationFee = (adminLiquidationFeePercent: number, liquidationAmount: number) =>
+  Math.trunc((adminLiquidationFeePercent * liquidationAmount) / 10000)
 
 /**
  * @param collateralAmount – amount of 1 of the collateral tokens in USD
@@ -216,4 +221,90 @@ export const calculateAdminLiquidationFee = (adminLiquidationFeePercent: number,
 export const calculateCollateralShare = (collateralAmount: number, totalAmount: number) => {
   if (totalAmount === 0) return 100
   return getNumberInBounds(0, 100, Number(((collateralAmount / totalAmount) * 100).toFixed(2)))
+}
+
+// Vaults dashboard calcs
+
+/**
+ * Used on dashboard overview vautls tab
+ * @param vaultIds array of vaults addresses
+ * @param vaultsMapper dictionary <vaultAddress, vault data>
+ * @param tokensMetadata dictionary <tokenAddress, token metadata>
+ * @param tokensPrices dictionary <tokenSymbol, token rate>
+ * @returns global TVL for vault, general collateral ratio, average collateral ratio, and list of collareral tokens that consist from balance, represent color and its address
+ */
+export const reduceVaultsAssets = (
+  vaultIds: string[],
+  vaultsMapper: Record<string, VaultType>,
+  tokensMetadata: TokensContext['tokensMetadata'],
+  tokensPrices: TokensContext['tokensPrices'],
+) => {
+  let vaultWithBalances = 0
+  let totalBorrowedAmounts = 0
+  let totalCollateralBalances = 0
+  let colorIdx = 0
+
+  const { assets, globalVaultTVL } = vaultIds.reduce<{
+    globalVaultTVL: number
+    collateralRatio: number
+    avgCollateralRatio: number
+    assets: Record<string, VaultAssetData>
+  }>(
+    (acc, vaultId) => {
+      const { assets } = acc
+      const { collateralData, borrowedAmount, borrowedTokenAddress } = vaultsMapper[vaultId]
+
+      const token = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
+      if (!token || !token.rate) return acc
+      const { decimals: borrowedTokenDecimals, rate: borrowedTokenRate } = token
+
+      const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
+
+      totalBorrowedAmounts +=
+        convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals }) * borrowedTokenRate
+      totalCollateralBalances += collateralBalance
+
+      if (borrowedAmount && collateralBalance) {
+        vaultWithBalances++
+      }
+
+      collateralData.forEach(({ amount, tokenAddress }) => {
+        const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+        if (!token || !token.rate) return
+        const { decimals: collateralDecimals, rate: collateralRate } = token
+
+        const convertedAmount = convertNumberForClient({ number: amount, grade: collateralDecimals })
+
+        acc.globalVaultTVL += convertedAmount * collateralRate
+
+        if (assets[tokenAddress]) {
+          assets[tokenAddress].balance += amount
+        } else {
+          assets[tokenAddress] = {
+            balance: amount,
+            chartColor: getAssetColor(colorIdx),
+            tokenAddress,
+          }
+          colorIdx++
+        }
+      })
+
+      return acc
+    },
+    {
+      assets: {},
+      globalVaultTVL: 0,
+      collateralRatio: 0,
+      avgCollateralRatio: 0,
+    },
+  )
+
+  const collateralRatio = (totalCollateralBalances / totalBorrowedAmounts) * 100
+
+  return {
+    assetsBalances: Object.values(assets),
+    globalVaultTVL,
+    collateralRatio,
+    avgCollateralRatio: collateralRatio / vaultWithBalances,
+  }
 }

@@ -26,6 +26,7 @@ import { stringFullCharsCompare } from 'utils/stringFullCharsCompare'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getVaultCollateralBalance, sortVaultsByStatus } from 'providers/LoansProvider/helpers/vaults.utils'
 import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 type Filters = Record<string, string>
 type AssetCategory = 'loanAssets' | 'collateralAssets'
@@ -52,8 +53,20 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
     ...restQP
   } = qs.parse(search, { ignoreQueryPrefix: true })
 
-  const preparedCollateralAssets = assetSymbols.collateralAssets.map((asset) => `${COLLATERAL_NAME}, ${asset}`)
-  const preparedLoanAssets = assetSymbols.loanAssets.map((asset) => `${BORROWED_NAME}, ${asset}`)
+  const preparedCollateralAssets = assetSymbols.collateralAssets.reduce<Array<string>>((acc, tokenAddress) => {
+    const collateral = getTokenDataByAddress({ tokenAddress, tokensMetadata })
+    if (!collateral) return acc
+
+    acc.push(`${COLLATERAL_NAME}, ${collateral.symbol}`)
+    return acc
+  }, [])
+  const preparedLoanAssets = assetSymbols.loanAssets.reduce<Array<string>>((acc, tokenAddress) => {
+    const loanToken = getTokenDataByAddress({ tokenAddress, tokensMetadata })
+    if (!loanToken) return acc
+
+    acc.push(`${BORROWED_NAME}, ${loanToken.symbol}`)
+    return acc
+  }, [])
   const preparedAssets = [ALL_VAULTS_FILTER].concat(preparedCollateralAssets).concat(preparedLoanAssets)
 
   const filterDdItems = useMemo(() => preparedAssets.map((item) => getDdItem(item)), [preparedAssets])

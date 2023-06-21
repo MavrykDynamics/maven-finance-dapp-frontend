@@ -10,6 +10,7 @@ export type CollateralType = {
   tokenAddress: TokenAddressType
 }
 
+// TODO: add descr to liquidation fields while testing liquidation functionality and popup
 export type VaultType = {
   // vault tokens data
   borrowedTokenAddress: TokenAddressType // address of borrowed token
@@ -38,7 +39,7 @@ export type VaultType = {
 
   // Additional fields for vaults page
   minimumRepay: number // minimun amount of token that user can repay
-  apr: number
+  apr: number // interest rate the user is charged for borrowing
   availableLiquidity: number // how much token avaliable in a pool, user to calc borrowCapacity of the vault *after normalizer it's not converted to client format*
   creationTimestamp: number // creation timestamp of the vault
 }

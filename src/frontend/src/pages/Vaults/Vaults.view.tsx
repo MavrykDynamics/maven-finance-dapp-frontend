@@ -24,7 +24,6 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getVaultAssets } from './Vaults.helpers'
 
 // types
 import { State } from '../../reducers'
@@ -33,7 +32,6 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 // actions
 import { markForLiquidation } from './Vaults.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 const pathname = '/vaults'
 
@@ -47,8 +45,6 @@ export const VaultsView = () => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()
-
-  const { tokensMetadata } = useTokensContext()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
@@ -69,7 +65,29 @@ export const VaultsView = () => {
   )
   const [tabsList, setTabsList] = useState<TabItem[]>([])
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
-  const assets = useMemo(() => getVaultAssets(vaultsMapper, tokensMetadata), [vaultsMapper, tokensMetadata])
+  const assets = useMemo(() => {
+    const { collateralAssets, loanAssets } = allVaultsIds.reduce<{
+      collateralAssets: Set<string>
+      loanAssets: Set<string>
+    }>(
+      (acc, vaultAddress) => {
+        const { borrowedTokenAddress, collateralData } = vaultsMapper[vaultAddress]
+        acc.loanAssets.add(borrowedTokenAddress)
+
+        Array.from({ length: collateralData.length }, (_, idx) =>
+          acc.collateralAssets.add(collateralData[idx].tokenAddress),
+        )
+
+        return acc
+      },
+      {
+        collateralAssets: new Set(),
+        loanAssets: new Set(),
+      },
+    )
+
+    return { collateralAssets: Array.from(collateralAssets), loanAssets: Array.from(loanAssets) }
+  }, [allVaultsIds, vaultsMapper])
 
   const currentListName =
     tabId === vaultTabs.ALL
