@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
@@ -26,11 +26,7 @@ import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import {
-  getVaultCollateralRatio,
-  getVaultBorrowCapacity,
-  getVaultCollateralBalance,
-} from 'providers/LoansProvider/helpers/vaults.utils'
+import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 const marketSettings: MarketSettingsType = {
@@ -49,13 +45,13 @@ export const LoansBorrow = () => {
   const location = useLocation()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { openCreateVaultPopup } = useLoansPopupsContext()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const {
     isDataLoaded,
     loanTokens,
-    config: { DAOFee },
     vaults: { allVaultsIds, myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
@@ -67,8 +63,6 @@ export const LoansBorrow = () => {
     calcTotalCollateralChart: true,
     calcMarketCollateralChart: true,
   })
-
-  const [newVaultAddress, setNewVaultAddress] = useState('')
 
   const { totalCollaterals, totalBorrowed, tokenTotals } = useMemo(
     () =>
@@ -98,18 +92,7 @@ export const LoansBorrow = () => {
 
           const vaultBorrowedInUsd =
             convertNumberForClient({ number: borrowedAmount, grade: borrowTokenDecimals }) * borrowTokenRate
-          const vaultCollateralInUsd = collateralData.reduce((acc, { amount, tokenAddress }) => {
-            const collateralToken = getTokenDataByAddress({
-              tokenAddress,
-              tokensPrices,
-              tokensMetadata,
-            })
-
-            if (!collateralToken || !collateralToken.rate) return acc
-
-            const { decimals: collateralAssetDecimals, rate: collateralRate } = collateralToken
-            return (acc += convertNumberForClient({ number: amount, grade: collateralAssetDecimals }) * collateralRate)
-          }, 0)
+          const vaultCollateralInUsd = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
 
           acc.totalCollaterals += vaultCollateralInUsd
           acc.totalBorrowed += vaultBorrowedInUsd
@@ -137,8 +120,6 @@ export const LoansBorrow = () => {
     [accountPkh, allVaultsIds, tokensMetadata, tokensPrices, vaultsMapper],
   )
 
-  const { openBorrowPopup, openCreateVaultPopup } = useLoansPopupsContext()
-
   const markets = useMemo(
     () =>
       loanTokens.reduce<MarketType[]>((acc, item) => {
@@ -160,14 +141,8 @@ export const LoansBorrow = () => {
           address,
           annualRate: item.borrowAPR,
           annualRateName: 'APR',
-          leftValue: convertNumberForClient({
-            number: tokenTotals[item.loanTokenAddress].userTotalBorrowed ?? 0,
-            grade: decimals,
-          }),
-          rightValue: convertNumberForClient({
-            number: tokenTotals[item.loanTokenAddress].userTotalCollateral ?? 0,
-            grade: decimals,
-          }),
+          leftValue: tokenTotals[item.loanTokenAddress].userTotalBorrowed,
+          rightValue: tokenTotals[item.loanTokenAddress].userTotalCollateral,
           totalAmount: convertNumberForClient({ number: item.totalBorrowed, grade: decimals }),
           price,
           chartData,
@@ -178,10 +153,18 @@ export const LoansBorrow = () => {
     [loanTokens, marketCollateralChart, tokenTotals, tokensMetadata, tokensPrices],
   )
 
-  // TODO: check this method with @CasualJackie
+  const handleSetNewlyCreatedVaultAddress = (address: string) => {
+    const params = new URLSearchParams(location.search)
+    params.append('vaultAddress', address)
+    history.replace({ ...location, search: params.toString() })
+  }
+
   const handleBorrow = (marketTokenAddress: string) => {
+    // get first valid vault, it's vault where user can borrow, and it shares same token as market
     const validVaultId = myVaultsIds.find((vaultId) => {
       const vault = vaultsMapper[vaultId]
+
+      if (marketTokenAddress !== vault.borrowedTokenAddress) return false
 
       const borrowToken = getTokenDataByAddress({
         tokenAddress: vault.borrowedTokenAddress,
@@ -197,67 +180,36 @@ export const LoansBorrow = () => {
         }),
         collateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices)
 
-      return (
-        marketTokenAddress === vault.borrowedTokenAddress &&
-        getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * borrowToken.rate) > 200
-      )
+      return getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * borrowToken.rate) > 200
     })
 
-    const marketAvaliableLiquidity = loanTokens.find(
-      ({ loanTokenAddress }) => marketTokenAddress === loanTokenAddress,
-    )?.availableLiquidity
+    // if we don't have valid vault to borrow, open create new vault popup
+    if (!validVaultId) {
+      const market = loanTokens.find(({ loanTokenAddress }) => marketTokenAddress === loanTokenAddress)
 
-    const marketToken = getTokenDataByAddress({
-      tokenAddress: marketTokenAddress,
-      tokensMetadata,
-      tokensPrices,
-    })
-
-    if (!validVaultId || !marketToken || !marketToken.rate) return
-
-    const { decimals, rate } = marketToken
-
-    // redirect specific asset market if user does not have vaults with collateral ratio > 200
-    if (marketAvaliableLiquidity) {
-      openCreateVaultPopup?.({
-        marketTokenAddress: marketTokenAddress,
-        setCreatedVaultAddress: (address: string) => (address ? setNewVaultAddress(address) : null),
-        avaliableLiquidity: convertNumberForClient({ number: marketAvaliableLiquidity, grade: decimals }) * rate,
+      const marketToken = getTokenDataByAddress({
+        tokenAddress: marketTokenAddress,
+        tokensMetadata,
+        tokensPrices,
       })
 
-      return
+      if (market && marketToken && marketToken.rate) {
+        const marketAvaliableLiquidity =
+          convertNumberForClient({ number: market.availableLiquidity, grade: marketToken.decimals }) * marketToken.rate
+
+        openCreateVaultPopup({
+          marketTokenAddress: marketTokenAddress,
+          setCreatedVaultAddress: handleSetNewlyCreatedVaultAddress,
+          avaliableLiquidity: marketAvaliableLiquidity,
+        })
+      }
+    } else {
+      const validVault = vaultsMapper[validVaultId]
+
+      if (!validVault) return
+
+      history.push(`/loans/${validVault.borrowedTokenAddress}/borrowTab`)
     }
-
-    const vault = vaultsMapper[validVaultId]
-
-    if (!vault) return
-
-    const convertedBorrowedAmount = convertNumberForClient({
-        number: vault.borrowedAmount,
-        grade: decimals,
-      }),
-      convetedAvailableLiq = convertNumberForClient({
-        number: vault.availableLiquidity,
-        grade: decimals,
-      }),
-      collateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices),
-      collateralRatio = getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * rate),
-      borrowCapacity = getVaultBorrowCapacity(
-        convetedAvailableLiq * rate,
-        convertedBorrowedAmount * rate,
-        collateralBalance,
-      )
-
-    openBorrowPopup({
-      vaultId: vault.vaultId,
-      tokenAddress: marketTokenAddress,
-      borrowedAmount: convertedBorrowedAmount,
-      collateralBalance,
-      borrowCapacity,
-      collateralRatio,
-      DAOFee,
-      borrowAPR: vault.apr,
-    })
   }
 
   const { isLoading } = useDataLoader(

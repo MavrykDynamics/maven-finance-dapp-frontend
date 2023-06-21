@@ -66,6 +66,7 @@ const useLoansCharts = ({
           const amountInUsd = convertedAmount * rate
 
           const isLast7dOperation = dayjs().diff(timestamp) <= ONE_DAY_IN_MS * 7
+          const isLast14dOperation = dayjs().diff(timestamp) <= ONE_DAY_IN_MS * 14
 
           const operationTime = new Date(timestamp).getTime() as UTCTimestamp
 
@@ -77,7 +78,7 @@ const useLoansCharts = ({
             })
           }
 
-          if (type === 0 && calcMarketLendingChart) {
+          if (type === 0 && calcMarketLendingChart && isLast14dOperation) {
             if (!acc.marketLendingChart[tokenAddress]) {
               acc.marketLendingChart[tokenAddress] = [
                 {
@@ -101,7 +102,7 @@ const useLoansCharts = ({
             })
           }
 
-          if (type === 1 && calcMarketLendingChart) {
+          if (type === 1 && calcMarketLendingChart && isLast14dOperation) {
             if (!acc.marketLendingChart[tokenAddress]) {
               acc.marketLendingChart[tokenAddress] = [
                 {
@@ -120,7 +121,7 @@ const useLoansCharts = ({
           // borrow operation
           if (type === 2 && calcTotalBorrowingChart && isLast7dOperation) {
             acc.totalBorrowingChart.push({
-              value: (acc.totalLendingChart.at(-1)?.value ?? 0) + amountInUsd,
+              value: (acc.totalBorrowingChart.at(-1)?.value ?? 0) + amountInUsd,
               time: operationTime,
             })
           }
@@ -128,7 +129,7 @@ const useLoansCharts = ({
           // repay operation
           if (type === 3 && calcTotalBorrowingChart && isLast7dOperation) {
             acc.totalBorrowingChart.push({
-              value: (acc.totalLendingChart.at(-1)?.value ?? 0) - amountInUsd,
+              value: (acc.totalBorrowingChart.at(-1)?.value ?? 0) - amountInUsd,
               time: operationTime,
             })
           }
@@ -136,12 +137,12 @@ const useLoansCharts = ({
           // deposit collateral operation
           if (type === 4 && calcTotalCollateralChart && isLast7dOperation) {
             acc.totalCollateralChart.push({
-              value: (acc.totalLendingChart.at(-1)?.value ?? 0) + amountInUsd,
+              value: (acc.totalCollateralChart.at(-1)?.value ?? 0) + amountInUsd,
               time: operationTime,
             })
           }
 
-          if (type === 4 && calcMarketCollateralChart) {
+          if (type === 4 && calcMarketCollateralChart && isLast14dOperation) {
             if (!acc.marketCollateralChart[tokenAddress]) {
               acc.marketCollateralChart[tokenAddress] = [
                 {
@@ -160,16 +161,25 @@ const useLoansCharts = ({
           // withdraw collateral operation
           if (type === 5 && calcTotalCollateralChart && isLast7dOperation) {
             acc.totalCollateralChart.push({
-              value: (acc.totalLendingChart.at(-1)?.value ?? 0) - amountInUsd,
+              value: (acc.totalCollateralChart.at(-1)?.value ?? 0) - amountInUsd,
               time: operationTime,
             })
           }
 
-          if (type === 5 && calcMarketCollateralChart) {
-            acc.marketCollateralChart[tokenAddress].push({
-              value: (acc.marketCollateralChart[tokenAddress].at(-1)?.value ?? 0) - amountInUsd,
-              time: operationTime,
-            })
+          if (type === 5 && calcMarketCollateralChart && isLast14dOperation) {
+            if (!acc.marketCollateralChart[tokenAddress]) {
+              acc.marketCollateralChart[tokenAddress] = [
+                {
+                  value: -amountInUsd,
+                  time: operationTime,
+                },
+              ]
+            } else {
+              acc.marketCollateralChart[tokenAddress].push({
+                value: (acc.marketCollateralChart[tokenAddress].at(-1)?.value ?? 0) - amountInUsd,
+                time: operationTime,
+              })
+            }
           }
 
           // deposit sMVK collateral operation TODO: check rate find for sMVK
@@ -180,7 +190,7 @@ const useLoansCharts = ({
             })
           }
 
-          if (type === 6 && calcMarketCollateralChart) {
+          if (type === 6 && calcMarketCollateralChart && isLast14dOperation) {
             if (!acc.marketCollateralChart[tokenAddress]) {
               acc.marketCollateralChart[tokenAddress] = [
                 {
@@ -204,11 +214,20 @@ const useLoansCharts = ({
             })
           }
 
-          if (type === 6 && calcMarketCollateralChart) {
-            acc.marketCollateralChart[tokenAddress].push({
-              value: (acc.marketCollateralChart[tokenAddress].at(-1)?.value ?? 0) - amountInUsd,
-              time: operationTime,
-            })
+          if (type === 6 && calcMarketCollateralChart && isLast14dOperation) {
+            if (!acc.marketCollateralChart[tokenAddress]) {
+              acc.marketCollateralChart[tokenAddress] = [
+                {
+                  value: -amountInUsd,
+                  time: operationTime,
+                },
+              ]
+            } else {
+              acc.marketCollateralChart[tokenAddress].push({
+                value: (acc.marketCollateralChart[tokenAddress].at(-1)?.value ?? 0) - amountInUsd,
+                time: operationTime,
+              })
+            }
           }
 
           return acc
