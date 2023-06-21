@@ -37,14 +37,18 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const { allVaultsIds, vaultsMapper } = useSelector((state: State) => state.loans.vaults)
-  const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio } = useMemo(
-    () => reduceVaultsAssets(allVaultsIds, vaultsMapper, tokensMetadata, tokensPrices),
-    [allVaultsIds, tokensMetadata, tokensPrices, vaultsMapper],
-  )
 
-  const chartData = useMemo(() => {
-    return getPieChartData(assetsBalances, globalVaultTVL, hoveredPath, tokensMetadata, tokensPrices)
-  }, [assetsBalances, globalVaultTVL, hoveredPath, tokensMetadata, tokensPrices])
+  const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio, chartData } = useMemo(() => {
+    const { assetsBalances, globalVaultTVL, ...restVaultsStats } = reduceVaultsAssets(
+      allVaultsIds,
+      vaultsMapper,
+      tokensMetadata,
+      tokensPrices,
+    )
+    const chartData = getPieChartData(assetsBalances, globalVaultTVL, hoveredPath, tokensMetadata, tokensPrices)
+
+    return { assetsBalances, globalVaultTVL, chartData, ...restVaultsStats }
+  }, [allVaultsIds, hoveredPath, tokensMetadata, tokensPrices, vaultsMapper])
 
   return (
     <TabWrapperStyled className="vaults">
@@ -153,9 +157,7 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
                         } 0%,rgba(255,255,255,0) 100%)`,
                       }}
                       className="asset-lable"
-                      onMouseEnter={() => {
-                        setHoveredPath(symbol)
-                      }}
+                      onMouseEnter={() => setHoveredPath(symbol)}
                       onMouseLeave={() => setHoveredPath(null)}
                       key={symbol}
                     >
