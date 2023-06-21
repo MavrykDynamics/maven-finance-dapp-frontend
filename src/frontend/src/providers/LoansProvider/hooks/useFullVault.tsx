@@ -92,6 +92,7 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
     borrowedAmount: convertedBorrowedAmount,
     liquidationTimestamp,
   })
+  const totalOutstanding = convertedBorrowedAmount + convertedFee
 
   return {
     address,
@@ -102,13 +103,13 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
     borrowedAmount: convertedBorrowedAmount,
     availableLiquidity: convertedAvailableLiquidity,
     fee: convertedFee,
-    totalOutstanding: convertedBorrowedAmount + convertedFee,
+    totalOutstanding,
     borrowedTokenAddress,
     borrowedToken: { ...borrowedToken, rate: borrowedTokenRate },
     borrowCapacity,
     liquidationLvl,
     liquidationTimestamp,
-    liquidationPrice: getVaultLiquidationPrice(convertedBorrowedAmount + convertedFee, restVault.liquidationRatio),
+    liquidationPrice: getVaultLiquidationPrice(totalOutstanding * borrowedTokenRate, restVault.liquidationRatio),
     liquidationMax: convertNumberForClient({ number: liquidationMax, grade: borrowedTokenDecimals }),
     ...restVault,
   }
