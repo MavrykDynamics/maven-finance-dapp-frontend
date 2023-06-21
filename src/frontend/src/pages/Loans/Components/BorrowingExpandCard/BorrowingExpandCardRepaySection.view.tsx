@@ -88,12 +88,16 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   })
   const inputAmount = checkNan(parseFloat(inputData.amount))
 
-  const totalOutstanding = fee + Number(borrowedAmount)
+  const totalOutstanding = fee + borrowedAmount
   const userAssetBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: borrowedToken.address })
 
   const isRepayInFull = activeRepayTab?.id === loansTabNames.REPAY_IN_FULL
+  // TODO: calc warnings on validation, not here
   const isMinimumRepayWarning =
-    inputData.validationStatus === INPUT_STATUS_ERROR && inputAmount <= minimumRepay && totalOutstanding !== 0
+    inputData.validationStatus === INPUT_STATUS_ERROR &&
+    inputAmount <= minimumRepay &&
+    totalOutstanding !== 0 &&
+    inputData.amount !== ''
   const isNotRepayInFullWarning = isRepayInFull && totalOutstanding !== inputAmount
 
   const futureBorrowedAmount = borrowedAmount - inputAmount < 0 ? 0 : borrowedAmount - inputAmount
@@ -206,6 +210,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       inputAmount,
       borrowedTokenRate,
       inputOnChangeHandle,
+      userAssetBalance,
       totalOutstanding,
       decimals,
     ],

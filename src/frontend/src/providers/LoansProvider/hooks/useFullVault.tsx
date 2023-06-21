@@ -35,6 +35,7 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
     liquidationLvl,
     address,
     liquidationMax,
+    minimumRepay,
     ...restVault
   } = vault
 
@@ -87,6 +88,7 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
     collateralBalance,
   )
   const collateralRatio = getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * borrowedTokenRate)
+  const convertedMinRepay = convertNumberForClient({ number: minimumRepay, grade: borrowedTokenDecimals })
   const status = getVaultStatus({
     collateralRatio,
     borrowedAmount: convertedBorrowedAmount,
@@ -111,6 +113,7 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
     liquidationTimestamp,
     liquidationPrice: getVaultLiquidationPrice(totalOutstanding * borrowedTokenRate, restVault.liquidationRatio),
     liquidationMax: convertNumberForClient({ number: liquidationMax, grade: borrowedTokenDecimals }),
+    minimumRepay: convertedMinRepay,
     ...restVault,
   }
 }
