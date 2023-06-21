@@ -67,9 +67,9 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
 
         Array.from({ length: collateralData.length }, (_, idx) => {
           const collateral = getTokenDataByAddress({ tokenAddress: collateralData[idx].tokenAddress, tokensMetadata })
-          if (!collateral) return acc
-
-          acc.collateralAssets.add(`${COLLATERAL_NAME}, ${collateral.symbol}`)
+          if (collateral) {
+            acc.collateralAssets.add(`${COLLATERAL_NAME}, ${collateral.symbol}`)
+          }
         })
 
         return acc

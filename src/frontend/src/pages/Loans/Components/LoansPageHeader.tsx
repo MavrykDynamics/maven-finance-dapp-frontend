@@ -24,12 +24,10 @@ export const MarketPageHeader = ({ assetAddress }: MarketPageHeaderPropsType) =>
   const { tokensMetadata } = useTokensContext()
 
   const token = getTokenDataByAddress({ tokensMetadata, tokenAddress: assetAddress })
-
   if (!token) return null
 
   const { symbol, icon } = token
 
-  // TODO: handle images we can display in header, by name
   const foregroundImageSrc = ASSETS_WE_HAVE_BG_TO.includes(symbol)
     ? `/images/lending-header-${symbol}.svg`
     : '/images/lending-header.svg'

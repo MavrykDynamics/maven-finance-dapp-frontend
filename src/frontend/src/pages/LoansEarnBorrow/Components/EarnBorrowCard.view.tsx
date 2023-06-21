@@ -66,7 +66,7 @@ export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: 
         </div>
 
         <div className="buttons">
-          <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isDisabledButton} onClick={() => onClick(symbol)}>
+          <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isDisabledButton} onClick={() => onClick(address)}>
             <Icon id="loans" />
             {`${buttonName} ${isButtonSymbol ? symbol : ''}`}
           </Button>

@@ -10,7 +10,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { LoansChartsType, UseLoansChartsStateType } from '../helpers/loans.types'
 
 // consts & helpers
-import { COLLATERAL_HISTORY_DATA_TYPES, DEFAULT_LOANS_CHARTS_STATE, ONE_DAY_IN_MS } from '../helpers/loans.const'
+import { COLLATERAL_HISTORY_DATA_TYPES, ONE_DAY_IN_MS } from '../helpers/loans.const'
 import { GET_LOANS_HISTORY_DATA } from 'providers/LoansProvider/queries/loansHistory.query'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
@@ -33,7 +33,13 @@ const useLoansCharts = ({
 }: LoansChartsType) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
-  const [chartsData, setChartsData] = useState<UseLoansChartsStateType>(DEFAULT_LOANS_CHARTS_STATE)
+  const [chartsData, setChartsData] = useState<UseLoansChartsStateType>({
+    totalLendingChart: [],
+    totalBorrowingChart: [],
+    totalCollateralChart: [],
+    marketCollateralChart: {},
+    marketLendingChart: {},
+  })
 
   const { loading } = useSubscription(GET_LOANS_HISTORY_DATA, {
     shouldResubscribe: true,
@@ -207,7 +213,13 @@ const useLoansCharts = ({
 
           return acc
         },
-        DEFAULT_LOANS_CHARTS_STATE,
+        {
+          totalLendingChart: [],
+          totalBorrowingChart: [],
+          totalCollateralChart: [],
+          marketCollateralChart: {},
+          marketLendingChart: {},
+        },
       )
 
       setChartsData(newChartsData)

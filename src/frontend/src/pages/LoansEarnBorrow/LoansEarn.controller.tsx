@@ -128,7 +128,6 @@ export const LoansEarn = () => {
     [loanTokens, marketLendingChart, tokensMetadata, tokensPrices, userMTokens],
   )
 
-  // TODO: pass address here
   const handleEarn = (marketTokenAddress: string) => {
     const market = loanTokens.find((item) => item.loanMTokenAddress === marketTokenAddress)
     if (!market) return
@@ -137,7 +136,7 @@ export const LoansEarn = () => {
 
     //  if the user has already supplied to the specific asset pool we will route to asset market
     if (lendValue) {
-      history.push(`/loans/${market.loanMTokenAddress}/lendingTab`)
+      history.push(`/loans/${marketTokenAddress}/lendingTab`)
       return
     }
 
