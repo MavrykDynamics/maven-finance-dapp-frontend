@@ -65,29 +65,6 @@ export const VaultsView = () => {
   )
   const [tabsList, setTabsList] = useState<TabItem[]>([])
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
-  const assets = useMemo(() => {
-    const { collateralAssets, loanAssets } = allVaultsIds.reduce<{
-      collateralAssets: Set<string>
-      loanAssets: Set<string>
-    }>(
-      (acc, vaultAddress) => {
-        const { borrowedTokenAddress, collateralData } = vaultsMapper[vaultAddress]
-        acc.loanAssets.add(borrowedTokenAddress)
-
-        Array.from({ length: collateralData.length }, (_, idx) =>
-          acc.collateralAssets.add(collateralData[idx].tokenAddress),
-        )
-
-        return acc
-      },
-      {
-        collateralAssets: new Set(),
-        loanAssets: new Set(),
-      },
-    )
-
-    return { collateralAssets: Array.from(collateralAssets), loanAssets: Array.from(loanAssets) }
-  }, [allVaultsIds, vaultsMapper])
 
   const currentListName =
     tabId === vaultTabs.ALL
@@ -162,9 +139,9 @@ export const VaultsView = () => {
       <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="primary-switcher" />
 
       <VaultsSearchFilter
-        assets={assets}
         vaultsMapper={vaultsMapper}
         currentVaultsIds={currentVaultsIds}
+        allVaultsIds={allVaultsIds}
         setVaultsIds={setVaultsIds}
       />
 

@@ -29,16 +29,15 @@ import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 type Filters = Record<string, string>
-type AssetCategory = 'loanAssets' | 'collateralAssets'
 
 type Props = {
-  assets: Record<AssetCategory, string[]>
   vaultsMapper: Record<string, VaultType>
+  allVaultsIds: string[]
   currentVaultsIds: string[]
   setVaultsIds: (arg: string[]) => void
 }
 
-export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, currentVaultsIds, setVaultsIds }: Props) => {
+export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsIds, setVaultsIds }: Props) => {
   const history = useHistory()
   const { search } = useLocation()
   const { tabId } = useParams<{ tabId: string }>()
@@ -53,20 +52,37 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
     ...restQP
   } = qs.parse(search, { ignoreQueryPrefix: true })
 
-  const preparedCollateralAssets = assetSymbols.collateralAssets.reduce<Array<string>>((acc, tokenAddress) => {
-    const collateral = getTokenDataByAddress({ tokenAddress, tokensMetadata })
-    if (!collateral) return acc
+  const { preparedCollateralAssets, preparedLoanAssets } = useMemo(() => {
+    const { collateralAssets, loanAssets } = allVaultsIds.reduce<{
+      collateralAssets: Set<string>
+      loanAssets: Set<string>
+    }>(
+      (acc, vaultAddress) => {
+        const { borrowedTokenAddress, collateralData } = vaultsMapper[vaultAddress]
 
-    acc.push(`${COLLATERAL_NAME}, ${collateral.symbol}`)
-    return acc
-  }, [])
-  const preparedLoanAssets = assetSymbols.loanAssets.reduce<Array<string>>((acc, tokenAddress) => {
-    const loanToken = getTokenDataByAddress({ tokenAddress, tokensMetadata })
-    if (!loanToken) return acc
+        const loanToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata })
+        if (!loanToken) return acc
 
-    acc.push(`${BORROWED_NAME}, ${loanToken.symbol}`)
-    return acc
-  }, [])
+        acc.loanAssets.add(`${BORROWED_NAME}, ${loanToken.symbol}`)
+
+        Array.from({ length: collateralData.length }, (_, idx) => {
+          const collateral = getTokenDataByAddress({ tokenAddress: collateralData[idx].tokenAddress, tokensMetadata })
+          if (!collateral) return acc
+
+          acc.collateralAssets.add(`${COLLATERAL_NAME}, ${collateral.symbol}`)
+        })
+
+        return acc
+      },
+      {
+        collateralAssets: new Set(),
+        loanAssets: new Set(),
+      },
+    )
+
+    return { preparedCollateralAssets: Array.from(collateralAssets), preparedLoanAssets: Array.from(loanAssets) }
+  }, [allVaultsIds, tokensMetadata, vaultsMapper])
+
   const preparedAssets = [ALL_VAULTS_FILTER].concat(preparedCollateralAssets).concat(preparedLoanAssets)
 
   const filterDdItems = useMemo(() => preparedAssets.map((item) => getDdItem(item)), [preparedAssets])
@@ -247,7 +263,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
       setFilteredData(filteredVaultsIds)
       setVaultsIds(filteredVaultsIds)
     },
-    [currentVaultsIds, history, restQP, searchInputValue, setVaultsIds, tabId, vaultsMapper],
+    [currentVaultsIds, history, restQP, searchInputValue, tabId, vaultsMapper, tokensMetadata, tokensPrices],
   )
 
   const handleClickCheckbox = () => {

@@ -67,8 +67,8 @@ export const normalizeVaultsStorage = async (storage: {
           // Vault stats&meta data
           borrowedTokenAddress: item.loan_token.token.token_address,
           name: vault.name,
-          address: vault?.address,
-          ownerId: item.owner?.address || '',
+          address: vault.address,
+          ownerId: item.owner.address,
           vaultId: item.internal_id,
           xtzDelegatedTo: vault?.baker?.address ?? null,
           apr:
@@ -116,6 +116,7 @@ export const normalizeVaultsStorage = async (storage: {
                 Number(item.lending_controller?.liquidation_delay_in_minutes) * BLOCKS_PER_MINUTE,
 
           // Permissions
+          // TODO: implement smvk operators
           sMVKDelegatedTo: '',
           depositors,
           deporsitorsFlag,
