@@ -9,6 +9,8 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type Props = {
   lendingItem: LendingItemType
@@ -18,6 +20,7 @@ type Props = {
 
 export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY }: Props) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userTokensBalances } = useUserContext()
 
   const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
 
@@ -27,8 +30,7 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
 
   const { lendValue = 0, interestEarned = 0 } = lendingItem || {}
 
-  // TODO: use just symbol, requires user tokens refactor
-  const tokenBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
+  const tokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: loanToken.address })
 
   const convertedLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
   const convertedInterestEarned = convertNumberForClient({ number: interestEarned, grade: decimals })

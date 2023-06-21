@@ -148,7 +148,16 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
       convertedValue: inputAmount * rate,
       inputSize: INPUT_LARGE,
     }),
-    [symbol, inputData.validationStatus, inputAmount, rate, inputOnChangeHandle, borrowCapacity, decimals],
+    [
+      userAssetBalance,
+      symbol,
+      inputData.validationStatus,
+      inputAmount,
+      rate,
+      inputOnChangeHandle,
+      borrowCapacity,
+      decimals,
+    ],
   )
 
   return (
