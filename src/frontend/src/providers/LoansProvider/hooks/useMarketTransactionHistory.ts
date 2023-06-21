@@ -8,7 +8,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { LoansMarketTransactionHistoryArgs, LoansMarketTransactionHistoryType } from '../helpers/loans.types'
 
 // consts & helpers
-import { GET_LOANS_HISTORY_FOR_MARKET_DATA } from 'providers/LoansProvider/queries/loansHistory.query'
+import { getLoansHistorySubscription } from 'providers/LoansProvider/queries/loansHistory.query'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { parseDate } from 'utils/time'
 import { getDescrByType } from '../helpers/loans.utils'
@@ -20,16 +20,21 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
  * @param param0.marketTokenAddress – market token address to get transactions for
  * @param param0.userAddress – user address for which get transaction history
  */
-const useMarketTransactionHistory = ({ marketTokenAddress, userAddress }: LoansMarketTransactionHistoryArgs) => {
+const useMarketTransactionHistory = ({
+  marketTokenAddress,
+  userAddress,
+  vaultAddress,
+}: LoansMarketTransactionHistoryArgs) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const [transactionHistory, setTransactionHistory] = useState<Array<LoansMarketTransactionHistoryType>>([])
 
-  const { loading } = useSubscription(GET_LOANS_HISTORY_FOR_MARKET_DATA, {
-    skip: !userAddress,
+  const { loading } = useSubscription(getLoansHistorySubscription({ userAddress, vaultAddress }), {
+    skip: (!userAddress && !vaultAddress) || !marketTokenAddress,
     variables: {
       marketTokenAddress,
       userAddress,
+      vaultAddress,
     },
     shouldResubscribe: true,
     onData: ({ data: { data } }) => {

@@ -1,4 +1,8 @@
 import { gql } from 'utils/__generated__'
+import { gql as apolloGql } from '@apollo/client'
+import { OperationVariables, TypedDocumentNode } from '@apollo/client'
+import { DocumentNode } from 'graphql'
+import { GetLoansHistoryForMarketDataSubscription } from 'utils/__generated__/graphql'
 
 // Cals 24h diffs
 export const LEND_BORROW_24H_DIFF = gql(`
@@ -51,34 +55,47 @@ subscription getLoansHistoryData {
 `)
 
 // Loans market transaction history
-export const GET_LOANS_HISTORY_FOR_MARKET_DATA = gql(`
-subscription getLoansHistoryForMarketData($marketTokenAddress: String, $userAddress: String) {
-  lending_controller(where: {mock_time: {_eq: false}}) {
-    history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, sender: {address: {_eq: $userAddress}}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
-      type
-      amount
-      timestamp
-      loan_token {
-        loan_token_name
-        token {
-          token_address
-        }
-      }
-      collateral_token {
-        token {
-          token_address
-        }
-      }
-      operation_hash
-      sender {
-        address
-      }
-      vault {
-        vault {
-          address
+export function getLoansHistorySubscription({
+  userAddress,
+  vaultAddress,
+}: {
+  userAddress?: string
+  vaultAddress?: string
+}): DocumentNode | TypedDocumentNode<GetLoansHistoryForMarketDataSubscription, OperationVariables> {
+  const filterUserCondition = userAddress ? `sender: {address: {_eq: $userAddress}}` : `sender: {address: {_neq: ""}}`
+  const filterVaultCondition = vaultAddress
+    ? `vault: { vault: {address: {_eq: $vaultAddress}}}`
+    : `vault: { vault: {address: {_neq: ""}}}`
+
+  return apolloGql(`
+    subscription getLoansHistoryForMarketData($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "") {
+      lending_controller(where: {mock_time: {_eq: false}}) {
+        history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
+          type
+          amount
+          timestamp
+          loan_token {
+            loan_token_name
+            token {
+              token_address
+            }
+          }
+          collateral_token {
+            token {
+              token_address
+            }
+          }
+          operation_hash
+          sender {
+            address
+          }
+          vault {
+            vault {
+              address
+            }
+          }
         }
       }
     }
-  }
-}
 `)
+}

@@ -59,35 +59,31 @@ export const TransactionHistory = ({
   const { isLoading: isTransactionHistoryLoading, transactionHistory } = useMarketTransactionHistory({
     marketTokenAddress: loanTokenAddress,
     userAddress,
+    vaultAddress,
   })
 
-  const history = useMemo(() => {
-    const historyTransaction =
-      vaultAddress || userAddress
+  const history = useMemo(
+    () =>
+      vaultAddress
         ? transactionHistory.filter((item) => {
             // check if there is description in filters, if there is then skip the condition
-            if (
+
+            return !(
               item.descr &&
               filterByDescriptions &&
               filterByDescriptions.length !== 0 &&
               !filterByDescriptions.includes(item.descr)
             )
-              return false
-
-            return (
-              (vaultAddress && item.vaultAddress === vaultAddress) || (userAddress && item.userAddress === userAddress)
-            )
           })
-        : transactionHistory
-
-    return historyTransaction
-  }, [filterByDescriptions, transactionHistory, userAddress, vaultAddress])
+        : transactionHistory,
+    [filterByDescriptions, transactionHistory],
+  )
 
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
 
   const paginatedTableRows = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, TRANSACTION_HISTORY_TABLE_NAME)
-    return history?.slice(from, to)
+    return history.slice(from, to)
   }, [currentPage, history])
 
   return (
@@ -103,8 +99,6 @@ export const TransactionHistory = ({
                   <TableHeaderCell>Description</TableHeaderCell>
                   <TableHeaderCell>Amount</TableHeaderCell>
                   <TableHeaderCell>Date</TableHeaderCell>
-                  {/* // TODO: remove this and below if it will be unnecessary. Or make it optional */}
-                  {/* <TableHeaderCell>User</TableHeaderCell> */}
                   <TableHeaderCell contentPosition="right">View TX</TableHeaderCell>
                 </TableRow>
               </TableHeader>
@@ -122,9 +116,6 @@ export const TransactionHistory = ({
                         <CommaNumber value={amount} className="value" endingText={symbol} />
                       </TableCell>
                       <TableCell width={`30%`}>{date}</TableCell>
-                      {/* <TableCell width={`11%`}>
-                        <TzAddress tzAddress={userAddress} type={BLUE} />
-                      </TableCell> */}
                       <TableCell contentPosition="right">
                         <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
                           <Button text="View TX" kind={TRANSPARENT} className="link" />
