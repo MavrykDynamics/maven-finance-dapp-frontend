@@ -14,7 +14,6 @@ export type LoanVaultAllowanceType = typeof VAULT_ALLOWANCE_ANY | typeof VAULT_A
 export type LendingItemType = {
   lendValue: number
   interestEarned: number
-  mBalance: number
 } | null
 
 // Market Type

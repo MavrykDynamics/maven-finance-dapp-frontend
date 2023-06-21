@@ -129,11 +129,9 @@ export const fetchUserData = async (accountPkh: string, currentBlockLevel: numbe
     const normalizedMTokens = m_token_accounts.reduce<Array<UserMTokenType>>((acc, tokenData) => {
       acc.push({
         lendedAmount: tokenData.balance,
-        balance: tokenData.balance + tokenData.rewards_earned,
         tokenAddress: tokenData.m_token.address,
-        reward_index: tokenData.reward_index,
-        rewards_earned: tokenData.rewards_earned,
-        interestRateDecimals,
+        rewardIndex: tokenData.reward_index,
+        rewardsEarned: convertNumberForClient({ number: tokenData.rewards_earned, grade: interestRateDecimals }),
       })
       return acc
     }, [])
@@ -172,8 +170,8 @@ export const fetchUserData = async (accountPkh: string, currentBlockLevel: numbe
      * (reward amount in blockchain number) / (10 ** decimals for loanasset + decimals for loans in general) * (rate of the loan asset to convert it all to $)
      */
     userInfo.availableLoansRewards =
-      normalizedMTokens.reduce((acc, { rewards_earned, interestRateDecimals }) => {
-        return (acc += convertNumberForClient({ number: rewards_earned, grade: interestRateDecimals + XTZ_DECIMALS }))
+      normalizedMTokens.reduce((acc, { rewardsEarned }) => {
+        return (acc += convertNumberForClient({ number: rewardsEarned, grade: XTZ_DECIMALS }))
       }, 0) ?? 0
 
     const { actionsHistory, gatheredDoormanRewards, gatheredFarmRewards, gatheredSatellitesRewards } =

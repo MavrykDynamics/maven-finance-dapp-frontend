@@ -33,21 +33,19 @@ export const getDescrByType = (type: number) => {
   }
 }
 
-// get lending item of user
+/**
+ * getting userMToken
+ * @param userMTokens list of user supplied mTokens
+ * @param loanMtokenAddress address of mToken we want to get from user
+ * @returns lendValue – mToken balance (including rewards), interestEarned – already earned rewards
+ */
 export const getMarketUserLengingItem = (userMTokens: Array<UserMTokenType>, loanMtokenAddress: string) => {
   const mTokenAsset = userMTokens?.find(({ tokenAddress }) => tokenAddress === loanMtokenAddress)
 
   if (mTokenAsset) {
-    const interestRateDecimals = mTokenAsset.interestRateDecimals
-
-    const convertedRewards = convertNumberForClient({ number: mTokenAsset.rewards_earned, grade: interestRateDecimals })
-    const convertedBalance = convertNumberForClient({ number: mTokenAsset.balance, grade: interestRateDecimals })
-
     return {
       lendValue: mTokenAsset.lendedAmount,
-      interestEarned: convertedRewards,
-      // TODO: check whether i need here convertedBalance & convertedRewards
-      mBalance: mTokenAsset.lendedAmount + convertedBalance + convertedRewards,
+      interestEarned: mTokenAsset.rewardsEarned,
     }
   }
 

@@ -38,11 +38,9 @@ export interface LoansCollateralTokenMetadataType extends LoansTokenMetadataType
 // mToken in user store type
 export type UserMTokenType = {
   lendedAmount: number
-  balance: number
   tokenAddress: TokenAddressType
-  reward_index: number
-  rewards_earned: number
-  interestRateDecimals: number
+  rewardIndex: number
+  rewardsEarned: number
 }
 
 type TokensPricesType = ReturnType<typeof normalizeTokenPrices>

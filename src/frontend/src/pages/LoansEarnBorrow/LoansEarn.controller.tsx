@@ -110,6 +110,8 @@ export const LoansEarn = () => {
         const { lendValue = 0, interestEarned = 0 } =
           getMarketUserLengingItem(userMTokens, item.loanMTokenAddress) ?? {}
 
+        console.log({ tokensMetadata, lendValue, interestEarned })
+
         acc.push({
           icon,
           symbol,
@@ -129,22 +131,22 @@ export const LoansEarn = () => {
   )
 
   const handleEarn = (marketTokenAddress: string) => {
-    const market = loanTokens.find((item) => item.loanMTokenAddress === marketTokenAddress)
+    const market = loanTokens.find((item) => item.loanTokenAddress === marketTokenAddress)
     if (!market) return
 
-    const { lendValue, mBalance = 0 } = getMarketUserLengingItem(userMTokens, market.loanMTokenAddress) ?? {}
+    const lendItem = getMarketUserLengingItem(userMTokens, market.loanMTokenAddress)
 
     //  if the user has already supplied to the specific asset pool we will route to asset market
-    if (lendValue) {
+    if (lendItem) {
       history.push(`/loans/${marketTokenAddress}/lendingTab`)
       return
+    } else {
+      openAddLendingAssetPopup({
+        mBalance: 0,
+        lendingAPY: market.lendingAPY,
+        tokenAddress: market.loanTokenAddress,
+      })
     }
-
-    openAddLendingAssetPopup({
-      mBalance,
-      lendingAPY: market.lendingAPY,
-      tokenAddress: market.loanTokenAddress,
-    })
   }
 
   const { isLoading } = useDataLoader(

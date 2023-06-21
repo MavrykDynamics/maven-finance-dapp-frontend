@@ -52,10 +52,9 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
 
   const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
 
-  const {} = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  const { lendValue = 0, mBalance = 0 } = lendingItem || {}
+  const { lendValue = 0 } = lendingItem || {}
 
   const [activeTab, setActiveTab] = useState(LENDING_TAB_SLIDING_BUTTONS.find((item) => item.active))
   const [inputData, setInputData] = useState<{
@@ -73,12 +72,11 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   const { symbol, decimals, icon, rate } = loanToken
   const tokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: loanToken.address })
 
-  const convertedMbalance = convertNumberForClient({ number: mBalance, grade: decimals })
   const convertedLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
 
   const futureMBalance = isSupplyActiveTab
-    ? convertedMbalance + Number(inputData.amount)
-    : convertedMbalance - Number(inputData.amount)
+    ? convertedLendValue + Number(inputData.amount)
+    : convertedLendValue - Number(inputData.amount)
 
   const isDisabledButton = inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionActive
 
@@ -95,7 +93,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
       case loansTabNames.SUPPLY:
         openConfirmAddLendingAssetPopup({
           inputAmount: Number(inputData.amount),
-          mBalance: convertedMbalance,
+          mBalance: convertedLendValue,
           lendingAPY: lendAPY,
           tokenAddress: loanTokenAddress,
         })
@@ -143,12 +141,12 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
     isSupplyActiveTab
       ? onChangeHandler(getLoansInputMaxAmount(tokenBalance, decimals), tokenBalance)
       : onChangeHandler(
-          getLoansInputMaxAmount(Math.min(mBalance, tokenBalance), decimals),
-          Math.min(mBalance, tokenBalance),
+          getLoansInputMaxAmount(Math.min(lendValue, tokenBalance), decimals),
+          Math.min(lendValue, tokenBalance),
         )
 
   const inputOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChangeHandler(e.target.value, isSupplyActiveTab ? tokenBalance : Math.min(mBalance, tokenBalance))
+    onChangeHandler(e.target.value, isSupplyActiveTab ? tokenBalance : Math.min(lendValue, tokenBalance))
   }
 
   const inputProps: InputProps = {

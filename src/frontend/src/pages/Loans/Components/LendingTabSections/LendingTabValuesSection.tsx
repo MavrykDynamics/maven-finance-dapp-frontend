@@ -25,7 +25,7 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
 
   const { symbol, decimals, rate } = loanToken
 
-  const { lendValue = 0, interestEarned = 0, mBalance = 0 } = lendingItem || {}
+  const { lendValue = 0, interestEarned = 0 } = lendingItem || {}
 
   // TODO: use just symbol, requires user tokens refactor
   const tokenBalance = 0 //userTokens[balanceSymbol]?.balance ?? 0
@@ -71,7 +71,7 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
 
         <LoansValuesSectionInfo>
           <CommaNumber
-            value={convertNumberForClient({ number: mBalance, grade: decimals })}
+            value={convertNumberForClient({ number: lendValue, grade: decimals })}
             className="value"
             showDecimal
             decimalsToShow={decimals}
