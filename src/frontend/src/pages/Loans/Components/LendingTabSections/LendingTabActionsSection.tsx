@@ -10,7 +10,7 @@ import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.co
 import { LENDING_TAB_SLIDING_BUTTONS, assetDecimalsToShow, loansTabNames } from '../../Loans.const'
 import { getLoansInputMaxAmount, loansInputValidation } from '../../Loans.helpers'
 import { LENDING_TAB_SUPPLY_TEXT, LENDING_TAB_WITHDRAW_TEXT } from 'texts/banners/loan.text'
-import { LENDING_APY } from 'texts/tooltips/loan.text'
+import { EARN_APY } from 'texts/tooltips/loan.text'
 import {
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
@@ -198,7 +198,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
           <ThreeLevelListItem>
             <div className="name">
               Earn APY
-              <CustomTooltip iconId="info" text={LENDING_APY(symbol)} />
+              <CustomTooltip iconId="info" text={EARN_APY} />
             </div>
             <CommaNumber value={lendAPY} className="value" endingText="%" />
           </ThreeLevelListItem>
