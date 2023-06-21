@@ -13,6 +13,7 @@ export const SUBSCRIBE_FEEDS_REWARDS_COUNT = gql(`
   }
 `)
 
+// TODO: extract history data to separate hook and use only on details page
 // feeds subsciption
 export const SUBSCRIBE_FEEDS = gql(`
   subscription subsribeOracleDataFeed {
@@ -44,18 +45,9 @@ export const SUBSCRIBE_FEEDS = gql(`
       pct_oracle_threshold
       alpha_pct_per_thousand
       heart_beat_seconds
-      oracles {
-        observations {
-          epoch
-          round
-          timestamp
-          oracle {
-            user {
-              address
-            }
-            init_epoch
-            init_round
-          }
+      oracles_aggregate {
+        aggregate {
+          count
         }
       }
     }

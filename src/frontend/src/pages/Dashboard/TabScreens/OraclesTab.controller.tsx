@@ -110,7 +110,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
                       <StatBlock>
                         <div className="name">Oracle Nodes</div>
                         <div className="value">
-                          <CommaNumber value={feed.oracles.length} />
+                          <CommaNumber value={feed.oraclesAmount} />
                         </div>
                       </StatBlock>
                       <StatBlock>

@@ -14,10 +14,11 @@ export const normalizeFeed = (feedGql: SubsribeOracleDataFeedSubscription['aggre
   const icon = feedGql?.metadata?.icon ?? null
   const network = feedGql?.network ?? null
 
-  const { history_data, ...restOfTheItem } = feedGql
+  const { oracles_aggregate, ...restOfTheItem } = feedGql
 
   return {
     ...restOfTheItem,
+    oraclesAmount: oracles_aggregate?.aggregate?.count ?? 0,
     category,
     network,
     amount: convertNumberForClient({ number: feedGql.last_completed_data, grade: feedGql.decimals }),
