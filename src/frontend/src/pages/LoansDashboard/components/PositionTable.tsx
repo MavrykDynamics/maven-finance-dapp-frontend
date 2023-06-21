@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
@@ -90,10 +90,7 @@ export const LoansPositionTable = ({
                   <div className="cell-content">
                     <span>Borrow APR</span>
                     <span>Loan Balance</span>
-                    <span>
-                      Vault Status
-                      {/* <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} /> */}
-                    </span>
+                    <span>Vault Status</span>
                     <span></span>
                   </div>
                 </TableHeaderCell>
@@ -104,8 +101,7 @@ export const LoansPositionTable = ({
               <TableBody className={`treasury dashboard-loans-table`}>
                 {paginatedTableRows.map(
                   ({ loanMTokenAddress, loanTokenAddress, borrowAPR, lendingAPY, availableLiquidity }) => {
-                    const { lendValue = 0, interestEarned = 0 } =
-                      getMarketUserLengingItem(userMTokens, loanMTokenAddress) ?? {}
+                    const lendingItem = getMarketUserLengingItem(userMTokens, loanMTokenAddress)
 
                     const loanToken = getTokenDataByAddress({
                       tokenAddress: loanTokenAddress,
@@ -118,6 +114,8 @@ export const LoansPositionTable = ({
                     if (!loanToken || !loanToken.rate || !marketVaultsUserData) return null
 
                     const { symbol, icon, rate, decimals, address } = loanToken
+
+                    const { lendValue = 0, interestEarned = 0 } = lendingItem ?? {}
 
                     const averageVaultStatus = getGaugeVaultRiskSimpleStatus(
                       marketVaultsUserData?.collateralAmount
@@ -136,10 +134,10 @@ export const LoansPositionTable = ({
 
                         <TableCell
                           width="43%"
-                          className={`position-multy-cell lending ${!loanMTokenAddress ? 'one-item' : ''}`}
+                          className={`position-multy-cell lending ${!lendingItem ? 'one-item' : ''}`}
                         >
                           <div className="cell-content" style={{ marginRight: '20px' }}>
-                            {loanMTokenAddress ? (
+                            {lendingItem ? (
                               <>
                                 <CommaNumber value={lendingAPY} endingText="%" />
                                 <CommaNumber

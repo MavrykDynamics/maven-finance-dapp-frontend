@@ -64,7 +64,6 @@ export const normalizeVaultsStorage = async (storage: {
             : NONE_USER
 
         const normallizedVault: VaultType = {
-          // Vault stats&meta data
           borrowedTokenAddress: item.loan_token.token.token_address,
           name: vault.name,
           address: vault.address,
