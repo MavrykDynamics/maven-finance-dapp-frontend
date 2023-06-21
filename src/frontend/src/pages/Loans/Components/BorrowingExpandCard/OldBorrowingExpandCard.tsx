@@ -99,8 +99,6 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
   const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
   const vaultHasSmvkCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVK_TOKEN_ADDRESS)
 
-  const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
-
   const handleOpenVault = () => {
     if (isExpanded) return
 
