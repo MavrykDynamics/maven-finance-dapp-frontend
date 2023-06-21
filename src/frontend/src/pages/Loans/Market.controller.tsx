@@ -33,7 +33,7 @@ import { USER_AVAILABLE_BORROW } from 'texts/tooltips/loan.text'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getVaultBorrowCapacity } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getVaultBorrowCapacity, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
 
 export const Market = () => {
   const dispatch = useDispatch()
@@ -44,7 +44,7 @@ export const Market = () => {
   const {
     loanTokens,
     isDataLoaded,
-    vaults: { allVaultsIds, vaultsMapper },
+    vaults: { myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
@@ -78,7 +78,7 @@ export const Market = () => {
 
   const { userTotalBorrowed, userTotalCollateral, userAccruedInterest, userAvailableBorrow } = useMemo(
     () =>
-      allVaultsIds.reduce(
+      myVaultsIds.reduce(
         (acc, itemId) => {
           const vault = vaultsMapper[itemId]
 
@@ -86,29 +86,17 @@ export const Market = () => {
             return acc
           const { decimals: loanTokenDecimals, rate: loanTokenRate } = loanToken
 
-          const vaultCollateralBalance = vault.collateralData.reduce(
-            (acc, { amount, tokenAddress: collateralTokenAddress }) => {
-              const collateralToken = getTokenDataByAddress({
-                tokenAddress: assetAddress,
-                tokensMetadata,
-                tokensPrices,
-              })
-              if (!collateralToken || !collateralToken.rate) return acc
-
-              const { rate: collateralRate, decimals: collateralDecimals } = collateralToken
-              return (acc += convertNumberForClient({ number: amount, grade: collateralDecimals }) * collateralRate)
-            },
-            0,
-          )
-
-          acc.userTotalBorrowed +=
+          const vaultCollateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices)
+          const convertedBorrowedAmount =
             convertNumberForClient({ number: vault.borrowedAmount, grade: loanTokenDecimals }) * loanTokenRate
+
+          acc.userTotalBorrowed += convertedBorrowedAmount
           acc.userTotalCollateral += vaultCollateralBalance
           acc.userAccruedInterest +=
             convertNumberForClient({ number: vault.fee, grade: loanTokenDecimals }) * loanTokenRate
           acc.userAvailableBorrow += getVaultBorrowCapacity(
             convertNumberForClient({ number: vault.availableLiquidity, grade: loanTokenDecimals }) * loanTokenRate,
-            convertNumberForClient({ number: vault.borrowedAmount, grade: loanTokenDecimals }) * loanTokenRate,
+            convertedBorrowedAmount,
             vaultCollateralBalance,
           )
           return acc
@@ -120,7 +108,7 @@ export const Market = () => {
           userAvailableBorrow: 0,
         },
       ),
-    [accountPkh, allVaultsIds, assetAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
+    [accountPkh, myVaultsIds, assetAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
   )
 
   if (!loanToken || !loanToken.rate) return null
@@ -221,7 +209,6 @@ export const Market = () => {
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Suppliers</div>
-                {/* TODO: add mTokens usage from tokens context */}
                 <CommaNumber value={currentToken.suppliers} className="value" />
               </ThreeLevelListItem>
             </>

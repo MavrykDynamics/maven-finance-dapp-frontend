@@ -8,12 +8,7 @@ import {
   getCollateralRationPersent,
   loansTabNames,
 } from 'pages/Loans/Loans.const'
-import {
-  calcCollateralRatio,
-  getCollateralRatioByPersentage,
-  getLoansInputMaxAmount,
-  loansInputValidation,
-} from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 import {
   INPUT_LARGE,
@@ -44,6 +39,7 @@ import { checkNan } from 'utils/checkNan'
 import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
 
 type Props = {
   vaultId: number
@@ -103,10 +99,9 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const futureBorrowedAmount = borrowedAmount - inputAmount < 0 ? 0 : borrowedAmount - inputAmount
   const futureTotalOutstanding = totalOutstanding - inputAmount < 0 ? 0 : totalOutstanding - inputAmount
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = calcCollateralRatio(
+    const futureCollateralRatio = getVaultCollateralRatio(
       collateralBalance,
-      borrowedAmount - inputAmount,
-      borrowedTokenRate,
+      (borrowedAmount - inputAmount) * borrowedTokenRate,
     )
 
     const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)

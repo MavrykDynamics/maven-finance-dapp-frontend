@@ -1,7 +1,9 @@
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
-import { convertNumberForClient, convertNumberForContractCall, getNumberInBounds } from '../../utils/calcFunctions'
+import { convertNumberForClient, convertNumberForContractCall } from '../../utils/calcFunctions'
 import { assetDecimalsToShow } from './Loans.const'
+
+// TODO: move this utils to provider and add docs to them while loans live update
 
 // HELPER FOR LENDING APY
 export const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): number => {
@@ -30,18 +32,6 @@ export const calculateAccruedInterest = (
   }
 
   return newLoanOutstandingTotal
-}
-
-// HELPER FOR COLLATERAL RATIO
-export const calcCollateralRatio = (collateralAmount: number, borrowedAmount: number, borrowedAssetRate: number) => {
-  // means we haven't borrowed anything
-  if (collateralAmount === 0) return 0
-
-  // means we haven't borrowed, but we have deposited
-  if (borrowedAmount === 0) return 250
-
-  const collateralRatio = (collateralAmount / Math.max(1, borrowedAmount * borrowedAssetRate)) * 100
-  return getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1)))
 }
 
 // HELPER FOR MAX COLLATERAL WITHDRAW

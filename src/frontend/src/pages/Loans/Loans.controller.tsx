@@ -230,8 +230,8 @@ export const Loans = () => {
                 },
               )
 
-              const convertedTotalLended = convertNumberForClient({ number: totalLended, grade: decimals })
-              const convertedTotalBorrowed = convertNumberForClient({ number: totalBorrowed, grade: decimals })
+              const convertedMarketTotalLended = convertNumberForClient({ number: totalLended, grade: decimals })
+              const convertedMarketTotalBorrowed = convertNumberForClient({ number: totalBorrowed, grade: decimals })
 
               const totalCorratealColor =
                 loanTokenTotalCollaterals && loanTokenVaultsTotalBorrowed
@@ -253,8 +253,8 @@ export const Loans = () => {
                     <div className="row">
                       <ThreeLevelListItem>
                         <div className="name">Total Lending</div>
-                        <CommaNumber beginningText="$" value={convertedTotalLended * rate} className="value" />
-                        <CommaNumber value={convertedTotalLended} className="rate" />
+                        <CommaNumber beginningText="$" value={convertedMarketTotalLended * rate} className="value" />
+                        <CommaNumber value={convertedMarketTotalLended} className="rate" />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Earn APY</div>
@@ -291,8 +291,8 @@ export const Loans = () => {
                     <div className="row">
                       <ThreeLevelListItem>
                         <div className="name">Total Borrowed</div>
-                        <CommaNumber beginningText="$" value={convertedTotalBorrowed * rate} className="value" />
-                        <CommaNumber value={convertedTotalBorrowed} className="rate" />
+                        <CommaNumber beginningText="$" value={convertedMarketTotalBorrowed * rate} className="value" />
+                        <CommaNumber value={convertedMarketTotalBorrowed} className="rate" />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Borrow APR</div>

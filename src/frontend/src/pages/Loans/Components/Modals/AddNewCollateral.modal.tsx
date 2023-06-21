@@ -10,12 +10,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 
-import {
-  calcCollateralRatio,
-  getCollateralRatioByPersentage,
-  getLoansInputMaxAmount,
-  loansInputValidation,
-} from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
@@ -49,6 +44,7 @@ import useXtzBakersForDD from 'providers/DAPPConfig/helpers/useDDXtzBakers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({
@@ -152,7 +148,10 @@ export const AddNewCollateral = ({
   const { rate: borrowedTokenRate } = borrowedToken
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
-  const futureCollateralRatio = calcCollateralRatio(collateralBalance + inputAmount, borrowedAmount, borrowedTokenRate)
+  const futureCollateralRatio = getVaultCollateralRatio(
+    collateralBalance + inputAmount,
+    borrowedAmount * borrowedTokenRate,
+  )
   const futureCollateralBalance = collateralBalance + inputAmount * rate
   const futureBorrowCapacity = Math.min(
     Math.max(availableLiquidity, 0),

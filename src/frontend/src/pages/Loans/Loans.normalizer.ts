@@ -17,11 +17,6 @@ export const normalizeLoans = ({
   )
   const interestRateDecimals = lendingController?.interest_rate_decimals ?? 0
 
-  const config = {
-    DAOFee: (lendingController?.minimum_loan_fee_pct ?? 0) / 100,
-    loansControllerAddress: lendingController?.address,
-  }
-
   const loanTokens = lendingController?.loan_tokens?.reduce<Array<LoanMarketType>>((acc, loanToken) => {
     const {
       utilisation_rate,
@@ -36,17 +31,9 @@ export const normalizeLoans = ({
 
     if (!token_address) return acc
 
-    // TODO: check calcs
     const reserveAmount = token_pool_total * (reserve_ratio / 10000)
-    // const reserveAmount = convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }) * (reserve_ratio / 10000)
-
-    // TODO: check calcs
-    const availableLiquidity = total_remaining - reserveAmount
-    // const availableLiquidity = (convertNumberForClient({ number: total_remaining, grade: loanTokenMetadata.decimals }) - reserveAmount) * loanTokenMetadata.rate
-
     const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
     const lendAPY = calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare)
-    const borrowAPR = tokenCurrentInterestRate * 100
 
     acc.push({
       loanTokenAddress: token_address,
@@ -57,7 +44,7 @@ export const normalizeLoans = ({
         convertNumberForClient({ number: utilisation_rate, grade: interestRateDecimals }) * 100,
       ),
 
-      availableLiquidity,
+      availableLiquidity: total_remaining - reserveAmount,
       totalLended: token_pool_total,
       totalBorrowed: total_borrowed,
 
@@ -67,7 +54,7 @@ export const normalizeLoans = ({
       collateralFactor: lendingController.collateral_ratio / 10,
       reserveFactor: reserve_ratio / 100,
       reserveAmount,
-      borrowAPR: borrowAPR,
+      borrowAPR: tokenCurrentInterestRate * 100,
       lendingAPY: lendAPY,
     })
 
@@ -77,6 +64,8 @@ export const normalizeLoans = ({
   return {
     loanTokens,
     mvkTokenOperators: mvkTokenOperatorsStorage?.map((item) => item.operator.address) ?? [],
-    config,
+    config: {
+      DAOFee: (lendingController?.minimum_loan_fee_pct ?? 0) / 100,
+    },
   }
 }

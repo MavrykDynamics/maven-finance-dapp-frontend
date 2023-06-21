@@ -26,12 +26,7 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { depositCollateralsAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import {
-  calcCollateralRatio,
-  getCollateralRatioByPersentage,
-  getLoansInputMaxAmount,
-  loansInputValidation,
-} from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
@@ -44,6 +39,7 @@ import {
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -109,10 +105,9 @@ export const AddCollateral = ({
   const { rate: borrowedTokenRate } = borrowedToken
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
-  const futureCollateralRatio = calcCollateralRatio(
+  const futureCollateralRatio = getVaultCollateralRatio(
     collateralBalance + inputAmount * collateralRate,
-    borrowedAmount,
-    borrowedTokenRate,
+    borrowedAmount * borrowedTokenRate,
   )
 
   const futureCollateralBalance = collateralBalance + inputAmount * collateralRate

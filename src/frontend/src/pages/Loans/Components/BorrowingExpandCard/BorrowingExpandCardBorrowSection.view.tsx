@@ -3,12 +3,7 @@ import { useSelector } from 'react-redux'
 import classNames from 'classnames'
 import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import {
-  calcCollateralRatio,
-  getCollateralRatioByPersentage,
-  getLoansInputMaxAmount,
-  loansInputValidation,
-} from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 import {
   INPUT_LARGE,
@@ -41,6 +36,7 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
 
 type Props = {
   borrowedAssetAddress: TokenAddressType
@@ -83,12 +79,10 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
 
   const userAssetBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: borrowedAssetAddress })
 
-  // TODO: incapsulate to the separate component
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = calcCollateralRatio(
+    const futureCollateralRatio = getVaultCollateralRatio(
       currentCollateralBalance,
-      currentBorrowedAmount + inputAmount,
-      rate,
+      (currentBorrowedAmount + inputAmount) * rate,
     )
 
     const futureBorrowCapacity = borrowCapacity - inputAmount * rate

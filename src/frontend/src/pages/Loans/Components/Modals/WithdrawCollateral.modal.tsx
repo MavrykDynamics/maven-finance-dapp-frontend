@@ -28,7 +28,6 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import {
-  calcCollateralRatio,
   getCollateralRatioByPersentage,
   getLoansInputMaxAmount,
   getMaxCollateralWithdraw,
@@ -45,6 +44,7 @@ import {
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -106,10 +106,9 @@ export const WithdrawCollateral = ({
   })
   const { rate: borrowedTokenRate } = borrowedToken
 
-  const futureCollateralRatio = calcCollateralRatio(
+  const futureCollateralRatio = getVaultCollateralRatio(
     collateralBalance - inputAmount * collateralRate,
-    borrowedAmount,
-    borrowedTokenRate,
+    borrowedAmount * borrowedTokenRate,
   )
 
   const currentCollateralToWithdraw = getMaxCollateralWithdraw(

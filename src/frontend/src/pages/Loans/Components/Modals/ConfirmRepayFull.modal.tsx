@@ -15,13 +15,14 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { calcCollateralRatio, getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 import { State } from 'reducers'
 import colors from 'styles/colors'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
 
 export const ConfirmRepayFull = ({
   closePopup,
@@ -47,7 +48,7 @@ export const ConfirmRepayFull = ({
 
   const { symbol, rate } = borrowedToken
 
-  const futureCollateralRatio = calcCollateralRatio(collateralBalance, 0, rate)
+  const futureCollateralRatio = getVaultCollateralRatio(collateralBalance, 0)
   const futureBorrowCapacity = Math.max(borrowCapacity + borrowedAmount, 0)
 
   const repayBtnHandler = async () => {

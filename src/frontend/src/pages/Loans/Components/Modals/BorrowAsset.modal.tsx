@@ -29,12 +29,7 @@ import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
 import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
-import {
-  calcCollateralRatio,
-  getCollateralRatioByPersentage,
-  getLoansInputMaxAmount,
-  loansInputValidation,
-} from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { StatusMessageStyled } from '../LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
@@ -45,6 +40,7 @@ import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/T
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
 export const BorrowAsset = ({
@@ -104,7 +100,10 @@ export const BorrowAsset = ({
   const convertedBorrowedAmount = convertNumberForClient({ number: borrowedAmount, grade: decimals }),
     inputAmount = checkNan(parseFloat(inputData.amount))
 
-  const futureCollateralRatio = calcCollateralRatio(collateralBalance, convertedBorrowedAmount + inputAmount, rate)
+  const futureCollateralRatio = getVaultCollateralRatio(
+    collateralBalance,
+    (convertedBorrowedAmount + inputAmount) * rate,
+  )
   const futureBorrowCapacity = borrowCapacity - inputAmount * rate
 
   // stuff to handle inputs
