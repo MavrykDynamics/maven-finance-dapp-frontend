@@ -13,7 +13,21 @@ export const SUBSCRIBE_FEEDS_REWARDS_COUNT = gql(`
   }
 `)
 
-// TODO: extract history data to separate hook and use only on details page
+// feeds rewards subsciption
+export const SUBSCRIBE_FEED_HISTORY = gql(`
+  subscription subsribeFeedHistoryData($feedAddress: String) {
+    aggregator(where: { address: { _eq: $feedAddress } }) {
+      history_data(distinct_on: timestamp, order_by: { timestamp: desc }) {
+        data
+        timestamp
+        aggregator {
+          decimals
+        }
+      }
+    }
+  }
+`)
+
 // feeds subsciption
 export const SUBSCRIBE_FEEDS = gql(`
   subscription subsribeOracleDataFeed {
@@ -23,13 +37,6 @@ export const SUBSCRIBE_FEEDS = gql(`
       decimals
       factory {
         address
-      }
-      history_data(distinct_on: timestamp, order_by: { timestamp: desc }) {
-        data
-        timestamp
-        aggregator {
-          decimals
-        }
       }
       metadata
       network

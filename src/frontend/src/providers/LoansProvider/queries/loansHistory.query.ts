@@ -58,19 +58,24 @@ subscription getLoansHistoryData {
 export function getLoansHistorySubscription({
   userAddress,
   vaultAddress,
+  typeFilter,
 }: {
   userAddress?: string
   vaultAddress?: string
+  typeFilter?: Array<number>
 }): DocumentNode | TypedDocumentNode<GetLoansHistoryForMarketDataSubscription, OperationVariables> {
   const filterUserCondition = userAddress ? `sender: {address: {_eq: $userAddress}}` : `sender: {address: {_neq: ""}}`
   const filterVaultCondition = vaultAddress
     ? `vault: { vault: {address: {_eq: $vaultAddress}}}`
     : `vault: { vault: {address: {_neq: ""}}}`
+  const filterTypeCondition = typeFilter
+    ? `type: {_in: $typeFilter}`
+    : `type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}`
 
   return apolloGql(`
-    subscription getLoansHistoryForMarketData($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "") {
+    subscription getLoansHistoryForMarketData($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = []) {
       lending_controller(where: {mock_time: {_eq: false}}) {
-        history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
+        history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, distinct_on: timestamp, order_by: {timestamp: desc}) {
           type
           amount
           timestamp

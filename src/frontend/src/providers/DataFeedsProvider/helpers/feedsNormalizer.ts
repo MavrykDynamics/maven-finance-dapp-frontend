@@ -1,15 +1,12 @@
 import { UTCTimestamp } from 'lightweight-charts'
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { Feed } from '../dataFeeds.provider.types'
-import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
+import { SubsribeFeedHistoryDataSubscription, SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 
 import { convertNumberForClient, percentageDifference } from 'utils/calcFunctions'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 
 export const normalizeFeed = (feedGql: SubsribeOracleDataFeedSubscription['aggregator'][number]) => {
-  const dataFeedsHistory = normalizeDataFeedsHistory(feedGql.history_data)
-  const dataFeedsVolatility = normalizeDataFeedsVolatility(feedGql.history_data)
-
   const category = feedGql?.metadata?.category ?? null
   const icon = feedGql?.metadata?.icon ?? null
   const network = feedGql?.network ?? null
@@ -23,8 +20,6 @@ export const normalizeFeed = (feedGql: SubsribeOracleDataFeedSubscription['aggre
     network,
     amount: convertNumberForClient({ number: feedGql.last_completed_data, grade: feedGql.decimals }),
     oraclesResponces: feedGql.last_completed_data_pct_oracle_resp / 100,
-    dataFeedsHistory: dataFeedsHistory,
-    dataFeedsVolatility: dataFeedsVolatility,
     icon,
   }
 }
@@ -68,7 +63,7 @@ export function normalizeFeeds(
 }
 
 export function normalizeDataFeedsHistory(
-  historyData: SubsribeOracleDataFeedSubscription['aggregator'][number]['history_data'],
+  historyData: SubsribeFeedHistoryDataSubscription['aggregator'][number]['history_data'],
 ) {
   return historyData?.length
     ? historyData
@@ -85,7 +80,7 @@ export function normalizeDataFeedsHistory(
 }
 
 export function normalizeDataFeedsVolatility(
-  historyData: SubsribeOracleDataFeedSubscription['aggregator'][number]['history_data'],
+  historyData: SubsribeFeedHistoryDataSubscription['aggregator'][number]['history_data'],
 ) {
   return historyData?.length >= 2
     ? historyData

@@ -35,4 +35,5 @@ export type LoansMarketTransactionHistoryArgs = {
   marketTokenAddress: TokenAddressType
   userAddress?: string
   vaultAddress?: string
+  typeFilter?: Array<number>
 }

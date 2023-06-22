@@ -110,8 +110,6 @@ export const LoansEarn = () => {
         const { lendValue = 0, interestEarned = 0 } =
           getMarketUserLengingItem(userMTokens, item.loanMTokenAddress) ?? {}
 
-        console.log({ tokensMetadata, lendValue, interestEarned })
-
         acc.push({
           icon,
           symbol,

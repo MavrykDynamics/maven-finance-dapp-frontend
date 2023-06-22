@@ -27,7 +27,7 @@ import useMarketTransactionHistory from 'providers/LoansProvider/hooks/useMarket
 
 type TransactionHistoryPropsType = {
   loanTokenAddress: TokenAddressType
-  filterByDescriptions?: string[]
+  filterByDescriptions?: number[]
   vaultAddress?: string
   userAddress?: string
   styleType?: typeof PRIMARY_TRANSACTION_HISTORY_STYLE | typeof SECONDARY_TRANSACTION_HISTORY_STYLE
@@ -36,7 +36,7 @@ type TransactionHistoryPropsType = {
 /**
  *
  * @param loanTokenAddress - token addres by which take transaction history
- * @param filterByDescriptions - if you want to get a transaction history for certain descriptions, you can specify this option. For ex.: ['Liquidity Added', 'Liquidity Removed']
+ * @param filterByDescriptions - if you want to get a transaction history for certain descriptions, you can specify this option. For ex.: ['Liquidity Added', 'Liquidity Removed'] will be [0, 1] indexer type for descr can get here: getDescrByType
  * @param vaultAddress - if you want to get a transaction history for one vault, you can specify this option.
  * @param userAddress - if you want to get a transaction history for one user, you can specify this option.
  * @param styleType - you can set one of several background options. Use the constant from Loans.const.tsx.
@@ -60,38 +60,22 @@ export const TransactionHistory = ({
     marketTokenAddress: loanTokenAddress,
     userAddress,
     vaultAddress,
+    typeFilter: filterByDescriptions,
   })
-
-  const history = useMemo(
-    () =>
-      vaultAddress
-        ? transactionHistory.filter((item) => {
-            // check if there is description in filters, if there is then skip the condition
-
-            return !(
-              item.descr &&
-              filterByDescriptions &&
-              filterByDescriptions.length !== 0 &&
-              !filterByDescriptions.includes(item.descr)
-            )
-          })
-        : transactionHistory,
-    [filterByDescriptions, transactionHistory],
-  )
 
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
 
   const paginatedTableRows = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, TRANSACTION_HISTORY_TABLE_NAME)
-    return history.slice(from, to)
-  }, [currentPage, history])
+    return transactionHistory.slice(from, to)
+  }, [currentPage, transactionHistory])
 
   return (
     <TransactionHistoryStyled className={styleType}>
       <div className="main">
         <H2Title>Transaction History</H2Title>
 
-        {history.length ? (
+        {transactionHistory.length ? (
           <>
             <Table className="treasury-table">
               <TableHeader className="simple-header treasury">
@@ -104,7 +88,7 @@ export const TransactionHistory = ({
               </TableHeader>
 
               <TableBody className="transaction-history">
-                {paginatedTableRows?.map(({ descr, amount, date, userAddress, operationHash, symbol }) => {
+                {paginatedTableRows?.map(({ descr, amount, date, operationHash, symbol }) => {
                   if (!descr) return null
 
                   return (
@@ -139,7 +123,11 @@ export const TransactionHistory = ({
         )}
       </div>
 
-      <Pagination itemsCount={history.length} listName={TRANSACTION_HISTORY_TABLE_NAME} side={PAGINATION_SIDE_CENTER} />
+      <Pagination
+        itemsCount={transactionHistory.length}
+        listName={TRANSACTION_HISTORY_TABLE_NAME}
+        side={PAGINATION_SIDE_CENTER}
+      />
 
       {lendingControllerAddress ? (
         <div className="lending-controller">

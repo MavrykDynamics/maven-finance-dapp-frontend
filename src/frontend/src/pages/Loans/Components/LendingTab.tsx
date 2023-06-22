@@ -67,7 +67,7 @@ export const LendingTab = ({ loanTokenAddress, loanMtokenAddress, lendAPY }: Len
       {accountPkh && (
         <TransactionHistory
           loanTokenAddress={loanTokenAddress}
-          filterByDescriptions={['Liquidity Added', 'Liquidity Removed']}
+          filterByDescriptions={[0, 1]}
           userAddress={accountPkh}
           styleType={SECONDARY_TRANSACTION_HISTORY_STYLE}
         />
