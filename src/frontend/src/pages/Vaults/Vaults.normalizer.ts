@@ -88,16 +88,16 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         )
 
         // Calculating Fee of the vault
-        const currentLoanInterest = convertNumberForClient({
-          number: item.loan_interest_total,
-          grade: loanTokenMetadata.decimals,
-        })
-        const fee =
-          borrowedAmount === 0
-            ? currentLoanInterest
-            : currentLoanInterest +
-              calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
-                FIXED_POINT_ACCURACY
+        const fee = Math.abs(
+          convertNumberForClient({
+            number: calculateAccruedInterest(
+              item.loan_outstanding_total,
+              item.borrow_index,
+              item.loan_token.borrow_index,
+            ),
+            grade: loanTokenMetadata.decimals,
+          }) - borrowedAmount,
+        )
 
         const liquidationMax =
           (calculateVaultMaxLiquidationAmount(
