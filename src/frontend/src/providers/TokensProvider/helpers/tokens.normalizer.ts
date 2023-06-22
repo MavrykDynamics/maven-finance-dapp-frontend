@@ -1,5 +1,5 @@
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getTokenSymbolAndName } from '../hooks/tokenNames'
+import { getTokenSymbolAndName } from './tokenNames'
 import { isValidTokenType } from 'utils/TypesAndInterfaces/General'
 
 import { TokenMetadataType, TokensContext } from '../tokens.provider.types'
