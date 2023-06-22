@@ -121,7 +121,7 @@ export const Market = () => {
         <PageHeader page={'lending'} />
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading {assetAddress} market</div>
+          <div className="text">Loading {symbol} market</div>
         </DataLoaderWrapper>
       </Page>
     )
