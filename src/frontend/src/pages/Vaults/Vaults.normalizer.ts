@@ -1,5 +1,5 @@
 import { ANY_USER, WHITELIST_USERS, NONE_USER } from 'pages/Loans/Loans.const'
-import { BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY } from 'utils/constants'
+import { BLOCKS_PER_MINUTE } from 'utils/constants'
 
 import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Loans'
 
