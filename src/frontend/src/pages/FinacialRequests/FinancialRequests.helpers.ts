@@ -31,7 +31,7 @@ export const normalizeFinancialRequests = (
         governanceContract: item.governance_financial.governance.address,
         governanceFinId: item.governance_financial.address,
         treasuryContract: item.treasury.address,
-        votingTillTime: item.execution_datetime ?? item.expiration_datetime,
+        votingTillTime: item.executed ? item.execution_datetime : item.expiration_datetime,
         tokensAmount: tokenName === 'MVK' ? calcWithoutPrecision(item.token_amount) : calcWithoutMu(item.token_amount),
         tokenName: tokenName,
         executed: item.executed,
