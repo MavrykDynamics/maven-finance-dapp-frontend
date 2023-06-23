@@ -4,7 +4,7 @@ import { Redirect, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 
 // const
-import { ACTION_SIMPLE, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 
 // view
@@ -15,7 +15,6 @@ import { BorrowingTab } from './Components/BorrowingTab'
 import { LendingTab } from './Components/LendingTab'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-import { TransactionHistory } from './Components/TransactionHistory'
 
 // styles
 import { Page } from 'styles'
@@ -28,12 +27,49 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from './Actions/getLoansData.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import colors from 'styles/colors'
+import { USER_AVAILABLE_BORROW } from 'texts/tooltips/loan.text'
 
 export const Market = () => {
   const dispatch = useDispatch()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
-  const { loanTokens, loansControllerAddress, isDataLoaded } = useSelector((state: State) => state.loans)
+  const {
+    loanTokens,
+    isDataLoaded,
+    vaults: { allVaultsIds, vaultsMapper },
+  } = useSelector((state: State) => state.loans)
+
+  const {
+    lendingController: { address: lendingControllerAddress },
+  } = useSelector((state: State) => state.contractAddresses)
+
   const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
+
+  const { userTotalBorrowed, userTotalCollateral, userAccruedInterest, userAvailableBorrow } = useMemo(
+    () =>
+      allVaultsIds.reduce(
+        (acc, itemId) => {
+          const vault = vaultsMapper[itemId]
+
+          if (vault.ownerId !== accountPkh || vault.borrowedAsset.symbol !== assetId) return acc
+
+          acc.userTotalBorrowed += vault.borrowedAmount * vault.borrowedAsset.rate
+          acc.userTotalCollateral += vault.collateralBalance
+          acc.userAccruedInterest += vault.fee * vault.borrowedAsset.rate
+          acc.userAvailableBorrow += vault.borrowCapacity * vault.borrowedAsset.rate
+          return acc
+        },
+        {
+          userTotalBorrowed: 0,
+          userTotalCollateral: 0,
+          userAccruedInterest: 0,
+          userAvailableBorrow: 0,
+        },
+      ),
+    [accountPkh, allVaultsIds, assetId, vaultsMapper],
+  )
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -102,17 +138,6 @@ export const Market = () => {
     </MarketPagination>
   )
 
-  const tabsNav = (
-    <div className="tabs-nav">
-      <Link to={`/loans/${assetId}/${LEND_TAB_ID}`}>
-        <Button text={'My Lending'} kind={ACTION_SIMPLE} className={`${tabId === LEND_TAB_ID ? 'active' : ''}`} />
-      </Link>
-      <Link to={`/loans/${assetId}/${BORROW_TAB_ID}`}>
-        <Button text={'My Borrowing'} kind={ACTION_SIMPLE} className={`${tabId === BORROW_TAB_ID ? 'active' : ''}`} />
-      </Link>
-    </div>
-  )
-
   return (
     <Page>
       <MarketPageHeader assetId={assetId} currentAsset={currentToken} />
@@ -135,7 +160,7 @@ export const Market = () => {
           {tabId === LEND_TAB_ID ? (
             <>
               <ThreeLevelListItem>
-                <div className="name">Oracle Price</div>
+                <div className="name">Price</div>
                 <CommaNumber
                   value={currentToken.loanTokenData.rate}
                   beginningText="$"
@@ -150,11 +175,11 @@ export const Market = () => {
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Total Lending</div>
-                <CommaNumber value={currentToken.totalLended} className="value" />
+                <CommaNumber value={currentToken.totalLended} beginningText="$" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Available Liquidity</div>
-                <CommaNumber value={currentToken.availableLiquidity} className="value" />
+                <CommaNumber value={Math.max(currentToken.availableLiquidity, 0)} beginningText="$" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Collateral Factor</div>
@@ -168,7 +193,7 @@ export const Market = () => {
           ) : (
             <>
               <ThreeLevelListItem>
-                <div className="name">Oracle Price</div>
+                <div className="name">Price</div>
                 <CommaNumber
                   value={currentToken.loanTokenData.rate}
                   beginningText="$"
@@ -178,47 +203,45 @@ export const Market = () => {
                 />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Borrow APR</div>
-                <CommaNumber value={currentToken.borrowAPR} endingText="%" className="value" />
+                <div className="name">Your Total Loan Balance</div>
+                <CommaNumber value={userTotalBorrowed} beginningText="$" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Total Borrowed</div>
-                <CommaNumber value={currentToken.totalBorrowed} className="value" />
+                <div className="name">Your Total Collateral</div>
+                <CommaNumber value={userTotalCollateral} beginningText="$" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Reserve Amount</div>
-                <CommaNumber value={currentToken.reserveAmount} className="value" />
+                <div className="name">Your Total Accrued Interest</div>
+                <CommaNumber value={userAccruedInterest} beginningText="$" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Reserve Factor</div>
-                <CommaNumber value={currentToken.reserveFactor} endingText="%" className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Borrowers</div>
-                <CommaNumber value={currentToken.borrowers} className="value" />
+                <div className="name">
+                  Your Total Available Borrow
+                  <CustomTooltip
+                    iconId="info"
+                    text={USER_AVAILABLE_BORROW(assetId)}
+                    defaultStrokeColor={colors[themeSelected].textColor}
+                  />
+                </div>
+                <CommaNumber value={userAvailableBorrow} beginningText="$" className="value" />
               </ThreeLevelListItem>
             </>
           )}
         </div>
 
-        {tabsNav}
-
         {tabId === LEND_TAB_ID ? (
           <LendingTab
             lendingItem={currentToken.lendingItem}
-            lendingControllerAddress={loansControllerAddress}
+            lendingControllerAddress={lendingControllerAddress}
             assetData={currentToken.loanTokenData}
             lendAPY={currentToken.lendingAPY}
+            marketAvailableLiquidity={currentToken.availableLiquidity}
+            marketReserveAmount={currentToken.reserveAmount}
           />
         ) : null}
         {tabId === BORROW_TAB_ID ? (
-          <BorrowingTab
-            lendingControllerAddress={loansControllerAddress}
-            currentMarketAsset={currentToken.loanTokenData.gqlName}
-          />
+          <BorrowingTab currentToken={currentToken} />
         ) : null}
-
-        <TransactionHistory currentToken={currentToken} />
       </MarketStyled>
     </Page>
   )

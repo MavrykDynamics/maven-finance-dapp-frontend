@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
@@ -17,7 +17,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
 import { LoansModalBase } from './Modals.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { updateOperatorsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17307%3A226700&t=Sx2aEpp3ifrGxBtQ-0
@@ -53,10 +53,6 @@ export const UpdateMVKOperator = ({
     }
   }, [show])
 
-  const isActionDisabled = useMemo(() => {
-    return tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS)
-  }, [tableData])
-
   const handleAddRow = () => setTableData(tableData.concat([{ address: '', validationStatus: '' }]))
   const handleDeleteRow = (rowId: number) => setTableData(tableData.filter((_, idx) => idx !== rowId))
 
@@ -70,12 +66,12 @@ export const UpdateMVKOperator = ({
     )
   }
 
-  const updateHandler = () => {
+  const getUpdatedOperators = useCallback(() => {
     const updateOperators: UpdateTokenOperator[] = []
-    const tableAddresses = tableData.map((item) => item.address)
+    const tableAddresses = tableData.filter((item) => item.address).map((item) => item.address)
 
     // get operators to add
-    tableData.forEach(({ address }) => {
+    tableAddresses.forEach((address) => {
       if (!operators.includes(address)) {
         updateOperators.push({
           add_operator: {
@@ -100,9 +96,22 @@ export const UpdateMVKOperator = ({
       }
     })
 
-    if (!updateOperators.length) return
+    return updateOperators
+  }, [operators, tableData, vaultAddress])
+
+  const updateHandler = () => {
+    const updateOperators = getUpdatedOperators()
     dispatch(updateOperatorsAction(vaultAddress, tokenName, updateOperators, closePopup))
   }
+
+  const isActionDisabled = useMemo(() => {
+    // if length === 0 it means that the user has no changes to update
+    const updatedOperatorLength = getUpdatedOperators().length
+
+    return (
+      tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS) || updatedOperatorLength === 0
+    )
+  }, [getUpdatedOperators, tableData])
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -122,7 +131,7 @@ export const UpdateMVKOperator = ({
             <TableBody className="editable-body">
               {tableData.map(({ address, validationStatus }, rowIdx) => {
                 return (
-                  <TableRow className="editable-row" key={`${rowIdx}-${address}`}>
+                  <TableRow className="editable-row" key={rowIdx}>
                     <TableCell width="100%">
                       <Input
                         className={`table-input`}

@@ -24,7 +24,7 @@ export const CONTRACT_ADDRESSES_QUERY = `
     emergency_governance {
       address
     }
-    governance(where: {active: {_eq: true}}) {
+    governance {
       address
     }
     governance_proxy {

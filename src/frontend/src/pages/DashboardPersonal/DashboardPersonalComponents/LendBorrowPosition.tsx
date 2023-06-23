@@ -54,7 +54,7 @@ export const LendBorrowPosition = ({
           const { borrowedAmount = 0, collateralAmount = 0 } = userLoansData.userVaultsData[gqlName] ?? {}
 
           // calculating value risk data & how much borrowed per vault
-          acc.borrowCapacity += collateralAmount / 2
+          acc.borrowCapacity += collateralAmount / 2 - borrowedAmount
           acc.borrowedAmount += borrowedAmount
           borrowedPerMarket += borrowedAmount
 

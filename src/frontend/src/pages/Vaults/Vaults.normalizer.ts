@@ -5,19 +5,20 @@ import { FIXED_POINT_ACCURACY, BLOCKS_PER_MINUTE } from 'utils/constants'
 
 import { State } from 'reducers'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { LoansGQL, LoansVaultType, CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
-
 import {
-  getAssetMetadata,
-  calculateAccruedInterest,
-  calcCollateralRatio,
-  isTezosAsset,
-} from 'pages/Loans/Loans.helpers'
+  LendingControllerGQL,
+  LoansVaultType,
+  CollateralType,
+  DepositorsFlagType,
+} from 'utils/TypesAndInterfaces/Loans'
+
+import { getAssetMetadata, calculateAccruedInterest, calcCollateralRatio } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount, calculateLiquidationPrice } from './calcFunctionsForVault'
+import { vaultsStatuses } from './Vaults.consts'
 
 type VaultsStorageProps = {
-  lendingController: LoansGQL
+  lendingController: LendingControllerGQL
   accountPkh?: string
   feeds: State['dataFeeds']['feedsLedger']
   dipDupTokens: State['tokens']['dipDupTokens']
@@ -52,15 +53,15 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         const acc = await promiseAcc
 
         // Check whether we have market & vault
-        if (!item.loan_token || !item.vault?.address) return acc
+        if (!item.loan_token || !item.vault?.address || !item.loan_token.token.token_address) return acc
 
         // Get market asset metadata
         const loanTokenMetadata = getAssetMetadata({
           tokenName: item.loan_token.loan_token_name,
-          tokenAddress: item.loan_token.loan_token_address,
+          tokenAddress: item.loan_token.token.token_address,
           dipDupTokens,
           feeds,
-          oracleId: String(item.loan_token.oracle_id),
+          oracleId: String(item.loan_token.oracle?.address),
         })
 
         // Check whether we have market asset metadata
@@ -87,16 +88,16 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         )
 
         // Calculating Fee of the vault
-        const currentLoanInterest = convertNumberForClient({
-          number: item.loan_interest_total,
-          grade: loanTokenMetadata.decimals,
-        })
-        const fee =
-          borrowedAmount === 0
-            ? currentLoanInterest
-            : currentLoanInterest +
-              calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
-                FIXED_POINT_ACCURACY
+        const fee = Math.abs(
+          convertNumberForClient({
+            number: calculateAccruedInterest(
+              item.loan_outstanding_total,
+              item.borrow_index,
+              item.loan_token.borrow_index,
+            ),
+            grade: loanTokenMetadata.decimals,
+          }) - borrowedAmount,
+        )
 
         const liquidationMax =
           (calculateVaultMaxLiquidationAmount(
@@ -107,7 +108,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           loanTokenMetadata.rate
         const liquidationReward = lendingController.liquidation_fee_pct / 10 ** lendingController.decimals
         const adminLiquidateFee = lendingController.admin_liquidation_fee_pct
-        const liquidationPrice = item.loan_token?.oracle_id
+        const liquidationPrice = item.loan_token?.oracle?.address
           ? calculateLiquidationPrice(
               item.loan_outstanding_total / 10 ** item.loan_decimals,
               lendingController.liquidation_ratio,
@@ -116,7 +117,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           : 0
 
         // Convert deep structure of depositors to array of depositrors addresses (strings)
-        const depositors = (item.vault?.depositors.map(({ depositor_id }) => depositor_id).filter(Boolean) ??
+        const depositors = (item.vault?.depositors.map(({ depositor }) => depositor?.address).filter(Boolean) ??
           []) as Array<string>
         // Calc what permission type vaults it is visible to any, whitelist, owner only
         const deporsitorsFlag: DepositorsFlagType =
@@ -130,7 +131,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         // Need one source to get status like vaults or loans.
         // Because at the moment the data is different for the same items
 
-        const status = getStatusByCollateralRatio(collateralRatio)
+        const status = borrowedAmount === 0 ? vaultsStatuses.ACTIVE : getStatusByCollateralRatio(collateralRatio)
 
         // gotStatusByCollateralRatio !== 'no status'
         //   ? gotStatusByCollateralRatio
@@ -165,7 +166,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         // }
 
         // Calc how much free tokens pool has
-        const avaliableLiq = convertNumberForClient({
+        const availableLiquidity = convertNumberForClient({
           number:
             item.loan_token.total_remaining -
             (item.loan_token.token_pool_total * item.loan_token.reserve_ratio) / 10000,
@@ -176,14 +177,15 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           // Vault stats&meta data
           borrowedAsset: {
             ...loanTokenMetadata,
-            tokenType: item.loan_token.loan_token_contract_standard as TokenType,
+            // TODO: token issue
+            tokenType: item.loan_token.token.token_standard as TokenType,
           },
           name: item.vault.name,
           address: item.vault?.address,
-          ownerId: item.owner_id || '',
+          ownerId: item.owner?.address || '',
           vaultId: item.internal_id,
           creationTimestamp: item.vault.creation_timestamp ?? undefined,
-          xtzDelegatedTo: item.vault?.baker_id ?? null,
+          xtzDelegatedTo: item.vault?.baker?.address ?? null,
           status,
           apr:
             convertNumberForClient({
@@ -195,9 +197,9 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           borrowedAmount,
           borrowCapacity: Math.min(
             vaultCollateral.totalRow.amount / 2 - borrowedAmount * loanTokenMetadata.rate,
-            avaliableLiq,
+            Math.max(availableLiquidity, 0),
           ),
-          avaliableLiq,
+          availableLiquidity,
           minimumRepay: convertNumberForClient({
             number: item.loan_token.min_repayment_amount,
             grade: loanTokenMetadata.decimals,
@@ -223,7 +225,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
             Number(item.lending_controller?.liquidation_delay_in_minutes) * BLOCKS_PER_MINUTE,
 
           // Permissions
-          operators: [],
           sMVKDelegatedTo: '',
           depositors,
           deporsitorsFlag,
@@ -235,14 +236,14 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         acc.allVaultsIds.push(item.vault.address)
 
         // If user is owner add vault id to my vaults list
-        if (accountPkh === item.owner_id) {
+        if (accountPkh === item.owner.address) {
           acc.myVaultsIds.push(item.vault.address)
         }
 
         // If user is depositor of the vault, or vault is visible to anyone, add it to permissioned vaults list
         if (
           ((accountPkh && depositors.includes(accountPkh)) || deporsitorsFlag === ANY_USER) &&
-          accountPkh !== item.owner_id
+          accountPkh !== item.owner.address
         ) {
           acc.permissinedVaultsIds.push(item.vault.address)
         }
@@ -276,7 +277,7 @@ const normalizeCollateralAssets = ({
 }: {
   feeds: State['dataFeeds']['feedsLedger']
   dipDupTokens: State['tokens']['dipDupTokens']
-  collateralAssets: LoansGQL['vaults'][number]['collateral_balances']
+  collateralAssets: LendingControllerGQL['vaults'][number]['collateral_balances']
 }): {
   normalizedCollaterals: Array<CollateralType>
   totalRow: CollateralType
@@ -286,14 +287,14 @@ const normalizeCollateralAssets = ({
     totalRow: CollateralType
   }>(
     (acc, collateral) => {
-      if (!collateral.token) return acc
+      if (!collateral.collateral_token.token?.token_address) return acc
 
       const collateralAsset = getAssetMetadata({
-        tokenName: collateral.token.token_name,
-        tokenAddress: collateral.token.token_address,
+        tokenName: collateral.collateral_token.token_name,
+        tokenAddress: collateral.collateral_token.token.token_address,
         dipDupTokens,
         feeds,
-        oracleId: String(collateral.token.oracle_id),
+        oracleId: String(collateral.collateral_token.oracle?.address),
       })
 
       if (!collateralAsset) return acc

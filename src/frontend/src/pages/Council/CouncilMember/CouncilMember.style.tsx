@@ -14,10 +14,7 @@ export const CouncilMemberStyled = styled(CardHover)<{ theme: MavrykTheme }>`
     width: calc(100% - 70px);
 
     h4 {
-      white-space: nowrap;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      max-width: 180px;
       font-weight: 600;
       font-size: 14px;
       line-height: 21px;

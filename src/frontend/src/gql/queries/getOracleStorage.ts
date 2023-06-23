@@ -1,9 +1,11 @@
 export const ORACLE_STORAGE_QUERY = `
-   query GetOracleDataFeeds {
+  query GetOracleDataFeeds {
     aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {
       address
       admin
       decimals
+      metadata
+      network
       factory {
         address
       }
@@ -33,7 +35,9 @@ export const ORACLE_STORAGE_QUERY = `
           round
           timestamp
           oracle {
-            user_id
+            user {
+              address
+            }
             init_epoch
             init_round
           }
@@ -42,15 +46,6 @@ export const ORACLE_STORAGE_QUERY = `
     }
     aggregator_factory {
       aggregator_name_max_length
-    }
-    dipdup_contract_metadata {
-      contract
-      created_at
-      id
-      metadata
-      update_id
-      updated_at
-      network
     }
   }
 `

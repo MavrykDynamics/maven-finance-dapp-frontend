@@ -32,20 +32,7 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
   border-collapse: collapse;
 
   &.borrowing-table {
-    margin-top: 5px;
     position: relative;
-    margin-bottom: 10px;
-
-    &.show-before {
-      &::before {
-        content: '';
-        position: absolute;
-        bottom: 0px;
-        height: 1px;
-        width: 100%;
-        background-color: ${({ theme }) => theme.cardBorderColor};
-      }
-    }
   }
 
   &.treasury-table {
@@ -134,6 +121,18 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
 
   &.transaction-history-table {
     margin-top: 30px;
+  }
+
+  &.fix-mistaken-transfer-table {
+    margin: 0;
+
+    .remove {
+      right: -18px;
+    }
+
+    .add {
+      margin-left: 5px;
+    }
   }
 `
 

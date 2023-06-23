@@ -5,6 +5,7 @@ import { FarmAccountsType, FarmContractType, FarmGraphQL, Normalizedfarm } from 
 import { getContractBigmapKeys, network } from 'utils/blockchainApi'
 import { STAKED } from './Farms.const'
 import { State } from 'reducers'
+import { Farm_Account } from 'utils/generated/graphqlTypes'
 
 type EndsInType = {
   endsIn: any
@@ -47,7 +48,9 @@ export const normalizeFarmStorage = (
         lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] &&
         address === lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0],
     )
-    const dipDupToken = dipDupTokens.find(({ contract }) => farmItem.lp_token_address === contract)
+    const dipDupToken = dipDupTokens.find(
+      ({ token_address }) => farmItem.lp_token.token_address === token_address,
+    )?.metadata
 
     return {
       address: farmItem.address,
@@ -67,7 +70,7 @@ export const normalizeFarmStorage = (
       lastBlockUpdate: farmItem.last_block_update,
       lpTokenUserBalance,
       lpTokenAddress: lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] ?? '',
-      lpBalance: farmItem.lp_token_balance / Math.pow(10, Number(dipDupToken?.metadata.decimals)),
+      lpBalance: farmItem.lp_token_balance / Math.pow(10, Number(dipDupToken?.decimals ?? 0)),
       lpToken1: {
         symbol: lpTokenInfo?.liquidityPairToken?.token0?.symbol?.[0],
         address: lpTokenInfo?.liquidityPairToken?.token0?.tokenAddress?.[0],
@@ -98,7 +101,7 @@ export const calculateAPR = (currentRewardPerBlock: number, blocksAmount: number
   return lpTokenBalance > 0 ? ((currentRewardPerBlock * blocksAmount) / lpTokenBalance) * 100 : 0
 }
 
-export const getSummDepositedAmount = (farmAccounts: FarmAccountsType[]): number => {
+export const getSummDepositedAmount = (farmAccounts: Farm_Account[]): number => {
   return farmAccounts.reduce((acc, cur) => acc + cur.deposited_amount, 0)
 }
 

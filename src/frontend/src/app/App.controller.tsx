@@ -17,12 +17,13 @@ import { State } from '../reducers'
 // view, styles
 import { Toaster } from './App.components/Toaster/Toaster.controller'
 import { Menu } from './App.components/Menu/Menu.controller'
-import { PopupChangeNode } from './App.components/SettingsPopup/SettingsPopup.controller'
 import { ActionLoader, LoaderRocket, WertLoader } from './App.components/Loader/Loader.view'
+import { SettingPopup } from './App.components/SettingsPopup/SettingsPopup'
 import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
 import { AppStyled } from './App.style'
 import LoansPopupsProvider from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { PolicyPopup } from 'app/App.components/PolicyPopup/Policy.controller'
+import { Footer } from './App.components/Footer/Footer'
 
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
@@ -109,7 +110,7 @@ const AppContainer = () => {
         <WertLoader />
         <Menu />
 
-        <PopupChangeNode isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
+        <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
         <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
         <StakeProvider>
@@ -117,6 +118,8 @@ const AppContainer = () => {
             <AppRoutes />
           </LoansPopupsProvider>
         </StakeProvider>
+
+        <Footer />
       </AppStyled>
     </Router>
   )

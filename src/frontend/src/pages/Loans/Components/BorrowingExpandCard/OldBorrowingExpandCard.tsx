@@ -1,7 +1,8 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
-import { Link } from 'react-router-dom'
+import { Link, useHistory, useLocation } from 'react-router-dom'
+import classNames from 'classnames'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
@@ -11,7 +12,7 @@ import {
   getStatusByCollateralRatio,
   NONE_USER,
   WHITELIST_USERS,
-} from '../Loans.const'
+} from '../../Loans.const'
 import {
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
@@ -23,28 +24,35 @@ import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
-import Expand from 'app/App.components/Expand/Expand.view'
+import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { StatusMessage } from './StatusMessage.view'
+import { StatusMessage } from '../StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { scrollToFullView } from 'utils/scrollToFullView'
-import { assetDecimalsToShow } from '../Loans.const'
+import { assetDecimalsToShow } from '../../Loans.const'
 
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
-import { ThreeLevelListItem } from '../Loans.style'
-import { BorrowingTabListItemExpanded } from './LoansComponents.style'
+import { ThreeLevelListItem } from '../../Loans.style'
+import { BorrowingExpandedCard } from '../LoansComponents.style'
 
-import { loansPopupsContext } from './Modals/LoansModals.provider'
+import { loansPopupsContext } from '../Modals/LoansModals.provider'
 
 import { State } from 'reducers'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
-import { isTezosAsset } from '../Loans.helpers'
-import getTimestampByLevel from 'utils/api/getTimestampByLevel'
+import { getCollateralRatioByPersentage, isTezosAsset } from '../../Loans.helpers'
+import {
+  getTimestampByLevelHeaders,
+  getTimestampByLevelSchema,
+  getTimestampByLevelUrl,
+} from 'utils/api/api-helpers/getTimestampByLevel'
 import { getNumberInBounds } from 'utils/calcFunctions'
+import { isAbortError } from 'errors/error'
+import { api } from 'utils/api/api'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -56,12 +64,11 @@ type BorrowingExpandCardPropsType = LoansVaultType & {
   DAOFee: number
 }
 
-export const BorrowingExpandCard = ({
+export const OldBorrowingExpandCard = ({
   isOwner = false,
   borrowedAsset,
   collateralData,
   xtzDelegatedTo,
-  operators,
   sMVKDelegatedTo,
   vaultId,
   name,
@@ -81,17 +88,26 @@ export const BorrowingExpandCard = ({
   borrowedAmount,
   collateralRatio,
   borrowCapacity,
-  avaliableLiq,
+  availableLiquidity,
   minimumRepay,
   DAOFee,
 }: BorrowingExpandCardPropsType) => {
+  const history = useHistory()
+  const location = useLocation()
+
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search])
+  const vaultAddress = params.get('vaultAddress')
+
   const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
 
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
+  const { mvkTokenOperators } = useSelector((state: State) => state.loans)
 
-  const [expanded, setExpanded] = useState(false)
+  const { bug } = useToasterContext()
+
+  const isExpanded = address === vaultAddress
 
   const {
     openChangeBakerPopup,
@@ -129,8 +145,7 @@ export const BorrowingExpandCard = ({
     isActionActive
 
   const ref = useRef<HTMLDivElement | null>(null)
-
-  useClickAway(ref, () => (notHandleClickAway ? null : setExpanded(false)))
+  useClickAway(ref, () => (notHandleClickAway ? null : handleCloseVault()))
 
   // use for borrow or repay
   // it scrolls until the current vault after the transaction and changing position
@@ -139,8 +154,8 @@ export const BorrowingExpandCard = ({
   }
 
   const mappedMVKOperators = {
-    firstAddress: operators?.[0],
-    ...(operators ? { amount: operators.length - 1 } : {}),
+    firstAddress: mvkTokenOperators?.[0],
+    ...(mvkTokenOperators ? { amount: mvkTokenOperators.length } : {}),
   }
 
   const vaultStatus = status ?? getStatusByCollateralRatio(collateralRatio)
@@ -151,37 +166,75 @@ export const BorrowingExpandCard = ({
 
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
 
+  const handleOpenVault = () => {
+    if (isExpanded) return
+
+    params.append('vaultAddress', address)
+    history.replace({ ...location, search: params.toString() })
+  }
+
+  const handleCloseVault = () => {
+    if (!isExpanded) return
+
+    params.delete('vaultAddress')
+    history.replace({ ...location, search: params.toString() })
+  }
+
+  const handleClickExpand = () => {
+    isExpanded ? handleCloseVault() : handleOpenVault()
+  }
+
   useEffect(() => {
     if (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE) {
+      if (!levelOfEarly || !levelOfLate) return
+
+      const abortEarlyController = new AbortController()
+      const abortLatelyController = new AbortController()
+
       ;(async () => {
-        if (!levelOfEarly || !levelOfLate) {
-          setTimerTimestamp(undefined)
-          return
+        try {
+          const [{ data: timestampOfEarly }, { data: timestampOfLate }] = await Promise.all([
+            api(
+              getTimestampByLevelUrl(levelOfEarly),
+              { signal: abortEarlyController.signal, headers: getTimestampByLevelHeaders },
+              getTimestampByLevelSchema,
+            ),
+            api(
+              getTimestampByLevelUrl(levelOfLate),
+              { signal: abortLatelyController.signal, headers: getTimestampByLevelHeaders },
+              getTimestampByLevelSchema,
+            ),
+          ])
+
+          const timestamp =
+            new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
+
+          setTimerTimestamp(timestamp)
+        } catch (e) {
+          // TODO: handle fetch errors when error boundary will be ready
+          if (!isAbortError(e)) {
+            console.error('getting timestamp by lvl error: ', e)
+          }
+          bug('Unexpected error happened occured, please reload the page')
         }
-
-        const [timestampOfEarly, timestampOfLate] = await Promise.all([
-          getTimestampByLevel(levelOfEarly),
-          getTimestampByLevel(levelOfLate),
-        ])
-
-        const timestamp =
-          new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
-
-        setTimerTimestamp(timestamp)
       })()
-    }
-  }, [vaultStatus, levelOfEarly, levelOfLate])
 
-  useEffect(() => {
-    setExpanded(Boolean(isOpenedVault))
-  }, [isOpenedVault])
+      return () => {
+        abortEarlyController.abort()
+        abortLatelyController.abort()
+      }
+    }
+
+    return
+  }, [vaultStatus, levelOfEarly, levelOfLate])
 
   return (
     <div ref={ref}>
-      <Expand
-        getExpandedStatus={setExpanded}
-        isExpandedByDefault={expanded}
-        className={`expand-borrow-tab  ${expanded ? 'expandedCard' : ''}`}
+      <ExpandSimple
+        isExpanded={isExpanded}
+        onClick={handleClickExpand}
+        openButtonName="View"
+        className={classNames('expand-borrow-tab', { 'expanded-card': isExpanded })}
         sufix={headerSufix}
         header={
           <>
@@ -204,7 +257,7 @@ export const BorrowingExpandCard = ({
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
+                currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -239,7 +292,7 @@ export const BorrowingExpandCard = ({
         }
       >
         {children || (
-          <BorrowingTabListItemExpanded
+          <BorrowingExpandedCard
             className={`expand-borrow-tab-container ${
               vaultHasXtzCollateral || vaultHasSmvkCollateral ? '' : 'more-padding'
             }`}
@@ -397,7 +450,7 @@ export const BorrowingExpandCard = ({
                                         existingCollaterals: collateralData,
                                         borrowedAssetRate: borrowedAsset.rate,
                                         borrowCapacity,
-                                        avaliableLiq,
+                                        availableLiquidity,
                                       })
                                     }
                                     kind={BUTTON_PRIMARY}
@@ -426,7 +479,7 @@ export const BorrowingExpandCard = ({
                                       borrowedAmount,
                                       borrowedAssetRate: borrowedAsset.rate,
                                       borrowCapacity,
-                                      avaliableLiq,
+                                      availableLiquidity,
                                     })
                                   }
                                   form={BUTTON_WIDE}
@@ -474,7 +527,7 @@ export const BorrowingExpandCard = ({
                           borrowedAmount,
                           existingCollaterals: collateralData,
                           borrowedAssetRate: borrowedAsset.rate,
-                          avaliableLiq,
+                          availableLiquidity,
                           borrowCapacity,
                         })
                       }
@@ -537,7 +590,7 @@ export const BorrowingExpandCard = ({
                   </div>
                 ) : null}
 
-                <div
+                {/* <div
                   className={`block-name ${
                     vaultHasXtzCollateral || vaultHasSmvkCollateral ? 'margin-top-20' : 'margin-top'
                   }`}
@@ -572,7 +625,7 @@ export const BorrowingExpandCard = ({
                   >
                     Update <Icon id="paginationArrowLeft" />
                   </Button>
-                </div>
+                </div> */}
                 {vaultHasSmvkCollateral ? (
                   <div className="bottom-info-row">
                     <div className="name">
@@ -596,8 +649,7 @@ export const BorrowingExpandCard = ({
                         openUpdateMvkOperatorsPopup?.({
                           vaultAddress: address,
                           tokenName: gqlName,
-                          // TODO: add valid operators
-                          operators: [],
+                          operators: mvkTokenOperators,
                         })
                       }
                     >
@@ -630,9 +682,9 @@ export const BorrowingExpandCard = ({
                 </div>
               </>
             ) : null}
-          </BorrowingTabListItemExpanded>
+          </BorrowingExpandedCard>
         )}
-      </Expand>
+      </ExpandSimple>
     </div>
   )
 }

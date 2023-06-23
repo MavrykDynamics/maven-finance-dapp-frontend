@@ -3,6 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import qs from 'qs'
 
 import { Input } from 'app/App.components/Input/Input.controller'
+import Icon from '../Icon/Icon.view'
 
 import { PaginationArrow, PaginationWrapper } from './Pagination.style'
 
@@ -55,9 +56,7 @@ const Pagination = ({ itemsCount, side = PAGINATION_SIDE_RIGHT, listName, classN
           }
         }}
       >
-        <svg>
-          <use xlinkHref="/icons/sprites.svg#paginationArrowLeft" />
-        </svg>
+        <Icon id="paginationArrowLeft" />
       </PaginationArrow>
       <PaginationArrow
         isDisabled={+currentPage === +pagesCount}
@@ -68,9 +67,7 @@ const Pagination = ({ itemsCount, side = PAGINATION_SIDE_RIGHT, listName, classN
           }
         }}
       >
-        <svg>
-          <use xlinkHref="/icons/sprites.svg#paginationArrowLeft" />
-        </svg>
+        <Icon id="paginationArrowLeft" />
       </PaginationArrow>
     </PaginationWrapper>
   ) : null

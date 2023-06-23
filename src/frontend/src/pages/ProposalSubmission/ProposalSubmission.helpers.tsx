@@ -133,7 +133,7 @@ export const checkStage1Validation = ({
     description === INPUT_STATUS_SUCCESS &&
     title === INPUT_STATUS_SUCCESS &&
     sourceCode === INPUT_STATUS_SUCCESS &&
-    invoice === INPUT_STATUS_SUCCESS
+    invoice !== INPUT_STATUS_ERROR
   )
 }
 
@@ -262,7 +262,7 @@ export const getPaymentsDiff = (
       const decimals =
         item1.token_address === 'XTZ'
           ? 6
-          : dipDupTokens.find(({ contract }) => contract === item1.token_address)?.metadata?.decimals ?? 0
+          : dipDupTokens.find(({ token_address }) => token_address === item1.token_address)?.metadata?.decimals ?? 0
 
       const symbol =
         item1.token_address === 'XTZ'

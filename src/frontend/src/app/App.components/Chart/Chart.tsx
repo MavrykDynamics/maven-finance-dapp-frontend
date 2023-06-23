@@ -84,7 +84,7 @@ export const Chart = ({
 
   if (data.plots.length < numberOfItemsToDisplay) {
     return (
-      <Plug>
+      <Plug className='chartPlug'>
         <div>
           <Icon id="stars" className="icon-stars" />
           <Icon id="cow" className="icon-cow" />

@@ -5,84 +5,70 @@ import { Dispatch } from 'redux'
 // helpers
 import { normalizeDoormanChartsData } from './helpers/normalizer'
 import { convertNumberForClient, convertNumberForContractCall } from 'utils/calcFunctions'
+import { unknownToError } from 'errors/error'
 
 import {
   SubscribeSmvkHistoryDataSubscription,
-  SubscribeAdressBalanceSubscription,
   SubscribeMvkTokenTotalSubscription,
+  SubscribeAdressBalanceSubscription,
 } from 'utils/__generated__/graphql'
 
 // types
 import { State, Props, StakeContext } from './stake.provider.types'
 
 // consts
-import { TOASTER_ERROR } from 'app/App.components/Toaster/Toaster.constants'
-import { STAKE_ACTION, UNSTAKE_ACTION } from './helpers/stake.consts'
 import { MVK_DECIMALS, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { UPDATE_USER_DATA } from 'reducers/actions/user.actions'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 // TODO move wallet to context to avoid redux logic inside Stake Context
 // redux
 import { State as ReduxState } from 'reducers'
-import { UPDATE_USER_DATA } from 'reducers/actions/user.actions'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import {
-  actionEndToaster,
-  actionStartToaster,
-} from 'app/App.components/Toaster/builtActions/actions-helpers.notifications'
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
+/** */
 export class StakeProviderClass extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
       context: {
         action: '',
+        updateStakeActionContext: this.updateStakeActionContext,
+        loadingToasterId: null,
+        updateStakeLoadingToasterId: this.updateStakeLoadingToasterId,
+
         totalStakedMvk: 0,
         totalSupply: 0,
         maximumTotalSupply: 0,
         mvkHistoryData: [],
         smvkHistoryData: [],
-        turnOfActionLoader: false,
         updateStakeHistoryData: this.updateStakeHistoryData,
         updateTotalStakedMvk: this.updateTotalStakedMvk,
         updateUserStakeData: this.updateUserStakeData,
-        updateStakeActionContext: this.updateStakeActionContext,
         updateTotalMvkToken: this.updateTotalMvkToken,
-        updateStakeActionLoaderContext: this.updateStakeActionLoaderContext,
         stakeMVK: this.stakeMVK,
         unstakeMVK: this.unstakeMVK,
       },
     }
   }
 
-  // Used only for action, on it's completion to turn of loading toaster and show success toaster
-  componentDidUpdate(): void {
-    if (this.state.context.turnOfActionLoader && this.state.context.action) {
-      this.props.dispatch(actionEndToaster(this.state.context.action))
-      this.updateStakeActionContext('')
-      this.updateStakeActionLoaderContext(false)
-    }
-  }
-
   updateStakeActionContext = (newAction: StakeContext['action']) => {
-    this.setState({
+    this.setState((prevState) => ({
       context: {
-        ...this.state.context,
+        ...prevState.context,
         action: newAction,
       },
-    })
+    }))
   }
 
-  updateStakeActionLoaderContext = (newLoaderValue: boolean) => {
-    this.setState({
+  updateStakeLoadingToasterId = (newLoaderToasterId: StakeContext['loadingToasterId']) => {
+    this.setState((prevState) => ({
       context: {
-        ...this.state.context,
-        turnOfActionLoader: newLoaderValue,
+        ...prevState.context,
+        loadingToasterId: newLoaderToasterId,
       },
-    })
+    }))
   }
 
   updateStakeHistoryData = (smvkStorage: SubscribeSmvkHistoryDataSubscription) => {
@@ -149,20 +135,12 @@ export class StakeProviderClass extends React.Component<Props, State> {
   }
 
   // ACTIONS
-  stakeMVK = async (amount: number) => {
-    const { accountPkh, dispatch, doormanAddress, mvkTokenAddress } = this.props
-
-    // check whether we can send transaction
-    if (!this.props.accountPkh) {
-      dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (!(amount > 0)) {
-      dispatch(showToaster(TOASTER_ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
-      return
-    }
-
+  stakeMVK = async (
+    amount: number,
+    accountPkh: string,
+    doormanAddress: string,
+    mvkTokenAddress: string,
+  ): Promise<{ actionSuccess: boolean; error: null | unknown }> => {
     try {
       // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
@@ -198,50 +176,26 @@ export class StakeProviderClass extends React.Component<Props, State> {
           .withContractCall(mvkTokenContract.methods.update_operators(removeOperators)))
       await batch?.send()
 
-      this.updateStakeActionContext(STAKE_ACTION)
-      dispatch(actionStartToaster(STAKE_ACTION))
+      return { actionSuccess: true, error: null }
     } catch (error) {
-      if (error instanceof Error) {
-        console.error(error)
-        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-      }
-      dispatch(toggleActionFullScreenLoader(false))
-      dispatch(toggleActionCompletion(false))
+      return { actionSuccess: false, error: unknownToError(error) }
     }
   }
 
-  unstakeMVK = async (amount: number) => {
-    const { dispatch, doormanAddress } = this.props
-
-    // check whether we can send transaction
-    if (!this.props.accountPkh) {
-      dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (!(amount > 0)) {
-      dispatch(showToaster(TOASTER_ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
-      return
-    }
-
+  unstakeMVK = async (amount: number, doormanAddress: string) => {
     try {
       // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(doormanAddress)
       await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
 
-      this.updateStakeActionContext(UNSTAKE_ACTION)
-      dispatch(actionStartToaster(UNSTAKE_ACTION))
+      return { actionSuccess: true, error: null }
     } catch (error) {
-      if (error instanceof Error) {
-        console.error(error)
-        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-      }
-      dispatch(toggleActionFullScreenLoader(false))
-      dispatch(toggleActionCompletion(false))
+      return { actionSuccess: false, error: unknownToError(error) }
     }
   }
 
+  /** */
   render(): React.ReactNode {
     return <stakeContext.Provider value={this.state.context}>{this.props.children}</stakeContext.Provider>
   }

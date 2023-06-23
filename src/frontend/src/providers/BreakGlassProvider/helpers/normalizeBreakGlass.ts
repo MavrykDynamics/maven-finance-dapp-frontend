@@ -1,3 +1,4 @@
+import { toCamelCase } from 'utils/toCamelCase'
 import { BreakGlassStatusType, BreakGlassStatusStorage, BreakGlassConfigType } from '../breakGlass.provider.type'
 
 export const normalizeBreakGlass = ({
@@ -26,7 +27,7 @@ export function normalizeBreakGlassStatus(storage: BreakGlassStatusType): BreakG
               lastUpdated: item.last_updated_at,
               methods: {
                 compound: item.compound_paused,
-                'farm claimed': item.farm_claimed_paused,
+                'farm claimed': item.farm_claim_paused,
                 unstake: item.unstake_paused,
               },
             }
@@ -174,4 +175,8 @@ export function normalizeBreakGlassStatus(storage: BreakGlassStatusType): BreakG
   ]
     .flat()
     .filter(Boolean)
+}
+
+export const getEntrypointText = (str: string) => {
+  return `%${toCamelCase(str).replace(/paused/i, '')}`
 }

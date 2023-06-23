@@ -5,11 +5,11 @@ import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 export interface LoansState {
   loanTokens: LoansStorage['loanTokens']
   vaults: VaultsStorage
-
   chartsData: LoansChartsDataType
-  loansControllerAddress: string
+  mvkTokenOperators: LoansStorage['mvkTokenOperators']
   config: {
     DAOFee: number
+    loansControllerAddress: string
   }
 
   isDataLoaded: boolean
@@ -23,20 +23,19 @@ const loansDefaultState: LoansState = {
     allVaultsIds: [],
     vaultsMapper: {},
   },
-  loansControllerAddress: '',
   chartsData: {
     borrowingChartData: [],
     collateralChartData: [],
     lendingChartData: [],
     lendBorrow24hDiff: {
-      last48hLending: 0,
       last24hLending: 0,
-      last48hBorrowing: 0,
       last24hBorrowing: 0,
     },
   },
+  mvkTokenOperators: [],
   config: {
     DAOFee: 0,
+    loansControllerAddress: '',
   },
   isDataLoaded: false,
 }

@@ -16,6 +16,11 @@ import { isValidLength, isValidHttpUrl } from '../../../utils/validatorFunctions
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { containSpaces } from 'app/App.utils/input'
+import { Info } from 'app/App.components/Info/Info.view'
+import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
+import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 
 export const StageOneForm = ({
   proposalId,
@@ -33,8 +38,19 @@ export const StageOneForm = ({
     governancePhase,
   } = useSelector((state: State) => state.governance.config)
 
+  const {
+    user: { isNewlyRegisteredSatellite },
+  } = useSelector((state: State) => state.wallet)
+
   const isProposalSubmitted = proposalId >= 0
   const isProposalPeriod = governancePhase === 'PROPOSAL'
+
+  function handleOnBlur<G extends HTMLInputElement | HTMLTextAreaElement>(e: React.FocusEvent<G>) {
+    if (containSpaces(e.target.value)) {
+      const trimmedValue = e.target.value.trim()
+      updateLocalProposalData({ [e.target.name]: trimmedValue }, proposalId)
+    }
+  }
 
   // update local state value and parent state due to inputted info
   const inputHandler = (
@@ -93,6 +109,7 @@ export const StageOneForm = ({
   return (
     <>
       <div className="stage-descr">{STAGE_1_DESCRIPTION}</div>
+      {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
 
       <ProposalSubmittionStageOneBody isProposalSubmitted={isProposalSubmitted}>
         {isProposalSubmitted ? (
@@ -114,6 +131,7 @@ export const StageOneForm = ({
               placeholder: 'Proposal Title',
               name: 'title',
               onChange: inputHandler,
+              onBlur: handleOnBlur,
             }}
           />
         )}
@@ -141,6 +159,7 @@ export const StageOneForm = ({
             placeholder="Descriprion of the proposal"
             value={currentProposal.description}
             onChange={inputHandler}
+            onBlur={handleOnBlur}
             inputStatus={currentProposalValidation.description}
             disabled={isProposalSubmitted || !isProposalPeriod}
             textAreaMaxLimit={proposalDescriptionMaxLength}
@@ -174,10 +193,23 @@ export const StageOneForm = ({
 
         {isProposalSubmitted ? (
           <div className="submitted-data source-code">
-            <div className="label">6 - Add an Invoice Image</div>
-            <a className="isCyan" href={currentProposal.invoice}>
-              {currentProposal.invoice}
-            </a>
+            <div className="label">6 - Invoice</div>
+            {currentProposal.invoice ? (
+              <div className="invoice-content">
+                <div className="image-style">
+                  <ImageWithPlug
+                    noImageIconId="image"
+                    imageLink={currentProposal.invoice}
+                    alt="invoice for the proposal"
+                  />
+                </div>{' '}
+                <a className="isCyan" href={currentProposal.invoice}>
+                  {currentProposal.invoice}
+                </a>
+              </div>
+            ) : (
+              <div className="value">No link for an invoice given</div>
+            )}
           </div>
         ) : (
           <div className="invoice">

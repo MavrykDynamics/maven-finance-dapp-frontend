@@ -68,7 +68,7 @@ export const BREAK_GLASS_DOORMAN_SUB = gql(`
     doorman(where: {admin: {_neq: ""}}) {
       address
       compound_paused
-      farm_claimed_paused
+      farm_claim_paused
       unstake_paused
       admin
       last_updated_at

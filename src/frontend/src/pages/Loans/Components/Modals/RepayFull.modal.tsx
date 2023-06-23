@@ -13,11 +13,11 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CommaNumber, formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { calcCollateralRatio, isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getCollateralRatioByPersentage, isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { Info } from 'app/App.components/Info/Info.view'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 
@@ -176,7 +176,7 @@ export const RepayFull = ({
                       <GradientDiagram
                         className="diagram"
                         colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                        currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
+                        currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
                       />
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
@@ -231,7 +231,7 @@ export const RepayFull = ({
                   <GradientDiagram
                     className="diagram"
                     colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                    currentPersentage={Math.max(0, Math.min(((futureCollateralRatio - 100) / 150) * 100, 100))}
+                    currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>

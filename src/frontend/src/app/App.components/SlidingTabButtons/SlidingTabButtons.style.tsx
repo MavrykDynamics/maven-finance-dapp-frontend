@@ -24,10 +24,12 @@ export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  &.transaction-history {
+  &.vault {
+    height: 40px;
+    width: 310px;
+
     button {
       white-space: nowrap;
-      margin: 0;
     }
   }
 `
@@ -41,7 +43,7 @@ export const ButtonStyled = styled.button<{ disabled: boolean; theme: MavrykThem
   padding: 0 22px;
   border-radius: ${BUTTON_RADIUS};
   user-select: none;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.lightTextColor};
   background: transparent;
 
   &.selected {

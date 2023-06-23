@@ -36,6 +36,9 @@ import {
   TableRow,
 } from 'app/App.components/Table'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
+import { Info } from 'app/App.components/Info/Info.view'
+import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
+import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 
 export const StageThreeForm = ({
   proposalId,
@@ -50,6 +53,7 @@ export const StageThreeForm = ({
     (state: State) => state.governance.config,
   )
   const { treasuryTokens } = useSelector((state: State) => state.treasury)
+  const { isNewlyRegisteredSatellite } = useSelector((state: State) => state.wallet.user)
 
   const isProposalRound = governancePhase === 'PROPOSAL'
 
@@ -110,7 +114,6 @@ export const StageThreeForm = ({
       {
         proposalPayments: (proposalPayments ?? []).concat({
           id: -(proposalPayments.length + 1),
-          internal_id: 0,
           title: '',
           to__id: '',
           token_amount: 0,
@@ -154,7 +157,7 @@ export const StageThreeForm = ({
   return (
     <>
       <div className="stage-descr">{STAGE_3_DESCRIPTION}</div>
-
+      {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
       <SubmitProposalGeneralData>
         <div className="submitted-data">
           <div className="label">1 - Proposal Title</div>
@@ -171,7 +174,6 @@ export const StageThreeForm = ({
           <CommaNumber className="value" value={fee} endingText="XTZ" />
         </div>
       </SubmitProposalGeneralData>
-
       <div className="payments-table">
         <div className="label">4 - Enter Proposal Payment Data</div>
         <Table className="editable-table with-header">

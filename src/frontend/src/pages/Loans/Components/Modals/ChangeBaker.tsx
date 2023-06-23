@@ -15,7 +15,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 import { DropDownXTZBakerType } from './CreateNewVault.modal'
 
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'

@@ -14,6 +14,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 
 import {
   calcCollateralRatio,
+  getCollateralRatioByPersentage,
   getLoansInputMaxAmount,
   isTezosAsset,
   loansInputValidation,
@@ -31,7 +32,7 @@ import {
 } from 'app/App.components/Input/Input.constants'
 
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
@@ -40,6 +41,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
+import { checkNan } from 'utils/checkNan'
 
 type InputState =
   | {
@@ -70,7 +72,7 @@ export const AddNewCollateral = ({
     currentCollateralRatio = 0,
     borrowedAmount = 0,
     borrowedAssetRate = 0,
-    avaliableLiq = 0,
+    availableLiquidity = 0,
     borrowCapacity = 0,
     existingCollaterals,
   } = data ?? {}
@@ -112,17 +114,22 @@ export const AddNewCollateral = ({
     const firstNotDisabledCollateralId = Number(
       Object.keys(mappedAvaliableCollaterals).find((id) => mappedAvaliableCollaterals[Number(id)].disabled === false),
     )
-    mappedAvaliableCollaterals[firstNotDisabledCollateralId].disabled = true
+
+    const mappedAvaliableCollateral = mappedAvaliableCollaterals[firstNotDisabledCollateralId]
+
+    if (mappedAvaliableCollateral) {
+      mappedAvaliableCollateral.disabled = true
+    }
 
     setInputData({
       amount: '0',
-      assetName: mappedAvaliableCollaterals[firstNotDisabledCollateralId].gqlName,
-      assetSymbol: mappedAvaliableCollaterals[firstNotDisabledCollateralId].symbol,
-      assetDisplayName: mappedAvaliableCollaterals[firstNotDisabledCollateralId].name,
+      assetName: mappedAvaliableCollateral.gqlName,
+      assetSymbol: mappedAvaliableCollateral.symbol,
+      assetDisplayName: mappedAvaliableCollateral.name,
       validationStatus: '',
-      id: mappedAvaliableCollaterals[firstNotDisabledCollateralId].id,
+      id: mappedAvaliableCollateral.id,
       ddItems: mappedAvaliableCollaterals,
-      selectedDdItem: mappedAvaliableCollaterals[firstNotDisabledCollateralId],
+      selectedDdItem: mappedAvaliableCollateral,
     })
 
     if (!show) {
@@ -137,7 +144,7 @@ export const AddNewCollateral = ({
 
   const { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance } = useMemo(() => {
     if (inputData) {
-      const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
+      const inputAmount = checkNan(parseFloat(inputData.amount))
       const selectedAsset = avaliableCollaterals.find(({ id }) => id === inputData?.id)
       const collateralRate = Number(selectedAsset?.rate)
 
@@ -147,14 +154,14 @@ export const AddNewCollateral = ({
 
       const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
       const futureBorrowCapacity = Math.min(
-        avaliableLiq,
+        Math.max(availableLiquidity, 0),
         futureCollateralBalance / 2 - borrowedAmount * borrowedAssetRate,
       )
 
       return { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance }
     }
     return { futureCollateralRatio: 0, futureBorrowCapacity: 0, futureCollateralBalance: 0 }
-  }, [inputData, avaliableCollaterals, vaultCollateralBalance, borrowedAmount, borrowedAssetRate, avaliableLiq])
+  }, [inputData, avaliableCollaterals, vaultCollateralBalance, borrowedAmount, borrowedAssetRate, availableLiquidity])
 
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
@@ -297,7 +304,7 @@ export const AddNewCollateral = ({
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((currentCollateralRatio - 100) / 150) * 100, 100))}
+                currentPersentage={getCollateralRatioByPersentage(currentCollateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -308,7 +315,7 @@ export const AddNewCollateral = ({
               <div className="name">
                 Available to Borrow{' '}
                 <CustomTooltip
-                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
                   iconId="info"
                   defaultStrokeColor={silverColor}
                 />
@@ -406,7 +413,7 @@ export const AddNewCollateral = ({
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((futureCollateralRatio - 100) / 150) * 100, 100))}
+                currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -417,7 +424,7 @@ export const AddNewCollateral = ({
               <div className="name">
                 Available to Borrow{' '}
                 <CustomTooltip
-                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
                   iconId="info"
                   defaultStrokeColor={silverColor}
                 />

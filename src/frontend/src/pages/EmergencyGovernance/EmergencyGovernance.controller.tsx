@@ -13,10 +13,10 @@ import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // providers
-import { DOORMAN_STATS_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { useBreakGlassContext } from 'providers/BreakGlassProvider/breakGlass.provider'
 import { useBreakGlassConfigInit } from 'providers/BreakGlassProvider/hooks/useBreakGlassConfigInit'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
 
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
@@ -31,7 +31,11 @@ export const EmergencyGovernance = () => {
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB])
+  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
+    skipAddressBalance: SUB_SKIP,
+    skipStakeHistory: SUB_SKIP,
+    skipUserBalance: SUB_SKIP,
+  })
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

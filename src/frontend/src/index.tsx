@@ -6,20 +6,23 @@ import { ApolloProvider } from '@apollo/client'
 // apollo
 import { client } from './apollo'
 
-// import { PersistGate } from "redux-persist/integration/react";
-
-import DarkThemeProvider from './app/App.components/DarkThemeProvider/DarkThemeProvider.view'
-// import { App, store, persistor } from "./app/App.controller";
-import { App, store } from './app/App.controller'
+// utils
 import reportWebVitals from './reportWebVitals'
 import { unregister } from './serviceWorker'
-import { GlobalStyle } from './styles'
 import { isMobile } from './utils/device-info'
+
+// providers
+import ToasterProvider from 'providers/ToasterProvider/toaster.provider'
+import BrealGlassProvider from 'providers/BreakGlassProvider/breakGlass.provider'
+import DarkThemeProvider from './app/App.components/DarkThemeProvider/DarkThemeProvider.view'
+
+import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
+import { App, store } from './app/App.controller'
 import Mobile from './app/App.components/Mobile/Mobile.view'
 
+import { GlobalStyle } from './styles'
 import './styles/fonts.css'
 import './styles/animations.css'
-import BrealGlassProvider from 'providers/BreakGlassProvider/breakGlass.provider'
 
 export const Root = () => {
   const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
@@ -28,12 +31,13 @@ export const Root = () => {
       <ApolloProvider client={client}>
         <Provider store={store}>
           <BrealGlassProvider>
-            {/* <PersistGate loading={null} persistor={persistor}> */}
             <DarkThemeProvider>
               <GlobalStyle />
-              {isMobile ? <Mobile /> : <App />}
+              <ToasterProvider>
+                {isMobile ? <Mobile /> : <App />}
+                <ToasterMessages />
+              </ToasterProvider>
             </DarkThemeProvider>
-            {/* </PersistGate> */}
           </BrealGlassProvider>
         </Provider>
       </ApolloProvider>

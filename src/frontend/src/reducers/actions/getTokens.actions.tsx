@@ -6,7 +6,6 @@ import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import {
   normalizeDipDupTokens,
-  normalizeDipDupContracts,
   normalizeMTokens,
   normalizeWhitelistTokens,
 } from 'utils/normalizers/DAPPTokens.normalizers'
@@ -57,20 +56,17 @@ export const getTokensForDAPP = () => async (dispatch: AppDispatch, getState: Ge
       DAPP_TOKENS_VARIABLE(address),
     )
 
-    const dipDupTokensStorage = storageTokens.dipdup_token_metadata
-    const dipDupContractsStorage = storageTokens.dipdup_contract_metadata
+    const dipDupTokensStorage = storageTokens.token
     const whitelistTokensStorage = storageTokens.treasury
     const mTokensStorage = storageTokens.m_token
 
     const dipDupTokens = normalizeDipDupTokens(dipDupTokensStorage)
-    const dipDupContracts = normalizeDipDupContracts(dipDupContractsStorage)
     const mTokens = normalizeMTokens(mTokensStorage)
     const whitelistTokens = normalizeWhitelistTokens(whitelistTokensStorage)
 
     dispatch({
       type: GET_DAPP_TOKENS,
       dipDupTokens,
-      dipDupContracts,
       whitelistTokens,
       mTokens,
     })

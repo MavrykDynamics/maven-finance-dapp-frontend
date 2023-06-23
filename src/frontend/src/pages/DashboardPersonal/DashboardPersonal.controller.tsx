@@ -27,7 +27,6 @@ import DelegationTab from './DashboardPersonalComponents/DelegationTab'
 import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
-import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 import { DashboardPersonalTabStyled } from './DashboardPersonalComponents/DashboardPersonalComponents.style'
 import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
@@ -40,6 +39,7 @@ import { DOORMAN_STATS_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -70,7 +70,11 @@ const DashboardPersonal = () => {
 
   const claimRewards = async () => await dispatch(claimAllRewardsAction())
 
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB])
+  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
+    skipAddressBalance: SUB_SKIP,
+    skipStakeHistory: SUB_SKIP,
+    skipUserBalance: SUB_SKIP,
+  })
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {

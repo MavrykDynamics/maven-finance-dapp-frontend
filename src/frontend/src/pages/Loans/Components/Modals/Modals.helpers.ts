@@ -3,7 +3,7 @@ import { CollateralType, DepositorsFlagType, LoansAssetDataType, LoansVaultType 
 import LoansPopupsProvider from './LoansModals.provider'
 
 export type LoansPopupsInputStateType = { amount: string; validationStatus: InputStatusType }
-export type VaultNameInputStateType = { name: string; validationStatus: InputStatusType }
+export type VaultNameInputStateType = { name: string; validationStatus: InputStatusType; errorMessage: string }
 export type LoansPopupsAddressInputStateType = { address: string; validationStatus: InputStatusType }
 export const DEFAULT_LOANS_INPUT_VALUE: LoansPopupsInputStateType = {
   amount: '0',
@@ -12,6 +12,50 @@ export const DEFAULT_LOANS_INPUT_VALUE: LoansPopupsInputStateType = {
 
 export const getOnBlurValue = (inputValue: string) => (inputValue === '' ? '0' : inputValue)
 export const getOnFocusValue = (inputValue: string) => (inputValue === '0' ? '' : inputValue)
+
+export type ConfirmAddLendingAssetDataType =
+  | (AddLendingAssetDataType & {
+      inputAmount: number
+    })
+  | null
+
+export type ConfirmRemoveLendingAssetDataType =
+  | (RemoveLendingAssetDataType & {
+      inputAmount: number
+    })
+  | null
+
+export type ConfirmBorrowPopupDataType = {
+  inputAmount: number
+  vaultId: number
+  borrowedAsset: LoansVaultType['borrowedAsset']
+  borrowCapacity: number
+  currentCollateralBalance: number
+  DAOFee: number
+  currentBorrowedAmount: number
+  scrollToCurrentVault?: () => void
+} | null
+
+export type ConfirmRepayPartPopupDataType = {
+  vaultId: number
+  vaultAddress: string
+  borrowedAsset: LoansVaultType['borrowedAsset']
+  borrowedAmount: number
+  currentCollateralBalance: number
+  borrowCapacity: number
+  inputAmount: number
+  scrollToCurrentVault?: () => void
+} | null
+
+export type ConfirmRepayFullPopupDataType = {
+  vaultId: number
+  vaultAddress: string
+  borrowedAsset: LoansVaultType['borrowedAsset']
+  feesAmount: number
+  borrowedAmount: number
+  currentCollateralBalance: number
+  borrowCapacity: number
+} | null
 
 export type CollateralPopupCommonDataType = {
   vaultAddress: string
@@ -25,7 +69,7 @@ export type CollateralPopupCommonDataType = {
 export type AddCollateralPopupDataType =
   | (CollateralPopupCommonDataType & {
       borrowCapacity: number
-      avaliableLiq: number
+      availableLiquidity: number
     })
   | null
 
@@ -33,7 +77,7 @@ export type AddNewCollateralDataProps =
   | (CollateralPopupCommonDataType & {
       existingCollaterals: Array<CollateralType>
       borrowCapacity: number
-      avaliableLiq: number
+      availableLiquidity: number
     })
   | null
 
@@ -56,7 +100,7 @@ export type RepayCollateralPopupDataBaseType = {
 
 export type RepayPartPopupDataType =
   | (RepayCollateralPopupDataBaseType & {
-      scrollToCurrentVault: () => void
+      scrollToCurrentVault?: () => void
     })
   | null
 
@@ -76,7 +120,7 @@ export type BorrowPopupDataType = {
   currentCollateralBalance: number
   DAOFee: number
   currentBorrowedAmount: number
-  scrollToCurrentVault: () => void
+  scrollToCurrentVault?: () => void
 } | null
 
 export type AddLendingAssetDataType =
@@ -90,11 +134,18 @@ export type AddLendingAssetDataType =
 export type RemoveLendingAssetDataType =
   | (AddLendingAssetDataType & {
       currentLendedAmount: number
+      reserveAmount: number
+      availableLiquidity: number
     })
   | null
 
 export type ChangeBakerPopupDataType = {
   bakerAddress: string | null
+  vaultAddress: string
+} | null
+
+export type ChangeVaultNamePopupDataType = {
+  vaultName: string
   vaultAddress: string
 } | null
 
@@ -122,6 +173,11 @@ export type ModalStateType<T = {}> = {
 }
 
 export type LoansPopupsContextStateType = {
+  confirmAddLendingAssetPopup: ModalStateType<ConfirmAddLendingAssetDataType>
+  confirmRemoveLendingAssetPopup: ModalStateType<ConfirmRemoveLendingAssetDataType>
+  confirmRepayPartPopup: ModalStateType<ConfirmRepayPartPopupDataType>
+  confirmRepayFullPopup: ModalStateType<ConfirmRepayFullPopupDataType>
+  confirmBorrowAssetPopup: ModalStateType<ConfirmBorrowPopupDataType>
   changeBakerPopup: ModalStateType<ChangeBakerPopupDataType>
   repayPartPopup: ModalStateType<RepayPartPopupDataType>
   repayFullPopup: ModalStateType<RepayFullPopupDataType>
@@ -131,11 +187,22 @@ export type LoansPopupsContextStateType = {
   withdrawCollateralPopup: ModalStateType<WithdrawCollateralPopupDataType>
   updateMvkOperatorPopup: ModalStateType<UpdateOperatorsPopupDataType>
   managePermissionsPopup: ModalStateType<ManagePermissionsPopupDataType>
+  changeVaultNamePopup: ModalStateType<ChangeVaultNamePopupDataType>
   createVaultPopup: ModalStateType<CreateVaultPopupDataType>
   addLendingAssetPopup: ModalStateType<AddLendingAssetDataType>
   removeLendingAssetPopup: ModalStateType<RemoveLendingAssetDataType>
   liquidateVaultPopup: ModalStateType<LiquidateVaultDataType>
 
+  openConfirmAddLendingAssetPopup: InstanceType<typeof LoansPopupsProvider>['openConfirmAddLendingAssetPopup']
+  closeConfirmAddLendingAssetPopup: InstanceType<typeof LoansPopupsProvider>['closeConfirmAddLendingAssetPopup']
+  openConfirmRemoveLendingAssetPopup: InstanceType<typeof LoansPopupsProvider>['openConfirmRemoveLendingAssetPopup']
+  closeConfirmRemoveLendingAssetPopup: InstanceType<typeof LoansPopupsProvider>['closeConfirmRemoveLendingAssetPopup']
+  openConfirmBorrowPopup: InstanceType<typeof LoansPopupsProvider>['openConfirmBorrowPopup']
+  closeConfirmBorrowPopup: InstanceType<typeof LoansPopupsProvider>['closeConfirmBorrowPopup']
+  openConfirmRepayPopup: InstanceType<typeof LoansPopupsProvider>['openConfirmRepayPopup']
+  closeConfirmRepayPopup: InstanceType<typeof LoansPopupsProvider>['closeConfirmRepayPopup']
+  openConfirmRepayFullPopup: InstanceType<typeof LoansPopupsProvider>['openConfirmRepayFullPopup']
+  closeConfirmRepayFullPopup: InstanceType<typeof LoansPopupsProvider>['closeConfirmRepayFullPopup']
   openChangeBakerPopup: InstanceType<typeof LoansPopupsProvider>['openChangeBakerPopup']
   closeChangeBakerPopup: InstanceType<typeof LoansPopupsProvider>['closeChangeBakerPopup']
   openBorrowPopup: InstanceType<typeof LoansPopupsProvider>['openBorrowPopup']
@@ -154,6 +221,8 @@ export type LoansPopupsContextStateType = {
   closeUpdateMvkOperatorsPopup: InstanceType<typeof LoansPopupsProvider>['closeUpdateMvkOperatorsPopup']
   openManagePermissionsPopup: InstanceType<typeof LoansPopupsProvider>['openManagePermissionsPopup']
   closeManagePermissionsPopup: InstanceType<typeof LoansPopupsProvider>['closeManagePermissionsPopup']
+  openChangeVaultNamePopup: InstanceType<typeof LoansPopupsProvider>['openChangeVaultNamePopup']
+  closeChangeVaultNamePopup: InstanceType<typeof LoansPopupsProvider>['closeChangeVaultNamePopup']
   openCreateVaultPopup: InstanceType<typeof LoansPopupsProvider>['openCreateVaultPopup']
   closeCreateVaultPopup: InstanceType<typeof LoansPopupsProvider>['closeCreateVaultPopup']
   openAddLendingAssetPopup: InstanceType<typeof LoansPopupsProvider>['openAddLendingAssetPopup']
@@ -170,6 +239,11 @@ const DEFAULT_LOANS_POPUP_STATE = {
 }
 
 export const DEFAULT_LOANS_POPUPS_STATE = {
+  confirmAddLendingAssetPopup: DEFAULT_LOANS_POPUP_STATE,
+  confirmRemoveLendingAssetPopup: DEFAULT_LOANS_POPUP_STATE,
+  confirmRepayPartPopup: DEFAULT_LOANS_POPUP_STATE,
+  confirmRepayFullPopup: DEFAULT_LOANS_POPUP_STATE,
+  confirmBorrowAssetPopup: DEFAULT_LOANS_POPUP_STATE,
   changeBakerPopup: DEFAULT_LOANS_POPUP_STATE,
   repayPartPopup: DEFAULT_LOANS_POPUP_STATE,
   repayFullPopup: DEFAULT_LOANS_POPUP_STATE,
@@ -179,6 +253,7 @@ export const DEFAULT_LOANS_POPUPS_STATE = {
   withdrawCollateralPopup: DEFAULT_LOANS_POPUP_STATE,
   updateMvkOperatorPopup: DEFAULT_LOANS_POPUP_STATE,
   managePermissionsPopup: DEFAULT_LOANS_POPUP_STATE,
+  changeVaultNamePopup: DEFAULT_LOANS_POPUP_STATE,
   createVaultPopup: DEFAULT_LOANS_POPUP_STATE,
   addLendingAssetPopup: DEFAULT_LOANS_POPUP_STATE,
   removeLendingAssetPopup: DEFAULT_LOANS_POPUP_STATE,

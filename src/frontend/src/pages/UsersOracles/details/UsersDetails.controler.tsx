@@ -16,7 +16,7 @@ import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 const UserDetails = () => {
   const dispatch = useDispatch()
-  const { feedCategories, feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { feedsCategories, feedsLedger } = useSelector((state: State) => state.dataFeeds)
   let { userId } = useParams<{ userId: string }>()
 
   let [selectedUser, setSelectedUser] = useState<null | UserType>(null)
@@ -40,7 +40,7 @@ const UserDetails = () => {
   }, [dispatch, userId])
 
   return (
-    <UserDetailsView user={selectedUser} feeds={sortedFeeds} handleSelect={handleSelect} categories={feedCategories} />
+    <UserDetailsView user={selectedUser} feeds={sortedFeeds} handleSelect={handleSelect} categories={feedsCategories} />
   )
 }
 

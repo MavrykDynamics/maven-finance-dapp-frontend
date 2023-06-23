@@ -14,7 +14,7 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
     font-size: 14px;
     line-height: 24px;
     color: ${({ theme }) => theme.textColor};
-    margin-bottom: 50px;
+    margin-bottom: 30px;
   }
 
   .bytes-label {
@@ -65,12 +65,43 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
 
     a {
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 600;
+    }
+
+    .invoice-content {
+      display: flex;
+      align-items: center;
+      column-gap: 10px;
+    }
+
+    .image-style {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 120px;
+      height: 133px;
+
+      border-radius: 10px;
+      border: 1px solid ${({ theme }) => theme.valueColor};
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      svg {
+        height: 20px;
+        width: 20px;
+
+        fill: ${({ theme }) => theme.textColor};
+      }
     }
 
     .value {
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 600;
       color: ${({ theme }) => theme.textColor};
     }
   }
@@ -81,7 +112,7 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
     top: -20px;
     left: 0;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .description {
@@ -205,12 +236,12 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>
 // Proposal submittion general styles
 export const ProposalSubmittionButtons = styled.div<{ theme: MavrykTheme }>`
   margin-top: 40px;
-  display: grid;
-  grid-template-columns: 220px 220px 220px;
+  display: flex;
   justify-content: flex-end;
   column-gap: 10px;
 
   .btn-wrapper {
+    width: 220px;
     position: relative;
 
     .tooltip {

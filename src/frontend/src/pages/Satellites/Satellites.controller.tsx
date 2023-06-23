@@ -26,7 +26,7 @@ import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.ac
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
 // styles
-import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
+import { SatelliteGovernanceStatsInfo } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { EmptyContainer } from 'app/App.style'
@@ -36,6 +36,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
 
 const Satellites = () => {
   const dispatch = useDispatch()
@@ -43,7 +44,11 @@ const Satellites = () => {
   const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
 
-  const { isIntialLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
+  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
+    skipAddressBalance: SUB_SKIP,
+    skipStakeHistory: SUB_SKIP,
+    skipMvkTokenTotal: SUB_SKIP,
+  })
   const {
     user: { isSatellite, userTokens },
   } = useSelector((state: State) => state.wallet)
@@ -79,23 +84,23 @@ const Satellites = () => {
       <PageContent>
         <SatellitesOverviewStyled>
           <InfoBlockWrapper>
-            <SmallInfoBlock>
+            <SatelliteGovernanceStatsInfo>
               <h3>Total Delegated MVK</h3>
-              <div className="info-content">
+              <div className="value">
                 {tabsInfo.totalDelegetedMVK}
                 <a href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle">
                   <CustomTooltip iconId="info" text="All staked MVK that is delegated to satellites by users" />
                 </a>
               </div>
-            </SmallInfoBlock>
-            <SmallInfoBlock>
+            </SatelliteGovernanceStatsInfo>
+            <SatelliteGovernanceStatsInfo>
               <h3>Total Satellites & Oracles</h3>
-              <div className="info-content">{tabsInfo.totalSatelliteOracles}</div>
-            </SmallInfoBlock>
-            <SmallInfoBlock>
+              <div className="value">{tabsInfo.totalSatelliteOracles}</div>
+            </SatelliteGovernanceStatsInfo>
+            <SatelliteGovernanceStatsInfo>
               <h3>Number of Data Feeds</h3>
-              <div className="info-content">{tabsInfo.numberOfDataFeeds}</div>
-            </SmallInfoBlock>
+              <div className="value">{tabsInfo.numberOfDataFeeds}</div>
+            </SatelliteGovernanceStatsInfo>
           </InfoBlockWrapper>
 
           {isLoading || isDoormanLoading ? (
