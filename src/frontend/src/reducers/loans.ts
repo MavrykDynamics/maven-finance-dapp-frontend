@@ -1,13 +1,12 @@
 import { GET_LOANS_STORAGE } from 'pages/Loans/Actions/getLoansData.actions'
-import { LoansChartsDataType, LoansStorage, VaultsStorage } from 'utils/TypesAndInterfaces/Loans'
+import { LoansStorage, VaultsStorage } from 'utils/TypesAndInterfaces/Loans'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface LoansState {
   loanTokens: LoansStorage['loanTokens']
   vaults: VaultsStorage
+  mvkTokenOperators: LoansStorage['mvkTokenOperators']
 
-  chartsData: LoansChartsDataType
-  loansControllerAddress: string
   config: {
     DAOFee: number
   }
@@ -23,18 +22,7 @@ const loansDefaultState: LoansState = {
     allVaultsIds: [],
     vaultsMapper: {},
   },
-  loansControllerAddress: '',
-  chartsData: {
-    borrowingChartData: [],
-    collateralChartData: [],
-    lendingChartData: [],
-    lendBorrow24hDiff: {
-      last48hLending: 0,
-      last24hLending: 0,
-      last48hBorrowing: 0,
-      last24hBorrowing: 0,
-    },
-  },
+  mvkTokenOperators: [],
   config: {
     DAOFee: 0,
   },

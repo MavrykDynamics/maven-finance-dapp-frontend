@@ -1,37 +1,57 @@
 import TokensProvider from './tokens.provider'
 
-import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { normalizeTokenPrices } from './hooks/tokens.normalizer'
+import { normalizeTokenPrices } from './helpers/tokens.normalizer'
 
-export type XtxBakersType = {
-  otherBakers: Array<XtzBakerType>
-  dao: (XtzBakerType & { description: string; isDisabled: boolean }) | null
-  mavrykDynamics: (XtzBakerType & { description: string; isDisabled: boolean }) | null
+export type TokenAddressType = string
+
+// regular token
+export interface TokenMetadataType {
+  id: number
+  address: TokenAddressType
+  name: string
+  symbol: string
+  decimals: number
+  icon: string
+  type: TokenType
+  loanData?: {
+    indexerName: string
+    isProtectedCollateral?: boolean
+  }
+}
+
+// loan token (market)
+export interface LoansTokenMetadataType extends TokenMetadataType {
+  loanData: {
+    indexerName: string
+  }
+}
+
+// collareral token
+export interface LoansCollateralTokenMetadataType extends LoansTokenMetadataType {
+  loanData: {
+    indexerName: string
+    isProtectedCollateral: boolean
+  }
+}
+
+// mToken in user store type
+export type UserMTokenType = {
+  lendedAmount: number
+  tokenAddress: TokenAddressType
+  rewardIndex: number
+  rewardsEarned: number
 }
 
 type TokensPricesType = ReturnType<typeof normalizeTokenPrices>
 
-export type WhiteListTokensType = Array<{
-  symbol: string
-  address: string
-  shortSymbol: TokenType
-  id: number
-}>
-
+// Context types
 export type TokensContext = {
-  // TODO: implement later
-  // data
-  // dipDupTokens: Array<DipDupTokensGraphQl>
-  // avaliableCollaterals: Array<AvaliableCollateralType> | null
-  // whitelistTokens: WhiteListTokensType
-  // mTokens: Array<M_Token>
-  // internal helper state
-  // collateralData: GetAvaliableCollateralsQuery | null
-  // actions
-  // initializeDAPPTokens: InstanceType<typeof TokensProvider>['initializeDAPPTokens']
-  // updateCollateralsData: InstanceType<typeof TokensProvider>['updateCollateralsData']
-  // updateAvaliableCollaterals: InstanceType<typeof TokensProvider>['updateAvaliableCollaterals']
+  // 3 bottom fields updates from updateTokensMetadata
+  collateralTokens: Array<TokenAddressType>
+  mTokens: Array<TokenAddressType>
+  tokensMetadata: Record<TokenAddressType, TokenMetadataType>
+  updateTokensMetadata: InstanceType<typeof TokensProvider>['updateTokensMetadata']
 
   tokensPrices: TokensPricesType
   updateTokensPrices: InstanceType<typeof TokensProvider>['updateTokensPrices']

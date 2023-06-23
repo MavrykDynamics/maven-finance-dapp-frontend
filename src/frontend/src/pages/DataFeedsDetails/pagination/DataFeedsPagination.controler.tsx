@@ -6,20 +6,16 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
 
 // consts
-import { SUB_SKIP } from 'utils/api/apollo.consts'
 import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
-import { useFeedsStats } from 'providers/DataFeedsProvider/hooks/useFeedsStats'
 
 // style
 import { SatellitePaginationStyled } from 'pages/SatelliteDetails/SatellitePagination/SatellitePagination.style'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
 const DataFeedsPagination = () => {
   let { feedId = '' } = useParams<{ feedId: string }>()
 
-  const { feedsAddresses } = useFeedsStats({
-    skipFeedsRewardsSubsciption: SUB_SKIP,
-    skipFeedsAmountSubsciption: SUB_SKIP,
-  })
+  const { feedsAddresses } = useDataFeedsContext()
 
   const currentFeedIdx = useMemo(
     () => feedsAddresses.findIndex((address) => address === feedId),

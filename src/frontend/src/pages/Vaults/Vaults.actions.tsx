@@ -3,10 +3,8 @@ import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.ac
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
-import { normalizeOracleLatestPrice } from './Vaults.helpers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
-import { fetchFromIndexer } from 'gql/fetchGraphQL'
 
 import { AppDispatch, GetState } from '../../app/App.controller'
 import { State } from 'reducers'
@@ -20,11 +18,6 @@ import {
   TOASTER_SUCCESS,
   TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
 } from 'app/App.components/Toaster/Toaster.constants'
-import {
-  ORACLE_AGGREGATOR_LATEST_PRICE_QUERY,
-  ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME,
-  ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE,
-} from 'gql/queries/getVaultsStorage'
 
 // Liquidate Vault
 export const liquidateVault =
@@ -150,20 +143,3 @@ export const markForLiquidation =
       dispatch(toggleActionCompletion(false))
     }
   }
-
-// Oracle Latest Price
-export const getOracleAggregatorLatestPrice = async (oracleId: string) => {
-  try {
-    const storage = await fetchFromIndexer(
-      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY,
-      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME,
-      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE(oracleId),
-    )
-
-    const oracleLatestPrice = normalizeOracleLatestPrice(storage)
-    return oracleLatestPrice
-  } catch (e) {
-    console.error('getOracleAggregatorLatestPrice error: ', e)
-    return null
-  }
-}

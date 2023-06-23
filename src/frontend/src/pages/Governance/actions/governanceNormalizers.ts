@@ -11,7 +11,6 @@ import { MVK_DECIMALS } from 'utils/constants'
 
 export const normalizeProposal = (
   item: GovernanceProposalGraphQL,
-  dipDupTokens: State['tokens']['dipDupTokens'],
   { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: State['governance']['config'],
 ) => {
   const proposalConvertedStatus = getProposalStatus(
@@ -31,8 +30,8 @@ export const normalizeProposal = (
 
   return {
     id: item.id,
-    proposerId: item.proposer_id,
-    governanceId: item.governance_id,
+    proposerId: item.proposer.address,
+    governanceId: item.governance.address,
 
     status: proposalConvertedStatus,
     anyCanExecute,
@@ -68,25 +67,21 @@ export const normalizeProposal = (
       isLocalBytes: false,
     })),
 
-    proposalPayments: item.payments.map(({ governance_proposal, governance_proposal_id, ...paymentData }) => {
-      // TODO: remove this check with tokens reorganization
-      const decimals =
-        paymentData.token_address?.toLowerCase() === 'xtz'
-          ? 6
-          : dipDupTokens?.find(({ contract }) => contract === paymentData.token_address)?.metadata?.decimals ?? 0
-
-      return {
-        ...paymentData,
-        // we're getting amount * by 10 in decimals grage, need to parse it to initial user input
-        token_amount: Number(paymentData.token_amount) / Math.pow(10, Number(decimals)) ?? 0,
-      }
-    }),
+    proposalPayments: item.payments
+      .map(({ to_, title, id, token_id, token_amount, token }) => ({
+        id,
+        to__id: to_?.address,
+        title,
+        token_address: token?.token_address,
+        token_id,
+        token_amount,
+      }))
+      .filter(({ token_address, to__id, token_amount }) => token_address && to__id && token_amount),
   }
 }
 
 export const normalizeGovernanceProposals = (
   proposals: Array<GovernanceProposalGraphQL>,
-  dipDupTokens: State['tokens']['dipDupTokens'],
   governanceConfig: State['governance']['config'],
 ): Omit<Omit<State['governance'], 'isLoaded'>, 'config'> => {
   const { governancePhase, timelockProposalId } = governanceConfig
@@ -94,31 +89,30 @@ export const normalizeGovernanceProposals = (
 
   return proposals.reduce<Omit<Omit<State['governance'], 'isLoaded'>, 'config'>>(
     (acc, proposalFromGQL) => {
-      const normalizedProposal = normalizeProposal(proposalFromGQL, dipDupTokens, governanceConfig)
+      const normalizedProposal = normalizeProposal(proposalFromGQL, governanceConfig)
 
       const { id, executed, status, currentRoundProposal, paymentProcessed } = normalizedProposal
 
       acc.proposalsMapper[id] = normalizedProposal
       acc.allProposalsIds.push(id)
 
+      const isPastProposal =
+        status === ProposalStatus.DROPPED || status === ProposalStatus.EXECUTED || status === ProposalStatus.DEFEATED
+
       // Add id of proposal to be executed proposal
-      if (isProposalRound && !executed && timelockProposalId === id && status !== ProposalStatus.DROPPED) {
+      if (isProposalRound && !executed && timelockProposalId === id && !isPastProposal) {
         acc.waitingProposalsIdsToBeExecuted.push(id)
         return acc
       }
 
       // Add id of proposal to be paid proposal
-      if (isProposalRound && executed && timelockProposalId === id && !paymentProcessed) {
+      if (isProposalRound && !executed && timelockProposalId === id && !paymentProcessed && !isPastProposal) {
         acc.waitingProposalsIdsToBePaid.push(id)
         return acc
       }
 
       // Add id of past proposal
-      if (
-        status === ProposalStatus.DROPPED ||
-        status === ProposalStatus.EXECUTED ||
-        status === ProposalStatus.DEFEATED
-      ) {
+      if (isPastProposal) {
         acc.pastProposalsIds.push(id)
         return acc
       }

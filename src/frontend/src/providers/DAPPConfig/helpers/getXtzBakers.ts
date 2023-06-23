@@ -1,13 +1,32 @@
-import { BakeryDelegateDataType, getBakeryDelegateData } from 'pages/Loans/LoansFethcers'
-
 import { convertNumberForClient } from 'utils/calcFunctions'
-
-import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 
 import BakersMocked from './bakers.json'
 import { XTZ_DECIMALS } from 'utils/constants'
+import { api } from 'utils/api/api'
+import { z } from 'zod'
 
-export const getFreeSpace = (data: BakeryDelegateDataType) => {
+// types
+export type XtzBakerType = {
+  logo: string
+  name: string
+  address: string
+  fee: number
+  yield: number
+  freespace: number
+  efficiency?: number
+  isDisabled?: boolean
+  description?: string
+}
+
+const bakeryDelegateDataSchema = z.object({
+  balance: z.number(),
+  delegatedBalance: z.number(),
+})
+
+type BakeryDelegateDataType = z.infer<typeof bakeryDelegateDataSchema>
+
+// helpers
+const getFreeSpace = (data: BakeryDelegateDataType) => {
   if (data.balance === -1) return -1
 
   const freeSpace = data.balance * 9 - data.delegatedBalance
@@ -25,21 +44,28 @@ export const getXTZBakers = async (): Promise<{
 
     const otherBakers = process.env.REACT_APP_NETWORK === 'ghostnet' ? GHOSTNET_BAKERS : BakersMocked
 
-    // TODO: use api with zod
-    const values = await Promise.all([
-      getBakeryDelegateData(DAO_BAKER_STATIC_DATA.address),
-      getBakeryDelegateData(MAVRYK_DYNAMICS_BAKER_STATIC_DATA.address),
+    const [{ data: daoBakerData }, { data: mavrykDynamicsBakerData }] = await Promise.all([
+      api<BakeryDelegateDataType>(
+        `https://api.tzkt.io/v1/delegates/${DAO_BAKER_STATIC_DATA.address}`,
+        {},
+        bakeryDelegateDataSchema,
+      ),
+      api<BakeryDelegateDataType>(
+        `https://api.tzkt.io/v1/delegates/${MAVRYK_DYNAMICS_BAKER_STATIC_DATA.address}`,
+        {},
+        bakeryDelegateDataSchema,
+      ),
     ])
 
     return {
       otherBakers,
       dao: {
         ...DAO_BAKER_STATIC_DATA,
-        freespace: getFreeSpace(values[0] as BakeryDelegateDataType),
+        freespace: getFreeSpace(daoBakerData),
       },
       mavrykDynamics: {
         ...MAVRYK_DYNAMICS_BAKER_STATIC_DATA,
-        freespace: getFreeSpace(values[1] as BakeryDelegateDataType),
+        freespace: getFreeSpace(mavrykDynamicsBakerData),
       },
     }
   } catch (e) {

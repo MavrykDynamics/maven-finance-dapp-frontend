@@ -6,24 +6,30 @@ import { ApolloProvider } from '@apollo/client'
 // apollo
 import { client } from './apollo'
 
+// utils
 import { App, store } from './app/App.controller'
 import reportWebVitals from './reportWebVitals'
-import { unregister } from './serviceWorker'
-import { GlobalStyle } from './styles'
 import { isMobile } from './utils/device-info'
+import { unregister } from './serviceWorker'
+
+// view
+import { GlobalStyle } from './styles'
+import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
 import Mobile from './app/App.components/Mobile/Mobile.view'
 
 // providers
-import DAPPConfigProvider, { dappContext } from 'providers/DAPPConfig/dappConfig.provider'
 import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider'
+import DAPPConfigProvider from 'providers/DAPPConfig/dappConfig.provider'
 import DataFeedsProvider from 'providers/DataFeedsProvider/dataFeeds.provider'
 import TokensProvider from 'providers/TokensProvider/tokens.provider'
+import ToasterProvider from 'providers/ToasterProvider/toaster.provider'
+import UserProvider from 'providers/UserProvider/user.provider'
+import StakeProvider from 'providers/StakeProvider/stake.provider'
 import DarkThemeProvider from './app/App.components/DarkThemeProvider/DarkThemeProvider.view'
 
 import './styles/fonts.css'
 import './styles/animations.css'
 
-// TODO: implement tokens context while tokens reorganization task
 export const Root = () => {
   const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
   return (
@@ -31,21 +37,23 @@ export const Root = () => {
       <ApolloProvider client={client}>
         <Provider store={store}>
           <DAPPConfigProvider>
-            {/* TODO: remove after indexer update */}
-            <dappContext.Consumer>
-              {(value) => (
-                <SatellitesProvider>
-                  <DataFeedsProvider dipDupContracts={value.dipDupContracts}>
-                    <TokensProvider>
+            <DataFeedsProvider>
+              <TokensProvider>
+                <UserProvider>
+                  <SatellitesProvider>
+                    <StakeProvider>
                       <DarkThemeProvider>
                         <GlobalStyle />
-                        {isMobile ? <Mobile /> : <App />}
+                        <ToasterProvider>
+                          {isMobile ? <Mobile /> : <App />}
+                          <ToasterMessages />
+                        </ToasterProvider>
                       </DarkThemeProvider>
-                    </TokensProvider>
-                  </DataFeedsProvider>
-                </SatellitesProvider>
-              )}
-            </dappContext.Consumer>
+                    </StakeProvider>
+                  </SatellitesProvider>
+                </UserProvider>
+              </TokensProvider>
+            </DataFeedsProvider>
           </DAPPConfigProvider>
         </Provider>
       </ApolloProvider>

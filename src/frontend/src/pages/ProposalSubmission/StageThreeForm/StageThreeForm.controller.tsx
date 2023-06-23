@@ -12,7 +12,7 @@ import { getValidityStageThreeTable } from '../ProposalSubmission.helpers'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
+import { DDItemId, DropDown, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
 import Button from 'app/App.components/Button/NewButton'
@@ -37,6 +37,13 @@ import {
 } from 'app/App.components/Table'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { reduceTreasuryAssets } from 'pages/Treasury/helpers/treasury.utils'
+import { Info } from 'app/App.components/Info/Info.view'
+import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
+import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 export const StageThreeForm = ({
   proposalId,
@@ -47,6 +54,8 @@ export const StageThreeForm = ({
 }: StageThreeFormProps) => {
   const { proposalPayments, locked, title } = currentProposal
 
+  const { tokensMetadata } = useTokensContext()
+
   const {
     maxLengths: {
       governance: { proposalMetadataTitleMaxLength },
@@ -54,16 +63,28 @@ export const StageThreeForm = ({
   } = useDAPPConfigContext()
 
   const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
-  const { treasuryTokens } = useSelector((state: State) => state.treasury)
+
+  const { treasuryStorage } = useSelector((state: State) => state.treasury)
+  const treasuryTokens = useMemo(() => reduceTreasuryAssets(treasuryStorage), [treasuryStorage])
+
+  const { isNewlyRegisteredSatellite } = useSelector((state: State) => state.wallet.user)
 
   const isProposalRound = governancePhase === 'PROPOSAL'
 
-  const ddItems = useMemo(() => {
-    return Object.keys(treasuryTokens).map((tokenAddress) => ({
-      content: <DropDownJsxChild>{treasuryTokens[tokenAddress].name}</DropDownJsxChild>,
-      id: tokenAddress,
-    }))
-  }, [treasuryTokens])
+  const allowedTokensForDD = useMemo(() => {
+    return Object.keys(treasuryTokens).reduce<Array<DropDownItemType>>((acc, tokenAddress) => {
+      const allowedToken = getTokenDataByAddress({ tokenAddress, tokensMetadata })
+
+      if (!allowedToken) return acc
+
+      acc.push({
+        content: <DropDownJsxChild>{allowedToken.symbol}</DropDownJsxChild>,
+        id: tokenAddress,
+      })
+
+      return acc
+    }, [])
+  }, [tokensMetadata, treasuryTokens])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: string | number } },
@@ -106,7 +127,7 @@ export const StageThreeForm = ({
   }
 
   const handleAddRow = () => {
-    const paymentToken = Object.values(treasuryTokens)?.[0] ?? null
+    const paymentToken = Object.keys(treasuryTokens)?.[0] ?? null
 
     if (!paymentToken) return
 
@@ -115,13 +136,12 @@ export const StageThreeForm = ({
       {
         proposalPayments: (proposalPayments ?? []).concat({
           id: -(proposalPayments.length + 1),
-          internal_id: 0,
           title: '',
           to__id: '',
           token_amount: 0,
           // TODO: implement token id's when it's fixed on backend
           token_id: 0,
-          token_address: paymentToken.tokenAddress,
+          token_address: paymentToken,
         }),
       },
       proposalId,
@@ -159,7 +179,7 @@ export const StageThreeForm = ({
   return (
     <>
       <div className="stage-descr">{STAGE_3_DESCRIPTION}</div>
-
+      {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
       <SubmitProposalGeneralData>
         <div className="submitted-data">
           <div className="label">1 - Proposal Title</div>
@@ -176,7 +196,6 @@ export const StageThreeForm = ({
           <CommaNumber className="value" value={fee} endingText="XTZ" />
         </div>
       </SubmitProposalGeneralData>
-
       <div className="payments-table">
         <div className="label">4 - Enter Proposal Payment Data</div>
         <Table className="editable-table with-header">
@@ -218,11 +237,24 @@ export const StageThreeForm = ({
 
                 if (payment.to__id === null || payment.title === null || !payment.token_address) return null
 
-                const token = treasuryTokens[payment.token_address]
+                const tokenAddress = payment.token_address
 
-                if (!token) return null
+                const allowedToken = getTokenDataByAddress({ tokenAddress, tokensMetadata })
+                const tokenBalance = treasuryTokens[tokenAddress].balance
 
-                const { name, tokenAddress, balance } = token
+                if (!tokenBalance || !tokenAddress || !allowedToken) return null
+
+                const { symbol, decimals } = allowedToken
+
+                const maxAmount = convertNumberForClient({
+                  number: tokenBalance,
+                  grade: decimals,
+                })
+
+                const tokenAmount = convertNumberForClient({
+                  number: payment.token_amount ?? 0,
+                  grade: decimals,
+                })
 
                 return (
                   <TableRow className="editable-row" key={payment.id}>
@@ -272,7 +304,7 @@ export const StageThreeForm = ({
 
                     <TableCell width="25%" className="hide-overflow">
                       {isTableDisabled ? (
-                        <CommaNumber value={Number(payment.token_amount)} endingText={name} />
+                        <CommaNumber value={tokenAmount} endingText={symbol} />
                       ) : (
                         <Input
                           settings={{
@@ -281,10 +313,10 @@ export const StageThreeForm = ({
                           }}
                           inputProps={{
                             placeholder: 'Enter Tokens Amount',
-                            value: String(payment.token_amount),
+                            value: String(tokenAmount),
                             type: 'number',
                             name: 'token_amount',
-                            onChange: (e) => handleChange(e, rowIdx, { tokenBalance: balance }),
+                            onChange: (e) => handleChange(e, rowIdx, { tokenBalance: maxAmount }),
                           }}
                         />
                       )}
@@ -292,13 +324,13 @@ export const StageThreeForm = ({
 
                     <TableCell width="25%">
                       {isTableDisabled ? (
-                        name
+                        symbol
                       ) : (
                         <DropDown
                           placeholder={'Select payment method'}
                           className="stage-3-dropDown"
-                          items={ddItems}
-                          activeItem={ddItems.find(({ id }) => tokenAddress === id)}
+                          items={allowedTokensForDD}
+                          activeItem={allowedTokensForDD.find(({ id }) => tokenAddress === id)}
                           clickItem={(newSelectedAddress: DDItemId) => {
                             handleChange(
                               {

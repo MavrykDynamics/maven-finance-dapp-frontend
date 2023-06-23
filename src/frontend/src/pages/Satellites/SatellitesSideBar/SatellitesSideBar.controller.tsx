@@ -15,6 +15,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -62,9 +63,10 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
   } = useSelector((state: State) => state.wallet)
 
   const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
-  // onChain data points subscription
-  const { feedsAddresses, rewardsAmount } = useFeedsStats()
+
   const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
+  const { rewardsAmount } = useFeedsStats()
+  const { feedsAddresses } = useDataFeedsContext()
 
   const averageRevard =
     convertNumberForClient({ number: rewardsAmount, grade: MVK_DECIMALS }) / Math.max(feedsAddresses.length, 1)

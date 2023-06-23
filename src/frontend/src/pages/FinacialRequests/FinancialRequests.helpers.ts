@@ -1,34 +1,32 @@
-import { State } from 'reducers'
-import { calcWithoutMu, calcWithoutPrecision } from 'utils/calcFunctions'
+import { calcWithoutPrecision } from 'utils/calcFunctions'
 import { FinancialRequestRecord, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import { GovernanceFinancialRequestGraphQL } from '../../utils/TypesAndInterfaces/Governance'
 import { FinancialRequestStoreType } from 'reducers/financialRequests'
 
-export const normalizeFinancialRequests = (
-  storage: {
-    governance_financial_request: Array<GovernanceFinancialRequestGraphQL>
-  },
-  dipDupTokens: State['tokens']['dipDupTokens'],
-) => {
+export const normalizeFinancialRequests = (storage: {
+  governance_financial_request: Array<GovernanceFinancialRequestGraphQL>
+}) => {
   const { financialRequestMapper, frIds } = storage?.governance_financial_request.reduce<{
     financialRequestMapper: Record<number, FinancialRequestRecord>
     frIds: number[]
   }>(
     (acc, item) => {
-      const tokenName = dipDupTokens.find(({ contract }) => contract === item.token_address)?.metadata.symbol ?? 'MVK'
+      const { token_address } = item.token
+
+      if (!token_address) return acc
+
       const frItem = {
-        tokenAddress: item.token_address,
+        tokenAddress: token_address,
         id: item.id,
         type: item.request_type,
         purpose: item.request_purpose,
-        requesterAddress: item.requester_id,
+        requesterAddress: item.requester.address,
         requestedTime: item.requested_datetime,
         governanceContract: item.governance_financial.governance.address,
-        governanceFinId: item.governance_financial_id,
-        treasuryContract: item.treasury_id,
-        votingTillTime: item.execution_datetime ?? item.expiration_datetime,
-        tokensAmount: tokenName === 'MVK' ? calcWithoutPrecision(item.token_amount) : calcWithoutMu(item.token_amount),
-        tokenName: tokenName,
+        governanceFinId: item.governance_financial.address,
+        treasuryContract: item.treasury.address,
+        tokensAmount: item.token_amount,
+        votingTillTime: item.executed ? item.execution_datetime : item.expiration_datetime,
         executed: item.executed,
         status: item.status,
 

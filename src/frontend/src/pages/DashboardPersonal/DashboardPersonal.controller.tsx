@@ -27,7 +27,6 @@ import DelegationTab from './DashboardPersonalComponents/DelegationTab'
 import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
-import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 import { DashboardPersonalTabStyled } from './DashboardPersonalComponents/DashboardPersonalComponents.style'
 import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
@@ -38,15 +37,23 @@ import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { updateUserData } from 'reducers/actions/user.actions'
-import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 import { SUB_SKIP } from 'utils/api/apollo.consts'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
-  const { tokensPrices } = useSelector((state: State) => state.tokens)
+  const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
+  const { userTokensBalances } = useUserContext()
+
+  const {
+    mvkTokenAddress: { address: mvkTokenAddress },
+  } = useSelector((state: State) => state.contractAddresses)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
@@ -54,7 +61,6 @@ const DashboardPersonal = () => {
   const {
     accountPkh,
     user: {
-      userTokens,
       availableDoormanRewards,
       availableSatellitesRewards,
       availableFarmRewards,
@@ -69,11 +75,10 @@ const DashboardPersonal = () => {
     },
   } = useSelector((state: State) => state.wallet)
 
-  const claimRewards = async () => await dispatch(claimAllRewardsAction())
+  const claimRewards = async () => await dispatch(claimAllRewardsAction(tokensMetadata))
 
   useStakeUpdater({
     skipAddressBalance: SUB_SKIP,
-    skipUserBalance: SUB_SKIP,
     skipStakeHistory: SUB_SKIP,
   })
 
@@ -106,33 +111,68 @@ const DashboardPersonal = () => {
   }
 
   const earnings = {
-    mvkRate: tokensPrices[MVK_TOKEN_SYMBOL],
-    xtzRate: tokensPrices[XTZ_TOKEN_SYMBOL],
     satelliteRewards: gatheredSatellitesRewards,
     farmsRewards: gatheredFarmRewards,
     exitRewards: gatheredDoormanRewards,
     lendingIncome: availableLoansRewards,
   }
 
-  const userTokensList = Object.values(userTokens)
-  const mostSuppliedUserTokenSymbol = userTokensList.reduce((acc, { symbol, balance, type }) => {
-    if (symbol === MVK_TOKEN_SYMBOL || symbol === SMVK_TOKEN_SYMBOL || symbol === XTZ_TOKEN_SYMBOL || type === 'mToken')
+  const mostSuppliedUserToken = (userTokensBalances ? Object.keys(userTokensBalances) : []).reduce<null | {
+    address: string
+    symbol: string
+    balance: number
+  }>((acc, tokenAddress) => {
+    // If token is mToken or shown by default return acc, we skip such tokens
+    if (
+      tokenAddress === mvkTokenAddress ||
+      tokenAddress === SMVK_TOKEN_ADDRESS ||
+      tokenAddress === XTZ_TOKEN_ADDRESS ||
+      mTokens.includes(tokenAddress)
+    )
       return acc
-    const accAssetBalanceInUSD = Number(userTokens[acc]?.balance ?? 0) * (tokensPrices[acc] ?? 1)
-    const assetToCompareBalanceInUSD = Number(balance) * (tokensPrices[symbol] ?? 1)
-    return accAssetBalanceInUSD > assetToCompareBalanceInUSD ? acc : symbol
-  }, '')
+
+    const tokenToCheck = getTokenDataByAddress({ tokensMetadata, tokenAddress, tokensPrices })
+    const tokenToCheckBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress })
+
+    // If token to compare is not valid skip check
+    if (!tokenToCheck || !tokenToCheck.rate) return acc
+
+    // if we don't have acc, make acc current token, cuz it's valid
+    if (!acc)
+      return {
+        address: tokenAddress,
+        balance: tokenToCheckBalance,
+        symbol: tokenToCheck.symbol,
+      }
+
+    const accToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: acc.address, tokensPrices })
+
+    // check for acc token exist to make ts satisfied, cuz it's 100% valid token inside acc
+    if (!accToken || !accToken.rate) return acc
+
+    const { rate: checkTokenRate } = tokenToCheck
+    const { rate: accTokenRate } = accToken
+    const accTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: acc.address })
+
+    return accTokenBalance * accTokenRate > tokenToCheckBalance * checkTokenRate
+      ? acc
+      : {
+          address: tokenToCheck.address,
+          balance: tokenToCheckBalance,
+          symbol: tokenToCheck.symbol,
+        }
+  }, null)
 
   // TODO REMOVE ToLowerCase BEFORE MERGE
   const walletData = {
-    xtzAmount: userTokens[XTZ_TOKEN_SYMBOL.toLowerCase()].balance,
-    sMVKAmount: userTokens[SMVK_TOKEN_SYMBOL.toLowerCase()].balance,
-    MVKAmount: userTokens[MVK_TOKEN_SYMBOL.toLowerCase()].balance,
-    ...(mostSuppliedUserTokenSymbol
+    xtzAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }),
+    sMVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+    MVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
+    ...(mostSuppliedUserToken
       ? {
           mostSuppliedUserToken: {
-            name: userTokens[mostSuppliedUserTokenSymbol.toLowerCase()].name,
-            amount: userTokens[mostSuppliedUserTokenSymbol.toLowerCase()].balance,
+            name: mostSuppliedUserToken.symbol,
+            amount: mostSuppliedUserToken.balance,
           },
         }
       : {}),

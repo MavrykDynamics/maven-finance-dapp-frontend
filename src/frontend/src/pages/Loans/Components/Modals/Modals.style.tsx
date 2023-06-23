@@ -6,6 +6,12 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     font-size: 22px;
   }
 
+  .useMax-btn {
+    button {
+      font-size: 14px;
+    }
+  }
+
   .modalDescr {
     margin-top: 7px;
     font-weight: 600;
@@ -26,6 +32,11 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.textColor};
     padding-left: 7px;
     padding-bottom: 3px;
+  }
+
+  .confirmation-btn {
+    margin: 55px auto 0;
+    width: 300px;
   }
 
   .manage-btn {
@@ -69,11 +80,18 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
   }
 
   .collateral-list {
-    padding-bottom: 20px;
+    overflow-y: auto;
     overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
-    row-gap: 45px;
+    row-gap: 40px;
+    max-height: 250px;
+    margin-bottom: 20px;
+    min-height: 100px;
+  }
+
+  .xtz-baker {
+    margin: 20px 0;
   }
 
   .creating-vault-loader-wrapper {

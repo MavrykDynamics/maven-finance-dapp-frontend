@@ -21,10 +21,11 @@ import {
 
 // styles
 import { useLockBodyScroll } from 'react-use'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { FarmLpActionsPopupsContent } from '../Farms.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { farm } from 'reducers/farm'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const FarmWithdrawModal = ({
   closeHandler,
@@ -36,7 +37,7 @@ export const FarmWithdrawModal = ({
   data: FarmDepositPopupDataType
 }) => {
   const { selectedFarmAddress = '' } = data ?? {}
-
+  const { tokensMetadata } = useTokensContext()
   const dispatch = useDispatch()
   useLockBodyScroll(show)
 
@@ -55,7 +56,7 @@ export const FarmWithdrawModal = ({
   })
 
   const farmDepositedAmountByUser = useMemo(() => {
-    return Number(farmAccounts.find(({ user_id }) => accountPkh === user_id))
+    return Number(farmAccounts.find(({ user: { address } }) => accountPkh === address))
   }, [farmAccounts, accountPkh])
 
   const tokensNames = `${lpTokenOneSymbol}/${lpTokenTwoSymbol}`
@@ -81,7 +82,7 @@ export const FarmWithdrawModal = ({
 
   const handleClick = () => {
     if (selectedFarmAddress && inputData.validation === INPUT_STATUS_SUCCESS) {
-      dispatch(withdraw(selectedFarmAddress, Number(inputData.amount)))
+      dispatch(withdraw(selectedFarmAddress, Number(inputData.amount), tokensMetadata))
     }
   }
 

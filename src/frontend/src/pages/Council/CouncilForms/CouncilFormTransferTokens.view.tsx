@@ -10,7 +10,6 @@ import { TokenType } from 'utils/TypesAndInterfaces/General'
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
-import { getTokenDecimals } from 'utils/calcFunctions'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
@@ -27,6 +26,8 @@ import { InputProps } from 'app/App.components/Input/newInput.type'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 const INIT_FORM = {
   receiverAddress: '',
@@ -53,7 +54,9 @@ const itemsForDropDown = [
 
 export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
-  const { dipDupTokens } = useSelector((state: State) => state.tokens)
+
+  const { tokensMetadata } = useTokensContext()
+
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [form, setForm] = useState(INIT_FORM)
@@ -113,19 +116,16 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
   const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
   const handleBlurTokenAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = e.target
+    const { value: tokenAddress, name } = e.target
 
-    const decimals = getTokenDecimals({
-      tokenAddress: value,
-      dipDupTokens,
-    })
+    const token = getTokenDataByAddress({ tokenAddress, tokensMetadata })
 
     setFormInputStatus((prev) => {
-      const isValidAddress = decimals ? 'success' : 'error'
+      const isValidAddress = token ? 'success' : 'error'
       return { ...prev, [name]: isValidAddress }
     })
 
-    setTokenDecimals(decimals)
+    if (token) setTokenDecimals(token.decimals)
   }
 
   const handleClickDropdownItem = useCallback(

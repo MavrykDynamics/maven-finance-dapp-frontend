@@ -13,7 +13,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
   [
     'lending',
     {
-      title: 'Lending and Borrow Markets',
+      title: 'Earn and Borrow Markets',
       subText: 'View all available markets and see details to lend and borrow assets.',
       foregroundImageSrc: '/images/lending-header.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
@@ -24,6 +24,24 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     {
       title: 'Lend/Borrow Dashboard',
       subText: 'View all available markets and see details to lend and borrow assets.',
+      foregroundImageSrc: '/images/lending-header.svg',
+      backgroundImageSrc: '/images/dapp-header-bg.svg',
+    },
+  ],
+  [
+    'loansEarn',
+    {
+      title: 'Earn Yield on Your Assets',
+      subText: 'Earn yield by depositing your tokens',
+      foregroundImageSrc: '/images/lending-header.svg',
+      backgroundImageSrc: '/images/dapp-header-bg.svg',
+    },
+  ],
+  [
+    'loansBorrow',
+    {
+      title: 'Borrow',
+      subText: 'Borrow stablecoins and bitcoin using your assets as collateral',
       foregroundImageSrc: '/images/lending-header.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },

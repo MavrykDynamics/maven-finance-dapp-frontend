@@ -21,12 +21,74 @@ import { NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE } from 
 
 import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 import { scrollUpPage } from 'utils/scrollUpPage'
+import { sleep } from 'utils/api/sleep'
+import { LoansTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+
+// change vault name
+export const changeVaultNameAction =
+  (newVaultName: string, vaultAddress: string, callback: () => void) =>
+  async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
+
+    // check whether we can send transaction
+    if (!state.wallet.accountPkh) {
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
+    }
+
+    try {
+      // prepare and send transaction
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(vaultAddress)
+      const transaction = await contract.methods.initVaultAction('updateVaultName', newVaultName).send()
+
+      // close popup
+      callback()
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Changing vault name...', ACTION_START_MESSAGE_TEXT))
+
+      await sleep(5000)
+
+      // turn off fs actions loader and start data updating after 5s after operation started
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
+
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getLoansStorage())
+
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Vault name is changed.', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
+    } catch (error) {
+      console.error('changeVaultNameAction error:', error)
+      if (error instanceof Error) {
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
+        callback()
+      }
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
+    }
+  }
 
 // trigger initial vault creation to get the id of future vault
 export const triggerInitialVaultCreation =
@@ -74,6 +136,7 @@ export const triggerInitialVaultCreation =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
+
       return
     }
   }
@@ -83,9 +146,9 @@ export const borrowVaultAssetAction =
   (
     vaultId: number,
     amountToBorrow: number,
-    assetDecimals: number,
+    borrowedToken: LoansTokenMetadataType,
     callback: () => void,
-    scrollToCurrentVault: () => void,
+    scrollToCurrentVault?: () => void,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
@@ -97,8 +160,9 @@ export const borrowVaultAssetAction =
     }
 
     try {
+      const { decimals } = borrowedToken
       // prepare and send transaction
-      const convertedAssetAmount = convertNumberForContractCall({ number: amountToBorrow, grade: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: amountToBorrow, grade: decimals })
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods.borrow(vaultId, convertedAssetAmount).send()
@@ -137,7 +201,7 @@ export const borrowVaultAssetAction =
         })
       }, 5000)
 
-      scrollToCurrentVault()
+      scrollToCurrentVault?.()
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
       if (error instanceof Error) {
@@ -155,11 +219,9 @@ export const repayPartOfVaultAction =
     vaultId: number,
     vaultAddress: string,
     repayAmount: number,
-    assetDecimals: number,
-    tokenType: TokenType,
-    tokenAddress: string,
+    borrowedToken: LoansTokenMetadataType,
     callback: () => void,
-    scrollToCurrentVault: () => void,
+    scrollToCurrentVault?: () => void,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
@@ -171,14 +233,15 @@ export const repayPartOfVaultAction =
     }
 
     try {
+      const { decimals, address, type } = borrowedToken
       // prepare and send transaction
-      const convertedAssetAmount = convertNumberForContractCall({ number: repayAmount, grade: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: repayAmount, grade: decimals })
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       let transaction: BatchWalletOperation | TransactionWalletOperation | null = null
 
-      if (tokenType === 'fa12') {
-        const assetContract = await tezos.wallet.at(tokenAddress)
+      if (type === 'fa12') {
+        const assetContract = await tezos.wallet.at(address)
         const batchArr = [
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -196,8 +259,8 @@ export const repayPartOfVaultAction =
 
         const batch = await tezos.wallet.batch(batchArr)
         transaction = await batch.send()
-      } else if (tokenType === 'fa2') {
-        const assetContract = await tezos.wallet.at(tokenAddress)
+      } else if (type === 'fa2') {
+        const assetContract = await tezos.wallet.at(address)
         const batchArr = [
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -273,7 +336,7 @@ export const repayPartOfVaultAction =
         })
       }, 5000)
 
-      scrollToCurrentVault()
+      scrollToCurrentVault?.()
     } catch (error) {
       console.error('repayPartOfVaultAction error:', error)
       if (error instanceof Error) {
@@ -291,9 +354,7 @@ export const repayFullAndCloseVaultAction =
     vaultId: number,
     vaultAddress: string,
     repayAmount: number,
-    assetDecimals: number,
-    tokenType: TokenType,
-    tokenAddress: string,
+    borrowedToken: LoansTokenMetadataType,
     callback: () => void,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
@@ -306,14 +367,15 @@ export const repayFullAndCloseVaultAction =
     }
 
     try {
+      const { decimals, address, type } = borrowedToken
       // prepare and send transaction
-      const convertedAssetAmount = convertNumberForContractCall({ number: repayAmount, grade: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: repayAmount, grade: decimals })
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       let transaction: BatchWalletOperation | null = null
 
-      if (tokenType === 'fa12') {
-        const assetContract = await tezos.wallet.at(tokenAddress)
+      if (type === 'fa12') {
+        const assetContract = await tezos.wallet.at(address)
         const batchArr = [
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -335,8 +397,8 @@ export const repayFullAndCloseVaultAction =
 
         const batch = await tezos.wallet.batch(batchArr)
         transaction = await batch.send()
-      } else if (tokenType === 'fa2') {
-        const assetContract = await tezos.wallet.at(tokenAddress)
+      } else if (type === 'fa2') {
+        const assetContract = await tezos.wallet.at(address)
         const batchArr = [
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,

@@ -48,7 +48,7 @@ export function MyCouncilActions({
   }
   return (
     <>
-      <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="tabSwitcher" />
+      <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="primary-switcher" />
       {activeActionTab === tabsList[1].text && (
         <>
           {myPastCouncilAction.length ? (

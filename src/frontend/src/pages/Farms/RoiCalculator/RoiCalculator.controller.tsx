@@ -18,7 +18,7 @@ import { RoiCalculatorStyled, RoiExpandStyled } from './RoiCalculator.style'
 import { InputStatusesType, InputValuesType, SelectedTabsStateType } from './RoiCalc.types'
 
 // consts, helpers
-import { calculateAPR, calculateAPY, getUserBalanceByAddress } from '../Farms.helpers'
+import { calculateAPR, calculateAPY, getUserBalanceByAddressOld } from '../Farms.helpers'
 import {
   BOTTOM_INPUT,
   COMPOUNDING_ITEMS,
@@ -31,9 +31,11 @@ import {
   TOP_INPUT,
 } from './RoiCalc.helpers'
 import { RoiCalculatorPopupDataType } from '../Farms.const'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { useLockBodyScroll } from 'react-use'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export default function RoiCalculator({
   closeHandler,
@@ -50,7 +52,9 @@ export default function RoiCalculator({
   useLockBodyScroll(show)
   const { farms } = useSelector((state: State) => state.farm)
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { mvk: mvkExchangeRate = 0 } = useSelector((state: State) => state.tokens.tokensPrices)
+
+  const { tokensPrices } = useTokensContext()
+  const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL]
 
   const farm = farms.find(({ address }) => selectedFarmAddress === address)
 
@@ -80,7 +84,7 @@ export default function RoiCalculator({
 
   useEffect(() => {
     ;(async () => {
-      const userBalanceFetched = Number(await getUserBalanceByAddress(farm?.lpTokenAddress))
+      const userBalanceFetched = Number(await getUserBalanceByAddressOld(farm?.lpTokenAddress))
       setUserBalance(userBalanceFetched)
     })().catch((e) => console.error('fetching user balance in ROI calc error: ', e))
   }, [farm?.lpTokenAddress])

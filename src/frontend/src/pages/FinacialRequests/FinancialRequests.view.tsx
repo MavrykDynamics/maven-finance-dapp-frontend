@@ -13,6 +13,7 @@ import {
 } from '../../app/App.components/Pagination/pagination.consts'
 import { votingFinancialRequestVote } from './FinancialRequest.actions'
 import { parseDate } from 'utils/time'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // types
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
@@ -36,6 +37,8 @@ import {
   InfoBlockName,
 } from './FinancialRequests.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 export const FinancialRequestsView = ({
   financialRequestsIds,
@@ -46,6 +49,8 @@ export const FinancialRequestsView = ({
 }) => {
   const dispatch = useDispatch()
   const { search } = useLocation()
+
+  const { tokensMetadata } = useTokensContext()
 
   const {
     accountPkh,
@@ -90,8 +95,15 @@ export const FinancialRequestsView = ({
     dispatch(votingFinancialRequestVote(vote, rightSideContent.id))
   }
 
-  const RightSideBlock = () =>
-    rightSideContent ? (
+  const RightSideBlock = () => {
+    if (!rightSideContent) return null
+
+    const requestedToken = getTokenDataByAddress({ tokenAddress: rightSideContent.tokenAddress, tokensMetadata })
+    if (!requestedToken) return null
+
+    const { decimals, symbol } = requestedToken
+
+    return (
       <FinancialRequestsRightContainer>
         <div className="title-status">
           <H2Title>{rightSideContent.type}</H2Title>
@@ -116,7 +128,7 @@ export const FinancialRequestsView = ({
               : { forBtn: undefined, againsBtn: undefined }
           }
           className={'fr-voting'}
-          disableVotingButtons={Boolean(rightSideContent?.votes?.find(({ voter_id }) => voter_id === accountPkh))}
+          disableVotingButtons={Boolean(rightSideContent?.votes?.find(({ voter }) => voter.address === accountPkh))}
         />
 
         <hr />
@@ -146,13 +158,16 @@ export const FinancialRequestsView = ({
             <div className="list_item">
               <InfoBlockName>Amount Requested</InfoBlockName>
               <InfoBlockValue>
-                <CommaNumber value={rightSideContent.tokensAmount} endingText={rightSideContent.tokenName} />
+                <CommaNumber
+                  value={convertNumberForClient({ number: rightSideContent.tokensAmount, grade: decimals })}
+                  endingText={symbol}
+                />
               </InfoBlockValue>
             </div>
 
             <div className="list_item">
               <InfoBlockName>Type</InfoBlockName>
-              <InfoBlockValue>{rightSideContent.tokenName}</InfoBlockValue>
+              <InfoBlockValue>{symbol}</InfoBlockValue>
             </div>
           </div>
         </div>
@@ -192,7 +207,8 @@ export const FinancialRequestsView = ({
           </div>
         </div>
       </FinancialRequestsRightContainer>
-    ) : null
+    )
+  }
 
   return (
     <FinancialRequestsStyled>

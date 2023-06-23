@@ -13,7 +13,7 @@ export function normalizeEmergencyGovernance(storage: EmergencyGovernanceGraphQl
                 id: voter.id,
                 sMvkAmount: voter.smvk_amount,
                 timestamp: new Date(voter.timestamp as string),
-                voterId: voter.voter_id,
+                voterId: voter.voter.address,
               }
             })
           : []
@@ -25,7 +25,7 @@ export function normalizeEmergencyGovernance(storage: EmergencyGovernanceGraphQl
           startLevel: record.start_level,
           dropped: record.dropped,
           executed: record.executed,
-          proposerId: record.proposer_id,
+          proposerId: record.proposer.address,
           emergencyGovernanceId: record.emergency_governance_id,
           startTimestamp: new Date(record.start_timestamp as string).getTime(),
           expirationTimestamp: new Date(record.expiration_timestamp as string).getTime(),

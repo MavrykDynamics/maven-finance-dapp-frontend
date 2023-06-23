@@ -8,7 +8,13 @@ import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 import { normalizeFeeds } from './helpers/feedsNormalizer'
 
 export const dataFeedsContext = React.createContext<DataFeedsContext>(undefined!)
+const propomitionAddresses = [
+  'KT1AgXce6SwfMNQ6wcKGALHi46FuN77bHioV',
+  'KT1C1sYNxacr8LPZimA512gAfWajdGah75nq',
+  'KT1BYGLiHStMzdv2WCikKKDtFtvUjxzZ8WB9',
+]
 
+/** */
 export class DataFeedsProvider extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -26,8 +32,7 @@ export class DataFeedsProvider extends React.Component<Props, State> {
   }
 
   updateDataFeeds = (data: SubsribeOracleDataFeedSubscription['aggregator']) => {
-    if (!this.props.dipDupContracts) return
-    const { feedsCategories, feedsAddresses, feedsMapper } = normalizeFeeds(data, this.props.dipDupContracts)
+    const { feedsCategories, feedsAddresses, feedsMapper } = normalizeFeeds(data, propomitionAddresses)
 
     this.setState({
       context: {
@@ -43,6 +48,7 @@ export class DataFeedsProvider extends React.Component<Props, State> {
     console.info('Unimplemented')
   }
 
+  /** */
   render(): React.ReactNode {
     return <dataFeedsContext.Provider value={this.state.context}>{this.props.children}</dataFeedsContext.Provider>
   }

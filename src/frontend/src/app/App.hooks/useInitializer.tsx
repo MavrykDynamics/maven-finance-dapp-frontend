@@ -1,21 +1,18 @@
 // hooks
 import { useDappInit } from 'providers/DAPPConfig/hooks/useDappInit'
 import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
-import { useTokensInit } from 'providers/TokensProvider/hooks/useTokensInit'
-import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
-import { SUB_QUERY } from 'utils/api/apollo.consts'
+import { useTokensUpdater } from 'providers/TokensProvider/hooks/useTokensUpdater'
+import { useUserBalancesUpdater } from 'providers/UserProvider/hooks/useUserBalancesUpdater'
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
 
 export const useInitializer = () => {
-  useDappInit()
-  // TODO: implement tokens context
-  // useTokensInit()
-  useDataFeedsUpdater({ skipFeedsSubscription: SUB_QUERY })
-  useSatellitesUpdater({
-    skipAggregatorOracles: SUB_QUERY,
-    skipEmergencyGov: SUB_QUERY,
-    skipFinancialRequest: SUB_QUERY,
-    skipGovProposal: SUB_QUERY,
-    skipSatelliteCycle: SUB_QUERY,
-    skipSatelliteData: SUB_QUERY,
-  })
+  const { accountPkh = null } = useSelector((state: State) => state.wallet)
+
+  const { isLoading: isTokensLoading } = useTokensUpdater()
+  const { isLoading: isDappGeneralLoading } = useDappInit()
+  const { isLoading: isFeedsLoading } = useDataFeedsUpdater()
+  const { isLoading: isUserTokensLoading } = useUserBalancesUpdater(accountPkh, isTokensLoading)
+
+  return { isLoading: isDappGeneralLoading || isFeedsLoading || isTokensLoading || isUserTokensLoading }
 }

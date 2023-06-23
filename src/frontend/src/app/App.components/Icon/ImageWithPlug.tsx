@@ -7,11 +7,13 @@ export const ImageWithPlug = ({
   alt,
   className = '',
   plugSrc,
+  noImageIconId = 'noImage',
 }: {
   imageLink?: Maybe<string>
   alt: string
   className?: string
   plugSrc?: string
+  noImageIconId?: string
 }) => {
   const [imageSrc, setImageSrc] = useState<string | null>(imageLink)
 
@@ -27,5 +29,5 @@ export const ImageWithPlug = ({
     )
   }
 
-  return <Icon id="noImage" className={className} />
+  return <Icon id={noImageIconId} className={className} />
 }

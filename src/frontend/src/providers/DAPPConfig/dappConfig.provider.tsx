@@ -11,6 +11,7 @@ import { getXTZBakers } from './helpers/getXtzBakers'
 
 export const dappContext = React.createContext<DAPPConfigContext>(undefined!)
 
+/** */
 export class DAPPConfigProvider extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -111,6 +112,7 @@ export class DAPPConfigProvider extends React.Component<Props, State> {
     })
   }
 
+  /** */
   render(): React.ReactNode {
     return <dappContext.Provider value={this.state.context}>{this.props.children}</dappContext.Provider>
   }

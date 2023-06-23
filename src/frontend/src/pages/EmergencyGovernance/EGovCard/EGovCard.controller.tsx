@@ -29,7 +29,9 @@ import {
   SatelliteGovernanceCardDropDown,
   SatelliteGovernanceCardTitleTextGroup,
 } from 'pages/SatelliteGovernance/SatelliteGovernanceCard/SatelliteGovernanceCard.style'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type EGovCardProps = {
   emergencyGovernance: EmergergencyGovernanceItem
@@ -38,14 +40,13 @@ type EGovCardProps = {
 export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
   const dispatch = useDispatch()
   const { totalStakedMvk } = useStakeContext()
+  const { userTokensBalances } = useUserContext()
+
   const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     config: { minStakedMvkRequiredToVote },
   } = useSelector((state: State) => state.emergencyGovernance)
-  const {
-    accountPkh,
-    user: { userTokens },
-  } = useSelector((state: State) => state.wallet)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const isActiveProposal =
     !emergencyGovernance.executed &&
@@ -101,7 +102,8 @@ export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
           isVotingActive={true}
           disableVotingButtons={
             Boolean(emergencyGovernance.voters.find((voter) => accountPkh === voter.voterId)) ||
-            userTokens[SMVK_TOKEN_SYMBOL].balance < minStakedMvkRequiredToVote
+            getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) <
+              minStakedMvkRequiredToVote
           }
           handleVote={handleProposalVote}
           buttonsToShow={{ forBtn: { text: 'Vote to Trigger' } }}

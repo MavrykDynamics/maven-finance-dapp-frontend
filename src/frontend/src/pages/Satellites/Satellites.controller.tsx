@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // providers
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 // types
@@ -23,9 +24,10 @@ import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/satellites.co
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
 // styles
-import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
+import { SatelliteGovernanceStatsInfo } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { EmptyContainer } from 'app/App.style'
@@ -33,32 +35,24 @@ import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
-import { SUB_SKIP } from 'utils/api/apollo.consts'
 
 const Satellites = () => {
-  const { isLoading: isFeedsLoading } = useDataFeedsUpdater()
-  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
-    skipAddressBalance: SUB_SKIP,
-    skipMvkTokenTotal: SUB_SKIP,
-    skipStakeHistory: SUB_SKIP,
-  })
-
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
+  const { userTokensBalances } = useUserContext()
 
   const dispatch = useDispatch()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { activeSatellitesIds, satelliteMapper } = useSatellitesContext()
 
   const {
-    user: { isSatellite, userTokens },
+    user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
 
-  useSatellitesUpdater()
+  const { isLoading: isSatellitesLoading } = useSatellitesUpdater()
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
@@ -82,32 +76,32 @@ const Satellites = () => {
   return (
     <Page>
       <PageHeader page={'satellites'} />
-      {!isSatellite && userTokens[SMVK_TOKEN_SYMBOL].balance === 0 ? (
+      {!isSatellite && getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 ? (
         <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
       ) : null}
       <PageContent>
         <SatellitesOverviewStyled>
           <InfoBlockWrapper>
-            <SmallInfoBlock>
+            <SatelliteGovernanceStatsInfo>
               <h3>Total Delegated MVK</h3>
-              <div className="info-content">
+              <div className="value">
                 {tabsInfo.totalDelegetedMVK}
                 <a href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle">
                   <CustomTooltip iconId="info" text="All staked MVK that is delegated to satellites by users" />
                 </a>
               </div>
-            </SmallInfoBlock>
-            <SmallInfoBlock>
+            </SatelliteGovernanceStatsInfo>
+            <SatelliteGovernanceStatsInfo>
               <h3>Total Satellites & Oracles</h3>
-              <div className="info-content">{tabsInfo.totalSatelliteOracles}</div>
-            </SmallInfoBlock>
-            <SmallInfoBlock>
+              <div className="value">{tabsInfo.totalSatelliteOracles}</div>
+            </SatelliteGovernanceStatsInfo>
+            <SatelliteGovernanceStatsInfo>
               <h3>Number of Data Feeds</h3>
-              <div className="info-content">{tabsInfo.numberOfDataFeeds}</div>
-            </SmallInfoBlock>
+              <div className="value">{tabsInfo.numberOfDataFeeds}</div>
+            </SatelliteGovernanceStatsInfo>
           </InfoBlockWrapper>
 
-          {isLoading || isDoormanLoading || isFeedsLoading ? (
+          {isLoading || isSatellitesLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellites and data feeds data</div>

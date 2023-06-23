@@ -109,7 +109,9 @@ subscription satelliteAggregatorOracles {
         round
         timestamp
         oracle {
-          user_id
+          user {
+            address
+          }
           init_epoch
           init_round
         }
@@ -126,7 +128,7 @@ subscription satelliteAggregatorOracles {
 
 export const SATELLITE_CYCLE_SUBSCRIPTION = gql(`
 subscription satelliteGovernanceCycle {
-  governance(where: {active: {_eq: true}}) {
+  governance {
     satellite_snapshots(order_by: {cycle: desc_nulls_last}) {
       cycle
       user_id

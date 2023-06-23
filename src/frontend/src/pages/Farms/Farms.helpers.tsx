@@ -4,7 +4,8 @@ import { FarmAccountsType, FarmContractType, FarmGraphQL, Normalizedfarm } from 
 // helpers
 import { getContractBigmapKeys, network } from 'utils/blockchainApi'
 import { STAKED } from './Farms.const'
-import { State } from 'reducers'
+import { Farm_Account } from 'utils/generated/graphqlTypes'
+import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 
 type EndsInType = {
   endsIn: any
@@ -32,7 +33,7 @@ type TokensInfoType = {
 
 export const normalizeFarmStorage = (
   farmList: FarmGraphQL[],
-  dipDupTokens: State['tokens']['dipDupTokens'],
+  tokens: TokensContext['tokensMetadata'],
   farmCardEndsIn: EndsInType,
   farmLPTokensInfo: TokensInfoType,
   farmContracts: FarmContractType[],
@@ -47,7 +48,7 @@ export const normalizeFarmStorage = (
         lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] &&
         address === lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0],
     )
-    const dipDupToken = dipDupTokens.find(({ contract }) => farmItem.lp_token_address === contract)
+    const dipDupToken = tokens[farmItem.lp_token.token_address]
 
     return {
       address: farmItem.address,
@@ -67,7 +68,7 @@ export const normalizeFarmStorage = (
       lastBlockUpdate: farmItem.last_block_update,
       lpTokenUserBalance,
       lpTokenAddress: lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] ?? '',
-      lpBalance: farmItem.lp_token_balance / Math.pow(10, Number(dipDupToken?.metadata.decimals)),
+      lpBalance: farmItem.lp_token_balance / Math.pow(10, Number(dipDupToken?.decimals ?? 0)),
       lpToken1: {
         symbol: lpTokenInfo?.liquidityPairToken?.token0?.symbol?.[0],
         address: lpTokenInfo?.liquidityPairToken?.token0?.tokenAddress?.[0],
@@ -98,7 +99,7 @@ export const calculateAPR = (currentRewardPerBlock: number, blocksAmount: number
   return lpTokenBalance > 0 ? ((currentRewardPerBlock * blocksAmount) / lpTokenBalance) * 100 : 0
 }
 
-export const getSummDepositedAmount = (farmAccounts: FarmAccountsType[]): number => {
+export const getSummDepositedAmount = (farmAccounts: Farm_Account[]): number => {
   return farmAccounts.reduce((acc, cur) => acc + cur.deposited_amount, 0)
 }
 
@@ -136,7 +137,7 @@ export const getLPTokensInfo = async (farmList: FarmGraphQL[]) => {
 
         const lpTokenUserBalance =
           typeof parsedLpTokenInfo === 'object'
-            ? Number(await getUserBalanceByAddress(parsedLpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]))
+            ? Number(await getUserBalanceByAddressOld(parsedLpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]))
             : 0
         return {
           lpTokenInfo: parsedLpTokenInfo,
@@ -178,7 +179,7 @@ export async function getFarmMetadata(farmAddress: string) {
 }
 
 // get user tokens balance
-export const getUserBalanceByAddress = async (tokenAddress?: string) => {
+export const getUserBalanceByAddressOld = async (tokenAddress?: string) => {
   if (!tokenAddress) return 0
 
   return await (await fetch(`https://api.${network}.tzkt.io/v1/accounts/${tokenAddress}/balance`)).json()

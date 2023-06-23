@@ -1,0 +1,194 @@
+import { useContext, useMemo } from 'react'
+import { useHistory } from 'react-router'
+import { useDispatch, useSelector } from 'react-redux'
+import { State } from 'reducers'
+
+// components
+import { Page } from 'styles'
+import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
+import { LoansEarnBorrow } from './LoansEarnBorrow.view'
+import { EarnBorrowTotalCharts } from './Components/EarnBorrowTotalCharts.view'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+
+// styles
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+
+// types
+import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
+
+// helpers
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
+
+// actions
+import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+
+// providers
+import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+
+const marketSettings: MarketSettingsType = {
+  priceName: 'Oracle Price',
+  totalName: 'Total Earning',
+  leftValueName: 'Your Position',
+  rightValueName: 'Earned to Date',
+  buttonName: 'Deposit & Earn',
+  marketTabName: 'lendingTab',
+}
+
+export const LoansEarn = () => {
+  const dispatch = useDispatch()
+  const history = useHistory()
+
+  const {
+    isLoading: isChartsLoading,
+    chartsData: { totalBorrowingChart, totalLendingChart, marketLendingChart },
+  } = useLoansCharts({
+    calcTotalBorrowingChart: true,
+    calcTotalLendingChart: true,
+    calcMarketLendingChart: true,
+  })
+
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
+  const {
+    accountPkh,
+    user: { userMTokens },
+  } = useSelector((state: State) => state.wallet)
+
+  const { isDataLoaded, loanTokens } = useSelector((state: State) => state.loans)
+
+  const { totalBorrowed, totalLended } = useMemo(
+    () =>
+      loanTokens.reduce<{
+        totalLended: number
+        totalBorrowed: number
+      }>(
+        (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
+          const token = getTokenDataByAddress({
+            tokenAddress: loanTokenAddress,
+            tokensPrices,
+            tokensMetadata,
+          })
+
+          if (!token || !token.rate) return acc
+
+          const { rate, decimals } = token
+
+          acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
+          acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
+          return acc
+        },
+        {
+          totalLended: 0,
+          totalBorrowed: 0,
+        },
+      ),
+    [loanTokens, tokensMetadata, tokensPrices],
+  )
+
+  const { openAddLendingAssetPopup } = useLoansPopupsContext()
+
+  const markets: MarketType[] = useMemo(
+    () =>
+      loanTokens.reduce<MarketType[]>((acc, item) => {
+        const chartData = marketLendingChart[item.loanTokenAddress] ?? []
+
+        const token = getTokenDataByAddress({
+          tokenAddress: item.loanTokenAddress,
+          tokensPrices,
+          tokensMetadata,
+        })
+
+        if (!token || !token.rate) return acc
+
+        const { rate: price, decimals, icon, symbol, address } = token
+
+        const { lendValue = 0, interestEarned = 0 } =
+          getMarketUserLengingItem(userMTokens, item.loanMTokenAddress) ?? {}
+
+        acc.push({
+          icon,
+          symbol,
+          address,
+          annualRate: item.lendingAPY,
+          annualRateName: 'APY',
+          leftValue: convertNumberForClient({ number: lendValue, grade: decimals }) * price,
+          rightValue: convertNumberForClient({ number: interestEarned, grade: decimals }) * price,
+          totalAmount: convertNumberForClient({ number: item.totalLended, grade: decimals }),
+          price,
+          chartData,
+        })
+
+        return acc
+      }, []),
+    [loanTokens, marketLendingChart, tokensMetadata, tokensPrices, userMTokens],
+  )
+
+  const handleEarn = (marketTokenAddress: string) => {
+    const market = loanTokens.find((item) => item.loanTokenAddress === marketTokenAddress)
+    if (!market) return
+
+    const lendItem = getMarketUserLengingItem(userMTokens, market.loanMTokenAddress)
+
+    //  if the user has already supplied to the specific asset pool we will route to asset market
+    if (lendItem) {
+      history.push(`/loans/${marketTokenAddress}/lendingTab`)
+      return
+    } else {
+      openAddLendingAssetPopup({
+        mBalance: 0,
+        lendingAPY: market.lendingAPY,
+        tokenAddress: market.loanTokenAddress,
+      })
+    }
+  }
+
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        if (!isDataLoaded || isDepsChanged) {
+          await dispatch(getLoansStorage())
+        }
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
+
+  return (
+    <Page>
+      <PageHeader page={'loansEarn'} />
+
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading charts of earnings</div>
+        </DataLoaderWrapper>
+      ) : (
+        <>
+          <EarnBorrowTotalCharts
+            // left chart
+            leftChartData={totalLendingChart}
+            leftChartTitle="Total Earning"
+            leftTotalAmount={totalLended}
+            // right chart
+            rightChartData={totalBorrowingChart}
+            rightChartTitle="Total Borrowing"
+            rightTotalAmount={totalBorrowed}
+          />
+
+          <LoansEarnBorrow
+            title="Earn"
+            markets={markets}
+            settings={marketSettings}
+            handleClick={handleEarn}
+            isDisabledButton={!accountPkh}
+          />
+        </>
+      )}
+    </Page>
+  )
+}

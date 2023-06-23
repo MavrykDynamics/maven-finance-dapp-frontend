@@ -3,11 +3,12 @@ import {
   M_Token,
   Treasury,
   Governance_Financial_Whitelist_Token_Contract,
+  Token,
 } from 'utils/generated/graphqlTypes'
 
 // Normalize Tokens
-export function normalizeDipDupTokens(dipdup_token_metadata?: Array<Dipdup_Token_Metadata>) {
-  return dipdup_token_metadata ?? []
+export function normalizeDipDupTokens(token?: Array<Token>) {
+  return token ?? []
 }
 
 export function normalizeMTokens(m_token: M_Token) {
@@ -20,10 +21,10 @@ export function normalizeWhitelistTokens(whitelistTokens: Array<Treasury>) {
       .map((tokenInfo) => ({
         symbol: tokenInfo.contract_name,
         address: tokenInfo.contract_address,
-        shortSymbol: tokenInfo.token_contract_standard,
+        shortSymbol: tokenInfo.token.token_standard,
         id: 0,
       }))
       // TODO: remove this filter when back-end is ready for this
-      .filter(({ symbol }) => symbol.toLowerCase() === 'mvk')
+      .filter(({ symbol, shortSymbol }) => shortSymbol && symbol.toLowerCase() === 'mvk')
   )
 }

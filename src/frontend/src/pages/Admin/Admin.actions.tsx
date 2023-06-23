@@ -440,13 +440,14 @@ export const addAllCollateralTokensToMarkets =
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
 
-      allowedCollaterals.forEach((collateralToken: string) => {
-        if (state.tokens.avaliableCollaterals.some((e) => e.gqlName === collateralToken)) {
-          const tokenOracleId = oracleIDMap.get(collateralToken) ?? ''
-          const tokenBatchObject = createCollateralTokenBatchMethodObject(contract, tokenOracleId, collateralToken)
-          if (tokenBatchObject !== null) batchArray.push(tokenBatchObject)
-        }
-      })
+      // TODO: is not used
+      // allowedCollaterals.forEach((collateralToken: string) => {
+      //   if (state.tokens.avaliableCollaterals.some((e) => e.gqlName === collateralToken)) {
+      //     const tokenOracleId = oracleIDMap.get(collateralToken) ?? ''
+      //     const tokenBatchObject = createCollateralTokenBatchMethodObject(contract, tokenOracleId, collateralToken)
+      //     if (tokenBatchObject !== null) batchArray.push(tokenBatchObject)
+      //   }
+      // })
 
       allowedCollaterals.forEach((collateralToken: string) => {
         const tokenOracleId = oracleIDMap.get(collateralToken) ?? ''

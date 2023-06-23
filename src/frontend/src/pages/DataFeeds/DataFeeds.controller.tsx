@@ -23,8 +23,6 @@ import {
 // types, actions
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
-import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
-
 // styles
 import { Page } from 'styles'
 import { DataFeedsSearchFilter, DataFeedsStyled } from './DataFeeds.styles'
@@ -41,8 +39,6 @@ import { SUB_SKIP } from 'utils/api/apollo.consts'
  */
 
 export const DataFeeds = () => {
-  useDataFeedsUpdater()
-
   const { feedsAddresses, feedsMapper, feedsCategories } = useDataFeedsContext()
   useDataFeedsUpdater()
   const { totalOracleNetworks } = useSatelliteStatistics({
@@ -140,7 +136,11 @@ export const DataFeeds = () => {
               ))}
             </div>
 
-            <Pagination itemsCount={filteredFeeds.length} side={PAGINATION_SIDE_RIGHT} listName={FEEDS_ALL_LIST_NAME} />
+            <Pagination
+              itemsCount={feedsAddresses.length}
+              side={PAGINATION_SIDE_RIGHT}
+              listName={FEEDS_ALL_LIST_NAME}
+            />
           </>
         ) : (
           <EmptyContainer>

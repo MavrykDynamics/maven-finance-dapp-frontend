@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
@@ -21,20 +20,18 @@ import { OraclesContentStyled, TabWrapperStyled, PopularFeed } from './Dashboard
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useOraclesRewadSum } from 'providers/SatellitesProvider/hooks/useOraclesRewadSum'
+import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
   const {
-    tokensPrices: { MVK_TOKEN_SYMBOL: mvkExchangeRate = 0 },
+    tokensPrices: { [MVK_TOKEN_SYMBOL]: mvkExchangeRate = 0 },
   } = useTokensContext()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  useDataFeedsUpdater()
   const oracleFeeds = feedsAddresses.length
-  // TODO: consider add limitation filter and popularity sorting to the sub
   const popularFeeds = feedsAddresses.slice(0, 3)
 
   const oracleRewardsTotal = useOraclesRewadSum()
@@ -101,7 +98,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
                       <StatBlock>
                         <div className="name">Oracle Nodes</div>
                         <div className="value">
-                          <CommaNumber value={feed.oracles.length} />
+                          <CommaNumber value={feed.oraclesAmount} />
                         </div>
                       </StatBlock>
                       <StatBlock>

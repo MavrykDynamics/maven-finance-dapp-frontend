@@ -1,6 +1,6 @@
+import { useLocation } from 'react-router'
 import ConnectWalletInfo from 'app/App.components/ConnectWallet/ConnectWalletBanner'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
 import {
   PageHeaderForegroundImage,
@@ -10,16 +10,26 @@ import {
 } from 'app/App.components/PageHeader/PageHeader.style'
 
 import { ASSETS_WE_HAVE_BG_TO } from '../Loans.const'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 type MarketPageHeaderPropsType = {
-  currentAsset: LoanMarketType
-  assetId: string
+  assetAddress: string
 }
 
-export const MarketPageHeader = ({ currentAsset, assetId }: MarketPageHeaderPropsType) => {
-  // TODO: handle images we can display in header, by name
-  const foregroundImageSrc = ASSETS_WE_HAVE_BG_TO.includes(assetId.toUpperCase())
-    ? `/images/lending-header-${assetId.toUpperCase()}.svg`
+export const MarketPageHeader = ({ assetAddress }: MarketPageHeaderPropsType) => {
+  const { pathname } = useLocation()
+  const isLendingTab = /lendingtab/i.test(pathname)
+
+  const { tokensMetadata } = useTokensContext()
+
+  const token = getTokenDataByAddress({ tokensMetadata, tokenAddress: assetAddress })
+  if (!token) return null
+
+  const { symbol, icon } = token
+
+  const foregroundImageSrc = ASSETS_WE_HAVE_BG_TO.includes(symbol)
+    ? `/images/lending-header-${symbol}.svg`
     : '/images/lending-header.svg'
 
   return (
@@ -27,9 +37,9 @@ export const MarketPageHeader = ({ currentAsset, assetId }: MarketPageHeaderProp
       <PageHeaderStyled backgroundImageSrc={'/images/dapp-header-bg.svg'}>
         <PageHeaderTextArea className="loans">
           <div className="asset-wrapper">
-            {currentAsset?.loanTokenData?.icon ? (
+            {icon ? (
               <div className="icon">
-                <img src={currentAsset.loanTokenData.icon} alt={`${currentAsset.loanTokenData.symbol} logo`} />
+                <img src={icon} alt={`${symbol} logo`} />
               </div>
             ) : (
               <Icon id={'noImage'} />
@@ -37,13 +47,14 @@ export const MarketPageHeader = ({ currentAsset, assetId }: MarketPageHeaderProp
           </div>
           <div className="text-container">
             <h1>
-              {(currentAsset.loanTokenData.gqlName === 'tez'
-                ? 'xtz'
-                : currentAsset.loanTokenData.gqlName
-              ).toUpperCase()}{' '}
-              Market
+              {isLendingTab ? 'Earn ' : 'Borrow '}
+              {symbol}
             </h1>
-            <p>{`Lend and borrow ${assetId} and manage your current ${assetId} positions`}</p>
+            <p>
+              {isLendingTab
+                ? `Deposit ${symbol} and start earning yield from interest`
+                : `Lend and borrow ${symbol} and manage your current ${symbol} positions`}
+            </p>
           </div>
         </PageHeaderTextArea>
         <PageHeaderForegroundImageContainer>

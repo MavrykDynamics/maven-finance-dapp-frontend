@@ -1,15 +1,11 @@
-import { useState, useEffect, useMemo } from 'react'
-import { useSelector } from 'react-redux'
+import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 
-import { State } from 'reducers'
-import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
-
-import { TRANSACTION_HISTORY_SLIDING_BUTTONS } from '../Loans.const'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TRANSPARENT } from 'app/App.components/Button/Button.constants'
 import {
@@ -18,107 +14,126 @@ import {
   PAGINATION_SIDE_CENTER,
   calculateSlicePositions,
 } from 'app/App.components/Pagination/pagination.consts'
+import { PRIMARY_TRANSACTION_HISTORY_STYLE, SECONDARY_TRANSACTION_HISTORY_STYLE } from '../Loans.const'
 
 import { TransactionHistoryStyled } from '../Loans.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { EmptyContainer } from 'app/App.style'
-import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { State } from 'reducers'
+import { useSelector } from 'react-redux'
+import useMarketTransactionHistory from 'providers/LoansProvider/hooks/useMarketTransactionHistory'
 
 type TransactionHistoryPropsType = {
-  currentToken: LoanMarketType | undefined
+  loanTokenAddress: TokenAddressType
+  filterByDescriptions?: number[]
+  vaultAddress?: string
+  userAddress?: string
+  styleType?: typeof PRIMARY_TRANSACTION_HISTORY_STYLE | typeof SECONDARY_TRANSACTION_HISTORY_STYLE
 }
 
-export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType) => {
+/**
+ *
+ * @param loanTokenAddress - token addres by which take transaction history
+ * @param filterByDescriptions - if you want to get a transaction history for certain descriptions, you can specify this option. For ex.: ['Liquidity Added', 'Liquidity Removed'] will be [0, 1] indexer type for descr can get here: getDescrByType
+ * @param vaultAddress - if you want to get a transaction history for one vault, you can specify this option.
+ * @param userAddress - if you want to get a transaction history for one user, you can specify this option.
+ * @param styleType - you can set one of several background options. Use the constant from Loans.const.tsx.
+ *
+ * TODO: add loader when loading
+ */
+export const TransactionHistory = ({
+  loanTokenAddress,
+  filterByDescriptions,
+  vaultAddress,
+  userAddress,
+  styleType = PRIMARY_TRANSACTION_HISTORY_STYLE,
+}: TransactionHistoryPropsType) => {
   const { search } = useLocation()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const [switcherState, setSwitcherState] = useState<'all' | 'personal'>('all')
+  const {
+    lendingController: { address: lendingControllerAddress },
+  } = useSelector((state: State) => state.contractAddresses)
 
-  const transactionHistory = useMemo(
-    () =>
-      switcherState === 'all'
-        ? currentToken?.transactionHistory
-        : currentToken?.transactionHistory.filter(({ userAddress }) => accountPkh === userAddress),
-    [switcherState, accountPkh, currentToken?.transactionHistory],
-  )
+  const { isLoading: isTransactionHistoryLoading, transactionHistory } = useMarketTransactionHistory({
+    marketTokenAddress: loanTokenAddress,
+    userAddress,
+    vaultAddress,
+    typeFilter: filterByDescriptions,
+  })
 
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
 
   const paginatedTableRows = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, TRANSACTION_HISTORY_TABLE_NAME)
-    return transactionHistory?.slice(from, to)
+    return transactionHistory.slice(from, to)
   }, [currentPage, transactionHistory])
 
   return (
-    <TransactionHistoryStyled>
-      <div className="top">
+    <TransactionHistoryStyled className={styleType}>
+      <div className="main">
         <H2Title>Transaction History</H2Title>
 
-        <SlidingTabButtons
-          onClick={(tabId: number) => setSwitcherState(tabId === 0 ? 'all' : 'personal')}
-          tabItems={TRANSACTION_HISTORY_SLIDING_BUTTONS}
-          className="transaction-history"
-        />
+        {transactionHistory.length ? (
+          <>
+            <Table className="treasury-table">
+              <TableHeader className="simple-header treasury">
+                <TableRow>
+                  <TableHeaderCell>Description</TableHeaderCell>
+                  <TableHeaderCell>Amount</TableHeaderCell>
+                  <TableHeaderCell>Date</TableHeaderCell>
+                  <TableHeaderCell contentPosition="right">View TX</TableHeaderCell>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody className="transaction-history">
+                {paginatedTableRows?.map(({ descr, amount, date, operationHash, symbol }) => {
+                  if (!descr) return null
+
+                  return (
+                    <TableRow rowHeight={45} className="add-hover" key={`${operationHash}-${date}`}>
+                      <TableCell width={`30%`} className="vert-middle">
+                        <span className="descr">{descr}</span>
+                      </TableCell>
+                      <TableCell width={`30%`}>
+                        <CommaNumber value={amount} className="value" endingText={symbol} />
+                      </TableCell>
+                      <TableCell width={`30%`}>{date}</TableCell>
+                      <TableCell contentPosition="right">
+                        <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
+                          <Button text="View TX" kind={TRANSPARENT} className="link" />
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </>
+        ) : (
+          <EmptyContainer
+            style={{
+              padding: '30px 0 20px 0',
+            }}
+          >
+            <img src="/images/not-found.svg" alt=" No Transaction History to show" />
+            <figcaption>No Transaction History to show</figcaption>
+          </EmptyContainer>
+        )}
       </div>
 
-      {transactionHistory?.length ? (
-        <>
-          <Table className="treasury-table">
-            <TableHeader className="simple-header treasury">
-              <TableRow>
-                <TableHeaderCell>Description</TableHeaderCell>
-                <TableHeaderCell>Amount</TableHeaderCell>
-                <TableHeaderCell>Date</TableHeaderCell>
-                <TableHeaderCell>User</TableHeaderCell>
-                <TableHeaderCell contentPosition="right">View TX</TableHeaderCell>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody className="transaction-history">
-              {paginatedTableRows?.map(({ descr, amount, date, userAddress, operationHash, tokenSymbol = '' }) => {
-                if (!descr) return null
-
-                return (
-                  <TableRow rowHeight={45} className="add-hover" key={`${operationHash}-${date}`}>
-                    <TableCell width={`21%`} className="vert-middle">
-                      <span className="descr">{descr}</span>
-                    </TableCell>
-                    <TableCell width={`21%`}>
-                      <CommaNumber value={amount} className="value" endingText={tokenSymbol} />
-                    </TableCell>
-                    <TableCell width={`28%`}>{date}</TableCell>
-                    <TableCell width={`11%`}>
-                      <TzAddress tzAddress={userAddress} type={BLUE} />
-                    </TableCell>
-                    <TableCell contentPosition="right">
-                      <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
-                        <Button text="View TX" kind={TRANSPARENT} className="link" />
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
-        </>
-      ) : (
-        <EmptyContainer
-          style={{
-            padding: '30px 0 20px 0',
-          }}
-        >
-          <img src="/images/not-found.svg" alt=" No Transaction History to show" />
-          <figcaption> No Transaction History to show</figcaption>
-        </EmptyContainer>
-      )}
-
       <Pagination
-        itemsCount={transactionHistory?.length ?? 0}
+        itemsCount={transactionHistory.length}
         listName={TRANSACTION_HISTORY_TABLE_NAME}
         side={PAGINATION_SIDE_CENTER}
       />
+
+      {lendingControllerAddress ? (
+        <div className="lending-controller">
+          Lending Controller Address: <TzAddress tzAddress={lendingControllerAddress} type={BLUE} isBold />
+        </div>
+      ) : null}
     </TransactionHistoryStyled>
   )
 }

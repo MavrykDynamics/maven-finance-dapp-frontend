@@ -9,7 +9,11 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 // helpers & actions
 import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
 import { parseDate } from 'utils/time'
-import getTimestampByLevel from 'utils/api/getTimestampByLevel'
+import {
+  getTimestampByLevelHeaders,
+  getTimestampByLevelSchema,
+  getTimestampByLevelUrl,
+} from 'utils/api/api-helpers/getTimestampByLevel'
 import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
 import {
   executeProposal,
@@ -37,15 +41,24 @@ import { TzAddress, handleCopyToClipboard } from 'app/App.components/TzAddress/T
 import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.helpers'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { api } from 'utils/api/api'
+import { isAbortError } from 'errors/error'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
   const dispatch = useDispatch()
 
+  const { bug } = useToasterContext()
+
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { whitelistTokens } = useSelector((state: State) => state.tokens)
   const { governancePhase } = useSelector((state: State) => state.governance.config)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+
+  const { tokensMetadata } = useTokensContext()
 
   const isUserOwnerIfTheProposal = proposal.proposerId === accountPkh
 
@@ -84,17 +97,26 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   // Loading voting till time for proposal
   const [votingTill, setVotingTill] = useState<null | number>(null)
   useEffect(() => {
-    let ignore = false
+    const abortController = new AbortController()
 
-    const handleGetTimestampByLevel = async () => {
-      const res = await getTimestampByLevel(proposal.currentCycleEndLevel)
-      if (!ignore) setVotingTill(new Date(res).getTime())
-    }
-    handleGetTimestampByLevel()
+    ;(async () => {
+      try {
+        const { data: votingEndTimestamp } = await api(
+          getTimestampByLevelUrl(proposal.currentCycleEndLevel),
+          { signal: abortController.signal, headers: getTimestampByLevelHeaders },
+          getTimestampByLevelSchema,
+        )
+        setVotingTill(new Date(votingEndTimestamp).getTime())
+      } catch (e) {
+        // TODO: handle fetch errors when error boundary will be ready
+        if (!isAbortError(e)) {
+          console.error('getting timestamp by lvl error: ', e)
+        }
+        bug('Unexpected error happened occured, please reload the page')
+      }
+    })()
 
-    return () => {
-      ignore = true
-    }
+    return () => abortController.abort()
   }, [proposal.currentCycleEndLevel])
 
   // store bytes that are opened
@@ -141,26 +163,25 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         handleProposalVote={handleProposalRoundVote}
         selectedProposal={proposal}
         vote={proposal.votes.find(
-          ({ voter_id, round }) =>
-            voter_id === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
+          ({ voter: { address }, round }) =>
+            address === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
         )}
         isVoteActive={(votingTill ?? 0) >= Date.now()}
         govPhase={governancePhase}
       />
 
-      {isExecuteProposal ? (
+      {isExecuteProposal || isPaymentProposal ? (
         <div className="proposal-button-action">
-          <Button onClick={handleClickExecuteProposal} disabled={isActionActive} kind={BUTTON_PRIMARY}>
-            Execute Proposal
-          </Button>
-        </div>
-      ) : null}
-
-      {isPaymentProposal ? (
-        <div className="proposal-button-action">
-          <Button onClick={handleClickProcessPayment} disabled={isActionActive} kind={BUTTON_PRIMARY}>
-            Process Payment
-          </Button>
+          {isExecuteProposal ? (
+            <Button onClick={handleClickExecuteProposal} disabled={isActionActive} kind={BUTTON_PRIMARY}>
+              Execute Proposal
+            </Button>
+          ) : null}
+          {isPaymentProposal ? (
+            <Button onClick={handleClickProcessPayment} disabled={isActionActive} kind={BUTTON_PRIMARY}>
+              Process Payment
+            </Button>
+          ) : null}
         </div>
       ) : null}
 
@@ -183,9 +204,13 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Invoice</div>
         <div className="proposal-data-block-value">
-          <a href={proposal.invoice} target="_blank" rel="noreferrer" className="isCyan">
-            {proposal.invoice}
-          </a>
+          {proposal.invoice ? (
+            <a href={proposal.invoice} target="_blank" rel="noreferrer" className="isCyan">
+              {proposal.invoice}
+            </a>
+          ) : (
+            'No link for an invoice given'
+          )}
         </div>
       </div>
 
@@ -258,12 +283,20 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
             </TableHeader>
             <TableBody>
               {proposal.proposalPayments.map((payment) => {
-                if (payment.to__id === null || payment.title === null) return null
+                if (
+                  payment.to__id === null ||
+                  payment.title === null ||
+                  payment.token_address === null ||
+                  payment.token_address === undefined
+                )
+                  return null
 
-                const selectedSymbol =
-                  whitelistTokens.find(({ address }) => address === payment.token_address)?.symbol?.toUpperCase() ??
-                  whitelistTokens?.[0]?.symbol?.toUpperCase() ??
-                  'MVK'
+                const token = getTokenDataByAddress({ tokenAddress: payment.token_address, tokensMetadata })
+
+                if (!token) return null
+
+                const { symbol, decimals } = token
+                const tokenAmount = convertNumberForClient({ number: Number(payment.token_amount), grade: decimals })
 
                 return (
                   <TableRow className="editable-row proposal-details-payments" key={payment.id}>
@@ -272,15 +305,10 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
                     </TableCell>
                     <TableCell width="25%">{String(payment.title)}</TableCell>
                     <TableCell width="25%">
-                      <CommaNumber
-                        value={Number(payment.token_amount)}
-                        // TODO: add decimals of max asset decimals, and check design with large decimals amount
-                        decimalsToShow={4}
-                        endingText={selectedSymbol}
-                      />
+                      <CommaNumber value={tokenAmount} decimalsToShow={decimals} endingText={symbol} />
                     </TableCell>
                     <TableCell className="no-right-border" width="25%">
-                      {selectedSymbol}
+                      {symbol}
                     </TableCell>
                   </TableRow>
                 )

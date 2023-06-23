@@ -1,4 +1,3 @@
-import { DAPPConfigContext } from 'providers/DAPPConfig/dappConfig.types'
 import DataFeedsProvider from './dataFeeds.provider'
 
 import { normalizeFeeds, normalizeFeed } from './helpers/feedsNormalizer'
@@ -21,6 +20,5 @@ export type State = {
 }
 
 export type Props = {
-  dipDupContracts: DAPPConfigContext['dipDupContracts']
   children: React.ReactNode
 }

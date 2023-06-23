@@ -52,8 +52,8 @@ import { parseDate } from 'utils/time'
 
 // actions
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useDataFeedsUpdater } from 'providers/DataFeedsProvider/hooks/useDataFeedsUpdater'
 import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
+import { useFeedCharts } from 'providers/DataFeedsProvider/hooks/useFeedCharts'
 
 const tabsList = [
   {
@@ -70,11 +70,11 @@ const DataFeedDetails = () => {
   const { search } = useLocation()
   const { feedId } = useParams<{ feedId: string }>()
 
-  useDataFeedsUpdater({}, feedId)
-
   const { feedsMapper, registerFeedAction } = useDataFeedsContext()
 
   const { oraclesIds, satelliteMapper } = useSatellitesContext()
+  const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts({}, feedId)
+
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
@@ -99,7 +99,7 @@ const DataFeedDetails = () => {
     }
   })
 
-  const chartPlots = (activeTab === 1 ? feed?.dataFeedsHistory : feed?.dataFeedsVolatility) ?? []
+  const chartPlots = (activeTab === 1 ? dataFeedsHistory : dataFeedsVolatility) ?? []
 
   const feedsSatellites = useMemo(
     () =>

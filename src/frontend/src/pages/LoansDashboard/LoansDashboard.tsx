@@ -6,7 +6,6 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
 
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
 import { getGaugeVaultRiskSimpleStatus } from './helpers/position.helpers'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
@@ -16,7 +15,6 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { LoansPositionTable } from './components/PositionTable'
 import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
-import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { LBHInfoBlock } from 'pages/DashboardPersonal/DashboardPersonalComponents/DashboardPersonalComponents.style'
@@ -27,7 +25,12 @@ import colors from 'styles/colors'
 import { connect } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24hDiff'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
+import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 export type GaugeChartStateType = {
   maxValue: number
@@ -54,20 +57,19 @@ export const GAUGE_STATE_APY_PART = {
 
 export const LoansDashboard = () => {
   const dispatch = useDispatch()
+
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const {
-    isDataLoaded: isLoansLoaded,
-    loanTokens,
-    chartsData: {
-      lendBorrow24hDiff: { last24hLending, last48hLending, last24hBorrowing, last48hBorrowing },
-    },
-  } = useSelector((state: State) => state.loans)
+  const { isDataLoaded: isLoansLoaded, loanTokens } = useSelector((state: State) => state.loans)
+
+  const { lending24hPersentChange, borrowing24hPersentChange } = useLendBorrow24hDiff()
 
   const {
     accountPkh,
     user: {
       availableLoansRewards,
-      userLoansData,
+      userMTokens,
       userAvatars: { mainAvatar },
     },
   } = useSelector((state: State) => state.wallet)
@@ -76,9 +78,14 @@ export const LoansDashboard = () => {
     totalLended: number
     totalBorrowed: number
   }>(
-    (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
-      acc.totalBorrowed += totalBorrowed * rate
-      acc.totalLended += totalLended * rate
+    (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
+      const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
+      if (!token || !token.rate) return acc
+
+      const { decimals, rate } = token
+
+      acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
+      acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
       return acc
     },
     {
@@ -98,17 +105,12 @@ export const LoansDashboard = () => {
     [accountPkh],
   )
 
-  // Calcuating total lended and borrowed by user
-  const { totalUserLended, totalUserBorrowed } = useMemo(() => {
-    const totalUserLended = userLoansData.userLendings.reduce((acc, { usdAmount }) => (acc += usdAmount), 0)
-    const totalUserBorrowed = userLoansData.userBorrowing.reduce((acc, { usdAmount }) => (acc += usdAmount), 0)
-
-    return { totalUserLended, totalUserBorrowed }
-  }, [userLoansData])
-
-  // Calcuating persents of total lended and borrowed changed since last operation
-  const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hLending, last48hLending)
-  const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hBorrowing, last48hBorrowing)
+  const {
+    isLoading: userLoansDataLoading,
+    userVaultsData,
+    totalUserBorrowed,
+    totalUserLended,
+  } = useUserLoansData({ userAddress: accountPkh })
 
   // calc data for gauge chart
   const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {
@@ -123,20 +125,29 @@ export const LoansDashboard = () => {
         sumOfRatioSuppliedToAPY: number
         sumOfRatioBorrowedToAPR: number
       }>(
-        (acc, { borrowAPR, lendingAPY, lendingItem, loanTokenData: { rate, gqlName } }) => {
+        (acc, { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress }) => {
+          const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
+          if (!token || !token.rate) return acc
+
           let borrowedPerMarket = 0
 
-          const { borrowedAmount = 0, collateralAmount = 0 } = userLoansData.userVaultsData[gqlName] ?? {}
+          const { lendValue } = getMarketUserLengingItem(userMTokens, loanMTokenAddress) ?? { lendValue: 0 }
+
+          const { decimals, rate } = token
+
+          const conveterLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
+
+          const { borrowedAmount = 0, collateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
 
           // calculating value risk data & how much borrowed per vault
-          acc.borrowCapacity += collateralAmount / 2
+          acc.borrowCapacity += collateralAmount / 2 - borrowedAmount
           acc.borrowedAmount += borrowedAmount
           borrowedPerMarket += borrowedAmount
 
           // calculating net APY supplied & borrowed ratio's
-          acc.sumOfRatioSuppliedToAPY += (lendingItem?.lendValue ?? 0 * rate) * lendingAPY
+          acc.sumOfRatioSuppliedToAPY += conveterLendValue * rate * lendingAPY
           acc.sumOfRatioBorrowedToAPR += borrowedPerMarket * borrowAPR
-          acc.totalSuppliedValue += lendingItem?.lendValue ?? 0 * rate
+          acc.totalSuppliedValue += conveterLendValue * rate
           return acc
         },
         {
@@ -163,7 +174,7 @@ export const LoansDashboard = () => {
         currentValue: apyNet,
       },
     }
-  }, [loanTokens, accountPkh, userLoansData.userVaultsData])
+  }, [loanTokens, accountPkh, userMTokens, tokensMetadata, tokensPrices, userVaultsData])
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
@@ -300,7 +311,7 @@ export const LoansDashboard = () => {
                   </Button>
                 )}
               </div>
-              <LoansPositionTable markets={loanTokens} userVaultsData={userLoansData.userVaultsData} />
+              <LoansPositionTable markets={loanTokens} userVaultsData={userVaultsData} />
             </LBHInfoBlock>
           </>
         )}

@@ -11,7 +11,6 @@ import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { VaultsSearchFilterStyled, VaultsSearchFilterWrapper, VaultsFilters } from './../Vaults.style'
 
 // helpers
-import { sortByVaultCategory } from '../Vaults.helpers'
 import {
   sortVaultItems,
   sortingList,
@@ -24,22 +23,26 @@ import {
 import { stringFullCharsCompare } from 'utils/stringFullCharsCompare'
 
 // types
-import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getVaultCollateralBalance, sortVaultsByStatus } from 'providers/LoansProvider/helpers/vaults.utils'
+import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 type Filters = Record<string, string>
-type AssetCategory = 'loanAssets' | 'collateralAssets'
 
 type Props = {
-  assets: Record<AssetCategory, string[]>
-  vaultsMapper: Record<string, LoansVaultType>
+  vaultsMapper: Record<string, VaultType>
+  allVaultsIds: string[]
   currentVaultsIds: string[]
   setVaultsIds: (arg: string[]) => void
 }
 
-export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, currentVaultsIds, setVaultsIds }: Props) => {
+export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsIds, setVaultsIds }: Props) => {
   const history = useHistory()
   const { search } = useLocation()
   const { tabId } = useParams<{ tabId: string }>()
+
+  const { tokensMetadata, tokensPrices } = useTokensContext()
 
   // use MOST_RECENT and ALL_VAULTS_FILTER as the default filters value
   const {
@@ -49,8 +52,37 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
     ...restQP
   } = qs.parse(search, { ignoreQueryPrefix: true })
 
-  const preparedCollateralAssets = assetSymbols.collateralAssets.map((asset) => `${COLLATERAL_NAME}, ${asset}`)
-  const preparedLoanAssets = assetSymbols.loanAssets.map((asset) => `${BORROWED_NAME}, ${asset}`)
+  const { preparedCollateralAssets, preparedLoanAssets } = useMemo(() => {
+    const { collateralAssets, loanAssets } = allVaultsIds.reduce<{
+      collateralAssets: Set<string>
+      loanAssets: Set<string>
+    }>(
+      (acc, vaultAddress) => {
+        const { borrowedTokenAddress, collateralData } = vaultsMapper[vaultAddress]
+
+        const loanToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata })
+        if (!loanToken) return acc
+
+        acc.loanAssets.add(`${BORROWED_NAME}, ${loanToken.symbol}`)
+
+        Array.from({ length: collateralData.length }, (_, idx) => {
+          const collateral = getTokenDataByAddress({ tokenAddress: collateralData[idx].tokenAddress, tokensMetadata })
+          if (collateral) {
+            acc.collateralAssets.add(`${COLLATERAL_NAME}, ${collateral.symbol}`)
+          }
+        })
+
+        return acc
+      },
+      {
+        collateralAssets: new Set(),
+        loanAssets: new Set(),
+      },
+    )
+
+    return { preparedCollateralAssets: Array.from(collateralAssets), preparedLoanAssets: Array.from(loanAssets) }
+  }, [allVaultsIds, tokensMetadata, vaultsMapper])
+
   const preparedAssets = [ALL_VAULTS_FILTER].concat(preparedCollateralAssets).concat(preparedLoanAssets)
 
   const filterDdItems = useMemo(() => preparedAssets.map((item) => getDdItem(item)), [preparedAssets])
@@ -106,16 +138,17 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
   }
 
   const applyFilters = useCallback(
-    (filtersList: Filters) => {
+    async (filtersList: Filters) => {
       const data = searchInputValue ? handleSearch(searchInputValue, currentVaultsIds) : [...currentVaultsIds]
       let filteredVaultsIds: string[] = data
 
       // sort by statuses
       if (filtersList[vaultsFilters.SORT] === sortVaultItems.STATUSES) {
-        filteredVaultsIds = sortByVaultCategory({
+        filteredVaultsIds = await sortVaultsByStatus({
           vaultsIds: data,
           vaultsMapper,
-          status: filtersList[vaultsFilters.SORT],
+          tokensMetadata,
+          tokensPrices,
         })
       }
 
@@ -136,15 +169,15 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
         filteredVaultsIds = data.sort((a, b) => {
           // by collateral amount high > low
           if (sortIsCollateralHighToLow) {
-            const vaultA = vaultsMapper[a].collateralBalance
-            const vaultB = vaultsMapper[b].collateralBalance
+            const vaultA = getVaultCollateralBalance(vaultsMapper[a].collateralData, tokensMetadata, tokensPrices)
+            const vaultB = getVaultCollateralBalance(vaultsMapper[b].collateralData, tokensMetadata, tokensPrices)
 
             return vaultB - vaultA
           }
           // by collateral amount low > high
           if (sortIsCollateralLowToHigh) {
-            const vaultA = vaultsMapper[a].collateralBalance
-            const vaultB = vaultsMapper[b].collateralBalance
+            const vaultA = getVaultCollateralBalance(vaultsMapper[a].collateralData, tokensMetadata, tokensPrices)
+            const vaultB = getVaultCollateralBalance(vaultsMapper[b].collateralData, tokensMetadata, tokensPrices)
 
             return vaultA - vaultB
           }
@@ -188,8 +221,9 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
         filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
           if (vault.collateralData.length) {
-            const isFound = vault.collateralData.some(({ symbol }) => {
-              return stringFullCharsCompare(symbol, assetIcon)
+            const isFound = vault.collateralData.some(({ tokenAddress }) => {
+              // TODO: test it
+              return stringFullCharsCompare(tokensMetadata[tokenAddress].symbol, assetIcon)
             })
 
             return isFound
@@ -203,8 +237,9 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
       if (filtersList[vaultsFilters.ASSETS] && !isCollateralAsset && assetIcon) {
         filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
-          if (vault.borrowedAsset.symbol) {
-            return stringFullCharsCompare(vault.borrowedAsset.symbol, assetIcon)
+          if (vault.borrowedTokenAddress) {
+            // TODO: test it
+            return stringFullCharsCompare(tokensMetadata[vault.borrowedTokenAddress].symbol, assetIcon)
           }
 
           return false
@@ -214,8 +249,8 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
       // filter by 0 balance
       if (filtersList[vaultsFilters.ZERO]) {
         filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
-          const { borrowedAmount, collateralBalance } = vaultsMapper[vaultId]
-          return borrowedAmount || collateralBalance
+          const { borrowedAmount, collateralData } = vaultsMapper[vaultId]
+          return borrowedAmount || getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
         })
       }
 
@@ -228,7 +263,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
       setFilteredData(filteredVaultsIds)
       setVaultsIds(filteredVaultsIds)
     },
-    [currentVaultsIds, history, restQP, searchInputValue, setVaultsIds, tabId, vaultsMapper],
+    [currentVaultsIds, history, restQP, searchInputValue, tabId, vaultsMapper, tokensMetadata, tokensPrices],
   )
 
   const handleClickCheckbox = () => {

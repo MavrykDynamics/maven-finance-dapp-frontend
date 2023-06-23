@@ -64,28 +64,23 @@ export const convertNumberForClient = ({
   return number / Math.pow(10, grade)
 }
 
+/**
+ *
+ * @param number number we want to get it's persent
+ * @param wholeSum number we wan't to get persent from
+ * @returns persent of number in whole sum
+ */
+export const calcPersent = (number: number, wholeSum: number) => {
+  const divider = wholeSum / 100
+  return divider === 0 ? 0 : getNumberInBounds(0, 100, number / divider)
+}
+
 export const getDynamicDecimalsAmountForOutput = (number: number): number => {
   const decimalPart = String(number).split('.')[1]
   if (!decimalPart) return DECIMALS_TO_SHOW
 
   const matchesForLeadingZeroes = decimalPart.match(/^0+/)
   return matchesForLeadingZeroes ? matchesForLeadingZeroes[0].length + 2 : DECIMALS_TO_SHOW
-}
-
-export const getTokenDecimals = ({
-  tokenType,
-  tokenAddress,
-  dipDupTokens,
-}: {
-  tokenType?: TokenType
-  tokenAddress: string
-  dipDupTokens: State['tokens']['dipDupTokens']
-}): number | null => {
-  if (tokenType === 'tez') return XTZ_DECIMALS
-
-  const { metadata: { decimals = null } = {} } = dipDupTokens.find(({ contract }) => tokenAddress === contract) ?? {}
-
-  return decimals ? Number(decimals) : null
 }
 
 export function calcTimeToBlock(currentBlockLevel?: number, endBlockLevel?: number) {
@@ -304,3 +299,5 @@ export const percentageDifference = (a: number, b: number): number => {
 export const getNumberInBounds = (minBound: number, maxBound: number, numberToPutInBound: number) => {
   return Math.max(minBound, Math.min(maxBound, numberToPutInBound))
 }
+
+export const generateUniqueId = () => Math.random().toString(36).substring(2) + Date.now().toString(36)

@@ -99,7 +99,7 @@ const CELL_BUTTONS_STYLES = css`
     &.borrowing {
       > div {
         display: grid;
-        grid-template-columns: 130px 130px;
+        grid-template-columns: 120px 120px;
         justify-content: flex-end;
       }
 

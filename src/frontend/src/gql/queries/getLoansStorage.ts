@@ -1,112 +1,45 @@
 export const LOANS_QUERY = `
-  query GetLoansStorage {
-    lending_controller(where: {mock_time: {_eq: false}}) {
-      address
-      collateral_ratio
-      interest_treasury_share
-      interest_rate_decimals
-      minimum_loan_fee_pct
-      decimals
-      history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
-        type
-        amount
-        timestamp
-        loan_token {
-          loan_token_name
-          oracle_id
-          loan_token_address
-        }
-      }
-
-      collateral_tokens {
+query GetLoansStorage {
+  lending_controller(where: {mock_time: {_eq: false}}) {
+    collateral_ratio
+    interest_treasury_share
+    interest_rate_decimals
+    minimum_loan_fee_pct
+    decimals
+    
+    loan_tokens {
+      loan_token_name
+      id
+      utilisation_rate
+      total_borrowed
+      token_pool_total
+      total_remaining
+      reserve_ratio
+      current_interest_rate
+      token {
         token_address
-        id
-        token_name
-        token_contract_standard
-        protected
-        oracle_id
+      }
+      m_token {
+        address
+        accounts_aggregate(where: {balance: {_gte: 0}}) {
+          aggregate {
+            count
+          }
+        }
       }
 
-      loan_tokens {
-        loan_token_contract_standard
-        loan_token_address
-        loan_token_name
-        id
-        utilisation_rate
-        total_borrowed
-        token_pool_total
-        total_remaining
-        reserve_ratio
-        current_interest_rate
-        oracle_id
-
-        m_token {
-          address
-        }
-
-        history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
-          type
-          amount
-          timestamp
-          operation_hash
-          sender_id
-          loan_token {
-            loan_token_name
-            loan_token_address
-            
-            oracle_id
-          }
-        }
-
-        vaults_aggregate(where: {loan_outstanding_total: {_neq: "0"}}) {
-          aggregate {
-            count(distinct: true, columns: owner_id)
-          }
+      vaults_aggregate(where: {loan_outstanding_total: {_neq: "0"}}) {
+        aggregate {
+          count(distinct: true, columns: owner_id)
         }
       }
     }
   }
+}
 `
 
 export const LOANS_QUERY_NAME = 'GetLoansStorage'
 export const LOANS_QUERY_VARIABLE = {}
-
-export const AVALIABLE_COLLATERALS_QUERY = `
-  query GetAvaliableCollaterals {
-    lending_controller(where: {mock_time: {_eq: false}}) {
-      collateral_tokens {
-        token_address
-        id
-        token_name
-        token_contract_standard
-        protected
-        oracle_id
-      }
-
-      loan_tokens {
-        loan_token_name
-        oracle_id
-
-        vaults {
-          collateral_balances {
-            token {
-              token_address
-              token_name
-            }
-          }
-          loan_token {
-            loan_token_address
-            loan_token_name
-            oracle_id
-          }
-        }
-      }
-    }
-  }
-`
-
-export const AVALIABLE_COLLATERALS_QUERY_NAME = 'GetAvaliableCollaterals'
-export const AVALIABLE_COLLATERALS_QUERY_VARIABLE = {}
 
 export const NEW_VAULT_QUERY = `
   query GetUsersLastestCreatedVault($userAddress: String = "", $vaultName: String = "") {
@@ -124,50 +57,19 @@ export const NEW_VAULT_QUERY = `
 export const NEW_VAULT_QUERY_NAME = 'GetUsersLastestCreatedVault'
 export const NEW_VAULT_QUERY_VARIABLE = (userAddress: string, vaultName: string) => ({ userAddress, vaultName })
 
-export const USER_LENDING_DATA_QUERY = `
-  query GetLendBorrowHistoryPerUser($userAddress: String = "", $_in: [smallint!] = ["0", "1", "2", "3"]) {
-    mavryk_user(where: {address: {_eq: $userAddress}}) {
-      lending_controller_history_data_sender(where: {lending_controller: {mock_time: {_eq: false}}, type: {_in: $_in}}, order_by: {type: asc, timestamp: asc}) {
-        type
-        timestamp
-        operation_hash
-        amount
-        loan_token {
-          oracle_id
-          loan_token_name
-          loan_token_address
-          loan_token_contract_standard
-          current_interest_rate
-        }
-        lending_controller {
-          interest_rate_decimals
-          interest_treasury_share
-          decimals
-        }
+export const MVK_TOKEN_OPERATOR_QUERY = `
+  query GetMvkTokenOperator($_userAddress: String) {
+    mvk_token_operator(where: {owner: {address: {_eq: $_userAddress}}}) {
+      operator {
+        address
       }
-
-      lending_controller_vaults(where: {lending_controller: {mock_time: {_eq: false}}}) {
-        collateral_balances {
-          balance
-          token {
-            token_name
-            token_address
-            oracle_id
-          }
-        }
-        loan_decimals
-        loan_principal_total
-        loan_token {
-          loan_token_name
-          loan_token_address
-          oracle_id
-        }
+      
+      owner {
+        address
       }
     }
   }
 `
 
-export const USER_LENDING_DATA_QUERY_NAME = 'GetLendBorrowHistoryPerUser'
-export const USER_LENDING_DATA_QUERY_VARIABLE = (userAddress?: string) => {
-  return { userAddress: userAddress ?? '' }
-}
+export const MVK_TOKEN_OPERATOR_QUERY_NAME = 'GetMvkTokenOperator'
+export const MVK_TOKEN_OPERATOR_QUERY_VARIABLE = (address: string) => ({ _userAddress: address })

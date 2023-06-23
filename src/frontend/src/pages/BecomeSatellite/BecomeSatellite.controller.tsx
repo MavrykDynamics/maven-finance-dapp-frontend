@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { INFO_DEFAULT, INFO_ERROR } from 'app/App.components/Info/info.constants'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
 import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
@@ -15,6 +15,11 @@ import {
   getFormTextBasedOnUserRole,
   getInputValidationStatus,
 } from './BecomeSatellite.conts'
+
+// providers
+import { SUB_QUERY } from 'utils/api/apollo.consts'
+import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // Actions
 import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
@@ -50,11 +55,10 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-import { normallizeSatellite } from 'providers/SatellitesProvider/helpers/Satellites.normalizer'
 import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
-import { SUB_QUERY, SUB_SKIP } from 'utils/api/apollo.consts'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -70,7 +74,6 @@ export const BecomeSatellite = () => {
   const {
     accountPkh = '',
     user: {
-      userTokens,
       isSatellite,
       satelliteMvkIsDelegatedTo,
       userAvatars: { mainAvatar = '/images/default-avatar.png' },
@@ -85,6 +88,9 @@ export const BecomeSatellite = () => {
     maxLengths: { satelliteDelegation },
     minimumStakedMvkBalance,
   } = useDAPPConfigContext()
+  const { userTokensBalances } = useUserContext()
+
+  const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
   const { isLoading } = useSatellitesUpdater(
     {
@@ -98,19 +104,13 @@ export const BecomeSatellite = () => {
     accountPkh,
   )
 
-  useStakeUpdater({
-    skipAddressBalance: SUB_SKIP,
-    skipMvkTokenTotal: SUB_SKIP,
-    skipStakeHistory: SUB_SKIP,
-  })
-
-  const balanceOverMinStakedMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= minimumStakedMvkBalance
+  const balanceOverMinStakedMvk = userSmvkBalance >= minimumStakedMvkBalance
   const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
-  const [isChecked, setIsChecked] = useState(false)
   const pageText = getFormTextBasedOnUserRole(isSatellite)
   const isUserOracle = Boolean(usersSatelliteProfile?.peerId || usersSatelliteProfile?.publicKey)
+  const [isChecked, setIsChecked] = useState(isUserOracle)
   const showOracleWarning = isUserOracle && !isChecked
 
   const [showUnregisterPopup, setShowUnregisterPopup] = useState(false)
@@ -135,7 +135,7 @@ export const BecomeSatellite = () => {
 
     const formIsValid = Object.values(formForValidation).every(({ status }) => status === INPUT_STATUS_SUCCESS)
     const hasChangedValues = Object.entries(formForValidation).some(([key, { text }]) => {
-      const existingSatelliteField = usersSatelliteProfile?.[key as keyof ReturnType<typeof normallizeSatellite>]
+      const existingSatelliteField = usersSatelliteProfile?.[key as keyof SatelliteRecordType]
 
       if (existingSatelliteField) {
         return text !== String(existingSatelliteField)
@@ -169,12 +169,6 @@ export const BecomeSatellite = () => {
       setForm(DEFAULT_BECOME_SATELLITE_FORM)
     }
   }, [usersSatelliteProfile, accountPkh])
-
-  // Set checkbox === true if satellite is oracle
-  useEffect(() => {
-    if (isChecked === isUserOracle) return
-    setIsChecked(isUserOracle)
-  }, [isUserOracle])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string; value: string } },
@@ -313,11 +307,7 @@ export const BecomeSatellite = () => {
                 {accountPkh ? (
                   <BecomeSatelliteFormBalanceCheck balanceOk={balanceOverMinStakedMvk}>
                     <Icon id={balanceOverMinStakedMvk ? 'check-stroke' : 'close-stroke'} />
-                    <CommaNumber
-                      value={userTokens[SMVK_TOKEN_SYMBOL].balance}
-                      beginningText={'Currently staking'}
-                      endingText={'MVK'}
-                    />
+                    <CommaNumber value={userSmvkBalance} beginningText={'Currently staking'} endingText={'MVK'} />
                   </BecomeSatelliteFormBalanceCheck>
                 ) : (
                   connectWalletMessage

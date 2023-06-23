@@ -19,7 +19,7 @@ import Icon from '../Icon/Icon.view'
 import { scrollToFullView } from 'utils/scrollToFullView'
 import { ImageWithPlug } from '../Icon/ImageWithPlug'
 
-export const getDdItem = (item: string) => ({
+export const getDdItem = <T extends string>(item: T) => ({
   content: <DropdownTruncateOption text={item} />,
   id: item,
 })
@@ -35,7 +35,7 @@ type DropDownProps = {
   clickItem: (id: DDItemId) => void
   placeholder: string
   disabled?: boolean
-  activeItem?: DropDownItemType
+  activeItem?: DropDownItemType | null
   items: readonly DropDownItemType[]
   className?: string
 }

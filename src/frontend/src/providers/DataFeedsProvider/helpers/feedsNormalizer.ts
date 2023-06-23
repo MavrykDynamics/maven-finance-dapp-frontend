@@ -1,40 +1,33 @@
 import { UTCTimestamp } from 'lightweight-charts'
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { Feed } from '../dataFeeds.provider.types'
-import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
+import { SubsribeFeedHistoryDataSubscription, SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 
 import { convertNumberForClient, percentageDifference } from 'utils/calcFunctions'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 
-// TODO: use contracts inside feeds after it's in dev
-
-// Can't type it cuz metadata has unknown type for now
-type FeedContractType = { metadata?: { category?: string; icon: string }; network?: string } | undefined
-
 export const normalizeFeed = (feedGql: SubsribeOracleDataFeedSubscription['aggregator'][number]) => {
-  const dataFeedsHistory = normalizeDataFeedsHistory(feedGql.history_data)
-  const dataFeedsVolatility = normalizeDataFeedsVolatility(feedGql.history_data)
+  const category = feedGql?.metadata?.category ?? null
+  const icon = feedGql?.metadata?.icon ?? null
+  const network = feedGql?.network ?? null
 
-  const feedMetadata = feedGql.metadata as FeedContractType
-
-  const category = feedMetadata?.metadata?.category ?? null
-  const network = feed?.network ?? null
-
-  const { history_data, ...restOfTheItem } = feedGql
+  const { oracles_aggregate, ...restOfTheItem } = feedGql
 
   return {
     ...restOfTheItem,
+    oraclesAmount: oracles_aggregate?.aggregate?.count ?? 0,
     category,
     network,
     amount: convertNumberForClient({ number: feedGql.last_completed_data, grade: feedGql.decimals }),
     oraclesResponces: feedGql.last_completed_data_pct_oracle_resp / 100,
-    dataFeedsHistory: dataFeedsHistory,
-    dataFeedsVolatility: dataFeedsVolatility,
-    icon: feedMetadata?.metadata?.icon ?? null,
+    icon,
   }
 }
 
-export function normalizeFeeds(feeds: SubsribeOracleDataFeedSubscription['aggregator']) {
+export function normalizeFeeds(
+  feeds: SubsribeOracleDataFeedSubscription['aggregator'],
+  promotionAddresses?: Array<string>,
+) {
   const dataFeedUniqueCategories = new Set<string>()
 
   const { feedsMapper, feedsAddresses } = feeds.reduce<{
@@ -58,13 +51,19 @@ export function normalizeFeeds(feeds: SubsribeOracleDataFeedSubscription['aggreg
 
   return {
     feedsMapper,
-    feedsAddresses,
+    feedsAddresses: promotionAddresses
+      ? [...feedsAddresses].sort((aAddress, bAddress) => {
+          if (promotionAddresses.includes(aAddress)) return -1
+          if (promotionAddresses.includes(bAddress)) return 1
+          return 0
+        })
+      : feedsAddresses,
     feedsCategories: [...dataFeedUniqueCategories],
   }
 }
 
 export function normalizeDataFeedsHistory(
-  historyData: SubsribeOracleDataFeedSubscription['aggregator'][number]['history_data'],
+  historyData: SubsribeFeedHistoryDataSubscription['aggregator'][number]['history_data'],
 ) {
   return historyData?.length
     ? historyData
@@ -81,7 +80,7 @@ export function normalizeDataFeedsHistory(
 }
 
 export function normalizeDataFeedsVolatility(
-  historyData: SubsribeOracleDataFeedSubscription['aggregator'][number]['history_data'],
+  historyData: SubsribeFeedHistoryDataSubscription['aggregator'][number]['history_data'],
 ) {
   return historyData?.length >= 2
     ? historyData

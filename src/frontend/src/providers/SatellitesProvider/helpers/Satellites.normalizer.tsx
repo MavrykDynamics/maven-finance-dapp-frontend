@@ -271,7 +271,7 @@ export const normallizeSatellite = (
 
   const satelliteMetrics = getNewSatelliteMetrics({
     ...metricsData,
-    satelliteAddress: satelliteRecord.user_id,
+    satelliteAddress: satelliteRecord.user.address,
     satelliteVotings: { proposalVotingHistory, financialRequestsVotes, emergencyGovernanceVotes, satelliteActionVotes },
   })
 
@@ -305,7 +305,7 @@ export const normallizeSatellite = (
   }
 
   return {
-    address: satelliteRecord.user_id,
+    address: satelliteRecord.user.address,
     description: satelliteRecord.description,
     website: satelliteRecord.website,
     image: satelliteRecord.image,

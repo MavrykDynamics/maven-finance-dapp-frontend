@@ -1,31 +1,23 @@
-import dayjs from 'dayjs'
+import { ANY_USER, WHITELIST_USERS, NONE_USER } from 'pages/Loans/Loans.const'
+import { BLOCKS_PER_MINUTE } from 'utils/constants'
 
-import { ANY_USER, WHITELIST_USERS, NONE_USER, getStatusByCollateralRatio } from 'pages/Loans/Loans.const'
-import { FIXED_POINT_ACCURACY, BLOCKS_PER_MINUTE } from 'utils/constants'
+import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Loans'
 
-import { State } from 'reducers'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { LoansGQL, LoansVaultType, CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
-
-import {
-  getAssetMetadata,
-  calculateAccruedInterest,
-  calcCollateralRatio,
-  isTezosAsset,
-} from 'pages/Loans/Loans.helpers'
+import { CollateralType, DepositorsFlagType, VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { calculateAccruedInterest } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { calculateVaultMaxLiquidationAmount, calculateLiquidationPrice } from './calcFunctionsForVault'
+import { calculateVaultMaxLiquidationAmount } from 'providers/LoansProvider/helpers/vaults.utils'
 
-type VaultsStorageProps = {
-  lendingController: LoansGQL
+/**
+ * @param storage vaults data from indexer
+ * @returns nomalizer vaults data, all values are in indexer format
+ */
+export const normalizeVaultsStorage = async (storage: {
+  lendingController: LendingControllerGQL
   accountPkh?: string
-  feeds: any[] //State['dataFeeds']['feedsLedger']
-  dipDupTokens: State['tokens']['dipDupTokens']
-}
-
-export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
+}) => {
   try {
-    const { lendingController, feeds, accountPkh, dipDupTokens } = storage
+    const { lendingController, accountPkh } = storage
     if (!lendingController.vaults.length)
       return {
         permissinedVaultsIds: [],
@@ -36,227 +28,123 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
     const interestRateDecimals = lendingController?.interest_rate_decimals || 0
 
-    const currentBlock = await (
-      await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/blocks/${dayjs().toISOString()}`)
-    ).json()
-
-    const data = await lendingController.vaults.reduce<
-      Promise<{
-        permissinedVaultsIds: string[]
-        myVaultsIds: string[]
-        allVaultsIds: string[]
-        vaultsMapper: Record<string, LoansVaultType>
-      }>
-    >(
-      async (promiseAcc, item) => {
-        const acc = await promiseAcc
-
-        // Check whether we have market & vault
-        if (!item.loan_token || !item.vault?.address) return acc
-
-        // Get market asset metadata
-        const loanTokenMetadata = getAssetMetadata({
-          tokenName: item.loan_token.loan_token_name,
-          tokenAddress: item.loan_token.loan_token_address,
-          dipDupTokens,
-          feeds,
-          oracleId: String(item.loan_token.oracle_id),
-        })
-
-        // Check whether we have market asset metadata
-        if (!loanTokenMetadata) return acc
-
-        // Normalize collaterals and check whether vault has xtz collateral
-        const vaultCollateral = normalizeCollateralAssets({
-          dipDupTokens,
-          feeds,
-          collateralAssets: item.collateral_balances,
-        })
+    return lendingController.vaults.reduce<{
+      permissinedVaultsIds: string[]
+      myVaultsIds: string[]
+      allVaultsIds: string[]
+      vaultsMapper: Record<string, VaultType>
+    }>(
+      (acc, item) => {
+        const vault = item.vault
+        // Check whether we market & vault exists
+        if (!item.loan_token || !vault || !item.loan_token.token.token_address) return acc
 
         // Borrowed amount of the vault
-        const borrowedAmount = convertNumberForClient({
-          number: item.loan_principal_total,
-          grade: loanTokenMetadata.decimals,
-        })
-
-        // Calc collateral ratio how overcollateralized the vault is
-        const collateralRatio = calcCollateralRatio(
-          vaultCollateral.totalRow.amount,
-          borrowedAmount,
-          loanTokenMetadata.rate,
-        )
+        const borrowedAmount = item.loan_principal_total
 
         // Calculating Fee of the vault
-        const currentLoanInterest = convertNumberForClient({
-          number: item.loan_interest_total,
-          grade: loanTokenMetadata.decimals,
-        })
-        const fee =
-          borrowedAmount === 0
-            ? currentLoanInterest
-            : currentLoanInterest +
-              calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
-                FIXED_POINT_ACCURACY
-
-        const liquidationMax =
-          (calculateVaultMaxLiquidationAmount(
-            item.loan_outstanding_total,
-            lendingController.max_vault_liquidation_pct,
-          ) /
-            10 ** loanTokenMetadata.decimals) *
-          loanTokenMetadata.rate
-        const liquidationReward = lendingController.liquidation_fee_pct / 10 ** lendingController.decimals
-        const adminLiquidateFee = lendingController.admin_liquidation_fee_pct
-        const liquidationPrice = item.loan_token?.oracle_id
-          ? calculateLiquidationPrice(
-              item.loan_outstanding_total / 10 ** item.loan_decimals,
-              lendingController.liquidation_ratio,
-              loanTokenMetadata.rate,
-            )
-          : 0
+        const fee = Math.abs(
+          calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) -
+            borrowedAmount,
+        )
 
         // Convert deep structure of depositors to array of depositrors addresses (strings)
-        const depositors = (item.vault?.depositors.map(({ depositor_id }) => depositor_id).filter(Boolean) ??
+        const depositors = (vault.depositors.map(({ depositor }) => depositor?.address).filter(Boolean) ??
           []) as Array<string>
+
         // Calc what permission type vaults it is visible to any, whitelist, owner only
         const deporsitorsFlag: DepositorsFlagType =
-          item.vault.allowance === 0
+          vault.allowance === 0
             ? ANY_USER
-            : item.vault.allowance === 1 && depositors.length !== 0
+            : vault.allowance === 1 && depositors.length !== 0
             ? WHITELIST_USERS
             : NONE_USER
 
-        // TODO: check data below
-        // Need one source to get status like vaults or loans.
-        // Because at the moment the data is different for the same items
-
-        const status = getStatusByCollateralRatio(collateralRatio)
-
-        // gotStatusByCollateralRatio !== 'no status'
-        //   ? gotStatusByCollateralRatio
-        //   : item.loan_token?.oracle_id
-        //   ? vaultStatusChecker({
-        //       currentBlockLevel: currentBlock?.level ?? 0,
-        //       liquidationEndLevel: item.liquidation_end_level,
-        //       markedForLiquidationLevel: item.marked_for_liquidation_level,
-        //       liquidationDelayInMinutes: lendingController.liquidation_delay_in_minutes,
-        //       loanOutstandingTotal: item.loan_outstanding_total / 10 ** item.loan_decimals,
-        //       loanTokenOracleAddress: item.loan_token.oracle_id,
-        //       liquidationRatio: lendingController.liquidation_ratio,
-        //       vaultCollateralTokens: normalizeCollateralTokens,
-        //       collateralRatio: lendingController.collateral_ratio,
-        //       oracleLatestPrices,
-        //     })
-        //   : 'no status'
-
-        // Need one source to get levelOfEarly and levelOfLate like vaults or loans.
-        // Because at the moment the data is different for the same items
-
-        // let levelOfEarly = 0
-        // let levelOfLate = 0
-
-        // if (status === vaultsStatuses.GRACE_PERIOD && currentBlock?.level) {
-        //   levelOfEarly = currentBlock?.level ?? 0
-        //   levelOfLate =
-        //     item.marked_for_liquidation_level + lendingController.liquidation_delay_in_minutes * BLOCKS_PER_MINUTE
-        // } else if (status === vaultsStatuses.LIQUIDATABLE && currentBlock?.level && item.liquidation_end_level) {
-        //   levelOfEarly = currentBlock?.level ?? 0
-        //   levelOfLate = item.liquidation_end_level
-        // }
-
-        // Calc how much free tokens pool has
-        const avaliableLiq = convertNumberForClient({
-          number:
-            item.loan_token.total_remaining -
-            (item.loan_token.token_pool_total * item.loan_token.reserve_ratio) / 10000,
-          grade: loanTokenMetadata.decimals,
-        })
-
-        const normallizedVault = {
-          // Vault stats&meta data
-          borrowedAsset: {
-            ...loanTokenMetadata,
-            tokenType: item.loan_token.loan_token_contract_standard as TokenType,
-          },
-          name: item.vault.name,
-          address: item.vault?.address,
-          ownerId: item.owner_id || '',
+        const normallizedVault: VaultType = {
+          borrowedTokenAddress: item.loan_token.token.token_address,
+          name: vault.name,
+          address: vault.address,
+          ownerId: item.owner.address,
           vaultId: item.internal_id,
-          creationTimestamp: item.vault.creation_timestamp ?? undefined,
-          xtzDelegatedTo: item.vault?.baker_id ?? null,
-          status,
+          xtzDelegatedTo: vault?.baker?.address ?? null,
           apr:
             convertNumberForClient({
               number: item.loan_token?.current_interest_rate ?? 0,
               grade: interestRateDecimals,
             }) * 100,
+          creationTimestamp: new Date(vault.creation_timestamp).getTime(),
 
-          // Vault borrow capability
           borrowedAmount,
-          borrowCapacity: Math.min(
-            vaultCollateral.totalRow.amount / 2 - borrowedAmount * loanTokenMetadata.rate,
-            avaliableLiq,
-          ),
-          avaliableLiq,
-          minimumRepay: convertNumberForClient({
-            number: item.loan_token.min_repayment_amount,
-            grade: loanTokenMetadata.decimals,
-          }),
+          // Calc how much free tokens pool has for certain market
+          availableLiquidity:
+            item.loan_token.total_remaining -
+            (item.loan_token.token_pool_total * item.loan_token.reserve_ratio) / 10000,
+          minimumRepay: item.loan_token.min_repayment_amount,
           fee,
 
           // Vault collaterals data
-          collateralBalance: vaultCollateral.totalRow.amount,
-          collateralRatio,
+          collateralData: item.collateral_balances.reduce<Array<CollateralType>>((acc, collateral) => {
+            if (!collateral.collateral_token.token?.token_address) return acc
 
-          collateralData: vaultCollateral.normalizedCollaterals.length
-            ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
-            : [],
+            acc.push({
+              tokenAddress: collateral.collateral_token.token.token_address,
+              amount: collateral.balance,
+            })
+
+            return acc
+          }, []),
 
           // Liquidation
-          liquidationMax,
-          liquidationReward,
-          adminLiquidateFee,
-          liquidationPrice,
-          levelOfEarly: currentBlock?.level ?? 0,
-          levelOfLate:
-            item.marked_for_liquidation_level +
-            Number(item.lending_controller?.liquidation_delay_in_minutes) * BLOCKS_PER_MINUTE,
+          liquidationMax: calculateVaultMaxLiquidationAmount(
+            item.loan_outstanding_total,
+            lendingController.max_vault_liquidation_pct,
+          ),
+          liquidationReward: convertNumberForClient({
+            number: lendingController.liquidation_fee_pct,
+            grade: lendingController.decimals,
+          }),
+          adminLiquidateFee: lendingController.admin_liquidation_fee_pct,
+          liquidationRatio: lendingController.liquidation_ratio,
+          liquidationLvl:
+            item.marked_for_liquidation_level === 0
+              ? null
+              : item.marked_for_liquidation_level +
+                Number(item.lending_controller?.liquidation_delay_in_minutes) * BLOCKS_PER_MINUTE,
 
           // Permissions
-          operators: [],
+          // TODO: implement smvk operators
           sMVKDelegatedTo: '',
           depositors,
           deporsitorsFlag,
         }
 
         // Add vault object to mapper id => vault
-        acc.vaultsMapper[item.vault.address] = normallizedVault
+        acc.vaultsMapper[vault.address] = normallizedVault
         // Add vault id to all valts list
-        acc.allVaultsIds.push(item.vault.address)
+        acc.allVaultsIds.push(vault.address)
 
         // If user is owner add vault id to my vaults list
-        if (accountPkh === item.owner_id) {
-          acc.myVaultsIds.push(item.vault.address)
+        if (accountPkh === item.owner.address) {
+          acc.myVaultsIds.push(vault.address)
         }
 
         // If user is depositor of the vault, or vault is visible to anyone, add it to permissioned vaults list
         if (
           ((accountPkh && depositors.includes(accountPkh)) || deporsitorsFlag === ANY_USER) &&
-          accountPkh !== item.owner_id
+          accountPkh !== item.owner.address
         ) {
-          acc.permissinedVaultsIds.push(item.vault.address)
+          acc.permissinedVaultsIds.push(vault.address)
         }
 
         return acc
       },
-      Promise.resolve({
+      {
         permissinedVaultsIds: [],
         myVaultsIds: [],
         allVaultsIds: [],
         vaultsMapper: {},
-      }),
+      },
     )
-    return data
   } catch (e) {
     console.error('normalizeVaultsStorage error: ', e)
     return {
@@ -266,62 +154,4 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
       vaultsMapper: {},
     }
   }
-}
-
-// Normalize collaterals of the vault
-const normalizeCollateralAssets = ({
-  feeds,
-  dipDupTokens,
-  collateralAssets,
-}: {
-  feeds: any[] //State['dataFeeds']['feedsLedger']
-  dipDupTokens: State['tokens']['dipDupTokens']
-  collateralAssets: LoansGQL['vaults'][number]['collateral_balances']
-}): {
-  normalizedCollaterals: Array<CollateralType>
-  totalRow: CollateralType
-} => {
-  const normalizedCollaterals = collateralAssets?.reduce<{
-    normalizedCollaterals: Array<CollateralType>
-    totalRow: CollateralType
-  }>(
-    (acc, collateral) => {
-      if (!collateral.token) return acc
-
-      const collateralAsset = getAssetMetadata({
-        tokenName: collateral.token.token_name,
-        tokenAddress: collateral.token.token_address,
-        dipDupTokens,
-        feeds,
-        oracleId: String(collateral.token.oracle_id),
-      })
-
-      if (!collateralAsset) return acc
-
-      const collateralBalance = collateral.balance / 10 ** collateralAsset.decimals
-
-      acc.normalizedCollaterals.push({
-        ...collateralAsset,
-        amount: collateralBalance,
-      })
-
-      acc.totalRow.amount += collateralBalance * collateralAsset.rate
-      return acc
-    },
-    {
-      normalizedCollaterals: [],
-      totalRow: {
-        symbol: 'total',
-        amount: 0,
-        rate: 0,
-        name: '',
-        gqlName: '',
-        icon: '',
-        id: 0,
-        decimals: 0,
-      },
-    },
-  )
-
-  return normalizedCollaterals
 }
