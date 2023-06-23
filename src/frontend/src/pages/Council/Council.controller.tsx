@@ -24,7 +24,6 @@ import {
   dropRequest,
   sign,
 } from './Council.actions'
-import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 // types
 

@@ -51,9 +51,6 @@ const AppContainer = () => {
 
   useEffect(() => {
     ;(async () => {
-      // Needs to be fetched before promise all
-      await dispatch(getContractAddressesStorage())
-
       // For using Beacon wallet
       await Promise.all([
         dispatch(getContractAddressesStorage()),

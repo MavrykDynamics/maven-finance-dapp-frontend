@@ -241,6 +241,8 @@ export const BecomeSatellite = () => {
     />
   )
 
+  if (!usersSatelliteProfile) return null
+
   return (
     <>
       <Page>

@@ -46,10 +46,7 @@ export const useSatellitesUpdater = (
   const { loading: satellitesLoading } = useSubscription(getSatelliteDataSubscription(address), {
     onData: ({ data: response }) => {
       const { data } = response
-      if (data) {
-        console.log(data)
-        setStorage({ ...storage, satellite: [...data.satellite] })
-      }
+      if (data) setStorage({ ...storage, satellite: [...data.satellite] })
     },
     onError: (error) => {
       console.log({ error })

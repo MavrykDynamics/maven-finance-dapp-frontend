@@ -97,7 +97,7 @@ export const Dashboard = () => {
 
   const { isInitialLoading: isDoormanLoading } = useStakeUpdater()
 
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
+  const { isLoading: isDataLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
@@ -124,7 +124,12 @@ export const Dashboard = () => {
   return (
     <Page>
       <PageHeader page={'dashboard'} />
-      <DashboardView tvl={tvlValue} mvkStatsBlock={mvkStatsBlock} activeTab={activeTab} isLoading={isLoading} />
+      <DashboardView
+        tvl={tvlValue}
+        mvkStatsBlock={mvkStatsBlock}
+        activeTab={activeTab}
+        isLoading={isDataLoading || isDoormanLoading}
+      />
     </Page>
   )
 }
