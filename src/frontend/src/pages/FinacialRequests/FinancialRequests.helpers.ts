@@ -25,8 +25,8 @@ export const normalizeFinancialRequests = (storage: {
         governanceContract: item.governance_financial.governance.address,
         governanceFinId: item.governance_financial.address,
         treasuryContract: item.treasury.address,
-        votingTillTime: item.execution_datetime ?? item.expiration_datetime,
         tokensAmount: item.token_amount,
+        votingTillTime: item.executed ? item.execution_datetime : item.expiration_datetime,
         executed: item.executed,
         status: item.status,
 
