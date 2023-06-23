@@ -1,11 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { State } from 'reducers'
 import { submitEmergencyGovernanceProposal } from '../EmergencyGovernance.actions'
 import {
   InputStatusType,
-  INPUT_LARGE,
   INPUT_MEDIUM,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
@@ -21,7 +20,6 @@ import { NewInputLabel } from 'app/App.components/Input/Input.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
-import { useBreakGlassConfigInit } from 'providers/BreakGlassProvider/hooks/useBreakGlassConfigInit'
 
 export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolean; closeHandler: () => void }) => {
   const dispatch = useDispatch()
@@ -30,8 +28,6 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
     config: { proposalTitleMaxLength, proposalDescMaxLength },
   } = useSelector((state: State) => state.emergencyGovernance)
   const { isActionActive } = useSelector((state: State) => state.loading)
-
-  useBreakGlassConfigInit()
 
   const [proposalData, setProposalData] = useState<{
     title: { text: string; validation: InputStatusType }

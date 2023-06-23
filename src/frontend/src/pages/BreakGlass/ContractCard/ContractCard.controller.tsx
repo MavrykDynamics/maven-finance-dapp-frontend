@@ -3,11 +3,11 @@ import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.co
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { BGAccordion } from '../Accordeon/Accordeon.view'
 import { parseDate } from 'utils/time'
-import { BreakGlassStatusStorage } from 'providers/BreakGlassProvider/breakGlass.provider.type'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_UP } from 'app/App.components/StatusFlag/StatusFlag.constants'
+import { ContractStatusesStorage } from 'providers/ContractStatusesProvider/contractStatus.provider.types'
 
 type ContractCardProps = {
-  contract: BreakGlassStatusStorage[number]
+  contract: ContractStatusesStorage[number]
   isActive?: boolean
   isExpanded: boolean
   onClick?: () => void

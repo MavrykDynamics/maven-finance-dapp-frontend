@@ -1,19 +1,20 @@
 import { useSubscription } from '@apollo/client'
-import {
-  BREAK_GLASS_FARM_SUB,
-  BREAK_GLASS_AGGREGATOR_FACTORY_SUB,
-  BREAK_GLASS_AGGREGATOR_SUB,
-  BREAK_GLASS_DELEGATION_SUB,
-  BREAK_GLASS_DOORMAN_SUB,
-  BREAK_GLASS_FARM_FACTORY_SUB,
-  BREAK_GLASS_TREASURY_FACTORY_SUB,
-  BREAK_GLASS_TREASURY_SUB,
-} from 'gql/queries/getBreakGlassStorage'
-import { useState, useEffect } from 'react'
-import { useBreakGlassContext } from '../breakGlass.provider'
-import { BreakGlassStatusType } from '../breakGlass.provider.type'
 
-function checkStorageProperties(storage: Partial<BreakGlassStatusType>): boolean {
+import { useState, useEffect } from 'react'
+import {
+  CONTRACT_STATUSES_FARM_SUB,
+  CONTRACT_STATUSES_FARM_FACTORY_SUB,
+  CONTRACT_STATUSES_TREASURY_SUB,
+  CONTRACT_STATUSES_TREASURY_FACTORY_SUB,
+  CONTRACT_STATUSES_AGGREGATOR_SUB,
+  CONTRACT_STATUSES_AGGREGATOR_FACTORY_SUB,
+  CONTRACT_STATUSES_DELEGATION_SUB,
+  CONTRACT_STATUSES_DOORMAN_SUB,
+} from '../queries/contractStatuses.query'
+import { ContractStatusesType } from '../contractStatus.provider.types'
+import { useContractStatusesContext } from '../contractStatus.provider'
+
+function checkStorageProperties(storage: Partial<ContractStatusesType>): storage is ContractStatusesType {
   return (
     storage.hasOwnProperty('farm') &&
     storage.hasOwnProperty('farm_factory') &&
@@ -26,67 +27,67 @@ function checkStorageProperties(storage: Partial<BreakGlassStatusType>): boolean
   )
 }
 
-export const useContactStatus = () => {
-  const { updateBreakGlassStatus } = useBreakGlassContext()
-  const [storage, setStorage] = useState<Partial<BreakGlassStatusType>>({})
+export const useContactStatuses = () => {
+  const { updateBreakGlassStatuses } = useContractStatusesContext()
+  const [storage, setStorage] = useState<Partial<ContractStatusesType>>({})
 
-  const { loading: farmLoading } = useSubscription(BREAK_GLASS_FARM_SUB, {
+  const { loading: farmLoading } = useSubscription(CONTRACT_STATUSES_FARM_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
       if (data) setStorage((prevStorage) => ({ ...prevStorage, farm: data.farm }))
     },
   })
 
-  const { loading: farmFactoryLoading } = useSubscription(BREAK_GLASS_FARM_FACTORY_SUB, {
+  const { loading: farmFactoryLoading } = useSubscription(CONTRACT_STATUSES_FARM_FACTORY_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
       if (data) setStorage((prevStorage) => ({ ...prevStorage, farm_factory: data.farm_factory }))
     },
   })
 
-  const { loading: treasuryLoading } = useSubscription(BREAK_GLASS_TREASURY_SUB, {
+  const { loading: treasuryLoading } = useSubscription(CONTRACT_STATUSES_TREASURY_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
       if (data) setStorage((prevStorage) => ({ ...prevStorage, treasury: data.treasury }))
     },
   })
 
-  const { loading: treasuryFactoryLoading } = useSubscription(BREAK_GLASS_TREASURY_FACTORY_SUB, {
+  const { loading: treasuryFactoryLoading } = useSubscription(CONTRACT_STATUSES_TREASURY_FACTORY_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
       if (data) setStorage((prevStorage) => ({ ...prevStorage, treasury_factory: data.treasury_factory }))
     },
   })
 
-  const { loading: aggregatorLoading } = useSubscription(BREAK_GLASS_AGGREGATOR_SUB, {
+  const { loading: aggregatorLoading } = useSubscription(CONTRACT_STATUSES_AGGREGATOR_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
       if (data) setStorage((prevStorage) => ({ ...prevStorage, aggregator: data.aggregator }))
     },
   })
 
-  const { loading: aggregatorFactoryLoading } = useSubscription(BREAK_GLASS_AGGREGATOR_FACTORY_SUB, {
+  const { loading: aggregatorFactoryLoading } = useSubscription(CONTRACT_STATUSES_AGGREGATOR_FACTORY_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
       if (data) setStorage((prevStorage) => ({ ...prevStorage, aggregator_factory: data.aggregator_factory }))
     },
   })
 
-  const { loading: delegationLoading } = useSubscription(BREAK_GLASS_DELEGATION_SUB, {
+  const { loading: delegationLoading } = useSubscription(CONTRACT_STATUSES_DELEGATION_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
       if (data) setStorage((prevStorage) => ({ ...prevStorage, delegation: data.delegation }))
     },
   })
 
-  const { loading: doormanLoading } = useSubscription(BREAK_GLASS_DOORMAN_SUB, {
+  const { loading: doormanLoading } = useSubscription(CONTRACT_STATUSES_DOORMAN_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
       if (data) setStorage((prevStorage) => ({ ...prevStorage, doorman: data.doorman }))
     },
   })
 
-  const isLoaded =
+  const isAllStatusesLoaded =
     !farmLoading &&
     !farmFactoryLoading &&
     !treasuryLoading &&
@@ -97,10 +98,8 @@ export const useContactStatus = () => {
     !doormanLoading
 
   useEffect(() => {
-    if (isLoaded && checkStorageProperties(storage)) {
-      updateBreakGlassStatus(storage as BreakGlassStatusType)
-    }
-  }, [isLoaded, storage, updateBreakGlassStatus])
+    if (isAllStatusesLoaded && checkStorageProperties(storage)) updateBreakGlassStatuses(storage)
+  }, [isAllStatusesLoaded, storage, updateBreakGlassStatuses])
 
-  return { isLoading: !isLoaded }
+  return { isLoading: !isAllStatusesLoaded }
 }

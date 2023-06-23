@@ -36,7 +36,7 @@ type Props = {
   accountPkh?: string
   handleTriggerEmergencyProposal: () => void
   emergencyGovernanceLedger: EmergencyGovernanceStorage['emergencyGovernanceLedger']
-  isGlassBroken: boolean
+  isGlassBroken: boolean | null
 }
 
 export const EmergencyGovernanceView = ({

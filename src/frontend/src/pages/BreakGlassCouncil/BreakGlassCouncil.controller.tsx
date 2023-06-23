@@ -25,7 +25,7 @@ import { getCouncilStorage } from 'pages/Council/Council.actions'
 
 // types
 import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
-import { useBreakGlassConfigInit } from 'providers/BreakGlassProvider/hooks/useBreakGlassConfigInit'
+import { useContractStatusConfig } from 'providers/ContractStatusesProvider/hooks/useContractStatusesConfig'
 
 const titles = {
   membersName: 'Break Glass Council',
@@ -42,8 +42,6 @@ export function BreakGlassCouncil() {
       userAvatars: { breakGlassAvatar },
     },
   } = useSelector((state: State) => state.wallet)
-
-  const { isLoading: isConfigLoaded } = useBreakGlassConfigInit()
 
   const {
     config: { councilMaxLength },
@@ -107,7 +105,7 @@ export function BreakGlassCouncil() {
     <Page>
       <PageHeader page={'break glass council'} avatar={breakGlassAvatar} />
 
-      {isLoading && isConfigLoaded ? (
+      {isLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading break glass counsil</div>
@@ -117,6 +115,7 @@ export function BreakGlassCouncil() {
           // general info
           pathnameOfPage="/break-glass-council"
           maxLength={councilMaxLength}
+          // TODO: clarigy this field with @CasualJackie & @Sam-M-Israel
           glassBroken={!emergencyGovActive}
           showPropagateBreakGlass
           titles={titles}

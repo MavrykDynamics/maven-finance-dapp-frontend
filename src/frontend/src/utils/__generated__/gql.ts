@@ -13,6 +13,9 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
+    "\n  subscription subscribeSmvkHistoryData {\n    smvk_history_data(distinct_on: timestamp) {\n      mvk_total_supply\n      smvk_total_supply\n      timestamp\n    }\n  }\n": types.SubscribeSmvkHistoryDataDocument,
+    "\n  subscription subscribeAdressBalance($_eq: String) {\n    mavryk_user(where: { address: { _eq: $_eq } }) {\n      address\n      mvk_balance\n      smvk_balance\n    }\n  }\n": types.SubscribeAdressBalanceDocument,
+    "\nsubscription subscribeMvkTokenTotal {\n  mvk_token {\n    total_supply\n    maximum_supply\n  }\n}\n": types.SubscribeMvkTokenTotalDocument,
     "\nsubscription glasssBrokenStatus {\n  break_glass {\n    glass_broken\n  }\n}\n": types.GlasssBrokenStatusDocument,
     "\nsubscription whiteListDevelopers {\n  whitelist_developer {\n    developer {\n      address\n    }\n  }\n}\n": types.WhiteListDevelopersDocument,
     "\n  subscription breakGlassfarm($_eq: String) {\n    farm(where: {admin: {_neq: \"\"}}) {\n      name\n      address\n      claim_paused\n      deposit_paused\n      withdraw_paused\n      admin\n      last_updated_at\n    }\n  }\n": types.BreakGlassfarmDocument,
@@ -23,9 +26,6 @@ const documents = {
     "\n  subscription breakGlassTreasuryFactory($_eq: String) {\n    treasury_factory(where: {admin: {_neq: \"\"}}) {\n      create_treasury_paused\n      address\n      track_treasury_paused\n      untrack_treasury_paused\n      admin\n      last_updated_at\n    }\n  }\n": types.BreakGlassTreasuryFactoryDocument,
     "\n  subscription breakGlassAggregator($_eq: String) {\n    aggregator(where: {admin: {_neq: \"\"}}) {\n      address\n      name\n      withdraw_reward_smvk_paused\n      withdraw_reward_xtz_paused\n      admin\n      last_updated_at\n    }\n  }\n": types.BreakGlassAggregatorDocument,
     "\n  subscription breakGlassAggregatorFactory($_eq: String) {\n    aggregator_factory(where: {admin: {_neq: \"\"}}) {\n      address\n      untrack_aggregator_paused\n      track_aggregator_paused\n      distribute_reward_xtz_paused\n      distribute_reward_smvk_paused\n      create_aggregator_paused\n      admin\n      last_updated_at\n    }\n  }\n": types.BreakGlassAggregatorFactoryDocument,
-    "\n  subscription subscribeSmvkHistoryData {\n    smvk_history_data(distinct_on: timestamp) {\n      mvk_total_supply\n      smvk_total_supply\n      timestamp\n    }\n  }\n": types.SubscribeSmvkHistoryDataDocument,
-    "\n  subscription subscribeAdressBalance($_eq: String) {\n    mavryk_user(where: { address: { _eq: $_eq } }) {\n      address\n      mvk_balance\n      smvk_balance\n    }\n  }\n": types.SubscribeAdressBalanceDocument,
-    "\nsubscription subscribeMvkTokenTotal {\n  mvk_token {\n    total_supply\n    maximum_supply\n  }\n}\n": types.SubscribeMvkTokenTotalDocument,
 };
 
 /**
@@ -42,6 +42,18 @@ const documents = {
  */
 export function gql(source: string): unknown;
 
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  subscription subscribeSmvkHistoryData {\n    smvk_history_data(distinct_on: timestamp) {\n      mvk_total_supply\n      smvk_total_supply\n      timestamp\n    }\n  }\n"): (typeof documents)["\n  subscription subscribeSmvkHistoryData {\n    smvk_history_data(distinct_on: timestamp) {\n      mvk_total_supply\n      smvk_total_supply\n      timestamp\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  subscription subscribeAdressBalance($_eq: String) {\n    mavryk_user(where: { address: { _eq: $_eq } }) {\n      address\n      mvk_balance\n      smvk_balance\n    }\n  }\n"): (typeof documents)["\n  subscription subscribeAdressBalance($_eq: String) {\n    mavryk_user(where: { address: { _eq: $_eq } }) {\n      address\n      mvk_balance\n      smvk_balance\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nsubscription subscribeMvkTokenTotal {\n  mvk_token {\n    total_supply\n    maximum_supply\n  }\n}\n"): (typeof documents)["\nsubscription subscribeMvkTokenTotal {\n  mvk_token {\n    total_supply\n    maximum_supply\n  }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -82,18 +94,6 @@ export function gql(source: "\n  subscription breakGlassAggregator($_eq: String)
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  subscription breakGlassAggregatorFactory($_eq: String) {\n    aggregator_factory(where: {admin: {_neq: \"\"}}) {\n      address\n      untrack_aggregator_paused\n      track_aggregator_paused\n      distribute_reward_xtz_paused\n      distribute_reward_smvk_paused\n      create_aggregator_paused\n      admin\n      last_updated_at\n    }\n  }\n"): (typeof documents)["\n  subscription breakGlassAggregatorFactory($_eq: String) {\n    aggregator_factory(where: {admin: {_neq: \"\"}}) {\n      address\n      untrack_aggregator_paused\n      track_aggregator_paused\n      distribute_reward_xtz_paused\n      distribute_reward_smvk_paused\n      create_aggregator_paused\n      admin\n      last_updated_at\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  subscription subscribeSmvkHistoryData {\n    smvk_history_data(distinct_on: timestamp) {\n      mvk_total_supply\n      smvk_total_supply\n      timestamp\n    }\n  }\n"): (typeof documents)["\n  subscription subscribeSmvkHistoryData {\n    smvk_history_data(distinct_on: timestamp) {\n      mvk_total_supply\n      smvk_total_supply\n      timestamp\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  subscription subscribeAdressBalance($_eq: String) {\n    mavryk_user(where: { address: { _eq: $_eq } }) {\n      address\n      mvk_balance\n      smvk_balance\n    }\n  }\n"): (typeof documents)["\n  subscription subscribeAdressBalance($_eq: String) {\n    mavryk_user(where: { address: { _eq: $_eq } }) {\n      address\n      mvk_balance\n      smvk_balance\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\nsubscription subscribeMvkTokenTotal {\n  mvk_token {\n    total_supply\n    maximum_supply\n  }\n}\n"): (typeof documents)["\nsubscription subscribeMvkTokenTotal {\n  mvk_token {\n    total_supply\n    maximum_supply\n  }\n}\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

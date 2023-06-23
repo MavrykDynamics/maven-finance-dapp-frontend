@@ -1,19 +1,6 @@
-import { toCamelCase } from 'utils/toCamelCase'
-import { BreakGlassStatusType, BreakGlassStatusStorage, BreakGlassConfigType } from '../breakGlass.provider.type'
+import { ContractStatusesStorage, ContractStatusesType } from '../contractStatus.provider.types'
 
-export const normalizeBreakGlass = ({
-  break_glass: [breakGlassStorage],
-  whitelist_developer,
-}: BreakGlassConfigType) => {
-  const whitelistDev = whitelist_developer.map((item) => item.developer?.address ?? '').filter((item) => item !== '')
-
-  return {
-    glassBroken: breakGlassStorage?.glass_broken,
-    whitelistDev,
-  }
-}
-
-export function normalizeBreakGlassStatus(storage: BreakGlassStatusType): BreakGlassStatusStorage {
+export function normalizeBreakGlassStatuses(storage: ContractStatusesType): ContractStatusesStorage {
   return [
     // doorman
     ...(storage?.doorman?.length
@@ -175,8 +162,4 @@ export function normalizeBreakGlassStatus(storage: BreakGlassStatusType): BreakG
   ]
     .flat()
     .filter(Boolean)
-}
-
-export const getEntrypointText = (str: string) => {
-  return `%${toCamelCase(str).replace(/paused/i, '')}`
 }

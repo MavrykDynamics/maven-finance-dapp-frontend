@@ -14,20 +14,18 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // providers
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
-import { useBreakGlassContext } from 'providers/BreakGlassProvider/breakGlass.provider'
-import { useBreakGlassConfigInit } from 'providers/BreakGlassProvider/hooks/useBreakGlassConfigInit'
 import { SUB_SKIP } from 'utils/api/apollo.consts'
+import { useContractStatusConfig } from 'providers/ContractStatusesProvider/hooks/useContractStatusesConfig'
 
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { eGovProposals, isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const {
-    config: { glassBroken },
-  } = useBreakGlassContext()
 
-  useBreakGlassConfigInit()
+  const { isLoading: isContractStatusConfigLoading, isGlassBroken } = useContractStatusConfig({
+    skipWhitelistDevelopers: SUB_SKIP,
+  })
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 
@@ -54,7 +52,7 @@ export const EmergencyGovernance = () => {
   return (
     <Page>
       <PageHeader page={'emergency governance'} />
-      {isLoading || isDoormanLoading ? (
+      {isLoading || isDoormanLoading || isContractStatusConfigLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading emergency governance proposals</div>
@@ -66,7 +64,7 @@ export const EmergencyGovernance = () => {
             handleTriggerEmergencyProposal={openInitiatePopup}
             accountPkh={accountPkh}
             emergencyGovernanceLedger={eGovProposals}
-            isGlassBroken={glassBroken}
+            isGlassBroken={isGlassBroken}
           />
         </>
       )}

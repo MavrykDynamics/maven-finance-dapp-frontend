@@ -1,6 +1,5 @@
 import React from 'react'
-import BreakGlassProvider from './breakGlass.provider'
-import { normalizeBreakGlass } from './helpers/normalizeBreakGlass'
+import ContractStatusesProvider from './contractStatus.provider'
 import {
   BreakGlassAggregatorFactorySubscription,
   BreakGlassAggregatorSubscription,
@@ -14,8 +13,9 @@ import {
   Maybe,
   WhiteListDevelopersSubscription,
 } from 'utils/__generated__/graphql'
+import { SubscriptionSkipType } from 'utils/api/apollo.consts'
 
-export type BreakGlassStatusStorage = Array<{
+export type ContractStatusesStorage = Array<{
   title: string
   type: string
   address: string
@@ -24,18 +24,13 @@ export type BreakGlassStatusStorage = Array<{
   methods: Record<string, boolean>
 }>
 
-export type BreakGlassConfig = ReturnType<typeof normalizeBreakGlass>
-
-export interface BreakGlassContext {
-  breakGlassStatus: BreakGlassStatusStorage
-  config: BreakGlassConfig
-  // actions
-  updateBreakGlassConfig: InstanceType<typeof BreakGlassProvider>['updateBreakGlassConfig']
-  updateBreakGlassStatus: InstanceType<typeof BreakGlassProvider>['updateBreakGlassStatus']
+export interface ContractStatusesContext {
+  contractStatuses: ContractStatusesStorage
+  updateContractStatuses: InstanceType<typeof ContractStatusesProvider>['updateContractStatuses']
 }
 
 export type State = {
-  context: BreakGlassContext
+  context: ContractStatusesContext
 }
 
 export type Props = {
@@ -43,9 +38,13 @@ export type Props = {
 }
 
 // hooks
-export type BreakGlassConfigType = GlasssBrokenStatusSubscription & WhiteListDevelopersSubscription
+export type ContractStatusesConfigSkips = {
+  skipGlassBroken?: SubscriptionSkipType
+  skipWhitelistDevelopers?: SubscriptionSkipType
+}
+export type ContractStatusesConfigType = GlasssBrokenStatusSubscription & WhiteListDevelopersSubscription
 
-export type BreakGlassStatusType = BreakGlassfarmSubscription &
+export type ContractStatusesType = BreakGlassfarmSubscription &
   BreakGlassAggregatorFactorySubscription &
   BreakGlassAggregatorSubscription &
   BreakGlassDelegationSubscription &
