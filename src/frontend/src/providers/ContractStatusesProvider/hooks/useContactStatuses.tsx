@@ -28,7 +28,7 @@ function checkStorageProperties(storage: Partial<ContractStatusesType>): storage
 }
 
 export const useContactStatuses = () => {
-  const { updateBreakGlassStatuses } = useContractStatusesContext()
+  const { updateContractStatuses } = useContractStatusesContext()
   const [storage, setStorage] = useState<Partial<ContractStatusesType>>({})
 
   const { loading: farmLoading } = useSubscription(CONTRACT_STATUSES_FARM_SUB, {
@@ -98,8 +98,8 @@ export const useContactStatuses = () => {
     !doormanLoading
 
   useEffect(() => {
-    if (isAllStatusesLoaded && checkStorageProperties(storage)) updateBreakGlassStatuses(storage)
-  }, [isAllStatusesLoaded, storage, updateBreakGlassStatuses])
+    if (isAllStatusesLoaded && checkStorageProperties(storage)) updateContractStatuses(storage)
+  }, [isAllStatusesLoaded, storage, updateContractStatuses])
 
   return { isLoading: !isAllStatusesLoaded }
 }
