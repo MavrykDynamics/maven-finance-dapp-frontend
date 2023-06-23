@@ -1,6 +1,6 @@
 import { useSubscription } from '@apollo/client'
 
-import { useState, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import {
   CONTRACT_STATUSES_FARM_SUB,
   CONTRACT_STATUSES_FARM_FACTORY_SUB,
@@ -11,8 +11,8 @@ import {
   CONTRACT_STATUSES_DELEGATION_SUB,
   CONTRACT_STATUSES_DOORMAN_SUB,
 } from '../queries/contractStatuses.query'
-import { ContractStatusesType } from '../contractStatus.provider.types'
-import { useContractStatusesContext } from '../contractStatus.provider'
+import { ContractStatusesType } from '../contractStatuses.types'
+import { normalizeContractStatuses } from '../helpers/normalizeContractStatuses'
 
 function checkStorageProperties(storage: Partial<ContractStatusesType>): storage is ContractStatusesType {
   return (
@@ -27,63 +27,68 @@ function checkStorageProperties(storage: Partial<ContractStatusesType>): storage
   )
 }
 
+/**
+ * not using context, cuz it's used only on 1 page, so context is not needed for that data
+ * @returns contract statuses arr and initial loading flag
+ */
 export const useContactStatuses = () => {
-  const { updateContractStatuses } = useContractStatusesContext()
-  const [storage, setStorage] = useState<Partial<ContractStatusesType>>({})
+  const [indexerContractStatuses, setIndexerContractStatuses] = useState<Partial<ContractStatusesType>>({})
 
   const { loading: farmLoading } = useSubscription(CONTRACT_STATUSES_FARM_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
-      if (data) setStorage((prevStorage) => ({ ...prevStorage, farm: data.farm }))
+      if (data) setIndexerContractStatuses((prevStorage) => ({ ...prevStorage, farm: data.farm }))
     },
   })
 
   const { loading: farmFactoryLoading } = useSubscription(CONTRACT_STATUSES_FARM_FACTORY_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
-      if (data) setStorage((prevStorage) => ({ ...prevStorage, farm_factory: data.farm_factory }))
+      if (data) setIndexerContractStatuses((prevStorage) => ({ ...prevStorage, farm_factory: data.farm_factory }))
     },
   })
 
   const { loading: treasuryLoading } = useSubscription(CONTRACT_STATUSES_TREASURY_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
-      if (data) setStorage((prevStorage) => ({ ...prevStorage, treasury: data.treasury }))
+      if (data) setIndexerContractStatuses((prevStorage) => ({ ...prevStorage, treasury: data.treasury }))
     },
   })
 
   const { loading: treasuryFactoryLoading } = useSubscription(CONTRACT_STATUSES_TREASURY_FACTORY_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
-      if (data) setStorage((prevStorage) => ({ ...prevStorage, treasury_factory: data.treasury_factory }))
+      if (data)
+        setIndexerContractStatuses((prevStorage) => ({ ...prevStorage, treasury_factory: data.treasury_factory }))
     },
   })
 
   const { loading: aggregatorLoading } = useSubscription(CONTRACT_STATUSES_AGGREGATOR_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
-      if (data) setStorage((prevStorage) => ({ ...prevStorage, aggregator: data.aggregator }))
+      if (data) setIndexerContractStatuses((prevStorage) => ({ ...prevStorage, aggregator: data.aggregator }))
     },
   })
 
   const { loading: aggregatorFactoryLoading } = useSubscription(CONTRACT_STATUSES_AGGREGATOR_FACTORY_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
-      if (data) setStorage((prevStorage) => ({ ...prevStorage, aggregator_factory: data.aggregator_factory }))
+      if (data)
+        setIndexerContractStatuses((prevStorage) => ({ ...prevStorage, aggregator_factory: data.aggregator_factory }))
     },
   })
 
   const { loading: delegationLoading } = useSubscription(CONTRACT_STATUSES_DELEGATION_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
-      if (data) setStorage((prevStorage) => ({ ...prevStorage, delegation: data.delegation }))
+      if (data) setIndexerContractStatuses((prevStorage) => ({ ...prevStorage, delegation: data.delegation }))
     },
   })
 
   const { loading: doormanLoading } = useSubscription(CONTRACT_STATUSES_DOORMAN_SUB, {
     onData: ({ data: response }) => {
       const { data } = response
-      if (data) setStorage((prevStorage) => ({ ...prevStorage, doorman: data.doorman }))
+      if (data) setIndexerContractStatuses((prevStorage) => ({ ...prevStorage, doorman: data.doorman }))
     },
   })
 
@@ -97,9 +102,11 @@ export const useContactStatuses = () => {
     !delegationLoading &&
     !doormanLoading
 
-  useEffect(() => {
-    if (isAllStatusesLoaded && checkStorageProperties(storage)) updateContractStatuses(storage)
-  }, [isAllStatusesLoaded, storage, updateContractStatuses])
+  const contractStatuses = useMemo(() => {
+    if (isAllStatusesLoaded && checkStorageProperties(indexerContractStatuses))
+      return normalizeContractStatuses(indexerContractStatuses)
+    return []
+  }, [isAllStatusesLoaded, indexerContractStatuses])
 
-  return { isLoading: !isAllStatusesLoaded }
+  return { isLoading: !isAllStatusesLoaded, contractStatuses }
 }

@@ -15,7 +15,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 // providers
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { SUB_SKIP } from 'utils/api/apollo.consts'
-import { useContractStatusConfig } from 'providers/ContractStatusesProvider/hooks/useContractStatusesConfig'
+import { useContractStatusConfig } from 'providers/ContractStatuses/hooks/useContractStatusesConfig'
 
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
@@ -37,7 +37,9 @@ export const EmergencyGovernance = () => {
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
-      await Promise.all([(!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage())].filter(Boolean))
+      if (!isEgovLoaded || isDepsChanged) {
+        await dispatch(getEmergencyGovernanceStorage())
+      }
     } catch (e) {}
   }, [])
 

@@ -1,6 +1,6 @@
-import { ContractStatusesStorage, ContractStatusesType } from '../contractStatus.provider.types'
+import { ContractStatusesStorage, ContractStatusesType } from '../contractStatuses.types'
 
-export function normalizeBreakGlassStatuses(storage: ContractStatusesType): ContractStatusesStorage {
+export function normalizeContractStatuses(storage: ContractStatusesType): ContractStatusesStorage {
   return [
     // doorman
     ...(storage?.doorman?.length

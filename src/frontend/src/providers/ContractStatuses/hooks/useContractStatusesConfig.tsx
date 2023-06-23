@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSubscription } from '@apollo/client'
 
-import { ContractStatusesConfigSkips } from '../contractStatus.provider.types'
+import { ContractStatusesConfigSkips } from '../contractStatuses.types'
 
 import { GLASS_BROKEN_SUB, WHITE_LIST_DEVELOPERS_SUB } from '../queries/contractStatusConfig.query'
 import { SUB_QUERY, SUB_SKIP, SUB_SUBSCRIBE } from 'utils/api/apollo.consts'

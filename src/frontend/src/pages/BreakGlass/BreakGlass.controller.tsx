@@ -3,9 +3,8 @@ import { useLocation, useHistory } from 'react-router-dom'
 import qs from 'qs'
 
 // providers
-import { useContractStatusesContext } from 'providers/ContractStatusesProvider/contractStatus.provider'
-import { useContactStatuses } from 'providers/ContractStatusesProvider/hooks/useContactStatuses'
-import { useContractStatusConfig } from 'providers/ContractStatusesProvider/hooks/useContractStatusesConfig'
+import { useContactStatuses } from 'providers/ContractStatuses/hooks/useContactStatuses'
+import { useContractStatusConfig } from 'providers/ContractStatuses/hooks/useContractStatusesConfig'
 
 // components
 import { ContractCard } from './ContractCard/ContractCard.controller'
@@ -43,9 +42,7 @@ const ALL = 'All Contracts'
 const GENERAL = 'General Contracts'
 
 export const BreakGlass = () => {
-  const { contractStatuses } = useContractStatusesContext()
-
-  const { isLoading: isContractStatusesLoading } = useContactStatuses()
+  const { isLoading: isContractStatusesLoading, contractStatuses } = useContactStatuses()
   const { isLoading: isContractStatusConfigLoading, isGlassBroken, whitelistDevelopers } = useContractStatusConfig()
 
   const { search, pathname } = useLocation()

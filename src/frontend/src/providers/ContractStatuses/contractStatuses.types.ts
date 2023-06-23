@@ -1,5 +1,3 @@
-import React from 'react'
-import ContractStatusesProvider from './contractStatus.provider'
 import {
   BreakGlassAggregatorFactorySubscription,
   BreakGlassAggregatorSubscription,
@@ -13,6 +11,7 @@ import {
   Maybe,
   WhiteListDevelopersSubscription,
 } from 'utils/__generated__/graphql'
+
 import { SubscriptionSkipType } from 'utils/api/apollo.consts'
 
 export type ContractStatusesStorage = Array<{
@@ -24,20 +23,6 @@ export type ContractStatusesStorage = Array<{
   methods: Record<string, boolean>
 }>
 
-export interface ContractStatusesContext {
-  contractStatuses: ContractStatusesStorage
-  updateContractStatuses: InstanceType<typeof ContractStatusesProvider>['updateContractStatuses']
-}
-
-export type State = {
-  context: ContractStatusesContext
-}
-
-export type Props = {
-  children: React.ReactNode
-}
-
-// hooks
 export type ContractStatusesConfigSkips = {
   skipGlassBroken?: SubscriptionSkipType
   skipWhitelistDevelopers?: SubscriptionSkipType

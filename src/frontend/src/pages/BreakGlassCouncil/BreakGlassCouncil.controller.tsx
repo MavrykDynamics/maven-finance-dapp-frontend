@@ -25,7 +25,6 @@ import { getCouncilStorage } from 'pages/Council/Council.actions'
 
 // types
 import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
-import { useContractStatusConfig } from 'providers/ContractStatusesProvider/hooks/useContractStatusesConfig'
 
 const titles = {
   membersName: 'Break Glass Council',
