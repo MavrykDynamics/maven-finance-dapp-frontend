@@ -388,7 +388,7 @@ export const StakeUnstakeView = ({
           )}
         </StakeUnstakeInputColumn>
 
-        <StakeUnstakeRate onClick={onUseMaxBalance('smvk')}>
+        <StakeUnstakeRate>
           <span>1 MVK =</span>
           &nbsp;
           <CommaNumber value={mvkExchangeRate} beginningText={'$'} />

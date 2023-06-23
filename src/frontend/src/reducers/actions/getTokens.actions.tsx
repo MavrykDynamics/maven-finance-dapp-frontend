@@ -61,7 +61,6 @@ export const getTokensForDAPP = () => async (dispatch: AppDispatch, getState: Ge
     const mTokensStorage = storageTokens.m_token
 
     const dipDupTokens = normalizeDipDupTokens(dipDupTokensStorage)
-    console.log({ dipDupTokens, dipDupTokensStorage })
     const mTokens = normalizeMTokens(mTokensStorage)
     const whitelistTokens = normalizeWhitelistTokens(whitelistTokensStorage)
 

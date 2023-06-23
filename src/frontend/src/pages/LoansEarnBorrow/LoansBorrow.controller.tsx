@@ -1,5 +1,5 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
-import { useHistory } from 'react-router'
+import { useContext, useMemo } from 'react'
+import { useHistory, useLocation } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -38,18 +38,16 @@ const marketSettings: MarketSettingsType = {
 export const LoansBorrow = () => {
   const dispatch = useDispatch()
   const history = useHistory()
+  const location = useLocation()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const {
     isDataLoaded,
     loanTokens,
-    config: { DAOFee },
     vaults: { allVaultsIds, myVaultsIds, vaultsMapper },
     chartsData: { collateralChartData, borrowingChartData },
   } = useSelector((state: State) => state.loans)
-
-  const [newVaultAddress, setNewVaultAddress] = useState('')
 
   const { totalCollaterals, totalBorrowed, tokenTotals } = useMemo(
     () =>
@@ -90,7 +88,7 @@ export const LoansBorrow = () => {
     [accountPkh, allVaultsIds, vaultsMapper],
   )
 
-  const { openBorrowPopup, openCreateVaultPopup } = useContext(loansPopupsContext)
+  const { openCreateVaultPopup } = useContext(loansPopupsContext)
 
   const markets: MarketType[] = useMemo(
     () =>
@@ -108,55 +106,36 @@ export const LoansBorrow = () => {
     [loanTokens, tokenTotals],
   )
 
+  const handleCreatedVaultAddress = (address?: string) => {
+    if (!address) return
+
+    const params = new URLSearchParams(location.search)
+    params.append('vaultAddress', address)
+    history.replace({ ...location, search: params.toString() })
+  }
+
   const handleBorrow = (marketSymbol: string) => {
     const validVaultId = myVaultsIds.find((vaultId) => {
       const vault = vaultsMapper[vaultId]
-      return marketSymbol === vault.borrowedAsset.symbol
+      return marketSymbol === vault.borrowedAsset.symbol && vault.collateralRatio > 200
     })
 
-    // create vault if user does not have vaults
     if (!validVaultId) {
       openCreateVaultPopup?.({
-        showShortFlow: true,
         currentMarketAsset: marketSymbol === 'XTZ' ? 'tez' : marketSymbol.toLowerCase(),
-        setCreatedVaultAddress: (address: string) => {
-          if (!address) return
-          setNewVaultAddress(address)
-        },
+        setCreatedVaultAddress: handleCreatedVaultAddress,
       })
 
       return
     }
 
-    //  if the user has already borrowed to the specific asset pool we will route to asset market
-    history.push(`/loans/${marketSymbol}/borrowTab`)
+    const vault = vaultsMapper[validVaultId]
+
+    // if the user has already borrowing from the specific asset pool we will route to asset market
+    if (vault) {
+      history.push(`/loans/${vault.borrowedAsset.symbol}/borrowTab`)
+    }
   }
-
-  // open borrow popup after getting new vault address
-  useEffect(() => {
-    if (!newVaultAddress) return
-
-    const vault = vaultsMapper[newVaultAddress]
-
-    if (!vault) return
-
-    openBorrowPopup?.({
-      vaultId: vault.vaultId,
-      borrowedAsset: vault.borrowedAsset,
-      collateralRatio: vault.collateralRatio,
-      borrowAPR: vault.apr,
-      currentCollateralBalance: vault.collateralData.at(-1)?.amount ?? 0,
-      hasUserBorrowed: Boolean(vault.borrowedAmount),
-      borrowCapacity: vault.borrowCapacity,
-      currentBorrowedAmount: vault.borrowedAmount,
-      DAOFee,
-      scrollToCurrentVault: () => {
-        setNewVaultAddress('')
-        // redirect to the market after borrowing
-        history.push(`/loans/${vault.borrowedAsset.symbol}/borrowTab/${newVaultAddress}`)
-      },
-    })
-  }, [myVaultsIds, newVaultAddress])
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {

@@ -63,13 +63,13 @@ export const VaultsList = styled.div<{ theme: MavrykTheme }>`
   flex-direction: column;
   row-gap: 10px;
 
-  &:has(.expandedCard) {
+  &:has(.expanded-card) {
     .expand-borrow-tab {
       opacity: 0.3;
       pointer-events: none;
     }
 
-    .expandedCard {
+    .expanded-card {
       opacity: 1;
       pointer-events: auto;
     }
@@ -408,7 +408,6 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
       align-items: center;
       column-gap: 6px;
 
-      font-size: 16px;
       color: ${({ theme }) => theme.dataColor};
     }
 

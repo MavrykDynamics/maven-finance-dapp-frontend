@@ -114,17 +114,22 @@ export const AddNewCollateral = ({
     const firstNotDisabledCollateralId = Number(
       Object.keys(mappedAvaliableCollaterals).find((id) => mappedAvaliableCollaterals[Number(id)].disabled === false),
     )
-    mappedAvaliableCollaterals[firstNotDisabledCollateralId].disabled = true
+
+    const mappedAvaliableCollateral = mappedAvaliableCollaterals[firstNotDisabledCollateralId]
+
+    if (mappedAvaliableCollateral) {
+      mappedAvaliableCollateral.disabled = true
+    }
 
     setInputData({
       amount: '0',
-      assetName: mappedAvaliableCollaterals[firstNotDisabledCollateralId].gqlName,
-      assetSymbol: mappedAvaliableCollaterals[firstNotDisabledCollateralId].symbol,
-      assetDisplayName: mappedAvaliableCollaterals[firstNotDisabledCollateralId].name,
+      assetName: mappedAvaliableCollateral.gqlName,
+      assetSymbol: mappedAvaliableCollateral.symbol,
+      assetDisplayName: mappedAvaliableCollateral.name,
       validationStatus: '',
-      id: mappedAvaliableCollaterals[firstNotDisabledCollateralId].id,
+      id: mappedAvaliableCollateral.id,
       ddItems: mappedAvaliableCollaterals,
-      selectedDdItem: mappedAvaliableCollaterals[firstNotDisabledCollateralId],
+      selectedDdItem: mappedAvaliableCollateral,
     })
 
     if (!show) {

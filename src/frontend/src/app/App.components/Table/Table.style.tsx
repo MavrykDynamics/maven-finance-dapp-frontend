@@ -122,6 +122,18 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
   &.transaction-history-table {
     margin-top: 30px;
   }
+
+  &.fix-mistaken-transfer-table {
+    margin: 0;
+
+    .remove {
+      right: -18px;
+    }
+
+    .add {
+      margin-left: 5px;
+    }
+  }
 `
 
 export const TableBody = styled.tbody<{ theme: MavrykTheme }>`

@@ -31,11 +31,6 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
       }
     }
   }
-
-  .tabSwitcher {
-    margin-bottom: 0;
-    width: 350px;
-  }
 `
 
 export const VaultsSearchFilterWrapper = styled.div`
