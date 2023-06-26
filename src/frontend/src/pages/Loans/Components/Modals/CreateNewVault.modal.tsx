@@ -135,7 +135,7 @@ export const CreateNewVault = ({
 
   // Data for 3rd screen, in case we have only 1 collateral to add
   const firstCollateralMetadata = useMemo(
-    () => (collaterals?.[0]?.id ? collateralsToSelect[collaterals[0].id] : undefined),
+    () => (collaterals?.[0]?.id !== undefined ? collateralsToSelect[collaterals[0].id] : undefined),
     [collateralsToSelect, collaterals],
   )
 
