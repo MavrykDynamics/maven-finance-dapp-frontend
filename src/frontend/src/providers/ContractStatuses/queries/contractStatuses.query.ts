@@ -1,22 +1,7 @@
-export const BREAK_GLASS_CONFIG_QUERY = `
- query GetBreakGlassStorageQuery {
-    break_glass {
-      glass_broken
-    }
+import { gql } from 'utils/__generated__'
 
-    whitelist_developer {
-      developer {
-        address
-      }
-    }
-  }
-`
-
-export const BREAK_GLASS_CONFIG_QUERY_NAME = 'GetBreakGlassStorageQuery'
-export const BREAK_GLASS_CONFIG_QUERY_VARIABLE = {}
-
-export const BREAK_GLASS_STATUS_QUERY = `
-  query GetBreakGlassStatusQuery {
+export const CONTRACT_STATUSES_FARM_SUB = gql(`
+  subscription breakGlassfarm($_eq: String) {
     farm(where: {admin: {_neq: ""}}) {
       name
       address
@@ -26,6 +11,11 @@ export const BREAK_GLASS_STATUS_QUERY = `
       admin
       last_updated_at
     }
+  }
+`)
+
+export const CONTRACT_STATUSES_FARM_FACTORY_SUB = gql(`
+  subscription breakGlassfarmFactory($_eq: String) {
     farm_factory(where: {admin: {_neq: ""}}) {
       create_farm_paused
       track_farm_paused
@@ -34,6 +24,11 @@ export const BREAK_GLASS_STATUS_QUERY = `
       admin
       last_updated_at
     }
+  }
+`)
+
+export const CONTRACT_STATUSES_DELEGATION_SUB = gql(`
+  subscription breakGlassDelegation($_eq: String) {
     delegation(where: {admin: {_neq: ""}}) {
       delegate_to_satellite_paused
       distribute_reward_paused
@@ -45,6 +40,11 @@ export const BREAK_GLASS_STATUS_QUERY = `
       admin
       last_updated_at
     }
+  }
+`)
+
+export const CONTRACT_STATUSES_DOORMAN_SUB = gql(`
+  subscription breakGlassDoorman($_eq: String) {
     doorman(where: {admin: {_neq: ""}}) {
       address
       compound_paused
@@ -53,6 +53,11 @@ export const BREAK_GLASS_STATUS_QUERY = `
       admin
       last_updated_at
     }
+  }
+`)
+
+export const CONTRACT_STATUSES_TREASURY_SUB = gql(`
+  subscription breakGlassTreasury($_eq: String) {
     treasury(where: {admin: {_neq: ""}}) {
       name
       mint_mvk_and_transfer_paused
@@ -63,6 +68,10 @@ export const BREAK_GLASS_STATUS_QUERY = `
       admin
       last_updated_at
     }
+  }
+`)
+export const CONTRACT_STATUSES_TREASURY_FACTORY_SUB = gql(`
+  subscription breakGlassTreasuryFactory($_eq: String) {
     treasury_factory(where: {admin: {_neq: ""}}) {
       create_treasury_paused
       address
@@ -71,6 +80,11 @@ export const BREAK_GLASS_STATUS_QUERY = `
       admin
       last_updated_at
     }
+  }
+`)
+
+export const CONTRACT_STATUSES_AGGREGATOR_SUB = gql(`
+  subscription breakGlassAggregator($_eq: String) {
     aggregator(where: {admin: {_neq: ""}}) {
       address
       name
@@ -79,6 +93,11 @@ export const BREAK_GLASS_STATUS_QUERY = `
       admin
       last_updated_at
     }
+  }
+`)
+
+export const CONTRACT_STATUSES_AGGREGATOR_FACTORY_SUB = gql(`
+  subscription breakGlassAggregatorFactory($_eq: String) {
     aggregator_factory(where: {admin: {_neq: ""}}) {
       address
       untrack_aggregator_paused
@@ -90,7 +109,4 @@ export const BREAK_GLASS_STATUS_QUERY = `
       last_updated_at
     }
   }
-`
-
-export const BREAK_GLASS_STATUS_QUERY_NAME = 'GetBreakGlassStatusQuery'
-export const BREAK_GLASS_STATUS_QUERY_VARIABLE = {}
+`)
