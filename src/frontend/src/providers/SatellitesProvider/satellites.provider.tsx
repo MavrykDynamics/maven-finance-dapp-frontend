@@ -18,7 +18,7 @@ import {
   TOASTER_SUCCESS,
   TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
 } from 'app/App.components/Toaster/Toaster.constants'
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
@@ -27,6 +27,7 @@ import { updateUserData } from 'reducers/actions/user.actions'
 // context
 export const satellitesContext = React.createContext<SatellitesContext>(undefined!)
 
+/** */
 export class SatellitesProviderClass extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -87,12 +88,12 @@ export class SatellitesProviderClass extends React.Component<Props, State> {
       return
     }
 
-    if (user.userTokens[SMVK_TOKEN_SYMBOL].balance === 0 && user.userTokens[MVK_TOKEN_SYMBOL].balance === 0) {
+    if (user.userTokens[SMVK_TOKEN_ADDRESS].balance === 0 && user.userTokens[MVK_TOKEN_SYMBOL].balance === 0) {
       dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please buy MVK and stake it'))
       return
     }
 
-    if (user.userTokens[SMVK_TOKEN_SYMBOL].balance === 0) {
+    if (user.userTokens[SMVK_TOKEN_ADDRESS].balance === 0) {
       dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please stake your MVK'))
       return
     }

@@ -40,7 +40,6 @@ import { SUB_SKIP } from 'utils/api/apollo.consts'
 
 export const DataFeeds = () => {
   const { feedsAddresses, feedsMapper, feedsCategories } = useDataFeedsContext()
-  useDataFeedsUpdater()
   const { totalOracleNetworks } = useSatelliteStatistics({
     skipActiveSatellitesCount: SUB_SKIP,
     skipTotalDelegatedMVK: SUB_SKIP,

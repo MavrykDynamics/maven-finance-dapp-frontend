@@ -17,6 +17,7 @@ import {
   SatelliteAggregatorOraclesSubscription,
   Governance_Satellite_Snapshot,
 } from 'utils/__generated__/graphql'
+import { MVK_DECIMALS, XTZ_DECIMALS } from 'utils/constants'
 
 type Snapshot = Pick<Governance_Satellite_Snapshot, 'user_id' | 'total_voting_power'>
 /**
@@ -156,20 +157,20 @@ export const getNewSatelliteMetrics = ({
   }
 }
 
-export const getSatelliteOracleRecords = ({
-  user: { aggregator_oracles = [] },
-}: SatelliteDataSubSubscription['satellite'][0]) => {
-  return aggregator_oracles.map(({ aggregator: { oracles, address: feedAddress }, user_id: oracleAddress }) => {
+export const getSatelliteOracleRecords = (
+  satelliteOracles: SatelliteDataSubSubscription['satellite'][number]['user']['aggregator_oracles'],
+) => {
+  return satelliteOracles.map(({ aggregator: { oracles, address: feedAddress } }) => {
     // getting rewards for oracle per feed
     const { sMVKReward, XTZReward } = oracles.reduce(
-      (acc, { rewards, user_id: rewardUserId }) => {
+      (acc, { rewards }) => {
         rewards.forEach(({ type, reward }) => {
-          if (type === 0 && rewardUserId === oracleAddress) {
-            acc.XTZReward += calcWithoutMu(reward)
+          if (type === 0) {
+            acc.XTZReward += convertNumberForClient({ number: reward, grade: XTZ_DECIMALS })
           }
 
-          if (type === 1 && rewardUserId === oracleAddress) {
-            acc.sMVKReward += calcWithoutPrecision(reward)
+          if (type === 1) {
+            acc.sMVKReward += convertNumberForClient({ number: reward, grade: MVK_DECIMALS })
           }
         })
 
@@ -261,6 +262,7 @@ export const normallizeSatellite = (
     financialRequestLedger: SatelliteGovernanceFinancialRequestSubscription['governance_financial_request']
   },
 ) => {
+  const satelliteAddress = satelliteRecord.user.address
   const satelliteTotalDelegatedAmount = satelliteRecord
     ? satelliteRecord.delegations.reduce((sum, current) => sum + current.user.smvk_balance, 0)
     : 0
@@ -271,7 +273,7 @@ export const normallizeSatellite = (
 
   const satelliteMetrics = getNewSatelliteMetrics({
     ...metricsData,
-    satelliteAddress: satelliteRecord.user.address,
+    satelliteAddress,
     satelliteVotings: { proposalVotingHistory, financialRequestsVotes, emergencyGovernanceVotes, satelliteActionVotes },
   })
 
@@ -305,33 +307,41 @@ export const normallizeSatellite = (
   }
 
   return {
-    address: satelliteRecord.user.address,
+    // satellite metadata
+    address: satelliteAddress,
     description: satelliteRecord.description,
     website: satelliteRecord.website,
     image: satelliteRecord.image,
     name: satelliteRecord.name,
+    oracleStatus,
+
+    // oracles data
     peerId: satelliteRecord?.peer_id ?? '',
     publicKey: satelliteRecord?.public_key ?? '',
+    status: satelliteRecord.status,
+
+    // registration status
     isSatelliteReady: satelliteRecord.currently_registered && satelliteRecord.status === 0,
     currentlyRegistered: satelliteRecord.currently_registered,
-    status: satelliteRecord.status,
+
+    // delegation data
     delegationRatio: satelliteRecord?.delegation?.delegation_ratio / 10 ?? 0,
     delegatorCount: satelliteRecord?.delegations.length,
     satelliteFee: (satelliteRecord?.fee ?? 0) / 100,
-    mvkBalance: calcWithoutPrecision(satelliteRecord?.user.mvk_balance),
-    sMvkBalance: calcWithoutPrecision(satelliteRecord?.user.smvk_balance),
-    totalDelegatedAmount: calcWithoutPrecision(satelliteTotalDelegatedAmount),
-    totalVotingPower: convertNumberForClient({
-      number: satelliteObjectSnapshots[satelliteRecord.user_id]?.total_voting_power ?? 0,
-    }),
+    totalDelegatedAmount: convertNumberForClient({ number: satelliteTotalDelegatedAmount, grade: MVK_DECIMALS }),
+
+    mvkBalance: convertNumberForClient({ number: satelliteRecord?.user.mvk_balance, grade: MVK_DECIMALS }),
+    sMvkBalance: convertNumberForClient({ number: satelliteRecord?.user.smvk_balance, grade: MVK_DECIMALS }),
+    totalVotingPower: satelliteObjectSnapshots[satelliteAddress]?.total_voting_power ?? 0,
     accuracy: getSatelliteAccuracy(satelliteRecord),
     oracleRecords: satelliteOracleRecords,
+
+    // votes
     proposalVotingHistory,
     financialRequestsVotes,
     emergencyGovernanceVotes,
     satelliteActionVotes,
     satelliteMetrics,
-    oracleStatus,
   }
 }
 
