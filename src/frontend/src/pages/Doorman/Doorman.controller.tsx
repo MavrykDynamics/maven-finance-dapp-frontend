@@ -16,12 +16,12 @@ import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 // actions
 import { State } from 'reducers'
 import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
+import { SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
 
 export const DEFAULT_STAKE_UNSTAKE_INPUT: { amount: string; validation: InputStatusType; errorMessage: string } = {
   amount: '0',
@@ -30,7 +30,13 @@ export const DEFAULT_STAKE_UNSTAKE_INPUT: { amount: string; validation: InputSta
 }
 
 export const Doorman = () => {
-  const { totalStakedMvk, maximumTotalSupply, totalSupply } = useStakeContext()
+  const {
+    totalStakedMvk,
+    maximumTotalSupply,
+    totalSupply,
+    changeStakingSubscriptionType,
+    isLoading: isDoormanLoading,
+  } = useStakeContext()
 
   const { doormanAddress, mvkTokenAddress } = useSelector((state: State) => state.contractAddresses)
   const {
@@ -46,7 +52,14 @@ export const Doorman = () => {
 
   const [stakeUnstakeInput, setStakeUnstakeInput] = useState(DEFAULT_STAKE_UNSTAKE_INPUT)
 
-  const { isInitialLoading: isDoormanLoading } = useStakeUpdater()
+  // useEffect(() => {
+  //   changeStakingSubscriptionType({
+  //     skipAddressBalance: SUB_SUBSCRIBE,
+  //     skipMvkTokenTotal: SUB_SUBSCRIBE,
+  //     skipStakeHistory: SUB_SUBSCRIBE,
+  //     skipUserBalance: SUB_SUBSCRIBE,
+  //   })
+  // }, [])
 
   const closeExitFeePopup = () => setUnstakePopupActive(false)
   const openExitFeePopup = () => setUnstakePopupActive(true)

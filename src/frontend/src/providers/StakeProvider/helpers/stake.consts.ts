@@ -1,3 +1,5 @@
+import { StakeActionType, StakingActionData, StakingSubsLoadingsType } from '../stake.provider.types'
+
 // CONSTS FOR UPDATE STATE PARTIALLY
 export const DOORMAN_HISTORY_SUB = 'history'
 export const DOORMAN_STATS_SUB = 'doormanStats'
@@ -10,32 +12,36 @@ export type StakingSubscriptionsTypes =
 // CONSTS FOR STAKE ACTIONS
 export const STAKE_ACTION = 'stake'
 export const UNSTAKE_ACTION = 'unstake'
-export type StakingActionTypes = typeof STAKE_ACTION | typeof UNSTAKE_ACTION | ''
 
-// CONST FOR ACTION LOADING
-export const STAKE_DEFAULT_LOADINGS: StakeActionsLoaderState = {
-  history: false,
-  userBalance: false,
-  doormanBalance: false,
-  loadingStateUpdatedForAction: '',
-}
-
-export type StakeActionsLoaderState = {
-  history: boolean
-  userBalance: boolean
-  doormanBalance: boolean
-  loadingStateUpdatedForAction: StakingActionTypes
-}
-
-export const getInitialLoadingStateForFiredAction = (actionName: StakingActionTypes) => {
-  if (actionName === STAKE_ACTION || actionName === UNSTAKE_ACTION) {
-    return {
-      ...STAKE_DEFAULT_LOADINGS,
-      history: true,
-      userBalance: true,
-      doormanBalance: true,
-    }
+export const getInitialLoadingStateForFiredAction = (actionName?: StakeActionType) => {
+  switch (actionName) {
+    case STAKE_ACTION:
+      return {
+        addressBalance: true,
+        mvkTokenTotal: false,
+        stakeHistory: true,
+        userBalance: true,
+      }
+    case UNSTAKE_ACTION:
+      return {
+        addressBalance: true,
+        mvkTokenTotal: false,
+        stakeHistory: true,
+        userBalance: true,
+      }
+    default:
+      return {
+        addressBalance: false,
+        mvkTokenTotal: false,
+        stakeHistory: false,
+        userBalance: false,
+      }
   }
+}
 
-  return STAKE_DEFAULT_LOADINGS
+export const needOffStakeAction = (queryLoadings: StakingSubsLoadingsType, stakingActionData: StakingActionData) => {
+  if (!stakingActionData.action || !stakingActionData.loadingToasterId) return false
+  if (Object.values(queryLoadings).find((isLoading) => isLoading)) return false
+
+  return true
 }

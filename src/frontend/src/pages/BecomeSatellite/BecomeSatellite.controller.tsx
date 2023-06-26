@@ -17,8 +17,7 @@ import {
 } from './BecomeSatellite.conts'
 
 // providers
-import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 // Actions
 import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
@@ -57,7 +56,7 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { SUB_SKIP } from 'utils/api/apollo.consts'
+import { SUB_SKIP, SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -69,6 +68,7 @@ const connectWalletMessage = (
 )
 
 export const BecomeSatellite = () => {
+  const { changeStakingSubscriptionType, isLoading: isDoormanLoading } = useStakeContext()
   const dispatch = useDispatch()
   const {
     accountPkh = '',
@@ -87,11 +87,13 @@ export const BecomeSatellite = () => {
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
-  useStakeUpdater({
-    skipAddressBalance: SUB_SKIP,
-    skipMvkTokenTotal: SUB_SKIP,
-    skipStakeHistory: SUB_SKIP,
-  })
+  useEffect(() => {
+    changeStakingSubscriptionType({
+      skipAddressBalance: SUB_SKIP,
+      skipStakeHistory: SUB_SKIP,
+      skipMvkTokenTotal: SUB_SKIP,
+    })
+  }, [])
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -261,7 +263,7 @@ export const BecomeSatellite = () => {
 
         <PageContent>
           <div>
-            {isLoading ? (
+            {isLoading || isDoormanLoading ? (
               <DataLoaderWrapper>
                 <ClockLoader width={150} height={150} />
                 <div className="text">Loading satellite data</div>

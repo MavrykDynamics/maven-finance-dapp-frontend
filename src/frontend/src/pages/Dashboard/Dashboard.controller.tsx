@@ -7,8 +7,6 @@ import { Page } from 'styles'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
-import { DOORMAN_HISTORY_SUB, DOORMAN_STATS_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -18,6 +16,8 @@ import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import QueryString from 'qs'
+import { useEffect } from 'react'
+import { SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -26,7 +26,7 @@ export const Dashboard = () => {
   const parsedQp = QueryString.parse(search, { ignoreQueryPrefix: true }) as { tab: string }
   const activeTab = isValidPersonalDashboardTabId(parsedQp.tab) ? parsedQp.tab : LENDING_TAB_ID
 
-  const { totalStakedMvk, totalSupply, maximumTotalSupply } = useStakeContext()
+  const { totalStakedMvk, totalSupply, maximumTotalSupply, changeStakingSubscriptionType } = useStakeContext()
 
   const {
     tokensPrices: { mvk: mvkExchangeRate = 0 },
@@ -84,7 +84,14 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
-  const { isInitialLoading: isDoormanLoading } = useStakeUpdater()
+  // useEffect(() => {
+  //   changeStakingSubscriptionType({
+  //     skipAddressBalance: SUB_SUBSCRIBE,
+  //     skipMvkTokenTotal: SUB_SUBSCRIBE,
+  //     skipStakeHistory: SUB_SUBSCRIBE,
+  //     skipUserBalance: SUB_SUBSCRIBE,
+  //   })
+  // }, [])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

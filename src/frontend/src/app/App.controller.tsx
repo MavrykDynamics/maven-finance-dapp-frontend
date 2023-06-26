@@ -8,9 +8,6 @@ import { useCookies } from 'react-cookie'
 
 import { configureStore } from './App.store'
 
-// providers
-import { StakeProvider } from 'providers/StakeProvider/stake.provider'
-
 // types
 import { State } from '../reducers'
 
@@ -41,7 +38,7 @@ export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
 export type GetState = typeof store.getState
 
-const AppContainer = () => {
+export const App = () => {
   const dispatch = useDispatch()
 
   const showSidebarOpened = useMedia('(min-width: 1400px)')
@@ -113,18 +110,12 @@ const AppContainer = () => {
         <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
         <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
-        <StakeProvider>
-          <LoansPopupsProvider>
-            <AppRoutes />
-          </LoansPopupsProvider>
-        </StakeProvider>
+        <LoansPopupsProvider>
+          <AppRoutes />
+        </LoansPopupsProvider>
 
         <Footer />
       </AppStyled>
     </Router>
   )
-}
-
-export const App = () => {
-  return <AppContainer />
 }

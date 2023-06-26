@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from '../../reducers'
 
@@ -13,13 +13,14 @@ import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // providers
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
-import { SUB_SKIP } from 'utils/api/apollo.consts'
+import { SUB_SKIP, SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
 import { useContractStatusConfig } from 'providers/ContractStatuses/hooks/useContractStatusesConfig'
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
 
+  const { changeStakingSubscriptionType, isLoading: isDoormanLoading } = useStakeContext()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { eGovProposals, isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 
@@ -29,11 +30,13 @@ export const EmergencyGovernance = () => {
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 
-  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
-    skipAddressBalance: SUB_SKIP,
-    skipStakeHistory: SUB_SKIP,
-    skipUserBalance: SUB_SKIP,
-  })
+  useEffect(() => {
+    changeStakingSubscriptionType({
+      skipAddressBalance: SUB_SKIP,
+      skipStakeHistory: SUB_SKIP,
+      skipUserBalance: SUB_SKIP,
+    })
+  }, [])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

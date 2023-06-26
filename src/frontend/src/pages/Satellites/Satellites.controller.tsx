@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // providers
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 // types
 import { State } from 'reducers'
@@ -35,23 +35,26 @@ import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
-import { SUB_SKIP } from 'utils/api/apollo.consts'
+import { SUB_SKIP, SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
 
 const Satellites = () => {
+  const { changeStakingSubscriptionType, isLoading: isDoormanLoading } = useStakeContext()
   const dispatch = useDispatch()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
 
-  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
-    skipAddressBalance: SUB_SKIP,
-    skipStakeHistory: SUB_SKIP,
-    skipMvkTokenTotal: SUB_SKIP,
-  })
   const {
     user: { isSatellite, userTokens },
   } = useSelector((state: State) => state.wallet)
+
+  useEffect(() => {
+    changeStakingSubscriptionType({
+      skipAddressBalance: SUB_SKIP,
+      skipMvkTokenTotal: SUB_SKIP,
+      skipStakeHistory: SUB_SKIP,
+    })
+  }, [])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

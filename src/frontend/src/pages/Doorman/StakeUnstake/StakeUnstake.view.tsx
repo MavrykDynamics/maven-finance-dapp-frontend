@@ -76,7 +76,7 @@ export const StakeUnstakeView = ({
 }: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
-  const { stakeMVK, updateStakeActionContext, updateStakeLoadingToasterId, loadingToasterId } = useStakeContext()
+  const { stakeMVK, updateStakeActionData } = useStakeContext()
   const { info, loading, hideToasterMessage, bug } = useToasterContext()
 
   const {
@@ -172,7 +172,7 @@ export const StakeUnstakeView = ({
     const { actionSuccess, error } = await stakeMVK(stakeAmount, accountPkh, doormanAddress, mvkTokenAddress)
 
     if (actionSuccess && !error) {
-      updateStakeActionContext(STAKE_ACTION)
+      updateStakeActionData({ action: STAKE_ACTION })
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
 
@@ -188,9 +188,11 @@ export const StakeUnstakeView = ({
         TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
         TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
       )
-      updateStakeLoadingToasterId(loadingToasterId)
+      updateStakeActionData({ loadingToasterId })
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     } else {
-      if (loadingToasterId) hideToasterMessage(loadingToasterId)
+      updateStakeActionData(null)
       dispatch(toggleActionFullScreenLoader(false))
       dispatch(toggleActionCompletion(false))
       const parsedError = unknownToError(error)
