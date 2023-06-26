@@ -1,11 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { State } from 'reducers'
 import { submitEmergencyGovernanceProposal } from '../EmergencyGovernance.actions'
 import {
   InputStatusType,
-  INPUT_LARGE,
   INPUT_MEDIUM,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
