@@ -26,6 +26,7 @@ import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
 import { AppStyled } from './App.style'
 import LoansPopupsProvider from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { PolicyPopup } from 'app/App.components/PolicyPopup/Policy.controller'
+import { Footer } from './App.components/Footer/Footer'
 
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
@@ -99,21 +100,21 @@ const AppContainer = () => {
     <LoaderRocket />
   ) : (
     <Router>
-      <StakeProvider>
-        <AppStyled isExpandedMenu={sidebarOpened}>
-          <ActionLoader />
-          <Toaster />
-          <WertLoader />
-          <Menu />
+      <AppStyled isExpandedMenu={sidebarOpened}>
+        <ActionLoader />
+        <Toaster />
+        <WertLoader />
+        <Menu />
 
-          <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
-          <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
+        <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
+        <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
-          <LoansPopupsProvider>
-            <AppRoutes />
-          </LoansPopupsProvider>
-        </AppStyled>
-      </StakeProvider>
+        <LoansPopupsProvider>
+          <AppRoutes />
+        </LoansPopupsProvider>
+
+        <Footer />
+      </AppStyled>
     </Router>
   )
 }

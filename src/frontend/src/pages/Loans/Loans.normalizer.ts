@@ -135,11 +135,19 @@ export const normalizeUserLending = ({
           0,
         )
 
-        acc[loan_token.loan_token_name] = {
-          borrowedAmount:
-            convertNumberForClient({ number: loan_principal_total, grade: vaultAssetData.decimals }) *
-            vaultAssetData.rate,
-          collateralAmount,
+        const convertedBorrowedAmountInUSD =
+          convertNumberForClient({ number: loan_principal_total, grade: vaultAssetData.decimals }) * vaultAssetData.rate
+
+        if (convertedBorrowedAmountInUSD <= 0 || collateralAmount <= 0) return acc
+
+        if (acc[loan_token.loan_token_name]) {
+          acc[loan_token.loan_token_name].borrowedAmount += convertedBorrowedAmountInUSD
+          acc[loan_token.loan_token_name].collateralAmount += collateralAmount
+        } else {
+          acc[loan_token.loan_token_name] = {
+            borrowedAmount: convertedBorrowedAmountInUSD,
+            collateralAmount,
+          }
         }
 
         return acc

@@ -32,7 +32,7 @@ export const getCollateralTokens = (
 ): Array<AvaliableCollateralType> => {
   try {
     return collateralTokens.reduce<AvaliableCollateralType[]>(
-      (acc, { token: { token_address, token_standard }, token_name, protected: isProtected, oracle }) => {
+      (acc, { token: { token_address, token_standard }, token_name, protected: isProtected, oracle }, index) => {
         const assetMetadata = getAssetMetadata({
           tokenName: token_name,
           tokenAddress: token_address,
@@ -48,8 +48,11 @@ export const getCollateralTokens = (
             ...assetMetadata,
             name,
             symbol,
-            tokenType: token_standard as TokenType,
+            // TODO: assetMetadata.gqlName is temporary solution.
+            // delete assetMetadata.gqlName after token_standard will always have value.
+            tokenType: (token_standard ?? assetMetadata.gqlName) as TokenType,
             isProtected,
+            id: index,
           })
         }
 

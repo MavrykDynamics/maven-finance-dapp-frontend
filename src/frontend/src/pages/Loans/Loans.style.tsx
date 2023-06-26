@@ -62,18 +62,6 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
     border: 1px solid ${({ theme }) => theme.cardBorderColor};
     border-radius: 10px;
   }
-
-  &.earn-borrow-chart {
-    column-gap: 150px;
-
-    .chart-wrapper {
-      width: fit-content;
-    }
-
-    .chart {
-      height: fit-content;
-    }
-  }
 `
 
 export const MarketsOverviewContainer = styled.div<{ theme: MavrykTheme }>`

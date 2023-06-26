@@ -1,169 +1,134 @@
 import styled from 'styled-components/macro'
-import { Card, royalPurpleColor, containerColor, skyColor, cyanColor, headerColor } from 'styles'
+import { Card } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
-export const SlidingTabButtonsWrap = styled.div`
-  display: flex;
-  width: 536px;
-  margin-top: 30px;
-  margin-bottom: 30px;
-
-  > div {
-    width: 100%;
-    justify-content: flex-end;
-  }
-
-  button {
-    width: 100%;
-  }
-`
-
-export const SmallInfoBlock = styled.div<{ theme: MavrykTheme }>`
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
-  border-radius: 10px;
-  background-color: ${({ theme }) => theme.containerColor};
-  padding: 25px 28px;
+export const SatelliteGovernanceStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
+  row-gap: 30px;
+  margin-top: 30px;
+`
+
+export const SatelliteGovernanceStats = styled.div<{ theme: MavrykTheme }>`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 20px;
+`
+
+export const SatelliteGovernanceStatsInfo = styled.div<{ theme: MavrykTheme }>`
+  padding: 30px 25px;
   height: 102px;
-  justify-content: center;
-  row-gap: 7px;
+
+  background-color: ${({ theme }) => theme.containerColor};
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border-radius: 10px;
 
   h3 {
     font-weight: 600;
     font-size: 14px;
+    line-height: 21px;
+
     color: ${({ theme }) => theme.textColor};
   }
 
-  .info-content {
+  .value {
     display: flex;
-    align-items: center;
+
     font-weight: 600;
     font-size: 16px;
+    line-height: 22px;
+
     color: ${({ theme }) => theme.dataColor};
-    position: relative;
 
     p {
       margin: 0;
     }
+  }
+`
 
-    a {
-      width: 16px;
-      height: 16px;
-      margin-left: 4px;
+export const SatelliteGovernanceAvailableActions = styled(Card)`
+  margin: 0;
+  padding: 0;
+
+  .navigation {
+    display: grid;
+    grid-template-columns: 195px auto 440px;
+    align-items: center;
+    padding: 17px 30px;
+
+    span {
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 24px;
+
+      color: ${({ theme }) => theme.textColor};
     }
   }
 `
 
-export const SatelliteGovernanceStyled = styled.section<{ theme: MavrykTheme }>`
-  .satellite-governance-article {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    padding-top: 30px;
-    margin-bottom: 0;
-  }
+export const SatelliteGovernanceAvailableAction = styled.form<{ theme: MavrykTheme }>`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  row-gap: 30px;
+  padding: 30px 20px 40px;
 
-  .tab-buttons {
-    margin-top: 30px;
-    margin-bottom: 30px;
-    width: 536px;
-    justify-content: unset;
+  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
 
-    button {
-      width: 100%;
-      height: 38px;
+  a {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: fit-content;
+
+    svg {
+      fill: ${({ theme }) => theme.valueColor};
+      width: 16px;
+      height: 16px;
     }
   }
 
-  .buttons-selector {
-    margin: 30px 0 25px 0;
+  p {
+    margin: 0;
+
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+
+    color: ${({ theme }) => theme.textColor};
   }
 
-  .suspend-satellite-group {
-    padding-top: 40px;
+  fieldset {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  label {
+    margin-bottom: 5px;
+
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  h2,
+  p,
+  label {
+    margin-left: 10px;
+  }
+
+  .button-wrapper {
+    margin-top: 25px;
     margin-left: auto;
     width: 300px;
   }
 `
 
-export const AvailableActionsStyle = styled.div<{ theme: MavrykTheme }>`
-  padding: 0;
-  margin-top: 0;
-  border-top: 1px solid ${royalPurpleColor};
-
-  .satellite-address {
-    margin-bottom: 19px;
-  }
-
-  .inputs-block {
-    padding-top: 40px;
-    padding-left: 26px;
-    padding-right: 26px;
-    padding-bottom: 23px;
-    position: relative;
-
-    a {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      width: fit-content;
-      svg {
-        fill: ${cyanColor};
-        width: 16px;
-        height: 16px;
-      }
-    }
-
-    .banSatellite,
-    .removeOracles,
-    .removeFromAggregator {
-      &.fill {
-        svg {
-          stroke: ${containerColor};
-        }
-      }
-    }
-
-    h1 {
-      margin-top: 0;
-      margin-bottom: 0;
-      margin-left: 10px;
-    }
-
-    p {
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 21px;
-      color: ${({ theme }) => theme.textColor};
-      margin-top: 1px;
-      margin-bottom: 17px;
-      margin-left: 10px;
-    }
-
-    .textarea {
-      color: ${({ theme }) => theme.textColor};
-    }
-
-    label {
-      font-weight: 700;
-      font-size: 14px;
-      line-height: 21px;
-      color: ${({ theme }) => theme.textColor};
-      padding-left: 8px;
-      padding-left: 10px;
-      margin-bottom: 5px;
-      display: block;
-    }
-
-    fieldset {
-      display: grid;
-      grid-template-columns: 0.5fr 0.5fr;
-      gap: 20px;
-    }
-  }
-
-  .table-wrap {
-    position: relative;
-  }
-` // AvailableActionsStyle
+export const SatelliteGovernanceMenuCards = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+`

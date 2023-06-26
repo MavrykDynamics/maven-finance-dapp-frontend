@@ -1,26 +1,6 @@
-import { toCamelCase } from 'utils/toCamelCase'
+import { ContractStatusesStorage, ContractStatusesType } from '../contractStatuses.types'
 
-import {
-  BreakGlassGraphQL,
-  BreakGlassStatusGraphQL,
-  BreakGlassStatusStorage,
-  WhitelistDevGraphQL,
-} from '../../utils/TypesAndInterfaces/BreakGlass'
-
-export const normalizeBreakGlass = ({
-  break_glass: [breakGlassStorage],
-  whitelist_developer,
-}: {
-  break_glass: BreakGlassGraphQL[]
-  whitelist_developer: WhitelistDevGraphQL
-}) => {
-  return {
-    glassBroken: breakGlassStorage?.glass_broken,
-    whitelistDev: whitelist_developer?.developer?.address ?? '',
-  }
-}
-
-export function normalizeBreakGlassStatus(storage: BreakGlassStatusGraphQL): BreakGlassStatusStorage {
+export function normalizeContractStatuses(storage: ContractStatusesType): ContractStatusesStorage {
   return [
     // doorman
     ...(storage?.doorman?.length
@@ -182,8 +162,4 @@ export function normalizeBreakGlassStatus(storage: BreakGlassStatusGraphQL): Bre
   ]
     .flat()
     .filter(Boolean)
-}
-
-export const getEntrypointText = (str: string) => {
-  return `%${toCamelCase(str).replace(/paused/i, '')}`
 }

@@ -28,7 +28,7 @@ import { SUB_SKIP } from 'utils/api/apollo.consts'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 // styles
-import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
+import { SatelliteGovernanceStatsInfo } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { EmptyContainer } from 'app/App.style'
@@ -81,23 +81,23 @@ const Satellites = () => {
       <PageContent>
         <SatellitesOverviewStyled>
           <InfoBlockWrapper>
-            <SmallInfoBlock>
+            <SatelliteGovernanceStatsInfo>
               <h3>Total Delegated MVK</h3>
-              <div className="info-content">
+              <div className="value">
                 {tabsInfo.totalDelegetedMVK}
                 <a href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle">
                   <CustomTooltip iconId="info" text="All staked MVK that is delegated to satellites by users" />
                 </a>
               </div>
-            </SmallInfoBlock>
-            <SmallInfoBlock>
+            </SatelliteGovernanceStatsInfo>
+            <SatelliteGovernanceStatsInfo>
               <h3>Total Satellites & Oracles</h3>
-              <div className="info-content">{tabsInfo.totalSatelliteOracles}</div>
-            </SmallInfoBlock>
-            <SmallInfoBlock>
+              <div className="value">{tabsInfo.totalSatelliteOracles}</div>
+            </SatelliteGovernanceStatsInfo>
+            <SatelliteGovernanceStatsInfo>
               <h3>Number of Data Feeds</h3>
-              <div className="info-content">{tabsInfo.numberOfDataFeeds}</div>
-            </SmallInfoBlock>
+              <div className="value">{tabsInfo.numberOfDataFeeds}</div>
+            </SatelliteGovernanceStatsInfo>
           </InfoBlockWrapper>
 
           {isLoading || isDoormanLoading ? (

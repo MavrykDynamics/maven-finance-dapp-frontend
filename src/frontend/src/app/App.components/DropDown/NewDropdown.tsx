@@ -19,7 +19,7 @@ import Icon from '../Icon/Icon.view'
 import { scrollToFullView } from 'utils/scrollToFullView'
 import { ImageWithPlug } from '../Icon/ImageWithPlug'
 
-export const getDdItem = (item: string) => ({
+export const getDdItem = <T extends string>(item: T) => ({
   content: <DropdownTruncateOption text={item} />,
   id: item,
 })

@@ -1,7 +1,8 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
-import { Link } from 'react-router-dom'
+import { Link, useHistory, useLocation } from 'react-router-dom'
+import classNames from 'classnames'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
@@ -23,7 +24,7 @@ import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
-import Expand from 'app/App.components/Expand/Expand.view'
+import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusMessage } from '../StatusMessage.view'
@@ -91,6 +92,12 @@ export const OldBorrowingExpandCard = ({
   minimumRepay,
   DAOFee,
 }: BorrowingExpandCardPropsType) => {
+  const history = useHistory()
+  const location = useLocation()
+
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search])
+  const vaultAddress = params.get('vaultAddress')
+
   const { gqlName, symbol, icon, rate = 1 } = borrowedAsset
 
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
@@ -100,7 +107,7 @@ export const OldBorrowingExpandCard = ({
 
   const { bug } = useToasterContext()
 
-  const [expanded, setExpanded] = useState(false)
+  const isExpanded = address === vaultAddress
 
   const {
     openChangeBakerPopup,
@@ -138,8 +145,7 @@ export const OldBorrowingExpandCard = ({
     isActionActive
 
   const ref = useRef<HTMLDivElement | null>(null)
-
-  useClickAway(ref, () => (notHandleClickAway ? null : setExpanded(false)))
+  useClickAway(ref, () => (notHandleClickAway ? null : handleCloseVault()))
 
   // use for borrow or repay
   // it scrolls until the current vault after the transaction and changing position
@@ -159,6 +165,24 @@ export const OldBorrowingExpandCard = ({
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
+
+  const handleOpenVault = () => {
+    if (isExpanded) return
+
+    params.append('vaultAddress', address)
+    history.replace({ ...location, search: params.toString() })
+  }
+
+  const handleCloseVault = () => {
+    if (!isExpanded) return
+
+    params.delete('vaultAddress')
+    history.replace({ ...location, search: params.toString() })
+  }
+
+  const handleClickExpand = () => {
+    isExpanded ? handleCloseVault() : handleOpenVault()
+  }
 
   useEffect(() => {
     if (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE) {
@@ -204,16 +228,13 @@ export const OldBorrowingExpandCard = ({
     return
   }, [vaultStatus, levelOfEarly, levelOfLate])
 
-  useEffect(() => {
-    setExpanded(Boolean(isOpenedVault))
-  }, [isOpenedVault])
-
   return (
     <div ref={ref}>
-      <Expand
-        getExpandedStatus={setExpanded}
-        isExpandedByDefault={expanded}
-        className={`expand-borrow-tab  ${expanded ? 'expandedCard' : ''}`}
+      <ExpandSimple
+        isExpanded={isExpanded}
+        onClick={handleClickExpand}
+        openButtonName="View"
+        className={classNames('expand-borrow-tab', { 'expanded-card': isExpanded })}
         sufix={headerSufix}
         header={
           <>
@@ -663,7 +684,7 @@ export const OldBorrowingExpandCard = ({
             ) : null}
           </BorrowingExpandedCard>
         )}
-      </Expand>
+      </ExpandSimple>
     </div>
   )
 }

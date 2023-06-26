@@ -11,8 +11,8 @@ export const MINI_CHART_SETTINGS = {
 }
 
 export const CHART_SETTINGS = {
-  width: 372,
-  height: 182,
+  width: 450,
+  height: 270,
   hideXAxis: true,
   hideYAxis: true,
 }

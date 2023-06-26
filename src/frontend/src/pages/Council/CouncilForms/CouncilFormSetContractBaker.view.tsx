@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
 
 // helpers
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+import { validateFormAddress } from 'utils/validatorFunctions'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
@@ -58,7 +58,6 @@ export const CouncilFormSetContractBaker = () => {
     })
   }
 
-  const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
   const targetContractAddressProps = {
@@ -79,10 +78,10 @@ export const CouncilFormSetContractBaker = () => {
   const keyHashProps = {
     name: 'keyHash',
     value: keyHash,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlurAddress(e),
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange(e)
-      handleBlur(e)
+      handleBlurAddress(e)
     },
     required: true,
   }

@@ -152,7 +152,6 @@ export type ChangeVaultNamePopupDataType = {
 export type CreateVaultPopupDataType = {
   currentMarketAsset: string
   setCreatedVaultAddress?: (address: string) => void
-  showShortFlow?: boolean
 } | null
 
 export type LiquidateVaultDataType = LoansVaultType | null

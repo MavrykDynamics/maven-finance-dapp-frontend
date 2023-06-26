@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 import { zoomIn, slideDown } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
 import {
@@ -315,7 +315,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   }
 
   &:focus-within {
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.primaryColor}19;
+    box-shadow: 0 0 0 1.5px ${({ theme }) => theme.primaryColor}19;
     border-color: ${({ theme }) => theme.primaryColor}7F;
   }
 
@@ -327,14 +327,14 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
       &::placeholder {
         color: ${({ theme }) => theme.downColor};
       }
-
-      &:focus {
-        box-shadow: 0 0 0 2px ${({ theme }) => theme.downColor}7F;
-      }
     }
 
     .pinned-child {
       border-left: 1px solid ${({ theme }) => theme.downColor};
+    }
+
+    &:focus-within {
+      box-shadow: 0 0 0 1.5px ${({ theme }) => theme.downColor}7F;
     }
   }
 
@@ -346,14 +346,14 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
       &::placeholder {
         color: ${({ theme }) => theme.upColor};
       }
-
-      &:focus {
-        box-shadow: 0 0 0 2px ${({ theme }) => theme.upColor}7F;
-      }
     }
 
     .pinned-child {
       border-left: 1px solid ${({ theme }) => theme.upColor};
+    }
+
+    &:focus-within {
+      box-shadow: 0 0 0 1.5px ${({ theme }) => theme.upColor}7F;
     }
   }
 

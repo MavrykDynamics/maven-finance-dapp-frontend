@@ -10,7 +10,7 @@ import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.co
 import { LENDING_TAB_SLIDING_BUTTONS, assetDecimalsToShow, loansTabNames } from '../../Loans.const'
 import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from '../../Loans.helpers'
 import { LENDING_TAB_SUPPLY_TEXT, LENDING_TAB_WITHDRAW_TEXT } from 'texts/banners/loan.text'
-import { LENDING_APY } from 'texts/tooltips/loan.text'
+import { EARN_APY } from 'texts/tooltips/loan.text'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './../Modals/Modals.helpers'
 import { INPUT_LARGE, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { loansPopupsContext } from './../Modals/LoansModals.provider'
@@ -205,7 +205,7 @@ export const LendingTabActionsSection = ({
           <ThreeLevelListItem>
             <div className="name">
               Earn APY
-              <CustomTooltip iconId="info" text={LENDING_APY(assetData.symbol)} />
+              <CustomTooltip iconId="info" text={EARN_APY} />
             </div>
             <CommaNumber value={lendAPY} className="value" endingText="%" />
           </ThreeLevelListItem>

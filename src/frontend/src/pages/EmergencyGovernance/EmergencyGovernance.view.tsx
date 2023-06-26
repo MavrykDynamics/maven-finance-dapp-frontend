@@ -36,7 +36,7 @@ type Props = {
   accountPkh?: string
   handleTriggerEmergencyProposal: () => void
   emergencyGovernanceLedger: EmergencyGovernanceStorage['emergencyGovernanceLedger']
-  isGlassBroken: boolean
+  isGlassBroken: boolean | null
 }
 
 export const EmergencyGovernanceView = ({
@@ -108,6 +108,7 @@ export const EmergencyGovernanceView = ({
                 kind={ACTION_PRIMARY}
                 icon={'auction'}
                 onClick={handleTriggerEmergencyProposal}
+                // TODO: add correct cond for isGlassBroken
                 // disabled={isGlassBroken || activeItems.length !== 0}
                 disabled
               />
