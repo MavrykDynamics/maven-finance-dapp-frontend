@@ -157,7 +157,7 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
   }
 }
 
-export function createBatchForExpiredActions(getState: GetState, contract: UnwrapPromise<ReturnType<Wallet['at']>>) {
+export function createBatchForExpiredActions(getState: GetState, contract: Awaited<ReturnType<Wallet['at']>>) {
   const state = getState()
 
   const { mySatelliteGovIds, satelliteGovIdsMapper } = state.satelliteGovernance
