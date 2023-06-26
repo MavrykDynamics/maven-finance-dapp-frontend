@@ -24,7 +24,6 @@ import {
   dropBreakGlass,
   signAction,
 } from './BreakGlassCouncil.actions'
-import { getBreakGlassConfig } from 'pages/BreakGlass/BreakGlass.actions'
 
 // types
 
@@ -47,7 +46,7 @@ export function BreakGlassCouncil() {
       userAvatars: { breakGlassAvatar },
     },
   } = useSelector((state: State) => state.wallet)
-  const { isConfigLoaded } = useSelector((state: State) => state.breakGlass.config)
+
   const {
     breakGlassCouncilMembers,
     breakGlassCouncilActions: {
@@ -79,7 +78,6 @@ export function BreakGlassCouncil() {
     try {
       await Promise.all(
         [
-          (!isConfigLoaded || isDepsChanged) && dispatch(getBreakGlassConfig()),
           (!isBreakGlassCouncilMembersLoaded || isDepsChanged) && dispatch(getBreakGlassCouncilMembers()),
           (!isBreakGlassCouncilPastActionsLoaded || isDepsChanged) && dispatch(getBreakGlassCouncilPastActions()),
         ].filter(Boolean),
@@ -119,6 +117,7 @@ export function BreakGlassCouncil() {
           // general info
           pathnameOfPage="/break-glass-council"
           maxLength={councilMaxLengths}
+          // TODO: clarify this field with @CasualJackie & @Sam-M-Israel
           glassBroken={!emergencyGovActive}
           showPropagateBreakGlass
           titles={titles}

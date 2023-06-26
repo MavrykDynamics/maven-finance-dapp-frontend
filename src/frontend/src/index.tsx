@@ -7,26 +7,23 @@ import { ApolloProvider } from '@apollo/client'
 import { client } from './apollo'
 
 // utils
-import { App, store } from './app/App.controller'
 import reportWebVitals from './reportWebVitals'
-import { isMobile } from './utils/device-info'
 import { unregister } from './serviceWorker'
+import { isMobile } from './utils/device-info'
 
-// view
-import { GlobalStyle } from './styles'
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
+import { App, store } from './app/App.controller'
 import Mobile from './app/App.components/Mobile/Mobile.view'
 
 // providers
-import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider'
 import DAPPConfigProvider from 'providers/DAPPConfig/dappConfig.provider'
+import ToasterProvider from 'providers/ToasterProvider/toaster.provider'
 import DataFeedsProvider from 'providers/DataFeedsProvider/dataFeeds.provider'
 import TokensProvider from 'providers/TokensProvider/tokens.provider'
-import ToasterProvider from 'providers/ToasterProvider/toaster.provider'
 import UserProvider from 'providers/UserProvider/user.provider'
-import StakeProvider from 'providers/StakeProvider/stake.provider'
 import DarkThemeProvider from './app/App.components/DarkThemeProvider/DarkThemeProvider.view'
 
+import { GlobalStyle } from './styles'
 import './styles/fonts.css'
 import './styles/animations.css'
 
@@ -40,17 +37,13 @@ export const Root = () => {
             <DataFeedsProvider>
               <TokensProvider>
                 <UserProvider>
-                  <SatellitesProvider>
-                    <StakeProvider>
-                      <DarkThemeProvider>
-                        <GlobalStyle />
-                        <ToasterProvider>
-                          {isMobile ? <Mobile /> : <App />}
-                          <ToasterMessages />
-                        </ToasterProvider>
-                      </DarkThemeProvider>
-                    </StakeProvider>
-                  </SatellitesProvider>
+                  <DarkThemeProvider>
+                    <GlobalStyle />
+                    <ToasterProvider>
+                      {isMobile ? <Mobile /> : <App />}
+                      <ToasterMessages />
+                    </ToasterProvider>
+                  </DarkThemeProvider>
                 </UserProvider>
               </TokensProvider>
             </DataFeedsProvider>

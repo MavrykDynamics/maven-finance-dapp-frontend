@@ -75,6 +75,7 @@ export const BorrowingExpandCard = ({
     updateMvkOperatorPopup,
     managePermissionsPopup,
     liquidateVaultPopup,
+    createVaultPopup,
   } = useLoansPopupsContext()
 
   const history = useHistory()
@@ -107,6 +108,7 @@ export const BorrowingExpandCard = ({
     updateMvkOperatorPopup.showModal ||
     managePermissionsPopup.showModal ||
     liquidateVaultPopup.showModal ||
+    createVaultPopup.showModal ||
     isActionActive
 
   const ref = useRef<HTMLDivElement | null>(null)

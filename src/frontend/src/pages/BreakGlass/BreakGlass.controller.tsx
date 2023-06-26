@@ -1,50 +1,188 @@
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useMemo, useState } from 'react'
+import { useLocation, useHistory } from 'react-router-dom'
+import qs from 'qs'
 
-import { State } from '../../reducers'
-import { getBreakGlassConfig, getContractStatuses } from './BreakGlass.actions'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+// providers
+import { useContactStatuses } from 'providers/ContractStatuses/hooks/useContactStatuses'
+import { useContractStatusConfig } from 'providers/ContractStatuses/hooks/useContractStatusesConfig'
 
-import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { BreakGlassView } from './BreakGlass.view'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-
-import { Page } from 'styles'
+// components
+import { ContractCard } from './ContractCard/ContractCard.controller'
+import NewButton from 'app/App.components/Button/NewButton'
+import { FAQLink } from '../Satellites/SatellitesSideBar/SatelliteSideBar.style'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+
+// helpers
+import {
+  BREAK_GLASS_LIST_NAME,
+  calculateSlicePositions,
+  getPageNumber,
+  updatePageInUrl,
+} from 'app/App.components/Pagination/pagination.consts'
+import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
+
+// styles
+import {
+  BGCardsWrapper,
+  BGInfo,
+  BGMiddleWrapper,
+  BGStatusIndicator,
+  BGStyled,
+  BGPrimaryTitle,
+  BGTop,
+  BGWhitelist,
+} from './BreakGlass.style'
+import { Page } from 'styles'
+
+const ALL = 'All Contracts'
+const GENERAL = 'General Contracts'
 
 export const BreakGlass = () => {
-  const dispatch = useDispatch()
-  const {
-    breakGlassStatus,
-    config: { glassBroken, whitelistDev, isConfigLoaded },
-    isLoaded: isContractStatusesLoaded,
-  } = useSelector((state: State) => state.breakGlass)
+  const { isLoading: isContractStatusesLoading, contractStatuses } = useContactStatuses()
+  const { isLoading: isContractStatusConfigLoading, isGlassBroken, whitelistDevelopers } = useContractStatusConfig()
 
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    try {
-      await Promise.all(
-        [
-          (!isConfigLoaded || isDepsChanged) && dispatch(getBreakGlassConfig()),
-          (!isContractStatusesLoaded || isDepsChanged) && dispatch(getContractStatuses()),
-        ].filter(Boolean),
-      )
-    } catch (e) {}
-  }, [])
+  const { search, pathname } = useLocation()
+  const history = useHistory()
+  const { page = {}, ...rest } = qs.parse(search, { ignoreQueryPrefix: true })
+
+  const [selectedContract, setSelectedContract] = useState<string>(ALL)
+  const [activeCard, setActiveCard] = React.useState<null | string>(null)
+  const [openedAccordeon, setOpenedAcordeon] = React.useState<null | string>(null)
+
+  const uniqueContracts = useMemo(() => {
+    const uniqueAllContracts = contractStatuses
+      ? (Array.from(new Set(contractStatuses.map((key) => key.type))) as string[])
+      : []
+    return [ALL, ...uniqueAllContracts.filter((item) => item !== GENERAL)]
+  }, [contractStatuses])
+
+  const filteredcontractStatuses = useMemo(() => {
+    return selectedContract === ALL
+      ? contractStatuses
+      : contractStatuses?.filter((item) => selectedContract === item.type)
+  }, [contractStatuses, selectedContract])
+
+  const currentPage = getPageNumber(search, BREAK_GLASS_LIST_NAME)
+
+  const paginatedMyPastCouncilActions = useMemo(() => {
+    const [from, to] = calculateSlicePositions(currentPage, BREAK_GLASS_LIST_NAME)
+    return filteredcontractStatuses?.slice(from, to)
+  }, [currentPage, filteredcontractStatuses])
+
+  const handleTabChange = () => {
+    // this is required to reset the page number when changing the tab
+    const generateNewUrl = updatePageInUrl({
+      page,
+      newPage: 1,
+      listName: BREAK_GLASS_LIST_NAME,
+      pathname,
+      restQP: rest,
+    })
+    history.push(generateNewUrl)
+  }
 
   return (
     <Page>
       <PageHeader page={'break glass'} />
-      {isLoading ? (
+      {isContractStatusesLoading && isContractStatusConfigLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading contracts statuses</div>
         </DataLoaderWrapper>
       ) : (
-        <BreakGlassView
-          breakGlassStatuses={breakGlassStatus}
-          glassBroken={glassBroken}
-          pauseAllActive={glassBroken}
-          whitelistDev={whitelistDev}
-        />
+        <BGStyled className={'breakGlassContainer'}>
+          <BGTop>
+            <BGInfo>
+              <BGStatusIndicator>
+                <div className="status-indicator-wrapper">
+                  Status:{' '}
+                  <span className={isGlassBroken ? 'color-red' : 'color-green'}>
+                    {isGlassBroken ? 'glass broken' : 'not broken'}
+                  </span>
+                </div>
+                <div className="status-indicator-wrapper">
+                  Pause All:{' '}
+                  <span className={isGlassBroken ? 'color-red' : 'color-green'}>
+                    {isGlassBroken ? 'paused' : 'not paused'}
+                  </span>
+                </div>
+              </BGStatusIndicator>
+
+              <p>
+                The breakglass protocol (BGP) allows MVK holders to shutdown the system without waiting for a central
+                authority. The BGP is triggered through the Emergency governance vote.
+              </p>
+
+              <FAQLink className="BG-faq-link">
+                <a
+                  href="https://mavryk.finance/litepaper#emergency-governance--break-glass "
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Read documentation here
+                </a>
+              </FAQLink>
+
+              <BGWhitelist>
+                Whitelist Developers
+                <div className="adress-list">
+                  {whitelistDevelopers.length > 0 ? (
+                    whitelistDevelopers.map((devAddress) => (
+                      <TzAddress key={devAddress} tzAddress={devAddress} hasIcon />
+                    ))
+                  ) : (
+                    <div>None</div>
+                  )}
+                </div>
+              </BGWhitelist>
+              <div className="line"></div>
+            </BGInfo>
+          </BGTop>
+
+          <BGMiddleWrapper>
+            <BGPrimaryTitle>Contract Status</BGPrimaryTitle>
+            <div className="buttons-selector">
+              {uniqueContracts.map((item) => (
+                <NewButton
+                  key={item}
+                  kind={BUTTON_NAVIGATION}
+                  selected={item === selectedContract}
+                  onClick={() => {
+                    setSelectedContract(item)
+                    handleTabChange()
+                  }}
+                >
+                  {item}
+                </NewButton>
+              ))}
+            </div>
+          </BGMiddleWrapper>
+
+          <BGCardsWrapper>
+            <div className="cards-list">
+              {paginatedMyPastCouncilActions.map((item) => {
+                const trimmedTitle = item.title.trim()
+                const address = item.address.trim()
+                const isCardActive = activeCard === address
+                return (
+                  <ContractCard
+                    isActive={isCardActive}
+                    contract={item}
+                    key={trimmedTitle + address}
+                    onClick={() => setActiveCard(isCardActive ? null : address)}
+                    isExpanded={openedAccordeon === item.address}
+                    handleExpandAccordeon={setOpenedAcordeon}
+                  />
+                )
+              })}
+            </div>
+            <Pagination itemsCount={filteredcontractStatuses.length} listName={BREAK_GLASS_LIST_NAME} />
+          </BGCardsWrapper>
+        </BGStyled>
       )}
     </Page>
   )

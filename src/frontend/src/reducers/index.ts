@@ -7,7 +7,6 @@ import { governance, GovernanceState } from './governance'
 import { emergencyGovernance, EmergencyGovernanceState } from './emergencyGovernance'
 import { treasury, TreasuryState } from './treasury'
 import { council, CouncilState } from './council'
-import { breakGlass, BreakGlassState } from './breakGlass'
 import { vesting, VestingState } from './vesting'
 import { farm, FarmState } from './farm'
 import { preferences, PreferencesState } from './preferences'
@@ -26,7 +25,6 @@ export const reducers = combineReducers({
   governance,
   council,
   financialRequest,
-  breakGlass,
   emergencyGovernance,
 
   satelliteGovernance,
@@ -45,7 +43,6 @@ export interface State {
   emergencyGovernance: EmergencyGovernanceState
   treasury: TreasuryState
   council: CouncilState
-  breakGlass: BreakGlassState
   vesting: VestingState
   farm: FarmState
   preferences: PreferencesState

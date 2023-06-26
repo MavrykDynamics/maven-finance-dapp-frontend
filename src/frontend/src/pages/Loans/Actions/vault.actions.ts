@@ -125,7 +125,7 @@ export const triggerInitialVaultCreation =
             NEW_VAULT_QUERY_VARIABLE(userAddress, vaultName),
           )
 
-          return newVaultData.vault.at(-1)?.lending_controller_vaults?.[0]?.vault_id
+          return newVaultData.vault.at(-1)?.lending_controller_vaults?.[0]?.vault?.address
         },
         currentOperationLevel,
       })
