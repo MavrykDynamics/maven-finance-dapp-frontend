@@ -8,7 +8,7 @@ import { stakingInputValidation } from '../Doorman.converter'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
 import { unknownToError } from 'errors/error'
-import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { sleep } from 'utils/api/sleep'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
@@ -32,7 +32,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { State } from 'reducers'
 import { unstakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/DappAction.helpers'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void

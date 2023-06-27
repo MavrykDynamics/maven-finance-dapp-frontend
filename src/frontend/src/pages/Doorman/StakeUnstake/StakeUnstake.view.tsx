@@ -60,7 +60,7 @@ import {
 import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/DappAction.helpers'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void

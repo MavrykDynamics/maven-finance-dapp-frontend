@@ -33,7 +33,8 @@ export const Root = () => {
           <DarkThemeProvider>
             <ToasterProvider>
               <DappConfigProvider>
-                <GlobalStyle>{isMobile ? <Mobile /> : <App />}</GlobalStyle>
+                <GlobalStyle />
+                {isMobile ? <Mobile /> : <App />}
               </DappConfigProvider>
               <ToasterMessages />
             </ToasterProvider>
