@@ -1,5 +1,5 @@
 import { useParams } from 'react-router'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
 
@@ -35,15 +35,16 @@ import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { DOORMAN_STATS_SUB } from 'providers/StakeProvider/helpers/stake.consts'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { SUB_SKIP } from 'utils/api/apollo.consts'
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
+
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
 
   const { tokensPrices } = useSelector((state: State) => state.tokens)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
@@ -70,11 +71,11 @@ const DashboardPersonal = () => {
 
   const claimRewards = async () => await dispatch(claimAllRewardsAction())
 
-  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
-    skipAddressBalance: SUB_SKIP,
-    skipStakeHistory: SUB_SKIP,
-    skipUserBalance: SUB_SKIP,
-  })
+  useEffect(() => {
+    changeStakingSubscriptionsList({
+      [SMVK_HISTORY_SUB]: false,
+    })
+  }, [])
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -148,7 +149,7 @@ const DashboardPersonal = () => {
           <DashboardPersonalEarningsHistory {...earnings} />
         </div>
 
-        {isLoading ? (
+        {isLoading || isDoormanLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
             <div className="text">Loading your statistic</div>

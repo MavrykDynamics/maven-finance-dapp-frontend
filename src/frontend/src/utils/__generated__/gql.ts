@@ -26,6 +26,7 @@ const documents = {
     "\n  subscription breakGlassTreasuryFactory($_eq: String) {\n    treasury_factory(where: {admin: {_neq: \"\"}}) {\n      create_treasury_paused\n      address\n      track_treasury_paused\n      untrack_treasury_paused\n      admin\n      last_updated_at\n    }\n  }\n": types.BreakGlassTreasuryFactoryDocument,
     "\n  subscription breakGlassAggregator($_eq: String) {\n    aggregator(where: {admin: {_neq: \"\"}}) {\n      address\n      name\n      withdraw_reward_smvk_paused\n      withdraw_reward_xtz_paused\n      admin\n      last_updated_at\n    }\n  }\n": types.BreakGlassAggregatorDocument,
     "\n  subscription breakGlassAggregatorFactory($_eq: String) {\n    aggregator_factory(where: {admin: {_neq: \"\"}}) {\n      address\n      untrack_aggregator_paused\n      track_aggregator_paused\n      distribute_reward_xtz_paused\n      distribute_reward_smvk_paused\n      create_aggregator_paused\n      admin\n      last_updated_at\n    }\n  }\n": types.BreakGlassAggregatorFactoryDocument,
+    "\n  subscription subscribeToIndexerLevel {\n    dipdup_head {\n\t\t\tlevel\n\t\t\tname\n\t\t}\n  }\n": types.SubscribeToIndexerLevelDocument,
 };
 
 /**
@@ -94,6 +95,10 @@ export function gql(source: "\n  subscription breakGlassAggregator($_eq: String)
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  subscription breakGlassAggregatorFactory($_eq: String) {\n    aggregator_factory(where: {admin: {_neq: \"\"}}) {\n      address\n      untrack_aggregator_paused\n      track_aggregator_paused\n      distribute_reward_xtz_paused\n      distribute_reward_smvk_paused\n      create_aggregator_paused\n      admin\n      last_updated_at\n    }\n  }\n"): (typeof documents)["\n  subscription breakGlassAggregatorFactory($_eq: String) {\n    aggregator_factory(where: {admin: {_neq: \"\"}}) {\n      address\n      untrack_aggregator_paused\n      track_aggregator_paused\n      distribute_reward_xtz_paused\n      distribute_reward_smvk_paused\n      create_aggregator_paused\n      admin\n      last_updated_at\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  subscription subscribeToIndexerLevel {\n    dipdup_head {\n\t\t\tlevel\n\t\t\tname\n\t\t}\n  }\n"): (typeof documents)["\n  subscription subscribeToIndexerLevel {\n    dipdup_head {\n\t\t\tlevel\n\t\t\tname\n\t\t}\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

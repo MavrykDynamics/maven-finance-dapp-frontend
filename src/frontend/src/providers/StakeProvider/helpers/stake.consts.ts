@@ -1,41 +1,46 @@
-// CONSTS FOR UPDATE STATE PARTIALLY
-export const DOORMAN_HISTORY_SUB = 'history'
-export const DOORMAN_STATS_SUB = 'doormanStats'
-export const USER_MVK_BALANCE_SUB = 'userMVK_balances'
-export type StakingSubscriptionsTypes =
-  | typeof USER_MVK_BALANCE_SUB
-  | typeof DOORMAN_STATS_SUB
-  | typeof DOORMAN_HISTORY_SUB
+import { StakeActionType, StakingSubsRecordType } from '../stake.provider.types'
 
 // CONSTS FOR STAKE ACTIONS
 export const STAKE_ACTION = 'stake'
 export const UNSTAKE_ACTION = 'unstake'
-export type StakingActionTypes = typeof STAKE_ACTION | typeof UNSTAKE_ACTION | ''
 
-// CONST FOR ACTION LOADING
-export const STAKE_DEFAULT_LOADINGS: StakeActionsLoaderState = {
-  history: false,
+// CONSTS FOR STAKING PROVIDER STATES
+export const SMVK_HISTORY_SUB = 'smvkHistorySub'
+export const MVK_TOTAL_SUB = 'mvkTotalSub'
+export const MVK_BALANCE_SUB = 'mvkBalanceSub'
+
+// PROVIDER DEFAULT CONSTS
+export const DEFAULT_STAKING_SUBS = {
+  [MVK_BALANCE_SUB]: false,
+  [MVK_TOTAL_SUB]: false,
+  [SMVK_HISTORY_SUB]: false,
   userBalance: false,
-  doormanBalance: false,
-  loadingStateUpdatedForAction: '',
+} as const
+
+export const DEFAULT_STAKING_CTX = {
+  totalStakedMvk: 0,
+  totalSupply: 0,
+  maximumTotalSupply: 0,
+  mvkHistoryData: [],
+  smvkHistoryData: [],
 }
 
-export type StakeActionsLoaderState = {
-  history: boolean
-  userBalance: boolean
-  doormanBalance: boolean
-  loadingStateUpdatedForAction: StakingActionTypes
-}
-
-export const getInitialLoadingStateForFiredAction = (actionName: StakingActionTypes) => {
-  if (actionName === STAKE_ACTION || actionName === UNSTAKE_ACTION) {
-    return {
-      ...STAKE_DEFAULT_LOADINGS,
-      history: true,
-      userBalance: true,
-      doormanBalance: true,
-    }
+// PROVIDER HELPERS
+export const getInitialLoadingStateForFiredAction = (actionName?: StakeActionType) => {
+  switch (actionName) {
+    case STAKE_ACTION:
+    case UNSTAKE_ACTION:
+      return {
+        [MVK_BALANCE_SUB]: true,
+        [MVK_TOTAL_SUB]: false,
+        [SMVK_HISTORY_SUB]: true,
+        userBalance: true,
+      }
+    default:
+      return DEFAULT_STAKING_SUBS
   }
+}
 
-  return STAKE_DEFAULT_LOADINGS
+export const isAllSubsAfterActionCompleted = (queryLoadings: StakingSubsRecordType) => {
+  return !Object.values(queryLoadings).find((loading) => loading)
 }

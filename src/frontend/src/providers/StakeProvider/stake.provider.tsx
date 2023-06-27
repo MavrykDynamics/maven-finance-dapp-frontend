@@ -1,218 +1,178 @@
-import React, { useContext } from 'react'
-import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
+import React, { useContext, useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 // helpers
 import { normalizeDoormanChartsData } from './helpers/normalizer'
-import { convertNumberForClient, convertNumberForContractCall } from 'utils/calcFunctions'
-import { unknownToError } from 'errors/error'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
+// providers
+import { ApolloError, useSubscription } from '@apollo/client'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// types
+import {
+  Props,
+  StakeContext,
+  StakeContextStateType,
+  StakingSubsRecordType,
+  StakingSubsType,
+} from './stake.provider.types'
 import {
   SubscribeSmvkHistoryDataSubscription,
   SubscribeMvkTokenTotalSubscription,
   SubscribeAdressBalanceSubscription,
 } from 'utils/__generated__/graphql'
 
-// types
-import { State, Props, StakeContext } from './stake.provider.types'
-
 // consts
 import { MVK_DECIMALS, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { UPDATE_USER_DATA } from 'reducers/actions/user.actions'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
+import {
+  DEFAULT_STAKING_CTX,
+  MVK_BALANCE_SUB,
+  MVK_TOTAL_SUB,
+  DEFAULT_STAKING_SUBS,
+  SMVK_HISTORY_SUB,
+} from './helpers/stake.consts'
+import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import {
+  SUBSCRIPTION_ADDRESS_BALANCE_DATA,
+  SUBSCRIPTION_MVK_TOKEN_TOTAL,
+  SUBSCRIPTION_STAKE_HISTORY,
+} from 'gql/subscriptions/stakingData'
 
-// TODO move wallet to context to avoid redux logic inside Stake Context
-// redux
+// TODO: remove after user balances live update is ready
 import { State as ReduxState } from 'reducers'
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
-/** */
-export class StakeProviderClass extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props)
-    this.state = {
-      context: {
-        action: '',
-        updateStakeActionContext: this.updateStakeActionContext,
-        loadingToasterId: null,
-        updateStakeLoadingToasterId: this.updateStakeLoadingToasterId,
+const StakeProvider = ({ children }: Props) => {
+  const { bug } = useToasterContext()
 
-        totalStakedMvk: 0,
-        totalSupply: 0,
-        maximumTotalSupply: 0,
-        mvkHistoryData: [],
-        smvkHistoryData: [],
-        updateStakeHistoryData: this.updateStakeHistoryData,
-        updateTotalStakedMvk: this.updateTotalStakedMvk,
-        updateUserStakeData: this.updateUserStakeData,
-        updateTotalMvkToken: this.updateTotalMvkToken,
-        stakeMVK: this.stakeMVK,
-        unstakeMVK: this.unstakeMVK,
-      },
-    }
+  // TODO: remove after user balances live update is ready
+  const dispatch = useDispatch()
+  const { accountPkh, user } = useSelector((state: ReduxState) => state.wallet)
+  // TODO: move to context
+  const {
+    doormanAddress: { address: doormanAddress },
+  } = useSelector((state: ReduxState) => state.contractAddresses)
+
+  const [stakingCtxState, setStakingCtxState] = useState<StakeContextStateType>(DEFAULT_STAKING_CTX)
+  const [shouldSkip, setShouldSkip] = useState<StakingSubsRecordType>(DEFAULT_STAKING_SUBS)
+
+  const handleSubError = (error: ApolloError, subName: StakingSubsType) => {
+    console.error(`${subName} query error: `, error)
+    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
-  updateStakeActionContext = (newAction: StakeContext['action']) => {
-    this.setState((prevState) => ({
-      context: {
-        ...prevState.context,
-        action: newAction,
-      },
-    }))
-  }
+  // subscribes
+  const { loading: isStakingHistoryLoading } = useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
+    skip: shouldSkip[SMVK_HISTORY_SUB],
+    onData: ({ data: { data } }) => {
+      if (!data) return
+      updateStakeHistoryData(data)
+    },
+    onError: (error) => handleSubError(error, SMVK_HISTORY_SUB),
+  })
 
-  updateStakeLoadingToasterId = (newLoaderToasterId: StakeContext['loadingToasterId']) => {
-    this.setState((prevState) => ({
-      context: {
-        ...prevState.context,
-        loadingToasterId: newLoaderToasterId,
-      },
-    }))
-  }
+  const { loading: isMvkBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
+    skip: shouldSkip[MVK_BALANCE_SUB],
+    variables: {
+      _eq: doormanAddress,
+    },
+    onData: ({ data: { data } }) => {
+      if (!data) return
+      updateTotalStakedMvk(data)
+    },
+    onError: (error) => handleSubError(error, MVK_BALANCE_SUB),
+    shouldResubscribe: true,
+  })
 
-  updateStakeHistoryData = (smvkStorage: SubscribeSmvkHistoryDataSubscription) => {
-    const { smvk_history_data } = smvkStorage
-    const { smvkHistoryData, mvkHistoryData } = normalizeDoormanChartsData({ smvk_history_data })
+  const { loading: isMvkTotalLoading } = useSubscription(SUBSCRIPTION_MVK_TOKEN_TOTAL, {
+    skip: shouldSkip[MVK_TOTAL_SUB],
+    onData: ({ data: { data } }) => {
+      if (!data) return
+      updateTotalMvkToken(data)
+    },
+    onError: (error) => handleSubError(error, MVK_TOTAL_SUB),
+    shouldResubscribe: true,
+  })
 
-    this.setState({
-      context: {
-        ...this.state.context,
-        smvkHistoryData,
-        mvkHistoryData,
-      },
-    })
-  }
+  // TODO: remove after user balances live update is ready
+  const { loading: isUserBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
+    skip: shouldSkip.userBalance,
+    variables: {
+      _eq: accountPkh,
+    },
+    onData: ({ data: { data } }) => {
+      if (!data) return
 
-  updateTotalStakedMvk = (storage: SubscribeAdressBalanceSubscription) => {
-    this.setState({
-      context: {
-        ...this.state.context,
-        totalStakedMvk: convertNumberForClient({
-          number: storage.mavryk_user[0].mvk_balance ?? 0,
-          grade: MVK_DECIMALS,
-        }),
-      },
-    })
-  }
+      const { mvk_balance = 0, smvk_balance = 0 } = data.mavryk_user[0]
 
-  updateTotalMvkToken = (storage: SubscribeMvkTokenTotalSubscription) => {
-    const {
-      mvk_token: [mvkTokenItem],
-    } = storage
-
-    this.setState({
-      context: {
-        ...this.state.context,
-        totalSupply: convertNumberForClient({ number: mvkTokenItem.total_supply ?? 0, grade: MVK_DECIMALS }),
-        maximumTotalSupply: convertNumberForClient({ number: mvkTokenItem.maximum_supply ?? 0, grade: MVK_DECIMALS }),
-      },
-    })
-  }
-
-  // TODO move wallet from redux to context
-  updateUserStakeData = (userData: SubscribeAdressBalanceSubscription) => {
-    const { mvk_balance = 0, smvk_balance = 0 } = userData.mavryk_user[0]
-
-    this.props.dispatch({
-      type: UPDATE_USER_DATA,
-      userData: {
-        ...this.props.user,
-        userTokens: {
-          ...this.props.user.userTokens,
-          [MVK_TOKEN_SYMBOL]: {
-            ...this.props.user.userTokens[MVK_TOKEN_SYMBOL],
-            balance: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }),
-          },
-          [SMVK_TOKEN_SYMBOL]: {
-            ...this.props.user.userTokens[SMVK_TOKEN_SYMBOL],
-            balance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
+      dispatch({
+        type: UPDATE_USER_DATA,
+        userData: {
+          ...user,
+          userTokens: {
+            ...user.userTokens,
+            [MVK_TOKEN_SYMBOL]: {
+              ...user.userTokens[MVK_TOKEN_SYMBOL],
+              balance: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }),
+            },
+            [SMVK_TOKEN_SYMBOL]: {
+              ...user.userTokens[SMVK_TOKEN_SYMBOL],
+              balance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
+            },
           },
         },
-      },
-      accountPkh: this.props.accountPkh,
-    })
+        accountPkh,
+      })
+    },
+    onError: (error) => handleSubError(error, 'userBalance'),
+    shouldResubscribe: true,
+  })
+
+  // methods to update context data
+  const updateStakeHistoryData = ({ smvk_history_data }: SubscribeSmvkHistoryDataSubscription) => {
+    const { smvkHistoryData, mvkHistoryData } = normalizeDoormanChartsData({ smvk_history_data })
+
+    setStakingCtxState((prevState) => ({
+      ...prevState,
+      smvkHistoryData,
+      mvkHistoryData,
+    }))
   }
 
-  // ACTIONS
-  stakeMVK = async (
-    amount: number,
-    accountPkh: string,
-    doormanAddress: string,
-    mvkTokenAddress: string,
-  ): Promise<{ actionSuccess: boolean; error: null | unknown }> => {
-    try {
-      // prepare and send transaction
-      const tezos = await DAPP_INSTANCE.tezos()
-      const mvkTokenContract = await tezos?.wallet.at(mvkTokenAddress)
-      const doormanContract = await tezos?.wallet.at(doormanAddress)
+  const updateTotalStakedMvk = (storage: SubscribeAdressBalanceSubscription) => {
+    setStakingCtxState((prevState) => ({
+      ...prevState,
+      totalStakedMvk: convertNumberForClient({
+        number: storage.mavryk_user[0].mvk_balance ?? 0,
+        grade: MVK_DECIMALS,
+      }),
+    }))
+  }
 
-      const addOperators = [
-          {
-            add_operator: {
-              owner: accountPkh,
-              operator: doormanAddress,
-              token_id: 0,
-            },
-          },
-        ],
-        removeOperators = [
-          {
-            remove_operator: {
-              owner: accountPkh,
-              operator: doormanAddress,
-              token_id: 0,
-            },
-          },
-        ]
+  const updateTotalMvkToken = ({ mvk_token: [mvkTokenItem] }: SubscribeMvkTokenTotalSubscription) => {
+    setStakingCtxState((prevState) => ({
+      ...prevState,
+      totalSupply: convertNumberForClient({ number: mvkTokenItem.total_supply ?? 0, grade: MVK_DECIMALS }),
+      maximumTotalSupply: convertNumberForClient({ number: mvkTokenItem.maximum_supply ?? 0, grade: MVK_DECIMALS }),
+    }))
+  }
 
-      const batch =
-        mvkTokenContract &&
-        doormanContract &&
-        (await tezos.wallet
-          .batch()
-          .withContractCall(mvkTokenContract.methods.update_operators(addOperators))
-          .withContractCall(doormanContract.methods.stake(convertNumberForContractCall({ number: amount })))
-          .withContractCall(mvkTokenContract.methods.update_operators(removeOperators)))
-      await batch?.send()
-
-      return { actionSuccess: true, error: null }
-    } catch (error) {
-      return { actionSuccess: false, error: unknownToError(error) }
+  const contextProviderValue = useMemo(() => {
+    const changeStakingSubscriptionsList = (newSkips: Partial<StakingSubsRecordType>) =>
+      setShouldSkip((prev) => ({ ...prev, ...newSkips }))
+    return {
+      ...stakingCtxState,
+      isLoading: isStakingHistoryLoading || isMvkBalanceLoading || isMvkTotalLoading || isUserBalanceLoading,
+      changeStakingSubscriptionsList,
     }
-  }
+  }, [isMvkBalanceLoading, isMvkTotalLoading, isStakingHistoryLoading, isUserBalanceLoading, stakingCtxState])
 
-  unstakeMVK = async (amount: number, doormanAddress: string) => {
-    try {
-      // prepare and send transaction
-      const tezos = await DAPP_INSTANCE.tezos()
-      const contract = await tezos.wallet.at(doormanAddress)
-      await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
-
-      return { actionSuccess: true, error: null }
-    } catch (error) {
-      return { actionSuccess: false, error: unknownToError(error) }
-    }
-  }
-
-  /** */
-  render(): React.ReactNode {
-    return <stakeContext.Provider value={this.state.context}>{this.props.children}</stakeContext.Provider>
-  }
+  return <stakeContext.Provider value={contextProviderValue}>{children}</stakeContext.Provider>
 }
-
-const mapStateToProps = (state: ReduxState) => ({
-  doormanAddress: state.contractAddresses.doormanAddress.address,
-  mvkTokenAddress: state.contractAddresses.mvkTokenAddress.address,
-  accountPkh: state.wallet.accountPkh,
-  user: state.wallet.user,
-})
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  dispatch,
-})
-
-export const StakeProvider = connect(mapStateToProps, mapDispatchToProps)(StakeProviderClass)
 
 export const useStakeContext = () => {
   const context = useContext(stakeContext)

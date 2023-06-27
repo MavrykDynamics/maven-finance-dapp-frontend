@@ -16,7 +16,6 @@ import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 // actions
 import { State } from 'reducers'
@@ -30,7 +29,7 @@ export const DEFAULT_STAKE_UNSTAKE_INPUT: { amount: string; validation: InputSta
 }
 
 export const Doorman = () => {
-  const { totalStakedMvk, maximumTotalSupply, totalSupply } = useStakeContext()
+  const { totalStakedMvk, maximumTotalSupply, totalSupply, isLoading: isDoormanLoading } = useStakeContext()
 
   const { doormanAddress, mvkTokenAddress } = useSelector((state: State) => state.contractAddresses)
   const {
@@ -45,8 +44,6 @@ export const Doorman = () => {
   const [unstakePopupActive, setUnstakePopupActive] = useState(false)
 
   const [stakeUnstakeInput, setStakeUnstakeInput] = useState(DEFAULT_STAKE_UNSTAKE_INPUT)
-
-  const { isInitialLoading: isDoormanLoading } = useStakeUpdater()
 
   const closeExitFeePopup = () => setUnstakePopupActive(false)
   const openExitFeePopup = () => setUnstakePopupActive(true)
