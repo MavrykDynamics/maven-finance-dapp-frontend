@@ -39,7 +39,7 @@ export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
 export type GetState = typeof store.getState
 
-const AppContainer = () => {
+export const App = () => {
   const dispatch = useDispatch()
 
   const showSidebarOpened = useMedia('(min-width: 1400px)')
@@ -85,29 +85,28 @@ const AppContainer = () => {
     setCookie('policyPopup', true)
   }, [])
 
-  return isInitialDataLoading || isInitialCtxLoading ? (
-    <LoaderRocket />
-  ) : (
-    <Router>
-      <AppStyled isExpandedMenu={sidebarOpened}>
-        <ActionLoader />
-        <Toaster />
-        <WertLoader />
-        <Menu />
+  return (
+    <>
+      <LoaderRocket isActive={isInitialDataLoading || isInitialCtxLoading} />
+      {!isInitialDataLoading && !isInitialCtxLoading ? (
+        <Router>
+          <AppStyled isExpandedMenu={sidebarOpened} isVisible={!isInitialDataLoading && !isInitialCtxLoading}>
+            <ActionLoader />
+            <Toaster />
+            <WertLoader />
+            <Menu />
 
-        <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
-        <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
+            <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
+            <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
-        <LoansPopupsProvider>
-          <AppRoutes />
-        </LoansPopupsProvider>
+            <LoansPopupsProvider>
+              <AppRoutes />
+            </LoansPopupsProvider>
 
-        <Footer />
-      </AppStyled>
-    </Router>
+            <Footer />
+          </AppStyled>
+        </Router>
+      ) : null}
+    </>
   )
-}
-
-export const App = () => {
-  return <AppContainer />
 }

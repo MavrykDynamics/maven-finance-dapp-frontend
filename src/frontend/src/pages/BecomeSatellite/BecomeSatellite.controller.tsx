@@ -8,6 +8,7 @@ import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { INFO_DEFAULT, INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
+import { MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
   BecomeSatelliteFormStateType,
@@ -17,12 +18,13 @@ import {
 } from './BecomeSatellite.conts'
 
 // providers
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
-import { SUB_SKIP } from 'utils/api/apollo.consts'
 import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 // Actions
 import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getSatelliteConfig } from 'pages/Satellites/Satellites.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
@@ -58,8 +60,6 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -71,6 +71,7 @@ const connectWalletMessage = (
 )
 
 export const BecomeSatellite = () => {
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
   const dispatch = useDispatch()
   const {
     accountPkh = '',
@@ -95,11 +96,13 @@ export const BecomeSatellite = () => {
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
-  useStakeUpdater({
-    skipAddressBalance: SUB_SKIP,
-    skipMvkTokenTotal: SUB_SKIP,
-    skipStakeHistory: SUB_SKIP,
-  })
+  useEffect(() => {
+    changeStakingSubscriptionsList({
+      [MVK_BALANCE_SUB]: false,
+      [MVK_TOTAL_SUB]: false,
+      [SMVK_HISTORY_SUB]: false,
+    })
+  }, [])
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -263,7 +266,7 @@ export const BecomeSatellite = () => {
 
         <PageContent>
           <div>
-            {isLoading ? (
+            {isLoading || isDoormanLoading ? (
               <DataLoaderWrapper>
                 <ClockLoader width={150} height={150} />
                 <div className="text">Loading satellite data</div>

@@ -1,5 +1,5 @@
 import { useParams } from 'react-router'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
 
@@ -35,14 +35,14 @@ import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
-import { SUB_SKIP } from 'utils/api/apollo.consts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -54,6 +54,8 @@ const DashboardPersonal = () => {
   const {
     mvkTokenAddress: { address: mvkTokenAddress },
   } = useSelector((state: State) => state.contractAddresses)
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
+
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
@@ -77,10 +79,11 @@ const DashboardPersonal = () => {
 
   const claimRewards = async () => await dispatch(claimAllRewardsAction(tokensMetadata))
 
-  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
-    skipAddressBalance: SUB_SKIP,
-    skipStakeHistory: SUB_SKIP,
-  })
+  useEffect(() => {
+    changeStakingSubscriptionsList({
+      [SMVK_HISTORY_SUB]: false,
+    })
+  }, [])
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -189,7 +192,7 @@ const DashboardPersonal = () => {
           <DashboardPersonalEarningsHistory {...earnings} />
         </div>
 
-        {isLoading ? (
+        {isLoading || isDoormanLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
             <div className="text">Loading your statistic</div>

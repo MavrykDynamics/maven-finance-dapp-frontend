@@ -16,17 +16,17 @@ import ToasterProvider from 'providers/ToasterProvider/toaster.provider'
 import TokensProvider from 'providers/TokensProvider/tokens.provider'
 import DAPPConfigProvider from 'providers/DAPPConfig/dappConfig.provider'
 import DataFeedsProvider from 'providers/DataFeedsProvider/dataFeeds.provider'
+import UserProvider from 'providers/UserProvider/user.provider'
+import DappConfigProvider from 'providers/DappConfigProvider/dappConfig.provider'
 import DarkThemeProvider from './app/App.components/DarkThemeProvider/DarkThemeProvider.view'
 
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
 import { App, store } from './app/App.controller'
 import Mobile from './app/App.components/Mobile/Mobile.view'
 
+import { GlobalStyle } from './styles'
 import './styles/fonts.css'
 import './styles/animations.css'
-import UserProvider from 'providers/UserProvider/user.provider'
-import StakeProvider from 'providers/StakeProvider/stake.provider'
-import { GlobalStyle } from './styles'
 import './styles/fonts.css'
 import './styles/animations.css'
 
@@ -40,15 +40,14 @@ export const Root = () => {
             <DataFeedsProvider>
               <TokensProvider>
                 <UserProvider>
-                  <StakeProvider>
-                    <DarkThemeProvider>
-                      <GlobalStyle />
-                      <ToasterProvider>
-                        {isMobile ? <Mobile /> : <App />}
-                        <ToasterMessages />
-                      </ToasterProvider>
-                    </DarkThemeProvider>
-                  </StakeProvider>
+                  <DarkThemeProvider>
+                    <ToasterProvider>
+                      <DappConfigProvider>
+                        <GlobalStyle>{isMobile ? <Mobile /> : <App />}</GlobalStyle>
+                      </DappConfigProvider>
+                      <ToasterMessages />
+                    </ToasterProvider>
+                  </DarkThemeProvider>
                 </UserProvider>
               </TokensProvider>
             </DataFeedsProvider>

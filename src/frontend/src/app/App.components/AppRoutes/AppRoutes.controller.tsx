@@ -34,6 +34,7 @@ import DashboardPersonal from 'pages/DashboardPersonal/DashboardPersonal.control
 import { Market } from 'pages/Loans/Market.controller'
 import { LoansDashboard } from 'pages/LoansDashboard/LoansDashboard'
 import { ProposalSubmission } from 'pages/ProposalSubmission/ProposalSubmission.controller'
+import StakeProvider from 'providers/StakeProvider/stake.provider'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
@@ -51,31 +52,25 @@ export const AppRoutes = () => {
   // TODO: add error boundaries
   return (
     <Switch>
-      <Route exact path="/staking">
-        <Doorman />
-      </Route>
+      <StakeProvider>
+        <Route exact path="/staking" component={Doorman} />
+      </StakeProvider>
 
       {/* DASHBOARD */}
-      <Route exact path="/">
-        <Dashboard />
-      </Route>
-      <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
-        <DashboardPersonal />
-      </Route>
+      <StakeProvider>
+        <Route exact path="/" component={Dashboard} />
+        <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?" component={DashboardPersonal} />
+      </StakeProvider>
 
       {/* SATELLITES */}
-      <Route exact path="/satellites">
-        <Satellites />
-      </Route>
-      <Route exact path="/become-satellite">
-        <BecomeSatellite />
-      </Route>
-      <Route exact path="/satellite-nodes">
-        <SatelliteNodes />
-      </Route>
-      <Route exact path="/satellites/satellite-details/:satelliteId">
-        <SatelliteDetails />
-      </Route>
+      <StakeProvider>
+        <Route exact path="/satellites" component={Satellites} />
+        <Route exact path="/become-satellite" component={BecomeSatellite} />
+      </StakeProvider>
+
+      <Route exact path="/satellite-nodes" component={SatelliteNodes} />
+      <Route exact path="/satellites/satellite-details/:satelliteId" component={SatelliteDetails} />
+
       <Route exact path="/data-feeds">
         <DataFeeds />
       </Route>
@@ -99,9 +94,9 @@ export const AppRoutes = () => {
       <Route exact path="/financial-requests">
         <FinancialRequests />
       </Route>
-      <Route exact path="/emergency-governance">
-        <EmergencyGovernance />
-      </Route>
+      <StakeProvider>
+        <Route exact path="/emergency-governance" component={EmergencyGovernance} />
+      </StakeProvider>
       <Route exact path="/mavryk-council/:tabId?">
         <Council />
       </Route>

@@ -1,10 +1,10 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // providers
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 // types
 import { State } from 'reducers'
@@ -24,7 +24,7 @@ import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { SUB_SKIP } from 'utils/api/apollo.consts'
+import { MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
 // styles
@@ -42,19 +42,22 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 const Satellites = () => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
   const { userTokensBalances } = useUserContext()
-
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
   const dispatch = useDispatch()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
-  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
-    skipAddressBalance: SUB_SKIP,
-    skipStakeHistory: SUB_SKIP,
-    skipMvkTokenTotal: SUB_SKIP,
-  })
   const {
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
+
+  useEffect(() => {
+    changeStakingSubscriptionsList({
+      [MVK_BALANCE_SUB]: false,
+      [MVK_TOTAL_SUB]: false,
+      [SMVK_HISTORY_SUB]: false,
+    })
+  }, [])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

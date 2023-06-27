@@ -1,41 +1,24 @@
 // CONSTS FOR STAKE ACTIONS
 export const STAKE_ACTION = 'stake'
 export const UNSTAKE_ACTION = 'unstake'
-export const GET_MVK_FROM_FAUCET_ACTION = 'getFaucetMvk'
-export type StakingActionTypes = typeof STAKE_ACTION | typeof UNSTAKE_ACTION | typeof GET_MVK_FROM_FAUCET_ACTION | ''
 
-// CONST FOR ACTION LOADING
-export const STAKE_DEFAULT_LOADINGS: StakeActionsLoaderState = {
-  history: false,
+// CONSTS FOR STAKING PROVIDER STATES
+export const SMVK_HISTORY_SUB = 'smvkHistorySub'
+export const MVK_TOTAL_SUB = 'mvkTotalSub'
+export const MVK_BALANCE_SUB = 'mvkBalanceSub'
+
+// PROVIDER DEFAULT CONSTS
+export const DEFAULT_STAKING_SUBS = {
+  [MVK_BALANCE_SUB]: false,
+  [MVK_TOTAL_SUB]: false,
+  [SMVK_HISTORY_SUB]: false,
   userBalance: false,
-  doormanBalance: false,
-  loadingStateUpdatedForAction: '',
-}
+} as const
 
-export type StakeActionsLoaderState = {
-  history: boolean
-  userBalance: boolean
-  doormanBalance: boolean
-  loadingStateUpdatedForAction: StakingActionTypes
-}
-
-export const getInitialLoadingStateForFiredAction = (actionName: StakingActionTypes) => {
-  if (actionName === STAKE_ACTION || actionName === UNSTAKE_ACTION) {
-    return {
-      ...STAKE_DEFAULT_LOADINGS,
-      history: true,
-      userBalance: true,
-      doormanBalance: true,
-    }
-  }
-
-  if (actionName === GET_MVK_FROM_FAUCET_ACTION) {
-    return {
-      ...STAKE_DEFAULT_LOADINGS,
-      userBalance: true,
-      doormanBalance: true,
-    }
-  }
-
-  return STAKE_DEFAULT_LOADINGS
+export const DEFAULT_STAKING_CTX = {
+  totalStakedMvk: 0,
+  totalSupply: 0,
+  maximumTotalSupply: 0,
+  mvkHistoryData: [],
+  smvkHistoryData: [],
 }

@@ -2,38 +2,25 @@ import styled, { css } from 'styled-components/macro'
 
 import { MavrykTheme } from '../styles/interfaces'
 
-export const AppStyled = styled.div<{ theme: MavrykTheme; isExpandedMenu?: boolean }>`
+export const AppStyled = styled.div<{ theme: MavrykTheme; isExpandedMenu?: boolean; isVisible: boolean }>`
   --carousel-button-size: 30px;
   --carousel-button-bg: rgb(22 14 63 / 70%);
   --carousel-button-indent: -15px;
   min-height: 100vh;
   padding-left: ${({ isExpandedMenu }) => (isExpandedMenu ? '232px' : '72px')};
+  transition: 150ms opacity;
+
+  ${({ isVisible }) =>
+    !isVisible
+      ? css`
+          opacity: 0;
+          visibility: hidden;
+        `
+      : ''};
 
   @media screen and (max-width: 1399px) {
     padding-left: 72px;
   }
-`
-
-export const AppBg = styled.div<{ theme: MavrykTheme }>`
-  position: fixed;
-  top: 0;
-  left: 0;
-  min-width: 100vw;
-  min-height: 100vh;
-  background-color: ${({ theme }) => theme.containerColor};
-  /* background-image: url('/images/bg.png');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover; */
-`
-
-export const AppWrapper = styled.div`
-  position: absolute;
-  width: 100vw;
-  top: 0;
-  background: url('/images/grid.svg') repeat center top;
-  /* height: 100vh; */
-  will-change: transform, opacity;
 `
 
 export const EmptyContainer = styled.figure<{ theme: MavrykTheme }>`
