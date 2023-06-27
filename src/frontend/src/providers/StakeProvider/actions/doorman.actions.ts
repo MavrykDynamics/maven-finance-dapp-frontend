@@ -1,5 +1,6 @@
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { unknownToError } from 'errors/error'
+import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 export const stakeMVK = async (
@@ -7,7 +8,7 @@ export const stakeMVK = async (
   accountPkh: string,
   doormanAddress: string,
   mvkTokenAddress: string,
-): Promise<{ actionSuccess: boolean; error: null | unknown }> => {
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
@@ -41,9 +42,9 @@ export const stakeMVK = async (
         .withContractCall(mvkTokenContract.methods.update_operators(addOperators))
         .withContractCall(doormanContract.methods.stake(convertNumberForContractCall({ number: amount })))
         .withContractCall(mvkTokenContract.methods.update_operators(removeOperators)))
-    await batch?.send()
+    const operation = await batch?.send()
 
-    return { actionSuccess: true, error: null }
+    return { actionSuccess: true, operation }
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }
@@ -52,14 +53,14 @@ export const stakeMVK = async (
 export const unstakeMVK = async (
   amount: number,
   doormanAddress: string,
-): Promise<{ actionSuccess: boolean; error: null | unknown }> => {
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(doormanAddress)
-    await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
+    const operation = await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
 
-    return { actionSuccess: true, error: null }
+    return { actionSuccess: true, operation }
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }

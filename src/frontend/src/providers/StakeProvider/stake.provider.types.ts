@@ -19,7 +19,6 @@ export type StakeContext = {
   // additional data & methods
   isLoading: boolean
   changeStakingSubscriptionsList: (skips: Partial<StakingSubsRecordType>) => void
-  handleStakingAction: (actionData: StakingActionData) => void
 }
 
 export type StakeContextStateType = Pick<

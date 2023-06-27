@@ -22,6 +22,7 @@ import Mobile from './app/App.components/Mobile/Mobile.view'
 import { GlobalStyle } from './styles'
 import './styles/fonts.css'
 import './styles/animations.css'
+import DappConfigProvider from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const Root = () => {
   const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
@@ -30,9 +31,10 @@ export const Root = () => {
       <ApolloProvider client={client}>
         <Provider store={store}>
           <DarkThemeProvider>
-            <GlobalStyle />
             <ToasterProvider>
-              {isMobile ? <Mobile /> : <App />}
+              <DappConfigProvider>
+                <GlobalStyle>{isMobile ? <Mobile /> : <App />}</GlobalStyle>
+              </DappConfigProvider>
               <ToasterMessages />
             </ToasterProvider>
           </DarkThemeProvider>

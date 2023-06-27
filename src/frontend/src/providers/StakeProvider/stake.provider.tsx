@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // helpers
@@ -14,7 +14,6 @@ import {
   Props,
   StakeContext,
   StakeContextStateType,
-  StakingActionData,
   StakingSubsRecordType,
   StakingSubsType,
 } from './stake.provider.types'
@@ -27,16 +26,13 @@ import {
 // consts
 import { MVK_DECIMALS, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { UPDATE_USER_DATA } from 'reducers/actions/user.actions'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import {
   DEFAULT_STAKING_CTX,
-  DEFAULT_STAKING_SUBS,
   MVK_BALANCE_SUB,
   MVK_TOTAL_SUB,
+  DEFAULT_STAKING_SUBS,
   SMVK_HISTORY_SUB,
-  getInitialLoadingStateForFiredAction,
-  isAllSubsAfterActionCompleted,
 } from './helpers/stake.consts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import {
@@ -45,16 +41,13 @@ import {
   SUBSCRIPTION_STAKE_HISTORY,
 } from 'gql/subscriptions/stakingData'
 
-// helpers
-import { sleep } from 'utils/api/sleep'
-
 // TODO: remove after user balances live update is ready
 import { State as ReduxState } from 'reducers'
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
 const StakeProvider = ({ children }: Props) => {
-  const { bug, hideToasterMessage, success } = useToasterContext()
+  const { bug } = useToasterContext()
 
   // TODO: remove after user balances live update is ready
   const dispatch = useDispatch()
@@ -66,37 +59,6 @@ const StakeProvider = ({ children }: Props) => {
 
   const [stakingCtxState, setStakingCtxState] = useState<StakeContextStateType>(DEFAULT_STAKING_CTX)
   const [shouldSkip, setShouldSkip] = useState<StakingSubsRecordType>(DEFAULT_STAKING_SUBS)
-  const [queryLoadings, setQueryLoadings] = useState<StakingSubsRecordType>(DEFAULT_STAKING_SUBS)
-  const [stakingAction, setStakingAction] = useState<StakingActionData>(null)
-
-  /**
-   * @param newStakingAction action name and toaster id, set's action into context (means that action data update in progress)
-   * and @setQueryLoadings sets list of queries that should update after action proceed
-   */
-  const handleStakingAction = (newStakingAction: StakingActionData) => {
-    if (newStakingAction) setQueryLoadings(getInitialLoadingStateForFiredAction(newStakingAction.action))
-
-    setStakingAction(newStakingAction)
-  }
-
-  /**
-   * Effect to remove loading toaster and show success after data update for action finishes
-   */
-  useEffect(() => {
-    if (!stakingAction) return
-
-    const { action, loadingToasterId } = stakingAction
-    const turnOffAction = async () => {
-      await sleep(1000)
-      hideToasterMessage(loadingToasterId)
-      await sleep(500)
-      success(TOASTER_ACTIONS_TEXTS[action]['end']['message'], TOASTER_ACTIONS_TEXTS[action]['end']['title'])
-
-      setStakingAction(null)
-    }
-
-    if (isAllSubsAfterActionCompleted(queryLoadings)) turnOffAction()
-  }, [stakingAction, queryLoadings])
 
   const handleSubError = (error: ApolloError, subName: StakingSubsType) => {
     console.error(`${subName} query error: `, error)
@@ -165,7 +127,6 @@ const StakeProvider = ({ children }: Props) => {
         },
         accountPkh,
       })
-      setQueryLoadings({ ...queryLoadings, userBalance: false })
     },
     onError: (error) => handleSubError(error, 'userBalance'),
     shouldResubscribe: true,
@@ -180,7 +141,6 @@ const StakeProvider = ({ children }: Props) => {
       smvkHistoryData,
       mvkHistoryData,
     }))
-    setQueryLoadings({ ...queryLoadings, [SMVK_HISTORY_SUB]: false })
   }
 
   const updateTotalStakedMvk = (storage: SubscribeAdressBalanceSubscription) => {
@@ -191,7 +151,6 @@ const StakeProvider = ({ children }: Props) => {
         grade: MVK_DECIMALS,
       }),
     }))
-    setQueryLoadings({ ...queryLoadings, [MVK_BALANCE_SUB]: false })
   }
 
   const updateTotalMvkToken = ({ mvk_token: [mvkTokenItem] }: SubscribeMvkTokenTotalSubscription) => {
@@ -200,7 +159,6 @@ const StakeProvider = ({ children }: Props) => {
       totalSupply: convertNumberForClient({ number: mvkTokenItem.total_supply ?? 0, grade: MVK_DECIMALS }),
       maximumTotalSupply: convertNumberForClient({ number: mvkTokenItem.maximum_supply ?? 0, grade: MVK_DECIMALS }),
     }))
-    setQueryLoadings({ ...queryLoadings, [MVK_TOTAL_SUB]: false })
   }
 
   const contextProviderValue = useMemo(() => {
@@ -210,7 +168,6 @@ const StakeProvider = ({ children }: Props) => {
       ...stakingCtxState,
       isLoading: isStakingHistoryLoading || isMvkBalanceLoading || isMvkTotalLoading || isUserBalanceLoading,
       changeStakingSubscriptionsList,
-      handleStakingAction,
     }
   }, [isMvkBalanceLoading, isMvkTotalLoading, isStakingHistoryLoading, isUserBalanceLoading, stakingCtxState])
 

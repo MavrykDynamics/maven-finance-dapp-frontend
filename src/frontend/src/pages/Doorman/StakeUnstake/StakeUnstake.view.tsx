@@ -2,7 +2,7 @@ import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // context
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // view
@@ -60,6 +60,7 @@ import {
 import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/DappAction.helpers'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -76,7 +77,7 @@ export const StakeUnstakeView = ({
 }: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
-  const { handleStakingAction } = useStakeContext()
+  const { setAction } = useDappConfigContext()
   const { info, loading, bug } = useToasterContext()
 
   const {
@@ -169,30 +170,38 @@ export const StakeUnstakeView = ({
       errorMessage: '',
     })
 
-    const { actionSuccess, error } = await stakeMVK(stakeAmount, accountPkh, doormanAddress, mvkTokenAddress)
+    const actionResult = await stakeMVK(stakeAmount, accountPkh, doormanAddress, mvkTokenAddress)
 
-    if (actionSuccess && !error) {
-      dispatch(toggleActionFullScreenLoader(true))
-      dispatch(toggleActionCompletion(true))
+    if (checkIfActionSuccess(actionResult)) {
+      try {
+        const { operation } = actionResult
+        dispatch(toggleActionFullScreenLoader(true))
+        dispatch(toggleActionCompletion(true))
 
-      info(
-        TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
-        TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['title'],
-      )
+        info(
+          TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['title'],
+        )
 
-      await sleep(5000)
+        await sleep(5000)
 
-      // show toaster loader after 5000ms after operation started
-      const loadingToasterId = loading(
-        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-      )
-      dispatch(toggleActionFullScreenLoader(false))
-      dispatch(toggleActionCompletion(false))
-      handleStakingAction({ loadingToasterId, action: STAKE_ACTION })
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+
+        setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
+      } catch (e) {}
     } else {
-      handleStakingAction(null)
-      const parsedError = unknownToError(error)
+      setAction(null)
+      const parsedError = unknownToError(actionResult.error)
       bug(parsedError.message)
     }
   }
