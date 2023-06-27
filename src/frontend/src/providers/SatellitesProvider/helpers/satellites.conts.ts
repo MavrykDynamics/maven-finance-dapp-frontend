@@ -1,0 +1,1 @@
+export const SATELLITE_ACTIVE_STATUS = 0

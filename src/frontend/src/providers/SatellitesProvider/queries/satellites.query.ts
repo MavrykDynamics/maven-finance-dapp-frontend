@@ -4,12 +4,11 @@ import { gql as apolloGql } from '@apollo/client'
 import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
 
 export function getSatelliteDataSubscription(
-  user_id?: string,
+  userAddress: string | null,
 ): DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables> {
-  const filteredCondition = user_id ? `user_id: {_eq: "${user_id}"}` : `user_id: {_neq: ""}`
+  const filteredCondition = userAddress ? `user: {address: {_eq: "$userAddress"}}` : `user: {address: {_neq: ""}}`
 
-  return apolloGql`
-  subscription satelliteDataSub {
+  return apolloGql`subscription satelliteDataSub($userAddress: String) {
     satellite(where: {registration_timestamp: {_is_null: false}, ${filteredCondition}}, order_by: {currently_registered: desc}) {
       description
       fee
@@ -37,8 +36,6 @@ export function getSatelliteDataSubscription(
         mvk_balance
 
         aggregator_oracles {
-          aggregator_id
-          user_id
           observations(order_by: {epoch: desc_nulls_last}, limit: 5) {
             oracle_id
             epoch
@@ -61,60 +58,59 @@ export function getSatelliteDataSubscription(
           }
         }
 
-				# Egov votes
-        emergency_governance_votes {
-          emergency_governance_record_id
-          id
-          smvk_amount
-          timestamp
-          voter_id
-          emergency_governance_record {
-            title
+        governance_satellite_snapshots(where: {user: {address: {_eq: "tz1T8S68igxa6uWZbeoWWwbcuRHEDQSzknEX"}}}, order_by: {cycle: desc}, limit: 1) {
+          cycle
+          total_voting_power
+          user {
+            address
           }
         }
 
-				# Financial Request votes
-        governance_financial_requests_votes {
-          governance_financial_request_id
-          id
-          timestamp
-          vote
-          voter_id
-          governance_financial_request {
-            request_type
-          }
-        }
+        # uncomment and test when eGov will be ready
+        # Egov votes
+        # emergency_governance_votes {
+        #	emergency_governance_record_id
+        #	id
+        #	smvk_amount
+        #	timestamp
+        #	emergency_governance_record {
+        #		title
+        #	}
+        # }
 
-				# Proposals votes
-        governance_proposals_votes(order_by: {timestamp: desc}) {
-          governance_proposal_id
-          id
-          round
-          timestamp
-          vote
-          voter_id
-          voting_power
-          current_round_vote
-          governance_proposal {
-            title
-            executed
-            locked
-          }
-        }
+			# Financial Request votes
+			governance_financial_requests_votes {
+				timestamp
+				vote
+        id
+				governance_financial_request {
+					request_type
+				}
+			}
 
-				# Satellite governance votes
-        governance_satellite_actions_votes {
-          governance_satellite_action_id
+			# Proposals votes
+			governance_proposals_votes(order_by: {timestamp: desc}) {
+				timestamp
+				vote
+        id
+				governance_proposal {
           id
-          timestamp
-          vote
-          voter_id
-          governance_satellite_action {
-            governance_type
-          }
-        }
+					title
+				}
+			}
+
+			# Satellite governance votes
+			governance_satellite_actions_votes {
+				timestamp
+				vote
+        id
+				governance_satellite_action {
+					governance_type
+				}
+			}
       }
     }
   }
+  
   ` as DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables>
 }

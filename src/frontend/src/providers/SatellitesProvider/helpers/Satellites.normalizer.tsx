@@ -44,17 +44,6 @@ export const createSatelliteSnapshotsByIds = (snapshots: Snapshot[], cycle: numb
   }, {})
 }
 
-export const getSatelliteAccuracy = (satelliteRecord: SatelliteDataSubSubscription['satellite'][0]) => {
-  const v1 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.aggregator?.last_completed_data),
-    v2 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.observations?.[0]?.data)
-
-  if (isNaN(v1) && isNaN(v2)) return 0
-
-  const parsedV1 = isNaN(v1) ? 0 : v1,
-    parsedv2 = isNaN(v2) ? 0 : v2
-  return 100 - ((parsedV1 - parsedv2) / ((parsedV1 + parsedv2) / 2)) * 100
-}
-
 const getOraclePredictionSuccessRatio = (
   latestObservation?: SatelliteAggregatorOraclesSubscription['aggregator'][0]['oracles'][0]['observations'][0],
 ): number => {
@@ -75,11 +64,6 @@ export const getNewSatelliteMetrics = ({
   financialRequestLedger,
   feeds,
 }: {
-  // proposals: SatelliteGovernanceProposalDataSubscription['governance_proposal']
-  //   emergencyGovernanceLedger: SatelliteEmergencyGovernanceDataSubscription['emergency_governance']
-  //   feeds: SatelliteAggregatorOraclesSubscription['aggregator']
-  //   financialRequestLedger: SatelliteGovernanceFinancialRequestSubscription['governance_financial_request']
-
   proposals: SatelliteGovernanceProposalDataSubscription['governance_proposal']
   emergencyGovernanceLedger: SatelliteEmergencyGovernanceDataSubscription['emergency_governance']
   feeds: SatelliteAggregatorOraclesSubscription['aggregator']
@@ -184,7 +168,6 @@ export const getSatelliteOracleRecords = (
 
     return {
       feedAddress,
-      oracleAddress,
       sMVKReward,
       XTZReward,
     }
@@ -192,119 +175,65 @@ export const getSatelliteOracleRecords = (
 }
 
 export const getSatelliteVotings = ({
-  user: {
-    governance_proposals_votes,
-    governance_financial_requests_votes,
-    governance_satellite_actions_votes,
-    emergency_governance_votes,
-  },
-}: SatelliteDataSubSubscription['satellite'][0]) => {
+  governance_proposals_votes,
+  governance_financial_requests_votes,
+  governance_satellite_actions_votes,
+}: // emergency_governance_votes,
+SatelliteDataSubSubscription['satellite'][0]['user']) => {
   const proposalVotingHistory = governance_proposals_votes.map((vote) => {
     return {
       id: vote.id,
-      proposalId: vote.governance_proposal_id,
       timestamp: new Date(vote.timestamp as string),
       vote: vote.vote,
-      voterId: vote.voter_id,
       voteName: vote?.governance_proposal?.title,
-      votingPower: calcWithoutPrecision(vote.voting_power),
     }
   })
 
   const financialRequestsVotes = governance_financial_requests_votes.map((vote) => {
     return {
       id: vote.id,
-      proposalId: vote.governance_financial_request_id,
       timestamp: new Date(vote.timestamp as string),
       vote: vote.vote,
-      voterId: vote.voter_id,
       voteName: vote?.governance_financial_request?.request_type,
-    }
-  })
-
-  const emergencyGovernanceVotes = emergency_governance_votes.map((vote) => {
-    return {
-      id: vote.id,
-      proposalId: vote.emergency_governance_record_id,
-      timestamp: new Date(vote.timestamp as string),
-      vote: 1,
-      voterId: vote.voter_id,
-      voteName: vote?.emergency_governance_record?.title,
     }
   })
 
   const satelliteActionVotes = governance_satellite_actions_votes.map((vote) => {
     return {
       id: vote.id,
-      proposalId: vote.governance_satellite_action_id,
       timestamp: new Date(vote.timestamp as string),
       vote: vote.vote,
-      voterId: vote.voter_id,
       voteName: vote?.governance_satellite_action?.governance_type,
     }
   })
 
+  // const emergencyGovernanceVotes = emergency_governance_votes.map((vote) => {
+  //   return {
+  //     id: vote.id,
+  //     timestamp: new Date(vote.timestamp as string),
+  //     vote: 1,
+  //     voteName: vote?.emergency_governance_record?.title,
+  //   }
+  // })
+
   return {
     satelliteActionVotes,
-    emergencyGovernanceVotes,
+    // emergencyGovernanceVotes,
     financialRequestsVotes,
     proposalVotingHistory,
   }
 }
 
-export const normallizeSatellite = (
-  satelliteRecord: SatelliteDataSubSubscription['satellite'][0],
-  satelliteObjectSnapshots: ReturnType<typeof createSatelliteSnapshotsByIds>,
-  metricsData: {
-    proposals: SatelliteGovernanceProposalDataSubscription['governance_proposal']
-    emergencyGovernanceLedger: SatelliteEmergencyGovernanceDataSubscription['emergency_governance']
-    feeds: SatelliteAggregatorOraclesSubscription['aggregator']
-    financialRequestLedger: SatelliteGovernanceFinancialRequestSubscription['governance_financial_request']
-  },
-) => {
+export const normallizeSatellite = (satelliteRecord: SatelliteDataSubSubscription['satellite'][0]) => {
   const satelliteAddress = satelliteRecord.user.address
+  const satelliteUser = satelliteRecord.user
+  const lastVotedProposal = satelliteUser.governance_proposals_votes[0]
+
   const satelliteTotalDelegatedAmount = satelliteRecord
     ? satelliteRecord.delegations.reduce((sum, current) => sum + current.user.smvk_balance, 0)
     : 0
 
-  const satelliteOracleRecords = getSatelliteOracleRecords(satelliteRecord)
-  const { proposalVotingHistory, financialRequestsVotes, emergencyGovernanceVotes, satelliteActionVotes } =
-    getSatelliteVotings(satelliteRecord)
-
-  const satelliteMetrics = getNewSatelliteMetrics({
-    ...metricsData,
-    satelliteAddress,
-    satelliteVotings: { proposalVotingHistory, financialRequestsVotes, emergencyGovernanceVotes, satelliteActionVotes },
-  })
-
-  // Getting oracle status
-  let oracleStatus: OracleStatusTypes = 'notAnOracle'
-
-  // check if satellite is an oracle
-  if (satelliteOracleRecords?.length > 0) {
-    // check whether oracle is active, if true status can be responded or awaiting
-    if (satelliteRecord.status === 0) {
-      const currentOracleFeeds = metricsData.feeds.filter(
-        ({ admin }) => satelliteOracleRecords[0].oracleAddress === admin,
-      )
-
-      // if timestamp or all feeds from this satellite is >= than 30m ago, feed is not active, if all feeds are not active oracle status is responded, if at least 1 feed is still active, satellite status is awaiting
-      if (
-        currentOracleFeeds.every(
-          ({ last_completed_data_last_updated_at, heart_beat_seconds }) =>
-            (Number(Date.now()) - Number(new Date(last_completed_data_last_updated_at || Date.now()))) / 1000 >=
-            heart_beat_seconds,
-        )
-      ) {
-        oracleStatus = 'responded'
-      } else {
-        oracleStatus = 'awaiting'
-      }
-      // if oracle is not active, status should be "no response"
-    } else {
-      oracleStatus = 'noResponse'
-    }
-  }
+  const { proposalVotingHistory, financialRequestsVotes, satelliteActionVotes } = getSatelliteVotings(satelliteUser)
 
   return {
     // satellite metadata
@@ -313,12 +242,11 @@ export const normallizeSatellite = (
     website: satelliteRecord.website,
     image: satelliteRecord.image,
     name: satelliteRecord.name,
-    oracleStatus,
+    status: satelliteRecord.status,
 
     // oracles data
     peerId: satelliteRecord?.peer_id ?? '',
     publicKey: satelliteRecord?.public_key ?? '',
-    status: satelliteRecord.status,
 
     // registration status
     isSatelliteReady: satelliteRecord.currently_registered && satelliteRecord.status === 0,
@@ -332,21 +260,22 @@ export const normallizeSatellite = (
 
     mvkBalance: convertNumberForClient({ number: satelliteRecord?.user.mvk_balance, grade: MVK_DECIMALS }),
     sMvkBalance: convertNumberForClient({ number: satelliteRecord?.user.smvk_balance, grade: MVK_DECIMALS }),
-    totalVotingPower: satelliteObjectSnapshots[satelliteAddress]?.total_voting_power ?? 0,
-    accuracy: getSatelliteAccuracy(satelliteRecord),
-    oracleRecords: satelliteOracleRecords,
+    oracleRecords: getSatelliteOracleRecords(satelliteUser['aggregator_oracles']),
 
-    // votes
+    // votes & voting metrix
+    lastVotedProposal: {
+      vote: lastVotedProposal.vote,
+      proposalTitle: lastVotedProposal.governance_proposal.title,
+      proposalId: lastVotedProposal.governance_proposal.id,
+    },
     proposalVotingHistory,
     financialRequestsVotes,
-    emergencyGovernanceVotes,
     satelliteActionVotes,
-    satelliteMetrics,
   }
 }
 
 export const normalizeSatellitesLedger = (
-  store: SatellitesStorage,
+  store: SatelliteDataSubSubscription,
 ): {
   satelliteMapper: Record<string, ReturnType<typeof normallizeSatellite>>
   activeSatellitesIds: string[]
@@ -360,14 +289,7 @@ export const normalizeSatellitesLedger = (
     oraclesIds: string[]
   }>(
     (acc, satelliteRecord) => {
-      const { satellite_snapshots, cycle_id } = store.governance[0]
-      const satelliteObjectSnapshots = createSatelliteSnapshotsByIds(satellite_snapshots, cycle_id)
-      const nomalizedSatellite = normallizeSatellite(satelliteRecord, satelliteObjectSnapshots, {
-        proposals: store.governance_proposal,
-        emergencyGovernanceLedger: store.emergency_governance,
-        feeds: store.aggregator,
-        financialRequestLedger: store.governance_financial_request,
-      })
+      const nomalizedSatellite = normallizeSatellite(satelliteRecord)
       acc.satelliteMapper[nomalizedSatellite.address] = nomalizedSatellite
       acc.allSatellitesIds.push(nomalizedSatellite.address)
 
