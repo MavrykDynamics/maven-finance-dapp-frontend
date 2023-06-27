@@ -41,7 +41,8 @@ export const Root = () => {
                 <TokensProvider>
                   <UserProvider>
                     <DappConfigProvider>
-                      <GlobalStyle>{isMobile ? <Mobile /> : <App />}</GlobalStyle>
+                      <GlobalStyle />
+                      {isMobile ? <Mobile /> : <App />}
                     </DappConfigProvider>
                     <ToasterMessages />
                   </UserProvider>

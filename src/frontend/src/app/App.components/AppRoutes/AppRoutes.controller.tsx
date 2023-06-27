@@ -54,34 +54,75 @@ export const AppRoutes = () => {
   // TODO: add error boundaries
   return (
     <Switch>
-      <StakeProvider>
-        <Route exact path="/" component={Dashboard} />
-        <Route exact path="/staking" component={Doorman} />
-        <Route exact path="/emergency-governance" component={EmergencyGovernance} />
-        <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?" component={DashboardPersonal} />
-        <Route exact path="/satellites" component={Satellites} />
-        <Route exact path="/become-satellite" component={BecomeSatellite} />
-      </StakeProvider>
+      <Route exact path="/staking">
+        <StakeProvider>
+          <Doorman />
+        </StakeProvider>
+      </Route>
 
-      <Route exact path="/satellite-nodes" component={SatelliteNodes} />
-      <Route exact path="/satellites/satellite-details/:satelliteId" component={SatelliteDetails} />
-      <Route exact path="/data-feeds" component={DataFeeds} />
-      <Route exact path="/satellites/feed-details/:feedId" component={DataFeedDetails} />
-      <Route exact path="/governance" component={Governance} />
-      <Route exact path="/satellite-governance/:tabId?" component={SatelliteGovernance} />
-      <Route exact path="/proposal-history" component={() => <Governance isHistory />} />
-      <Route exact path="/contract-status" component={BreakGlass} />
-      <Route exact path="/financial-requests" component={FinancialRequests} />
-      <Route exact path="/mavryk-council/:tabId?" component={Council} />
-      <Route exact path="/break-glass-council/:tabId?" component={BreakGlassCouncil} />
-      <Route exact path="/treasury" component={Treasury} />
-      <Route exact path="/yield-farms" component={Farms} />
-      <Route exact path="/loans/:assetAddress/:tabId" component={Market} />
-      <Route exact path="/loans" component={Loans} />
-      <Route exact path="/vaults/:tabId" component={Vaults} />
-      <Route exact path="/loans/dashboard" component={LoansDashboard} />
-      <Route exact path="/loans/earn" component={LoansEarn} />
-      <Route exact path="/loans/borrow" component={LoansBorrow} />
+      {/* DASHBOARD */}
+      <Route exact path="/">
+        <StakeProvider>
+          <Dashboard />
+        </StakeProvider>
+      </Route>
+      <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
+        <StakeProvider>
+          <DashboardPersonal />
+        </StakeProvider>
+      </Route>
+
+      {/* SATELLITES */}
+      <Route exact path="/satellites">
+        <StakeProvider>
+          <Satellites />
+        </StakeProvider>
+      </Route>
+      <Route exact path="/become-satellite">
+        <StakeProvider>
+          <BecomeSatellite />
+        </StakeProvider>
+      </Route>
+      <Route exact path="/satellite-nodes">
+        <SatelliteNodes />
+      </Route>
+      <Route exact path="/satellites/satellite-details/:satelliteId">
+        <SatelliteDetails />
+      </Route>
+      <Route exact path="/data-feeds">
+        <DataFeeds />
+      </Route>
+      <Route exact path="/satellites/feed-details/:feedId">
+        <DataFeedDetails />
+      </Route>
+
+      {/* GOVERNANCE PAGES */}
+      <Route exact path="/governance">
+        <Governance />
+      </Route>
+      <Route exact path="/satellite-governance/:tabId?">
+        <SatelliteGovernance />
+      </Route>
+      <Route exact path="/proposal-history">
+        <Governance isHistory />
+      </Route>
+      <Route exact path="/contract-status">
+        <BreakGlass />
+      </Route>
+      <Route exact path="/financial-requests">
+        <FinancialRequests />
+      </Route>
+      <Route exact path="/emergency-governance">
+        <StakeProvider>
+          <EmergencyGovernance />
+        </StakeProvider>
+      </Route>
+      <Route exact path="/mavryk-council/:tabId?">
+        <Council />
+      </Route>
+      <Route exact path="/break-glass-council/:tabId?">
+        <BreakGlassCouncil />
+      </Route>
       <ProtectedRoute
         path="/submit-proposal"
         component={ProposalSubmission}
@@ -92,14 +133,21 @@ export const AppRoutes = () => {
       />
 
       {/* NOT PROD PAGES */}
-      <Route exact path="/admin" component={Admin} />
+      <Route exact path="/admin">
+        <Admin />
+      </Route>
 
-      {/*TODO: Replace later on with actual 404 page*/}
-      <Route exact path="/404" component={Dashboard} />
+      <Route exact path="/404">
+        {/*TODO: Replace later on with actual 404 page*/}
+        <Dashboard />
+      </Route>
+
       <Redirect to="/404" />
 
       {/* NOT READY PAGES */}
-      <Route exact path="/your-vesting" component={Dashboard} />
+      <Route exact path="/your-vesting">
+        <Dashboard />
+      </Route>
     </Switch>
   )
 }

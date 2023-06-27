@@ -105,8 +105,8 @@ export const App = () => {
 
             <Footer />
           </AppStyled>
-        </Router>
-      ) : null}
+        ) : null}
+      </Router>
     </>
   )
 }
