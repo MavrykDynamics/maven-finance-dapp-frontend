@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 // contexts
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useSubscription } from '@apollo/client'
+import { ApolloError, useQuery, useSubscription } from '@apollo/client'
 
 // types
-import { DappConfigContext, UserActionType } from './dappConfig.provider.types'
+import { DappConfigContext, DappConfigContextStateType, UserActionType } from './dappConfig.provider.types'
 
 // consts
 import { SUBSCRIPTION_INDEXER_LVL } from './queries/indexerLvl.query'
@@ -15,6 +15,12 @@ import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterA
 
 // helpers
 import { sleep } from 'utils/api/sleep'
+import { DAPP_DEFAULT_MAX_LENGHTS } from './helpers/dappConfig.const'
+import { GET_MVK_FAUCET_QUERY } from 'providers/TokensProvider/queries/mvkFauset.query'
+import { GET_MAX_LENGTHS_QUERY } from './queries/maxLenghts.query'
+import { getXTZBakers } from './bakers/getXtzBakers'
+import { normalizerMaxLenghts } from './helpers/dappConfig.normalizers'
+import { GetMaxlenghtsQueryQuery, MvkFaucetQuery } from 'utils/__generated__/graphql'
 
 export const dappConfigContext = React.createContext<DappConfigContext>(undefined!)
 
@@ -23,12 +29,18 @@ type Props = {
 }
 
 const DappConfigProvider = ({ children }: Props) => {
+  const handleSubError = (error: ApolloError) => {
+    console.error(`DappConfigProvider query error: `, error)
+    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+  }
+
+  // HANDLING DATA UPDATE LOADER STATE AFTER USER FIRED ACTION
   const { bug, hideToasterMessage, success } = useToasterContext()
 
   const [currentIndexedLevel, setCurrentIndexedLevel] = useState<number | null>(null)
   const [action, setAction] = useState<UserActionType | null>(null)
 
-  const { loading: isLvlLoading } = useSubscription(SUBSCRIPTION_INDEXER_LVL, {
+  useSubscription(SUBSCRIPTION_INDEXER_LVL, {
     skip: !action,
     shouldResubscribe: true,
     onData: ({ data: { data } }) => {
@@ -37,10 +49,7 @@ const DappConfigProvider = ({ children }: Props) => {
       const indexerLvl = data.dipdup_head.find(({ name }) => name.includes('ghostnet'))?.level
       if (indexerLvl) setCurrentIndexedLevel(indexerLvl)
     },
-    onError: (error) => {
-      console.error(`SUBSCRIPTION_INDEXER_LVL query error: `, error)
-      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-    },
+    onError: handleSubError,
   })
 
   useEffect(() => {
@@ -59,13 +68,64 @@ const DappConfigProvider = ({ children }: Props) => {
     if (currentIndexedLevel >= operationLvl) turnOffAction()
   }, [action, currentIndexedLevel, hideToasterMessage, success])
 
+  // HANDLING INITIAL DATA, THAT SHOULD BE LOADED
+  const [dappConfigCtxState, setDappConfigCtxState] = useState<DappConfigContextStateType>({
+    maxLengths: DAPP_DEFAULT_MAX_LENGHTS,
+    xtzBakers: null,
+    // TODO: set default address to null, when contracts are updated
+    mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh',
+  })
+
+  // Load max lenghts for inputs
+  const { loading: maxLengthsLoading } = useQuery(GET_MAX_LENGTHS_QUERY, {
+    onCompleted: (data) => updateMaxLengths(data),
+    onError: handleSubError,
+  })
+
+  // Load MVK faucet
+  const { loading: mvkFaucetLoading } = useQuery(GET_MVK_FAUCET_QUERY, {
+    onCompleted: (data) => updateMVKFaucetAddress(data),
+    onError: handleSubError,
+  })
+
+  const updateMaxLengths = (data: GetMaxlenghtsQueryQuery) => {
+    setDappConfigCtxState((prev) => ({
+      ...prev,
+      maxLengths: normalizerMaxLenghts(data),
+    }))
+  }
+
+  const updateMVKFaucetAddress = (mvkData: MvkFaucetQuery) => {
+    setDappConfigCtxState((prev) => ({
+      ...prev,
+      mvkFaucetAddress: mvkData.mvk_faucet[0]?.address ?? null,
+    }))
+  }
+
+  // TODO: move it to the custom hook
+  useEffect(() => {
+    if (!dappConfigCtxState.xtzBakers) {
+      updateXtzBakers()
+    }
+  }, [dappConfigCtxState.xtzBakers])
+
+  const updateXtzBakers = async () => {
+    const xtzBakers = await getXTZBakers()
+
+    setDappConfigCtxState((prev) => ({
+      ...prev,
+      xtzBakers,
+    }))
+  }
+
   const contextProviderValue = useMemo(() => {
     return {
       currentIndexedLevel,
-      isLoading: isLvlLoading,
+      isLoading: maxLengthsLoading || mvkFaucetLoading,
       setAction,
+      ...dappConfigCtxState,
     }
-  }, [currentIndexedLevel, isLvlLoading])
+  }, [currentIndexedLevel, maxLengthsLoading, mvkFaucetLoading, dappConfigCtxState])
 
   return <dappConfigContext.Provider value={contextProviderValue}>{children}</dappConfigContext.Provider>
 }

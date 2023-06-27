@@ -17,8 +17,8 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
-import useXtzBakersForDD from 'providers/DAPPConfig/helpers/useDDXtzBakers'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 
 const MAVRYK_DYNAMICS_BAKERY = 1
 const DAO_BAKERY = 2
@@ -37,7 +37,7 @@ export const ChangeBaker = ({
 }) => {
   const { bakerAddress = null, vaultAddress = '' } = data ?? {}
 
-  const { xtzBakers } = useDAPPConfigContext()
+  const { xtzBakers } = useDappConfigContext()
   const { otherBakers = [], dao, mavrykDynamics } = xtzBakers ?? {}
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD(true)
 

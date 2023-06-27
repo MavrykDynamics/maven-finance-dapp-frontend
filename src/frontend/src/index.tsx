@@ -14,7 +14,6 @@ import { isMobile } from './utils/device-info'
 // providers
 import ToasterProvider from 'providers/ToasterProvider/toaster.provider'
 import TokensProvider from 'providers/TokensProvider/tokens.provider'
-import DAPPConfigProvider from 'providers/DAPPConfig/dappConfig.provider'
 import DataFeedsProvider from 'providers/DataFeedsProvider/dataFeeds.provider'
 import UserProvider from 'providers/UserProvider/user.provider'
 import DappConfigProvider from 'providers/DappConfigProvider/dappConfig.provider'
@@ -36,22 +35,20 @@ export const Root = () => {
     <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey} language="en">
       <ApolloProvider client={client}>
         <Provider store={store}>
-          <DAPPConfigProvider>
-            <DataFeedsProvider>
-              <TokensProvider>
-                <UserProvider>
-                  <DarkThemeProvider>
-                    <ToasterProvider>
-                      <DappConfigProvider>
-                        <GlobalStyle>{isMobile ? <Mobile /> : <App />}</GlobalStyle>
-                      </DappConfigProvider>
-                      <ToasterMessages />
-                    </ToasterProvider>
-                  </DarkThemeProvider>
-                </UserProvider>
-              </TokensProvider>
-            </DataFeedsProvider>
-          </DAPPConfigProvider>
+          <DarkThemeProvider>
+            <ToasterProvider>
+              <DataFeedsProvider>
+                <TokensProvider>
+                  <UserProvider>
+                    <DappConfigProvider>
+                      <GlobalStyle>{isMobile ? <Mobile /> : <App />}</GlobalStyle>
+                    </DappConfigProvider>
+                    <ToasterMessages />
+                  </UserProvider>
+                </TokensProvider>
+              </DataFeedsProvider>
+            </ToasterProvider>
+          </DarkThemeProvider>
         </Provider>
       </ApolloProvider>
     </GoogleReCaptchaProvider>

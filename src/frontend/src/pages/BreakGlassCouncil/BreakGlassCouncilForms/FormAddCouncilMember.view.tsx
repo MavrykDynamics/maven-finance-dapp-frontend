@@ -10,7 +10,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // types
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { CouncilMaxLength } from 'providers/DAPPConfig/dappConfig.types'
+import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'

@@ -15,7 +15,7 @@ import { State } from 'reducers'
 // helpers, constants
 import { isValidLength, isValidHttpUrl } from '../../../utils/validatorFunctions'
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { containSpaces } from 'app/App.utils/input'
@@ -34,7 +34,7 @@ export const StageOneForm = ({
     maxLengths: {
       governance: { proposalTitleMaxLength, proposalDescriptionMaxLength, proposalSourceCodeMaxLength },
     },
-  } = useDAPPConfigContext()
+  } = useDappConfigContext()
   const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
 
   const {

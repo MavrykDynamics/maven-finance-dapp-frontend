@@ -42,7 +42,7 @@ import {
 
 // types
 import { CouncilActionType, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
-import { CouncilMaxLength } from 'providers/DAPPConfig/dappConfig.types'
+import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions

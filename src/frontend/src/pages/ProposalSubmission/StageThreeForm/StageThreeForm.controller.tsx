@@ -36,7 +36,7 @@ import {
   TableRow,
 } from 'app/App.components/Table'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { reduceTreasuryAssets } from 'pages/Treasury/helpers/treasury.utils'
 import { Info } from 'app/App.components/Info/Info.view'
@@ -60,7 +60,7 @@ export const StageThreeForm = ({
     maxLengths: {
       governance: { proposalMetadataTitleMaxLength },
     },
-  } = useDAPPConfigContext()
+  } = useDappConfigContext()
   const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
 
   const { treasuryStorage } = useSelector((state: State) => state.treasury)

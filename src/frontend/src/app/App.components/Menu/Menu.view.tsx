@@ -22,7 +22,7 @@ import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
 import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
@@ -58,8 +58,8 @@ export const SocialIcons = () => (
 )
 
 export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
-  const { getMVKTokensFromFaucet } = useStakeContext()
-  const { mvkFaucetAddress } = useDAPPConfigContext()
+  // const { getMVKTokensFromFaucet } = useStakeContext()
+  const { mvkFaucetAddress } = useDappConfigContext()
   const { userTokensBalances } = useUserContext()
 
   const dispatch = useDispatch()
@@ -141,7 +141,8 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               kind={BUTTON_PRIMARY}
               form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND}
               isThin
-              onClick={() => getMVKTokensFromFaucet(mvkFaucetAddress)}
+              // onClick={() => getMVKTokensFromFaucet(mvkFaucetAddress)}
+              onClick={() => console.log('implement')}
               disabled={!canGetInitThouthand || isActionActive}
             >
               {sidebarOpened ? 'MVK Faucet' : 'mvk'}

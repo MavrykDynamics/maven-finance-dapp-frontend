@@ -20,7 +20,7 @@ import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.
 import { INFO_DEFAULT, INFO_WARNING } from 'app/App.components/Info/info.constants'
 import { BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { isHexadecimal } from 'utils/validatorFunctions'
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { checkBytesPairExists, getBytesPairValidationStatus, PROPOSAL_BYTE } from '../ProposalSubmission.helpers'
 
 // styles
@@ -40,7 +40,7 @@ export const StageTwoForm = ({
     maxLengths: {
       governance: { proposalMetadataTitleMaxLength, proposalDescriptionMaxLength },
     },
-  } = useDAPPConfigContext()
+  } = useDappConfigContext()
   const { governancePhase, fee, successReward } = useSelector((state: State) => state.governance.config)
 
   const { isNewlyRegisteredSatellite } = useSelector((state: State) => state.wallet.user)

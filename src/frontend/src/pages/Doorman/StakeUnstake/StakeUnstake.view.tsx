@@ -23,7 +23,7 @@ import { stakingInputValidation } from '../Doorman.converter'
 import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
 import { unknownToError } from 'errors/error'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/DappAction.helpers'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 import { sleep } from 'utils/api/sleep'
 
 // consts

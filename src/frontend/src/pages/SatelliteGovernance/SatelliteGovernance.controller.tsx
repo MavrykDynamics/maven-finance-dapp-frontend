@@ -5,7 +5,7 @@ import { State } from 'reducers'
 import { useLocation, useParams, useHistory } from 'react-router'
 
 // providers
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // const
 import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
@@ -93,7 +93,7 @@ export const SatelliteGovernance = () => {
       governanceSatellite: { purposeMaxLength },
       dataFeeds: { feedNameMaxLength },
     },
-  } = useDAPPConfigContext()
+  } = useDappConfigContext()
 
   const { isLoaded, ongoingSatelliteGovIds, pastSatelliteGovIds, mySatelliteGovIds, satelliteGovIdsMapper } =
     useSelector((state: State) => state.satelliteGovernance)

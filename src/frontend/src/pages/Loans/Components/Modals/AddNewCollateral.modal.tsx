@@ -40,7 +40,7 @@ import {
   isTezosAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import useXtzBakersForDD from 'providers/DAPPConfig/helpers/useDDXtzBakers'
+import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'

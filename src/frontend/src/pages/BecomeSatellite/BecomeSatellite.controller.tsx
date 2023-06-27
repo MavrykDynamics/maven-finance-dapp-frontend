@@ -18,7 +18,7 @@ import {
 } from './BecomeSatellite.conts'
 
 // providers
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
@@ -91,7 +91,7 @@ export const BecomeSatellite = () => {
 
   const {
     maxLengths: { satelliteDelegation },
-  } = useDAPPConfigContext()
+  } = useDappConfigContext()
   const { userTokensBalances } = useUserContext()
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })

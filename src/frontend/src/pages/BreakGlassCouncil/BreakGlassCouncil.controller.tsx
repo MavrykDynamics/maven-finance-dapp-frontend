@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // prviders
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // components
 import { Page } from 'styles'
@@ -38,7 +38,7 @@ export function BreakGlassCouncil() {
 
   const {
     maxLengths: { council: councilMaxLengths },
-  } = useDAPPConfigContext()
+  } = useDappConfigContext()
 
   const {
     accountPkh,

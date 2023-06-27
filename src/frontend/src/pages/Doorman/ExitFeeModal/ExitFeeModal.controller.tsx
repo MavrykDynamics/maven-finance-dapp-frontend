@@ -32,7 +32,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { State } from 'reducers'
 import { unstakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/DappAction.helpers'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void

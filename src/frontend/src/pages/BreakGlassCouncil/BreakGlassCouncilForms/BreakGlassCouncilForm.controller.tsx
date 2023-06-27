@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom'
 import qs from 'qs'
 
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // components
 import { FormSetAllContractsAdminView } from './FormSetAllContractsAdmin.view'
@@ -26,7 +26,7 @@ export function BreakGlassCouncilForm() {
 
   const {
     maxLengths: { council: councilMaxLengths },
-  } = useDAPPConfigContext()
+  } = useDappConfigContext()
 
   switch (action) {
     case actions.SET_ALL_CONTRACTS_ADMIN:
