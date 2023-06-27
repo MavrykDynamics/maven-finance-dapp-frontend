@@ -100,8 +100,8 @@ export const App = () => {
   return (
     <>
       <LoaderRocket isActive={isInitialDataLoading} />
-      {!isInitialDataLoading ? (
-        <Router>
+      <Router>
+        {!isInitialDataLoading ? (
           <AppStyled isExpandedMenu={sidebarOpened} isVisible={!isInitialDataLoading}>
             <ActionLoader />
             <Toaster />
@@ -117,8 +117,8 @@ export const App = () => {
 
             <Footer />
           </AppStyled>
-        </Router>
-      ) : null}
+        ) : null}
+      </Router>
     </>
   )
 }

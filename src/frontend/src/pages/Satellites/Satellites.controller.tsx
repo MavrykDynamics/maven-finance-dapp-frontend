@@ -38,6 +38,7 @@ import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 const Satellites = () => {
+  console.log('render satellites')
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
   const dispatch = useDispatch()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)

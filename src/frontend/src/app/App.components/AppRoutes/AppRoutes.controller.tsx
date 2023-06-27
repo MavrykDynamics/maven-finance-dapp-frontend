@@ -54,25 +54,41 @@ export const AppRoutes = () => {
   // TODO: add error boundaries
   return (
     <Switch>
-      <StakeProvider>
-        <Route exact path="/staking" component={Doorman} />
-      </StakeProvider>
+      <Route exact path="/staking">
+        <StakeProvider>
+          <Doorman />
+        </StakeProvider>
+      </Route>
 
       {/* DASHBOARD */}
-      <StakeProvider>
-        <Route exact path="/" component={Dashboard} />
-        <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?" component={DashboardPersonal} />
-      </StakeProvider>
+      <Route exact path="/">
+        <StakeProvider>
+          <Dashboard />
+        </StakeProvider>
+      </Route>
+      <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
+        <StakeProvider>
+          <DashboardPersonal />
+        </StakeProvider>
+      </Route>
 
       {/* SATELLITES */}
-      <StakeProvider>
-        <Route exact path="/satellites" component={Satellites} />
-        <Route exact path="/become-satellite" component={BecomeSatellite} />
-      </StakeProvider>
-
-      <Route exact path="/satellite-nodes" component={SatelliteNodes} />
-      <Route exact path="/satellites/satellite-details/:satelliteId" component={SatelliteDetails} />
-
+      <Route exact path="/satellites">
+        <StakeProvider>
+          <Satellites />
+        </StakeProvider>
+      </Route>
+      <Route exact path="/become-satellite">
+        <StakeProvider>
+          <BecomeSatellite />
+        </StakeProvider>
+      </Route>
+      <Route exact path="/satellite-nodes">
+        <SatelliteNodes />
+      </Route>
+      <Route exact path="/satellites/satellite-details/:satelliteId">
+        <SatelliteDetails />
+      </Route>
       <Route exact path="/data-feeds">
         <DataFeeds />
       </Route>
@@ -96,9 +112,11 @@ export const AppRoutes = () => {
       <Route exact path="/financial-requests">
         <FinancialRequests />
       </Route>
-      <StakeProvider>
-        <Route exact path="/emergency-governance" component={EmergencyGovernance} />
-      </StakeProvider>
+      <Route exact path="/emergency-governance">
+        <StakeProvider>
+          <EmergencyGovernance />
+        </StakeProvider>
+      </Route>
       <Route exact path="/mavryk-council/:tabId?">
         <Council />
       </Route>
@@ -162,6 +180,7 @@ export const AppRoutes = () => {
         {/*TODO: Replace later on with actual 404 page*/}
         <Dashboard />
       </Route>
+      <Redirect to="/404" />
       <Redirect to="/404" />
     </Switch>
   )
