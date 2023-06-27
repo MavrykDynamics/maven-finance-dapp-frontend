@@ -13,14 +13,15 @@ import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // providers
-import { SUB_SKIP, SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
+import { SUB_SKIP } from 'utils/api/apollo.consts'
 import { useContractStatusConfig } from 'providers/ContractStatuses/hooks/useContractStatusesConfig'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { MVK_BALANCE_SUB, SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
 
-  const { changeStakingSubscriptionType, isLoading: isDoormanLoading } = useStakeContext()
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { eGovProposals, isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 
@@ -31,10 +32,10 @@ export const EmergencyGovernance = () => {
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 
   useEffect(() => {
-    changeStakingSubscriptionType({
-      skipAddressBalance: SUB_SKIP,
-      skipStakeHistory: SUB_SKIP,
-      skipUserBalance: SUB_SKIP,
+    changeStakingSubscriptionsList({
+      [MVK_BALANCE_SUB]: false,
+      userBalance: false,
+      [SMVK_HISTORY_SUB]: false,
     })
   }, [])
 

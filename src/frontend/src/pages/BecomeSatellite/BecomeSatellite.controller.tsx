@@ -56,7 +56,7 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { SUB_SKIP, SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
+import { MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -68,7 +68,7 @@ const connectWalletMessage = (
 )
 
 export const BecomeSatellite = () => {
-  const { changeStakingSubscriptionType, isLoading: isDoormanLoading } = useStakeContext()
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
   const dispatch = useDispatch()
   const {
     accountPkh = '',
@@ -88,10 +88,10 @@ export const BecomeSatellite = () => {
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
   useEffect(() => {
-    changeStakingSubscriptionType({
-      skipAddressBalance: SUB_SKIP,
-      skipStakeHistory: SUB_SKIP,
-      skipMvkTokenTotal: SUB_SKIP,
+    changeStakingSubscriptionsList({
+      [MVK_BALANCE_SUB]: false,
+      [MVK_TOTAL_SUB]: false,
+      [SMVK_HISTORY_SUB]: false,
     })
   }, [])
 

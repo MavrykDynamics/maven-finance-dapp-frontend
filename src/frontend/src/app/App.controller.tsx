@@ -97,25 +97,28 @@ export const App = () => {
     setCookie('policyPopup', true)
   }, [])
 
-  return isInitialDataLoading ? (
-    <LoaderRocket />
-  ) : (
-    <Router>
-      <AppStyled isExpandedMenu={sidebarOpened}>
-        <ActionLoader />
-        <Toaster />
-        <WertLoader />
-        <Menu />
+  return (
+    <>
+      <LoaderRocket isActive={isInitialDataLoading} />
+      {!isInitialDataLoading ? (
+        <Router>
+          <AppStyled isExpandedMenu={sidebarOpened} isVisible={!isInitialDataLoading}>
+            <ActionLoader />
+            <Toaster />
+            <WertLoader />
+            <Menu />
 
-        <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
-        <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
+            <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
+            <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
-        <LoansPopupsProvider>
-          <AppRoutes />
-        </LoansPopupsProvider>
+            <LoansPopupsProvider>
+              <AppRoutes />
+            </LoansPopupsProvider>
 
-        <Footer />
-      </AppStyled>
-    </Router>
+            <Footer />
+          </AppStyled>
+        </Router>
+      ) : null}
+    </>
   )
 }

@@ -31,6 +31,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { State } from 'reducers'
+import { unstakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -56,7 +57,7 @@ export const ExitFeeModal = ({
 }: ExitFeeModalPropsType) => {
   const dispatch = useDispatch()
 
-  const { unstakeMVK, updateStakeActionData } = useStakeContext()
+  const { handleStakingAction } = useStakeContext()
   const { bug, info, loading } = useToasterContext()
 
   const {
@@ -86,7 +87,6 @@ export const ExitFeeModal = ({
     closePopup()
 
     if (actionSuccess && !error) {
-      updateStakeActionData({ action: STAKE_ACTION })
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
 
@@ -102,11 +102,11 @@ export const ExitFeeModal = ({
         TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
         TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
       )
-      updateStakeActionData({ loadingToasterId })
       dispatch(toggleActionFullScreenLoader(false))
       dispatch(toggleActionCompletion(false))
+      handleStakingAction({ loadingToasterId, action: STAKE_ACTION })
     } else {
-      updateStakeActionData(null)
+      handleStakingAction(null)
       dispatch(toggleActionFullScreenLoader(false))
       dispatch(toggleActionCompletion(false))
       const parsedError = unknownToError(error)

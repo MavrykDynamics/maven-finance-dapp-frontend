@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 import { shine, ellipsis } from 'styles/animations'
 import { MavrykTheme } from 'styles/interfaces'
 
@@ -65,7 +65,7 @@ export const LoaderStyled = styled.div`
   }
 `
 
-export const LoaderStyledWithBackdrop = styled.div<{ theme: MavrykTheme; backdropAlpha?: number }>`
+export const LoaderStyledWithBackdrop = styled.div<{ theme: MavrykTheme; backdropAlpha?: number; isActive: boolean }>`
   position: fixed;
   inset: 0;
   transition: background-color 0.15s ease-in-out;
@@ -78,6 +78,15 @@ export const LoaderStyledWithBackdrop = styled.div<{ theme: MavrykTheme; backdro
   font-weight: 600;
   font-size: 18px;
   color: ${({ theme }) => theme.valueColor};
+  transition: 300ms opacity, 300ms visibility;
+
+  ${({ isActive }) =>
+    !isActive
+      ? css`
+          opacity: 0;
+          visibility: hidden;
+        `
+      : ''};
 
   figcaption {
     margin-top: -30px;

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -34,7 +33,7 @@ import {
 import { STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
-import { InputStatusType, INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 import colors from 'styles/colors'
@@ -60,6 +59,7 @@ import {
 // types
 import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
+import { stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -76,8 +76,8 @@ export const StakeUnstakeView = ({
 }: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
-  const { stakeMVK, updateStakeActionData } = useStakeContext()
-  const { info, loading, hideToasterMessage, bug } = useToasterContext()
+  const { handleStakingAction } = useStakeContext()
+  const { info, loading, bug } = useToasterContext()
 
   const {
     accountPkh,
@@ -172,7 +172,6 @@ export const StakeUnstakeView = ({
     const { actionSuccess, error } = await stakeMVK(stakeAmount, accountPkh, doormanAddress, mvkTokenAddress)
 
     if (actionSuccess && !error) {
-      updateStakeActionData({ action: STAKE_ACTION })
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
 
@@ -188,11 +187,11 @@ export const StakeUnstakeView = ({
         TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
         TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
       )
-      updateStakeActionData({ loadingToasterId })
       dispatch(toggleActionFullScreenLoader(false))
       dispatch(toggleActionCompletion(false))
+      handleStakingAction({ loadingToasterId, action: STAKE_ACTION })
     } else {
-      updateStakeActionData(null)
+      handleStakingAction(null)
       dispatch(toggleActionFullScreenLoader(false))
       dispatch(toggleActionCompletion(false))
       const parsedError = unknownToError(error)

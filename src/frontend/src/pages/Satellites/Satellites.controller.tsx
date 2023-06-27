@@ -35,10 +35,10 @@ import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { SUB_SKIP, SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
+import { MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 const Satellites = () => {
-  const { changeStakingSubscriptionType, isLoading: isDoormanLoading } = useStakeContext()
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
   const dispatch = useDispatch()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
@@ -49,10 +49,10 @@ const Satellites = () => {
   } = useSelector((state: State) => state.wallet)
 
   useEffect(() => {
-    changeStakingSubscriptionType({
-      skipAddressBalance: SUB_SKIP,
-      skipMvkTokenTotal: SUB_SKIP,
-      skipStakeHistory: SUB_SKIP,
+    changeStakingSubscriptionsList({
+      [MVK_BALANCE_SUB]: false,
+      [MVK_TOTAL_SUB]: false,
+      [SMVK_HISTORY_SUB]: false,
     })
   }, [])
 

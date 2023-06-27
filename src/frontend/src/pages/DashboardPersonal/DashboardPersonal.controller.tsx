@@ -37,14 +37,14 @@ import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { SUB_SKIP, SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
-  const { changeStakingSubscriptionType, isLoading: isDoormanLoading } = useStakeContext()
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
 
   const { tokensPrices } = useSelector((state: State) => state.tokens)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
@@ -72,8 +72,8 @@ const DashboardPersonal = () => {
   const claimRewards = async () => await dispatch(claimAllRewardsAction())
 
   useEffect(() => {
-    changeStakingSubscriptionType({
-      skipStakeHistory: SUB_SKIP,
+    changeStakingSubscriptionsList({
+      [SMVK_HISTORY_SUB]: false,
     })
   }, [])
 

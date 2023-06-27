@@ -1,47 +1,46 @@
-import { StakeActionType, StakingActionData, StakingSubsLoadingsType } from '../stake.provider.types'
-
-// CONSTS FOR UPDATE STATE PARTIALLY
-export const DOORMAN_HISTORY_SUB = 'history'
-export const DOORMAN_STATS_SUB = 'doormanStats'
-export const USER_MVK_BALANCE_SUB = 'userMVK_balances'
-export type StakingSubscriptionsTypes =
-  | typeof USER_MVK_BALANCE_SUB
-  | typeof DOORMAN_STATS_SUB
-  | typeof DOORMAN_HISTORY_SUB
+import { StakeActionType, StakingSubsRecordType } from '../stake.provider.types'
 
 // CONSTS FOR STAKE ACTIONS
 export const STAKE_ACTION = 'stake'
 export const UNSTAKE_ACTION = 'unstake'
 
+// CONSTS FOR STAKING PROVIDER STATES
+export const SMVK_HISTORY_SUB = 'smvkHistorySub'
+export const MVK_TOTAL_SUB = 'mvkTotalSub'
+export const MVK_BALANCE_SUB = 'mvkBalanceSub'
+
+// PROVIDER DEFAULT CONSTS
+export const DEFAULT_STAKING_SKIPS = {
+  [MVK_BALANCE_SUB]: false,
+  [MVK_TOTAL_SUB]: false,
+  [SMVK_HISTORY_SUB]: false,
+  userBalance: false,
+} as const
+
+export const DEFAULT_STAKING_CTX = {
+  totalStakedMvk: 0,
+  totalSupply: 0,
+  maximumTotalSupply: 0,
+  mvkHistoryData: [],
+  smvkHistoryData: [],
+}
+
+// PROVIDER HELPERS
 export const getInitialLoadingStateForFiredAction = (actionName?: StakeActionType) => {
   switch (actionName) {
     case STAKE_ACTION:
-      return {
-        addressBalance: true,
-        mvkTokenTotal: false,
-        stakeHistory: true,
-        userBalance: true,
-      }
     case UNSTAKE_ACTION:
       return {
-        addressBalance: true,
-        mvkTokenTotal: false,
-        stakeHistory: true,
+        [MVK_BALANCE_SUB]: true,
+        [MVK_TOTAL_SUB]: false,
+        [SMVK_HISTORY_SUB]: true,
         userBalance: true,
       }
     default:
-      return {
-        addressBalance: false,
-        mvkTokenTotal: false,
-        stakeHistory: false,
-        userBalance: false,
-      }
+      return DEFAULT_STAKING_SKIPS
   }
 }
 
-export const needOffStakeAction = (queryLoadings: StakingSubsLoadingsType, stakingActionData: StakingActionData) => {
-  if (!stakingActionData.action || !stakingActionData.loadingToasterId) return false
-  if (Object.values(queryLoadings).find((isLoading) => isLoading)) return false
-
-  return true
+export const isAllSubsAfterActionCompleted = (queryLoadings: StakingSubsRecordType) => {
+  return !Object.values(queryLoadings).find((loading) => loading)
 }

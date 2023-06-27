@@ -16,8 +16,6 @@ import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import QueryString from 'qs'
-import { useEffect } from 'react'
-import { SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -26,7 +24,7 @@ export const Dashboard = () => {
   const parsedQp = QueryString.parse(search, { ignoreQueryPrefix: true }) as { tab: string }
   const activeTab = isValidPersonalDashboardTabId(parsedQp.tab) ? parsedQp.tab : LENDING_TAB_ID
 
-  const { totalStakedMvk, totalSupply, maximumTotalSupply, changeStakingSubscriptionType } = useStakeContext()
+  const { totalStakedMvk, totalSupply, maximumTotalSupply } = useStakeContext()
 
   const {
     tokensPrices: { mvk: mvkExchangeRate = 0 },
