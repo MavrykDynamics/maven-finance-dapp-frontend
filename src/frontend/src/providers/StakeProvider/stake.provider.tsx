@@ -31,7 +31,7 @@ import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterA
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import {
   DEFAULT_STAKING_CTX,
-  DEFAULT_STAKING_SKIPS,
+  DEFAULT_STAKING_SUBS,
   MVK_BALANCE_SUB,
   MVK_TOTAL_SUB,
   SMVK_HISTORY_SUB,
@@ -65,8 +65,8 @@ const StakeProvider = ({ children }: Props) => {
   } = useSelector((state: ReduxState) => state.contractAddresses)
 
   const [stakingCtxState, setStakingCtxState] = useState<StakeContextStateType>(DEFAULT_STAKING_CTX)
-  const [shouldSkip, setShouldSkip] = useState<StakingSubsRecordType>(DEFAULT_STAKING_SKIPS)
-  const [queryLoadings, setQueryLoadings] = useState<StakingSubsRecordType>(DEFAULT_STAKING_SKIPS)
+  const [shouldSkip, setShouldSkip] = useState<StakingSubsRecordType>(DEFAULT_STAKING_SUBS)
+  const [queryLoadings, setQueryLoadings] = useState<StakingSubsRecordType>(DEFAULT_STAKING_SUBS)
   const [stakingAction, setStakingAction] = useState<StakingActionData>(null)
 
   /**

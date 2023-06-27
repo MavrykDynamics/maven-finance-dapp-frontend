@@ -57,10 +57,7 @@ export const unstakeMVK = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(doormanAddress)
-    const actionRes = await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
-
-    // TODO: debug log
-    console.log({ actionRes })
+    await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
 
     return { actionSuccess: true, error: null }
   } catch (error) {

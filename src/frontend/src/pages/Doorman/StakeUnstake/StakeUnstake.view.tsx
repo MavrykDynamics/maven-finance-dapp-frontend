@@ -192,8 +192,6 @@ export const StakeUnstakeView = ({
       handleStakingAction({ loadingToasterId, action: STAKE_ACTION })
     } else {
       handleStakingAction(null)
-      dispatch(toggleActionFullScreenLoader(false))
-      dispatch(toggleActionCompletion(false))
       const parsedError = unknownToError(error)
       bug(parsedError.message)
     }

@@ -10,7 +10,7 @@ export const MVK_TOTAL_SUB = 'mvkTotalSub'
 export const MVK_BALANCE_SUB = 'mvkBalanceSub'
 
 // PROVIDER DEFAULT CONSTS
-export const DEFAULT_STAKING_SKIPS = {
+export const DEFAULT_STAKING_SUBS = {
   [MVK_BALANCE_SUB]: false,
   [MVK_TOTAL_SUB]: false,
   [SMVK_HISTORY_SUB]: false,
@@ -37,7 +37,7 @@ export const getInitialLoadingStateForFiredAction = (actionName?: StakeActionTyp
         userBalance: true,
       }
     default:
-      return DEFAULT_STAKING_SKIPS
+      return DEFAULT_STAKING_SUBS
   }
 }
 

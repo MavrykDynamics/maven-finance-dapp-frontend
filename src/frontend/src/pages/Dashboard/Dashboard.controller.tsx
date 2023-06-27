@@ -82,15 +82,6 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
-  // useEffect(() => {
-  //   changeStakingSubscriptionType({
-  //     skipAddressBalance: SUB_SUBSCRIBE,
-  //     skipMvkTokenTotal: SUB_SUBSCRIBE,
-  //     skipStakeHistory: SUB_SUBSCRIBE,
-  //     skipUserBalance: SUB_SUBSCRIBE,
-  //   })
-  // }, [])
-
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
