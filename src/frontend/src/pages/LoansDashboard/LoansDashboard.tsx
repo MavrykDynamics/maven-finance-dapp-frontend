@@ -22,8 +22,6 @@ import { Page } from 'styles'
 import { AccountStyledStyled, LoansDashboardStyled, TotalVolumeStyled } from './LoansDashboard.styles'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
-import { connect } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import Icon from 'app/App.components/Icon/Icon.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24hDiff'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -31,6 +29,7 @@ import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
 import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 
 export type GaugeChartStateType = {
   maxValue: number
@@ -305,10 +304,7 @@ export const LoansDashboard = () => {
                     </Button>
                   </Link>
                 ) : (
-                  <Button kind={BUTTON_PRIMARY} size={BUTTON_LARGE} onClick={() => dispatch(connect())}>
-                    <Icon id="wallet" />
-                    Connect Wallet
-                  </Button>
+                  <ConnectWalletBtn />
                 )}
               </div>
               <LoansPositionTable markets={loanTokens} userVaultsData={userVaultsData} />

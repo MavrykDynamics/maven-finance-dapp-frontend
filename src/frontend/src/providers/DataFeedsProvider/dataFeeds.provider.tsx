@@ -11,7 +11,7 @@ import { SUBSCRIBE_FEEDS } from './queries/feeds.query'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const dataFeedsContext = React.createContext<DataFeedsContext>(undefined!)
-const propomitionAddresses = [
+const propomotedAddresses = [
   'KT1AgXce6SwfMNQ6wcKGALHi46FuN77bHioV',
   'KT1C1sYNxacr8LPZimA512gAfWajdGah75nq',
   'KT1BYGLiHStMzdv2WCikKKDtFtvUjxzZ8WB9',
@@ -42,7 +42,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
   })
 
   const updateDataFeeds = (data: SubsribeOracleDataFeedSubscription['aggregator']) => {
-    const { feedsCategories, feedsAddresses, feedsMapper } = normalizeFeeds(data, propomitionAddresses)
+    const { feedsCategories, feedsAddresses, feedsMapper } = normalizeFeeds(data, propomotedAddresses)
 
     setFeedsCtxState({
       ...feedsCtxState,
@@ -54,7 +54,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
 
   const providerValue = useMemo(() => {
     return { ...feedsCtxState, isLoading: aggregatorLoading }
-  }, [feedsCtxState])
+  }, [aggregatorLoading, feedsCtxState])
 
   return <dataFeedsContext.Provider value={providerValue}>{children}</dataFeedsContext.Provider>
 }

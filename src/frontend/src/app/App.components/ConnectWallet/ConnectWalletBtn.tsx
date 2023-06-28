@@ -4,10 +4,16 @@ import Button from '../Button/NewButton'
 import Icon from '../Icon/Icon.view'
 import { connect } from './ConnectWallet.actions'
 import { ConnectWalletBtnWrap } from './ConnectWallet.style'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const ConnectWalletBtn = () => {
   const dispatch = useDispatch()
-  const connectWalletHandler = async () => await dispatch(connect())
+
+  const { connect: connectContextUser } = useUserContext()
+  const connectWalletHandler = async () => {
+    await dispatch(connect())
+    connectContextUser()
+  }
 
   return (
     <ConnectWalletBtnWrap>

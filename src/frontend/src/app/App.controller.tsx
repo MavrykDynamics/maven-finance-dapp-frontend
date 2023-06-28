@@ -12,7 +12,9 @@ import { configureStore } from './App.store'
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 
 // hooks
-import { useInitializer } from './App.hooks/useInitializer'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // types
 import { State } from '../reducers'
@@ -34,6 +36,7 @@ import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.
 import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
@@ -42,13 +45,16 @@ export type GetState = typeof store.getState
 export const App = () => {
   const dispatch = useDispatch()
 
+  const { isLoading: isDappGeneralLoading } = useDappConfigContext()
+  const { isLoading: isTokensLoading } = useTokensContext()
+  const { isLoading: isFeedsLoading } = useDataFeedsContext()
+  const { isLoading: isUserLoading } = useUserContext()
+
   const showSidebarOpened = useMedia('(min-width: 1400px)')
   const [{ policyPopup }, setCookie] = useCookies(['policyPopup'])
 
   const { changeNodePopupOpen, sidebarOpened } = useSelector((state: State) => state.preferences)
-  const { isInitialDataLoading } = useSelector((state: State) => state.loading)
-
-  const [isIOS, setIsIOS] = useState(true)
+  const { isInitialDataLoading: isInitialReduxLoading } = useSelector((state: State) => state.loading)
 
   useEffect(() => {
     ;(async () => {
@@ -66,12 +72,12 @@ export const App = () => {
     })()
   }, [dispatch])
 
-  // inital data load
-  const { isLoading: isInitialCtxLoading } = useInitializer()
-
   useEffect(() => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))
   }, [showSidebarOpened])
+
+  // IOS mobile handle
+  const [isIOS, setIsIOS] = useState(true)
 
   useEffect(() => {
     setIsIOS(
@@ -80,23 +86,24 @@ export const App = () => {
   }, [])
 
   const closeModalHandler = useCallback(() => dispatch(toggleRPCNodePopup(false)), [])
+  const proccedPolicy = useCallback(() => setCookie('policyPopup', true), [])
 
-  const proccedPolicy = useCallback(() => {
-    setCookie('policyPopup', true)
-  }, [])
+  const isInitialLoading =
+    isDappGeneralLoading || isTokensLoading || isFeedsLoading || isUserLoading || isInitialReduxLoading
 
   return (
     <>
-      <LoaderRocket isActive={isInitialDataLoading || isInitialCtxLoading} />
-      {!isInitialDataLoading && !isInitialCtxLoading ? (
+      <LoaderRocket isActive={isInitialLoading} />
+      {!isInitialLoading ? (
         <Router>
-          <AppStyled isExpandedMenu={sidebarOpened} isVisible={!isInitialDataLoading && !isInitialCtxLoading}>
+          <AppStyled isExpandedMenu={sidebarOpened} isVisible={!isInitialLoading}>
             <ActionLoader />
             <Toaster />
             <WertLoader />
             <Menu />
 
             <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
+            {/* TODO: @CasualJackie do not open policy popup on IOS devices? */}
             <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
             <LoansPopupsProvider>

@@ -66,7 +66,7 @@ const DataFeedDetails = () => {
   const { search } = useLocation()
   const { feedId } = useParams<{ feedId: string }>()
 
-  const { feedsMapper, registerFeedAction } = useDataFeedsContext()
+  const { feedsMapper } = useDataFeedsContext()
 
   const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts({}, feedId)
 
@@ -277,7 +277,12 @@ const DataFeedDetails = () => {
               </DataFeedValueText>
             </div>
             <div className="register-pair-wrapper">
-              <Button text="Register" kind={ACTION_PRIMARY} disabled={isActionActive} onClick={registerFeedAction} />
+              <Button
+                text="Register"
+                kind={ACTION_PRIMARY}
+                disabled={isActionActive || true}
+                onClick={() => console.log('implement')}
+              />
             </div>
           </ContractDetails>
         </div>

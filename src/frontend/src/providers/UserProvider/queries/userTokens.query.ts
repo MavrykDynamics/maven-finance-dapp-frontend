@@ -1,7 +1,7 @@
 import { gql } from 'utils/__generated__/gql'
 
 export const SUBSCRIBE_USER_MVK_SMVK_BALANCE = gql(`
-subscription getUserMvkSmvkBalance($userAddress: String = "tz1Y2tUUooW6QT6pQCeqz9ep9wCkX5bnKeTs") {
+subscription getUserMvkSmvkBalance($userAddress: String = "") {
 	mavryk_user(where: {address: {_eq: $userAddress}}) {
   	smvk_balance
     mvk_balance

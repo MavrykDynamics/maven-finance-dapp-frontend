@@ -1,16 +1,104 @@
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import UserProvider from './user.provider'
+import { z } from 'zod'
+
+// useUserLoansData Types
+export type UserLendBorrowItem = {
+  amount: number
+  id: number
+  annualPecentage: number
+  date: string
+  operationHash: string
+  tokenAddress: TokenAddressType
+}
+
+export type UserLoansDataStateType = {
+  userBorrowings: Array<UserLendBorrowItem>
+  totalUserBorrowed: number
+  totalUserLended: number
+  userLendings: Array<UserLendBorrowItem>
+  userVaultsData: Record<string, { borrowedAmount: number; collateralAmount: number }>
+}
+
+// user tokens Types
+export const userTzktTokenBalancesSchema = z.array(
+  z.object({
+    token: z.object({
+      contract: z.object({
+        address: z.string(),
+      }),
+    }),
+    account: z.object({
+      address: z.string(),
+    }),
+    balance: z.string(),
+  }),
+)
+export type UserTzktTokensBalancesType = z.infer<typeof userTzktTokenBalancesSchema>
+
+export const userTzktAccountSchema = z.object({
+  balance: z.number(),
+  address: z.string(),
+})
+export type UserTzktAccountType = z.infer<typeof userTzktWSAccountSchema>
+
+export const userTzktWSAccountSchema = z.array(userTzktAccountSchema)
+export type UserTzktWSAccountType = z.infer<typeof userTzktWSAccountSchema>
 
 // Context types
 export type UserContext = {
+  // user's metadata
+  userAddress: string | null
+  satelliteMvkIsDelegatedTo: string | null
+  isSatellite: boolean
+  isVestee: boolean
+  isNewlyRegisteredSatellite: boolean
+  govActionsCount: number
+  userAvatars: {
+    mainAvatar: string | null
+    satelliteAvatar: string | null
+    counsilAvatar: string | null
+    breakGlassAvatar: string | null
+  }
+  actionsHistory: Array<{
+    action: string
+    amount: number
+    totalAmount: number
+    fee: number
+    id: number
+  }>
+
+  // user rewards
+  gatheredFarmRewards: number
+  gatheredSatellitesRewards: number
+  gatheredDoormanRewards: number
+  // availableDoormanRewards: number
+  // availableFarmRewards: Record<string, UserFarmRewardsData>
+  // availableSatellitesRewards: number
+  // availableLoansRewards: number
+
+  // user tokens
   userTokensBalances: Record<TokenAddressType, number> | null
-  updateUserTokenBalances: InstanceType<typeof UserProvider>['updateUserTokenBalances']
+
+  isLoading: boolean
+
+  // actions
+  connect: () => void
+  signOut: () => void
+  changeUser: () => void
 }
 
-export type State = {
-  context: UserContext
-}
+export type UserContextStateType = UserMetadataType & Pick<UserContext, 'userTokensBalances' | 'userAddress'>
 
-export type Props = {
-  children: React.ReactNode
-}
+export type UserMetadataType = Pick<
+  UserContext,
+  | 'actionsHistory'
+  | 'govActionsCount'
+  | 'isNewlyRegisteredSatellite'
+  | 'isSatellite'
+  | 'isVestee'
+  | 'userAvatars'
+  | 'satelliteMvkIsDelegatedTo'
+  | 'gatheredFarmRewards'
+  | 'gatheredSatellitesRewards'
+  | 'gatheredDoormanRewards'
+>

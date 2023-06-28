@@ -16,11 +16,11 @@ import { useSelector } from 'react-redux'
 import colors from 'styles/colors'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { UserLoansDataStateType } from 'providers/UserProvider/helpers/user.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
 
 export const LendBorrowPosition = ({
   markets,

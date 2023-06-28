@@ -25,12 +25,12 @@ import { Plug } from 'app/App.components/Chart/Chart.style'
 import { PositionTableStyled } from '../LoansDashboard.styles'
 import { getGaugeVaultRiskSimpleStatus } from '../helpers/position.helpers'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
-import { UserLoansDataStateType } from 'providers/UserProvider/helpers/user.types'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
 
 export const LoansPositionTable = ({
   markets,

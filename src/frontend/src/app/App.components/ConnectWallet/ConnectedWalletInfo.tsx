@@ -34,7 +34,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   const history = useHistory()
 
   const { tokensPrices, tokensMetadata } = useTokensContext()
-  const { userTokensBalances } = useUserContext()
+  const { userTokensBalances, signOut, changeUser } = useUserContext()
 
   const mvkTokenRate = tokensPrices[MVK_TOKEN_SYMBOL]
   const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
@@ -55,8 +55,14 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
     setDetailsShown(false)
   }
 
-  const handleChangeWallet = async () => await dispatch(changeWallet())
-  const disconnectWallet = async () => await dispatch(disconnect())
+  const handleChangeWallet = async () => {
+    await dispatch(changeWallet())
+    changeUser()
+  }
+  const disconnectWallet = async () => {
+    await dispatch(disconnect())
+    signOut()
+  }
   const closeDetailsHandler = () => setDetailsShown(false)
   const mouseOverHanlder = () => setDetailsShown(true)
 
@@ -220,7 +226,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
   const history = useHistory()
 
   const { tokensPrices, tokensMetadata } = useTokensContext()
-  const { userTokensBalances } = useUserContext()
+  const { userTokensBalances, signOut, changeUser } = useUserContext()
 
   const mvkTokenRate = tokensPrices[MVK_TOKEN_SYMBOL]
   const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
@@ -245,8 +251,14 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
     closeMobileMenu()
   }
 
-  const handleChangeWallet = async () => await dispatch(changeWallet())
-  const disconnectWallet = async () => await dispatch(disconnect())
+  const handleChangeWallet = async () => {
+    await dispatch(changeWallet())
+    changeUser()
+  }
+  const disconnectWallet = async () => {
+    await dispatch(disconnect())
+    signOut()
+  }
   const clickHander = () => setDetailsShown(!detailsShown)
 
   if (!accountPkh || !userTokensBalances) return null

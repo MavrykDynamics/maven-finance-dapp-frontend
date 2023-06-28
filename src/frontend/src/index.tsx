@@ -37,8 +37,8 @@ export const Root = () => {
         <Provider store={store}>
           <DarkThemeProvider>
             <ToasterProvider>
-              <DataFeedsProvider>
-                <TokensProvider>
+              <TokensProvider>
+                <DataFeedsProvider>
                   <UserProvider>
                     <DappConfigProvider>
                       <GlobalStyle />
@@ -46,8 +46,8 @@ export const Root = () => {
                     </DappConfigProvider>
                     <ToasterMessages />
                   </UserProvider>
-                </TokensProvider>
-              </DataFeedsProvider>
+                </DataFeedsProvider>
+              </TokensProvider>
             </ToasterProvider>
           </DarkThemeProvider>
         </Provider>
