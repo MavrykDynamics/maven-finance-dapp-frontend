@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // consts
 import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
@@ -7,62 +7,70 @@ import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.normalizer'
 
 // types
-import { State, Props, TokensContext } from './tokens.provider.types'
+import { TokensContext, TokensContextState } from './tokens.provider.types'
 import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from 'utils/__generated__/graphql'
+import { useSubscription } from '@apollo/client'
+import { SUBSCRIBE_TOKENS_METADATA } from './queries/tokens.query'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
-/** */
-export class TokensProvider extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props)
-    this.state = {
-      context: {
-        collateralTokens: [],
-        mTokens: [],
-        tokensMetadata: {},
-        tokensPrices: { [MVK_TOKEN_SYMBOL]: 1, [SMVK_TOKEN_ADDRESS]: 1 },
-        updateTokensPrices: this.updateTokensPrices,
-        updateTokensMetadata: this.updateTokensMetadata,
-      },
-    }
-  }
+type Props = {
+  children: React.ReactNode
+}
 
-  updateTokensPrices = (feedsLedger: SubsribeOracleDataFeedSubscription['aggregator']) => {
+export const TokensProvider = ({ children }: Props) => {
+  const [tokensCtxState, setTokensCtxState] = useState<TokensContextState>({
+    collateralTokens: [],
+    mTokens: [],
+    tokensMetadata: {},
+    tokensPrices: { [MVK_TOKEN_SYMBOL]: 1, [SMVK_TOKEN_ADDRESS]: 1 },
+  })
+
+  const { loading: tokensLoading } = useSubscription(SUBSCRIBE_TOKENS_METADATA, {
+    shouldResubscribe: true,
+    onData: ({ data: { data } }) => {
+      if (!data) return
+      updateTokensMetadata(data.token)
+    },
+    onError: (error) => console.log({ error }),
+  })
+
+  const updateTokensPrices = useCallback((feedsLedger: SubsribeOracleDataFeedSubscription['aggregator']) => {
     const normalizedTokenPrices = normalizeTokenPrices(feedsLedger)
 
-    this.setState({
-      context: {
-        ...this.state.context,
-        tokensPrices: { ...this.state.context.tokensPrices, ...normalizedTokenPrices },
-      },
-    })
-  }
+    setTokensCtxState((prev) => ({
+      ...prev,
+      tokensPrices: { ...prev.tokensPrices, ...normalizedTokenPrices },
+    }))
+  }, [])
 
-  updateTokensMetadata = (tokensGql: TokensMetadataSubscription['token']) => {
+  const updateTokensMetadata = (tokensGql: TokensMetadataSubscription['token']) => {
     const tokensMetadata = normalizeTokensMetadata(tokensGql)
 
-    this.setState({
-      context: {
-        ...this.state.context,
-        tokensMetadata: { ...this.state.context.tokensMetadata, ...tokensMetadata.tokensMetadata },
-        collateralTokens: [...this.state.context.collateralTokens, ...tokensMetadata.collateralTokens],
-        mTokens: [...this.state.context.mTokens, ...tokensMetadata.mTokens],
-      },
+    setTokensCtxState({
+      ...tokensCtxState,
+      tokensMetadata: { ...tokensCtxState.tokensMetadata, ...tokensMetadata.tokensMetadata },
+      collateralTokens: [...tokensCtxState.collateralTokens, ...tokensMetadata.collateralTokens],
+      mTokens: [...tokensCtxState.mTokens, ...tokensMetadata.mTokens],
     })
   }
 
-  /** */
-  render(): React.ReactNode {
-    return <tokensContext.Provider value={this.state.context}>{this.props.children}</tokensContext.Provider>
-  }
+  const providerValue = useMemo(() => {
+    return {
+      ...tokensCtxState,
+      updateTokensPrices,
+      isLoading: tokensLoading,
+    }
+  }, [tokensCtxState, tokensLoading, updateTokensPrices])
+
+  return <tokensContext.Provider value={providerValue}>{children}</tokensContext.Provider>
 }
 
 export const useTokensContext = () => {
   const context = useContext(tokensContext)
 
   if (!context) {
-    throw new Error('tokensContext should be used withing Tokens provider')
+    throw new Error('tokensContext should be used withing TokensProvider')
   }
 
   return context

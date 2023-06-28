@@ -1,7 +1,6 @@
-import TokensProvider from './tokens.provider'
-
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { normalizeTokenPrices } from './helpers/tokens.normalizer'
+import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 
 export type TokenAddressType = string
 
@@ -47,20 +46,14 @@ type TokensPricesType = ReturnType<typeof normalizeTokenPrices>
 
 // Context types
 export type TokensContext = {
-  // 3 bottom fields updates from updateTokensMetadata
+  // data
   collateralTokens: Array<TokenAddressType>
   mTokens: Array<TokenAddressType>
   tokensMetadata: Record<TokenAddressType, TokenMetadataType>
-  updateTokensMetadata: InstanceType<typeof TokensProvider>['updateTokensMetadata']
-
   tokensPrices: TokensPricesType
-  updateTokensPrices: InstanceType<typeof TokensProvider>['updateTokensPrices']
+  isLoading: boolean
+  // methods
+  updateTokensPrices: (feeds: SubsribeOracleDataFeedSubscription['aggregator']) => void
 }
 
-export type State = {
-  context: TokensContext
-}
-
-export type Props = {
-  children: React.ReactNode
-}
+export type TokensContextState = Pick<TokensContext, 'tokensPrices' | 'collateralTokens' | 'tokensMetadata' | 'mTokens'>
