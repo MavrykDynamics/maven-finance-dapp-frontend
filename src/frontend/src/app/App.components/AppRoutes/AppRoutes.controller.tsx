@@ -132,6 +132,39 @@ export const AppRoutes = () => {
         redirectPath={'/governance'}
       />
 
+      <Route exact path="/treasury">
+        <Treasury />
+      </Route>
+
+      <Route exact path="/yield-farms">
+        <Farms />
+      </Route>
+
+      {/* LEND & BORROW */}
+      <Route exact path="/loans/:assetId/:tabId">
+        <Market />
+      </Route>
+      <Route exact path="/loans">
+        <Loans />
+      </Route>
+      <Route exact path="/vaults/:tabId">
+        <Vaults />
+      </Route>
+      <Route exact path="/loans/dashboard">
+        <LoansDashboard />
+      </Route>
+      <Route exact path="/loans/earn">
+        <LoansEarn />
+      </Route>
+      <Route exact path="/loans/borrow">
+        <LoansBorrow />
+      </Route>
+
+      {/* NOT READY PAGES */}
+      <Route exact path="/your-vesting">
+        <Dashboard />
+      </Route>
+
       {/* NOT PROD PAGES */}
       <Route exact path="/admin">
         <Admin />
@@ -143,11 +176,6 @@ export const AppRoutes = () => {
       </Route>
 
       <Redirect to="/404" />
-
-      {/* NOT READY PAGES */}
-      <Route exact path="/your-vesting">
-        <Dashboard />
-      </Route>
     </Switch>
   )
 }
