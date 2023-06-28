@@ -1,11 +1,14 @@
-import React, { useContext } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 
 // types
-import { State, Props, DataFeedsContext } from './dataFeeds.provider.types'
+import { DataFeedsContext, DataFeedsContextState } from './dataFeeds.provider.types'
 import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 
 // helpers
 import { normalizeFeeds } from './helpers/feedsNormalizer'
+import { useSubscription } from '@apollo/client'
+import { SUBSCRIBE_FEEDS } from './queries/feeds.query'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const dataFeedsContext = React.createContext<DataFeedsContext>(undefined!)
 const propomitionAddresses = [
@@ -14,44 +17,46 @@ const propomitionAddresses = [
   'KT1BYGLiHStMzdv2WCikKKDtFtvUjxzZ8WB9',
 ]
 
-/** */
-export class DataFeedsProvider extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props)
-    this.state = {
-      context: {
-        // data
-        feedsAddresses: [],
-        feedsMapper: {},
-        feedsCategories: [],
-        // actions
-        updateDataFeeds: this.updateDataFeeds,
-        registerFeedAction: this.registerFeedAction,
-      },
-    }
-  }
+type Props = {
+  children: React.ReactNode
+}
 
-  updateDataFeeds = (data: SubsribeOracleDataFeedSubscription['aggregator']) => {
+export const DataFeedsProvider = ({ children }: Props) => {
+  const { updateTokensPrices } = useTokensContext()
+
+  const [feedsCtxState, setFeedsCtxState] = useState<DataFeedsContextState>({
+    feedsAddresses: [],
+    feedsMapper: {},
+    feedsCategories: [],
+  })
+
+  const { loading: aggregatorLoading } = useSubscription(SUBSCRIBE_FEEDS, {
+    shouldResubscribe: true,
+    onData: ({ data: { data } }) => {
+      if (!data) return
+
+      updateDataFeeds(data.aggregator)
+      updateTokensPrices(data.aggregator)
+    },
+    onError: (error) => console.log({ error }),
+  })
+
+  const updateDataFeeds = (data: SubsribeOracleDataFeedSubscription['aggregator']) => {
     const { feedsCategories, feedsAddresses, feedsMapper } = normalizeFeeds(data, propomitionAddresses)
 
-    this.setState({
-      context: {
-        ...this.state.context,
-        feedsCategories: Array.from(new Set([...this.state.context.feedsCategories, ...feedsCategories])),
-        feedsAddresses: Array.from(new Set([...this.state.context.feedsAddresses, ...feedsAddresses])),
-        feedsMapper: { ...this.state.context.feedsMapper, ...feedsMapper },
-      },
+    setFeedsCtxState({
+      ...feedsCtxState,
+      feedsCategories: Array.from(new Set([...feedsCtxState.feedsCategories, ...feedsCategories])),
+      feedsAddresses: Array.from(new Set([...feedsCtxState.feedsAddresses, ...feedsAddresses])),
+      feedsMapper: { ...feedsCtxState.feedsMapper, ...feedsMapper },
     })
   }
 
-  registerFeedAction = () => {
-    console.info('Unimplemented')
-  }
+  const providerValue = useMemo(() => {
+    return { ...feedsCtxState, isLoading: aggregatorLoading }
+  }, [feedsCtxState])
 
-  /** */
-  render(): React.ReactNode {
-    return <dataFeedsContext.Provider value={this.state.context}>{this.props.children}</dataFeedsContext.Provider>
-  }
+  return <dataFeedsContext.Provider value={providerValue}>{children}</dataFeedsContext.Provider>
 }
 
 export const useDataFeedsContext = () => {
