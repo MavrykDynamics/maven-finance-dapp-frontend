@@ -180,7 +180,7 @@ export const AppRoutes = () => {
         {/*TODO: Replace later on with actual 404 page*/}
         <Dashboard />
       </Route>
-      <Redirect to="/404" />
+
       <Redirect to="/404" />
     </Switch>
   )
