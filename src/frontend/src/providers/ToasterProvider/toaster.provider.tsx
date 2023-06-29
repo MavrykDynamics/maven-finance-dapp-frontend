@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { ErrorPage } from 'pages/Error/ErrorPage'
 
 // types
 import type { ToasterContextType, ToasterTypes } from './toaster.provider.type'
@@ -166,7 +167,12 @@ export default class ToasterProvider extends React.Component<Props, State> {
    */
   render(): JSX.Element {
     // add 404 page when isCritical error
-    return <toasterContext.Provider value={this.state.context}>{this.props.children}</toasterContext.Provider>
+    const isCritical = Boolean(this.state.context.error)
+    return (
+      <toasterContext.Provider value={this.state.context}>
+        {isCritical ? <ErrorPage /> : this.props.children}
+      </toasterContext.Provider>
+    )
   }
 }
 

@@ -36,6 +36,7 @@ import DashboardPersonal from 'pages/DashboardPersonal/DashboardPersonal.control
 import { Market } from 'pages/Loans/Market.controller'
 import { LoansDashboard } from 'pages/LoansDashboard/LoansDashboard'
 import { ProposalSubmission } from 'pages/ProposalSubmission/ProposalSubmission.controller'
+import { ErrorPage } from 'pages/Error/ErrorPage'
 import StakeProvider from 'providers/StakeProvider/stake.provider'
 
 export const AppRoutes = () => {
@@ -178,7 +179,7 @@ export const AppRoutes = () => {
 
       <Route exact path="/404">
         {/*TODO: Replace later on with actual 404 page*/}
-        <Dashboard />
+        <ErrorPage />
       </Route>
 
       <Redirect to="/404" />
