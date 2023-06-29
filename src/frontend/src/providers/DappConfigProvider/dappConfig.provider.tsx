@@ -48,7 +48,7 @@ const DappConfigProvider = ({ children }: Props) => {
 
     const { actionName, toasterId, operationLvl } = action
     const turnOffAction = async () => {
-      await sleep(1000)
+      await sleep(500)
       hideToasterMessage(toasterId)
       await sleep(500)
       success(TOASTER_ACTIONS_TEXTS[actionName]['end']['message'], TOASTER_ACTIONS_TEXTS[actionName]['end']['title'])
