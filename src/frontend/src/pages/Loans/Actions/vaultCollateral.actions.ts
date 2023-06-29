@@ -144,7 +144,6 @@ export const depositCollateralAction =
       const { amount, assetAddress, assetId, collateralName, tokenType, decimals, isStakedToken } = collateralAssets
       const convertedAssetAmount = convertNumberForContractCall({ number: amount, grade: decimals })
       const tezos = await DAPP_INSTANCE.tezos()
-      const contract = await tezos.wallet.at(vaultAddress)
       let transaction: BatchWalletOperation | TransactionWalletOperation | null = null
 
       if (isStakedToken) {
@@ -153,6 +152,7 @@ export const depositCollateralAction =
           .vaultDepositStakedToken(collateralName, vaultId, convertedAssetAmount)
           .send()
       } else if (tokenType === 'tez') {
+        const contract = await tezos.wallet.at(vaultAddress)
         const delegateToBakerBatchPart: Array<WalletParamsWithKind> = bakerAddress
           ? [
               {
@@ -173,6 +173,7 @@ export const depositCollateralAction =
 
         transaction = await batch.send()
       } else if (tokenType === 'fa12') {
+        const contract = await tezos.wallet.at(vaultAddress)
         const assetContract = await tezos.wallet.at(assetAddress)
         const batchArr = [
           {
@@ -192,6 +193,7 @@ export const depositCollateralAction =
         const batch = await tezos.wallet.batch(batchArr)
         transaction = await batch.send()
       } else if (tokenType === 'fa2') {
+        const contract = await tezos.wallet.at(vaultAddress)
         const assetContract = await tezos.wallet.at(assetAddress)
 
         const batchArr = [
