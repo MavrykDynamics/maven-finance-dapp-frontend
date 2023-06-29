@@ -1,5 +1,6 @@
 import * as signalR from '@microsoft/signalr'
 
+// types
 import {
   UserContext,
   UserTzktTokensBalancesType,
@@ -8,14 +9,21 @@ import {
   userTzktWSAccountSchema,
 } from './../user.provider.types'
 import { GetUserDataSubscription } from 'utils/__generated__/graphql'
-import { TokenAddressType, TokensContext, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
+import {
+  TokenAddressType,
+  TokensContext,
+  UserMTokenType,
+  mTokenMetadataSchema,
+} from 'providers/TokensProvider/tokens.provider.types'
 
+// helpers
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { MVK_DECIMALS, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 import { api } from 'utils/api/api'
+import { convertNumberForClient } from 'utils/calcFunctions'
 import { ApiError } from 'errors/error'
-import { mTokenMetadataSchema } from 'providers/TokensProvider/helpers/tokens.types'
+
+// consts
+import { MVK_DECIMALS, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 
 export const getUserTokenBalanceByAddress = ({
   userTokensBalances,
@@ -72,7 +80,7 @@ export const normalizeUserIndexerTokensBalances = ({
   const { smvk_balance, mvk_balance, mvk_transfer_receiver, mvk_transfer_sender, m_token_accounts } =
     indexerData.mavryk_user[0]
 
-  // TODO: find a way to 100% have mvk token address here
+  // TODO: find a way to 100% have mvk token address here, need back-end implementation
   const mvkTokenAddress = mvk_transfer_receiver[0]?.mvk_token.address ?? mvk_transfer_sender[0]?.mvk_token.address
 
   const { mTokenBalances, userMTokens, availableLoansRewards } = m_token_accounts.reduce<{

@@ -2,9 +2,8 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenSymbolAndName } from './tokenNames'
 import { isValidTokenType } from 'utils/TypesAndInterfaces/General'
 
-import { TokenMetadataType, TokensContext } from '../tokens.provider.types'
+import { TokenMetadataType, TokensContext, tokenMetadataSchema } from '../tokens.provider.types'
 import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from 'utils/__generated__/graphql'
-import { tokenMetadataSchema } from './tokens.types'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
 /**

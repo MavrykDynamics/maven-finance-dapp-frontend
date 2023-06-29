@@ -1,6 +1,19 @@
-import { TokenType } from 'utils/TypesAndInterfaces/General'
+import { z } from 'zod'
+
 import { normalizeTokenPrices } from './helpers/tokens.normalizer'
+
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
+
+export const tokenMetadataSchema = z.object({
+  icon: z.string().optional(),
+  symbol: z.string(),
+  decimals: z.string(),
+})
+
+export const mTokenMetadataSchema = z.object({
+  decimals: z.string(),
+})
 
 export type TokenAddressType = string
 
