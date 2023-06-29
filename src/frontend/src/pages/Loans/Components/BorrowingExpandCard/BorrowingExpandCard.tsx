@@ -15,7 +15,7 @@ import { BorrowingExpandCardRepaySection } from './BorrowingExpandCardRepaySecti
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-
+import Expand from 'app/App.components/Expand/ExpandCC.view'
 import { ThreeLevelListItem } from '../../Loans.style'
 import { LoansActionsSection, BorrowingExpandedCard } from '../LoansComponents.style'
 import { loansPopupsContext } from '../Modals/LoansModals.provider'
@@ -359,7 +359,142 @@ export const BorrowingExpandCard = ({
 
   return (
     <div ref={ref}>
-      <ExpandSimple
+      <Expand>
+        <Expand.Header>
+          <ThreeLevelListItem className="borrow-asset-header">
+            <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+            <div className="data">
+              <div className="value">{name ? name : borrowedAsset.symbol}</div>
+              <div className="value">
+                <TzAddress tzAddress={address} shouldCopy hasIcon />
+              </div>
+            </div>
+          </ThreeLevelListItem>
+
+          <ThreeLevelListItem className="collateral-diagram" customColor={getCollateralRationPersent(collateralRatio)}>
+            <div className={`percentage`}>
+              Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+            </div>
+            <GradientDiagram
+              className="diagram"
+              colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+              currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
+            />
+          </ThreeLevelListItem>
+
+          <ThreeLevelListItem>
+            <div className="name">Outstanding Debt</div>
+            <CommaNumber
+              value={(borrowedAmount + fee) * rate}
+              beginningText="$"
+              className="value"
+              showDecimal
+              decimalsToShow={borrowedAsset.decimals}
+            />
+          </ThreeLevelListItem>
+
+          <ThreeLevelListItem>
+            <div className="name">Collateral amount</div>
+            <CommaNumber value={collateralBalance} className="value" beginningText="$" showDecimal decimalsToShow={2} />
+          </ThreeLevelListItem>
+
+          <Expand.Open>Open</Expand.Open>
+          <Expand.Close>Close</Expand.Close>
+
+          <>{headerSufix ? headerSufix : undefined}</>
+        </Expand.Header>
+
+        <Expand.Content>
+          {children || (
+            <BorrowingExpandedCard>
+              {vaultStatus && <StatusMessage status={vaultStatus} timestamp={timerTimestamp} />}
+
+              <div className="stats-and-actions">
+                <BorrowingExpandCardValuesSection
+                  collateralRatio={collateralRatio}
+                  collateralBalance={collateralBalance}
+                  borrowedAmount={borrowedAmount}
+                  borrowCapacity={borrowCapacity}
+                  decimals={borrowedAsset.decimals}
+                  fee={fee}
+                  apr={apr}
+                  rate={rate}
+                />
+
+                <LoansActionsSection className="borrowing-tab">
+                  <div className="switchers">
+                    <SlidingTabButtons
+                      onClick={handleSwitchTab('repayAndBorrow')}
+                      tabItems={repayBorrowSlidingButtons}
+                      className="vault"
+                    />
+                    {activeRepayBorrowTab?.id === loansTabNames.REPAY && (
+                      <SlidingTabButtons
+                        onClick={handleSwitchTab('repay')}
+                        tabItems={VAULT_CARD_REPAY_SLIDING_BUTTONS}
+                        className="vault"
+                      />
+                    )}
+                  </div>
+
+                  {activeRepayBorrowTab?.id === loansTabNames.BORROW && (
+                    <BorrowingExpandCardBorrowSection
+                      borrowedAsset={borrowedAsset}
+                      borrowAPR={apr}
+                      currentCollateralBalance={collateralData.at(-1)?.amount ?? 0}
+                      hasUserBorrowed={Boolean(borrowedAmount)}
+                      borrowCapacity={borrowCapacity}
+                      currentBorrowedAmount={borrowedAmount}
+                      DAOFee={DAOFee}
+                      openConfirmBorrowPopup={handleClickOpenConfirmBorrowPopup}
+                    />
+                  )}
+
+                  {activeRepayBorrowTab?.id === loansTabNames.REPAY && (
+                    <BorrowingExpandCardRepaySection
+                      vaultId={vaultId}
+                      borrowedAsset={borrowedAsset}
+                      currentCollateralBalance={collateralData.at(-1)?.amount ?? 0}
+                      borrowCapacity={borrowCapacity}
+                      vaultAddress={address}
+                      borrowedAmount={borrowedAmount}
+                      feesAmount={fee}
+                      minimumRepay={minimumRepay}
+                      activeRepayTab={activeRepayTab}
+                      openConfirmRepayPopup={handleClickOpenConfirmRepayPopup}
+                      openConfirmRepayFullPopup={handleClickOpenConfirmRepayFullPopup}
+                    />
+                  )}
+                </LoansActionsSection>
+              </div>
+
+              {currentToken && (
+                <BorrowingExpandCardMenuSection
+                  openAddNewCollateralPopup={handleClickOpenAddNewCollateralPopup}
+                  openAddExistingCollateralPopup={handleClickOpenAddExistingCollateralPopup}
+                  openWithdrawCollateralPopup={handleClickOpenWithdrawCollateralPopup}
+                  openChangeBakerPopup={handleClickOpenChangeBakerPopup}
+                  openManagePermissionsPopup={handleClickOpenManagePermissionsPopup}
+                  openUpdateMvkOperatorsPopup={handleClickOpenUpdateMvkOperatorsPopup}
+                  openChangeVaultNamePopup={handleClickOpenChangeVaultNamePopup}
+                  collateralData={collateralData}
+                  currentToken={currentToken}
+                  isOwner={isOwner}
+                  vaultName={name}
+                  vaultAddress={address}
+                  xtzDelegatedTo={xtzDelegatedTo}
+                  sMVKDelegatedTo={sMVKDelegatedTo}
+                  collateralRatio={collateralRatio}
+                  deporsitorsFlag={deporsitorsFlag}
+                  mappedMVKOperators={mappedMVKOperators}
+                  hideTransactionHistory={hideTransactionHistory}
+                />
+              )}
+            </BorrowingExpandedCard>
+          )}
+        </Expand.Content>
+      </Expand>
+      {/* <ExpandSimple
         isExpanded={isExpanded}
         onClick={handleClickExpand}
         openButtonName="View"
@@ -499,7 +634,7 @@ export const BorrowingExpandCard = ({
             )}
           </BorrowingExpandedCard>
         )}
-      </ExpandSimple>
+      </ExpandSimple> */}
     </div>
   )
 }
