@@ -25,7 +25,12 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import { calcCollateralRatio, getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import {
+  calcCollateralRatio,
+  getCollateralRatioByPersentage,
+  getLoansInputMaxAmount,
+  loansInputValidation,
+} from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
@@ -45,6 +50,7 @@ export const AddCollateral = ({
     selectedAsset,
     vaultCollateralBalance = 0,
     vaultAddress,
+    vaultId,
     currentCollateralRatio = 0,
     borrowedAmount = 0,
     borrowedAssetRate = 0,
@@ -137,10 +143,11 @@ export const AddCollateral = ({
         decimals: collateralData.decimals,
         amount: Number(inputData.amount),
         assetAddress: collateralData.address,
+        isStakedToken: collateralData.isStaked,
       }
 
-      if (vaultAddress) {
-        await dispatch(depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup))
+      if (vaultAddress && vaultId) {
+        await dispatch(depositCollateralAction(vaultAddress, vaultId, collaretalToDeposit, closePopup))
       }
     }
   }

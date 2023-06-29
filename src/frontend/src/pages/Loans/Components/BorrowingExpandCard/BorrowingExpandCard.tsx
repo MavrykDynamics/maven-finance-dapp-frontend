@@ -251,6 +251,7 @@ export const BorrowingExpandCard = ({
   const handleClickOpenAddNewCollateralPopup = () => {
     openAddNewCollateralPopup?.({
       vaultAddress: address,
+      vaultId,
       vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
       currentCollateralRatio: collateralRatio,
       borrowedAmount,
@@ -264,6 +265,7 @@ export const BorrowingExpandCard = ({
   const handleClickOpenAddExistingCollateralPopup = (idx: number) => {
     openAddExistingCollateralPopup?.({
       vaultAddress: address,
+      vaultId,
       vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
       selectedAsset: collateralData[idx],
       currentCollateralRatio: collateralRatio,
@@ -277,6 +279,7 @@ export const BorrowingExpandCard = ({
   const handleClickOpenWithdrawCollateralPopup = ({ amount, idx }: { amount: number; idx: number }) => {
     openWithdrawCollateralPopup?.({
       vaultAddress: address,
+      vaultId,
       currentCollateralBalance: amount,
       vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
       selectedAsset: collateralData[idx],

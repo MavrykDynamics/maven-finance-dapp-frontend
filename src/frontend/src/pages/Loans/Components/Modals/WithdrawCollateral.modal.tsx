@@ -54,6 +54,7 @@ export const WithdrawCollateral = ({
     currentCollateralBalance = 0,
     vaultCollateralBalance = 0,
     vaultAddress,
+    vaultId,
     currentCollateralRatio = 0,
     borrowedAmount = 0,
   } = data ?? {}
@@ -153,14 +154,16 @@ export const WithdrawCollateral = ({
   }
 
   const withdrawHandler = async () => {
-    if (vaultAddress && collateralData?.gqlName) {
+    if (vaultAddress && vaultId && collateralData?.gqlName) {
       setIsActionPerforming(true)
       await dispatch(
         withdrawCollateralAction(
           Number(inputData.amount),
           collateralData.gqlName,
           vaultAddress,
+          vaultId,
           collateralData.decimals,
+          collateralData.isStaked,
           closePopup,
         ),
       )

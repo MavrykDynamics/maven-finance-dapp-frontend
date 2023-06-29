@@ -444,6 +444,7 @@ export const OldBorrowingExpandCard = ({
                                     onClick={() =>
                                       openAddNewCollateralPopup?.({
                                         vaultAddress: address,
+                                        vaultId,
                                         vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                                         currentCollateralRatio: collateralRatio,
                                         borrowedAmount,
@@ -473,6 +474,7 @@ export const OldBorrowingExpandCard = ({
                                   onClick={() =>
                                     openAddExistingCollateralPopup?.({
                                       vaultAddress: address,
+                                      vaultId,
                                       vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                                       selectedAsset: collateralData[idx],
                                       currentCollateralRatio: collateralRatio,
@@ -493,6 +495,7 @@ export const OldBorrowingExpandCard = ({
                                     onClick={() =>
                                       openWithdrawCollateralPopup?.({
                                         vaultAddress: address,
+                                        vaultId,
                                         currentCollateralBalance: amount,
                                         vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                                         selectedAsset: collateralData[idx],
@@ -522,6 +525,7 @@ export const OldBorrowingExpandCard = ({
                       onClick={() =>
                         openAddNewCollateralPopup?.({
                           vaultAddress: address,
+                          vaultId,
                           vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                           currentCollateralRatio: collateralRatio,
                           borrowedAmount,

@@ -69,6 +69,7 @@ export const AddNewCollateral = ({
   const {
     vaultCollateralBalance = 0,
     vaultAddress,
+    vaultId,
     currentCollateralRatio = 0,
     borrowedAmount = 0,
     borrowedAssetRate = 0,
@@ -271,11 +272,18 @@ export const AddNewCollateral = ({
         decimals: inputData.selectedDdItem.decimals,
         amount: Number(inputData.amount),
         assetAddress: inputData.selectedDdItem.address,
+        isStakedToken: inputData.selectedDdItem.isStaked,
       }
 
-      if (vaultAddress) {
+      if (vaultAddress && vaultId) {
         dispatch(
-          depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup, bakerChosenDdItem?.bakerAddress),
+          depositCollateralAction(
+            vaultAddress,
+            vaultId,
+            collaretalToDeposit,
+            closePopup,
+            bakerChosenDdItem?.bakerAddress,
+          ),
         )
       }
     }

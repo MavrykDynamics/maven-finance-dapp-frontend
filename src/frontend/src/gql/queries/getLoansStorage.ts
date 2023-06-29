@@ -110,6 +110,8 @@ query GetAvaliableCollaterals {
       }
       id
       token_name
+      is_staked_token
+      is_scaled_token
       protected
       oracle {
         address

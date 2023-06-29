@@ -58,6 +58,8 @@ export type LendingItemType = {
 export type AvaliableCollateralType = LoansAssetDataType & {
   address: string
   isProtected: boolean
+  isStaked: boolean
+  isScaled: boolean
   tokenType: 'tez' | 'fa12' | 'fa2'
 }
 

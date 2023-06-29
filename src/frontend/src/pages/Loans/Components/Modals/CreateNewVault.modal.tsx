@@ -270,7 +270,7 @@ export const CreateNewVault = ({
     })
   }
 
-  const { decimals, address, tokenType, gqlName } = collateralsToSelect[collaterals[0]?.id] || {}
+  const { decimals, address, tokenType, gqlName, isStaked } = collateralsToSelect[collaterals[0]?.id] || {}
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, inputIdx: number, userAssetBalance: number) => {
@@ -369,11 +369,20 @@ export const CreateNewVault = ({
       decimals,
       amount: Number(collaterals[0].inputAmount),
       assetAddress: address,
+      isStakedToken: isStaked,
     }
 
-    if (newVaultAddress && collaretalToDeposit.assetAddress && !isAddCollateralContinueDisabled) {
+    const vaultId = vaultsMapper[newVaultAddress].vaultId
+
+    if (newVaultAddress && vaultId && collaretalToDeposit.assetAddress && !isAddCollateralContinueDisabled) {
       dispatch(
-        depositCollateralAction(newVaultAddress, collaretalToDeposit, closePopup, bakerChosenDdItem?.bakerAddress),
+        depositCollateralAction(
+          newVaultAddress,
+          vaultId,
+          collaretalToDeposit,
+          closePopup,
+          bakerChosenDdItem?.bakerAddress,
+        ),
       )
     }
   }
