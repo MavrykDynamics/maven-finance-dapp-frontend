@@ -39,8 +39,8 @@ export const checkIndexerLevelAndRunDataUpdateCallback = ({
         )) as { dipdup_head: Array<Dipdup_Head> }
 
         // as we're getting levels for mainnet and ghostnet, we need to select level for current env, by default use ghostnet
-        const indexerLevel = indexerLevelGQL.dipdup_head?.find(({ name }) =>
-          name.toLowerCase().includes((process.env.REACT_APP_NETWORK ?? 'ghostnet').toLowerCase()),
+        const indexerLevel = indexerLevelGQL.dipdup_head?.find(
+          ({ name }) => name === process.env.REACT_APP_RPC_TZKT_API,
         )?.level
 
         // TODO: debug log, remove later

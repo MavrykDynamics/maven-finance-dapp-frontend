@@ -34,12 +34,17 @@ const DappConfigProvider = ({ children }: Props) => {
     onData: ({ data: { data } }) => {
       if (!data) return
 
-      const indexerLvl = data.dipdup_head.find(({ name }) => name.includes('ghostnet'))?.level
+      const indexerLvl = data.dipdup_head.find(({ name }) => name === process.env.REACT_APP_RPC_TZKT_API)?.level
       if (indexerLvl) setCurrentIndexedLevel(indexerLvl)
     },
     onError: (error) => {
       console.error(`SUBSCRIPTION_INDEXER_LVL query error: `, error)
       bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+
+      if (action) {
+        hideToasterMessage(action.toasterId)
+        setAction(null)
+      }
     },
   })
 
