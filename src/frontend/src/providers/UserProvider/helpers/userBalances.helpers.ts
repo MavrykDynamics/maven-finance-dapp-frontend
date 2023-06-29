@@ -140,7 +140,6 @@ export const fetchTzktUserBalances = async ({
       ]),
       userAddress,
       tokensMetadata,
-      // dappMTokens: mTokens,
     })
 
     return normalizedTzktTokensBalances
@@ -150,6 +149,7 @@ export const fetchTzktUserBalances = async ({
   }
 }
 
+// TZKT sockets handlers
 export const openTzktWebSocket = async (): Promise<signalR.HubConnection> => {
   try {
     const tzktSocket = new signalR.HubConnectionBuilder()
@@ -161,26 +161,6 @@ export const openTzktWebSocket = async (): Promise<signalR.HubConnection> => {
     // open connection
     await tzktSocket.start()
 
-    // tzktSocket.onreconnecting((error) => {
-    //   bug(
-    //     'Connection to your token balances has lost, your balances will not be updated, reconnecting...',
-    //     'Web Sockets',
-    //   )
-    //   console.error('user balances socket reconnectig', { error })
-    // })
-
-    // tzktSocket.onreconnected(async () => {
-    //   success('Connection to your token balances has been resumed, your balances will be updated now...', 'Web Sockets')
-
-    //   if (userCtxState.userAddress) {
-    //     const fetchedTokens = await fetchTzktUserBalances({
-    //       userAddress: userCtxState.userAddress,
-    //       tokensMetadata,
-    //       mTokens,
-    //     })
-    //     updateUserTokenBalances(fetchedTokens)
-    //   }
-    // })
     return tzktSocket
   } catch (e) {
     throw new ApiError("Couldn't open tzkt socket connection")
@@ -191,15 +171,20 @@ export const attachTzktSocketsEventHandlers = ({
   userAddress,
   handleTokens,
   tzktSocket,
+  handleDisconnect,
+  handleOnReconnected,
 }: {
   userAddress: string
   handleTokens: (tokens: UserTzktTokensBalancesType) => void
   tzktSocket: signalR.HubConnection
+  handleDisconnect: (error?: Error) => void
+  handleOnReconnected: (userAddress: string) => void
 }) => {
   tzktSocket.on('token_balances', (msg) => {
     if (!msg.data) return
 
     try {
+      console.log('tzktSocket on token_balances msg', { data: msg.data })
       const tokensBalances = userTzktTokenBalancesSchema.parse(msg.data)
       handleTokens(tokensBalances)
     } catch (e) {
@@ -212,6 +197,7 @@ export const attachTzktSocketsEventHandlers = ({
     if (!msg.data) return
 
     try {
+      console.log('tzktSocket on accounts msg', { data: msg.data })
       const [{ balance, address }] = userTzktWSAccountSchema.parse(msg.data)
       handleTokens([
         {
@@ -234,4 +220,8 @@ export const attachTzktSocketsEventHandlers = ({
   tzktSocket.invoke('SubscribeToAccounts', {
     addresses: [userAddress],
   })
+
+  tzktSocket.onclose(handleDisconnect)
+  tzktSocket.onreconnecting(handleDisconnect)
+  tzktSocket.onreconnected(() => handleOnReconnected(userAddress))
 }
