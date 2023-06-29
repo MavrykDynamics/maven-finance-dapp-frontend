@@ -97,12 +97,12 @@ const Satellites = () => {
               </div>
             </SatelliteGovernanceStatsInfo>
             <SatelliteGovernanceStatsInfo>
-              <h3>Total Satellites & Oracles</h3>
-              <div className="value">{tabsInfo.totalSatelliteOracles}</div>
-            </SatelliteGovernanceStatsInfo>
-            <SatelliteGovernanceStatsInfo>
               <h3>Number of Data Feeds</h3>
               <div className="value">{tabsInfo.numberOfDataFeeds}</div>
+            </SatelliteGovernanceStatsInfo>
+            <SatelliteGovernanceStatsInfo>
+              <h3>Total Satellites & Oracles</h3>
+              <div className="value">{tabsInfo.totalSatelliteOracles}</div>
             </SatelliteGovernanceStatsInfo>
           </InfoBlockWrapper>
 
