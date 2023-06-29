@@ -1,8 +1,11 @@
+import * as signalR from '@microsoft/signalr'
+
 import {
   UserContext,
   UserTzktTokensBalancesType,
   userTzktAccountSchema,
   userTzktTokenBalancesSchema,
+  userTzktWSAccountSchema,
 } from './../user.provider.types'
 import { GetUserMvkSmvkBalanceSubscription } from 'utils/__generated__/graphql'
 import { TokenAddressType, TokensContext } from 'providers/TokensProvider/tokens.provider.types'
@@ -24,16 +27,27 @@ export const getUserTokenBalanceByAddress = ({
   return userTokensBalances[tokenAddress] ?? 0
 }
 
+export const checkIfTokensAreTzkt = (
+  tokens: UserTzktTokensBalancesType | GetUserMvkSmvkBalanceSubscription,
+): tokens is UserTzktTokensBalancesType => {
+  try {
+    userTzktTokenBalancesSchema.parse(tokens)
+    return true
+  } catch (e) {
+    return false
+  }
+}
+
 export const normalizeUserTzktTokensBalances = ({
   userAddress,
-  dappMTokens,
+  // dappMTokens,
   indexerData,
   tokensMetadata,
 }: {
   indexerData: UserTzktTokensBalancesType
   tokensMetadata: TokensContext['tokensMetadata']
   userAddress: string | null
-  dappMTokens: TokensContext['mTokens']
+  // dappMTokens: TokensContext['mTokens']
 }) => {
   return indexerData.reduce<NonNullable<UserContext['userTokensBalances']>>(
     (
@@ -50,7 +64,8 @@ export const normalizeUserTzktTokensBalances = ({
 
       console.log({ token, tokenAddress })
 
-      if (!token || dappMTokens.includes(tokenAddress) || userAddress !== address) return acc
+      // if (!token || dappMTokens.includes(tokenAddress) || userAddress !== address) return acc
+      if (!token || userAddress !== address) return acc
       const { decimals } = token
 
       acc[tokenAddress] = convertNumberForClient({ number: parseFloat(balance), grade: decimals })
@@ -123,7 +138,7 @@ export const fetchTzktUserBalances = async ({
       ]),
       userAddress,
       tokensMetadata,
-      dappMTokens: mTokens,
+      // dappMTokens: mTokens,
     })
 
     return normalizedTzktTokensBalances
@@ -131,4 +146,90 @@ export const fetchTzktUserBalances = async ({
     console.error(`fetchTzktUserBalances query error: `, e)
     throw new ApiError('Error occured while loading your balances, try to reload the page')
   }
+}
+
+export const openTzktWebSocket = async (): Promise<signalR.HubConnection> => {
+  try {
+    const tzktSocket = new signalR.HubConnectionBuilder()
+      .withUrl('https://api.ghostnet.tzkt.io/v1/ws', {
+        transport: signalR.HttpTransportType.WebSockets,
+      })
+      .build()
+
+    // open connection
+    await tzktSocket.start()
+
+    // tzktSocket.onreconnecting((error) => {
+    //   bug(
+    //     'Connection to your token balances has lost, your balances will not be updated, reconnecting...',
+    //     'Web Sockets',
+    //   )
+    //   console.error('user balances socket reconnectig', { error })
+    // })
+
+    // tzktSocket.onreconnected(async () => {
+    //   success('Connection to your token balances has been resumed, your balances will be updated now...', 'Web Sockets')
+
+    //   if (userCtxState.userAddress) {
+    //     const fetchedTokens = await fetchTzktUserBalances({
+    //       userAddress: userCtxState.userAddress,
+    //       tokensMetadata,
+    //       mTokens,
+    //     })
+    //     updateUserTokenBalances(fetchedTokens)
+    //   }
+    // })
+    return tzktSocket
+  } catch (e) {
+    throw new ApiError("Couldn't open tzkt socket connection")
+  }
+}
+
+export const attachTzktSocketsEventHandlers = ({
+  userAddress,
+  handleTokens,
+  tzktSocket,
+}: {
+  userAddress: string
+  handleTokens: (tokens: UserTzktTokensBalancesType) => void
+  tzktSocket: signalR.HubConnection
+}) => {
+  tzktSocket.on('token_balances', (msg) => {
+    if (!msg.data) return
+
+    try {
+      const tokensBalances = userTzktTokenBalancesSchema.parse(msg.data)
+      handleTokens(tokensBalances)
+    } catch (e) {
+      console.error('tzkt tokens balance parse error: ', { e, msg })
+    }
+  })
+
+  // handle xtz token balance update message
+  tzktSocket.on('accounts', (msg) => {
+    if (!msg.data) return
+
+    try {
+      const [{ balance, address }] = userTzktWSAccountSchema.parse(msg.data)
+      handleTokens([
+        {
+          token: { contract: { address: XTZ_TOKEN_ADDRESS } },
+          balance: balance.toString(),
+          account: { address },
+        },
+      ])
+    } catch (e) {
+      console.error('tzkt xtz token balance parse error: ', { e, msg })
+    }
+  })
+
+  // subscribe to account's tokens
+  tzktSocket.invoke('SubscribeToTokenBalances', {
+    account: userAddress,
+  })
+
+  // subscribe to account data to get xtz balance ):
+  tzktSocket.invoke('SubscribeToAccounts', {
+    addresses: [userAddress],
+  })
 }

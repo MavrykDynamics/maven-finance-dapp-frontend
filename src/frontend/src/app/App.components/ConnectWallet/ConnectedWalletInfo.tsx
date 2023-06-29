@@ -183,7 +183,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             const { symbol, rate, icon } = tokenMetadata
 
             return (
-              <div className="row">
+              <div className="row" key={tokenAddress}>
                 <div className="icon">
                   {icon ? <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> : <Icon id={'noImage'} />}
                 </div>
@@ -382,7 +382,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             const { symbol, rate, icon } = tokenMetadata
 
             return (
-              <div className="row">
+              <div className="row" key={tokenAddress}>
                 <div className="icon">
                   {icon ? <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> : <Icon id={'noImage'} />}
                 </div>
