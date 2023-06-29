@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 // helpers, actions, consts
 import { distinctRequestsByExecuting, getRequestStatus } from './FinancialRequests.helpers'
@@ -39,6 +39,7 @@ import {
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const FinancialRequestsView = ({
   financialRequestsIds,
@@ -51,11 +52,7 @@ export const FinancialRequestsView = ({
   const { search } = useLocation()
 
   const { tokensMetadata } = useTokensContext()
-
-  const {
-    accountPkh,
-    user: { isSatellite: isUserSatellite },
-  } = useSelector((state: State) => state.wallet)
+  const { userAddress, isSatellite: isUserSatellite } = useUserContext()
 
   // Handling lists data
   const { ongoing, past } = distinctRequestsByExecuting(financialRequestsIds, financialRequestMapper)
@@ -128,7 +125,7 @@ export const FinancialRequestsView = ({
               : { forBtn: undefined, againsBtn: undefined }
           }
           className={'fr-voting'}
-          disableVotingButtons={Boolean(rightSideContent?.votes?.find(({ voter }) => voter.address === accountPkh))}
+          disableVotingButtons={Boolean(rightSideContent?.votes?.find(({ voter }) => voter.address === userAddress))}
         />
 
         <hr />

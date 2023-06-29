@@ -44,6 +44,7 @@ import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const StageThreeForm = ({
   proposalId,
@@ -55,7 +56,7 @@ export const StageThreeForm = ({
   const { proposalPayments, locked, title } = currentProposal
 
   const { tokensMetadata } = useTokensContext()
-
+  const { isNewlyRegisteredSatellite } = useUserContext()
   const {
     maxLengths: {
       governance: { proposalMetadataTitleMaxLength },
@@ -65,8 +66,6 @@ export const StageThreeForm = ({
 
   const { treasuryStorage } = useSelector((state: State) => state.treasury)
   const treasuryTokens = useMemo(() => reduceTreasuryAssets(treasuryStorage), [treasuryStorage])
-
-  const { isNewlyRegisteredSatellite } = useSelector((state: State) => state.wallet.user)
 
   const isProposalRound = governancePhase === 'PROPOSAL'
 

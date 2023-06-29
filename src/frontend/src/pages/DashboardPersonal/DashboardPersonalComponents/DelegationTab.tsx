@@ -23,17 +23,13 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const DelegationTab = () => {
   const dispatch = useDispatch()
-  const { userTokensBalances } = useUserContext()
+  const { userTokensBalances, satelliteMvkIsDelegatedTo, availableSatellitesRewards, userAddress } = useUserContext()
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
-  const {
-    user: { satelliteMvkIsDelegatedTo, availableSatellitesRewards },
-    accountPkh,
-  } = useSelector((state: State) => state.wallet)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
-  const satelliteInfo = satelliteMapper[satelliteMvkIsDelegatedTo]
+  const satelliteInfo = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
 
   const handleDistributeRewards = () => {
     // TODO: add valid data
@@ -121,7 +117,7 @@ const DelegationTab = () => {
             </div>
             <Link to="/satellites">Satellites Overview</Link>
           </>
-        ) : userSmvkBalance === 0 && accountPkh ? (
+        ) : userSmvkBalance === 0 && userAddress ? (
           <div className="no-data">
             <span>You don't have SMVK</span>
             <div className="nav-button">
@@ -132,7 +128,7 @@ const DelegationTab = () => {
               </Link>
             </div>
           </div>
-        ) : accountPkh && userSmvkBalance ? (
+        ) : userAddress && userSmvkBalance ? (
           <div className="no-data">
             <span>You are not delegated at this time</span>
             <div className="nav-button">

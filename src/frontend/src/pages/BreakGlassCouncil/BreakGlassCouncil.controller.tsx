@@ -24,6 +24,7 @@ import {
   dropBreakGlass,
   signAction,
 } from './BreakGlassCouncil.actions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // types
 
@@ -41,11 +42,9 @@ export function BreakGlassCouncil() {
   } = useDappConfigContext()
 
   const {
-    accountPkh,
-    user: {
-      userAvatars: { breakGlassAvatar },
-    },
-  } = useSelector((state: State) => state.wallet)
+    userAddress,
+    userAvatars: { breakGlassAvatar },
+  } = useUserContext()
 
   const {
     breakGlassCouncilMembers,
@@ -88,7 +87,7 @@ export function BreakGlassCouncil() {
   // getting data after auth
   useDataLoader(
     async (isDepsChanged) => {
-      if (!accountPkh) return
+      if (!userAddress) return
 
       try {
         await Promise.all(
@@ -100,7 +99,7 @@ export function BreakGlassCouncil() {
         )
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   return (

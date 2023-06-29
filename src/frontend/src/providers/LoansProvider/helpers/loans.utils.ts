@@ -32,22 +32,3 @@ export const getDescrByType = (type: number) => {
       return null
   }
 }
-
-/**
- * getting userMToken
- * @param userMTokens list of user supplied mTokens
- * @param loanMtokenAddress address of mToken we want to get from user
- * @returns lendValue – mToken balance (including rewards), interestEarned – already earned rewards
- */
-export const getMarketUserLengingItem = (userMTokens: Array<UserMTokenType>, loanMtokenAddress: string) => {
-  const mTokenAsset = userMTokens?.find(({ tokenAddress }) => tokenAddress === loanMtokenAddress)
-
-  if (mTokenAsset) {
-    return {
-      lendValue: mTokenAsset.lendedAmount,
-      interestEarned: mTokenAsset.rewardsEarned,
-    }
-  }
-
-  return null
-}

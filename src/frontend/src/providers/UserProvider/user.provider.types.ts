@@ -1,4 +1,4 @@
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { TokenAddressType, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
 import { z } from 'zod'
 
 // useUserLoansData Types
@@ -44,6 +44,20 @@ export type UserTzktAccountType = z.infer<typeof userTzktWSAccountSchema>
 export const userTzktWSAccountSchema = z.array(userTzktAccountSchema)
 export type UserTzktWSAccountType = z.infer<typeof userTzktWSAccountSchema>
 
+export interface UserFarmRewardsData {
+  generalAccumulatedRewardsPerShare: number
+  currentRewardPerBlock: number
+  lastBlockUpdate: number
+  generalTotalRewards: number
+  generalPaidReward: number
+  generalUnpaidReward: number
+  infinite: boolean
+  totalLPTokenDeposited: number
+  myDepositedAmount: number
+  myParticipationRewardsPerShare: number
+  myAvailableFarmRewards: number
+}
+
 // Context types
 export type UserContext = {
   // user's metadata
@@ -54,7 +68,7 @@ export type UserContext = {
   isNewlyRegisteredSatellite: boolean
   govActionsCount: number
   userAvatars: {
-    mainAvatar: string | null
+    mainAvatar: string
     satelliteAvatar: string | null
     counsilAvatar: string | null
     breakGlassAvatar: string | null
@@ -71,13 +85,14 @@ export type UserContext = {
   gatheredFarmRewards: number
   gatheredSatellitesRewards: number
   gatheredDoormanRewards: number
-  // availableDoormanRewards: number
-  // availableFarmRewards: Record<string, UserFarmRewardsData>
-  // availableSatellitesRewards: number
-  // availableLoansRewards: number
+  availableDoormanRewards: number
+  availableSatellitesRewards: number
+  availableLoansRewards: number
+  availableFarmRewards: Record<string, UserFarmRewardsData>
 
   // user tokens
-  userTokensBalances: Record<TokenAddressType, number> | null
+  userTokensBalances: Record<TokenAddressType, number>
+  userMTokens: Record<TokenAddressType, UserMTokenType>
 
   isLoading: boolean
 
@@ -87,7 +102,8 @@ export type UserContext = {
   changeUser: () => void
 }
 
-export type UserContextStateType = UserMetadataType & Pick<UserContext, 'userTokensBalances' | 'userAddress'>
+export type UserContextStateType = UserMetadataType &
+  Pick<UserContext, 'userTokensBalances' | 'userMTokens' | 'userAddress' | 'availableLoansRewards'>
 
 export type UserMetadataType = Pick<
   UserContext,
@@ -101,4 +117,7 @@ export type UserMetadataType = Pick<
   | 'gatheredFarmRewards'
   | 'gatheredSatellitesRewards'
   | 'gatheredDoormanRewards'
+  | 'availableDoormanRewards'
+  | 'availableFarmRewards'
+  | 'availableSatellitesRewards'
 >

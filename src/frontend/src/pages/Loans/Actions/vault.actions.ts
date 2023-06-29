@@ -4,7 +4,6 @@ import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-o
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { updateUserData } from 'reducers/actions/user.actions'
 import { getLoansStorage } from './getLoansData.actions'
 
 import {
@@ -116,7 +115,6 @@ export const triggerInitialVaultCreation =
 
       const { value } = await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
-          await dispatch(updateUserData())
           await dispatch(getLoansStorage())
 
           const newVaultData = await fetchFromIndexer(
@@ -190,7 +188,6 @@ export const borrowVaultAssetAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(updateUserData())
             await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())
@@ -325,7 +322,6 @@ export const repayPartOfVaultAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(updateUserData())
             await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())
@@ -478,7 +474,6 @@ export const repayFullAndCloseVaultAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(updateUserData())
             await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())

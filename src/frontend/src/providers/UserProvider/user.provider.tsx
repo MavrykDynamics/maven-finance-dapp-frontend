@@ -6,7 +6,7 @@ import { ApolloError, useSubscription } from '@apollo/client'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { DEFAULT_USER } from './helpers/user.consts'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { dappClient } from 'reducers/wallet/WalletCore'
+import { dappClient } from 'providers/UserProvider/wallet/WalletCore'
 
 // context
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -15,22 +15,19 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 // helpers
 import {
   attachTzktSocketsEventHandlers,
-  checkIfTokensAreTzkt,
   fetchTzktUserBalances,
   normalizeUserIndexerTokensBalances,
   normalizeUserTzktTokensBalances,
   openTzktWebSocket,
 } from './helpers/userBalances.helpers'
-import { normalizeUserMetadata } from './helpers/userMetadata.helpers'
+import { normalizeUser } from './helpers/userMetadata.helpers'
 
 // queries
 import { SUBSCRIBE_USER_DATA } from './queries/userData.query'
-import { SUBSCRIBE_USER_MVK_SMVK_BALANCE } from './queries/userTokens.query'
 
 // types
-import { UserContext, UserContextStateType, UserMetadataType, UserTzktTokensBalancesType } from './user.provider.types'
+import { UserContext, UserContextStateType, UserTzktTokensBalancesType } from './user.provider.types'
 import { ToasterContextType } from 'providers/ToasterProvider/toaster.provider.type'
-import { GetUserMvkSmvkBalanceSubscription } from 'utils/__generated__/graphql'
 
 export const userContext = React.createContext<UserContext>(undefined!)
 
@@ -52,7 +49,7 @@ const hasUserInLocalStorage =
 // TODO: think about attaching listeners to tzktSocket & test if reopening socket will clear invoke filters
 export const UserProvider = ({ children }: Props) => {
   const { tokensMetadata, mTokens } = useTokensContext()
-  const { bug, success, info } = useToasterContext()
+  const { bug, info } = useToasterContext()
 
   const ws = useRef<null | signalR.HubConnection>(null)
 
@@ -83,28 +80,24 @@ export const UserProvider = ({ children }: Props) => {
     }
   }, [])
 
+  /**
+   * @userAddress -> address of the user need for tzkt normalization, cuz it can be subscribed to 1+ user
+   * @userTokens -> loaded tokens from tztk
+   *
+   * TODO: check whether reopen tzkt socket will cancel subscription, if yes remove 1st fn with userAddress
+   */
   const updateUserTokenBalances = useCallback(
-    (userAddress: string) => (userTokens: UserTzktTokensBalancesType | GetUserMvkSmvkBalanceSubscription) => {
-      let normalizedUserTokens: UserContext['userTokensBalances'] | null = null
-
-      if (checkIfTokensAreTzkt(userTokens)) {
-        normalizedUserTokens = normalizeUserTzktTokensBalances({
-          indexerData: userTokens,
-          userAddress,
-          tokensMetadata,
-        })
-      } else {
-        normalizedUserTokens = normalizeUserIndexerTokensBalances({
-          indexerData: userTokens,
-          tokensMetadata,
-        })
-      }
-
+    (userAddress: string) => (userTokens: UserTzktTokensBalancesType) => {
+      const normalizedTzktUserTokens = normalizeUserTzktTokensBalances({
+        indexerData: userTokens,
+        userAddress,
+        tokensMetadata,
+      })
       setUserCtxState((prev) => ({
         ...prev,
         userTokensBalances: {
           ...userCtxState.userTokensBalances,
-          ...normalizedUserTokens,
+          ...normalizedTzktUserTokens,
         },
       }))
     },
@@ -123,7 +116,6 @@ export const UserProvider = ({ children }: Props) => {
       const fetchedTokens = await fetchTzktUserBalances({
         userAddress,
         tokensMetadata,
-        mTokens,
       })
 
       setUserCtxState((prev) => ({
@@ -171,21 +163,7 @@ export const UserProvider = ({ children }: Props) => {
     }
   }, [canStartUserInitialLoading, connect])
 
-  // subscribe to user's balances for tokens, that can be indexed by indexer
-  const { loading: userBalancesFromIndexerLoading } = useSubscription(SUBSCRIBE_USER_MVK_SMVK_BALANCE, {
-    skip: !userCtxState.userAddress,
-    variables: {
-      userAddress: userCtxState.userAddress,
-    },
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data || !userCtxState.userAddress) return
-      updateUserTokenBalances(userCtxState.userAddress)(data)
-    },
-    onError: (e) => handleSubError(e, bug),
-  })
-
-  // subscribe to user's metadata
+  // subscribe to user's indexer data
   const { loading: userDataLoading } = useSubscription(SUBSCRIBE_USER_DATA, {
     skip: !userCtxState.userAddress,
     variables: {
@@ -194,10 +172,20 @@ export const UserProvider = ({ children }: Props) => {
     shouldResubscribe: true,
     onData: ({ data: { data } }) => {
       if (!data) return
-      const normalizedUserMetadata = normalizeUserMetadata({ indexerData: data })
+      const { tokensBalances, availableLoansRewards, userMTokens } = normalizeUserIndexerTokensBalances({
+        indexerData: data,
+        tokensMetadata,
+      })
+      const normalizedUserData = normalizeUser({ indexerData: data })
       setUserCtxState((prev) => ({
         ...prev,
-        ...normalizedUserMetadata,
+        userTokensBalances: {
+          ...prev.userTokensBalances,
+          ...tokensBalances,
+        },
+        ...normalizedUserData,
+        availableLoansRewards,
+        userMTokens,
       }))
     },
     onError: (e) => handleSubError(e, bug),
@@ -248,20 +236,12 @@ export const UserProvider = ({ children }: Props) => {
   const providerValue = useMemo(
     () => ({
       ...userCtxState,
-      isLoading: userBalancesFromIndexerLoading || userDataLoading || isTzktBalancesLoading,
+      isLoading: userDataLoading || isTzktBalancesLoading,
       connect,
       signOut,
       changeUser,
     }),
-    [
-      connect,
-      signOut,
-      changeUser,
-      userBalancesFromIndexerLoading,
-      userCtxState,
-      userDataLoading,
-      isTzktBalancesLoading,
-    ],
+    [connect, signOut, changeUser, userCtxState, userDataLoading, isTzktBalancesLoading],
   )
 
   return <userContext.Provider value={providerValue}>{children}</userContext.Provider>

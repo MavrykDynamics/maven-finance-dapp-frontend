@@ -26,8 +26,6 @@ import {
   SATELLITE_CONFIG_QUERY_NAME,
   SATELLITE_CONFIG_QUERY_VARIABLE,
 } from 'gql/queries'
-import { updateUserData } from 'reducers/actions/user.actions'
-import { SMVK_TOKEN_ADDRESS, MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const GET_SATELLITES_STORAGE = 'GET_SATELLITES_STORAGE'
 export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -124,7 +122,6 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(getSatellitesStorage())
-          await dispatch(updateUserData())
 
           // Add here call for update data actions
           await dispatch(hideToaster())
@@ -180,7 +177,6 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(getSatellitesStorage())
-          await dispatch(updateUserData())
 
           // Add here call for update data actions
           await dispatch(hideToaster())
@@ -237,7 +233,6 @@ export const distributeProposalRewards =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(getSatellitesStorage())
-            await dispatch(updateUserData())
 
             // Add here call for update data actions
             await dispatch(hideToaster())

@@ -11,12 +11,12 @@ import {
 import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { updateUserData } from 'reducers/actions/user.actions'
 
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 import { State } from 'reducers'
 import type { AppDispatch, GetState } from '../../app/App.controller'
 
+// TODO: move to context action flow
 export const rewardsCompound = (address: string) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
@@ -52,8 +52,6 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
       // refetch data we need
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
-          await dispatch(updateUserData())
-
           // Add here call for update data actions
           await dispatch(hideToaster())
           await dispatch(showToaster(TOASTER_SUCCESS, 'Compounding done', ACTION_COMPLETION_MESSAGE_TEXT))

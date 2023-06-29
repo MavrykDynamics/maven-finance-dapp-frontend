@@ -43,11 +43,9 @@ const SatelliteNodes = () => {
   const { pathname, search } = useLocation()
 
   const { userTokensBalances } = useUserContext()
+  const { isSatellite } = useUserContext()
 
   const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
-  const {
-    user: { isSatellite },
-  } = useSelector((state: State) => state.wallet)
 
   const [filteredSatelliteList, setFilteredSatelliteList] = useState(allSatellitesIds)
   const [ddIsOpen, setDdIsOpen] = useState(false)

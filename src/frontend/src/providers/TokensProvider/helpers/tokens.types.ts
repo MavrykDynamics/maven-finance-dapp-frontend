@@ -10,3 +10,7 @@ export const tokenMetadataSchema = z.object({
   symbol: z.string(),
   decimals: z.string(),
 })
+
+export const mTokenMetadataSchema = z.object({
+  decimals: z.string(),
+})

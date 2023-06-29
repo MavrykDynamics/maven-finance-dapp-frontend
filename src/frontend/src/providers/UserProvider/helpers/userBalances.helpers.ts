@@ -7,14 +7,15 @@ import {
   userTzktTokenBalancesSchema,
   userTzktWSAccountSchema,
 } from './../user.provider.types'
-import { GetUserMvkSmvkBalanceSubscription } from 'utils/__generated__/graphql'
-import { TokenAddressType, TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+import { GetUserDataSubscription } from 'utils/__generated__/graphql'
+import { TokenAddressType, TokensContext, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
 
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { MVK_DECIMALS, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 import { api } from 'utils/api/api'
 import { ApiError } from 'errors/error'
+import { mTokenMetadataSchema } from 'providers/TokensProvider/helpers/tokens.types'
 
 export const getUserTokenBalanceByAddress = ({
   userTokensBalances,
@@ -27,27 +28,14 @@ export const getUserTokenBalanceByAddress = ({
   return userTokensBalances[tokenAddress] ?? 0
 }
 
-export const checkIfTokensAreTzkt = (
-  tokens: UserTzktTokensBalancesType | GetUserMvkSmvkBalanceSubscription,
-): tokens is UserTzktTokensBalancesType => {
-  try {
-    userTzktTokenBalancesSchema.parse(tokens)
-    return true
-  } catch (e) {
-    return false
-  }
-}
-
 export const normalizeUserTzktTokensBalances = ({
   userAddress,
-  // dappMTokens,
   indexerData,
   tokensMetadata,
 }: {
   indexerData: UserTzktTokensBalancesType
   tokensMetadata: TokensContext['tokensMetadata']
   userAddress: string | null
-  // dappMTokens: TokensContext['mTokens']
 }) => {
   return indexerData.reduce<NonNullable<UserContext['userTokensBalances']>>(
     (
@@ -64,7 +52,6 @@ export const normalizeUserTzktTokensBalances = ({
 
       console.log({ token, tokenAddress })
 
-      // if (!token || dappMTokens.includes(tokenAddress) || userAddress !== address) return acc
       if (!token || userAddress !== address) return acc
       const { decimals } = token
 
@@ -79,48 +66,63 @@ export const normalizeUserIndexerTokensBalances = ({
   indexerData,
   tokensMetadata,
 }: {
-  indexerData: GetUserMvkSmvkBalanceSubscription
+  indexerData: GetUserDataSubscription
   tokensMetadata: TokensContext['tokensMetadata']
-}): Record<TokenAddressType, number> => {
+}) => {
   const { smvk_balance, mvk_balance, mvk_transfer_receiver, mvk_transfer_sender, m_token_accounts } =
     indexerData.mavryk_user[0]
 
   // TODO: find a way to 100% have mvk token address here
   const mvkTokenAddress = mvk_transfer_receiver[0]?.mvk_token.address ?? mvk_transfer_sender[0]?.mvk_token.address
 
-  const mTokenBalances = m_token_accounts.reduce<NonNullable<UserContext['userTokensBalances']>>(
-    (acc, { balance, m_token: { address } }) => {
-      const mToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: address })
+  const { mTokenBalances, userMTokens, availableLoansRewards } = m_token_accounts.reduce<{
+    mTokenBalances: NonNullable<UserContext['userTokensBalances']>
+    userMTokens: Record<TokenAddressType, UserMTokenType>
+    availableLoansRewards: 0
+  }>(
+    (acc, { balance, rewards_earned, m_token: { address, metadata } }) => {
+      try {
+        const { decimals: interestRateDecimals } = mTokenMetadataSchema.parse(metadata)
+        const mToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: address })
+        if (!mToken) throw new Error(`token is not whitelisted for DAPP: ${{ address }}`)
 
-      if (!mToken) return acc
+        const mTokenBalance = convertNumberForClient({ number: balance, grade: mToken.decimals })
+        const mTokenInterestEarned = convertNumberForClient({ number: rewards_earned, grade: +interestRateDecimals })
 
-      const { decimals } = mToken
-
-      // TODO: should mToken balance include rewards?
-      acc[address] = convertNumberForClient({ number: balance, grade: decimals })
-
-      return acc
+        acc.mTokenBalances[address] = mTokenBalance
+        acc.userMTokens[address] = {
+          lendValue: mTokenBalance,
+          interestEarned: mTokenInterestEarned,
+        }
+        acc.availableLoansRewards += mTokenInterestEarned
+      } catch (e) {
+        console.error('normalize user mTokens error: ', { e })
+      } finally {
+        return acc
+      }
     },
-    {},
+    { mTokenBalances: {}, userMTokens: {}, availableLoansRewards: 0 },
   )
 
   return {
-    ...(mvkTokenAddress
-      ? { [mvkTokenAddress]: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }) }
-      : {}),
-    [SMVK_TOKEN_ADDRESS]: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
-    ...mTokenBalances,
+    tokensBalances: {
+      ...(mvkTokenAddress
+        ? { [mvkTokenAddress]: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }) }
+        : {}),
+      [SMVK_TOKEN_ADDRESS]: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
+      ...mTokenBalances,
+    },
+    userMTokens,
+    availableLoansRewards,
   }
 }
 
 export const fetchTzktUserBalances = async ({
   userAddress,
-  mTokens,
   tokensMetadata,
 }: {
   tokensMetadata: TokensContext['tokensMetadata']
   userAddress: string
-  mTokens: TokensContext['mTokens']
 }) => {
   try {
     const [{ data: tokensData }, { data: xtxData }] = await Promise.all([

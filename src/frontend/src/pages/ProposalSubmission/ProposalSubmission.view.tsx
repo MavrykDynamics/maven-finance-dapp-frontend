@@ -53,17 +53,15 @@ import {
 import { getBytesDiff, getPaymentsDiff } from './ProposalSubmission.helpers'
 import { dropProposal, lockProposal, submitProposal, updateProposalData } from './ProposalSubmission.actions'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const dispatch = useDispatch()
   const history = useHistory()
 
   const { tokensMetadata } = useTokensContext()
+  const { userAddress, isNewlyRegisteredSatellite } = useUserContext()
 
-  const {
-    accountPkh,
-    user: { isNewlyRegisteredSatellite },
-  } = useSelector((state: State) => state.wallet)
   const {
     currentRoundProposalsIds,
     proposalsMapper,
@@ -78,7 +76,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   // this object represents ds we can use with stages, to interact with in tables, inputs, etc
   const [proposalKeys, mappedProposals, mappedValidation] = useMemo(() => {
     const { keys, mapper, validityObj } = currentRoundProposalsIds
-      .filter((proposalId) => proposalsMapper[proposalId].proposerId === accountPkh)
+      .filter((proposalId) => proposalsMapper[proposalId].proposerId === userAddress)
       .reduce<SubmittedProposalsMapper>(
         (acc, proposalId) => {
           const proposal = proposalsMapper[proposalId]
@@ -112,7 +110,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       ]
     }
     return [keys, mapper, validityObj]
-  }, [accountPkh, currentRoundProposalsIds, proposalsMapper])
+  }, [userAddress, currentRoundProposalsIds, proposalsMapper])
 
   // mapping user created proposals to tabs buttons data
   const usersProposalsToSwitch = useMemo(

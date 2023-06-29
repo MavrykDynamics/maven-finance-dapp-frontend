@@ -79,20 +79,17 @@ export const StakeUnstakeView = ({
 }: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
-  const { userTokensBalances } = useUserContext()
+  const {
+    userTokensBalances,
+    userAddress,
+    availableDoormanRewards,
+    availableSatellitesRewards,
+    availableFarmRewards,
+    satelliteMvkIsDelegatedTo,
+    isSatellite,
+  } = useUserContext()
   const { setAction } = useDappConfigContext()
   const { info, loading, bug } = useToasterContext()
-
-  const {
-    accountPkh,
-    user: {
-      availableDoormanRewards,
-      availableSatellitesRewards,
-      availableFarmRewards,
-      satelliteMvkIsDelegatedTo,
-      isSatellite,
-    },
-  } = useSelector((state: State) => state.wallet)
 
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -103,7 +100,7 @@ export const StakeUnstakeView = ({
     mvkTokenAddress: { address: mvkTokenAddress },
   } = useSelector((state: State) => state.contractAddresses)
 
-  const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
+  const delegatedUser = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
   const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
     myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
 
@@ -128,7 +125,7 @@ export const StakeUnstakeView = ({
       amount: Number(value),
       myMvkTokenBalance,
       mySMvkTokenBalance,
-      accountPkh,
+      userAddress,
     })
 
     setInputData({ ...inputData, amount: value, validation: validationStatus })
@@ -157,7 +154,7 @@ export const StakeUnstakeView = ({
       })
     }
 
-    if (!accountPkh) {
+    if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return
     }
@@ -172,7 +169,7 @@ export const StakeUnstakeView = ({
       errorMessage: '',
     })
 
-    const actionResult = await stakeMVK(stakeAmount, accountPkh, doormanAddress, mvkTokenAddress)
+    const actionResult = await stakeMVK(stakeAmount, userAddress, doormanAddress, mvkTokenAddress)
 
     if (checkIfActionSuccess(actionResult)) {
       try {
@@ -220,8 +217,8 @@ export const StakeUnstakeView = ({
   }
 
   const handleCompound = async () => {
-    if (accountPkh) {
-      await dispatch(rewardsCompound(accountPkh))
+    if (userAddress) {
+      await dispatch(rewardsCompound(userAddress))
     }
   }
 
@@ -295,9 +292,9 @@ export const StakeUnstakeView = ({
                 onClick={handleDelegate}
                 kind={BUTTON_PRIMARY}
                 form={BUTTON_WIDE}
-                disabled={!accountPkh || isActionActive}
+                disabled={!userAddress || isActionActive}
                 isThin
-                animation={accountPkh ? BUTTON_PULSE : null}
+                animation={userAddress ? BUTTON_PULSE : null}
               >
                 <Icon id="satellites" />
                 Delegate

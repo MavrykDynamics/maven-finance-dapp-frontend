@@ -26,7 +26,6 @@ import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLev
 // actions
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { hideToaster, showToaster } from '../../app/App.components/Toaster/Toaster.actions'
-import { updateUserData } from 'reducers/actions/user.actions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 
@@ -124,7 +123,6 @@ export const harvest =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(updateUserData())
             await dispatch(getFarmStorage(tokens))
 
             await dispatch(hideToaster())
@@ -187,7 +185,6 @@ export const deposit =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(updateUserData())
             await dispatch(getFarmStorage(tokens))
 
             await dispatch(hideToaster())
@@ -250,7 +247,6 @@ export const withdraw =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(updateUserData())
             await dispatch(getFarmStorage(tokens))
 
             await dispatch(hideToaster())

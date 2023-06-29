@@ -13,8 +13,8 @@ import { LendingTabActionsSection } from './LendingTabSections/LendingTabActions
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type LendingTabPropsType = {
   loanTokenAddress: TokenAddressType
@@ -24,14 +24,11 @@ type LendingTabPropsType = {
 
 export const LendingTab = ({ loanTokenAddress, loanMtokenAddress, lendAPY }: LendingTabPropsType) => {
   const { openAddLendingAssetPopup } = useLoansPopupsContext()
+  const { userMTokens, userAddress } = useUserContext()
 
-  const {
-    accountPkh,
-    user: { userMTokens },
-  } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  const lendingItem = getMarketUserLengingItem(userMTokens, loanMtokenAddress)
+  const lendingItem = userMTokens[loanMtokenAddress]
 
   return (
     <LendingTabStyled>
@@ -48,7 +45,7 @@ export const LendingTab = ({ loanTokenAddress, loanMtokenAddress, lendAPY }: Len
             <Button
               kind={BUTTON_PRIMARY}
               form={BUTTON_WIDE}
-              disabled={!Boolean(accountPkh) || isActionActive}
+              disabled={!Boolean(userAddress) || isActionActive}
               onClick={() =>
                 openAddLendingAssetPopup({
                   mBalance: 0,
@@ -64,11 +61,11 @@ export const LendingTab = ({ loanTokenAddress, loanMtokenAddress, lendAPY }: Len
         </NoItemsInTabStyled>
       )}
 
-      {accountPkh && (
+      {userAddress && (
         <TransactionHistory
           loanTokenAddress={loanTokenAddress}
           filterByDescriptions={[0, 1]}
-          userAddress={accountPkh}
+          userAddress={userAddress}
           styleType={SECONDARY_TRANSACTION_HISTORY_STYLE}
         />
       )}

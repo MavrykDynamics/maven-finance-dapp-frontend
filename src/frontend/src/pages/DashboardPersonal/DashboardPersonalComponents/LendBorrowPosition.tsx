@@ -17,10 +17,10 @@ import colors from 'styles/colors'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const LendBorrowPosition = ({
   markets,
@@ -33,13 +33,12 @@ export const LendBorrowPosition = ({
   totalUserBorrowed: number
   totalUserLended: number
   userVaultsData: UserLoansDataStateType['userVaultsData']
-  userLoansRewards: State['wallet']['user']['availableLoansRewards']
+  userLoansRewards: number
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userMTokens } = useUserContext()
+
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const {
-    user: { userMTokens },
-  } = useSelector((state: State) => state.wallet)
 
   // calc data for gauge chart
   const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {
@@ -62,7 +61,7 @@ export const LendBorrowPosition = ({
 
           const { decimals, rate } = token
 
-          const { lendValue = 0 } = getMarketUserLengingItem(userMTokens, loanMTokenAddress) ?? {}
+          const { lendValue = 0 } = userMTokens[loanMTokenAddress] ?? {}
 
           const conveterLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
 

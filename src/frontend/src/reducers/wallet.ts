@@ -1,92 +1,22 @@
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import type { UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
-import { UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
 
 import { DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { UPDATE_USER_DATA } from './actions/user.actions'
 
-export interface UserState {
-  userMTokens: Array<UserMTokenType>
-
-  satelliteMvkIsDelegatedTo: string
-  isLoaded: boolean
-  isSatellite: boolean
-  isVestee: boolean
-  isNewlyRegisteredSatellite: boolean
-  govActionsCount: number
-
-  // user rewards
-  gatheredFarmRewards: number
-  gatheredSatellitesRewards: number
-  gatheredDoormanRewards: number
-  availableDoormanRewards: number
-  availableFarmRewards: Record<string, UserFarmRewardsData>
-  availableSatellitesRewards: number
-  availableLoansRewards: number
-
-  userAvatars: {
-    mainAvatar: string | null
-    satelliteAvatar: string | null
-    counsilAvatar: string | null
-    breakGlassAvatar: string | null
-  }
-
-  // user's actions history
-  actionsHistory: Array<{
-    action: string
-    amount: number
-    totalAmount: number
-    fee: number
-    id: number
-  }>
-}
+export const SET_REDUX_USER = 'SET_REDUX_USER'
 
 export interface WalletState {
   accountPkh?: string
-  user: UserState
-}
-
-export const DEFAULT_USER: UserState = {
-  userMTokens: [],
-
-  satelliteMvkIsDelegatedTo: '',
-  isLoaded: false,
-  isSatellite: false,
-  isVestee: false,
-  isNewlyRegisteredSatellite: false,
-  govActionsCount: 0,
-
-  availableLoansRewards: 0,
-  availableDoormanRewards: 0,
-  availableSatellitesRewards: 0,
-  availableFarmRewards: {},
-
-  gatheredFarmRewards: 0,
-  gatheredSatellitesRewards: 0,
-  gatheredDoormanRewards: 0,
-
-  userAvatars: {
-    mainAvatar: null,
-    satelliteAvatar: null,
-    counsilAvatar: null,
-    breakGlassAvatar: null,
-  },
-
-  actionsHistory: [],
 }
 
 export const walletDefaultState: WalletState = {
   accountPkh: undefined,
-  user: DEFAULT_USER,
 }
 
 export function wallet(state = walletDefaultState, action: Action) {
   switch (action.type) {
-    case UPDATE_USER_DATA:
+    case SET_REDUX_USER:
       return {
-        ...state,
         accountPkh: action.accountPkh,
-        user: { ...action.userData, isLoaded: true },
       }
     case DISCONNECT:
       return {

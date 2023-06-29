@@ -22,6 +22,7 @@ import { containSpaces } from 'app/App.utils/input'
 import { Info } from 'app/App.components/Info/Info.view'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const StageOneForm = ({
   proposalId,
@@ -35,11 +36,9 @@ export const StageOneForm = ({
       governance: { proposalTitleMaxLength, proposalDescriptionMaxLength, proposalSourceCodeMaxLength },
     },
   } = useDappConfigContext()
-  const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
+  const { isNewlyRegisteredSatellite } = useUserContext()
 
-  const {
-    user: { isNewlyRegisteredSatellite },
-  } = useSelector((state: State) => state.wallet)
+  const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
 
   const isProposalSubmitted = proposalId >= 0
   const isProposalPeriod = governancePhase === 'PROPOSAL'

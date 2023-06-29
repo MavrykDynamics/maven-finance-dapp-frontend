@@ -3,6 +3,9 @@ import { Redirect, Route, Switch, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
+// context
+import { useUserContext } from 'providers/UserProvider/user.provider'
+
 // pages
 import { Admin } from '../../../pages/Admin/Admin.controller'
 import { BecomeSatellite } from '../../../pages/BecomeSatellite/BecomeSatellite.controller'
@@ -40,7 +43,9 @@ import ProtectedRoute from './ProtectedRoute'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
-  const { accountPkh, user: { isSatellite } = {} } = useSelector((state: State) => state.wallet)
+
+  const { userAddress, isSatellite } = useUserContext()
+
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
 
   // get origin pathname
@@ -126,7 +131,7 @@ export const AppRoutes = () => {
       <ProtectedRoute
         path="/submit-proposal"
         component={ProposalSubmission}
-        isAuthorized={Boolean(accountPkh)}
+        isAuthorized={Boolean(userAddress)}
         canCheck={!isInitialDataLoading}
         hasAccess={Boolean(isSatellite)}
         redirectPath={'/governance'}

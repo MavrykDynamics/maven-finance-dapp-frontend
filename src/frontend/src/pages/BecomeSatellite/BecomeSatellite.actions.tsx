@@ -17,11 +17,11 @@ import {
 import { State } from 'reducers'
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 import type { AppDispatch, GetState } from '../../app/App.controller'
-import { updateUserData } from 'reducers/actions/user.actions'
 import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
 
 export const registerAsSatellite =
-  (form: RegisterAsSatelliteForm) => async (dispatch: AppDispatch, getState: GetState) => {
+  (form: RegisterAsSatelliteForm, userDelegatedToAddress: string | null) =>
+  async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
@@ -30,7 +30,6 @@ export const registerAsSatellite =
     }
 
     try {
-      const userDelegatedToAddress = state.wallet.user.satelliteMvkIsDelegatedTo
       // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
@@ -87,7 +86,6 @@ export const registerAsSatellite =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(getSatellitesStorage())
-            await dispatch(updateUserData())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Satellite Registered.', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -152,7 +150,6 @@ export const updateSatelliteRecord =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(getSatellitesStorage())
-            await dispatch(updateUserData())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Satellite record updated.', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -208,7 +205,6 @@ export const unregisterAsSatellite = (closePopup: () => void) => async (dispatch
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(getSatellitesStorage())
-          await dispatch(updateUserData())
 
           await dispatch(hideToaster())
           await dispatch(

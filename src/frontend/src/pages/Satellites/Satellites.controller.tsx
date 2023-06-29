@@ -41,15 +41,12 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const Satellites = () => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
-  const { userTokensBalances } = useUserContext()
+  const { userTokensBalances, isSatellite } = useUserContext()
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
+
   const dispatch = useDispatch()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
-
-  const {
-    user: { isSatellite },
-  } = useSelector((state: State) => state.wallet)
 
   useEffect(() => {
     changeStakingSubscriptionsList({

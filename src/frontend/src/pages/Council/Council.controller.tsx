@@ -24,6 +24,7 @@ import {
   dropRequest,
   sign,
 } from './Council.actions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // types
 
@@ -41,11 +42,10 @@ export const Council = () => {
   } = useDappConfigContext()
 
   const {
-    accountPkh,
-    user: {
-      userAvatars: { counsilAvatar },
-    },
-  } = useSelector((state: State) => state.wallet)
+    userAddress,
+    userAvatars: { counsilAvatar },
+  } = useUserContext()
+
   const {
     councilMembers,
     councilActions: {
@@ -83,7 +83,7 @@ export const Council = () => {
 
   useDataLoader(
     async (isDepsChanged) => {
-      if (!accountPkh) return
+      if (!userAddress) return
 
       try {
         await Promise.all(
@@ -94,7 +94,7 @@ export const Council = () => {
         )
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   return (

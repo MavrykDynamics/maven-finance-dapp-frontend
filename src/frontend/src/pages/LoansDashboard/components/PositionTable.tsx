@@ -26,11 +26,11 @@ import { PositionTableStyled } from '../LoansDashboard.styles'
 import { getGaugeVaultRiskSimpleStatus } from '../helpers/position.helpers'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
-import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const LoansPositionTable = ({
   markets,
@@ -41,12 +41,9 @@ export const LoansPositionTable = ({
 }) => {
   const { openCreateVaultPopup, openAddLendingAssetPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userAddress, userMTokens } = useUserContext()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const {
-    accountPkh,
-    user: { userMTokens },
-  } = useSelector((state: State) => state.wallet)
 
   const { search, pathname } = useLocation()
   const currentPage = getPageNumber(search, LOANS_POSITION_TABLE)
@@ -97,11 +94,11 @@ export const LoansPositionTable = ({
               </TableRow>
             </TableHeader>
 
-            {accountPkh ? (
+            {userAddress ? (
               <TableBody className={`treasury dashboard-loans-table`}>
                 {paginatedTableRows.map(
                   ({ loanMTokenAddress, loanTokenAddress, borrowAPR, lendingAPY, availableLiquidity }) => {
-                    const lendingItem = getMarketUserLengingItem(userMTokens, loanMTokenAddress)
+                    const lendingItem = userMTokens[loanMTokenAddress]
 
                     const loanToken = getTokenDataByAddress({
                       tokenAddress: loanTokenAddress,
@@ -220,7 +217,7 @@ export const LoansPositionTable = ({
             )}
           </Table>
 
-          {accountPkh ? null : (
+          {userAddress ? null : (
             <div className="not-connected">
               <ConnectWalletBtn />
             </div>

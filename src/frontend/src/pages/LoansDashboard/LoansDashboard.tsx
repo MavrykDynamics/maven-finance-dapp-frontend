@@ -26,10 +26,10 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24hDiff'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
-import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export type GaugeChartStateType = {
   maxValue: number
@@ -58,20 +58,17 @@ export const LoansDashboard = () => {
   const dispatch = useDispatch()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const {
+    userAddress,
+    availableLoansRewards,
+    userAvatars: { mainAvatar },
+    userMTokens,
+  } = useUserContext()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isDataLoaded: isLoansLoaded, loanTokens } = useSelector((state: State) => state.loans)
 
   const { lending24hPersentChange, borrowing24hPersentChange } = useLendBorrow24hDiff()
-
-  const {
-    accountPkh,
-    user: {
-      availableLoansRewards,
-      userMTokens,
-      userAvatars: { mainAvatar },
-    },
-  } = useSelector((state: State) => state.wallet)
 
   const { totalBorrowed, totalLended } = loanTokens.reduce<{
     totalLended: number
@@ -101,7 +98,7 @@ export const LoansDashboard = () => {
         }
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   const {
@@ -109,7 +106,7 @@ export const LoansDashboard = () => {
     userVaultsData,
     totalUserBorrowed,
     totalUserLended,
-  } = useUserLoansData({ userAddress: accountPkh })
+  } = useUserLoansData({ userAddress })
 
   // calc data for gauge chart
   const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {
@@ -130,7 +127,7 @@ export const LoansDashboard = () => {
 
           let borrowedPerMarket = 0
 
-          const { lendValue } = getMarketUserLengingItem(userMTokens, loanMTokenAddress) ?? { lendValue: 0 }
+          const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
 
           const { decimals, rate } = token
 
@@ -158,9 +155,9 @@ export const LoansDashboard = () => {
         },
       )
 
-    const vaultRiskValue = !accountPkh || !borrowCapacity ? 0 : (borrowedAmount / borrowCapacity) * 100
+    const vaultRiskValue = !userAddress || !borrowCapacity ? 0 : (borrowedAmount / borrowCapacity) * 100
     const apyNet =
-      !accountPkh || !totalSuppliedValue ? 0 : (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue
+      !userAddress || !totalSuppliedValue ? 0 : (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue
 
     return {
       vaultRiskGaugeData: {
@@ -173,7 +170,7 @@ export const LoansDashboard = () => {
         currentValue: apyNet,
       },
     }
-  }, [loanTokens, accountPkh, userMTokens, tokensMetadata, tokensPrices, userVaultsData])
+  }, [loanTokens, userAddress, userMTokens, tokensMetadata, tokensPrices, userVaultsData])
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
@@ -297,7 +294,7 @@ export const LoansDashboard = () => {
             <LBHInfoBlock className="position">
               <H2Title>Your Positions</H2Title>
               <div className="view-markets">
-                {accountPkh ? (
+                {userAddress ? (
                   <Link to={'/loans'}>
                     <Button kind={BUTTON_PRIMARY} size={BUTTON_LARGE}>
                       View Markets

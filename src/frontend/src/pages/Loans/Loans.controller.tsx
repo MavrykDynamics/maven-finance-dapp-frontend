@@ -35,9 +35,9 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -65,6 +65,7 @@ export const Loans = () => {
   })
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userAddress, userMTokens } = useUserContext()
 
   const {
     isDataLoaded,
@@ -73,10 +74,6 @@ export const Loans = () => {
   } = useSelector((state: State) => state.loans)
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const {
-    accountPkh,
-    user: { userMTokens },
-  } = useSelector((state: State) => state.wallet)
 
   const { totalBorrowed, totalLended } = loanTokens.reduce<{
     totalLended: number
@@ -107,7 +104,7 @@ export const Loans = () => {
         }
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   useEffect(() => {
@@ -190,7 +187,7 @@ export const Loans = () => {
 
               if (!loanToken || !loanToken.rate) return null
 
-              const { interestEarned: totalFeesEarned } = getMarketUserLengingItem(userMTokens, loanMTokenAddress) ?? {
+              const { interestEarned } = userMTokens[loanMTokenAddress] ?? {
                 interestEarned: 0,
               }
 
@@ -271,7 +268,7 @@ export const Loans = () => {
                       <ThreeLevelListItem>
                         <div className="name">Total Earned</div>
                         <CommaNumber
-                          value={convertNumberForClient({ number: totalFeesEarned, grade: decimals })}
+                          value={convertNumberForClient({ number: interestEarned, grade: decimals })}
                           className="value"
                           beginningText="$"
                         />

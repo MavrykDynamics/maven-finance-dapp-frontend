@@ -34,12 +34,11 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   const history = useHistory()
 
   const { tokensPrices, tokensMetadata } = useTokensContext()
-  const { userTokensBalances, signOut, changeUser } = useUserContext()
+  const { userAddress, userTokensBalances, signOut, changeUser } = useUserContext()
 
   const mvkTokenRate = tokensPrices[MVK_TOKEN_SYMBOL]
   const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
     mvkTokenAddress: { address: mvkTokenAddress },
   } = useSelector((state: State) => state.contractAddresses)
@@ -66,7 +65,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   const closeDetailsHandler = () => setDetailsShown(false)
   const mouseOverHanlder = () => setDetailsShown(true)
 
-  if (!accountPkh || !userTokensBalances) return null
+  if (!userAddress || !userTokensBalances) return null
 
   const userTokens = Object.keys(userTokensBalances)
 
@@ -78,15 +77,15 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
         onMouseLeave={closeDetailsHandler}
       >
         <Icon id="wallet" className="wallet" />
-        <TzAddress tzAddress={accountPkh} hasIcon={false} shouldCopy={false} />
+        <TzAddress tzAddress={userAddress} hasIcon={false} shouldCopy={false} />
         <Icon id="paginationArrowLeft" className="end-icon" />
       </WalletDetailsVisiblePart>
 
       <WalletDetailsHiddenPart isShown={detailsShown}>
         <div className="top">
           <Icon id="wallet" />
-          <TzAddress tzAddress={accountPkh} type={BLUE} />
-          <a href={`https://ghost.tzstats.com/${accountPkh}`} target="_blank" rel="noreferrer">
+          <TzAddress tzAddress={userAddress} type={BLUE} />
+          <a href={`https://ghost.tzstats.com/${userAddress}`} target="_blank" rel="noreferrer">
             <Icon id="send" className="icon-send" />
           </a>
         </div>
@@ -226,12 +225,11 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
   const history = useHistory()
 
   const { tokensPrices, tokensMetadata } = useTokensContext()
-  const { userTokensBalances, signOut, changeUser } = useUserContext()
+  const { userAddress, userTokensBalances, signOut, changeUser } = useUserContext()
 
   const mvkTokenRate = tokensPrices[MVK_TOKEN_SYMBOL]
   const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
     mvkTokenAddress: { address: mvkTokenAddress },
   } = useSelector((state: State) => state.contractAddresses)
@@ -261,7 +259,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
   }
   const clickHander = () => setDetailsShown(!detailsShown)
 
-  if (!accountPkh || !userTokensBalances) return null
+  if (!userAddress || !userTokensBalances) return null
 
   const userTokens = Object.keys(userTokensBalances)
 
@@ -269,7 +267,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
     <MobileWalletDetailsStyled>
       <WalletDetailsVisiblePart isShown={detailsShown} onClick={clickHander}>
         <Icon id="wallet" className="wallet" />
-        <TzAddress tzAddress={accountPkh} hasIcon={false} shouldCopy={false} />
+        <TzAddress tzAddress={userAddress} hasIcon={false} shouldCopy={false} />
         <Icon id="paginationArrowLeft" className="end-icon" />
       </WalletDetailsVisiblePart>
 
@@ -284,8 +282,8 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
         <div className="top">
           <Icon id="wallet" />
-          <TzAddress tzAddress={accountPkh} type={BLUE} />
-          <a href={`https://ghost.tzstats.com/${accountPkh}`} target="_blank" rel="noreferrer">
+          <TzAddress tzAddress={userAddress} type={BLUE} />
+          <a href={`https://ghost.tzstats.com/${userAddress}`} target="_blank" rel="noreferrer">
             <Icon id="send" className="icon-send" />
           </a>
         </div>

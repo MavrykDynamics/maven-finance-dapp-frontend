@@ -35,7 +35,6 @@ import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { updateUserData } from 'reducers/actions/user.actions'
 import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -49,7 +48,20 @@ const DashboardPersonal = () => {
   const { tabId } = useParams<{ tabId: string }>()
 
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
-  const { userTokensBalances } = useUserContext()
+  const {
+    userTokensBalances,
+    userAddress,
+    userAvatars: { mainAvatar },
+    availableDoormanRewards,
+    availableSatellitesRewards,
+    availableFarmRewards,
+    availableLoansRewards,
+    gatheredDoormanRewards,
+    gatheredFarmRewards,
+    gatheredSatellitesRewards,
+    isSatellite,
+    isVestee,
+  } = useUserContext()
 
   const {
     mvkTokenAddress: { address: mvkTokenAddress },
@@ -60,22 +72,6 @@ const DashboardPersonal = () => {
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
-  const {
-    accountPkh,
-    user: {
-      availableDoormanRewards,
-      availableSatellitesRewards,
-      availableFarmRewards,
-      availableLoansRewards,
-      gatheredDoormanRewards,
-      gatheredFarmRewards,
-      gatheredSatellitesRewards,
-      isSatellite,
-      isVestee,
-      isLoaded: isUserDataLoaded,
-      userAvatars: { mainAvatar },
-    },
-  } = useSelector((state: State) => state.wallet)
 
   const claimRewards = async () => await dispatch(claimAllRewardsAction(tokensMetadata))
 
@@ -94,12 +90,11 @@ const DashboardPersonal = () => {
             (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
             isVestee && (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
             (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
-            (!isUserDataLoaded || isDepsChanged) && dispatch(updateUserData()),
           ].filter(Boolean),
         )
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   const rewards = {
