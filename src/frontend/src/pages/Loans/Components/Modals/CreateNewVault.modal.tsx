@@ -104,6 +104,11 @@ export const CreateNewVault = ({
 
     const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<DDItemId, DropDownCollateralAssetType>>(
       (acc, collateralData) => {
+        // TODO: remove "if" block after token data update
+        if (collateralData.gqlName === 'smvk') {
+          return acc
+        }
+
         acc[collateralData.id] = {
           ...collateralData,
           content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.name} />,
