@@ -1,14 +1,14 @@
 import classNames from 'classnames'
 import Icon from '../Icon/Icon.view'
-import { getIconForInfoTyType, infoType } from './info.constants'
+import { getIconForInfoTyType, infoType, InfoSize } from './info.constants'
 import { InfoBlock } from './info.style'
 
 type Props = {
   text: string | JSX.Element
   type: infoType
   showIcon?: boolean
-  isLarge?: boolean
   children?: React.ReactNode
+  size?: InfoSize
 }
 
 // TODO: add close banner btn and store it's id in sessionStorage that it's closed
@@ -20,17 +20,17 @@ type Props = {
  * text: simple string or JSX.Element (you should use JSX when there is a need to add some colored text, timer etc.
  * NOTE: no images, buttons and other similar stuff, only text)
  * type: 'info' | 'error' | 'success
- * isLarge: boolean value to take large className for banner
  * showIcon: boolean value to show left banner icon
+ * size: 'small' | 'medium' | 'large'
  * children: React.ReactNode - element that is displayed on the right side of the banner (f.e. timer, button)
  * }
  * @returns
  */
-export const Info = ({ children, text, type, showIcon = true, isLarge = false }: Props) => {
+export const Info = ({ children, text, type, showIcon = true, size = 'medium' }: Props) => {
   const iconToUse = getIconForInfoTyType(type)
 
   const bannerClasses = classNames(type, {
-    isLarge,
+    size,
     hasBorder: showIcon,
     hasChild: Boolean(children),
   })

@@ -37,14 +37,22 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
     flex-shrink: 0;
   }
 
-  &.isLarge {
-    padding: 22px 40px;
-  }
-
   &.hasChild {
     p {
       max-width: 65%;
     }
+  }
+
+  &.small {
+    padding: 0 20px;
+  }
+
+  &.medium {
+    padding: 10px 20px;
+  }
+
+  &.large {
+    padding: 22px 40px;
   }
 
   &.hasBorder {
