@@ -245,8 +245,9 @@ export const SatelliteGovernance = () => {
 
             <SatelliteGovernanceForm
               maxLength={maxLength}
-              isActionActive={isActionActive}
+              isActionActive={isActionActive || govActionsCount >= maxActionsCount}
               variant={chosenDdItem?.id}
+
             />
           </SatelliteGovernanceAvailableActions>
         ) : null}
