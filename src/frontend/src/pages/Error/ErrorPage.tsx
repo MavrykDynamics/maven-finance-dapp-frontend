@@ -1,7 +1,7 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import NewButton from 'app/App.components/Button/NewButton'
-import { BUTTON_PRIMARY, BUTTON_ROUND } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import Icon from 'app/App.components/Icon/Icon.view'
 import {
   ErrorPageWrapper,

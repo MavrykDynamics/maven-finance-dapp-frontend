@@ -20,7 +20,6 @@ export const ErrorPageInner = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: purple;
 
   button svg {
     stroke: ${({ theme }) => theme.containerColor};

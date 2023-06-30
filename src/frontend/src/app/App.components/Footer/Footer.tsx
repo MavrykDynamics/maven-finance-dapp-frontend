@@ -1,7 +1,15 @@
+import { useLocation } from 'react-router'
 import { FooterStyled } from './Footer.styles'
 
+// consts
+
+import { notFooterRoutes } from 'consts/routes.const'
+
 export const Footer = () => {
-  return (
+  const { pathname } = useLocation()
+  const showFooter = !notFooterRoutes.includes(pathname)
+
+  return showFooter ? (
     <FooterStyled>
       <div className="powered-by">
         Powered by&nbsp;
@@ -32,5 +40,5 @@ export const Footer = () => {
         </a>
       </div>
     </FooterStyled>
-  )
+  ) : null
 }
