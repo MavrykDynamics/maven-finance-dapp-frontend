@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 
-import { useDAPPConfigContext } from '../dappConfig.provider'
+import { useDappConfigContext } from '../dappConfig.provider'
+
 import { DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
@@ -15,7 +16,7 @@ export type DropDownXTZBakerType = DropDownItemType & {
 }
 
 const useXtzBakersForDD = (useMavrykBakers = true) => {
-  const { xtzBakers } = useDAPPConfigContext()
+  const { xtzBakers } = useDappConfigContext()
 
   const [choosenBakerAddress, setChoosenBakerAddress] = useState<string | undefined>()
 

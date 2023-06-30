@@ -1,17 +1,51 @@
-import { UserContext } from './../user.provider.types'
-import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
-import { UserTokenBalancesParsedResponce } from './user.types'
+import * as signalR from '@microsoft/signalr'
 
+// types
+import {
+  UserContext,
+  UserTzktTokensBalancesType,
+  userTzktAccountSchema,
+  userTzktTokenBalancesSchema,
+  userTzktWSAccountSchema,
+} from './../user.provider.types'
+import { GetUserDataSubscription } from 'utils/__generated__/graphql'
+import {
+  TokenAddressType,
+  TokensContext,
+  UserMTokenType,
+  mTokenMetadataSchema,
+} from 'providers/TokensProvider/tokens.provider.types'
+
+// helpers
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { api } from 'utils/api/api'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { ApiError } from 'errors/error'
 
-export const normalizerUserBalances = (
-  tokensData: UserTokenBalancesParsedResponce,
-  tokensMetadata: TokensContext['tokensMetadata'],
-  dappMTokens: TokensContext['mTokens'],
-  userAddress: string | null,
-) => {
-  return tokensData.reduce<NonNullable<UserContext['userTokensBalances']>>(
+// consts
+import { MVK_DECIMALS, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
+
+export const getUserTokenBalanceByAddress = ({
+  userTokensBalances,
+  tokenAddress,
+}: {
+  userTokensBalances: UserContext['userTokensBalances']
+  tokenAddress?: string
+}): number => {
+  if (!userTokensBalances || !tokenAddress) return 0
+  return userTokensBalances[tokenAddress] ?? 0
+}
+
+export const normalizeUserTzktTokensBalances = ({
+  userAddress,
+  indexerData,
+  tokensMetadata,
+}: {
+  indexerData: UserTzktTokensBalancesType
+  tokensMetadata: TokensContext['tokensMetadata']
+  userAddress: string | null
+}) => {
+  return indexerData.reduce<NonNullable<UserContext['userTokensBalances']>>(
     (
       acc,
       {
@@ -24,7 +58,9 @@ export const normalizerUserBalances = (
     ) => {
       const token = getTokenDataByAddress({ tokenAddress, tokensMetadata })
 
-      if (!token || dappMTokens.includes(tokenAddress) || userAddress !== address) return acc
+      console.log({ token, tokenAddress })
+
+      if (!token || userAddress !== address) return acc
       const { decimals } = token
 
       acc[tokenAddress] = convertNumberForClient({ number: parseFloat(balance), grade: decimals })
@@ -34,13 +70,166 @@ export const normalizerUserBalances = (
   )
 }
 
-export const getUserTokenBalanceByAddress = ({
-  userTokensBalances,
-  tokenAddress,
+export const normalizeUserIndexerTokensBalances = ({
+  indexerData,
+  tokensMetadata,
 }: {
-  userTokensBalances: UserContext['userTokensBalances']
-  tokenAddress?: string
-}): number => {
-  if (!userTokensBalances || !tokenAddress) return 0
-  return userTokensBalances[tokenAddress] ?? 0
+  indexerData: GetUserDataSubscription
+  tokensMetadata: TokensContext['tokensMetadata']
+}) => {
+  const { smvk_balance, mvk_balance, mvk_transfer_receiver, mvk_transfer_sender, m_token_accounts } =
+    indexerData.mavryk_user[0]
+
+  // TODO: find a way to 100% have mvk token address here, need back-end implementation
+  const mvkTokenAddress = mvk_transfer_receiver[0]?.mvk_token.address ?? mvk_transfer_sender[0]?.mvk_token.address
+
+  const { mTokenBalances, userMTokens, availableLoansRewards } = m_token_accounts.reduce<{
+    mTokenBalances: NonNullable<UserContext['userTokensBalances']>
+    userMTokens: Record<TokenAddressType, UserMTokenType>
+    availableLoansRewards: 0
+  }>(
+    (acc, { balance, rewards_earned, m_token: { address, metadata } }) => {
+      try {
+        const { decimals: interestRateDecimals } = mTokenMetadataSchema.parse(metadata)
+        const mToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: address })
+        if (!mToken) throw new Error(`token is not whitelisted for DAPP: ${{ address }}`)
+
+        const mTokenBalance = convertNumberForClient({ number: balance, grade: mToken.decimals })
+        const mTokenInterestEarned = convertNumberForClient({ number: rewards_earned, grade: +interestRateDecimals })
+
+        acc.mTokenBalances[address] = mTokenBalance
+        acc.userMTokens[address] = {
+          lendValue: mTokenBalance,
+          interestEarned: mTokenInterestEarned,
+        }
+        acc.availableLoansRewards += mTokenInterestEarned
+      } catch (e) {
+        console.error('normalize user mTokens error: ', { e })
+      } finally {
+        return acc
+      }
+    },
+    { mTokenBalances: {}, userMTokens: {}, availableLoansRewards: 0 },
+  )
+
+  return {
+    tokensBalances: {
+      ...(mvkTokenAddress
+        ? { [mvkTokenAddress]: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }) }
+        : {}),
+      [SMVK_TOKEN_ADDRESS]: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
+      ...mTokenBalances,
+    },
+    userMTokens,
+    availableLoansRewards,
+  }
+}
+
+export const fetchTzktUserBalances = async ({
+  userAddress,
+  tokensMetadata,
+}: {
+  tokensMetadata: TokensContext['tokensMetadata']
+  userAddress: string
+}) => {
+  try {
+    const [{ data: tokensData }, { data: xtxData }] = await Promise.all([
+      api(`https://api.ghostnet.tzkt.io/v1/tokens/balances?account.eq=${userAddress}`, {}, userTzktTokenBalancesSchema),
+      api(`https://api.ghostnet.tzkt.io/v1/accounts/${userAddress}`, {}, userTzktAccountSchema),
+    ])
+
+    const normalizedTzktTokensBalances = normalizeUserTzktTokensBalances({
+      indexerData: tokensData.concat([
+        {
+          token: { contract: { address: XTZ_TOKEN_ADDRESS } },
+          balance: xtxData.balance.toString(),
+          account: { address: xtxData.address },
+        },
+      ]),
+      userAddress,
+      tokensMetadata,
+    })
+
+    return normalizedTzktTokensBalances
+  } catch (e) {
+    console.error(`fetchTzktUserBalances query error: `, e)
+    throw new ApiError('Error occured while loading your balances, try to reload the page')
+  }
+}
+
+// TZKT sockets handlers
+export const openTzktWebSocket = async (): Promise<signalR.HubConnection> => {
+  try {
+    const tzktSocket = new signalR.HubConnectionBuilder()
+      .withUrl('https://api.ghostnet.tzkt.io/v1/ws', {
+        transport: signalR.HttpTransportType.WebSockets,
+      })
+      .build()
+
+    // open connection
+    await tzktSocket.start()
+
+    return tzktSocket
+  } catch (e) {
+    throw new ApiError("Couldn't open tzkt socket connection")
+  }
+}
+
+export const attachTzktSocketsEventHandlers = ({
+  userAddress,
+  handleTokens,
+  tzktSocket,
+  handleDisconnect,
+  handleOnReconnected,
+}: {
+  userAddress: string
+  handleTokens: (tokens: UserTzktTokensBalancesType) => void
+  tzktSocket: signalR.HubConnection
+  handleDisconnect: (error?: Error) => void
+  handleOnReconnected: (userAddress: string) => void
+}) => {
+  tzktSocket.on('token_balances', (msg) => {
+    if (!msg.data) return
+
+    try {
+      console.log('tzktSocket on token_balances msg', { data: msg.data })
+      const tokensBalances = userTzktTokenBalancesSchema.parse(msg.data)
+      handleTokens(tokensBalances)
+    } catch (e) {
+      console.error('tzkt tokens balance parse error: ', { e, msg })
+    }
+  })
+
+  // handle xtz token balance update message
+  tzktSocket.on('accounts', (msg) => {
+    if (!msg.data) return
+
+    try {
+      console.log('tzktSocket on accounts msg', { data: msg.data })
+      const [{ balance, address }] = userTzktWSAccountSchema.parse(msg.data)
+      handleTokens([
+        {
+          token: { contract: { address: XTZ_TOKEN_ADDRESS } },
+          balance: balance.toString(),
+          account: { address },
+        },
+      ])
+    } catch (e) {
+      console.error('tzkt xtz token balance parse error: ', { e, msg })
+    }
+  })
+
+  // subscribe to account's tokens
+  tzktSocket.invoke('SubscribeToTokenBalances', {
+    account: userAddress,
+  })
+
+  // subscribe to account data to get xtz balance ):
+  tzktSocket.invoke('SubscribeToAccounts', {
+    addresses: [userAddress],
+  })
+
+  tzktSocket.onclose(handleDisconnect)
+  tzktSocket.onreconnecting(handleDisconnect)
+  tzktSocket.onreconnected(() => handleOnReconnected(userAddress))
 }

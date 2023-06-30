@@ -5,7 +5,6 @@ import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
-import { updateUserData } from 'reducers/actions/user.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
@@ -23,13 +22,11 @@ import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 
+// TODO: move to context action flow
 export const claimAllRewardsAction =
   (tokens: TokensContext['tokensMetadata']) => async (dispatch: AppDispatch, getState: GetState) => {
     const {
-      wallet: {
-        accountPkh,
-        user: { availableDoormanRewards, availableFarmRewards, availableSatellitesRewards },
-      },
+      wallet: { accountPkh },
       contractAddresses: { doormanAddress },
     }: State = getState()
 
@@ -39,6 +36,10 @@ export const claimAllRewardsAction =
     }
 
     try {
+      // update it to be from args after moving to context
+      const availableDoormanRewards = 0,
+        availableFarmRewards = {} as any,
+        availableSatellitesRewards = 0
       // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       // if user has farm rewards to claim it will transfrom this rewards to batch call getting rewards array
@@ -96,7 +97,6 @@ export const claimAllRewardsAction =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(getSatellitesStorage())
-            await dispatch(updateUserData())
             await dispatch(getFarmStorage(tokens))
 
             // Add here call for update data actions
@@ -117,6 +117,7 @@ export const claimAllRewardsAction =
     }
   }
 
+// TODO: move to context action flow
 export const claimVestingReward = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     wallet: { accountPkh },
@@ -155,7 +156,6 @@ export const claimVestingReward = () => async (dispatch: AppDispatch, getState: 
       // refetch data we need
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
-          await dispatch(updateUserData())
           await dispatch(getVestingStorage())
 
           // Add here call for update data actions

@@ -35,7 +35,7 @@ export const VOTE_NUM_MAPPER: Record<number, string> = {
   0: 'Pass',
   1: 'Yes',
   2: 'No',
-}
+} as const
 
 export const getVoteText = (voteType?: number): string => {
   if (voteType === 0) return 'Pass'

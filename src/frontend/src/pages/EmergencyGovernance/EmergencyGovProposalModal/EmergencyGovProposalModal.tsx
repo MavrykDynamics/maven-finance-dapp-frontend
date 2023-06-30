@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // providers
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 import { State } from 'reducers'
 import { submitEmergencyGovernanceProposal } from '../EmergencyGovernance.actions'
@@ -31,7 +31,7 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
     maxLengths: {
       emergencyGovernance: { proposalTitleMaxLength, proposalDescMaxLength },
     },
-  } = useDAPPConfigContext()
+  } = useDappConfigContext()
   const { fee } = useSelector((state: State) => state.governance.config)
   const { isActionActive } = useSelector((state: State) => state.loading)
 

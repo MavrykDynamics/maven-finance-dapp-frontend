@@ -5,7 +5,7 @@ import { State } from 'reducers'
 import { useLocation, useParams, useHistory } from 'react-router'
 
 // providers
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // const
 import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
@@ -52,6 +52,7 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const getCurrentListNameById = (tabId: string) => {
   switch (tabId) {
@@ -87,12 +88,8 @@ export const SatelliteGovernance = () => {
       governanceSatellite: { purposeMaxLength },
       dataFeeds: { feedNameMaxLength },
     },
-  } = useDAPPConfigContext()
-
-  const {
-    accountPkh,
-    user: { isSatellite, govActionsCount },
-  } = useSelector((state: State) => state.wallet)
+  } = useDappConfigContext()
+  const { userAddress, isSatellite, govActionsCount } = useUserContext()
 
   const { maxActionsCount } = useSelector((state: State) => state.satelliteGovernance.config)
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -162,7 +159,7 @@ export const SatelliteGovernance = () => {
         }
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   // set tabs list
@@ -188,7 +185,7 @@ export const SatelliteGovernance = () => {
         id: 3,
         active: SATELLITE_GOVERNANCE_MENU_TABS.MY === tabId,
         path: SATELLITE_GOVERNANCE_MENU_TABS.MY,
-        isDisabled: !accountPkh,
+        isDisabled: !userAddress,
       }
 
       baseTabs.push(satelliteTab)
@@ -196,10 +193,10 @@ export const SatelliteGovernance = () => {
 
     setTabsList(baseTabs)
 
-    if (accountPkh) return
+    if (userAddress) return
     // return back to "ongoing actions" tab if user is not connected
     history.replace(`${SATELLITE_GOVERNANCE_PATHNAME}/${SATELLITE_GOVERNANCE_MENU_TABS.ONGOING}`)
-  }, [accountPkh, isSatellite, tabId])
+  }, [userAddress, isSatellite, tabId])
 
   return (
     <Page>
@@ -277,7 +274,7 @@ export const SatelliteGovernance = () => {
                         yayVotesSmvkTotal={action.yayVoteSmvkTotal}
                         nayVotesSmvkTotal={action.nayVoteSmvkTotal}
                         passVoteSmvkTotal={action.passVoteSmvkTotal}
-                        accountPkh={accountPkh}
+                        accountPkh={userAddress}
                         isActionActive={isActionActive}
                         votes={action.votes}
                       />

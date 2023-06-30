@@ -2,8 +2,11 @@ import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // context
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -20,6 +23,8 @@ import { rewardsCompound } from '../Doorman.actions'
 import { stakingInputValidation } from '../Doorman.converter'
 import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
 import { unknownToError } from 'errors/error'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 import { sleep } from 'utils/api/sleep'
 
 // consts
@@ -59,9 +64,6 @@ import {
 // types
 import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
-import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -78,20 +80,17 @@ export const StakeUnstakeView = ({
 }: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
-  const { stakeMVK, updateStakeActionContext, updateStakeLoadingToasterId, loadingToasterId } = useStakeContext()
-  const { info, loading, hideToasterMessage, bug } = useToasterContext()
-  const { userTokensBalances } = useUserContext()
-
   const {
-    accountPkh,
-    user: {
-      availableDoormanRewards,
-      availableSatellitesRewards,
-      availableFarmRewards,
-      satelliteMvkIsDelegatedTo,
-      isSatellite,
-    },
-  } = useSelector((state: State) => state.wallet)
+    userTokensBalances,
+    userAddress,
+    availableDoormanRewards,
+    availableSatellitesRewards,
+    availableFarmRewards,
+    satelliteMvkIsDelegatedTo,
+    isSatellite,
+  } = useUserContext()
+  const { setAction } = useDappConfigContext()
+  const { info, loading, bug } = useToasterContext()
 
   const { satelliteMapper } = useSatellitesContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -102,7 +101,7 @@ export const StakeUnstakeView = ({
     mvkTokenAddress: { address: mvkTokenAddress },
   } = useSelector((state: State) => state.contractAddresses)
 
-  const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
+  const delegatedUser = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
   const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
     myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
 
@@ -127,7 +126,7 @@ export const StakeUnstakeView = ({
       amount: Number(value),
       myMvkTokenBalance,
       mySMvkTokenBalance,
-      accountPkh,
+      userAddress,
     })
 
     setInputData({ ...inputData, amount: value, validation: validationStatus })
@@ -156,7 +155,7 @@ export const StakeUnstakeView = ({
       })
     }
 
-    if (!accountPkh) {
+    if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return
     }
@@ -171,31 +170,38 @@ export const StakeUnstakeView = ({
       errorMessage: '',
     })
 
-    const { actionSuccess, error } = await stakeMVK(stakeAmount, accountPkh, doormanAddress, mvkTokenAddress)
+    const actionResult = await stakeMVK(stakeAmount, userAddress, doormanAddress, mvkTokenAddress)
 
-    if (actionSuccess && !error) {
-      updateStakeActionContext(STAKE_ACTION)
-      dispatch(toggleActionFullScreenLoader(true))
-      dispatch(toggleActionCompletion(true))
+    if (checkIfActionSuccess(actionResult)) {
+      try {
+        const { operation } = actionResult
+        dispatch(toggleActionFullScreenLoader(true))
+        dispatch(toggleActionCompletion(true))
 
-      info(
-        TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
-        TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['title'],
-      )
+        info(
+          TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['title'],
+        )
 
-      await sleep(5000)
+        await sleep(5000)
 
-      // show toaster loader after 5000ms after operation started
-      const loadingToasterId = loading(
-        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-      )
-      updateStakeLoadingToasterId(loadingToasterId)
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+
+        setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
+      } catch (e) {}
     } else {
-      if (loadingToasterId) hideToasterMessage(loadingToasterId)
-      dispatch(toggleActionFullScreenLoader(false))
-      dispatch(toggleActionCompletion(false))
-      const parsedError = unknownToError(error)
+      setAction(null)
+      const parsedError = unknownToError(actionResult.error)
       bug(parsedError.message)
     }
   }
@@ -212,8 +218,8 @@ export const StakeUnstakeView = ({
   }
 
   const handleCompound = async () => {
-    if (accountPkh) {
-      await dispatch(rewardsCompound(accountPkh))
+    if (userAddress) {
+      await dispatch(rewardsCompound(userAddress))
     }
   }
 
@@ -287,9 +293,9 @@ export const StakeUnstakeView = ({
                 onClick={handleDelegate}
                 kind={BUTTON_PRIMARY}
                 form={BUTTON_WIDE}
-                disabled={!accountPkh || isActionActive}
+                disabled={!userAddress || isActionActive}
                 isThin
-                animation={accountPkh ? BUTTON_PULSE : null}
+                animation={userAddress ? BUTTON_PULSE : null}
               >
                 <Icon id="satellites" />
                 Delegate

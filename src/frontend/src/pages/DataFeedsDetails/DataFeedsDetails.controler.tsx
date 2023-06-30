@@ -52,7 +52,6 @@ import { parseDate } from 'utils/time'
 
 // actions
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 import { useFeedCharts } from 'providers/DataFeedsProvider/hooks/useFeedCharts'
 
 const tabsList = [
@@ -70,9 +69,9 @@ const DataFeedDetails = () => {
   const { search } = useLocation()
   const { feedId } = useParams<{ feedId: string }>()
 
-  const { feedsMapper, registerFeedAction } = useDataFeedsContext()
+  const { feedsMapper } = useDataFeedsContext()
 
-  const { oraclesIds, satelliteMapper } = useSatellitesContext()
+  const { oraclesIds, satelliteMapper, isLoading: isSatellitesLoading } = useSatellitesContext()
   const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts({}, feedId)
 
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -84,8 +83,6 @@ const DataFeedDetails = () => {
   const [isTrustedAnswer, setTrustedAnswer] = useState(true)
 
   const [activeTab, setActiveTab] = useState(tabsList[0].id)
-
-  useSatellitesUpdater()
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -283,7 +280,12 @@ const DataFeedDetails = () => {
               </DataFeedValueText>
             </div>
             <div className="register-pair-wrapper">
-              <Button text="Register" kind={ACTION_PRIMARY} disabled={isActionActive} onClick={registerFeedAction} />
+              <Button
+                text="Register"
+                kind={ACTION_PRIMARY}
+                disabled={isActionActive || true}
+                onClick={() => console.log('implement')}
+              />
             </div>
           </ContractDetails>
         </div>

@@ -4,7 +4,7 @@ import { State } from 'reducers'
 
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
-import type { CouncilMaxLength } from 'providers/DAPPConfig/dappConfig.types'
+import type { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // helpers
 import { validateFormField } from 'utils/validatorFunctions'

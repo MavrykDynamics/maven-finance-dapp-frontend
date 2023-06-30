@@ -16,6 +16,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -57,10 +58,7 @@ export const SateliteSideBarFAQ = () => (
 )
 
 const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
-  const {
-    accountPkh,
-    user: { isSatellite },
-  } = useSelector((state: State) => state.wallet)
+  const { userAddress, isSatellite } = useUserContext()
 
   const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
 
@@ -80,7 +78,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
               text={isSatellite ? 'Edit Satellite Profile' : 'Become a Satellite'}
               icon="satellite-stroke"
               kind={ACTION_PRIMARY}
-              disabled={!accountPkh}
+              disabled={!userAddress}
             />
           </Link>
         ) : null}

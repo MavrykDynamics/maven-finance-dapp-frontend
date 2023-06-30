@@ -16,7 +16,6 @@ import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 // actions
 import { State } from 'reducers'
@@ -34,11 +33,10 @@ export const DEFAULT_STAKE_UNSTAKE_INPUT: { amount: string; validation: InputSta
 
 export const Doorman = () => {
   const { tokensPrices } = useTokensContext()
-  const { totalStakedMvk, maximumTotalSupply, totalSupply } = useStakeContext()
-  const { userTokensBalances } = useUserContext()
+  const { userTokensBalances, userAddress } = useUserContext()
+  const { totalStakedMvk, maximumTotalSupply, totalSupply, isLoading: isDoormanLoading } = useStakeContext()
 
   const { doormanAddress, mvkTokenAddress } = useSelector((state: State) => state.contractAddresses)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
   const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
@@ -47,8 +45,6 @@ export const Doorman = () => {
   const [unstakePopupActive, setUnstakePopupActive] = useState(false)
 
   const [stakeUnstakeInput, setStakeUnstakeInput] = useState(DEFAULT_STAKE_UNSTAKE_INPUT)
-
-  const { isInitialLoading: isDoormanLoading } = useStakeUpdater()
 
   const closeExitFeePopup = () => setUnstakePopupActive(false)
   const openExitFeePopup = () => setUnstakePopupActive(true)
@@ -59,7 +55,7 @@ export const Doorman = () => {
     mySMvkTokenBalance,
     myMvkTokenBalance,
     totalStakedMvk,
-    accountPkh,
+    userAddress,
   }
 
   useEffect(() => {
@@ -68,7 +64,7 @@ export const Doorman = () => {
       validation: '',
       errorMessage: '',
     })
-  }, [accountPkh])
+  }, [userAddress])
 
   return (
     <Page>

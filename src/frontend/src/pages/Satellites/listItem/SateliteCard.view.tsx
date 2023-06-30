@@ -1,8 +1,19 @@
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
-// consts, helpers, actionsimport { getVoteText, ORACLE_STATUSES_MAPPER } from 'providers/SatellitesProvider/satellites.const'
+// context, hooks
+import { useSatelliteOracleStatus } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+
+// actions
+import { delegate, undelegate, distributeProposalRewards } from '../Satellites.actions'
+import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
+
+// consts
 import { getVoteText, ORACLE_STATUSES_MAPPER } from 'providers/SatellitesProvider/satellites.const'
+import colors from 'styles/colors'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
@@ -12,8 +23,11 @@ import {
   BUTTON_PRIMARY,
   BUTTON_SIMPLE,
 } from 'app/App.components/Button/Button.constants'
-import { delegate, undelegate, distributeProposalRewards } from '../Satellites.actions'
-import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
+import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
+
+// helpers
+import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -26,8 +40,12 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // types
 import { State } from 'reducers'
-import { SatelliteStatus } from 'providers/SatellitesProvider/satellites.provider.types'
-import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
+import {
+  ACTIVE_SATELLITE_STATUS,
+  BANNED_SATELLITE_STATUS,
+  SatelliteRecordType,
+  SatelliteStatuses,
+} from 'providers/SatellitesProvider/satellites.provider.types'
 
 //styles
 import { AvatarStyle } from 'app/App.components/Avatar/Avatar.style'
@@ -44,11 +62,6 @@ import {
   SatelliteCardButtons,
   SatelliteCardRow,
 } from './SatelliteCard.style'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
-import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
-import colors from 'styles/colors'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -64,42 +77,44 @@ const renderVotingHistoryItem = (vote: number) => {
 }
 
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
-  const { userTokensBalances } = useUserContext()
+  const { userTokensBalances, isSatellite, satelliteMvkIsDelegatedTo, availableSatellitesRewards, userAddress } =
+    useUserContext()
+  const { eGovProposalsAmount, proposalsAmount, executedProposalAmount, finRequestsAmount } = useSatellitesContext()
+
+  const { oracleStatus, satelliteStatus } = useSatelliteOracleStatus(satellite)
+
+  const { proposalParticipation, votingPartisipation } = getSatelliteParticipations({
+    satellite,
+    eGovProposalsAmount,
+    proposalsAmount,
+    executedProposalAmount,
+    finRequestsAmount,
+  })
 
   const dispatch = useDispatch()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const {
-    accountPkh,
-    user: { isSatellite, satelliteMvkIsDelegatedTo, availableSatellitesRewards },
-  } = useSelector((state: State) => state.wallet)
-  const { proposalsMapper } = useSelector((state: State) => state.governance)
 
-  // Card buttons handlers
+  const {
+    currentlyRegistered,
+    sMvkBalance,
+    delegationRatio,
+    totalDelegatedAmount,
+    address: satelliteAddress,
+  } = satellite
+
+  const freesMVKSpace = Math.max(sMvkBalance * delegationRatio - totalDelegatedAmount, 0)
+  const isUserDelegatedToThisSatellite = satelliteAddress === satelliteMvkIsDelegatedTo
+  const balanceOver1SMvk = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) >= 1
+  const isSatelliteInactive = !currentlyRegistered || satelliteStatus !== SatelliteStatuses[ACTIVE_SATELLITE_STATUS]
+
+  // Actions
   const delegateCallback = async () => await dispatch(delegate(satellite.address))
   const undelegateCallback = async () => await dispatch(undelegate(satellite.address))
-  const claimRewardsCallback = async () => (accountPkh ? await dispatch(rewardsCompound(accountPkh)) : null)
+  const claimRewardsCallback = async () => (userAddress ? await dispatch(rewardsCompound(userAddress)) : null)
   // TODO: add valid data
   const distributeRewardsCallback = async () => await dispatch(distributeProposalRewards('', []))
-
-  const freesMVKSpace = Math.max(satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount, 0)
-  const isUserDelegatedToThisSatellite = satellite.address === satelliteMvkIsDelegatedTo
-  const balanceOver1SMvk = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) >= 1
-  const { currentlyRegistered } = satellite
-
-  // Latest vote data
-  const currentlySupportingProposalVote = satellite.proposalVotingHistory?.at(0)?.vote ?? null
-  const lastSupportedgProposalId = satellite.proposalVotingHistory?.at(0)?.proposalId ?? null
-
-  // Satellite status data
-  const satelliteStatusColor =
-    satellite.status === SatelliteStatus.BANNED || !currentlyRegistered ? STATUS_FLAG_DOWN : STATUS_FLAG_WARNING
-  // if satellite is unregistered, show inactive status
-  const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE || !currentlyRegistered
-
-  const participation =
-    (satellite.satelliteMetrics.proposalParticipation + satellite.satelliteMetrics.votingPartisipation) / 2
 
   const buttonToShow =
     isUserDelegatedToThisSatellite && currentlyRegistered ? (
@@ -109,7 +124,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           icon="man-close"
           kind={ACTION_SECONDARY}
           onClick={undelegateCallback}
-          disabled={!accountPkh || isActionActive}
+          disabled={!userAddress || isActionActive}
         />
         {isDetailsPage && availableSatellitesRewards > 0 ? (
           <Button
@@ -117,7 +132,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             icon="rewards"
             kind={ACTION_PRIMARY}
             onClick={claimRewardsCallback}
-            disabled={!accountPkh || isActionActive}
+            disabled={!userAddress || isActionActive}
             strokeWidth={0.3}
           />
         ) : null}
@@ -140,7 +155,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         icon="man-check"
         kind={ACTION_PRIMARY}
         onClick={delegateCallback}
-        disabled={!accountPkh || !balanceOver1SMvk || isActionActive}
+        disabled={!userAddress || !balanceOver1SMvk || isActionActive}
       />
     )
 
@@ -211,7 +226,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup>
               <SatelliteMainText>Participation</SatelliteMainText>
               <SatelliteSubText>
-                <CommaNumber value={participation} endingText="%" />
+                <CommaNumber value={proposalParticipation + votingPartisipation} endingText="%" />
               </SatelliteSubText>
             </SatelliteTextGroup>
           </div>
@@ -219,8 +234,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup className="oracle-status">
               <SatelliteMainText>Oracle Status</SatelliteMainText>
               <SatelliteSubText>
-                <SatelliteOracleStatusComponent statusType={satellite.oracleStatus}>
-                  {ORACLE_STATUSES_MAPPER[satellite.oracleStatus]}
+                <SatelliteOracleStatusComponent statusType={oracleStatus}>
+                  {ORACLE_STATUSES_MAPPER[oracleStatus]}
                 </SatelliteOracleStatusComponent>
               </SatelliteSubText>
             </SatelliteTextGroup>
@@ -230,7 +245,14 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         <SatelliteCardButtons>
           {isSatelliteInactive && (
             <div>
-              <StatusFlag status={satelliteStatusColor} text={SatelliteStatus[SatelliteStatus.INACTIVE]} />
+              <StatusFlag
+                status={
+                  satelliteStatus !== SatelliteStatuses[BANNED_SATELLITE_STATUS] || !currentlyRegistered
+                    ? STATUS_FLAG_DOWN
+                    : STATUS_FLAG_WARNING
+                }
+                text={satelliteStatus}
+              />
             </div>
           )}
 
@@ -238,18 +260,16 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         </SatelliteCardButtons>
       </SatelliteCardInner>
 
-      {children
-        ? children
-        : lastSupportedgProposalId &&
-          proposalsMapper[lastSupportedgProposalId] &&
-          currentlySupportingProposalVote !== null && (
-            <SatelliteCardRow>
-              <div>
-                Voted {renderVotingHistoryItem(currentlySupportingProposalVote)} on current Proposal{' '}
-                {lastSupportedgProposalId} - {proposalsMapper[lastSupportedgProposalId].title}
-              </div>
-            </SatelliteCardRow>
-          )}
+      {children ? (
+        children
+      ) : satellite.lastVotedProposal ? (
+        <SatelliteCardRow>
+          <div>
+            Voted {renderVotingHistoryItem(satellite.lastVotedProposal.vote)} on current Proposal{' '}
+            {satellite.lastVotedProposal.proposalId} - {satellite.lastVotedProposal.proposalTitle}
+          </div>
+        </SatelliteCardRow>
+      ) : null}
     </SatelliteCard>
   )
 }

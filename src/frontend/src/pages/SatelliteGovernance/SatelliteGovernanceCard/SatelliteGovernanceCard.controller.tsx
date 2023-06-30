@@ -37,7 +37,7 @@ type Props = {
   nayVotesSmvkTotal: number
   passVoteSmvkTotal: number
   snapshotSmvkTotalSupply: number
-  accountPkh?: string
+  accountPkh: string | null
   isActionActive: boolean
   votes: SatelliteGovernance['satelliteGovIdsMapper'][0]['votes']
 }
@@ -96,21 +96,21 @@ export const SatelliteGovernanceCard = ({
       header={
         <>
           <SatelliteGovernanceCardTitleTextGroup>
-            <div className='name'>Date</div>
+            <div className="name">Date</div>
             <div className="value">{parseDate({ time: date, timeFormat: 'MMM Do, YYYY' })}</div>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
-            <div className='name'>Action</div>
+            <div className="name">Action</div>
             <div className="value capitallize">{getSeparateSnakeCase(governanceType)}</div>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
-            <div className='name'>Target</div>
+            <div className="name">Target</div>
             <div className="value">
               <TzAddress tzAddress={satelliteId} hasIcon={true} />
             </div>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
-            <div className='name'>Initiator</div>
+            <div className="name">Initiator</div>
             <div className="value">
               <TzAddress tzAddress={initiatorId} hasIcon={true} />
             </div>

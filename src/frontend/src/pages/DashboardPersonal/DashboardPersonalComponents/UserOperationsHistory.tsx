@@ -1,24 +1,25 @@
+import { useLocation } from 'react-router'
+import { useMemo } from 'react'
+
+import { useUserContext } from 'providers/UserProvider/user.provider'
+
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
+
 import {
   getPageNumber,
   USER_ACTIONS_HISTORY,
   calculateSlicePositions,
   PAGINATION_SIDE_CENTER,
 } from 'app/App.components/Pagination/pagination.consts'
-import Pagination from 'app/App.components/Pagination/Pagination.view'
-import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { useLocation } from 'react-router'
-import { State } from 'reducers'
+
 import { HistoryBlock } from './DashboardPersonalComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 export const UserActionHistory = () => {
-  const {
-    user: { actionsHistory },
-  } = useSelector((state: State) => state.wallet)
+  const { actionsHistory } = useUserContext()
 
   const { search, pathname } = useLocation()
   const currentPage = getPageNumber(search, USER_ACTIONS_HISTORY)

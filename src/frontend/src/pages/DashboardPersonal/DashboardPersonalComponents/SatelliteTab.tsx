@@ -19,24 +19,20 @@ import { UserActionHistory } from './UserOperationsHistory'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
 import colors from 'styles/colors'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const SatelliteTab = () => {
   const dispatch = useDispatch()
-  const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  const {
-    accountPkh = '',
-    user: { availableSatellitesRewards },
-  } = useSelector((state: State) => state.wallet)
+  const { userAddress, availableSatellitesRewards } = useUserContext()
   const { satelliteMapper } = useSatellitesContext()
 
-  useSatellitesUpdater({}, accountPkh)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  const satelliteRecord = satelliteMapper[accountPkh]
+  const satelliteRecord = userAddress ? satelliteMapper[userAddress] : null
 
   const handleDistributeRewards = () => {
     // TODO: add valid data

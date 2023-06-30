@@ -21,8 +21,7 @@ import { mainNavigationLinks } from './NavigationLink/MainNavigationLinks'
 import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
 import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
@@ -58,15 +57,15 @@ export const SocialIcons = () => (
 )
 
 export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
-  const { getMVKTokensFromFaucet } = useStakeContext()
-  const { mvkFaucetAddress } = useDAPPConfigContext()
+  // const { getMVKTokensFromFaucet } = useStakeContext()
+  const { mvkFaucetAddress } = useDappConfigContext()
   const { userTokensBalances } = useUserContext()
+  const { userAddress, isSatellite } = useUserContext()
 
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const { sidebarOpened } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { user, accountPkh } = useSelector((state: State) => state.wallet)
   const {
     mvkTokenAddress: { address: mvkTokenAddress },
   } = useSelector((state: State) => state.contractAddresses)
@@ -82,17 +81,17 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     })
 
     setSelectedMainLink(selectedMainRoute?.id || 0)
-  }, [accountPkh, pathname, user.isSatellite])
+  }, [userAddress, pathname, isSatellite])
 
   useEffect(() => {
     setCanGetInitThouthand(
       Boolean(
-        accountPkh &&
+        userAddress &&
           (getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }) === 0 ||
             getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0),
       ),
     )
-  }, [accountPkh, mvkTokenAddress, userTokensBalances])
+  }, [userAddress, mvkTokenAddress, userTokensBalances])
 
   const [selectedMainLink, setSelectedMainLink] = useState<number>(0)
 
@@ -141,7 +140,8 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               kind={BUTTON_PRIMARY}
               form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND}
               isThin
-              onClick={() => getMVKTokensFromFaucet(mvkFaucetAddress)}
+              // onClick={() => getMVKTokensFromFaucet(mvkFaucetAddress)}
+              onClick={() => console.log('implement')}
               disabled={!canGetInitThouthand || isActionActive}
             >
               {sidebarOpened ? 'MVK Faucet' : 'mvk'}

@@ -1,7 +1,19 @@
-import TokensProvider from './tokens.provider'
+import { z } from 'zod'
+
+import { normalizeTokenPrices } from './helpers/tokens.normalizer'
 
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { normalizeTokenPrices } from './helpers/tokens.normalizer'
+import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
+
+export const tokenMetadataSchema = z.object({
+  icon: z.string().optional(),
+  symbol: z.string(),
+  decimals: z.string(),
+})
+
+export const mTokenMetadataSchema = z.object({
+  decimals: z.string(),
+})
 
 export type TokenAddressType = string
 
@@ -37,30 +49,22 @@ export interface LoansCollateralTokenMetadataType extends LoansTokenMetadataType
 
 // mToken in user store type
 export type UserMTokenType = {
-  lendedAmount: number
-  tokenAddress: TokenAddressType
-  rewardIndex: number
-  rewardsEarned: number
+  lendValue: number
+  interestEarned: number
 }
 
 type TokensPricesType = ReturnType<typeof normalizeTokenPrices>
 
 // Context types
 export type TokensContext = {
-  // 3 bottom fields updates from updateTokensMetadata
+  // data
   collateralTokens: Array<TokenAddressType>
   mTokens: Array<TokenAddressType>
   tokensMetadata: Record<TokenAddressType, TokenMetadataType>
-  updateTokensMetadata: InstanceType<typeof TokensProvider>['updateTokensMetadata']
-
   tokensPrices: TokensPricesType
-  updateTokensPrices: InstanceType<typeof TokensProvider>['updateTokensPrices']
+  isLoading: boolean
+  // methods
+  updateTokensPrices: (feeds: SubsribeOracleDataFeedSubscription['aggregator']) => void
 }
 
-export type State = {
-  context: TokensContext
-}
-
-export type Props = {
-  children: React.ReactNode
-}
+export type TokensContextState = Pick<TokensContext, 'tokensPrices' | 'collateralTokens' | 'tokensMetadata' | 'mTokens'>

@@ -9,7 +9,6 @@ import { Page } from 'styles'
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 // const & types
 import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
@@ -32,7 +31,7 @@ export const Dashboard = () => {
   const parsedQp = QueryString.parse(search, { ignoreQueryPrefix: true }) as { tab: string }
   const activeTab = isValidPersonalDashboardTabId(parsedQp.tab) ? parsedQp.tab : LENDING_TAB_ID
 
-  const { totalStakedMvk, totalSupply, maximumTotalSupply } = useStakeContext()
+  const { totalStakedMvk, totalSupply, maximumTotalSupply, isLoading: isDoormanLoading } = useStakeContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
@@ -95,9 +94,7 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
-  const { isInitialLoading: isDoormanLoading } = useStakeUpdater()
-
-  const { isLoading: isDataLoading } = useDataLoader(async (isDepsChanged) => {
+  const { isLoading: isPromiseLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
@@ -128,7 +125,7 @@ export const Dashboard = () => {
         tvl={tvlValue}
         mvkStatsBlock={mvkStatsBlock}
         activeTab={activeTab}
-        isLoading={isDataLoading || isDoormanLoading}
+        isLoading={isPromiseLoading || isDoormanLoading}
       />
     </Page>
   )

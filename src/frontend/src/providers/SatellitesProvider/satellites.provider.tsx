@@ -2,15 +2,21 @@ import React, { useContext, useMemo, useState } from 'react'
 
 // types
 import { SatellitesContext, SatellitesCtxState } from './satellites.provider.types'
-import { normalizeSatellitesLedger } from './helpers/Satellites.normalizer'
+import { normalizeSatellitesLedger } from './helpers/satellites.normalizer'
 
 // redux
-import { useSubscription } from '@apollo/client'
+import { ApolloError, useSubscription } from '@apollo/client'
 import { getSatelliteDataSubscription } from './queries/satellites.query'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
+import {
+  EXECUTED_PROPOSALS_AMOUNT_SUBSCRIPTION,
+  E_GOV_PROPOSALS_AMOUNT_SUBSCRIPTION,
+  FINANCIAL_REQUESTS_AMOUNT_SUBSCRIPTION,
+  PROPOSALS_AMOUNT_SUBSCRIPTION,
+} from './queries/satellitesMetricsData.query'
 
 // context
 export const satellitesContext = React.createContext<SatellitesContext>(undefined!)
@@ -21,14 +27,24 @@ export type Props = {
 
 export const SatellitesProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
+
   const [satellitesCtxState, setSatellitesCtxState] = useState<SatellitesCtxState>({
     satelliteMapper: {},
     activeSatellitesIds: [],
     allSatellitesIds: [],
     oraclesIds: [],
+    eGovProposalsAmount: 0,
+    executedProposalAmount: 0,
+    proposalsAmount: 0,
+    finRequestsAmount: 0,
   })
 
   const [satelliteAddressToSubsctibe, setSatelliteAddressToSubsctibe] = useState<null | string>(null)
+
+  const handleSubError = (e: ApolloError) => {
+    console.error('SUBSCRIPTION_STAKE_HISTORY query error: ', { e })
+    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+  }
 
   const { loading: satellitesLoading } = useSubscription(getSatelliteDataSubscription(satelliteAddressToSubsctibe), {
     variables: {
@@ -38,10 +54,55 @@ export const SatellitesProvider = ({ children }: Props) => {
       if (!data) return
       updateSatellitesContext(data)
     },
-    onError: (error) => {
-      console.error('SUBSCRIPTION_STAKE_HISTORY query error: ', error)
-      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+    onError: handleSubError,
+    shouldResubscribe: true,
+  })
+
+  const { loading: proposalsAmountLoading } = useSubscription(PROPOSALS_AMOUNT_SUBSCRIPTION, {
+    onData: ({ data: { data } }) => {
+      if (!data) return
+      setSatellitesCtxState((prev) => ({
+        ...prev,
+        proposalsAmount: data.governance_proposal_aggregate.aggregate?.count ?? 0,
+      }))
     },
+    onError: handleSubError,
+    shouldResubscribe: true,
+  })
+
+  const { loading: executedProposalsAmountLoading } = useSubscription(EXECUTED_PROPOSALS_AMOUNT_SUBSCRIPTION, {
+    onData: ({ data: { data } }) => {
+      if (!data) return
+      setSatellitesCtxState((prev) => ({
+        ...prev,
+        executedProposalAmount: data.governance_proposal_aggregate.aggregate?.count ?? 0,
+      }))
+    },
+    onError: handleSubError,
+    shouldResubscribe: true,
+  })
+
+  const { loading: finRequestsAmountLoading } = useSubscription(FINANCIAL_REQUESTS_AMOUNT_SUBSCRIPTION, {
+    onData: ({ data: { data } }) => {
+      if (!data) return
+      setSatellitesCtxState((prev) => ({
+        ...prev,
+        finRequestsAmount: data.governance_financial_request_aggregate.aggregate?.count ?? 0,
+      }))
+    },
+    onError: handleSubError,
+    shouldResubscribe: true,
+  })
+
+  const { loading: eGovProposalsAmountLoading } = useSubscription(E_GOV_PROPOSALS_AMOUNT_SUBSCRIPTION, {
+    onData: ({ data: { data } }) => {
+      if (!data) return
+      setSatellitesCtxState((prev) => ({
+        ...prev,
+        eGovProposalsAmount: data.emergency_governance_aggregate.aggregate?.count ?? 0,
+      }))
+    },
+    onError: handleSubError,
     shouldResubscribe: true,
   })
 
@@ -61,10 +122,22 @@ export const SatellitesProvider = ({ children }: Props) => {
   const memoSatellitesContext = useMemo(() => {
     return {
       ...satellitesCtxState,
-      isLoading: satellitesLoading,
+      isLoading:
+        satellitesLoading ||
+        proposalsAmountLoading ||
+        executedProposalsAmountLoading ||
+        finRequestsAmountLoading ||
+        eGovProposalsAmountLoading,
       setSatelliteAddressToSubsctibe,
     }
-  }, [satellitesCtxState, satellitesLoading])
+  }, [
+    eGovProposalsAmountLoading,
+    executedProposalsAmountLoading,
+    finRequestsAmountLoading,
+    proposalsAmountLoading,
+    satellitesCtxState,
+    satellitesLoading,
+  ])
 
   return <satellitesContext.Provider value={memoSatellitesContext}>{children}</satellitesContext.Provider>
 }

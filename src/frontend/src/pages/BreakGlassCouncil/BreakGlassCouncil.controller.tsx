@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // prviders
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // components
 import { Page } from 'styles'
@@ -24,6 +24,7 @@ import {
   dropBreakGlass,
   signAction,
 } from './BreakGlassCouncil.actions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // types
 
@@ -38,14 +39,12 @@ export function BreakGlassCouncil() {
 
   const {
     maxLengths: { council: councilMaxLengths },
-  } = useDAPPConfigContext()
+  } = useDappConfigContext()
 
   const {
-    accountPkh,
-    user: {
-      userAvatars: { breakGlassAvatar },
-    },
-  } = useSelector((state: State) => state.wallet)
+    userAddress,
+    userAvatars: { breakGlassAvatar },
+  } = useUserContext()
 
   const {
     breakGlassCouncilMembers,
@@ -88,7 +87,7 @@ export function BreakGlassCouncil() {
   // getting data after auth
   useDataLoader(
     async (isDepsChanged) => {
-      if (!accountPkh) return
+      if (!userAddress) return
 
       try {
         await Promise.all(
@@ -100,7 +99,7 @@ export function BreakGlassCouncil() {
         )
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   return (

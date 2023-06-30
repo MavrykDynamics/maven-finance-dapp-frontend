@@ -1,9 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router'
-import { useSelector } from 'react-redux'
-
-// helpers, actions
-import { State } from 'reducers'
 
 // consts
 import {
@@ -29,7 +25,6 @@ import { NotStakingBanner } from 'pages/Satellites/components/NotStakingBanner.v
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 const itemsForDropDown = [
@@ -45,18 +40,13 @@ const SatelliteNodes = () => {
   const { pathname, search } = useLocation()
 
   const { userTokensBalances } = useUserContext()
-  const { allSatellitesIds, satelliteMapper } = useSatellitesContext()
-
-  const {
-    user: { isSatellite },
-  } = useSelector((state: State) => state.wallet)
+  const { isSatellite } = useUserContext()
+  const { allSatellitesIds, satelliteMapper, isLoading: isSatellitesLoading } = useSatellitesContext()
 
   const [filteredSatelliteList, setFilteredSatelliteList] = useState(allSatellitesIds)
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [inputSearch, setInputSearch] = useState('')
   const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
-
-  const { isLoading: isSatellitesLoading } = useSatellitesUpdater()
 
   const currentPage = getPageNumber(search, SATELITES_NODES_LIST_NAME)
 

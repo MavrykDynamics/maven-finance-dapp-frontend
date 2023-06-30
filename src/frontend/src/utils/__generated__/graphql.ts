@@ -54733,6 +54733,7 @@ export type Satellite = {
   registration_timestamp: Scalars['timestamptz'];
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status: Scalars['smallint'];
+  total_delegated_amount: Scalars['float8'];
   /** An object relationship */
   user: Mavryk_User;
   user_id: Scalars['bigint'];
@@ -54767,9 +54768,24 @@ export type Satellite_Aggregate = {
 };
 
 export type Satellite_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Satellite_Aggregate_Bool_Exp_Avg>;
   bool_and?: InputMaybe<Satellite_Aggregate_Bool_Exp_Bool_And>;
   bool_or?: InputMaybe<Satellite_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Satellite_Aggregate_Bool_Exp_Corr>;
   count?: InputMaybe<Satellite_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Satellite_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Satellite_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Satellite_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Satellite_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Satellite_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Satellite_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Avg = {
+  arguments: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 export type Satellite_Aggregate_Bool_Exp_Bool_And = {
@@ -54786,11 +54802,70 @@ export type Satellite_Aggregate_Bool_Exp_Bool_Or = {
   predicate: Boolean_Comparison_Exp;
 };
 
+export type Satellite_Aggregate_Bool_Exp_Corr = {
+  arguments: Satellite_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
 export type Satellite_Aggregate_Bool_Exp_Count = {
   arguments?: InputMaybe<Array<Satellite_Select_Column>>;
   distinct?: InputMaybe<Scalars['Boolean']>;
   filter?: InputMaybe<Satellite_Bool_Exp>;
   predicate: Int_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Satellite_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Max = {
+  arguments: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Min = {
+  arguments: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Sum = {
+  arguments: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 /** aggregate fields of "satellite" */
@@ -54839,6 +54914,7 @@ export type Satellite_Avg_Fields = {
   id?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
+  total_delegated_amount?: Maybe<Scalars['Float']>;
   user_id?: Maybe<Scalars['Float']>;
 };
 
@@ -54849,6 +54925,7 @@ export type Satellite_Avg_Order_By = {
   id?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -54871,6 +54948,7 @@ export type Satellite_Bool_Exp = {
   public_key?: InputMaybe<String_Comparison_Exp>;
   registration_timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
   status?: InputMaybe<Smallint_Comparison_Exp>;
+  total_delegated_amount?: InputMaybe<Float8_Comparison_Exp>;
   user?: InputMaybe<Mavryk_User_Bool_Exp>;
   user_id?: InputMaybe<Bigint_Comparison_Exp>;
   website?: InputMaybe<String_Comparison_Exp>;
@@ -54890,6 +54968,7 @@ export type Satellite_Max_Fields = {
   registration_timestamp?: Maybe<Scalars['timestamptz']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['smallint']>;
+  total_delegated_amount?: Maybe<Scalars['float8']>;
   user_id?: Maybe<Scalars['bigint']>;
   website?: Maybe<Scalars['String']>;
 };
@@ -54907,6 +54986,7 @@ export type Satellite_Max_Order_By = {
   registration_timestamp?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
   website?: InputMaybe<Order_By>;
 };
@@ -54925,6 +55005,7 @@ export type Satellite_Min_Fields = {
   registration_timestamp?: Maybe<Scalars['timestamptz']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['smallint']>;
+  total_delegated_amount?: Maybe<Scalars['float8']>;
   user_id?: Maybe<Scalars['bigint']>;
   website?: Maybe<Scalars['String']>;
 };
@@ -54942,6 +55023,7 @@ export type Satellite_Min_Order_By = {
   registration_timestamp?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
   website?: InputMaybe<Order_By>;
 };
@@ -54961,6 +55043,7 @@ export type Satellite_Order_By = {
   public_key?: InputMaybe<Order_By>;
   registration_timestamp?: InputMaybe<Order_By>;
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user?: InputMaybe<Mavryk_User_Order_By>;
   user_id?: InputMaybe<Order_By>;
   website?: InputMaybe<Order_By>;
@@ -55586,9 +55669,17 @@ export enum Satellite_Select_Column {
   /** column name */
   Status = 'status',
   /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount',
+  /** column name */
   UserId = 'user_id',
   /** column name */
   Website = 'website'
+}
+
+/** select "satellite_aggregate_bool_exp_avg_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
 }
 
 /** select "satellite_aggregate_bool_exp_bool_and_arguments_columns" columns of table "satellite" */
@@ -55603,6 +55694,48 @@ export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Bool_Or_Argumen
   CurrentlyRegistered = 'currently_registered'
 }
 
+/** select "satellite_aggregate_bool_exp_corr_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
+}
+
+/** select "satellite_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
+}
+
+/** select "satellite_aggregate_bool_exp_max_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
+}
+
+/** select "satellite_aggregate_bool_exp_min_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
+}
+
+/** select "satellite_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
+}
+
+/** select "satellite_aggregate_bool_exp_sum_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
+}
+
+/** select "satellite_aggregate_bool_exp_var_samp_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
+}
+
 /** aggregate stddev on columns */
 export type Satellite_Stddev_Fields = {
   __typename?: 'satellite_stddev_fields';
@@ -55611,6 +55744,7 @@ export type Satellite_Stddev_Fields = {
   id?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
+  total_delegated_amount?: Maybe<Scalars['Float']>;
   user_id?: Maybe<Scalars['Float']>;
 };
 
@@ -55621,6 +55755,7 @@ export type Satellite_Stddev_Order_By = {
   id?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -55632,6 +55767,7 @@ export type Satellite_Stddev_Pop_Fields = {
   id?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
+  total_delegated_amount?: Maybe<Scalars['Float']>;
   user_id?: Maybe<Scalars['Float']>;
 };
 
@@ -55642,6 +55778,7 @@ export type Satellite_Stddev_Pop_Order_By = {
   id?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -55653,6 +55790,7 @@ export type Satellite_Stddev_Samp_Fields = {
   id?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
+  total_delegated_amount?: Maybe<Scalars['Float']>;
   user_id?: Maybe<Scalars['Float']>;
 };
 
@@ -55663,6 +55801,7 @@ export type Satellite_Stddev_Samp_Order_By = {
   id?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -55688,6 +55827,7 @@ export type Satellite_Stream_Cursor_Value_Input = {
   registration_timestamp?: InputMaybe<Scalars['timestamptz']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Scalars['smallint']>;
+  total_delegated_amount?: InputMaybe<Scalars['float8']>;
   user_id?: InputMaybe<Scalars['bigint']>;
   website?: InputMaybe<Scalars['String']>;
 };
@@ -55700,6 +55840,7 @@ export type Satellite_Sum_Fields = {
   id?: Maybe<Scalars['bigint']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['smallint']>;
+  total_delegated_amount?: Maybe<Scalars['float8']>;
   user_id?: Maybe<Scalars['bigint']>;
 };
 
@@ -55710,6 +55851,7 @@ export type Satellite_Sum_Order_By = {
   id?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -55721,6 +55863,7 @@ export type Satellite_Var_Pop_Fields = {
   id?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
+  total_delegated_amount?: Maybe<Scalars['Float']>;
   user_id?: Maybe<Scalars['Float']>;
 };
 
@@ -55731,6 +55874,7 @@ export type Satellite_Var_Pop_Order_By = {
   id?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -55742,6 +55886,7 @@ export type Satellite_Var_Samp_Fields = {
   id?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
+  total_delegated_amount?: Maybe<Scalars['Float']>;
   user_id?: Maybe<Scalars['Float']>;
 };
 
@@ -55752,6 +55897,7 @@ export type Satellite_Var_Samp_Order_By = {
   id?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -55763,6 +55909,7 @@ export type Satellite_Variance_Fields = {
   id?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
+  total_delegated_amount?: Maybe<Scalars['Float']>;
   user_id?: Maybe<Scalars['Float']>;
 };
 
@@ -55773,6 +55920,7 @@ export type Satellite_Variance_Order_By = {
   id?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -72353,6 +72501,11 @@ export type BreakGlassAggregatorFactorySubscriptionVariables = Exact<{
 
 export type BreakGlassAggregatorFactorySubscription = { __typename?: 'subscription_root', aggregator_factory: Array<{ __typename?: 'aggregator_factory', address: string, untrack_aggregator_paused: boolean, track_aggregator_paused: boolean, distribute_reward_xtz_paused: boolean, distribute_reward_smvk_paused: boolean, create_aggregator_paused: boolean, admin: string, last_updated_at: any }> };
 
+export type SubscribeToIndexerLevelSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SubscribeToIndexerLevelSubscription = { __typename?: 'subscription_root', dipdup_head: Array<{ __typename?: 'dipdup_head', level: number, name: string }> };
+
 export type GetMaxlenghtsQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -72397,19 +72550,32 @@ export type GetLoansHistoryForMarketDataSubscriptionVariables = Exact<{
 
 export type GetLoansHistoryForMarketDataSubscription = { __typename?: 'subscription_root', lending_controller: Array<{ __typename?: 'lending_controller', history_data: Array<{ __typename?: 'lending_controller_history_data', type: any, amount: any, timestamp: any, operation_hash: string, loan_token?: { __typename?: 'lending_controller_loan_token', loan_token_name: string, token: { __typename?: 'token', token_address: string } } | null, collateral_token?: { __typename?: 'lending_controller_collateral_token', token: { __typename?: 'token', token_address: string } } | null, sender: { __typename?: 'mavryk_user', address: string }, vault?: { __typename?: 'lending_controller_vault', vault?: { __typename?: 'vault', address: string } | null } | null }> }> };
 
-export type SatelliteGovernanceCycleSubscriptionVariables = Exact<{
-  satelliteAddress?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type SatelliteGovernanceCycleSubscription = { __typename?: 'subscription_root', governance: Array<{ __typename?: 'governance', cycle_id: any, satellite_snapshots: Array<{ __typename?: 'governance_satellite_snapshot', cycle: any, total_voting_power: any }> }> };
-
 export type SatelliteDataSubSubscriptionVariables = Exact<{
   userAddress?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type SatelliteDataSubSubscription = { __typename?: 'subscription_root', satellite: Array<{ __typename?: 'satellite', description: string, fee: any, image: string, name: string, status: any, website: string, currently_registered: boolean, peer_id?: string | null, public_key?: string | null, delegations: Array<{ __typename?: 'delegation_record', user: { __typename?: 'mavryk_user', smvk_balance: any } }>, delegation: { __typename?: 'delegation', delegation_ratio: any }, user: { __typename?: 'mavryk_user', address: string, smvk_balance: any, mvk_balance: any, aggregator_oracles: Array<{ __typename?: 'aggregator_oracle', observations: Array<{ __typename?: 'aggregator_oracle_observation', oracle_id: any, epoch: any, data: any, round: any, timestamp: any }>, aggregator: { __typename?: 'aggregator', address: string, last_completed_data: any, last_completed_data_epoch: any, last_completed_data_round: any, oracles: Array<{ __typename?: 'aggregator_oracle', user_id: any, rewards: Array<{ __typename?: 'aggregator_oracle_reward', reward: any, type: any }> }> } }>, governance_satellite_snapshots: Array<{ __typename?: 'governance_satellite_snapshot', cycle: any, total_voting_power: any, user: { __typename?: 'mavryk_user', address: string } }>, governance_financial_requests_votes: Array<{ __typename?: 'governance_financial_request_vote', timestamp: any, vote: any, id: any, governance_financial_request: { __typename?: 'governance_financial_request', request_type: string } }>, governance_proposals_votes: Array<{ __typename?: 'governance_proposal_vote', timestamp: any, vote: any, id: any, governance_proposal: { __typename?: 'governance_proposal', id: any, title: string } }>, governance_satellite_actions_votes: Array<{ __typename?: 'governance_satellite_action_vote', timestamp: any, vote: any, id: any, governance_satellite_action: { __typename?: 'governance_satellite_action', governance_type: string } }> } }> };
+export type SatelliteDataSubSubscription = { __typename?: 'subscription_root', satellite: Array<{ __typename?: 'satellite', description: string, fee: any, image: string, name: string, status: any, website: string, currently_registered: boolean, peer_id?: string | null, public_key?: string | null, delegations: Array<{ __typename?: 'delegation_record', user: { __typename?: 'mavryk_user', smvk_balance: any } }>, delegation: { __typename?: 'delegation', delegation_ratio: any }, user: { __typename?: 'mavryk_user', address: string, smvk_balance: any, mvk_balance: any, aggregator_oracles: Array<{ __typename?: 'aggregator_oracle', observations: Array<{ __typename?: 'aggregator_oracle_observation', oracle_id: any, epoch: any, data: any, round: any, timestamp: any }>, aggregator: { __typename?: 'aggregator', address: string, last_completed_data: any, last_completed_data_epoch: any, last_completed_data_round: any, oracles: Array<{ __typename?: 'aggregator_oracle', user_id: any, rewards: Array<{ __typename?: 'aggregator_oracle_reward', reward: any, type: any }> }> } }>, governance_satellite_snapshots: Array<{ __typename?: 'governance_satellite_snapshot', cycle: any, total_voting_power: any, governance: { __typename?: 'governance', cycle_id: any } }>, emergency_governance_votes: Array<{ __typename?: 'emergency_governance_vote', emergency_governance_record_id: any, id: any, smvk_amount: any, timestamp: any, emergency_governance_record: { __typename?: 'emergency_governance_record', title: string } }>, governance_financial_requests_votes: Array<{ __typename?: 'governance_financial_request_vote', timestamp: any, vote: any, id: any, governance_financial_request: { __typename?: 'governance_financial_request', request_type: string } }>, governance_proposals_votes: Array<{ __typename?: 'governance_proposal_vote', timestamp: any, vote: any, id: any, governance_proposal: { __typename?: 'governance_proposal', id: any, title: string, executed: boolean } }>, governance_satellite_actions_votes: Array<{ __typename?: 'governance_satellite_action_vote', timestamp: any, vote: any, id: any, governance_satellite_action: { __typename?: 'governance_satellite_action', governance_type: string } }> } }> };
+
+export type ProposalsAmountSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ProposalsAmountSubscription = { __typename?: 'subscription_root', governance_proposal_aggregate: { __typename?: 'governance_proposal_aggregate', aggregate?: { __typename?: 'governance_proposal_aggregate_fields', count: number } | null } };
+
+export type SubmittedProposalsAmountSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SubmittedProposalsAmountSubscription = { __typename?: 'subscription_root', governance_proposal_aggregate: { __typename?: 'governance_proposal_aggregate', aggregate?: { __typename?: 'governance_proposal_aggregate_fields', count: number } | null } };
+
+export type FinRequestsAmountSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FinRequestsAmountSubscription = { __typename?: 'subscription_root', governance_financial_request_aggregate: { __typename?: 'governance_financial_request_aggregate', aggregate?: { __typename?: 'governance_financial_request_aggregate_fields', count: number } | null } };
+
+export type EGovProposalsAmountSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EGovProposalsAmountSubscription = { __typename?: 'subscription_root', emergency_governance_aggregate: { __typename?: 'emergency_governance_aggregate', aggregate?: { __typename?: 'emergency_governance_aggregate_fields', count: number } | null } };
 
 export type SubscribeSmvkHistoryDataSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -72438,6 +72604,13 @@ export type TokensMetadataSubscriptionVariables = Exact<{ [key: string]: never; 
 
 export type TokensMetadataSubscription = { __typename?: 'subscription_root', token: Array<{ __typename?: 'token', token_id: any, metadata: any, token_address: string, token_standard?: string | null, lending_controller_collateral_tokens: Array<{ __typename?: 'lending_controller_collateral_token', token_name: string, protected: boolean }>, lending_controller_loan_tokens: Array<{ __typename?: 'lending_controller_loan_token', loan_token_name: string }>, m_tokens: Array<{ __typename?: 'm_token', address: string }>, mvk_tokens: Array<{ __typename?: 'mvk_token', address: string }> }> };
 
+export type GetUserDataSubscriptionVariables = Exact<{
+  userAddress?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetUserDataSubscription = { __typename?: 'subscription_root', mavryk_user: Array<{ __typename?: 'mavryk_user', address: string, smvk_balance: any, mvk_balance: any, mvk_transfer_sender: Array<{ __typename?: 'mvk_transfer_history_data', mvk_token: { __typename?: 'mvk_token', address: string } }>, mvk_transfer_receiver: Array<{ __typename?: 'mvk_transfer_history_data', mvk_token: { __typename?: 'mvk_token', address: string } }>, m_token_accounts: Array<{ __typename?: 'm_token_account', balance: any, rewards_earned: any, reward_index: any, m_token: { __typename?: 'm_token', token_reward_index: any, address: string, metadata?: any | null } }>, delegations: Array<{ __typename?: 'delegation_record', satellite: { __typename?: 'satellite', user: { __typename?: 'mavryk_user', address: string } } }>, stakes_history_data: Array<{ __typename?: 'stake_history_data', type: any, id: any, desired_amount: any, final_amount: any, from_: { __typename?: 'mavryk_user', mvk_balance: any, smvk_balance: any } }>, satellites: Array<{ __typename?: 'satellite', currently_registered: boolean, status: any, image: string, user: { __typename?: 'mavryk_user', address: string } }>, council_council_members: Array<{ __typename?: 'council_council_member', image: string }>, break_glass_council_members: Array<{ __typename?: 'break_glass_council_member', image: string }>, vesting_vestees: Array<{ __typename?: 'vesting_vestee', end_vesting_timestamp: any }>, governance_satellite_snapshots: Array<{ __typename?: 'governance_satellite_snapshot', cycle: any, ready: boolean, user: { __typename?: 'mavryk_user', address: string }, governance: { __typename?: 'governance', cycle_id: any } }>, governance_satellite_action_initiators_aggregate: { __typename?: 'governance_satellite_action_aggregate', aggregate?: { __typename?: 'governance_satellite_action_aggregate_fields', count: number } | null }, doorman_stake_accounts: Array<{ __typename?: 'doorman_stake_account', participation_fees_per_share: any, smvk_balance: any, doorman: { __typename?: 'doorman', unclaimed_rewards: any, accumulated_fees_per_share: any } }>, satellite_rewardss: Array<{ __typename?: 'satellite_rewards', unpaid: any, paid: any, participation_rewards_per_share: any, reference?: { __typename?: 'satellite_rewards', satellite_accumulated_reward_per_share: any } | null }>, farm_accounts: Array<{ __typename?: 'farm_account', deposited_amount: any, participation_rewards_per_share: any, farm: { __typename?: 'farm', address: string, accumulated_rewards_per_share: any, current_reward_per_block: any, last_block_update: any, total_rewards: any, paid_rewards: any, unpaid_rewards: any, infinite: boolean, lp_token_balance: any } }> }> };
+
 export type GetUserLoansDataSubscriptionVariables = Exact<{
   userAddress?: InputMaybe<Scalars['String']>;
   _in?: InputMaybe<Array<Scalars['smallint']> | Scalars['smallint']>;
@@ -72445,13 +72618,6 @@ export type GetUserLoansDataSubscriptionVariables = Exact<{
 
 
 export type GetUserLoansDataSubscription = { __typename?: 'subscription_root', mavryk_user: Array<{ __typename?: 'mavryk_user', lending_controller_history_data_sender: Array<{ __typename?: 'lending_controller_history_data', id: any, type: any, timestamp: any, operation_hash: string, amount: any, loan_token?: { __typename?: 'lending_controller_loan_token', current_interest_rate: any, token: { __typename?: 'token', token_address: string } } | null, lending_controller: { __typename?: 'lending_controller', interest_rate_decimals: any, interest_treasury_share: any, decimals: any } }>, lending_controller_vaults: Array<{ __typename?: 'lending_controller_vault', loan_decimals: any, loan_principal_total: any, collateral_balances: Array<{ __typename?: 'lending_controller_vault_collateral_balance', balance: any, collateral_token: { __typename?: 'lending_controller_collateral_token', token: { __typename?: 'token', token_address: string } } }>, loan_token: { __typename?: 'lending_controller_loan_token', token: { __typename?: 'token', token_address: string } } }> }> };
-
-export type GetUserMvkSmvkBalanceSubscriptionVariables = Exact<{
-  userAddress?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type GetUserMvkSmvkBalanceSubscription = { __typename?: 'subscription_root', mavryk_user: Array<{ __typename?: 'mavryk_user', smvk_balance: any, mvk_balance: any, mvk_transfer_sender: Array<{ __typename?: 'mvk_transfer_history_data', mvk_token: { __typename?: 'mvk_token', address: string } }>, mvk_transfer_receiver: Array<{ __typename?: 'mvk_transfer_history_data', mvk_token: { __typename?: 'mvk_token', address: string } }>, m_token_accounts: Array<{ __typename?: 'm_token_account', balance: any, m_token: { __typename?: 'm_token', address: string } }> }> };
 
 
 export const OraclesCountStatDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"OraclesCountStat"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"satellite_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"aggregator_oracles_aggregate"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"count"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"predicate"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"IntValue","value":"0"}}]}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<OraclesCountStatSubscription, OraclesCountStatSubscriptionVariables>;
@@ -72469,6 +72635,7 @@ export const BreakGlassTreasuryDocument = {"kind":"Document","definitions":[{"ki
 export const BreakGlassTreasuryFactoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"breakGlassTreasuryFactory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_eq"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"treasury_factory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"admin"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_neq"},"value":{"kind":"StringValue","value":"","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"create_treasury_paused"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"track_treasury_paused"}},{"kind":"Field","name":{"kind":"Name","value":"untrack_treasury_paused"}},{"kind":"Field","name":{"kind":"Name","value":"admin"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_at"}}]}}]}}]} as unknown as DocumentNode<BreakGlassTreasuryFactorySubscription, BreakGlassTreasuryFactorySubscriptionVariables>;
 export const BreakGlassAggregatorDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"breakGlassAggregator"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_eq"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregator"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"admin"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_neq"},"value":{"kind":"StringValue","value":"","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"withdraw_reward_smvk_paused"}},{"kind":"Field","name":{"kind":"Name","value":"withdraw_reward_xtz_paused"}},{"kind":"Field","name":{"kind":"Name","value":"admin"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_at"}}]}}]}}]} as unknown as DocumentNode<BreakGlassAggregatorSubscription, BreakGlassAggregatorSubscriptionVariables>;
 export const BreakGlassAggregatorFactoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"breakGlassAggregatorFactory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_eq"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregator_factory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"admin"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_neq"},"value":{"kind":"StringValue","value":"","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"untrack_aggregator_paused"}},{"kind":"Field","name":{"kind":"Name","value":"track_aggregator_paused"}},{"kind":"Field","name":{"kind":"Name","value":"distribute_reward_xtz_paused"}},{"kind":"Field","name":{"kind":"Name","value":"distribute_reward_smvk_paused"}},{"kind":"Field","name":{"kind":"Name","value":"create_aggregator_paused"}},{"kind":"Field","name":{"kind":"Name","value":"admin"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_at"}}]}}]}}]} as unknown as DocumentNode<BreakGlassAggregatorFactorySubscription, BreakGlassAggregatorFactorySubscriptionVariables>;
+export const SubscribeToIndexerLevelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"subscribeToIndexerLevel"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dipdup_head"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"level"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<SubscribeToIndexerLevelSubscription, SubscribeToIndexerLevelSubscriptionVariables>;
 export const GetMaxlenghtsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMaxlenghtsQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"council"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"council_member_image_max_length"}},{"kind":"Field","name":{"kind":"Name","value":"council_member_name_max_length"}},{"kind":"Field","name":{"kind":"Name","value":"council_member_website_max_length"}},{"kind":"Field","name":{"kind":"Name","value":"request_purpose_max_length"}},{"kind":"Field","name":{"kind":"Name","value":"request_token_name_max_length"}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"proposal_description_max_length"}},{"kind":"Field","name":{"kind":"Name","value":"proposal_invoice_max_length"}},{"kind":"Field","name":{"kind":"Name","value":"proposal_metadata_title_max_length"}},{"kind":"Field","name":{"kind":"Name","value":"proposal_source_code_max_length"}},{"kind":"Field","name":{"kind":"Name","value":"proposal_title_max_length"}}]}},{"kind":"Field","name":{"kind":"Name","value":"emergency_governance"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"proposal_desc_max_length"}},{"kind":"Field","name":{"kind":"Name","value":"proposal_title_max_length"}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_satellite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gov_purpose_max_length"}}]}},{"kind":"Field","name":{"kind":"Name","value":"delegation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"satellite_description_max_length"}},{"kind":"Field","name":{"kind":"Name","value":"satellite_name_max_length"}},{"kind":"Field","name":{"kind":"Name","value":"satellite_website_max_length"}},{"kind":"Field","name":{"kind":"Name","value":"minimum_smvk_balance"}}]}}]}}]} as unknown as DocumentNode<GetMaxlenghtsQueryQuery, GetMaxlenghtsQueryQueryVariables>;
 export const FeedsRewardsAmountSubscriptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"FeedsRewardsAmountSubscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregator_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sum"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reward_amount_smvk"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FeedsRewardsAmountSubscriptionSubscription, FeedsRewardsAmountSubscriptionSubscriptionVariables>;
 export const SubsribeFeedHistoryDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"subsribeFeedHistoryData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"feedAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregator"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"feedAddress"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"history_data"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"timestamp"}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"aggregator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}}]}}]}}]}}]} as unknown as DocumentNode<SubsribeFeedHistoryDataSubscription, SubsribeFeedHistoryDataSubscriptionVariables>;
@@ -72476,12 +72643,15 @@ export const SubsribeOracleDataFeedDocument = {"kind":"Document","definitions":[
 export const GetLendingDiffDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"getLendingDiff"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"currentTimestamp"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lending_controller"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"mock_time"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"history_data"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"StringValue","value":"0","block":false},{"kind":"StringValue","value":"1","block":false},{"kind":"StringValue","value":"2","block":false},{"kind":"StringValue","value":"3","block":false},{"kind":"StringValue","value":"4","block":false},{"kind":"StringValue","value":"5","block":false},{"kind":"StringValue","value":"6","block":false},{"kind":"StringValue","value":"7","block":false}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"currentTimestamp"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"timestamp"}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"loan_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"loan_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"total_borrowed"}},{"kind":"Field","name":{"kind":"Name","value":"token_pool_total"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetLendingDiffSubscription, GetLendingDiffSubscriptionVariables>;
 export const GetLoansHistoryDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"getLoansHistoryData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lending_controller"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"mock_time"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"history_data"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"StringValue","value":"0","block":false},{"kind":"StringValue","value":"1","block":false},{"kind":"StringValue","value":"2","block":false},{"kind":"StringValue","value":"3","block":false},{"kind":"StringValue","value":"4","block":false},{"kind":"StringValue","value":"5","block":false},{"kind":"StringValue","value":"6","block":false},{"kind":"StringValue","value":"7","block":false}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"timestamp"}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"loan_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loan_token_name"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"collateral_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetLoansHistoryDataSubscription, GetLoansHistoryDataSubscriptionVariables>;
 export const GetLoansHistoryForMarketDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"getLoansHistoryForMarketData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vaultAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"typeFilter"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"smallint"}}},"defaultValue":{"kind":"ListValue","values":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lending_controller"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"mock_time"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"history_data"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"loan_token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token_address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}}}]}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"timestamp"}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"loan_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loan_token_name"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"collateral_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"operation_hash"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"vault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetLoansHistoryForMarketDataSubscription, GetLoansHistoryForMarketDataSubscriptionVariables>;
-export const SatelliteGovernanceCycleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"satelliteGovernanceCycle"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"satelliteAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"governance"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"satellite_snapshots"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"cycle"},"value":{"kind":"EnumValue","value":"desc_nulls_last"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"satelliteAddress"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cycle"}},{"kind":"Field","name":{"kind":"Name","value":"total_voting_power"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cycle_id"}}]}}]}}]} as unknown as DocumentNode<SatelliteGovernanceCycleSubscription, SatelliteGovernanceCycleSubscriptionVariables>;
-export const SatelliteDataSubDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"satelliteDataSub"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"satellite"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registration_timestamp"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"currently_registered"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"website"}},{"kind":"Field","name":{"kind":"Name","value":"currently_registered"}},{"kind":"Field","name":{"kind":"Name","value":"peer_id"}},{"kind":"Field","name":{"kind":"Name","value":"public_key"}},{"kind":"Field","name":{"kind":"Name","value":"delegations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"smvk_balance"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"delegation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delegation_ratio"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"smvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"mvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"aggregator_oracles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"observations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"epoch"},"value":{"kind":"EnumValue","value":"desc_nulls_last"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"5"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"oracle_id"}},{"kind":"Field","name":{"kind":"Name","value":"epoch"}},{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"round"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}}]}},{"kind":"Field","name":{"kind":"Name","value":"aggregator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"last_completed_data"}},{"kind":"Field","name":{"kind":"Name","value":"last_completed_data_epoch"}},{"kind":"Field","name":{"kind":"Name","value":"last_completed_data_round"}},{"kind":"Field","name":{"kind":"Name","value":"oracles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user_id"}},{"kind":"Field","name":{"kind":"Name","value":"rewards"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reward"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_satellite_snapshots"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"tz1T8S68igxa6uWZbeoWWwbcuRHEDQSzknEX","block":false}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"cycle"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cycle"}},{"kind":"Field","name":{"kind":"Name","value":"total_voting_power"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_financial_requests_votes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"vote"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"governance_financial_request"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"request_type"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_proposals_votes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"vote"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"governance_proposal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_satellite_actions_votes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"vote"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"governance_satellite_action"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"governance_type"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<SatelliteDataSubSubscription, SatelliteDataSubSubscriptionVariables>;
+export const SatelliteDataSubDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"satelliteDataSub"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"satellite"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registration_timestamp"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"currently_registered"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"website"}},{"kind":"Field","name":{"kind":"Name","value":"currently_registered"}},{"kind":"Field","name":{"kind":"Name","value":"peer_id"}},{"kind":"Field","name":{"kind":"Name","value":"public_key"}},{"kind":"Field","name":{"kind":"Name","value":"delegations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"smvk_balance"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"delegation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delegation_ratio"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"smvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"mvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"aggregator_oracles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"observations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"epoch"},"value":{"kind":"EnumValue","value":"desc_nulls_last"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"5"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"oracle_id"}},{"kind":"Field","name":{"kind":"Name","value":"epoch"}},{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"round"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}}]}},{"kind":"Field","name":{"kind":"Name","value":"aggregator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"last_completed_data"}},{"kind":"Field","name":{"kind":"Name","value":"last_completed_data_epoch"}},{"kind":"Field","name":{"kind":"Name","value":"last_completed_data_round"}},{"kind":"Field","name":{"kind":"Name","value":"oracles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user_id"}},{"kind":"Field","name":{"kind":"Name","value":"rewards"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reward"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_satellite_snapshots"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"cycle"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cycle"}},{"kind":"Field","name":{"kind":"Name","value":"total_voting_power"}},{"kind":"Field","name":{"kind":"Name","value":"governance"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cycle_id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"emergency_governance_votes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"emergency_governance_record_id"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"smvk_amount"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"emergency_governance_record"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_financial_requests_votes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"vote"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"governance_financial_request"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"request_type"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_proposals_votes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"vote"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"governance_proposal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"executed"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_satellite_actions_votes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"vote"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"governance_satellite_action"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"governance_type"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<SatelliteDataSubSubscription, SatelliteDataSubSubscriptionVariables>;
+export const ProposalsAmountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"proposalsAmount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"governance_proposal_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<ProposalsAmountSubscription, ProposalsAmountSubscriptionVariables>;
+export const SubmittedProposalsAmountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"submittedProposalsAmount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"governance_proposal_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<SubmittedProposalsAmountSubscription, SubmittedProposalsAmountSubscriptionVariables>;
+export const FinRequestsAmountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"finRequestsAmount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"governance_financial_request_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FinRequestsAmountSubscription, FinRequestsAmountSubscriptionVariables>;
+export const EGovProposalsAmountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"eGovProposalsAmount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"emergency_governance_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<EGovProposalsAmountSubscription, EGovProposalsAmountSubscriptionVariables>;
 export const SubscribeSmvkHistoryDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"subscribeSmvkHistoryData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"smvk_history_data"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"timestamp"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mvk_total_supply"}},{"kind":"Field","name":{"kind":"Name","value":"smvk_total_supply"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}}]}}]}}]} as unknown as DocumentNode<SubscribeSmvkHistoryDataSubscription, SubscribeSmvkHistoryDataSubscriptionVariables>;
 export const SubscribeAdressBalanceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"subscribeAdressBalance"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_eq"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mavryk_user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"_eq"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"mvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"smvk_balance"}}]}}]}}]} as unknown as DocumentNode<SubscribeAdressBalanceSubscription, SubscribeAdressBalanceSubscriptionVariables>;
 export const SubscribeMvkTokenTotalDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"subscribeMvkTokenTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mvk_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"total_supply"}},{"kind":"Field","name":{"kind":"Name","value":"maximum_supply"}}]}}]}}]} as unknown as DocumentNode<SubscribeMvkTokenTotalSubscription, SubscribeMvkTokenTotalSubscriptionVariables>;
 export const MvkFaucetDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MVKFaucet"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mvk_faucet"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]} as unknown as DocumentNode<MvkFaucetQuery, MvkFaucetQueryVariables>;
 export const TokensMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"tokensMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_id"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"token_address"}},{"kind":"Field","name":{"kind":"Name","value":"token_standard"}},{"kind":"Field","name":{"kind":"Name","value":"lending_controller_collateral_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_name"}},{"kind":"Field","name":{"kind":"Name","value":"protected"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lending_controller_loan_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loan_token_name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"m_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"mvk_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]}}]} as unknown as DocumentNode<TokensMetadataSubscription, TokensMetadataSubscriptionVariables>;
+export const GetUserDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"getUserData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mavryk_user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"smvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"mvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"mvk_transfer_sender"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mvk_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"mvk_transfer_receiver"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mvk_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"m_token_accounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"rewards_earned"}},{"kind":"Field","name":{"kind":"Name","value":"reward_index"}},{"kind":"Field","name":{"kind":"Name","value":"m_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_reward_index"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"delegations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"satellite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"stakes_history_data"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"StringValue","value":"0","block":false},{"kind":"StringValue","value":"1","block":false},{"kind":"StringValue","value":"2","block":false},{"kind":"StringValue","value":"3","block":false},{"kind":"StringValue","value":"4","block":false}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"desired_amount"}},{"kind":"Field","name":{"kind":"Name","value":"final_amount"}},{"kind":"Field","name":{"kind":"Name","value":"from_"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"smvk_balance"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"satellites"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currently_registered"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"image"}}]}},{"kind":"Field","name":{"kind":"Name","value":"council_council_members"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"image"}}]}},{"kind":"Field","name":{"kind":"Name","value":"break_glass_council_members"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"image"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vesting_vestees"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"end_vesting_timestamp"}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_satellite_snapshots"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"cycle"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cycle"}},{"kind":"Field","name":{"kind":"Name","value":"ready"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cycle_id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_satellite_action_initiators_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"0","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"doorman_stake_accounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"participation_fees_per_share"}},{"kind":"Field","name":{"kind":"Name","value":"smvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"doorman"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"unclaimed_rewards"}},{"kind":"Field","name":{"kind":"Name","value":"accumulated_fees_per_share"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"satellite_rewardss"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"unpaid"}},{"kind":"Field","name":{"kind":"Name","value":"paid"}},{"kind":"Field","name":{"kind":"Name","value":"participation_rewards_per_share"}},{"kind":"Field","name":{"kind":"Name","value":"reference"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"satellite_accumulated_reward_per_share"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"farm_accounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deposited_amount"}},{"kind":"Field","name":{"kind":"Name","value":"participation_rewards_per_share"}},{"kind":"Field","name":{"kind":"Name","value":"farm"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"accumulated_rewards_per_share"}},{"kind":"Field","name":{"kind":"Name","value":"current_reward_per_block"}},{"kind":"Field","name":{"kind":"Name","value":"last_block_update"}},{"kind":"Field","name":{"kind":"Name","value":"total_rewards"}},{"kind":"Field","name":{"kind":"Name","value":"paid_rewards"}},{"kind":"Field","name":{"kind":"Name","value":"unpaid_rewards"}},{"kind":"Field","name":{"kind":"Name","value":"infinite"}},{"kind":"Field","name":{"kind":"Name","value":"lp_token_balance"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUserDataSubscription, GetUserDataSubscriptionVariables>;
 export const GetUserLoansDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"getUserLoansData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_in"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"smallint"}}}},"defaultValue":{"kind":"ListValue","values":[{"kind":"StringValue","value":"0","block":false},{"kind":"StringValue","value":"1","block":false},{"kind":"StringValue","value":"2","block":false},{"kind":"StringValue","value":"3","block":false}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mavryk_user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lending_controller_history_data_sender"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"lending_controller"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"mock_time"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"_in"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"EnumValue","value":"asc"}},{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"operation_hash"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"loan_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"current_interest_rate"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"interest_rate_decimals"}},{"kind":"Field","name":{"kind":"Name","value":"interest_treasury_share"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"lending_controller_vaults"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"lending_controller"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"mock_time"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collateral_balances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"collateral_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"loan_decimals"}},{"kind":"Field","name":{"kind":"Name","value":"loan_principal_total"}},{"kind":"Field","name":{"kind":"Name","value":"loan_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUserLoansDataSubscription, GetUserLoansDataSubscriptionVariables>;
-export const GetUserMvkSmvkBalanceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"getUserMvkSmvkBalance"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"tz1Y2tUUooW6QT6pQCeqz9ep9wCkX5bnKeTs","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mavryk_user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"smvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"mvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"mvk_transfer_sender"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mvk_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"mvk_transfer_receiver"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mvk_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"m_token_accounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"m_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUserMvkSmvkBalanceSubscription, GetUserMvkSmvkBalanceSubscriptionVariables>;

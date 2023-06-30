@@ -1,17 +1,14 @@
-import { useSelector } from 'react-redux'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
-// state
-import { State } from '../../../reducers'
-
-// view
 import ConnectWalletBtn from './ConnectWalletBtn'
 import { Info } from '../Info/Info.view'
+
 import { INFO_DEFAULT } from '../Info/info.constants'
 
 const ConnectWalletBanner = () => {
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { userAddress } = useUserContext()
 
-  return accountPkh ? null : (
+  return userAddress ? null : (
     <Info
       showIcon={false}
       isLarge

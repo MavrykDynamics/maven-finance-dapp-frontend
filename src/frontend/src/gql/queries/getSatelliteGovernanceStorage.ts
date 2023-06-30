@@ -73,19 +73,3 @@ export const SATELLITE_GOVERNANCE_STORAGE_QUERY = `
 
 export const SATELLITE_GOVERNANCE_STORAGE_QUERY_NAME = 'GetGovernanceSatelliteStorageQuery'
 export const SATELLITE_GOVERNANCE_STORAGE_QUERY_VARIABLE = {}
-
-// actions max count
-// TODO add cycle_id when it will be ready (right now it takes all actions from cycles)
-export const SATELLITE_ACTIONS_COUNT_QUERY = `
-query maxSatGovActionsPerSatellitePerCycle($address:String = "") {
-  governance_satellite {
-    actions(where: {initiator: {address: {_eq: $address}}, status: {_eq: "0"}}, order_by: {expiration_datetime: desc}) {
-      status
-    }
-  }
-}
-`
-export const SATELLITE_ACTIONS_COUNT_QUERY_NAME = 'maxSatGovActionsPerSatellitePerCycle'
-export function SATELLITE_ACTIONS_COUNT_QUERY_VARIABLE(address: string) {
-  return { address: address }
-}

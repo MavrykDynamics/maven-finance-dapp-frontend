@@ -36,7 +36,7 @@ import {
   TableRow,
 } from 'app/App.components/Table'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { reduceTreasuryAssets } from 'pages/Treasury/helpers/treasury.utils'
 import { Info } from 'app/App.components/Info/Info.view'
@@ -44,6 +44,7 @@ import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const StageThreeForm = ({
   proposalId,
@@ -55,19 +56,16 @@ export const StageThreeForm = ({
   const { proposalPayments, locked, title } = currentProposal
 
   const { tokensMetadata } = useTokensContext()
-
+  const { isNewlyRegisteredSatellite } = useUserContext()
   const {
     maxLengths: {
       governance: { proposalMetadataTitleMaxLength },
     },
-  } = useDAPPConfigContext()
-
+  } = useDappConfigContext()
   const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
 
   const { treasuryStorage } = useSelector((state: State) => state.treasury)
   const treasuryTokens = useMemo(() => reduceTreasuryAssets(treasuryStorage), [treasuryStorage])
-
-  const { isNewlyRegisteredSatellite } = useSelector((state: State) => state.wallet.user)
 
   const isProposalRound = governancePhase === 'PROPOSAL'
 

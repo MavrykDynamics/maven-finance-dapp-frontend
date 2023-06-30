@@ -1,12 +1,22 @@
-import { normallizeSatellite, getSatelliteVotings } from './helpers/Satellites.normalizer'
+import { getSatelliteVotings, normallizeSatellite } from './helpers/satellites.normalizer'
+
 import { TokenType } from 'utils/TypesAndInterfaces/General'
+
+export type SatelliteRecordType = ReturnType<typeof normallizeSatellite>
+export type SatelliteMapper = Record<string, SatelliteRecordType>
 
 export type SatellitesContext = {
   // data
-  satelliteMapper: Record<string, ReturnType<typeof normallizeSatellite>>
+  satelliteMapper: SatelliteMapper
   activeSatellitesIds: string[]
   allSatellitesIds: string[]
   oraclesIds: string[]
+
+  // values to calc satellite metrix
+  proposalsAmount: number
+  executedProposalAmount: number
+  finRequestsAmount: number
+  eGovProposalsAmount: number
 
   // additional data
   isLoading: boolean
@@ -17,26 +27,37 @@ export type SatellitesContext = {
 
 export type SatellitesCtxState = Pick<
   SatellitesContext,
-  'satelliteMapper' | 'activeSatellitesIds' | 'allSatellitesIds' | 'oraclesIds'
+  | 'satelliteMapper'
+  | 'activeSatellitesIds'
+  | 'allSatellitesIds'
+  | 'oraclesIds'
+  | 'proposalsAmount'
+  | 'eGovProposalsAmount'
+  | 'executedProposalAmount'
+  | 'finRequestsAmount'
 >
 
-// additional types
-export type SatelliteRecordType = ReturnType<typeof normallizeSatellite>
-export type SatelliteMapper = Record<string, ReturnType<typeof normallizeSatellite>>
+// Satellite status
+export const ACTIVE_SATELLITE_STATUS = 0
+export const SUSPENDED_SATELLITE_STATUS = 1
+export const BANNED_SATELLITE_STATUS = 2
+export const INACTIVE_SATELLITE_STATUS = 3
+export type SatelliteIndexerStatusType = keyof typeof SatelliteStatuses
 
-export enum SatelliteStatus {
-  ACTIVE = 0,
-  SUSPENDED = 1,
-  BANNED = 2,
-  INACTIVE = 3,
-}
+export const SatelliteStatuses = {
+  [ACTIVE_SATELLITE_STATUS]: 'ACTIVE',
+  [SUSPENDED_SATELLITE_STATUS]: 'SUSPENDED',
+  [BANNED_SATELLITE_STATUS]: 'BANNED',
+  [INACTIVE_SATELLITE_STATUS]: 'INACTIVE',
+} as const
 
+// Satellite votes
 export type SatelliteVotingsType = ReturnType<typeof getSatelliteVotings>
 export type SatelliteVoteType =
   | SatelliteVotingsType['satelliteActionVotes'][number]
-  // | SatelliteVotingsType['emergencyGovernanceVotes'][number]
+  | SatelliteVotingsType['eGovVotes'][number]
   | SatelliteVotingsType['financialRequestsVotes'][number]
-  | SatelliteVotingsType['proposalVotingHistory'][number]
+  | SatelliteVotingsType['proposalsVotes'][number]
 
 export type SatelliteGovernanceTransfer = {
   to_: string //this is a contract address

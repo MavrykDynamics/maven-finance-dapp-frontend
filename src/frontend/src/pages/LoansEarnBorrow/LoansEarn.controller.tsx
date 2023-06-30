@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
@@ -18,7 +18,6 @@ import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getMarketUserLengingItem } from 'providers/LoansProvider/helpers/loans.utils'
 
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
@@ -29,6 +28,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -53,11 +53,7 @@ export const LoansEarn = () => {
   })
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
-
-  const {
-    accountPkh,
-    user: { userMTokens },
-  } = useSelector((state: State) => state.wallet)
+  const { userAddress, userMTokens } = useUserContext()
 
   const { isDataLoaded, loanTokens } = useSelector((state: State) => state.loans)
 
@@ -107,8 +103,7 @@ export const LoansEarn = () => {
 
         const { rate: price, decimals, icon, symbol, address } = token
 
-        const { lendValue = 0, interestEarned = 0 } =
-          getMarketUserLengingItem(userMTokens, item.loanMTokenAddress) ?? {}
+        const { lendValue = 0, interestEarned = 0 } = userMTokens[item.loanMTokenAddress] ?? {}
 
         acc.push({
           icon,
@@ -132,7 +127,7 @@ export const LoansEarn = () => {
     const market = loanTokens.find((item) => item.loanTokenAddress === marketTokenAddress)
     if (!market) return
 
-    const lendItem = getMarketUserLengingItem(userMTokens, market.loanMTokenAddress)
+    const lendItem = userMTokens[market.loanMTokenAddress]
 
     //  if the user has already supplied to the specific asset pool we will route to asset market
     if (lendItem) {
@@ -155,7 +150,7 @@ export const LoansEarn = () => {
         }
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   return (
@@ -185,7 +180,7 @@ export const LoansEarn = () => {
             markets={markets}
             settings={marketSettings}
             handleClick={handleEarn}
-            isDisabledButton={!accountPkh}
+            isDisabledButton={!userAddress}
           />
         </>
       )}

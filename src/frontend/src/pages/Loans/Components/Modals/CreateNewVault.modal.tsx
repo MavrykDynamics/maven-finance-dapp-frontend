@@ -41,7 +41,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { containSpaces } from 'app/App.utils/input'
 import { CreateVaultPopupDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import useXtzBakersForDD from 'providers/DAPPConfig/helpers/useDDXtzBakers'
+import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import {
   checkWhetherTokenIsCollateralToken,

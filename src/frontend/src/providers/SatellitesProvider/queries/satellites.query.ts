@@ -58,56 +58,57 @@ export function getSatelliteDataSubscription(
           }
         }
 
-        governance_satellite_snapshots(where: {user: {address: {_eq: "tz1T8S68igxa6uWZbeoWWwbcuRHEDQSzknEX"}}}, order_by: {cycle: desc}, limit: 1) {
+        # satellite total voting power
+        governance_satellite_snapshots(order_by: {cycle: desc}, limit: 1) {
           cycle
           total_voting_power
-          user {
-            address
+          governance {
+            cycle_id
           }
         }
 
-        # uncomment and test when eGov will be ready
         # Egov votes
-        # emergency_governance_votes {
-        #	emergency_governance_record_id
-        #	id
-        #	smvk_amount
-        #	timestamp
-        #	emergency_governance_record {
-        #		title
-        #	}
-        # }
-
-			# Financial Request votes
-			governance_financial_requests_votes {
-				timestamp
-				vote
-        id
-				governance_financial_request {
-					request_type
-				}
-			}
-
-			# Proposals votes
-			governance_proposals_votes(order_by: {timestamp: desc}) {
-				timestamp
-				vote
-        id
-				governance_proposal {
+        emergency_governance_votes {
+          emergency_governance_record_id
           id
-					title
-				}
-			}
+          smvk_amount
+          timestamp
+          emergency_governance_record {
+            title
+          }
+        }
 
-			# Satellite governance votes
-			governance_satellite_actions_votes {
-				timestamp
-				vote
-        id
-				governance_satellite_action {
-					governance_type
-				}
-			}
+        # Financial Request votes
+        governance_financial_requests_votes {
+          timestamp
+          vote
+          id
+          governance_financial_request {
+            request_type
+          }
+        }
+
+        # Proposals votes
+        governance_proposals_votes(order_by: {timestamp: desc}) {
+          timestamp
+          vote
+          id
+          governance_proposal {
+            id
+            title
+            executed
+          }
+        }
+
+        # Satellite governance votes
+        governance_satellite_actions_votes {
+          timestamp
+          vote
+          id
+          governance_satellite_action {
+            governance_type
+          }
+        }
       }
     }
   }

@@ -23,6 +23,7 @@ import { checkIfLinkSelected, isSubLinkShown } from './NavigationLink.constants'
 
 // view
 import Icon from 'app/App.components/Icon/Icon.view'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const Sublink = ({ subNavLink, isSelected }: { subNavLink: SubNavigationRoute; isSelected: boolean }) => (
   <SubNavLink disabled={subNavLink.disabled}>
@@ -56,10 +57,9 @@ export const NavigationLink = ({
   navLinkClickHandler,
 }: NavigationLinkProps) => {
   const { pathname } = useLocation()
-  const {
-    accountPkh,
-    user: { isSatellite },
-  } = useSelector((state: State) => state.wallet)
+
+  const { userAddress, isSatellite } = useUserContext()
+
   const [showSubPages, setShowSubPages] = useState<boolean>(false)
 
   const isMainLinkDisabled = useMemo(() => {
@@ -115,7 +115,7 @@ export const NavigationLink = ({
             <NavigationSubLinks className="content">
               {subPages.map((subNavLink: SubNavigationRoute) => {
                 const selectedSubLink = checkIfLinkSelected(pathname, subNavLink.routeSubPath)
-                const showSublink = isSubLinkShown(subNavLink, isSatellite, accountPkh)
+                const showSublink = isSubLinkShown(subNavLink, isSatellite, userAddress)
 
                 return showSublink ? (
                   <Sublink key={subNavLink.id} subNavLink={subNavLink} isSelected={selectedSubLink} />

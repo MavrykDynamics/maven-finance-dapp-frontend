@@ -7,17 +7,17 @@ import { GET_USER_LOANS_DATA } from '../queries/userLoans.query'
 import { calcLendingAPY } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
-import { UserLoansDataStateType } from '../helpers/user.types'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
 import { GetUserLoansDataSubscription } from 'utils/__generated__/graphql'
+import { UserLoansDataStateType } from '../user.provider.types'
 
 /**
  *
  * @param param0.userAddress – address of the current user to get his lend/borrow data
  * @returns returns user's loans data, all values are converted, this data is used to show his loans stats
  */
-const useUserLoansData = ({ userAddress }: { userAddress?: string }) => {
+const useUserLoansData = ({ userAddress }: { userAddress: string | null }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const [userLoansData, setUserLoansData] = useState<UserLoansDataStateType>({

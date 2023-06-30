@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
-import { SatelliteRecordType } from '../satellites.provider.types'
+import { SatelliteRecordType, SatelliteStatuses } from '../satellites.provider.types'
 
 import { OracleStatusTypes } from '../satellites.const'
 import { SATELLITE_ACTIVE_STATUS } from '../helpers/satellites.conts'
@@ -11,7 +11,7 @@ import { SATELLITE_ACTIVE_STATUS } from '../helpers/satellites.conts'
 export const useSatelliteOracleStatus = (satellite: SatelliteRecordType) => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
 
-  const [satelliteStatus, setSatelliteStatus] = useState<OracleStatusTypes>('notAnOracle')
+  const [oracleStatus, setOracleStatus] = useState<OracleStatusTypes>('notAnOracle')
 
   useEffect(() => {
     const satelliteOracleRecords = satellite.oracleRecords
@@ -31,13 +31,13 @@ export const useSatelliteOracleStatus = (satellite: SatelliteRecordType) => {
           return nowAndLastUpdateDiffInMs / 1000 >= heart_beat_seconds
         })
 
-        setSatelliteStatus(isAllSatellitesFeedsActive ? 'responded' : 'awaiting')
+        setOracleStatus(isAllSatellitesFeedsActive ? 'responded' : 'awaiting')
       } else {
         // if oracle is not active, status should be "no response"
-        setSatelliteStatus('noResponse')
+        setOracleStatus('noResponse')
       }
     }
   }, [feedsAddresses, feedsMapper, satellite.address, satellite.oracleRecords, satellite.status])
 
-  return { satelliteStatus }
+  return { oracleStatus, satelliteStatus: SatelliteStatuses[satellite.status] }
 }

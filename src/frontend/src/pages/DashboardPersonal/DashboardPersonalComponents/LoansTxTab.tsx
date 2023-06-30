@@ -23,9 +23,9 @@ import { parseDate } from 'utils/time'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { useSelector } from 'react-redux'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
-import { UserLoansDataStateType } from 'providers/UserProvider/helpers/user.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
 
 export const LoansTxTab = ({
   txVariant,

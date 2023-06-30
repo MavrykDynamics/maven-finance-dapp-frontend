@@ -167,6 +167,7 @@ export const distributeProposalRewards = (a: any, b: any) => async (dispatch: Ap
 
 //         // @ts-ignore don't have proper type to acees data, type has only methods
 //         const currentOperationLevel = transaction?.lastHead?.header?.level
+// refetch data we need
 
 //         // refetch data we need
 //         await checkIndexerLevelAndRunDataUpdateCallback({

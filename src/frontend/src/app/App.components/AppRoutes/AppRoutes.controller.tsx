@@ -3,11 +3,8 @@ import { Redirect, Route, Switch, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
-import { DataFeeds } from 'pages/DataFeeds/DataFeeds.controller'
-import DataFeedDetails from 'pages/DataFeedsDetails/DataFeedsDetails.controler'
-import { FinancialRequests } from 'pages/FinacialRequests/FinancialRequests.controller'
-import SatelliteNodes from 'pages/SatelliteNodes/SatelliteNodes.controller'
-import Satellites from 'pages/Satellites/Satellites.controller'
+// context
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // pages
 import { Admin } from '../../../pages/Admin/Admin.controller'
@@ -25,19 +22,30 @@ import { SatelliteDetails } from '../../../pages/SatelliteDetails/SatelliteDetai
 import { SatelliteGovernance } from '../../../pages/SatelliteGovernance/SatelliteGovernance.controller'
 import { Treasury } from '../../../pages/Treasury/Treasury.controller'
 import { Vaults } from '../../../pages/Vaults/Vaults.controller'
-import { LoansEarn } from 'pages/LoansEarnBorrow/LoansEarn.controller'
-import { LoansBorrow } from 'pages/LoansEarnBorrow/LoansBorrow.controller'
-
-import { scrollUpPage } from 'utils/scrollUpPage'
-import ProtectedRoute from './ProtectedRoute'
 import DashboardPersonal from 'pages/DashboardPersonal/DashboardPersonal.controller'
-import { Market } from 'pages/Loans/Market.controller'
 import { LoansDashboard } from 'pages/LoansDashboard/LoansDashboard'
 import { ProposalSubmission } from 'pages/ProposalSubmission/ProposalSubmission.controller'
+import { LoansEarn } from 'pages/LoansEarnBorrow/LoansEarn.controller'
+import { Market } from 'pages/Loans/Market.controller'
+import { LoansBorrow } from 'pages/LoansEarnBorrow/LoansBorrow.controller'
+import { DataFeeds } from 'pages/DataFeeds/DataFeeds.controller'
+import DataFeedDetails from 'pages/DataFeedsDetails/DataFeedsDetails.controler'
+import { FinancialRequests } from 'pages/FinacialRequests/FinancialRequests.controller'
+import SatelliteNodes from 'pages/SatelliteNodes/SatelliteNodes.controller'
+import Satellites from 'pages/Satellites/Satellites.controller'
+
+// providers
+import StakeProvider from 'providers/StakeProvider/stake.provider'
+
+// helpers
+import { scrollUpPage } from 'utils/scrollUpPage'
+import ProtectedRoute from './ProtectedRoute'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
-  const { accountPkh, user: { isSatellite } = {} } = useSelector((state: State) => state.wallet)
+
+  const { userAddress, isSatellite } = useUserContext()
+
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
 
   // get origin pathname
@@ -52,23 +60,33 @@ export const AppRoutes = () => {
   return (
     <Switch>
       <Route exact path="/staking">
-        <Doorman />
+        <StakeProvider>
+          <Doorman />
+        </StakeProvider>
       </Route>
 
       {/* DASHBOARD */}
       <Route exact path="/">
-        <Dashboard />
+        <StakeProvider>
+          <Dashboard />
+        </StakeProvider>
       </Route>
       <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
-        <DashboardPersonal />
+        <StakeProvider>
+          <DashboardPersonal />
+        </StakeProvider>
       </Route>
 
       {/* SATELLITES */}
       <Route exact path="/satellites">
-        <Satellites />
+        <StakeProvider>
+          <Satellites />
+        </StakeProvider>
       </Route>
       <Route exact path="/become-satellite">
-        <BecomeSatellite />
+        <StakeProvider>
+          <BecomeSatellite />
+        </StakeProvider>
       </Route>
       <Route exact path="/satellite-nodes">
         <SatelliteNodes />
@@ -100,7 +118,9 @@ export const AppRoutes = () => {
         <FinancialRequests />
       </Route>
       <Route exact path="/emergency-governance">
-        <EmergencyGovernance />
+        <StakeProvider>
+          <EmergencyGovernance />
+        </StakeProvider>
       </Route>
       <Route exact path="/mavryk-council/:tabId?">
         <Council />
@@ -111,7 +131,7 @@ export const AppRoutes = () => {
       <ProtectedRoute
         path="/submit-proposal"
         component={ProposalSubmission}
-        isAuthorized={Boolean(accountPkh)}
+        isAuthorized={Boolean(userAddress)}
         canCheck={!isInitialDataLoading}
         hasAccess={Boolean(isSatellite)}
         redirectPath={'/governance'}
@@ -126,7 +146,7 @@ export const AppRoutes = () => {
       </Route>
 
       {/* LEND & BORROW */}
-      <Route exact path="/loans/:assetAddress/:tabId">
+      <Route exact path="/loans/:assetId/:tabId">
         <Market />
       </Route>
       <Route exact path="/loans">
@@ -159,6 +179,7 @@ export const AppRoutes = () => {
         {/*TODO: Replace later on with actual 404 page*/}
         <Dashboard />
       </Route>
+
       <Redirect to="/404" />
     </Switch>
   )

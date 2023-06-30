@@ -20,9 +20,10 @@ import { calculateAPY } from '../Farms.helpers'
 // styles
 import { FarmCardStyled, FarmHarvestStyled, FarmStakeStyled } from './FarmCard.style'
 import { FarmStorage, Normalizedfarm } from 'utils/TypesAndInterfaces/Farm'
-import { UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
 import { farmsPopupsContext } from '../FarmsPopups/FarmsPopups.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { UserFarmRewardsData } from 'providers/UserProvider/user.provider.types'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const QuestionLinkBlock = () => (
   <a className="info-link" href="https://mavryk.finance/litepaper#yield-farming" target="_blank" rel="noreferrer">
@@ -152,7 +153,7 @@ const FarmingBlock = ({
   isFarmLive: boolean
   token1Symbol: string
   token2Symbol: string
-  accountPhk?: string
+  accountPhk: string | null
   farmAccounts: FarmStorage[number]['farmAccounts']
 }) => {
   const depositedAmount = farmAccounts.find(({ user: { address } }) => accountPhk === address)?.deposited_amount ?? 0
@@ -181,7 +182,7 @@ const FarmingBlock = ({
 type FarmCardViewProps = {
   farm: Normalizedfarm
   apyValue: number
-  accountPkh?: string
+  accountPkh: string | null
   isOpenedCard: boolean
   userReward?: UserFarmRewardsData
   triggerWithdrawModal: () => void
@@ -316,11 +317,8 @@ type FarmCardProps = {
 export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, expandCallback }: FarmCardProps) => {
   const dispatch = useDispatch()
   const { tokensMetadata } = useTokensContext()
+  const { userAddress, availableFarmRewards } = useUserContext()
   const { openDepositFarmPopup, openRoiCalculatorPopup, openWithdrawFarmPopup } = useContext(farmsPopupsContext)
-  const {
-    accountPkh,
-    user: { availableFarmRewards },
-  } = useSelector((state: State) => state.wallet)
 
   const valueAPY = calculateAPY(farm.currentRewardPerBlock, farm.lpBalance)
   const userReward = availableFarmRewards[farm.address]
@@ -346,7 +344,7 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
 
   return variant === 'vertical' ? (
     <VerticalFarmComponent
-      accountPkh={accountPkh}
+      accountPkh={userAddress}
       farm={farm}
       isOpenedCard={isOpenedCard}
       userReward={userReward}
@@ -359,7 +357,7 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
     />
   ) : (
     <HorisontalFarmComponent
-      accountPkh={accountPkh}
+      accountPkh={userAddress}
       farm={farm}
       isOpenedCard={isOpenedCard}
       userReward={userReward}

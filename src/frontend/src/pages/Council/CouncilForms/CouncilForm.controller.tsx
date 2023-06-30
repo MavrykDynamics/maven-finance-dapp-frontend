@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // providers
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // components
 import { CouncilFormAddVestee } from './CouncilFormAddVestee.view'
@@ -43,7 +43,7 @@ export function CouncilForm() {
 
   const {
     maxLengths: { council: councilMaxLengths },
-  } = useDAPPConfigContext()
+  } = useDappConfigContext()
 
   switch (action) {
     case actions.ADD_VESTEE:

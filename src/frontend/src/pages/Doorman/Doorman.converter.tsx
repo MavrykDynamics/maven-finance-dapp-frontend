@@ -67,19 +67,19 @@ export const stakingInputValidation = ({
   amount,
   myMvkTokenBalance,
   mySMvkTokenBalance,
-  accountPkh,
+  userAddress,
 }: {
   amount: number
   myMvkTokenBalance: number
   mySMvkTokenBalance: number
-  accountPkh?: string
+  userAddress: string | null
 }) => {
   if (amount === 0) return ''
 
   return isValidNumberValue(
     amount,
     1,
-    accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
+    userAddress ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
   )
     ? INPUT_STATUS_SUCCESS
     : INPUT_STATUS_ERROR

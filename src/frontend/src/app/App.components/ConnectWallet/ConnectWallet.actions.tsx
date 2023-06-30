@@ -1,11 +1,11 @@
 import { AppDispatch, GetState } from 'app/App.controller'
 
 import { showToaster } from '../Toaster/Toaster.actions'
-import { updateUserData } from 'reducers/actions/user.actions'
-import { dappClient } from 'reducers/wallet/WalletCore'
+import { dappClient } from 'providers/UserProvider/wallet/WalletCore'
 
 import { ERROR } from '../Toaster/Toaster.constants'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import { SET_REDUX_USER } from 'reducers/wallet'
 
 // Instance of Dapp wallet
 export const DAPP_INSTANCE = dappClient()
@@ -21,7 +21,7 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
 
     // If they are equal wallet changed, need to update user data
     if (accountAddress && accountAddress !== state.wallet.accountPkh) {
-      await dispatch(updateUserData(accountAddress))
+      dispatch({ type: SET_REDUX_USER, accountPkh: accountAddress })
 
       // Update loans data on wallet manipulations if it's loaded, cuz it's user centric data
       if (state.loans.isDataLoaded) await dispatch(getLoansStorage())
@@ -42,7 +42,7 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
 
     // if choosen wallet in popup
     if (accountAddress) {
-      await dispatch(updateUserData(accountAddress))
+      dispatch({ type: SET_REDUX_USER, accountPkh: accountAddress })
 
       // Update loans data on wallet manipulations if it's loaded, cuz it's user centric data
       if (state.loans.isDataLoaded) await dispatch(getLoansStorage())

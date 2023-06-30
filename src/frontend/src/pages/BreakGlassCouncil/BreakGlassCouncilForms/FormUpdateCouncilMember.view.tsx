@@ -15,7 +15,7 @@ import { validateFormField } from 'utils/validatorFunctions'
 
 // types
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { CouncilMaxLength } from 'providers/DAPPConfig/dappConfig.types'
+import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // styles
 import { FormStyled } from './BreakGlassCouncilForm.style'

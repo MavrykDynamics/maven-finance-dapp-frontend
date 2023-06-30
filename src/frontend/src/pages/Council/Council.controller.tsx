@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // providers
-import { useDAPPConfigContext } from 'providers/DAPPConfig/dappConfig.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // components
 import { Page } from 'styles'
@@ -24,6 +24,7 @@ import {
   dropRequest,
   sign,
 } from './Council.actions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // types
 
@@ -38,14 +39,13 @@ export const Council = () => {
 
   const {
     maxLengths: { council: councilMaxLengths },
-  } = useDAPPConfigContext()
+  } = useDappConfigContext()
 
   const {
-    accountPkh,
-    user: {
-      userAvatars: { counsilAvatar },
-    },
-  } = useSelector((state: State) => state.wallet)
+    userAddress,
+    userAvatars: { counsilAvatar },
+  } = useUserContext()
+
   const {
     councilMembers,
     councilActions: {
@@ -83,7 +83,7 @@ export const Council = () => {
 
   useDataLoader(
     async (isDepsChanged) => {
-      if (!accountPkh) return
+      if (!userAddress) return
 
       try {
         await Promise.all(
@@ -94,7 +94,7 @@ export const Council = () => {
         )
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   return (

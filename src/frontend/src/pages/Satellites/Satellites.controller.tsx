@@ -1,13 +1,8 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
 
 // providers
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
-
-// types
-import { State } from 'reducers'
 
 // view
 import SatellitesSideBar from './SatellitesSideBar/SatellitesSideBar.controller'
@@ -21,9 +16,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 
 // consts, helpers, actions
 import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/satellites.const'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
-import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
 // styles
@@ -38,29 +31,11 @@ import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
 
 const Satellites = () => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
-  const { userTokensBalances } = useUserContext()
-
-  const dispatch = useDispatch()
-  const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
-  const { activeSatellitesIds, satelliteMapper } = useSatellitesContext()
-
-  const {
-    user: { isSatellite },
-  } = useSelector((state: State) => state.wallet)
-
-  const { isLoading: isSatellitesLoading } = useSatellitesUpdater()
-
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    try {
-      if (!isGovernanceLoaded || isDepsChanged) {
-        dispatch(getGovernanceStorage())
-      }
-    } catch (e) {}
-  }, [])
+  const { activeSatellitesIds, satelliteMapper, isLoading: isSatellitesLoading } = useSatellitesContext()
+  const { userTokensBalances, isSatellite } = useUserContext()
 
   const tabsInfo = useMemo(
     () => ({
@@ -92,16 +67,16 @@ const Satellites = () => {
               </div>
             </SatelliteGovernanceStatsInfo>
             <SatelliteGovernanceStatsInfo>
-              <h3>Total Satellites & Oracles</h3>
-              <div className="value">{tabsInfo.totalSatelliteOracles}</div>
-            </SatelliteGovernanceStatsInfo>
-            <SatelliteGovernanceStatsInfo>
               <h3>Number of Data Feeds</h3>
               <div className="value">{tabsInfo.numberOfDataFeeds}</div>
             </SatelliteGovernanceStatsInfo>
+            <SatelliteGovernanceStatsInfo>
+              <h3>Total Satellites & Oracles</h3>
+              <div className="value">{tabsInfo.totalSatelliteOracles}</div>
+            </SatelliteGovernanceStatsInfo>
           </InfoBlockWrapper>
 
-          {isLoading || isSatellitesLoading ? (
+          {isSatellitesLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellites and data feeds data</div>
