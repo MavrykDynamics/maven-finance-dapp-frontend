@@ -101,7 +101,7 @@ export const Loans = () => {
           data={{ type: AREA_CHART_TYPE, plots: chartsData.lendingChartData }}
           colors={CHART_COLORS}
           settings={CHART_SETTINGS}
-          numberOfItemsToDisplay={3}
+          numberOfItemsToDisplay={0}
           tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
           tooltipAsset="$"
         />
@@ -121,7 +121,7 @@ export const Loans = () => {
           data={{ type: AREA_CHART_TYPE, plots: chartsData.borrowingChartData }}
           colors={CHART_COLORS}
           settings={CHART_SETTINGS}
-          numberOfItemsToDisplay={3}
+          numberOfItemsToDisplay={0}
           tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
           tooltipAsset="$"
         />
