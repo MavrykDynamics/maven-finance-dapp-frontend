@@ -116,7 +116,7 @@ export const normalizeTreasuryStorage = (
     const sMVKAmount = parsedsMVKAmount.find(({ contract }: TreasuryBalanceType) => contract === treasuryData.address)
 
     // XTZ is present by default for each treasury, and it can't be defined on back-end
-    const treasuryWhitelistTokens = ['XTZ'].concat(
+    const treasuryWhitelistTokens = ['tz1ZZZZZZZZZZZZZZZZZZZZZZZZZZZZNkiRg'].concat(
       treasuryData.whitelist_token_contracts.map(({ contract_address }) => contract_address),
     )
 
