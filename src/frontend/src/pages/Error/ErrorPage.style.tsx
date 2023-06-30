@@ -1,22 +1,25 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../styles/interfaces'
+import { hangInSpace } from 'styles/animations'
 
 export const ErrorPageWrapper = styled.div<{ theme: MavrykTheme }>`
   margin: auto;
-  width: 100%;
+  width: 100vw;
   position: relative;
-  height: calc(100vh + 112px);
-  padding-top: 112px;
-  background-color: red;
+  height: 100vh;
+  padding-top: 80px;
   background: url('/images/error-bg.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   display: flex;
   justify-content: center;
-  align-items: start;
+  align-items: center;
 `
 
 export const ErrorPageInner = styled.div<{ theme: MavrykTheme }>`
   display: inline-block;
-  margin-top: 37px;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -56,4 +59,20 @@ export const ErrorLogoImage = styled.img<{ theme: MavrykTheme }>`
   height: 213px;
   margin: 20px 0;
   object-fit: cover;
+`
+
+export const Vector1 = styled.img<{ theme: MavrykTheme }>`
+  position: absolute;
+  left: -158px;
+  bottom: 95px;
+  z-index: 1;
+  animation: ${hangInSpace} 80s ease-in-out infinite alternate;
+`
+
+export const Vector2 = styled.img<{ theme: MavrykTheme }>`
+  position: absolute;
+  right: -100px;
+  top: 20px;
+  z-index: 1;
+  animation: ${hangInSpace} 90s ease-in-out infinite alternate;
 `

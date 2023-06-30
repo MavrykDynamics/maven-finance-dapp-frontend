@@ -10,6 +10,8 @@ import {
   ErrorMidHeader,
   ErrorParagraph,
   ErrorLogoImage,
+  Vector1,
+  Vector2,
 } from './ErrorPage.style'
 
 export const ErrorPage = () => {
@@ -22,7 +24,9 @@ export const ErrorPage = () => {
     <ErrorPageWrapper>
       <ErrorPageInner>
         <ErrorTopHeader>Error</ErrorTopHeader>
+        <Vector1 src="/images/satellite-error.svg" />
         <ErrorLogoImage src="/images/404.png" alt="404-logo" />
+        <Vector2 src="/images/space-cow.svg" />
         <ErrorMidHeader>This page is outside the universe </ErrorMidHeader>
         <ErrorParagraph>
           The page you are trying to access doesn’t exist or has been moved.
