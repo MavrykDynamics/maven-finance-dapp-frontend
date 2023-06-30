@@ -21,30 +21,30 @@ import {
 
 const BUTTONS_KIND_STYLES = css`
   &.${BUTTON_PRIMARY} {
-    color: ${({ theme }) => theme.containerColor};
-    background-color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.cards};
+    background-color: ${({ theme }) => theme.linksAndButtons};
 
     svg {
-      fill: ${({ theme }) => theme.containerColor};
+      fill: ${({ theme }) => theme.cards};
     }
   }
 
   &.${BUTTON_SECONDARY} {
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
     background-color: transparent;
-    border: 2px solid ${({ theme }) => theme.valueColor};
+    border: 2px solid ${({ theme }) => theme.linksAndButtons};
 
     svg {
-      fill: ${({ theme }) => theme.valueColor};
+      fill: ${({ theme }) => theme.linksAndButtons};
     }
   }
   &.${BUTTON_SECONDARY_PURPLE} {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
     background-color: transparent;
-    border: 2px solid ${({ theme }) => theme.cardBorderColor};
+    border: 2px solid ${({ theme }) => theme.strokeColor};
 
     svg {
-      fill: ${({ theme }) => theme.cardBorderColor};
+      fill: ${({ theme }) => theme.strokeColor};
     }
   }
 
@@ -52,11 +52,12 @@ const BUTTONS_KIND_STYLES = css`
     width: fit-content;
     height: fit-content;
     padding: 0;
-
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    
+    background-color: transparent;
+    border: 1px solid ${({ theme }) => theme.divider};
 
     svg {
-      fill: ${({ theme }) => theme.valueColor};
+      fill: ${({ theme }) => theme.linksAndButtons};
     }
   }
 
@@ -65,9 +66,10 @@ const BUTTONS_KIND_STYLES = css`
     height: fit-content;
     padding: 0;
 
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
+
     svg {
-      fill: ${({ theme }) => theme.valueColor};
+      fill: ${({ theme }) => theme.linksAndButtons};
     }
   }
 
@@ -76,11 +78,12 @@ const BUTTONS_KIND_STYLES = css`
     height: fit-content;
     padding: 0;
 
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
+
     svg {
       width: 14px;
       height: 14px;
-      fill: ${({ theme }) => theme.valueColor};
+      fill: ${({ theme }) => theme.linksAndButtons};
     }
   }
 
@@ -90,7 +93,7 @@ const BUTTONS_KIND_STYLES = css`
     padding: 0;
     position: relative;
     transition: 0.3s all;
-    color: ${({ theme }) => theme.navTitleColor};
+    color: ${({ theme }) => theme.menuButtonText};
 
     &.selected:not(:disabled),
     &:hover:not(:disabled) {
@@ -103,24 +106,24 @@ const BUTTONS_KIND_STYLES = css`
         content: '';
         width: 30px;
         height: 1px;
-        background-color: ${({ theme }) => theme.navLinkSubTitleActive};
+        background-color: ${({ theme }) => theme.selectedColor};
       }
-      color: ${({ theme }) => theme.navLinkSubTitleActive};
+      color: ${({ theme }) => theme.selectedColor};
     }
   }
 
   &.${VOTING_FOR} {
-    color: ${({ theme }) => theme.backgroundColor};
+    color: ${({ theme }) => theme.cards};
     background-color: ${({ theme }) => theme.upColor};
   }
 
   &.${VOTING_PASS} {
-    color: ${({ theme }) => theme.backgroundColor};
+    color: ${({ theme }) => theme.cards};
     background-color: ${({ theme }) => theme.headerSkyColor};
   }
 
   &.${VOTING_AGAINST} {
-    color: ${({ theme }) => theme.backgroundColor};
+    color: ${({ theme }) => theme.cards};
     background-color: ${({ theme }) => theme.downColor};
   }
 `
