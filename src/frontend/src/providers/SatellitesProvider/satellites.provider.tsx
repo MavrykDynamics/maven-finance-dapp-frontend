@@ -41,20 +41,20 @@ export const SatellitesProvider = ({ children }: Props) => {
 
   const [satelliteAddressToSubsctibe, setSatelliteAddressToSubsctibe] = useState<null | string>(null)
 
-  const handleSubError = (e: ApolloError) => {
-    console.error('SUBSCRIPTION_STAKE_HISTORY query error: ', { e })
+  const handleSubError = (e: ApolloError, queryName: string) => {
+    console.error(`${queryName} query error: `, { e })
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
   const { loading: satellitesLoading } = useSubscription(getSatelliteDataSubscription(satelliteAddressToSubsctibe), {
-    variables: {
-      userAddress: satelliteAddressToSubsctibe,
-    },
+    // variables: {
+    //   userAddress: satelliteAddressToSubsctibe,
+    // },
     onData: ({ data: { data } }) => {
       if (!data) return
       updateSatellitesContext(data)
     },
-    onError: handleSubError,
+    onError: (e) => handleSubError(e, 'getSatelliteDataSubscription'),
     shouldResubscribe: true,
   })
 
@@ -66,7 +66,7 @@ export const SatellitesProvider = ({ children }: Props) => {
         proposalsAmount: data.governance_proposal_aggregate.aggregate?.count ?? 0,
       }))
     },
-    onError: handleSubError,
+    onError: (e) => handleSubError(e, 'PROPOSALS_AMOUNT_SUBSCRIPTION'),
     shouldResubscribe: true,
   })
 
@@ -78,7 +78,7 @@ export const SatellitesProvider = ({ children }: Props) => {
         executedProposalAmount: data.governance_proposal_aggregate.aggregate?.count ?? 0,
       }))
     },
-    onError: handleSubError,
+    onError: (e) => handleSubError(e, 'EXECUTED_PROPOSALS_AMOUNT_SUBSCRIPTION'),
     shouldResubscribe: true,
   })
 
@@ -90,7 +90,7 @@ export const SatellitesProvider = ({ children }: Props) => {
         finRequestsAmount: data.governance_financial_request_aggregate.aggregate?.count ?? 0,
       }))
     },
-    onError: handleSubError,
+    onError: (e) => handleSubError(e, 'FINANCIAL_REQUESTS_AMOUNT_SUBSCRIPTION'),
     shouldResubscribe: true,
   })
 
@@ -102,13 +102,15 @@ export const SatellitesProvider = ({ children }: Props) => {
         eGovProposalsAmount: data.emergency_governance_aggregate.aggregate?.count ?? 0,
       }))
     },
-    onError: handleSubError,
+    onError: (e) => handleSubError(e, 'E_GOV_PROPOSALS_AMOUNT_SUBSCRIPTION'),
     shouldResubscribe: true,
   })
 
   // actions
   const updateSatellitesContext = (storage: SatelliteDataSubSubscription) => {
     const { oraclesIds, activeSatellitesIds, allSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(storage)
+
+    console.log({ satelliteMapper })
 
     setSatellitesCtxState((prev) => ({
       ...prev,

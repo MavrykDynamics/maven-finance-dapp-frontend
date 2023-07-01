@@ -8,7 +8,8 @@ export function getSatelliteDataSubscription(
 ): DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables> {
   const filteredCondition = userAddress ? `user: {address: {_eq: "$userAddress"}}` : `user: {address: {_neq: ""}}`
 
-  return apolloGql`subscription satelliteDataSub($userAddress: String) {
+  // return apolloGql`subscription satelliteDataSub($userAddress: String) {
+  return apolloGql`subscription satelliteDataSub {
     satellite(where: {registration_timestamp: {_is_null: false}, ${filteredCondition}}, order_by: {currently_registered: desc}) {
       description
       fee
@@ -35,24 +36,55 @@ export function getSatelliteDataSubscription(
         smvk_balance
         mvk_balance
 
+        # get latest observation for every feed, then need to get latest of all feeds
         aggregator_oracles {
-          observations(order_by: {epoch: desc_nulls_last}, limit: 5) {
-            oracle_id
+          aggregator {
+            address
+          }
+
+          init_epoch
+          init_round
+          observations(order_by: {timestamp: desc}, limit: 1) {
             epoch
-            data
             round
             timestamp
           }
-          aggregator {
-            address
-            last_completed_data
-            last_completed_data_epoch
-            last_completed_data_round
-            oracles {
-              user_id
-              rewards {
+
+          # satellite feed predictions aggregated
+          observations_aggregate {
+            aggregate {
+              sum {
+                data
+              }
+              count
+            }
+          }
+
+          # feeds smvk rewards amount
+          smvkRewardsAmount: rewards_aggregate(where: {type: {_eq: "1"}}) {
+            aggregate {
+              sum {
                 reward
-                type
+              }
+            }
+          }
+          
+          # feeds xtz rewards amount
+          xtzRewardsAmount: rewards_aggregate(where: {type: {_eq: "0"}}) {
+            aggregate {
+              sum {
+                reward
+              }
+            }
+          }
+        }
+
+        # amount of all observations
+        feedsObservationsAmount: aggregator_oracles_aggregate {
+          nodes {
+            observations_aggregate {
+              aggregate {
+                count
               }
             }
           }
@@ -89,7 +121,7 @@ export function getSatelliteDataSubscription(
         }
 
         # Proposals votes
-        governance_proposals_votes(order_by: {timestamp: desc}) {
+        governance_proposals_votes(order_by: {timestamp: desc}, where: {round: {_eq: "1"}}) {
           timestamp
           vote
           id

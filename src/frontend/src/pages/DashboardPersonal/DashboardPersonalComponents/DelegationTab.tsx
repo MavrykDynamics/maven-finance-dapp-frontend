@@ -2,9 +2,13 @@ import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { State } from 'reducers'
 
+// consts
 import { BUTTON_SECONDARY, BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { distributeProposalRewards } from 'pages/Satellites/Satellites.actions'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import colors from 'styles/colors'
+import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 
+// view
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { DelegationStatusBlock } from './DashboardPersonalComponents.style'
@@ -17,14 +21,15 @@ import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // providers
-import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-import { useSatellitesUpdater } from 'providers/SatellitesProvider/hooks/useSatellitesUpdater'
-
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
-import colors from 'styles/colors'
-import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+
+// helpers
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+
+// actions
+import { distributeProposalRewards } from 'pages/Satellites/Satellites.actions'
 
 const DelegationTab = () => {
   const dispatch = useDispatch()
@@ -33,15 +38,20 @@ const DelegationTab = () => {
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { satelliteMapper } = useSatellitesContext()
-  const satelliteInfo = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
+  const { satelliteMapper, eGovProposalsAmount, proposalsAmount, executedProposalAmount, finRequestsAmount } =
+    useSatellitesContext()
 
-  useSatellitesUpdater({}, satelliteMvkIsDelegatedTo)
+  const satelliteRecord = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
+  const { proposalParticipation } = getSatelliteParticipations({
+    satellite: satelliteRecord,
+    eGovProposalsAmount,
+    proposalsAmount,
+    executedProposalAmount,
+    finRequestsAmount,
+  })
 
-  const handleDistributeRewards = () => {
-    // TODO: add valid data
-    dispatch(distributeProposalRewards('', []))
-  }
+  // TODO: add valid data
+  const handleDistributeRewards = () => dispatch(distributeProposalRewards('', []))
 
   return (
     <>
@@ -60,16 +70,16 @@ const DelegationTab = () => {
             Distribute Gov. Rewards
           </NewButton>
         </DashboardCardHeader>
-        {satelliteInfo ? (
+        {satelliteRecord ? (
           <>
             <div className="delegated-to">Delegated To</div>
             <div className="top-row">
               <div className="grid-item info">
-                <ImageWithPlug imageLink={satelliteInfo.image} alt={satelliteInfo.name + ' avatar'} />
+                <ImageWithPlug imageLink={satelliteRecord.image} alt={satelliteRecord.name + ' avatar'} />
                 <div className="text">
-                  <div className="name">{satelliteInfo.name}</div>
+                  <div className="name">{satelliteRecord.name}</div>
                   <div className="value">
-                    <TzAddress tzAddress={satelliteInfo.address} />
+                    <TzAddress tzAddress={satelliteRecord.address} />
                   </div>
                 </div>
               </div>
@@ -83,7 +93,7 @@ const DelegationTab = () => {
                   />
                 </div>
                 <div className="value">
-                  <CommaNumber value={satelliteInfo.totalVotingPower} endingText="sMVK" />
+                  <CommaNumber value={satelliteRecord.totalVotingPower} endingText="sMVK" />
                 </div>
               </div>
               <div className="grid-item space">
@@ -91,7 +101,8 @@ const DelegationTab = () => {
                 <div className="value">
                   <CommaNumber
                     value={Math.max(
-                      satelliteInfo.sMvkBalance * satelliteInfo.delegationRatio - satelliteInfo.totalDelegatedAmount,
+                      satelliteRecord.sMvkBalance * satelliteRecord.delegationRatio -
+                        satelliteRecord.totalDelegatedAmount,
                       0,
                     )}
                   />
@@ -100,25 +111,25 @@ const DelegationTab = () => {
               <div className="grid-item participation">
                 <div className="name">Gov. Participation</div>
                 <div className="value">
-                  <CommaNumber value={satelliteInfo.satelliteMetrics.proposalParticipation} endingText="%" />
+                  <CommaNumber value={proposalParticipation} endingText="%" />
                 </div>
               </div>
               <div className="grid-item delegated">
                 <div className="name">Delegated MVK</div>
                 <div className="value">
-                  <CommaNumber value={satelliteInfo.totalDelegatedAmount + satelliteInfo.sMvkBalance} />
+                  <CommaNumber value={satelliteRecord.totalDelegatedAmount + satelliteRecord.sMvkBalance} />
                 </div>
               </div>
               <div className="grid-item fee">
                 <div className="name">Fee</div>
                 <div className="value">
-                  <CommaNumber value={satelliteInfo.satelliteFee} endingText="%" />
+                  <CommaNumber value={satelliteRecord.satelliteFee} endingText="%" />
                 </div>
               </div>
               <div className="grid-item oraclePart">
                 <div className="name">Oracle Participation</div>
                 <div className="value">
-                  <CommaNumber value={satelliteInfo.satelliteMetrics.oracleEfficiency} endingText="%" />
+                  <CommaNumber value={satelliteRecord.oracleEfficiency} endingText="%" />
                 </div>
               </div>
             </div>

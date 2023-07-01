@@ -3,20 +3,30 @@ import { useEffect, useState } from 'react'
 
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
-import { SatelliteRecordType, SatelliteStatuses } from '../satellites.provider.types'
+import {
+  AWAITING_ORACLE_STATUS,
+  NOT_AN_ORACLE_ORACLE_STATUS,
+  NO_RESPONSE_ORACLE_STATUS,
+  RESPONDED_ORACLE_STATUS,
+  SatelliteOracleStatusType,
+  SatelliteIndexerStatusType,
+  SatelliteRecordType,
+  INACTIVE_SATELLITE_STATUS,
+} from '../satellites.provider.types'
 
-import { OracleStatusTypes } from '../satellites.const'
 import { SATELLITE_ACTIVE_STATUS } from '../helpers/satellites.conts'
 
-export const useSatelliteOracleStatus = (satellite: SatelliteRecordType) => {
+export const useSatelliteStatuses = (
+  satellite: SatelliteRecordType | null,
+): { oracleStatus: SatelliteOracleStatusType; satelliteStatus: SatelliteIndexerStatusType } => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
 
-  const [oracleStatus, setOracleStatus] = useState<OracleStatusTypes>('notAnOracle')
+  const [oracleStatus, setOracleStatus] = useState<SatelliteOracleStatusType>(NOT_AN_ORACLE_ORACLE_STATUS)
 
   useEffect(() => {
-    const satelliteOracleRecords = satellite.oracleRecords
+    if (!satellite) return
 
-    if (satelliteOracleRecords.length > 0) {
+    if (Object.keys(satellite.participatedFeeds).length > 0) {
       if (satellite.status === SATELLITE_ACTIVE_STATUS) {
         const currentFeedsWhereSatelliteAdmin = feedsAddresses.filter(
           (feedAddress) => feedsMapper[feedAddress].admin === satellite.address,
@@ -31,13 +41,16 @@ export const useSatelliteOracleStatus = (satellite: SatelliteRecordType) => {
           return nowAndLastUpdateDiffInMs / 1000 >= heart_beat_seconds
         })
 
-        setOracleStatus(isAllSatellitesFeedsActive ? 'responded' : 'awaiting')
+        setOracleStatus(isAllSatellitesFeedsActive ? RESPONDED_ORACLE_STATUS : AWAITING_ORACLE_STATUS)
       } else {
         // if oracle is not active, status should be "no response"
-        setOracleStatus('noResponse')
+        setOracleStatus(NO_RESPONSE_ORACLE_STATUS)
       }
     }
-  }, [feedsAddresses, feedsMapper, satellite.address, satellite.oracleRecords, satellite.status])
+  }, [feedsAddresses, feedsMapper, satellite])
 
-  return { oracleStatus, satelliteStatus: SatelliteStatuses[satellite.status] }
+  return {
+    oracleStatus,
+    satelliteStatus: satellite?.status ?? INACTIVE_SATELLITE_STATUS,
+  }
 }

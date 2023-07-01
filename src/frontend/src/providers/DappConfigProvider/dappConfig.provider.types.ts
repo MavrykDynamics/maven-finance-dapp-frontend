@@ -5,21 +5,24 @@ import { XtzBakerType } from './bakers/getXtzBakers'
 
 export type DappConfigContext = {
   // data
-  currentIndexedLevel: number | null
-  isLoading: boolean
   maxLengths: DappMaxLengths
   mvkFaucetAddress: string | null
+  minimumStakedMvkBalance: number
   xtzBakers: {
     dao: XtzBakerType
     mavrykDynamics: XtzBakerType
     otherBakers: Array<XtzBakerType>
   } | null
+  isLoading: boolean
 
   // methods
   setAction: (actionName: null | UserActionType) => void
 }
 
-export type DappConfigContextStateType = Pick<DappConfigContext, 'maxLengths' | 'mvkFaucetAddress' | 'xtzBakers'>
+export type DappConfigContextStateType = Pick<
+  DappConfigContext,
+  'maxLengths' | 'mvkFaucetAddress' | 'xtzBakers' | 'minimumStakedMvkBalance'
+>
 
 // TODO: dont forget to add other action names with their transfer to context
 export type UserActionType = {

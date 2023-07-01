@@ -21,8 +21,8 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useOraclesRewadSum } from 'providers/SatellitesProvider/hooks/useOraclesRewadSum'
 import { MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
 
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
@@ -34,7 +34,11 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const oracleFeeds = feedsAddresses.length
   const popularFeeds = feedsAddresses.slice(0, 3)
 
-  const oracleRewardsTotal = useOraclesRewadSum()
+  const { oracleRewardsTotal } = useSatelliteStatistics({
+    skipActiveSatellitesCount: true,
+    skipOracleCount: true,
+    skipTotalDelegatedMVK: true,
+  })
 
   return (
     <TabWrapperStyled className="oracles" backgroundImage="dashboard_oraclesTab_bg.png">

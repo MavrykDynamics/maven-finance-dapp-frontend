@@ -102,9 +102,7 @@ const DataFeedDetails = () => {
     () =>
       feedId
         ? oraclesIds
-            .filter((address) =>
-              satelliteMapper[address].oracleRecords.find(({ feedAddress }) => feedId === feedAddress),
-            )
+            .filter((address) => satelliteMapper[address].participatedFeeds[feedId])
             .map((address) => satelliteMapper[address])
         : [],
     [feedId, oraclesIds, satelliteMapper],
@@ -324,7 +322,7 @@ const DataFeedDetails = () => {
 
             <div className={`oracles-list`}>
               {feedsSatellites.map((item) => (
-                <OracleCard oracle={item} key={item.address} />
+                <OracleCard oracle={item} key={item.address} feed={feed} />
               ))}
 
               <Pagination

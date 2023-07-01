@@ -67,6 +67,11 @@ query GetGovernanceProposalsQuery {
       vote
       voter {
         address
+
+        satellites {
+          image
+          name
+        }
       }
     }
 

@@ -17,10 +17,11 @@ export const handleSortSatellites =
           (satelliteA.totalDelegatedAmount + satelliteA.sMvkBalance)
         )
       case 'Participation':
-        return (
-          (satelliteB.satelliteMetrics.proposalParticipation + satelliteB.satelliteMetrics.votingPartisipation) / 2 -
-          (satelliteA.satelliteMetrics.proposalParticipation + satelliteA.satelliteMetrics.votingPartisipation) / 2
-        )
+        return 1
+      // return (
+      //   (satelliteB.satelliteMetrics.proposalParticipation + satelliteB.satelliteMetrics.votingPartisipation) / 2 -
+      //   (satelliteA.satelliteMetrics.proposalParticipation + satelliteA.satelliteMetrics.votingPartisipation) / 2
+      // )
       default:
         return 0
     }

@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { ORACLE_STATUSES_MAPPER } from 'providers/SatellitesProvider/satellites.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { distributeProposalRewards } from 'pages/Satellites/Satellites.actions'
 
@@ -23,21 +22,32 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import colors from 'styles/colors'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
+import { SATELLITE_ORACLE_STATUSES } from 'providers/SatellitesProvider/satellites.provider.types'
+import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 const SatelliteTab = () => {
   const dispatch = useDispatch()
 
   const { userAddress, availableSatellitesRewards } = useUserContext()
-  const { satelliteMapper } = useSatellitesContext()
+  const { satelliteMapper, eGovProposalsAmount, proposalsAmount, executedProposalAmount, finRequestsAmount } =
+    useSatellitesContext()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const satelliteRecord = userAddress ? satelliteMapper[userAddress] : null
 
-  const handleDistributeRewards = () => {
-    // TODO: add valid data
-    dispatch(distributeProposalRewards('', []))
-  }
+  const { oracleStatus } = useSatelliteStatuses(satelliteRecord)
+  const { proposalParticipation } = getSatelliteParticipations({
+    satellite: satelliteRecord,
+    eGovProposalsAmount,
+    proposalsAmount,
+    executedProposalAmount,
+    finRequestsAmount,
+  })
+
+  // TODO: add valid data
+  const handleDistributeRewards = () => dispatch(distributeProposalRewards('', []))
 
   return (
     <>
@@ -86,7 +96,7 @@ const SatelliteTab = () => {
                 <div className="grid-item ">
                   <div className="name">Gov. Participation</div>
                   <div className="value">
-                    <CommaNumber value={satelliteRecord.satelliteMetrics.votingPartisipation} endingText="%" />
+                    <CommaNumber value={proposalParticipation} endingText="%" />
                   </div>
                 </div>
                 <div className="grid-item ">
@@ -98,7 +108,7 @@ const SatelliteTab = () => {
                 <div className="grid-item ">
                   <div className="name">Oracle Participation</div>
                   <div className="value">
-                    <CommaNumber value={satelliteRecord.satelliteMetrics.oracleEfficiency} endingText="%" />
+                    <CommaNumber value={satelliteRecord.oracleEfficiency} endingText="%" />
                   </div>
                 </div>
 
@@ -124,8 +134,8 @@ const SatelliteTab = () => {
                 <div className="grid-item ">
                   <div className="name">Oracle Status</div>
                   <div className="value">
-                    <SatelliteOracleStatusComponent statusType={satelliteRecord.oracleStatus}>
-                      {ORACLE_STATUSES_MAPPER[satelliteRecord.oracleStatus]}
+                    <SatelliteOracleStatusComponent statusType={oracleStatus}>
+                      {SATELLITE_ORACLE_STATUSES[oracleStatus]}
                     </SatelliteOracleStatusComponent>
                   </div>
                 </div>

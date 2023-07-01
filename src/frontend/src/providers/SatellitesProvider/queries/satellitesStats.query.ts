@@ -21,16 +21,6 @@ subscription ActiveSatellitesCount {
 }
 `)
 
-export const ALL_SATELLITES_COUNT_STAT = gql(`
-subscription allSatellitesCount {
-  satellite_aggregate {
-    aggregate {
-      count
-    }
-  }
-}
-`)
-
 export const ORACLES_TOTAL_REWARD = gql(`
 subscription satelliteOraclesReward {
   aggregator_oracle_reward_aggregate(where: {type: {_eq: "1"}, oracle: {user: {satellites: {registration_timestamp: {_is_null: false}}}}}) {

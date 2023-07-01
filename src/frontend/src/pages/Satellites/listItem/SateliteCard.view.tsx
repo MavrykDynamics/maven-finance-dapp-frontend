@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // context, hooks
-import { useSatelliteOracleStatus } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
+import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
@@ -11,7 +11,6 @@ import { delegate, undelegate, distributeProposalRewards } from '../Satellites.a
 import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
 
 // consts
-import { getVoteText, ORACLE_STATUSES_MAPPER } from 'providers/SatellitesProvider/satellites.const'
 import colors from 'styles/colors'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
@@ -43,8 +42,11 @@ import { State } from 'reducers'
 import {
   ACTIVE_SATELLITE_STATUS,
   BANNED_SATELLITE_STATUS,
+  SATELLITE_ORACLE_STATUSES,
+  SATELLITE_STATUSES,
+  SATELLITE_VOTES_MAPPER,
   SatelliteRecordType,
-  SatelliteStatuses,
+  SatelliteVoteType,
 } from 'providers/SatellitesProvider/satellites.provider.types'
 
 //styles
@@ -71,8 +73,8 @@ type SatelliteListItemProps = {
   children?: JSX.Element
 }
 
-const renderVotingHistoryItem = (vote: number) => {
-  const voteText = getVoteText(vote)
+const renderVotingHistoryItem = (vote: SatelliteVoteType) => {
+  const voteText = SATELLITE_VOTES_MAPPER[vote]
   return <span className={`voting-${voteText.toLowerCase()}`}>{voteText.toUpperCase()}</span>
 }
 
@@ -81,9 +83,20 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     useUserContext()
   const { eGovProposalsAmount, proposalsAmount, executedProposalAmount, finRequestsAmount } = useSatellitesContext()
 
-  const { oracleStatus, satelliteStatus } = useSatelliteOracleStatus(satellite)
+  const { oracleStatus, satelliteStatus } = useSatelliteStatuses(satellite)
 
   const { proposalParticipation, votingPartisipation } = getSatelliteParticipations({
+    satellite,
+    eGovProposalsAmount,
+    proposalsAmount,
+    executedProposalAmount,
+    finRequestsAmount,
+  })
+
+  console.log({
+    proposalParticipation,
+    votingPartisipation,
+    name: satellite.name,
     satellite,
     eGovProposalsAmount,
     proposalsAmount,
@@ -107,7 +120,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const freesMVKSpace = Math.max(sMvkBalance * delegationRatio - totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satelliteAddress === satelliteMvkIsDelegatedTo
   const balanceOver1SMvk = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) >= 1
-  const isSatelliteInactive = !currentlyRegistered || satelliteStatus !== SatelliteStatuses[ACTIVE_SATELLITE_STATUS]
+  const isSatelliteInactive = !currentlyRegistered || satelliteStatus !== ACTIVE_SATELLITE_STATUS
 
   // Actions
   const delegateCallback = async () => await dispatch(delegate(satellite.address))
@@ -235,7 +248,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
               <SatelliteMainText>Oracle Status</SatelliteMainText>
               <SatelliteSubText>
                 <SatelliteOracleStatusComponent statusType={oracleStatus}>
-                  {ORACLE_STATUSES_MAPPER[oracleStatus]}
+                  {SATELLITE_ORACLE_STATUSES[oracleStatus]}
                 </SatelliteOracleStatusComponent>
               </SatelliteSubText>
             </SatelliteTextGroup>
@@ -247,11 +260,11 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <div>
               <StatusFlag
                 status={
-                  satelliteStatus !== SatelliteStatuses[BANNED_SATELLITE_STATUS] || !currentlyRegistered
+                  satelliteStatus !== BANNED_SATELLITE_STATUS || !currentlyRegistered
                     ? STATUS_FLAG_DOWN
                     : STATUS_FLAG_WARNING
                 }
-                text={satelliteStatus}
+                text={SATELLITE_STATUSES[satelliteStatus]}
               />
             </div>
           )}
