@@ -1,7 +1,6 @@
 import dayjs from 'dayjs'
 
 import {
-  SATELLITE_VOTE_YES,
   satelliteStatusSchema,
   satelliteVoteSchema,
   SatelliteVoteItemType,

@@ -1,25 +1,28 @@
+import { ApolloError, useSubscription } from '@apollo/client'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 
-// types
-import { SatellitesContext, SatellitesCtxState } from './satellites.provider.types'
-import { normalizeSatellitesLedger } from './helpers/satellites.normalizer'
-
-// redux
-import { ApolloError, useSubscription } from '@apollo/client'
+// helpers
 import { getSatelliteDataSubscription } from './queries/satellites.query'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import { normalizeSatellitesLedger } from './helpers/satellites.normalizer'
 import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
+
+// consts
+import { ALL_SATELLITES_SUB } from './satellites.const'
 import {
   FINANCIAL_REQUESTS_AMOUNT_SUBSCRIPTION,
   PROPOSALS_AMOUNT_SUBSCRIPTION,
   SATELLITES_ADDRESSES_SUBSCRIPTION,
   SATELLITE_GOV_ACTIONS_AMOUNT_SUBSCRIPTION,
 } from './queries/satellitesMetricsData.query'
-import { ALL_SATELLITES_SUB } from './satellites.const'
+import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
+import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+
+// types
+import { SatellitesContext, SatellitesCtxState } from './satellites.provider.types'
 
 // context
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
 export const satellitesContext = React.createContext<SatellitesContext>(undefined!)
 
 export type Props = {
