@@ -4,10 +4,11 @@ import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSate
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 import { Feed } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
-import { SATELLITE_ORACLE_STATUSES, SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 import { XTZ_TOKEN_SYMBOL } from 'utils/constants'
+import { SATELLITE_ORACLE_STATUSES } from 'providers/SatellitesProvider/satellites.const'
 
 import { calcPersent, convertNumberForClient } from 'utils/calcFunctions'
 
@@ -73,7 +74,6 @@ export const OracleCard = ({ oracle, feed }: { oracle: SatelliteRecordType; feed
           </SatelliteOracleStatusComponent>
         </FeedsListItem>
 
-        {/* TODO: what this should do? */}
         <FeedsListItem className="open-full vertical-center">
           <svg>
             <use xlinkHref="/icons/sprites.svg#openLink" />

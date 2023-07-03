@@ -1,18 +1,19 @@
 import dayjs from 'dayjs'
 
+// types
 import {
-  satelliteStatusSchema,
-  satelliteVoteSchema,
   SatelliteVoteItemType,
   SatelliteRecordType,
-  INACTIVE_SATELLITE_STATUS,
   SatelliteIndexerStatusType,
 } from 'providers/SatellitesProvider/satellites.provider.types'
+import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
 
 // helpers
 import { calcPersent, convertNumberForClient } from '../../../utils/calcFunctions'
-import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
+
+// const
 import { MVK_DECIMALS, XTZ_DECIMALS } from 'utils/constants'
+import { satelliteVoteSchema, satelliteStatusSchema, INACTIVE_SATELLITE_STATUS } from '../satellites.const'
 
 const getSatelliteOracleRewards = (
   satelliteOracleData: SatelliteDataSubSubscription['satellite'][number]['user']['aggregator_oracles'],

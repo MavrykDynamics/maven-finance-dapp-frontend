@@ -39,15 +39,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // types
 import { State } from 'reducers'
-import {
-  ACTIVE_SATELLITE_STATUS,
-  BANNED_SATELLITE_STATUS,
-  SATELLITE_ORACLE_STATUSES,
-  SATELLITE_STATUSES,
-  SATELLITE_VOTES_MAPPER,
-  SatelliteRecordType,
-  SatelliteVoteType,
-} from 'providers/SatellitesProvider/satellites.provider.types'
+import { SatelliteRecordType, SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 //styles
 import { AvatarStyle } from 'app/App.components/Avatar/Avatar.style'
@@ -64,6 +56,13 @@ import {
   SatelliteCardButtons,
   SatelliteCardRow,
 } from './SatelliteCard.style'
+import {
+  ACTIVE_SATELLITE_STATUS,
+  BANNED_SATELLITE_STATUS,
+  SATELLITE_ORACLE_STATUSES,
+  SATELLITE_STATUSES,
+  SATELLITE_VOTES_MAPPER,
+} from 'providers/SatellitesProvider/satellites.const'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType

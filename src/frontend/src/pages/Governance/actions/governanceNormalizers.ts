@@ -8,7 +8,8 @@ import {
 } from 'utils/TypesAndInterfaces/Governance'
 import { getProposalStatus } from '../Governance.helpers'
 import { MVK_DECIMALS } from 'utils/constants'
-import { SatelliteVoteType, satelliteVoteSchema } from 'providers/SatellitesProvider/satellites.provider.types'
+import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { satelliteVoteSchema } from 'providers/SatellitesProvider/satellites.const'
 
 export const normalizeProposal = (
   item: GovernanceProposalGraphQL,

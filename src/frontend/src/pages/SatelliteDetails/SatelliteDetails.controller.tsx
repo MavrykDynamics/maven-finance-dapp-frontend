@@ -1,4 +1,5 @@
-import { Redirect, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { useEffect } from 'react'
 
 // context
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
@@ -9,6 +10,8 @@ import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSide
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import SatellitePagination from './SatellitePagination/SatellitePagination.view'
 import { SatelliteListItem } from 'pages/Satellites/listItem/SateliteCard.view'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { Page, PageContent } from 'styles'
 import { EmptyContainer } from 'app/App.style'
 import {
@@ -25,13 +28,11 @@ import {
 import { parseDate } from 'utils/time'
 import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
+// consts
+import { ALL_SATELLITES_SUB, SATELLITE_VOTES_MAPPER } from 'providers/SatellitesProvider/satellites.const'
+
 // types
-import { SATELLITE_VOTES_MAPPER } from 'providers/SatellitesProvider/satellites.provider.types'
 import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { useEffect } from 'react'
-import { ALL_SATELLITES_SUB } from 'providers/SatellitesProvider/satellites.const'
 
 const SatellitesVotingHistory = ({
   satellite: { proposalsVotes, satelliteActionVotes, financialRequestsVotes },

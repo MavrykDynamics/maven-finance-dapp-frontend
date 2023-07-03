@@ -1,11 +1,8 @@
 import { calcPersent, getNumberInBounds } from 'utils/calcFunctions'
-import {
-  NOT_AN_ORACLE_ORACLE_STATUS,
-  NO_RESPONSE_ORACLE_STATUS,
-  RESPONDED_ORACLE_STATUS,
-  SatelliteOracleStatusType,
-  SatelliteRecordType,
-} from '../satellites.provider.types'
+
+import { RESPONDED_ORACLE_STATUS, NO_RESPONSE_ORACLE_STATUS, NOT_AN_ORACLE_ORACLE_STATUS } from '../satellites.const'
+
+import { SatelliteOracleStatusType, SatelliteRecordType } from '../satellites.provider.types'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const getSatelliteParticipations = ({
@@ -74,4 +71,17 @@ export const findColorBasedOnStatus = (statusType: SatelliteOracleStatusType, th
     : statusType === NO_RESPONSE_ORACLE_STATUS || statusType === NOT_AN_ORACLE_ORACLE_STATUS
     ? theme.downColor
     : theme.warningColor
+}
+
+export function getTotalDelegatedMVK(
+  satelliteIds: Array<SatelliteRecordType['address']>,
+  satellitesMapper: Record<string, SatelliteRecordType>,
+): number {
+  if (!satelliteIds) return 0
+  return satelliteIds.reduce(
+    (sum, currentAddress) =>
+      sum +
+      Number(satellitesMapper[currentAddress].totalDelegatedAmount + satellitesMapper[currentAddress].sMvkBalance),
+    0,
+  )
 }
