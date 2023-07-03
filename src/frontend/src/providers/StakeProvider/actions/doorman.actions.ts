@@ -61,7 +61,6 @@ export const stakeMVK = async (
       return { actionSuccess: false, error: estimateBatchOp.error }
     }
 
-
     const operation = await tezos.wallet.batch(batchArr).send()
 
     return { actionSuccess: true, operation }
@@ -86,6 +85,26 @@ export const unstakeMVK = async (
     }
 
     const operation = await unstakeOperationMetaData.send()
+
+    return { actionSuccess: true, operation }
+  } catch (error) {
+    return { actionSuccess: false, error: unknownToError(error) }
+  }
+}
+
+export const rewardsCompound = async (userAddress: string, doormanAddress: string) => {
+  try {
+    // prepare and send transaction
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos?.wallet.at(doormanAddress)
+    const rewardsOperationMetaData = contract?.methods.compound(userAddress)
+    const op = await estimateExecution(rewardsOperationMetaData)
+
+    if (op?.error) {
+      return { actionSuccess: false, error: op.error }
+    }
+
+    const operation = await rewardsOperationMetaData.send()
 
     return { actionSuccess: true, operation }
   } catch (error) {

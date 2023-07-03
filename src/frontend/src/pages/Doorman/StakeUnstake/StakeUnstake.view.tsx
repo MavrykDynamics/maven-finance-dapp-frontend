@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
+import { rewardsCompound, stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -18,7 +18,6 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // helpers
 import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
-import { rewardsCompound } from '../Doorman.actions'
 import { stakingInputValidation } from '../Doorman.converter'
 import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
 import { unknownToError } from 'errors/error'
@@ -34,7 +33,7 @@ import {
   BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from '../../../app/App.components/Button/Button.constants'
-import { STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { REWARDS_COMPOUND_ACTION, STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
@@ -227,8 +226,49 @@ export const StakeUnstakeView = ({
   }
 
   const handleCompound = async () => {
-    if (userAddress) {
-      await dispatch(rewardsCompound(userAddress))
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+
+    const actionResult = await rewardsCompound(userAddress, doormanAddress)
+
+    if (checkIfActionSuccess(actionResult)) {
+      try {
+        const { operation } = actionResult
+        dispatch(toggleActionFullScreenLoader(true))
+        dispatch(toggleActionCompletion(true))
+
+        info(
+          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['title'],
+        )
+
+        await sleep(5000)
+
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+
+        setAction({ actionName: REWARDS_COMPOUND_ACTION, toasterId, operationLvl })
+      } catch (e) {}
+    } else if (isContractErrorPayload(actionResult.error)) {
+      setSharedError(WALLTET_ERROR_FIELD, {
+        ...(actionResult.error as TezosWalletErrorPayload),
+        actionId: REWARDS_COMPOUND_ACTION,
+      })
+    } else {
+      setAction(null)
+      const parsedError = unknownToError(actionResult.error)
+      bug(parsedError.message)
     }
   }
 

@@ -13,7 +13,6 @@ import {
   BUTTON_SIMPLE,
 } from 'app/App.components/Button/Button.constants'
 import { delegate, undelegate, distributeProposalRewards } from '../Satellites.actions'
-import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -48,6 +47,7 @@ import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 import colors from 'styles/colors'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { rewardsCompound } from 'providers/StakeProvider/actions/doorman.actions'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -71,11 +71,52 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { proposalsMapper } = useSelector((state: State) => state.governance)
+  const {
+    doormanAddress: { address: doormanAddress },
+  } = useSelector((state: State) => state.contractAddresses)
 
   // Card buttons handlers
   const delegateCallback = async () => await dispatch(delegate(satellite.address))
   const undelegateCallback = async () => await dispatch(undelegate(satellite.address))
-  const claimRewardsCallback = async () => (userAddress ? await dispatch(rewardsCompound(userAddress)) : null)
+  // TODO add logic
+  const claimRewardsCallback = async () => {
+    // if (!userAddress) {
+    //   bug('Click Connect in the left menu', 'Please connect your wallet')
+    //   return
+    // }
+    // const actionResult = await rewardsCompound(userAddress, doormanAddress)
+    // if (checkIfActionSuccess(actionResult)) {
+    //   try {
+    //     const { operation } = actionResult
+    //     dispatch(toggleActionFullScreenLoader(true))
+    //     dispatch(toggleActionCompletion(true))
+    //     info(
+    //       TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['message'],
+    //       TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['title'],
+    //     )
+    //     await sleep(5000)
+    //     // show toaster loader after 5000ms after operation started
+    //     const toasterId = loading(
+    //       TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+    //       TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+    //     )
+    //     dispatch(toggleActionFullScreenLoader(false))
+    //     dispatch(toggleActionCompletion(false))
+    //     const operationConfirm = await operation.confirmation()
+    //     const operationLvl = operationConfirm.block.header.level
+    //     setAction({ actionName: REWARDS_COMPOUND_ACTION, toasterId, operationLvl })
+    //   } catch (e) {}
+    // } else if (isContractErrorPayload(actionResult.error)) {
+    //   setSharedError(WALLTET_ERROR_FIELD, {
+    //     ...(actionResult.error as TezosWalletErrorPayload),
+    //     actionId: REWARDS_COMPOUND_ACTION,
+    //   })
+    // } else {
+    //   setAction(null)
+    //   const parsedError = unknownToError(actionResult.error)
+    //   bug(parsedError.message)
+    // }
+  }
   // TODO: add valid data
   const distributeRewardsCallback = async () => await dispatch(distributeProposalRewards('', []))
 
