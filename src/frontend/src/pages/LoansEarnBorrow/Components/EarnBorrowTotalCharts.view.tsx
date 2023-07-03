@@ -1,3 +1,5 @@
+import classNames from 'classnames'
+
 // styles
 import { MarketChartsContainer } from 'pages/Loans/Loans.style'
 
@@ -7,6 +9,7 @@ import { Chart } from 'app/App.components/Chart/Chart'
 import { CHART_COLORS, CHART_SETTINGS, numberOfItemsToDisplay } from '../LoansEarnBorrow.consts'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
+import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from 'pages/Loans/Loans.helpers'
 
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
@@ -39,11 +42,11 @@ export const EarnBorrowTotalCharts = ({
         <CommaNumber value={leftTotalAmount ?? 0} beginningText={'$'} />
       </div>
 
-      <div className="chart">
+      <div className={classNames('chart', { emptyChart: leftChartData.length === 0 })}>
         <Chart
-          data={{ type: AREA_CHART_TYPE, plots: leftChartData }}
+          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(leftChartData, 7) }}
           colors={CHART_COLORS}
-          settings={CHART_SETTINGS}
+          settings={getChartSettingsBasedOnChartLength(leftChartData, CHART_SETTINGS)}
           numberOfItemsToDisplay={numberOfItemsToDisplay}
           tooltipAsset="$"
           tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
@@ -60,11 +63,11 @@ export const EarnBorrowTotalCharts = ({
         <CommaNumber value={rightTotalAmount ?? 0} beginningText={'$'} />
       </div>
 
-      <div className="chart">
+      <div className={classNames('chart', { emptyChart: rightChartData.length === 0 })}>
         <Chart
-          data={{ type: AREA_CHART_TYPE, plots: rightChartData }}
+          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(rightChartData, 7) }}
           colors={CHART_COLORS}
-          settings={CHART_SETTINGS}
+          settings={getChartSettingsBasedOnChartLength(rightChartData, CHART_SETTINGS)}
           numberOfItemsToDisplay={numberOfItemsToDisplay}
           tooltipAsset="$"
           tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}

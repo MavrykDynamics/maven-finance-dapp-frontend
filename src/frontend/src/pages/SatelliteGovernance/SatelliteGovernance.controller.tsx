@@ -242,7 +242,11 @@ export const SatelliteGovernance = () => {
               />
             </div>
 
-            <SatelliteGovernanceForm maxLength={maxLength} isActionActive={isActionActive} variant={chosenDdItem?.id} />
+            <SatelliteGovernanceForm
+              maxLength={maxLength}
+              isActionActive={isActionActive || govActionsCount >= maxActionsCount}
+              variant={chosenDdItem?.id}
+            />
           </SatelliteGovernanceAvailableActions>
         ) : null}
 
@@ -266,7 +270,8 @@ export const SatelliteGovernance = () => {
                         id={action.id}
                         satelliteId={convertBytesAddressToAddress(action.parameters[0].value)}
                         initiatorId={action.initiatorId}
-                        date={action.expirationDatetime}
+                        actionExpirationDate={action.expirationDatetime}
+                        actionStartDate={action.startDatetime}
                         statusFlag={action.statusFlag}
                         purpose={action.purpose}
                         governanceType={action.type}
