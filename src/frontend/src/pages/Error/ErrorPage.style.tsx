@@ -66,7 +66,7 @@ export const Vector1 = styled.img<{ theme: MavrykTheme }>`
   left: -158px;
   bottom: 95px;
   z-index: 1;
-  animation: ${hangInSpace} 80s ease-in-out infinite alternate;
+  animation: ${hangInSpace} 110s ease-in-out infinite alternate;
 `
 
 export const Vector2 = styled.img<{ theme: MavrykTheme }>`
@@ -74,5 +74,5 @@ export const Vector2 = styled.img<{ theme: MavrykTheme }>`
   right: -100px;
   top: 20px;
   z-index: 1;
-  animation: ${hangInSpace} 90s ease-in-out infinite alternate;
+  animation: ${hangInSpace} 120s ease-in-out infinite alternate;
 `

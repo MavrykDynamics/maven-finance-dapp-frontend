@@ -2,12 +2,18 @@ import styled, { css } from 'styled-components/macro'
 
 import { MavrykTheme } from '../styles/interfaces'
 
-export const AppStyled = styled.div<{ theme: MavrykTheme; isExpandedMenu?: boolean; isVisible: boolean }>`
+export const AppStyled = styled.div<{
+  theme: MavrykTheme
+  isExpandedMenu?: boolean
+  isVisible: boolean
+  isSideBarHidden: boolean
+}>`
   --carousel-button-size: 30px;
   --carousel-button-bg: rgb(22 14 63 / 70%);
   --carousel-button-indent: -15px;
   min-height: 100vh;
-  padding-left: ${({ isExpandedMenu }) => (isExpandedMenu ? '232px' : '72px')};
+  padding-left: ${({ isExpandedMenu, isSideBarHidden }) =>
+    isSideBarHidden ? '0px' : isExpandedMenu ? '232px' : '72px'};
   transition: 150ms opacity;
 
   ${({ isVisible }) =>

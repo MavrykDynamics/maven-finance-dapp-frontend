@@ -32,6 +32,7 @@ import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
 import { getTokensForDAPP, getTokensPrices } from 'reducers/actions/getTokens.actions'
 import { getAvaliableCollaterals, getXtzBakers } from 'pages/Loans/Actions/getLoansData.actions'
+import { hideSideBarRoutes } from 'consts/routes.const'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
@@ -46,6 +47,7 @@ export const App = () => {
 
   const { changeNodePopupOpen, sidebarOpened } = useSelector((state: State) => state.preferences)
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
+  const isSideBarHidden = hideSideBarRoutes.includes('/'.concat(window.location.href.split('/').pop() ?? ''))
 
   const [isIOS, setIsIOS] = useState(true)
 
@@ -97,12 +99,14 @@ export const App = () => {
     setCookie('policyPopup', true)
   }, [])
 
+  console.log(isSideBarHidden)
+
   return (
     <>
       <LoaderRocket isActive={isInitialDataLoading} />
       <Router>
         {!isInitialDataLoading ? (
-          <AppStyled isExpandedMenu={sidebarOpened} isVisible={!isInitialDataLoading}>
+          <AppStyled isExpandedMenu={sidebarOpened} isVisible={!isInitialDataLoading} isSideBarHidden={isSideBarHidden}>
             <ActionLoader />
             <Toaster />
             <WertLoader />
