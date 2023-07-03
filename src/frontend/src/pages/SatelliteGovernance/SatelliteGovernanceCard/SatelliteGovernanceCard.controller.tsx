@@ -23,11 +23,13 @@ import { PRECISION_NUMBER } from 'utils/constants'
 import { parseDate } from 'utils/time'
 import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import dayjs from 'dayjs'
 
 type Props = {
   satelliteId: string
   initiatorId: string
-  date: string | null
+  actionExpirationDate: string | null
+  actionStartDate: string | null
   statusFlag: StatusFlagKind
   id: number
   purpose: string
@@ -46,7 +48,8 @@ export const SatelliteGovernanceCard = ({
   id,
   satelliteId,
   initiatorId,
-  date,
+  actionExpirationDate,
+  actionStartDate,
   statusFlag,
   purpose,
   governanceType,
@@ -62,9 +65,7 @@ export const SatelliteGovernanceCard = ({
   const dispatch = useDispatch()
 
   const myVote = useMemo(() => votes.find((item) => item.voterId === accountPkh)?.vote, [accountPkh, votes])
-  const timeNow = Date.now()
-  const expirationDatetime = new Date(date ?? 0).getTime()
-  const isEndingVotingTime = expirationDatetime > timeNow
+  const isEndingVotingTime = dayjs().diff(actionExpirationDate) < 0
 
   const voteStatistic = useMemo(
     () => ({
@@ -96,21 +97,21 @@ export const SatelliteGovernanceCard = ({
       header={
         <>
           <SatelliteGovernanceCardTitleTextGroup>
-            <div className='name'>Date</div>
-            <div className="value">{parseDate({ time: date, timeFormat: 'MMM Do, YYYY' })}</div>
+            <div className="name">Date</div>
+            <div className="value">{parseDate({ time: actionStartDate, timeFormat: 'MMM Do, YYYY' })}</div>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
-            <div className='name'>Action</div>
+            <div className="name">Action</div>
             <div className="value capitallize">{getSeparateSnakeCase(governanceType)}</div>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
-            <div className='name'>Target</div>
+            <div className="name">Target</div>
             <div className="value">
               <TzAddress tzAddress={satelliteId} hasIcon={true} />
             </div>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
-            <div className='name'>Initiator</div>
+            <div className="name">Initiator</div>
             <div className="value">
               <TzAddress tzAddress={initiatorId} hasIcon={true} />
             </div>
@@ -146,7 +147,7 @@ export const SatelliteGovernanceCard = ({
           <h3>Vote Statistics</h3>
           <b className="voting-ends">
             Voting {!isEndingVotingTime ? 'ended' : 'ending'} on{' '}
-            {parseDate({ time: date, timeFormat: 'MMM DD, HH:mm' })} CEST
+            {parseDate({ time: actionExpirationDate, timeFormat: 'MMM DD, HH:mm' })} CEST
           </b>
 
           <VotingArea
