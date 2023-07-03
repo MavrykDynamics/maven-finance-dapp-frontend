@@ -48,7 +48,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_UP } from 'app/App.components/StatusFlag/StatusFlag.constants'
-import { SATELLITE_VOTES_MAPPER } from 'providers/SatellitesProvider/satellites.provider.types'
+import { SATELLITE_VOTES_MAPPER } from 'providers/SatellitesProvider/satellites.const'
 
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const dispatch = useDispatch()
