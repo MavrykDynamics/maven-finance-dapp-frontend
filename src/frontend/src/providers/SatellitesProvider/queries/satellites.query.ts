@@ -2,14 +2,14 @@ import { OperationVariables, TypedDocumentNode } from '@apollo/client'
 import { DocumentNode } from 'graphql'
 import { gql as apolloGql } from '@apollo/client'
 import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
+import { ALL_SATELLITES_SUB } from '../satellites.const'
 
 export function getSatelliteDataSubscription(
   userAddress: string | null,
 ): DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables> {
-  const filteredCondition = userAddress ? `user: {address: {_eq: "$userAddress"}}` : `user: {address: {_neq: ""}}`
+  const filteredCondition = `user: {address: {${userAddress !== ALL_SATELLITES_SUB ? '_eq' : '_neq'}: $userAddress}}`
 
-  // return apolloGql`subscription satelliteDataSub($userAddress: String) {
-  return apolloGql`subscription satelliteDataSub {
+  return apolloGql`subscription satelliteDataSub($userAddress: String!) {
     satellite(where: {registration_timestamp: {_is_null: false}, ${filteredCondition}}, order_by: {currently_registered: desc}) {
       description
       fee
@@ -20,6 +20,14 @@ export function getSatelliteDataSubscription(
       currently_registered
       peer_id
       public_key
+
+      delegatorCount: delegations_aggregate {
+        aggregate {
+          count
+        }
+      }
+
+      total_delegated_amount
 
       delegations {
         user {
@@ -87,6 +95,27 @@ export function getSatelliteDataSubscription(
                 count
               }
             }
+          }
+        }
+
+        # amount of governance proposals created by satellite
+        createdGovProposalsAmount: governance_proposals_proposer_aggregate {
+          aggregate {
+            count
+          }
+        }
+        
+        # amount of financial requests created by satellite
+        createdFinProposalsAmount: governance_financial_requests_requester_aggregate {
+          aggregate {
+            count
+          }
+        }
+        
+        # amount of satellite governance actions created by satellite
+        createdSatelliteGovProposalsAmount: governance_satellite_action_initiators_aggregate {
+          aggregate {
+            count
           }
         }
 

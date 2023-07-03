@@ -81,26 +81,14 @@ const renderVotingHistoryItem = (vote: SatelliteVoteType) => {
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
   const { userTokensBalances, isSatellite, satelliteMvkIsDelegatedTo, availableSatellitesRewards, userAddress } =
     useUserContext()
-  const { eGovProposalsAmount, proposalsAmount, executedProposalAmount, finRequestsAmount } = useSatellitesContext()
+  const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
 
   const { oracleStatus, satelliteStatus } = useSatelliteStatuses(satellite)
 
   const { proposalParticipation, votingPartisipation } = getSatelliteParticipations({
     satellite,
-    eGovProposalsAmount,
     proposalsAmount,
-    executedProposalAmount,
-    finRequestsAmount,
-  })
-
-  console.log({
-    proposalParticipation,
-    votingPartisipation,
-    name: satellite.name,
-    satellite,
-    eGovProposalsAmount,
-    proposalsAmount,
-    executedProposalAmount,
+    satelliteGovActionsAmount,
     finRequestsAmount,
   })
 

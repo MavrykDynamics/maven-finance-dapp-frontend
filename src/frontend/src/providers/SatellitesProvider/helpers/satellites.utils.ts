@@ -9,17 +9,15 @@ import {
 import { MavrykTheme } from 'styles/interfaces'
 
 export const getSatelliteParticipations = ({
-  eGovProposalsAmount,
   finRequestsAmount,
   proposalsAmount,
-  executedProposalAmount,
+  satelliteGovActionsAmount,
   satellite,
 }: {
   satellite: SatelliteRecordType | null
-  eGovProposalsAmount: number
   finRequestsAmount: number
   proposalsAmount: number
-  executedProposalAmount: number
+  satelliteGovActionsAmount: number
 }) => {
   if (!satellite)
     return {
@@ -27,25 +25,41 @@ export const getSatelliteParticipations = ({
       votingPartisipation: 0,
     }
 
-  const { proposalsVotes, financialRequestsVotes, eGovVotes, executedVotedProposalsAmount } = satellite
+  const {
+    proposalsVotes,
+    financialRequestsVotes,
+    satelliteActionVotes,
+    createdFinProposalsAmount,
+    createdGovProposalsAmount,
+    createdSatelliteGovProposalsAmount,
+  } = satellite
+
+  const satelliteVotesAmount = proposalsVotes.length + financialRequestsVotes.length + satelliteActionVotes.length
+  // TODO: add value here (sum of proposals, requests, action that satellite was able to vote) needs to be implemented by tristan first
+  const satelliteVotingPeriods = 0
+
   /**
    * @votingPartisipation how many votes satellite has participied
    */
-  const satelliteVotesAmount = eGovVotes.length + proposalsVotes.length + financialRequestsVotes.length
-  const totalVotingPeriods = eGovProposalsAmount + finRequestsAmount + proposalsAmount
   const votingPartisipation = getNumberInBounds(
     0,
     100,
-    totalVotingPeriods === 0 ? 0 : calcPersent(satelliteVotesAmount, totalVotingPeriods),
+    !satelliteVotesAmount || !satelliteVotingPeriods ? 0 : calcPersent(satelliteVotesAmount, satelliteVotingPeriods),
   )
 
+  const initiatedProposalsAmount =
+    createdFinProposalsAmount + createdGovProposalsAmount + createdSatelliteGovProposalsAmount
+  const totalProposalCreated = finRequestsAmount + proposalsAmount + satelliteGovActionsAmount
+
   /**
-   * @proposalParticipation how many proposals that satellite has voted "yes" were executed
+   * @proposalParticipation how many proposals, requests, actions has user initiated to all their amount
    */
   const proposalParticipation = getNumberInBounds(
     0,
     100,
-    executedProposalAmount === 0 ? 0 : calcPersent(executedVotedProposalsAmount, executedProposalAmount),
+    !initiatedProposalsAmount || !totalProposalCreated
+      ? 0
+      : calcPersent(initiatedProposalsAmount, totalProposalCreated),
   )
 
   return {

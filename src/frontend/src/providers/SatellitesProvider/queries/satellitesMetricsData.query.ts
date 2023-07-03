@@ -10,9 +10,9 @@ export const PROPOSALS_AMOUNT_SUBSCRIPTION = gql(`
 	}
 `)
 
-export const EXECUTED_PROPOSALS_AMOUNT_SUBSCRIPTION = gql(`
-	subscription submittedProposalsAmount {
-		governance_proposal_aggregate {
+export const SATELLITE_GOV_ACTIONS_AMOUNT_SUBSCRIPTION = gql(`
+	subscription satelliteGovActionsAmount {
+		governance_satellite_action_aggregate {
 			aggregate {
 				count
 			}
@@ -30,11 +30,13 @@ export const FINANCIAL_REQUESTS_AMOUNT_SUBSCRIPTION = gql(`
 	}
 `)
 
-export const E_GOV_PROPOSALS_AMOUNT_SUBSCRIPTION = gql(`
-	subscription eGovProposalsAmount {
-		emergency_governance_aggregate {
-			aggregate {
-				count
+export const SATELLITES_ADDRESSES_SUBSCRIPTION = gql(`
+	subscription satellitesAddresses {
+		satellite_aggregate(order_by: {currently_registered: desc}) {
+			nodes {
+				user {
+					address
+				}
 			}
 		}
 	}

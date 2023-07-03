@@ -1,4 +1,3 @@
-import { MavrykTheme } from 'styles/interfaces'
 import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 export function getTotalDelegatedMVK(
@@ -13,3 +12,5 @@ export function getTotalDelegatedMVK(
     0,
   )
 }
+
+export const ALL_SATELLITES_SUB = 'all'

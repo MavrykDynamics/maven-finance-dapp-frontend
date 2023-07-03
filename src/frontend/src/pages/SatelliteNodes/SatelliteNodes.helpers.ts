@@ -1,7 +1,20 @@
+import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
 import { SatelliteMapper, SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 export const handleSortSatellites =
-  (sortType: string, satelliteMapper: SatelliteMapper) =>
+  ({
+    sortType,
+    satelliteMapper,
+    proposalsAmount,
+    satelliteGovActionsAmount,
+    finRequestsAmount,
+  }: {
+    sortType: string
+    satelliteMapper: SatelliteMapper
+    proposalsAmount: number
+    satelliteGovActionsAmount: number
+    finRequestsAmount: number
+  }) =>
   (a: SatelliteRecordType['address'], b: SatelliteRecordType['address']): number => {
     const satelliteA = satelliteMapper[a],
       satelliteB = satelliteMapper[b]
@@ -17,11 +30,23 @@ export const handleSortSatellites =
           (satelliteA.totalDelegatedAmount + satelliteA.sMvkBalance)
         )
       case 'Participation':
-        return 1
-      // return (
-      //   (satelliteB.satelliteMetrics.proposalParticipation + satelliteB.satelliteMetrics.votingPartisipation) / 2 -
-      //   (satelliteA.satelliteMetrics.proposalParticipation + satelliteA.satelliteMetrics.votingPartisipation) / 2
-      // )
+        const satelliteA_participation = getSatelliteParticipations({
+          satellite: satelliteA,
+          proposalsAmount,
+          satelliteGovActionsAmount,
+          finRequestsAmount,
+        })
+
+        const satelliteB_participation = getSatelliteParticipations({
+          satellite: satelliteB,
+          proposalsAmount,
+          satelliteGovActionsAmount,
+          finRequestsAmount,
+        })
+        return (
+          (satelliteB_participation.proposalParticipation + satelliteB_participation.votingPartisipation) / 2 -
+          (satelliteA_participation.proposalParticipation + satelliteA_participation.votingPartisipation) / 2
+        )
       default:
         return 0
     }
@@ -32,7 +57,7 @@ export const handleFilterSatellites =
   (satelliteAddress: SatelliteRecordType['address']): boolean => {
     const satellite = satelliteMapper[satelliteAddress]
     return (
-      satellite.address.toLowerCase().includes(inputSearch.toLowerCase()) ||
-      satellite.name.toLowerCase().includes(inputSearch.toLowerCase())
+      satellite?.address.toLowerCase().includes(inputSearch.toLowerCase()) ||
+      satellite?.name.toLowerCase().includes(inputSearch.toLowerCase())
     )
   }

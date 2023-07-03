@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 // types
 import { SatellitesContext, SatellitesCtxState } from './satellites.provider.types'
@@ -12,11 +12,12 @@ import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
 import {
-  EXECUTED_PROPOSALS_AMOUNT_SUBSCRIPTION,
-  E_GOV_PROPOSALS_AMOUNT_SUBSCRIPTION,
   FINANCIAL_REQUESTS_AMOUNT_SUBSCRIPTION,
   PROPOSALS_AMOUNT_SUBSCRIPTION,
+  SATELLITES_ADDRESSES_SUBSCRIPTION,
+  SATELLITE_GOV_ACTIONS_AMOUNT_SUBSCRIPTION,
 } from './queries/satellitesMetricsData.query'
+import { ALL_SATELLITES_SUB } from './satellites.const'
 
 // context
 export const satellitesContext = React.createContext<SatellitesContext>(undefined!)
@@ -33,13 +34,23 @@ export const SatellitesProvider = ({ children }: Props) => {
     activeSatellitesIds: [],
     allSatellitesIds: [],
     oraclesIds: [],
-    eGovProposalsAmount: 0,
-    executedProposalAmount: 0,
+    satelliteGovActionsAmount: 0,
     proposalsAmount: 0,
     finRequestsAmount: 0,
   })
 
-  const [satelliteAddressToSubsctibe, setSatelliteAddressToSubsctibe] = useState<null | string>(null)
+  const [satelliteAddressToSubsctibe, setSatelliteAddressToSubsctibe] = useState<string | typeof ALL_SATELLITES_SUB>(
+    ALL_SATELLITES_SUB,
+  )
+  const [isSatellitesLoading, setIsSatelliteLoading] = useState(false)
+
+  /**
+   * need this effect to track whether user subscribes to cetrain satellite of resubs to all satellites, to show loading status if it's loading
+   * cuz useSubscription is not changing it's returned loading on variable change
+   **/
+  useEffect(() => {
+    setIsSatelliteLoading(true)
+  }, [satelliteAddressToSubsctibe])
 
   const handleSubError = (e: ApolloError, queryName: string) => {
     console.error(`${queryName} query error: `, { e })
@@ -47,14 +58,26 @@ export const SatellitesProvider = ({ children }: Props) => {
   }
 
   const { loading: satellitesLoading } = useSubscription(getSatelliteDataSubscription(satelliteAddressToSubsctibe), {
-    // variables: {
-    //   userAddress: satelliteAddressToSubsctibe,
-    // },
+    variables: {
+      userAddress: satelliteAddressToSubsctibe,
+    },
     onData: ({ data: { data } }) => {
       if (!data) return
       updateSatellitesContext(data)
     },
     onError: (e) => handleSubError(e, 'getSatelliteDataSubscription'),
+    shouldResubscribe: true,
+  })
+
+  const { loading: satellitesAddressesLoading } = useSubscription(SATELLITES_ADDRESSES_SUBSCRIPTION, {
+    onData: ({ data: { data } }) => {
+      if (!data) return
+      setSatellitesCtxState((prev) => ({
+        ...prev,
+        allSatellitesIds: Array.from(new Set(data.satellite_aggregate.nodes.map(({ user: { address } }) => address))),
+      }))
+    },
+    onError: (e) => handleSubError(e, 'PROPOSALS_AMOUNT_SUBSCRIPTION'),
     shouldResubscribe: true,
   })
 
@@ -70,15 +93,15 @@ export const SatellitesProvider = ({ children }: Props) => {
     shouldResubscribe: true,
   })
 
-  const { loading: executedProposalsAmountLoading } = useSubscription(EXECUTED_PROPOSALS_AMOUNT_SUBSCRIPTION, {
+  const { loading: satelliteGovActionsAmountLoading } = useSubscription(SATELLITE_GOV_ACTIONS_AMOUNT_SUBSCRIPTION, {
     onData: ({ data: { data } }) => {
       if (!data) return
       setSatellitesCtxState((prev) => ({
         ...prev,
-        executedProposalAmount: data.governance_proposal_aggregate.aggregate?.count ?? 0,
+        satelliteGovActionsAmount: data.governance_satellite_action_aggregate.aggregate?.count ?? 0,
       }))
     },
-    onError: (e) => handleSubError(e, 'EXECUTED_PROPOSALS_AMOUNT_SUBSCRIPTION'),
+    onError: (e) => handleSubError(e, 'SATELLITE_GOV_ACTIONS_AMOUNT_SUBSCRIPTION'),
     shouldResubscribe: true,
   })
 
@@ -94,49 +117,42 @@ export const SatellitesProvider = ({ children }: Props) => {
     shouldResubscribe: true,
   })
 
-  const { loading: eGovProposalsAmountLoading } = useSubscription(E_GOV_PROPOSALS_AMOUNT_SUBSCRIPTION, {
-    onData: ({ data: { data } }) => {
-      if (!data) return
-      setSatellitesCtxState((prev) => ({
-        ...prev,
-        eGovProposalsAmount: data.emergency_governance_aggregate.aggregate?.count ?? 0,
-      }))
-    },
-    onError: (e) => handleSubError(e, 'E_GOV_PROPOSALS_AMOUNT_SUBSCRIPTION'),
-    shouldResubscribe: true,
-  })
-
   // actions
   const updateSatellitesContext = (storage: SatelliteDataSubSubscription) => {
-    const { oraclesIds, activeSatellitesIds, allSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(storage)
+    const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(storage)
 
-    console.log({ satelliteMapper })
+    if (satelliteAddressToSubsctibe) {
+      setIsSatelliteLoading(false)
+    }
 
     setSatellitesCtxState((prev) => ({
       ...prev,
-      satelliteMapper,
-      activeSatellitesIds,
-      allSatellitesIds,
-      oraclesIds,
+      satelliteMapper: satelliteAddressToSubsctibe ? { ...prev.satelliteMapper, ...satelliteMapper } : satelliteMapper,
+      activeSatellitesIds: activeSatellitesIds,
+      oraclesIds: oraclesIds,
     }))
   }
 
   const memoSatellitesContext = useMemo(() => {
+    // TODO: debug log
+    console.log({ satellites: satellitesCtxState })
     return {
       ...satellitesCtxState,
       isLoading:
         satellitesLoading ||
         proposalsAmountLoading ||
-        executedProposalsAmountLoading ||
+        satelliteGovActionsAmountLoading ||
         finRequestsAmountLoading ||
-        eGovProposalsAmountLoading,
+        isSatellitesLoading ||
+        satellitesAddressesLoading,
       setSatelliteAddressToSubsctibe,
     }
   }, [
-    eGovProposalsAmountLoading,
-    executedProposalsAmountLoading,
     finRequestsAmountLoading,
+    isSatellitesLoading,
     proposalsAmountLoading,
+    satelliteGovActionsAmountLoading,
+    satellitesAddressesLoading,
     satellitesCtxState,
     satellitesLoading,
   ])
@@ -155,192 +171,3 @@ export const useSatellitesContext = () => {
 }
 
 export default SatellitesProvider
-
-// redux actions
-// delegate = async (satelliteAddress: string) => {
-//   const wallet = this.props.wallet
-//   const contractAddresses = this.props.contractAddresses
-//   const { accountPkh, user } = wallet
-
-//   const dispatch = this.props.dispatch
-
-//   if (!accountPkh) {
-//     dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-//     return
-//   }
-
-//   if (user.userTokens[SMVK_TOKEN_ADDRESS].balance === 0 && user.userTokens[MVK_TOKEN_SYMBOL].balance === 0) {
-//     dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please buy MVK and stake it'))
-//     return
-//   }
-
-//   if (user.userTokens[SMVK_TOKEN_ADDRESS].balance === 0) {
-//     dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please stake your MVK'))
-//     return
-//   }
-
-//   try {
-//     // prepare and send transaction
-//     const tezos = await DAPP_INSTANCE.tezos()
-//     const contract = await tezos.wallet.at(contractAddresses.delegationAddress.address)
-//     const transaction = await contract?.methods.delegateToSatellite(accountPkh, satelliteAddress).send()
-
-//     dispatch(toggleActionFullScreenLoader(true))
-//     dispatch(toggleActionCompletion(true))
-//     dispatch(showToaster(TOASTER_INFO, 'Delegating...', ACTION_START_MESSAGE_TEXT))
-
-//     // TODO replace timeout with sleep after merge
-//     // turn off fs actions loader and start data updating after 5s after operation started
-//     setTimeout(async () => {
-//       dispatch(toggleActionFullScreenLoader(false))
-//       dispatch(
-//         showToaster(
-//           TOASTER_LOADING,
-//           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-//           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-//         ),
-//       )
-
-//       // @ts-ignore don't have proper type to acees data, type has only methods
-//       const currentOperationLevel = transaction?.lastHead?.header?.level
-
-//       // refetch data we need
-//       await checkIndexerLevelAndRunDataUpdateCallback({
-//         callback: async () => {
-//           await dispatch(updateUserData())
-
-//           // Add here call for update data actions
-//           dispatch(hideToaster())
-//           dispatch(showToaster(TOASTER_SUCCESS, 'Delegation done', ACTION_COMPLETION_MESSAGE_TEXT))
-//           dispatch(toggleActionCompletion(false))
-//         },
-//         currentOperationLevel,
-//       })
-//     }, 5000)
-//   } catch (error) {
-//     if (error instanceof Error) {
-//       console.error(error)
-//       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-//     }
-//     dispatch(toggleActionFullScreenLoader(false))
-//     dispatch(toggleActionCompletion(false))
-//   }
-// }
-
-// undelegate = async (delegateAddress: string) => {
-//   const wallet = this.props.wallet
-//   const contractAddresses = this.props.contractAddresses
-//   const { accountPkh } = wallet
-
-//   const dispatch = this.props.dispatch
-
-//   if (!accountPkh) {
-//     dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-//     return
-//   }
-
-//   try {
-//     // prepare and send transaction
-//     const tezos = await DAPP_INSTANCE.tezos()
-//     const contract = await tezos.wallet.at(contractAddresses.delegationAddress.address)
-//     const transaction = await contract?.methods.undelegateFromSatellite(accountPkh, delegateAddress).send()
-
-//     dispatch(toggleActionFullScreenLoader(true))
-//     dispatch(toggleActionCompletion(true))
-//     dispatch(showToaster(TOASTER_INFO, 'Undelegating...', ACTION_START_MESSAGE_TEXT))
-
-//     // turn off fs actions loader and start data updating after 5s after operation started
-//     setTimeout(async () => {
-//       await dispatch(toggleActionFullScreenLoader(false))
-//       await dispatch(
-//         showToaster(
-//           TOASTER_LOADING,
-//           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-//           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-//         ),
-//       )
-
-//       // @ts-ignore don't have proper type to acees data, type has only methods
-//       const currentOperationLevel = transaction?.lastHead?.header?.level
-
-//       // refetch data we need
-//       await checkIndexerLevelAndRunDataUpdateCallback({
-//         callback: async () => {
-//           await dispatch(updateUserData())
-
-//           // Add here call for update data actions
-//           dispatch(hideToaster())
-//           dispatch(showToaster(TOASTER_SUCCESS, 'Undelegating done', ACTION_COMPLETION_MESSAGE_TEXT))
-//           dispatch(toggleActionCompletion(false))
-//         },
-//         currentOperationLevel,
-//       })
-//     }, 5000)
-//   } catch (error) {
-//     if (error instanceof Error) {
-//       console.error(error)
-//       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-//     }
-//     dispatch(toggleActionFullScreenLoader(false))
-//     dispatch(toggleActionCompletion(false))
-//   }
-// }
-
-// distributeProposalRewards = async (satelliteAddress: string, proposals: string[]) => {
-//   const wallet = this.props.wallet
-//   const contractAddresses = this.props.contractAddresses
-//   const { accountPkh, user } = wallet
-
-//   const dispatch = this.props.dispatch
-
-//   if (!accountPkh) {
-//     dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-//     return
-//   }
-
-//   try {
-//     // prepare and send transaction
-//     const tezos = await DAPP_INSTANCE.tezos()
-//     const contract = await tezos.wallet.at(contractAddresses.delegationAddress.address)
-//     const transaction = await contract?.methods.distributeProposalRewards(satelliteAddress, proposals).send()
-
-//     dispatch(toggleActionFullScreenLoader(true))
-//     dispatch(toggleActionCompletion(true))
-//     dispatch(showToaster(TOASTER_INFO, 'Distributing proposal rewards...', ACTION_START_MESSAGE_TEXT))
-
-//     // turn off fs actions loader and start data updating after 5s after operation started
-//     setTimeout(async () => {
-//       dispatch(toggleActionFullScreenLoader(false))
-//       dispatch(
-//         showToaster(
-//           TOASTER_LOADING,
-//           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-//           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-//         ),
-//       )
-
-//       // @ts-ignore don't have proper type to acees data, type has only methods
-//       const currentOperationLevel = transaction?.lastHead?.header?.level
-
-//       // refetch data we need
-//       await checkIndexerLevelAndRunDataUpdateCallback({
-//         callback: async () => {
-//           await dispatch(updateUserData())
-
-//           // Add here call for update data actions
-//           dispatch(hideToaster())
-//           dispatch(showToaster(TOASTER_SUCCESS, 'Distributing proposal rewards done', ACTION_COMPLETION_MESSAGE_TEXT))
-//           dispatch(toggleActionCompletion(false))
-//         },
-//         currentOperationLevel,
-//       })
-//     }, 5000)
-//   } catch (error) {
-//     if (error instanceof Error) {
-//       console.error(error)
-//       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-//     }
-//     dispatch(toggleActionFullScreenLoader(false))
-//     dispatch(toggleActionCompletion(false))
-//   }
-// }

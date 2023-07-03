@@ -23,9 +23,8 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
   const {
     activeSatellitesIds,
     satelliteMapper,
-    eGovProposalsAmount,
     proposalsAmount,
-    executedProposalAmount,
+    satelliteGovActionsAmount,
     finRequestsAmount,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
@@ -37,9 +36,8 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
 
       const { proposalParticipation, votingPartisipation } = getSatelliteParticipations({
         satellite: satelliteRecord,
-        eGovProposalsAmount,
         proposalsAmount,
-        executedProposalAmount,
+        satelliteGovActionsAmount,
         finRequestsAmount,
       })
 

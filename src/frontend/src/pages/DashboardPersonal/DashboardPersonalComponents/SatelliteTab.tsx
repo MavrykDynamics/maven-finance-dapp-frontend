@@ -30,8 +30,7 @@ const SatelliteTab = () => {
   const dispatch = useDispatch()
 
   const { userAddress, availableSatellitesRewards } = useUserContext()
-  const { satelliteMapper, eGovProposalsAmount, proposalsAmount, executedProposalAmount, finRequestsAmount } =
-    useSatellitesContext()
+  const { satelliteMapper, proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
@@ -40,9 +39,8 @@ const SatelliteTab = () => {
   const { oracleStatus } = useSatelliteStatuses(satelliteRecord)
   const { proposalParticipation } = getSatelliteParticipations({
     satellite: satelliteRecord,
-    eGovProposalsAmount,
     proposalsAmount,
-    executedProposalAmount,
+    satelliteGovActionsAmount,
     finRequestsAmount,
   })
 

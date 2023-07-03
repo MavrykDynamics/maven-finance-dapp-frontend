@@ -15,15 +15,14 @@ export type SatellitesContext = {
 
   // values to calc satellite metrix
   proposalsAmount: number
-  executedProposalAmount: number
+  satelliteGovActionsAmount: number
   finRequestsAmount: number
-  eGovProposalsAmount: number
 
   // additional data
   isLoading: boolean
 
   // api
-  setSatelliteAddressToSubsctibe: (satelliteAddress: string | null) => void
+  setSatelliteAddressToSubsctibe: (satelliteAddress: string) => void
 }
 
 export type SatellitesCtxState = Pick<
@@ -33,8 +32,7 @@ export type SatellitesCtxState = Pick<
   | 'allSatellitesIds'
   | 'oraclesIds'
   | 'proposalsAmount'
-  | 'eGovProposalsAmount'
-  | 'executedProposalAmount'
+  | 'satelliteGovActionsAmount'
   | 'finRequestsAmount'
 >
 
@@ -43,8 +41,8 @@ export const ACTIVE_SATELLITE_STATUS = 0
 export const SUSPENDED_SATELLITE_STATUS = 1
 export const BANNED_SATELLITE_STATUS = 2
 export const INACTIVE_SATELLITE_STATUS = 3
-export const satelliteStatusSchema = z.literal(0).or(z.literal(1)).or(z.literal(2)).or(z.literal(3))
-export type SatelliteIndexerStatusType = z.infer<typeof satelliteStatusSchema>
+export const satelliteStatusSchema = z.literal(0).or(z.literal(1)).or(z.literal(2))
+export type SatelliteIndexerStatusType = z.infer<typeof satelliteStatusSchema> | typeof INACTIVE_SATELLITE_STATUS
 export type SatelliteConvertedIndexerStatusType = (typeof SATELLITE_STATUSES)[keyof typeof SATELLITE_STATUSES]
 
 export const SATELLITE_STATUSES = {

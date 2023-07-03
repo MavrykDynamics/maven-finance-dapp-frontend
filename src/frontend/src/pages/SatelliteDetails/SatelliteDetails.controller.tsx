@@ -28,15 +28,17 @@ import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers
 // types
 import { SATELLITE_VOTES_MAPPER } from 'providers/SatellitesProvider/satellites.provider.types'
 import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
-import dayjs from 'dayjs'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { useEffect } from 'react'
+import { ALL_SATELLITES_SUB } from 'providers/SatellitesProvider/satellites.const'
 
 const SatellitesVotingHistory = ({
-  satellite: { proposalsVotes, satelliteActionVotes, financialRequestsVotes, eGovVotes },
+  satellite: { proposalsVotes, satelliteActionVotes, financialRequestsVotes },
 }: {
   satellite: SatelliteRecordType
 }) => {
-  const hasVoted =
-    proposalsVotes.length || satelliteActionVotes.length || financialRequestsVotes.length || eGovVotes.length
+  const hasVoted = proposalsVotes.length || satelliteActionVotes.length || financialRequestsVotes.length
 
   if (!hasVoted)
     return (
@@ -47,7 +49,7 @@ const SatellitesVotingHistory = ({
       </div>
     )
 
-  const allVotes = [...proposalsVotes, ...satelliteActionVotes, ...financialRequestsVotes, ...eGovVotes]
+  const allVotes = [...proposalsVotes, ...satelliteActionVotes, ...financialRequestsVotes]
   return (
     <div className="voting-info-list-wrapper scroll-block">
       {allVotes.map(({ vote, id, voteName, timestamp }) => {
@@ -59,7 +61,7 @@ const SatellitesVotingHistory = ({
             <p>{votedItemName}</p>
             <span className="currentSatellite-voting-history-info">
               Voted <b className={`voting-${voteText.toLowerCase()}`}>{voteText} </b>
-              {timestamp ? `on ${parseDate({ time: dayjs(timestamp).unix(), timeFormat: 'MMM Do, YYYY' })}` : null}
+              {timestamp ? `on ${parseDate({ time: timestamp, timeFormat: 'MMM Do, YYYY' })}` : null}
             </span>
           </SatelliteVotingHistoryListItem>
         )
@@ -70,19 +72,27 @@ const SatellitesVotingHistory = ({
 
 export const SatelliteDetails = () => {
   const { satelliteId } = useParams<{ satelliteId: string }>()
-  const { satelliteMapper, eGovProposalsAmount, proposalsAmount, executedProposalAmount, finRequestsAmount } =
-    useSatellitesContext()
+  const {
+    satelliteMapper,
+    proposalsAmount,
+    satelliteGovActionsAmount,
+    finRequestsAmount,
+    isLoading: isSatellitesLoading,
+    setSatelliteAddressToSubsctibe,
+  } = useSatellitesContext()
   const currentSatellite = satelliteMapper[satelliteId]
 
   const { proposalParticipation, votingPartisipation } = getSatelliteParticipations({
     satellite: currentSatellite,
-    eGovProposalsAmount,
     proposalsAmount,
-    executedProposalAmount,
+    satelliteGovActionsAmount,
     finRequestsAmount,
   })
 
-  if (!currentSatellite) return <Redirect to={'/currentSatellite-nodes'} />
+  useEffect(() => {
+    setSatelliteAddressToSubsctibe(satelliteId)
+    return () => setSatelliteAddressToSubsctibe(ALL_SATELLITES_SUB)
+  }, [satelliteId])
 
   return (
     <Page>
@@ -91,7 +101,12 @@ export const SatelliteDetails = () => {
         <div>
           <SatellitePagination />
 
-          {currentSatellite ? (
+          {isSatellitesLoading && !currentSatellite ? (
+            <DataLoaderWrapper>
+              <ClockLoader width={150} height={150} />
+              <div className="text">Loading satellite profile data...</div>
+            </DataLoaderWrapper>
+          ) : currentSatellite ? (
             <SatelliteListItem satellite={currentSatellite} isDetailsPage>
               <SatelliteCardBottomRow>
                 <SatelliteDescrBlock>

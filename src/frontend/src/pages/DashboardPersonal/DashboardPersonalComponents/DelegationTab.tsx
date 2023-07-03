@@ -38,15 +38,13 @@ const DelegationTab = () => {
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { satelliteMapper, eGovProposalsAmount, proposalsAmount, executedProposalAmount, finRequestsAmount } =
-    useSatellitesContext()
+  const { satelliteMapper, proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
 
   const satelliteRecord = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
   const { proposalParticipation } = getSatelliteParticipations({
     satellite: satelliteRecord,
-    eGovProposalsAmount,
     proposalsAmount,
-    executedProposalAmount,
+    satelliteGovActionsAmount,
     finRequestsAmount,
   })
 
