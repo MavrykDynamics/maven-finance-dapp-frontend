@@ -57,7 +57,8 @@ export const handleFilterSatellites =
   (satelliteAddress: SatelliteRecordType['address']): boolean => {
     const satellite = satelliteMapper[satelliteAddress]
     return (
-      satellite?.address.toLowerCase().includes(inputSearch.toLowerCase()) ||
-      satellite?.name.toLowerCase().includes(inputSearch.toLowerCase())
+      satellite &&
+      (satellite.address.toLowerCase().includes(inputSearch.toLowerCase()) ||
+        satellite.name.toLowerCase().includes(inputSearch.toLowerCase()))
     )
   }

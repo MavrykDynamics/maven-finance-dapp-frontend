@@ -159,4 +159,8 @@ export const DataLoaderWrapper = styled.div<{ theme: MavrykTheme }>`
       color: ${({ theme }) => theme.textColor};
     }
   }
+
+  &.no-margin {
+    margin: 0;
+  }
 `

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { State } from 'reducers'
@@ -6,6 +7,7 @@ import { State } from 'reducers'
 import { BUTTON_SECONDARY, BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
+import { ALL_SATELLITES_SUB } from 'providers/SatellitesProvider/satellites.const'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 
 // view
@@ -33,12 +35,26 @@ import { distributeProposalRewards } from 'pages/Satellites/Satellites.actions'
 
 const DelegationTab = () => {
   const dispatch = useDispatch()
+
+  const {
+    satelliteMapper,
+    proposalsAmount,
+    satelliteGovActionsAmount,
+    finRequestsAmount,
+    setSatelliteAddressToSubsctibe,
+  } = useSatellitesContext()
   const { userTokensBalances, satelliteMvkIsDelegatedTo, availableSatellitesRewards, userAddress } = useUserContext()
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { satelliteMapper, proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
+
+  useEffect(() => {
+    if (satelliteMvkIsDelegatedTo) {
+      setSatelliteAddressToSubsctibe(satelliteMvkIsDelegatedTo)
+    }
+    return () => setSatelliteAddressToSubsctibe(ALL_SATELLITES_SUB)
+  }, [satelliteMvkIsDelegatedTo])
 
   const satelliteRecord = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
   const { proposalParticipation } = getSatelliteParticipations({

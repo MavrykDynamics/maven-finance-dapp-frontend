@@ -94,9 +94,7 @@ export const AppRoutes = () => {
       </Route>
       <Route exact path="/become-satellite">
         <SatellitesProvider>
-          <StakeProvider>
-            <BecomeSatellite />
-          </StakeProvider>
+          <BecomeSatellite />
         </SatellitesProvider>
       </Route>
       <Route exact path="/satellite-nodes">

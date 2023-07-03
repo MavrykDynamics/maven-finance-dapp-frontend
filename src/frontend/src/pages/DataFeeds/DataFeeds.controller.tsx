@@ -31,16 +31,15 @@ import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
 import { useLocation } from 'react-router'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
-/**
- * this page don't need loader, cuz feeds are loaded while initial loading, and by the time we get here
- * we already have feeds context loaded, and we just subscribe to it, and update feeds in background
- */
 export const DataFeeds = () => {
   const { feedsAddresses, feedsMapper, feedsCategories } = useDataFeedsContext()
-  const { totalOracleNetworks } = useSatelliteStatistics({
+  const { totalOracleNetworks, isLoading: isOraclesDataLoading } = useSatelliteStatistics({
     skipActiveSatellitesCount: true,
     skipTotalDelegatedMVK: true,
+    skipOracleRewardsTotal: true,
   })
 
   const dispatch = useDispatch()
@@ -124,28 +123,35 @@ export const DataFeeds = () => {
         />
       </DataFeedsSearchFilter>
 
-      <DataFeedsStyled>
-        {filteredFeeds.length ? (
-          <>
-            <div className="list-wrapper">
-              {paginatedFeeds.map((feedAddress) => (
-                <DataFeedCard feed={feedsMapper[feedAddress]} oracleNodes={totalOracleNetworks} key={feedAddress} />
-              ))}
-            </div>
+      {isOraclesDataLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading feeds data...</div>
+        </DataLoaderWrapper>
+      ) : (
+        <DataFeedsStyled>
+          {filteredFeeds.length ? (
+            <>
+              <div className="list-wrapper">
+                {paginatedFeeds.map((feedAddress) => (
+                  <DataFeedCard feed={feedsMapper[feedAddress]} oracleNodes={totalOracleNetworks} key={feedAddress} />
+                ))}
+              </div>
 
-            <Pagination
-              itemsCount={feedsAddresses.length}
-              side={PAGINATION_SIDE_RIGHT}
-              listName={FEEDS_ALL_LIST_NAME}
-            />
-          </>
-        ) : (
-          <EmptyContainer>
-            <img src="/images/not-found.svg" alt=" No data feeds to show" />
-            <figcaption> No data feeds to show</figcaption>
-          </EmptyContainer>
-        )}
-      </DataFeedsStyled>
+              <Pagination
+                itemsCount={feedsAddresses.length}
+                side={PAGINATION_SIDE_RIGHT}
+                listName={FEEDS_ALL_LIST_NAME}
+              />
+            </>
+          ) : (
+            <EmptyContainer>
+              <img src="/images/not-found.svg" alt=" No data feeds to show" />
+              <figcaption> No data feeds to show</figcaption>
+            </EmptyContainer>
+          )}
+        </DataFeedsStyled>
+      )}
     </Page>
   )
 }

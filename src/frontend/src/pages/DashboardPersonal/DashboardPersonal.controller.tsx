@@ -161,7 +161,6 @@ const DashboardPersonal = () => {
         }
   }, null)
 
-  // TODO REMOVE ToLowerCase BEFORE MERGE
   const walletData = {
     xtzAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }),
     sMVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),

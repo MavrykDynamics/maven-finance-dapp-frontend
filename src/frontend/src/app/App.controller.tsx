@@ -57,7 +57,6 @@ export const App = () => {
 
   useEffect(() => {
     ;(async () => {
-      // For using Beacon wallet
       await Promise.all([
         dispatch(getContractAddressesStorage()),
         ...(localStorage.getItem('beacon:active-account') &&

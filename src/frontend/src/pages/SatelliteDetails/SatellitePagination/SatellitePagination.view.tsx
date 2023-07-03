@@ -1,8 +1,6 @@
-import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 
 import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
-import { State } from 'reducers'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'

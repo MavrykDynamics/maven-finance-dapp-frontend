@@ -8,6 +8,7 @@ import { Page } from 'styles'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // const & types
@@ -32,6 +33,7 @@ export const Dashboard = () => {
   const activeTab = isValidPersonalDashboardTabId(parsedQp.tab) ? parsedQp.tab : LENDING_TAB_ID
 
   const { totalStakedMvk, totalSupply, maximumTotalSupply, isLoading: isDoormanLoading } = useStakeContext()
+  const { isLoading: isSatellitesLoading } = useSatellitesContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
@@ -125,7 +127,7 @@ export const Dashboard = () => {
         tvl={tvlValue}
         mvkStatsBlock={mvkStatsBlock}
         activeTab={activeTab}
-        isLoading={isPromiseLoading || isDoormanLoading}
+        isLoading={isPromiseLoading || isDoormanLoading || isSatellitesLoading}
       />
     </Page>
   )

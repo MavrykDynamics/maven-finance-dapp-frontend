@@ -71,7 +71,7 @@ export const normalizeProposal = (
           avatar: vote.voter.satellites[0].image,
         })
       } catch (e) {
-        console.error('emergency_governance_votes vote parse error: ', { e })
+        console.error('governance_votes vote parse error: ', { e })
       } finally {
         return acc
       }

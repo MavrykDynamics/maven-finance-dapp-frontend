@@ -1,36 +1,56 @@
 import { useSelector, useDispatch } from 'react-redux'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
+// const
+import { ALL_SATELLITES_SUB } from 'providers/SatellitesProvider/satellites.const'
+import colors from 'styles/colors'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
+import { SATELLITE_ORACLE_STATUSES } from 'providers/SatellitesProvider/satellites.provider.types'
+
+// types
+import { State } from 'reducers'
+
+// context
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+
+// helpers
+import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
+import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
 import { distributeProposalRewards } from 'pages/Satellites/Satellites.actions'
 
+// view
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-
 import { SatelliteStatusBlock } from './DashboardPersonalComponents.style'
 import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/SatelliteCard.style'
 import { DashboardCardHeader } from '../DashboardPersonal.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-
-import { State } from 'reducers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { UserActionHistory } from './UserOperationsHistory'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-
-import colors from 'styles/colors'
-import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
-import { SATELLITE_ORACLE_STATUSES } from 'providers/SatellitesProvider/satellites.provider.types'
-import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 const SatelliteTab = () => {
   const dispatch = useDispatch()
 
   const { userAddress, availableSatellitesRewards } = useUserContext()
-  const { satelliteMapper, proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
+  const {
+    satelliteMapper,
+    proposalsAmount,
+    satelliteGovActionsAmount,
+    finRequestsAmount,
+    setSatelliteAddressToSubsctibe,
+  } = useSatellitesContext()
+
+  useEffect(() => {
+    if (userAddress) {
+      setSatelliteAddressToSubsctibe(userAddress)
+    }
+    return () => setSatelliteAddressToSubsctibe(ALL_SATELLITES_SUB)
+  }, [userAddress])
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
 

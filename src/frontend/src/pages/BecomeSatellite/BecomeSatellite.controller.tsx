@@ -74,19 +74,18 @@ export const BecomeSatellite = () => {
     isSatellite,
     satelliteMvkIsDelegatedTo,
     userAvatars: { mainAvatar },
+    userTokensBalances,
   } = useUserContext()
+
+  const {
+    maxLengths: { satelliteDelegation },
+    minimumStakedMvkBalance,
+  } = useDappConfigContext()
 
   const dispatch = useDispatch()
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
-
-  const {
-    maxLengths: { satelliteDelegation },
-    // TODO: add this field to dapp config context
-    minimumStakedMvkBalance,
-  } = useDappConfigContext()
-  const { userTokensBalances } = useUserContext()
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
