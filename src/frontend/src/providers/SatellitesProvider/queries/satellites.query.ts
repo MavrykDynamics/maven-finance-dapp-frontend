@@ -29,12 +29,6 @@ export function getSatelliteDataSubscription(
 
       total_delegated_amount
 
-      delegations {
-        user {
-          smvk_balance
-        }
-      }
-
       delegation {
         delegation_ratio
       }
@@ -125,17 +119,6 @@ export function getSatelliteDataSubscription(
           total_voting_power
           governance {
             cycle_id
-          }
-        }
-
-        # Egov votes
-        emergency_governance_votes {
-          emergency_governance_record_id
-          id
-          smvk_amount
-          timestamp
-          emergency_governance_record {
-            title
           }
         }
 
