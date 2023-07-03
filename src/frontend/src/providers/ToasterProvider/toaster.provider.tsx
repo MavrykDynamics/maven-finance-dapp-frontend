@@ -14,6 +14,7 @@ import {
 } from './toaster.provider.const'
 import { generateUniqueId } from 'utils/calcFunctions'
 import { SharedErrorFileds, SharedErrors } from 'errors/error.type'
+import { WalletActionType } from 'types/actions.type'
 
 export const toasterContext = React.createContext<ToasterContextType>(undefined!)
 
@@ -125,7 +126,7 @@ export default class ToasterProvider extends React.Component<Props, State> {
     }))
   }
 
-  setSharedError = (fieldName: SharedErrorFileds, error: SharedErrors | null) => {
+  setSharedError = (fieldName: SharedErrorFileds, error: (SharedErrors & { actionId: WalletActionType }) | null) => {
     this.setState({
       context: {
         ...this.state.context,

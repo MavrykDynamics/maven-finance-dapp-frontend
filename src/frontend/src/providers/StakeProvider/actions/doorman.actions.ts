@@ -1,5 +1,7 @@
+import { OpKind } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { unknownToError } from 'errors/error'
+import { estimateBatchOperation, estimateExecution } from 'errors/helpers/walletError.helper'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
@@ -15,34 +17,52 @@ export const stakeMVK = async (
     const mvkTokenContract = await tezos?.wallet.at(mvkTokenAddress)
     const doormanContract = await tezos?.wallet.at(doormanAddress)
 
-    const addOperators = [
-        {
-          add_operator: {
-            owner: accountPkh,
-            operator: doormanAddress,
-            token_id: 0,
+    const approveBatchItemMetaData = {
+      kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+      ...mvkTokenContract.methods
+        .update_operators([
+          {
+            add_operator: {
+              owner: accountPkh,
+              operator: doormanAddress,
+              token_id: 0,
+            },
           },
-        },
-      ],
-      removeOperators = [
-        {
-          remove_operator: {
-            owner: accountPkh,
-            operator: doormanAddress,
-            token_id: 0,
-          },
-        },
-      ]
+        ])
+        .toTransferParams(),
+    }
 
-    const batch =
-      mvkTokenContract &&
-      doormanContract &&
-      (await tezos.wallet
-        .batch()
-        .withContractCall(mvkTokenContract.methods.update_operators(addOperators))
-        .withContractCall(doormanContract.methods.stake(convertNumberForContractCall({ number: amount })))
-        .withContractCall(mvkTokenContract.methods.update_operators(removeOperators)))
-    const operation = await batch?.send()
+    const removeBatchItemMetaData = {
+      kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+      ...mvkTokenContract.methods
+        .update_operators([
+          {
+            remove_operator: {
+              owner: accountPkh,
+              operator: doormanAddress,
+              token_id: 0,
+            },
+          },
+        ])
+        .toTransferParams(),
+    }
+
+    const stakeBatchItemMetaData = {
+      kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+      ...doormanContract.methods.stake(convertNumberForContractCall({ number: amount })).toTransferParams(),
+    }
+
+    const batchArr = [approveBatchItemMetaData, stakeBatchItemMetaData, removeBatchItemMetaData]
+
+    // Estimating Operations for the batch call
+    const estimateBatchOp = await estimateBatchOperation(batchArr)
+
+    if (estimateBatchOp.error) {
+      return { actionSuccess: false, error: estimateBatchOp.error }
+    }
+
+
+    const operation = await tezos.wallet.batch(batchArr).send()
 
     return { actionSuccess: true, operation }
   } catch (error) {
@@ -58,7 +78,14 @@ export const unstakeMVK = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(doormanAddress)
-    const operation = await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
+    const unstakeOperationMetaData = contract?.methods.unstake(convertNumberForContractCall({ number: amount }))
+    const op = await estimateExecution(unstakeOperationMetaData)
+
+    if (op?.error) {
+      return { actionSuccess: false, error: op.error }
+    }
+
+    const operation = await unstakeOperationMetaData.send()
 
     return { actionSuccess: true, operation }
   } catch (error) {

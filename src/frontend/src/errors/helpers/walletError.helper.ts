@@ -5,10 +5,9 @@ import { DEFAULT_TEZOS_ERROR } from 'errors/consts/error.const'
 import { CONTRACT_ERROR_CODES } from 'errors/consts/walletErrorCodes'
 import { isTezosContractError } from 'errors/error'
 import { EstimatedBatchCall, EstimatedOperation, TezosWalletErrorPayload } from 'errors/error.type'
-import { WalletActionType } from 'types/actions.type'
 import { toSentenceCase } from 'utils/toSentenceCase'
 
-export const getContractErrorMessage = (e: unknown, actionId: WalletActionType = null): TezosWalletErrorPayload => {
+export const getContractErrorMessage = (e: unknown): TezosWalletErrorPayload => {
   const isTezosError = isTezosContractError(e)
   if (isTezosError) {
     const error = e as TezosOperationError
@@ -25,7 +24,7 @@ export const getContractErrorMessage = (e: unknown, actionId: WalletActionType =
       }
     }
 
-    _error = { ..._error, description: toSentenceCase(_error.description), actionId }
+    _error = { ..._error, description: toSentenceCase(_error.description) }
 
     return _error
   }
@@ -34,7 +33,6 @@ export const getContractErrorMessage = (e: unknown, actionId: WalletActionType =
 }
 
 export const estimateExecution = async (
-  actionId: WalletActionType = null,
   tezosOperation: ContractMethod<Wallet>,
 ): Promise<EstimatedOperation> => {
   const defaultEstimatedOperation: EstimatedOperation = {
@@ -52,13 +50,12 @@ export const estimateExecution = async (
   } catch (e) {
     return {
       ...defaultEstimatedOperation,
-      error: getContractErrorMessage(e, actionId),
+      error: getContractErrorMessage(e),
     }
   }
 }
 
 export const estimateBatchOperation = async (
-  actionId: WalletActionType = null,
   tezosBatchOperation: (TransferParams & { kind: OpKind.TRANSACTION })[],
 ): Promise<EstimatedBatchCall> => {
   const defaultEstimatedBatchCalls: EstimatedBatchCall = {
@@ -87,7 +84,7 @@ export const estimateBatchOperation = async (
 
     return estimatedBatchCalls
   } catch (e) {
-    return { ...defaultEstimatedBatchCalls, error: getContractErrorMessage(e, actionId) }
+    return { ...defaultEstimatedBatchCalls, error: getContractErrorMessage(e) }
   }
 }
 

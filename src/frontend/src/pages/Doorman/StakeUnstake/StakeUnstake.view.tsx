@@ -63,6 +63,9 @@ import {
 // types
 import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
+import { TezosWalletErrorPayload } from 'errors/error.type'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -89,7 +92,9 @@ export const StakeUnstakeView = ({
     isSatellite,
   } = useUserContext()
   const { setAction } = useDappConfigContext()
-  const { info, loading, bug } = useToasterContext()
+  const { info, loading, bug, setSharedError, sharedErrors } = useToasterContext()
+
+  console.log(sharedErrors, 'sharedErrors')
 
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -198,6 +203,11 @@ export const StakeUnstakeView = ({
 
         setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
       } catch (e) {}
+    } else if (isContractErrorPayload(actionResult.error)) {
+      setSharedError(WALLTET_ERROR_FIELD, {
+        ...(actionResult.error as TezosWalletErrorPayload),
+        actionId: STAKE_ACTION,
+      })
     } else {
       setAction(null)
       const parsedError = unknownToError(actionResult.error)

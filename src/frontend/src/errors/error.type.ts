@@ -2,7 +2,6 @@ import type { ApiError, FatalError, ValidationError, TezosOperationError } from 
 import { z } from 'zod'
 import { tezosContractErrorPayload, tezosContractErrorPayloadErrorItemSchema } from './error.schema'
 import { WALLTET_ERROR_FIELD } from './consts/error.const'
-import { WalletActionType } from 'types/actions.type'
 
 export type InputPayload = {
   field?: string
@@ -30,7 +29,6 @@ export type ErrorType =
   | TezosOperationError
 
 export type TezosWalletErrorPayload = {
-  actionId: WalletActionType | null
   message: string
   description: string
 }

@@ -33,6 +33,9 @@ import { InputProps } from 'app/App.components/Input/newInput.type'
 import { State } from 'reducers'
 import { unstakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
 import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
+import { TezosWalletErrorPayload } from 'errors/error.type'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -58,7 +61,7 @@ export const ExitFeeModal = ({
 }: ExitFeeModalPropsType) => {
   const dispatch = useDispatch()
   const { setAction } = useDappConfigContext()
-  const { bug, info, loading } = useToasterContext()
+  const { bug, info, loading, setSharedError } = useToasterContext()
 
   const {
     doormanAddress: { address: doormanAddress },
@@ -112,6 +115,11 @@ export const ExitFeeModal = ({
 
         setAction({ actionName: UNSTAKE_ACTION, toasterId, operationLvl })
       } catch (e) {}
+    } else if (isContractErrorPayload(actionResult.error)) {
+      setSharedError(WALLTET_ERROR_FIELD, {
+        ...(actionResult.error as TezosWalletErrorPayload),
+        actionId: UNSTAKE_ACTION,
+      })
     } else {
       setAction(null)
       const parsedError = unknownToError(actionResult.error)
