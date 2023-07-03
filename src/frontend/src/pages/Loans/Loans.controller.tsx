@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
+import classNames from 'classnames'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -17,6 +18,7 @@ import colors from 'styles/colors'
 import { skyColor } from 'styles'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from './Loans.helpers'
 
 import { State } from 'reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -117,12 +119,12 @@ export const Loans = () => {
         <span>Total Lending</span>
         <CommaNumber value={totalLended} beginningText={'$'} />
       </div>
-      <div className="chart">
+      <div className={classNames('chart', { emptyChart: totalLendingChart.length === 0 })}>
         <Chart
-          data={{ type: AREA_CHART_TYPE, plots: totalLendingChart }}
+          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(totalLendingChart, 7) }}
           colors={CHART_COLORS}
-          settings={CHART_SETTINGS}
-          numberOfItemsToDisplay={3}
+          settings={getChartSettingsBasedOnChartLength(totalLendingChart, CHART_SETTINGS)}
+          numberOfItemsToDisplay={0}
           tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
           tooltipAsset="$"
         />
@@ -137,12 +139,12 @@ export const Loans = () => {
         <span>Total Borrowing</span>
         <CommaNumber value={totalBorrowed} beginningText={'$'} />
       </div>
-      <div className="chart">
+      <div className={classNames('chart', { emptyChart: totalBorrowingChart.length === 0 })}>
         <Chart
-          data={{ type: AREA_CHART_TYPE, plots: totalBorrowingChart }}
+          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(totalBorrowingChart, 7) }}
           colors={CHART_COLORS}
-          settings={CHART_SETTINGS}
-          numberOfItemsToDisplay={3}
+          settings={getChartSettingsBasedOnChartLength(totalBorrowingChart, CHART_SETTINGS)}
+          numberOfItemsToDisplay={0}
           tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
           tooltipAsset="$"
         />

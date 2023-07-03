@@ -102,7 +102,7 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
         statusFlag,
         satelliteId: item.governance_satellite.address,
         initiatorId: item.initiator.address,
-        expirationDatetime: item.expiration_datetime ?? null,
+        expirationDatetime: item.executed ? item.execution_datetime : item.expiration_datetime ?? null,
         startDatetime: item.start_datetime ?? null,
         smvkPercentageForApproval: item.smvk_percentage_for_approval,
         smvkRequiredForApproval: item.smvk_required_for_approval,
