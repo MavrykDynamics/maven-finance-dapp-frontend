@@ -27,6 +27,12 @@ export const ErrorPageInner = styled.div<{ theme: MavrykTheme }>`
   button svg {
     stroke: ${({ theme }) => theme.containerColor};
   }
+
+  & a {
+    text-decoration: none;
+    color: ${({ theme }) => theme.textColor};
+    font-weight: 900;
+  }
 `
 
 export const ErrorTopHeader = styled.div<{ theme: MavrykTheme }>`

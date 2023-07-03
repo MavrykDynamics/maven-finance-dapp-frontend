@@ -50,4 +50,6 @@ export type ToasterContextType = {
   addToasterMessage?: InstanceType<typeof ToasterProvider>['addToasterMessage']
   setError: InstanceType<typeof ToasterProvider>['setError']
   messages: ToasterMessage[]
+  is404PageInView: boolean
+  setIs404PageInView: InstanceType<typeof ToasterProvider>['setIs404PageInView']
 }

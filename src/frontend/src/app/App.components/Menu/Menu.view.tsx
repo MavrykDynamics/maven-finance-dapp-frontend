@@ -22,7 +22,7 @@ import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
 import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { getMVKTokensFromFaucet } from '../../../pages/Doorman/Doorman.actions'
 import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { hideSideBarRoutes } from 'consts/routes.const'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 type MenuViewProps = {
   openChangeNodePopupHandler: () => void
@@ -62,8 +62,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { user, accountPkh } = useSelector((state: State) => state.wallet)
   const [canGetInitThouthand, setCanGetInitThouthand] = useState(false)
-
-  const isSideBarHidden = hideSideBarRoutes.includes(pathname)
+  const { is404PageInView } = useToasterContext()
 
   useEffect(() => {
     const selectedMainRoute = mainNavigationLinks.find(({ routePath = '', subPages = null }) => {
@@ -112,7 +111,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
         isExpandedMenu={sidebarOpened}
       />
 
-      {!isSideBarHidden && (
+      {!is404PageInView && (
         <MenuSidebarStyled
           className={`navbar-sticky ${sidebarOpened ? 'menu-expanded' : 'menu-collapsed'}`}
           onClick={sidebarBackdropClickHandler}

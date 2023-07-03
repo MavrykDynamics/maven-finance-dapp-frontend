@@ -12,6 +12,10 @@ import {
   TOASTER_LOADING,
   TOASTER_SUCCESS,
   TOASTER_WARNING,
+  errorDescDefaultText,
+  errorDescDefaultTextWhenError,
+  errorHeaderDefaultText,
+  errorHeaderDefaultTextWhenError,
 } from './toaster.provider.const'
 import { generateUniqueId } from 'utils/calcFunctions'
 
@@ -47,12 +51,15 @@ export default class ToasterProvider extends React.Component<Props, State> {
         deleteToasterFromArray: this.deleteToasterFromArray,
         messages: [],
         setError: this.setError,
+        is404PageInView: false,
+        setIs404PageInView: this.setIs404PageInView,
       },
     }
   }
 
   /**
    *
+   * @param error
    */
   componentDidCatch(error: Error): void {
     this.addToasterMessage('', error.message, TOASTER_ERROR)
@@ -162,15 +169,31 @@ export default class ToasterProvider extends React.Component<Props, State> {
     }))
   }
 
+  setIs404PageInView = (value = true) => {
+    this.setState((prevState) => ({
+      context: {
+        ...prevState.context,
+        is404PageInView: value,
+      },
+    }))
+  }
+
   /**
    *
    */
   render(): JSX.Element {
     // add 404 page when isCritical error
     const isCritical = Boolean(this.state.context.error)
+
+    console.log(isCritical, 'isCritical')
+
+    // TODO replace with real error message
+    const headerText = isCritical ? errorHeaderDefaultTextWhenError : errorHeaderDefaultText
+    const descText = isCritical ? errorDescDefaultTextWhenError : errorDescDefaultText
+
     return (
       <toasterContext.Provider value={this.state.context}>
-        {isCritical ? <ErrorPage /> : this.props.children}
+        {isCritical ? <ErrorPage headerText={headerText} descText={descText} /> : this.props.children}
       </toasterContext.Provider>
     )
   }

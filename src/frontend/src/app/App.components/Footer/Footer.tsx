@@ -1,15 +1,11 @@
-import { useLocation } from 'react-router'
 import { FooterStyled } from './Footer.styles'
 
-// consts
-
-import { notFooterRoutes } from 'consts/routes.const'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 export const Footer = () => {
-  const { pathname } = useLocation()
-  const showFooter = !notFooterRoutes.includes(pathname)
+  const { is404PageInView } = useToasterContext()
 
-  return showFooter ? (
+  return !is404PageInView ? (
     <FooterStyled>
       <div className="powered-by">
         Powered by&nbsp;

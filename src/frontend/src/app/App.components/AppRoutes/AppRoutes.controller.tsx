@@ -178,7 +178,6 @@ export const AppRoutes = () => {
       </Route>
 
       <Route exact path="/404">
-        {/*TODO: Replace later on with actual 404 page*/}
         <ErrorPage />
       </Route>
 

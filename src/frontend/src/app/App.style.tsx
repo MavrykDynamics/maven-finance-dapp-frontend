@@ -25,7 +25,7 @@ export const AppStyled = styled.div<{
       : ''};
 
   @media screen and (max-width: 1399px) {
-    padding-left: 72px;
+    padding-left: ${({ isSideBarHidden }) => (isSideBarHidden ? '0px' : '72px')};
   }
 `
 
