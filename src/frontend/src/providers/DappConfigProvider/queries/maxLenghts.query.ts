@@ -27,7 +27,6 @@ query getMaxlenghtsQuery {
       satellite_description_max_length
       satellite_name_max_length
       satellite_website_max_length
-      minimum_smvk_balance
     }
   }
   

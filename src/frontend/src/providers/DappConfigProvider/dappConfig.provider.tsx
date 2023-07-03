@@ -11,17 +11,19 @@ import { DappConfigContext, DappConfigContextStateType, UserActionType } from '.
 import { SUBSCRIPTION_INDEXER_LVL } from './queries/indexerLvl.query'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import { MVK_DECIMALS } from 'utils/constants'
+import { DAPP_DEFAULT_MAX_LENGHTS } from './helpers/dappConfig.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 
 // helpers
 import { sleep } from 'utils/api/sleep'
-import { DAPP_DEFAULT_MAX_LENGHTS } from './helpers/dappConfig.const'
+import { normalizerMaxLenghts } from './helpers/dappConfig.normalizers'
+import { convertNumberForClient } from 'utils/calcFunctions'
+
+// queries
 import { GET_MAX_LENGTHS_QUERY } from './queries/maxLenghts.query'
 import { getXTZBakers } from './bakers/getXtzBakers'
-import { normalizerMaxLenghts } from './helpers/dappConfig.normalizers'
 import { GET_MVK_FAUCET_QUERY, GET_SATELLITE_MIN_STAKED_AMOUNT_QUERY } from './queries/config.query'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { MVK_DECIMALS } from 'utils/constants'
 
 export const dappConfigContext = React.createContext<DappConfigContext>(undefined!)
 

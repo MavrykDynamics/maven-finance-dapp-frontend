@@ -108,7 +108,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const freesMVKSpace = Math.max(sMvkBalance * delegationRatio - totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satelliteAddress === satelliteMvkIsDelegatedTo
   const balanceOver1SMvk = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) >= 1
-  const isSatelliteInactive = !currentlyRegistered || satelliteStatus !== ACTIVE_SATELLITE_STATUS
 
   // Actions
   const delegateCallback = async () => await dispatch(delegate(satellite.address))
@@ -227,7 +226,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup>
               <SatelliteMainText>Participation</SatelliteMainText>
               <SatelliteSubText>
-                <CommaNumber value={proposalParticipation + votingPartisipation} endingText="%" />
+                {/* TODO: clarify with sam */}
+                <CommaNumber value={(proposalParticipation + votingPartisipation) / 2} endingText="%" />
               </SatelliteSubText>
             </SatelliteTextGroup>
           </div>
@@ -244,20 +244,16 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         </div>
 
         <SatelliteCardButtons>
-          {isSatelliteInactive && (
+          {satelliteStatus !== ACTIVE_SATELLITE_STATUS && (
             <div>
               <StatusFlag
-                status={
-                  satelliteStatus !== BANNED_SATELLITE_STATUS || !currentlyRegistered
-                    ? STATUS_FLAG_DOWN
-                    : STATUS_FLAG_WARNING
-                }
+                status={satelliteStatus !== BANNED_SATELLITE_STATUS ? STATUS_FLAG_DOWN : STATUS_FLAG_WARNING}
                 text={SATELLITE_STATUSES[satelliteStatus]}
               />
             </div>
           )}
 
-          {!isSatelliteInactive && !isSatellite && buttonToShow}
+          {satelliteStatus !== ACTIVE_SATELLITE_STATUS && !isSatellite && buttonToShow}
         </SatelliteCardButtons>
       </SatelliteCardInner>
 
