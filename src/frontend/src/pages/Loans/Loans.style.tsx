@@ -26,6 +26,13 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
       border-radius: 10px;
     }
 
+    .emptyChart {
+      & > div:first-child {
+        position: relative;
+        top: 215px;
+      }
+    }
+
     .summary {
       display: flex;
       flex-direction: column;
