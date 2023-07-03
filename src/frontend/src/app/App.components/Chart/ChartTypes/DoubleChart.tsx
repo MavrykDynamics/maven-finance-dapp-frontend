@@ -1,7 +1,8 @@
 import { useRef, useEffect, useState } from 'react'
 import { createChart, BusinessDay, UTCTimestamp, SingleValueData, CandlestickData } from 'lightweight-charts'
+import { useSelector } from 'react-redux'
 
-import { lightTextColor, headerColor } from 'styles'
+import styleColors from 'styles/colors'
 import { parseDate } from 'utils/time'
 import {
   DEFAULT_LAYOUT_SETTING,
@@ -23,9 +24,19 @@ import {
   DoubleChartPropsType,
   HISTOGRAM_CHART_TYPE,
 } from '../helpers/Chart.types'
+import { State } from 'reducers'
 
 export const DoubleChart = ({
-  settings: {
+  settings,
+  firstChart,
+  secondChart,
+  tooltipName = DOUBLE_AMOUNT_DATE_TOOLTIP,
+  tooltipAssetFirst,
+  tooltipAssetSecond,
+}: DoubleChartPropsType) => {
+  const { themeSelected } = useSelector((state: State) => state.preferences)
+
+  const {
     height,
     width,
     tickDateFormatter,
@@ -36,23 +47,22 @@ export const DoubleChart = ({
     yAxisSide = 'right',
     priceMargins,
     crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
-    textColor = lightTextColor,
-    borderColor = headerColor,
+    textColor = styleColors[themeSelected]['regularText'],
+    borderColor = styleColors[themeSelected]['selectedColor'],
     firstChartSeriesMarkers,
     secondChartSeriesMarkers,
-  } = {},
-  firstChart: {
+  } = settings ?? {}
+
+  const {
     data: { type: firstChartType, plots: firstChartPlots },
     colors: firstChartColors,
-  },
-  secondChart: {
+  } = firstChart ?? {}
+
+  const {
     data: { type: secondChartType, plots: secondChartPlots },
     colors: secondChartColors,
-  },
-  tooltipName = DOUBLE_AMOUNT_DATE_TOOLTIP,
-  tooltipAssetFirst,
-  tooltipAssetSecond,
-}: DoubleChartPropsType) => {
+  } = secondChart ?? {}
+
   const chartContainerRef = useRef<HTMLDivElement | null>(null)
   const mainChartWrapperRef = useRef<HTMLDivElement | null>(null)
 

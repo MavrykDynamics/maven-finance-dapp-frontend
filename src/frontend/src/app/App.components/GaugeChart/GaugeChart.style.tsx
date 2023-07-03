@@ -55,11 +55,11 @@ export const ValueWrapper = styled.div<{ theme: MavrykTheme }>`
   align-items: center;
   justify-content: center;
 
-  background: ${({ theme }) => theme.dPurple_container_dPurple};
-  color: ${({ theme }) => theme.dataColor};
+  background: ${({ theme }) => theme.messagesBackground};
+  color: ${({ theme }) => theme.primaryText};
 
   > * {
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
   }
 
   .lend-borrow-position {

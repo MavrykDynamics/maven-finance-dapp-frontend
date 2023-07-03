@@ -1,10 +1,13 @@
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
+
 import Arrow from './svg/Arrow'
 import Backdrop from './svg/Backdrop'
 
 import { GaugeChartStyled, ArrowStyled, ValueWrapper } from './GaugeChart.style'
 import BackgroundArc, { GRADIENT_NAME } from './svg/BackgroundArc'
 import { getNumberInBounds } from 'utils/calcFunctions'
-import { cyanColor } from 'styles'
+import colors from 'styles/colors'
 
 type GaugeChartProps = {
   children: React.ReactNode
@@ -50,6 +53,8 @@ export const calcArcAngle = ({
  * @todo: if need add color as a prop
  */
 export const GaugeChart = ({ children, maxValue, minValue, currentValue, isProgress }: GaugeChartProps) => {
+  const { themeSelected } = useSelector((state: State) => state.preferences)
+
   const arrowAngle = Math.ceil(getNumberInBounds(0, 180, calcArrowAngle({ maxValue, currentValue, minValue })))
   const progressArcAngle = Math.ceil(getNumberInBounds(0, 180, calcArcAngle({ maxValue, currentValue, minValue })))
 
@@ -58,7 +63,7 @@ export const GaugeChart = ({ children, maxValue, minValue, currentValue, isProgr
       <BackgroundArc
         className={`colored-arc`}
         offset={isProgress ? progressArcAngle : 0}
-        paint={isProgress ? cyanColor : `url(#${GRADIENT_NAME})`}
+        paint={isProgress ? colors[themeSelected]['gaugeChartColor'] : `url(#${GRADIENT_NAME})`}
       />
 
       <Backdrop className="backdrop" />

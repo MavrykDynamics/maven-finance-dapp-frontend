@@ -1,7 +1,5 @@
 import styled from 'styled-components/macro'
 
-import { containerColor, royalPurpleColor, darkColor } from 'styles'
-
 export const CheckboxStyled = styled.div`
   position: relative;
   display: flex;
@@ -9,7 +7,7 @@ export const CheckboxStyled = styled.div`
   align-items: center;
 
   .children {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
     font-weight: 600;
     font-size: 14px;
   }
@@ -17,22 +15,22 @@ export const CheckboxStyled = styled.div`
   label {
     width: 24px;
     height: 24px;
-    border: 1px solid ${royalPurpleColor};
+    border: 1px solid ${({ theme }) => theme.strokeColor};
     border-radius: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: 0.15s ease-in-out;
     cursor: pointer;
-    background-color: ${darkColor};
+    background-color: ${({ theme }) => theme.backgroundColor};
 
     &:hover {
-      background-color: ${containerColor};
+      background-color: ${({ theme }) => theme.cards};
     }
   }
 
   svg {
-    fill: ${darkColor};
+    fill: ${({ theme }) => theme.backgroundColor};
     width: 13px;
     height: 13px;
     opacity: 0;
@@ -47,13 +45,13 @@ export const CheckboxStyled = styled.div`
 
     &:checked {
       & + label {
-        background-color: ${royalPurpleColor};
+        background-color: ${({ theme }) => theme.strokeColor};
         svg {
           opacity: 1;
         }
 
         &:hover {
-          background-color: ${royalPurpleColor};
+          background-color: ${({ theme }) => theme.strokeColor};
         }
       }
     }

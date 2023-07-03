@@ -1,7 +1,8 @@
 import { useRef, useEffect, useState } from 'react'
 import { createChart, BusinessDay, UTCTimestamp, CandlestickData } from 'lightweight-charts'
+import { useSelector } from 'react-redux'
 
-import { upColor, downColor, lightTextColor, headerColor } from 'styles'
+import styleColors from 'styles/colors'
 import { parseDate } from 'utils/time'
 import {
   DEFAULT_LAYOUT_SETTING,
@@ -18,9 +19,18 @@ import ChartTooltip, { AMOUNT_DATE_TOOLTIP } from '../Tooltips/ChartTooltip'
 import { ChartStyled } from '../Chart.style'
 
 import { CandlestickChartPlotType, CandleStickPropsType } from '../helpers/Chart.types'
+import { State } from 'reducers'
 
 export const CandlestickChart = ({
-  settings: {
+  settings,
+  colors,
+  data,
+  tooltipName = AMOUNT_DATE_TOOLTIP,
+  tooltipAsset,
+}: CandleStickPropsType) => {
+  const { themeSelected } = useSelector((state: State) => state.preferences)
+
+  const {
     height,
     width,
     tickDateFormatter,
@@ -31,15 +41,16 @@ export const CandlestickChart = ({
     priceMargins,
     yAxisSide = 'left',
     crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
-    textColor = lightTextColor,
-    borderColor = headerColor,
+    textColor = styleColors[themeSelected]['regularText'],
+    borderColor = styleColors[themeSelected]['selectedColor'],
     seriesMarkers,
-  } = {},
-  colors: { chandleUpColor = upColor, chandleDownColor = downColor } = {},
-  data,
-  tooltipName = AMOUNT_DATE_TOOLTIP,
-  tooltipAsset,
-}: CandleStickPropsType) => {
+  } = settings ?? {}
+
+  const {
+    chandleUpColor = styleColors[themeSelected]['upColor'],
+    chandleDownColor = styleColors[themeSelected]['downColor'],
+  } = colors ?? {}
+
   const chartContainerRef = useRef<HTMLDivElement | null>(null)
   const mainChartWrapperRef = useRef<HTMLDivElement | null>(null)
 

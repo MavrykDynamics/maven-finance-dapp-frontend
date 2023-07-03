@@ -207,7 +207,6 @@ const Themes = () => {
           isThin
           isSquare
           onClick={() => setNewThemeHandler(DARK_THEME)}
-          disabled
         >
           Dark
         </Button>
@@ -217,7 +216,6 @@ const Themes = () => {
           isThin
           isSquare
           onClick={() => setNewThemeHandler(LIGHT_THEME)}
-          disabled
         >
           Light
         </Button>
