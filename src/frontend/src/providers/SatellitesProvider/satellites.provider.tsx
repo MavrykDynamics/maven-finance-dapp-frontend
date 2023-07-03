@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 // helpers
 import { getSatelliteDataSubscription } from './queries/satellites.query'
-import { normalizeSatellitesLedger } from './helpers/satellites.normalizer'
+import { normalizeSatellitesLedger } from 'providers/SatellitesProvider/helpers/satellites.normalizer'
 import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
 
 // consts
