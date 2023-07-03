@@ -226,7 +226,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup>
               <SatelliteMainText>Participation</SatelliteMainText>
               <SatelliteSubText>
-                {/* TODO: clarify with sam */}
                 <CommaNumber value={(proposalParticipation + votingPartisipation) / 2} endingText="%" />
               </SatelliteSubText>
             </SatelliteTextGroup>

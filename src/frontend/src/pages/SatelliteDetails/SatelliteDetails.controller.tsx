@@ -104,7 +104,7 @@ export const SatelliteDetails = () => {
           {isSatellitesLoading && !currentSatellite ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
-              <div className="text">Loading satellite profile data...</div>
+              <div className="text">Loading satellite profile data</div>
             </DataLoaderWrapper>
           ) : currentSatellite ? (
             <SatelliteListItem satellite={currentSatellite} isDetailsPage>
@@ -162,8 +162,8 @@ export const SatelliteDetails = () => {
             </SatelliteListItem>
           ) : (
             <EmptyContainer>
-              <img src="/images/not-found.svg" alt=" No proposals to show" />
-              <figcaption> No Current Satellite data</figcaption>
+              <img src="/images/not-found.svg" alt="No satellite to show" />
+              <figcaption>Satellite with address ({satelliteId}) does not exist</figcaption>
             </EmptyContainer>
           )}
         </div>

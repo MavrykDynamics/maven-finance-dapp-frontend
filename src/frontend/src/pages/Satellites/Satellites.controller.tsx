@@ -79,7 +79,7 @@ const Satellites = () => {
           {isSatellitesLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
-              <div className="text">Loading satellites and data feeds data</div>
+              <div className="text">Loading satellites and feeds data</div>
             </DataLoaderWrapper>
           ) : (
             <>

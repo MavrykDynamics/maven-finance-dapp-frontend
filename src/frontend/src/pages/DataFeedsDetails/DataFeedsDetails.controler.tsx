@@ -355,7 +355,7 @@ const DataFeedDetails = () => {
         ) : (
           <EmptyContainer>
             <img src="/images/not-found.svg" alt=" No feed to show" />
-            <figcaption> Feed with this address ({feedId}) is not exists</figcaption>
+            <figcaption>Feed with address ({feedId}) does not exist</figcaption>
           </EmptyContainer>
         )}
       </DataFeedsStyled>
