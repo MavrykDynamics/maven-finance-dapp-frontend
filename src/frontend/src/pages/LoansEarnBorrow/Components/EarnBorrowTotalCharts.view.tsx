@@ -44,7 +44,7 @@ export const EarnBorrowTotalCharts = ({
 
       <div className={classNames('chart', { emptyChart: leftChartData.length === 0 })}>
         <Chart
-          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(leftChartData) }}
+          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(leftChartData, 7) }}
           colors={CHART_COLORS}
           settings={getChartSettingsBasedOnChartLength(leftChartData, CHART_SETTINGS)}
           numberOfItemsToDisplay={numberOfItemsToDisplay}
@@ -65,7 +65,7 @@ export const EarnBorrowTotalCharts = ({
 
       <div className={classNames('chart', { emptyChart: rightChartData.length === 0 })}>
         <Chart
-          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(rightChartData) }}
+          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(rightChartData, 7) }}
           colors={CHART_COLORS}
           settings={getChartSettingsBasedOnChartLength(rightChartData, CHART_SETTINGS)}
           numberOfItemsToDisplay={numberOfItemsToDisplay}

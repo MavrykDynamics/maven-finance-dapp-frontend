@@ -100,7 +100,7 @@ export const Loans = () => {
       </div>
       <div className={classNames('chart', { emptyChart: chartsData.lendingChartData.length === 0 })}>
         <Chart
-          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(chartsData.lendingChartData) }}
+          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(chartsData.lendingChartData, 7) }}
           colors={CHART_COLORS}
           settings={getChartSettingsBasedOnChartLength(chartsData.lendingChartData, CHART_SETTINGS)}
           numberOfItemsToDisplay={0}
@@ -120,7 +120,7 @@ export const Loans = () => {
       </div>
       <div className={classNames('chart', { emptyChart: chartsData.borrowingChartData.length === 0 })}>
         <Chart
-          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(chartsData.borrowingChartData) }}
+          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(chartsData.borrowingChartData, 7) }}
           colors={CHART_COLORS}
           settings={getChartSettingsBasedOnChartLength(chartsData.borrowingChartData, CHART_SETTINGS)}
           numberOfItemsToDisplay={0}

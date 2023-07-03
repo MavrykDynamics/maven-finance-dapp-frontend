@@ -486,47 +486,31 @@ export const getCollateralRatioByPersentage = (collateralRatio: number) => {
   return Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))
 }
 
-// get data with 0 value within 7 days (as this is the period on the chart)
-// it is need instead of plug for empty chart
-export const getChartDataBasedOnLength = (chartData: AreaChartPlotType[]) => {
+
+/**
+ * get data with 0 value within 7 days (as this is the period on the chart). Is need instead of plug for empty chart.
+ * @param chartData - data of chart
+ * @param period - the number of days to display 0 if the chart is empty
+ */
+export const getChartDataBasedOnLength = (chartData: AreaChartPlotType[], period: number) => {
   const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 
-  return chartData.length !== 0
-    ? chartData
-    : ([
-        {
-          time: new Date().getTime() - ONE_DAY_IN_MS * 6,
-          value: 0,
-        },
-        {
-          time: new Date().getTime() - ONE_DAY_IN_MS * 5,
-          value: 0,
-        },
-        {
-          time: new Date().getTime() - ONE_DAY_IN_MS * 4,
-          value: 0,
-        },
-        {
-          time: new Date().getTime() - ONE_DAY_IN_MS * 3,
-          value: 0,
-        },
-        {
-          time: new Date().getTime() - ONE_DAY_IN_MS * 2,
-          value: 0,
-        },
-        {
-          time: new Date().getTime() - ONE_DAY_IN_MS * 1,
-          value: 0,
-        },
-        {
-          time: new Date().getTime(),
-          value: 0,
-        },
-      ] as AreaChartPlotType[])
+  const emptyChartData = Array.apply(null, Array(period)).map((item, index, array) => ({
+    // get 0 value for each day in period
+    time: new Date().getTime() - ONE_DAY_IN_MS * (array.length - index - 1),
+    value: 0,
+  })) as AreaChartPlotType[]
+
+  return chartData.length !== 0 ? chartData : emptyChartData
 }
 
-// get current settings if the chart is not empty, or custom settings with small chart height for empty chart
-// need a small height because the empty chart with standard settings has a bad look in the center of the container
+/**
+ * get current settings if the chart is not empty, or custom settings with small chart height for empty chart.
+ * Need a small height because the empty chart with standard settings has a bad look in the center of the container.
+ * @param chartData - data of chart
+ * @param settings - settings of chart
+ * @returns 
+ */
 export const getChartSettingsBasedOnChartLength = (
   chartData: AreaChartPlotType[],
   settings: {
