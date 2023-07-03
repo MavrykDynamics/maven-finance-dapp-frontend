@@ -10,7 +10,7 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
   font-weight: 500;
   font-size: 14px;
   line-height: 24px;
-  color: ${({ theme }) => theme.regularText};
+  color: ${({ theme }) => theme.placeholders};
 
   &.disabled {
     cursor: not-allowed;
@@ -117,7 +117,7 @@ export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
   border-width: 1.5px;
   border-style: solid;
   border-color: ${({ theme }) => theme.strokeForForms};
-  color: ${({ theme }) => theme.regularText};
+  color: ${({ theme }) => theme.placeholders};
   border-radius: 10px;
   transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   will-change: border-color, box-shadow;
@@ -164,8 +164,8 @@ export const DropDownList = styled.ul<{ theme: MavrykTheme }>`
   border-radius: 10px;
   transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   will-change: border-color, box-shadow;
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
-  background-color: ${({ theme }) => theme.containerColor};
+  border: 1px solid ${({ theme }) => theme.strokeForForms};
+  background-color: ${({ theme }) => theme.cards};
   margin-top: 8px;
   z-index: 2;
 `
@@ -177,20 +177,20 @@ export const DropDownListItem = styled.li<{ disabled?: boolean }>`
   column-gap: 10px;
   align-items: center;
   width: 100%;
-  color: ${({ theme }) => theme.regularText};
+  color: ${({ theme }) => theme.placeholders};
   padding-left: 15px;
   padding-right: 15px;
   cursor: pointer;
   justify-content: space-between;
 
   .selectedIcon {
-    stroke: ${({ theme }) => theme.regularText};
+    stroke: ${({ theme }) => theme.upColor};
     width: 10px;
     height: 10px;
   }
 
   &:hover {
-    background-color: ${({ theme }) => theme.cardBorderColor};
+    background-color: ${({ theme }) => theme.selectedColor}33;
   }
 
   ${({ disabled }) =>
@@ -226,36 +226,6 @@ export const DropdownContainer = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.regularText};
     flex-shrink: 0;
     margin-right: 16px;
-  }
-`
-
-export const DropdownWrap = styled.div<{ theme: MavrykTheme }>`
-  display: flex;
-  padding: 16px 30px;
-  align-items: center;
-
-  h2 {
-    font-weight: 600;
-    font-size: 22px;
-    line-height: 22px;
-    color: ${({ theme }) => theme.regularText};
-
-    &::after {
-      display: none;
-    }
-
-    & + div {
-      width: 450px;
-      margin-right: 0;
-    }
-  }
-
-  h3 {
-    font-weight: 500;
-    margin-left: 14px;
-    font-size: 14px;
-    line-height: 24px;
-    color: ${({ theme }) => theme.regularText};
   }
 `
 
@@ -322,6 +292,6 @@ export const DropDownJsxChild = styled.div`
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
   }
 `
