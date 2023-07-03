@@ -485,7 +485,7 @@ export const BecomeSatellite = () => {
                   >
                     <Icon id="satellite-small" />
                     {usersSatelliteProfile
-                      ? usersSatelliteProfile.currentlyRegistered
+                      ? usersSatelliteProfile.isSatelliteReady
                         ? 'Update Satellite Info'
                         : 'Register Satellite'
                       : 'Become a Satellite'}
