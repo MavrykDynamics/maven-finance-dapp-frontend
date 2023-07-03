@@ -10,7 +10,7 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
   font-weight: 500;
   font-size: 14px;
   line-height: 24px;
-  color: ${({ theme }) => theme.colorText};
+  color: ${({ theme }) => theme.regularText};
 
   &.disabled {
     cursor: not-allowed;
@@ -64,7 +64,7 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
       top: 85%;
 
       > div {
-        background: ${({ theme }) => theme.containerColor};
+        background: ${({ theme }) => theme.cards};
         z-index: 10;
       }
 
@@ -89,18 +89,18 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
   &.stage-3-dropDown {
     #selected-option {
       div {
-        color: ${({ theme }) => theme.blockNameTitleColor};
+        color: ${({ theme }) => theme.primaryText};
       }
     }
 
     #dropDownListContainer {
       div {
-        color: ${({ theme }) => theme.blockNameTitleColor};
+        color: ${({ theme }) => theme.primaryText};
       }
     }
 
     svg {
-      stroke: ${({ theme }) => theme.blockNameTitleColor};
+      stroke: ${({ theme }) => theme.primaryText};
     }
   }
 `
@@ -116,8 +116,8 @@ export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
   padding-left: 16px;
   border-width: 1.5px;
   border-style: solid;
-  border-color: ${({ theme }) => theme.cardBorderColor};
-  color: ${({ theme }) => theme.textColor};
+  border-color: ${({ theme }) => theme.strokeForForms};
+  color: ${({ theme }) => theme.regularText};
   border-radius: 10px;
   transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   will-change: border-color, box-shadow;
@@ -126,7 +126,7 @@ export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
 
   > span {
     width: 50px;
-    border-left: 2px solid ${({ theme }) => theme.headerColor};
+    border-left: 1px solid ${({ theme }) => theme.strokeForForms};
     display: flex;
     height: 100%;
     justify-content: center;
@@ -136,7 +136,7 @@ export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
     > svg {
       height: 12px;
       width: 16px;
-      stroke: ${({ theme }) => theme.textColor};
+      stroke: ${({ theme }) => theme.selectedColor};
       stroke-width: 3px;
       fill: none;
       transition: 0.15s ease-in-out;
@@ -177,14 +177,14 @@ export const DropDownListItem = styled.li<{ disabled?: boolean }>`
   column-gap: 10px;
   align-items: center;
   width: 100%;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.regularText};
   padding-left: 15px;
   padding-right: 15px;
   cursor: pointer;
   justify-content: space-between;
 
   .selectedIcon {
-    stroke: ${({ theme }) => theme.textColor};
+    stroke: ${({ theme }) => theme.regularText};
     width: 10px;
     height: 10px;
   }
@@ -223,7 +223,7 @@ export const DropdownContainer = styled.div<{ theme: MavrykTheme }>`
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
     flex-shrink: 0;
     margin-right: 16px;
   }
@@ -238,7 +238,7 @@ export const DropdownWrap = styled.div<{ theme: MavrykTheme }>`
     font-weight: 600;
     font-size: 22px;
     line-height: 22px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
 
     &::after {
       display: none;
@@ -255,7 +255,7 @@ export const DropdownWrap = styled.div<{ theme: MavrykTheme }>`
     margin-left: 14px;
     font-size: 14px;
     line-height: 24px;
-    color: ${({ theme }) => theme.lightTextColor};
+    color: ${({ theme }) => theme.regularText};
   }
 `
 
@@ -300,14 +300,14 @@ export const DropDownJsxChild = styled.div`
     column-gap: 10px;
     font-weight: 500;
     font-size: 16px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
 
     &.with-image {
       svg,
       .img-wrapper {
         width: 24px;
         height: 24px;
-        fill: ${({ theme }) => theme.textColor};
+        fill: ${({ theme }) => theme.regularText};
 
         img {
           width: 100%;

@@ -17,8 +17,8 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
   top: 80px;
   right: 15px;
 
-  background: #160e3f;
-  border: 1px solid ${({ theme }) => theme.valueColor};
+  background: ${({ theme }) => theme.cards};
+  border: 1px solid ${({ theme }) => theme.linksAndButtons};
 
   border-radius: 10px;
   padding: 33px 0 33px 0;
@@ -37,7 +37,7 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
   hr {
     width: 100%;
     height: 1px;
-    background: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
+    background: ${({ theme }) => theme.divider};
     border: none;
   }
 
@@ -60,7 +60,7 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
       svg {
         width: 16px;
         height: 16px;
-        fill: ${({ theme }) => theme.textColor};
+        fill: ${({ theme }) => theme.regularText};
       }
     }
 
@@ -77,7 +77,7 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
     > svg {
       width: 20px;
       height: 24px;
-      fill: ${({ theme }) => theme.dataColor};
+      fill: ${({ theme }) => theme.primaryText};
     }
   }
 
@@ -104,7 +104,7 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
         svg {
           height: 24px;
           width: 24px;
-          fill: ${({ theme }) => theme.textColor};
+          fill: ${({ theme }) => theme.regularText};
         }
       }
 
@@ -118,14 +118,14 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
         font-weight: 600;
         font-size: 18px;
         line-height: 27px;
-        color: ${({ theme }) => theme.textColor};
+        color: ${({ theme }) => theme.regularText};
       }
 
       .converted-amount {
         font-weight: 600;
         font-size: 14px;
         line-height: 21px;
-        color: ${({ theme }) => theme.dataColor};
+        color: ${({ theme }) => theme.primaryText};
       }
 
       .action {
@@ -135,7 +135,7 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
           width: 7px;
           height: 12px;
           transform: rotate(180deg);
-          fill: ${({ theme }) => theme.valueColor};
+          fill: ${({ theme }) => theme.linksAndButtons};
         }
       }
 
@@ -147,7 +147,7 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
         transform: translateX(-50%);
         width: 100%;
         height: 1px;
-        background: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
+        background: ${({ theme }) => theme.divider};
       }
     }
   }
@@ -177,7 +177,7 @@ export const WalletDetailsVisiblePart = styled.div<{ theme: MavrykTheme; isShown
   > div {
     font-weight: 600;
     font-size: 16px;
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
   }
 
   .end-icon {
@@ -185,7 +185,7 @@ export const WalletDetailsVisiblePart = styled.div<{ theme: MavrykTheme; isShown
     width: 10px;
     margin-left: 3px;
     transform: rotate(-90deg);
-    fill: ${({ theme }) => theme.valueColor};
+    fill: ${({ theme }) => theme.linksAndButtons};
 
     ${({ isShown }) =>
       isShown
@@ -199,17 +199,17 @@ export const WalletDetailsVisiblePart = styled.div<{ theme: MavrykTheme; isShown
     width: 22px;
     height: 17px;
     stroke: none;
-    fill: ${({ theme }) => theme.valueColor};
+    fill: ${({ theme }) => theme.linksAndButtons};
     transition: 0.3s fill;
   }
 `
 
 export const WertIo = styled.div`
   width: 100%;
-  background: #160e3f;
+  background: ${({ theme }) => theme.cards};
   padding: 30px;
   border-radius: 10px;
-  border: 1px solid #86d4c9;
+  border: 1px solid ${({ theme }) => theme.linksAndButtons};
   height: 100%;
   display: flex;
   justify-content: center;
@@ -266,13 +266,13 @@ export const MobileWalletDetailsHiddenPart = styled(WalletDetailsHiddenPart)<{ t
     svg {
       max-width: 26px;
       height: 21px;
-      stroke: #8d86eb;
+      stroke: ${({ theme }) => theme.linksAndButtons};
       transition: 0.6s all;
     }
 
     &:hover {
       svg {
-        stroke: ${({ theme }) => theme.valueColor};
+        opacity: 0.8;
       }
     }
   }
