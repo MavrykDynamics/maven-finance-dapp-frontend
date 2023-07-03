@@ -11,6 +11,7 @@ import {
   LoanMarketType,
   BaseLoansAssetDataType,
 } from 'utils/TypesAndInterfaces/Loans'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
@@ -483,4 +484,46 @@ export const getLoansInputMaxAmount = (amount: number = 0, decimals: number = as
  */
 export const getCollateralRatioByPersentage = (collateralRatio: number) => {
   return Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))
+}
+
+
+/**
+ * get data with 0 value within 7 days (as this is the period on the chart). Is need instead of plug for empty chart.
+ * @param chartData - data of chart
+ * @param period - the number of days to display 0 if the chart is empty
+ */
+export const getChartDataBasedOnLength = (chartData: AreaChartPlotType[], period: number) => {
+  const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
+
+  const emptyChartData = Array.apply(null, Array(period)).map((item, index, array) => ({
+    // get 0 value for each day in period
+    time: new Date().getTime() - ONE_DAY_IN_MS * (array.length - index - 1),
+    value: 0,
+  })) as AreaChartPlotType[]
+
+  return chartData.length !== 0 ? chartData : emptyChartData
+}
+
+/**
+ * get current settings if the chart is not empty, or custom settings with small chart height for empty chart.
+ * Need a small height because the empty chart with standard settings has a bad look in the center of the container.
+ * @param chartData - data of chart
+ * @param settings - settings of chart
+ * @returns 
+ */
+export const getChartSettingsBasedOnChartLength = (
+  chartData: AreaChartPlotType[],
+  settings: {
+    width: number
+    height: number
+    hideXAxis: boolean
+    hideYAxis: boolean
+  },
+) => {
+  return chartData.length !== 0
+    ? settings
+    : {
+        ...settings,
+        height: 50,
+      }
 }

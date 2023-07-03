@@ -16,6 +16,7 @@ export const SATELLITE_GOVERNANCE_STORAGE_QUERY = `
     governance_satellite_action(order_by: {expiration_datetime: desc}) {
       executed
       expiration_datetime
+      execution_datetime
       governance_purpose
       governance_satellite {
         address
