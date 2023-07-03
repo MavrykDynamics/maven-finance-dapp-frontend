@@ -92,27 +92,6 @@ export function getSatelliteDataSubscription(
           }
         }
 
-        # amount of governance proposals created by satellite
-        createdGovProposalsAmount: governance_proposals_proposer_aggregate {
-          aggregate {
-            count
-          }
-        }
-        
-        # amount of financial requests created by satellite
-        createdFinProposalsAmount: governance_financial_requests_requester_aggregate {
-          aggregate {
-            count
-          }
-        }
-        
-        # amount of satellite governance actions created by satellite
-        createdSatelliteGovProposalsAmount: governance_satellite_action_initiators_aggregate {
-          aggregate {
-            count
-          }
-        }
-
         # satellite total voting power
         governance_satellite_snapshots(order_by: {cycle: desc}, limit: 1) {
           cycle
@@ -122,35 +101,56 @@ export function getSatelliteDataSubscription(
           }
         }
 
-        # Financial Request votes
-        governance_financial_requests_votes {
-          timestamp
+        # last voted proposal
+        lastVotedProposal: governance_proposals_votes(order_by: {timestamp: desc}, where: {round: {_eq: "1"}}) {
           vote
-          id
-          governance_financial_request {
-            request_type
-          }
-        }
-
-        # Proposals votes
-        governance_proposals_votes(order_by: {timestamp: desc}, where: {round: {_eq: "1"}}) {
-          timestamp
-          vote
-          id
           governance_proposal {
             id
             title
-            executed
           }
         }
 
-        # Satellite governance votes
-        governance_satellite_actions_votes {
-          timestamp
-          vote
-          id
-          governance_satellite_action {
-            governance_type
+        # --------  SATELLITE METRICS PART --------
+
+        # amount of governance proposals created by satellite
+        createdGovProposalsAmount: governance_proposals_proposer_aggregate {
+          aggregate {
+            count
+          }
+        }
+        
+        # amount of financial requests created by satellite
+        createdFinRequestsAmount: governance_financial_requests_requester_aggregate {
+          aggregate {
+            count
+          }
+        }
+        
+        # amount of satellite governance actions created by satellite
+        createdSatelliteGovActionsAmount: governance_satellite_action_initiators_aggregate {
+          aggregate {
+            count
+          }
+        }
+
+        # amount of governance proposals votes made by satellite
+        govProposalsVotesAmount: governance_proposals_votes_aggregate {
+          aggregate {
+            count
+          }
+        }
+        
+        # amount of financial requests votes made by satellite
+        finRequestsVotesAmount: governance_financial_requests_votes_aggregate {
+          aggregate {
+            count
+          }
+        }
+        
+        # amount of satellite governance actions votes made by satellite
+        satelliteGovActionsVotesAmount: governance_satellite_actions_votes_aggregate {
+          aggregate {
+            count
           }
         }
       }

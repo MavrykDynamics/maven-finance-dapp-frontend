@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { normallizeSatellite } from './helpers/satellites.normalizer'
+import { normalizeSatelliteVotings, normallizeSatellite } from './helpers/satellites.normalizer'
 
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 
@@ -55,6 +55,7 @@ export type SatelliteConvertedOracleStatusType =
 
 // Satellite votes
 export type SatelliteVoteType = z.infer<typeof satelliteVoteSchema>
+export type SatelliteVotesType = ReturnType<typeof normalizeSatelliteVotings>
 
 export type SatelliteVoteItemType = {
   id: number

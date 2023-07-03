@@ -6,7 +6,7 @@ import {
   SatelliteRecordType,
   SatelliteIndexerStatusType,
 } from 'providers/SatellitesProvider/satellites.provider.types'
-import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
+import { SatelliteDataSubSubscription, SatelliteVotesSubSubscription } from 'utils/__generated__/graphql'
 
 // helpers
 import { calcPersent, convertNumberForClient } from '../../../utils/calcFunctions'
@@ -96,11 +96,120 @@ const getSatelliteOracleEfficiency = (satelliteUser: SatelliteDataSubSubscriptio
   return calcPersent(predictionSuccessRatio, totalFeedsObservation)
 }
 
-const getSatelliteVotings = ({
+export const normallizeSatellite = (satelliteRecord: SatelliteDataSubSubscription['satellite'][0]) => {
+  try {
+    const satelliteAddress = satelliteRecord.user.address
+    const satelliteUser = satelliteRecord.user
+    const lastVotedProposal = satelliteUser.lastVotedProposal[0]
+
+    const totalVotingPower =
+      satelliteUser.governance_satellite_snapshots[0].cycle ===
+      satelliteUser.governance_satellite_snapshots[0].governance.cycle_id
+        ? convertNumberForClient({
+            number: satelliteUser.governance_satellite_snapshots?.[0]?.total_voting_power ?? 0,
+            grade: MVK_DECIMALS,
+          })
+        : 0
+
+    const { sMVKRewards, XTZRewards, participatedFeeds } = getSatelliteOracleRewards(
+      satelliteUser['aggregator_oracles'],
+    )
+
+    const satelliteStatus: SatelliteIndexerStatusType = satelliteRecord.currently_registered
+      ? satelliteStatusSchema.parse(satelliteRecord.status)
+      : INACTIVE_SATELLITE_STATUS
+
+    return {
+      // satellite metadata
+      address: satelliteAddress,
+      description: satelliteRecord.description,
+      website: satelliteRecord.website,
+      image: satelliteRecord.image,
+      name: satelliteRecord.name,
+      status: satelliteStatus,
+
+      // oracles data
+      peerId: satelliteRecord?.peer_id ?? '',
+      publicKey: satelliteRecord?.public_key ?? '',
+
+      // registration status
+      isSatelliteReady: satelliteRecord.currently_registered && satelliteRecord.status === 0,
+      currentlyRegistered: satelliteRecord.currently_registered,
+
+      // delegation data
+      delegationRatio: satelliteRecord?.delegation?.delegation_ratio / 10 ?? 0,
+      delegatorCount: satelliteRecord.delegatorCount.aggregate?.count ?? 0,
+      totalVotingPower,
+      satelliteFee: (satelliteRecord?.fee ?? 0) / 100,
+      totalDelegatedAmount: convertNumberForClient({
+        number: satelliteRecord.total_delegated_amount,
+        grade: MVK_DECIMALS,
+      }),
+
+      mvkBalance: convertNumberForClient({ number: satelliteRecord?.user.mvk_balance, grade: MVK_DECIMALS }),
+      sMvkBalance: convertNumberForClient({ number: satelliteRecord?.user.smvk_balance, grade: MVK_DECIMALS }),
+      sMVKRewards,
+      XTZRewards,
+      participatedFeeds,
+      oracleEfficiency: getSatelliteOracleEfficiency(satelliteUser),
+
+      // votes & voting metrix
+      lastVotedProposal: lastVotedProposal
+        ? {
+            vote: lastVotedProposal.vote,
+            proposalTitle: lastVotedProposal.governance_proposal.title,
+            proposalId: lastVotedProposal.governance_proposal.id,
+          }
+        : null,
+      proposalsVotesAmount: satelliteUser.govProposalsVotesAmount.aggregate?.count ?? 0,
+      financialRequestsVotesAmount: satelliteUser.finRequestsVotesAmount.aggregate?.count ?? 0,
+      satelliteActionVotesAmount: satelliteUser.satelliteGovActionsVotesAmount.aggregate?.count ?? 0,
+      createdGovProposalsAmount: satelliteUser.createdGovProposalsAmount.aggregate?.count ?? 0,
+      createdFinProposalsAmount: satelliteUser.createdFinRequestsAmount.aggregate?.count ?? 0,
+      createdSatelliteGovProposalsAmount: satelliteUser.createdSatelliteGovActionsAmount.aggregate?.count ?? 0,
+    }
+  } catch (e) {
+    console.error('normallizeSatellite parsing error: ', { e })
+    return null
+  }
+}
+
+export const normalizeSatellitesLedger = (store: SatelliteDataSubSubscription) => {
+  return store.satellite.reduce<{
+    satelliteMapper: Record<string, SatelliteRecordType>
+    activeSatellitesIds: string[]
+    oraclesIds: string[]
+  }>(
+    (acc, satelliteRecord) => {
+      const nomalizedSatellite = normallizeSatellite(satelliteRecord)
+
+      if (!nomalizedSatellite) return acc
+
+      acc.satelliteMapper[nomalizedSatellite.address] = nomalizedSatellite
+
+      if (nomalizedSatellite.currentlyRegistered && nomalizedSatellite.status === 0) {
+        acc.activeSatellitesIds.push(nomalizedSatellite.address)
+      }
+
+      if (Object.keys(nomalizedSatellite.participatedFeeds).length) {
+        acc.oraclesIds.push(nomalizedSatellite.address)
+      }
+
+      return acc
+    },
+    {
+      satelliteMapper: {},
+      activeSatellitesIds: [],
+      oraclesIds: [],
+    },
+  )
+}
+
+export const normalizeSatelliteVotings = ({
   governance_proposals_votes,
   governance_financial_requests_votes,
   governance_satellite_actions_votes,
-}: SatelliteDataSubSubscription['satellite'][0]['user']) => {
+}: SatelliteVotesSubSubscription['satellite'][0]['user']) => {
   const proposalsVotes = governance_proposals_votes.reduce<Array<SatelliteVoteItemType>>((acc, vote) => {
     try {
       const voteValue = satelliteVoteSchema.parse(vote.vote)
@@ -157,114 +266,4 @@ const getSatelliteVotings = ({
     financialRequestsVotes,
     proposalsVotes,
   }
-}
-
-export const normallizeSatellite = (satelliteRecord: SatelliteDataSubSubscription['satellite'][0]) => {
-  try {
-    const satelliteAddress = satelliteRecord.user.address
-    const satelliteUser = satelliteRecord.user
-    const lastVotedProposal = satelliteUser.governance_proposals_votes[0]
-
-    const totalVotingPower =
-      satelliteUser.governance_satellite_snapshots[0].cycle ===
-      satelliteUser.governance_satellite_snapshots[0].governance.cycle_id
-        ? convertNumberForClient({
-            number: satelliteUser.governance_satellite_snapshots?.[0]?.total_voting_power ?? 0,
-            grade: MVK_DECIMALS,
-          })
-        : 0
-
-    const { proposalsVotes, financialRequestsVotes, satelliteActionVotes } = getSatelliteVotings(satelliteUser)
-    const { sMVKRewards, XTZRewards, participatedFeeds } = getSatelliteOracleRewards(
-      satelliteUser['aggregator_oracles'],
-    )
-
-    const satelliteStatus: SatelliteIndexerStatusType = satelliteRecord.currently_registered
-      ? satelliteStatusSchema.parse(satelliteRecord.status)
-      : INACTIVE_SATELLITE_STATUS
-
-    return {
-      // satellite metadata
-      address: satelliteAddress,
-      description: satelliteRecord.description,
-      website: satelliteRecord.website,
-      image: satelliteRecord.image,
-      name: satelliteRecord.name,
-      status: satelliteStatus,
-
-      // oracles data
-      peerId: satelliteRecord?.peer_id ?? '',
-      publicKey: satelliteRecord?.public_key ?? '',
-
-      // registration status
-      isSatelliteReady: satelliteRecord.currently_registered && satelliteRecord.status === 0,
-      currentlyRegistered: satelliteRecord.currently_registered,
-
-      // delegation data
-      delegationRatio: satelliteRecord?.delegation?.delegation_ratio / 10 ?? 0,
-      delegatorCount: satelliteRecord.delegatorCount.aggregate?.count ?? 0,
-      satelliteFee: (satelliteRecord?.fee ?? 0) / 100,
-      totalDelegatedAmount: convertNumberForClient({
-        number: satelliteRecord.total_delegated_amount,
-        grade: MVK_DECIMALS,
-      }),
-
-      mvkBalance: convertNumberForClient({ number: satelliteRecord?.user.mvk_balance, grade: MVK_DECIMALS }),
-      sMvkBalance: convertNumberForClient({ number: satelliteRecord?.user.smvk_balance, grade: MVK_DECIMALS }),
-      sMVKRewards,
-      XTZRewards,
-      participatedFeeds,
-      oracleEfficiency: getSatelliteOracleEfficiency(satelliteUser),
-
-      // votes & voting metrix
-      lastVotedProposal: lastVotedProposal
-        ? {
-            vote: lastVotedProposal.vote,
-            proposalTitle: lastVotedProposal.governance_proposal.title,
-            proposalId: lastVotedProposal.governance_proposal.id,
-          }
-        : null,
-      proposalsVotes,
-      financialRequestsVotes,
-      satelliteActionVotes,
-      totalVotingPower,
-      createdGovProposalsAmount: satelliteUser.createdGovProposalsAmount.aggregate?.count ?? 0,
-      createdFinProposalsAmount: satelliteUser.createdFinProposalsAmount.aggregate?.count ?? 0,
-      createdSatelliteGovProposalsAmount: satelliteUser.createdSatelliteGovProposalsAmount.aggregate?.count ?? 0,
-    }
-  } catch (e) {
-    console.error('normallizeSatellite parsing error: ', { e })
-    return null
-  }
-}
-
-export const normalizeSatellitesLedger = (store: SatelliteDataSubSubscription) => {
-  return store.satellite.reduce<{
-    satelliteMapper: Record<string, SatelliteRecordType>
-    activeSatellitesIds: string[]
-    oraclesIds: string[]
-  }>(
-    (acc, satelliteRecord) => {
-      const nomalizedSatellite = normallizeSatellite(satelliteRecord)
-
-      if (!nomalizedSatellite) return acc
-
-      acc.satelliteMapper[nomalizedSatellite.address] = nomalizedSatellite
-
-      if (nomalizedSatellite.currentlyRegistered && nomalizedSatellite.status === 0) {
-        acc.activeSatellitesIds.push(nomalizedSatellite.address)
-      }
-
-      if (Object.keys(nomalizedSatellite.participatedFeeds).length) {
-        acc.oraclesIds.push(nomalizedSatellite.address)
-      }
-
-      return acc
-    },
-    {
-      satelliteMapper: {},
-      activeSatellitesIds: [],
-      oraclesIds: [],
-    },
-  )
 }

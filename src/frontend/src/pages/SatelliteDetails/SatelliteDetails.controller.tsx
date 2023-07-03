@@ -26,18 +26,19 @@ import {
 
 // helpers
 import { parseDate } from 'utils/time'
+import { useSatelliteVotes } from 'providers/SatellitesProvider/hooks/useSatelliteVotes'
 import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 // consts
 import { ALL_SATELLITES_SUB, SATELLITE_VOTES_MAPPER } from 'providers/SatellitesProvider/satellites.const'
 
 // types
-import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { SatelliteVotesType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 const SatellitesVotingHistory = ({
-  satellite: { proposalsVotes, satelliteActionVotes, financialRequestsVotes },
+  satelliteVotes: { proposalsVotes, satelliteActionVotes, financialRequestsVotes },
 }: {
-  satellite: SatelliteRecordType
+  satelliteVotes: SatelliteVotesType
 }) => {
   const hasVoted = proposalsVotes.length || satelliteActionVotes.length || financialRequestsVotes.length
 
@@ -94,6 +95,8 @@ export const SatelliteDetails = () => {
     setSatelliteAddressToSubsctibe(satelliteId)
     return () => setSatelliteAddressToSubsctibe(ALL_SATELLITES_SUB)
   }, [satelliteId])
+
+  const { satelliteVotes, isLoading: isSatelliteVotesLoading } = useSatelliteVotes(satelliteId)
 
   return (
     <Page>
@@ -157,7 +160,7 @@ export const SatelliteDetails = () => {
 
                 <SatelliteVotingInfoWrapper>
                   <BlockName>Voting History</BlockName>
-                  <SatellitesVotingHistory satellite={currentSatellite} />
+                  <SatellitesVotingHistory satelliteVotes={satelliteVotes} />
                 </SatelliteVotingInfoWrapper>
               </SatelliteCardBottomRow>
             </SatelliteListItem>
