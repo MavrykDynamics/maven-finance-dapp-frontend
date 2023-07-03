@@ -1,5 +1,6 @@
 import { GET_MVK_FROM_FAUCET_ACTION, REWARDS_COMPOUND_ACTION, STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
 import { ACTION_START_MESSAGE_TEXT, ACTION_COMPLETION_MESSAGE_TEXT } from '../Toaster.constants'
+import { CLAIM_VESTING_REWARD_ACTION } from 'providers/UserProvider/helpers/user.consts'
 
 export const TOASTER_ACTIONS_TEXTS = {
   [STAKE_ACTION]: {
@@ -40,6 +41,16 @@ export const TOASTER_ACTIONS_TEXTS = {
     end: {
       title: 'Compounding done',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [CLAIM_VESTING_REWARD_ACTION]: {
+    start: {
+      title: 'Claiming vesting reward...',
+      message: 'Please wait 15s',
+    },
+    end: {
+      title: 'Compounding done',
+      message: 'Vesting reward claimed',
     },
   },
 }

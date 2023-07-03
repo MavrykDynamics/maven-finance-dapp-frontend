@@ -26,3 +26,7 @@ export const DEFAULT_USER: UserContextStateType = {
   userTokensBalances: {},
   userMTokens: {},
 }
+
+
+// CONSTS FOR USER ACTIONS
+export const CLAIM_VESTING_REWARD_ACTION = 'claimVestingReward'

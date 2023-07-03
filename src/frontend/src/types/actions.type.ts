@@ -1,3 +1,3 @@
-import { StakeActionType } from 'providers/StakeProvider/stake.provider.types'
+import { ActionTypes } from 'providers/DappConfigProvider/dappConfig.provider.types';
 
-export type WalletActionType = StakeActionType | null
+export type WalletActionType = ActionTypes | null

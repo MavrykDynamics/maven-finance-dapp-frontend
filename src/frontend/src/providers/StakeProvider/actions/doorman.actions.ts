@@ -92,7 +92,10 @@ export const unstakeMVK = async (
   }
 }
 
-export const rewardsCompound = async (userAddress: string, doormanAddress: string) => {
+export const rewardsCompound = async (
+  userAddress: string,
+  doormanAddress: string,
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
