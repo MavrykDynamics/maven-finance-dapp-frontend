@@ -6,14 +6,12 @@ export const AppStyled = styled.div<{
   theme: MavrykTheme
   isExpandedMenu?: boolean
   isVisible: boolean
-  isSideBarHidden: boolean
 }>`
   --carousel-button-size: 30px;
   --carousel-button-bg: rgb(22 14 63 / 70%);
   --carousel-button-indent: -15px;
   min-height: 100vh;
-  padding-left: ${({ isExpandedMenu, isSideBarHidden }) =>
-    isSideBarHidden ? '0px' : isExpandedMenu ? '232px' : '72px'};
+  padding-left: ${({ isExpandedMenu }) => (isExpandedMenu ? '232px' : '72px')};
   transition: 150ms opacity;
 
   ${({ isVisible }) =>
@@ -25,7 +23,7 @@ export const AppStyled = styled.div<{
       : ''};
 
   @media screen and (max-width: 1399px) {
-    padding-left: ${({ isSideBarHidden }) => (isSideBarHidden ? '0px' : '72px')};
+    padding-left: 72px;
   }
 `
 

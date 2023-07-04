@@ -176,15 +176,6 @@ export default class ToasterProvider extends React.Component<Props, State> {
     }))
   }
 
-  setIs404PageInView = (value = true) => {
-    this.setState((prevState) => ({
-      context: {
-        ...prevState.context,
-        is404PageInView: value,
-      },
-    }))
-  }
-
   /**
    *
    */

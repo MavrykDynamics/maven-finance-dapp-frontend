@@ -62,7 +62,6 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { user, accountPkh } = useSelector((state: State) => state.wallet)
   const [canGetInitThouthand, setCanGetInitThouthand] = useState(false)
-  const { is404PageInView } = useToasterContext()
 
   useEffect(() => {
     const selectedMainRoute = mainNavigationLinks.find(({ routePath = '', subPages = null }) => {
@@ -111,65 +110,63 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
         isExpandedMenu={sidebarOpened}
       />
 
-      {!is404PageInView && (
-        <MenuSidebarStyled
-          className={`navbar-sticky ${sidebarOpened ? 'menu-expanded' : 'menu-collapsed'}`}
-          onClick={sidebarBackdropClickHandler}
-        >
-          <MenuSidebarContent onClick={(e) => e.stopPropagation()}>
-            <MenuGrid>
-              {mainNavigationLinks.map((navigationLink: MainNavigationRoute) => {
-                return (
-                  <NavigationLink
-                    key={navigationLink.id}
-                    selectedMainLink={selectedMainLink}
-                    isMobMenuExpanded={sidebarOpened}
-                    navLinkClickHandler={navLinkClickHandler}
-                    {...navigationLink}
-                  />
-                )
-              })}
-            </MenuGrid>
-            <MenuFooter className={`${sidebarOpened ? '' : 'menu-collapsed'}`}>
-              <NewButton
-                kind={BUTTON_PRIMARY}
-                form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND}
-                isThin
-                onClick={handleGetMVKTokensFromFaucet}
-                disabled={!canGetInitThouthand || isActionActive}
-              >
-                {sidebarOpened ? 'MVK Faucet' : 'mvk'}
+      <MenuSidebarStyled
+        className={`navbar-sticky ${sidebarOpened ? 'menu-expanded' : 'menu-collapsed'}`}
+        onClick={sidebarBackdropClickHandler}
+      >
+        <MenuSidebarContent onClick={(e) => e.stopPropagation()}>
+          <MenuGrid>
+            {mainNavigationLinks.map((navigationLink: MainNavigationRoute) => {
+              return (
+                <NavigationLink
+                  key={navigationLink.id}
+                  selectedMainLink={selectedMainLink}
+                  isMobMenuExpanded={sidebarOpened}
+                  navLinkClickHandler={navLinkClickHandler}
+                  {...navigationLink}
+                />
+              )
+            })}
+          </MenuGrid>
+          <MenuFooter className={`${sidebarOpened ? '' : 'menu-collapsed'}`}>
+            <NewButton
+              kind={BUTTON_PRIMARY}
+              form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND}
+              isThin
+              onClick={handleGetMVKTokensFromFaucet}
+              disabled={!canGetInitThouthand || isActionActive}
+            >
+              {sidebarOpened ? 'MVK Faucet' : 'mvk'}
+            </NewButton>
+            <a
+              href="https://faucet.marigold.dev/ "
+              target="_blank"
+              rel="noreferrer"
+              className={sidebarOpened ? '' : 'small'}
+            >
+              <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
+                {sidebarOpened ? ' Ghostnet Faucet' : 'GF'}
               </NewButton>
-              <a
-                href="https://faucet.marigold.dev/ "
-                target="_blank"
-                rel="noreferrer"
-                className={sidebarOpened ? '' : 'small'}
-              >
-                <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
-                  {sidebarOpened ? ' Ghostnet Faucet' : 'GF'}
-                </NewButton>
-              </a>
-              <a
-                href="https://forms.gle/bwmTfpoLKBhaf7yD6"
-                target="_blank"
-                rel="noreferrer"
-                className={sidebarOpened ? '' : 'small'}
-              >
-                <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
-                  {sidebarOpened ? 'Submit Feedback' : 'SF'}
-                </NewButton>
-              </a>
+            </a>
+            <a
+              href="https://forms.gle/bwmTfpoLKBhaf7yD6"
+              target="_blank"
+              rel="noreferrer"
+              className={sidebarOpened ? '' : 'small'}
+            >
+              <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
+                {sidebarOpened ? 'Submit Feedback' : 'SF'}
+              </NewButton>
+            </a>
 
-              <SocialIcons />
-              <span>
-                DAPP v0.1
-                <br />© Mavryk Finance 2023
-              </span>
-            </MenuFooter>
-          </MenuSidebarContent>
-        </MenuSidebarStyled>
-      )}
+            <SocialIcons />
+            <span>
+              DAPP v0.1
+              <br />© Mavryk Finance 2023
+            </span>
+          </MenuFooter>
+        </MenuSidebarContent>
+      </MenuSidebarStyled>
     </>
   )
 }

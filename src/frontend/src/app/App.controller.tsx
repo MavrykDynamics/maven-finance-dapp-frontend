@@ -47,7 +47,6 @@ export const App = () => {
 
   const { changeNodePopupOpen, sidebarOpened } = useSelector((state: State) => state.preferences)
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
-  const { is404PageInView } = useToasterContext()
 
   const [isIOS, setIsIOS] = useState(true)
 
@@ -104,7 +103,7 @@ export const App = () => {
       <LoaderRocket isActive={isInitialDataLoading} />
       <Router>
         {!isInitialDataLoading ? (
-          <AppStyled isExpandedMenu={sidebarOpened} isVisible={!isInitialDataLoading} isSideBarHidden={is404PageInView}>
+          <AppStyled isExpandedMenu={sidebarOpened} isVisible={!isInitialDataLoading}>
             <ActionLoader />
             <Toaster />
             <WertLoader />
