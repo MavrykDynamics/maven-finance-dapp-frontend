@@ -7,7 +7,6 @@ export const ErrorPageWrapper = styled.div<{ theme: MavrykTheme }>`
   width: 100vw;
   position: relative;
   height: 100vh;
-  padding-top: 80px;
   background: url('/images/error-bg.svg');
   background-position: center;
   background-repeat: no-repeat;
@@ -97,7 +96,7 @@ export const ErrorFooterWrapper = styled.div<{ theme: MavrykTheme }>`
   margin: 0 auto;
   padding-bottom: 10px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   color: ${({ theme }) => theme.textColor};
 
