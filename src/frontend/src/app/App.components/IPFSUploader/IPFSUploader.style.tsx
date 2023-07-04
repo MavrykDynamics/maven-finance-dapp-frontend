@@ -12,13 +12,8 @@ export const IPFSUploaderStyled = styled.div<{ theme: MavrykTheme }>`
     bottom: 5px;
     left: 10px;
 
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
     font-weight: 700;
-  }
-
-  > p {
-    font-weight: 700;
-    color: ${({ theme }) => theme.textColor};
   }
 `
 
@@ -26,7 +21,7 @@ export const UploaderFileSelector = styled.div<{ validation: string; theme: Mavr
   cursor: pointer;
   height: 107px;
   width: 100%;
-  background-color: ${({ theme }) => theme.containerColor};
+  background-color: transparent;
   display: flex;
   border-radius: 10px;
   justify-content: center;
@@ -53,7 +48,7 @@ export const UploaderFileSelector = styled.div<{ validation: string; theme: Mavr
 
   .delete-icon {
     position: absolute;
-    fill: ${({ theme }) => theme.textColor};
+    fill: ${({ theme }) => theme.mainHeadingText};
     width: 16px;
     height: 16px;
     display: block;
@@ -109,7 +104,7 @@ export const UploadIconContainer = styled.div<{
   .upload-figure {
     font-size: 12px;
     font-weight: 400;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
     white-space: nowrap;
     display: flex;
     flex-direction: column;
@@ -121,7 +116,7 @@ export const UploadIconContainer = styled.div<{
       padding-top: 4px;
       font-size: 10px;
       line-height: 10px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.mainHeadingText};
     }
 
     figcaption {
@@ -140,7 +135,7 @@ export const UploadIconContainer = styled.div<{
   }
 
   .upload-icon {
-    fill: ${({ theme }) => theme.textColor};
+    fill: ${({ theme }) => theme.mainHeadingText};
     width: 24px;
     height: 24px;
   }
@@ -148,7 +143,7 @@ export const UploadIconContainer = styled.div<{
   .pencil-wrap {
     width: 16px;
     height: 16px;
-    background-color: ${({ theme }) => theme.textColor};
+    background-color: ${({ theme }) => theme.mainHeadingText};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -160,7 +155,7 @@ export const UploadIconContainer = styled.div<{
     svg {
       width: 10px;
       height: 10px;
-      stroke: ${({ theme }) => theme.containerColor};
+      stroke: ${({ theme }) => theme.cards};
     }
   }
 `
@@ -204,30 +199,6 @@ export const IpfsUploadedImageContainer = styled.figure`
     width: 50px;
     border-radius: 50%;
   }
-
-  .uploaded-document {
-    width: 20px;
-    height: 20px;
-    stroke: ${({ theme }) => theme.headerColor};
-    margin-top: 12px;
-  }
-`
-
-export const TextAreaIcon = styled.svg<{ theme: MavrykTheme }>`
-  display: block;
-  position: absolute;
-  top: 20px;
-  left: 10px;
-  z-index: 1;
-  width: 20px;
-  height: 20px;
-  margin-top: -10px;
-  font-size: 14px;
-  line-height: 20px;
-  text-align: center;
-  visibility: visible;
-  pointer-events: none;
-  stroke: ${({ theme }) => theme.backgroundTextColor};
 `
 
 export const IPFSUploaderErrorMessage = styled.div<{ theme: MavrykTheme }>`
