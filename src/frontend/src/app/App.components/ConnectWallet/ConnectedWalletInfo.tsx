@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 
@@ -6,7 +6,6 @@ import { State } from '../../../reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_WIDE } from '../Button/Button.constants'
 import { BLUE } from '../TzAddress/TzAddress.constants'
 import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
-import { changeWallet, disconnect } from './ConnectWallet.actions'
 
 import Icon from '../Icon/Icon.view'
 import { TzAddress } from '../TzAddress/TzAddress.view'
@@ -30,7 +29,6 @@ type ConnectWalletProps = {
 }
 
 export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
-  const dispatch = useDispatch()
   const history = useHistory()
 
   const { tokensPrices, tokensMetadata } = useTokensContext()
@@ -54,14 +52,6 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
     setDetailsShown(false)
   }
 
-  const handleChangeWallet = async () => {
-    await dispatch(changeWallet())
-    changeUser()
-  }
-  const disconnectWallet = async () => {
-    await dispatch(disconnect())
-    signOut()
-  }
   const closeDetailsHandler = () => setDetailsShown(false)
   const mouseOverHanlder = () => setDetailsShown(true)
 
@@ -203,11 +193,11 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
         </div>
 
         <div className="action-btn-wrapper">
-          <Button onClick={handleChangeWallet} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
+          <Button onClick={changeUser} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
             <Icon id="exchange" /> Change Wallet
           </Button>
 
-          <Button onClick={disconnectWallet} form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
+          <Button onClick={signOut} form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
             <Icon id="exit" /> Sign out
           </Button>
         </div>
@@ -221,7 +211,6 @@ type MobileConnectWalletProps = ConnectWalletProps & {
 }
 
 export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileConnectWalletProps) => {
-  const dispatch = useDispatch()
   const history = useHistory()
 
   const { tokensPrices, tokensMetadata } = useTokensContext()
@@ -249,14 +238,6 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
     closeMobileMenu()
   }
 
-  const handleChangeWallet = async () => {
-    await dispatch(changeWallet())
-    changeUser()
-  }
-  const disconnectWallet = async () => {
-    await dispatch(disconnect())
-    signOut()
-  }
   const clickHander = () => setDetailsShown(!detailsShown)
 
   if (!userAddress || !userTokensBalances) return null
@@ -401,11 +382,11 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
         </div>
 
         <div className="action-btn-wrapper">
-          <Button onClick={handleChangeWallet} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
+          <Button onClick={changeUser} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
             <Icon id="exchange" /> Change Wallet
           </Button>
 
-          <Button onClick={disconnectWallet} form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
+          <Button onClick={signOut} form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
             <Icon id="exit" /> Sign out
           </Button>
         </div>

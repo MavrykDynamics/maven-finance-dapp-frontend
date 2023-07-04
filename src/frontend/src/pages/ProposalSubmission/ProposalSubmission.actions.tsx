@@ -15,7 +15,7 @@ import {
   TOASTER_SUCCESS,
   TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
 } from 'app/App.components/Toaster/Toaster.constants'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // types
 import type { AppDispatch, GetState } from '../../app/App.controller'

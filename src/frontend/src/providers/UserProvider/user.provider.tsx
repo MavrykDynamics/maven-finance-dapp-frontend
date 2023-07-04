@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import * as signalR from '@microsoft/signalr'
-import { ApolloError, useSubscription } from '@apollo/client'
+import { useSubscription } from '@apollo/client'
 
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
@@ -29,6 +29,10 @@ import { SUBSCRIBE_USER_DATA } from './queries/userData.query'
 // types
 import { UserContext, UserContextStateType, UserTzktTokensBalancesType } from './user.provider.types'
 
+// TODO: remove after user addres won't be needed in redux actions
+import { useDispatch } from 'react-redux'
+import { DISCONNECT, SET_REDUX_USER } from 'reducers/wallet'
+
 export const userContext = React.createContext<UserContext>(undefined!)
 
 type Props = {
@@ -40,10 +44,15 @@ export const DAPP_INSTANCE = dappClient()
 const hasUserInLocalStorage =
   localStorage.getItem('beacon:active-account') && localStorage.getItem('beacon:active-account') !== 'undefined'
 
-// TODO: think about attaching listeners to tzktSocket & test if reopening socket will clear invoke filters
+/**
+ * ADJUSTMENTS:
+ * 1. on changing user do not reopen socket, just update filter (invoke), currently hadn't found any example of it
+ */
 export const UserProvider = ({ children }: Props) => {
-  const { tokensMetadata, mTokens } = useTokensContext()
+  const { tokensMetadata } = useTokensContext()
   const { bug, info, success, loading, hideToasterMessage } = useToasterContext()
+
+  const dispatch = useDispatch()
 
   const ws = useRef<null | signalR.HubConnection>(null)
 
@@ -77,8 +86,6 @@ export const UserProvider = ({ children }: Props) => {
   /**
    * @userAddress -> address of the user need for tzkt normalization, cuz it can be subscribed to 1+ user
    * @userTokens -> loaded tokens from tztk
-   *
-   * TODO: check whether reopen tzkt socket will cancel subscription, if yes remove 1st fn with userAddress
    */
   const updateUserTzktTokenBalances = useCallback(
     (userAddress: string) => (userTokens: UserTzktTokensBalancesType) => {
@@ -90,17 +97,17 @@ export const UserProvider = ({ children }: Props) => {
       setUserCtxState((prev) => ({
         ...prev,
         userTokensBalances: {
-          ...userCtxState.userTokensBalances,
+          ...prev.userTokensBalances,
           ...normalizedTzktUserTokens,
         },
       }))
     },
-    [tokensMetadata, userCtxState.userTokensBalances],
+    [tokensMetadata],
   )
 
   const loadInitialTzktTokensForNewlyConnectedUser = useCallback(
-    async ({ userAddress }: { userAddress: string }) => {
-      setIsTzktBalancesLoading(true)
+    async ({ userAddress, useLoader = true }: { userAddress: string; useLoader?: boolean }) => {
+      if (useLoader) setIsTzktBalancesLoading(true)
 
       setUserCtxState((prev) => ({
         ...prev,
@@ -112,6 +119,8 @@ export const UserProvider = ({ children }: Props) => {
         tokensMetadata,
       })
 
+      console.log({ fetchedTokens, userAddress })
+
       setUserCtxState((prev) => ({
         ...prev,
         userTokensBalances: {
@@ -119,9 +128,31 @@ export const UserProvider = ({ children }: Props) => {
         },
       }))
 
-      setIsTzktBalancesLoading(false)
+      if (useLoader) setIsTzktBalancesLoading(false)
     },
     [tokensMetadata],
+  )
+
+  // handle tzkt socket close or reconnecting events
+  const handleDisconnect = useCallback((error?: Error) => {
+    if (error) {
+      console.error('tzkt socket disconnected: ', { error })
+      bug('Connection to TZKT has been lost, try to reload page', 'TZKT connection')
+    }
+  }, [])
+
+  // handle tzkt socket reconnected event, need to update all tzkt tokens, cuz balances might have changed
+  const handleOnReconnected = useCallback(
+    async (userAddress: string) => {
+      success('Connection to TZKT has been resumed', 'TZKT connection')
+      await sleep(500)
+      const loadingToasterId = loading('Updating balances of TZKT tokens...', 'TZKT connection')
+      await loadInitialTzktTokensForNewlyConnectedUser({ userAddress })
+      await sleep(500)
+      hideToasterMessage(loadingToasterId)
+      success('TZKT tokens baalnces has been updated', 'TZKT connection')
+    },
+    [loadInitialTzktTokensForNewlyConnectedUser],
   )
 
   // connect user's wallet to DAPP
@@ -132,6 +163,8 @@ export const UserProvider = ({ children }: Props) => {
       // if choosen wallet in popup set it to context and loan initial balances from tzkt via fetch
       if (userAddress) {
         loadInitialTzktTokensForNewlyConnectedUser({ userAddress })
+
+        dispatch({ type: SET_REDUX_USER, accountPkh: userAddress })
 
         if (ws.current) {
           attachTzktSocketsEventHandlers({
@@ -149,7 +182,7 @@ export const UserProvider = ({ children }: Props) => {
       console.error(`Failed to connect wallet:`, e)
       bug('Failed to connect wallet', TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
     }
-  }, [updateUserTzktTokenBalances, loadInitialTzktTokensForNewlyConnectedUser])
+  }, [updateUserTzktTokenBalances, loadInitialTzktTokensForNewlyConnectedUser, handleDisconnect, handleOnReconnected])
 
   // effect to perform resotring user from localStorage
   useEffect(() => {
@@ -197,6 +230,8 @@ export const UserProvider = ({ children }: Props) => {
 
       setUserCtxState(DEFAULT_USER)
 
+      dispatch({ type: DISCONNECT })
+
       await ws.current?.stop()
       ws.current = null
     } catch (e) {
@@ -206,14 +241,15 @@ export const UserProvider = ({ children }: Props) => {
   }, [])
 
   // change user's wallet for DAPP, load new data for him and reopen socket for him
-  // TODO: check if we need reopen socket, if it will cancel invoke filter then ok, if no just make new invoke
   const changeUser = useCallback(async () => {
     try {
       const newUserAddress = await DAPP_INSTANCE.swapAccount()
 
       if (newUserAddress && newUserAddress !== userCtxState.userAddress) {
         setUserCtxState(DEFAULT_USER)
-        loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress })
+        loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress, useLoader: false })
+
+        dispatch({ type: SET_REDUX_USER, accountPkh: newUserAddress })
 
         await ws.current?.stop()
 
@@ -232,26 +268,13 @@ export const UserProvider = ({ children }: Props) => {
       console.error(`Failed to change wallet: `, e)
       bug('Failed to change wallet', TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
     }
-  }, [updateUserTzktTokenBalances, loadInitialTzktTokensForNewlyConnectedUser, userCtxState.userAddress])
-
-  // handle tzkt socket close or reconnecting events
-  const handleDisconnect = (error?: Error) => {
-    if (error) {
-      console.error('tzkt socket disconnected: ', { error })
-      bug('Connection to TZKT has been lost, try to reload page', 'TZKT connection')
-    }
-  }
-
-  // handle tzkt socket reconnected event, need to update all tzkt tokens, cuz balances might have changed
-  const handleOnReconnected = async (userAddress: string) => {
-    success('Connection to TZKT has been resumed', 'TZKT connection')
-    await sleep(500)
-    const loadingToasterId = loading('Updating balances of TZKT tokens...', 'TZKT connection')
-    await loadInitialTzktTokensForNewlyConnectedUser({ userAddress })
-    await sleep(500)
-    hideToasterMessage(loadingToasterId)
-    success('TZKT tokens baalnces has been updated', 'TZKT connection')
-  }
+  }, [
+    updateUserTzktTokenBalances,
+    loadInitialTzktTokensForNewlyConnectedUser,
+    userCtxState.userAddress,
+    handleDisconnect,
+    handleOnReconnected,
+  ])
 
   const providerValue = useMemo(
     () => ({

@@ -43,23 +43,17 @@ export const Market = () => {
 
   const {
     loanTokens,
-    isDataLoaded,
     vaults: { myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isDataLoaded || isDepsChanged) {
-          await dispatch(getLoansStorage())
-        }
-      } catch (e) {}
-    },
-    [accountPkh],
-  )
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await dispatch(getLoansStorage())
+    } catch (e) {}
+  }, [accountPkh])
 
   useEffect(() => {
     window.scrollTo(0, 0)

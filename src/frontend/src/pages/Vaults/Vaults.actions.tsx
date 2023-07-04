@@ -1,5 +1,4 @@
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
@@ -18,6 +17,7 @@ import {
   TOASTER_SUCCESS,
   TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
 } from 'app/App.components/Toaster/Toaster.constants'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // Liquidate Vault
 export const liquidateVault =
