@@ -43,7 +43,6 @@ const VestingTab = () => {
 
   // TODO: test claim vestee reward action
   const handleClaimVestingReward = async () => {
-    // claimVestingReward
     if (!accountPkh) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return

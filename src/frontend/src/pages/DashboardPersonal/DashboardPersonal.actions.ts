@@ -117,7 +117,7 @@ export const claimAllRewardsAction =
     }
   }
 
-// TODO: move to context action flow
+// TODO: move to context action flow (already added, test it)
 export const claimVestingReward = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     wallet: { accountPkh },

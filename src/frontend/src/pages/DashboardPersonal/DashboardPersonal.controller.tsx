@@ -6,7 +6,6 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom'
 import { State } from 'reducers'
 
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { claimAllRewardsAction } from './DashboardPersonal.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import {
   isValidPersonalDashboardTabId,
@@ -73,7 +72,7 @@ const DashboardPersonal = () => {
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
 
-  const claimRewards = async () => await dispatch(claimAllRewardsAction(tokensMetadata))
+  const claimRewards = async () => {}
 
   useEffect(() => {
     changeStakingSubscriptionsList({
