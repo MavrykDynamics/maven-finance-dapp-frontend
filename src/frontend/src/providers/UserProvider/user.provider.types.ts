@@ -1,6 +1,6 @@
 import { TokenAddressType, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
 import { z } from 'zod'
-import { CLAIM_VESTING_REWARD_ACTION } from './helpers/user.consts'
+import { CLAIM_ALL_REWARDS_ACTION, CLAIM_VESTING_REWARD_ACTION } from './helpers/user.consts'
 
 // useUserLoansData Types
 export type UserLendBorrowItem = {
@@ -123,4 +123,4 @@ export type UserMetadataType = Pick<
   | 'availableSatellitesRewards'
 >
 
-export type UserActionsType = typeof CLAIM_VESTING_REWARD_ACTION
+export type UserActionsType = typeof CLAIM_VESTING_REWARD_ACTION | typeof CLAIM_ALL_REWARDS_ACTION

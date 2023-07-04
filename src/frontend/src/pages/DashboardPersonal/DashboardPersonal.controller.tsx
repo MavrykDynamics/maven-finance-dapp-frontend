@@ -41,6 +41,19 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { claimAllRewardsAction } from 'providers/UserProvider/actions/user.actions'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
+import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { sleep } from 'utils/api/sleep'
+import { CLAIM_ALL_REWARDS_ACTION } from 'providers/UserProvider/helpers/user.consts'
+import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
+import { unknownToError } from 'errors/error'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { TezosWalletErrorPayload } from 'errors/error.type'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -66,13 +79,63 @@ const DashboardPersonal = () => {
     mvkTokenAddress: { address: mvkTokenAddress },
   } = useSelector((state: State) => state.contractAddresses)
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
+  const { setAction } = useDappConfigContext()
+  const { bug, info, loading, setSharedError } = useToasterContext()
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
+  const {
+    doormanAddress: { address: doormanAddress },
+  } = useSelector((state: State) => state.contractAddresses)
 
-  const claimRewards = async () => {}
+  const claimRewards = async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+
+    const actionResult = await claimAllRewardsAction(userAddress, doormanAddress)
+
+    if (checkIfActionSuccess(actionResult)) {
+      try {
+        const { operation } = actionResult
+        dispatch(toggleActionFullScreenLoader(true))
+        dispatch(toggleActionCompletion(true))
+
+        info(
+          TOASTER_ACTIONS_TEXTS[CLAIM_ALL_REWARDS_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[CLAIM_ALL_REWARDS_ACTION]['start']['title'],
+        )
+
+        await sleep(5000)
+
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+
+        setAction({ actionName: CLAIM_ALL_REWARDS_ACTION, toasterId, operationLvl })
+      } catch (e) {}
+    } else if (isContractErrorPayload(actionResult.error)) {
+      setSharedError(WALLTET_ERROR_FIELD, {
+        ...(actionResult.error as TezosWalletErrorPayload),
+        actionId: CLAIM_ALL_REWARDS_ACTION,
+      })
+    } else {
+      setAction(null)
+      const parsedError = unknownToError(actionResult.error)
+      bug(parsedError.message)
+    }
+  }
 
   useEffect(() => {
     changeStakingSubscriptionsList({
