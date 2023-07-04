@@ -1,12 +1,7 @@
 import { FooterStyled } from './Footer.styles'
 
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-
 export const Footer = () => {
-  const { errorType } = useToasterContext()
-
-  const showFooter = errorType !== null
-  return showFooter ? (
+  return (
     <FooterStyled>
       <div className="powered-by">
         Powered by&nbsp;
@@ -37,5 +32,5 @@ export const Footer = () => {
         </a>
       </div>
     </FooterStyled>
-  ) : null
+  )
 }

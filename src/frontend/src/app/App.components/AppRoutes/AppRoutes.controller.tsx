@@ -177,11 +177,9 @@ export const AppRoutes = () => {
         <Admin />
       </Route>
 
-      <Route exact path="/404">
+      <Route path="*">
         <RenderErrorPage />
       </Route>
-
-      <Redirect to="/404" />
     </Switch>
   )
 }

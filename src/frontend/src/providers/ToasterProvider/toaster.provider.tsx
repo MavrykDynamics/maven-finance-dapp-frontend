@@ -44,8 +44,8 @@ export default class ToasterProvider extends React.Component<Props, State> {
         fatal: this.fatal,
         success: this.success,
         loading: this.loading,
-        error: props.error || null,
-        errorType: null,
+        error: props.error || null, // fatal error
+        errorType: null, // router | fatal - to know which text to show on ErrorPage
         setErrorType: this.setErrorType,
         hideToasterMessage: this.hideToasterMessage,
         deleteToasterFromArray: this.deleteToasterFromArray,
