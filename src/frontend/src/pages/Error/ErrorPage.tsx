@@ -11,9 +11,12 @@ import {
   ErrorLogoImage,
   Vector1,
   Vector2,
+  ErrorFooterWrapper,
+  ErrorFooterMiddle,
+  ErrorFooterRight,
 } from './ErrorPage.style'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { errorDescDefaultText, errorHeaderDefaultText } from 'providers/ToasterProvider/toaster.provider.const'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 type ErrorPageProps = {
   headerText?: string
@@ -21,21 +24,9 @@ type ErrorPageProps = {
 }
 
 export const ErrorPage = ({ headerText = errorHeaderDefaultText, descText = errorDescDefaultText }: ErrorPageProps) => {
-  const { setIs404PageInView } = useToasterContext()
-
   const handleRedirect = () => {
     window.location.assign('/')
   }
-
-  // set boolean value in context for 404 page to change styles in other components
-  useLayoutEffect(() => {
-    setIs404PageInView()
-
-    // reset is404 on unmount
-    return () => {
-      setIs404PageInView(false)
-    }
-  }, [])
 
   return (
     <ErrorPageWrapper>
@@ -51,6 +42,38 @@ export const ErrorPage = ({ headerText = errorHeaderDefaultText, descText = erro
           Go To Dashboard
         </NewButton>
       </ErrorPageInner>
+      <ErrorFooterWrapper>
+        <span onClick={handleRedirect}>
+          <ImageWithPlug plugSrc="/images/mavryk-logo-small.svg" alt="logo-small" />
+        </span>
+        <ErrorFooterMiddle>
+          Powered by&nbsp;
+          <a href="https://tzkt.io" target="_blank" rel="noreferrer">
+            TzKT API
+          </a>
+          &nbsp; & &nbsp;
+          <a href="https://dipdup.io" target="_blank" rel="noreferrer">
+            DipDup
+          </a>
+        </ErrorFooterMiddle>
+        <ErrorFooterRight>
+          <a
+            href="https://docs.google.com/document/d/1jW-XtRPv3TsCV2meV2ajgkQ6dI0iEwuz9xgZwnyMliw/edit"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Privacy Policy
+          </a>
+
+          <a
+            href="https://docs.google.com/document/d/1R0LA7CmVQjH7vr-FvWOy96LRxJ_XU3HXLXnqNZjZlJQ/edit"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Terms of Use
+          </a>
+        </ErrorFooterRight>
+      </ErrorFooterWrapper>
     </ErrorPageWrapper>
   )
 }

@@ -3,9 +3,10 @@ import { FooterStyled } from './Footer.styles'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 export const Footer = () => {
-  const { is404PageInView } = useToasterContext()
+  const { errorType } = useToasterContext()
 
-  return !is404PageInView ? (
+  const showFooter = errorType !== null
+  return showFooter ? (
     <FooterStyled>
       <div className="powered-by">
         Powered by&nbsp;

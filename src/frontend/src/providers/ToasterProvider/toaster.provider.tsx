@@ -2,22 +2,20 @@ import React, { useContext } from 'react'
 import { ErrorPage } from 'pages/Error/ErrorPage'
 
 // types
-import type { ToasterContextType, ToasterTypes } from './toaster.provider.type'
+import type { ErrorPageType, ToasterContextType, ToasterTypes } from './toaster.provider.type'
 import type { CustomErrors } from '../../errors/error'
 
 // consts
 import {
+  ErrorPageFatal,
   TOASTER_ERROR,
   TOASTER_INFO,
   TOASTER_LOADING,
   TOASTER_SUCCESS,
   TOASTER_WARNING,
-  errorDescDefaultText,
-  errorDescDefaultTextWhenError,
-  errorHeaderDefaultText,
-  errorHeaderDefaultTextWhenError,
 } from './toaster.provider.const'
 import { generateUniqueId } from 'utils/calcFunctions'
+import { getErrorPageData } from './helpers/getErrorPageData'
 
 export const toasterContext = React.createContext<ToasterContextType>(undefined!)
 
@@ -47,12 +45,12 @@ export default class ToasterProvider extends React.Component<Props, State> {
         success: this.success,
         loading: this.loading,
         error: props.error || null,
+        errorType: null,
+        setErrorType: this.setErrorType,
         hideToasterMessage: this.hideToasterMessage,
         deleteToasterFromArray: this.deleteToasterFromArray,
         messages: [],
         setError: this.setError,
-        is404PageInView: false,
-        setIs404PageInView: this.setIs404PageInView,
       },
     }
   }
@@ -97,6 +95,7 @@ export default class ToasterProvider extends React.Component<Props, State> {
 
   fatal = (error: CustomErrors): void => {
     this.setError(error)
+    this.setErrorType(ErrorPageFatal)
     console.error(error)
   }
 
@@ -122,6 +121,14 @@ export default class ToasterProvider extends React.Component<Props, State> {
       context: {
         ...prevState.context,
         error,
+      },
+    }))
+  }
+  setErrorType = (type: ErrorPageType): void => {
+    this.setState((prevState) => ({
+      context: {
+        ...prevState.context,
+        errorType: type,
       },
     }))
   }
@@ -182,18 +189,12 @@ export default class ToasterProvider extends React.Component<Props, State> {
    *
    */
   render(): JSX.Element {
-    // add 404 page when isCritical error
-    const isCritical = Boolean(this.state.context.error)
-
-    console.log(isCritical, 'isCritical')
-
-    // TODO replace with real error message
-    const headerText = isCritical ? errorHeaderDefaultTextWhenError : errorHeaderDefaultText
-    const descText = isCritical ? errorDescDefaultTextWhenError : errorDescDefaultText
+    const showErrorPage = this.state.context.errorType !== null
+    const { header, desc } = getErrorPageData(this.state.context.errorType)
 
     return (
       <toasterContext.Provider value={this.state.context}>
-        {isCritical ? <ErrorPage headerText={headerText} descText={descText} /> : this.props.children}
+        {showErrorPage ? <ErrorPage headerText={header} descText={desc} /> : this.props.children}
       </toasterContext.Provider>
     )
   }

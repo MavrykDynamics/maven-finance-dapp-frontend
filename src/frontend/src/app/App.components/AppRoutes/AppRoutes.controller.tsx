@@ -36,8 +36,8 @@ import DashboardPersonal from 'pages/DashboardPersonal/DashboardPersonal.control
 import { Market } from 'pages/Loans/Market.controller'
 import { LoansDashboard } from 'pages/LoansDashboard/LoansDashboard'
 import { ProposalSubmission } from 'pages/ProposalSubmission/ProposalSubmission.controller'
-import { ErrorPage } from 'pages/Error/ErrorPage'
 import StakeProvider from 'providers/StakeProvider/stake.provider'
+import { RenderErrorPage } from 'pages/Error/RenderErrorPage'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
@@ -178,7 +178,7 @@ export const AppRoutes = () => {
       </Route>
 
       <Route exact path="/404">
-        <ErrorPage />
+        <RenderErrorPage />
       </Route>
 
       <Redirect to="/404" />

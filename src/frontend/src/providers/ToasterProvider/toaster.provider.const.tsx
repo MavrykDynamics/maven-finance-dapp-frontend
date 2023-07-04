@@ -62,6 +62,10 @@ export const ACTION_COMPLETION_MESSAGE_TEXT = 'All good :)'
 export const TOASTER_SUBSCRIPTION_ERROR = 'TOASTER_SUBSCRIPTION_ERROR'
 
 // Error page default texts
+
+export const ErrorPageRouter = 'router'
+export const ErrorPageFatal = 'fatal'
+
 export const errorHeaderDefaultText = 'This page is outside the universe'
 export const errorDescDefaultText = (
   <>
