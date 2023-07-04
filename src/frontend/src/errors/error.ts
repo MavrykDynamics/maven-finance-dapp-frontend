@@ -1,4 +1,5 @@
-import type { InputPayload, Payload } from './error.type'
+import { ERROR_TYPE_FATAL } from './error.const'
+import type { InputPayload, InternalErrorType, Payload } from './error.type'
 
 /**
  * ExtendedErrorClass as base class. Contains all essential information
@@ -6,14 +7,16 @@ import type { InputPayload, Payload } from './error.type'
  */
 class ExtendedErrorClass extends Error {
   payload: Payload | InputPayload
+  type: InternalErrorType
 
-  constructor(messageOrError: string | Error, payload: Payload = {}) {
+  constructor(messageOrError: string | Error, payload: Payload = {}, type: InternalErrorType = ERROR_TYPE_FATAL) {
     const message = messageOrError instanceof Error ? messageOrError.message : messageOrError
     const rawStack = messageOrError instanceof Error ? messageOrError.stack : undefined
     super(message)
     this.name = this.constructor.name
     const stack = rawStack?.replace(/^.+\n/, `${this.name}: ${this.message}\n`)
     this.payload = payload
+    this.type = type
     if (stack) {
       this.stack = stack
     }

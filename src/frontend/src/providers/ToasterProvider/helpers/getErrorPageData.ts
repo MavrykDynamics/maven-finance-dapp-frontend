@@ -1,29 +1,28 @@
+import { InternalErrorType } from 'errors/error.type'
+import { ERROR_TYPE_FATAL, ERROR_TYPE_ROUTER } from 'errors/error.const'
 import {
-  ErrorPageFatal,
-  ErrorPageRouter,
   errorDescDefaultText,
   errorDescDefaultTextWhenError,
   errorHeaderDefaultText,
   errorHeaderDefaultTextWhenError,
 } from '../toaster.provider.const'
-import { ErrorPageType } from '../toaster.provider.type'
 
-export function getErrorPageData(type: ErrorPageType | null) {
+export function getErrorPageData(type: InternalErrorType | null) {
   switch (type) {
-    case ErrorPageRouter:
+    case ERROR_TYPE_ROUTER:
       return {
         header: errorHeaderDefaultText,
         desc: errorDescDefaultText,
       }
-    case ErrorPageFatal:
+    case ERROR_TYPE_FATAL:
       return {
         header: errorHeaderDefaultTextWhenError,
         desc: errorDescDefaultTextWhenError,
       }
     default:
       return {
-        header: errorHeaderDefaultText,
-        desc: errorDescDefaultText,
+        header: errorHeaderDefaultTextWhenError,
+        desc: errorDescDefaultTextWhenError,
       }
   }
 }

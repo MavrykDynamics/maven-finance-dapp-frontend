@@ -1,8 +1,6 @@
 import type { CustomErrors } from '../../errors/error'
 import type ToasterProvider from './toaster.provider'
 import {
-  ErrorPageFatal,
-  ErrorPageRouter,
   TOASTER_ERROR,
   TOASTER_HIDE,
   TOASTER_INFO,
@@ -39,8 +37,6 @@ export interface ErrorTransfer {
   }
 }
 
-export type ErrorPageType = typeof ErrorPageRouter | typeof ErrorPageFatal
-
 export type ToasterContextType = {
   bug: InstanceType<typeof ToasterProvider>['bug']
   info: InstanceType<typeof ToasterProvider>['info']
@@ -54,6 +50,4 @@ export type ToasterContextType = {
   addToasterMessage?: InstanceType<typeof ToasterProvider>['addToasterMessage']
   setError: InstanceType<typeof ToasterProvider>['setError']
   messages: ToasterMessage[]
-  errorType: ErrorPageType | null
-  setErrorType: InstanceType<typeof ToasterProvider>['setErrorType']
 }

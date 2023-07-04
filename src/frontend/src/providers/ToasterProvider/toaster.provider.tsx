@@ -2,12 +2,11 @@ import React, { useContext } from 'react'
 import { ErrorPage } from 'pages/Error/ErrorPage'
 
 // types
-import type { ErrorPageType, ToasterContextType, ToasterTypes } from './toaster.provider.type'
-import type { CustomErrors } from '../../errors/error'
+import type { ToasterContextType, ToasterTypes } from './toaster.provider.type'
+import type { CustomErrors, ExtendedError, FatalError } from '../../errors/error'
 
 // consts
 import {
-  ErrorPageFatal,
   TOASTER_ERROR,
   TOASTER_INFO,
   TOASTER_LOADING,
@@ -16,6 +15,7 @@ import {
 } from './toaster.provider.const'
 import { generateUniqueId } from 'utils/calcFunctions'
 import { getErrorPageData } from './helpers/getErrorPageData'
+import { ERROR_TYPE_FATAL } from 'errors/error.const'
 
 export const toasterContext = React.createContext<ToasterContextType>(undefined!)
 
@@ -45,8 +45,6 @@ export default class ToasterProvider extends React.Component<Props, State> {
         success: this.success,
         loading: this.loading,
         error: props.error || null, // fatal error
-        errorType: null, // router | fatal - to know which text to show on ErrorPage
-        setErrorType: this.setErrorType,
         hideToasterMessage: this.hideToasterMessage,
         deleteToasterFromArray: this.deleteToasterFromArray,
         messages: [],
@@ -95,7 +93,6 @@ export default class ToasterProvider extends React.Component<Props, State> {
 
   fatal = (error: CustomErrors): void => {
     this.setError(error)
-    this.setErrorType(ErrorPageFatal)
     console.error(error)
   }
 
@@ -121,14 +118,6 @@ export default class ToasterProvider extends React.Component<Props, State> {
       context: {
         ...prevState.context,
         error,
-      },
-    }))
-  }
-  setErrorType = (type: ErrorPageType): void => {
-    this.setState((prevState) => ({
-      context: {
-        ...prevState.context,
-        errorType: type,
       },
     }))
   }
@@ -180,8 +169,10 @@ export default class ToasterProvider extends React.Component<Props, State> {
    *
    */
   render(): JSX.Element {
-    const showErrorPage = this.state.context.errorType !== null
-    const { header, desc } = getErrorPageData(this.state.context.errorType)
+    const { error } = this.state.context
+    const showErrorPage = Boolean(error)
+    const type = (error as unknown as ExtendedError)?.type ?? ERROR_TYPE_FATAL
+    const { header, desc } = getErrorPageData(type)
 
     return (
       <toasterContext.Provider value={this.state.context}>
@@ -190,5 +181,7 @@ export default class ToasterProvider extends React.Component<Props, State> {
     )
   }
 }
+
+export type test = Omit<CustomErrors, 'Error'>
 
 export const useToasterContext = () => useContext(toasterContext)
