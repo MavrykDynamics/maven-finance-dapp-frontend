@@ -1,4 +1,5 @@
 import { TokenAddressType, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
+import { GetUserDataSubscription } from 'utils/__generated__/graphql'
 import { z } from 'zod'
 
 // useUserLoansData Types
@@ -44,20 +45,6 @@ export type UserTzktAccountType = z.infer<typeof userTzktWSAccountSchema>
 export const userTzktWSAccountSchema = z.array(userTzktAccountSchema)
 export type UserTzktWSAccountType = z.infer<typeof userTzktWSAccountSchema>
 
-export interface UserFarmRewardsData {
-  generalAccumulatedRewardsPerShare: number
-  currentRewardPerBlock: number
-  lastBlockUpdate: number
-  generalTotalRewards: number
-  generalPaidReward: number
-  generalUnpaidReward: number
-  infinite: boolean
-  totalLPTokenDeposited: number
-  myDepositedAmount: number
-  myParticipationRewardsPerShare: number
-  myAvailableFarmRewards: number
-}
-
 // Context types
 export type UserContext = {
   // user's metadata
@@ -88,7 +75,7 @@ export type UserContext = {
   availableDoormanRewards: number
   availableSatellitesRewards: number
   availableLoansRewards: number
-  availableFarmRewards: Record<string, UserFarmRewardsData>
+  availableFarmRewards: Record<string, number>
 
   // user tokens
   userTokensBalances: Record<TokenAddressType, number>
@@ -102,8 +89,15 @@ export type UserContext = {
   changeUser: () => void
 }
 
+export type UserIndexerFarmRewardsType = GetUserDataSubscription['mavryk_user'][number]['farm_accounts']
+
 export type UserContextStateType = UserMetadataType &
-  Pick<UserContext, 'userTokensBalances' | 'userMTokens' | 'userAddress' | 'availableLoansRewards'>
+  Pick<
+    UserContext,
+    'userTokensBalances' | 'userMTokens' | 'userAddress' | 'availableLoansRewards' | 'availableFarmRewards'
+  > & {
+    farmAccounts: UserIndexerFarmRewardsType
+  }
 
 export type UserMetadataType = Pick<
   UserContext,
@@ -118,6 +112,7 @@ export type UserMetadataType = Pick<
   | 'gatheredSatellitesRewards'
   | 'gatheredDoormanRewards'
   | 'availableDoormanRewards'
-  | 'availableFarmRewards'
   | 'availableSatellitesRewards'
->
+> & {
+  farmAccounts: UserIndexerFarmRewardsType
+}

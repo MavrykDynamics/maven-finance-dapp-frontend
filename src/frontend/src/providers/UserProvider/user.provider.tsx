@@ -4,6 +4,7 @@ import { useSubscription } from '@apollo/client'
 
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import { SUBSCRIPTION_INDEXER_LVL } from 'providers/DappConfigProvider/queries/indexerLvl.query'
 import { DEFAULT_USER } from './helpers/user.consts'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { dappClient } from 'providers/UserProvider/wallet/WalletCore'
@@ -22,6 +23,7 @@ import {
 } from './helpers/userBalances.helpers'
 import { normalizeUser } from './helpers/userData.helpers'
 import { sleep } from 'utils/api/sleep'
+import { getUsersFarmRewards } from './helpers/userRewards.helpers'
 
 // queries
 import { SUBSCRIBE_USER_DATA } from './queries/userData.query'
@@ -55,6 +57,7 @@ export const UserProvider = ({ children }: Props) => {
   const dispatch = useDispatch()
 
   const ws = useRef<null | signalR.HubConnection>(null)
+  const lastSavedLevel = useRef<number>(0)
 
   const [userCtxState, setUserCtxState] = useState<UserContextStateType>(DEFAULT_USER)
   const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
@@ -118,8 +121,6 @@ export const UserProvider = ({ children }: Props) => {
         userAddress,
         tokensMetadata,
       })
-
-      console.log({ fetchedTokens, userAddress })
 
       setUserCtxState((prev) => ({
         ...prev,
@@ -216,6 +217,37 @@ export const UserProvider = ({ children }: Props) => {
         availableLoansRewards,
         userMTokens,
       }))
+    },
+    onError: (e) => {
+      console.error(`UserProvider query error: `, e)
+      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+    },
+  })
+
+  /**
+   * User farm rewards depends on current indexed level, and every time level updates we need to recalc farm rewards
+   * to reduce amount of needed rerenders, we recalc farm rewards every 3rd level change
+   *
+   * Subscribe to level change only when user's wallet is connected and he has farms where he has deposited
+   */
+  useSubscription(SUBSCRIPTION_INDEXER_LVL, {
+    skip: !userCtxState.userAddress && Object.keys(userCtxState.farmAccounts).length > 0,
+    shouldResubscribe: true,
+    onData: ({ data: { data } }) => {
+      if (!data) return
+      const indexerLvl = data.dipdup_head.find(({ name }) => name === process.env.REACT_APP_RPC_TZKT_API)?.level
+      if (indexerLvl) {
+        if (indexerLvl - lastSavedLevel.current >= 3) {
+          setUserCtxState((prev) => ({
+            ...prev,
+            availableFarmRewards: getUsersFarmRewards({
+              userFarmsRewardsDataFromIndexer: userCtxState.farmAccounts,
+              currentLvl: indexerLvl,
+            }),
+          }))
+        }
+        lastSavedLevel.current = indexerLvl
+      }
     },
     onError: (e) => {
       console.error(`UserProvider query error: `, e)

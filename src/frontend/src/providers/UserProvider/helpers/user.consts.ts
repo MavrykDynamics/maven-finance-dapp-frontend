@@ -25,4 +25,5 @@ export const DEFAULT_USER: UserContextStateType = {
   availableFarmRewards: {},
   userTokensBalances: {},
   userMTokens: {},
+  farmAccounts: [],
 }

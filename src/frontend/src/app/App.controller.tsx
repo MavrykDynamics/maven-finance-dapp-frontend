@@ -83,13 +83,6 @@ export const App = () => {
   const isInitialLoading =
     isDappGeneralLoading || isTokensLoading || isFeedsLoading || isUserLoading || isInitialReduxLoading
 
-  console.log({
-    isTokensLoading,
-    isFeedsLoading,
-    isUserLoading,
-    isDappGeneralLoading,
-  })
-
   return (
     <>
       <LoaderRocket isActive={isInitialLoading} />

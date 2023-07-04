@@ -54725,12 +54725,15 @@ export type Satellite = {
   delegations_aggregate: Delegation_Record_Aggregate;
   description: Scalars['String'];
   fee: Scalars['smallint'];
+  financial_request_counter: Scalars['bigint'];
+  governance_proposal_counter: Scalars['bigint'];
   id: Scalars['bigint'];
   image: Scalars['String'];
   name: Scalars['String'];
   peer_id?: Maybe<Scalars['String']>;
   public_key?: Maybe<Scalars['String']>;
   registration_timestamp: Scalars['timestamptz'];
+  satellite_action_counter: Scalars['bigint'];
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status: Scalars['smallint'];
   total_delegated_amount: Scalars['float8'];
@@ -54911,7 +54914,10 @@ export type Satellite_Avg_Fields = {
   __typename?: 'satellite_avg_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
   total_delegated_amount?: Maybe<Scalars['Float']>;
@@ -54922,7 +54928,10 @@ export type Satellite_Avg_Fields = {
 export type Satellite_Avg_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -54941,12 +54950,15 @@ export type Satellite_Bool_Exp = {
   delegations_aggregate?: InputMaybe<Delegation_Record_Aggregate_Bool_Exp>;
   description?: InputMaybe<String_Comparison_Exp>;
   fee?: InputMaybe<Smallint_Comparison_Exp>;
+  financial_request_counter?: InputMaybe<Bigint_Comparison_Exp>;
+  governance_proposal_counter?: InputMaybe<Bigint_Comparison_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   image?: InputMaybe<String_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   peer_id?: InputMaybe<String_Comparison_Exp>;
   public_key?: InputMaybe<String_Comparison_Exp>;
   registration_timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
+  satellite_action_counter?: InputMaybe<Bigint_Comparison_Exp>;
   status?: InputMaybe<Smallint_Comparison_Exp>;
   total_delegated_amount?: InputMaybe<Float8_Comparison_Exp>;
   user?: InputMaybe<Mavryk_User_Bool_Exp>;
@@ -54960,12 +54972,15 @@ export type Satellite_Max_Fields = {
   delegation_id?: Maybe<Scalars['bigint']>;
   description?: Maybe<Scalars['String']>;
   fee?: Maybe<Scalars['smallint']>;
+  financial_request_counter?: Maybe<Scalars['bigint']>;
+  governance_proposal_counter?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
   image?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   peer_id?: Maybe<Scalars['String']>;
   public_key?: Maybe<Scalars['String']>;
   registration_timestamp?: Maybe<Scalars['timestamptz']>;
+  satellite_action_counter?: Maybe<Scalars['bigint']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['smallint']>;
   total_delegated_amount?: Maybe<Scalars['float8']>;
@@ -54978,12 +54993,15 @@ export type Satellite_Max_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   peer_id?: InputMaybe<Order_By>;
   public_key?: InputMaybe<Order_By>;
   registration_timestamp?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -54997,12 +55015,15 @@ export type Satellite_Min_Fields = {
   delegation_id?: Maybe<Scalars['bigint']>;
   description?: Maybe<Scalars['String']>;
   fee?: Maybe<Scalars['smallint']>;
+  financial_request_counter?: Maybe<Scalars['bigint']>;
+  governance_proposal_counter?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
   image?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   peer_id?: Maybe<Scalars['String']>;
   public_key?: Maybe<Scalars['String']>;
   registration_timestamp?: Maybe<Scalars['timestamptz']>;
+  satellite_action_counter?: Maybe<Scalars['bigint']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['smallint']>;
   total_delegated_amount?: Maybe<Scalars['float8']>;
@@ -55015,12 +55036,15 @@ export type Satellite_Min_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   peer_id?: InputMaybe<Order_By>;
   public_key?: InputMaybe<Order_By>;
   registration_timestamp?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -55036,12 +55060,15 @@ export type Satellite_Order_By = {
   delegations_aggregate?: InputMaybe<Delegation_Record_Aggregate_Order_By>;
   description?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   peer_id?: InputMaybe<Order_By>;
   public_key?: InputMaybe<Order_By>;
   registration_timestamp?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
   user?: InputMaybe<Mavryk_User_Order_By>;
@@ -55655,6 +55682,10 @@ export enum Satellite_Select_Column {
   /** column name */
   Fee = 'fee',
   /** column name */
+  FinancialRequestCounter = 'financial_request_counter',
+  /** column name */
+  GovernanceProposalCounter = 'governance_proposal_counter',
+  /** column name */
   Id = 'id',
   /** column name */
   Image = 'image',
@@ -55666,6 +55697,8 @@ export enum Satellite_Select_Column {
   PublicKey = 'public_key',
   /** column name */
   RegistrationTimestamp = 'registration_timestamp',
+  /** column name */
+  SatelliteActionCounter = 'satellite_action_counter',
   /** column name */
   Status = 'status',
   /** column name */
@@ -55741,7 +55774,10 @@ export type Satellite_Stddev_Fields = {
   __typename?: 'satellite_stddev_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
   total_delegated_amount?: Maybe<Scalars['Float']>;
@@ -55752,7 +55788,10 @@ export type Satellite_Stddev_Fields = {
 export type Satellite_Stddev_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -55764,7 +55803,10 @@ export type Satellite_Stddev_Pop_Fields = {
   __typename?: 'satellite_stddev_pop_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
   total_delegated_amount?: Maybe<Scalars['Float']>;
@@ -55775,7 +55817,10 @@ export type Satellite_Stddev_Pop_Fields = {
 export type Satellite_Stddev_Pop_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -55787,7 +55832,10 @@ export type Satellite_Stddev_Samp_Fields = {
   __typename?: 'satellite_stddev_samp_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
   total_delegated_amount?: Maybe<Scalars['Float']>;
@@ -55798,7 +55846,10 @@ export type Satellite_Stddev_Samp_Fields = {
 export type Satellite_Stddev_Samp_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -55819,12 +55870,15 @@ export type Satellite_Stream_Cursor_Value_Input = {
   delegation_id?: InputMaybe<Scalars['bigint']>;
   description?: InputMaybe<Scalars['String']>;
   fee?: InputMaybe<Scalars['smallint']>;
+  financial_request_counter?: InputMaybe<Scalars['bigint']>;
+  governance_proposal_counter?: InputMaybe<Scalars['bigint']>;
   id?: InputMaybe<Scalars['bigint']>;
   image?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   peer_id?: InputMaybe<Scalars['String']>;
   public_key?: InputMaybe<Scalars['String']>;
   registration_timestamp?: InputMaybe<Scalars['timestamptz']>;
+  satellite_action_counter?: InputMaybe<Scalars['bigint']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Scalars['smallint']>;
   total_delegated_amount?: InputMaybe<Scalars['float8']>;
@@ -55837,7 +55891,10 @@ export type Satellite_Sum_Fields = {
   __typename?: 'satellite_sum_fields';
   delegation_id?: Maybe<Scalars['bigint']>;
   fee?: Maybe<Scalars['smallint']>;
+  financial_request_counter?: Maybe<Scalars['bigint']>;
+  governance_proposal_counter?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
+  satellite_action_counter?: Maybe<Scalars['bigint']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['smallint']>;
   total_delegated_amount?: Maybe<Scalars['float8']>;
@@ -55848,7 +55905,10 @@ export type Satellite_Sum_Fields = {
 export type Satellite_Sum_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -55860,7 +55920,10 @@ export type Satellite_Var_Pop_Fields = {
   __typename?: 'satellite_var_pop_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
   total_delegated_amount?: Maybe<Scalars['Float']>;
@@ -55871,7 +55934,10 @@ export type Satellite_Var_Pop_Fields = {
 export type Satellite_Var_Pop_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -55883,7 +55949,10 @@ export type Satellite_Var_Samp_Fields = {
   __typename?: 'satellite_var_samp_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
   total_delegated_amount?: Maybe<Scalars['Float']>;
@@ -55894,7 +55963,10 @@ export type Satellite_Var_Samp_Fields = {
 export type Satellite_Var_Samp_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -55906,7 +55978,10 @@ export type Satellite_Variance_Fields = {
   __typename?: 'satellite_variance_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
   total_delegated_amount?: Maybe<Scalars['Float']>;
@@ -55917,7 +55992,10 @@ export type Satellite_Variance_Fields = {
 export type Satellite_Variance_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;

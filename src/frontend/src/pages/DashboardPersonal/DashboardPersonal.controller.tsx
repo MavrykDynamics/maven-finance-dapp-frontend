@@ -101,10 +101,7 @@ const DashboardPersonal = () => {
     rewardsToClaim:
       availableDoormanRewards +
       availableSatellitesRewards +
-      Object.values(availableFarmRewards).reduce(
-        (acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards),
-        0,
-      ),
+      Object.values(availableFarmRewards).reduce((acc, farmReward) => (acc += farmReward), 0),
     earnedRewards: gatheredSatellitesRewards + gatheredFarmRewards + gatheredDoormanRewards,
   }
 

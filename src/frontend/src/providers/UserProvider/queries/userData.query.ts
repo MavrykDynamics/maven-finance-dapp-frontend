@@ -96,7 +96,7 @@ subscription getUserData($userAddress: String = "") {
     # user doorman rewards
     doorman_stake_accounts {
       participation_fees_per_share
-        smvk_balance
+      smvk_balance
       doorman {
         unclaimed_rewards
         accumulated_fees_per_share
