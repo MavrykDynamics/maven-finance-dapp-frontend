@@ -21,13 +21,17 @@ export function getSatelliteDataSubscription(
       peer_id
       public_key
 
+      satellite_action_counter
+      governance_proposal_counter
+      financial_request_counter
+      total_delegated_amount
+
       delegatorCount: delegations_aggregate {
         aggregate {
           count
         }
       }
 
-      total_delegated_amount
 
       delegation {
         delegation_ratio

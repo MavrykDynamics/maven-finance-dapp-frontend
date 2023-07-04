@@ -54725,12 +54725,15 @@ export type Satellite = {
   delegations_aggregate: Delegation_Record_Aggregate;
   description: Scalars['String'];
   fee: Scalars['smallint'];
+  financial_request_counter: Scalars['bigint'];
+  governance_proposal_counter: Scalars['bigint'];
   id: Scalars['bigint'];
   image: Scalars['String'];
   name: Scalars['String'];
   peer_id?: Maybe<Scalars['String']>;
   public_key?: Maybe<Scalars['String']>;
   registration_timestamp: Scalars['timestamptz'];
+  satellite_action_counter: Scalars['bigint'];
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status: Scalars['smallint'];
   total_delegated_amount: Scalars['float8'];
@@ -54911,7 +54914,10 @@ export type Satellite_Avg_Fields = {
   __typename?: 'satellite_avg_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
   total_delegated_amount?: Maybe<Scalars['Float']>;
@@ -54922,7 +54928,10 @@ export type Satellite_Avg_Fields = {
 export type Satellite_Avg_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -54941,12 +54950,15 @@ export type Satellite_Bool_Exp = {
   delegations_aggregate?: InputMaybe<Delegation_Record_Aggregate_Bool_Exp>;
   description?: InputMaybe<String_Comparison_Exp>;
   fee?: InputMaybe<Smallint_Comparison_Exp>;
+  financial_request_counter?: InputMaybe<Bigint_Comparison_Exp>;
+  governance_proposal_counter?: InputMaybe<Bigint_Comparison_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   image?: InputMaybe<String_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   peer_id?: InputMaybe<String_Comparison_Exp>;
   public_key?: InputMaybe<String_Comparison_Exp>;
   registration_timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
+  satellite_action_counter?: InputMaybe<Bigint_Comparison_Exp>;
   status?: InputMaybe<Smallint_Comparison_Exp>;
   total_delegated_amount?: InputMaybe<Float8_Comparison_Exp>;
   user?: InputMaybe<Mavryk_User_Bool_Exp>;
@@ -54960,12 +54972,15 @@ export type Satellite_Max_Fields = {
   delegation_id?: Maybe<Scalars['bigint']>;
   description?: Maybe<Scalars['String']>;
   fee?: Maybe<Scalars['smallint']>;
+  financial_request_counter?: Maybe<Scalars['bigint']>;
+  governance_proposal_counter?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
   image?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   peer_id?: Maybe<Scalars['String']>;
   public_key?: Maybe<Scalars['String']>;
   registration_timestamp?: Maybe<Scalars['timestamptz']>;
+  satellite_action_counter?: Maybe<Scalars['bigint']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['smallint']>;
   total_delegated_amount?: Maybe<Scalars['float8']>;
@@ -54978,12 +54993,15 @@ export type Satellite_Max_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   peer_id?: InputMaybe<Order_By>;
   public_key?: InputMaybe<Order_By>;
   registration_timestamp?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -54997,12 +55015,15 @@ export type Satellite_Min_Fields = {
   delegation_id?: Maybe<Scalars['bigint']>;
   description?: Maybe<Scalars['String']>;
   fee?: Maybe<Scalars['smallint']>;
+  financial_request_counter?: Maybe<Scalars['bigint']>;
+  governance_proposal_counter?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
   image?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   peer_id?: Maybe<Scalars['String']>;
   public_key?: Maybe<Scalars['String']>;
   registration_timestamp?: Maybe<Scalars['timestamptz']>;
+  satellite_action_counter?: Maybe<Scalars['bigint']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['smallint']>;
   total_delegated_amount?: Maybe<Scalars['float8']>;
@@ -55015,12 +55036,15 @@ export type Satellite_Min_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   peer_id?: InputMaybe<Order_By>;
   public_key?: InputMaybe<Order_By>;
   registration_timestamp?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -55036,12 +55060,15 @@ export type Satellite_Order_By = {
   delegations_aggregate?: InputMaybe<Delegation_Record_Aggregate_Order_By>;
   description?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   peer_id?: InputMaybe<Order_By>;
   public_key?: InputMaybe<Order_By>;
   registration_timestamp?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
   user?: InputMaybe<Mavryk_User_Order_By>;
@@ -55655,6 +55682,10 @@ export enum Satellite_Select_Column {
   /** column name */
   Fee = 'fee',
   /** column name */
+  FinancialRequestCounter = 'financial_request_counter',
+  /** column name */
+  GovernanceProposalCounter = 'governance_proposal_counter',
+  /** column name */
   Id = 'id',
   /** column name */
   Image = 'image',
@@ -55666,6 +55697,8 @@ export enum Satellite_Select_Column {
   PublicKey = 'public_key',
   /** column name */
   RegistrationTimestamp = 'registration_timestamp',
+  /** column name */
+  SatelliteActionCounter = 'satellite_action_counter',
   /** column name */
   Status = 'status',
   /** column name */
@@ -55741,7 +55774,10 @@ export type Satellite_Stddev_Fields = {
   __typename?: 'satellite_stddev_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
   total_delegated_amount?: Maybe<Scalars['Float']>;
@@ -55752,7 +55788,10 @@ export type Satellite_Stddev_Fields = {
 export type Satellite_Stddev_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -55764,7 +55803,10 @@ export type Satellite_Stddev_Pop_Fields = {
   __typename?: 'satellite_stddev_pop_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
   total_delegated_amount?: Maybe<Scalars['Float']>;
@@ -55775,7 +55817,10 @@ export type Satellite_Stddev_Pop_Fields = {
 export type Satellite_Stddev_Pop_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -55787,7 +55832,10 @@ export type Satellite_Stddev_Samp_Fields = {
   __typename?: 'satellite_stddev_samp_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
   total_delegated_amount?: Maybe<Scalars['Float']>;
@@ -55798,7 +55846,10 @@ export type Satellite_Stddev_Samp_Fields = {
 export type Satellite_Stddev_Samp_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -55819,12 +55870,15 @@ export type Satellite_Stream_Cursor_Value_Input = {
   delegation_id?: InputMaybe<Scalars['bigint']>;
   description?: InputMaybe<Scalars['String']>;
   fee?: InputMaybe<Scalars['smallint']>;
+  financial_request_counter?: InputMaybe<Scalars['bigint']>;
+  governance_proposal_counter?: InputMaybe<Scalars['bigint']>;
   id?: InputMaybe<Scalars['bigint']>;
   image?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   peer_id?: InputMaybe<Scalars['String']>;
   public_key?: InputMaybe<Scalars['String']>;
   registration_timestamp?: InputMaybe<Scalars['timestamptz']>;
+  satellite_action_counter?: InputMaybe<Scalars['bigint']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Scalars['smallint']>;
   total_delegated_amount?: InputMaybe<Scalars['float8']>;
@@ -55837,7 +55891,10 @@ export type Satellite_Sum_Fields = {
   __typename?: 'satellite_sum_fields';
   delegation_id?: Maybe<Scalars['bigint']>;
   fee?: Maybe<Scalars['smallint']>;
+  financial_request_counter?: Maybe<Scalars['bigint']>;
+  governance_proposal_counter?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
+  satellite_action_counter?: Maybe<Scalars['bigint']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['smallint']>;
   total_delegated_amount?: Maybe<Scalars['float8']>;
@@ -55848,7 +55905,10 @@ export type Satellite_Sum_Fields = {
 export type Satellite_Sum_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -55860,7 +55920,10 @@ export type Satellite_Var_Pop_Fields = {
   __typename?: 'satellite_var_pop_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
   total_delegated_amount?: Maybe<Scalars['Float']>;
@@ -55871,7 +55934,10 @@ export type Satellite_Var_Pop_Fields = {
 export type Satellite_Var_Pop_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -55883,7 +55949,10 @@ export type Satellite_Var_Samp_Fields = {
   __typename?: 'satellite_var_samp_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
   total_delegated_amount?: Maybe<Scalars['Float']>;
@@ -55894,7 +55963,10 @@ export type Satellite_Var_Samp_Fields = {
 export type Satellite_Var_Samp_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -55906,7 +55978,10 @@ export type Satellite_Variance_Fields = {
   __typename?: 'satellite_variance_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
   total_delegated_amount?: Maybe<Scalars['Float']>;
@@ -55917,7 +55992,10 @@ export type Satellite_Variance_Fields = {
 export type Satellite_Variance_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
@@ -72547,7 +72625,7 @@ export type SatelliteDataSubSubscriptionVariables = Exact<{
 }>;
 
 
-export type SatelliteDataSubSubscription = { __typename?: 'subscription_root', satellite: Array<{ __typename?: 'satellite', description: string, fee: any, image: string, name: string, status: any, website: string, currently_registered: boolean, peer_id?: string | null, public_key?: string | null, total_delegated_amount: any, delegatorCount: { __typename?: 'delegation_record_aggregate', aggregate?: { __typename?: 'delegation_record_aggregate_fields', count: number } | null }, delegation: { __typename?: 'delegation', delegation_ratio: any }, user: { __typename?: 'mavryk_user', address: string, smvk_balance: any, mvk_balance: any, aggregator_oracles: Array<{ __typename?: 'aggregator_oracle', init_epoch: any, init_round: any, aggregator: { __typename?: 'aggregator', address: string }, observations: Array<{ __typename?: 'aggregator_oracle_observation', epoch: any, round: any, timestamp: any }>, observations_aggregate: { __typename?: 'aggregator_oracle_observation_aggregate', aggregate?: { __typename?: 'aggregator_oracle_observation_aggregate_fields', count: number, sum?: { __typename?: 'aggregator_oracle_observation_sum_fields', data?: any | null } | null } | null }, smvkRewardsAmount: { __typename?: 'aggregator_oracle_reward_aggregate', aggregate?: { __typename?: 'aggregator_oracle_reward_aggregate_fields', sum?: { __typename?: 'aggregator_oracle_reward_sum_fields', reward?: any | null } | null } | null }, xtzRewardsAmount: { __typename?: 'aggregator_oracle_reward_aggregate', aggregate?: { __typename?: 'aggregator_oracle_reward_aggregate_fields', sum?: { __typename?: 'aggregator_oracle_reward_sum_fields', reward?: any | null } | null } | null } }>, feedsObservationsAmount: { __typename?: 'aggregator_oracle_aggregate', nodes: Array<{ __typename?: 'aggregator_oracle', observations_aggregate: { __typename?: 'aggregator_oracle_observation_aggregate', aggregate?: { __typename?: 'aggregator_oracle_observation_aggregate_fields', count: number } | null } }> }, governance_satellite_snapshots: Array<{ __typename?: 'governance_satellite_snapshot', cycle: any, total_voting_power: any, governance: { __typename?: 'governance', cycle_id: any } }>, lastVotedProposal: Array<{ __typename?: 'governance_proposal_vote', vote: any, governance_proposal: { __typename?: 'governance_proposal', id: any, title: string } }>, createdGovProposalsAmount: { __typename?: 'governance_proposal_aggregate', aggregate?: { __typename?: 'governance_proposal_aggregate_fields', count: number } | null }, createdFinRequestsAmount: { __typename?: 'governance_financial_request_aggregate', aggregate?: { __typename?: 'governance_financial_request_aggregate_fields', count: number } | null }, createdSatelliteGovActionsAmount: { __typename?: 'governance_satellite_action_aggregate', aggregate?: { __typename?: 'governance_satellite_action_aggregate_fields', count: number } | null }, govProposalsVotesAmount: { __typename?: 'governance_proposal_vote_aggregate', aggregate?: { __typename?: 'governance_proposal_vote_aggregate_fields', count: number } | null }, finRequestsVotesAmount: { __typename?: 'governance_financial_request_vote_aggregate', aggregate?: { __typename?: 'governance_financial_request_vote_aggregate_fields', count: number } | null }, satelliteGovActionsVotesAmount: { __typename?: 'governance_satellite_action_vote_aggregate', aggregate?: { __typename?: 'governance_satellite_action_vote_aggregate_fields', count: number } | null } } }> };
+export type SatelliteDataSubSubscription = { __typename?: 'subscription_root', satellite: Array<{ __typename?: 'satellite', description: string, fee: any, image: string, name: string, status: any, website: string, currently_registered: boolean, peer_id?: string | null, public_key?: string | null, satellite_action_counter: any, governance_proposal_counter: any, financial_request_counter: any, total_delegated_amount: any, delegatorCount: { __typename?: 'delegation_record_aggregate', aggregate?: { __typename?: 'delegation_record_aggregate_fields', count: number } | null }, delegation: { __typename?: 'delegation', delegation_ratio: any }, user: { __typename?: 'mavryk_user', address: string, smvk_balance: any, mvk_balance: any, aggregator_oracles: Array<{ __typename?: 'aggregator_oracle', init_epoch: any, init_round: any, aggregator: { __typename?: 'aggregator', address: string }, observations: Array<{ __typename?: 'aggregator_oracle_observation', epoch: any, round: any, timestamp: any }>, observations_aggregate: { __typename?: 'aggregator_oracle_observation_aggregate', aggregate?: { __typename?: 'aggregator_oracle_observation_aggregate_fields', count: number, sum?: { __typename?: 'aggregator_oracle_observation_sum_fields', data?: any | null } | null } | null }, smvkRewardsAmount: { __typename?: 'aggregator_oracle_reward_aggregate', aggregate?: { __typename?: 'aggregator_oracle_reward_aggregate_fields', sum?: { __typename?: 'aggregator_oracle_reward_sum_fields', reward?: any | null } | null } | null }, xtzRewardsAmount: { __typename?: 'aggregator_oracle_reward_aggregate', aggregate?: { __typename?: 'aggregator_oracle_reward_aggregate_fields', sum?: { __typename?: 'aggregator_oracle_reward_sum_fields', reward?: any | null } | null } | null } }>, feedsObservationsAmount: { __typename?: 'aggregator_oracle_aggregate', nodes: Array<{ __typename?: 'aggregator_oracle', observations_aggregate: { __typename?: 'aggregator_oracle_observation_aggregate', aggregate?: { __typename?: 'aggregator_oracle_observation_aggregate_fields', count: number } | null } }> }, governance_satellite_snapshots: Array<{ __typename?: 'governance_satellite_snapshot', cycle: any, total_voting_power: any, governance: { __typename?: 'governance', cycle_id: any } }>, lastVotedProposal: Array<{ __typename?: 'governance_proposal_vote', vote: any, governance_proposal: { __typename?: 'governance_proposal', id: any, title: string } }>, createdGovProposalsAmount: { __typename?: 'governance_proposal_aggregate', aggregate?: { __typename?: 'governance_proposal_aggregate_fields', count: number } | null }, createdFinRequestsAmount: { __typename?: 'governance_financial_request_aggregate', aggregate?: { __typename?: 'governance_financial_request_aggregate_fields', count: number } | null }, createdSatelliteGovActionsAmount: { __typename?: 'governance_satellite_action_aggregate', aggregate?: { __typename?: 'governance_satellite_action_aggregate_fields', count: number } | null }, govProposalsVotesAmount: { __typename?: 'governance_proposal_vote_aggregate', aggregate?: { __typename?: 'governance_proposal_vote_aggregate_fields', count: number } | null }, finRequestsVotesAmount: { __typename?: 'governance_financial_request_vote_aggregate', aggregate?: { __typename?: 'governance_financial_request_vote_aggregate_fields', count: number } | null }, satelliteGovActionsVotesAmount: { __typename?: 'governance_satellite_action_vote_aggregate', aggregate?: { __typename?: 'governance_satellite_action_vote_aggregate_fields', count: number } | null } } }> };
 
 export type ProposalsAmountSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -72648,7 +72726,7 @@ export const GetLendingDiffDocument = {"kind":"Document","definitions":[{"kind":
 export const GetLoansHistoryDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"getLoansHistoryData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lending_controller"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"mock_time"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"history_data"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"ListValue","values":[{"kind":"StringValue","value":"0","block":false},{"kind":"StringValue","value":"1","block":false},{"kind":"StringValue","value":"2","block":false},{"kind":"StringValue","value":"3","block":false},{"kind":"StringValue","value":"4","block":false},{"kind":"StringValue","value":"5","block":false},{"kind":"StringValue","value":"6","block":false},{"kind":"StringValue","value":"7","block":false}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"timestamp"}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"asc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"loan_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loan_token_name"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"collateral_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetLoansHistoryDataSubscription, GetLoansHistoryDataSubscriptionVariables>;
 export const GetLoansHistoryForMarketDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"getLoansHistoryForMarketData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vaultAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"typeFilter"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"smallint"}}},"defaultValue":{"kind":"ListValue","values":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lending_controller"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"mock_time"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"history_data"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"loan_token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token_address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}}}]}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"timestamp"}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"loan_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loan_token_name"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"collateral_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"operation_hash"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"vault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetLoansHistoryForMarketDataSubscription, GetLoansHistoryForMarketDataSubscriptionVariables>;
 export const SatelliteVotesSubDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"satelliteVotesSub"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"satellite"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registration_timestamp"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"user"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"currently_registered"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"governance_financial_requests_votes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"vote"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"governance_financial_request"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"request_type"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_proposals_votes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"round"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"1","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"vote"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"governance_proposal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_satellite_actions_votes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"vote"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"governance_satellite_action"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"governance_type"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<SatelliteVotesSubSubscription, SatelliteVotesSubSubscriptionVariables>;
-export const SatelliteDataSubDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"satelliteDataSub"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"satellite"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registration_timestamp"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"currently_registered"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"website"}},{"kind":"Field","name":{"kind":"Name","value":"currently_registered"}},{"kind":"Field","name":{"kind":"Name","value":"peer_id"}},{"kind":"Field","name":{"kind":"Name","value":"public_key"}},{"kind":"Field","alias":{"kind":"Name","value":"delegatorCount"},"name":{"kind":"Name","value":"delegations_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"total_delegated_amount"}},{"kind":"Field","name":{"kind":"Name","value":"delegation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delegation_ratio"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"smvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"mvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"aggregator_oracles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"init_epoch"}},{"kind":"Field","name":{"kind":"Name","value":"init_round"}},{"kind":"Field","name":{"kind":"Name","value":"observations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"epoch"}},{"kind":"Field","name":{"kind":"Name","value":"round"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}}]}},{"kind":"Field","name":{"kind":"Name","value":"observations_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sum"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"}}]}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"smvkRewardsAmount"},"name":{"kind":"Name","value":"rewards_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"1","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sum"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reward"}}]}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"xtzRewardsAmount"},"name":{"kind":"Name","value":"rewards_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"0","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sum"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reward"}}]}}]}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"feedsObservationsAmount"},"name":{"kind":"Name","value":"aggregator_oracles_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"observations_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_satellite_snapshots"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"cycle"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cycle"}},{"kind":"Field","name":{"kind":"Name","value":"total_voting_power"}},{"kind":"Field","name":{"kind":"Name","value":"governance"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cycle_id"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"lastVotedProposal"},"name":{"kind":"Name","value":"governance_proposals_votes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"round"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"1","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"vote"}},{"kind":"Field","name":{"kind":"Name","value":"governance_proposal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"createdGovProposalsAmount"},"name":{"kind":"Name","value":"governance_proposals_proposer_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"createdFinRequestsAmount"},"name":{"kind":"Name","value":"governance_financial_requests_requester_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"createdSatelliteGovActionsAmount"},"name":{"kind":"Name","value":"governance_satellite_action_initiators_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"govProposalsVotesAmount"},"name":{"kind":"Name","value":"governance_proposals_votes_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"finRequestsVotesAmount"},"name":{"kind":"Name","value":"governance_financial_requests_votes_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"satelliteGovActionsVotesAmount"},"name":{"kind":"Name","value":"governance_satellite_actions_votes_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<SatelliteDataSubSubscription, SatelliteDataSubSubscriptionVariables>;
+export const SatelliteDataSubDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"satelliteDataSub"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"satellite"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registration_timestamp"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"currently_registered"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"website"}},{"kind":"Field","name":{"kind":"Name","value":"currently_registered"}},{"kind":"Field","name":{"kind":"Name","value":"peer_id"}},{"kind":"Field","name":{"kind":"Name","value":"public_key"}},{"kind":"Field","name":{"kind":"Name","value":"satellite_action_counter"}},{"kind":"Field","name":{"kind":"Name","value":"governance_proposal_counter"}},{"kind":"Field","name":{"kind":"Name","value":"financial_request_counter"}},{"kind":"Field","name":{"kind":"Name","value":"total_delegated_amount"}},{"kind":"Field","alias":{"kind":"Name","value":"delegatorCount"},"name":{"kind":"Name","value":"delegations_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"delegation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delegation_ratio"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"smvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"mvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"aggregator_oracles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"init_epoch"}},{"kind":"Field","name":{"kind":"Name","value":"init_round"}},{"kind":"Field","name":{"kind":"Name","value":"observations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"epoch"}},{"kind":"Field","name":{"kind":"Name","value":"round"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}}]}},{"kind":"Field","name":{"kind":"Name","value":"observations_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sum"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"}}]}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"smvkRewardsAmount"},"name":{"kind":"Name","value":"rewards_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"1","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sum"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reward"}}]}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"xtzRewardsAmount"},"name":{"kind":"Name","value":"rewards_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"0","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sum"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reward"}}]}}]}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"feedsObservationsAmount"},"name":{"kind":"Name","value":"aggregator_oracles_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"observations_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"governance_satellite_snapshots"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"cycle"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cycle"}},{"kind":"Field","name":{"kind":"Name","value":"total_voting_power"}},{"kind":"Field","name":{"kind":"Name","value":"governance"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cycle_id"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"lastVotedProposal"},"name":{"kind":"Name","value":"governance_proposals_votes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"round"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"1","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"vote"}},{"kind":"Field","name":{"kind":"Name","value":"governance_proposal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"createdGovProposalsAmount"},"name":{"kind":"Name","value":"governance_proposals_proposer_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"createdFinRequestsAmount"},"name":{"kind":"Name","value":"governance_financial_requests_requester_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"createdSatelliteGovActionsAmount"},"name":{"kind":"Name","value":"governance_satellite_action_initiators_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"govProposalsVotesAmount"},"name":{"kind":"Name","value":"governance_proposals_votes_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"finRequestsVotesAmount"},"name":{"kind":"Name","value":"governance_financial_requests_votes_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"satelliteGovActionsVotesAmount"},"name":{"kind":"Name","value":"governance_satellite_actions_votes_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<SatelliteDataSubSubscription, SatelliteDataSubSubscriptionVariables>;
 export const ProposalsAmountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"proposalsAmount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"governance_proposal_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<ProposalsAmountSubscription, ProposalsAmountSubscriptionVariables>;
 export const SatelliteGovActionsAmountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"satelliteGovActionsAmount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"governance_satellite_action_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<SatelliteGovActionsAmountSubscription, SatelliteGovActionsAmountSubscriptionVariables>;
 export const FinRequestsAmountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"finRequestsAmount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"governance_financial_request_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FinRequestsAmountSubscription, FinRequestsAmountSubscriptionVariables>;

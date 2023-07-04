@@ -29,11 +29,14 @@ export const getSatelliteParticipations = ({
     createdFinProposalsAmount,
     createdGovProposalsAmount,
     createdSatelliteGovProposalsAmount,
+    satelliteActionVotingPeriods,
+    governanceProposalsVotingPeriods,
+    financialRequestsVotingPeriods,
   } = satellite
 
   const satelliteVotesAmount = proposalsVotesAmount + financialRequestsVotesAmount + satelliteActionVotesAmount
-  // TODO: add value here (sum of proposals, requests, action that satellite was able to vote) needs to be implemented by tristan first
-  const satelliteVotingPeriods = 0
+  const satelliteVotingPeriods =
+    satelliteActionVotingPeriods + governanceProposalsVotingPeriods + financialRequestsVotingPeriods
 
   /**
    * @votingPartisipation how many votes satellite has participied
