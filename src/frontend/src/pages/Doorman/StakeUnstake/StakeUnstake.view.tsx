@@ -33,7 +33,7 @@ import {
   BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from '../../../app/App.components/Button/Button.constants'
-import { REWARDS_COMPOUND_ACTION, STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { REWARDS_COMPOUND_ACTION, STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
@@ -65,6 +65,8 @@ import { InputProps } from 'app/App.components/Input/newInput.type'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
 import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
 import { TezosWalletErrorPayload } from 'errors/error.type'
+import { Info } from 'app/App.components/Info/Info.view'
+import { INFO_ERROR, INFO_SMALL } from 'app/App.components/Info/info.constants'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -115,6 +117,9 @@ export const StakeUnstakeView = ({
     availableSatellitesRewards +
     Object.values(availableFarmRewards).reduce((acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards), 0)
   const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
+  const hasError =
+    sharedErrors[WALLTET_ERROR_FIELD]?.actionId === STAKE_ACTION ||
+    sharedErrors[WALLTET_ERROR_FIELD]?.actionId === UNSTAKE_ACTION
 
   const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {
     handleInputData(String(mathRoundTwoDigit(balance === 'mvk' ? myMvkTokenBalance : mySMvkTokenBalance)))
@@ -444,7 +449,12 @@ export const StakeUnstakeView = ({
           <CommaNumber value={mvkExchangeRate} beginningText={'$'} />
         </StakeUnstakeRate>
 
-        <StakeUnstakeButtonGrid>
+        {hasError && sharedErrors[WALLTET_ERROR_FIELD] && (
+          <div className="infoBlockWrapper">
+            <Info type={INFO_ERROR} size={INFO_SMALL} text={sharedErrors[WALLTET_ERROR_FIELD].description} />
+          </div>
+        )}
+        <StakeUnstakeButtonGrid hasError={hasError}>
           <NewButton
             kind={BUTTON_PRIMARY}
             onClick={() => handleStake(Number(inputData.amount))}

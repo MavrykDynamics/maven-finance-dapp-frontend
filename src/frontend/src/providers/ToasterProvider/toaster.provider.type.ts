@@ -11,6 +11,7 @@ import {
   TOASTER_WARNING,
 } from './toaster.provider.const'
 import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
+import { WalletActionType } from 'types/actions.type'
 
 export type ToasterTypes =
   | typeof TOASTER_SUCCESS
@@ -48,7 +49,7 @@ export type ToasterContextType = {
   loading: InstanceType<typeof ToasterProvider>['loading']
   error: CustomErrors | null
   sharedErrors: {
-    [WALLTET_ERROR_FIELD]: TezosWalletErrorPayload | null
+    [WALLTET_ERROR_FIELD]: (TezosWalletErrorPayload & { actionId: WalletActionType }) | null
   }
   hideToasterMessage: InstanceType<typeof ToasterProvider>['hideToasterMessage']
   deleteToasterFromArray: InstanceType<typeof ToasterProvider>['deleteToasterFromArray']

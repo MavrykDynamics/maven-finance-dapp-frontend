@@ -1,5 +1,5 @@
 import { OpKind, TransferParams, WalletParamsWithKind } from '@taquito/taquito'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { unknownToError } from 'errors/error'
 import { estimateBatchOperation, estimateExecution } from 'errors/helpers/walletError.helper'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'

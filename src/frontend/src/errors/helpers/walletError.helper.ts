@@ -1,5 +1,5 @@
 import { ContractMethod, OpKind, TezosOperationError, TransferParams, Wallet } from '@taquito/taquito'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { SPECIFIC_CONTRACT_ERROR_CODES } from 'errors/consts/customWalletErrorCodes'
 import { DEFAULT_TEZOS_ERROR } from 'errors/consts/error.const'
 import { CONTRACT_ERROR_CODES } from 'errors/consts/walletErrorCodes'
@@ -32,9 +32,7 @@ export const getContractErrorMessage = (e: unknown): TezosWalletErrorPayload => 
   return DEFAULT_TEZOS_ERROR
 }
 
-export const estimateExecution = async (
-  tezosOperation: ContractMethod<Wallet>,
-): Promise<EstimatedOperation> => {
+export const estimateExecution = async (tezosOperation: ContractMethod<Wallet>): Promise<EstimatedOperation> => {
   const defaultEstimatedOperation: EstimatedOperation = {
     gasLimit: 0,
     minimalFeeMutez: 0,
@@ -46,7 +44,7 @@ export const estimateExecution = async (
   try {
     const tezos = await DAPP_INSTANCE.tezos()
     const estimatedOperation = await tezos?.estimate.transfer(tezosOperation.toTransferParams())
-    return { ...defaultEstimatedOperation, ...estimatedOperation }
+    return { ...defaultEstimatedOperation, error: DEFAULT_TEZOS_ERROR }
   } catch (e) {
     return {
       ...defaultEstimatedOperation,

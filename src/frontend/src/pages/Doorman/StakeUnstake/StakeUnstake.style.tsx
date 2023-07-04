@@ -52,6 +52,10 @@ export const StakeUnstakeActionCard = styled(Card)<{ theme: MavrykTheme }>`
   color: ${({ theme }) => theme.subTextColor};
   margin: 0;
   padding: 18px 30px;
+
+  & .infoBlockWrapper {
+    margin: 15px auto;
+  }
 `
 export const StakeUnstakeInputColumn = styled.div`
   position: relative;

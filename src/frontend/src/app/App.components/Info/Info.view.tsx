@@ -30,7 +30,7 @@ export const Info = ({ children, text, type, showIcon = true, size = 'medium' }:
   const iconToUse = getIconForInfoTyType(type)
 
   const bannerClasses = classNames(type, {
-    size,
+    [size]: size,
     hasBorder: showIcon,
     hasChild: Boolean(children),
   })
