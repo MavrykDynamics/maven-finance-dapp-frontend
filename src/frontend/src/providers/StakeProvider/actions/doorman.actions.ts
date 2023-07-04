@@ -4,6 +4,7 @@ import { unknownToError } from 'errors/error'
 import { estimateBatchOperation, estimateExecution } from 'errors/helpers/walletError.helper'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const stakeMVK = async (
   amount: number,
@@ -108,6 +109,27 @@ export const rewardsCompound = async (
     }
 
     const operation = await rewardsOperationMetaData.send()
+
+    return { actionSuccess: true, operation }
+  } catch (error) {
+    return { actionSuccess: false, error: unknownToError(error) }
+  }
+}
+
+export const getMVKTokensFromFaucet = async (mvkFaucetAddress: string) => {
+  try {
+    // prepare and send transaction
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(mvkFaucetAddress)
+    const requestMVKMetaData = await contract.methods.requestMvk()
+
+    const op = await estimateExecution(requestMVKMetaData)
+
+    if (op?.error) {
+      return { actionSuccess: false, error: op.error }
+    }
+
+    const operation = await requestMVKMetaData.send()
 
     return { actionSuccess: true, operation }
   } catch (error) {

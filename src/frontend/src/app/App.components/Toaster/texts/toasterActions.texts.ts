@@ -8,6 +8,7 @@ import { ACTION_START_MESSAGE_TEXT, ACTION_COMPLETION_MESSAGE_TEXT } from '../To
 import { CLAIM_ALL_REWARDS_ACTION, CLAIM_VESTING_REWARD_ACTION } from 'providers/UserProvider/helpers/user.consts'
 
 export const TOASTER_ACTIONS_TEXTS = {
+  // doorman actions -----------------------------
   [STAKE_ACTION]: {
     start: {
       title: 'Staking...',
