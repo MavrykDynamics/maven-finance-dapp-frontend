@@ -1,0 +1,2 @@
+const minimumPersentValue = 0.01
+export const getClassNameBasedOnPersentValue = (persentValue: number) => persentValue > minimumPersentValue || persentValue < -minimumPersentValue ? (persentValue > 0 ? 'up' : 'down') : 'neutral'

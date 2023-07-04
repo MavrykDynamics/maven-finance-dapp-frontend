@@ -53,7 +53,7 @@ export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: 
 
         <EarnBorrowChart data={chartData} />
 
-        <div className={leftValue || rightValue ? '' : 'hidden'}>
+        <div>
           <div className="info">
             <span>{leftValueName}</span>
             <span>{rightValueName}</span>

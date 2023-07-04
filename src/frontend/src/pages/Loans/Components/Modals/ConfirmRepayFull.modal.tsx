@@ -39,6 +39,7 @@ export const ConfirmRepayFull = ({
     currentCollateralBalance = 0,
     borrowCapacity = 0,
     borrowedAmount = 0,
+    callback,
   } = data ?? {}
 
   const totalOutstanding = feesAmount + Number(borrowedAmount)
@@ -56,6 +57,11 @@ export const ConfirmRepayFull = ({
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [borrowedAsset, currentCollateralBalance, borrowCapacity, borrowedAmount])
 
+  const callActionsAfterTransaction = () => {
+    closePopup()
+    callback?.()
+  }
+
   const repayBtnHandler = async () => {
     if (vaultId && borrowedAsset && vaultAddress) {
       await dispatch(
@@ -66,7 +72,7 @@ export const ConfirmRepayFull = ({
           borrowedAsset.decimals,
           borrowedAsset.tokenType,
           borrowedAsset.address,
-          closePopup,
+          callActionsAfterTransaction,
         ),
       )
     }

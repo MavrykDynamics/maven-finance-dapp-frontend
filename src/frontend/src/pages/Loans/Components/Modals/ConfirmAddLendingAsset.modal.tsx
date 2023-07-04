@@ -38,14 +38,21 @@ export const ConfirmAddLendingAsset = ({
     gqlName = '',
     tokenType = '',
     id = 0,
+    callback,
   } = data ?? {}
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()
 
+
+  const callActionsAfterTransaction = () => {
+    closePopup()
+    callback?.()
+  }
+
   const depositHandler = () => {
     if (tokenType && address) {
-      dispatch(depositLendingAssetAction(gqlName, inputAmount, address, id, tokenType, decimals, closePopup))
+      dispatch(depositLendingAssetAction(gqlName, inputAmount, address, id, tokenType, decimals, callActionsAfterTransaction))
     }
   }
 

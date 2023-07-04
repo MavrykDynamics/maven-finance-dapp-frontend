@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Redirect, useParams } from 'react-router'
+import { Redirect, useHistory, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 
 // const
@@ -32,6 +32,7 @@ import colors from 'styles/colors'
 import { USER_AVAILABLE_BORROW } from 'texts/tooltips/loan.text'
 
 export const Market = () => {
+  const history = useHistory()
   const dispatch = useDispatch()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
   const {
@@ -113,9 +114,13 @@ export const Market = () => {
 
   const marketPagination = (
     <MarketPagination>
-      <Link to="/loans">
-        <Button text="Go Back" icon="arrowRight" className="arrow" kind={TRANSPARENT_WITH_BORDER} />
-      </Link>
+      <Button
+        onClick={() => history.goBack()}
+        text="Go Back"
+        icon="arrowRight"
+        className="arrow"
+        kind={TRANSPARENT_WITH_BORDER}
+      />
 
       <div className="right-side-wrapper">
         {prevMarket ? (
@@ -239,9 +244,7 @@ export const Market = () => {
             marketReserveAmount={currentToken.reserveAmount}
           />
         ) : null}
-        {tabId === BORROW_TAB_ID ? (
-          <BorrowingTab currentToken={currentToken} />
-        ) : null}
+        {tabId === BORROW_TAB_ID ? <BorrowingTab currentToken={currentToken} /> : null}
       </MarketStyled>
     </Page>
   )
