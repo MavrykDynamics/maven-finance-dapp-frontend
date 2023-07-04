@@ -116,7 +116,9 @@ export const rewardsCompound = async (
   }
 }
 
-export const getMVKTokensFromFaucet = async (mvkFaucetAddress: string) => {
+export const getMVKTokensFromFaucet = async (
+  mvkFaucetAddress: string,
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
