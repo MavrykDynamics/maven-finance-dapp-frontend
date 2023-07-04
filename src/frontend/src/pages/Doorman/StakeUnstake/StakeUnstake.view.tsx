@@ -95,8 +95,6 @@ export const StakeUnstakeView = ({
   const { setAction } = useDappConfigContext()
   const { info, loading, bug, setSharedError, sharedErrors } = useToasterContext()
 
-  console.log(sharedErrors, 'sharedErrors')
-
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)

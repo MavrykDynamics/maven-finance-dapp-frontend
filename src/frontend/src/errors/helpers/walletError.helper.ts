@@ -44,7 +44,7 @@ export const estimateExecution = async (tezosOperation: ContractMethod<Wallet>):
   try {
     const tezos = await DAPP_INSTANCE.tezos()
     const estimatedOperation = await tezos?.estimate.transfer(tezosOperation.toTransferParams())
-    return { ...defaultEstimatedOperation, error: DEFAULT_TEZOS_ERROR }
+    return { ...defaultEstimatedOperation, ...estimatedOperation }
   } catch (e) {
     return {
       ...defaultEstimatedOperation,
