@@ -48,6 +48,18 @@ import colors from 'styles/colors'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { rewardsCompound } from 'providers/StakeProvider/actions/doorman.actions'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { REWARDS_COMPOUND_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { sleep } from 'utils/api/sleep'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { TezosWalletErrorPayload } from 'errors/error.type'
+import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
+import { unknownToError } from 'errors/error'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -65,6 +77,8 @@ const renderVotingHistoryItem = (vote: number) => {
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
   const { userTokensBalances, isSatellite, satelliteMvkIsDelegatedTo, availableSatellitesRewards, userAddress } =
     useUserContext()
+  const { setAction } = useDappConfigContext()
+  const { bug, info, loading, setSharedError } = useToasterContext()
 
   const dispatch = useDispatch()
 
@@ -80,42 +94,42 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const undelegateCallback = async () => await dispatch(undelegate(satellite.address))
   // TODO add logic
   const claimRewardsCallback = async () => {
-    // if (!userAddress) {
-    //   bug('Click Connect in the left menu', 'Please connect your wallet')
-    //   return
-    // }
-    // const actionResult = await rewardsCompound(userAddress, doormanAddress)
-    // if (checkIfActionSuccess(actionResult)) {
-    //   try {
-    //     const { operation } = actionResult
-    //     dispatch(toggleActionFullScreenLoader(true))
-    //     dispatch(toggleActionCompletion(true))
-    //     info(
-    //       TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['message'],
-    //       TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['title'],
-    //     )
-    //     await sleep(5000)
-    //     // show toaster loader after 5000ms after operation started
-    //     const toasterId = loading(
-    //       TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-    //       TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-    //     )
-    //     dispatch(toggleActionFullScreenLoader(false))
-    //     dispatch(toggleActionCompletion(false))
-    //     const operationConfirm = await operation.confirmation()
-    //     const operationLvl = operationConfirm.block.header.level
-    //     setAction({ actionName: REWARDS_COMPOUND_ACTION, toasterId, operationLvl })
-    //   } catch (e) {}
-    // } else if (isContractErrorPayload(actionResult.error)) {
-    //   setSharedError(WALLTET_ERROR_FIELD, {
-    //     ...(actionResult.error as TezosWalletErrorPayload),
-    //     actionId: REWARDS_COMPOUND_ACTION,
-    //   })
-    // } else {
-    //   setAction(null)
-    //   const parsedError = unknownToError(actionResult.error)
-    //   bug(parsedError.message)
-    // }
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    const actionResult = await rewardsCompound(userAddress, doormanAddress)
+    if (checkIfActionSuccess(actionResult)) {
+      try {
+        const { operation } = actionResult
+        dispatch(toggleActionFullScreenLoader(true))
+        dispatch(toggleActionCompletion(true))
+        info(
+          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['title'],
+        )
+        await sleep(5000)
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+        setAction({ actionName: REWARDS_COMPOUND_ACTION, toasterId, operationLvl })
+      } catch (e) {}
+    } else if (isContractErrorPayload(actionResult.error)) {
+      setSharedError(WALLTET_ERROR_FIELD, {
+        ...(actionResult.error as TezosWalletErrorPayload),
+        actionId: REWARDS_COMPOUND_ACTION,
+      })
+    } else {
+      setAction(null)
+      const parsedError = unknownToError(actionResult.error)
+      bug(parsedError.message)
+    }
   }
   // TODO: add valid data
   const distributeRewardsCallback = async () => await dispatch(distributeProposalRewards('', []))
