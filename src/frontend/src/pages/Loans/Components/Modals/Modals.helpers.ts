@@ -16,12 +16,14 @@ export const getOnFocusValue = (inputValue: string) => (inputValue === '0' ? '' 
 export type ConfirmAddLendingAssetDataType =
   | (AddLendingAssetDataType & {
       inputAmount: number
+      callback: () => void
     })
   | null
 
 export type ConfirmRemoveLendingAssetDataType =
   | (RemoveLendingAssetDataType & {
       inputAmount: number
+      callback: () => void
     })
   | null
 
@@ -33,7 +35,7 @@ export type ConfirmBorrowPopupDataType = {
   currentCollateralBalance: number
   DAOFee: number
   currentBorrowedAmount: number
-  scrollToCurrentVault?: () => void
+  callback: () => void
 } | null
 
 export type ConfirmRepayPartPopupDataType = {
@@ -44,7 +46,7 @@ export type ConfirmRepayPartPopupDataType = {
   currentCollateralBalance: number
   borrowCapacity: number
   inputAmount: number
-  scrollToCurrentVault?: () => void
+  callback: () => void
 } | null
 
 export type ConfirmRepayFullPopupDataType = {
@@ -55,6 +57,7 @@ export type ConfirmRepayFullPopupDataType = {
   borrowedAmount: number
   currentCollateralBalance: number
   borrowCapacity: number
+  callback: () => void
 } | null
 
 export type CollateralPopupCommonDataType = {

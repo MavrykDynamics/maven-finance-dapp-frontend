@@ -33,13 +33,20 @@ export const ConfirmRemoveAssetsFromLending = ({
     lendingAPY = 0,
     icon = '',
     gqlName = '',
+    callback,
   } = data ?? {}
 
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()
 
-  const withdrawHandler = () => dispatch(withdrawLendingAssetAction(gqlName, inputAmount, decimals, closePopup))
+  const callActionsAfterTransaction = () => {
+    closePopup()
+    callback?.()
+  }
+
+  const withdrawHandler = () =>
+    dispatch(withdrawLendingAssetAction(gqlName, inputAmount, decimals, callActionsAfterTransaction))
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -70,11 +77,7 @@ export const ConfirmRemoveAssetsFromLending = ({
               </ThreeLevelListItem>
               <ThreeLevelListItem className="right">
                 <div className="name">New USD Value</div>
-                <CommaNumber
-                  value={(currentLendedAmount - inputAmount) * rate}
-                  className="value"
-                  beginningText="$"
-                />
+                <CommaNumber value={(currentLendedAmount - inputAmount) * rate} className="value" beginningText="$" />
               </ThreeLevelListItem>
             </div>
           </div>

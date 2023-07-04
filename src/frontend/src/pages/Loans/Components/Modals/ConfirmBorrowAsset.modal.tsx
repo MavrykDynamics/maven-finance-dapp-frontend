@@ -40,7 +40,7 @@ export const ConfirmBorrowAsset = ({
     currentBorrowedAmount = 0,
     currentCollateralBalance = 0,
     DAOFee = 0,
-    scrollToCurrentVault,
+    callback,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -57,11 +57,14 @@ export const ConfirmBorrowAsset = ({
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputAmount, borrowCapacity])
 
+  const callActionsAfterTransaction = () => {
+    closePopup()
+    callback?.()
+  }
+
   const borrowAsserHandler = async () => {
     if (vaultId && borrowedAsset) {
-      await dispatch(
-        borrowVaultAssetAction(vaultId, inputAmount, borrowedAsset.decimals, closePopup, scrollToCurrentVault),
-      )
+      await dispatch(borrowVaultAssetAction(vaultId, inputAmount, borrowedAsset.decimals, callActionsAfterTransaction))
     }
   }
 

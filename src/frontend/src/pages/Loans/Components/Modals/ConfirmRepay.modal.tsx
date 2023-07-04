@@ -39,7 +39,7 @@ export const ConfirmRepay = ({
     currentCollateralBalance = 0,
     borrowCapacity = 0,
     borrowedAmount = 0,
-    scrollToCurrentVault,
+    callback,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -55,6 +55,11 @@ export const ConfirmRepay = ({
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [borrowedAsset, currentCollateralBalance, borrowCapacity, inputAmount, borrowedAmount])
 
+  const callActionsAfterTransaction = () => {
+    closePopup()
+    callback?.()
+  }
+
   const repayBtnHandler = async () => {
     if (vaultId && borrowedAsset && vaultAddress) {
       await dispatch(
@@ -65,8 +70,7 @@ export const ConfirmRepay = ({
           borrowedAsset.decimals,
           borrowedAsset.tokenType,
           borrowedAsset.address,
-          closePopup,
-          scrollToCurrentVault,
+          callActionsAfterTransaction,
         ),
       )
     }
