@@ -1,4 +1,4 @@
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
 import { getGovernanceStorage } from './GovernanseData.actions'
 import { showToaster, hideToaster } from 'app/App.components/Toaster/Toaster.actions'

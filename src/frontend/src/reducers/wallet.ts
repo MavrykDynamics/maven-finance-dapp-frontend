@@ -1,8 +1,7 @@
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
-import { DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-
 export const SET_REDUX_USER = 'SET_REDUX_USER'
+export const DISCONNECT = 'DISCONNECT'
 
 export interface WalletState {
   accountPkh?: string

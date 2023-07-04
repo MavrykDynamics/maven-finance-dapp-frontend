@@ -146,7 +146,7 @@ export const AppRoutes = () => {
       </Route>
 
       {/* LEND & BORROW */}
-      <Route exact path="/loans/:assetId/:tabId">
+      <Route exact path="/loans/:assetAddress/:tabId">
         <Market />
       </Route>
       <Route exact path="/loans">

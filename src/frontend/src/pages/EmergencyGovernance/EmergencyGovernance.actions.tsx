@@ -1,5 +1,5 @@
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { hideToaster, showToaster } from '../../app/App.components/Toaster/Toaster.actions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 import { normalizeEmergencyGovernance } from '../EmergencyGovernance/EmergencyGovernance.helpers'

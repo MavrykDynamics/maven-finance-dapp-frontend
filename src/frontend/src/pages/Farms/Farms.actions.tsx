@@ -26,7 +26,7 @@ import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLev
 // actions
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { hideToaster, showToaster } from '../../app/App.components/Toaster/Toaster.actions'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 
 export const GET_FARM_STORAGE = 'GET_FARM_STORAGE'

@@ -6,7 +6,7 @@ import farmFactoryAddress from '../../deployments/farmFactoryAddress.json'
 
 import { OpKind } from '@taquito/taquito'
 import { convertNumberForContractCall } from '../../utils/calcFunctions'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { GET_GOVERNANCE_CONFIG } from 'pages/Governance/actions/GovernanseData.actions'
 import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 

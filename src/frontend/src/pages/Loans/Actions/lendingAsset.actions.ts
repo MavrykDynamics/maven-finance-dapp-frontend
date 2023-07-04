@@ -1,7 +1,7 @@
 import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
 import { OpKind, TransactionWalletOperation } from '@taquito/taquito'
 
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { getLoansStorage } from './getLoansData.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
