@@ -122,16 +122,15 @@ export const BorrowAsset = ({
   const continueBtnHandler = () => setShownScreen('confitmation')
   const backBtnHandler = () => setShownScreen('initial')
 
+  const callActionsAfterTransaction = () => {
+    closePopup()
+    scrollToCurrentVault?.()
+  }
+
   const borrowAsserHandler = async () => {
     if (vaultId && borrowedAsset) {
       await dispatch(
-        borrowVaultAssetAction(
-          vaultId,
-          Number(inputData.amount),
-          borrowedAsset.decimals,
-          closePopup,
-          scrollToCurrentVault,
-        ),
+        borrowVaultAssetAction(vaultId, Number(inputData.amount), borrowedAsset.decimals, callActionsAfterTransaction),
       )
     }
   }
