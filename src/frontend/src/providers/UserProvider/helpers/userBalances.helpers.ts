@@ -30,7 +30,7 @@ export const getUserTokenBalanceByAddress = ({
   tokenAddress,
 }: {
   userTokensBalances: UserContext['userTokensBalances']
-  tokenAddress?: string
+  tokenAddress?: string | null
 }): number => {
   if (!userTokensBalances || !tokenAddress) return 0
   return userTokensBalances[tokenAddress] ?? 0

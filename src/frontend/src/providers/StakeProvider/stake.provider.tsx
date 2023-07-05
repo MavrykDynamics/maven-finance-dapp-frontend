@@ -1,3 +1,4 @@
+import { ApolloError, useSubscription } from '@apollo/client'
 import React, { useContext, useMemo, useState } from 'react'
 
 // helpers
@@ -5,7 +6,7 @@ import { normalizeDoormanChartsData } from './helpers/normalizer'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 // providers
-import { ApolloError, useSubscription } from '@apollo/client'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
@@ -39,19 +40,13 @@ import {
 } from './queries/doorman.query'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
-// TODO: remove after contract addresses to context
-import { State as ReduxState } from 'reducers'
-import { useSelector } from 'react-redux'
-
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
 const StakeProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
-
-  // TODO: remove after contract addresses to context
   const {
-    doormanAddress: { address: doormanAddress },
-  } = useSelector((state: ReduxState) => state.contractAddresses)
+    contractAddresses: { doormanAddress },
+  } = useDappConfigContext()
 
   const [stakingCtxState, setStakingCtxState] = useState<StakeContextStateType>(DEFAULT_STAKING_CTX)
   const [activeSubs, setActiveSubs] = useState<StakingSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
@@ -72,7 +67,7 @@ const StakeProvider = ({ children }: Props) => {
   })
 
   const { loading: isMvkBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
-    skip: !activeSubs[MVK_BALANCE_SUB],
+    skip: !activeSubs[MVK_BALANCE_SUB] || !doormanAddress,
     variables: {
       _eq: doormanAddress,
     },

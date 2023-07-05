@@ -9,6 +9,8 @@ import {
   satelliteVoteSchema,
   SATELLITE_ORACLE_STATUSES,
   SATELLITE_STATUSES,
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
 } from './satellites.const'
 
 export type SatelliteRecordType = NonNullable<ReturnType<typeof normallizeSatellite>>
@@ -30,7 +32,8 @@ export type SatellitesContext = {
   isLoading: boolean
 
   // api
-  setSatelliteAddressToSubsctibe: (satelliteAddress: string) => void
+  setSatelliteAddressToSubsctibe: (satelliteAddress: string | null) => void
+  changeSatellitesSubscriptionsList: (skips: Partial<SatellitesSubsRecordType>) => void
 }
 
 export type SatellitesCtxState = Pick<
@@ -85,3 +88,6 @@ export type SatellitesStatisticsSubsSkipsType = {
   skipTotalDelegatedMVK?: boolean
   skipOracleRewardsTotal?: boolean
 }
+
+export type SatellitesSubsType = typeof SATELLITE_DATA_SUB | typeof SATELLITE_PARTICIPATION_DATA_SUB
+export type SatellitesSubsRecordType = Record<SatellitesSubsType, boolean>

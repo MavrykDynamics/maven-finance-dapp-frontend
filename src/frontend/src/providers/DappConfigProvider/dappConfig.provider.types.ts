@@ -2,12 +2,14 @@ import { TransactionWalletOperation } from '@taquito/taquito'
 import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
 import { StakeActionType } from 'providers/StakeProvider/stake.provider.types'
 import { XtzBakerType } from './bakers/getXtzBakers'
+import { normalizeContractAddresses } from './helpers/dappConfig.normalizers'
 
 export type DappConfigContext = {
   // data
   maxLengths: DappMaxLengths
   mvkFaucetAddress: string | null
   minimumStakedMvkBalance: number
+  contractAddresses: Record<DappContractAddressesKeysType, string | null>
   xtzBakers: {
     dao: XtzBakerType
     mavrykDynamics: XtzBakerType
@@ -21,7 +23,7 @@ export type DappConfigContext = {
 
 export type DappConfigContextStateType = Pick<
   DappConfigContext,
-  'maxLengths' | 'mvkFaucetAddress' | 'xtzBakers' | 'minimumStakedMvkBalance'
+  'maxLengths' | 'mvkFaucetAddress' | 'xtzBakers' | 'minimumStakedMvkBalance' | 'contractAddresses'
 >
 
 // TODO: dont forget to add other action names with their transfer to context
@@ -36,6 +38,10 @@ export type ActionSuccessReturnType = {
   actionSuccess: boolean
   operation: TransactionWalletOperation | BatchWalletOperation
 }
+
+// Contract Addresses type
+export type DappContractAddressesType = ReturnType<typeof normalizeContractAddresses>
+export type DappContractAddressesKeysType = keyof DappContractAddressesType
 
 // MAX LENGHTS TYPES
 export type CouncilMaxLength = {

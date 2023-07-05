@@ -2,12 +2,12 @@ import { OperationVariables, TypedDocumentNode } from '@apollo/client'
 import { DocumentNode } from 'graphql'
 import { gql as apolloGql } from '@apollo/client'
 import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
-import { ALL_SATELLITES_SUB } from '../satellites.const'
 
 export function getSatelliteDataSubscription(
   userAddress: string | null,
 ): DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables> {
-  const filteredCondition = `user: {address: {${userAddress !== ALL_SATELLITES_SUB ? '_eq' : '_neq'}: $userAddress}}`
+  const filteredCondition = `user: {address: {${userAddress ? '_eq' : '_neq'}: $userAddress}}`
+  console.log({ userAddress })
 
   return apolloGql`subscription satelliteDataSub($userAddress: String!) {
     satellite(where: {registration_timestamp: {_is_null: false}, ${filteredCondition}}, order_by: {currently_registered: desc}) {

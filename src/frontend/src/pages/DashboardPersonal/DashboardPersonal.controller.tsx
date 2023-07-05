@@ -46,12 +46,22 @@ import {
   MVK_TOTAL_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
 } from 'providers/StakeProvider/helpers/stake.consts'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+} from 'providers/SatellitesProvider/satellites.const'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
+  const {
+    contractAddresses: { mvkTokenAddress },
+  } = useDappConfigContext()
   const {
     userTokensBalances,
     userAddress,
@@ -66,10 +76,8 @@ const DashboardPersonal = () => {
     isSatellite,
     isVestee,
   } = useUserContext()
+  const { changeSatellitesSubscriptionsList, isLoading: isSatellitesLoading } = useSatellitesContext()
 
-  const {
-    mvkTokenAddress: { address: mvkTokenAddress },
-  } = useSelector((state: State) => state.contractAddresses)
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
@@ -85,7 +93,15 @@ const DashboardPersonal = () => {
       [MVK_BALANCE_SUB]: true,
     })
 
-    return () => changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
   }, [])
 
   const { isLoading } = useDataLoader(
@@ -191,7 +207,7 @@ const DashboardPersonal = () => {
           <DashboardPersonalEarningsHistory {...earnings} />
         </div>
 
-        {isLoading || isDoormanLoading ? (
+        {isLoading || isDoormanLoading || isSatellitesLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
             <div className="text">Loading your statistic</div>

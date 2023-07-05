@@ -1,8 +1,6 @@
-import { useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 
-import { State } from '../../../reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_WIDE } from '../Button/Button.constants'
 import { BLUE } from '../TzAddress/TzAddress.constants'
 import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
@@ -23,6 +21,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { ImageWithPlug } from '../Icon/ImageWithPlug'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type ConnectWalletProps = {
   mountWertWiget: (commodity: string) => void
@@ -33,13 +32,12 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
 
   const { tokensPrices, tokensMetadata } = useTokensContext()
   const { userAddress, userTokensBalances, signOut, changeUser } = useUserContext()
+  const {
+    contractAddresses: { mvkTokenAddress },
+  } = useDappConfigContext()
 
   const mvkTokenRate = tokensPrices[MVK_TOKEN_SYMBOL]
   const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
-
-  const {
-    mvkTokenAddress: { address: mvkTokenAddress },
-  } = useSelector((state: State) => state.contractAddresses)
 
   const { pathname } = useLocation()
 
@@ -215,13 +213,12 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
   const { tokensPrices, tokensMetadata } = useTokensContext()
   const { userAddress, userTokensBalances, signOut, changeUser } = useUserContext()
+  const {
+    contractAddresses: { mvkTokenAddress },
+  } = useDappConfigContext()
 
   const mvkTokenRate = tokensPrices[MVK_TOKEN_SYMBOL]
   const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
-
-  const {
-    mvkTokenAddress: { address: mvkTokenAddress },
-  } = useSelector((state: State) => state.contractAddresses)
 
   const { pathname } = useLocation()
 

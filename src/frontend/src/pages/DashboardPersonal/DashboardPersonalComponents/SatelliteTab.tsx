@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 // const
-import { ALL_SATELLITES_SUB, SATELLITE_ORACLE_STATUSES } from 'providers/SatellitesProvider/satellites.const'
+import { SATELLITE_ORACLE_STATUSES } from 'providers/SatellitesProvider/satellites.const'
 import colors from 'styles/colors'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
@@ -48,7 +48,7 @@ const SatelliteTab = () => {
     if (userAddress) {
       setSatelliteAddressToSubsctibe(userAddress)
     }
-    return () => setSatelliteAddressToSubsctibe(ALL_SATELLITES_SUB)
+    return () => setSatelliteAddressToSubsctibe(null)
   }, [userAddress])
 
   const { themeSelected } = useSelector((state: State) => state.preferences)

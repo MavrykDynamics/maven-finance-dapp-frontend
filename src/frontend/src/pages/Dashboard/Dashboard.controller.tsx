@@ -30,6 +30,11 @@ import {
   MVK_BALANCE_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
 } from 'providers/StakeProvider/helpers/stake.consts'
+import {
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+} from 'providers/SatellitesProvider/satellites.const'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -45,7 +50,7 @@ export const Dashboard = () => {
     isLoading: isDoormanLoading,
     changeStakingSubscriptionsList,
   } = useStakeContext()
-  const { isLoading: isSatellitesLoading } = useSatellitesContext()
+  const { isLoading: isSatellitesLoading, changeSatellitesSubscriptionsList } = useSatellitesContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   useEffect(() => {
@@ -53,8 +58,15 @@ export const Dashboard = () => {
       [MVK_TOTAL_SUB]: true,
       [MVK_BALANCE_SUB]: true,
     })
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
 
-    return () => changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+    return () => {
+      changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
   }, [])
 
   const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0

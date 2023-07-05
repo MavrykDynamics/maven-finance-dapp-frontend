@@ -34,19 +34,14 @@ import { FinancialRequests } from 'pages/FinacialRequests/FinancialRequests.cont
 import SatelliteNodes from 'pages/SatelliteNodes/SatelliteNodes.controller'
 import Satellites from 'pages/Satellites/Satellites.controller'
 
-// providers
-
 // helpers
 import { scrollUpPage } from 'utils/scrollUpPage'
 import ProtectedRoute from './ProtectedRoute'
-import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
 
   const { userAddress, isSatellite } = useUserContext()
-
-  const { isInitialDataLoading } = useSelector((state: State) => state.loading)
 
   // get origin pathname
   const [, path] = pathname.split('/')
@@ -59,53 +54,35 @@ export const AppRoutes = () => {
   return (
     <Switch>
       <Route exact path="/staking">
-        <SatellitesProvider>
-          <Doorman />
-        </SatellitesProvider>
+        <Doorman />
       </Route>
 
       {/* DASHBOARD */}
       <Route exact path="/">
-        <SatellitesProvider>
-          <Dashboard />
-        </SatellitesProvider>
+        <Dashboard />
       </Route>
       <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
-        <SatellitesProvider>
-          <DashboardPersonal />
-        </SatellitesProvider>
+        <DashboardPersonal />
       </Route>
 
       {/* SATELLITES */}
       <Route exact path="/satellites">
-        <SatellitesProvider>
-          <Satellites />
-        </SatellitesProvider>
+        <Satellites />
       </Route>
       <Route exact path="/become-satellite">
-        <SatellitesProvider>
-          <BecomeSatellite />
-        </SatellitesProvider>
+        <BecomeSatellite />
       </Route>
       <Route exact path="/satellite-nodes">
-        <SatellitesProvider>
-          <SatelliteNodes />
-        </SatellitesProvider>
+        <SatelliteNodes />
       </Route>
       <Route exact path="/satellites/satellite-details/:satelliteId">
-        <SatellitesProvider>
-          <SatelliteDetails />
-        </SatellitesProvider>
+        <SatelliteDetails />
       </Route>
       <Route exact path="/data-feeds">
-        <SatellitesProvider>
-          <DataFeeds />
-        </SatellitesProvider>
+        <DataFeeds />
       </Route>
       <Route exact path="/satellites/feed-details/:feedId">
-        <SatellitesProvider>
-          <DataFeedDetails />
-        </SatellitesProvider>
+        <DataFeedDetails />
       </Route>
 
       {/* GOVERNANCE PAGES */}
@@ -137,7 +114,6 @@ export const AppRoutes = () => {
         path="/submit-proposal"
         component={ProposalSubmission}
         isAuthorized={Boolean(userAddress)}
-        canCheck={!isInitialDataLoading}
         hasAccess={Boolean(isSatellite)}
         redirectPath={'/governance'}
       />

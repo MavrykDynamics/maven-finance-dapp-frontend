@@ -35,10 +35,10 @@ import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartDat
 type Props = {
   treasury: TreasuryType[number]
   isGlobal?: boolean
-  factoryAddress?: string
+  factoryAddress?: string | null
 }
 
-export default function TreasuryView({ treasury, isGlobal = false, factoryAddress = '' }: Props) {
+export default function TreasuryView({ treasury, isGlobal = false, factoryAddress }: Props) {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
   const [showZeroTreasuries, setShowZeroTreasuries] = useState<boolean>(false)
   const ref = useRef<HTMLDivElement | null>(null)

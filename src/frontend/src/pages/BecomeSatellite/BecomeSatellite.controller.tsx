@@ -57,7 +57,7 @@ import {
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-import { ALL_SATELLITES_SUB } from 'providers/SatellitesProvider/satellites.const'
+import { DEFAULT_SATELLITES_ACTIVE_SUBS, SATELLITE_DATA_SUB } from 'providers/SatellitesProvider/satellites.const'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -69,7 +69,12 @@ const connectWalletMessage = (
 )
 
 export const BecomeSatellite = () => {
-  const { satelliteMapper, setSatelliteAddressToSubsctibe, isLoading: isSatellitesLoading } = useSatellitesContext()
+  const {
+    satelliteMapper,
+    setSatelliteAddressToSubsctibe,
+    changeSatellitesSubscriptionsList,
+    isLoading: isSatellitesLoading,
+  } = useSatellitesContext()
   const {
     userAddress,
     isSatellite,
@@ -83,13 +88,23 @@ export const BecomeSatellite = () => {
     minimumStakedMvkBalance,
   } = useDappConfigContext()
 
+  useEffect(() => {
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
+  }, [])
+
   const dispatch = useDispatch()
 
   useEffect(() => {
     if (userAddress) {
       setSatelliteAddressToSubsctibe(userAddress)
     }
-    return () => setSatelliteAddressToSubsctibe(ALL_SATELLITES_SUB)
+    return () => setSatelliteAddressToSubsctibe(null)
   }, [userAddress])
 
   const { isActionActive } = useSelector((state: State) => state.loading)

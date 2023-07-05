@@ -15,6 +15,7 @@ import { DoormanStats } from './DoormanStats/DoormanStats.controller'
 import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 
 // providers
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 // actions
@@ -30,6 +31,8 @@ import {
   SMVK_HISTORY_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
 } from 'providers/StakeProvider/helpers/stake.consts'
+import { DEFAULT_SATELLITES_ACTIVE_SUBS, SATELLITE_DATA_SUB } from 'providers/SatellitesProvider/satellites.const'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const DEFAULT_STAKE_UNSTAKE_INPUT: { amount: string; validation: InputStatusType; errorMessage: string } = {
   amount: '0',
@@ -40,6 +43,10 @@ export const DEFAULT_STAKE_UNSTAKE_INPUT: { amount: string; validation: InputSta
 export const Doorman = () => {
   const { tokensPrices } = useTokensContext()
   const { userTokensBalances, userAddress } = useUserContext()
+  const {
+    contractAddresses: { doormanAddress, mvkTokenAddress },
+  } = useDappConfigContext()
+  const { changeSatellitesSubscriptionsList } = useSatellitesContext()
   const {
     totalStakedMvk,
     maximumTotalSupply,
@@ -55,14 +62,17 @@ export const Doorman = () => {
       [SMVK_HISTORY_SUB]: true,
     })
 
-    return () => changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
-  }, [])
+    changeSatellitesSubscriptionsList({ [SATELLITE_DATA_SUB]: true })
 
-  const { doormanAddress, mvkTokenAddress } = useSelector((state: State) => state.contractAddresses)
+    return () => {
+      changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
+  }, [])
 
   const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
   const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
-    myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress.address })
+    myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
 
   const [unstakePopupActive, setUnstakePopupActive] = useState(false)
 
@@ -119,8 +129,8 @@ export const Doorman = () => {
               maximumTotalSupply={maximumTotalSupply}
               totalStakedMvk={totalStakedMvk}
               totalSupply={totalSupply}
-              doormanAddress={doormanAddress.address}
-              mvkTokenAddress={mvkTokenAddress.address}
+              doormanAddress={doormanAddress}
+              mvkTokenAddress={mvkTokenAddress}
             />
           </DoormanInfoStyled>
         </>
