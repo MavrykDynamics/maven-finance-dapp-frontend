@@ -110,6 +110,7 @@ export const ExitFeeModal = ({
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
 
+        setInputData({ ...inputData, amount: '0' })
         setAction({ actionName: UNSTAKE_ACTION, toasterId, operationLvl })
       } catch (e) {}
     } else {

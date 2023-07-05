@@ -196,7 +196,7 @@ export const StakeUnstakeView = ({
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
-
+        setInputData({ ...inputData, amount: '0' })
         setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
       } catch (e) {}
     } else {
