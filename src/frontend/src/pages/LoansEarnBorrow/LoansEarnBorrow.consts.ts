@@ -4,7 +4,7 @@ import { skyColor } from 'styles'
 export const numberOfItemsToDisplay = 0
 
 export const MINI_CHART_SETTINGS = {
-  width: 305,
+  width: 300,
   height: 103,
   hideXAxis: true,
   hideYAxis: true,

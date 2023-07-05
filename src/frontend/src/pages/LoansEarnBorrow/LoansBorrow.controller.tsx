@@ -153,10 +153,8 @@ export const LoansBorrow = () => {
     [loanTokens, marketCollateralChart, tokenTotals, tokensMetadata, tokensPrices],
   )
 
-  const handleSetNewlyCreatedVaultAddress = (address: string) => {
-    const params = new URLSearchParams(location.search)
-    params.append('vaultAddress', address)
-    history.replace({ ...location, search: params.toString() })
+  const handleSetNewlyCreatedVaultAddress = (marketAddress: string) => (address: string) => {
+    history.replace(`/loans/${marketAddress}/borrowTab?vaultAddress=${address}`)
   }
 
   const handleBorrow = (marketTokenAddress: string) => {
@@ -199,7 +197,7 @@ export const LoansBorrow = () => {
 
         openCreateVaultPopup({
           marketTokenAddress: marketTokenAddress,
-          setCreatedVaultAddress: handleSetNewlyCreatedVaultAddress,
+          setCreatedVaultAddress: handleSetNewlyCreatedVaultAddress(marketTokenAddress),
           avaliableLiquidity: marketAvaliableLiquidity,
         })
       }
