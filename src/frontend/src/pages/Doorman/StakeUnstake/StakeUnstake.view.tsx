@@ -119,7 +119,7 @@ export const StakeUnstakeView = ({
   const rewardsToClaim =
     availableDoormanRewards +
     availableSatellitesRewards +
-    Object.values(availableFarmRewards).reduce((acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards), 0)
+    Object.values(availableFarmRewards).reduce((acc, farmReward) => (acc += farmReward), 0)
   const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
 
   const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {

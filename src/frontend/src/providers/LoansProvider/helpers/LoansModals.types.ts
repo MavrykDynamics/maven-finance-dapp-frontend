@@ -12,7 +12,7 @@ export type ConfirmBorrowPopupDataType = {
   borrowCapacity: number
   inputAmount: number
   DAOFee: number
-  scrollToCurrentVault?: () => void
+  callback: () => void
 } | null
 
 export type ConfirmRepayPartPopupDataType = {
@@ -24,7 +24,7 @@ export type ConfirmRepayPartPopupDataType = {
   collateralBalance: number
   borrowCapacity: number
   totalOutstanding: number
-  scrollToCurrentVault?: () => void
+  callback: () => void
 } | null
 
 export type ConfirmRepayFullPopupDataType = {
@@ -35,6 +35,7 @@ export type ConfirmRepayFullPopupDataType = {
   collateralBalance: number
   borrowCapacity: number
   totalOutstanding: number
+  callback: () => void
 } | null
 
 export type AddCollateralPopupDataType = {
@@ -78,7 +79,7 @@ export type BorrowPopupDataType = {
   collateralRatio: number
   borrowAPR: number
   DAOFee: number
-  scrollToCurrentVault?: () => void
+  scrollToCurrentVault: () => void
 } | null
 
 export type LiquidateVaultDataType = {
@@ -104,12 +105,14 @@ export type ConfirmAddLendingAssetDataType = {
   lendingAPY: number
   mBalance: number
   inputAmount: number
+  callback: () => void
 } | null
 
 export type ConfirmRemoveLendingAssetDataType = {
   tokenAddress: TokenAddressType
   currentLendedAmount: number
   inputAmount: number
+  callback: () => void
 } | null
 
 // Vaults manage popups data types

@@ -142,7 +142,12 @@ export const BorrowAsset = ({
 
   const borrowAsserHandler = async () => {
     if (vaultId && checkWhetherTokenIsLoanToken(borrowedToken)) {
-      await dispatch(borrowVaultAssetAction(vaultId, inputAmount, borrowedToken, closePopup, scrollToCurrentVault))
+      await dispatch(
+        borrowVaultAssetAction(vaultId, inputAmount, borrowedToken, () => {
+          closePopup()
+          scrollToCurrentVault()
+        }),
+      )
     }
   }
 

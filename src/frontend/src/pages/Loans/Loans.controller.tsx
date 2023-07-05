@@ -70,7 +70,6 @@ export const Loans = () => {
   const { userAddress, userMTokens } = useUserContext()
 
   const {
-    isDataLoaded,
     loanTokens,
     vaults: { allVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
@@ -98,16 +97,11 @@ export const Loans = () => {
     },
   )
 
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isDataLoaded || isDepsChanged) {
-          await dispatch(getLoansStorage())
-        }
-      } catch (e) {}
-    },
-    [userAddress],
-  )
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await dispatch(getLoansStorage())
+    } catch (e) {}
+  }, [userAddress])
 
   useEffect(() => {
     window.scrollTo(0, 0)

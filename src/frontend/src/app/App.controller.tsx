@@ -32,7 +32,6 @@ import { Footer } from './App.components/Footer/Footer'
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
 import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.actions'
-import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -57,13 +56,7 @@ export const App = () => {
 
   useEffect(() => {
     ;(async () => {
-      await Promise.all([
-        dispatch(getContractAddressesStorage()),
-        ...(localStorage.getItem('beacon:active-account') &&
-        localStorage.getItem('beacon:active-account') !== 'undefined'
-          ? [dispatch(connect())]
-          : []),
-      ])
+      dispatch(getContractAddressesStorage())
 
       // Turn off loader
       await dispatch(toggleInitialDataLoading(false))
@@ -101,7 +94,6 @@ export const App = () => {
             <Menu />
 
             <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
-            {/* TODO: @CasualJackie do not open policy popup on IOS devices? */}
             <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
             <LoansPopupsProvider>

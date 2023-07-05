@@ -15,7 +15,7 @@ import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLev
 
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { getGovernanceStorage } from './GovernanseData.actions'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 
 export const startProposalRound = () => async (dispatch: AppDispatch, getState: GetState) => {

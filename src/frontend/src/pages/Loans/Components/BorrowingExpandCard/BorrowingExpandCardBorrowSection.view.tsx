@@ -46,7 +46,7 @@ type Props = {
   currentCollateralBalance: number
   DAOFee: number
   currentBorrowedAmount: number
-  openConfirmBorrowPopup: (inputAmount: number) => void
+  openConfirmBorrowPopup: (inputAmount: number, callback: () => void) => void
 }
 
 export const BorrowingExpandCardBorrowSection = (props: Props) => {
@@ -91,6 +91,13 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   }, [currentCollateralBalance, currentBorrowedAmount, inputAmount, rate, borrowCapacity])
 
   const showWarning = (inputAmount > borrowCapacity / rate || futureCollateralRatio < 200) && inputAmount !== 0
+
+  const clearData = () => {
+    setInputData({
+      amount: '0',
+      validationStatus: INPUT_STATUS_DEFAULT,
+    })
+  }
 
   // stuff to handle inputs
   const inputOnChangeHandle = useCallback(
@@ -262,7 +269,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
         <NewButton
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
-          onClick={() => openConfirmBorrowPopup(inputAmount)}
+          onClick={() => openConfirmBorrowPopup(inputAmount, clearData)}
           disabled={isDisabledButton}
           animation={isDisabledButton ? null : BUTTON_PULSE}
         >

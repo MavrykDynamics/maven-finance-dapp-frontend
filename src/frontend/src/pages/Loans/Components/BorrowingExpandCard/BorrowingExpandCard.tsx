@@ -216,7 +216,7 @@ export const BorrowingExpandCard = ({
     })
   }
 
-  const handleClickOpenConfirmBorrowPopup = (inputAmount: number) => {
+  const handleClickOpenConfirmBorrowPopup = (inputAmount: number, clearInputData: () => void) => {
     openConfirmBorrowPopup({
       inputAmount,
       vaultId,
@@ -225,11 +225,14 @@ export const BorrowingExpandCard = ({
       collateralBalance,
       borrowCapacity,
       DAOFee,
-      scrollToCurrentVault,
+      callback: () => {
+        scrollToCurrentVault()
+        clearInputData()
+      },
     })
   }
 
-  const handleClickOpenConfirmRepayPopup = (inputAmount: number) => {
+  const handleClickOpenConfirmRepayPopup = (inputAmount: number, clearInputData: () => void) => {
     openConfirmRepayPopup({
       inputAmount,
       vaultId,
@@ -239,12 +242,15 @@ export const BorrowingExpandCard = ({
       collateralBalance,
       borrowCapacity,
       totalOutstanding,
-      scrollToCurrentVault,
+      callback: () => {
+        scrollToCurrentVault()
+        clearInputData()
+      },
     })
   }
 
-  const handleClickOpenConfirmRepayFullPopup = () => {
-    openConfirmRepayFullPopup({
+  const handleClickOpenConfirmRepayFullPopup = (clearInputData: () => void) => {
+    openConfirmRepayFullPopup?.({
       vaultId,
       vaultAddress,
       tokenAddress: borrowedTokenAddress,
@@ -252,6 +258,10 @@ export const BorrowingExpandCard = ({
       collateralBalance,
       borrowCapacity,
       totalOutstanding,
+      callback: () => {
+        scrollToCurrentVault()
+        clearInputData()
+      },
     })
   }
 

@@ -3,7 +3,7 @@ import { UserContext, UserMetadataType } from '../user.provider.types'
 import dayjs from 'dayjs'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
-import { calcUsersDoormanRewards, calcUsersFarmRewards, calcUsersSatelliteRewards } from './userRewards.helpers'
+import { getUserDoomanRewards, getUserSatelliteRewards } from './userRewards.helpers'
 import { DEFAULT_USER_AVATAR } from './user.consts'
 
 export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataSubscription }): UserMetadataType => {
@@ -34,22 +34,18 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataSubscri
   const { actionsHistory, gatheredDoormanRewards, gatheredFarmRewards, gatheredSatellitesRewards } =
     calcUsersRewardsToDate(stakes_history_data)
 
-  // TODO: clarify rewards calcs
-  const availableDoormanRewards = 0
-  // calcUsersDoormanRewards({
-  //   mySMvkTokenBalance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
-  //   userDoormanRewardsFromGQL: userRewardsData?.doorman?.[0],
-  // })
-  const availableSatellitesRewards = 0
-  // calcUsersSatelliteRewards({
-  //   mySMvkTokenBalance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
-  //   userSatelliteRewardsFromGQL: userRewardsData?.satellite_rewards?.[0],
-  // })
-  const availableFarmRewards = {}
-  // calcUsersFarmRewards({
-  //   currentBlockLevel: currentBlockLevel,
-  //   userFarmsRewardsFromGQL: userRewardsData?.farm ?? [],
-  // })
+  const availableDoormanRewards = doorman_stake_accounts[0]
+    ? getUserDoomanRewards({
+        userDoormanRewardsDataFromIndexer: doorman_stake_accounts[0],
+        userSmvkBalance: smvk_balance,
+      })
+    : 0
+  const availableSatellitesRewards = satellite_rewardss[0]
+    ? getUserSatelliteRewards({
+        userSmvkBalance: smvk_balance,
+        userSatelliteRewardsDataFromIndexer: satellite_rewardss[0],
+      })
+    : 0
 
   return {
     userAvatars: {
@@ -65,9 +61,9 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataSubscri
     gatheredDoormanRewards,
     gatheredFarmRewards,
     gatheredSatellitesRewards,
-    availableFarmRewards,
     availableSatellitesRewards,
     availableDoormanRewards,
+    farmAccounts: farm_accounts,
 
     isNewlyRegisteredSatellite: checkWhetherUserNewlyRegisteredSatellite(governance_satellite_snapshots),
     govActionsCount: governance_satellite_action_initiators_aggregate.aggregate?.count ?? 0,

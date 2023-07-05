@@ -1,7 +1,7 @@
 import { OpKind, TransactionWalletOperation } from '@taquito/taquito'
 import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
 
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { getLoansStorage } from './getLoansData.actions'
@@ -141,13 +141,7 @@ export const triggerInitialVaultCreation =
 
 // borrow asset from the vault
 export const borrowVaultAssetAction =
-  (
-    vaultId: number,
-    amountToBorrow: number,
-    borrowedToken: LoansTokenMetadataType,
-    callback: () => void,
-    scrollToCurrentVault?: () => void,
-  ) =>
+  (vaultId: number, amountToBorrow: number, borrowedToken: LoansTokenMetadataType, callback: () => void) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -197,8 +191,6 @@ export const borrowVaultAssetAction =
           currentOperationLevel,
         })
       }, 5000)
-
-      scrollToCurrentVault?.()
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
       if (error instanceof Error) {
@@ -218,7 +210,6 @@ export const repayPartOfVaultAction =
     repayAmount: number,
     borrowedToken: LoansTokenMetadataType,
     callback: () => void,
-    scrollToCurrentVault?: () => void,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
@@ -331,8 +322,6 @@ export const repayPartOfVaultAction =
           currentOperationLevel,
         })
       }, 5000)
-
-      scrollToCurrentVault?.()
     } catch (error) {
       console.error('repayPartOfVaultAction error:', error)
       if (error instanceof Error) {

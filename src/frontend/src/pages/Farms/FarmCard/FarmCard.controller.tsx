@@ -22,7 +22,6 @@ import { FarmCardStyled, FarmHarvestStyled, FarmStakeStyled } from './FarmCard.s
 import { FarmStorage, Normalizedfarm } from 'utils/TypesAndInterfaces/Farm'
 import { farmsPopupsContext } from '../FarmsPopups/FarmsPopups.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { UserFarmRewardsData } from 'providers/UserProvider/user.provider.types'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const QuestionLinkBlock = () => (
@@ -118,24 +117,13 @@ const LinksBlock = ({
   </div>
 )
 
-const HarvestBlock = ({
-  userReward,
-  harvestRewards,
-}: {
-  userReward?: UserFarmRewardsData
-  harvestRewards: () => void
-}) => (
+const HarvestBlock = ({ userReward = 0, harvestRewards }: { userReward?: number; harvestRewards: () => void }) => (
   <FarmHarvestStyled className="farm-harvest">
     <div className="farm-info">
       <h3>sMVK Earned</h3>
-      <CommaNumber className="value" value={userReward?.myAvailableFarmRewards ?? 0} />
+      <CommaNumber className="value" value={userReward} />
     </div>
-    <Button
-      kind="actionPrimary"
-      text={'Harvest'}
-      onClick={harvestRewards}
-      disabled={!userReward || userReward.myAvailableFarmRewards === 0}
-    />
+    <Button kind="actionPrimary" text={'Harvest'} onClick={harvestRewards} disabled={userReward === 0} />
   </FarmHarvestStyled>
 )
 
@@ -184,7 +172,7 @@ type FarmCardViewProps = {
   apyValue: number
   accountPkh: string | null
   isOpenedCard: boolean
-  userReward?: UserFarmRewardsData
+  userReward?: number
   triggerWithdrawModal: () => void
   triggerDepositModal: () => void
   harvestRewards: () => void

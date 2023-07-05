@@ -37,12 +37,17 @@ export const ConfirmAddLendingAsset = ({
 
   if (!data || !loanToken || !loanToken.rate) return null
 
-  const { mBalance, inputAmount, lendingAPY } = data
+  const { mBalance, inputAmount, lendingAPY, callback } = data
   const { symbol } = loanToken
 
   const depositHandler = () => {
     if (checkWhetherTokenIsLoanToken(loanToken)) {
-      dispatch(depositLendingAssetAction(loanToken, inputAmount, closePopup))
+      dispatch(
+        depositLendingAssetAction(loanToken, inputAmount, () => {
+          closePopup()
+          callback()
+        }),
+      )
     }
   }
 
