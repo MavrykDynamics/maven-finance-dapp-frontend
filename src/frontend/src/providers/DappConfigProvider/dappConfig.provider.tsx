@@ -150,7 +150,7 @@ const DappConfigProvider = ({ children }: Props) => {
       setAction,
       ...dappConfigCtxState,
     }
-  }, [maxLengthsLoading, mvkFaucetLoading, configLoading, contractAddressesLoading, dappConfigCtxState])
+  }, [dappConfigCtxState])
 
   return <dappConfigContext.Provider value={contextProviderValue}>{children}</dappConfigContext.Provider>
 }

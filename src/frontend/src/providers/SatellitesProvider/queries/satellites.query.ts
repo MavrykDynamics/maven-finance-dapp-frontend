@@ -7,7 +7,6 @@ export function getSatelliteDataSubscription(
   userAddress: string | null,
 ): DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables> {
   const filteredCondition = `user: {address: {${userAddress ? '_eq' : '_neq'}: $userAddress}}`
-  console.log({ userAddress })
 
   return apolloGql`subscription satelliteDataSub($userAddress: String!) {
     satellite(where: {registration_timestamp: {_is_null: false}, ${filteredCondition}}, order_by: {currently_registered: desc}) {

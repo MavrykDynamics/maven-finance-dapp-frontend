@@ -316,7 +316,7 @@ export const UserProvider = ({ children }: Props) => {
       signOut,
       changeUser,
     }),
-    [connect, signOut, changeUser, userCtxState, userDataLoading, isTzktBalancesLoading],
+    [connect, signOut, changeUser, userCtxState],
   )
 
   return <userContext.Provider value={providerValue}>{children}</userContext.Provider>

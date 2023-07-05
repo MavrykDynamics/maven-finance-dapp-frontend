@@ -54,7 +54,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
 
   const providerValue = useMemo(() => {
     return { ...feedsCtxState, isLoading: aggregatorLoading }
-  }, [aggregatorLoading, feedsCtxState])
+  }, [feedsCtxState])
 
   return <dataFeedsContext.Provider value={providerValue}>{children}</dataFeedsContext.Provider>
 }

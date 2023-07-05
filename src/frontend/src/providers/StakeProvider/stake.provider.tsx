@@ -128,7 +128,7 @@ const StakeProvider = ({ children }: Props) => {
       isLoading: isStakingHistoryLoading || isMvkBalanceLoading || isMvkTotalLoading,
       changeStakingSubscriptionsList,
     }
-  }, [isMvkBalanceLoading, isMvkTotalLoading, isStakingHistoryLoading, stakingCtxState])
+  }, [stakingCtxState])
 
   return <stakeContext.Provider value={contextProviderValue}>{children}</stakeContext.Provider>
 }

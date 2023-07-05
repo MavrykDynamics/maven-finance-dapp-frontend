@@ -50,11 +50,11 @@ const DappLibsProviders = ({ children }: { children: React.ReactNode }) => {
 const InitialDataDappProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <TokensProvider>
-      <DataFeedsProvider>
-        <UserProvider>
+      <UserProvider>
+        <DataFeedsProvider>
           <DappConfigProvider>{children}</DappConfigProvider>
-        </UserProvider>
-      </DataFeedsProvider>
+        </DataFeedsProvider>
+      </UserProvider>
     </TokensProvider>
   )
 }

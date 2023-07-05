@@ -161,7 +161,6 @@ export const SatellitesProvider = ({ children }: Props) => {
     return {
       ...satellitesCtxState,
       isLoading:
-        // satellitesLoading ||
         proposalsAmountLoading ||
         satelliteGovActionsAmountLoading ||
         finRequestsAmountLoading ||
@@ -170,14 +169,7 @@ export const SatellitesProvider = ({ children }: Props) => {
       setSatelliteAddressToSubsctibe,
       changeSatellitesSubscriptionsList,
     }
-  }, [
-    finRequestsAmountLoading,
-    isSatellitesLoading,
-    proposalsAmountLoading,
-    satelliteGovActionsAmountLoading,
-    satellitesAddressesLoading,
-    satellitesCtxState,
-  ])
+  }, [satellitesCtxState, isSatellitesLoading])
 
   return <satellitesContext.Provider value={memoSatellitesContext}>{children}</satellitesContext.Provider>
 }
