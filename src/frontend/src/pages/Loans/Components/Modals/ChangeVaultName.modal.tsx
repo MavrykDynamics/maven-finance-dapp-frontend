@@ -62,7 +62,6 @@ export const ChangeVaultName = ({
       changeVaultNameAction(
         newVaultName.name,
         vaultAddress,
-
         closePopup,
       ),
     )
