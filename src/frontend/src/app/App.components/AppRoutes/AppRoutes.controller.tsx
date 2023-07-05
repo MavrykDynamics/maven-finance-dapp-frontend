@@ -35,7 +35,6 @@ import SatelliteNodes from 'pages/SatelliteNodes/SatelliteNodes.controller'
 import Satellites from 'pages/Satellites/Satellites.controller'
 
 // providers
-import StakeProvider from 'providers/StakeProvider/stake.provider'
 
 // helpers
 import { scrollUpPage } from 'utils/scrollUpPage'
@@ -57,39 +56,30 @@ export const AppRoutes = () => {
     scrollUpPage()
   }, [path])
 
-  // TODO: add error boundaries
   return (
     <Switch>
       <Route exact path="/staking">
-        <StakeProvider>
-          <SatellitesProvider>
-            <Doorman />
-          </SatellitesProvider>
-        </StakeProvider>
+        <SatellitesProvider>
+          <Doorman />
+        </SatellitesProvider>
       </Route>
 
       {/* DASHBOARD */}
       <Route exact path="/">
         <SatellitesProvider>
-          <StakeProvider>
-            <Dashboard />
-          </StakeProvider>
+          <Dashboard />
         </SatellitesProvider>
       </Route>
       <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
         <SatellitesProvider>
-          <StakeProvider>
-            <DashboardPersonal />
-          </StakeProvider>
+          <DashboardPersonal />
         </SatellitesProvider>
       </Route>
 
       {/* SATELLITES */}
       <Route exact path="/satellites">
         <SatellitesProvider>
-          <StakeProvider>
-            <Satellites />
-          </StakeProvider>
+          <Satellites />
         </SatellitesProvider>
       </Route>
       <Route exact path="/become-satellite">
@@ -135,9 +125,7 @@ export const AppRoutes = () => {
         <FinancialRequests />
       </Route>
       <Route exact path="/emergency-governance">
-        <StakeProvider>
-          <EmergencyGovernance />
-        </StakeProvider>
+        <EmergencyGovernance />
       </Route>
       <Route exact path="/mavryk-council/:tabId?">
         <Council />
@@ -180,11 +168,6 @@ export const AppRoutes = () => {
       </Route>
       <Route exact path="/loans/borrow">
         <LoansBorrow />
-      </Route>
-
-      {/* NOT READY PAGES */}
-      <Route exact path="/your-vesting">
-        <Dashboard />
       </Route>
 
       {/* NOT PROD PAGES */}

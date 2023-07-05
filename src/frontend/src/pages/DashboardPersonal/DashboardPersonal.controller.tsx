@@ -41,7 +41,11 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import {
+  MVK_BALANCE_SUB,
+  MVK_TOTAL_SUB,
+  DEFAULT_STAKING_ACTIVE_SUBS,
+} from 'providers/StakeProvider/helpers/stake.consts'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -77,8 +81,11 @@ const DashboardPersonal = () => {
 
   useEffect(() => {
     changeStakingSubscriptionsList({
-      [SMVK_HISTORY_SUB]: false,
+      [MVK_TOTAL_SUB]: true,
+      [MVK_BALANCE_SUB]: true,
     })
+
+    return () => changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
   }, [])
 
   const { isLoading } = useDataLoader(

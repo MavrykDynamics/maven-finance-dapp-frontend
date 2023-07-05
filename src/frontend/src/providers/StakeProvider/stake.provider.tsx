@@ -29,7 +29,7 @@ import {
   DEFAULT_STAKING_CTX,
   MVK_BALANCE_SUB,
   MVK_TOTAL_SUB,
-  DEFAULT_STAKING_SUBS,
+  DEFAULT_STAKING_ACTIVE_SUBS,
   SMVK_HISTORY_SUB,
 } from './helpers/stake.consts'
 import {
@@ -54,7 +54,7 @@ const StakeProvider = ({ children }: Props) => {
   } = useSelector((state: ReduxState) => state.contractAddresses)
 
   const [stakingCtxState, setStakingCtxState] = useState<StakeContextStateType>(DEFAULT_STAKING_CTX)
-  const [shouldSkip, setShouldSkip] = useState<StakingSubsRecordType>(DEFAULT_STAKING_SUBS)
+  const [activeSubs, setActiveSubs] = useState<StakingSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
 
   const handleSubError = (error: ApolloError, subName: StakingSubsType) => {
     console.error(`${subName} query error: `, error)
@@ -63,7 +63,7 @@ const StakeProvider = ({ children }: Props) => {
 
   // subscribes
   const { loading: isStakingHistoryLoading } = useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
-    skip: shouldSkip[SMVK_HISTORY_SUB],
+    skip: !activeSubs[SMVK_HISTORY_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
       updateStakeHistoryData(data)
@@ -72,7 +72,7 @@ const StakeProvider = ({ children }: Props) => {
   })
 
   const { loading: isMvkBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
-    skip: shouldSkip[MVK_BALANCE_SUB],
+    skip: !activeSubs[MVK_BALANCE_SUB],
     variables: {
       _eq: doormanAddress,
     },
@@ -85,7 +85,7 @@ const StakeProvider = ({ children }: Props) => {
   })
 
   const { loading: isMvkTotalLoading } = useSubscription(SUBSCRIPTION_MVK_TOKEN_TOTAL, {
-    skip: shouldSkip[MVK_TOTAL_SUB],
+    skip: !activeSubs[MVK_TOTAL_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
       updateTotalMvkToken(data)
@@ -123,9 +123,11 @@ const StakeProvider = ({ children }: Props) => {
     }))
   }
 
+  const changeStakingSubscriptionsList = (newSkips: Partial<StakingSubsRecordType>) => {
+    setActiveSubs((prev) => ({ ...prev, ...newSkips }))
+  }
+
   const contextProviderValue = useMemo(() => {
-    const changeStakingSubscriptionsList = (newSkips: Partial<StakingSubsRecordType>) =>
-      setShouldSkip((prev) => ({ ...prev, ...newSkips }))
     return {
       ...stakingCtxState,
       isLoading: isStakingHistoryLoading || isMvkBalanceLoading || isMvkTotalLoading,

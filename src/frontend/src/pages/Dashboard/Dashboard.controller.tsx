@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import QueryString from 'qs'
 import { useLocation } from 'react-router'
@@ -24,6 +25,11 @@ import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import {
+  MVK_TOTAL_SUB,
+  MVK_BALANCE_SUB,
+  DEFAULT_STAKING_ACTIVE_SUBS,
+} from 'providers/StakeProvider/helpers/stake.consts'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -32,9 +38,24 @@ export const Dashboard = () => {
   const parsedQp = QueryString.parse(search, { ignoreQueryPrefix: true }) as { tab: string }
   const activeTab = isValidPersonalDashboardTabId(parsedQp.tab) ? parsedQp.tab : LENDING_TAB_ID
 
-  const { totalStakedMvk, totalSupply, maximumTotalSupply, isLoading: isDoormanLoading } = useStakeContext()
+  const {
+    totalStakedMvk,
+    totalSupply,
+    maximumTotalSupply,
+    isLoading: isDoormanLoading,
+    changeStakingSubscriptionsList,
+  } = useStakeContext()
   const { isLoading: isSatellitesLoading } = useSatellitesContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
+
+  useEffect(() => {
+    changeStakingSubscriptionsList({
+      [MVK_TOTAL_SUB]: true,
+      [MVK_BALANCE_SUB]: true,
+    })
+
+    return () => changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+  }, [])
 
   const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
 

@@ -24,6 +24,12 @@ import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import {
+  MVK_BALANCE_SUB,
+  MVK_TOTAL_SUB,
+  SMVK_HISTORY_SUB,
+  DEFAULT_STAKING_ACTIVE_SUBS,
+} from 'providers/StakeProvider/helpers/stake.consts'
 
 export const DEFAULT_STAKE_UNSTAKE_INPUT: { amount: string; validation: InputStatusType; errorMessage: string } = {
   amount: '0',
@@ -34,7 +40,23 @@ export const DEFAULT_STAKE_UNSTAKE_INPUT: { amount: string; validation: InputSta
 export const Doorman = () => {
   const { tokensPrices } = useTokensContext()
   const { userTokensBalances, userAddress } = useUserContext()
-  const { totalStakedMvk, maximumTotalSupply, totalSupply, isLoading: isDoormanLoading } = useStakeContext()
+  const {
+    totalStakedMvk,
+    maximumTotalSupply,
+    totalSupply,
+    isLoading: isDoormanLoading,
+    changeStakingSubscriptionsList,
+  } = useStakeContext()
+
+  useEffect(() => {
+    changeStakingSubscriptionsList({
+      [MVK_BALANCE_SUB]: true,
+      [MVK_TOTAL_SUB]: true,
+      [SMVK_HISTORY_SUB]: true,
+    })
+
+    return () => changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+  }, [])
 
   const { doormanAddress, mvkTokenAddress } = useSelector((state: State) => state.contractAddresses)
 
