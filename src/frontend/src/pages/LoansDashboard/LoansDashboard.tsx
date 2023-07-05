@@ -228,9 +228,7 @@ export const LoansDashboard = () => {
                         value={borrowing24hPersentChange}
                         endingText="% 24h"
                         beginningText={borrowing24hPersentChange > 0 ? '+' : ''}
-                        className={`diff ${
-                          borrowing24hPersentChange ? (borrowing24hPersentChange > 0 ? 'up' : 'down') : 'neutral'
-                        }`}
+                        className={`diff ${getClassNameBasedOnPersentValue(borrowing24hPersentChange)}`}
                       />
                     </div>
                   </div>

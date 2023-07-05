@@ -13,6 +13,11 @@ export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme }>`
   border: 1px solid ${({ theme }) => theme.borderColor};
   border-radius: 10px;
 
+  & > div:last-child {
+    position: relative;
+    left: 3px;
+  }
+
   .switchMenu {
     display: flex;
     justify-content: space-between;
