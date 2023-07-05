@@ -546,29 +546,28 @@ export const getChartSettingsBasedOnChartLength = (
 /**
  * @param array - chart data with value and time
  * @param period - 0 values for days without data will be added for this period
- * @returns {SingleValueData[]} - initial array with 0 values instead of days without data
+ * @returns {SingleValueData[]}
  */
 export const addMissingDaysWithZeroValues = (array: SingleValueData[], period: number) => {
+  const reversedArray = [...array].reverse()
   const updatedArray: SingleValueData[] = []
   const currentDay = new Date()
   // we use "+1" below, because it will count the period without taking into account the current day that we want to include
   currentDay.setDate(currentDay.getDate() + 1 - period)
 
   while (currentDay <= new Date()) {
-    const foundData = array.filter(
+    const foundDay = reversedArray.find(
       (item) => compareDatesByDay(currentDay, new Date(item.time as unknown as Date)) === 0,
     )
 
-    if (foundData.length !== 0) {
-      foundData.forEach((item) => {
-        updatedArray.push(item)
-      })
-    } else {
-      updatedArray.push({
-        time: currentDay.getTime() as UTCTimestamp,
-        value: 0,
-      })
-    }
+    updatedArray.push(
+      foundDay
+        ? foundDay
+        : {
+            time: currentDay.getTime() as UTCTimestamp,
+            value: 0,
+          },
+    )
 
     currentDay.setDate(currentDay.getDate() + 1)
   }
