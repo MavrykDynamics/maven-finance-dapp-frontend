@@ -1,3 +1,9 @@
+/**
+ * Compare two dates without time (ex. Wed Jul 05 2023 14:12:59 === Wed Jul 05 2023 16:12:59 ==> true)
+ * @param date1 - the first date
+ * @param date2 - the second date
+ * @returns "1" if date1 > date 2 | "-1" if date1 < date2 | "0" if date1 === date2 
+ */
 export const compareDatesByDay = (date1: Date, date2: Date) => {
   const day1 = date1.getDate()
   const month1 = date1.getMonth()
