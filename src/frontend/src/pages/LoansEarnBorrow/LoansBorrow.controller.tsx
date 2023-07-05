@@ -38,7 +38,6 @@ const marketSettings: MarketSettingsType = {
 export const LoansBorrow = () => {
   const dispatch = useDispatch()
   const history = useHistory()
-  const location = useLocation()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
