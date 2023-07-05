@@ -27,3 +27,7 @@ export const DEFAULT_USER: UserContextStateType = {
   userMTokens: {},
   farmAccounts: [],
 }
+
+// CONSTS FOR USER ACTIONS
+export const CLAIM_VESTING_REWARD_ACTION = 'claimVestingReward'
+export const CLAIM_ALL_REWARDS_ACTION = 'clailAllRewards'

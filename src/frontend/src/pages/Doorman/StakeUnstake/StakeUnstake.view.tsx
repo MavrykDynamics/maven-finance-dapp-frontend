@@ -7,7 +7,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
+import { rewardsCompound, stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -20,7 +20,6 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // helpers
 import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
-import { rewardsCompound } from '../Doorman.actions'
 import { stakingInputValidation } from '../Doorman.converter'
 import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
 import { unknownToError } from 'errors/error'
@@ -36,7 +35,7 @@ import {
   BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from '../../../app/App.components/Button/Button.constants'
-import { STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { REWARDS_COMPOUND_ACTION, STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
@@ -66,6 +65,11 @@ import {
 // types
 import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
+import { TezosWalletErrorPayload } from 'errors/error.type'
+import { Info } from 'app/App.components/Info/Info.view'
+import { INFO_ERROR, INFO_SMALL } from 'app/App.components/Info/info.constants'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -92,7 +96,7 @@ export const StakeUnstakeView = ({
     isSatellite,
   } = useUserContext()
   const { setAction } = useDappConfigContext()
-  const { info, loading, bug } = useToasterContext()
+  const { info, loading, bug, setSharedError, sharedErrors } = useToasterContext()
 
   const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -121,6 +125,9 @@ export const StakeUnstakeView = ({
     availableSatellitesRewards +
     Object.values(availableFarmRewards).reduce((acc, farmReward) => (acc += farmReward), 0)
   const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
+  const hasError =
+    sharedErrors[WALLTET_ERROR_FIELD]?.actionId === STAKE_ACTION ||
+    sharedErrors[WALLTET_ERROR_FIELD]?.actionId === UNSTAKE_ACTION
 
   const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {
     handleInputData(String(mathRoundTwoDigit(balance === 'mvk' ? myMvkTokenBalance : mySMvkTokenBalance)))
@@ -208,6 +215,11 @@ export const StakeUnstakeView = ({
         setInputData({ ...inputData, amount: '0' })
         setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
       } catch (e) {}
+    } else if (isContractErrorPayload(actionResult.error)) {
+      setSharedError(WALLTET_ERROR_FIELD, {
+        ...(actionResult.error as TezosWalletErrorPayload),
+        actionId: STAKE_ACTION,
+      })
     } else {
       setAction(null)
       const parsedError = unknownToError(actionResult.error)
@@ -227,8 +239,49 @@ export const StakeUnstakeView = ({
   }
 
   const handleCompound = async () => {
-    if (userAddress) {
-      await dispatch(rewardsCompound(userAddress))
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+
+    const actionResult = await rewardsCompound(userAddress, doormanAddress)
+
+    if (checkIfActionSuccess(actionResult)) {
+      try {
+        const { operation } = actionResult
+        dispatch(toggleActionFullScreenLoader(true))
+        dispatch(toggleActionCompletion(true))
+
+        info(
+          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['title'],
+        )
+
+        await sleep(5000)
+
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+
+        setAction({ actionName: REWARDS_COMPOUND_ACTION, toasterId, operationLvl })
+      } catch (e) {}
+    } else if (isContractErrorPayload(actionResult.error)) {
+      setSharedError(WALLTET_ERROR_FIELD, {
+        ...(actionResult.error as TezosWalletErrorPayload),
+        actionId: REWARDS_COMPOUND_ACTION,
+      })
+    } else {
+      setAction(null)
+      const parsedError = unknownToError(actionResult.error)
+      bug(parsedError.message)
     }
   }
 
@@ -404,7 +457,12 @@ export const StakeUnstakeView = ({
           <CommaNumber value={mvkExchangeRate} beginningText={'$'} />
         </StakeUnstakeRate>
 
-        <StakeUnstakeButtonGrid>
+        {hasError && sharedErrors[WALLTET_ERROR_FIELD] && (
+          <div className="infoBlockWrapper">
+            <Info type={INFO_ERROR} size={INFO_SMALL} text={sharedErrors[WALLTET_ERROR_FIELD].description} />
+          </div>
+        )}
+        <StakeUnstakeButtonGrid hasError={hasError}>
           <NewButton
             kind={BUTTON_PRIMARY}
             onClick={() => handleStake(Number(inputData.amount))}

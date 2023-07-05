@@ -13,6 +13,8 @@ import {
   TOASTER_WARNING,
 } from './toaster.provider.const'
 import { generateUniqueId } from 'utils/calcFunctions'
+import { SharedErrorFileds, SharedErrors } from 'errors/error.type'
+import { WalletActionType } from 'types/actions.type'
 
 export const toasterContext = React.createContext<ToasterContextType>(undefined!)
 
@@ -41,11 +43,17 @@ export default class ToasterProvider extends React.Component<Props, State> {
         fatal: this.fatal,
         success: this.success,
         loading: this.loading,
+        // fatal error to show 404 page
         error: props.error || null,
+        // custom errors, like error from Wallet, api, validation etc.
+        sharedErrors: {
+          walletError: null,
+        },
         hideToasterMessage: this.hideToasterMessage,
         deleteToasterFromArray: this.deleteToasterFromArray,
         messages: [],
         setError: this.setError,
+        setSharedError: this.setSharedError,
       },
     }
   }
@@ -116,6 +124,18 @@ export default class ToasterProvider extends React.Component<Props, State> {
         error,
       },
     }))
+  }
+
+  setSharedError = (fieldName: SharedErrorFileds, error: (SharedErrors & { actionId: WalletActionType }) | null) => {
+    this.setState({
+      context: {
+        ...this.state.context,
+        sharedErrors: {
+          ...this.state.context.sharedErrors,
+          [fieldName]: error,
+        },
+      },
+    })
   }
 
   /**

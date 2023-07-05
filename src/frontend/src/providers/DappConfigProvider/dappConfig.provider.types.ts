@@ -2,6 +2,7 @@ import { TransactionWalletOperation } from '@taquito/taquito'
 import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
 import { StakeActionType } from 'providers/StakeProvider/stake.provider.types'
 import { XtzBakerType } from './bakers/getXtzBakers'
+import { UserActionsType } from 'providers/UserProvider/user.provider.types'
 
 export type DappConfigContext = {
   // data
@@ -24,9 +25,12 @@ export type DappConfigContextStateType = Pick<
   'maxLengths' | 'mvkFaucetAddress' | 'xtzBakers' | 'minimumStakedMvkBalance'
 >
 
+
+export type ActionTypes = StakeActionType | UserActionsType 
+
 // TODO: dont forget to add other action names with their transfer to context
 export type UserActionType = {
-  actionName: StakeActionType
+  actionName: ActionTypes
   toasterId: string
   operationLvl: number
 }
