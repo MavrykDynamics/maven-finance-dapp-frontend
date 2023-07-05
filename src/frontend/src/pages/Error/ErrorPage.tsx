@@ -1,10 +1,14 @@
+import { useCallback } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
-import NewButton from 'app/App.components/Button/NewButton'
-import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import Icon from 'app/App.components/Icon/Icon.view'
-import { errorDescDefaultText, errorHeaderDefaultText } from 'providers/ToasterProvider/toaster.provider.const'
-import { ErrorFooter } from './components/ErrorFooter'
+// components
 import { ErrorTopbar } from './components/ErrorTopbar'
+import { ErrorFooter } from './components/ErrorFooter'
+import NewButton from 'app/App.components/Button/NewButton'
+import Icon from 'app/App.components/Icon/Icon.view'
+// consts
+import { errorDescDefaultText, errorHeaderDefaultText } from 'providers/ToasterProvider/toaster.provider.const'
+import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+// styles
 import {
   ErrorPageWrapper,
   ErrorPageInner,
@@ -22,14 +26,14 @@ type ErrorPageProps = {
 }
 
 export const ErrorPage = ({ headerText = errorHeaderDefaultText, descText = errorDescDefaultText }: ErrorPageProps) => {
-  const handleRedirect = () => {
+  const handleRedirect = useCallback(() => {
     window.location.assign('/')
-  }
+  }, [])
 
   return (
     <Router>
       <ErrorPageWrapper>
-        <ErrorTopbar />
+        <ErrorTopbar handleRedirect={handleRedirect} />
         <ErrorPageInner>
           <ErrorTopHeader>Error</ErrorTopHeader>
           <Vector1 src="/images/satellite-error.svg" />

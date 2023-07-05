@@ -8,11 +8,15 @@ import {
 } from 'app/App.components/Menu/MenuTopBar/MenuTopBar.controller'
 import { TopBarLinks } from 'app/App.components/Menu/MenuTopBar/TopBarLinks/TopBarLinks.controller'
 
-export const ErrorTopbar = () => {
+type ErrorTopbarProps = {
+  handleRedirect: () => void
+}
+
+export const ErrorTopbar = ({ handleRedirect }: ErrorTopbarProps) => {
   return (
     <ErrorMenuTopStyled>
       <div className="left-side">
-        <ErrorTopbarLogo alt="logo" className={'desktop-logo'} src="/logo-dark.svg" />
+        <ErrorTopbarLogo alt="logo" className={'desktop-logo'} src="/logo-dark.svg" onClick={handleRedirect} />
       </div>
       <div className="grouped-links">
         <TopBarLinks groupName={'Products'} groupLinks={PRODUCTS_LINKS} />
