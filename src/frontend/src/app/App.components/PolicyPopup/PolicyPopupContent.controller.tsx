@@ -28,6 +28,7 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
 
       <ol>
         <li>Improved UI/UX for Satellite operators.</li>
+        <li>Live data updates (more exact data at all times).</li>
         <li>Advanced Permissions for Vaults.</li>
         <li>Transaction Estimation & Improved Error Handling.</li>
       </ol>
