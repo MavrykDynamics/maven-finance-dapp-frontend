@@ -1,12 +1,14 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../styles/interfaces'
 import { hangInSpace } from 'styles/animations'
+import { Z_INDEX_DEFAULT } from 'styles/constants'
 
 export const ErrorPageWrapper = styled.div<{ theme: MavrykTheme }>`
   margin: auto;
   width: 100vw;
   position: relative;
   height: 100vh;
+  padding-top: 80px;
   background: url('/images/error-bg.svg');
   background-position: center;
   background-repeat: no-repeat;
@@ -136,5 +138,55 @@ export const ErrorFooterRight = styled.div<{ theme: MavrykTheme }>`
     font-weight: 400;
     color: inherit;
     line-height: normal;
+  }
+`
+
+export const ErrorMenuTopStyled = styled.div<{ theme: MavrykTheme }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-width: 100vw;
+  height: 80px;
+  z-index: 11;
+  background: ${({ theme }) => theme.containerColor};
+  display: flex;
+  align-items: center;
+  padding: 0 22px 0 34px;
+
+  a {
+    text-decoration: none;
+  }
+
+  .left-side {
+    display: flex;
+    align-items: center;
+  }
+
+  .grouped-links {
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  @media screen and (max-width: 870px) {
+    .grouped-links {
+      display: none;
+    }
+  }
+`
+
+export const ErrorTopbarLogo = styled.img`
+  z-index: ${Z_INDEX_DEFAULT};
+  width: 218px;
+  height: 43px;
+
+  &.mobile-logo {
+    display: none;
+  }
+
+  @media screen and (max-width: 1400px) {
+    width: 160px;
   }
 `
