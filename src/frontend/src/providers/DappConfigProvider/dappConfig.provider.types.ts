@@ -3,6 +3,7 @@ import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-o
 import { StakeActionType } from 'providers/StakeProvider/stake.provider.types'
 import { XtzBakerType } from './bakers/getXtzBakers'
 import { UserActionsType } from 'providers/UserProvider/user.provider.types'
+import { SatelliteActionsType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 export type DappConfigContext = {
   // data
@@ -25,8 +26,7 @@ export type DappConfigContextStateType = Pick<
   'maxLengths' | 'mvkFaucetAddress' | 'xtzBakers' | 'minimumStakedMvkBalance'
 >
 
-
-export type ActionTypes = StakeActionType | UserActionsType 
+export type ActionTypes = StakeActionType | UserActionsType | SatelliteActionsType
 
 // TODO: dont forget to add other action names with their transfer to context
 export type UserActionType = {

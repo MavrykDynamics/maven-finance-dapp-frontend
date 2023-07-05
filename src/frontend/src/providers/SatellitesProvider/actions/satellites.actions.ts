@@ -6,28 +6,10 @@ import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { RegisterAsSatelliteForm } from 'utils/TypesAndInterfaces/Forms'
 
 export const delegate = async (
+  accountPkh: string,
   satelliteAddress: string,
   delegationAddress: string,
-  accountPkh: string,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
-  //   if (!state.wallet.accountPkh) {
-  //     dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-  //     return
-  //   }
-
-  //   if (
-  //     state.wallet.user.userTokens[SMVK_TOKEN_SYMBOL].balance === 0 &&
-  //     state.wallet.user.userTokens[MVK_TOKEN_SYMBOL].balance === 0
-  //   ) {
-  //     dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please buy MVK and stake it'))
-  //     return
-  //   }
-
-  //   if (state.wallet.user.userTokens[SMVK_TOKEN_SYMBOL].balance === 0) {
-  //     dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please stake your MVK'))
-  //     return
-  //   }
-
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
@@ -41,15 +23,10 @@ export const delegate = async (
 }
 
 export const undelegate = async (
+  accountPkh: string,
   delegateToAddress: string,
   delegationAddress: string,
-  accountPkh: string,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
-  // if (!state.wallet.accountPkh) {
-  //   dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-  //   return
-  // }
-
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
@@ -67,11 +44,6 @@ export const distributeProposalRewards = async (
   satelliteAddress: string,
   proposals: string[],
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
-  // if (!state.wallet.accountPkh) {
-  //   dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-  //   return
-  // }
-
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()

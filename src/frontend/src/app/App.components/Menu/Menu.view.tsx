@@ -118,8 +118,8 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       return
     }
 
-    const mvkTokenBalance = userTokensBalances[MVK_TOKEN_SYMBOL]
-    const sMvkTokenBalance = userTokensBalances[SMVK_TOKEN_ADDRESS]
+    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: MVK_TOKEN_SYMBOL })
+    const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
     if (mvkTokenBalance > 0 || sMvkTokenBalance > 0) {
       bug('You have already claimed MVK', 'You are unable to claim MVK, you have already claimed')
@@ -156,10 +156,8 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
         setAction({ actionName: GET_MVK_FROM_FAUCET_ACTION, toasterId, operationLvl })
       } catch (e) {}
     } else if (isContractErrorPayload(actionResult.error)) {
-      setSharedError(WALLTET_ERROR_FIELD, {
-        ...(actionResult.error as TezosWalletErrorPayload),
-        actionId: GET_MVK_FROM_FAUCET_ACTION,
-      })
+      const { message, description } = actionResult.error as TezosWalletErrorPayload
+      bug(description, message)
     } else {
       setAction(null)
       const parsedError = unknownToError(actionResult.error)

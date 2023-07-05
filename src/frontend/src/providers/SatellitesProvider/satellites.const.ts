@@ -1,5 +1,13 @@
 import { z } from 'zod'
 
+// actions
+export const DELEGATE_ACTION = 'delegate'
+export const UNDELEGATE_ACTION = 'undelegate'
+export const DISTRIBUTE_PROPOSALS_REWARDS_ACTION = 'distributeProposalRewards'
+export const REGISTER_SATELLITE_ACTION = 'registerSatellite'
+export const UNREGISTER_SATELLITE_ACTION = 'unregisterSatellite'
+export const UPDATE_SATELLITE_ACTION = 'updateSatellite'
+
 export const ALL_SATELLITES_SUB = 'all'
 
 // Satellite status
