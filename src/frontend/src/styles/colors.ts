@@ -66,10 +66,12 @@ export const dark = {
   // third colors
   primaryChartColor: '#77A4F2',
   secondaryChartColor: '#77A4F2',
-  histogramChartColor: 'rgba(119, 164, 242, 0.51)',
+  histogramChartColor: '#77A4F2',
   gaugeChartColor: '#86D4C9',
   gradientDiagramBackgroundColor: '#696969',
   inputFocusColor: '#7068AA',
+  ipfsBorderColor: 'rgb(80, 62, 170)',
+  ipfsHoverBorderColor: '%2386D4C9FF',
   // tabs
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
 
@@ -151,10 +153,12 @@ export const light = {
   // third colors
   primaryChartColor: '#77A4F2',
   secondaryChartColor: '#77A4F2',
-  histogramChartColor: 'rgba(119, 164, 242, 0.51)',
+  histogramChartColor: '#77A4F2',
   gaugeChartColor: '#86D4C9',
   gradientDiagramBackgroundColor: '#696969',
   inputFocusColor: '#7068AA',
+  ipfsBorderColor: 'rgb(31, 31, 31)',
+  ipfsHoverBorderColor: '%238D86EBFF',
   // tabs
   forTabs: 'linear-gradient(90deg, #03C9A3 0.31%, #8D86EB 99.97%)',
 
@@ -236,10 +240,12 @@ export const space = {
   // third colors
   primaryChartColor: '#77A4F2',
   secondaryChartColor: '#86D4C9',
-  histogramChartColor: 'rgba(119, 164, 242, 0.51)',
+  histogramChartColor: '#77A4F2',
   gaugeChartColor: '#86D4C9',
   gradientDiagramBackgroundColor: '#696969',
   inputFocusColor: '#7068AA',
+  ipfsBorderColor: 'rgb(80, 62, 170)',
+  ipfsHoverBorderColor: '%2386D4C9FF',
   // tabs
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
 
