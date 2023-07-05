@@ -120,6 +120,11 @@ export const Repay = ({
   const continueBtnHandler = () => setShownScreen('confitmation')
   const backBtnHandler = () => setShownScreen('initial')
 
+  const callActionsAfterTransaction = () => {
+    closePopup()
+    scrollToCurrentVault?.()
+  }
+
   const repayBtnHandler = async () => {
     if (vaultId && borrowedAsset && vaultAddress) {
       await dispatch(
@@ -130,8 +135,7 @@ export const Repay = ({
           borrowedAsset.decimals,
           borrowedAsset.tokenType,
           borrowedAsset.address,
-          closePopup,
-          scrollToCurrentVault,
+          callActionsAfterTransaction,
         ),
       )
     }
