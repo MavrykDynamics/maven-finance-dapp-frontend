@@ -30,7 +30,7 @@ export const UploaderFileSelector = styled.div<{ validation: string; theme: Mavr
   ${({ validation }) =>
     validation === INPUT_STATUS_SUCCESS
       ? `
-    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='10' ry='10' stroke='rgb(39, 174, 96)' stroke-width='2' stroke-dasharray='10' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='10' ry='10' stroke='#86D4C9' stroke-width='2' stroke-dasharray='10' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
     `
       : validation === INPUT_STATUS_ERROR
       ? `
@@ -44,6 +44,14 @@ export const UploaderFileSelector = styled.div<{ validation: string; theme: Mavr
 
   &:hover:not(.disabled) {
     background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='10' ry='10' stroke='%2386D4C9FF' stroke-width='2' stroke-dasharray='10' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+
+    figcaption {
+      color: ${({ theme }) => theme.linksAndButtons};
+    }
+
+    .upload-icon {
+      fill: ${({ theme }) => theme.linksAndButtons};
+    }
   }
 
   .delete-icon {
