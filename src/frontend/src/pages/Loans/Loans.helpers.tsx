@@ -18,6 +18,7 @@ import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Inp
 import { parseDate } from 'utils/time'
 import { convertNumberForClient, convertNumberForContractCall, getNumberInBounds } from '../../utils/calcFunctions'
 import { assetDecimalsToShow } from './Loans.const'
+import { compareDatesByDay } from 'utils/compareDatesByDay'
 
 // CONST FOR HELPERS
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
@@ -94,8 +95,8 @@ export const getTransactionHistory = (
   history_data: Lending_Controller_History_Data[],
   dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
-) =>
-  history_data.reduce<TransactionHistoryReduceType>(
+) => {
+  const data = history_data.reduce<TransactionHistoryReduceType>(
     (
       acc,
       {
@@ -207,13 +208,20 @@ export const getTransactionHistory = (
     },
   )
 
+  return {
+    ...data,
+    marketCollateralChartData: addMissingDaysWithZeroValues(data.marketCollateralChartData, 14),
+    marketLiquidityChartData: addMissingDaysWithZeroValues(data.marketLiquidityChartData, 14),
+  }
+}
+
 // NORMALIZE CHART DATA FOR LEND/BORROW MARKETS
 export const getChartData = (
   history_data: Lending_Controller_History_Data[],
   dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
-) =>
-  history_data?.reduce<LoansChartsDataType>(
+) => {
+  const data = history_data?.reduce<LoansChartsDataType>(
     (acc, { type, amount, timestamp, loan_token }) => {
       if (!loan_token?.token.token_address) return acc
       const assetMetadata = getAssetMetadata({
@@ -322,6 +330,14 @@ export const getChartData = (
       },
     },
   )
+
+  return {
+    ...data,
+    borrowingChartData: addMissingDaysWithZeroValues(data.borrowingChartData, 7),
+    collateralChartData: addMissingDaysWithZeroValues(data.collateralChartData, 7),
+    lendingChartData: addMissingDaysWithZeroValues(data.lendingChartData, 7),
+  }
+}
 
 // GET LENDING ITEM FOR MARKET
 export const getLendingItem = (
@@ -486,7 +502,6 @@ export const getCollateralRatioByPersentage = (collateralRatio: number) => {
   return Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))
 }
 
-
 /**
  * get data with 0 value within 7 days (as this is the period on the chart). Is need instead of plug for empty chart.
  * @param chartData - data of chart
@@ -509,7 +524,7 @@ export const getChartDataBasedOnLength = (chartData: AreaChartPlotType[], period
  * Need a small height because the empty chart with standard settings has a bad look in the center of the container.
  * @param chartData - data of chart
  * @param settings - settings of chart
- * @returns 
+ * @returns
  */
 export const getChartSettingsBasedOnChartLength = (
   chartData: AreaChartPlotType[],
@@ -526,4 +541,29 @@ export const getChartSettingsBasedOnChartLength = (
         ...settings,
         height: 50,
       }
+}
+
+export const addMissingDaysWithZeroValues = (array: SingleValueData[], period: number) => {
+  const reversedArray = [...array].reverse()
+  const updatedArray: SingleValueData[] = []
+  const currentDay = new Date()
+  currentDay.setDate(currentDay.getDate() + 1 - period)
+
+  while (currentDay <= new Date()) {
+    // @ts-ignore
+    const foundDay = reversedArray.find((item) => compareDatesByDay(currentDay, new Date(item.time)) === 0)
+
+    updatedArray.push(
+      foundDay
+        ? foundDay
+        : {
+            time: currentDay.getTime() as UTCTimestamp,
+            value: 0,
+          },
+    )
+
+    currentDay.setDate(currentDay.getDate() + 1)
+  }
+  
+  return updatedArray
 }
