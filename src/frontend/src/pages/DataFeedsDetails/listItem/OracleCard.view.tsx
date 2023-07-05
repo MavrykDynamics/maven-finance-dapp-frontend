@@ -26,10 +26,12 @@ export const OracleCard = ({ oracle, feed }: { oracle: SatelliteRecordType; feed
   const xtzExchangeRate = tokensPrices[XTZ_TOKEN_SYMBOL] ?? 0
   const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
 
-  const feedAccuracy = calcPersent(
-    convertNumberForClient({ number: oracle.participatedFeeds[feedAddress].averagePredict, grade: decimals }),
-    amount,
-  )
+  const oracleLastPredictedPrice = oracle.participatedFeeds[feedAddress].lastPredictedPrice
+
+  // TODO: check whether calcs for accuracy valid
+  const feedAccuracy = oracleLastPredictedPrice
+    ? calcPersent(convertNumberForClient({ number: oracleLastPredictedPrice, grade: decimals }), amount)
+    : 0
 
   return (
     <Link to={`/satellites/satellite-details/${address}`}>

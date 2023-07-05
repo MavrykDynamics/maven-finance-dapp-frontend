@@ -15,6 +15,11 @@ import { calcPersent, convertNumberForClient } from '../../../utils/calcFunction
 import { MVK_DECIMALS, XTZ_DECIMALS } from 'utils/constants'
 import { satelliteVoteSchema, satelliteStatusSchema, INACTIVE_SATELLITE_STATUS } from '../satellites.const'
 
+/**
+ *
+ * @param satelliteOracleData – satellite predictions on feeds and rewards for this predictions
+ * @returns @sMVKRewards – sMVK rewards from feeds, @XTZRewards – XTZ rewards from feeds, @participatedFeeds – object where satellite participated and his latest prediction price
+ */
 const getSatelliteOracleRewards = (
   satelliteOracleData: SatelliteDataSubSubscription['satellite'][number]['user']['aggregator_oracles'],
 ) => {
@@ -24,18 +29,13 @@ const getSatelliteOracleRewards = (
     participatedFeeds: Record<
       string,
       {
-        averagePredict: number
+        lastPredictedPrice: number | null
       }
     >
   }>(
     (
       acc,
-      {
-        smvkRewardsAmount,
-        xtzRewardsAmount,
-        aggregator: { address: feedAddress },
-        observations_aggregate: { aggregate },
-      },
+      { smvkRewardsAmount, xtzRewardsAmount, aggregator: { address: feedAddress }, observations: [latestObservation] },
     ) => {
       acc.XTZRewards += convertNumberForClient({
         number: xtzRewardsAmount.aggregate?.sum?.reward ?? 0,
@@ -46,7 +46,7 @@ const getSatelliteOracleRewards = (
         grade: MVK_DECIMALS,
       })
       acc.participatedFeeds[feedAddress] = {
-        averagePredict: Number(aggregate?.sum?.data) / Math.max(Number(aggregate?.count) ?? 1, 1),
+        lastPredictedPrice: latestObservation?.data ?? null,
       }
       return acc
     },
@@ -58,6 +58,12 @@ const getSatelliteOracleRewards = (
   )
 }
 
+/**
+ *
+ * @param satelliteUser – satellite we need to get efficiency for
+ * @returns oracle efficiency – how often satellite predict feed price
+ * TODO: @Sam-M-Israel should be reviewed by you
+ */
 const getSatelliteOracleEfficiency = (satelliteUser: SatelliteDataSubSubscription['satellite'][number]['user']) => {
   const { aggregator_oracles, feedsObservationsAmount } = satelliteUser
 
@@ -116,7 +122,9 @@ export const normallizeSatellite = (satelliteRecord: SatelliteDataSubSubscriptio
     )
 
     const satelliteStatus: SatelliteIndexerStatusType = satelliteRecord.currently_registered
-      ? satelliteStatusSchema.parse(satelliteRecord.status)
+      ? satelliteStatusSchema.parse(
+          satelliteRecord.currently_registered ? satelliteRecord.status : INACTIVE_SATELLITE_STATUS,
+        )
       : INACTIVE_SATELLITE_STATUS
 
     return {
@@ -223,7 +231,7 @@ export const normalizeSatelliteVotings = ({
         voteName: vote.governance_proposal.title,
       })
     } catch (e) {
-      console.error('emergency_governance_votes vote parse error: ', { e })
+      console.error('governance_proposals_votes vote parse error: ', { e })
     } finally {
       return acc
     }
@@ -240,7 +248,7 @@ export const normalizeSatelliteVotings = ({
           voteName: vote.governance_financial_request.request_type,
         })
       } catch (e) {
-        console.error('emergency_governance_votes vote parse error: ', { e })
+        console.error('governance_financial_requests_votes vote parse error: ', { e })
       } finally {
         return acc
       }
@@ -258,7 +266,7 @@ export const normalizeSatelliteVotings = ({
         voteName: vote.governance_satellite_action.governance_type,
       })
     } catch (e) {
-      console.error('emergency_governance_votes vote parse error: ', { e })
+      console.error('governance_satellite_actions_votes vote parse error: ', { e })
     } finally {
       return acc
     }

@@ -1,10 +1,18 @@
-import { calcPersent, getNumberInBounds } from 'utils/calcFunctions'
+import { calcPersent } from 'utils/calcFunctions'
 
 import { RESPONDED_ORACLE_STATUS, NO_RESPONSE_ORACLE_STATUS, NOT_AN_ORACLE_ORACLE_STATUS } from '../satellites.const'
 
 import { SatelliteOracleStatusType, SatelliteRecordType } from '../satellites.provider.types'
 import { MavrykTheme } from 'styles/interfaces'
 
+/**
+ *
+ * @param finRequestsAmount – total amount of created financial requests
+ * @param proposalsAmount – total amount of created gov proposals
+ * @param satelliteGovActionsAmount – total amount of created satellite gov actions
+ * @param satellite – data of satellite
+ * @returns @votingPartisipation – how many votes satellite has participied and @proposalParticipation – how many proposals, requests, actions has user initiated to all their amount
+ */
 export const getSatelliteParticipations = ({
   finRequestsAmount,
   proposalsAmount,
@@ -38,29 +46,15 @@ export const getSatelliteParticipations = ({
   const satelliteVotingPeriods =
     satelliteActionVotingPeriods + governanceProposalsVotingPeriods + financialRequestsVotingPeriods
 
-  /**
-   * @votingPartisipation how many votes satellite has participied
-   */
-  const votingPartisipation = getNumberInBounds(
-    0,
-    100,
-    !satelliteVotesAmount || !satelliteVotingPeriods ? 0 : calcPersent(satelliteVotesAmount, satelliteVotingPeriods),
-  )
+  const votingPartisipation =
+    !satelliteVotesAmount || !satelliteVotingPeriods ? 0 : calcPersent(satelliteVotesAmount, satelliteVotingPeriods)
 
   const initiatedProposalsAmount =
     createdFinProposalsAmount + createdGovProposalsAmount + createdSatelliteGovProposalsAmount
   const totalProposalCreated = finRequestsAmount + proposalsAmount + satelliteGovActionsAmount
 
-  /**
-   * @proposalParticipation how many proposals, requests, actions has user initiated to all their amount
-   */
-  const proposalParticipation = getNumberInBounds(
-    0,
-    100,
-    !initiatedProposalsAmount || !totalProposalCreated
-      ? 0
-      : calcPersent(initiatedProposalsAmount, totalProposalCreated),
-  )
+  const proposalParticipation =
+    !initiatedProposalsAmount || !totalProposalCreated ? 0 : calcPersent(initiatedProposalsAmount, totalProposalCreated)
 
   return {
     proposalParticipation,

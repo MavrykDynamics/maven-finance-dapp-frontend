@@ -137,8 +137,6 @@ export const SatellitesProvider = ({ children }: Props) => {
   }
 
   const memoSatellitesContext = useMemo(() => {
-    // TODO: debug log
-    console.log({ satellites: satellitesCtxState })
     return {
       ...satellitesCtxState,
       isLoading:
@@ -167,7 +165,7 @@ export const useSatellitesContext = () => {
   const context = useContext(satellitesContext)
 
   if (!context) {
-    throw new Error('satellitesContext should be used withing Satellites provider')
+    throw new Error('satellitesContext should be used withing SatellitesProvider')
   }
 
   return context

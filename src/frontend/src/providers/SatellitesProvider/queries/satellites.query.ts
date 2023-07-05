@@ -54,16 +54,7 @@ export function getSatelliteDataSubscription(
             epoch
             round
             timestamp
-          }
-
-          # satellite feed predictions aggregated
-          observations_aggregate {
-            aggregate {
-              sum {
-                data
-              }
-              count
-            }
+            data
           }
 
           # feeds smvk rewards amount
