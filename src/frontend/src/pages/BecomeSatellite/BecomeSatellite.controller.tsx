@@ -57,7 +57,22 @@ import {
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-import { ALL_SATELLITES_SUB } from 'providers/SatellitesProvider/satellites.const'
+import {
+  ALL_SATELLITES_SUB,
+  REGISTER_SATELLITE_ACTION,
+  UPDATE_SATELLITE_ACTION,
+} from 'providers/SatellitesProvider/satellites.const'
+import { registerSatellite, updateSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
+import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+import { unknownToError } from 'errors/error'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { sleep } from 'utils/api/sleep'
+import { REWARDS_COMPOUND_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { TezosWalletErrorPayload } from 'errors/error.type'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -81,7 +96,10 @@ export const BecomeSatellite = () => {
   const {
     maxLengths: { satelliteDelegation },
     minimumStakedMvkBalance,
+    setAction,
   } = useDappConfigContext()
+
+  const { bug, info, loading } = useToasterContext()
 
   const dispatch = useDispatch()
 
@@ -94,6 +112,9 @@ export const BecomeSatellite = () => {
 
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    delegationAddress: { address: delegationAddress },
+  } = useSelector((state: State) => state.contractAddresses)
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
@@ -197,6 +218,82 @@ export const BecomeSatellite = () => {
     }
   }
 
+  const handleRegister = async (requestData: RegisterAsSatelliteForm) => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+
+    const actionResult = await registerSatellite(userAddress, requestData, delegationAddress, satelliteMvkIsDelegatedTo)
+    if (checkIfActionSuccess(actionResult)) {
+      try {
+        const { operation } = actionResult
+        dispatch(toggleActionFullScreenLoader(true))
+        dispatch(toggleActionCompletion(true))
+        info(
+          TOASTER_ACTIONS_TEXTS[REGISTER_SATELLITE_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[REGISTER_SATELLITE_ACTION]['start']['title'],
+        )
+        await sleep(5000)
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+        setAction({ actionName: REGISTER_SATELLITE_ACTION, toasterId, operationLvl })
+      } catch (e) {}
+    } else if (isContractErrorPayload(actionResult.error)) {
+      const { message, description } = actionResult.error as TezosWalletErrorPayload
+      bug(description, message)
+    } else {
+      setAction(null)
+      const parsedError = unknownToError(actionResult.error)
+      bug(parsedError.message)
+    }
+  }
+
+  const handleUpdate = async (requestData: RegisterAsSatelliteForm) => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+
+    const actionResult = await updateSatellite(requestData, delegationAddress)
+    if (checkIfActionSuccess(actionResult)) {
+      try {
+        const { operation } = actionResult
+        dispatch(toggleActionFullScreenLoader(true))
+        dispatch(toggleActionCompletion(true))
+        info(
+          TOASTER_ACTIONS_TEXTS[UPDATE_SATELLITE_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[UPDATE_SATELLITE_ACTION]['start']['title'],
+        )
+        await sleep(5000)
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+        setAction({ actionName: UPDATE_SATELLITE_ACTION, toasterId, operationLvl })
+      } catch (e) {}
+    } else if (isContractErrorPayload(actionResult.error)) {
+      const { message, description } = actionResult.error as TezosWalletErrorPayload
+      bug(description, message)
+    } else {
+      setAction(null)
+      const parsedError = unknownToError(actionResult.error)
+      bug(parsedError.message)
+    }
+  }
+
   // Handlers for register/unregister and update data
   const handleRegisterOrUpdateSatellite = async () => {
     const mainRequestForm: RegisterAsSatelliteForm = {
@@ -212,9 +309,10 @@ export const BecomeSatellite = () => {
       ? { ...mainRequestForm, peerId: form.oraclePeerId.text, publicKey: form.oraclePublicKey.text }
       : mainRequestForm
 
+    // TODO add try catch
     usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered
-      ? await dispatch(updateSatelliteRecord(requestData))
-      : await dispatch(registerAsSatellite(requestData, satelliteMvkIsDelegatedTo))
+      ? await handleUpdate(requestData)
+      : await handleRegister(requestData)
   }
 
   const tooltipPublicKey = (

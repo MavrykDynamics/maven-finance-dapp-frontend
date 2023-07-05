@@ -61,13 +61,8 @@ export const registerSatellite = async (
   accountPkh: string,
   form: RegisterAsSatelliteForm,
   delegationAddress: string,
-  userDelegatedToAddress: string,
+  userDelegatedToAddress: string | null,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
-  // if (!state.wallet.accountPkh) {
-  //   dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-  //   return
-  // }
-
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
@@ -133,8 +128,8 @@ export const updateSatellite = async (
 }
 
 export const unregisterSatellite = async (
-  delegationAddress: string,
   accountPkh: string,
+  delegationAddress: string,
   callback: () => void,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   // if (!state.wallet.accountPkh) {
