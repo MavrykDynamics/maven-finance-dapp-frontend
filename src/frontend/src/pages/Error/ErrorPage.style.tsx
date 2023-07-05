@@ -181,6 +181,7 @@ export const ErrorTopbarLogo = styled.img`
   z-index: ${Z_INDEX_DEFAULT};
   width: 218px;
   height: 43px;
+  cursor: pointer;
 
   &.mobile-logo {
     display: none;
