@@ -106,12 +106,9 @@ export const LoansBorrow = () => {
     [loanTokens, tokenTotals],
   )
 
-  const handleCreatedVaultAddress = (address?: string) => {
+  const handleCreatedVaultAddress = (marketSymbol: string) => (address?: string) => {
     if (!address) return
-
-    const params = new URLSearchParams(location.search)
-    params.append('vaultAddress', address)
-    history.replace({ ...location, search: params.toString() })
+    history.replace(`/loans/${marketSymbol}/borrowTab?vaultAddress=${address}`)
   }
 
   const handleBorrow = (marketSymbol: string) => {
@@ -123,7 +120,7 @@ export const LoansBorrow = () => {
     if (!validVaultId) {
       openCreateVaultPopup?.({
         currentMarketAsset: marketSymbol === 'XTZ' ? 'tez' : marketSymbol.toLowerCase(),
-        setCreatedVaultAddress: handleCreatedVaultAddress,
+        setCreatedVaultAddress: handleCreatedVaultAddress(marketSymbol),
       })
 
       return
