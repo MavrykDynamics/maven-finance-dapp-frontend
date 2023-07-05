@@ -33,7 +33,7 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
         <li>Transaction Estimation & Improved Error Handling.</li>
       </ol>
 
-      <h3>Known UX/UI Issues & Bugs:</h3>
+      <h3>Known UI/UX Issues & Bugs:</h3>
 
       <ol>
         <li>Slow data display updates.</li>
