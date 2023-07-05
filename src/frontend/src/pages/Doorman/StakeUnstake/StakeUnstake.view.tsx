@@ -33,7 +33,7 @@ import {
 import { STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
-import { INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
 import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 import colors from 'styles/colors'
@@ -196,7 +196,7 @@ export const StakeUnstakeView = ({
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
-        setInputData({ ...inputData, amount: '0' })
+        setInputData({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
         setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
       } catch (e) {}
     } else {
