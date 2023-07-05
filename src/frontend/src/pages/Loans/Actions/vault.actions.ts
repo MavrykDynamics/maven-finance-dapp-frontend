@@ -141,13 +141,7 @@ export const triggerInitialVaultCreation =
 
 // borrow asset from the vault
 export const borrowVaultAssetAction =
-  (
-    vaultId: number,
-    amountToBorrow: number,
-    borrowedToken: LoansTokenMetadataType,
-    callback: () => void,
-    scrollToCurrentVault?: () => void,
-  ) =>
+  (vaultId: number, amountToBorrow: number, borrowedToken: LoansTokenMetadataType, callback: () => void) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -197,8 +191,6 @@ export const borrowVaultAssetAction =
           currentOperationLevel,
         })
       }, 5000)
-
-      scrollToCurrentVault?.()
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
       if (error instanceof Error) {
@@ -218,7 +210,6 @@ export const repayPartOfVaultAction =
     repayAmount: number,
     borrowedToken: LoansTokenMetadataType,
     callback: () => void,
-    scrollToCurrentVault?: () => void,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
@@ -331,8 +322,6 @@ export const repayPartOfVaultAction =
           currentOperationLevel,
         })
       }, 5000)
-
-      scrollToCurrentVault?.()
     } catch (error) {
       console.error('repayPartOfVaultAction error:', error)
       if (error instanceof Error) {

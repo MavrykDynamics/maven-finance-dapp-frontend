@@ -8,6 +8,7 @@ import { State } from 'reducers'
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { getGaugeVaultRiskSimpleStatus } from './helpers/position.helpers'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import { getClassNameBasedOnPersentValue } from './helpers/comparing.helpers'
 
 import Button from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -214,9 +215,7 @@ export const LoansDashboard = () => {
                         value={lending24hPersentChange}
                         endingText="% 24h"
                         beginningText={lending24hPersentChange > 0 ? '+' : ''}
-                        className={`diff ${
-                          lending24hPersentChange ? (lending24hPersentChange > 0 ? 'up' : 'down') : 'neutral'
-                        }`}
+                        className={`diff ${getClassNameBasedOnPersentValue(lending24hPersentChange)}`}
                       />
                     </div>
                   </div>

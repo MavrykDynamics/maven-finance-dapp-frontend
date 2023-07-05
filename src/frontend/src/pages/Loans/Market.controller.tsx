@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Redirect, useParams } from 'react-router'
+import { Redirect, useHistory, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 
 // const
@@ -36,6 +36,7 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { getVaultBorrowCapacity, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
 
 export const Market = () => {
+  const history = useHistory()
   const dispatch = useDispatch()
   const { assetAddress, tabId } = useParams<{ assetAddress: string; tabId: string }>()
 
@@ -127,9 +128,13 @@ export const Market = () => {
 
   const marketPagination = (
     <MarketPagination>
-      <Link to="/loans">
-        <Button text="Go Back" icon="arrowRight" className="arrow" kind={TRANSPARENT_WITH_BORDER} />
-      </Link>
+      <Button
+        onClick={() => history.goBack()}
+        text="Go Back"
+        icon="arrowRight"
+        className="arrow"
+        kind={TRANSPARENT_WITH_BORDER}
+      />
 
       <div className="right-side-wrapper">
         {prevMarket ? (

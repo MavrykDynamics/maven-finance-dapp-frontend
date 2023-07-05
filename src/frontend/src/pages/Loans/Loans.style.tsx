@@ -462,6 +462,7 @@ export const TransactionHistoryStyled = styled.div<{ theme: MavrykTheme }>`
   .lending-controller {
     display: flex;
     column-gap: 5px;
+    margin-top: 20px;
 
     font-weight: 600;
     font-size: 14px;

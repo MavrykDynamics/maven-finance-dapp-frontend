@@ -80,6 +80,13 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
 
   const isDisabledButton = inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionActive
 
+  const clearData = () => {
+    setInputData({
+      amount: '0',
+      validationStatus: INPUT_STATUS_DEFAULT,
+    })
+  }
+
   const handleSwitchTab = (tabId: number) => {
     setInputData({
       amount: '0',
@@ -92,6 +99,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
     switch (activeTab?.id) {
       case loansTabNames.SUPPLY:
         openConfirmAddLendingAssetPopup({
+          callback: clearData,
           inputAmount: Number(inputData.amount),
           mBalance: convertedLendValue,
           lendingAPY: lendAPY,
@@ -101,6 +109,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
         break
       case loansTabNames.WITHDRAW:
         openConfirmRemoveLendingAssetPopup({
+          callback: clearData,
           inputAmount: Number(inputData.amount),
           currentLendedAmount: convertedLendValue,
           tokenAddress: loanTokenAddress,

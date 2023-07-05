@@ -44,7 +44,7 @@ export const ConfirmRepayFull = ({
 
   if (!data || !borrowedToken || !borrowedToken.rate) return null
 
-  const { vaultId, vaultAddress, collateralBalance, borrowCapacity, borrowedAmount, totalOutstanding } = data
+  const { vaultId, vaultAddress, collateralBalance, borrowCapacity, borrowedAmount, totalOutstanding, callback } = data
 
   const { symbol, rate } = borrowedToken
 
@@ -53,7 +53,12 @@ export const ConfirmRepayFull = ({
 
   const repayBtnHandler = async () => {
     if (vaultId && vaultAddress && checkWhetherTokenIsLoanToken(borrowedToken)) {
-      await dispatch(repayFullAndCloseVaultAction(vaultId, vaultAddress, totalOutstanding, borrowedToken, closePopup))
+      await dispatch(
+        repayFullAndCloseVaultAction(vaultId, vaultAddress, totalOutstanding, borrowedToken, () => {
+          closePopup()
+          callback()
+        }),
+      )
     }
   }
 

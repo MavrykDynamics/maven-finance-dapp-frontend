@@ -45,8 +45,7 @@ export const ConfirmBorrowAsset = ({
 
   if (!data || !borrowedToken || !borrowedToken.rate) return null
 
-  const { vaultId, borrowCapacity, inputAmount, borrowedAmount, collateralBalance, DAOFee, scrollToCurrentVault } =
-    data ?? {}
+  const { vaultId, borrowCapacity, inputAmount, borrowedAmount, collateralBalance, DAOFee, callback } = data ?? {}
 
   const { symbol, rate } = borrowedToken
 
@@ -56,7 +55,12 @@ export const ConfirmBorrowAsset = ({
 
   const borrowAsserHandler = () => {
     if (vaultId && checkWhetherTokenIsLoanToken(borrowedToken)) {
-      dispatch(borrowVaultAssetAction(vaultId, inputAmount, borrowedToken, closePopup, scrollToCurrentVault))
+      dispatch(
+        borrowVaultAssetAction(vaultId, inputAmount, borrowedToken, () => {
+          closePopup()
+          callback()
+        }),
+      )
     }
   }
 

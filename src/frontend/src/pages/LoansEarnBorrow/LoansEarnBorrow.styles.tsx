@@ -146,8 +146,4 @@ export const EarnBorrowCardBody = styled.div<{ theme: MavrykTheme }>`
       fill: ${({ theme }) => theme.dataColor};
     }
   }
-
-  .hidden {
-    visibility: hidden;
-  }
 `

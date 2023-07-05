@@ -63,7 +63,7 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo>
-          <CommaNumber value={lendAPY} className="value" showDecimal decimalsToShow={decimals} />
+          <CommaNumber value={lendAPY} className="value" endingText="%" showDecimal decimalsToShow={2} />
 
           <div className="name margin-top">
             Earn APY
@@ -95,7 +95,7 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
 
       <LoansValuesSectionInfo className="learn-more">
         <a href="https://mavryk.finance/litepaper#multi-collateral-vaults" target="_blank" rel="noreferrer">
-          Learn more at the Mavryk Docs
+          Learn more at the Mavryk Finance Docs
         </a>
       </LoansValuesSectionInfo>
     </LoansValuesSection>

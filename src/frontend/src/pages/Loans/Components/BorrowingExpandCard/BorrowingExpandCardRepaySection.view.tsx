@@ -52,8 +52,8 @@ type Props = {
   collateralBalance: number
   borrowCapacity: number
   activeRepayTab?: TabItem
-  openConfirmRepayPopup: (inputAmount: number) => void
-  openConfirmRepayFullPopup: () => void
+  openConfirmRepayPopup: (inputAmount: number, callback: () => void) => void
+  openConfirmRepayFullPopup: (callback: () => void) => void
 }
 
 export const BorrowingExpandCardRepaySection = (props: Props) => {
@@ -112,6 +112,13 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [collateralBalance, borrowedAmount, inputAmount, borrowedTokenRate, borrowCapacity])
 
+  const clearData = () => {
+    setInputData({
+      amount: '0',
+      validationStatus: INPUT_STATUS_DEFAULT,
+    })
+  }
+
   const inputOnChangeHandle = useCallback(
     (newInputAmount: string, maxAmount: number) => {
       const validationStatus = loansInputValidation({
@@ -148,7 +155,9 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   const handleClickRepay = async () => {
     if (vaultId && vaultAddress) {
-      isRepayInFull && !isNotRepayInFullWarning ? openConfirmRepayFullPopup() : openConfirmRepayPopup(inputAmount)
+      isRepayInFull && !isNotRepayInFullWarning
+        ? openConfirmRepayFullPopup(clearData)
+        : openConfirmRepayPopup(inputAmount, clearData)
     }
   }
 

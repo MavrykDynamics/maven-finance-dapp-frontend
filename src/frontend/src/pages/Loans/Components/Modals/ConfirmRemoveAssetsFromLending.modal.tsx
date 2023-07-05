@@ -34,12 +34,17 @@ export const ConfirmRemoveAssetsFromLending = ({
 
   if (!data || !loanToken || !loanToken.rate) return null
 
-  const { currentLendedAmount, inputAmount } = data
+  const { currentLendedAmount, inputAmount, callback } = data
   const { symbol, rate } = loanToken
 
   const withdrawHandler = () => {
     if (checkWhetherTokenIsLoanToken(loanToken)) {
-      dispatch(withdrawLendingAssetAction(inputAmount, loanToken, closePopup))
+      dispatch(
+        withdrawLendingAssetAction(inputAmount, loanToken, () => {
+          closePopup()
+          callback()
+        }),
+      )
     }
   }
 
