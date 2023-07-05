@@ -1,6 +1,6 @@
 import { OpKind, TransferParams } from '@taquito/taquito'
 import { unknownToError } from 'errors/error'
-import { estimateBatchOperation, estimateExecution } from 'errors/helpers/walletError.helper'
+import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { RegisterAsSatelliteForm } from 'utils/TypesAndInterfaces/Forms'
@@ -34,14 +34,7 @@ export const delegate = async (
     const contract = await tezos.wallet.at(delegationAddress)
     const delegateMetaData = await contract?.methods.delegateToSatellite(accountPkh, satelliteAddress)
 
-    const op = await estimateExecution(delegateMetaData)
-
-    if (op?.error) {
-      return { actionSuccess: false, error: op.error }
-    }
-
-    const operation = await delegateMetaData.send()
-    return { actionSuccess: true, operation }
+    return await getEstimationResult(delegateMetaData)
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }
@@ -63,14 +56,7 @@ export const undelegate = async (
     const contract = await tezos.wallet.at(delegationAddress)
     const unDelegateMetaData = await contract?.methods.undelegateFromSatellite(accountPkh, delegateToAddress)
 
-    const op = await estimateExecution(unDelegateMetaData)
-
-    if (op?.error) {
-      return { actionSuccess: false, error: op.error }
-    }
-
-    const operation = await unDelegateMetaData.send()
-    return { actionSuccess: true, operation }
+    return await getEstimationResult(unDelegateMetaData)
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }
@@ -92,14 +78,7 @@ export const distributeProposalRewards = async (
     const contract = await tezos.wallet.at(delegationAddress)
     const distributeProposalsMetaData = await contract?.methods.distributeProposalRewards(satelliteAddress, proposals)
 
-    const op = await estimateExecution(distributeProposalsMetaData)
-
-    if (op?.error) {
-      return { actionSuccess: false, error: op.error }
-    }
-
-    const operation = await distributeProposalsMetaData.send()
-    return { actionSuccess: true, operation }
+    return await getEstimationResult(distributeProposalsMetaData)
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }
@@ -146,16 +125,7 @@ export const registerSatellite = async (
         .toTransferParams(),
     })
 
-    // Estimating Operations for the batch call
-    const estimateBatchOp = await estimateBatchOperation(batchArr)
-
-    if (estimateBatchOp.error) {
-      return { actionSuccess: false, error: estimateBatchOp.error }
-    }
-
-    const operation = await tezos.wallet.batch(batchArr).send()
-
-    return { actionSuccess: true, operation }
+    return await getEstimationBatchResult(tezos, batchArr)
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }
@@ -184,14 +154,7 @@ export const updateSatellite = async (
       form.peerId,
     )
 
-    const op = await estimateExecution(updateSatelliteMetaData)
-
-    if (op?.error) {
-      return { actionSuccess: false, error: op.error }
-    }
-
-    const operation = await updateSatelliteMetaData.send()
-    return { actionSuccess: true, operation }
+    return await getEstimationResult(updateSatelliteMetaData)
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }
@@ -213,16 +176,7 @@ export const unregisterSatellite = async (
     const contract = await tezos.wallet.at(delegationAddress)
     const unregisterSatelliteMetaData = await contract?.methods.unregisterAsSatellite(accountPkh)
 
-    const op = await estimateExecution(unregisterSatelliteMetaData)
-
-    if (op?.error) {
-      return { actionSuccess: false, error: op.error }
-    }
-
-    const operation = await unregisterSatelliteMetaData.send()
-
-    callback()
-    return { actionSuccess: true, operation }
+    return await getEstimationResult(unregisterSatelliteMetaData, callback)
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }
