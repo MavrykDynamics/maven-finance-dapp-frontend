@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // types
-import { StageTwoFormProps, ProposalBytesType } from '../ProposalSubmission.types'
+import { ProposalBytesType, StageTwoFormProps } from '../ProposalSubmission.types'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -15,17 +15,19 @@ import { Info } from 'app/App.components/Info/Info.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // const, helpers
-import { checkBytesPairExists, getBytesPairValidationStatus, PROPOSAL_BYTE } from '../ProposalSubmission.helpers'
 import { STAGE_2_DESCRIPTION } from 'texts/tooltips/governance'
 import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { INFO_DEFAULT, INFO_WARNING } from 'app/App.components/Info/info.constants'
 import { BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { isHexadecimal } from 'utils/validatorFunctions'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { checkBytesPairExists, getBytesPairValidationStatus, PROPOSAL_BYTE } from '../ProposalSubmission.helpers'
 
 // styles
 import { SubmitProposalBytes, SubmitProposalBytesPair, SubmitProposalGeneralData } from '../ProposalSubmission.style'
 import { containSpaces } from 'app/App.utils/input'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // valid bytes text for testing: 0502000000c703200743036e0a000000160136047207da50aa1f751393d670b8810457c21d43000655076504620000001525757064617465436f6e6669674e657756616c75650864046c0000001925636f6e6669675661756c744e616d654d61784c656e677468046c0000000625656d7074790000001325757064617465436f6e666967416374696f6e0000000d25757064617465436f6e666967072f0200000008074303620000032702000000000743036a0000034f0533036c0743036200140342034d053d036d034c031b
 export const StageTwoForm = ({
@@ -35,9 +37,15 @@ export const StageTwoForm = ({
   updateLocalProposalValidation,
   updateLocalProposalData,
 }: StageTwoFormProps) => {
-  const { governancePhase, fee, successReward, proposalMetadataTitleMaxLength, proposalDescriptionMaxLength } =
-    useSelector((state: State) => state.governance.config)
-  const { isNewlyRegisteredSatellite } = useSelector((state: State) => state.wallet.user)
+  const {
+    maxLengths: {
+      governance: { proposalMetadataTitleMaxLength, proposalDescriptionMaxLength },
+    },
+  } = useDappConfigContext()
+  const { isNewlyRegisteredSatellite } = useUserContext()
+
+  const { governancePhase, fee, successReward } = useSelector((state: State) => state.governance.config)
+
   const isProposalPeriod = governancePhase === 'PROPOSAL'
 
   // is no bytes pair on proposal change add empty pair on client

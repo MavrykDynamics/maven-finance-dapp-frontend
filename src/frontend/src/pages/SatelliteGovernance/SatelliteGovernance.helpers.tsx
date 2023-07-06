@@ -57,7 +57,6 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
   const config = {
     address: governanceSatellite.address,
     admin: governanceSatellite.admin,
-    purposeMaxLength: governanceSatellite.gov_purpose_max_length,
     approvalPercentage: governanceSatellite.gov_sat_approval_percentage,
     durationInDays: governanceSatellite.gov_sat_duration_in_days,
     counter: governanceSatellite.governance_satellite_counter,
@@ -103,7 +102,7 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
         statusFlag,
         satelliteId: item.governance_satellite.address,
         initiatorId: item.initiator.address,
-        expirationDatetime: item.expiration_datetime ?? null,
+        expirationDatetime: item.executed ? item.execution_datetime : item.expiration_datetime ?? null,
         startDatetime: item.start_datetime ?? null,
         smvkPercentageForApproval: item.smvk_percentage_for_approval,
         smvkRequiredForApproval: item.smvk_required_for_approval,

@@ -6,12 +6,6 @@ export const GOVERNANCE_CONFIG_QUERY = `
       success_reward
       cycle_id
 
-      proposal_invoice_max_length
-      proposal_metadata_title_max_length
-      proposal_description_max_length
-      proposal_source_code_max_length
-      proposal_title_max_length
-
       proposal_submission_fee_mutez
       timelock_proposal_id
       cycle_highest_voted_proposal_id
@@ -73,6 +67,11 @@ query GetGovernanceProposalsQuery {
       vote
       voter {
         address
+
+        satellites {
+          image
+          name
+        }
       }
     }
 

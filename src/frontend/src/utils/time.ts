@@ -28,7 +28,6 @@ type TimeFormatTypes =
 
 export const parseDate = ({ time, timeFormat }: { time?: string | number | null; timeFormat: TimeFormatTypes }) => {
   if (!time) return null
-  const dateObj = new Date(time)
 
-  return dayjs(dateObj.getTime()).format(timeFormat)
+  return dayjs(time).format(timeFormat)
 }

@@ -2,69 +2,6 @@ import styled, { css } from 'styled-components/macro'
 import { shine, ellipsis } from 'styles/animations'
 import { MavrykTheme } from 'styles/interfaces'
 
-export const LoaderStyled = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: 40px;
-
-  body {
-    display: flex;
-    height: 100vh;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .loading {
-    position: relative;
-    width: 96px;
-    height: 96px;
-    transform: rotate(45deg);
-    animation: hue-rotate 10s linear infinite both;
-  }
-
-  .loading__square {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 28px;
-    height: 28px;
-    margin: 2px;
-    border-radius: 2px;
-    background: #07a;
-    background-image: linear-gradient(45deg, #fa0 40%, #0c9 60%);
-    background-image: -moz-linear-gradient(#fa0, #fa0);
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    animation: square-animation 10s ease-in-out infinite both;
-  }
-  .loading__square:nth-of-type(0) {
-    animation-delay: 0s;
-  }
-  .loading__square:nth-of-type(1) {
-    animation-delay: -1.4285714286s;
-  }
-  .loading__square:nth-of-type(2) {
-    animation-delay: -2.8571428571s;
-  }
-  .loading__square:nth-of-type(3) {
-    animation-delay: -4.2857142857s;
-  }
-  .loading__square:nth-of-type(4) {
-    animation-delay: -5.7142857143s;
-  }
-  .loading__square:nth-of-type(5) {
-    animation-delay: -7.1428571429s;
-  }
-  .loading__square:nth-of-type(6) {
-    animation-delay: -8.5714285714s;
-  }
-  .loading__square:nth-of-type(7) {
-    animation-delay: -10s;
-  }
-`
-
 export const LoaderStyledWithBackdrop = styled.div<{ theme: MavrykTheme; backdropAlpha?: number; isActive: boolean }>`
   position: fixed;
   inset: 0;
@@ -158,5 +95,9 @@ export const DataLoaderWrapper = styled.div<{ theme: MavrykTheme }>`
       width: 0px;
       color: ${({ theme }) => theme.textColor};
     }
+  }
+
+  &.no-margin {
+    margin: 0;
   }
 `

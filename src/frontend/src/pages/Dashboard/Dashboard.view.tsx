@@ -19,7 +19,6 @@ import { SatellitesTab } from './TabScreens/SatellitesTab.controller'
 import { TreasuryTab } from './TabScreens/TreasuryTab.controller'
 import { VaultsTab } from './TabScreens/VaultsTab.controller'
 import { StakingTab } from './TabScreens/StakingTab.controller'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 const TabById = ({ activeTab, isDataLoading }: { activeTab: TabId; isDataLoading: boolean }) => {
   switch (activeTab) {

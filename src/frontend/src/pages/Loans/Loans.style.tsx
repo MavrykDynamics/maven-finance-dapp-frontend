@@ -26,6 +26,13 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
       border-radius: 10px;
     }
 
+    .emptyChart {
+      & > div:first-child {
+        position: relative;
+        top: 215px;
+      }
+    }
+
     .summary {
       display: flex;
       flex-direction: column;
@@ -455,6 +462,7 @@ export const TransactionHistoryStyled = styled.div<{ theme: MavrykTheme }>`
   .lending-controller {
     display: flex;
     column-gap: 5px;
+    margin-top: 20px;
 
     font-weight: 600;
     font-size: 14px;

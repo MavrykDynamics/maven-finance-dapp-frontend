@@ -9,15 +9,14 @@ import {
 } from 'app/App.components/Toaster/Toaster.constants'
 
 import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { updateUserData } from 'reducers/actions/user.actions'
 
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 import { State } from 'reducers'
 import type { AppDispatch, GetState } from '../../app/App.controller'
 
+// TODO: move to context action flow
 export const rewardsCompound = (address: string) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
@@ -53,8 +52,6 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
       // refetch data we need
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
-          await dispatch(updateUserData())
-
           // Add here call for update data actions
           await dispatch(hideToaster())
           await dispatch(showToaster(TOASTER_SUCCESS, 'Compounding done', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -66,80 +63,6 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
-      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-    }
-    dispatch(toggleActionFullScreenLoader(false))
-    dispatch(toggleActionCompletion(false))
-  }
-}
-
-export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
-
-  // check whether we can send transaction
-  if (!state.tokens.mvkFaucetAddress) {
-    dispatch(showToaster(TOASTER_ERROR, 'Cannot send transaction', 'No faucet address provided'))
-    return
-  }
-
-  if (!state.wallet.accountPkh) {
-    await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  if (
-    state.wallet.user.userTokens[MVK_TOKEN_SYMBOL].balance > 0 ||
-    state.wallet.user.userTokens[SMVK_TOKEN_SYMBOL].balance > 0
-  ) {
-    dispatch(
-      showToaster(
-        TOASTER_ERROR,
-        'You have already claimed MVK',
-        'You are unable to claim MVK, you have already claimed',
-      ),
-    )
-    return
-  }
-  try {
-    // prepare and send transaction
-    await dispatch(toggleActionFullScreenLoader(true))
-    const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(state.tokens.mvkFaucetAddress)
-    const transaction = await contract.methods.requestMvk().send()
-
-    dispatch(toggleActionFullScreenLoader(true))
-    dispatch(toggleActionCompletion(true))
-    dispatch(showToaster(TOASTER_INFO, 'Requesting MVK...', 'Please wait 15s'))
-
-    // turn off fs actions loader and start data updating after 5s after operation started
-    setTimeout(async () => {
-      await dispatch(toggleActionFullScreenLoader(false))
-      await dispatch(
-        showToaster(
-          TOASTER_LOADING,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        ),
-      )
-
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
-
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(updateUserData())
-
-          // Add here call for update data actions
-          await dispatch(hideToaster())
-          await dispatch(showToaster(TOASTER_SUCCESS, 'Received 1,000 MVK...', 'Enjoy using Mavryk Finance :)'))
-          await dispatch(toggleActionCompletion(false))
-        },
-        currentOperationLevel,
-      })
-    }, 5000)
-  } catch (error) {
-    if (error instanceof Error) {
       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
     dispatch(toggleActionFullScreenLoader(false))

@@ -33,7 +33,7 @@ export const BorrowingExpandCardValuesSection = ({
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   return (
-    <LoansValuesSection className='borrowing-tab'>
+    <LoansValuesSection className="borrowing-tab">
       <div className="stats">
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
           <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={decimals} />
@@ -103,7 +103,7 @@ export const BorrowingExpandCardValuesSection = ({
       </LoansValuesSectionInfo>
       <LoansValuesSectionInfo className="learn-more">
         <a href="https://mavryk.finance/litepaper#multi-collateral-vaults" target="_blank" rel="noreferrer">
-          Learn more at the Mavryk Docs
+          Learn more at the Mavryk Finance Docs
         </a>
       </LoansValuesSectionInfo>
     </LoansValuesSection>

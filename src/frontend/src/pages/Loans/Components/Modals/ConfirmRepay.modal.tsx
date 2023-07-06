@@ -1,9 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
-import { useMemo } from 'react'
 
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { ConfirmRepayPartPopupDataType } from './Modals.helpers'
+import { ConfirmRepayPartPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
 
@@ -16,11 +15,14 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { calcCollateralRatio, getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 import { State } from 'reducers'
 import colors from 'styles/colors'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
 
 export const ConfirmRepay = ({
   closePopup,
@@ -31,43 +33,29 @@ export const ConfirmRepay = ({
   show: boolean
   data: ConfirmRepayPartPopupDataType
 }) => {
-  const {
-    inputAmount = 0,
-    vaultId,
-    vaultAddress,
-    borrowedAsset,
-    currentCollateralBalance = 0,
-    borrowCapacity = 0,
-    borrowedAmount = 0,
-    scrollToCurrentVault,
-  } = data ?? {}
-
   useLockBodyScroll(show)
+  const { tokensMetadata, tokensPrices } = useTokensContext()
   const dispatch = useDispatch()
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = borrowedAsset
-      ? calcCollateralRatio(currentCollateralBalance, borrowedAmount - inputAmount, borrowedAsset.rate)
-      : 0
+  const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
-    const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
-    return { futureCollateralRatio, futureBorrowCapacity }
-  }, [borrowedAsset, currentCollateralBalance, borrowCapacity, inputAmount, borrowedAmount])
+  if (!data || !borrowedToken || !borrowedToken.rate) return null
+
+  const { vaultId, vaultAddress, collateralBalance, borrowCapacity, borrowedAmount, inputAmount, callback } = data
+
+  const { symbol, rate } = borrowedToken
+
+  const futureCollateralRatio = getVaultCollateralRatio(collateralBalance, (borrowedAmount - inputAmount) * rate)
+  const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
 
   const repayBtnHandler = async () => {
-    if (vaultId && borrowedAsset && vaultAddress) {
+    if (vaultId && vaultAddress && checkWhetherTokenIsLoanToken(borrowedToken)) {
       await dispatch(
-        repayPartOfVaultAction(
-          vaultId,
-          vaultAddress,
-          inputAmount,
-          borrowedAsset.decimals,
-          borrowedAsset.tokenType,
-          borrowedAsset.address,
-          closePopup,
-          scrollToCurrentVault,
-        ),
+        repayPartOfVaultAction(vaultId, vaultAddress, inputAmount, borrowedToken, () => {
+          closePopup()
+          callback()
+        }),
       )
     }
   }
@@ -86,7 +74,7 @@ export const ConfirmRepay = ({
           <div className="lending-stats" style={{ marginBottom: '25px' }}>
             <ThreeLevelListItem>
               <div className="name">Asset</div>
-              <div className="value">{borrowedAsset?.symbol}</div>
+              <div className="value">{symbol}</div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Amount</div>
@@ -94,7 +82,7 @@ export const ConfirmRepay = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem className="right">
               <div className="name">USD Value</div>
-              <CommaNumber value={inputAmount * Number(borrowedAsset?.rate)} className="value" beginningText="$" />
+              <CommaNumber value={inputAmount * rate} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </div>
 
@@ -116,7 +104,7 @@ export const ConfirmRepay = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral Value</div>
-              <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
+              <CommaNumber value={collateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">

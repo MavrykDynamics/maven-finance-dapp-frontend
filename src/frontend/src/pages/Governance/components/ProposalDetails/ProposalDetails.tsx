@@ -41,9 +41,12 @@ import { TzAddress, handleCopyToClipboard } from 'app/App.components/TzAddress/T
 import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.helpers'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { convertNumberForClient } from 'utils/calcFunctions'
 import { api } from 'utils/api/api'
 import { isAbortError } from 'errors/error'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
   const dispatch = useDispatch()
@@ -52,9 +55,10 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { whitelistTokens } = useSelector((state: State) => state.tokens)
   const { governancePhase } = useSelector((state: State) => state.governance.config)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+
+  const { tokensMetadata } = useTokensContext()
 
   const isUserOwnerIfTheProposal = proposal.proposerId === accountPkh
 
@@ -159,8 +163,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         handleProposalVote={handleProposalRoundVote}
         selectedProposal={proposal}
         vote={proposal.votes.find(
-          ({ voter: { address }, round }) =>
-            address === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
+          ({ address, round }) => address === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
         )}
         isVoteActive={(votingTill ?? 0) >= Date.now()}
         govPhase={governancePhase}
@@ -279,12 +282,20 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
             </TableHeader>
             <TableBody>
               {proposal.proposalPayments.map((payment) => {
-                if (payment.to__id === null || payment.title === null) return null
+                if (
+                  payment.to__id === null ||
+                  payment.title === null ||
+                  payment.token_address === null ||
+                  payment.token_address === undefined
+                )
+                  return null
 
-                const selectedSymbol =
-                  whitelistTokens.find(({ address }) => address === payment.token_address)?.symbol?.toUpperCase() ??
-                  whitelistTokens?.[0]?.symbol?.toUpperCase() ??
-                  'MVK'
+                const token = getTokenDataByAddress({ tokenAddress: payment.token_address, tokensMetadata })
+
+                if (!token) return null
+
+                const { symbol, decimals } = token
+                const tokenAmount = convertNumberForClient({ number: Number(payment.token_amount), grade: decimals })
 
                 return (
                   <TableRow className="editable-row proposal-details-payments" key={payment.id}>
@@ -293,15 +304,10 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
                     </TableCell>
                     <TableCell width="25%">{String(payment.title)}</TableCell>
                     <TableCell width="25%">
-                      <CommaNumber
-                        value={Number(payment.token_amount)}
-                        // TODO: add decimals of max asset decimals, and check design with large decimals amount
-                        decimalsToShow={4}
-                        endingText={selectedSymbol}
-                      />
+                      <CommaNumber value={tokenAmount} decimalsToShow={decimals} endingText={symbol} />
                     </TableCell>
                     <TableCell className="no-right-border" width="25%">
-                      {selectedSymbol}
+                      {symbol}
                     </TableCell>
                   </TableRow>
                 )

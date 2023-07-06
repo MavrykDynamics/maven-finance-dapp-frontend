@@ -6,7 +6,7 @@ import farmFactoryAddress from '../../deployments/farmFactoryAddress.json'
 
 import { OpKind } from '@taquito/taquito'
 import { convertNumberForContractCall } from '../../utils/calcFunctions'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { GET_GOVERNANCE_CONFIG } from 'pages/Governance/actions/GovernanseData.actions'
 import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 
@@ -440,13 +440,14 @@ export const addAllCollateralTokensToMarkets =
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
 
-      allowedCollaterals.forEach((collateralToken: string) => {
-        if (state.tokens.avaliableCollaterals.some((e) => e.gqlName === collateralToken)) {
-          const tokenOracleId = oracleIDMap.get(collateralToken) ?? ''
-          const tokenBatchObject = createCollateralTokenBatchMethodObject(contract, tokenOracleId, collateralToken)
-          if (tokenBatchObject !== null) batchArray.push(tokenBatchObject)
-        }
-      })
+      // TODO: is not used
+      // allowedCollaterals.forEach((collateralToken: string) => {
+      //   if (state.tokens.avaliableCollaterals.some((e) => e.gqlName === collateralToken)) {
+      //     const tokenOracleId = oracleIDMap.get(collateralToken) ?? ''
+      //     const tokenBatchObject = createCollateralTokenBatchMethodObject(contract, tokenOracleId, collateralToken)
+      //     if (tokenBatchObject !== null) batchArray.push(tokenBatchObject)
+      //   }
+      // })
 
       allowedCollaterals.forEach((collateralToken: string) => {
         const tokenOracleId = oracleIDMap.get(collateralToken) ?? ''

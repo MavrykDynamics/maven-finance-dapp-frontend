@@ -1,5 +1,4 @@
 export const LOANS_QUERY = `
-
 query GetLoansStorage {
   lending_controller(where: {mock_time: {_eq: false}}) {
     collateral_ratio
@@ -7,33 +6,7 @@ query GetLoansStorage {
     interest_rate_decimals
     minimum_loan_fee_pct
     decimals
-    history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
-      type
-      amount
-      timestamp
-      loan_token {
-        loan_token_name
-        oracle {
-          address
-        }
-        token {
-          token_address
-          token_standard
-        }
-      }
-    }
-    collateral_tokens {
-      token {
-        token_address
-        token_standard
-      }
-      id
-      token_name
-      protected
-      oracle {
-        address
-      }
-    }
+    
     loan_tokens {
       loan_token_name
       id
@@ -43,46 +16,14 @@ query GetLoansStorage {
       total_remaining
       reserve_ratio
       current_interest_rate
-      oracle {
-        address
-      }
       token {
         token_address
-        token_standard
       }
       m_token {
         address
-      }
-      history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
-        type
-        amount
-        timestamp
-        operation_hash
-        sender {
-          address
-        }
-        vault {
-          vault {
-            address
-          }
-        }
-        loan_token {
-          loan_token_name
-          token {
-            token_address
-            token_standard
-          }
-          oracle {
-            address
-          }
-        }
-        collateral_token {
-          token_name
-          token {
-            token_address
-          }
-          oracle {
-            address
+        accounts_aggregate(where: {balance: {_gte: 0}}) {
+          aggregate {
+            count
           }
         }
       }
@@ -99,53 +40,6 @@ query GetLoansStorage {
 
 export const LOANS_QUERY_NAME = 'GetLoansStorage'
 export const LOANS_QUERY_VARIABLE = {}
-
-export const AVALIABLE_COLLATERALS_QUERY = `
-query GetAvaliableCollaterals {
-  lending_controller(where: {mock_time: {_eq: false}}) {
-    collateral_tokens {
-      token {
-        token_address
-        token_standard
-      }
-      id
-      token_name
-      protected
-      oracle {
-        address
-      }
-    }
-    loan_tokens {
-      loan_token_name
-      oracle {
-        address
-      }
-      vaults {
-        collateral_balances {
-          collateral_token {
-            token_name
-            token {
-              token_address
-            }
-          }
-        }
-        loan_token {
-          token {
-            token_address
-          }
-          loan_token_name
-          oracle {
-            address
-          }
-        }
-      }
-    }
-  }
-}
-`
-
-export const AVALIABLE_COLLATERALS_QUERY_NAME = 'GetAvaliableCollaterals'
-export const AVALIABLE_COLLATERALS_QUERY_VARIABLE = {}
 
 export const NEW_VAULT_QUERY = `
   query GetUsersLastestCreatedVault($userAddress: String = "", $vaultName: String = "") {
@@ -164,65 +58,6 @@ export const NEW_VAULT_QUERY = `
 
 export const NEW_VAULT_QUERY_NAME = 'GetUsersLastestCreatedVault'
 export const NEW_VAULT_QUERY_VARIABLE = (userAddress: string, vaultName: string) => ({ userAddress, vaultName })
-
-export const USER_LENDING_DATA_QUERY = `
-query GetLendBorrowHistoryPerUser($userAddress: String = "", $_in: [smallint!] = ["0", "1", "2", "3"]) {
-  mavryk_user(where: {address: {_eq: $userAddress}}) {
-    lending_controller_history_data_sender(where: {lending_controller: {mock_time: {_eq: false}}, type: {_in: $_in}}, order_by: {type: asc, timestamp: asc}) {
-      type
-      timestamp
-      operation_hash
-      amount
-      loan_token {
-        oracle {
-            address
-          }
-        loan_token_name
-        token {
-          token_address
-          token_standard
-        }
-        current_interest_rate
-      }
-      lending_controller {
-        interest_rate_decimals
-        interest_treasury_share
-        decimals
-      }
-    }
-    lending_controller_vaults(where: {lending_controller: {mock_time: {_eq: false}}}) {
-      collateral_balances {
-        balance
-        collateral_token {
-          token_name
-          oracle {
-            address
-          }
-          token {
-            token_address
-          }
-        }
-      }
-      loan_decimals
-      loan_principal_total
-      loan_token {
-        loan_token_name
-        token {
-          token_address
-        }
-        oracle {
-            address
-          }
-      }
-    }
-  }
-}
-`
-
-export const USER_LENDING_DATA_QUERY_NAME = 'GetLendBorrowHistoryPerUser'
-export const USER_LENDING_DATA_QUERY_VARIABLE = (userAddress?: string) => {
-  return { userAddress: userAddress ?? '' }
-}
 
 export const MVK_TOKEN_OPERATOR_QUERY = `
   query GetMvkTokenOperator($_userAddress: String) {

@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
 import { State } from 'reducers'
 import { submitEmergencyGovernanceProposal } from '../EmergencyGovernance.actions'
 import {
@@ -23,10 +26,13 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Butt
 
 export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolean; closeHandler: () => void }) => {
   const dispatch = useDispatch()
-  const { fee } = useSelector((state: State) => state.governance.config)
+
   const {
-    config: { proposalTitleMaxLength, proposalDescMaxLength },
-  } = useSelector((state: State) => state.emergencyGovernance)
+    maxLengths: {
+      emergencyGovernance: { proposalTitleMaxLength, proposalDescMaxLength },
+    },
+  } = useDappConfigContext()
+  const { fee } = useSelector((state: State) => state.governance.config)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [proposalData, setProposalData] = useState<{

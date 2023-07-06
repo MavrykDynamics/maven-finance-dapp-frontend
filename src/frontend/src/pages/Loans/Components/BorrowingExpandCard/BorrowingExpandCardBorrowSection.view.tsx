@@ -3,17 +3,16 @@ import { useSelector } from 'react-redux'
 import classNames from 'classnames'
 import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
-import {
-  calcCollateralRatio,
-  getCollateralRatioByPersentage,
-  getLoansInputMaxAmount,
-  isTezosAsset,
-  loansInputValidation,
-} from 'pages/Loans/Loans.helpers'
-import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from '../Modals/Modals.helpers'
+import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
-import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import {
+  INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+  InputStatusType,
+  getOnBlurValue,
+  getOnFocusValue,
+} from 'app/App.components/Input/Input.constants'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Input } from 'app/App.components/Input/NewInput'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -33,24 +32,30 @@ import {
 } from 'texts/banners/vault.text'
 import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault.text'
 import { checkNan } from 'utils/checkNan'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
 
 type Props = {
-  borrowedAsset: LoansVaultType['borrowedAsset']
+  borrowedAssetAddress: TokenAddressType
   borrowCapacity: number
   borrowAPR: number
   hasUserBorrowed: boolean
   currentCollateralBalance: number
   DAOFee: number
   currentBorrowedAmount: number
-  openConfirmBorrowPopup: (inputAmount: number) => void
+  openConfirmBorrowPopup: (inputAmount: number, callback: () => void) => void
 }
 
 export const BorrowingExpandCardBorrowSection = (props: Props) => {
-  const { userTokens } = useSelector((state: State) => state.wallet.user)
+  const { userTokensBalances } = useUserContext()
+
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {
-    borrowedAsset,
+    borrowedAssetAddress,
     borrowCapacity = 0,
     currentBorrowedAmount = 0,
     currentCollateralBalance = 0,
@@ -58,26 +63,41 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
     openConfirmBorrowPopup,
   } = props
 
-  const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { symbol, decimals, icon } = tokensMetadata[borrowedAssetAddress]
+  const rate = tokensPrices[symbol]
+
+  const [inputData, setInputData] = useState<{
+    amount: string
+    validationStatus: InputStatusType
+  }>({
+    amount: '0',
+    validationStatus: INPUT_STATUS_DEFAULT,
+  })
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
 
-  const balanceSymbol = isTezosAsset(borrowedAsset?.gqlName ?? '') ? 'tezos' : borrowedAsset?.symbol.toLowerCase() ?? ''
-  const userAssetBalance = userTokens[balanceSymbol]?.balance ?? 0
+  const userAssetBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: borrowedAssetAddress })
 
-  // TODO: incapsulate to the separate component
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = borrowedAsset
-      ? calcCollateralRatio(currentCollateralBalance, currentBorrowedAmount + inputAmount, borrowedAsset.rate)
-      : 0
+    const futureCollateralRatio = getVaultCollateralRatio(
+      currentCollateralBalance,
+      (currentBorrowedAmount + inputAmount) * rate,
+    )
 
-    const futureBorrowCapacity = borrowCapacity - inputAmount * (borrowedAsset?.rate ?? 0)
+    const futureBorrowCapacity = borrowCapacity - inputAmount * rate
 
     return { futureCollateralRatio, futureBorrowCapacity }
-  }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputAmount, borrowCapacity])
+  }, [currentCollateralBalance, currentBorrowedAmount, inputAmount, rate, borrowCapacity])
 
-  const showWarning =
-    (inputAmount > borrowCapacity / (borrowedAsset?.rate ?? 0) || futureCollateralRatio < 200) && inputAmount !== 0
+  const showWarning = (inputAmount > borrowCapacity / rate || futureCollateralRatio < 200) && inputAmount !== 0
+
+  const clearData = () => {
+    setInputData({
+      amount: '0',
+      validationStatus: INPUT_STATUS_DEFAULT,
+    })
+  }
 
   // stuff to handle inputs
   const inputOnChangeHandle = useCallback(
@@ -86,7 +106,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
         inputAmount: newInputAmount,
         maxAmount,
         options: {
-          byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
+          byDecimalPlaces: decimals || assetDecimalsToShow,
         },
       })
 
@@ -96,7 +116,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
         validationStatus: validationStatus,
       })
     },
-    [borrowedAsset?.decimals, inputData],
+    [decimals, inputData],
   )
 
   const inputOnBlurHandle = useCallback(() => {
@@ -119,27 +139,32 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
       type: 'number',
       onBlur: inputOnBlurHandle,
       onFocus: onFocusHandler,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-        inputOnChangeHandle(e.target.value, borrowCapacity / borrowedAsset.rate),
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => inputOnChangeHandle(e.target.value, borrowCapacity / rate),
     }),
-    [borrowCapacity, borrowedAsset.rate, inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler],
+    [borrowCapacity, rate, inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler],
   )
 
   const settings: Settings = useMemo(
     () => ({
       balance: userAssetBalance,
-      balanceAsset: borrowedAsset?.symbol,
+      balanceAsset: symbol,
       balanceName: 'Wallet Balance',
       useMaxHandler: () =>
-        inputOnChangeHandle(
-          getLoansInputMaxAmount(borrowCapacity / borrowedAsset.rate, borrowedAsset.decimals),
-          borrowCapacity / borrowedAsset.rate,
-        ),
+        inputOnChangeHandle(getLoansInputMaxAmount(borrowCapacity / rate, decimals), borrowCapacity / rate),
       inputStatus: inputData.validationStatus,
-      convertedValue: inputAmount * borrowedAsset.rate,
+      convertedValue: inputAmount * rate,
       inputSize: INPUT_LARGE,
     }),
-    [borrowCapacity, borrowedAsset, inputAmount, inputData.validationStatus, inputOnChangeHandle, userAssetBalance],
+    [
+      userAssetBalance,
+      symbol,
+      inputData.validationStatus,
+      inputAmount,
+      rate,
+      inputOnChangeHandle,
+      borrowCapacity,
+      decimals,
+    ],
   )
 
   return (
@@ -152,13 +177,12 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
         <div className="tab-text">Select Amount to Borrow</div>
 
         <Input
-          className={classNames('pinned-dropdown', { 'input-with-rate': borrowedAsset.rate })}
+          className={classNames('pinned-dropdown', { 'input-with-rate': rate })}
           inputProps={inputProps}
           settings={settings}
         >
           <InputPinnedTokenInfo>
-            <ImageWithPlug imageLink={borrowedAsset.icon} alt={`${borrowedAsset.symbol} icon`} />{' '}
-            {borrowedAsset?.symbol}
+            <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
           </InputPinnedTokenInfo>
         </Input>
       </div>
@@ -173,7 +197,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
       ) : null}
 
       <div className={!showWarning ? 'mt-25' : ''}>
-        <div className="tab-text mb-10">Updated Borrow {borrowedAsset?.symbol} Stats</div>
+        <div className="tab-text mb-10">Updated Borrow {symbol} Stats</div>
         <VaultOverview>
           <div className="line">
             <ThreeLevelListItem>
@@ -245,7 +269,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
         <NewButton
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
-          onClick={() => openConfirmBorrowPopup(inputAmount)}
+          onClick={() => openConfirmBorrowPopup(inputAmount, clearData)}
           disabled={isDisabledButton}
           animation={isDisabledButton ? null : BUTTON_PULSE}
         >

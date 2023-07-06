@@ -70,6 +70,11 @@ export const SatelliteVotingInfoWrapper = styled.div`
     padding-right: 10px;
     margin-top: 10px;
   }
+
+  .loader {
+    margin: 0 auto;
+    width: fit-content;
+  }
 `
 
 export const SatelliteDescrBlock = styled.div<{ theme: MavrykTheme }>`

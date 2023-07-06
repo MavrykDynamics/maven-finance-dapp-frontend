@@ -37,3 +37,6 @@ export const defaultProposalSourceCodeMaxLength = 100_000
 export const defaultAggregatorNameMaxLength = 35
 export const defaultTreasuryNameMaxLength = 25
 export const defaultOraclePeerIdMaxLength = 52
+
+export const getOnBlurValue = (inputValue: string) => (inputValue === '' ? '0' : inputValue)
+export const getOnFocusValue = (inputValue: string) => (inputValue === '0' ? '' : inputValue)

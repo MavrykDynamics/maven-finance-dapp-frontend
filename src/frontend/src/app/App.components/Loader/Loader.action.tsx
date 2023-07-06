@@ -1,5 +1,4 @@
 import { AppDispatch } from 'app/App.controller'
-import { ROCKET_LOADER, WERT_IO_LOADER } from 'utils/constants'
 
 export const TOGGLE_ACTION_FULL_SCREEN_LOADER = 'TOGGLE_ACTION_FULL_SCREEN_LOADER'
 export const toggleActionFullScreenLoader = (showLoader: boolean) => (dispatch: AppDispatch) => {
@@ -22,13 +21,5 @@ export const toggleWertLoader = (isWertLoading: boolean) => (dispatch: AppDispat
   dispatch({
     type: TOGGLE_WERT_LOADER,
     isWertLoading,
-  })
-}
-
-export const TOGGLE_INITIAL_DATA_LOADING = 'TOGGLE_INITIAL_DATA_LOADING'
-export const toggleInitialDataLoading = (isInitialDataLoading: boolean) => (dispatch: AppDispatch) => {
-  dispatch({
-    type: TOGGLE_INITIAL_DATA_LOADING,
-    isInitialDataLoading,
   })
 }

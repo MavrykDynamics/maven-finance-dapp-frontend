@@ -57,7 +57,6 @@ export type FinancialRequestRecord = {
   votingTillTime?: string | null
   tokensAmount: number
   status: number
-  tokenName: string
   executed: boolean
 
   // Votes data

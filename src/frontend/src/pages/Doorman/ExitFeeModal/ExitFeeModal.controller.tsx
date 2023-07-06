@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // helpers
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
-import { INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
 import { stakingInputValidation } from '../Doorman.converter'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
@@ -43,7 +43,7 @@ type ExitFeeModalPropsType = {
     myMvkTokenBalance: number
     totalStakedMvk: number
     totalMVKSupply: number
-    accountPkh?: string
+    userAddress: string | null
   }
   inputData: typeof DEFAULT_STAKE_UNSTAKE_INPUT
   setInputData: (data: typeof DEFAULT_STAKE_UNSTAKE_INPUT) => void
@@ -52,17 +52,17 @@ type ExitFeeModalPropsType = {
 export const ExitFeeModal = ({
   closePopup,
   show,
-  data: { mvkExchangeRate, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, accountPkh, totalMVKSupply },
+  data: { mvkExchangeRate, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, userAddress, totalMVKSupply },
   inputData,
   setInputData,
 }: ExitFeeModalPropsType) => {
   const dispatch = useDispatch()
-  const { setAction } = useDappConfigContext()
+  const {
+    setAction,
+    contractAddresses: { doormanAddress },
+  } = useDappConfigContext()
   const { bug, info, loading } = useToasterContext()
 
-  const {
-    doormanAddress: { address: doormanAddress },
-  } = useSelector((state: State) => state.contractAddresses)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const parsedInputAmount = Number(inputData.amount)
@@ -72,13 +72,18 @@ export const ExitFeeModal = ({
   const fee = calcExitFee(totalMVKSupply, totalStakedMvk)
 
   const handleUnstake = async (unstakeAmount: number) => {
-    if (!accountPkh) {
+    if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return
     }
 
     if (unstakeAmount <= 0) {
       bug('Please enter an amount superior to zero', 'Incorrect amount')
+      return
+    }
+
+    if (!doormanAddress) {
+      bug('Please reload the page', 'Error')
       return
     }
 
@@ -110,6 +115,7 @@ export const ExitFeeModal = ({
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
 
+        setInputData({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
         setAction({ actionName: UNSTAKE_ACTION, toasterId, operationLvl })
       } catch (e) {}
     } else {
@@ -126,7 +132,7 @@ export const ExitFeeModal = ({
       amount: Number(value),
       myMvkTokenBalance,
       mySMvkTokenBalance,
-      accountPkh,
+      userAddress,
     })
 
     const errorMessage = Number(value) > Number(mySMvkTokenBalance) ? "You don't have enought sMVK to unstake" : ''
