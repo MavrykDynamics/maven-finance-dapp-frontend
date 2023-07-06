@@ -3,7 +3,7 @@ import { ErrorPage } from 'pages/Error/ErrorPage'
 
 // types
 import type { ToasterContextType, ToasterTypes } from './toaster.provider.type'
-import type { CustomErrors, ExtendedError, FatalError } from '../../errors/error'
+import { CustomErrors, ExtendedError, FatalError } from '../../errors/error'
 
 // consts
 import {
@@ -55,7 +55,13 @@ export default class ToasterProvider extends React.Component<Props, State> {
 
   /**
    *
-   * @param error
+   * @param error It is the error that was thrown by the descendant component.
+   *
+   * Error boundaries do not catch errors for:
+   * Event handlers
+   * Asynchronous code (e.g. setTimeout or requestAnimationFrame callbacks)
+   * Server side rendering
+   * Errors thrown in the error boundary itself (rather than its children)
    */
   componentDidCatch(error: Error): void {
     this.addToasterMessage('', error.message, TOASTER_ERROR)
@@ -171,7 +177,8 @@ export default class ToasterProvider extends React.Component<Props, State> {
   render(): JSX.Element {
     const { error } = this.state.context
     const showErrorPage = Boolean(error)
-    const type = (error as unknown as ExtendedError)?.type ?? ERROR_TYPE_FATAL
+    const type = error instanceof FatalError ? error?.type : null
+    // when type === null it returns default error text
     const { header, desc } = getErrorPageData(type)
 
     return (

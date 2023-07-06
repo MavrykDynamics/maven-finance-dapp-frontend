@@ -7,16 +7,14 @@ import type { InputPayload, InternalErrorType, Payload } from './error.type'
  */
 class ExtendedErrorClass extends Error {
   payload: Payload | InputPayload
-  type: InternalErrorType
 
-  constructor(messageOrError: string | Error, payload: Payload = {}, type: InternalErrorType = ERROR_TYPE_FATAL) {
+  constructor(messageOrError: string | Error, payload: Payload = {}) {
     const message = messageOrError instanceof Error ? messageOrError.message : messageOrError
     const rawStack = messageOrError instanceof Error ? messageOrError.stack : undefined
     super(message)
     this.name = this.constructor.name
     const stack = rawStack?.replace(/^.+\n/, `${this.name}: ${this.message}\n`)
     this.payload = payload
-    this.type = type
     if (stack) {
       this.stack = stack
     }
@@ -43,7 +41,14 @@ export class ValidationError extends ExtendedErrorClass {}
 /** when getting server error (f.e. 500 ) */
 export class ApiError extends ExtendedErrorClass {}
 /** critiacal error, show 404 page */
-export class FatalError extends ExtendedErrorClass {}
+export class FatalError extends ExtendedErrorClass {
+  type: InternalErrorType
+
+  constructor(messageOrError: string | Error, payload: Payload = {}, type: InternalErrorType = ERROR_TYPE_FATAL) {
+    super(messageOrError, payload)
+    this.type = type
+  }
+}
 
 export type CustomErrors = Error | ApiError | ValidationError | FatalError | null
 export type ExtendedError = FatalError | ApiError | ValidationError
