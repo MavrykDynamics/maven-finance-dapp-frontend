@@ -1,0 +1,48 @@
+{
+  "extends": "react-app",
+  "plugins": ["jsdoc"],
+  "settings": {
+    "jsdoc": {
+      "mode": "typescript"
+    }
+  },
+  "rules": {
+    "jsdoc/check-alignment": 1,
+    "jsdoc/check-indentation": 1,
+    "jsdoc/check-param-names": 1,
+    "jsdoc/check-tag-names": 1,
+    "jsdoc/check-types": 1,
+    "jsdoc/empty-tags": 1,
+    "jsdoc/multiline-blocks": 1,
+    "jsdoc/no-multi-asterisks": 1,
+    "jsdoc/no-undefined-types": 1,
+    "jsdoc/require-asterisk-prefix": ["error", "always"],
+    "jsdoc/require-jsdoc": [
+      "error",
+      {
+        "require": {
+          "ClassDeclaration": true,
+          "ClassExpression": true,
+          "MethodDefinition": true,
+          "ArrowFunctionExpression": false,
+          "FunctionDeclaration": false,
+          "FunctionExpression": false
+        },
+        "checkConstructors": false
+      }
+    ],
+    "jsdoc/require-param-description": 1,
+    "jsdoc/require-param-name": 1,
+    "jsdoc/require-param-type": 0,
+    "jsdoc/require-param": 1,
+    "jsdoc/require-property": 1,
+    "jsdoc/require-property-description": 1,
+    "jsdoc/require-property-name": 1,
+    "jsdoc/require-property-type": 1,
+    "jsdoc/require-returns-check": 1,
+    "jsdoc/require-returns-description": 1,
+    "jsdoc/require-returns-type": 0,
+    "jsdoc/require-returns": 1,
+    "jsdoc/require-throws": 1
+  }
+}
