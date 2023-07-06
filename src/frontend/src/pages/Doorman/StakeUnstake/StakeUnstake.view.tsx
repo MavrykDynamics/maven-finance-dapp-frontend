@@ -1,9 +1,11 @@
 import { useHistory } from 'react-router-dom'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // context
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
 
@@ -40,6 +42,7 @@ import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterA
 import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
+import { ALL_SATELLITES_SUB } from 'providers/SatellitesProvider/satellites.const'
 import colors from 'styles/colors'
 
 // style
@@ -91,9 +94,16 @@ export const StakeUnstakeView = ({
   const { setAction } = useDappConfigContext()
   const { info, loading, bug } = useToasterContext()
 
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+
+  useEffect(() => {
+    if (satelliteMvkIsDelegatedTo) {
+      setSatelliteAddressToSubsctibe(satelliteMvkIsDelegatedTo)
+    }
+    return () => setSatelliteAddressToSubsctibe(ALL_SATELLITES_SUB)
+  }, [satelliteMvkIsDelegatedTo])
 
   const {
     doormanAddress: { address: doormanAddress },

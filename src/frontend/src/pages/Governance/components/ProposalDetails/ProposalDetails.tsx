@@ -163,8 +163,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         handleProposalVote={handleProposalRoundVote}
         selectedProposal={proposal}
         vote={proposal.votes.find(
-          ({ voter: { address }, round }) =>
-            address === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
+          ({ address, round }) => address === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
         )}
         isVoteActive={(votingTill ?? 0) >= Date.now()}
         govPhase={governancePhase}

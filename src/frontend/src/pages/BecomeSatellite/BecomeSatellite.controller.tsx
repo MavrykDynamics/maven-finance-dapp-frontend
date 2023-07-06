@@ -8,7 +8,6 @@ import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { INFO_DEFAULT, INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
-import { MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
   BecomeSatelliteFormStateType,
@@ -18,18 +17,14 @@ import {
 } from './BecomeSatellite.conts'
 
 // providers
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 // Actions
 import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getSatelliteConfig } from 'pages/Satellites/Satellites.actions'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // Types
-import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 import { State } from 'reducers'
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 
@@ -60,6 +55,9 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { ALL_SATELLITES_SUB } from 'providers/SatellitesProvider/satellites.const'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -71,48 +69,34 @@ const connectWalletMessage = (
 )
 
 export const BecomeSatellite = () => {
-  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
+  const { satelliteMapper, setSatelliteAddressToSubsctibe, isLoading: isSatellitesLoading } = useSatellitesContext()
   const {
     userAddress,
     isSatellite,
     satelliteMvkIsDelegatedTo,
     userAvatars: { mainAvatar },
+    userTokensBalances,
   } = useUserContext()
 
-  const dispatch = useDispatch()
   const {
-    satelliteMapper,
-    config: { minimumStakedMvkBalance, isConfigLoaded },
-  } = useSelector((state: State) => state.satellites)
+    maxLengths: { satelliteDelegation },
+    minimumStakedMvkBalance,
+  } = useDappConfigContext()
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (userAddress) {
+      setSatelliteAddressToSubsctibe(userAddress)
+    }
+    return () => setSatelliteAddressToSubsctibe(ALL_SATELLITES_SUB)
+  }, [userAddress])
+
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
-  const {
-    maxLengths: { satelliteDelegation },
-  } = useDappConfigContext()
-  const { userTokensBalances } = useUserContext()
-
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
-
-  useEffect(() => {
-    changeStakingSubscriptionsList({
-      [MVK_BALANCE_SUB]: false,
-      [MVK_TOTAL_SUB]: false,
-      [SMVK_HISTORY_SUB]: false,
-    })
-  }, [])
-
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isConfigLoaded || isDepsChanged) {
-          await dispatch(getSatelliteConfig())
-        }
-      } catch (error) {}
-    },
-    [userAddress],
-  )
 
   const balanceOverMinStakedMvk = userSmvkBalance >= minimumStakedMvkBalance
   const usersSatelliteProfile = userAddress ? satelliteMapper[userAddress] : null
@@ -268,7 +252,7 @@ export const BecomeSatellite = () => {
 
         <PageContent>
           <div>
-            {isLoading || isDoormanLoading ? (
+            {isSatellitesLoading ? (
               <DataLoaderWrapper>
                 <ClockLoader width={150} height={150} />
                 <div className="text">Loading satellite data</div>

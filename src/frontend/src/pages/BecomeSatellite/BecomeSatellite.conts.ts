@@ -1,5 +1,4 @@
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { State } from 'reducers'
 import { isNotAllWhitespace, isValidLength, validatePublicKey } from 'utils/validatorFunctions'
 import { defaultOraclePeerIdMaxLength } from 'app/App.components/Input/Input.constants'
 

@@ -1,18 +1,17 @@
-import { useSelector } from 'react-redux'
-import { Redirect, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { useEffect } from 'react'
 
+// context
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+
+// view
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import SatellitePagination from './SatellitePagination/SatellitePagination.view'
 import { SatelliteListItem } from 'pages/Satellites/listItem/SateliteCard.view'
-
-import { getVoteText } from 'pages/Satellites/helpers/Satellites.consts'
-import { parseDate } from 'utils/time'
-
-import { State } from 'reducers'
-import { SatelliteRecordType, SatelliteVoteType } from 'utils/TypesAndInterfaces/Satellites'
-
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { Page, PageContent } from 'styles'
 import { EmptyContainer } from 'app/App.style'
 import {
@@ -25,31 +24,23 @@ import {
   SatelliteVotingHistoryListItem,
 } from './SatelliteDetails.style'
 
-const renderVotingHistoryItem = (item: SatelliteVoteType) => {
-  const voteText = getVoteText(item.vote)
-  return (
-    <SatelliteVotingHistoryListItem key={item.id}>
-      <p>{item?.voteName?.split('_').join(' ').toLowerCase()}</p>
-      <span className="currentSatellite-voting-history-info">
-        Voted <b className={`voting-${voteText.toLowerCase()}`}>{voteText} </b>
-        {item.timestamp
-          ? `on ${parseDate({ time: new Date(item.timestamp).getTime(), timeFormat: 'MMM Do, YYYY' })}`
-          : null}
-      </span>
-    </SatelliteVotingHistoryListItem>
-  )
-}
+// helpers
+import { parseDate } from 'utils/time'
+import { useSatelliteVotes } from 'providers/SatellitesProvider/hooks/useSatelliteVotes'
+import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+
+// consts
+import { ALL_SATELLITES_SUB, SATELLITE_VOTES_MAPPER } from 'providers/SatellitesProvider/satellites.const'
+
+// types
+import { SatelliteVotesType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 const SatellitesVotingHistory = ({
-  satellite: { proposalVotingHistory, satelliteActionVotes, financialRequestsVotes, emergencyGovernanceVotes },
+  satelliteVotes: { proposalsVotes, satelliteActionVotes, financialRequestsVotes },
 }: {
-  satellite: SatelliteRecordType
+  satelliteVotes: SatelliteVotesType
 }) => {
-  const hasVoted =
-    proposalVotingHistory.length ||
-    satelliteActionVotes.length ||
-    financialRequestsVotes.length ||
-    emergencyGovernanceVotes.length
+  const hasVoted = proposalsVotes.length || satelliteActionVotes.length || financialRequestsVotes.length
 
   if (!hasVoted)
     return (
@@ -60,22 +51,52 @@ const SatellitesVotingHistory = ({
       </div>
     )
 
-  const allVotes = [
-    ...proposalVotingHistory,
-    ...satelliteActionVotes,
-    ...financialRequestsVotes,
-    ...emergencyGovernanceVotes,
-  ]
+  const allVotes = [...proposalsVotes, ...satelliteActionVotes, ...financialRequestsVotes]
   return (
-    <div className="voting-info-list-wrapper scroll-block">{allVotes.map((item) => renderVotingHistoryItem(item))}</div>
+    <div className="voting-info-list-wrapper scroll-block">
+      {allVotes.map(({ vote, id, voteName, timestamp }) => {
+        const voteText = SATELLITE_VOTES_MAPPER[vote]
+        const votedItemName = voteName.split('_').join(' ').toLowerCase()
+
+        return (
+          <SatelliteVotingHistoryListItem key={`${voteName}_${id}`}>
+            <p>{votedItemName}</p>
+            <span className="currentSatellite-voting-history-info">
+              Voted <b className={`voting-${voteText.toLowerCase()}`}>{voteText} </b>
+              {timestamp ? `on ${parseDate({ time: timestamp, timeFormat: 'MMM Do, YYYY' })}` : null}
+            </span>
+          </SatelliteVotingHistoryListItem>
+        )
+      })}
+    </div>
   )
 }
 
 export const SatelliteDetails = () => {
   const { satelliteId } = useParams<{ satelliteId: string }>()
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const {
+    satelliteMapper,
+    proposalsAmount,
+    satelliteGovActionsAmount,
+    finRequestsAmount,
+    isLoading: isSatellitesLoading,
+    setSatelliteAddressToSubsctibe,
+  } = useSatellitesContext()
   const currentSatellite = satelliteMapper[satelliteId]
-  if (!currentSatellite) return <Redirect to={'/currentSatellite-nodes'} />
+
+  const { proposalParticipation, votingPartisipation } = getSatelliteParticipations({
+    satellite: currentSatellite,
+    proposalsAmount,
+    satelliteGovActionsAmount,
+    finRequestsAmount,
+  })
+
+  useEffect(() => {
+    setSatelliteAddressToSubsctibe(satelliteId)
+    return () => setSatelliteAddressToSubsctibe(ALL_SATELLITES_SUB)
+  }, [satelliteId])
+
+  const { satelliteVotes, isLoading: isSatelliteVotesLoading } = useSatelliteVotes(satelliteId)
 
   return (
     <Page>
@@ -84,7 +105,12 @@ export const SatelliteDetails = () => {
         <div>
           <SatellitePagination />
 
-          {currentSatellite ? (
+          {isSatellitesLoading && !currentSatellite ? (
+            <DataLoaderWrapper>
+              <ClockLoader width={150} height={150} />
+              <div className="text">Loading satellite profile data</div>
+            </DataLoaderWrapper>
+          ) : currentSatellite ? (
             <SatelliteListItem satellite={currentSatellite} isDetailsPage>
               <SatelliteCardBottomRow>
                 <SatelliteDescrBlock>
@@ -103,27 +129,15 @@ export const SatelliteDetails = () => {
                     <SatelliteMetricsBlock>
                       <h5>Proposal Participation</h5>
                       <p>
-                        <CommaNumber
-                          value={currentSatellite.satelliteMetrics.proposalParticipation}
-                          endingText="%"
-                          showDecimal={false}
-                        />
+                        <CommaNumber value={proposalParticipation} endingText="%" showDecimal={false} />
                       </p>
                       <h5>Vote Participation</h5>
                       <p>
-                        <CommaNumber
-                          value={currentSatellite.satelliteMetrics.votingPartisipation}
-                          endingText="%"
-                          showDecimal={false}
-                        />
+                        <CommaNumber value={votingPartisipation} endingText="%" showDecimal={false} />
                       </p>
                       <h5>Oracle Participation</h5>
                       <p>
-                        <CommaNumber
-                          value={currentSatellite.satelliteMetrics.oracleEfficiency}
-                          endingText="%"
-                          showDecimal={false}
-                        />
+                        <CommaNumber value={currentSatellite.oracleEfficiency} endingText="%" showDecimal={false} />
                       </p>
                     </SatelliteMetricsBlock>
                   </div>
@@ -139,21 +153,21 @@ export const SatelliteDetails = () => {
                     </p>
                     <h5># Oracle Feeds</h5>
                     <p>
-                      <CommaNumber value={currentSatellite.oracleRecords.length} showDecimal={false} />
+                      <CommaNumber value={Object.keys(currentSatellite.participatedFeeds).length} showDecimal={false} />
                     </p>
                   </SatelliteMetricsBlock>
                 </SatelliteMetrics>
 
                 <SatelliteVotingInfoWrapper>
                   <BlockName>Voting History</BlockName>
-                  <SatellitesVotingHistory satellite={currentSatellite} />
+                  <SatellitesVotingHistory satelliteVotes={satelliteVotes} />
                 </SatelliteVotingInfoWrapper>
               </SatelliteCardBottomRow>
             </SatelliteListItem>
           ) : (
             <EmptyContainer>
-              <img src="/images/not-found.svg" alt=" No proposals to show" />
-              <figcaption> No currentSatellite data</figcaption>
+              <img src="/images/not-found.svg" alt="No satellite to show" />
+              <figcaption>Satellite with address ({satelliteId}) does not exist</figcaption>
             </EmptyContainer>
           )}
         </div>

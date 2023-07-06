@@ -34,7 +34,7 @@ export const useFeedCharts = (
   }, [skipFeedChartsSubsciption, feedsHistoryLoading])
 
   const { dataFeedsHistory, dataFeedsVolatility } = useMemo(() => {
-    if (!feedsHistory) return { dataFeedsHistory: [], dataFeedsVolatility: [] }
+    if (!feedsHistory || !feedsHistory.aggregator[0]) return { dataFeedsHistory: [], dataFeedsVolatility: [] }
 
     return {
       dataFeedsHistory: normalizeDataFeedsHistory(feedsHistory.aggregator[0].history_data),

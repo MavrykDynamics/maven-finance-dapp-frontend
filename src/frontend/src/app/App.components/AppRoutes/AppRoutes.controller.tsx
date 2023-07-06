@@ -40,6 +40,7 @@ import StakeProvider from 'providers/StakeProvider/stake.provider'
 // helpers
 import { scrollUpPage } from 'utils/scrollUpPage'
 import ProtectedRoute from './ProtectedRoute'
+import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
@@ -61,44 +62,60 @@ export const AppRoutes = () => {
     <Switch>
       <Route exact path="/staking">
         <StakeProvider>
-          <Doorman />
+          <SatellitesProvider>
+            <Doorman />
+          </SatellitesProvider>
         </StakeProvider>
       </Route>
 
       {/* DASHBOARD */}
       <Route exact path="/">
-        <StakeProvider>
-          <Dashboard />
-        </StakeProvider>
+        <SatellitesProvider>
+          <StakeProvider>
+            <Dashboard />
+          </StakeProvider>
+        </SatellitesProvider>
       </Route>
       <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
-        <StakeProvider>
-          <DashboardPersonal />
-        </StakeProvider>
+        <SatellitesProvider>
+          <StakeProvider>
+            <DashboardPersonal />
+          </StakeProvider>
+        </SatellitesProvider>
       </Route>
 
       {/* SATELLITES */}
       <Route exact path="/satellites">
-        <StakeProvider>
-          <Satellites />
-        </StakeProvider>
+        <SatellitesProvider>
+          <StakeProvider>
+            <Satellites />
+          </StakeProvider>
+        </SatellitesProvider>
       </Route>
       <Route exact path="/become-satellite">
-        <StakeProvider>
+        <SatellitesProvider>
           <BecomeSatellite />
-        </StakeProvider>
+        </SatellitesProvider>
       </Route>
       <Route exact path="/satellite-nodes">
-        <SatelliteNodes />
+        <SatellitesProvider>
+          <SatelliteNodes />
+        </SatellitesProvider>
       </Route>
       <Route exact path="/satellites/satellite-details/:satelliteId">
-        <SatelliteDetails />
+        <SatellitesProvider>
+          <SatelliteDetails />
+        </SatellitesProvider>
       </Route>
       <Route exact path="/data-feeds">
-        <DataFeeds />
+        <SatellitesProvider>
+          <DataFeeds />
+        </SatellitesProvider>
       </Route>
       <Route exact path="/satellites/feed-details/:feedId">
-        <DataFeedDetails />
+        <SatellitesProvider>
+          <DataFeedDetails />
+        </SatellitesProvider>
       </Route>
 
       {/* GOVERNANCE PAGES */}

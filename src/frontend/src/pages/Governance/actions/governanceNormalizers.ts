@@ -8,6 +8,8 @@ import {
 } from 'utils/TypesAndInterfaces/Governance'
 import { getProposalStatus } from '../Governance.helpers'
 import { MVK_DECIMALS } from 'utils/constants'
+import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { satelliteVoteSchema } from 'providers/SatellitesProvider/satellites.const'
 
 export const normalizeProposal = (
   item: GovernanceProposalGraphQL,
@@ -57,7 +59,24 @@ export const normalizeProposal = (
     downvoteMvkTotal: convertNumberForClient({ number: item.nay_vote_smvk_total, grade: MVK_DECIMALS }),
     abstainMvkTotal: convertNumberForClient({ number: item.pass_vote_smvk_total, grade: MVK_DECIMALS }),
     quorumMvkTotal: convertNumberForClient({ number: item.quorum_smvk_total, grade: MVK_DECIMALS }),
-    votes: item.votes,
+    votes: item.votes.reduce<
+      Array<{ vote: SatelliteVoteType; address: string; name: string; avatar: string; round: number }>
+    >((acc, vote) => {
+      try {
+        const voteValue = satelliteVoteSchema.parse(vote.vote)
+        acc.push({
+          round: vote.round,
+          address: vote.voter.address,
+          name: vote.voter.satellites[0].name,
+          vote: voteValue,
+          avatar: vote.voter.satellites[0].image,
+        })
+      } catch (e) {
+        console.error('governance_votes vote parse error: ', { e })
+      } finally {
+        return acc
+      }
+    }, []),
     minQuorumPercentage: convertNumberForClient({ number: item.min_quorum_percentage, grade: 4 }),
 
     proposalData: item.data.map((byte, idx) => ({

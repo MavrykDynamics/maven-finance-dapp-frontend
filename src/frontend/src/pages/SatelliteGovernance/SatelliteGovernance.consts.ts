@@ -1,7 +1,7 @@
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { ValidationResult } from 'pages/ProposalSubmission/ProposalSubmission.types'
+import { SatelliteGovernanceTransfer } from 'providers/SatellitesProvider/satellites.provider.types'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { SatelliteGovernanceTransfer } from 'utils/TypesAndInterfaces/Satellites'
 
 export const SATELLITE_GOVERNANCE_CONTENT_FORM = {
   'Suspend Satellite': {

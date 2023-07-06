@@ -2,9 +2,9 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { useFeedsStats } from 'providers/DataFeedsProvider/hooks/useFeedsStats'
+import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
 
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getTotalDelegatedMVK } from '../helpers/Satellites.consts'
 
 import { State } from 'reducers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
@@ -60,14 +60,13 @@ export const SateliteSideBarFAQ = () => (
 const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
   const { userAddress, isSatellite } = useUserContext()
 
-  const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
 
-  // onChain data points subscription
+  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics({
+    skipOracleRewardsTotal: true,
+  })
   const { rewardsAmount } = useFeedsStats()
   const { feedsAddresses } = useDataFeedsContext()
-
-  const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
 
   const averageRevard =
     convertNumberForClient({ number: rewardsAmount, grade: MVK_DECIMALS }) / Math.max(feedsAddresses.length, 1)
@@ -108,7 +107,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <SideBarItem>
           <h3>Number of Satellites</h3>
           <var>
-            <CommaNumber value={activeSatellitesIds.length} showDecimal={false} />
+            <CommaNumber value={totalActiveSatellites} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>
@@ -120,7 +119,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <SideBarItem>
           <h3>Total Oracles</h3>
           <var>
-            <CommaNumber value={oraclesIds.length} showDecimal={false} />
+            <CommaNumber value={totalOracleNetworks} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>

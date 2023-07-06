@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
@@ -23,6 +22,7 @@ import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
 
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
@@ -31,22 +31,14 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   } = useTokensContext()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { satelliteMapper, oraclesIds } = useSelector((state: State) => state.satellites)
-
   const oracleFeeds = feedsAddresses.length
   const popularFeeds = feedsAddresses.slice(0, 3)
 
-  const oracleRewardsTotal = useMemo(
-    () =>
-      oraclesIds.reduce((acc, address) => {
-        const sMVKReward = satelliteMapper[address].oracleRecords.reduce(
-          (acc, { sMVKReward = 0 }) => (acc += sMVKReward),
-          0,
-        )
-        return (acc += sMVKReward)
-      }, 0),
-    [satelliteMapper, oraclesIds],
-  )
+  const { oracleRewardsTotal } = useSatelliteStatistics({
+    skipActiveSatellitesCount: true,
+    skipOracleCount: true,
+    skipTotalDelegatedMVK: true,
+  })
 
   return (
     <TabWrapperStyled className="oracles" backgroundImage="dashboard_oraclesTab_bg.png">

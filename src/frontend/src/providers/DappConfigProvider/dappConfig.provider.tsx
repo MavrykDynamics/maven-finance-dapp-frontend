@@ -11,16 +11,19 @@ import { DappConfigContext, DappConfigContextStateType, UserActionType } from '.
 import { SUBSCRIPTION_INDEXER_LVL } from './queries/indexerLvl.query'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import { MVK_DECIMALS } from 'utils/constants'
+import { DAPP_DEFAULT_MAX_LENGHTS } from './helpers/dappConfig.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 
 // helpers
 import { sleep } from 'utils/api/sleep'
-import { DAPP_DEFAULT_MAX_LENGHTS } from './helpers/dappConfig.const'
-import { GET_MVK_FAUCET_QUERY } from 'providers/TokensProvider/queries/mvkFauset.query'
+import { normalizerMaxLenghts } from './helpers/dappConfig.normalizers'
+import { convertNumberForClient } from 'utils/calcFunctions'
+
+// queries
 import { GET_MAX_LENGTHS_QUERY } from './queries/maxLenghts.query'
 import { getXTZBakers } from './bakers/getXtzBakers'
-import { normalizerMaxLenghts } from './helpers/dappConfig.normalizers'
-import { GetMaxlenghtsQueryQuery, MvkFaucetQuery } from 'utils/__generated__/graphql'
+import { GET_MVK_FAUCET_QUERY, GET_SATELLITE_MIN_STAKED_AMOUNT_QUERY } from './queries/config.query'
 
 export const dappConfigContext = React.createContext<DappConfigContext>(undefined!)
 
@@ -79,6 +82,7 @@ const DappConfigProvider = ({ children }: Props) => {
   // HANDLING INITIAL DATA, THAT SHOULD BE LOADED
   const [dappConfigCtxState, setDappConfigCtxState] = useState<DappConfigContextStateType>({
     maxLengths: DAPP_DEFAULT_MAX_LENGHTS,
+    minimumStakedMvkBalance: 0,
     xtzBakers: null,
     // TODO: set default address to null, when contracts are updated
     mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh',
@@ -86,29 +90,38 @@ const DappConfigProvider = ({ children }: Props) => {
 
   // Load max lenghts for inputs
   const { loading: maxLengthsLoading } = useQuery(GET_MAX_LENGTHS_QUERY, {
-    onCompleted: (data) => updateMaxLengths(data),
+    onCompleted: (data) => {
+      setDappConfigCtxState((prev) => ({
+        ...prev,
+        maxLengths: normalizerMaxLenghts(data),
+      }))
+    },
     onError: handleSubError,
   })
 
   // Load MVK faucet
   const { loading: mvkFaucetLoading } = useQuery(GET_MVK_FAUCET_QUERY, {
-    onCompleted: (data) => updateMVKFaucetAddress(data),
+    onCompleted: (data) => {
+      setDappConfigCtxState((prev) => ({
+        ...prev,
+        mvkFaucetAddress: data.mvk_faucet[0]?.address ?? null,
+      }))
+    },
     onError: handleSubError,
   })
 
-  const updateMaxLengths = (data: GetMaxlenghtsQueryQuery) => {
-    setDappConfigCtxState((prev) => ({
-      ...prev,
-      maxLengths: normalizerMaxLenghts(data),
-    }))
-  }
-
-  const updateMVKFaucetAddress = (mvkData: MvkFaucetQuery) => {
-    setDappConfigCtxState((prev) => ({
-      ...prev,
-      mvkFaucetAddress: mvkData.mvk_faucet[0]?.address ?? null,
-    }))
-  }
+  const { loading: configLoading } = useQuery(GET_SATELLITE_MIN_STAKED_AMOUNT_QUERY, {
+    onCompleted: (data) => {
+      setDappConfigCtxState((prev) => ({
+        ...prev,
+        minimumStakedMvkBalance: convertNumberForClient({
+          number: data.delegation[0].minimum_smvk_balance,
+          grade: MVK_DECIMALS,
+        }),
+      }))
+    },
+    onError: handleSubError,
+  })
 
   // TODO: move it to the custom hook
   useEffect(() => {
@@ -128,12 +141,11 @@ const DappConfigProvider = ({ children }: Props) => {
 
   const contextProviderValue = useMemo(() => {
     return {
-      currentIndexedLevel,
-      isLoading: maxLengthsLoading || mvkFaucetLoading,
+      isLoading: maxLengthsLoading || mvkFaucetLoading || configLoading,
       setAction,
       ...dappConfigCtxState,
     }
-  }, [currentIndexedLevel, maxLengthsLoading, mvkFaucetLoading, dappConfigCtxState])
+  }, [maxLengthsLoading, mvkFaucetLoading, configLoading, dappConfigCtxState])
 
   return <dappConfigContext.Provider value={contextProviderValue}>{children}</dappConfigContext.Provider>
 }

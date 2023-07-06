@@ -12,7 +12,6 @@ import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagin
 
 // actions
 import { getSatelliteGovernanceStorage } from './SatelliteGovernance.actions'
-import { getTotalDelegatedMVK } from 'pages/Satellites/helpers/Satellites.consts'
 
 // style
 import {
@@ -34,6 +33,7 @@ import {
   PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST,
   MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
+import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
 import {
   SATELLITE_GOVERNANCE_ACTIONS,
   SATELLITE_GOVERNANCE_MENU_TABS,
@@ -80,6 +80,11 @@ export const SatelliteGovernance = () => {
   const history = useHistory()
   const dispatch = useDispatch()
 
+  const { tabId = SATELLITE_GOVERNANCE_MENU_TABS.ONGOING } = useParams<{ tabId: string }>()
+
+  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics({
+    skipOracleRewardsTotal: true,
+  })
   const {
     maxLengths: {
       governanceSatellite: { purposeMaxLength },
@@ -88,14 +93,11 @@ export const SatelliteGovernance = () => {
   } = useDappConfigContext()
   const { userAddress, isSatellite, govActionsCount } = useUserContext()
 
-  const { tabId = SATELLITE_GOVERNANCE_MENU_TABS.ONGOING } = useParams<{ tabId: string }>()
-
   const { maxActionsCount } = useSelector((state: State) => state.satelliteGovernance.config)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const { isLoaded, ongoingSatelliteGovIds, pastSatelliteGovIds, mySatelliteGovIds, satelliteGovIdsMapper } =
     useSelector((state: State) => state.satelliteGovernance)
-  const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const dropDownItems = useMemo(() => SATELLITE_GOVERNANCE_ACTIONS.map((item) => getDdItem(item)), [])
   type DropDownItemType = (typeof dropDownItems)[0]
@@ -103,7 +105,6 @@ export const SatelliteGovernance = () => {
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
   const [tabsList, setTabsList] = useState<TabItem[]>([])
 
-  const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
   const ongoingActionsLength = ongoingSatelliteGovIds.length
 
   const maxLength = {
@@ -207,11 +208,11 @@ export const SatelliteGovernance = () => {
         <SatelliteGovernanceStats>
           <SatelliteGovernanceStatsInfo>
             <h3>Total Active Satellites</h3>
-            <div className="value">{activeSatellitesIds.length}</div>
+            <div className="value">{totalActiveSatellites}</div>
           </SatelliteGovernanceStatsInfo>
           <SatelliteGovernanceStatsInfo>
             <h3>Total Oracle Networks</h3>
-            <div className="value">{oraclesIds.length}</div>
+            <div className="value">{totalOracleNetworks}</div>
           </SatelliteGovernanceStatsInfo>
           <SatelliteGovernanceStatsInfo>
             <h3>Total Delegated MVK</h3>

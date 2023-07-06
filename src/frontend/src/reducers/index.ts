@@ -13,7 +13,6 @@ import { preferences, PreferencesState } from './preferences'
 import { contractAddresses, ContractAddressesState } from './contractAddresses'
 import { loans, LoansState } from './loans'
 import { financialRequest, FinancialRequestStoreType } from './financialRequests'
-import { satellites, SatellitesState } from './satellites'
 import { satelliteGovernance, SatelliteGovernanceState } from './satelliteGovernance'
 
 export const reducers = combineReducers({
@@ -29,8 +28,6 @@ export const reducers = combineReducers({
   emergencyGovernance,
 
   satelliteGovernance,
-  satellites,
-
   loans,
   treasury,
   farm,
@@ -51,6 +48,5 @@ export interface State {
   preferences: PreferencesState
   contractAddresses: ContractAddressesState
   loans: LoansState
-  satellites: SatellitesState
   satelliteGovernance: SatelliteGovernanceState
 }

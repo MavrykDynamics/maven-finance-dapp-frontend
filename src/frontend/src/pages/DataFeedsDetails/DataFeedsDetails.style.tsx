@@ -263,6 +263,8 @@ export const FeedDetailsChartWrapper = styled(Card)<{ theme: MavrykTheme }>`
 
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `
 
 export const ChartSlidingTabButtons = styled(SlidingTabButtons)`
