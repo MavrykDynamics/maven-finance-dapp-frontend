@@ -13,6 +13,10 @@ import { isMobile } from './utils/device-info'
 
 // providers
 import ToasterProvider from 'providers/ToasterProvider/toaster.provider'
+import TokensProvider from 'providers/TokensProvider/tokens.provider'
+import DataFeedsProvider from 'providers/DataFeedsProvider/dataFeeds.provider'
+import UserProvider from 'providers/UserProvider/user.provider'
+import DappConfigProvider from 'providers/DappConfigProvider/dappConfig.provider'
 import DarkThemeProvider from './app/App.components/DarkThemeProvider/DarkThemeProvider.view'
 
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
@@ -22,7 +26,8 @@ import Mobile from './app/App.components/Mobile/Mobile.view'
 import { GlobalStyle } from './styles'
 import './styles/fonts.css'
 import './styles/animations.css'
-import DappConfigProvider from 'providers/DappConfigProvider/dappConfig.provider'
+import './styles/fonts.css'
+import './styles/animations.css'
 
 export const Root = () => {
   const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
@@ -32,11 +37,17 @@ export const Root = () => {
         <Provider store={store}>
           <DarkThemeProvider>
             <ToasterProvider>
-              <DappConfigProvider>
-                <GlobalStyle />
-                {isMobile ? <Mobile /> : <App />}
-              </DappConfigProvider>
-              <ToasterMessages />
+              <TokensProvider>
+                <DataFeedsProvider>
+                  <UserProvider>
+                    <DappConfigProvider>
+                      <GlobalStyle />
+                      {isMobile ? <Mobile /> : <App />}
+                    </DappConfigProvider>
+                    <ToasterMessages />
+                  </UserProvider>
+                </DataFeedsProvider>
+              </TokensProvider>
             </ToasterProvider>
           </DarkThemeProvider>
         </Provider>

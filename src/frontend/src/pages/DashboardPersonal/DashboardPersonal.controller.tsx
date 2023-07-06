@@ -35,8 +35,11 @@ import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { updateUserData } from 'reducers/actions/user.actions'
-import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
@@ -44,32 +47,33 @@ const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
+  const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
+  const {
+    userTokensBalances,
+    userAddress,
+    userAvatars: { mainAvatar },
+    availableDoormanRewards,
+    availableSatellitesRewards,
+    availableFarmRewards,
+    availableLoansRewards,
+    gatheredDoormanRewards,
+    gatheredFarmRewards,
+    gatheredSatellitesRewards,
+    isSatellite,
+    isVestee,
+  } = useUserContext()
+
+  const {
+    mvkTokenAddress: { address: mvkTokenAddress },
+  } = useSelector((state: State) => state.contractAddresses)
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
 
-  const { tokensPrices } = useSelector((state: State) => state.tokens)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
-  const {
-    accountPkh,
-    user: {
-      userTokens,
-      availableDoormanRewards,
-      availableSatellitesRewards,
-      availableFarmRewards,
-      availableLoansRewards,
-      gatheredDoormanRewards,
-      gatheredFarmRewards,
-      gatheredSatellitesRewards,
-      isSatellite,
-      isVestee,
-      isLoaded: isUserDataLoaded,
-      userAvatars: { mainAvatar },
-    },
-  } = useSelector((state: State) => state.wallet)
 
-  const claimRewards = async () => await dispatch(claimAllRewardsAction())
+  const claimRewards = async () => await dispatch(claimAllRewardsAction(tokensMetadata))
 
   useEffect(() => {
     changeStakingSubscriptionsList({
@@ -86,52 +90,83 @@ const DashboardPersonal = () => {
             (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
             isVestee && (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
             (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
-            (!isUserDataLoaded || isDepsChanged) && dispatch(updateUserData()),
           ].filter(Boolean),
         )
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   const rewards = {
     rewardsToClaim:
       availableDoormanRewards +
       availableSatellitesRewards +
-      Object.values(availableFarmRewards).reduce(
-        (acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards),
-        0,
-      ),
+      Object.values(availableFarmRewards).reduce((acc, farmReward) => (acc += farmReward), 0),
     earnedRewards: gatheredSatellitesRewards + gatheredFarmRewards + gatheredDoormanRewards,
   }
 
   const earnings = {
-    mvkRate: tokensPrices[MVK_TOKEN_SYMBOL],
-    xtzRate: tokensPrices[XTZ_TOKEN_SYMBOL],
     satelliteRewards: gatheredSatellitesRewards,
     farmsRewards: gatheredFarmRewards,
     exitRewards: gatheredDoormanRewards,
     lendingIncome: availableLoansRewards,
   }
 
-  const userTokensList = Object.values(userTokens)
-  const mostSuppliedUserTokenSymbol = userTokensList.reduce((acc, { symbol, balance, type }) => {
-    if (symbol === MVK_TOKEN_SYMBOL || symbol === SMVK_TOKEN_SYMBOL || symbol === XTZ_TOKEN_SYMBOL || type === 'mToken')
+  const mostSuppliedUserToken = (userTokensBalances ? Object.keys(userTokensBalances) : []).reduce<null | {
+    address: string
+    symbol: string
+    balance: number
+  }>((acc, tokenAddress) => {
+    // If token is mToken or shown by default return acc, we skip such tokens
+    if (
+      tokenAddress === mvkTokenAddress ||
+      tokenAddress === SMVK_TOKEN_ADDRESS ||
+      tokenAddress === XTZ_TOKEN_ADDRESS ||
+      mTokens.includes(tokenAddress)
+    )
       return acc
-    const accAssetBalanceInUSD = Number(userTokens[acc]?.balance ?? 0) * (tokensPrices[acc] ?? 1)
-    const assetToCompareBalanceInUSD = Number(balance) * (tokensPrices[symbol] ?? 1)
-    return accAssetBalanceInUSD > assetToCompareBalanceInUSD ? acc : symbol
-  }, '')
+
+    const tokenToCheck = getTokenDataByAddress({ tokensMetadata, tokenAddress, tokensPrices })
+    const tokenToCheckBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress })
+
+    // If token to compare is not valid skip check
+    if (!tokenToCheck || !tokenToCheck.rate) return acc
+
+    // if we don't have acc, make acc current token, cuz it's valid
+    if (!acc)
+      return {
+        address: tokenAddress,
+        balance: tokenToCheckBalance,
+        symbol: tokenToCheck.symbol,
+      }
+
+    const accToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: acc.address, tokensPrices })
+
+    // check for acc token exist to make ts satisfied, cuz it's 100% valid token inside acc
+    if (!accToken || !accToken.rate) return acc
+
+    const { rate: checkTokenRate } = tokenToCheck
+    const { rate: accTokenRate } = accToken
+    const accTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: acc.address })
+
+    return accTokenBalance * accTokenRate > tokenToCheckBalance * checkTokenRate
+      ? acc
+      : {
+          address: tokenToCheck.address,
+          balance: tokenToCheckBalance,
+          symbol: tokenToCheck.symbol,
+        }
+  }, null)
 
   const walletData = {
-    xtzAmount: userTokens[XTZ_TOKEN_SYMBOL].balance,
-    sMVKAmount: userTokens[SMVK_TOKEN_SYMBOL].balance,
-    MVKAmount: userTokens[MVK_TOKEN_SYMBOL].balance,
-    ...(mostSuppliedUserTokenSymbol
+    xtzAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }),
+    sMVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+    MVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
+    ...(mostSuppliedUserToken
       ? {
           mostSuppliedUserToken: {
-            name: userTokens[mostSuppliedUserTokenSymbol].name,
-            amount: userTokens[mostSuppliedUserTokenSymbol].balance,
+            name: mostSuppliedUserToken.symbol,
+            amount: mostSuppliedUserToken.balance,
           },
         }
       : {}),

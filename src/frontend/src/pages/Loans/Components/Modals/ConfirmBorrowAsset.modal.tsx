@@ -1,9 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
-import { useMemo } from 'react'
 
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { ConfirmBorrowPopupDataType } from './Modals.helpers'
+import { ConfirmBorrowPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton'
@@ -18,10 +17,13 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
-import { calcCollateralRatio, getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 import { State } from 'reducers'
 import colors from 'styles/colors'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
 
 export const ConfirmBorrowAsset = ({
   closePopup,
@@ -32,39 +34,33 @@ export const ConfirmBorrowAsset = ({
   show: boolean
   data: ConfirmBorrowPopupDataType
 }) => {
-  const {
-    vaultId,
-    borrowedAsset,
-    borrowCapacity = 0,
-    inputAmount = 0,
-    currentBorrowedAmount = 0,
-    currentCollateralBalance = 0,
-    DAOFee = 0,
-    callback,
-  } = data ?? {}
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = borrowedAsset
-      ? calcCollateralRatio(currentCollateralBalance, currentBorrowedAmount + inputAmount, borrowedAsset.rate)
-      : 0
+  const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
-    const futureBorrowCapacity = borrowCapacity - inputAmount * (borrowedAsset?.rate ?? 0)
+  if (!data || !borrowedToken || !borrowedToken.rate) return null
 
-    return { futureCollateralRatio, futureBorrowCapacity }
-  }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputAmount, borrowCapacity])
+  const { vaultId, borrowCapacity, inputAmount, borrowedAmount, collateralBalance, DAOFee, callback } = data ?? {}
 
-  const callActionsAfterTransaction = () => {
-    closePopup()
-    callback?.()
-  }
+  const { symbol, rate } = borrowedToken
 
-  const borrowAsserHandler = async () => {
-    if (vaultId && borrowedAsset) {
-      await dispatch(borrowVaultAssetAction(vaultId, inputAmount, borrowedAsset.decimals, callActionsAfterTransaction))
+  const futureCollateralRatio = getVaultCollateralRatio(collateralBalance, (borrowedAmount + inputAmount) * rate)
+
+  const futureBorrowCapacity = borrowCapacity - inputAmount * rate
+
+  const borrowAsserHandler = () => {
+    if (vaultId && checkWhetherTokenIsLoanToken(borrowedToken)) {
+      dispatch(
+        borrowVaultAssetAction(vaultId, inputAmount, borrowedToken, () => {
+          closePopup()
+          callback()
+        }),
+      )
     }
   }
 
@@ -75,7 +71,7 @@ export const ConfirmBorrowAsset = ({
           <button onClick={closePopup} className="close-modal" />
 
           <GovRightContainerTitleArea>
-            <h2>Confirm Borrow {borrowedAsset?.symbol}</h2>
+            <h2>Confirm Borrow {symbol}</h2>
           </GovRightContainerTitleArea>
           <div className="modalDescr">Please confirm the following details.</div>
 
@@ -119,7 +115,7 @@ export const ConfirmBorrowAsset = ({
             <ThreeLevelListItem>
               <div className="name">USD Value</div>
               <CommaNumber
-                value={(inputAmount - inputAmount * (DAOFee / 100)) * Number(borrowedAsset?.rate)}
+                value={(inputAmount - inputAmount * (DAOFee / 100)) * rate}
                 className="value"
                 beginningText="$"
               />
@@ -144,7 +140,7 @@ export const ConfirmBorrowAsset = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral Value</div>
-              <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
+              <CommaNumber value={collateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">
@@ -167,7 +163,7 @@ export const ConfirmBorrowAsset = ({
             </NewButton>
             <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={borrowAsserHandler}>
               <Icon id="coin-loan" />
-              Borrow {borrowedAsset?.symbol}
+              Borrow {symbol}
             </NewButton>
           </div>
         </LoansModalBase>

@@ -1,5 +1,4 @@
 import React, { useContext, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 
 // helpers
 import { normalizeDoormanChartsData } from './helpers/normalizer'
@@ -24,8 +23,7 @@ import {
 } from 'utils/__generated__/graphql'
 
 // consts
-import { MVK_DECIMALS, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { UPDATE_USER_DATA } from 'reducers/actions/user.actions'
+import { MVK_DECIMALS } from 'utils/constants'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import {
   DEFAULT_STAKING_CTX,
@@ -34,25 +32,23 @@ import {
   DEFAULT_STAKING_SUBS,
   SMVK_HISTORY_SUB,
 } from './helpers/stake.consts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import {
+  SUBSCRIPTION_STAKE_HISTORY,
   SUBSCRIPTION_ADDRESS_BALANCE_DATA,
   SUBSCRIPTION_MVK_TOKEN_TOTAL,
-  SUBSCRIPTION_STAKE_HISTORY,
-} from 'gql/subscriptions/stakingData'
+} from './queries/doorman.query'
+import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
-// TODO: remove after user balances live update is ready
+// TODO: remove after contract addresses to context
 import { State as ReduxState } from 'reducers'
+import { useSelector } from 'react-redux'
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
 const StakeProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
 
-  // TODO: remove after user balances live update is ready
-  const dispatch = useDispatch()
-  const { accountPkh, user } = useSelector((state: ReduxState) => state.wallet)
-  // TODO: move to context
+  // TODO: remove after contract addresses to context
   const {
     doormanAddress: { address: doormanAddress },
   } = useSelector((state: ReduxState) => state.contractAddresses)
@@ -98,40 +94,6 @@ const StakeProvider = ({ children }: Props) => {
     shouldResubscribe: true,
   })
 
-  // TODO: remove after user balances live update is ready
-  const { loading: isUserBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
-    skip: shouldSkip.userBalance,
-    variables: {
-      _eq: accountPkh,
-    },
-    onData: ({ data: { data } }) => {
-      if (!data) return
-
-      const { mvk_balance = 0, smvk_balance = 0 } = data.mavryk_user[0]
-
-      dispatch({
-        type: UPDATE_USER_DATA,
-        userData: {
-          ...user,
-          userTokens: {
-            ...user.userTokens,
-            [MVK_TOKEN_SYMBOL]: {
-              ...user.userTokens[MVK_TOKEN_SYMBOL],
-              balance: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }),
-            },
-            [SMVK_TOKEN_SYMBOL]: {
-              ...user.userTokens[SMVK_TOKEN_SYMBOL],
-              balance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
-            },
-          },
-        },
-        accountPkh,
-      })
-    },
-    onError: (error) => handleSubError(error, 'userBalance'),
-    shouldResubscribe: true,
-  })
-
   // methods to update context data
   const updateStakeHistoryData = ({ smvk_history_data }: SubscribeSmvkHistoryDataSubscription) => {
     const { smvkHistoryData, mvkHistoryData } = normalizeDoormanChartsData({ smvk_history_data })
@@ -166,10 +128,10 @@ const StakeProvider = ({ children }: Props) => {
       setShouldSkip((prev) => ({ ...prev, ...newSkips }))
     return {
       ...stakingCtxState,
-      isLoading: isStakingHistoryLoading || isMvkBalanceLoading || isMvkTotalLoading || isUserBalanceLoading,
+      isLoading: isStakingHistoryLoading || isMvkBalanceLoading || isMvkTotalLoading,
       changeStakingSubscriptionsList,
     }
-  }, [isMvkBalanceLoading, isMvkTotalLoading, isStakingHistoryLoading, isUserBalanceLoading, stakingCtxState])
+  }, [isMvkBalanceLoading, isMvkTotalLoading, isStakingHistoryLoading, stakingCtxState])
 
   return <stakeContext.Provider value={contextProviderValue}>{children}</stakeContext.Provider>
 }

@@ -3,6 +3,9 @@ import qs from 'qs'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
 // components
 import { CouncilFormAddVestee } from './CouncilFormAddVestee.view'
 import { CouncilFormAddCouncilMember } from './CouncilFormAddCouncilMember.view'
@@ -39,14 +42,14 @@ export function CouncilForm() {
   const { action } = qs.parse(search, { ignoreQueryPrefix: true })
 
   const {
-    config: { councilMaxLength },
-  } = useSelector((state: State) => state.council)
+    maxLengths: { council: councilMaxLengths },
+  } = useDappConfigContext()
 
   switch (action) {
     case actions.ADD_VESTEE:
       return <CouncilFormAddVestee />
     case actions.ADD_COUNCIL_MEMBER:
-      return <CouncilFormAddCouncilMember {...councilMaxLength} />
+      return <CouncilFormAddCouncilMember {...councilMaxLengths} />
     case actions.UPDATE_VESTEE:
       return <CouncilFormUpdateVestee />
     case actions.REMOVE_VESTEE:
@@ -54,15 +57,15 @@ export function CouncilForm() {
     case actions.TOGGLE_VESTEE_LOCK:
       return <CouncilFormToggleVesteeLock />
     case actions.CHANGE_COUNCIL_MEMBER:
-      return <CouncilFormChangeCouncilMember {...councilMaxLength} />
+      return <CouncilFormChangeCouncilMember {...councilMaxLengths} />
     case actions.REMOVE_COUNCIL_MEMBER:
       return <CouncilFormRemoveCouncilMember />
     case actions.TRANSFER_TOKENS:
-      return <CouncilFormTransferTokens {...councilMaxLength} />
+      return <CouncilFormTransferTokens {...councilMaxLengths} />
     case actions.REQUEST_TOKENS:
-      return <CouncilFormRequestTokens {...councilMaxLength} />
+      return <CouncilFormRequestTokens {...councilMaxLengths} />
     case actions.REQUEST_TOKEN_MINT:
-      return <CouncilFormRequestTokenMint {...councilMaxLength} />
+      return <CouncilFormRequestTokenMint {...councilMaxLengths} />
     case actions.DROP_FINANCIAL_REQUEST:
       return <CouncilFormDropFinancialRequest />
     case actions.SET_BAKER:

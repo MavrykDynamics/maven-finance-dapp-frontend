@@ -19,8 +19,11 @@ import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 // actions
 import { State } from 'reducers'
-import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS, MVK_TOKEN_SYMBOL } from 'utils/constants'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 export const DEFAULT_STAKE_UNSTAKE_INPUT: { amount: string; validation: InputStatusType; errorMessage: string } = {
   amount: '0',
@@ -29,17 +32,15 @@ export const DEFAULT_STAKE_UNSTAKE_INPUT: { amount: string; validation: InputSta
 }
 
 export const Doorman = () => {
+  const { tokensPrices } = useTokensContext()
+  const { userTokensBalances, userAddress } = useUserContext()
   const { totalStakedMvk, maximumTotalSupply, totalSupply, isLoading: isDoormanLoading } = useStakeContext()
 
   const { doormanAddress, mvkTokenAddress } = useSelector((state: State) => state.contractAddresses)
-  const {
-    accountPkh,
-    user: { userTokens },
-  } = useSelector((state: State) => state.wallet)
-  const { mvk: mvkExchangeRate = 0 } = useSelector((state: State) => state.tokens.tokensPrices)
 
-  const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
-    myMvkTokenBalance = userTokens[MVK_TOKEN_SYMBOL].balance
+  const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
+  const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+    myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress.address })
 
   const [unstakePopupActive, setUnstakePopupActive] = useState(false)
 
@@ -54,7 +55,7 @@ export const Doorman = () => {
     mySMvkTokenBalance,
     myMvkTokenBalance,
     totalStakedMvk,
-    accountPkh,
+    userAddress,
   }
 
   useEffect(() => {
@@ -63,7 +64,7 @@ export const Doorman = () => {
       validation: '',
       errorMessage: '',
     })
-  }, [accountPkh])
+  }, [userAddress])
 
   return (
     <Page>

@@ -1,9 +1,8 @@
 import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
 import { OpKind, TransactionWalletOperation } from '@taquito/taquito'
 
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { updateUserData } from 'reducers/actions/user.actions'
 import { getLoansStorage } from './getLoansData.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
@@ -19,22 +18,13 @@ import {
 
 import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
+import { LoansTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 
 export const depositLendingAssetAction =
-  (
-    loanTokenName: string,
-    addLiquidityAmount: number,
-    tokenAddress: string,
-    // TODO: make it dynamic, blocked by backend
-    assetId: number,
-    tokenType: TokenType,
-    assetDecimals: number,
-    callback: () => void,
-  ) =>
+  (loanToken: LoansTokenMetadataType, addLiquidityAmount: number, callback: () => void) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -45,18 +35,25 @@ export const depositLendingAssetAction =
     }
 
     try {
+      const {
+        decimals,
+        type,
+        loanData: { indexerName },
+        address,
+      } = loanToken
+
       // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
-      const convertedAssetAmount = convertNumberForContractCall({ number: addLiquidityAmount, grade: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: addLiquidityAmount, grade: decimals })
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       let transaction: TransactionWalletOperation | BatchWalletOperation | null = null
 
-      if (tokenType === 'tez') {
+      if (type === 'tez') {
         transaction = await contract?.methods
-          .addLiquidity(loanTokenName, convertedAssetAmount)
+          .addLiquidity(indexerName, convertedAssetAmount)
           .send({ amount: convertedAssetAmount, mutez: true })
-      } else if (tokenType === 'fa12') {
-        const assetContract = await tezos.wallet.at(tokenAddress)
+      } else if (type === 'fa12') {
+        const assetContract = await tezos.wallet.at(address)
         const batch = await tezos.wallet.batch([
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -70,12 +67,12 @@ export const depositLendingAssetAction =
           },
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract?.methods.addLiquidity(convertedAssetAmount, loanTokenName).toTransferParams(),
+            ...contract?.methods.addLiquidity(convertedAssetAmount, indexerName).toTransferParams(),
           },
         ])
         transaction = await batch.send()
       } else {
-        const assetContract = await tezos.wallet.at(tokenAddress)
+        const assetContract = await tezos.wallet.at(address)
         const batch = await tezos.wallet.batch([
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -93,7 +90,7 @@ export const depositLendingAssetAction =
           },
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract.methods.addLiquidity(loanTokenName, convertedAssetAmount).toTransferParams(),
+            ...contract.methods.addLiquidity(indexerName, convertedAssetAmount).toTransferParams(),
           },
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -136,7 +133,6 @@ export const depositLendingAssetAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(updateUserData())
             await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())
@@ -158,7 +154,7 @@ export const depositLendingAssetAction =
   }
 
 export const withdrawLendingAssetAction =
-  (loanTokenName: string, removeLiquidityAmount: number, assetDecimals: number, callback: () => void) =>
+  (removeLiquidityAmount: number, loanToken: LoansTokenMetadataType, callback: () => void) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -169,11 +165,15 @@ export const withdrawLendingAssetAction =
     }
 
     try {
+      const {
+        decimals,
+        loanData: { indexerName },
+      } = loanToken
       // prepare and send transaction
-      const convertedAssetAmount = convertNumberForContractCall({ number: removeLiquidityAmount, grade: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: removeLiquidityAmount, grade: decimals })
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
-      const transaction = await contract?.methods.removeLiquidity(loanTokenName, convertedAssetAmount).send()
+      const transaction = await contract?.methods.removeLiquidity(indexerName, convertedAssetAmount).send()
 
       // close popup
       callback()
@@ -198,7 +198,6 @@ export const withdrawLendingAssetAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(updateUserData())
             await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())

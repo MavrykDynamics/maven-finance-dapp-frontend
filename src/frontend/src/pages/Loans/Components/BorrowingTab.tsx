@@ -1,11 +1,11 @@
 import { useHistory, useLocation } from 'react-router'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { loansPopupsContext } from './Modals/LoansModals.provider'
 import { State } from 'reducers'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { BorrowingExpandCard } from './BorrowingExpandCard/BorrowingExpandCard'
@@ -14,21 +14,24 @@ import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { BorrowingTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
-import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 type BorrowingTabPropsType = {
-  currentToken: LoanMarketType
+  loanTokenAddress: TokenAddressType
+  marketAvaliableLiquidity: number
 }
 
-export const BorrowingTab = ({ currentToken }: BorrowingTabPropsType) => {
+export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: BorrowingTabPropsType) => {
   const history = useHistory()
   const location = useLocation()
 
-  const { openCreateVaultPopup } = useContext(loansPopupsContext)
+  const { openCreateVaultPopup } = useLoansPopupsContext()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
 
-  const {
-    loanTokenData: { gqlName, symbol },
-  } = currentToken
+  const loanToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: loanTokenAddress })
 
   const [showZeroVaults, setShowZeroVaults] = useState(false)
   const { accountPkh } = useSelector((state: State) => state.wallet)
@@ -43,12 +46,18 @@ export const BorrowingTab = ({ currentToken }: BorrowingTabPropsType) => {
       myVaultsIds.filter((vaultId) => {
         const vault = vaultsMapper[vaultId]
 
-        return showZeroVaults
-          ? gqlName === vault.borrowedAsset.gqlName && (vault.collateralBalance || vault.borrowedAmount)
-          : gqlName === vault.borrowedAsset.gqlName
+        const vaultHasBalance = vault.collateralData.find(({ amount }) => amount) || vault.borrowedAmount
+
+        const isVaultValidForMarket = vault.borrowedTokenAddress === loanTokenAddress
+
+        return isVaultValidForMarket && (showZeroVaults ? vaultHasBalance : true)
       }),
-    [gqlName, myVaultsIds, showZeroVaults, vaultsMapper],
+    [loanTokenAddress, myVaultsIds, showZeroVaults, vaultsMapper],
   )
+
+  if (!loanToken || !loanToken.rate) return null
+
+  const { symbol, rate, decimals } = loanToken
 
   const handleCreatedVaultAddress = (address?: string) => {
     if (!address) return
@@ -70,7 +79,12 @@ export const BorrowingTab = ({ currentToken }: BorrowingTabPropsType) => {
               icon="plus"
               disabled={!Boolean(accountPkh) || isActionActive}
               onClick={() =>
-                openCreateVaultPopup({ currentMarketAsset: gqlName, setCreatedVaultAddress: handleCreatedVaultAddress })
+                openCreateVaultPopup({
+                  marketTokenAddress: loanTokenAddress,
+                  setCreatedVaultAddress: handleCreatedVaultAddress,
+                  avaliableLiquidity:
+                    convertNumberForClient({ number: marketAvaliableLiquidity, grade: decimals }) * rate,
+                })
               }
               kind={ACTION_PRIMARY}
               className="lending-tab-no-items-btn has-items-borrow-btn"
@@ -87,11 +101,9 @@ export const BorrowingTab = ({ currentToken }: BorrowingTabPropsType) => {
           </Checkbox>
 
           <VaultsList>
-            {userMarketVaultsIds.map((vaultId, idx) => {
+            {userMarketVaultsIds.map((vaultId) => {
               const vault = vaultsMapper[vaultId]
-              return (
-                <BorrowingExpandCard isOwner {...vault} key={vault.borrowedAsset.symbol + '-' + idx} DAOFee={DAOFee} />
-              )
+              return <BorrowingExpandCard isOwner vault={vault} key={vault.address} DAOFee={DAOFee} />
             })}
           </VaultsList>
         </>
@@ -104,7 +116,12 @@ export const BorrowingTab = ({ currentToken }: BorrowingTabPropsType) => {
             kind={ACTION_PRIMARY}
             disabled={!Boolean(accountPkh)}
             onClick={() =>
-              openCreateVaultPopup({ currentMarketAsset: gqlName, setCreatedVaultAddress: handleCreatedVaultAddress })
+              openCreateVaultPopup({
+                marketTokenAddress: loanTokenAddress,
+                setCreatedVaultAddress: handleCreatedVaultAddress,
+                avaliableLiquidity:
+                  convertNumberForClient({ number: marketAvaliableLiquidity, grade: decimals }) * rate,
+              })
             }
             className="lending-tab-no-items-btn"
           />

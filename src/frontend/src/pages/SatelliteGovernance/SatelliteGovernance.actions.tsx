@@ -19,7 +19,7 @@ import { checkIndexerLevelAndRunDataUpdateCallback } from '../../utils/checkInde
 
 // actions
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { getSatellitesStorage } from '../Satellites/Satellites.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 
@@ -29,7 +29,6 @@ import {
   SATELLITE_GOVERNANCE_STORAGE_QUERY_NAME,
   SATELLITE_GOVERNANCE_STORAGE_QUERY_VARIABLE,
 } from '../../gql/queries/getSatelliteGovernanceStorage'
-import { updateUserData } from 'reducers/actions/user.actions'
 
 // getSatelliteGovernanceStorage
 export const GET_SATELLITE_GOVERNANCE_STORAGE = 'GET_SATELLITE_GOVERNANCE_STORAGE'
@@ -100,7 +99,6 @@ export const suspendSatellite =
           callback: async () => {
             // Add here call for update data actions
             await dispatch(getSatelliteGovernanceStorage())
-            await dispatch(updateUserData())
             await dispatch(hideToaster())
             await dispatch(
               showToaster(TOASTER_SUCCESS, 'Suspend Satellite vote triggered', ACTION_COMPLETION_MESSAGE_TEXT),
@@ -157,7 +155,6 @@ export const unsuspendSatellite =
           callback: async () => {
             // Add here call for update data actions
             await dispatch(getSatelliteGovernanceStorage())
-            await dispatch(updateUserData())
             await dispatch(hideToaster())
             await dispatch(
               showToaster(TOASTER_SUCCESS, 'Unsuspend Satellite vote triggered', ACTION_COMPLETION_MESSAGE_TEXT),
@@ -215,7 +212,7 @@ export const banSatellite =
           callback: async () => {
             // Add here call for update data actions
             await dispatch(getSatelliteGovernanceStorage())
-            await dispatch(updateUserData())
+
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Ban Satellite vote triggered', ACTION_COMPLETION_MESSAGE_TEXT))
             await dispatch(toggleActionCompletion(false))
@@ -271,7 +268,7 @@ export const unbanSatellite =
           callback: async () => {
             // Add here call for update data actions
             await dispatch(getSatelliteGovernanceStorage())
-            await dispatch(updateUserData())
+
             await dispatch(hideToaster())
             await dispatch(
               showToaster(TOASTER_SUCCESS, 'Unban Satellite vote triggered', ACTION_COMPLETION_MESSAGE_TEXT),
@@ -329,7 +326,7 @@ export const removeOracles =
           callback: async () => {
             // Add here call for update data actions
             await dispatch(getSatelliteGovernanceStorage())
-            await dispatch(updateUserData())
+
             await dispatch(hideToaster())
             await dispatch(
               showToaster(TOASTER_SUCCESS, 'Remove all Oracles from Satellite done', ACTION_COMPLETION_MESSAGE_TEXT),
@@ -390,7 +387,7 @@ export const removeOracleInAggregator =
           callback: async () => {
             // Add here call for update data actions
             await dispatch(getSatelliteGovernanceStorage())
-            await dispatch(updateUserData())
+
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Remove from aggregator done', ACTION_COMPLETION_MESSAGE_TEXT))
             await dispatch(toggleActionCompletion(false))
@@ -447,7 +444,7 @@ export const addOracleToAggregator =
           callback: async () => {
             // Add here call for update data actions
             await dispatch(getSatelliteGovernanceStorage())
-            await dispatch(updateUserData())
+
             await dispatch(hideToaster())
             await dispatch(
               showToaster(TOASTER_SUCCESS, 'Adding Oracle to Aggregator done', ACTION_COMPLETION_MESSAGE_TEXT),
@@ -566,7 +563,7 @@ export const dropAction =
           callback: async () => {
             // Add here call for update data actions
             await dispatch(getSatelliteGovernanceStorage())
-            await dispatch(updateUserData())
+
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Drop Action done', ACTION_COMPLETION_MESSAGE_TEXT))
             await dispatch(toggleActionCompletion(false))
@@ -681,7 +678,7 @@ export const restoreSatellite =
           callback: async () => {
             // Add here call for update data actions
             await dispatch(getSatelliteGovernanceStorage())
-            await dispatch(updateUserData())
+
             await dispatch(hideToaster())
             await dispatch(
               showToaster(TOASTER_SUCCESS, `Restore Satellite vote started`, ACTION_COMPLETION_MESSAGE_TEXT),
@@ -852,7 +849,7 @@ export const fixMistakenTransfer =
           callback: async () => {
             // Add here call for update data actions
             await dispatch(getSatelliteGovernanceStorage())
-            await dispatch(updateUserData())
+
             await dispatch(hideToaster())
             await dispatch(
               showToaster(TOASTER_SUCCESS, `Fixing Mistaken Transfer triggered`, ACTION_COMPLETION_MESSAGE_TEXT),

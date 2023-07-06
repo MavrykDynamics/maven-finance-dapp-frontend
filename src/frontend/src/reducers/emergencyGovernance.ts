@@ -7,8 +7,6 @@ export interface EmergencyGovernanceState {
   config: {
     emergencyGovActive: boolean
     hasAcknowledgeEmergencyGovernance: boolean
-    proposalTitleMaxLength: number
-    proposalDescMaxLength: number
     sMvkPercentageRequired: number
     requiredFeeMutez: number
     minStakedMvkRequiredToTrigger: number
@@ -23,8 +21,6 @@ const emergencyGovernanceDefaultState: EmergencyGovernanceState = {
   config: {
     emergencyGovActive: false,
     hasAcknowledgeEmergencyGovernance: false,
-    proposalTitleMaxLength: 400,
-    proposalDescMaxLength: 400,
     requiredFeeMutez: 10,
     sMvkPercentageRequired: 0,
     minStakedMvkRequiredToTrigger: 0,

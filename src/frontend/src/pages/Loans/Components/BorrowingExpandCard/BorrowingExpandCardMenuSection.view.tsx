@@ -26,13 +26,16 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { TransactionHistory } from '../TransactionHistory'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { CollateralType, DepositorsFlagType, LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
-import { getNumberInBounds } from 'utils/calcFunctions'
-import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
+import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
+import { convertNumberForClient } from 'utils/calcFunctions'
 import colors from 'styles/colors'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { State } from 'reducers'
-import { isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { CollateralType, DepositorsFlagType } from 'providers/LoansProvider/helpers/vaults.types'
+import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
 import { EmptyContainer } from 'app/App.style'
 
 type Props = {
@@ -53,6 +56,7 @@ type Props = {
   xtzDelegatedTo: string | null
   sMVKDelegatedTo?: string
   collateralRatio: number
+  collateralBalance: number
   deporsitorsFlag: DepositorsFlagType
   mappedMVKOperators: {
     amount?: number
@@ -78,18 +82,17 @@ export const BorrowingExpandCardMenuSection = ({
   xtzDelegatedTo,
   sMVKDelegatedTo,
   collateralRatio,
+  collateralBalance,
   deporsitorsFlag,
   mappedMVKOperators,
   hideTransactionHistory,
 }: Props) => {
+  const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const {
     lendingController: { address: lendingControllerAddress },
   } = useSelector((state: State) => state.contractAddresses)
-  const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
-
-  const { transactionHistory } = currentToken
 
   const menuTabs = useMemo(
     () =>
@@ -105,10 +108,9 @@ export const BorrowingExpandCardMenuSection = ({
 
   const [activeMenuTab, setActiveMenuTab] = useState(menuTabs.find((item) => item.active))
 
-  const vaultHasXtzCollateral = collateralData.find(({ gqlName }) => isTezosAsset(gqlName))
+  const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
   // TODO: test it when sMVK will be avaliable as collateral
-  const vaultHasSmvkCollateral = collateralData.find(({ gqlName }) => gqlName === 'smvk')
-  const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
+  const vaultHasSmvkCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVK_TOKEN_ADDRESS)
 
   const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (tabId: number) => {
     setActiveTab(menuTabs.find((item) => item.id === tabId))
@@ -129,9 +131,7 @@ export const BorrowingExpandCardMenuSection = ({
               form={BUTTON_WIDE}
               isThin
               disabled={
-                avaliableCollaterals.length === 0 ||
-                avaliableCollaterals.length === collateralData.length - 1 ||
-                isActionActive
+                collateralTokens.length === 0 || collateralTokens.length === collateralData.length - 1 || isActionActive
               }
             >
               <Icon id="plus" /> Add Collateral Type
@@ -159,40 +159,34 @@ export const BorrowingExpandCardMenuSection = ({
             )}
 
             <TableBody>
-              {collateralData.map(({ icon, amount, rate, gqlName, symbol }, idx) => {
-                const isTotalRow = collateralData.length - 1 === idx
+              {collateralData.map(({ amount, tokenAddress }, idx) => {
+                const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
 
-                const collateralShare = isTotalRow
-                  ? 100
-                  : getNumberInBounds(0, 100, calculateCollateralShare(amount * rate, collateralTotalBalance))
+                if (!collateralToken || !collateralToken.rate) return null
 
-                if (isTotalRow && collateralData.length < 3) return null
+                const { symbol, icon, rate, decimals } = collateralToken
+
+                const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
+                const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                 return (
-                  <TableRow rowHeight={65} key={gqlName + '-' + idx}>
+                  <TableRow rowHeight={65} key={symbol}>
                     <TableCell width={'22%'} className="vert-middle">
-                      {isTotalRow ? (
-                        'Total'
-                      ) : (
-                        <div className="cell-content row with-icon">
-                          <ImageWithPlug imageLink={icon} alt={`${gqlName} icon`} />
-                          {symbol}
-                        </div>
-                      )}
+                      <div className="cell-content row with-icon">
+                        <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+                        {symbol}
+                      </div>
                     </TableCell>
 
                     <TableCell width={'22%'}>
                       <div className="cell-content">
                         <CommaNumber
-                          value={amount}
+                          value={convertedAmount}
                           className="value"
                           showDecimal
-                          decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
-                          beginningText={isTotalRow ? '$' : ''}
+                          decimalsToShow={assetDecimalsToShow}
                         />
-                        {rate ? (
-                          <CommaNumber value={amount * rate} className="rate" beginningText="$" showDecimal />
-                        ) : null}
+                        <CommaNumber value={convertedAmount * rate} className="rate" beginningText="$" showDecimal />
                       </div>
                     </TableCell>
                     <TableCell width={'22%'}>
@@ -200,40 +194,57 @@ export const BorrowingExpandCardMenuSection = ({
                         <CommaNumber value={collateralShare} className="value" endingText="%" />
                       </div>
                     </TableCell>
-                    {!isTotalRow && (
-                      <TableCell className={`buttons borrowing ${!isOwner ? 'single-btn' : ''}`}>
-                        <div className="cell-content row">
+                    <TableCell className={`buttons borrowing ${!isOwner ? 'single-btn' : ''}`}>
+                      <div className="cell-content row">
+                        <Button
+                          onClick={() => openAddExistingCollateralPopup(idx)}
+                          form={BUTTON_WIDE}
+                          kind={BUTTON_SECONDARY}
+                          disabled={isActionActive}
+                        >
+                          <Icon id="plus" /> Add
+                        </Button>
+                        {isOwner ? (
                           <Button
-                            onClick={() => openAddExistingCollateralPopup(idx)}
+                            onClick={() => openWithdrawCollateralPopup({ amount: convertedAmount, idx })}
                             form={BUTTON_WIDE}
                             kind={BUTTON_SECONDARY}
-                            disabled={isActionActive}
+                            disabled={collateralRatio <= 200 || isActionActive}
                           >
-                            <Icon id="plus" /> Add
+                            <Icon id="minus" /> Remove
                           </Button>
-                          {isOwner ? (
-                            <Button
-                              onClick={() => openWithdrawCollateralPopup({ amount, idx })}
-                              form={BUTTON_WIDE}
-                              kind={BUTTON_SECONDARY}
-                              disabled={collateralRatio <= 200 || isActionActive}
-                            >
-                              <Icon id="minus" /> Remove
-                            </Button>
-                          ) : null}
-                        </div>
-                      </TableCell>
-                    )}
+                        ) : null}
+                      </div>
+                    </TableCell>
                   </TableRow>
                 )
               })}
+
+              {/* Total row */}
+              {collateralData.length >= 2 ? (
+                <TableRow rowHeight={44}>
+                  <TableCell width={'22%'} className="vert-middle">
+                    Total
+                  </TableCell>
+
+                  <TableCell width={'22%'}>
+                    <div className="cell-content">
+                      <CommaNumber value={collateralBalance} decimalsToShow={2} beginningText="$" className="balance" />
+                    </div>
+                  </TableCell>
+
+                  <TableCell width={'22%'}>
+                    <CommaNumber value={100} endingText="%" />
+                  </TableCell>
+                </TableRow>
+              ) : null}
             </TableBody>
           </Table>
         </BorrowingTabListItemTabInfo>
       )}
 
       {activeMenuTab?.id === loansTabNames.TX_HISTORY && (
-        <TransactionHistory transactionHistory={transactionHistory} vaultAddress={vaultAddress} />
+        <TransactionHistory vaultAddress={vaultAddress} loanTokenAddress={currentToken.loanTokenAddress} />
       )}
 
       {activeMenuTab?.id === loansTabNames.USEFUL_INFO && (
@@ -276,7 +287,7 @@ export const BorrowingExpandCardMenuSection = ({
                   </div>
                   <Button
                     kind={BUTTON_SIMPLE}
-                    disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName)) || isActionActive}
+                    disabled={!vaultHasXtzCollateral || isActionActive}
                     onClick={openChangeBakerPopup}
                   >
                     Change Baker <Icon id="paginationArrowLeft" />

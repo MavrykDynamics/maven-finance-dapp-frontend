@@ -6,13 +6,15 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from 'app/App.components/Icon/Icon.view'
 
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { ConfirmRemoveLendingAssetDataType } from './Modals.helpers'
+import { ConfirmRemoveLendingAssetDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { withdrawLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
 
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const ConfirmRemoveAssetsFromLending = ({
   closePopup,
@@ -23,30 +25,28 @@ export const ConfirmRemoveAssetsFromLending = ({
   show: boolean
   data?: ConfirmRemoveLendingAssetDataType
 }) => {
-  const {
-    inputAmount = 0,
-    mBalance = 0,
-    rate = 0,
-    symbol = '',
-    currentLendedAmount = 0,
-    decimals = 0,
-    lendingAPY = 0,
-    icon = '',
-    gqlName = '',
-    callback,
-  } = data ?? {}
-
+  const { tokensMetadata, tokensPrices } = useTokensContext()
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()
 
-  const callActionsAfterTransaction = () => {
-    closePopup()
-    callback?.()
-  }
+  const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
-  const withdrawHandler = () =>
-    dispatch(withdrawLendingAssetAction(gqlName, inputAmount, decimals, callActionsAfterTransaction))
+  if (!data || !loanToken || !loanToken.rate) return null
+
+  const { currentLendedAmount, inputAmount, callback } = data
+  const { symbol, rate } = loanToken
+
+  const withdrawHandler = () => {
+    if (checkWhetherTokenIsLoanToken(loanToken)) {
+      dispatch(
+        withdrawLendingAssetAction(inputAmount, loanToken, () => {
+          closePopup()
+          callback()
+        }),
+      )
+    }
+  }
 
   return (
     <PopupContainer onClick={closePopup} show={show}>

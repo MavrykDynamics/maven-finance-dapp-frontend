@@ -149,3 +149,14 @@ export type DoubleChartPropsType = {
   tooltipAssetFirst: string
   tooltipAssetSecond: string
 }
+
+// Pie chart types
+export type PieChartDataType = Array<{
+  title: string
+  value: number
+  color: string
+  labelPersent: number
+  segmentStroke: number
+  isHoveredPathAsset: boolean
+  groupedSmall: boolean
+}>

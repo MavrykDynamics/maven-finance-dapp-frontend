@@ -20,17 +20,21 @@ import { StatBlock } from '../Dashboard.style'
 import { OraclesContentStyled, TabWrapperStyled, PopularFeed } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { feedsAddresses, feedsMapper } = useDataFeedsContext()
   const {
-    tokensPrices: { mvk: mvkExchangeRate = 0 },
-  } = useSelector((state: State) => state.tokens)
+    tokensPrices: { [MVK_TOKEN_SYMBOL]: mvkExchangeRate = 0 },
+  } = useTokensContext()
+
+  const { themeSelected } = useSelector((state: State) => state.preferences)
   const { satelliteMapper, oraclesIds } = useSelector((state: State) => state.satellites)
 
-  const oracleFeeds = feedsLedger.length
-  const popularFeeds = feedsLedger.slice(0, 3)
+  const oracleFeeds = feedsAddresses.length
+  const popularFeeds = feedsAddresses.slice(0, 3)
 
   const oracleRewardsTotal = useMemo(
     () =>
@@ -84,7 +88,9 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
 
           {popularFeeds.length ? (
             <div className="feeds-grid">
-              {popularFeeds.map((feed) => {
+              {popularFeeds.map((feedAddress) => {
+                const feed = feedsMapper[feedAddress]
+
                 return (
                   <Link key={feed.address} to={`/satellites/feed-details/${feed.address}`}>
                     <PopularFeed className="row">
@@ -104,7 +110,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
                       <StatBlock>
                         <div className="name">Oracle Nodes</div>
                         <div className="value">
-                          <CommaNumber value={feed.oracles.length} />
+                          <CommaNumber value={feed.oraclesAmount} />
                         </div>
                       </StatBlock>
                       <StatBlock>

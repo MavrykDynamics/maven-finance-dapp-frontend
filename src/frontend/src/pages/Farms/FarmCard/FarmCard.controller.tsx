@@ -20,8 +20,9 @@ import { calculateAPY } from '../Farms.helpers'
 // styles
 import { FarmCardStyled, FarmHarvestStyled, FarmStakeStyled } from './FarmCard.style'
 import { FarmStorage, Normalizedfarm } from 'utils/TypesAndInterfaces/Farm'
-import { UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
 import { farmsPopupsContext } from '../FarmsPopups/FarmsPopups.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const QuestionLinkBlock = () => (
   <a className="info-link" href="https://mavryk.finance/litepaper#yield-farming" target="_blank" rel="noreferrer">
@@ -116,24 +117,13 @@ const LinksBlock = ({
   </div>
 )
 
-const HarvestBlock = ({
-  userReward,
-  harvestRewards,
-}: {
-  userReward?: UserFarmRewardsData
-  harvestRewards: () => void
-}) => (
+const HarvestBlock = ({ userReward = 0, harvestRewards }: { userReward?: number; harvestRewards: () => void }) => (
   <FarmHarvestStyled className="farm-harvest">
     <div className="farm-info">
       <h3>sMVK Earned</h3>
-      <CommaNumber className="value" value={userReward?.myAvailableFarmRewards ?? 0} />
+      <CommaNumber className="value" value={userReward} />
     </div>
-    <Button
-      kind="actionPrimary"
-      text={'Harvest'}
-      onClick={harvestRewards}
-      disabled={!userReward || userReward.myAvailableFarmRewards === 0}
-    />
+    <Button kind="actionPrimary" text={'Harvest'} onClick={harvestRewards} disabled={userReward === 0} />
   </FarmHarvestStyled>
 )
 
@@ -151,7 +141,7 @@ const FarmingBlock = ({
   isFarmLive: boolean
   token1Symbol: string
   token2Symbol: string
-  accountPhk?: string
+  accountPhk: string | null
   farmAccounts: FarmStorage[number]['farmAccounts']
 }) => {
   const depositedAmount = farmAccounts.find(({ user: { address } }) => accountPhk === address)?.deposited_amount ?? 0
@@ -180,9 +170,9 @@ const FarmingBlock = ({
 type FarmCardViewProps = {
   farm: Normalizedfarm
   apyValue: number
-  accountPkh?: string
+  accountPkh: string | null
   isOpenedCard: boolean
-  userReward?: UserFarmRewardsData
+  userReward?: number
   triggerWithdrawModal: () => void
   triggerDepositModal: () => void
   harvestRewards: () => void
@@ -314,17 +304,15 @@ type FarmCardProps = {
 
 export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, expandCallback }: FarmCardProps) => {
   const dispatch = useDispatch()
+  const { tokensMetadata } = useTokensContext()
+  const { userAddress, availableFarmRewards } = useUserContext()
   const { openDepositFarmPopup, openRoiCalculatorPopup, openWithdrawFarmPopup } = useContext(farmsPopupsContext)
-  const {
-    accountPkh,
-    user: { availableFarmRewards },
-  } = useSelector((state: State) => state.wallet)
 
   const valueAPY = calculateAPY(farm.currentRewardPerBlock, farm.lpBalance)
   const userReward = availableFarmRewards[farm.address]
 
   const harvestRewards = () => {
-    dispatch(harvest(farm.address))
+    dispatch(harvest(farm.address, tokensMetadata))
   }
 
   const openROI = () =>
@@ -344,7 +332,7 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
 
   return variant === 'vertical' ? (
     <VerticalFarmComponent
-      accountPkh={accountPkh}
+      accountPkh={userAddress}
       farm={farm}
       isOpenedCard={isOpenedCard}
       userReward={userReward}
@@ -357,7 +345,7 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
     />
   ) : (
     <HorisontalFarmComponent
-      accountPkh={accountPkh}
+      accountPkh={userAddress}
       farm={farm}
       isOpenedCard={isOpenedCard}
       userReward={userReward}

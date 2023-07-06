@@ -14,7 +14,7 @@ import { ProposalSubmissionView } from './ProposalSubmission.view'
 import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { DEFAULT_PROPOSAL } from './ProposalSubmission.helpers'
-import { fillTreasuryStorage } from 'pages/Treasury/Treasury.actions'
+import { getTreasuryStorage } from 'pages/Treasury/Treasury.actions'
 
 export const ProposalSubmission = () => {
   const dispatch = useDispatch()
@@ -32,7 +32,7 @@ export const ProposalSubmission = () => {
     try {
       await Promise.all(
         [
-          (!isTreasuryLoaded || isDepsChanged) && dispatch(fillTreasuryStorage()),
+          (!isTreasuryLoaded || isDepsChanged) && dispatch(getTreasuryStorage()),
           (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
         ].filter(Boolean),
       )

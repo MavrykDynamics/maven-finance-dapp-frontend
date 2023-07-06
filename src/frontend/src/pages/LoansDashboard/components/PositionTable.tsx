@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
@@ -23,20 +23,27 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { Plug } from 'app/App.components/Chart/Chart.style'
 import { PositionTableStyled } from '../LoansDashboard.styles'
-import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { getGaugeVaultRiskSimpleStatus } from '../helpers/position.helpers'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const LoansPositionTable = ({
   markets,
   userVaultsData,
 }: {
   markets: State['loans']['loanTokens']
-  userVaultsData: State['wallet']['user']['userLoansData']['userVaultsData']
+  userVaultsData: UserLoansDataStateType['userVaultsData']
 }) => {
+  const { openCreateVaultPopup, openAddLendingAssetPopup } = useLoansPopupsContext()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userAddress, userMTokens } = useUserContext()
+
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { openCreateVaultPopup, openAddLendingAssetPopup } = useContext(loansPopupsContext)
 
   const { search, pathname } = useLocation()
   const currentPage = getPageNumber(search, LOANS_POSITION_TABLE)
@@ -80,111 +87,124 @@ export const LoansPositionTable = ({
                   <div className="cell-content">
                     <span>Borrow APR</span>
                     <span>Loan Balance</span>
-                    <span>
-                      Vault Status
-                      {/* <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} /> */}
-                    </span>
+                    <span>Vault Status</span>
                     <span></span>
                   </div>
                 </TableHeaderCell>
               </TableRow>
             </TableHeader>
 
-            {accountPkh ? (
+            {userAddress ? (
               <TableBody className={`treasury dashboard-loans-table`}>
-                {paginatedTableRows.map(({ lendingItem, loanTokenData, borrowAPR, lendingAPY }) => {
-                  const { lendValue = 0, interestEarned = 0 } = lendingItem ?? {}
+                {paginatedTableRows.map(
+                  ({ loanMTokenAddress, loanTokenAddress, borrowAPR, lendingAPY, availableLiquidity }) => {
+                    const lendingItem = userMTokens[loanMTokenAddress]
 
-                  const marketVaultsUserData = userVaultsData[loanTokenData.gqlName.toLowerCase()]
+                    const loanToken = getTokenDataByAddress({
+                      tokenAddress: loanTokenAddress,
+                      tokensMetadata,
+                      tokensPrices,
+                    })
 
-                  const averageVaultStatus = getGaugeVaultRiskSimpleStatus(
-                    marketVaultsUserData?.collateralAmount
-                      ? (marketVaultsUserData.borrowedAmount / (marketVaultsUserData.collateralAmount / 2)) * 100
-                      : 0,
-                  )
+                    const marketVaultsUserData = userVaultsData[loanTokenAddress]
 
-                  return (
-                    <TableRow
-                      rowHeight={60}
-                      borderColor="cardBorderColor"
-                      className="add-hover"
-                      key={loanTokenData.symbol}
-                    >
-                      <TableCell width="15%">
-                        <div className="cell-content row with-icon asset-name">
-                          <ImageWithPlug imageLink={loanTokenData.icon} alt={`${loanTokenData.symbol} logo`} />
-                          {loanTokenData.symbol}
-                        </div>
-                      </TableCell>
+                    if (!loanToken || !loanToken.rate || !marketVaultsUserData) return null
 
-                      <TableCell
-                        width="43%"
-                        className={`position-multy-cell lending ${!lendingItem ? 'one-item' : ''}`}
-                      >
-                        <div className="cell-content" style={{ marginRight: '20px' }}>
-                          {lendingItem ? (
-                            <>
-                              <CommaNumber value={lendingAPY} endingText="%" />
-                              <CommaNumber value={lendValue * loanTokenData.rate} beginningText="$" />
-                              <CommaNumber value={interestEarned} />
-                              <Link to={`/loans/${loanTokenData.symbol}/${LEND_TAB_ID}`}>
-                                <Button kind={BUTTON_SIMPLE}>View</Button>
+                    const { symbol, icon, rate, decimals, address } = loanToken
+
+                    const { lendValue = 0, interestEarned = 0 } = lendingItem ?? {}
+
+                    const averageVaultStatus = getGaugeVaultRiskSimpleStatus(
+                      marketVaultsUserData?.collateralAmount
+                        ? (marketVaultsUserData.borrowedAmount / (marketVaultsUserData.collateralAmount / 2)) * 100
+                        : 0,
+                    )
+
+                    return (
+                      <TableRow rowHeight={60} borderColor="cardBorderColor" className="add-hover" key={symbol}>
+                        <TableCell width="15%">
+                          <div className="cell-content row with-icon asset-name">
+                            <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
+                            {symbol}
+                          </div>
+                        </TableCell>
+
+                        <TableCell
+                          width="43%"
+                          className={`position-multy-cell lending ${!lendingItem ? 'one-item' : ''}`}
+                        >
+                          <div className="cell-content" style={{ marginRight: '20px' }}>
+                            {lendingItem ? (
+                              <>
+                                <CommaNumber value={lendingAPY} endingText="%" />
+                                <CommaNumber
+                                  value={convertNumberForClient({ number: lendValue, grade: decimals }) * rate}
+                                  beginningText="$"
+                                />
+                                <CommaNumber
+                                  value={convertNumberForClient({ number: interestEarned, grade: decimals })}
+                                />
+                                <Link to={`/loans/${address}/${LEND_TAB_ID}`}>
+                                  <Button kind={BUTTON_SIMPLE}>View</Button>
+                                </Link>
+                              </>
+                            ) : (
+                              <Link to={`/loans/${address}/${LEND_TAB_ID}`}>
+                                <Button
+                                  kind={BUTTON_SIMPLE}
+                                  onClick={() => {
+                                    openAddLendingAssetPopup({
+                                      mBalance: 0,
+                                      lendingAPY: lendingAPY,
+                                      tokenAddress: loanTokenAddress,
+                                    })
+                                  }}
+                                >
+                                  Supply {symbol} and start Earning
+                                </Button>
                               </Link>
-                            </>
-                          ) : (
-                            <Link to={`/loans/${loanTokenData.symbol}/${LEND_TAB_ID}`}>
-                              <Button
-                                kind={BUTTON_SIMPLE}
-                                onClick={() => {
-                                  openAddLendingAssetPopup({
-                                    mBalance: 0,
-                                    lendingAPY: lendingAPY,
-                                    ...loanTokenData,
-                                  })
-                                }}
-                              >
-                                Supply {loanTokenData.symbol} and start Earning
-                              </Button>
-                            </Link>
-                          )}
-                        </div>
-                      </TableCell>
+                            )}
+                          </div>
+                        </TableCell>
 
-                      <TableCell
-                        width="41%"
-                        className={`position-multy-cell borrowing ${!marketVaultsUserData ? 'one-item' : ''}`}
-                      >
-                        <div className="cell-content">
-                          {marketVaultsUserData ? (
-                            <>
-                              <CommaNumber value={borrowAPR} endingText="%" />
-                              <CommaNumber value={marketVaultsUserData.borrowedAmount} beginningText="$" />
-                              <div className={`vault-status ${averageVaultStatus.status}`}>
-                                {averageVaultStatus.text}
-                              </div>
-                              <Link to={`/loans/${loanTokenData.symbol}/${BORROW_TAB_ID}`}>
-                                <Button kind={BUTTON_SIMPLE}>View</Button>
+                        <TableCell
+                          width="41%"
+                          className={`position-multy-cell borrowing ${!marketVaultsUserData ? 'one-item' : ''}`}
+                        >
+                          <div className="cell-content">
+                            {marketVaultsUserData ? (
+                              <>
+                                <CommaNumber value={borrowAPR} endingText="%" />
+                                <CommaNumber value={marketVaultsUserData.borrowedAmount} beginningText="$" />
+                                <div className={`vault-status ${averageVaultStatus.status}`}>
+                                  {averageVaultStatus.text}
+                                </div>
+                                <Link to={`/loans/${address}/${BORROW_TAB_ID}`}>
+                                  <Button kind={BUTTON_SIMPLE}>View</Button>
+                                </Link>
+                              </>
+                            ) : (
+                              <Link to={`/loans/${address}/${BORROW_TAB_ID}`}>
+                                <Button
+                                  kind={BUTTON_SIMPLE}
+                                  onClick={() =>
+                                    openCreateVaultPopup({
+                                      marketTokenAddress: loanTokenAddress,
+                                      avaliableLiquidity:
+                                        convertNumberForClient({ number: availableLiquidity, grade: decimals }) * rate,
+                                    })
+                                  }
+                                >
+                                  Create a vault and start borrowing
+                                </Button>
                               </Link>
-                            </>
-                          ) : (
-                            <Link to={`/loans/${loanTokenData.symbol}/${BORROW_TAB_ID}`}>
-                              <Button
-                                kind={BUTTON_SIMPLE}
-                                onClick={() =>
-                                  openCreateVaultPopup({
-                                    currentMarketAsset: loanTokenData.symbol,
-                                  })
-                                }
-                              >
-                                Create a vault and start borrowing
-                              </Button>
-                            </Link>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  },
+                )}
               </TableBody>
             ) : (
               <TableBody>
@@ -197,7 +217,7 @@ export const LoansPositionTable = ({
             )}
           </Table>
 
-          {accountPkh ? null : (
+          {userAddress ? null : (
             <div className="not-connected">
               <ConnectWalletBtn />
             </div>

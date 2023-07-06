@@ -4,6 +4,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { useLocation, useParams, useHistory } from 'react-router'
 
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
 // const
 import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
 
@@ -49,6 +52,7 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const getCurrentListNameById = (tabId: string) => {
   switch (tabId) {
@@ -76,26 +80,21 @@ export const SatelliteGovernance = () => {
   const history = useHistory()
   const dispatch = useDispatch()
 
-  const { tabId = SATELLITE_GOVERNANCE_MENU_TABS.ONGOING } = useParams<{ tabId: string }>()
-
   const {
-    accountPkh,
-    user: { isSatellite, govActionsCount },
-  } = useSelector((state: State) => state.wallet)
+    maxLengths: {
+      governanceSatellite: { purposeMaxLength },
+      dataFeeds: { feedNameMaxLength },
+    },
+  } = useDappConfigContext()
+  const { userAddress, isSatellite, govActionsCount } = useUserContext()
+
+  const { tabId = SATELLITE_GOVERNANCE_MENU_TABS.ONGOING } = useParams<{ tabId: string }>()
 
   const { maxActionsCount } = useSelector((state: State) => state.satelliteGovernance.config)
 
-  const {
-    isLoaded,
-    ongoingSatelliteGovIds,
-    pastSatelliteGovIds,
-    mySatelliteGovIds,
-    satelliteGovIdsMapper,
-    config: { purposeMaxLength },
-  } = useSelector((state: State) => state.satelliteGovernance)
-
+  const { isLoaded, ongoingSatelliteGovIds, pastSatelliteGovIds, mySatelliteGovIds, satelliteGovIdsMapper } =
+    useSelector((state: State) => state.satelliteGovernance)
   const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { feedNameMaxLength } = useSelector((state: State) => state.dataFeeds.config)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const dropDownItems = useMemo(() => SATELLITE_GOVERNANCE_ACTIONS.map((item) => getDdItem(item)), [])
@@ -161,7 +160,7 @@ export const SatelliteGovernance = () => {
         }
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   // set tabs list
@@ -187,7 +186,7 @@ export const SatelliteGovernance = () => {
         id: 3,
         active: SATELLITE_GOVERNANCE_MENU_TABS.MY === tabId,
         path: SATELLITE_GOVERNANCE_MENU_TABS.MY,
-        isDisabled: !accountPkh,
+        isDisabled: !userAddress,
       }
 
       baseTabs.push(satelliteTab)
@@ -195,10 +194,10 @@ export const SatelliteGovernance = () => {
 
     setTabsList(baseTabs)
 
-    if (accountPkh) return
+    if (userAddress) return
     // return back to "ongoing actions" tab if user is not connected
     history.replace(`${SATELLITE_GOVERNANCE_PATHNAME}/${SATELLITE_GOVERNANCE_MENU_TABS.ONGOING}`)
-  }, [accountPkh, isSatellite, tabId])
+  }, [userAddress, isSatellite, tabId])
 
   return (
     <Page>
@@ -281,7 +280,7 @@ export const SatelliteGovernance = () => {
                         yayVotesSmvkTotal={action.yayVoteSmvkTotal}
                         nayVotesSmvkTotal={action.nayVoteSmvkTotal}
                         passVoteSmvkTotal={action.passVoteSmvkTotal}
-                        accountPkh={accountPkh}
+                        accountPkh={userAddress}
                         isActionActive={isActionActive}
                         votes={action.votes}
                       />

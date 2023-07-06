@@ -1,5 +1,5 @@
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 
 import { State } from 'reducers'
@@ -26,8 +26,6 @@ import {
   SATELLITE_CONFIG_QUERY_NAME,
   SATELLITE_CONFIG_QUERY_VARIABLE,
 } from 'gql/queries'
-import { updateUserData } from 'reducers/actions/user.actions'
-import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const GET_SATELLITES_STORAGE = 'GET_SATELLITES_STORAGE'
 export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -82,18 +80,19 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
     return
   }
 
-  if (
-    state.wallet.user.userTokens[SMVK_TOKEN_SYMBOL].balance === 0 &&
-    state.wallet.user.userTokens[MVK_TOKEN_SYMBOL].balance === 0
-  ) {
-    dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please buy MVK and stake it'))
-    return
-  }
+  // TODO: those checks will be moved to component where user balances are accessible in satellites update (next pr right after it)
+  // if (
+  //   state.wallet.user.userTokens[SMVK_TOKEN_ADDRESS].balance === 0 &&
+  //   state.wallet.user.userTokens[MVK_TOKEN_SYMBOL].balance === 0
+  // ) {
+  //   dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please buy MVK and stake it'))
+  //   return
+  // }
 
-  if (state.wallet.user.userTokens[SMVK_TOKEN_SYMBOL].balance === 0) {
-    dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please stake your MVK'))
-    return
-  }
+  // if (state.wallet.user.userTokens[SMVK_TOKEN_ADDRESS].balance === 0) {
+  //   dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please stake your MVK'))
+  //   return
+  // }
 
   try {
     // prepare and send transaction
@@ -123,7 +122,6 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(getSatellitesStorage())
-          await dispatch(updateUserData())
 
           // Add here call for update data actions
           await dispatch(hideToaster())
@@ -179,7 +177,6 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(getSatellitesStorage())
-          await dispatch(updateUserData())
 
           // Add here call for update data actions
           await dispatch(hideToaster())
@@ -236,7 +233,6 @@ export const distributeProposalRewards =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(getSatellitesStorage())
-            await dispatch(updateUserData())
 
             // Add here call for update data actions
             await dispatch(hideToaster())

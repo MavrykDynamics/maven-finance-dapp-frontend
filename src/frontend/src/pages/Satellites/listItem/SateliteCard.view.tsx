@@ -43,9 +43,11 @@ import {
   SatelliteCardButtons,
   SatelliteCardRow,
 } from './SatelliteCard.style'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 import colors from 'styles/colors'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -61,27 +63,25 @@ const renderVotingHistoryItem = (vote: number) => {
 }
 
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
+  const { userTokensBalances, isSatellite, satelliteMvkIsDelegatedTo, availableSatellitesRewards, userAddress } =
+    useUserContext()
+
   const dispatch = useDispatch()
 
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const {
-    accountPkh,
-    user: { isSatellite, userTokens, satelliteMvkIsDelegatedTo, availableSatellitesRewards },
-  } = useSelector((state: State) => state.wallet)
   const { proposalsMapper } = useSelector((state: State) => state.governance)
 
   // Card buttons handlers
   const delegateCallback = async () => await dispatch(delegate(satellite.address))
   const undelegateCallback = async () => await dispatch(undelegate(satellite.address))
-  const claimRewardsCallback = async () => (accountPkh ? await dispatch(rewardsCompound(accountPkh)) : null)
+  const claimRewardsCallback = async () => (userAddress ? await dispatch(rewardsCompound(userAddress)) : null)
   // TODO: add valid data
   const distributeRewardsCallback = async () => await dispatch(distributeProposalRewards('', []))
 
   const freesMVKSpace = Math.max(satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satellite.address === satelliteMvkIsDelegatedTo
-  const balanceOver1SMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= 1
+  const balanceOver1SMvk = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) >= 1
   const { currentlyRegistered } = satellite
 
   // Latest vote data
@@ -105,7 +105,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           icon="man-close"
           kind={ACTION_SECONDARY}
           onClick={undelegateCallback}
-          disabled={!accountPkh || isActionActive}
+          disabled={!userAddress || isActionActive}
         />
         {isDetailsPage && availableSatellitesRewards > 0 ? (
           <Button
@@ -113,7 +113,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             icon="rewards"
             kind={ACTION_PRIMARY}
             onClick={claimRewardsCallback}
-            disabled={!accountPkh || isActionActive}
+            disabled={!userAddress || isActionActive}
             strokeWidth={0.3}
           />
         ) : null}
@@ -136,7 +136,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         icon="man-check"
         kind={ACTION_PRIMARY}
         onClick={delegateCallback}
-        disabled={!accountPkh || !balanceOver1SMvk || isActionActive}
+        disabled={!userAddress || !balanceOver1SMvk || isActionActive}
       />
     )
 

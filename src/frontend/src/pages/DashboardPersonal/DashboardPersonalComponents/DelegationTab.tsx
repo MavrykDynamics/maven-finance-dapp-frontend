@@ -15,19 +15,21 @@ import { UserActionHistory } from './UserOperationsHistory'
 import { DashboardCardHeader } from '../DashboardPersonal.style'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const DelegationTab = () => {
   const dispatch = useDispatch()
-  const {
-    user: { satelliteMvkIsDelegatedTo, userTokens, availableSatellitesRewards },
-    accountPkh,
-  } = useSelector((state: State) => state.wallet)
+  const { userTokensBalances, satelliteMvkIsDelegatedTo, availableSatellitesRewards, userAddress } = useUserContext()
+
+  const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
-  const satelliteInfo = satelliteMapper[satelliteMvkIsDelegatedTo]
+  const satelliteInfo = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
 
   const handleDistributeRewards = () => {
     // TODO: add valid data
@@ -115,7 +117,7 @@ const DelegationTab = () => {
             </div>
             <Link to="/satellites">Satellites Overview</Link>
           </>
-        ) : userTokens[SMVK_TOKEN_SYMBOL].balance === 0 && accountPkh ? (
+        ) : userSmvkBalance === 0 && userAddress ? (
           <div className="no-data">
             <span>You don't have SMVK</span>
             <div className="nav-button">
@@ -126,7 +128,7 @@ const DelegationTab = () => {
               </Link>
             </div>
           </div>
-        ) : accountPkh && userTokens[SMVK_TOKEN_SYMBOL].balance ? (
+        ) : userAddress && userSmvkBalance ? (
           <div className="no-data">
             <span>You are not delegated at this time</span>
             <div className="nav-button">

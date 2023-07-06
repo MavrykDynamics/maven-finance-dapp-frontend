@@ -43,7 +43,7 @@ type ExitFeeModalPropsType = {
     myMvkTokenBalance: number
     totalStakedMvk: number
     totalMVKSupply: number
-    accountPkh?: string
+    userAddress: string | null
   }
   inputData: typeof DEFAULT_STAKE_UNSTAKE_INPUT
   setInputData: (data: typeof DEFAULT_STAKE_UNSTAKE_INPUT) => void
@@ -52,7 +52,7 @@ type ExitFeeModalPropsType = {
 export const ExitFeeModal = ({
   closePopup,
   show,
-  data: { mvkExchangeRate, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, accountPkh, totalMVKSupply },
+  data: { mvkExchangeRate, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, userAddress, totalMVKSupply },
   inputData,
   setInputData,
 }: ExitFeeModalPropsType) => {
@@ -72,7 +72,7 @@ export const ExitFeeModal = ({
   const fee = calcExitFee(totalMVKSupply, totalStakedMvk)
 
   const handleUnstake = async (unstakeAmount: number) => {
-    if (!accountPkh) {
+    if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return
     }
@@ -127,7 +127,7 @@ export const ExitFeeModal = ({
       amount: Number(value),
       myMvkTokenBalance,
       mySMvkTokenBalance,
-      accountPkh,
+      userAddress,
     })
 
     const errorMessage = Number(value) > Number(mySMvkTokenBalance) ? "You don't have enought sMVK to unstake" : ''

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // providers
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 // types
@@ -23,7 +24,8 @@ import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
+import { MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
 // styles
 import { SatelliteGovernanceStatsInfo } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
@@ -34,19 +36,17 @@ import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const Satellites = () => {
+  const { feedsAddresses, feedsMapper } = useDataFeedsContext()
+  const { userTokensBalances, isSatellite } = useUserContext()
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
+
   const dispatch = useDispatch()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
-
-  const {
-    user: { isSatellite, userTokens },
-  } = useSelector((state: State) => state.wallet)
 
   useEffect(() => {
     changeStakingSubscriptionsList({
@@ -58,12 +58,9 @@ const Satellites = () => {
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
-      await Promise.all(
-        [
-          (!isFeedsLoaded || isDepsChanged) && dispatch(getFeedsStorage()),
-          (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
-        ].filter(Boolean),
-      )
+      if (!isGovernanceLoaded || isDepsChanged) {
+        dispatch(getGovernanceStorage())
+      }
     } catch (e) {}
   }, [])
 
@@ -73,15 +70,15 @@ const Satellites = () => {
         <CommaNumber value={getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)} endingText={'MVK'} />
       ),
       totalSatelliteOracles: activeSatellitesIds.length,
-      numberOfDataFeeds: feedsLedger.length > 50 ? feedsLedger.length + '+' : feedsLedger.length,
+      numberOfDataFeeds: feedsAddresses.length > 50 ? feedsAddresses.length + '+' : feedsAddresses.length,
     }),
-    [activeSatellitesIds, feedsLedger, satelliteMapper],
+    [activeSatellitesIds, feedsAddresses, satelliteMapper],
   )
 
   return (
     <Page>
       <PageHeader page={'satellites'} />
-      {!isSatellite && userTokens[SMVK_TOKEN_SYMBOL].balance === 0 ? (
+      {!isSatellite && getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 ? (
         <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
       ) : null}
       <PageContent>
@@ -134,7 +131,7 @@ const Satellites = () => {
                 </>
               ) : null}
 
-              {feedsLedger.length ? (
+              {feedsAddresses.length ? (
                 <>
                   <div className="top-list">
                     <H2Title>Popular Feeds</H2Title>
@@ -148,14 +145,14 @@ const Satellites = () => {
                   </div>
 
                   <div className={`satellitesList`}>
-                    {feedsLedger.slice(0, 3).map((feed) => (
-                      <DataFeedCard feed={feed} key={feed.address} />
+                    {feedsAddresses.slice(0, 3).map((feedAddress) => (
+                      <DataFeedCard feed={feedsMapper[feedAddress]} key={feedAddress} />
                     ))}
                   </div>
                 </>
               ) : null}
 
-              {feedsLedger.length === 0 && activeSatellitesIds.length === 0 ? (
+              {feedsAddresses.length === 0 && activeSatellitesIds.length === 0 ? (
                 <EmptyContainer>
                   <img src="/images/not-found.svg" alt={`no satellites and data feeds`} />
                   <figcaption>No satellites and data feeds</figcaption>
