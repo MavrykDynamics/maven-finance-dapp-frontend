@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components'
-import { dropDownColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 // TODO: update colors
@@ -8,8 +7,8 @@ export const PopupContainerWrapper = styled.div<{ theme: MavrykTheme; widthSize?
   display: flex;
   flex-direction: column;
   padding: 40px;
-  background: #160e3f;
-  border: 1px solid #86d4c9;
+  background: ${({ theme }) => theme.cards};
+  border: 1px solid ${({ theme }) => theme.linksAndButtons};
   border-radius: 10px;
   height: fit-content;
   max-width: ${({ widthSize = 395 }) => `${widthSize}px`};
@@ -34,11 +33,11 @@ export const PopupContainerWrapper = styled.div<{ theme: MavrykTheme; widthSize?
     &:before {
       content: '✕';
       font-size: 25px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.linksAndButtons};
     }
 
     &:hover {
-      opacity: 0.7;
+      opacity: 0.8;
     }
   }
 
@@ -110,6 +109,11 @@ export const PopupContainerWrapper = styled.div<{ theme: MavrykTheme; widthSize?
       padding-left: 15px;
     }
 
+    p,
+    li {
+      color: ${({ theme }) => theme.regularText};
+    }
+
     h1:after {
       margin-bottom: 30px;
     }
@@ -156,7 +160,7 @@ export const PopupContainer = styled.div<{ show?: boolean }>`
   width: 100vw;
   height: 100vh;
 
-  background-color: ${dropDownColor};
+  background-color: ${({ theme }) => theme.popupBackdropColor};
   display: flex;
   justify-content: center;
   align-items: center;

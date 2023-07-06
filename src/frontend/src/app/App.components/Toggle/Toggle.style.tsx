@@ -1,33 +1,24 @@
 import styled from 'styled-components/macro'
-import { headerColor, darkColor, royalPurpleColor, cyanColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
 
-  &.disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-
-    .toggler {
-      pointer-events: none;
-    }
-  }
-
   span {
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
-    color: ${({ theme }) => theme.textColor};
   }
 
   .sufix {
     margin-left: 14px;
+    color: ${({ theme }) => theme.linksAndButtons};
   }
 
   .prefix {
     margin-right: 14px;
+    color: ${({ theme }) => theme.selectedColor};
   }
 
   .toggler {
@@ -41,8 +32,8 @@ export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
     top: 0;
     width: 46px;
     height: 25px;
-    background-color: ${({ theme }) => theme.containerColor};
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    background-color: ${({ theme }) => theme.backgroundColor};
+    border: 1px solid ${({ theme }) => theme.strokeColor};
     border-radius: 50px;
     cursor: pointer;
   }
@@ -68,12 +59,51 @@ export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
     width: 23px;
     height: 23px;
     border-radius: 50%;
-    background-color: ${({ theme }) => theme.valueColor};
+    background-color: ${({ theme }) => theme.selectedColor};
     transition: 0.3s;
   }
 
   input:checked ~ .slider::before {
     transform: translateX(21px);
+  }
+
+  &.checked:not(.labels) {
+    label {
+      background-color: ${({ theme }) => theme.cards};
+    }
+
+    .slider::before {
+      background-color: ${({ theme }) => theme.linksAndButtons};
+    }
+  }
+
+  &.checked {
+    .sufix {
+      color: ${({ theme }) => theme.selectedColor};
+    }
+
+    .prefix {
+      color: ${({ theme }) => theme.linksAndButtons};
+    }
+  }
+
+  &.labels {
+    label {
+      background-color: ${({ theme }) => theme.cards};
+    }
+
+    .slider::before {
+      background-color: ${({ theme }) => theme.linksAndButtons};
+    }
+  }
+
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+
+    .toggler {
+      pointer-events: none;
+    }
   }
 
   &.farm-toggle {
@@ -83,18 +113,6 @@ export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
 
     .checked {
       background-color: ${({ theme }) => theme.cardBorderColor};
-    }
-  }
-
-  &.personal-dashboard-toggler {
-    .prefix {
-      color: ${({ theme }) => theme.valueColor};
-      margin-left: 10px;
-    }
-
-    .sufix {
-      color: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
-      margin-right: 10px;
     }
   }
 `

@@ -30,7 +30,7 @@ const DashboardPersonalEarningsHistory = ({
         <Toggle
           prefix={'USD'}
           sufix={'MVK'}
-          className="personal-dashboard-toggler"
+          className="labels"
           checked={switcherActive}
           onChange={() => setSwithcerActive(!switcherActive)}
         />

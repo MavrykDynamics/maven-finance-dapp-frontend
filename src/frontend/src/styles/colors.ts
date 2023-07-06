@@ -73,8 +73,10 @@ export const dark = {
   ipfsBorderColor: 'rgb(80, 62, 170)',
   ipfsHoverBorderColor: '%2386D4C9FF',
   shineAnimationGradient: `linear-gradient(to right, ${headerColor} 0, ${cyanColor} 10%, ${headerColor} 20%)`,
-  menuBackdropColor:'#08062880',
+  menuBackdropColor: '#08062880',
   menuBackgroundActiveColor: 'linear-gradient(90deg, #38237c 0%, rgba(80, 80, 142, 0) 100%)',
+  popupBackdropColor: '#0000007a',
+  pageHeaderColor: '#FFFFFF',
   // tabs
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
 
@@ -161,8 +163,10 @@ export const light = {
   ipfsBorderColor: 'rgb(31, 31, 31)',
   ipfsHoverBorderColor: '%238D86EBFF',
   shineAnimationGradient: `linear-gradient(to right, ${headerColor} 0, ${cyanColor} 10%, ${headerColor} 20%)`,
-  menuBackdropColor:'#08062880',
+  menuBackdropColor: '#08062880',
   menuBackgroundActiveColor: 'linear-gradient(90deg, rgba(134, 212, 201, 0.5) 0%, rgba(134, 212, 201, 0) 100%);',
+  popupBackdropColor: '#0000007a',
+  pageHeaderColor: '#FFFFFF',
   // tabs
   forTabs: 'linear-gradient(90deg, #03C9A3 0.31%, #8D86EB 99.97%)',
 
@@ -249,8 +253,10 @@ export const space = {
   ipfsBorderColor: 'rgb(80, 62, 170)',
   ipfsHoverBorderColor: '%2386D4C9FF',
   shineAnimationGradient: `linear-gradient(to right, ${headerColor} 0, ${cyanColor} 10%, ${headerColor} 20%)`,
-  menuBackdropColor:'#08062880',
+  menuBackdropColor: '#08062880',
   menuBackgroundActiveColor: 'linear-gradient(90deg, #38237c 0%, rgba(80, 80, 142, 0) 100%)',
+  popupBackdropColor: '#0000007a',
+  pageHeaderColor: '#FFFFFF',
   // tabs
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
 

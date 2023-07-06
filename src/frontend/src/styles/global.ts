@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components/macro'
 
-import { royalPurpleColor, headerColor, cyanColor } from '../styles/colors'
+import { royalPurpleColor } from '../styles/colors'
 import { MavrykTheme } from './interfaces'
 
 export const GlobalStyle = createGlobalStyle<{ theme: MavrykTheme }>`
@@ -14,7 +14,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: ${({ theme }) => theme.backgroundColor};
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.regularText};
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -30,7 +30,7 @@ h1, h2 {
   font-weight: bold;
   display: inline-block;
   margin: 30px auto;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.mainHeadingText};
   font-weight: 700;
   font-size: 22px;
 
@@ -44,13 +44,9 @@ h1, h2 {
     display: block;
     width: 80px;
     height: 4px;
-    background: ${({ theme }) => theme.textColor};
+    background: ${({ theme }) => theme.mainHeadingText};
     margin: 7px 0 10px 1px;
   }
-}
-
-h2 {
-  font-weight: 600;
 }
 
 fieldset {
@@ -73,6 +69,7 @@ h2 {
   font-size: 22px;
   display: block;
   margin: 0;
+  font-weight: 600;
 }
 
 var {
@@ -84,12 +81,14 @@ h3 {
   font-weight: normal;
   display: block;
   margin: 0;
+  color: ${({ theme }) => theme.mainHeadingText};
 }
 
 h4 {
   font-size: 14px;
   font-weight: normal;
   margin: 0;
+  color: ${({ theme }) => theme.mainHeadingText};
   
   &.primary {
     color: ${({ theme }) => theme.textColor};
@@ -109,7 +108,7 @@ h4 {
 }
 
 input {
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.placeholders};
   font-size: 14px;
 }
 
@@ -123,7 +122,7 @@ input[type='number'] {
 }
 
 ::placeholder {
-  color:  ${({ theme }) => theme.placeholderColor};
+  color:  ${({ theme }) => theme.placeholders};
   font-size: 14px;
 }
 
@@ -145,7 +144,7 @@ a {
 
 
 a:hover:not(.full-opacity) {
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 p {
