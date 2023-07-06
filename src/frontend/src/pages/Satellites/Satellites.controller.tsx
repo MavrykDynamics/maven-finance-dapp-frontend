@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 // providers
@@ -31,11 +31,32 @@ import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import {
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+} from 'providers/SatellitesProvider/satellites.const'
 
 const Satellites = () => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
-  const { activeSatellitesIds, satelliteMapper, isLoading: isSatellitesLoading } = useSatellitesContext()
+  const {
+    activeSatellitesIds,
+    satelliteMapper,
+    isLoading: isSatellitesLoading,
+    changeSatellitesSubscriptionsList,
+  } = useSatellitesContext()
   const { userTokensBalances, isSatellite } = useUserContext()
+
+  useEffect(() => {
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
+  }, [])
 
   const tabsInfo = useMemo(
     () => ({
@@ -97,9 +118,10 @@ const Satellites = () => {
                   </div>
 
                   <div className={`satellitesList`}>
-                    {activeSatellitesIds.slice(0, 3).map((satelliteAddress) => (
-                      <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
-                    ))}
+                    {activeSatellitesIds.slice(0, 3).map((satelliteAddress) => {
+                      if (!satelliteMapper[satelliteAddress]) return null
+                      return <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
+                    })}
                   </div>
                 </>
               ) : null}

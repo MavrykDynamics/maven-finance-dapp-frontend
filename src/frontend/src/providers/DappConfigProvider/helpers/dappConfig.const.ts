@@ -1,3 +1,5 @@
+import { DappConfigContextStateType } from '../dappConfig.provider.types'
+
 // default max length
 export const defaultCouncilMemberImageMaxLength = 500
 export const defaultCouncilMemberNameMaxLength = 25
@@ -49,4 +51,35 @@ export const DAPP_DEFAULT_MAX_LENGHTS = {
     satelliteDescriptionMaxLength: defaultSatelliteDescriptionMaxLength,
     satelliteWebsiteMaxLength: defaultSatelliteWebsiteMaxLength,
   },
+}
+
+export const DAPP_DEFAULT_CONTRACT_ADDRESSES = {
+  farmsAddress: null,
+  farmsFactoryAddress: null,
+  delegationAddress: null,
+  doormanAddress: null,
+  mvkTokenAddress: null,
+  governanceAddress: null,
+  governanceFinancialAddress: null,
+  emergencyGovernanceAddress: null,
+  breakGlassAddress: null,
+  councilAddress: null,
+  treasuryAddress: null,
+  treasuryFactoryAddress: null,
+  vestingAddress: null,
+  governanceSatelliteAddress: null,
+  feedsFactoryAddress: null,
+  feedsAddress: null,
+  governanceProxyAddress: null,
+  lendingControllerAddress: null,
+  vaultFactoryAddress: null,
+}
+
+export const DEFAULT_DAPP_CONFIG_CONTEXT: DappConfigContextStateType = {
+  maxLengths: DAPP_DEFAULT_MAX_LENGHTS,
+  minimumStakedMvkBalance: 0,
+  xtzBakers: null,
+  contractAddresses: DAPP_DEFAULT_CONTRACT_ADDRESSES,
+  // TODO: set default address to null, when contracts are updated
+  mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh',
 }

@@ -41,13 +41,27 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import {
+  MVK_BALANCE_SUB,
+  MVK_TOTAL_SUB,
+  DEFAULT_STAKING_ACTIVE_SUBS,
+} from 'providers/StakeProvider/helpers/stake.consts'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+} from 'providers/SatellitesProvider/satellites.const'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
+  const {
+    contractAddresses: { mvkTokenAddress },
+  } = useDappConfigContext()
   const {
     userTokensBalances,
     userAddress,
@@ -62,10 +76,8 @@ const DashboardPersonal = () => {
     isSatellite,
     isVestee,
   } = useUserContext()
+  const { changeSatellitesSubscriptionsList, isLoading: isSatellitesLoading } = useSatellitesContext()
 
-  const {
-    mvkTokenAddress: { address: mvkTokenAddress },
-  } = useSelector((state: State) => state.contractAddresses)
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
@@ -77,8 +89,19 @@ const DashboardPersonal = () => {
 
   useEffect(() => {
     changeStakingSubscriptionsList({
-      [SMVK_HISTORY_SUB]: false,
+      [MVK_TOTAL_SUB]: true,
+      [MVK_BALANCE_SUB]: true,
     })
+
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
   }, [])
 
   const { isLoading } = useDataLoader(
@@ -184,7 +207,7 @@ const DashboardPersonal = () => {
           <DashboardPersonalEarningsHistory {...earnings} />
         </div>
 
-        {isLoading || isDoormanLoading ? (
+        {isLoading || isDoormanLoading || isSatellitesLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
             <div className="text">Loading your statistic</div>

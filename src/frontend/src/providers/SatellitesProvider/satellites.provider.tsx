@@ -7,7 +7,11 @@ import { normalizeSatellitesLedger } from './helpers/satellites.normalizer'
 import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
 
 // consts
-import { ALL_SATELLITES_SUB } from './satellites.const'
+import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+} from './satellites.const'
 import {
   FINANCIAL_REQUESTS_AMOUNT_SUBSCRIPTION,
   PROPOSALS_AMOUNT_SUBSCRIPTION,
@@ -18,7 +22,7 @@ import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 // types
-import { SatellitesContext, SatellitesCtxState } from './satellites.provider.types'
+import { SatellitesContext, SatellitesCtxState, SatellitesSubsRecordType } from './satellites.provider.types'
 
 // context
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -42,17 +46,28 @@ export const SatellitesProvider = ({ children }: Props) => {
     finRequestsAmount: 0,
   })
 
-  const [satelliteAddressToSubsctibe, setSatelliteAddressToSubsctibe] = useState<string | typeof ALL_SATELLITES_SUB>(
-    ALL_SATELLITES_SUB,
-  )
+  const [satelliteAddressToSubsctibe, setSatelliteAddressToSubsctibe] = useState<string | null>(null)
+  const [activeSubs, setActiveSubs] = useState<SatellitesSubsRecordType>(DEFAULT_SATELLITES_ACTIVE_SUBS)
   const [isSatellitesLoading, setIsSatelliteLoading] = useState(false)
 
   /**
-   * need this effect to track whether user subscribes to cetrain satellite of resubs to all satellites, to show loading status if it's loading
-   * cuz useSubscription is not changing it's returned loading on variable change
+   * need to handle satellties loading status manually cun on queyry variable change it resets the loading status, in some cases it shows loading instead of already loaded data
+   * we need to show loader for satellites metadata in 2 cases:
+   *
+   *    1. we are loading single satellite, whose data is not in context yet
+   *    2. satellites context provider have data for less amount of satellites, that are exists
+   *
+   * NOTE: loader will be shown only when we set or unset specific satellite address
    **/
   useEffect(() => {
-    setIsSatelliteLoading(true)
+    const isLoadingNotLoadedSingleSatellite =
+      satelliteAddressToSubsctibe && !satellitesCtxState.satelliteMapper[satelliteAddressToSubsctibe]
+    const isLoadingAllSatellitesMetadata =
+      Object.keys(satellitesCtxState.satelliteMapper).length !== satellitesCtxState.allSatellitesIds.length
+
+    if (activeSubs[SATELLITE_DATA_SUB] && (isLoadingNotLoadedSingleSatellite || isLoadingAllSatellitesMetadata)) {
+      setIsSatelliteLoading(true)
+    }
   }, [satelliteAddressToSubsctibe])
 
   const handleSubError = (e: ApolloError, queryName: string) => {
@@ -60,9 +75,10 @@ export const SatellitesProvider = ({ children }: Props) => {
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
-  const { loading: satellitesLoading } = useSubscription(getSatelliteDataSubscription(satelliteAddressToSubsctibe), {
+  useSubscription(getSatelliteDataSubscription(satelliteAddressToSubsctibe), {
+    skip: !activeSubs[SATELLITE_DATA_SUB],
     variables: {
-      userAddress: satelliteAddressToSubsctibe,
+      userAddress: satelliteAddressToSubsctibe ?? '',
     },
     onData: ({ data: { data } }) => {
       if (!data) return
@@ -73,6 +89,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   })
 
   const { loading: satellitesAddressesLoading } = useSubscription(SATELLITES_ADDRESSES_SUBSCRIPTION, {
+    skip: !activeSubs[SATELLITE_PARTICIPATION_DATA_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
       setSatellitesCtxState((prev) => ({
@@ -85,6 +102,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   })
 
   const { loading: proposalsAmountLoading } = useSubscription(PROPOSALS_AMOUNT_SUBSCRIPTION, {
+    skip: !activeSubs[SATELLITE_PARTICIPATION_DATA_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
       setSatellitesCtxState((prev) => ({
@@ -97,6 +115,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   })
 
   const { loading: satelliteGovActionsAmountLoading } = useSubscription(SATELLITE_GOV_ACTIONS_AMOUNT_SUBSCRIPTION, {
+    skip: !activeSubs[SATELLITE_PARTICIPATION_DATA_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
       setSatellitesCtxState((prev) => ({
@@ -124,9 +143,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   const updateSatellitesContext = (storage: SatelliteDataSubSubscription) => {
     const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(storage)
 
-    if (satelliteAddressToSubsctibe) {
-      setIsSatelliteLoading(false)
-    }
+    if (isSatellitesLoading) setIsSatelliteLoading(false)
 
     setSatellitesCtxState((prev) => ({
       ...prev,
@@ -136,27 +153,23 @@ export const SatellitesProvider = ({ children }: Props) => {
     }))
   }
 
+  const changeSatellitesSubscriptionsList = (newSkips: Partial<SatellitesSubsRecordType>) => {
+    setActiveSubs((prev) => ({ ...prev, ...newSkips }))
+  }
+
   const memoSatellitesContext = useMemo(() => {
     return {
       ...satellitesCtxState,
       isLoading:
-        satellitesLoading ||
         proposalsAmountLoading ||
         satelliteGovActionsAmountLoading ||
         finRequestsAmountLoading ||
         isSatellitesLoading ||
         satellitesAddressesLoading,
       setSatelliteAddressToSubsctibe,
+      changeSatellitesSubscriptionsList,
     }
-  }, [
-    finRequestsAmountLoading,
-    isSatellitesLoading,
-    proposalsAmountLoading,
-    satelliteGovActionsAmountLoading,
-    satellitesAddressesLoading,
-    satellitesCtxState,
-    satellitesLoading,
-  ])
+  }, [satellitesCtxState, isSatellitesLoading])
 
   return <satellitesContext.Provider value={memoSatellitesContext}>{children}</satellitesContext.Provider>
 }

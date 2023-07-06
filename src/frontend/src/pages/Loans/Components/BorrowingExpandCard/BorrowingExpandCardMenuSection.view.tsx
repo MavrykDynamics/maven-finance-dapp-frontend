@@ -37,6 +37,7 @@ import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { CollateralType, DepositorsFlagType } from 'providers/LoansProvider/helpers/vaults.types'
 import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
 import { EmptyContainer } from 'app/App.style'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type Props = {
   openAddNewCollateralPopup: () => void
@@ -89,8 +90,9 @@ export const BorrowingExpandCardMenuSection = ({
 }: Props) => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const {
-    lendingController: { address: lendingControllerAddress },
-  } = useSelector((state: State) => state.contractAddresses)
+    contractAddresses: { lendingControllerAddress },
+  } = useDappConfigContext()
+
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
@@ -270,7 +272,7 @@ export const BorrowingExpandCardMenuSection = ({
             <div className="useful-info-line">
               <div className="name">Lending Controller Address</div>
               <div className="value">
-                <TzAddress tzAddress={lendingControllerAddress} type={BLUE} />
+                {lendingControllerAddress ? <TzAddress tzAddress={lendingControllerAddress} type={BLUE} /> : '–'}
               </div>
             </div>
           </div>

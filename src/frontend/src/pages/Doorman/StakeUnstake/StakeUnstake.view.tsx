@@ -42,7 +42,6 @@ import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterA
 import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
-import { ALL_SATELLITES_SUB } from 'providers/SatellitesProvider/satellites.const'
 import colors from 'styles/colors'
 
 // style
@@ -91,7 +90,10 @@ export const StakeUnstakeView = ({
     satelliteMvkIsDelegatedTo,
     isSatellite,
   } = useUserContext()
-  const { setAction } = useDappConfigContext()
+  const {
+    setAction,
+    contractAddresses: { mvkTokenAddress, doormanAddress },
+  } = useDappConfigContext()
   const { info, loading, bug } = useToasterContext()
 
   const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
@@ -102,13 +104,8 @@ export const StakeUnstakeView = ({
     if (satelliteMvkIsDelegatedTo) {
       setSatelliteAddressToSubsctibe(satelliteMvkIsDelegatedTo)
     }
-    return () => setSatelliteAddressToSubsctibe(ALL_SATELLITES_SUB)
+    return () => setSatelliteAddressToSubsctibe(null)
   }, [satelliteMvkIsDelegatedTo])
-
-  const {
-    doormanAddress: { address: doormanAddress },
-    mvkTokenAddress: { address: mvkTokenAddress },
-  } = useSelector((state: State) => state.contractAddresses)
 
   const delegatedUser = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
   const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
@@ -171,6 +168,11 @@ export const StakeUnstakeView = ({
 
     if (stakeAmount <= 0) {
       bug('Please enter an amount superior to zero', 'Incorrect amount')
+      return
+    }
+
+    if (!doormanAddress || !mvkTokenAddress) {
+      bug('Please reload the page', 'Error')
       return
     }
 

@@ -55,6 +55,7 @@ import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provi
 import { useFeedCharts } from 'providers/DataFeedsProvider/hooks/useFeedCharts'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { SATELLITE_DATA_SUB, DEFAULT_SATELLITES_ACTIVE_SUBS } from 'providers/SatellitesProvider/satellites.const'
 
 const tabsList = [
   {
@@ -73,8 +74,23 @@ const DataFeedDetails = () => {
 
   const { feedsMapper } = useDataFeedsContext()
 
-  const { oraclesIds, satelliteMapper, isLoading: isSatellitesLoading } = useSatellitesContext()
+  const {
+    oraclesIds,
+    satelliteMapper,
+    isLoading: isSatellitesLoading,
+    changeSatellitesSubscriptionsList,
+  } = useSatellitesContext()
   const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts({}, feedId)
+
+  useEffect(() => {
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
+  }, [])
 
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)

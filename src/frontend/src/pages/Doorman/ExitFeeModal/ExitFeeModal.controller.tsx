@@ -57,12 +57,12 @@ export const ExitFeeModal = ({
   setInputData,
 }: ExitFeeModalPropsType) => {
   const dispatch = useDispatch()
-  const { setAction } = useDappConfigContext()
+  const {
+    setAction,
+    contractAddresses: { doormanAddress },
+  } = useDappConfigContext()
   const { bug, info, loading } = useToasterContext()
 
-  const {
-    doormanAddress: { address: doormanAddress },
-  } = useSelector((state: State) => state.contractAddresses)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const parsedInputAmount = Number(inputData.amount)
@@ -79,6 +79,11 @@ export const ExitFeeModal = ({
 
     if (unstakeAmount <= 0) {
       bug('Please enter an amount superior to zero', 'Incorrect amount')
+      return
+    }
+
+    if (!doormanAddress) {
+      bug('Please reload the page', 'Error')
       return
     }
 

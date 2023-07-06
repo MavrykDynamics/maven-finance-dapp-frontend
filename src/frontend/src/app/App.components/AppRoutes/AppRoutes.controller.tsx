@@ -34,20 +34,14 @@ import { FinancialRequests } from 'pages/FinacialRequests/FinancialRequests.cont
 import SatelliteNodes from 'pages/SatelliteNodes/SatelliteNodes.controller'
 import Satellites from 'pages/Satellites/Satellites.controller'
 
-// providers
-import StakeProvider from 'providers/StakeProvider/stake.provider'
-
 // helpers
 import { scrollUpPage } from 'utils/scrollUpPage'
 import ProtectedRoute from './ProtectedRoute'
-import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
 
   const { userAddress, isSatellite } = useUserContext()
-
-  const { isInitialDataLoading } = useSelector((state: State) => state.loading)
 
   // get origin pathname
   const [, path] = pathname.split('/')
@@ -57,65 +51,38 @@ export const AppRoutes = () => {
     scrollUpPage()
   }, [path])
 
-  // TODO: add error boundaries
   return (
     <Switch>
       <Route exact path="/staking">
-        <StakeProvider>
-          <SatellitesProvider>
-            <Doorman />
-          </SatellitesProvider>
-        </StakeProvider>
+        <Doorman />
       </Route>
 
       {/* DASHBOARD */}
       <Route exact path="/">
-        <SatellitesProvider>
-          <StakeProvider>
-            <Dashboard />
-          </StakeProvider>
-        </SatellitesProvider>
+        <Dashboard />
       </Route>
       <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
-        <SatellitesProvider>
-          <StakeProvider>
-            <DashboardPersonal />
-          </StakeProvider>
-        </SatellitesProvider>
+        <DashboardPersonal />
       </Route>
 
       {/* SATELLITES */}
       <Route exact path="/satellites">
-        <SatellitesProvider>
-          <StakeProvider>
-            <Satellites />
-          </StakeProvider>
-        </SatellitesProvider>
+        <Satellites />
       </Route>
       <Route exact path="/become-satellite">
-        <SatellitesProvider>
-          <BecomeSatellite />
-        </SatellitesProvider>
+        <BecomeSatellite />
       </Route>
       <Route exact path="/satellite-nodes">
-        <SatellitesProvider>
-          <SatelliteNodes />
-        </SatellitesProvider>
+        <SatelliteNodes />
       </Route>
       <Route exact path="/satellites/satellite-details/:satelliteId">
-        <SatellitesProvider>
-          <SatelliteDetails />
-        </SatellitesProvider>
+        <SatelliteDetails />
       </Route>
       <Route exact path="/data-feeds">
-        <SatellitesProvider>
-          <DataFeeds />
-        </SatellitesProvider>
+        <DataFeeds />
       </Route>
       <Route exact path="/satellites/feed-details/:feedId">
-        <SatellitesProvider>
-          <DataFeedDetails />
-        </SatellitesProvider>
+        <DataFeedDetails />
       </Route>
 
       {/* GOVERNANCE PAGES */}
@@ -135,9 +102,7 @@ export const AppRoutes = () => {
         <FinancialRequests />
       </Route>
       <Route exact path="/emergency-governance">
-        <StakeProvider>
-          <EmergencyGovernance />
-        </StakeProvider>
+        <EmergencyGovernance />
       </Route>
       <Route exact path="/mavryk-council/:tabId?">
         <Council />
@@ -149,7 +114,6 @@ export const AppRoutes = () => {
         path="/submit-proposal"
         component={ProposalSubmission}
         isAuthorized={Boolean(userAddress)}
-        canCheck={!isInitialDataLoading}
         hasAccess={Boolean(isSatellite)}
         redirectPath={'/governance'}
       />
@@ -180,11 +144,6 @@ export const AppRoutes = () => {
       </Route>
       <Route exact path="/loans/borrow">
         <LoansBorrow />
-      </Route>
-
-      {/* NOT READY PAGES */}
-      <Route exact path="/your-vesting">
-        <Dashboard />
       </Route>
 
       {/* NOT PROD PAGES */}

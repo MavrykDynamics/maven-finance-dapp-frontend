@@ -19,6 +19,7 @@ import { DDItemId, DropDown, DropDownItemType } from '../../app/App.components/D
 import { Page } from 'styles'
 import { TreasuryActiveStyle, TreasurySelectStyle } from './Treasury.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type TreasuryDDType = DropDownItemType & { treasury: TreasuryType[number] }
 
@@ -26,10 +27,11 @@ export const Treasury = () => {
   const dispatch = useDispatch()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { treasuryStorage, isLoaded } = useSelector((state: State) => state.treasury)
   const {
-    treasuryFactoryAddress: { address: treasuryFactoryAddress },
-  } = useSelector((state: State) => state.contractAddresses)
+    contractAddresses: { treasuryFactoryAddress },
+  } = useDappConfigContext()
+
+  const { treasuryStorage, isLoaded } = useSelector((state: State) => state.treasury)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

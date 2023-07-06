@@ -17,6 +17,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -59,8 +60,9 @@ export const SateliteSideBarFAQ = () => (
 
 const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
   const { userAddress, isSatellite } = useUserContext()
-
-  const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
+  const {
+    contractAddresses: { delegationAddress, feedsFactoryAddress },
+  } = useDappConfigContext()
 
   const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics({
     skipOracleRewardsTotal: true,
@@ -88,16 +90,12 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <h2>Info</h2>
         <SideBarItem>
           <h3>Satellite Contract</h3>
-          <var>{delegationAddress.address ? <TzAddress tzAddress={delegationAddress.address} hasIcon /> : '-'}</var>
+          <var>{<TzAddress tzAddress={delegationAddress} hasIcon />}</var>
         </SideBarItem>
         <SideBarItem>
           <h3>Oracles Contract</h3>
           <var>
-            {aggregatorFactoryAddress.address ? (
-              <TzAddress tzAddress={aggregatorFactoryAddress.address} hasIcon />
-            ) : (
-              '-'
-            )}
+            <TzAddress tzAddress={feedsFactoryAddress} hasIcon />
           </var>
         </SideBarItem>
       </SideBarSection>

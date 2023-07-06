@@ -6,8 +6,7 @@ import { MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB, STAKE_ACTION, UNSTAKE
 
 export type SmvkHistoryData = ReturnType<typeof normalizeDoormanChartsData>
 export type StakeActionType = typeof STAKE_ACTION | typeof UNSTAKE_ACTION
-export type StakingSubsType = typeof SMVK_HISTORY_SUB | typeof MVK_TOTAL_SUB | typeof MVK_BALANCE_SUB | 'userBalance'
-
+export type StakingSubsType = typeof SMVK_HISTORY_SUB | typeof MVK_TOTAL_SUB | typeof MVK_BALANCE_SUB
 export type StakeContext = {
   // data
   mvkHistoryData: SmvkHistoryData['mvkHistoryData']
