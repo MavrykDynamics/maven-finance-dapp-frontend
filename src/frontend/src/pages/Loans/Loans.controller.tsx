@@ -92,6 +92,8 @@ export const Loans = () => {
     window.scrollTo(0, 0)
   }, [])
 
+  console.log({ lendingCharts: chartsData.lendingChartData })
+
   const lendingPart = (
     <div className="chart-wrapper">
       <div className="summary">

@@ -149,6 +149,11 @@ export const getTransactionHistory = (
               value: (acc.marketLiquidityChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
               time: new Date(timestamp).getTime() as UTCTimestamp,
             })
+          } else {
+            acc.marketLiquidityChartData[0] = {
+              value: (acc.marketLiquidityChartData.at(0)?.value ?? 0) + transformedAmount * assetMetadata.rate,
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+            }
           }
         }
 
@@ -159,10 +164,15 @@ export const getTransactionHistory = (
           }
 
           if (dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
-            acc.marketCollateralChartData.push({
+            acc.marketLiquidityChartData.push({
               value: (acc.marketLiquidityChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
               time: new Date(timestamp).getTime() as UTCTimestamp,
             })
+          } else {
+            acc.marketLiquidityChartData[0] = {
+              value: (acc.marketLiquidityChartData.at(0)?.value ?? 0) - transformedAmount * assetMetadata.rate,
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+            }
           }
         }
 
@@ -181,19 +191,33 @@ export const getTransactionHistory = (
         }
 
         // Deposit collateral
-        if ((type === 4 || type === 6) && dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
-          acc.marketCollateralChartData.push({
-            value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
-            time: new Date(timestamp).getTime() as UTCTimestamp,
-          })
+        if (type === 4 || type === 6) {
+          if (dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
+            acc.marketCollateralChartData.push({
+              value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+            })
+          } else {
+            acc.marketCollateralChartData[0] = {
+              value: (acc.marketLiquidityChartData.at(0)?.value ?? 0) + transformedAmount * assetMetadata.rate,
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+            }
+          }
         }
 
         // Withdraw collateral
-        if ((type === 5 || type === 7) && dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
-          acc.marketCollateralChartData.push({
-            value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
-            time: new Date(timestamp).getTime() as UTCTimestamp,
-          })
+        if (type === 5 || type === 7) {
+          if (dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
+            acc.marketCollateralChartData.push({
+              value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+            })
+          } else {
+            acc.marketCollateralChartData[0] = {
+              value: (acc.marketLiquidityChartData.at(0)?.value ?? 0) - transformedAmount * assetMetadata.rate,
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+            }
+          }
         }
       }
 
@@ -210,8 +234,8 @@ export const getTransactionHistory = (
 
   return {
     ...data,
-    marketCollateralChartData: addMissingDaysWithZeroValues(data.marketCollateralChartData, 14),
-    marketLiquidityChartData: addMissingDaysWithZeroValues(data.marketLiquidityChartData, 14),
+    marketCollateralChartData: data.marketCollateralChartData, //addMissingDaysWithZeroValues(data.marketCollateralChartData, 14),
+    marketLiquidityChartData: data.marketLiquidityChartData, //addMissingDaysWithZeroValues(data.marketLiquidityChartData, 14),
   }
 }
 
@@ -249,6 +273,11 @@ export const getChartData = (
               time: new Date(timestamp).getTime() as UTCTimestamp,
               value: (acc.lendingChartData.at(-1)?.value ?? 0) + lendedAmount,
             })
+          } else {
+            acc.lendingChartData[0] = {
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+              value: (acc.lendingChartData.at(0)?.value ?? 0) + lendedAmount,
+            }
           }
         }
 
@@ -264,6 +293,11 @@ export const getChartData = (
               time: new Date(timestamp).getTime() as UTCTimestamp,
               value: (acc.lendingChartData.at(-1)?.value ?? 0) - lendedAmount,
             })
+          } else {
+            acc.lendingChartData[0] = {
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+              value: (acc.lendingChartData.at(0)?.value ?? 0) - lendedAmount,
+            }
           }
         }
 
@@ -279,6 +313,11 @@ export const getChartData = (
               time: new Date(timestamp).getTime() as UTCTimestamp,
               value: (acc.borrowingChartData.at(-1)?.value ?? 0) + borrowedAmount,
             })
+          } else {
+            acc.borrowingChartData[0] = {
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+              value: (acc.borrowingChartData.at(0)?.value ?? 0) + borrowedAmount,
+            }
           }
         }
 
@@ -294,27 +333,46 @@ export const getChartData = (
               time: new Date(timestamp).getTime() as UTCTimestamp,
               value: (acc.borrowingChartData.at(-1)?.value ?? 0) - borrowedAmount,
             })
+          } else {
+            acc.borrowingChartData[0] = {
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+              value: (acc.borrowingChartData.at(0)?.value ?? 0) - borrowedAmount,
+            }
           }
         }
 
         // Deposit collateral
-        if ((type === 4 || type === 6) && isLast1WeekOperations) {
+        if (type === 4 || type === 6) {
           const collateralAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
 
-          acc.collateralChartData.push({
-            value: (acc.collateralChartData.at(-1)?.value ?? 0) + collateralAmount,
-            time: new Date(timestamp).getTime() as UTCTimestamp,
-          })
+          if (isLast1WeekOperations) {
+            acc.collateralChartData.push({
+              value: (acc.collateralChartData.at(-1)?.value ?? 0) + collateralAmount,
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+            })
+          } else {
+            acc.collateralChartData[0] = {
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+              value: (acc.collateralChartData.at(0)?.value ?? 0) + collateralAmount,
+            }
+          }
         }
 
         // Withdraw collateral
         if ((type === 5 || type === 7) && isLast1WeekOperations) {
           const collateralAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
 
-          acc.collateralChartData.push({
-            value: (acc.collateralChartData.at(-1)?.value ?? 0) - collateralAmount,
-            time: new Date(timestamp).getTime() as UTCTimestamp,
-          })
+          if (isLast1WeekOperations) {
+            acc.collateralChartData.push({
+              value: (acc.collateralChartData.at(-1)?.value ?? 0) - collateralAmount,
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+            })
+          } else {
+            acc.collateralChartData[0] = {
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+              value: (acc.collateralChartData.at(0)?.value ?? 0) - collateralAmount,
+            }
+          }
         }
       }
 
@@ -333,9 +391,9 @@ export const getChartData = (
 
   return {
     ...data,
-    borrowingChartData: addMissingDaysWithZeroValues(data.borrowingChartData, 7),
-    collateralChartData: addMissingDaysWithZeroValues(data.collateralChartData, 7),
-    lendingChartData: addMissingDaysWithZeroValues(data.lendingChartData, 7),
+    borrowingChartData: data.borrowingChartData, //addMissingDaysWithZeroValues(data.borrowingChartData, 7),
+    collateralChartData: data.collateralChartData, //addMissingDaysWithZeroValues(data.collateralChartData, 7),
+    lendingChartData: data.lendingChartData, //addMissingDaysWithZeroValues(data.lendingChartData, 7),
   }
 }
 
