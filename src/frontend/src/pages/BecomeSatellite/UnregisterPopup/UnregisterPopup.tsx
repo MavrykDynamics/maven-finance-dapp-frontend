@@ -52,9 +52,9 @@ export const UnregisterPopup = ({
       return
     }
 
-    const actionResult = await unregisterSatellite(userAddress, delegationAddress, closePopup)
-    if (checkIfActionSuccess(actionResult)) {
-      try {
+    try {
+      const actionResult = await unregisterSatellite(userAddress, delegationAddress, closePopup)
+      if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
         dispatch(toggleActionFullScreenLoader(true))
         dispatch(toggleActionCompletion(true))
@@ -73,13 +73,15 @@ export const UnregisterPopup = ({
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
         setAction({ actionName: UNREGISTER_SATELLITE_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else if (isContractErrorPayload(actionResult.error)) {
-      const { message, description } = actionResult.error as TezosWalletErrorPayload
-      bug(description, message)
-    } else {
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
     }
   }

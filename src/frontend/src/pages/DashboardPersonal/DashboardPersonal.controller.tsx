@@ -109,10 +109,10 @@ const DashboardPersonal = () => {
       return
     }
 
-    const actionResult = await claimAllRewardsAction(userAddress, doormanAddress)
+    try {
+      const actionResult = await claimAllRewardsAction(userAddress, doormanAddress)
 
-    if (checkIfActionSuccess(actionResult)) {
-      try {
+      if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
         dispatch(toggleActionFullScreenLoader(true))
         dispatch(toggleActionCompletion(true))
@@ -137,13 +137,15 @@ const DashboardPersonal = () => {
         const operationLvl = operationConfirm.block.header.level
 
         setAction({ actionName: CLAIM_ALL_REWARDS_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else if (isContractErrorPayload(actionResult.error)) {
-      const { message, description } = actionResult.error as TezosWalletErrorPayload
-      bug(description, message)
-    } else {
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
     }
   }

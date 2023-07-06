@@ -5,6 +5,8 @@ import { XtzBakerType } from './bakers/getXtzBakers'
 import { normalizeContractAddresses } from './helpers/dappConfig.normalizers'
 import { UserActionsType } from 'providers/UserProvider/user.provider.types'
 import { SatelliteActionsType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { ExtendedError } from 'errors/error'
+import { TezosWalletErrorPayload } from 'errors/error.type'
 
 export type ActionTypes = StakeActionType | UserActionsType | SatelliteActionsType
 
@@ -37,7 +39,7 @@ export type UserActionType = {
   operationLvl: number
 }
 
-export type ActionErrorReturnType = { actionSuccess: boolean; error: null | unknown }
+export type ActionErrorReturnType = { actionSuccess: boolean; error: Error | ExtendedError | TezosWalletErrorPayload }
 export type ActionSuccessReturnType = {
   actionSuccess: boolean
   operation: TransactionWalletOperation | BatchWalletOperation

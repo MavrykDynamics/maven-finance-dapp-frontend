@@ -127,10 +127,10 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       return
     }
 
-    const actionResult = await getMVKTokensFromFaucet(mvkFaucetAddress)
+    try {
+      const actionResult = await getMVKTokensFromFaucet(mvkFaucetAddress)
 
-    if (checkIfActionSuccess(actionResult)) {
-      try {
+      if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
         dispatch(toggleActionFullScreenLoader(true))
         dispatch(toggleActionCompletion(true))
@@ -155,13 +155,15 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
         const operationLvl = operationConfirm.block.header.level
 
         setAction({ actionName: GET_MVK_FROM_FAUCET_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else if (isContractErrorPayload(actionResult.error)) {
-      const { message, description } = actionResult.error as TezosWalletErrorPayload
-      bug(description, message)
-    } else {
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
     }
   }

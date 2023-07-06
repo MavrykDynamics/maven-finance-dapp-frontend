@@ -189,43 +189,51 @@ export const StakeUnstakeView = ({
       errorMessage: '',
     })
 
-    const actionResult = await stakeMVK(stakeAmount, userAddress, doormanAddress, mvkTokenAddress)
+    try {
+      const actionResult = await stakeMVK(stakeAmount, userAddress, doormanAddress, mvkTokenAddress)
 
-    if (checkIfActionSuccess(actionResult)) {
-      try {
-        const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+      if (checkIfActionSuccess(actionResult)) {
+        try {
+          const { operation } = actionResult
+          dispatch(toggleActionFullScreenLoader(true))
+          dispatch(toggleActionCompletion(true))
 
-        info(
-          TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['title'],
-        )
+          info(
+            TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
+            TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['title'],
+          )
 
-        await sleep(5000)
+          await sleep(5000)
 
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
+          // show toaster loader after 5000ms after operation started
+          const toasterId = loading(
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          )
 
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+          dispatch(toggleActionFullScreenLoader(false))
+          dispatch(toggleActionCompletion(false))
 
-        const operationConfirm = await operation.confirmation()
-        const operationLvl = operationConfirm.block.header.level
-        setInputData({ ...inputData, amount: '0' })
-        setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else if (isContractErrorPayload(actionResult.error)) {
-      setSharedError(WALLTET_ERROR_FIELD, {
-        ...(actionResult.error as TezosWalletErrorPayload),
-        actionId: STAKE_ACTION,
-      })
-    } else {
+          const operationConfirm = await operation.confirmation()
+          const operationLvl = operationConfirm.block.header.level
+          setInputData({ ...inputData, amount: '0' })
+          setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
+        } catch (e) {
+          setAction(null)
+          const parsedError = unknownToError(e)
+          bug(parsedError.message)
+        }
+      } else if (isContractErrorPayload(actionResult.error)) {
+        setSharedError(WALLTET_ERROR_FIELD, {
+          ...(actionResult.error as TezosWalletErrorPayload),
+          actionId: STAKE_ACTION,
+        })
+      } else {
+        throw new Error(actionResult.error.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
     }
   }
@@ -251,10 +259,10 @@ export const StakeUnstakeView = ({
       return
     }
 
-    const actionResult = await rewardsCompound(userAddress, doormanAddress)
+    try {
+      const actionResult = await rewardsCompound(userAddress, doormanAddress)
 
-    if (checkIfActionSuccess(actionResult)) {
-      try {
+      if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
         dispatch(toggleActionFullScreenLoader(true))
         dispatch(toggleActionCompletion(true))
@@ -279,13 +287,15 @@ export const StakeUnstakeView = ({
         const operationLvl = operationConfirm.block.header.level
 
         setAction({ actionName: REWARDS_COMPOUND_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else if (isContractErrorPayload(actionResult.error)) {
-      const { message, description } = actionResult.error as TezosWalletErrorPayload
-      bug(description, message)
-    } else {
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
     }
   }

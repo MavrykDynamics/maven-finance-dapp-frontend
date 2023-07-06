@@ -90,11 +90,11 @@ export const ExitFeeModal = ({
       return
     }
 
-    const actionResult = await unstakeMVK(unstakeAmount, doormanAddress)
-    closePopup()
+    try {
+      const actionResult = await unstakeMVK(unstakeAmount, doormanAddress)
+      closePopup()
 
-    if (checkIfActionSuccess(actionResult)) {
-      try {
+      if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
         dispatch(toggleActionFullScreenLoader(true))
         dispatch(toggleActionCompletion(true))
@@ -120,15 +120,17 @@ export const ExitFeeModal = ({
 
         setInputData({ ...inputData, amount: '0' })
         setAction({ actionName: UNSTAKE_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else if (isContractErrorPayload(actionResult.error)) {
-      setSharedError(WALLTET_ERROR_FIELD, {
-        ...(actionResult.error as TezosWalletErrorPayload),
-        actionId: UNSTAKE_ACTION,
-      })
-    } else {
+      } else if (isContractErrorPayload(actionResult.error)) {
+        setSharedError(WALLTET_ERROR_FIELD, {
+          ...(actionResult.error as TezosWalletErrorPayload),
+          actionId: UNSTAKE_ACTION,
+        })
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
     }
   }

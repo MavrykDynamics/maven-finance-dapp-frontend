@@ -239,9 +239,14 @@ export const BecomeSatellite = () => {
       return
     }
 
-    const actionResult = await registerSatellite(userAddress, requestData, delegationAddress, satelliteMvkIsDelegatedTo)
-    if (checkIfActionSuccess(actionResult)) {
-      try {
+    try {
+      const actionResult = await registerSatellite(
+        userAddress,
+        requestData,
+        delegationAddress,
+        satelliteMvkIsDelegatedTo,
+      )
+      if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
         dispatch(toggleActionFullScreenLoader(true))
         dispatch(toggleActionCompletion(true))
@@ -260,13 +265,15 @@ export const BecomeSatellite = () => {
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
         setAction({ actionName: REGISTER_SATELLITE_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else if (isContractErrorPayload(actionResult.error)) {
-      const { message, description } = actionResult.error as TezosWalletErrorPayload
-      bug(description, message)
-    } else {
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
     }
   }
@@ -277,9 +284,9 @@ export const BecomeSatellite = () => {
       return
     }
 
-    const actionResult = await updateSatellite(requestData, delegationAddress)
-    if (checkIfActionSuccess(actionResult)) {
-      try {
+    try {
+      const actionResult = await updateSatellite(requestData, delegationAddress)
+      if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
         dispatch(toggleActionFullScreenLoader(true))
         dispatch(toggleActionCompletion(true))
@@ -298,13 +305,15 @@ export const BecomeSatellite = () => {
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
         setAction({ actionName: UPDATE_SATELLITE_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else if (isContractErrorPayload(actionResult.error)) {
-      const { message, description } = actionResult.error as TezosWalletErrorPayload
-      bug(description, message)
-    } else {
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
     }
   }

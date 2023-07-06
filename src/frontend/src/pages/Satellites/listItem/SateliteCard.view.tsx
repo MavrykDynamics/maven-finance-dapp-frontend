@@ -151,10 +151,10 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return
     }
 
-    const actionResult = await delegate(userAddress, satelliteAddress, delegationAddress)
+    try {
+      const actionResult = await delegate(userAddress, satelliteAddress, delegationAddress)
 
-    if (checkIfActionSuccess(actionResult)) {
-      try {
+      if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
         dispatch(toggleActionFullScreenLoader(true))
         dispatch(toggleActionCompletion(true))
@@ -178,13 +178,15 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
         setAction({ actionName: DELEGATE_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else if (isContractErrorPayload(actionResult.error)) {
-      const { message, description } = actionResult.error as TezosWalletErrorPayload
-      bug(description, message)
-    } else {
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
     }
   }
@@ -195,10 +197,10 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return
     }
 
-    const actionResult = await undelegate(userAddress, satelliteAddress, delegationAddress)
+    try {
+      const actionResult = await undelegate(userAddress, satelliteAddress, delegationAddress)
 
-    if (checkIfActionSuccess(actionResult)) {
-      try {
+      if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
         dispatch(toggleActionFullScreenLoader(true))
         dispatch(toggleActionCompletion(true))
@@ -222,13 +224,15 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
         setAction({ actionName: DISTRIBUTE_PROPOSALS_REWARDS_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else if (isContractErrorPayload(actionResult.error)) {
-      const { message, description } = actionResult.error as TezosWalletErrorPayload
-      bug(description, message)
-    } else {
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
     }
   }
@@ -238,34 +242,48 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return
     }
-    const actionResult = await rewardsCompound(userAddress, doormanAddress)
-    if (checkIfActionSuccess(actionResult)) {
-      try {
+    if (!doormanAddress) {
+      bug('Bad doorman address')
+      return
+    }
+
+    try {
+      const actionResult = await rewardsCompound(userAddress, doormanAddress)
+
+      if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
         dispatch(toggleActionFullScreenLoader(true))
         dispatch(toggleActionCompletion(true))
+
         info(
           TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['message'],
           TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['title'],
         )
+
         await sleep(5000)
+
         // show toaster loader after 5000ms after operation started
         const toasterId = loading(
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
+
         dispatch(toggleActionFullScreenLoader(false))
         dispatch(toggleActionCompletion(false))
+
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
+
         setAction({ actionName: REWARDS_COMPOUND_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else if (isContractErrorPayload(actionResult.error)) {
-      const { message, description } = actionResult.error as TezosWalletErrorPayload
-      bug(description, message)
-    } else {
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
     }
   }
@@ -277,10 +295,10 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     }
 
     // TODO: add valid data
-    const actionResult = await distributeProposalRewards(delegationAddress, '', [])
+    try {
+      const actionResult = await distributeProposalRewards(delegationAddress, '', [])
 
-    if (checkIfActionSuccess(actionResult)) {
-      try {
+      if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
         dispatch(toggleActionFullScreenLoader(true))
         dispatch(toggleActionCompletion(true))
@@ -304,13 +322,15 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
         setAction({ actionName: UNDELEGATE_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else if (isContractErrorPayload(actionResult.error)) {
-      const { message, description } = actionResult.error as TezosWalletErrorPayload
-      bug(description, message)
-    } else {
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
     }
   }

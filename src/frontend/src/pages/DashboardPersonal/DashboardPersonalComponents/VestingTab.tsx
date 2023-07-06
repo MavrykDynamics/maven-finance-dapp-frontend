@@ -48,10 +48,10 @@ const VestingTab = () => {
       return
     }
 
-    const actionResult = await claimVestingReward(vestingAddress.address)
+    try {
+      const actionResult = await claimVestingReward(vestingAddress.address)
 
-    if (checkIfActionSuccess(actionResult)) {
-      try {
+      if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
         dispatch(toggleActionFullScreenLoader(true))
         dispatch(toggleActionCompletion(true))
@@ -76,13 +76,15 @@ const VestingTab = () => {
         const operationLvl = operationConfirm.block.header.level
 
         setAction({ actionName: CLAIM_VESTING_REWARD_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else if (isContractErrorPayload(actionResult.error)) {
-      const { message, description } = actionResult.error as TezosWalletErrorPayload
-      bug(description, message)
-    } else {
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
     }
   }
