@@ -70,7 +70,6 @@ import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider
 import { unknownToError } from 'errors/error'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { sleep } from 'utils/api/sleep'
-import { REWARDS_COMPOUND_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
 import { TezosWalletErrorPayload } from 'errors/error.type'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
 

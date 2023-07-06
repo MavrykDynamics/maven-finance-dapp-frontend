@@ -25,7 +25,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { getMVKTokensFromFaucet } from 'providers/StakeProvider/actions/doorman.actions'
+import { getMVKTokensFromFaucet } from 'providers/UserProvider/actions/user.actions'
 import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from '../Loader/Loader.action'
 import { TOASTER_ACTIONS_TEXTS } from '../Toaster/texts/toasterActions.texts'
@@ -35,7 +35,7 @@ import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
 import { TezosWalletErrorPayload } from 'errors/error.type'
 import { unknownToError } from 'errors/error'
 import { sleep } from 'utils/api/sleep'
-import { GET_MVK_FROM_FAUCET_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { GET_MVK_FROM_FAUCET_ACTION } from 'providers/UserProvider/helpers/user.consts'
 
 type MenuViewProps = {
   openChangeNodePopupHandler: () => void

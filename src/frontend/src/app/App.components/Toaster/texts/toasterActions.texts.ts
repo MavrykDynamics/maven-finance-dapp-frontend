@@ -1,11 +1,11 @@
+import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { ACTION_START_MESSAGE_TEXT, ACTION_COMPLETION_MESSAGE_TEXT } from '../Toaster.constants'
 import {
+  CLAIM_ALL_REWARDS_ACTION,
+  CLAIM_VESTING_REWARD_ACTION,
   GET_MVK_FROM_FAUCET_ACTION,
   REWARDS_COMPOUND_ACTION,
-  STAKE_ACTION,
-  UNSTAKE_ACTION,
-} from 'providers/StakeProvider/helpers/stake.consts'
-import { ACTION_START_MESSAGE_TEXT, ACTION_COMPLETION_MESSAGE_TEXT } from '../Toaster.constants'
-import { CLAIM_ALL_REWARDS_ACTION, CLAIM_VESTING_REWARD_ACTION } from 'providers/UserProvider/helpers/user.consts'
+} from 'providers/UserProvider/helpers/user.consts'
 import {
   DELEGATE_ACTION,
   DISTRIBUTE_PROPOSALS_REWARDS_ACTION,

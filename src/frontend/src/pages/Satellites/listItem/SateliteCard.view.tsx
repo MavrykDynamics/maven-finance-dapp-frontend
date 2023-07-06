@@ -62,12 +62,12 @@ import {
   SATELLITE_VOTES_MAPPER,
   UNDELEGATE_ACTION,
 } from 'providers/SatellitesProvider/satellites.const'
-import { rewardsCompound } from 'providers/StakeProvider/actions/doorman.actions'
+import { rewardsCompound } from 'providers/UserProvider/actions/user.actions'
 import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
-import { REWARDS_COMPOUND_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { REWARDS_COMPOUND_ACTION } from 'providers/UserProvider/helpers/user.consts'
 import { sleep } from 'utils/api/sleep'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'

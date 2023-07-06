@@ -7,7 +7,8 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { rewardsCompound, stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
+import { stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
+import { rewardsCompound } from 'providers/UserProvider/actions/user.actions'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -35,7 +36,8 @@ import {
   BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from '../../../app/App.components/Button/Button.constants'
-import { REWARDS_COMPOUND_ACTION, STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { REWARDS_COMPOUND_ACTION } from 'providers/UserProvider/helpers/user.consts'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'

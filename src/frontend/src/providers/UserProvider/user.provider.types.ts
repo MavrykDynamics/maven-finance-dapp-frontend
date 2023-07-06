@@ -1,7 +1,12 @@
 import { TokenAddressType, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
 import { GetUserDataSubscription } from 'utils/__generated__/graphql'
 import { z } from 'zod'
-import { CLAIM_ALL_REWARDS_ACTION, CLAIM_VESTING_REWARD_ACTION } from './helpers/user.consts'
+import {
+  CLAIM_ALL_REWARDS_ACTION,
+  CLAIM_VESTING_REWARD_ACTION,
+  GET_MVK_FROM_FAUCET_ACTION,
+  REWARDS_COMPOUND_ACTION,
+} from './helpers/user.consts'
 
 // useUserLoansData Types
 export type UserLendBorrowItem = {
@@ -118,4 +123,8 @@ export type UserMetadataType = Pick<
   farmAccounts: UserIndexerFarmRewardsType
 }
 
-export type UserActionsType = typeof CLAIM_VESTING_REWARD_ACTION | typeof CLAIM_ALL_REWARDS_ACTION
+export type UserActionsType =
+  | typeof CLAIM_VESTING_REWARD_ACTION
+  | typeof CLAIM_ALL_REWARDS_ACTION
+  | typeof REWARDS_COMPOUND_ACTION
+  | typeof GET_MVK_FROM_FAUCET_ACTION
