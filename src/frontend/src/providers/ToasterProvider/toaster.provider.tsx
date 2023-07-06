@@ -177,9 +177,8 @@ export default class ToasterProvider extends React.Component<Props, State> {
   render(): JSX.Element {
     const { error } = this.state.context
     const showErrorPage = Boolean(error)
-    const type = error instanceof FatalError ? error?.type : null
     // when type === null it returns default error text
-    const { header, desc } = getErrorPageData(type)
+    const { header, desc } = getErrorPageData(error instanceof FatalError ? error?.type : null)
 
     return (
       <toasterContext.Provider value={this.state.context}>

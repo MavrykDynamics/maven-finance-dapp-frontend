@@ -37,6 +37,7 @@ import Satellites from 'pages/Satellites/Satellites.controller'
 // helpers
 import { scrollUpPage } from 'utils/scrollUpPage'
 import ProtectedRoute from './ProtectedRoute'
+import { RenderErrorPage } from 'pages/Error/RenderErrorPage'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
