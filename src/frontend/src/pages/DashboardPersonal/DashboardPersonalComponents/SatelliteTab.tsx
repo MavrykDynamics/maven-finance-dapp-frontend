@@ -18,7 +18,6 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 // helpers
 import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
 import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
-import { distributeProposalRewards } from 'pages/Satellites/Satellites.actions'
 
 // view
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
@@ -64,7 +63,9 @@ const SatelliteTab = () => {
   })
 
   // TODO: add valid data
-  const handleDistributeRewards = () => dispatch(distributeProposalRewards('', []))
+  const handleDistributeRewards = () => {
+    // TODO TAKE LOGIC FROM sATELLITEcARD COMPONENT FOR THIS CALLBACK FN
+  }
 
   return (
     <>

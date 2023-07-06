@@ -2,7 +2,6 @@ import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
 
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
-import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
@@ -96,7 +95,7 @@ export const claimAllRewardsAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(getSatellitesStorage())
+            // await dispatch(getSatellitesStorage())
             await dispatch(getFarmStorage(tokens))
 
             // Add here call for update data actions

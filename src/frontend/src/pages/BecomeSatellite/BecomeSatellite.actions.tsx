@@ -1,4 +1,3 @@
-import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
@@ -85,7 +84,7 @@ export const registerAsSatellite =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(getSatellitesStorage())
+            // await dispatch(getSatellitesStorage())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Satellite Registered.', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -149,7 +148,7 @@ export const updateSatelliteRecord =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(getSatellitesStorage())
+            // await dispatch(getSatellitesStorage())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Satellite record updated.', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -204,7 +203,7 @@ export const unregisterAsSatellite = (closePopup: () => void) => async (dispatch
       // refetch data we need
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
-          await dispatch(getSatellitesStorage())
+          // await dispatch(getSatellitesStorage())
 
           await dispatch(hideToaster())
           await dispatch(
