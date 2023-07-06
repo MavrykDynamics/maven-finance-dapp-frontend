@@ -58,7 +58,6 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import {
-  ALL_SATELLITES_SUB,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
   REGISTER_SATELLITE_ACTION,
@@ -123,7 +122,7 @@ export const BecomeSatellite = () => {
     if (userAddress) {
       setSatelliteAddressToSubsctibe(userAddress)
     }
-    return () => setSatelliteAddressToSubsctibe(ALL_SATELLITES_SUB)
+    return () => setSatelliteAddressToSubsctibe(null)
   }, [userAddress])
 
   const { isActionActive } = useSelector((state: State) => state.loading)
