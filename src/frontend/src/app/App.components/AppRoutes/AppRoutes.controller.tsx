@@ -27,6 +27,8 @@ import { SatelliteDetails } from '../../../pages/SatelliteDetails/SatelliteDetai
 import { SatelliteGovernance } from '../../../pages/SatelliteGovernance/SatelliteGovernance.controller'
 import { Treasury } from '../../../pages/Treasury/Treasury.controller'
 import { Vaults } from '../../../pages/Vaults/Vaults.controller'
+import { LoansEarn } from 'pages/LoansEarnBorrow/LoansEarn.controller'
+import { LoansBorrow } from 'pages/LoansEarnBorrow/LoansBorrow.controller'
 
 import { scrollUpPage } from 'utils/scrollUpPage'
 import ProtectedRoute from './ProtectedRoute'
@@ -34,6 +36,7 @@ import DashboardPersonal from 'pages/DashboardPersonal/DashboardPersonal.control
 import { Market } from 'pages/Loans/Market.controller'
 import { LoansDashboard } from 'pages/LoansDashboard/LoansDashboard'
 import { ProposalSubmission } from 'pages/ProposalSubmission/ProposalSubmission.controller'
+import StakeProvider from 'providers/StakeProvider/stake.provider'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
@@ -52,23 +55,33 @@ export const AppRoutes = () => {
   return (
     <Switch>
       <Route exact path="/staking">
-        <Doorman />
+        <StakeProvider>
+          <Doorman />
+        </StakeProvider>
       </Route>
 
       {/* DASHBOARD */}
       <Route exact path="/">
-        <Dashboard />
+        <StakeProvider>
+          <Dashboard />
+        </StakeProvider>
       </Route>
       <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
-        <DashboardPersonal />
+        <StakeProvider>
+          <DashboardPersonal />
+        </StakeProvider>
       </Route>
 
       {/* SATELLITES */}
       <Route exact path="/satellites">
-        <Satellites />
+        <StakeProvider>
+          <Satellites />
+        </StakeProvider>
       </Route>
       <Route exact path="/become-satellite">
-        <BecomeSatellite />
+        <StakeProvider>
+          <BecomeSatellite />
+        </StakeProvider>
       </Route>
       <Route exact path="/satellite-nodes">
         <SatelliteNodes />
@@ -100,7 +113,9 @@ export const AppRoutes = () => {
         <FinancialRequests />
       </Route>
       <Route exact path="/emergency-governance">
-        <EmergencyGovernance />
+        <StakeProvider>
+          <EmergencyGovernance />
+        </StakeProvider>
       </Route>
       <Route exact path="/mavryk-council/:tabId?">
         <Council />
@@ -138,6 +153,12 @@ export const AppRoutes = () => {
       <Route exact path="/loans/dashboard">
         <LoansDashboard />
       </Route>
+      <Route exact path="/loans/earn">
+        <LoansEarn />
+      </Route>
+      <Route exact path="/loans/borrow">
+        <LoansBorrow />
+      </Route>
 
       {/* NOT READY PAGES */}
       <Route exact path="/your-vesting">
@@ -159,6 +180,7 @@ export const AppRoutes = () => {
         {/*TODO: Replace later on with actual 404 page*/}
         <Dashboard />
       </Route>
+
       <Redirect to="/404" />
     </Switch>
   )

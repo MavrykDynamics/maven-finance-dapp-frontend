@@ -30,16 +30,6 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
         padding-bottom: 10px;
       }
     }
-
-    .expand-borrow-tab-container {
-      background-color: ${({ theme }) => theme.containerColor};
-      border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
-    }
-  }
-
-  .tabSwitcher {
-    margin-bottom: 0;
-    width: 350px;
   }
 `
 
@@ -67,10 +57,7 @@ export const VaultsFilters = styled.div`
   .filter {
     display: flex;
     align-items: center;
-
-    &:first-of-type {
-      margin-right: 20px;
-    }
+    margin-left: 20px;
 
     h4 {
       margin: 0 10px 0 0;
@@ -165,16 +152,9 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
       }
     }
 
-    .title {
-      display: flex;
-      align-items: center;
-    }
-
-    .info-icon {
-      margin-left: 4px;
-      width: 12px;
-      height: 12px;
-      fill: ${({ theme }) => theme.textColor};
+    .tooltip {
+      position: relative;
+      top: 2px;
     }
   }
 
@@ -199,15 +179,6 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
     .timer {
       display: inline-block;
       color: ${({ theme }) => theme.dataColor};
-    }
-  }
-
-  .info-icon {
-    position: relative;
-    bottom: 2px;
-
-    svg {
-      fill: ${({ theme }) => theme.textColor};
     }
   }
 

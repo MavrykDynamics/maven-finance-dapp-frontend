@@ -1,6 +1,9 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+
+// providers
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 // types
 import { State } from 'reducers'
@@ -16,7 +19,6 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
-import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
@@ -24,7 +26,7 @@ import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.ac
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
 // styles
-import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
+import { SatelliteGovernanceStatsInfo } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { EmptyContainer } from 'app/App.style'
@@ -33,23 +35,32 @@ import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 const Satellites = () => {
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
   const dispatch = useDispatch()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+
   const {
     user: { isSatellite, userTokens },
   } = useSelector((state: State) => state.wallet)
-  const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
+
+  useEffect(() => {
+    changeStakingSubscriptionsList({
+      [MVK_BALANCE_SUB]: false,
+      [MVK_TOTAL_SUB]: false,
+      [SMVK_HISTORY_SUB]: false,
+    })
+  }, [])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
           (!isFeedsLoaded || isDepsChanged) && dispatch(getFeedsStorage()),
-          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
           (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
         ].filter(Boolean),
       )
@@ -76,26 +87,26 @@ const Satellites = () => {
       <PageContent>
         <SatellitesOverviewStyled>
           <InfoBlockWrapper>
-            <SmallInfoBlock>
+            <SatelliteGovernanceStatsInfo>
               <h3>Total Delegated MVK</h3>
-              <div className="info-content">
+              <div className="value">
                 {tabsInfo.totalDelegetedMVK}
                 <a href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle">
                   <CustomTooltip iconId="info" text="All staked MVK that is delegated to satellites by users" />
                 </a>
               </div>
-            </SmallInfoBlock>
-            <SmallInfoBlock>
-              <h3>Total Satellites & Oracles</h3>
-              <div className="info-content">{tabsInfo.totalSatelliteOracles}</div>
-            </SmallInfoBlock>
-            <SmallInfoBlock>
+            </SatelliteGovernanceStatsInfo>
+            <SatelliteGovernanceStatsInfo>
               <h3>Number of Data Feeds</h3>
-              <div className="info-content">{tabsInfo.numberOfDataFeeds}</div>
-            </SmallInfoBlock>
+              <div className="value">{tabsInfo.numberOfDataFeeds}</div>
+            </SatelliteGovernanceStatsInfo>
+            <SatelliteGovernanceStatsInfo>
+              <h3>Total Satellites & Oracles</h3>
+              <div className="value">{tabsInfo.totalSatelliteOracles}</div>
+            </SatelliteGovernanceStatsInfo>
           </InfoBlockWrapper>
 
-          {isLoading ? (
+          {isLoading || isDoormanLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellites and data feeds data</div>

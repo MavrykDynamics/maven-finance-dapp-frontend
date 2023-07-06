@@ -1,10 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from '../../reducers'
 
 import { getEmergencyGovernanceStorage } from './EmergencyGovernance.actions'
-import { getBreakGlassConfig } from '../BreakGlass/BreakGlass.actions'
-import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
@@ -14,27 +12,38 @@ import { EmergencyGovProposalModal } from './EmergencyGovProposalModal/Emergency
 import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
+// providers
+import { SUB_SKIP } from 'utils/api/apollo.consts'
+import { useContractStatusConfig } from 'providers/ContractStatuses/hooks/useContractStatusesConfig'
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { MVK_BALANCE_SUB, SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
 
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { eGovProposals, isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const { glassBroken, isConfigLoaded: isBreakGlassConfigLoaded } = useSelector(
-    (state: State) => state.breakGlass.config,
-  )
-  const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
+
+  const { isLoading: isContractStatusConfigLoading, isGlassBroken } = useContractStatusConfig({
+    skipWhitelistDevelopers: SUB_SKIP,
+  })
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 
+  useEffect(() => {
+    changeStakingSubscriptionsList({
+      [MVK_BALANCE_SUB]: false,
+      userBalance: false,
+      [SMVK_HISTORY_SUB]: false,
+    })
+  }, [])
+
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
-      await Promise.all(
-        [
-          (!isBreakGlassConfigLoaded || isDepsChanged) && dispatch(getBreakGlassConfig()),
-          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
-          (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
-        ].filter(Boolean),
-      )
+      if (!isEgovLoaded || isDepsChanged) {
+        await dispatch(getEmergencyGovernanceStorage())
+      }
     } catch (e) {}
   }, [])
 
@@ -49,7 +58,7 @@ export const EmergencyGovernance = () => {
   return (
     <Page>
       <PageHeader page={'emergency governance'} />
-      {isLoading ? (
+      {isLoading || isDoormanLoading || isContractStatusConfigLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading emergency governance proposals</div>
@@ -61,7 +70,7 @@ export const EmergencyGovernance = () => {
             handleTriggerEmergencyProposal={openInitiatePopup}
             accountPkh={accountPkh}
             emergencyGovernanceLedger={eGovProposals}
-            isGlassBroken={glassBroken}
+            isGlassBroken={isGlassBroken}
           />
         </>
       )}

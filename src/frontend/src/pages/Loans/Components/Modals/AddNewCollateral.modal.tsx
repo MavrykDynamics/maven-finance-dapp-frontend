@@ -14,6 +14,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 
 import {
   calcCollateralRatio,
+  getCollateralRatioByPersentage,
   getLoansInputMaxAmount,
   isTezosAsset,
   loansInputValidation,
@@ -40,6 +41,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
+import { checkNan } from 'utils/checkNan'
 
 type InputState =
   | {
@@ -96,6 +98,11 @@ export const AddNewCollateral = ({
 
     const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<DDItemId, DropDownCollateralAssetType>>(
       (acc, collateralData) => {
+        // TODO: remove "if" block after token data update
+        if (collateralData.gqlName === 'smvk') {
+          return acc
+        }
+
         acc[collateralData.id] = {
           ...collateralData,
           content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.name} />,
@@ -112,17 +119,22 @@ export const AddNewCollateral = ({
     const firstNotDisabledCollateralId = Number(
       Object.keys(mappedAvaliableCollaterals).find((id) => mappedAvaliableCollaterals[Number(id)].disabled === false),
     )
-    mappedAvaliableCollaterals[firstNotDisabledCollateralId].disabled = true
+
+    const mappedAvaliableCollateral = mappedAvaliableCollaterals[firstNotDisabledCollateralId]
+
+    if (mappedAvaliableCollateral) {
+      mappedAvaliableCollateral.disabled = true
+    }
 
     setInputData({
       amount: '0',
-      assetName: mappedAvaliableCollaterals[firstNotDisabledCollateralId].gqlName,
-      assetSymbol: mappedAvaliableCollaterals[firstNotDisabledCollateralId].symbol,
-      assetDisplayName: mappedAvaliableCollaterals[firstNotDisabledCollateralId].name,
+      assetName: mappedAvaliableCollateral.gqlName,
+      assetSymbol: mappedAvaliableCollateral.symbol,
+      assetDisplayName: mappedAvaliableCollateral.name,
       validationStatus: '',
-      id: mappedAvaliableCollaterals[firstNotDisabledCollateralId].id,
+      id: mappedAvaliableCollateral.id,
       ddItems: mappedAvaliableCollaterals,
-      selectedDdItem: mappedAvaliableCollaterals[firstNotDisabledCollateralId],
+      selectedDdItem: mappedAvaliableCollateral,
     })
 
     if (!show) {
@@ -137,7 +149,7 @@ export const AddNewCollateral = ({
 
   const { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance } = useMemo(() => {
     if (inputData) {
-      const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
+      const inputAmount = checkNan(parseFloat(inputData.amount))
       const selectedAsset = avaliableCollaterals.find(({ id }) => id === inputData?.id)
       const collateralRate = Number(selectedAsset?.rate)
 
@@ -297,7 +309,7 @@ export const AddNewCollateral = ({
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((currentCollateralRatio - 100) / 150) * 100, 100))}
+                currentPersentage={getCollateralRatioByPersentage(currentCollateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -406,7 +418,7 @@ export const AddNewCollateral = ({
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((futureCollateralRatio - 100) / 150) * 100, 100))}
+                currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>

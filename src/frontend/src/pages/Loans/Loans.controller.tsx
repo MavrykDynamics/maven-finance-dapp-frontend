@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
+import classNames from 'classnames'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -17,6 +18,7 @@ import colors from 'styles/colors'
 import { skyColor } from 'styles'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from './Loans.helpers'
 
 import { State } from 'reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -96,12 +98,12 @@ export const Loans = () => {
         <span>Total Lending</span>
         <CommaNumber value={totalLended} beginningText={'$'} />
       </div>
-      <div className="chart">
+      <div className={classNames('chart', { emptyChart: chartsData.lendingChartData.length === 0 })}>
         <Chart
-          data={{ type: AREA_CHART_TYPE, plots: chartsData.lendingChartData }}
+          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(chartsData.lendingChartData, 7) }}
           colors={CHART_COLORS}
-          settings={CHART_SETTINGS}
-          numberOfItemsToDisplay={3}
+          settings={getChartSettingsBasedOnChartLength(chartsData.lendingChartData, CHART_SETTINGS)}
+          numberOfItemsToDisplay={0}
           tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
           tooltipAsset="$"
         />
@@ -116,12 +118,12 @@ export const Loans = () => {
         <span>Total Borrowing</span>
         <CommaNumber value={totalBorrowed} beginningText={'$'} />
       </div>
-      <div className="chart">
+      <div className={classNames('chart', { emptyChart: chartsData.borrowingChartData.length === 0 })}>
         <Chart
-          data={{ type: AREA_CHART_TYPE, plots: chartsData.borrowingChartData }}
+          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(chartsData.borrowingChartData, 7) }}
           colors={CHART_COLORS}
-          settings={CHART_SETTINGS}
-          numberOfItemsToDisplay={3}
+          settings={getChartSettingsBasedOnChartLength(chartsData.borrowingChartData, CHART_SETTINGS)}
+          numberOfItemsToDisplay={0}
           tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
           tooltipAsset="$"
         />
@@ -207,7 +209,7 @@ export const Loans = () => {
                         <CommaNumber value={totalLended} className="rate" />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
-                        <div className="name">Lend APY</div>
+                        <div className="name">Earn APY</div>
                         <div className="value">
                           <CommaNumber value={lendingAPY} className="value" endingText="%" />{' '}
                           <CustomTooltip
@@ -219,7 +221,7 @@ export const Loans = () => {
                         </div>
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
-                        <div className="name">Total Fees Earned</div>
+                        <div className="name">Total Earned</div>
                         <CommaNumber value={totalFeesEarned} className="value" beginningText="$" />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>

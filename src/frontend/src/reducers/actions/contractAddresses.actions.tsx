@@ -19,4 +19,3 @@ export const getContractAddressesStorage = () => async (dispatch: AppDispatch) =
     console.error('getDipDupTokensStorage error: ', e)
   }
 }
-

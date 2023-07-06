@@ -83,7 +83,8 @@ export const getTokenDecimals = ({
 }): number | null => {
   if (tokenType === 'tez') return XTZ_DECIMALS
 
-  const { metadata: { decimals = null } = {} } = dipDupTokens.find(({ contract }) => tokenAddress === contract) ?? {}
+  const { metadata: { decimals = null } = {} } =
+    dipDupTokens.find(({ token_address }) => tokenAddress === token_address) ?? {}
 
   return decimals ? Number(decimals) : null
 }
@@ -304,3 +305,5 @@ export const percentageDifference = (a: number, b: number): number => {
 export const getNumberInBounds = (minBound: number, maxBound: number, numberToPutInBound: number) => {
   return Math.max(minBound, Math.min(maxBound, numberToPutInBound))
 }
+
+export const generateUniqueId = () => Math.random().toString(36).substring(2) + Date.now().toString(36)

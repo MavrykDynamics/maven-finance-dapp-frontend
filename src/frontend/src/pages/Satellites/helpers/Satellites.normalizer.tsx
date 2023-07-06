@@ -22,7 +22,7 @@ import {
   defaultSatelliteNameMaxLength,
   defaultSatelliteWebsiteMaxLength,
 } from 'app/App.components/Input/Input.constants'
-import { VOTE_NUM_MAPPER } from './Satellites.consts'
+import { OracleStatusTypes, VOTE_NUM_MAPPER } from './Satellites.consts'
 
 export const getSatelliteAccuracy = (satelliteRecord: SatelliteRecordGraphQl) => {
   const v1 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.aggregator?.last_completed_data),
@@ -107,7 +107,13 @@ export const getNewSatelliteMetrics = ({
       const filteredSatellitesObservations = oracles
         .map(({ observations }) => observations)
         .flat()
-        .filter(({ oracle: { user_id } }) => user_id === satelliteAddress)
+        .filter(
+          ({
+            oracle: {
+              user: { address },
+            },
+          }) => address === satelliteAddress,
+        )
       return acc.concat(filteredSatellitesObservations)
     }, [])
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
@@ -125,35 +131,37 @@ export const getNewSatelliteMetrics = ({
 }
 
 export const getSatelliteOracleRecords = ({ user: { aggregator_oracles = [] } }: SatelliteRecordGraphQl) => {
-  return aggregator_oracles.map(({ aggregator: { oracles, address: feedAddress }, user_id: oracleAddress }) => {
-    // getting rewards for oracle per feed
-    const { sMVKReward, XTZReward } = oracles.reduce(
-      (acc, { rewards, user_id: rewardUserId }) => {
-        rewards.forEach(({ type, reward }) => {
-          if (type === 0 && rewardUserId === oracleAddress) {
-            acc.XTZReward += calcWithoutMu(reward)
-          }
+  return aggregator_oracles.map(
+    ({ aggregator: { oracles, address: feedAddress }, user: { address: oracleAddress } }) => {
+      // getting rewards for oracle per feed
+      const { sMVKReward, XTZReward } = oracles.reduce(
+        (acc, { rewards, user: { address: rewardUserId } }) => {
+          rewards.forEach(({ type, reward }) => {
+            if (type === 0 && rewardUserId === oracleAddress) {
+              acc.XTZReward += calcWithoutMu(reward)
+            }
 
-          if (type === 1 && rewardUserId === oracleAddress) {
-            acc.sMVKReward += calcWithoutPrecision(reward)
-          }
-        })
+            if (type === 1 && rewardUserId === oracleAddress) {
+              acc.sMVKReward += calcWithoutPrecision(reward)
+            }
+          })
 
-        return acc
-      },
-      {
-        sMVKReward: 0,
-        XTZReward: 0,
-      },
-    )
+          return acc
+        },
+        {
+          sMVKReward: 0,
+          XTZReward: 0,
+        },
+      )
 
-    return {
-      feedAddress,
-      oracleAddress,
-      sMVKReward,
-      XTZReward,
-    }
-  })
+      return {
+        feedAddress,
+        oracleAddress,
+        sMVKReward,
+        XTZReward,
+      }
+    },
+  )
 }
 
 export const getSatelliteVotings = ({
@@ -217,7 +225,7 @@ export const getSatelliteVotings = ({
   }
 }
 
-type Snapshot = Pick<Governance_Satellite_Snapshot, 'user_id' | 'total_voting_power'>
+type Snapshot = Pick<Governance_Satellite_Snapshot, 'user' | 'total_voting_power'>
 /**
  * @param snapshots array of objects with user_id and total_voting_power
  * @param cycle current active cycle (can be 0 if cycle hadn't started yet)
@@ -230,14 +238,14 @@ export const createSatelliteSnapshotsByIds = (snapshots: Snapshot[], cycle: numb
   const snapshotsWithoutDuplicates: Snapshot[] = []
 
   for (const obj of snapshots) {
-    if (!uniqueIds.has(obj.user_id)) {
+    if (!uniqueIds.has(obj.user.address)) {
       snapshotsWithoutDuplicates.push(obj)
-      uniqueIds.add(obj.user_id)
+      uniqueIds.add(obj.user.address)
     }
   }
 
   return snapshotsWithoutDuplicates.reduce((acc: { [key: string]: Snapshot }, s) => {
-    acc[s.user_id] = { ...s }
+    acc[s.user.address] = { ...s }
     return acc
   }, {})
 }
@@ -262,12 +270,41 @@ export const normallizeSatellite = (
 
   const satelliteMetrics = getNewSatelliteMetrics({
     ...metricsData,
-    satelliteAddress: satelliteRecord.user_id,
+    satelliteAddress: satelliteRecord.user.address,
     satelliteVotings: { proposalVotingHistory, financialRequestsVotes, emergencyGovernanceVotes, satelliteActionVotes },
   })
 
+  // Getting oracle status
+  let oracleStatus: OracleStatusTypes = 'notAnOracle'
+
+  // check if satellite is an oracle
+  if (satelliteOracleRecords?.length > 0) {
+    // check whether oracle is active, if true status can be responded or awaiting
+    if (satelliteRecord.status === 0) {
+      const currentOracleFeeds = metricsData.feeds.filter(
+        ({ admin }) => satelliteOracleRecords[0].oracleAddress === admin,
+      )
+
+      // if timestamp or all feeds from this satellite is >= than 30m ago, feed is not active, if all feeds are not active oracle status is responded, if at least 1 feed is still active, satellite status is awaiting
+      if (
+        currentOracleFeeds.every(
+          ({ last_completed_data_last_updated_at, heart_beat_seconds }) =>
+            (Number(Date.now()) - Number(new Date(last_completed_data_last_updated_at || Date.now()))) / 1000 >=
+            heart_beat_seconds,
+        )
+      ) {
+        oracleStatus = 'responded'
+      } else {
+        oracleStatus = 'awaiting'
+      }
+      // if oracle is not active, status should be "no response"
+    } else {
+      oracleStatus = 'noResponse'
+    }
+  }
+
   return {
-    address: satelliteRecord.user_id,
+    address: satelliteRecord.user.address,
     description: satelliteRecord.description,
     website: satelliteRecord.website,
     image: satelliteRecord.image,
@@ -293,6 +330,7 @@ export const normallizeSatellite = (
     emergencyGovernanceVotes,
     satelliteActionVotes,
     satelliteMetrics,
+    oracleStatus,
   }
 }
 

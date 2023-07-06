@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -10,7 +9,6 @@ import { BreakGlassCouncilForm, actions } from './BreakGlassCouncilForms/BreakGl
 import { FormUpdateCouncilMemberView } from './BreakGlassCouncilForms/FormUpdateCouncilMember.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -24,7 +22,6 @@ import {
   signAction,
 } from './BreakGlassCouncil.actions'
 import { getCouncilStorage } from 'pages/Council/Council.actions'
-import { getBreakGlassConfig } from 'pages/BreakGlass/BreakGlass.actions'
 
 // types
 import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
@@ -44,7 +41,7 @@ export function BreakGlassCouncil() {
       userAvatars: { breakGlassAvatar },
     },
   } = useSelector((state: State) => state.wallet)
-  const { isConfigLoaded } = useSelector((state: State) => state.breakGlass.config)
+
   const {
     config: { councilMaxLength },
     breakGlassCouncilMembers,
@@ -77,7 +74,6 @@ export function BreakGlassCouncil() {
     try {
       await Promise.all(
         [
-          (!isConfigLoaded || isDepsChanged) && dispatch(getBreakGlassConfig()),
           (!isStorageLoaded || isDepsChanged) && dispatch(getCouncilStorage()),
           (!isBreakGlassCouncilMembersLoaded || isDepsChanged) && dispatch(getBreakGlassCouncilMembers()),
           (!isBreakGlassCouncilPastActionsLoaded || isDepsChanged) && dispatch(getBreakGlassCouncilPastActions()),
@@ -118,6 +114,7 @@ export function BreakGlassCouncil() {
           // general info
           pathnameOfPage="/break-glass-council"
           maxLength={councilMaxLength}
+          // TODO: clarigy this field with @CasualJackie & @Sam-M-Israel
           glassBroken={!emergencyGovActive}
           showPropagateBreakGlass
           titles={titles}

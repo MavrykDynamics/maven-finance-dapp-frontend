@@ -23,6 +23,7 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import {
   calcCollateralRatio,
+  getCollateralRatioByPersentage,
   getLoansInputMaxAmount,
   isTezosAsset,
   loansInputValidation,
@@ -31,6 +32,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { StatusMessageStyled } from '../LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { checkNan } from 'utils/checkNan'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17953%3A224110&t=Sx2aEpp3ifrGxBtQ-0
 export const Repay = ({
@@ -66,7 +68,7 @@ export const Repay = ({
 
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
-  const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
+  const inputAmount = checkNan(parseFloat(inputData.amount))
 
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = borrowedAsset
@@ -118,8 +120,13 @@ export const Repay = ({
   const continueBtnHandler = () => setShownScreen('confitmation')
   const backBtnHandler = () => setShownScreen('initial')
 
+  const callActionsAfterTransaction = () => {
+    closePopup()
+    scrollToCurrentVault?.()
+  }
+
   const repayBtnHandler = async () => {
-    if (vaultId && borrowedAsset && vaultAddress && scrollToCurrentVault) {
+    if (vaultId && borrowedAsset && vaultAddress) {
       await dispatch(
         repayPartOfVaultAction(
           vaultId,
@@ -128,8 +135,7 @@ export const Repay = ({
           borrowedAsset.decimals,
           borrowedAsset.tokenType,
           borrowedAsset.address,
-          closePopup,
-          scrollToCurrentVault,
+          callActionsAfterTransaction,
         ),
       )
     }
@@ -275,7 +281,7 @@ export const Repay = ({
                   <GradientDiagram
                     className="diagram"
                     colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                    currentPersentage={Math.max(0, Math.min(((futureCollateralRatio - 100) / 150) * 100, 100))}
+                    currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>

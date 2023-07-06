@@ -13,6 +13,11 @@ export const TabSwitcherStyled = styled.div<{ theme: MavrykTheme }>`
       cursor: not-allowed;
     }
   }
+
+  &.primary-switcher {
+    width: fit-content;
+    column-gap: 20px;
+  }
 `
 
 export const ButtonStyled = styled.button<{  buttonActive: boolean; disabled: boolean; theme: MavrykTheme }>`

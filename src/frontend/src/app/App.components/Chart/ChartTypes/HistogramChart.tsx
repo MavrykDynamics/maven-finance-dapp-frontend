@@ -35,7 +35,7 @@ export const HistogramChart = ({
     borderColor = headerColor,
     seriesMarkers,
   } = {},
-  colors: { barColor = 'rgba(119, 164, 242, 0.51)' } = {},
+  colors: { barColor = '#77A4F2' } = {},
   data,
   tooltipName = AMOUNT_DATE_TOOLTIP,
   tooltipAsset,

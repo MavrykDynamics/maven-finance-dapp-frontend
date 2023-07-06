@@ -3,7 +3,7 @@ import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
-import { Lending_Controller_History_Data, Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
+import { Lending_Controller_History_Data } from 'utils/generated/graphqlTypes'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import {
   LendingItemType,
@@ -11,12 +11,14 @@ import {
   LoanMarketType,
   BaseLoansAssetDataType,
 } from 'utils/TypesAndInterfaces/Loans'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 import { parseDate } from 'utils/time'
 import { convertNumberForClient, convertNumberForContractCall, getNumberInBounds } from '../../utils/calcFunctions'
 import { assetDecimalsToShow } from './Loans.const'
+import { compareDatesByDay } from 'utils/compareDatesByDay'
 
 // CONST FOR HELPERS
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
@@ -41,9 +43,7 @@ export const getAssetMetadata = ({
   oracleId?: string
 }): (BaseLoansAssetDataType & { address: string }) | undefined => {
   const isXTZ = isTezosAsset(tokenName)
-  const foundAssetInDipDup = dipDupTokens.find(
-    ({ metadata: { name: dipDupName }, contract }) => tokenName === dipDupName || tokenAddress === contract,
-  )
+  const foundAssetInDipDup = dipDupTokens.find(({ token_address }) => tokenAddress === token_address)
 
   const { last_completed_data, decimals, icon } = feeds.find(({ address }) => address === oracleId) ?? {}
 
@@ -65,14 +65,14 @@ export const getAssetMetadata = ({
     return {
       decimals: Number(foundAssetInDipDup.metadata.decimals),
       gqlName: tokenName,
-      name: foundAssetInDipDup.metadata.name,
+      name: foundAssetInDipDup.metadata.name ?? '',
       symbol: foundAssetInDipDup.metadata.symbol,
       icon:
         tokenName === 'eurl'
           ? '/images/eurl.png'
           : tokenName === 'tzbtc'
           ? '/images/tzBTC.png'
-          : icon ?? foundAssetInDipDup.metadata.icon,
+          : icon ?? foundAssetInDipDup.metadata.icon ?? '',
       rate: last_completed_data / 10 ** decimals,
       address: tokenAddress,
       id: foundAssetInDipDup.id,
@@ -95,29 +95,45 @@ export const getTransactionHistory = (
   history_data: Lending_Controller_History_Data[],
   dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
-) =>
-  history_data.reduce<TransactionHistoryReduceType>(
-    (acc, { type, amount, timestamp, sender_id, operation_hash, loan_token }) => {
-      if (!loan_token) return acc
+) => {
+  const data = history_data.reduce<TransactionHistoryReduceType>(
+    (
+      acc,
+      {
+        type,
+        amount,
+        timestamp,
+        sender: { address: senderAddress },
+        operation_hash,
+        loan_token,
+        collateral_token,
+        vault,
+      },
+    ) => {
+      if (!loan_token?.token?.token_address) return acc
 
       const assetMetadata = getAssetMetadata({
-        tokenAddress: loan_token.loan_token_address,
-        tokenName: loan_token.loan_token_name,
+        // if we have collateral_token, that means it’s a vault operation
+        // if we do not have collateral_token, that means it’s a loan operation
+        tokenAddress: collateral_token?.token?.token_address ?? loan_token.token.token_address,
+        tokenName: collateral_token?.token_name ?? loan_token.loan_token_name,
         dipDupTokens,
         feeds,
-        oracleId: String(loan_token.oracle_id),
+        oracleId: String(collateral_token?.oracle?.address ?? loan_token.oracle.address),
       })
 
       if (assetMetadata) {
         const transformedAmount = amount / 10 ** assetMetadata.decimals
         const descrByType = getDescrByType(type)
+
         if (descrByType) {
           acc.transactionHistory.push({
             amount: transformedAmount,
             date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
-            userAddress: sender_id,
+            vaultAddress: vault?.vault?.address,
+            userAddress: senderAddress,
             operationHash: operation_hash,
-            descr: getDescrByType(type),
+            descr: descrByType,
             tokenSymbol: assetMetadata.symbol,
           })
         }
@@ -192,21 +208,28 @@ export const getTransactionHistory = (
     },
   )
 
+  return {
+    ...data,
+    marketCollateralChartData: addMissingDaysWithZeroValues(data.marketCollateralChartData, 14),
+    marketLiquidityChartData: addMissingDaysWithZeroValues(data.marketLiquidityChartData, 14),
+  }
+}
+
 // NORMALIZE CHART DATA FOR LEND/BORROW MARKETS
 export const getChartData = (
   history_data: Lending_Controller_History_Data[],
   dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
-) =>
-  history_data?.reduce<LoansChartsDataType>(
+) => {
+  const data = history_data?.reduce<LoansChartsDataType>(
     (acc, { type, amount, timestamp, loan_token }) => {
-      if (!loan_token) return acc
+      if (!loan_token?.token.token_address) return acc
       const assetMetadata = getAssetMetadata({
-        tokenAddress: loan_token.loan_token_address,
+        tokenAddress: loan_token.token.token_address,
         tokenName: loan_token.loan_token_name,
         dipDupTokens,
         feeds,
-        oracleId: String(loan_token.oracle_id),
+        oracleId: String(loan_token.oracle.address),
       })
 
       if (assetMetadata) {
@@ -307,6 +330,14 @@ export const getChartData = (
       },
     },
   )
+
+  return {
+    ...data,
+    borrowingChartData: addMissingDaysWithZeroValues(data.borrowingChartData, 7),
+    collateralChartData: addMissingDaysWithZeroValues(data.collateralChartData, 7),
+    lendingChartData: addMissingDaysWithZeroValues(data.lendingChartData, 7),
+  }
+}
 
 // GET LENDING ITEM FOR MARKET
 export const getLendingItem = (
@@ -461,4 +492,85 @@ export const getLoansInputMaxAmount = (amount: number = 0, decimals: number = as
   const blockchainNumberWithoutDecimals = Math.trunc(convertNumberForContractCall({ number: amount, grade: decimals }))
 
   return String(convertNumberForClient({ number: blockchainNumberWithoutDecimals, grade: decimals }))
+}
+
+/**
+ * @param collateralRatio is a number from 0 to 250. Which usually used to display collateral ratio in persentage
+ * @returns number from 1 to 100. Use this result for currentPersentage prop into GradientDiagram component
+ */
+export const getCollateralRatioByPersentage = (collateralRatio: number) => {
+  return Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))
+}
+
+/**
+ * get data with 0 value within 7 days (as this is the period on the chart). Is need instead of plug for empty chart.
+ * @param chartData - data of chart
+ * @param period - the number of days to display 0 if the chart is empty
+ */
+export const getChartDataBasedOnLength = (chartData: AreaChartPlotType[], period: number) => {
+  const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
+
+  const emptyChartData = Array.apply(null, Array(period)).map((item, index, array) => ({
+    // get 0 value for each day in period
+    time: new Date().getTime() - ONE_DAY_IN_MS * (array.length - index - 1),
+    value: 0,
+  })) as AreaChartPlotType[]
+
+  return chartData.length !== 0 ? chartData : emptyChartData
+}
+
+/**
+ * get current settings if the chart is not empty, or custom settings with small chart height for empty chart.
+ * Need a small height because the empty chart with standard settings has a bad look in the center of the container.
+ * @param chartData - data of chart
+ * @param settings - settings of chart
+ * @returns
+ */
+export const getChartSettingsBasedOnChartLength = (
+  chartData: AreaChartPlotType[],
+  settings: {
+    width: number
+    height: number
+    hideXAxis: boolean
+    hideYAxis: boolean
+  },
+) => {
+  return chartData.length !== 0
+    ? settings
+    : {
+        ...settings,
+        height: 50,
+      }
+}
+
+/**
+ * @param array - chart data with value and time
+ * @param period - 0 values for days without data will be added for this period
+ * @returns {SingleValueData[]}
+ */
+export const addMissingDaysWithZeroValues = (array: SingleValueData[], period: number) => {
+  const reversedArray = [...array].reverse()
+  const updatedArray: SingleValueData[] = []
+  const currentDay = new Date()
+  // we use "+1" below, because it will count the period without taking into account the current day that we want to include
+  currentDay.setDate(currentDay.getDate() + 1 - period)
+
+  while (currentDay <= new Date()) {
+    const foundDay = reversedArray.find(
+      (item) => compareDatesByDay(currentDay, new Date(item.time as unknown as Date)) === 0,
+    )
+
+    updatedArray.push(
+      foundDay
+        ? foundDay
+        : {
+            time: currentDay.getTime() as UTCTimestamp,
+            value: 0,
+          },
+    )
+
+    currentDay.setDate(currentDay.getDate() + 1)
+  }
+
+  return updatedArray
 }

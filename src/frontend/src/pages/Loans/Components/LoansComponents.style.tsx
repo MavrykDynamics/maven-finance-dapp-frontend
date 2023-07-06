@@ -17,6 +17,10 @@ export const NoItemsInTabStyled = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.textColor};
   }
 
+  .manage-btn {
+    width: 250px;
+  }
+
   .lending-tab-no-items-btn {
     max-width: 250px;
 
@@ -26,38 +30,31 @@ export const NoItemsInTabStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const LoansTabStyled = styled.div<{ theme: MavrykTheme }>`
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
-  background-color: ${({ theme }) => theme.containerColor};
-  border-radius: 10px;
-  padding: 30px;
-  padding-bottom: 40px;
-  position: relative;
+export const LendingTabStyled = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  row-gap: 40px;
+
+  .stats-and-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 20px;
+  }
+`
+
+export const BorrowingTabStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+
+  .title-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+  }
 
   .has-items-borrow-btn {
-    position: absolute;
-    right: 30px;
-    top: 20px;
     max-width: 250px;
-
-    svg {
-      stroke: unset;
-    }
-  }
-
-  .checkbox {
-    margin: 25px 0 10px 0;
-  }
-
-  .factory-info {
-    display: flex;
-    column-gap: 10px;
-    font-weight: 600;
-    font-size: 14px;
-    color: ${({ theme }) => theme.textColor};
-    position: absolute;
-    bottom: 10px;
-    right: 30px;
   }
 `
 
@@ -66,58 +63,82 @@ export const VaultsList = styled.div<{ theme: MavrykTheme }>`
   flex-direction: column;
   row-gap: 10px;
 
-  &:has(.expandedCard) {
+  &:has(.expanded-card) {
     .expand-borrow-tab {
       opacity: 0.3;
       pointer-events: none;
     }
 
-    .expandedCard {
+    .expanded-card {
       opacity: 1;
       pointer-events: auto;
     }
   }
 `
 
-export const LendingTabListItem = styled.div<{ theme: MavrykTheme }>`
+export const BorrowingExpandedCard = styled.div<{ theme: MavrykTheme }>`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  row-gap: 30px;
+
   background-color: ${({ theme }) => theme.containerColor};
-  border-radius: 10px;
-  padding: 18px 20px 8px 20px;
-  display: grid;
-  grid-template-columns: 0.8fr 0.8fr 0.8fr 1fr 1fr 1fr 125px 125px;
-  column-gap: 10px;
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
-
-  .lending-btn {
-    width: 120px;
-    height: 36px;
-    font-weight: 600;
-    font-size: 16px;
-    padding: 0;
-    align-items: center;
-    display: flex;
-
-    svg {
-      stroke-width: 0.5px;
-    }
-  }
-`
-
-export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.backgroundColor};
+  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
   border-radius: 10px;
   border-top-right-radius: 0;
   border-top-left-radius: 0;
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  cursor: default;
 
-  &.more-padding {
-    padding-bottom: 80px;
+  .stats-and-actions {
+    display: grid;
+    grid-template-columns: 450px auto;
+    column-gap: 20px;
   }
 
+  .menu-switcher {
+    width: fit-content;
+    column-gap: 20px;
+  }
+
+  .action-switchers {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    margin: 0 auto;
+  }
+
+  .bottom-info-row {
+    /* TODO: remove button styles from here */
+    button,
+    a {
+      margin-left: auto;
+      padding: 0;
+      height: fit-content;
+
+      &:hover {
+        opacity: 0.8;
+        color: ${({ theme }) => theme.valueColor};
+
+        svg {
+          opacity: 0.8;
+        }
+
+        &::before {
+          display: none;
+        }
+      }
+
+      svg {
+        height: 14px;
+        width: 8px;
+        transform: rotate(180deg);
+        stroke-width: 2px;
+        stroke: ${({ theme }) => theme.valueColor};
+      }
+    }
+  }
+
+  // styles below useing only in OldBorrowingExpandComponent
   .block-name {
     font-weight: 600;
     font-size: 18px;
@@ -148,23 +169,246 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  .bottom-info-row {
+  .add-first-collateral {
+    margin: 3px 0 0 auto;
+    width: 270px;
+  }
+
+  .repay-full {
+    position: absolute;
+    right: 18px;
+    bottom: 20px;
+  }
+`
+
+export const LoansActionsSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 30px;
+  padding: 30px;
+  border-radius: 10px;
+
+  &.borrowing-tab {
+    background-color: ${({ theme }) => theme.backgroundColor};
+  }
+
+  &.lending-tab {
+    background-color: ${({ theme }) => theme.containerColor};
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  }
+
+  .useMax-btn {
+    button {
+      font-size: 14px;
+    }
+  }
+
+  .coming-soon {
+    text-align: center;
+
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  .switchers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 15px;
+  }
+
+  .tab-text {
+    margin: 0 15px;
+
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 22px;
+
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 15px;
+
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border-radius: 10px;
+  }
+
+  .button-wrapper {
+    width: 300px;
+    margin: 0 auto;
+  }
+
+  .mt-25 {
+    margin-top: 25px;
+  }
+
+  .mb-10 {
+    margin-bottom: 10px;
+  }
+`
+
+export const LoansValuesSection = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  border-radius: 10px;
+
+  &.borrowing-tab {
+    row-gap: 60px;
+    background-color: ${({ theme }) => theme.backgroundColor};
+
+    .stats {
+      row-gap: 60px;
+    }
+  }
+
+  &.lending-tab {
+    row-gap: 45px;
+    background-color: ${({ theme }) => theme.containerColor};
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+
+    .stats {
+      row-gap: 45px;
+    }
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 30px;
+  }
+`
+
+export const LoansValuesSectionInfo = styled.div<{
+  theme: MavrykTheme
+  hasRate?: boolean
+  customColor?: string
+}>`
+  p {
+    margin: 0;
+  }
+
+  .name {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 27px;
+
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  .value {
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 40px;
+    word-break: break-all;
+
+    color: ${({ theme }) => theme.dataColor};
+  }
+
+  .rate {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 18px;
+
+    visibility: ${({ theme }) => (theme.hasRate ? 'hidden' : 'visible')};
+    color: ${({ theme }) => theme.dataColor};
+  }
+
+  .margin-top {
+    margin-top: 18px;
+  }
+
+  &.learn-more {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
+
+    a {
+      color: ${({ theme }) => theme.valueColor};
+    }
+  }
+
+  &.collateral-diagram {
+    .percentage {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      margin-bottom: 7px;
+      color: ${({ theme, customColor }) => customColor ?? theme.textColor};
+
+      p {
+        margin-left: 5px;
+      }
+    }
+
+    .copyIcon {
+      font-weight: 600;
+    }
+  }
+`
+
+export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  row-gap: 30px;
+
+  background-color: ${({ theme }) => theme.backgroundColor};
+  border-radius: 10px;
+
+  .tab-header {
+    display: grid;
+    grid-template-columns: auto 250px;
+  }
+
+  .useful-info {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+  }
+
+  .useful-info-title {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 27px;
+
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  .useful-info-line {
     display: flex;
     align-items: center;
     width: 400px;
-    margin: 6px 0;
+
+    a,
+    button,
+    .name,
+    .value {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+    }
 
     .name {
       margin-right: 10px;
+      color: ${({ theme }) => theme.textColor};
     }
 
     .value {
-      color: ${({ theme }) => theme.dataColor};
-      font-weight: 600;
-      font-size: 14px;
       display: flex;
       align-items: center;
       column-gap: 6px;
+
+      color: ${({ theme }) => theme.dataColor};
     }
 
     /* TODO: remove button styles from here */
@@ -196,42 +440,37 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
       }
     }
   }
+`
 
-  .close-vault {
-    position: absolute;
-    right: 18px;
-    bottom: 20px;
-    width: 250px;
-    height: 36px;
+export const VaultOverview = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  row-gap: 25px;
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  padding: 20px 15px;
+  border-radius: 10px;
 
-    > div {
-      display: flex;
-      align-items: center;
-    }
-
-    svg {
-      width: 15px;
-      height: 15px;
-    }
+  .line {
+    display: flex;
+    justify-content: space-between;
   }
 
-  .add-first-collateral {
-    margin: 3px 0 0 auto;
-    width: 270px;
-  }
+  .collateral-diagram {
+    .diagram {
+      width: 210px;
+    }
 
-  .repay-full {
-    position: absolute;
-    right: 18px;
-    bottom: 20px;
+    .copyIcon {
+      font-weight: 600;
+    }
   }
 `
+
 export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
   column-gap: 20px;
   padding: 15px 25px;
-  margin: 15px 0 25px 0;
   background-color: ${({ theme }) => theme.dPurple_container_dPurple};
   font-weight: 600;
   font-size: 14px;
@@ -246,6 +485,16 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
 
   &.borrow-message {
     margin: 40px 0 40px 0;
+  }
+
+  &.repay-in-full {
+    border: 1px solid ${({ theme }) => theme.infoColor};
+
+    svg {
+      width: 16px;
+      height: 16px;
+      fill: ${({ theme }) => theme.infoColor};
+    }
   }
 
   svg {

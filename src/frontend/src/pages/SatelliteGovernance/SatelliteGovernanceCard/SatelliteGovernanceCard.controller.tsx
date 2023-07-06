@@ -1,29 +1,35 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { Button } from '../../../app/App.components/Button/Button.controller'
+import Button from 'app/App.components/Button/NewButton'
+import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { getSeparateSnakeCase } from '../../../utils/parse'
 import { ProposalStatus, SatelliteGovernance } from '../../../utils/TypesAndInterfaces/Governance'
 import Expand from '../../../app/App.components/Expand/Expand.view'
 
-// action
 import { dropAction, voteForAction } from '../SatelliteGovernance.actions'
 
-import { SatelliteGovernanceCardDropDown, SatelliteGovernanceCardTitleTextGroup } from './SatelliteGovernanceCard.style'
+import {
+  SatelliteGovernanceCardDropDown,
+  SatelliteGovernanceCardPurposeBlock,
+  SatelliteGovernanceCardTitleTextGroup,
+  SatelliteGovernanceCardVotingBlock,
+} from './SatelliteGovernanceCard.style'
 import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
 import { PRECISION_NUMBER } from 'utils/constants'
 import { parseDate } from 'utils/time'
 import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
+import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import dayjs from 'dayjs'
 
 type Props = {
   satelliteId: string
   initiatorId: string
-  date: string | null
-  executed: boolean
-  status: number
+  actionExpirationDate: string | null
+  actionStartDate: string | null
   statusFlag: StatusFlagKind
   id: number
   purpose: string
@@ -42,9 +48,8 @@ export const SatelliteGovernanceCard = ({
   id,
   satelliteId,
   initiatorId,
-  date,
-  executed,
-  status,
+  actionExpirationDate,
+  actionStartDate,
   statusFlag,
   purpose,
   governanceType,
@@ -59,23 +64,8 @@ export const SatelliteGovernanceCard = ({
 }: Props) => {
   const dispatch = useDispatch()
 
-  const [expanded, setExpanded] = useState(false)
-
   const myVote = useMemo(() => votes.find((item) => item.voterId === accountPkh)?.vote, [accountPkh, votes])
-  const open = () => setExpanded(!expanded)
-
-  const handleVotingRoundVote = (type: string) => {
-    dispatch(voteForAction(id, type, open))
-  }
-
-  const handleClick = async () => {
-    console.log('Logging is actionActive', isActionActive)
-    await dispatch(dropAction(id, open))
-  }
-
-  const timeNow = Date.now()
-  const expirationDatetime = new Date(date ?? 0).getTime()
-  const isEndingVotingTime = expirationDatetime > timeNow
+  const isEndingVotingTime = dayjs().diff(actionExpirationDate) < 0
 
   const voteStatistic = useMemo(
     () => ({
@@ -93,28 +83,36 @@ export const SatelliteGovernanceCard = ({
     [yayVotesSmvkTotal, nayVotesSmvkTotal, passVoteSmvkTotal, snapshotSmvkTotalSupply, smvkPercentageForApproval],
   )
 
+  const handleVotingRoundVote = (type: string) => {
+    dispatch(voteForAction(id, type))
+  }
+
+  const handleDropAction = async () => {
+    await dispatch(dropAction(id))
+  }
+
   return (
     <Expand
       className="expand-governance"
       header={
         <>
           <SatelliteGovernanceCardTitleTextGroup>
-            <h3>Date</h3>
-            <p className="inner">{parseDate({ time: date, timeFormat: 'MMM Do, YYYY' })}</p>
+            <div className="name">Date</div>
+            <div className="value">{parseDate({ time: actionStartDate, timeFormat: 'MMM Do, YYYY' })}</div>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
-            <h3>Action</h3>
-            <p className="inner capitallize">{getSeparateSnakeCase(governanceType)}</p>
+            <div className="name">Action</div>
+            <div className="value capitallize">{getSeparateSnakeCase(governanceType)}</div>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
-            <h3>Target</h3>
-            <div className="inner">
+            <div className="name">Target</div>
+            <div className="value">
               <TzAddress tzAddress={satelliteId} hasIcon={true} />
             </div>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
-            <h3>Initiator</h3>
-            <div className="inner">
+            <div className="name">Initiator</div>
+            <div className="value">
               <TzAddress tzAddress={initiatorId} hasIcon={true} />
             </div>
           </SatelliteGovernanceCardTitleTextGroup>
@@ -123,34 +121,33 @@ export const SatelliteGovernanceCard = ({
       sufix={<StatusFlag className="expand-gov-status" status={statusFlag} text={statusFlag} />}
     >
       <SatelliteGovernanceCardDropDown>
-        <div className="purpose-block">
+        <SatelliteGovernanceCardPurposeBlock>
           <div>
             <h3>Purpose</h3>
             <p className="purpose">{purpose}</p>
 
             {initiatorId ? (
-              <Link className={'view-satellite'} to={`/satellites/satellite-details/${satelliteId}`}>
+              <Link className="profile-details" to={`/satellites/satellite-details/${satelliteId}`}>
                 Profile Details
               </Link>
             ) : null}
           </div>
 
           {statusFlag === ProposalStatus.ONGOING && accountPkh === initiatorId ? (
-            <Button
-              text="Drop Action"
-              className="drop-btn"
-              icon="close-stroke"
-              kind={'actionSecondary'}
-              onClick={handleClick}
-              disabled={isActionActive}
-            />
+            <div className="btn-wrapper">
+              <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={handleDropAction} disabled={isActionActive}>
+                <Icon id="navigation-menu_close" />
+                Drop Action
+              </Button>
+            </div>
           ) : null}
-        </div>
-        <div className="voting-block">
+        </SatelliteGovernanceCardPurposeBlock>
+
+        <SatelliteGovernanceCardVotingBlock>
           <h3>Vote Statistics</h3>
           <b className="voting-ends">
             Voting {!isEndingVotingTime ? 'ended' : 'ending'} on{' '}
-            {parseDate({ time: date, timeFormat: 'MMM DD, HH:mm' })} CEST
+            {parseDate({ time: actionExpirationDate, timeFormat: 'MMM DD, HH:mm' })} CEST
           </b>
 
           <VotingArea
@@ -160,7 +157,7 @@ export const SatelliteGovernanceCard = ({
             disableVotingButtons={isActionActive}
             disableButtonByVote={myVote}
           />
-        </div>
+        </SatelliteGovernanceCardVotingBlock>
       </SatelliteGovernanceCardDropDown>
     </Expand>
   )

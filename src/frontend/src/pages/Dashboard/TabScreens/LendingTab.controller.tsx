@@ -11,6 +11,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { getClassNameBasedOnPersentValue } from 'pages/LoansDashboard/helpers/comparing.helpers'
 
 import { StatBlock } from '../Dashboard.style'
 import { LendingContentStyled, TabWrapperStyled, EmptyContainer } from './DashboardTabs.style'
@@ -123,11 +124,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="name">Total Supplied</div>
               <div className="value">
                 <CommaNumber beginningText="$" value={totalLended} />
-                <div
-                  className={`impact ${
-                    lending24hPersentChange ? (lending24hPersentChange > 0 ? 'up' : 'down') : 'neutral'
-                  }`}
-                >
+                <div className={`impact ${getClassNameBasedOnPersentValue(lending24hPersentChange)}`}>
                   <CommaNumber
                     value={lending24hPersentChange}
                     beginningText={lending24hPersentChange > 0 ? '+' : ''}
@@ -172,11 +169,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="name">Total Borrowed</div>
               <div className="value">
                 <CommaNumber beginningText="$" value={totalBorrowed} />
-                <div
-                  className={`impact ${
-                    borrowing24hPersentChange ? (borrowing24hPersentChange > 0 ? 'up' : 'down') : 'neutral'
-                  }`}
-                >
+                <div className={`impact ${getClassNameBasedOnPersentValue(borrowing24hPersentChange)}`}>
                   <CommaNumber
                     value={borrowing24hPersentChange}
                     beginningText={borrowing24hPersentChange > 0 ? '+' : ''}

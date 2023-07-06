@@ -92,8 +92,8 @@ export const ClockLoader = ({
 }
 
 // Action full screen & initial data loader
-export const LoaderRocket = () => (
-  <LoaderStyledWithBackdrop>
+export const LoaderRocket = ({ isActive }: { isActive: boolean }) => (
+  <LoaderStyledWithBackdrop isActive={isActive}>
     <figure>
       <div>
         <img src={`/icons/lottie-rocket.gif?v=0`} alt={`Loader Image`} />
@@ -105,16 +105,16 @@ export const LoaderRocket = () => (
 export const ActionLoader = () => {
   const { isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
   useLockBodyScroll(isActiveFullScreenLoader)
-  return isActiveFullScreenLoader ? <LoaderRocket /> : null
+  return <LoaderRocket isActive={isActiveFullScreenLoader} />
 }
 
 // Wert initialization loader
 export const WertLoader = () => {
   const { isWertLoading } = useSelector((state: State) => state.loading)
   useLockBodyScroll(isWertLoading)
-  return isWertLoading ? (
-    <LoaderStyledWithBackdrop backdropAlpha={0.8}>
+  return (
+    <LoaderStyledWithBackdrop backdropAlpha={0.8} isActive={isWertLoading}>
       <LoaderShineTextAnimation>Initializating Wert IO widget...</LoaderShineTextAnimation>
     </LoaderStyledWithBackdrop>
-  ) : null
+  )
 }

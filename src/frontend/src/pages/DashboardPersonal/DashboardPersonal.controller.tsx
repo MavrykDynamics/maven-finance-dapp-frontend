@@ -1,5 +1,5 @@
 import { useParams } from 'react-router'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
 
@@ -27,7 +27,6 @@ import DelegationTab from './DashboardPersonalComponents/DelegationTab'
 import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
-import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 import { DashboardPersonalTabStyled } from './DashboardPersonalComponents/DashboardPersonalComponents.style'
 import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
@@ -38,10 +37,14 @@ import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
+
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
 
   const { tokensPrices } = useSelector((state: State) => state.tokens)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
@@ -67,6 +70,12 @@ const DashboardPersonal = () => {
   } = useSelector((state: State) => state.wallet)
 
   const claimRewards = async () => await dispatch(claimAllRewardsAction())
+
+  useEffect(() => {
+    changeStakingSubscriptionsList({
+      [SMVK_HISTORY_SUB]: false,
+    })
+  }, [])
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -140,7 +149,7 @@ const DashboardPersonal = () => {
           <DashboardPersonalEarningsHistory {...earnings} />
         </div>
 
-        {isLoading ? (
+        {isLoading || isDoormanLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
             <div className="text">Loading your statistic</div>
