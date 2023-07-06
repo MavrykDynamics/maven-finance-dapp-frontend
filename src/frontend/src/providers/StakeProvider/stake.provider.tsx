@@ -100,7 +100,7 @@ const StakeProvider = ({ children }: Props) => {
 
   // TODO: remove after user balances live update is ready
   const { loading: isUserBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
-    skip: shouldSkip.userBalance,
+    skip: shouldSkip.userBalance || !accountPkh,
     variables: {
       _eq: accountPkh,
     },
