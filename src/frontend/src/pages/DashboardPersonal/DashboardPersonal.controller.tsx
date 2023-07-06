@@ -55,11 +55,27 @@ import { TezosWalletErrorPayload } from 'errors/error.type'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 
+import {
+  MVK_BALANCE_SUB,
+  MVK_TOTAL_SUB,
+  DEFAULT_STAKING_ACTIVE_SUBS,
+} from 'providers/StakeProvider/helpers/stake.consts'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+} from 'providers/SatellitesProvider/satellites.const'
+
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
+  const {
+    contractAddresses: { mvkTokenAddress, doormanAddress },
+    setAction,
+  } = useDappConfigContext()
   const {
     userTokensBalances,
     userAddress,
@@ -74,25 +90,22 @@ const DashboardPersonal = () => {
     isSatellite,
     isVestee,
   } = useUserContext()
-
-  const {
-    mvkTokenAddress: { address: mvkTokenAddress },
-  } = useSelector((state: State) => state.contractAddresses)
+  const { changeSatellitesSubscriptionsList, isLoading: isSatellitesLoading } = useSatellitesContext()
+  const { bug, info, loading } = useToasterContext()
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
-  const { setAction } = useDappConfigContext()
-  const { bug, info, loading, setSharedError } = useToasterContext()
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
-  const {
-    doormanAddress: { address: doormanAddress },
-  } = useSelector((state: State) => state.contractAddresses)
 
   const claimRewards = async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!doormanAddress) {
+      bug('Bad doorman address')
       return
     }
 
@@ -137,8 +150,19 @@ const DashboardPersonal = () => {
 
   useEffect(() => {
     changeStakingSubscriptionsList({
-      [SMVK_HISTORY_SUB]: false,
+      [MVK_TOTAL_SUB]: true,
+      [MVK_BALANCE_SUB]: true,
     })
+
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
   }, [])
 
   const { isLoading } = useDataLoader(
@@ -244,7 +268,7 @@ const DashboardPersonal = () => {
           <DashboardPersonalEarningsHistory {...earnings} />
         </div>
 
-        {isLoading || isDoormanLoading ? (
+        {isLoading || isDoormanLoading || isSatellitesLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
             <div className="text">Loading your statistic</div>

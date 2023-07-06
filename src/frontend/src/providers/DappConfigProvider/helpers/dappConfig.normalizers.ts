@@ -1,4 +1,4 @@
-import { GetMaxlenghtsQueryQuery } from 'utils/__generated__/graphql'
+import { GetContractAddressesQueryQuery, GetMaxlenghtsQueryQuery } from 'utils/__generated__/graphql'
 import { DappMaxLengths } from '../dappConfig.provider.types'
 
 export const normalizerMaxLenghts = (data: GetMaxlenghtsQueryQuery): DappMaxLengths => {
@@ -50,5 +50,29 @@ export const normalizerMaxLenghts = (data: GetMaxlenghtsQueryQuery): DappMaxLeng
       satelliteDescriptionMaxLength: satellite_description_max_length,
       satelliteWebsiteMaxLength: satellite_website_max_length,
     },
+  }
+}
+
+export const normalizeContractAddresses = (data: GetContractAddressesQueryQuery) => {
+  return {
+    farmsAddress: data.farm[0].address,
+    farmsFactoryAddress: data.farm_factory[0].address,
+    delegationAddress: data.delegation[0].address,
+    doormanAddress: data.doorman[0].address,
+    mvkTokenAddress: data.mvk_token[0].address,
+    governanceAddress: data.governance[0].address,
+    governanceFinancialAddress: data.governance_financial[0].address,
+    emergencyGovernanceAddress: data.emergency_governance[0].address,
+    breakGlassAddress: data.break_glass[0].address,
+    councilAddress: data.council[0].address,
+    treasuryAddress: data.mvk_token[0].address, // { address: storage?.delegation?.[0]?.address },
+    treasuryFactoryAddress: data.treasury_factory[0].address,
+    vestingAddress: data.vesting[0].address,
+    governanceSatelliteAddress: data.governance_satellite[0].address,
+    feedsFactoryAddress: data.aggregator_factory[0].address,
+    feedsAddress: data.aggregator[0].address,
+    governanceProxyAddress: data.governance_proxy[0].address,
+    lendingControllerAddress: data.lending_controller[0].address,
+    vaultFactoryAddress: data.vault_factory[0].address,
   }
 }

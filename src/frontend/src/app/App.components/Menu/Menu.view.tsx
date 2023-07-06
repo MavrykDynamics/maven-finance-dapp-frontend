@@ -70,7 +70,11 @@ export const SocialIcons = () => (
 
 export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const { bug, info, loading, setSharedError } = useToasterContext()
-  const { mvkFaucetAddress, setAction } = useDappConfigContext()
+  const {
+    mvkFaucetAddress,
+    setAction,
+    contractAddresses: { mvkTokenAddress },
+  } = useDappConfigContext()
   const { userTokensBalances } = useUserContext()
   const { userAddress, isSatellite } = useUserContext()
 
@@ -78,9 +82,6 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const { pathname } = useLocation()
   const { sidebarOpened } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const {
-    mvkTokenAddress: { address: mvkTokenAddress },
-  } = useSelector((state: State) => state.contractAddresses)
   const [canGetInitThouthand, setCanGetInitThouthand] = useState(false)
 
   useEffect(() => {

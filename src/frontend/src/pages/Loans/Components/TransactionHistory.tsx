@@ -24,6 +24,7 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import { State } from 'reducers'
 import { useSelector } from 'react-redux'
 import useMarketTransactionHistory from 'providers/LoansProvider/hooks/useMarketTransactionHistory'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type TransactionHistoryPropsType = {
   loanTokenAddress: TokenAddressType
@@ -53,8 +54,8 @@ export const TransactionHistory = ({
   const { search } = useLocation()
 
   const {
-    lendingController: { address: lendingControllerAddress },
-  } = useSelector((state: State) => state.contractAddresses)
+    contractAddresses: { lendingControllerAddress },
+  } = useDappConfigContext()
 
   const { isLoading: isTransactionHistoryLoading, transactionHistory } = useMarketTransactionHistory({
     marketTokenAddress: loanTokenAddress,
@@ -129,11 +130,9 @@ export const TransactionHistory = ({
         side={PAGINATION_SIDE_CENTER}
       />
 
-      {lendingControllerAddress ? (
-        <div className="lending-controller">
-          Lending Controller Address: <TzAddress tzAddress={lendingControllerAddress} type={BLUE} isBold />
-        </div>
-      ) : null}
+      <div className="lending-controller">
+        Lending Controller Address: <TzAddress tzAddress={lendingControllerAddress} type={BLUE} isBold />
+      </div>
     </TransactionHistoryStyled>
   )
 }

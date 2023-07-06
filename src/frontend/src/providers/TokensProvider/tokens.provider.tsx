@@ -61,7 +61,7 @@ export const TokensProvider = ({ children }: Props) => {
       updateTokensPrices,
       isLoading: tokensLoading,
     }
-  }, [tokensCtxState, tokensLoading, updateTokensPrices])
+  }, [tokensCtxState, updateTokensPrices])
 
   return <tokensContext.Provider value={providerValue}>{children}</tokensContext.Provider>
 }

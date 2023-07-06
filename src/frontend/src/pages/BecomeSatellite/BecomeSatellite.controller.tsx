@@ -59,6 +59,8 @@ import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.pro
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import {
   ALL_SATELLITES_SUB,
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
   REGISTER_SATELLITE_ACTION,
   UPDATE_SATELLITE_ACTION,
 } from 'providers/SatellitesProvider/satellites.const'
@@ -83,7 +85,12 @@ const connectWalletMessage = (
 )
 
 export const BecomeSatellite = () => {
-  const { satelliteMapper, setSatelliteAddressToSubsctibe, isLoading: isSatellitesLoading } = useSatellitesContext()
+  const {
+    satelliteMapper,
+    setSatelliteAddressToSubsctibe,
+    changeSatellitesSubscriptionsList,
+    isLoading: isSatellitesLoading,
+  } = useSatellitesContext()
   const {
     userAddress,
     isSatellite,
@@ -101,6 +108,16 @@ export const BecomeSatellite = () => {
   const { bug, info, loading } = useToasterContext()
 
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
+  }, [])
 
   useEffect(() => {
     if (userAddress) {

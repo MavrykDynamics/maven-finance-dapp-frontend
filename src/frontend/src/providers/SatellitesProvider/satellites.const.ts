@@ -8,8 +8,6 @@ export const REGISTER_SATELLITE_ACTION = 'registerSatellite'
 export const UNREGISTER_SATELLITE_ACTION = 'unregisterSatellite'
 export const UPDATE_SATELLITE_ACTION = 'updateSatellite'
 
-export const ALL_SATELLITES_SUB = 'all'
-
 // Satellite status
 export const ACTIVE_SATELLITE_STATUS = 0
 export const SUSPENDED_SATELLITE_STATUS = 1
@@ -54,3 +52,12 @@ export const SATELLITE_VOTES_MAPPER = {
   [SATELLITE_VOTE_YES]: 'Yes',
   [SATELLITE_VOTE_NO]: 'No',
 } as const
+
+// Subs
+export const SATELLITE_DATA_SUB = 'SATELLITE_DATA_SUB'
+export const SATELLITE_PARTICIPATION_DATA_SUB = 'SATELLITE_PARTICIPATION_DATA_SUB'
+
+export const DEFAULT_SATELLITES_ACTIVE_SUBS = {
+  [SATELLITE_DATA_SUB]: false,
+  [SATELLITE_PARTICIPATION_DATA_SUB]: false,
+}

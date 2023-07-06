@@ -28,6 +28,11 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import {
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+} from 'providers/SatellitesProvider/satellites.const'
 
 const itemsForDropDown = [
   { text: 'Lowest Fee', value: 'satelliteFee' },
@@ -50,7 +55,19 @@ const SatelliteNodes = () => {
     satelliteGovActionsAmount,
     finRequestsAmount,
     isLoading: isSatellitesLoading,
+    changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
+
+  useEffect(() => {
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
+  }, [])
 
   const [filteredSatelliteList, setFilteredSatelliteList] = useState(allSatellitesIds)
   const [ddIsOpen, setDdIsOpen] = useState(false)
@@ -138,9 +155,10 @@ const SatelliteNodes = () => {
 
             {paginatedItemsList ? (
               <div className={`list`}>
-                {paginatedItemsList.map((satelliteAddress) => (
-                  <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
-                ))}
+                {paginatedItemsList.map((satelliteAddress) => {
+                  if (!satelliteMapper[satelliteAddress]) return null
+                  return <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
+                })}
 
                 <Pagination
                   itemsCount={filteredSatelliteList.length}

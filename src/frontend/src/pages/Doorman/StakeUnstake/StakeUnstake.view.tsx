@@ -97,7 +97,10 @@ export const StakeUnstakeView = ({
     satelliteMvkIsDelegatedTo,
     isSatellite,
   } = useUserContext()
-  const { setAction } = useDappConfigContext()
+  const {
+    setAction,
+    contractAddresses: { mvkTokenAddress, doormanAddress },
+  } = useDappConfigContext()
   const { info, loading, bug, setSharedError, sharedErrors } = useToasterContext()
 
   const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
@@ -110,11 +113,6 @@ export const StakeUnstakeView = ({
     }
     return () => setSatelliteAddressToSubsctibe(ALL_SATELLITES_SUB)
   }, [satelliteMvkIsDelegatedTo])
-
-  const {
-    doormanAddress: { address: doormanAddress },
-    mvkTokenAddress: { address: mvkTokenAddress },
-  } = useSelector((state: State) => state.contractAddresses)
 
   const delegatedUser = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
   const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
@@ -175,6 +173,10 @@ export const StakeUnstakeView = ({
 
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!doormanAddress || !mvkTokenAddress) {
+      bug('Wrong doorman or mvkToken address was provided')
       return
     }
 
@@ -243,6 +245,10 @@ export const StakeUnstakeView = ({
   const handleCompound = async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!doormanAddress) {
+      bug('Bad doorman address')
       return
     }
 

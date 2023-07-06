@@ -9,6 +9,8 @@ import {
   satelliteVoteSchema,
   SATELLITE_ORACLE_STATUSES,
   SATELLITE_STATUSES,
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
   DELEGATE_ACTION,
   UNDELEGATE_ACTION,
   DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
@@ -36,7 +38,8 @@ export type SatellitesContext = {
   isLoading: boolean
 
   // api
-  setSatelliteAddressToSubsctibe: (satelliteAddress: string) => void
+  setSatelliteAddressToSubsctibe: (satelliteAddress: string | null) => void
+  changeSatellitesSubscriptionsList: (skips: Partial<SatellitesSubsRecordType>) => void
 }
 
 export type SatellitesCtxState = Pick<
@@ -91,6 +94,9 @@ export type SatellitesStatisticsSubsSkipsType = {
   skipTotalDelegatedMVK?: boolean
   skipOracleRewardsTotal?: boolean
 }
+
+export type SatellitesSubsType = typeof SATELLITE_DATA_SUB | typeof SATELLITE_PARTICIPATION_DATA_SUB
+export type SatellitesSubsRecordType = Record<SatellitesSubsType, boolean>
 
 export type SatelliteActionsType =
   | typeof DELEGATE_ACTION

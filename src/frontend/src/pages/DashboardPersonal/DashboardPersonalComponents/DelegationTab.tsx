@@ -7,7 +7,6 @@ import { State } from 'reducers'
 import { BUTTON_SECONDARY, BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
-import { ALL_SATELLITES_SUB } from 'providers/SatellitesProvider/satellites.const'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 
 // view
@@ -50,7 +49,7 @@ const DelegationTab = () => {
     if (satelliteMvkIsDelegatedTo) {
       setSatelliteAddressToSubsctibe(satelliteMvkIsDelegatedTo)
     }
-    return () => setSatelliteAddressToSubsctibe(ALL_SATELLITES_SUB)
+    return () => setSatelliteAddressToSubsctibe(null)
   }, [satelliteMvkIsDelegatedTo])
 
   const satelliteRecord = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null

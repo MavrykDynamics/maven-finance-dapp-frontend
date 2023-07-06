@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // helpers
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
-import { INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
 import { stakingInputValidation } from '../Doorman.converter'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
@@ -34,8 +34,8 @@ import { State } from 'reducers'
 import { unstakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
 import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
-import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
 import { TezosWalletErrorPayload } from 'errors/error.type'
+import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -60,12 +60,12 @@ export const ExitFeeModal = ({
   setInputData,
 }: ExitFeeModalPropsType) => {
   const dispatch = useDispatch()
-  const { setAction } = useDappConfigContext()
+  const {
+    setAction,
+    contractAddresses: { doormanAddress },
+  } = useDappConfigContext()
   const { bug, info, loading, setSharedError } = useToasterContext()
 
-  const {
-    doormanAddress: { address: doormanAddress },
-  } = useSelector((state: State) => state.contractAddresses)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const parsedInputAmount = Number(inputData.amount)
@@ -77,6 +77,11 @@ export const ExitFeeModal = ({
   const handleUnstake = async (unstakeAmount: number) => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+
+    if (!doormanAddress) {
+      bug('Bad doorman address')
       return
     }
 
@@ -127,7 +132,6 @@ export const ExitFeeModal = ({
       bug(parsedError.message)
     }
   }
-
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
 

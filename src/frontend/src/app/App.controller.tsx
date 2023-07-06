@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
 import { AnyAction } from 'redux'
 import { useDispatch, useSelector } from 'react-redux'
 import { useMedia } from 'react-use'
@@ -22,7 +21,7 @@ import { State } from '../reducers'
 // view, styles
 import { Toaster } from './App.components/Toaster/Toaster.controller'
 import { Menu } from './App.components/Menu/Menu.controller'
-import { ActionLoader, LoaderRocket, WertLoader } from './App.components/Loader/Loader.view'
+import { ActionLoader, WertLoader } from './App.components/Loader/Loader.view'
 import { SettingPopup } from './App.components/SettingsPopup/SettingsPopup'
 import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
 import { AppStyled } from './App.style'
@@ -32,7 +31,6 @@ import { Footer } from './App.components/Footer/Footer'
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
 import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.actions'
-import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
@@ -52,16 +50,10 @@ export const App = () => {
   const [{ policyPopup }, setCookie] = useCookies(['policyPopup'])
 
   const { changeNodePopupOpen, sidebarOpened } = useSelector((state: State) => state.preferences)
-  const { isInitialDataLoading: isInitialReduxLoading } = useSelector((state: State) => state.loading)
 
   useEffect(() => {
-    ;(async () => {
-      dispatch(getContractAddressesStorage())
-
-      // Turn off loader
-      await dispatch(toggleInitialDataLoading(false))
-    })()
-  }, [dispatch])
+    dispatch(getContractAddressesStorage())
+  }, [])
 
   useEffect(() => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))
@@ -79,31 +71,23 @@ export const App = () => {
   const closeModalHandler = useCallback(() => dispatch(toggleRPCNodePopup(false)), [])
   const proccedPolicy = useCallback(() => setCookie('policyPopup', true), [])
 
-  const isInitialLoading =
-    isDappGeneralLoading || isTokensLoading || isFeedsLoading || isUserLoading || isInitialReduxLoading
+  const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isUserLoading
 
   return (
-    <>
-      <LoaderRocket isActive={isInitialLoading} />
-      {!isInitialLoading ? (
-        <Router>
-          <AppStyled isExpandedMenu={sidebarOpened} isVisible={!isInitialLoading}>
-            <ActionLoader />
-            <Toaster />
-            <WertLoader />
-            <Menu />
+    <AppStyled isExpandedMenu={sidebarOpened} isVisible={!isInitialLoading}>
+      <ActionLoader />
+      <Toaster />
+      <WertLoader />
+      <Menu />
 
-            <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
-            <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
+      <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
+      <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
-            <LoansPopupsProvider>
-              <AppRoutes />
-            </LoansPopupsProvider>
+      <LoansPopupsProvider>
+        <AppRoutes />
+      </LoansPopupsProvider>
 
-            <Footer />
-          </AppStyled>
-        </Router>
-      ) : null}
-    </>
+      <Footer />
+    </AppStyled>
   )
 }

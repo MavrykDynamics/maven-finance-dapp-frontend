@@ -10,7 +10,7 @@ import { TzAddressContainer, TzAddressIcon, TzAddressStyled } from './TzAddress.
 import { AppDispatch } from 'app/App.controller'
 
 type TzAddressProps = {
-  tzAddress: string
+  tzAddress?: string | null
   type?: TzAddressStyles
   hasIcon?: boolean
   iconToLeft?: boolean | undefined
@@ -47,8 +47,11 @@ export const TzAddress = ({
   amountFromStart = 4,
   amountFromEnd = 4,
 }: TzAddressProps) => {
-  const addrClasses = `${type} ${isBold ? 'bold' : ''}  ${isLargeIcon ? 'largeIcon' : ''} copyIcon`
   const dispatch = useDispatch()
+
+  if (!tzAddress) return <TzAddressContainer className={`${className} tzAddressToClick`}>–</TzAddressContainer>
+
+  const addrClasses = `${type} ${isBold ? 'bold' : ''}  ${isLargeIcon ? 'largeIcon' : ''} copyIcon`
 
   const handleCopy = () => dispatch(handleCopyToClipboard(tzAddress))
 

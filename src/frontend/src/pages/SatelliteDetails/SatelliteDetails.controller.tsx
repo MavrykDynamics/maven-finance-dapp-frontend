@@ -10,7 +10,7 @@ import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSide
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import SatellitePagination from './SatellitePagination/SatellitePagination.view'
 import { SatelliteListItem } from 'pages/Satellites/listItem/SateliteCard.view'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { Page, PageContent } from 'styles'
 import { EmptyContainer } from 'app/App.style'
@@ -30,7 +30,12 @@ import { useSatelliteVotes } from 'providers/SatellitesProvider/hooks/useSatelli
 import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 // consts
-import { ALL_SATELLITES_SUB, SATELLITE_VOTES_MAPPER } from 'providers/SatellitesProvider/satellites.const'
+import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+  SATELLITE_VOTES_MAPPER,
+} from 'providers/SatellitesProvider/satellites.const'
 
 // types
 import { SatelliteVotesType } from 'providers/SatellitesProvider/satellites.provider.types'
@@ -81,6 +86,7 @@ export const SatelliteDetails = () => {
     finRequestsAmount,
     isLoading: isSatellitesLoading,
     setSatelliteAddressToSubsctibe,
+    changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
   const currentSatellite = satelliteMapper[satelliteId]
 
@@ -92,8 +98,19 @@ export const SatelliteDetails = () => {
   })
 
   useEffect(() => {
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
+  }, [])
+
+  useEffect(() => {
     setSatelliteAddressToSubsctibe(satelliteId)
-    return () => setSatelliteAddressToSubsctibe(ALL_SATELLITES_SUB)
+    return () => setSatelliteAddressToSubsctibe(null)
   }, [satelliteId])
 
   const { satelliteVotes, isLoading: isSatelliteVotesLoading } = useSatelliteVotes(satelliteId)
@@ -160,7 +177,13 @@ export const SatelliteDetails = () => {
 
                 <SatelliteVotingInfoWrapper>
                   <BlockName>Voting History</BlockName>
-                  <SatellitesVotingHistory satelliteVotes={satelliteVotes} />
+                  {isSatelliteVotesLoading ? (
+                    <div className="loader">
+                      <SpinnerCircleLoaderStyled />
+                    </div>
+                  ) : (
+                    <SatellitesVotingHistory satelliteVotes={satelliteVotes} />
+                  )}
                 </SatelliteVotingInfoWrapper>
               </SatelliteCardBottomRow>
             </SatelliteListItem>
