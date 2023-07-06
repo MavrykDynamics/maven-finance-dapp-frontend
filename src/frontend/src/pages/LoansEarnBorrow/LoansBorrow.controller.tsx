@@ -42,7 +42,6 @@ const marketSettings: MarketSettingsType = {
 export const LoansBorrow = () => {
   const dispatch = useDispatch()
   const history = useHistory()
-  const location = useLocation()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { openCreateVaultPopup } = useLoansPopupsContext()
