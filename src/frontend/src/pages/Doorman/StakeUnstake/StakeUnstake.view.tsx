@@ -276,10 +276,8 @@ export const StakeUnstakeView = ({
         setAction({ actionName: REWARDS_COMPOUND_ACTION, toasterId, operationLvl })
       } catch (e) {}
     } else if (isContractErrorPayload(actionResult.error)) {
-      setSharedError(WALLTET_ERROR_FIELD, {
-        ...(actionResult.error as TezosWalletErrorPayload),
-        actionId: REWARDS_COMPOUND_ACTION,
-      })
+      const { message, description } = actionResult.error as TezosWalletErrorPayload
+      bug(description, message)
     } else {
       setAction(null)
       const parsedError = unknownToError(actionResult.error)

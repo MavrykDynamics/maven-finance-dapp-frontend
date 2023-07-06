@@ -1,8 +1,8 @@
 import { OpKind, TransferParams, WalletParamsWithKind } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { unknownToError } from 'errors/error'
-import { estimateBatchOperation, estimateExecution } from 'errors/helpers/walletError.helper'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
+import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 
 export const claimVestingReward = async (
   vestingAddress: string,
@@ -13,15 +13,7 @@ export const claimVestingReward = async (
     const contract = await tezos?.wallet.at(vestingAddress)
     const claimVestinOperationMetaData = contract?.methods.claim()
 
-    const op = await estimateExecution(claimVestinOperationMetaData)
-
-    if (op?.error) {
-      return { actionSuccess: false, error: op.error }
-    }
-
-    const operation = await claimVestinOperationMetaData.send()
-
-    return { actionSuccess: true, operation }
+    return await getEstimationResult(claimVestinOperationMetaData)
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }
@@ -55,27 +47,18 @@ export const claimAllRewardsAction = async (userAddress: string, doormanAddress:
         .map((fn) => fn()),
     )
 
-    // TODO fix type
-    const bachArr = [...farmsRewardsBatchPart] as (TransferParams & { kind: OpKind.TRANSACTION })[]
+    const batchArr = [...farmsRewardsBatchPart] as (TransferParams & { kind: OpKind.TRANSACTION })[]
 
     // if user has satelite/doorman reward batch part of getting this reward will be added to the batch array
     if (availableDoormanRewards > 0 || availableSatellitesRewards > 0) {
       const doormanContractInstance = await tezos?.wallet.at(doormanAddress)
-      bachArr.push({
+      batchArr.push({
         kind: OpKind.TRANSACTION,
         ...doormanContractInstance.methods.compound(userAddress).toTransferParams(),
       })
     }
 
-    const estimateBatchOp = await estimateBatchOperation(bachArr)
-
-    if (estimateBatchOp.error) {
-      return { actionSuccess: false, error: estimateBatchOp.error }
-    }
-
-    const operation = await tezos.wallet.batch(bachArr).send()
-
-    return { actionSuccess: true, operation }
+    return await getEstimationBatchResult(tezos, batchArr)
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }
@@ -90,15 +73,8 @@ export const rewardsCompound = async (
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos?.wallet.at(doormanAddress)
     const rewardsOperationMetaData = contract?.methods.compound(userAddress)
-    const op = await estimateExecution(rewardsOperationMetaData)
 
-    if (op?.error) {
-      return { actionSuccess: false, error: op.error }
-    }
-
-    const operation = await rewardsOperationMetaData.send()
-
-    return { actionSuccess: true, operation }
+    return await getEstimationResult(rewardsOperationMetaData)
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }
@@ -113,15 +89,7 @@ export const getMVKTokensFromFaucet = async (
     const contract = await tezos.wallet.at(mvkFaucetAddress)
     const requestMVKMetaData = await contract.methods.requestMvk()
 
-    const op = await estimateExecution(requestMVKMetaData)
-
-    if (op?.error) {
-      return { actionSuccess: false, error: op.error }
-    }
-
-    const operation = await requestMVKMetaData.send()
-
-    return { actionSuccess: true, operation }
+    return await getEstimationResult(requestMVKMetaData)
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }

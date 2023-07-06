@@ -1,9 +1,9 @@
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { unknownToError } from 'errors/error'
-import { estimateBatchOperation, estimateExecution } from 'errors/helpers/walletError.helper'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { OpKind } from '@taquito/taquito'
+import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 
 export const stakeMVK = async (
   amount: number,
@@ -54,16 +54,7 @@ export const stakeMVK = async (
 
     const batchArr = [approveBatchItemMetaData, stakeBatchItemMetaData, removeBatchItemMetaData]
 
-    // Estimating Operations for the batch call
-    const estimateBatchOp = await estimateBatchOperation(batchArr)
-
-    if (estimateBatchOp.error) {
-      return { actionSuccess: false, error: estimateBatchOp.error }
-    }
-
-    const operation = await tezos.wallet.batch(batchArr).send()
-
-    return { actionSuccess: true, operation }
+    return await getEstimationBatchResult(tezos, batchArr)
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }
@@ -78,15 +69,8 @@ export const unstakeMVK = async (
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(doormanAddress)
     const unstakeOperationMetaData = contract?.methods.unstake(convertNumberForContractCall({ number: amount }))
-    const op = await estimateExecution(unstakeOperationMetaData)
 
-    if (op?.error) {
-      return { actionSuccess: false, error: op.error }
-    }
-
-    const operation = await unstakeOperationMetaData.send()
-
-    return { actionSuccess: true, operation }
+    return await getEstimationResult(unstakeOperationMetaData)
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }
