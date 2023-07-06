@@ -27,20 +27,16 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
       <h3>Incoming Updates & Fixes:</h3>
 
       <ol>
-        <li> Independent Earn & Borrow pages for simpler on-boarding.</li>
-        <li>Advanced Permissions for Vaults.</li>
         <li>Improved UI/UX for Satellite operators.</li>
+        <li>Live data updates (more exact data at all times).</li>
+        <li>Advanced Permissions for Vaults.</li>
+        <li>Transaction Estimation & Improved Error Handling.</li>
       </ol>
 
-      <h3>Known UX/UI Issues & Bugs:</h3>
+      <h3>Known UI/UX Issues & Bugs:</h3>
 
       <ol>
-        <li>
-          Random wallet issue after triggering transactions where the spaceship loader lasts for 1 sec and data doesn't
-          update. If this occurs to you, please refresh the page a few seconds later.
-        </li>
         <li>Slow data display updates.</li>
-        <li>Governance Proposal Submission - snapshot timing issue. Will need to wait to new round to vote.</li>
       </ol>
 
       <Checkbox id="policy" onChangeHandler={() => setCheckbox(!checkbox)} checked={checkbox}>

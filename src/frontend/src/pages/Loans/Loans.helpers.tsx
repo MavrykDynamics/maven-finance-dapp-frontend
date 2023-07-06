@@ -4,9 +4,10 @@ import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Inp
 
 import { convertNumberForClient, convertNumberForContractCall } from '../../utils/calcFunctions'
 import { assetDecimalsToShow } from './Loans.const'
+import { compareDatesByDay } from 'utils/compareDatesByDay'
+import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 
 // TODO: move this utils to provider and add docs to them while loans live update
-
 // HELPER FOR LENDING APY
 export const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): number => {
   const secondsPerYear = 60 * 60 * 24 * 365
@@ -145,4 +146,36 @@ export const getChartSettingsBasedOnChartLength = (
         ...settings,
         height: 50,
       }
+}
+
+/**
+ * @param array - chart data with value and time
+ * @param period - 0 values for days without data will be added for this period
+ * @returns {SingleValueData[]}
+ */
+export const addMissingDaysWithZeroValues = (array: SingleValueData[], period: number) => {
+  const reversedArray = [...array].reverse()
+  const updatedArray: SingleValueData[] = []
+  const currentDay = new Date()
+  // we use "+1" below, because it will count the period without taking into account the current day that we want to include
+  currentDay.setDate(currentDay.getDate() + 1 - period)
+
+  while (currentDay <= new Date()) {
+    const foundDay = reversedArray.find(
+      (item) => compareDatesByDay(currentDay, new Date(item.time as unknown as Date)) === 0,
+    )
+
+    updatedArray.push(
+      foundDay
+        ? foundDay
+        : {
+            time: currentDay.getTime() as UTCTimestamp,
+            value: 0,
+          },
+    )
+
+    currentDay.setDate(currentDay.getDate() + 1)
+  }
+
+  return updatedArray
 }
