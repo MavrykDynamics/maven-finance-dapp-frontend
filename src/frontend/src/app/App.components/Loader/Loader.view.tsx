@@ -1,14 +1,8 @@
-import {
-  ClockLoaderWrapper,
-  LoaderShineTextAnimation,
-  LoaderStyled,
-  LoaderStyledWithBackdrop,
-  SpinnerCircleLoaderStyled,
-} from './Loader.style'
+import { ClockLoaderWrapper, LoaderShineTextAnimation, LoaderStyled, LoaderStyledWithBackdrop } from './Loader.style'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { useLockBodyScroll } from 'react-use'
-import { lightTextColor } from 'styles'
+import colors from 'styles/colors'
 
 // Details page loader
 export const SpinnerLoader = () => (
@@ -26,15 +20,10 @@ export const SpinnerLoader = () => (
 )
 
 // Page data loader
-export const ClockLoader = ({
-  width = 75,
-  height = 75,
-  fillColor = lightTextColor,
-}: {
-  width?: number
-  height?: number
-  fillColor?: string
-}) => {
+export const ClockLoader = (props: { width?: number; height?: number; fillColor?: string }) => {
+  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { width = 75, height = 75, fillColor = colors[themeSelected]['mainHeadingText'] } = props
+
   return (
     <ClockLoaderWrapper
       width={width}

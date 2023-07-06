@@ -77,7 +77,7 @@ export const LoaderStyledWithBackdrop = styled.div<{ theme: MavrykTheme; backdro
   text-align: center;
   font-weight: 600;
   font-size: 18px;
-  color: ${({ theme }) => theme.valueColor};
+  color: ${({ theme }) => theme.linksAndButtons};
   transition: 350ms opacity, 350ms visibility;
 
   ${({ isActive }) =>
@@ -115,7 +115,7 @@ export const LoaderShineTextAnimation = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const SpinnerCircleLoaderStyled = styled.div<{ theme: MavrykTheme }>`
-  color: #ffffff;
+  color: ${({ theme }) => theme.mainHeadingText};
   font-size: 20px;
   width: 1em;
   height: 1em;
@@ -156,7 +156,7 @@ export const DataLoaderWrapper = styled.div<{ theme: MavrykTheme }>`
       animation: ${ellipsis} steps(4, end) 1500ms infinite;
       content: '...';
       width: 0px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.mainHeadingText};
     }
   }
 `

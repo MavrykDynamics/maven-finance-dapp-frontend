@@ -68,7 +68,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
           <Icon id="wallet" />
           <TzAddress tzAddress={accountPkh} type={BLUE} />
           <a href={`https://ghost.tzstats.com/${accountPkh}`} target="_blank" rel="noreferrer">
-            <Icon id="send" className="icon-send" />
+            <Icon id="send" />
           </a>
         </div>
 
@@ -257,7 +257,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
           <Icon id="wallet" />
           <TzAddress tzAddress={accountPkh} type={BLUE} />
           <a href={`https://ghost.tzstats.com/${accountPkh}`} target="_blank" rel="noreferrer">
-            <Icon id="send" className="icon-send" />
+            <Icon id="send" />
           </a>
         </div>
 
