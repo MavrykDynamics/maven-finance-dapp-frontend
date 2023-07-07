@@ -7,7 +7,7 @@ import {
   errorHeaderDefaultTextWhenError,
 } from '../toaster.provider.const'
 
-export function getErrorPageData(type: InternalErrorType | null) {
+export function getErrorPageData(type: InternalErrorType) {
   switch (type) {
     case ERROR_TYPE_ROUTER:
       return {
@@ -15,10 +15,6 @@ export function getErrorPageData(type: InternalErrorType | null) {
         desc: errorDescDefaultText,
       }
     case ERROR_TYPE_FATAL:
-      return {
-        header: errorHeaderDefaultTextWhenError,
-        desc: errorDescDefaultTextWhenError,
-      }
     default:
       return {
         header: errorHeaderDefaultTextWhenError,
