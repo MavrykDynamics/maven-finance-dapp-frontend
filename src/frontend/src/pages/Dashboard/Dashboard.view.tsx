@@ -19,9 +19,6 @@ import { SatellitesTab } from './TabScreens/SatellitesTab.controller'
 import { TreasuryTab } from './TabScreens/TreasuryTab.controller'
 import { VaultsTab } from './TabScreens/VaultsTab.controller'
 import { StakingTab } from './TabScreens/StakingTab.controller'
-import { ApiError, FatalError, ValidationError } from 'errors/error'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useState } from 'react'
 
 const TabById = ({ activeTab, isDataLoading }: { activeTab: TabId; isDataLoading: boolean }) => {
   switch (activeTab) {
@@ -53,17 +50,6 @@ export const DashboardView = ({
   activeTab: TabId
   isLoading: boolean
 }) => {
-  const { fatal } = useToasterContext()
-  const [hasError, setHasError] = useState(false)
-
-  const renderTest = () => {
-    if (hasError) {
-      throw new Error('Has error test')
-    }
-
-    return <div>Test (this component will throw error which will be catch inside ComponentDidCatch)</div>
-  }
-
   return (
     <DashboardStyled>
       <div className="top">
@@ -72,22 +58,6 @@ export const DashboardView = ({
           <CommaNumber beginningText="$" value={isLoading ? 0 : tvl} />
         </div>
 
-        {renderTest()}
-
-        <button
-          onClick={() => {
-            fatal(new FatalError('Fatal error'))
-          }}
-        >
-          Fatal error
-        </button>
-        <button
-          onClick={() => {
-            setHasError(true)
-          }}
-        >
-          Trigger componentDidCatch error
-        </button>
         <div className="mvkStats">
           <BGPrimaryTitleStyled>MVK</BGPrimaryTitleStyled>
           <div className="statsWrapper">

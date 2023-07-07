@@ -15,7 +15,8 @@ export const LoaderStyledWithBackdrop = styled.div<{ theme: MavrykTheme; backdro
   font-weight: 600;
   font-size: 18px;
   color: ${({ theme }) => theme.valueColor};
-  transition: 350ms opacity, 350ms visibility;
+
+  transition: 250ms opacity ease-in, 250ms visibility ease-in;
 
   ${({ isActive }) =>
     !isActive

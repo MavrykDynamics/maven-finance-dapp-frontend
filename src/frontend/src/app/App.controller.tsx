@@ -10,11 +10,6 @@ import { configureStore } from './App.store'
 // providers
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 
-// hooks
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-
 // types
 import { State } from '../reducers'
 
@@ -32,7 +27,6 @@ import { Footer } from './App.components/Footer/Footer'
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
 import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.actions'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
@@ -40,11 +34,6 @@ export type GetState = typeof store.getState
 
 export const App = () => {
   const dispatch = useDispatch()
-
-  const { isLoading: isDappGeneralLoading } = useDappConfigContext()
-  const { isLoading: isTokensLoading } = useTokensContext()
-  const { isLoading: isFeedsLoading } = useDataFeedsContext()
-  const { isLoading: isUserLoading } = useUserContext()
 
   const showSidebarOpened = useMedia('(min-width: 1400px)')
   const [{ policyPopup }, setCookie] = useCookies(['policyPopup'])
@@ -71,10 +60,8 @@ export const App = () => {
   const closeModalHandler = useCallback(() => dispatch(toggleRPCNodePopup(false)), [])
   const proccedPolicy = useCallback(() => setCookie('policyPopup', true), [])
 
-  const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isUserLoading
-
   return (
-    <AppStyled isExpandedMenu={sidebarOpened} isVisible={!isInitialLoading}>
+    <AppStyled isExpandedMenu={sidebarOpened}>
       <ActionLoader />
       <Toaster />
       <WertLoader />

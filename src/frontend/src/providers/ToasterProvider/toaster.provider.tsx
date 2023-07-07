@@ -3,7 +3,7 @@ import { ErrorPage } from 'pages/Error/ErrorPage'
 
 // types
 import type { ToasterContextType, ToasterTypes } from './toaster.provider.type'
-import { CustomErrors, ExtendedError, FatalError } from '../../errors/error'
+import { CustomErrors, FatalError } from '../../errors/error'
 
 // consts
 import {
@@ -15,7 +15,6 @@ import {
 } from './toaster.provider.const'
 import { generateUniqueId } from 'utils/calcFunctions'
 import { getErrorPageData } from './helpers/getErrorPageData'
-import { ERROR_TYPE_FATAL } from 'errors/error.const'
 
 export const toasterContext = React.createContext<ToasterContextType>(undefined!)
 
