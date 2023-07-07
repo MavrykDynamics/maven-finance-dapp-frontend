@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { TabItem, TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { BorrowingTabListItemTabInfo } from '../LoansComponents.style'
 import {
   ANY_USER,
@@ -34,6 +33,8 @@ import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress
 import { State } from 'reducers'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { EmptyContainer } from 'app/App.style'
+import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 type Props = {
   openAddNewCollateralPopup: () => void
@@ -116,7 +117,11 @@ export const BorrowingExpandCardMenuSection = ({
 
   return (
     <>
-      <TabSwitcher tabItems={menuTabs} onClick={handleSwitchTab(setActiveMenuTab)} className="menu-switcher " />
+      <SlidingTabButtons
+        kind={SECONDARY_SLIDING_TAB_BUTTONS}
+        tabItems={menuTabs}
+        onClick={handleSwitchTab(setActiveMenuTab)}
+      />
 
       {activeMenuTab?.id === loansTabNames.COLLATERAL_ASSETS && (
         <BorrowingTabListItemTabInfo>

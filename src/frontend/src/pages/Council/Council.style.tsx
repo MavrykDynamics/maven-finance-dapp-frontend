@@ -41,10 +41,6 @@ export const CouncilStyled = styled.div<{ theme: MavrykTheme }>`
     .pending-items {
       width: 750px;
     }
-
-    .primary-switcher {
-      margin: 0;
-    }
   }
 
   .right-block {

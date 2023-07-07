@@ -37,6 +37,7 @@ import {
   SATELLITE_GOVERNANCE_PATHNAME,
 } from './SatelliteGovernance.consts'
 import { TOTAL_DELEGATED_MVK } from 'texts/tooltips/satellite'
+import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -45,10 +46,9 @@ import { SatelliteGovernanceCard } from './SatelliteGovernanceCard/SatelliteGove
 import { SatelliteGovernanceForm } from './SatelliteGovernance.form'
 import { CommaNumber } from '../../app/App.components/CommaNumber/CommaNumber.controller'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
-import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 const getCurrentListNameById = (tabId: string) => {
   switch (tabId) {
@@ -258,7 +258,7 @@ export const SatelliteGovernance = () => {
           </DataLoaderWrapper>
         ) : (
           <SatelliteGovernanceMenuCards>
-            <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="primary-switcher" />
+            <SlidingTabButtons kind={SECONDARY_SLIDING_TAB_BUTTONS} tabItems={tabsList} onClick={handleChangeTabs} />
 
             <div>
               {paginatedItemsList.length

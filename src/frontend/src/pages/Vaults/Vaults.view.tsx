@@ -5,7 +5,7 @@ import { useLocation, useHistory, useParams } from 'react-router'
 // components
 import { VaultsSearchFilter } from './components/VaultsSearchFilter.view'
 import { VaultsCard } from './components/VaultsCard.view'
-import { TabSwitcher } from 'pages/Council/Council.style'
+import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
@@ -25,10 +25,10 @@ import {
 import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getVaultAssets } from './Vaults.helpers'
+import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 // types
 import { State } from '../../reducers'
-import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
 import { markForLiquidation } from './Vaults.actions'
@@ -138,7 +138,7 @@ export const VaultsView = () => {
 
   return (
     <VaultsStyled>
-      <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="primary-switcher" />
+      <SlidingTabButtons kind={SECONDARY_SLIDING_TAB_BUTTONS} tabItems={tabsList} onClick={handleChangeTabs} />
 
       <VaultsSearchFilter
         assets={assets}

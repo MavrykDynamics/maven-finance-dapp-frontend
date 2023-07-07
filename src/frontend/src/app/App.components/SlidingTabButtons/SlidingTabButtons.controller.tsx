@@ -1,24 +1,30 @@
-import React, { useEffect, useState } from 'react'
-import { SlidingTabButtonsView } from './SlidingTabButtons.view'
+import { useEffect, useState } from 'react'
+import classNames from 'classnames'
+
+import { ButtonStyled, SlidingTabButtonsStyled } from './SlidingTabButtons.style'
+import { PRIMARY_SLIDING_TAB_BUTTONS, SlidingTabButtonsKindsType } from './SlidingTabButtons.conts'
 
 export interface TabItem {
   text: string
   id: number
   active: boolean
   isDisabled?: boolean
+  path?: string
 }
 
 type SlidingTabButtonsProps = {
-  className?: string
-  onClick: (tabId: number) => void
   tabItems: TabItem[]
+  onClick: (tabId: number) => void
+  kind?: SlidingTabButtonsKindsType
   disabled?: boolean
+  className?: string
 }
 
 export const SlidingTabButtons = ({
-  onClick,
-  className = '',
   tabItems = [],
+  onClick,
+  kind = PRIMARY_SLIDING_TAB_BUTTONS,
+  className,
   disabled = false,
 }: SlidingTabButtonsProps) => {
   // if we found active item by default set it, othervise set first item active, if it's not disabled
@@ -42,11 +48,16 @@ export const SlidingTabButtons = ({
   }
 
   return (
-    <SlidingTabButtonsView
-      className={`${className} ${disabled && 'disabled'}`}
-      onClick={clickHandler}
-      activeTab={activeTab}
-      tabValues={tabItems}
-    />
+    <SlidingTabButtonsStyled className={classNames(className, kind, { disabled: disabled })}>
+      {tabItems.map((tabItem) => (
+        <ButtonStyled
+          key={tabItem.id}
+          onClick={() => clickHandler(tabItem.id)}
+          className={classNames(kind, { selected: activeTab === tabItem.id })}
+        >
+          {tabItem.text}
+        </ButtonStyled>
+      ))}
+    </SlidingTabButtonsStyled>
   )
 }

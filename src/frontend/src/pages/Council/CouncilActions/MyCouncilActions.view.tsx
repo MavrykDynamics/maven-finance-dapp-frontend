@@ -4,13 +4,14 @@ import { CouncilOngoingAction } from './CouncilOngoingAction.view'
 import { CouncilAction } from 'pages/Council/CouncilActions/CouncilAction.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { councilEmptyContainer } from '../Council.view'
-
-// styles
-import { TabSwitcher } from '../Council.style'
+import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // types
 import { CouncilActionType } from 'utils/TypesAndInterfaces/Council'
-import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+import { TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+
+// helpers
+import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 type Props = {
   myPastCouncilAction: number[]
@@ -48,7 +49,7 @@ export function MyCouncilActions({
   }
   return (
     <>
-      <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="primary-switcher" />
+      <SlidingTabButtons kind={SECONDARY_SLIDING_TAB_BUTTONS} tabItems={tabsList} onClick={handleChangeTabs} />
       {activeActionTab === tabsList[1].text && (
         <>
           {myPastCouncilAction.length ? (

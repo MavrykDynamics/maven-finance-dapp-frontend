@@ -4,11 +4,10 @@ import { State } from 'reducers'
 
 // styles
 import { DoormanChartCard, DoormanExitFeeCurrentValues, Wrapper } from './DoormanChart.style'
-import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // components
 import { Chart } from '../../../app/App.components/Chart/Chart'
-import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { SlidingTabButtons, TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { cyanColor, skyColor } from 'styles'
 
 import { AREA_CHART_TYPE, AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
@@ -22,6 +21,7 @@ import { SingleValueData, Time } from 'lightweight-charts'
 import { calcExitFee, calcMLI } from 'utils/calcFunctions'
 import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 const tabsList: TabItem[] = [
   {
@@ -79,7 +79,7 @@ export function DoormanChart() {
 
   return (
     <Wrapper>
-      {tabsList?.length ? <TabSwitcher className="switcher" tabItems={tabsList} onClick={handleChangeTabs} /> : null}
+      <SlidingTabButtons kind={SECONDARY_SLIDING_TAB_BUTTONS} tabItems={tabsList} onClick={handleChangeTabs} />
 
       <DoormanChartCard>
         {activeTabId === tabsList[0].id ? (

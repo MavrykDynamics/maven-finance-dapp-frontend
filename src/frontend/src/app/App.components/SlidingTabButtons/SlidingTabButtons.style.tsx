@@ -1,76 +1,90 @@
-import styled, { css } from 'styled-components/macro'
+import styled from 'styled-components/macro'
 import { BUTTON_RADIUS } from '../../../styles/constants'
+import { PRIMARY_SLIDING_TAB_BUTTONS, SECONDARY_SLIDING_TAB_BUTTONS } from './SlidingTabButtons.conts'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.backgroundColor};
-  border: 1px solid ${({ theme }) => theme.strokeColor};
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
-  border-radius: 20px;
-  height: 40px;
-  padding: 1px;
 
   &.disabled {
     opacity: 0.6;
     cursor: not-allowed;
 
     > button {
+      opacity: 0.6;
       cursor: not-allowed;
     }
   }
 
-  &.vault {
+  &.${PRIMARY_SLIDING_TAB_BUTTONS} {
+    padding: 1px;
     height: 40px;
-    width: 310px;
 
-    button {
-      white-space: nowrap;
+    background-color: ${({ theme }) => theme.backgroundColor};
+    border: 1px solid ${({ theme }) => theme.strokeColor};
+    border-radius: 20px;
+
+    &.vault {
+      height: 40px;
+      width: 310px;
     }
   }
+
+  &.${SECONDARY_SLIDING_TAB_BUTTONS} {
+    column-gap: 20px;
+    width: fit-content;
+  }
 `
 
-export const ButtonStyled = styled.button<{ disabled: boolean; theme: MavrykTheme }>`
+export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   border: none;
   cursor: pointer;
-  height: 100%;
-  width: -webkit-fill-available;
   white-space: nowrap;
-  padding: 0 22px;
-  border-radius: ${BUTTON_RADIUS};
-  user-select: none;
-  color: ${({ theme }) => theme.regularText};
-  background: transparent;
 
-  &.selected {
-    color: ${({ theme }) => theme.backgroundColor};
-    background: ${({ theme }) => theme.forTabs};
-  }
+  font-weight: 600;
+  line-height: 21px;
 
-  &.loading {
-    pointer-events: none;
-    opacity: 0.8;
-  }
+  &.${PRIMARY_SLIDING_TAB_BUTTONS} {
+    padding: 0 22px;
 
-  ${({ disabled }) =>
-    disabled
-      ? css`
-          opacity: 0.7;
-          cursor: not-allowed;
-        `
-      : ''}
-`
+    height: 100%;
+    width: -webkit-fill-available;
 
-export const ButtonText = styled.div<{ theme: MavrykTheme }>`
-  > div {
-    text-align: center;
-    margin: auto;
-    display: inline-block;
-    vertical-align: top;
-
-    font-weight: 600;
     font-size: 14px;
-    line-height: 21px;
+    text-align: center;
+
+    border-radius: ${BUTTON_RADIUS};
+    color: ${({ theme }) => theme.regularText};
+
+    &.selected {
+      color: ${({ theme }) => theme.backgroundColor};
+      background: ${({ theme }) => theme.forTabs};
+    }
+  }
+
+  &.${SECONDARY_SLIDING_TAB_BUTTONS} {
+    position: relative;
+    padding-bottom: 6px;
+
+    font-size: 16px;
+    color: ${({ theme }) => theme.menuButtonText};
+
+    &.selected {
+      color: ${({ theme }) => theme.selectedColor};
+
+      &::after {
+        position: absolute;
+        left: calc(50% - 15px);
+        bottom: 0;
+
+        width: 30px;
+        height: 1px;
+
+        content: '';
+        background-color: ${({ theme }) => theme.selectedColor};
+      }
+    }
   }
 `

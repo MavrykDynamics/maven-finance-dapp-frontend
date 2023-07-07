@@ -5,12 +5,7 @@ import { Card } from 'styles'
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-
-  .switcher {
-    margin-top: 30px;
-    width: fit-content;
-    column-gap: 15px;
-  }
+  margin-top: 30px;
 `
 
 export const DoormanExitFeeCurrentValues = styled.div<{ theme: MavrykTheme }>`
