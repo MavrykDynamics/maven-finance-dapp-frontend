@@ -3,7 +3,7 @@ import { ErrorPage } from 'pages/Error/ErrorPage'
 
 // types
 import type { ToasterContextType, ToasterTypes } from './toaster.provider.type'
-import { FatalError, type CustomErrors } from '../../errors/error'
+import { FatalError, CustomErrors } from '../../errors/error'
 
 // consts
 import {
