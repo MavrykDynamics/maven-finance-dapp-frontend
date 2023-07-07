@@ -7,7 +7,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TRANSPARENT } from 'app/App.components/Button/Button.constants'
 import {
   TRANSACTION_HISTORY_TABLE_NAME,
@@ -141,7 +141,8 @@ export const TransactionHistory = ({
 
       {lendingControllerAddress ? (
         <div className="lending-controller">
-          Lending Controller Address: <TzAddress tzAddress={lendingControllerAddress} type={BLUE} isBold />
+          Lending Controller Address:{' '}
+          <TzAddress tzAddress={lendingControllerAddress} type={PRIMARY_TZ_ADDRESS_COLOR} isBold />
         </div>
       ) : null}
     </TransactionHistoryStyled>

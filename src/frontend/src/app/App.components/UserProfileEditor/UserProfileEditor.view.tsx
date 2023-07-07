@@ -9,7 +9,7 @@ import {
 } from './UserProfileEditor.style'
 import Icon from '../Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
-import { PRIMARY, BUTTON_ROUND, BUTTON_WIDE, BUTTON_THIRD } from '../Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_WIDE, BUTTON_THIRD } from '../Button/Button.constants'
 
 const rotateSides = {
   LEFT: 'left',
@@ -108,7 +108,7 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
           </UserProfileEditorZoom>
 
           <UserProfileEditorSaveButton>
-            <NewButton kind={PRIMARY} form={BUTTON_WIDE} onClick={handleFile}>
+            <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={handleFile}>
               Save Photo
             </NewButton>
           </UserProfileEditorSaveButton>

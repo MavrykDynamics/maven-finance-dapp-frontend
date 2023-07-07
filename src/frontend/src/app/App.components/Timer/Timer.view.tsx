@@ -1,6 +1,8 @@
-import { downColor, headerColor } from 'styles'
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
 
 import { TimerStyled } from './Timer.style'
+import colors from 'styles/colors'
 
 export const LETTER_VIEW = 'letter'
 export const COLON_VIEW = 'colon'
@@ -21,21 +23,19 @@ type TimerViewProps = {
   }
 }
 
-export const TimerView = ({
-  seconds,
-  minutes,
-  hours,
-  days,
-  options: {
+export const TimerView = ({ seconds, minutes, hours, days, options }: TimerViewProps) => {
+  const { themeSelected } = useSelector((state: State) => state.preferences)
+
+  const {
     showZeros = true,
-    negativeColor = downColor,
+    negativeColor = colors[themeSelected]['downColor'],
     endText,
-    defaultColor = headerColor,
+    defaultColor = colors[themeSelected]['primaryText'],
     timerView = LETTER_VIEW,
     shownParts = ['d', 'h', 'm', 's'],
     showFullDay = false,
-  },
-}: TimerViewProps) => {
+  } = options
+  
   return (
     <TimerStyled negativeColor={negativeColor} defaultColor={defaultColor} timerType={timerView}>
       {showFullDay && days >= 1 ? (

@@ -12,7 +12,7 @@ import { scrollToFullView } from 'utils/scrollToFullView'
 import { TreasuryViewStyle } from './Treasury.style'
 import { getPieChartData } from './helpers/calculateChartData'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import {
@@ -183,7 +183,11 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
         <div className="address-block">
           <div className="text">Treasury{isGlobal ? ' Factory ' : ' '}Address</div>
           <div className="value">
-            <TzAddress type={BLUE} tzAddress={isGlobal ? factoryAddress : treasury.address} hasIcon />
+            <TzAddress
+              type={PRIMARY_TZ_ADDRESS_COLOR}
+              tzAddress={isGlobal ? factoryAddress : treasury.address}
+              hasIcon
+            />
           </div>
         </div>
       ) : null}

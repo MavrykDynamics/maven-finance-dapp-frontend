@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { State } from '../../../reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_WIDE } from '../Button/Button.constants'
-import { BLUE } from '../TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from '../TzAddress/TzAddress.constants'
 import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { changeWallet, disconnect } from './ConnectWallet.actions'
 
@@ -66,7 +66,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
       <WalletDetailsHiddenPart isShown={detailsShown}>
         <div className="top">
           <Icon id="wallet" />
-          <TzAddress tzAddress={accountPkh} type={BLUE} />
+          <TzAddress tzAddress={accountPkh} type={PRIMARY_TZ_ADDRESS_COLOR} />
           <a href={`https://ghost.tzstats.com/${accountPkh}`} target="_blank" rel="noreferrer">
             <Icon id="send" />
           </a>
@@ -255,7 +255,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
         <div className="top">
           <Icon id="wallet" />
-          <TzAddress tzAddress={accountPkh} type={BLUE} />
+          <TzAddress tzAddress={accountPkh} type={PRIMARY_TZ_ADDRESS_COLOR} />
           <a href={`https://ghost.tzstats.com/${accountPkh}`} target="_blank" rel="noreferrer">
             <Icon id="send" />
           </a>

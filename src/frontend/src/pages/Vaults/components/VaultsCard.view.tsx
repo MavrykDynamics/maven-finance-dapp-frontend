@@ -31,7 +31,7 @@ import {
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 
 // helpers
-import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
+import { SECONDARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
@@ -205,7 +205,7 @@ export const VaultsCard = (props: Props) => {
           <div className="group">
             <div>
               Vault Owner
-              <TzAddress type={CYAN} tzAddress={ownerId} />
+              <TzAddress type={SECONDARY_TZ_ADDRESS_COLOR} tzAddress={ownerId} />
             </div>
             <div>
               Vault Risk

@@ -3,11 +3,11 @@ import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router'
 
 // consts, helpers
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { INFO } from 'app/App.components/Toaster/Toaster.constants'
 import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { parseDate } from 'utils/time'
-import { cyanColor, downColor, Page, skyColor } from 'styles'
+import { cyanColor, Page } from 'styles'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { registerFeedAction } from 'pages/DataFeeds/DataFeeds.actions'
 import {
@@ -176,8 +176,6 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                             options={{
                               short: true,
                               showZeros: false,
-                              negativeColor: downColor,
-                              defaultColor: skyColor,
                             }}
                             timestamp={
                               new Date(feed.last_completed_data_last_updated_at).getTime() +
@@ -238,7 +236,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                     />
                   </h3>
                   <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
-                    <TzAddress tzAddress={feed.address} type={BLUE} hasIcon={true} />
+                    <TzAddress tzAddress={feed.address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={true} />
                   </DataFeedValueText>
                 </div>
                 <div className="info-wrapper">
@@ -253,7 +251,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                   </h3>
                   <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
                     {feed.factory?.address ? (
-                      <TzAddress tzAddress={feed.factory?.address} type={BLUE} hasIcon={true} />
+                      <TzAddress tzAddress={feed.factory?.address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={true} />
                     ) : (
                       '-'
                     )}

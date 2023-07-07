@@ -20,7 +20,7 @@ import Button from 'app/App.components/Button/NewButton'
 // const
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { STAGE_3_DESCRIPTION } from 'texts/tooltips/governance'
 
 // styles
@@ -226,7 +226,7 @@ export const StageThreeForm = ({
                     <TableCell width="25%" className="hide-overflow tz-address-cell-center">
                       {isTableDisabled ? (
                         payment.to__id ? (
-                          <TzAddress tzAddress={String(payment.to__id)} type={BLUE} hasIcon />
+                          <TzAddress tzAddress={String(payment.to__id)} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
                         ) : (
                           '-'
                         )

@@ -1,6 +1,4 @@
 import { createGlobalStyle } from 'styled-components/macro'
-
-import { royalPurpleColor } from '../styles/colors'
 import { MavrykTheme } from './interfaces'
 
 export const GlobalStyle = createGlobalStyle<{ theme: MavrykTheme }>`
@@ -26,13 +24,18 @@ body {
   }
 }
 
+h1, h2, h3, h4 {
+  color: ${({ theme }) => theme.mainHeadingText};
+  font-weight: normal;
+}
+
 h1, h2 {
   font-weight: bold;
   display: inline-block;
   margin: 30px auto;
-  color: ${({ theme }) => theme.mainHeadingText};
-  font-weight: 700;
+
   font-size: 22px;
+  font-weight: 700;
 
   @media (max-width: 700px) {   
     font-size: 30px;
@@ -47,6 +50,26 @@ h1, h2 {
     background: ${({ theme }) => theme.mainHeadingText};
     margin: 7px 0 10px 1px;
   }
+}
+
+h2 {
+  display: block;
+  margin: 0;
+
+  font-size: 22px;
+  font-weight: 600;
+}
+
+h3 {
+  display: block;
+  margin: 0;
+
+  font-size: 30px;
+}
+
+h4 {
+  margin: 0;
+  font-size: 14px;
 }
 
 fieldset {
@@ -65,47 +88,10 @@ button {
   color: inherit;
 }
 
-h2 {
-  font-size: 22px;
-  display: block;
-  margin: 0;
-  font-weight: 600;
-}
-
 var {
   font-style: normal;
 }
 
-h3 {
-  font-size: 30px;
-  font-weight: normal;
-  display: block;
-  margin: 0;
-  color: ${({ theme }) => theme.mainHeadingText};
-}
-
-h4 {
-  font-size: 14px;
-  font-weight: normal;
-  margin: 0;
-  color: ${({ theme }) => theme.mainHeadingText};
-  
-  &.primary {
-    color: ${({ theme }) => theme.textColor};
-  }
-
-  &.secondary {
-    color: ${({ theme }) => theme.subTextColor};
-  }
-
-  &.transparent {
-    color: ${({ theme }) => theme.textColor};
-  }
-  
-  &.bold {
-    font-weight: bold;
-  }
-}
 
 input {
   color: ${({ theme }) => theme.placeholders};
@@ -131,15 +117,11 @@ input[type='number'] {
 }
 
 a {
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.linksAndButtons};
   text-decoration: none;
   opacity: 1;
   transition: opacity 0.15s ease-in-out-out;
   will-change: opacity;
-
-  &.isCyan {
-    color: ${({ theme }) => theme.valueColor};
-  }
 }
 
 
@@ -160,7 +142,7 @@ p {
   {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 10px;
-    background-color: ${royalPurpleColor}4d;
+    background-color: ${({ theme }) => theme.scrollBlockColor}4d;
   }
 .scroll-block::-webkit-scrollbar
   {
@@ -172,29 +154,29 @@ p {
   {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-    background-color: ${royalPurpleColor};
+    background-color: ${({ theme }) => theme.scrollBlockColor};
   }
 
-  .info-link {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.info-link {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-    &:hover {
-      svg {
-        opacity: 0.8;
-      }
-    }
-
+  &:hover {
     svg {
-      width: 16px;
-      height: 16px;
-      fill: ${({ theme }) => theme.textColor};
+      opacity: 0.8;
     }
   }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: ${({ theme }) => theme.linksAndButtons};
+  }
+}
 `

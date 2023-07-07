@@ -19,7 +19,7 @@ import {
   isTezosAsset,
   loansInputValidation,
 } from 'pages/Loans/Loans.helpers'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
@@ -378,7 +378,11 @@ export const AddNewCollateral = ({
                     <ThreeLevelListItem>
                       <div className="name">Bakery Address</div>
                       {bakerChosenDdItem?.bakerAddress ? (
-                        <TzAddress className="value" tzAddress={bakerChosenDdItem.bakerAddress} type={BLUE} />
+                        <TzAddress
+                          className="value"
+                          tzAddress={bakerChosenDdItem.bakerAddress}
+                          type={PRIMARY_TZ_ADDRESS_COLOR}
+                        />
                       ) : (
                         <div className="value">-</div>
                       )}

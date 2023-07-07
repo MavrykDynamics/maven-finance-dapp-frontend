@@ -59,19 +59,19 @@ export const Message = styled.div`
 
 export const Card = styled.div<{ theme: MavrykTheme }>`
   margin-top: 30px;
-  background-color: ${({ theme }) => theme.containerColor};
+  background-color: ${({ theme }) => theme.cards};
   border-radius: 10px;
   padding: 25px 35px;
   font-size: 14px;
   font-weight: 600;
-  color: ${({ theme }) => theme.subTextColor};
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  color: ${({ theme }) => theme.subHeadingText};
+  border: 1px solid ${({ theme }) => theme.strokeCards};
 `
 
 export const CardHover = styled(Card)`
   &:hover {
-    border-color: ${cyanColor};
-    box-shadow: 0px 4px 4px ${boxShadowColor};
+    border-color: ${({ theme }) => theme.cardHoverColor};
+    box-shadow: 0px 4px 4px ${({ theme }) => theme.cardHoverColor};
   }
 `
 
@@ -79,7 +79,6 @@ export const CardHeader = styled.h2<{ theme: MavrykTheme }>`
   font-weight: 700;
   font-size: 14px;
   line-height: 21px;
-  color: ${({ theme }) => theme.textColor};
 `
 
 export const PageContent = styled.section`

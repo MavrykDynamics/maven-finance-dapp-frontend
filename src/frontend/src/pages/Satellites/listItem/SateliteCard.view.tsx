@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 // consts, helpers, actions
 import { getVoteText, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
   ACTION_PRIMARY,
   ACTION_SECONDARY,
@@ -154,7 +154,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup>
               <SatelliteMainText>{satellite.name}</SatelliteMainText>
               <SatelliteSubText>
-                <TzAddress tzAddress={satellite.address} type={BLUE} hasIcon isBold />
+                <TzAddress tzAddress={satellite.address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon isBold />
               </SatelliteSubText>
             </SatelliteTextGroup>
           </div>

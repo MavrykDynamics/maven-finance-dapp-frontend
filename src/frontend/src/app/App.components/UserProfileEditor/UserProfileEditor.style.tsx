@@ -17,7 +17,7 @@ export const UserProfileEditorSaveButton = styled.div`
 `
 
 export const UserProfileEditorZoom = styled.div`
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.regularText};
 
   & > div {
     display: flex;
@@ -26,7 +26,7 @@ export const UserProfileEditorZoom = styled.div`
       width: 12px;
       height: 12px;
 
-      fill: ${({ theme }) => theme.textColor};
+      fill: ${({ theme }) => theme.regularText};
 
       &:first-of-type {
         margin-right: 10px;
@@ -47,8 +47,8 @@ export const UserProfileEditorZoom = styled.div`
     width: 100%;
     height: 7px;
 
-    background: ${({ theme }) => theme.connectInfoColor};
-    background-image: ${({ theme }) => `linear-gradient(${theme.valueColor}, ${theme.valueColor})`};
+    background: ${({ theme }) => theme.messagesBackground};
+    background-image: ${({ theme }) => `linear-gradient(${theme.linksAndButtons}, ${theme.linksAndButtons})`};
     background-repeat: no-repeat;
     background-size: 0% 100%;
     border-radius: 5px;
@@ -58,7 +58,7 @@ export const UserProfileEditorZoom = styled.div`
       width: 17px;
       height: 17px;
 
-      background: ${({ theme }) => theme.valueColor};
+      background: ${({ theme }) => theme.linksAndButtons};
       border-radius: 50%;
 
       cursor: ew-resize;

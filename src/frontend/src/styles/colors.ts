@@ -77,6 +77,8 @@ export const dark = {
   menuBackgroundActiveColor: 'linear-gradient(90deg, #38237c 0%, rgba(80, 80, 142, 0) 100%)',
   popupBackdropColor: '#0000007a',
   pageHeaderColor: '#FFFFFF',
+  scrollBlockColor: '#503EAA',
+  cardHoverColor: 'rgba(134, 212, 201, 0.5)',
   // tabs
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
 
@@ -167,6 +169,8 @@ export const light = {
   menuBackgroundActiveColor: 'linear-gradient(90deg, rgba(134, 212, 201, 0.5) 0%, rgba(134, 212, 201, 0) 100%);',
   popupBackdropColor: '#0000007a',
   pageHeaderColor: '#FFFFFF',
+  scrollBlockColor: '#503EAA',
+  cardHoverColor: 'rgba(134, 212, 201, 0.5)',
   // tabs
   forTabs: 'linear-gradient(90deg, #03C9A3 0.31%, #8D86EB 99.97%)',
 
@@ -257,6 +261,8 @@ export const space = {
   menuBackgroundActiveColor: 'linear-gradient(90deg, #38237c 0%, rgba(80, 80, 142, 0) 100%)',
   popupBackdropColor: '#0000007a',
   pageHeaderColor: '#FFFFFF',
+  scrollBlockColor: '#503EAA',
+  cardHoverColor: 'rgba(134, 212, 201, 0.5)',
   // tabs
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
 

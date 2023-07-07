@@ -4,7 +4,7 @@ import { useClickAway } from 'react-use'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import classNames from 'classnames'
 
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
   ANY_USER,
   COLLATERAL_RATIO_GRADIENT,
@@ -557,7 +557,11 @@ export const OldBorrowingExpandCard = ({
                   <div className="bottom-info-row">
                     <div className="name">XTZ Delegated to </div>
                     <div className="value">
-                      {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'Not Delegated'}
+                      {xtzDelegatedTo ? (
+                        <TzAddress tzAddress={xtzDelegatedTo} type={PRIMARY_TZ_ADDRESS_COLOR} />
+                      ) : (
+                        'Not Delegated'
+                      )}
                     </div>
                     <Button
                       kind={BUTTON_SIMPLE}
@@ -578,7 +582,11 @@ export const OldBorrowingExpandCard = ({
                   <div className="bottom-info-row">
                     <div className="name">sMVK Delegated to </div>
                     <div className="value">
-                      {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
+                      {sMVKDelegatedTo ? (
+                        <TzAddress tzAddress={sMVKDelegatedTo} type={PRIMARY_TZ_ADDRESS_COLOR} />
+                      ) : (
+                        'None'
+                      )}
                     </div>
                     <Link
                       to={sMVKDelegatedTo ? `/satellites/satellite-details/${sMVKDelegatedTo}` : '/satellite-nodes'}
@@ -638,7 +646,7 @@ export const OldBorrowingExpandCard = ({
                     </div>
                     <div className="value">
                       {mappedMVKOperators.firstAddress
-                        ? <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={BLUE} /> +
+                        ? <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={PRIMARY_TZ_ADDRESS_COLOR} /> +
                           ` ${mappedMVKOperators.amount ?? ''}`
                         : 'None'}
                     </div>

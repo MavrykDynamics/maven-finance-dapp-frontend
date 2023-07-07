@@ -30,7 +30,7 @@ import { CollateralType, DepositorsFlagType, LoanMarketType } from 'utils/TypesA
 import { getNumberInBounds } from 'utils/calcFunctions'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import colors from 'styles/colors'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { State } from 'reducers'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { EmptyContainer } from 'app/App.style'
@@ -252,14 +252,14 @@ export const BorrowingExpandCardMenuSection = ({
             <div className="useful-info-line">
               <div className="name">Vault Address</div>
               <div className="value">
-                <TzAddress tzAddress={vaultAddress} type={BLUE} />
+                <TzAddress tzAddress={vaultAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
               </div>
             </div>
 
             <div className="useful-info-line">
               <div className="name">Lending Controller Address</div>
               <div className="value">
-                <TzAddress tzAddress={lendingControllerAddress} type={BLUE} />
+                <TzAddress tzAddress={lendingControllerAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
               </div>
             </div>
           </div>
@@ -272,7 +272,11 @@ export const BorrowingExpandCardMenuSection = ({
                 <div className="useful-info-line">
                   <div className="name">XTZ Delegated to</div>
                   <div className="value">
-                    {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'Not Delegated'}
+                    {xtzDelegatedTo ? (
+                      <TzAddress tzAddress={xtzDelegatedTo} type={PRIMARY_TZ_ADDRESS_COLOR} />
+                    ) : (
+                      'Not Delegated'
+                    )}
                   </div>
                   <Button
                     kind={BUTTON_SIMPLE}
@@ -288,7 +292,11 @@ export const BorrowingExpandCardMenuSection = ({
                 <div className="useful-info-line">
                   <div className="name">sMVK Delegated to </div>
                   <div className="value">
-                    {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
+                    {sMVKDelegatedTo ? (
+                      <TzAddress tzAddress={sMVKDelegatedTo} type={PRIMARY_TZ_ADDRESS_COLOR} />
+                    ) : (
+                      'None'
+                    )}
                   </div>
                   <Link to={sMVKDelegatedTo ? `/satellites/satellite-details/${sMVKDelegatedTo}` : '/satellite-nodes'}>
                     <Button kind={BUTTON_SIMPLE}>
@@ -335,7 +343,7 @@ export const BorrowingExpandCardMenuSection = ({
                 <div className="value">
                   {mappedMVKOperators.firstAddress ? (
                     <>
-                      <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={BLUE} />
+                      <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
                       {mappedMVKOperators.amount ?? ''}
                     </>
                   ) : (

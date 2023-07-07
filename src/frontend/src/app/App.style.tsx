@@ -28,7 +28,7 @@ export const EmptyContainer = styled.figure<{ theme: MavrykTheme }>`
   justify-content: center;
   align-items: center;
   margin: 0;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.regularText};
   font-size: 18px;
   font-weight: 600;
   flex-direction: column;

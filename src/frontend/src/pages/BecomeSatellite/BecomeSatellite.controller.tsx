@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 // Consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
-import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
+import { SECONDARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { INFO_DEFAULT, INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import colors from 'styles/colors'
@@ -283,7 +283,7 @@ export const BecomeSatellite = () => {
                               tzAddress={satelliteMvkIsDelegatedTo}
                               hasIcon={false}
                               shouldCopy={false}
-                              type={CYAN}
+                              type={SECONDARY_TZ_ADDRESS_COLOR}
                             />
                           </Link>
                           . When becoming a satellite, you will first be undelegated from your current satellite and

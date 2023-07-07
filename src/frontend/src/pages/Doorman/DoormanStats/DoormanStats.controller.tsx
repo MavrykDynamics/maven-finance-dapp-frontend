@@ -2,10 +2,12 @@ import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
 
 // components
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import Icon from '../../../app/App.components/Icon/Icon.view'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { DoormanList, DoormanStatsHeader, DoormanStatsStyled } from './DoormanStats.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+
+// helpers
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 
 type DoormanStatsPropsType = {
   mvkExchangeRate: number
@@ -48,7 +50,7 @@ export const DoormanStats = ({
         <div>
           <h4>MVK Token Address</h4>
           <var className="click-address">
-            <TzAddress type="blue" tzAddress={mvkTokenAddress} hasIcon />
+            <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} tzAddress={mvkTokenAddress} hasIcon />
           </var>
         </div>
 
@@ -73,7 +75,7 @@ export const DoormanStats = ({
             />
           </h4>
           <var className="click-address">
-            <TzAddress type="blue" tzAddress={doormanAddress} hasIcon />
+            <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} tzAddress={doormanAddress} hasIcon />
           </var>
         </div>
 

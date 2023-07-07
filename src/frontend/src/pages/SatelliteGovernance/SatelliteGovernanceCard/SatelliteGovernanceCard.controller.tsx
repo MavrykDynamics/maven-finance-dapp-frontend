@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
+import dayjs from 'dayjs'
 
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -23,7 +24,6 @@ import { PRECISION_NUMBER } from 'utils/constants'
 import { parseDate } from 'utils/time'
 import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import dayjs from 'dayjs'
 
 type Props = {
   satelliteId: string
