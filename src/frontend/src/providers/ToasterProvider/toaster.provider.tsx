@@ -189,6 +189,12 @@ export default class ToasterProvider extends React.Component<Props, State> {
   }
 }
 
-export type test = Omit<CustomErrors, 'Error'>
+export const useToasterContext = () => {
+  const context = useContext(toasterContext)
 
-export const useToasterContext = () => useContext(toasterContext)
+  if (!context) {
+    throw new Error('toasterContext should be used withing ToasterProvider')
+  }
+
+  return context
+}
