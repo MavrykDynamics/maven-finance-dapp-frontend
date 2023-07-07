@@ -33,7 +33,10 @@ import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress
 import { State } from 'reducers'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { EmptyContainer } from 'app/App.style'
-import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import {
+  SlidingTabButtons,
+  SlidingTabButtonType,
+} from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 type Props = {
@@ -47,7 +50,7 @@ type Props = {
 
   collateralData: CollateralType[]
   currentToken: LoanMarketType
-  activeMenuTab?: TabItem
+  activeMenuTab?: SlidingTabButtonType
   isOwner: boolean
   vaultName: string
   vaultAddress: string
@@ -111,7 +114,7 @@ export const BorrowingExpandCardMenuSection = ({
   const vaultHasSmvkCollateral = collateralData.find(({ gqlName }) => gqlName === 'smvk')
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
 
-  const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (tabId: number) => {
+  const handleSwitchTab = (setActiveTab: (tab?: SlidingTabButtonType) => void) => (tabId: number) => {
     setActiveTab(menuTabs.find((item) => item.id === tabId))
   }
 

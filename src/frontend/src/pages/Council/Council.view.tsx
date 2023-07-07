@@ -30,6 +30,7 @@ import {
   calculateSlicePositions,
   getPageNumber,
 } from 'app/App.components/Pagination/pagination.consts'
+import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // styles
 import {
@@ -42,7 +43,6 @@ import {
 
 // types
 import { CouncilMaxLength, CouncilActionType, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
-import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
 import { propagateBreakGlass } from '../BreakGlassCouncil/BreakGlassCouncil.actions'
@@ -54,7 +54,7 @@ export const councilEmptyContainer = (
   </EmptyContainer>
 )
 
-export const councilTabsList: TabItem[] = [
+export const councilTabsList: SlidingTabButtonType[] = [
   {
     text: 'My Ongoing Actions',
     id: 1,

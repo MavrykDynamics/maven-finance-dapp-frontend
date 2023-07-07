@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro'
 import { Card, CardHover } from 'styles'
-import { TabSwitcher as TabSwitcherBase } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // types
 import { MavrykTheme } from '../../styles/interfaces'
@@ -249,9 +248,4 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
       }
     }
   }
-`
-
-export const TabSwitcher = styled(TabSwitcherBase)`
-  margin: 30px 0;
-  width: 300px;
 `

@@ -32,7 +32,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import colors from 'styles/colors'
-import { TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT } from 'texts/banners/vault.text'
 import { AVALIABLE_TO_BORROW, FEES_DUE } from 'texts/tooltips/vault.text'
@@ -47,7 +47,7 @@ type Props = {
   minimumRepay: number
   currentCollateralBalance: number
   borrowCapacity: number
-  activeRepayTab?: TabItem
+  activeRepayTab?: SlidingTabButtonType
   openConfirmRepayPopup: (inputAmount: number) => void
   openConfirmRepayFullPopup: () => void
 }

@@ -7,7 +7,10 @@ import { DoormanChartCard, DoormanExitFeeCurrentValues, Wrapper } from './Doorma
 
 // components
 import { Chart } from '../../../app/App.components/Chart/Chart'
-import { SlidingTabButtons, TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import {
+  SlidingTabButtons,
+  SlidingTabButtonType,
+} from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { cyanColor, skyColor } from 'styles'
 
 import { AREA_CHART_TYPE, AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
@@ -23,7 +26,7 @@ import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
-const tabsList: TabItem[] = [
+const tabsList: SlidingTabButtonType[] = [
   {
     text: 'MVK vs. sMVK',
     id: 1,

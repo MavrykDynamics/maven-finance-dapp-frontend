@@ -5,7 +5,10 @@ import { useLocation, useHistory, useParams } from 'react-router'
 // components
 import { VaultsSearchFilter } from './components/VaultsSearchFilter.view'
 import { VaultsCard } from './components/VaultsCard.view'
-import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import {
+  SlidingTabButtons,
+  SlidingTabButtonType,
+} from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
@@ -64,7 +67,7 @@ export const VaultsView = () => {
     },
     [accountPkh],
   )
-  const [tabsList, setTabsList] = useState<TabItem[]>([])
+  const [tabsList, setTabsList] = useState<SlidingTabButtonType[]>([])
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
 

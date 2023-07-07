@@ -46,6 +46,11 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   font-weight: 600;
   line-height: 21px;
 
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
   &.${PRIMARY_SLIDING_TAB_BUTTONS} {
     padding: 0 22px;
 

@@ -8,7 +8,7 @@ import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingT
 
 // types
 import { CouncilActionType } from 'utils/TypesAndInterfaces/Council'
-import { TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // helpers
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
@@ -22,7 +22,7 @@ type Props = {
   numCouncilMembers: number
   activeActionTab: string
   setActiveActionTab: (arg: string) => void
-  tabsList: TabItem[]
+  tabsList: SlidingTabButtonType[]
   handleDropAction: (arg: number) => void
   listNameMyPastActions: string
   listNameMyOngoingActions: string

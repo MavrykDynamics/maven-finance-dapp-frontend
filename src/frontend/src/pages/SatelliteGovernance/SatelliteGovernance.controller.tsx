@@ -48,7 +48,10 @@ import { CommaNumber } from '../../app/App.components/CommaNumber/CommaNumber.co
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import {
+  SlidingTabButtons,
+  SlidingTabButtonType,
+} from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 const getCurrentListNameById = (tabId: string) => {
   switch (tabId) {
@@ -102,7 +105,7 @@ export const SatelliteGovernance = () => {
   type DropDownItemType = (typeof dropDownItems)[0]
 
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
-  const [tabsList, setTabsList] = useState<TabItem[]>([])
+  const [tabsList, setTabsList] = useState<SlidingTabButtonType[]>([])
 
   const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
   const ongoingActionsLength = ongoingSatelliteGovIds.length
@@ -166,7 +169,7 @@ export const SatelliteGovernance = () => {
 
   // set tabs list
   useEffect(() => {
-    const baseTabs: TabItem[] = [
+    const baseTabs: SlidingTabButtonType[] = [
       {
         text: 'Ongoing Actions',
         id: 1,

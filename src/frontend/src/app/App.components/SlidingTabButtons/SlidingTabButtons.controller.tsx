@@ -4,16 +4,16 @@ import classNames from 'classnames'
 import { ButtonStyled, SlidingTabButtonsStyled } from './SlidingTabButtons.style'
 import { PRIMARY_SLIDING_TAB_BUTTONS, SlidingTabButtonsKindsType } from './SlidingTabButtons.conts'
 
-export interface TabItem {
+export interface SlidingTabButtonType {
   text: string
   id: number
   active: boolean
-  isDisabled?: boolean
+  disabled?: boolean
   path?: string
 }
 
 type SlidingTabButtonsProps = {
-  tabItems: TabItem[]
+  tabItems: SlidingTabButtonType[]
   onClick: (tabId: number) => void
   kind?: SlidingTabButtonsKindsType
   disabled?: boolean
@@ -29,13 +29,13 @@ export const SlidingTabButtons = ({
 }: SlidingTabButtonsProps) => {
   // if we found active item by default set it, othervise set first item active, if it's not disabled
   const [activeTab, setActiveTab] = useState<number | undefined>(
-    tabItems.find(({ active, isDisabled }) => active && !isDisabled)?.id ?? tabItems[0]?.isDisabled
+    tabItems.find(({ active, disabled }) => active && !disabled)?.id ?? tabItems[0]?.disabled
       ? tabItems[0]?.id
       : undefined,
   )
 
   useEffect(() => {
-    const foundActiveTabId = tabItems.find(({ active, isDisabled }) => active && !isDisabled)?.id
+    const foundActiveTabId = tabItems.find(({ active, disabled }) => active && !disabled)?.id
     if (typeof foundActiveTabId === 'number') {
       setActiveTab(foundActiveTabId)
     }
@@ -53,7 +53,7 @@ export const SlidingTabButtons = ({
         <ButtonStyled
           key={tabItem.id}
           onClick={() => clickHandler(tabItem.id)}
-          className={classNames(kind, { selected: activeTab === tabItem.id })}
+          className={classNames(kind, { selected: activeTab === tabItem.id }, { disabled: tabItem.disabled })}
         >
           {tabItem.text}
         </ButtonStyled>
