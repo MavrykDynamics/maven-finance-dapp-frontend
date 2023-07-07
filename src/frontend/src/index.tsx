@@ -24,12 +24,14 @@ import StakeProvider from 'providers/StakeProvider/stake.provider'
 
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
 import { App, store } from './app/App.controller'
+import { FullScreenLoadingApp } from 'app/App.style'
 import { LottieLoader } from 'app/App.components/Loader/Loader.view'
 import Mobile from './app/App.components/Mobile/Mobile.view'
 
 import { GlobalStyle } from './styles'
 import './styles/fonts.css'
 import './styles/animations.css'
+import './styles/index.css'
 import './styles/fonts.css'
 import './styles/animations.css'
 
@@ -71,7 +73,9 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
     <>
       <LottieLoader isActive={isInitialLoading} backdropAlpha={1} />
 
-      {isInitialLoading ? null : (
+      {isInitialLoading ? (
+        <FullScreenLoadingApp />
+      ) : (
         <StakeProvider>
           <SatellitesProvider>{children}</SatellitesProvider>
         </StakeProvider>

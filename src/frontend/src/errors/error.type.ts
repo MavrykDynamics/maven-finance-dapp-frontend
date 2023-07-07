@@ -1,4 +1,5 @@
 import type { ApiError, FatalError, ValidationError, TezosOperationError } from './error'
+import { ERROR_TYPE_FATAL, ERROR_TYPE_ROUTER } from './error.const'
 import { z } from 'zod'
 import { tezosContractErrorPayload, tezosContractErrorPayloadErrorItemSchema } from './error.schema'
 import { WALLTET_ERROR_FIELD } from './consts/error.const'
@@ -55,3 +56,5 @@ export type EstimatedBatchCall = {
 
 export type SharedErrorFileds = typeof WALLTET_ERROR_FIELD
 export type SharedErrors = TezosWalletErrorPayload & { actionId: WalletActionType }
+
+export type InternalErrorType = typeof ERROR_TYPE_ROUTER | typeof ERROR_TYPE_FATAL

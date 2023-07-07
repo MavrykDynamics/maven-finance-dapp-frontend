@@ -10,13 +10,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
-import {
-  Props,
-  StakeContext,
-  StakeContextStateType,
-  StakingSubsRecordType,
-  StakingSubsType,
-} from './stake.provider.types'
+import { StakeContext, StakeContextStateType, StakingSubsRecordType, StakingSubsType } from './stake.provider.types'
 import {
   SubscribeSmvkHistoryDataSubscription,
   SubscribeMvkTokenTotalSubscription,
@@ -41,6 +35,10 @@ import {
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
+
+type Props = {
+  children: React.ReactNode
+}
 
 const StakeProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()

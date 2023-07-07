@@ -1,5 +1,12 @@
-import type { InputPayload, Payload, TezosContractErrorPayload, TezosContractErrorPayloadErrorItem } from './error.type'
+import type {
+  InputPayload,
+  Payload,
+  TezosContractErrorPayload,
+  TezosContractErrorPayloadErrorItem,
+  InternalErrorType,
+} from './error.type'
 import { tezosContractErrorPayload } from './error.schema'
+import { ERROR_TYPE_FATAL } from './error.const'
 
 /**
  * ExtendedErrorClass as base class. Contains all essential information
@@ -41,8 +48,18 @@ export class ValidationError extends ExtendedErrorClass {}
 /** when getting server error (f.e. 500 ) */
 export class ApiError extends ExtendedErrorClass {}
 /** critiacal error, show 404 page */
-export class FatalError extends ExtendedErrorClass {}
+export class FatalError extends ExtendedErrorClass {
+  type: InternalErrorType
 
+  constructor(messageOrError: string | Error, payload: Payload = {}, type: InternalErrorType = ERROR_TYPE_FATAL) {
+    super(messageOrError, payload)
+    this.type = type
+  }
+}
+
+/**
+ *
+ */
 export class TezosOperationError extends ExtendedErrorClass {
   id?: string
   kind?: string

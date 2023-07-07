@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { normalizeDoormanChartsData } from './helpers/normalizer'
 
 import { MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB, STAKE_ACTION, UNSTAKE_ACTION } from './helpers/stake.consts'
@@ -29,9 +27,5 @@ export type StakingActionData = {
   loadingToasterId: string
   action: StakeActionType
 } | null
-
-export type Props = {
-  children: React.ReactNode
-}
 
 export type StakingSubsRecordType = Record<StakingSubsType, boolean>

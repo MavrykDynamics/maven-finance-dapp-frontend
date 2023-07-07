@@ -1,8 +1,9 @@
 import React, { useContext } from 'react'
+import { ErrorPage } from 'pages/Error/ErrorPage'
 
 // types
 import type { ToasterContextType, ToasterTypes } from './toaster.provider.type'
-import type { CustomErrors } from '../../errors/error'
+import { FatalError, type CustomErrors } from '../../errors/error'
 
 // consts
 import {
@@ -15,6 +16,7 @@ import {
 import { generateUniqueId } from 'utils/calcFunctions'
 import { SharedErrorFileds, SharedErrors } from 'errors/error.type'
 import { WalletActionType } from 'types/actions.type'
+import { getErrorPageData } from './helpers/getErrorPageData'
 
 export const toasterContext = React.createContext<ToasterContextType>(undefined!)
 
@@ -44,7 +46,7 @@ export default class ToasterProvider extends React.Component<Props, State> {
         success: this.success,
         loading: this.loading,
         // fatal error to show 404 page
-        error: props.error || null,
+        error: props.error || null, //fatal error
         // custom errors, like error from Wallet, api, validation etc.
         sharedErrors: {
           walletError: null,
@@ -60,6 +62,13 @@ export default class ToasterProvider extends React.Component<Props, State> {
 
   /**
    *
+   * @param error It is the error that was thrown by the descendant component.
+   *
+   * Error boundaries do not catch errors for:
+   * Event handlers
+   * Asynchronous code (e.g. setTimeout or requestAnimationFrame callbacks)
+   * Server side rendering
+   * Errors thrown in the error boundary itself (rather than its children)
    */
   componentDidCatch(error: Error): void {
     this.addToasterMessage('', error.message, TOASTER_ERROR)
@@ -185,8 +194,18 @@ export default class ToasterProvider extends React.Component<Props, State> {
    *
    */
   render(): JSX.Element {
-    // add 404 page when isCritical error
-    return <toasterContext.Provider value={this.state.context}>{this.props.children}</toasterContext.Provider>
+    const { error } = this.state.context
+    const errorPageContent = error instanceof FatalError ? getErrorPageData(error.type) : null
+
+    return (
+      <toasterContext.Provider value={this.state.context}>
+        {errorPageContent ? (
+          <ErrorPage headerText={errorPageContent.header} descText={errorPageContent.desc} />
+        ) : (
+          this.props.children
+        )}
+      </toasterContext.Provider>
+    )
   }
 }
 

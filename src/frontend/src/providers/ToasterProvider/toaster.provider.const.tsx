@@ -60,3 +60,28 @@ export const ACTION_COMPLETION_MESSAGE_TEXT = 'All good :)'
 
 // TOASTER TEXTS IDS
 export const TOASTER_SUBSCRIPTION_ERROR = 'TOASTER_SUBSCRIPTION_ERROR'
+
+// Error page default texts
+
+export const errorHeaderDefaultText = 'This page is outside the universe'
+export const errorDescDefaultText = (
+  <>
+    The page you are trying to access doesn’t exist or has been moved.
+    <br /> Try going back to your Dashboard page
+  </>
+)
+
+// with error in toaster context
+export const errorHeaderDefaultTextWhenError = 'Your spaceship has encountered a bug'
+export const errorDescDefaultTextWhenError = (
+  <>
+    A significant error has been encountered, please take a look at our{' '}
+    <a href="https://mavryk.finance/litepaper" target="_blank" rel="noreferrer">
+      Docs
+    </a>
+    or reach out to us through our{' '}
+    <a href="https://discord.com/invite/7VXPR4gkT6" target="_blank" rel="noreferrer">
+      Discord
+    </a>
+  </>
+)
