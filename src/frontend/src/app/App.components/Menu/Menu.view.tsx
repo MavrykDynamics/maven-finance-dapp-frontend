@@ -16,7 +16,6 @@ import { MainNavigationRoute } from '../../../utils/TypesAndInterfaces/Navigatio
 import { MenuFooter, MenuGrid, MenuSidebarContent, MenuSidebarStyled } from './Menu.style'
 
 // helpers, costants
-import { toggleSidebarCollapsing } from './Menu.actions'
 import { mainNavigationLinks } from './NavigationLink/MainNavigationLinks'
 import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
 import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -24,6 +23,7 @@ import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 type MenuViewProps = {
   openChangeNodePopupHandler: () => void
@@ -67,7 +67,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
 
   const dispatch = useDispatch()
   const { pathname } = useLocation()
-  const { sidebarOpened } = useSelector((state: State) => state.preferences)
+  const { sidebarOpened, toggleSidebarCollapsing } = usePreferencesContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
   const [canGetInitThouthand, setCanGetInitThouthand] = useState(false)
 
@@ -96,11 +96,11 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const [selectedMainLink, setSelectedMainLink] = useState<number>(0)
 
   const burgerClickHandler = useCallback(() => {
-    dispatch(toggleSidebarCollapsing())
+    toggleSidebarCollapsing()
   }, [])
 
   const sidebarBackdropClickHandler = useCallback(() => {
-    dispatch(toggleSidebarCollapsing(false))
+    toggleSidebarCollapsing(false)
   }, [])
 
   const navLinkClickHandler = useCallback(() => {

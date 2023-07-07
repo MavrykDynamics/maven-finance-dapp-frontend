@@ -58,6 +58,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { DEFAULT_SATELLITES_ACTIVE_SUBS, SATELLITE_DATA_SUB } from 'providers/SatellitesProvider/satellites.const'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -108,7 +109,7 @@ export const BecomeSatellite = () => {
   }, [userAddress])
 
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })

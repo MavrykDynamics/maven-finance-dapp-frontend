@@ -31,6 +31,7 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 export const LoansPositionTable = ({
   markets,
@@ -43,7 +44,7 @@ export const LoansPositionTable = ({
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress, userMTokens } = useUserContext()
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
 
   const { search, pathname } = useLocation()
   const currentPage = getPageNumber(search, LOANS_POSITION_TABLE)

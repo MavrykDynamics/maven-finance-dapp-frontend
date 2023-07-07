@@ -56,6 +56,7 @@ import { useFeedCharts } from 'providers/DataFeedsProvider/hooks/useFeedCharts'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { SATELLITE_DATA_SUB, DEFAULT_SATELLITES_ACTIVE_SUBS } from 'providers/SatellitesProvider/satellites.const'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 const tabsList = [
   {
@@ -93,7 +94,7 @@ const DataFeedDetails = () => {
   }, [])
 
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
 
   const feed = feedsMapper[feedId]
 

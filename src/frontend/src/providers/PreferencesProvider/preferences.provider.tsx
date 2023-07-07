@@ -1,10 +1,9 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { PreferencesContext, PreferencesState, RPCNodeType } from './preferences.provider.types'
-import { preferencesDefaultState } from './helpers/preferences.const'
-import { ThemeType } from 'app/App.components/DarkThemeProvider/DarkThemeProvider.actions'
+import { RPC_NODE, preferencesDefaultState } from './helpers/preferences.const'
+import { ThemeType } from 'app/App.components/DarkThemeProvider/DarkThemeProvider.const'
 import { getChainInfo } from 'utils/blockchainApi'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { unknownToError } from 'errors/error'
+import { setItemInStorage } from 'utils/storage'
 
 type Props = {
   children: React.ReactNode
@@ -13,7 +12,6 @@ type Props = {
 export const preferencesContext = React.createContext<PreferencesContext>(undefined!)
 
 export const PreferencesProvider = ({ children }: Props) => {
-  const { bug, success } = useToasterContext()
   const [preferences, setPreferences] = useState<PreferencesState>(preferencesDefaultState)
 
   const toggleTheme = (theme: ThemeType) => {
@@ -27,8 +25,7 @@ export const PreferencesProvider = ({ children }: Props) => {
         setPreferences((prev) => ({ ...prev, headData }))
       }
     } catch (e) {
-      const error = unknownToError(e)
-      bug(error?.message)
+      throw e
     }
   }
 
@@ -36,15 +33,13 @@ export const PreferencesProvider = ({ children }: Props) => {
     setPreferences((prev) => ({ ...prev, changeNodePopupOpen: isOpened }))
   }
 
-  const selectNewRPCNode = (newRPCNode: string, isRemove?: boolean) => {
+  const selectNewRPCNode = (newRPCNode: string) => {
+    setItemInStorage(RPC_NODE, newRPCNode)
     setPreferences((prev) => ({ ...prev, REACT_APP_RPC_PROVIDER: newRPCNode }))
-    if (!isRemove) success('New RPC link selected', 'The new RPC link has been selected in the DAPP')
   }
 
-  const setNewRPCNodes = (newRPCNodes: Array<RPCNodeType>, isRemove?: boolean) => {
+  const setNewRPCNodes = (newRPCNodes: Array<RPCNodeType>) => {
     setPreferences((prev) => ({ ...prev, RPC_NODES: newRPCNodes }))
-
-    if (!isRemove) success('New RPC link added', 'The new RPC link has been added in the DAPP')
   }
 
   const toggleSidebarCollapsing = (isOpened?: boolean) => {

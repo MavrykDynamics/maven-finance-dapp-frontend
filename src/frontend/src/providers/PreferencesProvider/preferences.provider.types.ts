@@ -1,4 +1,4 @@
-import { ThemeType } from 'app/App.components/DarkThemeProvider/DarkThemeProvider.actions'
+import { ThemeType } from 'app/App.components/DarkThemeProvider/DarkThemeProvider.const'
 
 export type HeadDataType = {
   knownLevel: number

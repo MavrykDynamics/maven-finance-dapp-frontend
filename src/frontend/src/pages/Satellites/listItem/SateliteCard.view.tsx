@@ -63,6 +63,7 @@ import {
   SATELLITE_STATUSES,
   SATELLITE_VOTES_MAPPER,
 } from 'providers/SatellitesProvider/satellites.const'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -93,7 +94,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   const dispatch = useDispatch()
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {

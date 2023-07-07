@@ -34,6 +34,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getVaultBorrowCapacity, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 export const Market = () => {
   const history = useHistory()
@@ -48,7 +49,7 @@ export const Market = () => {
   } = useSelector((state: State) => state.loans)
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
 
   const { isLoading } = useDataLoader(async () => {
     try {

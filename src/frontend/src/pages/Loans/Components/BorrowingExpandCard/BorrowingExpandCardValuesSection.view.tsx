@@ -8,6 +8,7 @@ import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/Gradien
 import colors from 'styles/colors'
 import { ACCRUED_INTEREST, APR, BORROW_CAPACITY, COLLATERAL_VALUE, OUTSTANDING_DEBT } from 'texts/tooltips/vault.text'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 type Props = {
   collateralRatio: number
@@ -30,7 +31,7 @@ export const BorrowingExpandCardValuesSection = ({
   apr,
   rate,
 }: Props) => {
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
 
   return (
     <LoansValuesSection className="borrowing-tab">

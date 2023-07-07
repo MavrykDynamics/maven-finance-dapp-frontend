@@ -2,8 +2,10 @@ import { getItemFromStorage } from 'utils/storage'
 import { PreferencesState } from '../preferences.provider.types'
 
 // preferences
-const mariGoldUrl = 'https://ghostnet.tezos.marigold.dev/'
-const ecadLabSUrl = 'https://ghostnet.ecadinfra.com'
+export const mariGoldUrl = 'https://ghostnet.tezos.marigold.dev/'
+export const ecadLabSUrl = 'https://ghostnet.ecadinfra.com'
+
+export const RPC_NODE = 'selectedRpcNode'
 
 export const preferencesDefaultState: PreferencesState = {
   themeSelected: getItemFromStorage('theme') || 'space',

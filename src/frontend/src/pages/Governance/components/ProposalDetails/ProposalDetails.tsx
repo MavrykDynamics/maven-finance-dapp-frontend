@@ -47,6 +47,7 @@ import { api } from 'utils/api/api'
 import { isAbortError } from 'errors/error'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
   const dispatch = useDispatch()
@@ -56,7 +57,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { governancePhase } = useSelector((state: State) => state.governance.config)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
 
   const { tokensMetadata } = useTokensContext()
 

@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import { State } from 'reducers'
+import { useDispatch } from 'react-redux'
 
 // consts
 import { BUTTON_SECONDARY, BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
@@ -31,6 +30,7 @@ import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers
 
 // actions
 import { distributeProposalRewards } from 'pages/Satellites/Satellites.actions'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 const DelegationTab = () => {
   const dispatch = useDispatch()
@@ -46,7 +46,7 @@ const DelegationTab = () => {
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
 
   useEffect(() => {
     if (satelliteMvkIsDelegatedTo) {

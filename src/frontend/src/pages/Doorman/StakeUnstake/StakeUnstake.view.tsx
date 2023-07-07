@@ -65,6 +65,7 @@ import {
 // types
 import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -98,7 +99,7 @@ export const StakeUnstakeView = ({
 
   const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
 
   useEffect(() => {
     if (satelliteMvkIsDelegatedTo) {
