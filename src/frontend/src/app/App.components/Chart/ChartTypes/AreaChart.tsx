@@ -43,7 +43,7 @@ export const AreaChart = ({
     yAxisSide = 'right',
     crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
     textColor = styleColors[themeSelected]['regularText'],
-    borderColor = styleColors[themeSelected]['selectedColor'],
+    borderColor = styleColors[themeSelected]['strokeColor'],
     seriesMarkers,
   } = settings ?? {}
 

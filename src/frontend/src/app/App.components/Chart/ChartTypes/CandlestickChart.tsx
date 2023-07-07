@@ -42,7 +42,7 @@ export const CandlestickChart = ({
     yAxisSide = 'left',
     crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
     textColor = styleColors[themeSelected]['regularText'],
-    borderColor = styleColors[themeSelected]['selectedColor'],
+    borderColor = styleColors[themeSelected]['strokeColor'],
     seriesMarkers,
   } = settings ?? {}
 

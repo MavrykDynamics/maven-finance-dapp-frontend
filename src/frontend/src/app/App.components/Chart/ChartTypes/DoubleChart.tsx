@@ -48,7 +48,7 @@ export const DoubleChart = ({
     priceMargins,
     crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
     textColor = styleColors[themeSelected]['regularText'],
-    borderColor = styleColors[themeSelected]['selectedColor'],
+    borderColor = styleColors[themeSelected]['strokeColor'],
     firstChartSeriesMarkers,
     secondChartSeriesMarkers,
   } = settings ?? {}

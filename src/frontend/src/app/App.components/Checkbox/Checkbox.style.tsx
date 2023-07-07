@@ -22,7 +22,7 @@ export const CheckboxStyled = styled.div`
     justify-content: center;
     transition: 0.15s ease-in-out;
     cursor: pointer;
-    background-color: ${({ theme }) => theme.backgroundColor};
+    background-color: ${({ theme }) => theme.cards};
 
     &:hover {
       background-color: ${({ theme }) => theme.cards};

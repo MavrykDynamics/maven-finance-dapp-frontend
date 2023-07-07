@@ -60,7 +60,7 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
       svg {
         width: 16px;
         height: 16px;
-        fill: ${({ theme }) => theme.regularText};
+        fill: ${({ theme }) => theme.primaryText};
       }
     }
 

@@ -11,6 +11,7 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
   font-size: 14px;
   line-height: 24px;
   color: ${({ theme }) => theme.placeholders};
+  background: ${({ theme }) => theme.backgroundColor};
 
   &.disabled {
     cursor: not-allowed;
@@ -136,7 +137,7 @@ export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
     > svg {
       height: 12px;
       width: 16px;
-      stroke: ${({ theme }) => theme.selectedColor};
+      stroke: ${({ theme }) => theme.strokeColor};
       stroke-width: 3px;
       fill: none;
       transition: 0.15s ease-in-out;
