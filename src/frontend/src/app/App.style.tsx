@@ -17,6 +17,13 @@ export const AppStyled = styled.div<{
   }
 `
 
+export const FullScreenLoadingApp = styled.div<{ theme: MavrykTheme }>`
+  position: fixed;
+  background-color: rgba(8, 6, 40, 1);
+  width: 100vw;
+  height: 100vh;
+`
+
 export const EmptyContainer = styled.figure<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: center;

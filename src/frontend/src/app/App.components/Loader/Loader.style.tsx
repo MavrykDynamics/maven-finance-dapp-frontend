@@ -4,19 +4,21 @@ import { MavrykTheme } from 'styles/interfaces'
 
 export const LoaderStyledWithBackdrop = styled.div<{ theme: MavrykTheme; backdropAlpha?: number; isActive: boolean }>`
   position: fixed;
-  inset: 0;
-  transition: background-color 0.15s ease-in-out;
-  background-color: ${({ backdropAlpha }) => `rgba(8, 6, 40,  ${backdropAlpha || 0.5})`};
-  display: flex;
   z-index: 12;
+  inset: 0;
+
+  display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
+
   font-weight: 600;
   font-size: 18px;
-  color: ${({ theme }) => theme.valueColor};
 
-  transition: 250ms opacity ease-in, 250ms visibility ease-in;
+  color: ${({ theme }) => theme.valueColor};
+  background-color: ${({ backdropAlpha }) => `rgba(8, 6, 40,  ${backdropAlpha || 0.5})`};
+
+  transition: 250ms opacity ease-out, 250ms visibility ease-out;
 
   ${({ isActive }) =>
     !isActive
