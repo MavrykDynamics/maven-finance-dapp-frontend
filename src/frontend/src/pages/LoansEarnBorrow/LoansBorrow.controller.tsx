@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useHistory, useLocation } from 'react-router'
+import { useHistory } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -140,8 +140,8 @@ export const LoansBorrow = () => {
           address,
           annualRate: item.borrowAPR,
           annualRateName: 'APR',
-          leftValue: tokenTotals[item.loanTokenAddress].userTotalBorrowed,
-          rightValue: tokenTotals[item.loanTokenAddress].userTotalCollateral,
+          leftValue: tokenTotals[item.loanTokenAddress]?.userTotalBorrowed ?? 0,
+          rightValue: tokenTotals[item.loanTokenAddress]?.userTotalCollateral ?? 0,
           totalAmount: convertNumberForClient({ number: item.totalBorrowed, grade: decimals }),
           price,
           chartData,
