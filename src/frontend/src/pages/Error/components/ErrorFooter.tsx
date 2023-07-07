@@ -1,6 +1,7 @@
 import React from 'react'
 import { ErrorFooterMiddle, ErrorFooterRight, ErrorFooterWrapper } from '../ErrorPage.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { mavrykLinks } from 'app/App.components/Footer/footer.const'
 
 type ErrorFooterProps = {
   handleRedirect: () => void
@@ -23,21 +24,11 @@ export const ErrorFooter = ({ handleRedirect }: ErrorFooterProps) => {
         </a>
       </ErrorFooterMiddle>
       <ErrorFooterRight>
-        <a
-          href="https://docs.google.com/document/d/1jW-XtRPv3TsCV2meV2ajgkQ6dI0iEwuz9xgZwnyMliw/edit"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Privacy Policy
-        </a>
-
-        <a
-          href="https://docs.google.com/document/d/1R0LA7CmVQjH7vr-FvWOy96LRxJ_XU3HXLXnqNZjZlJQ/edit"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Terms of Use
-        </a>
+        {mavrykLinks.map(({ link, title }) => (
+          <a key={link} href={link} target="_blank" rel="noreferrer">
+            {title}
+          </a>
+        ))}
       </ErrorFooterRight>
     </ErrorFooterWrapper>
   )
