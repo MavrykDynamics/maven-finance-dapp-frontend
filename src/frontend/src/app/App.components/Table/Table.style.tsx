@@ -12,7 +12,7 @@ export const TableScrollable = styled.div<{ theme: MavrykTheme; bodyHeight: numb
 
   thead {
     position: sticky;
-    background-color: ${({ theme }) => theme.containerColor};
+    background-color: ${({ theme }) => theme.cards};
     top: 0;
     z-index: ${DEFAULT_Z_INDEX_FOR_OVERLAP};
   }
@@ -41,7 +41,7 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
 
   &.editable-table {
     margin-top: 15px;
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border: 1px solid ${({ theme }) => theme.strokeColor};
     position: relative;
     width: 100%;
     border-spacing: 0;
@@ -65,27 +65,27 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
 
       tr:not(.plug-row) {
         td {
-          border-right: 1px solid ${({ theme }) => theme.cardBorderColor};
+          border-right: 1px solid ${({ theme }) => theme.strokeColor};
         }
       }
 
       tr {
         td {
           border: unset;
-          border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+          border-top: 1px solid ${({ theme }) => theme.strokeColor};
         }
 
         td:last-of-type {
           border: unset;
           border-right: unset;
-          border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+          border-top: 1px solid ${({ theme }) => theme.strokeColor};
         }
       }
     }
 
     &.one-column {
       td {
-        border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+        border-top: 1px solid ${({ theme }) => theme.strokeColor};
       }
 
       tr:first-child {
