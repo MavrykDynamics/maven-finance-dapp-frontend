@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 
 // style
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
@@ -19,7 +18,6 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 // actions
-import { State } from 'reducers'
 import { SMVK_TOKEN_ADDRESS, MVK_TOKEN_SYMBOL } from 'utils/constants'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
