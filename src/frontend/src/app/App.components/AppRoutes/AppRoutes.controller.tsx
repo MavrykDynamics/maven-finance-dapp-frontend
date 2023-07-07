@@ -37,6 +37,7 @@ import Satellites from 'pages/Satellites/Satellites.controller'
 // helpers
 import { scrollUpPage } from 'utils/scrollUpPage'
 import ProtectedRoute from './ProtectedRoute'
+import { RenderErrorPage } from 'pages/Error/RenderErrorPage'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
@@ -151,12 +152,9 @@ export const AppRoutes = () => {
         <Admin />
       </Route>
 
-      <Route exact path="/404">
-        {/*TODO: Replace later on with actual 404 page*/}
-        <Dashboard />
+      <Route path="*">
+        <RenderErrorPage />
       </Route>
-
-      <Redirect to="/404" />
     </Switch>
   )
 }

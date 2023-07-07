@@ -1,4 +1,5 @@
 import type { ApiError, FatalError, ValidationError } from './error'
+import { ERROR_TYPE_FATAL, ERROR_TYPE_ROUTER } from './error.const'
 
 export type InputPayload = {
   field?: string
@@ -19,3 +20,5 @@ export type ErrorType =
   | FatalError
   | ValidationError
   | ApiError
+
+export type InternalErrorType = typeof ERROR_TYPE_ROUTER | typeof ERROR_TYPE_FATAL

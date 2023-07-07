@@ -1,8 +1,9 @@
 import React, { useContext } from 'react'
+import { ErrorPage } from 'pages/Error/ErrorPage'
 
 // types
 import type { ToasterContextType, ToasterTypes } from './toaster.provider.type'
-import type { CustomErrors } from '../../errors/error'
+import { CustomErrors, FatalError } from '../../errors/error'
 
 // consts
 import {
@@ -13,6 +14,7 @@ import {
   TOASTER_WARNING,
 } from './toaster.provider.const'
 import { generateUniqueId } from 'utils/calcFunctions'
+import { getErrorPageData } from './helpers/getErrorPageData'
 
 export const toasterContext = React.createContext<ToasterContextType>(undefined!)
 
@@ -41,7 +43,7 @@ export default class ToasterProvider extends React.Component<Props, State> {
         fatal: this.fatal,
         success: this.success,
         loading: this.loading,
-        error: props.error || null,
+        error: props.error || null, // fatal error
         hideToasterMessage: this.hideToasterMessage,
         deleteToasterFromArray: this.deleteToasterFromArray,
         messages: [],
@@ -52,6 +54,13 @@ export default class ToasterProvider extends React.Component<Props, State> {
 
   /**
    *
+   * @param error It is the error that was thrown by the descendant component.
+   *
+   * Error boundaries do not catch errors for:
+   * Event handlers
+   * Asynchronous code (e.g. setTimeout or requestAnimationFrame callbacks)
+   * Server side rendering
+   * Errors thrown in the error boundary itself (rather than its children)
    */
   componentDidCatch(error: Error): void {
     this.addToasterMessage('', error.message, TOASTER_ERROR)
@@ -165,9 +174,27 @@ export default class ToasterProvider extends React.Component<Props, State> {
    *
    */
   render(): JSX.Element {
-    // add 404 page when isCritical error
-    return <toasterContext.Provider value={this.state.context}>{this.props.children}</toasterContext.Provider>
+    const { error } = this.state.context
+    const errorPageContent = error instanceof FatalError ? getErrorPageData(error.type) : null
+
+    return (
+      <toasterContext.Provider value={this.state.context}>
+        {errorPageContent ? (
+          <ErrorPage headerText={errorPageContent.header} descText={errorPageContent.desc} />
+        ) : (
+          this.props.children
+        )}
+      </toasterContext.Provider>
+    )
   }
 }
 
-export const useToasterContext = () => useContext(toasterContext)
+export const useToasterContext = () => {
+  const context = useContext(toasterContext)
+
+  if (!context) {
+    throw new Error('toasterContext should be used withing ToasterProvider')
+  }
+
+  return context
+}
