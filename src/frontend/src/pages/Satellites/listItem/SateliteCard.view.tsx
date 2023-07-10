@@ -139,10 +139,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
     const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
-    console.log(mvkTokenBalance)
-
-    console.log(sMvkTokenBalance)
-
     if (mvkTokenBalance === 0) {
       bug('Unable to Delegate', 'Please buy MVK and stake it')
       return
