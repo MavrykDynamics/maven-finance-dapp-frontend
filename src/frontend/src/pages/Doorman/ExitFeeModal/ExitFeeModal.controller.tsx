@@ -64,7 +64,7 @@ export const ExitFeeModal = ({
     setAction,
     contractAddresses: { doormanAddress },
   } = useDappConfigContext()
-  const { bug, info, loading, setSharedError } = useToasterContext()
+  const { bug, info, loading } = useToasterContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -121,10 +121,8 @@ export const ExitFeeModal = ({
         setInputData({ ...inputData, amount: '0' })
         setAction({ actionName: UNSTAKE_ACTION, toasterId, operationLvl })
       } else if (isContractErrorPayload(actionResult.error)) {
-        setSharedError(WALLTET_ERROR_FIELD, {
-          ...(actionResult.error as TezosWalletErrorPayload),
-          actionId: UNSTAKE_ACTION,
-        })
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
       } else {
         throw new Error(actionResult.error?.message)
       }

@@ -153,8 +153,8 @@ export const StakeUnstakeInputLabel = styled.div<{ theme: MavrykTheme }>`
   font-weight: 600;
 `
 
-export const StakeUnstakeButtonGrid = styled.div<{ hasError?: boolean }>`
-  margin: ${({ hasError }) => (!hasError ? '65px auto 0 auto' : '0 auto')};
+export const StakeUnstakeButtonGrid = styled.div`
+  margin: 65px auto 0 auto;
   display: flex;
   justify-content: space-between;
   column-gap: 10px;

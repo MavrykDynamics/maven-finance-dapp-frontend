@@ -100,7 +100,7 @@ export const StakeUnstakeView = ({
     setAction,
     contractAddresses: { mvkTokenAddress, doormanAddress },
   } = useDappConfigContext()
-  const { info, loading, bug, setSharedError, sharedErrors } = useToasterContext()
+  const { info, loading, bug, sharedErrors } = useToasterContext()
 
   const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -218,10 +218,8 @@ export const StakeUnstakeView = ({
         setInputData({ ...inputData, amount: '0' })
         setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
       } else if (isContractErrorPayload(actionResult.error)) {
-        setSharedError(WALLTET_ERROR_FIELD, {
-          ...(actionResult.error as TezosWalletErrorPayload),
-          actionId: STAKE_ACTION,
-        })
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
       } else {
         throw new Error(actionResult.error.message)
       }
@@ -466,12 +464,7 @@ export const StakeUnstakeView = ({
           <CommaNumber value={mvkExchangeRate} beginningText={'$'} />
         </StakeUnstakeRate>
 
-        {hasError && sharedErrors[WALLTET_ERROR_FIELD] && (
-          <div className="infoBlockWrapper">
-            <Info type={INFO_ERROR} size={INFO_SMALL} text={sharedErrors[WALLTET_ERROR_FIELD].description} />
-          </div>
-        )}
-        <StakeUnstakeButtonGrid hasError={hasError}>
+        <StakeUnstakeButtonGrid>
           <NewButton
             kind={BUTTON_PRIMARY}
             onClick={() => handleStake(Number(inputData.amount))}
