@@ -231,7 +231,7 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
 
 export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
   height: 100%;
-  border-left: 1px solid ${({ theme }) => theme.strokeForForms};
+  border-left: 1px solid ${({ theme }) => theme.strokeColor};
   background-color: ${({ theme }) => theme.backgroundColor};
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;

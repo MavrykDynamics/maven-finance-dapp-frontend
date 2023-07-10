@@ -127,7 +127,7 @@ export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
 
   > span {
     width: 50px;
-    border-left: 1px solid ${({ theme }) => theme.strokeForForms};
+    border-left: 1px solid ${({ theme }) => theme.strokeColor};
     display: flex;
     height: 100%;
     justify-content: center;
