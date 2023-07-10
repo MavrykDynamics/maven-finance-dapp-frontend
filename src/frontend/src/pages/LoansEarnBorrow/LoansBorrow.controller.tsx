@@ -22,13 +22,14 @@ import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.pr
 
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import { SingleValueData } from 'lightweight-charts'
 
 type TokenTypes = 'XTZ' | 'EURL' | 'USDT'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
   totalName: 'Total Borrowed',
-  leftValueName: 'Outstanding debt',
+  leftValueName: 'Outstanding Debt',
   rightValueName: 'Collateral Amount',
   buttonName: 'Borrow',
   isButtonSymbol: true,
@@ -48,15 +49,12 @@ export const LoansBorrow = () => {
     chartsData: { collateralChartData, borrowingChartData },
   } = useSelector((state: State) => state.loans)
 
-  const { totalCollaterals, totalBorrowed, tokenTotals } = useMemo(
+  const { tokenTotals } = useMemo(
     () =>
       allVaultsIds.reduce(
         (acc, vaultId) => {
           const vault = vaultsMapper[vaultId]
           const token = vault.borrowedAsset.symbol as TokenTypes
-
-          acc.totalCollaterals += vault.collateralBalance
-          acc.totalBorrowed += vault.borrowedAmount * vault.borrowedAsset.rate
 
           if (vault.ownerId === accountPkh) {
             acc.tokenTotals[token].userTotalBorrowed += vault.borrowedAmount * vault.borrowedAsset.rate
@@ -66,8 +64,6 @@ export const LoansBorrow = () => {
           return acc
         },
         {
-          totalCollaterals: 0,
-          totalBorrowed: 0,
           tokenTotals: {
             XTZ: {
               userTotalBorrowed: 0,
@@ -98,9 +94,9 @@ export const LoansBorrow = () => {
         annualRateName: 'APR',
         leftValue: tokenTotals[item.loanTokenData.symbol as TokenTypes].userTotalBorrowed ?? 0,
         rightValue: tokenTotals[item.loanTokenData.symbol as TokenTypes].userTotalCollateral ?? 0,
-        totalAmount: item.totalBorrowed,
+        totalAmount: (item.marketBorrowChartData.at(-1) as SingleValueData)?.value ?? 0,
         price: item.loanTokenData.rate,
-        chartData: item.marketCollateralChartData,
+        chartData: item.marketBorrowChartData,
       })),
     [loanTokens, tokenTotals],
   )
@@ -159,11 +155,11 @@ export const LoansBorrow = () => {
             // left chart
             leftChartData={collateralChartData}
             leftChartTitle="Total Collateral"
-            leftTotalAmount={totalCollaterals}
+            leftTotalAmount={collateralChartData.at(-1)?.value ?? 0}
             // right chart
             rightChartData={borrowingChartData}
             rightChartTitle="Total Borrowing"
-            rightTotalAmount={totalBorrowed}
+            rightTotalAmount={borrowingChartData.at(-1)?.value ?? 0}
           />
 
           <LoansEarnBorrow

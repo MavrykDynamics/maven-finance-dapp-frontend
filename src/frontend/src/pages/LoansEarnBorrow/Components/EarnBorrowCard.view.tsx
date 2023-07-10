@@ -51,7 +51,7 @@ export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: 
           <CommaNumber beginningText="$" value={totalAmount} />
         </div>
 
-        <EarnBorrowChart data={chartData} />
+        <EarnBorrowChart data={chartData} isBorrow={marketTabName === 'borrowTab'} />
 
         <div>
           <div className="info">

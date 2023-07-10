@@ -235,7 +235,7 @@ export const normalizeLoans = async ({
           transactionHistory,
           lending24hVolume,
           borrowing24hVolume,
-          marketCollateralChartData,
+          marketBorrowChartData,
           marketLiquidityChartData,
         } = getTransactionHistory(history_data, dipDupData, feeds)
 
@@ -254,7 +254,7 @@ export const normalizeLoans = async ({
           },
           lendingItem,
           transactionHistory: [...transactionHistory].reverse(),
-          marketCollateralChartData,
+          marketBorrowChartData,
           marketLiquidityChartData,
           utilisationRate: getNumberInBounds(
             0,

@@ -126,7 +126,7 @@ export type LoanMarketType = {
     tokenSymbol: string | undefined
   }>
   lendingItem: LendingItemType
-  marketCollateralChartData: Array<AreaChartPlotType>
+  marketBorrowChartData: Array<AreaChartPlotType>
   marketLiquidityChartData: Array<AreaChartPlotType>
   utilisationRate: number
   borrowers: number

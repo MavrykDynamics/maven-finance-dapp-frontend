@@ -87,7 +87,7 @@ type TransactionHistoryReduceType = {
   transactionHistory: LoanMarketType['transactionHistory']
   lending24hVolume: number
   borrowing24hVolume: number
-  marketCollateralChartData: Array<SingleValueData>
+  marketBorrowChartData: Array<SingleValueData>
   marketLiquidityChartData: Array<SingleValueData>
 }
 
@@ -181,40 +181,34 @@ export const getTransactionHistory = (
           if (dayjs().diff(timestamp) <= ONE_DAY_IN_MS) {
             acc.borrowing24hVolume += transformedAmount * assetMetadata.rate
           }
-        }
 
-        // Paid borrowed (repaid)
-        if (type === 3) {
-          if (dayjs().diff(timestamp) <= ONE_DAY_IN_MS) {
-            acc.borrowing24hVolume -= transformedAmount * assetMetadata.rate
-          }
-        }
-
-        // Deposit collateral
-        if (type === 4 || type === 6) {
           if (dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
-            acc.marketCollateralChartData.push({
-              value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
+            acc.marketBorrowChartData.push({
+              value: (acc.marketBorrowChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
               time: new Date(timestamp).getTime() as UTCTimestamp,
             })
           } else {
-            acc.marketCollateralChartData[0] = {
-              value: (acc.marketLiquidityChartData.at(0)?.value ?? 0) + transformedAmount * assetMetadata.rate,
+            acc.marketBorrowChartData[0] = {
+              value: (acc.marketBorrowChartData.at(0)?.value ?? 0) + transformedAmount * assetMetadata.rate,
               time: new Date(timestamp).getTime() as UTCTimestamp,
             }
           }
         }
 
-        // Withdraw collateral
-        if (type === 5 || type === 7) {
+        // Paid borrowed (repaid)
+        if (type === 3) {
+          if (dayjs().diff(timestamp) <= ONE_DAY_IN_MS) {
+            acc.borrowing24hVolume += transformedAmount * assetMetadata.rate
+          }
+
           if (dayjs().diff(timestamp) <= TWO_WEEKS_IN_MS) {
-            acc.marketCollateralChartData.push({
-              value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
+            acc.marketBorrowChartData.push({
+              value: (acc.marketBorrowChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
               time: new Date(timestamp).getTime() as UTCTimestamp,
             })
           } else {
-            acc.marketCollateralChartData[0] = {
-              value: (acc.marketLiquidityChartData.at(0)?.value ?? 0) - transformedAmount * assetMetadata.rate,
+            acc.marketBorrowChartData[0] = {
+              value: (acc.marketBorrowChartData.at(0)?.value ?? 0) - transformedAmount * assetMetadata.rate,
               time: new Date(timestamp).getTime() as UTCTimestamp,
             }
           }
@@ -225,7 +219,7 @@ export const getTransactionHistory = (
     },
     {
       transactionHistory: [],
-      marketCollateralChartData: [],
+      marketBorrowChartData: [],
       marketLiquidityChartData: [],
       lending24hVolume: 0,
       borrowing24hVolume: 0,
@@ -234,7 +228,7 @@ export const getTransactionHistory = (
 
   return {
     ...data,
-    marketCollateralChartData: data.marketCollateralChartData, //addMissingDaysWithZeroValues(data.marketCollateralChartData, 14),
+    marketBorrowChartData: data.marketBorrowChartData, //addMissingDaysWithZeroValues(data.marketCollateralChartData, 14),
     marketLiquidityChartData: data.marketLiquidityChartData, //addMissingDaysWithZeroValues(data.marketLiquidityChartData, 14),
   }
 }
