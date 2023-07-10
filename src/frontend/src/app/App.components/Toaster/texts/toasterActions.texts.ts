@@ -1,5 +1,5 @@
 import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
-import { ACTION_START_MESSAGE_TEXT, ACTION_START_MESSAGE_TEXT_15 } from '../Toaster.constants'
+import { ACTION_START_MESSAGE_TEXT } from '../Toaster.constants'
 import {
   CLAIM_ALL_REWARDS_ACTION,
   CLAIM_VESTING_REWARD_ACTION,
@@ -40,7 +40,7 @@ export const TOASTER_ACTIONS_TEXTS = {
   [GET_MVK_FROM_FAUCET_ACTION]: {
     start: {
       title: 'Requesting MVK...',
-      message: ACTION_START_MESSAGE_TEXT_15,
+      message: ACTION_START_MESSAGE_TEXT,
     },
     end: {
       title: 'Received 1,000 MVK...',
@@ -51,7 +51,7 @@ export const TOASTER_ACTIONS_TEXTS = {
   [REWARDS_COMPOUND_ACTION]: {
     start: {
       title: 'Compounding rewards...',
-      message: ACTION_START_MESSAGE_TEXT_15,
+      message: ACTION_START_MESSAGE_TEXT,
     },
     end: {
       title: 'Compounding done',
@@ -61,7 +61,7 @@ export const TOASTER_ACTIONS_TEXTS = {
   [CLAIM_VESTING_REWARD_ACTION]: {
     start: {
       title: 'Claiming vesting reward...',
-      message: ACTION_START_MESSAGE_TEXT_15,
+      message: ACTION_START_MESSAGE_TEXT,
     },
     end: {
       title: 'Compounding done',
@@ -71,7 +71,7 @@ export const TOASTER_ACTIONS_TEXTS = {
   [CLAIM_ALL_REWARDS_ACTION]: {
     start: {
       title: 'Claiming rewards...',
-      message: ACTION_START_MESSAGE_TEXT_15,
+      message: ACTION_START_MESSAGE_TEXT,
     },
     end: {
       title: 'Compounding done',
