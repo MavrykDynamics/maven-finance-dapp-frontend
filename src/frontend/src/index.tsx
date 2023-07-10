@@ -34,7 +34,6 @@ import './styles/animations.css'
 import './styles/index.css'
 import './styles/fonts.css'
 import './styles/animations.css'
-import { PreferencesProvider } from 'providers/PreferencesProvider/preferences.provider'
 
 const DappLibsProviders = ({ children }: { children: React.ReactNode }) => {
   const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
@@ -101,15 +100,13 @@ export const Root = () => {
   return (
     <DappLibsProviders>
       <ToasterProvider>
-        <PreferencesProvider>
-          <DarkThemeProvider>
-            <InitialDataDappProviders>
-              <DappSectionsDataProviders>
-                <AppContainer />
-              </DappSectionsDataProviders>
-            </InitialDataDappProviders>
-          </DarkThemeProvider>
-        </PreferencesProvider>
+        <DarkThemeProvider>
+          <InitialDataDappProviders>
+            <DappSectionsDataProviders>
+              <AppContainer />
+            </DappSectionsDataProviders>
+          </InitialDataDappProviders>
+        </DarkThemeProvider>
       </ToasterProvider>
     </DappLibsProviders>
   )

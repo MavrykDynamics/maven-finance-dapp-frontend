@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import colors from 'styles/colors'
 
 // helpers & actions
 import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
@@ -40,14 +41,15 @@ import { ProposalDetailsStyled } from './ProposalDetails.style'
 import { TzAddress, handleCopyToClipboard } from 'app/App.components/TzAddress/TzAddress.view'
 import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.helpers'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import colors from 'styles/colors'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { api } from 'utils/api/api'
 import { isAbortError } from 'errors/error'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
   const dispatch = useDispatch()
@@ -57,7 +59,9 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { governancePhase } = useSelector((state: State) => state.governance.config)
-  const { themeSelected } = usePreferencesContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const { tokensMetadata } = useTokensContext()
 

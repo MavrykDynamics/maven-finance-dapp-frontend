@@ -7,6 +7,7 @@ import { UserActionsType } from 'providers/UserProvider/user.provider.types'
 import { SatelliteActionsType } from 'providers/SatellitesProvider/satellites.provider.types'
 import { ExtendedError } from 'errors/error'
 import { TezosWalletErrorPayload } from 'errors/error.type'
+import { ThemeType } from 'app/App.components/DarkThemeProvider/DarkThemeProvider.const'
 
 export type ActionTypes = StakeActionType | UserActionsType | SatelliteActionsType
 
@@ -22,14 +23,27 @@ export type DappConfigContext = {
     otherBakers: Array<XtzBakerType>
   } | null
   isLoading: boolean
+  preferences: PreferencesState
+  globalLoadingState: LoadingState
 
   // methods
   setAction: (actionName: null | UserActionType) => void
+  // preferences actions
+  toggleTheme: (theme: ThemeType) => void
+  getHeadData: () => void
+  toggleRPCNodePopup: (isOpened: boolean) => void
+  selectNewRPCNode: (newRPCNode: string, isRemove?: boolean) => void
+  setNewRPCNodes: (newRPCNodes: Array<RPCNodeType>, isRemove?: boolean) => void
+  toggleSidebarCollapsing: (isOpened?: boolean) => void
+  // loading actions
+  toggleActionCompletion: (v: boolean) => void
+  toggleWertLoader: (v: boolean) => void
+  toggleActionFullScreenLoader: (v: boolean) => void
 }
 
 export type DappConfigContextStateType = Pick<
   DappConfigContext,
-  'maxLengths' | 'mvkFaucetAddress' | 'xtzBakers' | 'minimumStakedMvkBalance' | 'contractAddresses'
+  'maxLengths' | 'mvkFaucetAddress' | 'xtzBakers' | 'minimumStakedMvkBalance' | 'contractAddresses' | 'preferences' | 'globalLoadingState'
 >
 
 // TODO: dont forget to add other action names with their transfer to context
@@ -92,4 +106,35 @@ export type DappMaxLengths = {
   governance: GovernanceMaxLength
   governanceSatellite: GovernanceSatelliteMaxLength
   satelliteDelegation: SatelliteDelegationMaxLength
+}
+
+
+// preferences
+export type HeadDataType = {
+  knownLevel: number
+  level: number
+}
+
+export type RPCNodeType = {
+  url: string
+  title: string
+  nodeLogoUrl?: string
+  isUser: boolean
+}
+
+export type PreferencesState = {
+  themeSelected: ThemeType
+  headData?: HeadDataType
+  changeNodePopupOpen: boolean
+  RPC_NODES: Array<RPCNodeType>
+  REACT_APP_RPC_PROVIDER: string
+  sidebarOpened: boolean
+}
+
+// loading state
+
+export type LoadingState = {
+  isActiveFullScreenLoader: boolean
+  isActionActive: boolean
+  isWertLoading: boolean
 }

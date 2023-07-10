@@ -23,7 +23,7 @@ import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provi
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
-import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
@@ -31,7 +31,9 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
     tokensPrices: { [MVK_TOKEN_SYMBOL]: mvkExchangeRate = 0 },
   } = useTokensContext()
 
-  const { themeSelected } = usePreferencesContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const oracleFeeds = feedsAddresses.length
   const popularFeeds = feedsAddresses.slice(0, 3)
 

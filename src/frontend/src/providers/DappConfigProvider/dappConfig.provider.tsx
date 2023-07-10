@@ -5,14 +5,15 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { ApolloError, useQuery, useSubscription } from '@apollo/client'
 
 // types
-import { DappConfigContext, DappConfigContextStateType, UserActionType } from './dappConfig.provider.types'
+import { DappConfigContext, DappConfigContextStateType, RPCNodeType, UserActionType } from './dappConfig.provider.types'
+import { ThemeType } from 'app/App.components/DarkThemeProvider/DarkThemeProvider.const'
 
 // consts
 import { SUBSCRIPTION_INDEXER_LVL } from './queries/indexerLvl.query'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { MVK_DECIMALS } from 'utils/constants'
-import { DAPP_DEFAULT_MAX_LENGHTS, DEFAULT_DAPP_CONFIG_CONTEXT } from './helpers/dappConfig.const'
+import { DAPP_DEFAULT_MAX_LENGHTS, DEFAULT_DAPP_CONFIG_CONTEXT, RPC_NODE } from './helpers/dappConfig.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 
 // helpers
@@ -25,6 +26,10 @@ import { GET_MAX_LENGTHS_QUERY } from './queries/maxLenghts.query'
 import { getXTZBakers } from './bakers/getXtzBakers'
 import { GET_MVK_FAUCET_QUERY, GET_SATELLITE_MIN_STAKED_AMOUNT_QUERY } from './queries/config.query'
 import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
+
+// utils
+import { getChainInfo } from 'utils/blockchainApi'
+import { setItemInStorage } from 'utils/storage'
 
 export const dappConfigContext = React.createContext<DappConfigContext>(undefined!)
 
@@ -144,10 +149,87 @@ const DappConfigProvider = ({ children }: Props) => {
     }))
   }
 
+  // preferences actions
+  const toggleTheme = (theme: ThemeType) => {
+    setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, themeSelected: theme } }))
+  }
+
+  const getHeadData = async () => {
+    try {
+      const headData = await getChainInfo()
+      if (JSON.stringify(dappConfigCtxState.preferences.headData) !== JSON.stringify(headData)) {
+        setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, headData } }))
+      }
+    } catch (e) {
+      throw e
+    }
+  }
+
+  const toggleRPCNodePopup = (isOpened: boolean) => {
+    setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, changeNodePopupOpen: isOpened } }))
+  }
+
+  const selectNewRPCNode = (newRPCNode: string) => {
+    setItemInStorage(RPC_NODE, newRPCNode)
+    setDappConfigCtxState((prev) => ({
+      ...prev,
+      preferences: { ...prev.preferences, REACT_APP_RPC_PROVIDER: newRPCNode },
+    }))
+  }
+
+  const setNewRPCNodes = (newRPCNodes: Array<RPCNodeType>) => {
+    // setItemInStorage(RPC_NODE, newRPCNode)
+
+    setDappConfigCtxState((prev) => ({
+      ...prev,
+      preferences: { ...prev.preferences, RPC_NODES: newRPCNodes },
+    }))
+  }
+
+  const toggleSidebarCollapsing = (isOpened?: boolean) => {
+    setDappConfigCtxState((prev) => ({
+      ...prev,
+      preferences: { ...prev.preferences, sidebarOpened: isOpened ?? !dappConfigCtxState.preferences.sidebarOpened },
+    }))
+  }
+
+  // loading actions
+  const toggleActionFullScreenLoader = (v: boolean) => {
+    setDappConfigCtxState((prev) => ({
+      ...prev,
+      globalLoadingState: { ...prev.globalLoadingState, isActiveFullScreenLoader: v },
+    }))
+  }
+
+  const toggleActionCompletion = (v: boolean) => {
+    setDappConfigCtxState((prev) => ({
+      ...prev,
+      globalLoadingState: { ...prev.globalLoadingState, isActionActive: v },
+    }))
+  }
+
+  const toggleWertLoader = (v: boolean) => {
+    setDappConfigCtxState((prev) => ({
+      ...prev,
+      globalLoadingState: { ...prev.globalLoadingState, isWertLoading: v },
+    }))
+  }
+
   const contextProviderValue = useMemo(() => {
     return {
       isLoading: maxLengthsLoading || mvkFaucetLoading || configLoading || contractAddressesLoading,
       setAction,
+      // preferences
+      toggleTheme,
+      getHeadData,
+      toggleRPCNodePopup,
+      selectNewRPCNode,
+      setNewRPCNodes,
+      toggleSidebarCollapsing,
+      // loading
+      toggleActionFullScreenLoader,
+      toggleActionCompletion,
+      toggleWertLoader,
       ...dappConfigCtxState,
     }
   }, [dappConfigCtxState])

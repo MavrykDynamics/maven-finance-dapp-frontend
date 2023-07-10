@@ -1,7 +1,8 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useState } from 'react'
 
+// consts
 import {
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
@@ -11,37 +12,44 @@ import {
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { BorrowPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
-import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
+// types
+import { BorrowPopupDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
+
+// components
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
+// actions & helpers
+import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
+import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { checkNan } from 'utils/checkNan'
+
+// styles
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
-import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
-import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { StatusMessageStyled } from '../LoansComponents.style'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import colors from 'styles/colors'
-import { checkNan } from 'utils/checkNan'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
-import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
 export const BorrowAsset = ({
@@ -56,7 +64,9 @@ export const BorrowAsset = ({
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userTokensBalances } = useUserContext()
 
-  const { themeSelected } = usePreferencesContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()

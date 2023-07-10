@@ -25,9 +25,9 @@ import { Footer } from './App.components/Footer/Footer'
 
 // actions
 import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.actions'
-import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 import { setItemInStorage } from 'utils/storage'
-import { RPC_NODE, ecadLabSUrl } from 'providers/PreferencesProvider/helpers/preferences.const'
+import { RPC_NODE, ecadLabSUrl } from 'providers/DappConfigProvider/helpers/dappConfig.const'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
@@ -39,7 +39,11 @@ export const App = () => {
   const showSidebarOpened = useMedia('(min-width: 1400px)')
   const [{ policyPopup }, setCookie] = useCookies(['policyPopup'])
 
-  const { changeNodePopupOpen, sidebarOpened, toggleSidebarCollapsing, toggleRPCNodePopup } = usePreferencesContext()
+  const {
+    toggleSidebarCollapsing,
+    toggleRPCNodePopup,
+    preferences: { changeNodePopupOpen, sidebarOpened },
+  } = useDappConfigContext()
 
   useEffect(() => {
     dispatch(getContractAddressesStorage())

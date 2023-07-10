@@ -1,4 +1,3 @@
-import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -27,11 +26,9 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { UserActionHistory } from './UserOperationsHistory'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 const SatelliteTab = () => {
-  const dispatch = useDispatch()
-
   const { userAddress, availableSatellitesRewards } = useUserContext()
   const {
     satelliteMapper,
@@ -48,7 +45,9 @@ const SatelliteTab = () => {
     return () => setSatelliteAddressToSubsctibe(null)
   }, [userAddress])
 
-  const { themeSelected } = usePreferencesContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const satelliteRecord = userAddress ? satelliteMapper[userAddress] : null
 

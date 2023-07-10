@@ -2,6 +2,9 @@ import React, { useCallback, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useClickAway, useLockBodyScroll } from 'react-use'
 
+// providers
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
 // helpers, consts
 import {
   BUTTON_PRIMARY,
@@ -20,7 +23,7 @@ import { DARK_THEME, LIGHT_THEME, SPACE_THEME, ThemeType } from '../DarkThemePro
 
 // types
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { RPCNodeType } from 'providers/PreferencesProvider/preferences.provider.types'
+import { RPCNodeType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // views
 import Button from '../Button/NewButton'
@@ -31,8 +34,7 @@ import { Input } from '../Input/NewInput'
 // styles
 import { PopupContainer, PopupContainerWrapper } from '../popup/PopupMain.style'
 import { ChangeNodeNodesList, ChangeNodeNodesListItem, SettingsPopupBase } from '../popup/bases/SettingsPopup.style'
-import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 const MAX_NODES_AMOUNT = 3
 const DEFAULT_NODE_INPUT_STATE: { node: string; nodeValidation: InputStatusType } = {
@@ -43,7 +45,11 @@ const DEFAULT_NODE_INPUT_STATE: { node: string; nodeValidation: InputStatusType 
 export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boolean; closeModal: () => void }) => {
   useLockBodyScroll(isModalOpened)
 
-  const { RPC_NODES, REACT_APP_RPC_PROVIDER, selectNewRPCNode, setNewRPCNodes } = usePreferencesContext()
+  const {
+    selectNewRPCNode,
+    setNewRPCNodes,
+    preferences: { RPC_NODES, REACT_APP_RPC_PROVIDER },
+  } = useDappConfigContext()
   const { success } = useToasterContext()
 
   const inputRef = useRef<HTMLInputElement>(null)
@@ -181,7 +187,10 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
 
 const Themes = () => {
   const dispatch = useDispatch()
-  const { themeSelected, toggleTheme } = usePreferencesContext()
+  const {
+    toggleTheme,
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const setNewThemeHandler = useCallback((newTheme: ThemeType) => toggleTheme(newTheme), [])
 
   return (

@@ -3,10 +3,11 @@ import { useCallback } from 'react'
 // view
 import { MenuView } from './Menu.view'
 
-import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const Menu = () => {
-  const { toggleRPCNodePopup } = usePreferencesContext()
+  const { toggleRPCNodePopup } = useDappConfigContext()
   const openChangeNodePopup = useCallback(() => toggleRPCNodePopup(true), [])
 
   return <MenuView openChangeNodePopupHandler={openChangeNodePopup} />

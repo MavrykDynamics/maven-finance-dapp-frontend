@@ -29,12 +29,14 @@ import { getCollateralRatioByPersentage } from '../../Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
-import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type BorrowingExpandCardPropsType = {
   vault: VaultType
@@ -47,7 +49,9 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { openAddExistingCollateralPopup, addExistingCollateralPopup } = useLoansPopupsContext()
 
-  const { themeSelected } = usePreferencesContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)

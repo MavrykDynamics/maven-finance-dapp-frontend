@@ -20,7 +20,7 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const LendBorrowPosition = ({
   markets,
@@ -38,7 +38,9 @@ export const LendBorrowPosition = ({
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userMTokens } = useUserContext()
 
-  const { themeSelected } = usePreferencesContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   // calc data for gauge chart
   const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {

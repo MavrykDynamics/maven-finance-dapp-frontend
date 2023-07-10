@@ -20,7 +20,7 @@ import { MobileTopBar } from './TopBarLinks/MobileTopBar.controller'
 
 import { MenuLogo } from '../Menu.style'
 import { MenuMobileBurger, MenuTopStyled } from './MenuTopBar.style'
-import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type MenuTopBarProps = {
   burgerClickHandler: () => void
@@ -63,7 +63,9 @@ export const DOCS_LINKS = [
 
 export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodePopupHandler }: MenuTopBarProps) => {
   const dispatch = useDispatch()
-  const { themeSelected } = usePreferencesContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const [showMobileTopBar, setShowMobileTopBar] = useState(false)
