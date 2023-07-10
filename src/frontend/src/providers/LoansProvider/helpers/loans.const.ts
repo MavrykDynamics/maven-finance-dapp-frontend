@@ -24,3 +24,15 @@ export const LIQUIDITY_HISTORY_DATA_TYPES = [
   LOANS_HISTORY_DATA_TYPES.addLiquidity,
   LOANS_HISTORY_DATA_TYPES.removeLiquidity,
 ]
+
+// CONSTS FOR STAKING PROVIDER STATES
+export const LOANS_MARKETS_ADDRESSES = 'loansMarketsAddresses'
+export const LOANS_MARKETS_DATA = 'loansMarkets'
+export const LOANS_CONFIG = 'loansConfig'
+
+// PROVIDER DEFAULT CONSTS
+export const DEFAULT_LOANS_ACTIVE_SUBS = {
+  [LOANS_MARKETS_ADDRESSES]: false,
+  [LOANS_MARKETS_DATA]: false,
+  [LOANS_CONFIG]: false,
+} as const
