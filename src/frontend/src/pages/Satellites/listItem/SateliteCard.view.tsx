@@ -6,13 +6,9 @@ import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSate
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
-// actions
-import { delegate, undelegate, distributeProposalRewards } from '../Satellites.actions'
-import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
-
 // consts
 import colors from 'styles/colors'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
@@ -59,10 +55,31 @@ import {
 import {
   ACTIVE_SATELLITE_STATUS,
   BANNED_SATELLITE_STATUS,
+  DELEGATE_ACTION,
+  DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
   SATELLITE_ORACLE_STATUSES,
   SATELLITE_STATUSES,
   SATELLITE_VOTES_MAPPER,
+  UNDELEGATE_ACTION,
 } from 'providers/SatellitesProvider/satellites.const'
+import { rewardsCompound } from 'providers/UserProvider/actions/user.actions'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { REWARDS_COMPOUND_ACTION } from 'providers/UserProvider/helpers/user.consts'
+import { sleep } from 'utils/api/sleep'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { TezosWalletErrorPayload } from 'errors/error.type'
+import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
+import { unknownToError } from 'errors/error'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import {
+  delegate,
+  distributeProposalRewards,
+  undelegate,
+} from 'providers/SatellitesProvider/actions/satellites.actions'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -81,6 +98,11 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const { userTokensBalances, isSatellite, satelliteMvkIsDelegatedTo, availableSatellitesRewards, userAddress } =
     useUserContext()
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
+  const {
+    setAction,
+    contractAddresses: { delegationAddress, doormanAddress },
+  } = useDappConfigContext()
+  const { bug, info, loading } = useToasterContext()
 
   const { oracleStatus, satelliteStatus } = useSatelliteStatuses(satellite)
 
@@ -109,11 +131,222 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const balanceOver1SMvk = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) >= 1
 
   // Actions
-  const delegateCallback = async () => await dispatch(delegate(satellite.address))
-  const undelegateCallback = async () => await dispatch(undelegate(satellite.address))
-  const claimRewardsCallback = async () => (userAddress ? await dispatch(rewardsCompound(userAddress)) : null)
-  // TODO: add valid data
-  const distributeRewardsCallback = async () => await dispatch(distributeProposalRewards('', []))
+  const delegateCallback = async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
+      return
+    }
+
+    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: MVK_TOKEN_SYMBOL })
+    const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+
+    if (mvkTokenBalance === 0) {
+      bug('Unable to Delegate', 'Please buy MVK and stake it')
+      return
+    }
+
+    if (sMvkTokenBalance === 0) {
+      bug('Unable to Delegate', 'Please stake your MVK')
+      return
+    }
+
+    try {
+      const actionResult = await delegate(userAddress, satelliteAddress, delegationAddress)
+
+      if (checkIfActionSuccess(actionResult)) {
+        const { operation } = actionResult
+        dispatch(toggleActionFullScreenLoader(true))
+        dispatch(toggleActionCompletion(true))
+
+        info(
+          TOASTER_ACTIONS_TEXTS[DELEGATE_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[DELEGATE_ACTION]['start']['title'],
+        )
+
+        await sleep(5000)
+
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+        setAction({ actionName: DELEGATE_ACTION, toasterId, operationLvl })
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
+      setAction(null)
+      const parsedError = unknownToError(e)
+      bug(parsedError.message)
+    }
+  }
+
+  const undelegateCallback = async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
+      return
+    }
+
+    try {
+      const actionResult = await undelegate(userAddress, satelliteAddress, delegationAddress)
+
+      if (checkIfActionSuccess(actionResult)) {
+        const { operation } = actionResult
+        dispatch(toggleActionFullScreenLoader(true))
+        dispatch(toggleActionCompletion(true))
+
+        info(
+          TOASTER_ACTIONS_TEXTS[UNDELEGATE_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[UNDELEGATE_ACTION]['start']['title'],
+        )
+
+        await sleep(5000)
+
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+        setAction({ actionName: UNDELEGATE_ACTION, toasterId, operationLvl })
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
+      setAction(null)
+      const parsedError = unknownToError(e)
+      bug(parsedError.message)
+    }
+  }
+
+  const claimRewardsCallback = async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!doormanAddress) {
+      bug('Bad doorman address')
+      return
+    }
+
+    try {
+      const actionResult = await rewardsCompound(userAddress, doormanAddress)
+
+      if (checkIfActionSuccess(actionResult)) {
+        const { operation } = actionResult
+        dispatch(toggleActionFullScreenLoader(true))
+        dispatch(toggleActionCompletion(true))
+
+        info(
+          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['title'],
+        )
+
+        await sleep(5000)
+
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+
+        setAction({ actionName: REWARDS_COMPOUND_ACTION, toasterId, operationLvl })
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error.message)
+      }
+    } catch (e) {
+      setAction(null)
+      const parsedError = unknownToError(e)
+      bug(parsedError.message)
+    }
+  }
+
+  const distributeRewardsCallback = async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
+      return
+    }
+
+    // TODO: add valid data
+    try {
+      const actionResult = await distributeProposalRewards(delegationAddress, '', [])
+
+      if (checkIfActionSuccess(actionResult)) {
+        const { operation } = actionResult
+        dispatch(toggleActionFullScreenLoader(true))
+        dispatch(toggleActionCompletion(true))
+
+        info(
+          TOASTER_ACTIONS_TEXTS[DISTRIBUTE_PROPOSALS_REWARDS_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[DISTRIBUTE_PROPOSALS_REWARDS_ACTION]['start']['title'],
+        )
+
+        await sleep(5000)
+
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+        setAction({ actionName: DISTRIBUTE_PROPOSALS_REWARDS_ACTION, toasterId, operationLvl })
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
+      setAction(null)
+      const parsedError = unknownToError(e)
+      bug(parsedError.message)
+    }
+  }
 
   const buttonToShow =
     isUserDelegatedToThisSatellite && currentlyRegistered ? (

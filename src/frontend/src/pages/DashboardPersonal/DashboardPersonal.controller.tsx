@@ -6,7 +6,6 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom'
 import { State } from 'reducers'
 
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { claimAllRewardsAction } from './DashboardPersonal.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import {
   isValidPersonalDashboardTabId,
@@ -41,6 +40,21 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { claimAllRewardsAction } from 'providers/UserProvider/actions/user.actions'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
+import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { sleep } from 'utils/api/sleep'
+import { CLAIM_ALL_REWARDS_ACTION } from 'providers/UserProvider/helpers/user.consts'
+import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
+import { unknownToError } from 'errors/error'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { TezosWalletErrorPayload } from 'errors/error.type'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+
 import {
   MVK_BALANCE_SUB,
   MVK_TOTAL_SUB,
@@ -52,7 +66,6 @@ import {
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -60,7 +73,8 @@ const DashboardPersonal = () => {
 
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
   const {
-    contractAddresses: { mvkTokenAddress },
+    contractAddresses: { mvkTokenAddress, doormanAddress },
+    setAction,
   } = useDappConfigContext()
   const {
     userTokensBalances,
@@ -77,7 +91,7 @@ const DashboardPersonal = () => {
     isVestee,
   } = useUserContext()
   const { changeSatellitesSubscriptionsList, isLoading: isSatellitesLoading } = useSatellitesContext()
-
+  const { bug, info, loading } = useToasterContext()
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
@@ -85,7 +99,56 @@ const DashboardPersonal = () => {
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
 
-  const claimRewards = async () => await dispatch(claimAllRewardsAction(tokensMetadata))
+  const claimRewards = async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!doormanAddress) {
+      bug('Bad doorman address')
+      return
+    }
+
+    try {
+      const actionResult = await claimAllRewardsAction(userAddress, doormanAddress)
+
+      if (checkIfActionSuccess(actionResult)) {
+        const { operation } = actionResult
+        dispatch(toggleActionFullScreenLoader(true))
+        dispatch(toggleActionCompletion(true))
+
+        info(
+          TOASTER_ACTIONS_TEXTS[CLAIM_ALL_REWARDS_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[CLAIM_ALL_REWARDS_ACTION]['start']['title'],
+        )
+
+        await sleep(5000)
+
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+
+        setAction({ actionName: CLAIM_ALL_REWARDS_ACTION, toasterId, operationLvl })
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
+      setAction(null)
+      const parsedError = unknownToError(e)
+      bug(parsedError.message)
+    }
+  }
 
   useEffect(() => {
     changeStakingSubscriptionsList({

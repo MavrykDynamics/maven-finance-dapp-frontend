@@ -1,5 +1,4 @@
 // helpres, actions
-import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
@@ -149,7 +148,7 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     await checkIndexerLevelAndRunDataUpdateCallback({
       callback: async () => {
         await dispatch(getGovernanceStorage())
-        await dispatch(getSatellitesStorage())
+        // await dispatch(getSatellitesStorage())
 
         // Add here call for update data actions
         await dispatch(hideToaster())
@@ -205,7 +204,7 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     await checkIndexerLevelAndRunDataUpdateCallback({
       callback: async () => {
         await dispatch(getGovernanceStorage())
-        await dispatch(getSatellitesStorage())
+        // await dispatch(getSatellitesStorage())
 
         // Add here call for update data actions
         await dispatch(hideToaster())
@@ -280,7 +279,7 @@ export const updateProposalData =
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(getGovernanceStorage())
-          await dispatch(getSatellitesStorage())
+          // await dispatch(getSatellitesStorage())
 
           // Add here call for update data actions
           await dispatch(hideToaster())

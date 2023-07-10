@@ -33,6 +33,9 @@ import { InputProps } from 'app/App.components/Input/newInput.type'
 import { State } from 'reducers'
 import { unstakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
 import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { TezosWalletErrorPayload } from 'errors/error.type'
+import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -77,21 +80,21 @@ export const ExitFeeModal = ({
       return
     }
 
+    if (!doormanAddress) {
+      bug('Bad doorman address')
+      return
+    }
+
     if (unstakeAmount <= 0) {
       bug('Please enter an amount superior to zero', 'Incorrect amount')
       return
     }
 
-    if (!doormanAddress) {
-      bug('Please reload the page', 'Error')
-      return
-    }
+    try {
+      const actionResult = await unstakeMVK(unstakeAmount, doormanAddress)
+      closePopup()
 
-    const actionResult = await unstakeMVK(unstakeAmount, doormanAddress)
-    closePopup()
-
-    if (checkIfActionSuccess(actionResult)) {
-      try {
+      if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
         dispatch(toggleActionFullScreenLoader(true))
         dispatch(toggleActionCompletion(true))
@@ -115,16 +118,20 @@ export const ExitFeeModal = ({
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
 
-        setInputData({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
+        setInputData({ ...inputData, amount: '0' })
         setAction({ actionName: UNSTAKE_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else {
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
     }
   }
-
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
 

@@ -20,7 +20,6 @@ import { checkIndexerLevelAndRunDataUpdateCallback } from '../../utils/checkInde
 // actions
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
-import { getSatellitesStorage } from '../Satellites/Satellites.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 
 // gql
@@ -621,7 +620,7 @@ export const voteForAction =
           callback: async () => {
             // Add here call for update data actions
             await dispatch(getSatelliteGovernanceStorage())
-            await dispatch(getSatellitesStorage())
+            // await dispatch(getSatellitesStorage())
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, `${voteType} vote registered`, ACTION_COMPLETION_MESSAGE_TEXT))
             await dispatch(toggleActionCompletion(false))

@@ -1,12 +1,19 @@
+import type {
+  InputPayload,
+  Payload,
+  WalletOperationErrorPayload,
+  WalletOperationErrorPayloadErrorItem,
+  InternalErrorType,
+} from './error.type'
+import { walletOparationErrorPayload } from './error.schema'
 import { ERROR_TYPE_FATAL } from './error.const'
-import type { InputPayload, InternalErrorType, Payload } from './error.type'
 
 /**
  * ExtendedErrorClass as base class. Contains all essential information
  * for error. You can create another extened class from it. See examples below (ValidationError, PropertyError etc.)
  */
 class ExtendedErrorClass extends Error {
-  payload: Payload | InputPayload
+  payload: Payload | InputPayload | WalletOperationErrorPayload
 
   constructor(messageOrError: string | Error, payload: Payload = {}) {
     const message = messageOrError instanceof Error ? messageOrError.message : messageOrError
@@ -50,8 +57,20 @@ export class FatalError extends ExtendedErrorClass {
   }
 }
 
-export type CustomErrors = Error | ApiError | ValidationError | FatalError | null
-export type ExtendedError = FatalError | ApiError | ValidationError
+/**
+ *
+ */
+export class TezosOperationError extends ExtendedErrorClass {
+  id?: string
+  kind?: string
+  errors?: WalletOperationErrorPayloadErrorItem[]
+  errorDetails?: string
+}
+
+// this one for all errors
+export type CustomErrors = Error | ApiError | ValidationError | FatalError | TezosOperationError | null
+// this one only for extended error, so you know it is NOT null and NOT simple Error
+export type ExtendedError = FatalError | ApiError | ValidationError | TezosOperationError
 
 /**
  * Function checks the error type based on payload similarity
@@ -60,7 +79,14 @@ export type ExtendedError = FatalError | ApiError | ValidationError
  * @returns true if this is extendedError
  */
 export function isExtendedError(e: unknown): e is ExtendedError {
-  return e instanceof FatalError || e instanceof ApiError || e instanceof ValidationError
+  return (
+    e instanceof FatalError || e instanceof ApiError || e instanceof ValidationError || e instanceof TezosOperationError
+  )
+}
+
+export function isTezosOperationError(e: unknown) {
+  const result = walletOparationErrorPayload.safeParse(Object.assign({}, e))
+  return result.success
 }
 
 /**

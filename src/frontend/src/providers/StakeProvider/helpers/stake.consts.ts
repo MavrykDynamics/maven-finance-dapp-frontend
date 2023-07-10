@@ -1,7 +1,6 @@
 // CONSTS FOR STAKE ACTIONS
 export const STAKE_ACTION = 'stake'
 export const UNSTAKE_ACTION = 'unstake'
-export const GET_MVK_FROM_FAUCET_ACTION = 'faucetMVK'
 
 // CONSTS FOR STAKING PROVIDER STATES
 export const SMVK_HISTORY_SUB = 'smvkHistorySub'

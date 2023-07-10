@@ -3,7 +3,7 @@ import { ErrorPage } from 'pages/Error/ErrorPage'
 
 // types
 import type { ToasterContextType, ToasterTypes } from './toaster.provider.type'
-import { CustomErrors, FatalError } from '../../errors/error'
+import { FatalError, CustomErrors } from '../../errors/error'
 
 // consts
 import {
@@ -14,6 +14,8 @@ import {
   TOASTER_WARNING,
 } from './toaster.provider.const'
 import { generateUniqueId } from 'utils/calcFunctions'
+import { SharedErrorFileds, SharedErrors } from 'errors/error.type'
+import { WalletActionType } from 'types/actions.type'
 import { getErrorPageData } from './helpers/getErrorPageData'
 
 export const toasterContext = React.createContext<ToasterContextType>(undefined!)
@@ -43,11 +45,17 @@ export default class ToasterProvider extends React.Component<Props, State> {
         fatal: this.fatal,
         success: this.success,
         loading: this.loading,
-        error: props.error || null, // fatal error
+        // fatal error to show 404 page
+        error: props.error || null, //fatal error
+        // custom errors, like error from Wallet, api, validation etc.
+        sharedErrors: {
+          walletError: null,
+        },
         hideToasterMessage: this.hideToasterMessage,
         deleteToasterFromArray: this.deleteToasterFromArray,
         messages: [],
         setError: this.setError,
+        setSharedError: this.setSharedError,
       },
     }
   }
@@ -127,6 +135,18 @@ export default class ToasterProvider extends React.Component<Props, State> {
     }))
   }
 
+  setSharedError = (fieldName: SharedErrorFileds, error: (SharedErrors & { actionId: WalletActionType }) | null) => {
+    this.setState({
+      context: {
+        ...this.state.context,
+        sharedErrors: {
+          ...this.state.context.sharedErrors,
+          [fieldName]: error,
+        },
+      },
+    })
+  }
+
   /**
    * sets hide property for toast to 'true' to play hide animation
    * @param unique toaster id
@@ -189,12 +209,4 @@ export default class ToasterProvider extends React.Component<Props, State> {
   }
 }
 
-export const useToasterContext = () => {
-  const context = useContext(toasterContext)
-
-  if (!context) {
-    throw new Error('toasterContext should be used withing ToasterProvider')
-  }
-
-  return context
-}
+export const useToasterContext = () => useContext(toasterContext)
