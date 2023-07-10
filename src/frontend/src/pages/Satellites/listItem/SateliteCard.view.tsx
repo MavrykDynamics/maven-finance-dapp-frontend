@@ -95,15 +95,14 @@ const renderVotingHistoryItem = (vote: SatelliteVoteType) => {
 }
 
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
-  const {
-    doormanAddress: { address: doormanAddress },
-    delegationAddress: { address: delegationAddress },
-  } = useSelector((state: State) => state.contractAddresses)
   const { userTokensBalances, isSatellite, satelliteMvkIsDelegatedTo, availableSatellitesRewards, userAddress } =
     useUserContext()
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
-  const { setAction } = useDappConfigContext()
-  const { bug, info, loading, setSharedError } = useToasterContext()
+  const {
+    setAction,
+    contractAddresses: { delegationAddress, doormanAddress },
+  } = useDappConfigContext()
+  const { bug, info, loading } = useToasterContext()
 
   const { oracleStatus, satelliteStatus } = useSatelliteStatuses(satellite)
 
@@ -137,11 +136,15 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return
     }
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
+      return
+    }
 
     const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: MVK_TOKEN_SYMBOL })
     const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
-    if (mvkTokenBalance === 0 || sMvkTokenBalance === 0) {
+    if (mvkTokenBalance === 0) {
       bug('Unable to Delegate', 'Please buy MVK and stake it')
       return
     }
@@ -194,6 +197,11 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const undelegateCallback = async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
       return
     }
 
@@ -294,6 +302,11 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return
     }
 
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
+      return
+    }
+
     // TODO: add valid data
     try {
       const actionResult = await distributeProposalRewards(delegationAddress, '', [])
@@ -304,8 +317,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         dispatch(toggleActionCompletion(true))
 
         info(
-          TOASTER_ACTIONS_TEXTS[UNDELEGATE_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[UNDELEGATE_ACTION]['start']['title'],
+          TOASTER_ACTIONS_TEXTS[DISTRIBUTE_PROPOSALS_REWARDS_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[DISTRIBUTE_PROPOSALS_REWARDS_ACTION]['start']['title'],
         )
 
         await sleep(5000)
@@ -321,7 +334,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
-        setAction({ actionName: UNDELEGATE_ACTION, toasterId, operationLvl })
+        setAction({ actionName: DISTRIBUTE_PROPOSALS_REWARDS_ACTION, toasterId, operationLvl })
       } else if (isContractErrorPayload(actionResult.error)) {
         const { message, description } = actionResult.error as TezosWalletErrorPayload
         bug(description, message)

@@ -1,11 +1,11 @@
 import type {
   InputPayload,
   Payload,
-  TezosContractErrorPayload,
-  TezosContractErrorPayloadErrorItem,
+  WalletOperationErrorPayload,
+  WalletOperationErrorPayloadErrorItem,
   InternalErrorType,
 } from './error.type'
-import { tezosContractErrorPayload } from './error.schema'
+import { walletOparationErrorPayload } from './error.schema'
 import { ERROR_TYPE_FATAL } from './error.const'
 
 /**
@@ -13,7 +13,7 @@ import { ERROR_TYPE_FATAL } from './error.const'
  * for error. You can create another extened class from it. See examples below (ValidationError, PropertyError etc.)
  */
 class ExtendedErrorClass extends Error {
-  payload: Payload | InputPayload | TezosContractErrorPayload
+  payload: Payload | InputPayload | WalletOperationErrorPayload
 
   constructor(messageOrError: string | Error, payload: Payload = {}) {
     const message = messageOrError instanceof Error ? messageOrError.message : messageOrError
@@ -63,7 +63,7 @@ export class FatalError extends ExtendedErrorClass {
 export class TezosOperationError extends ExtendedErrorClass {
   id?: string
   kind?: string
-  errors?: TezosContractErrorPayloadErrorItem[]
+  errors?: WalletOperationErrorPayloadErrorItem[]
   errorDetails?: string
 }
 
@@ -84,8 +84,8 @@ export function isExtendedError(e: unknown): e is ExtendedError {
   )
 }
 
-export function isTezosContractError(e: unknown) {
-  const result = tezosContractErrorPayload.safeParse(Object.assign({}, e))
+export function isTezosOperationError(e: unknown) {
+  const result = walletOparationErrorPayload.safeParse(Object.assign({}, e))
   return result.success
 }
 

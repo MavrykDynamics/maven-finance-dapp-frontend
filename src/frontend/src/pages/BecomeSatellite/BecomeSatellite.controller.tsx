@@ -20,7 +20,6 @@ import {
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // Actions
-import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
@@ -100,6 +99,7 @@ export const BecomeSatellite = () => {
 
   const {
     maxLengths: { satelliteDelegation },
+    contractAddresses: { delegationAddress },
     minimumStakedMvkBalance,
     setAction,
   } = useDappConfigContext()
@@ -127,9 +127,6 @@ export const BecomeSatellite = () => {
 
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const {
-    delegationAddress: { address: delegationAddress },
-  } = useSelector((state: State) => state.contractAddresses)
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
@@ -238,6 +235,10 @@ export const BecomeSatellite = () => {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return
     }
+    if (!delegationAddress) {
+      bug('Wrong delegation address.')
+      return
+    }
 
     try {
       const actionResult = await registerSatellite(
@@ -281,6 +282,10 @@ export const BecomeSatellite = () => {
   const handleUpdate = async (requestData: RegisterAsSatelliteForm) => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
       return
     }
 

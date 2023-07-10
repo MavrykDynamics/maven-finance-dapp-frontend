@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
 
-import { unregisterAsSatellite } from '../BecomeSatellite.actions'
 import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 import { BUTTON_SECONDARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -38,17 +37,20 @@ export const UnregisterPopup = ({
 }) => {
   const dispatch = useDispatch()
 
-  const { setAction } = useDappConfigContext()
+  const {
+    setAction,
+    contractAddresses: { delegationAddress },
+  } = useDappConfigContext()
   const { bug, info, loading } = useToasterContext()
   const { userAddress } = useUserContext()
-
-  const {
-    delegationAddress: { address: delegationAddress },
-  } = useSelector((state: State) => state.contractAddresses)
 
   const handleUnregisterSatellite = async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
       return
     }
 

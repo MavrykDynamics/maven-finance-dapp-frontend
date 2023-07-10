@@ -193,36 +193,30 @@ export const StakeUnstakeView = ({
       const actionResult = await stakeMVK(stakeAmount, userAddress, doormanAddress, mvkTokenAddress)
 
       if (checkIfActionSuccess(actionResult)) {
-        try {
-          const { operation } = actionResult
-          dispatch(toggleActionFullScreenLoader(true))
-          dispatch(toggleActionCompletion(true))
+        const { operation } = actionResult
+        dispatch(toggleActionFullScreenLoader(true))
+        dispatch(toggleActionCompletion(true))
 
-          info(
-            TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
-            TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['title'],
-          )
+        info(
+          TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['title'],
+        )
 
-          await sleep(5000)
+        await sleep(5000)
 
-          // show toaster loader after 5000ms after operation started
-          const toasterId = loading(
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          )
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
 
-          dispatch(toggleActionFullScreenLoader(false))
-          dispatch(toggleActionCompletion(false))
+        dispatch(toggleActionFullScreenLoader(false))
+        dispatch(toggleActionCompletion(false))
 
-          const operationConfirm = await operation.confirmation()
-          const operationLvl = operationConfirm.block.header.level
-          setInputData({ ...inputData, amount: '0' })
-          setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
-        } catch (e) {
-          setAction(null)
-          const parsedError = unknownToError(e)
-          bug(parsedError.message)
-        }
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+        setInputData({ ...inputData, amount: '0' })
+        setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
       } else if (isContractErrorPayload(actionResult.error)) {
         setSharedError(WALLTET_ERROR_FIELD, {
           ...(actionResult.error as TezosWalletErrorPayload),

@@ -1,7 +1,7 @@
 import type { ApiError, FatalError, ValidationError, TezosOperationError } from './error'
 import { ERROR_TYPE_FATAL, ERROR_TYPE_ROUTER } from './error.const'
 import { z } from 'zod'
-import { tezosContractErrorPayload, tezosContractErrorPayloadErrorItemSchema } from './error.schema'
+import { walletOparationErrorPayload, walletOperationErrorPayloadErrorItemSchema } from './error.schema'
 import { WALLTET_ERROR_FIELD } from './consts/error.const'
 import { WalletActionType } from 'types/actions.type'
 
@@ -18,8 +18,8 @@ export type Payload = {
 }
 
 // tezos contracts
-export type TezosContractErrorPayloadErrorItem = z.infer<typeof tezosContractErrorPayloadErrorItemSchema>
-export type TezosContractErrorPayload = z.infer<typeof tezosContractErrorPayload>
+export type WalletOperationErrorPayloadErrorItem = z.infer<typeof walletOperationErrorPayloadErrorItemSchema>
+export type WalletOperationErrorPayload = z.infer<typeof walletOparationErrorPayload>
 
 export type ErrorType =
   | (Error & {

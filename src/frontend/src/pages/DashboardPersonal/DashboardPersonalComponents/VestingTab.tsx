@@ -32,10 +32,12 @@ const VestingTab = () => {
   const { vesteesMapper } = useSelector((state: State) => state.vesting)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { accountPkh = '' } = useSelector((state: State) => state.wallet)
-  const { vestingAddress } = useSelector((state: State) => state.contractAddresses)
 
   const { bug, info, loading, setSharedError } = useToasterContext()
-  const { setAction } = useDappConfigContext()
+  const {
+    setAction,
+    contractAddresses: { vestingAddress },
+  } = useDappConfigContext()
 
   const vesteeRecord = vesteesMapper[accountPkh]
 
@@ -47,9 +49,13 @@ const VestingTab = () => {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return
     }
+    if (!vestingAddress) {
+      bug('Wrong vesting address')
+      return
+    }
 
     try {
-      const actionResult = await claimVestingReward(vestingAddress.address)
+      const actionResult = await claimVestingReward(vestingAddress)
 
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult

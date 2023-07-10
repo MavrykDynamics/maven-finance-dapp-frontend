@@ -3,12 +3,17 @@ import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { SPECIFIC_CONTRACT_ERROR_CODES } from 'errors/consts/customWalletErrorCodes'
 import { DEFAULT_TEZOS_ERROR } from 'errors/consts/error.const'
 import { CONTRACT_ERROR_CODES } from 'errors/consts/walletErrorCodes'
-import { isTezosContractError } from 'errors/error'
+import { isTezosOperationError } from 'errors/error'
 import { EstimatedBatchCall, EstimatedOperation, TezosWalletErrorPayload } from 'errors/error.type'
 import { toSentenceCase } from 'utils/toSentenceCase'
 
+/**
+ * checks is it's wallet error and is yes - gets the error info by that specific code
+ * @param e Error instance
+ * @returns {Message, description} object which contains info from error code
+ */
 export const getContractErrorMessage = (e: unknown): TezosWalletErrorPayload => {
-  const isTezosError = isTezosContractError(e)
+  const isTezosError = isTezosOperationError(e)
   if (isTezosError) {
     const error = e as TezosOperationError
     const errorCode = Number(error.message) ? Number(error.message) : error.message ? error.message : null
@@ -32,6 +37,12 @@ export const getContractErrorMessage = (e: unknown): TezosWalletErrorPayload => 
   return DEFAULT_TEZOS_ERROR
 }
 
+
+/**
+ * estimates the operation before the actual contract call
+ * @param tezosOperation instance of contact method
+ * @returns estimation info with OR without error
+ */
 export const estimateExecution = async (tezosOperation: ContractMethod<Wallet>): Promise<EstimatedOperation> => {
   const defaultEstimatedOperation: EstimatedOperation = {
     gasLimit: 0,
@@ -53,6 +64,12 @@ export const estimateExecution = async (tezosOperation: ContractMethod<Wallet>):
   }
 }
 
+
+/**
+ * estimates the operations before the actual contract calls
+ * @param tezosOperation instance of contact method inside array
+ * @returns estimation info with OR without error
+ */
 export const estimateBatchOperation = async (
   tezosBatchOperation: (TransferParams & { kind: OpKind.TRANSACTION })[],
 ): Promise<EstimatedBatchCall> => {
@@ -85,7 +102,11 @@ export const estimateBatchOperation = async (
     return { ...defaultEstimatedBatchCalls, error: getContractErrorMessage(e) }
   }
 }
-
+/**
+ * 
+ * @param obj in most cases it would be object to check data returned by "getContractErrorMessage"
+ * @returns boolean
+ */
 export const isContractErrorPayload = (obj: any) => {
   return (
     typeof obj === 'object' &&

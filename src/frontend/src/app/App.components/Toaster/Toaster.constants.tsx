@@ -51,3 +51,7 @@ export const ACTION_COMPLETION_MESSAGE_TEXT = 'All good :)'
 
 // TOASTER TEXTS IDS
 export const TOASTER_SUBSCRIPTION_ERROR = 'TOASTER_SUBSCRIPTION_ERROR'
+
+export const getActionsStartMessageText = (v = 30) => {
+  return `Please wait ${v}s`
+}

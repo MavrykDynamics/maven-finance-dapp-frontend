@@ -1,9 +1,9 @@
 import { z } from 'zod'
 
-export const tezosContractErrorPayloadErrorItemSchema = z.record(z.string(), z.unknown())
+export const walletOperationErrorPayloadErrorItemSchema = z.record(z.string(), z.unknown())
 
-export const tezosContractErrorPayload = z.object({
-  errors: z.array(tezosContractErrorPayloadErrorItemSchema).optional(),
+export const walletOparationErrorPayload = z.object({
+  errors: z.array(walletOperationErrorPayloadErrorItemSchema).optional(),
   errorDetails: z.string().optional(),
   id: z.string(),
   kind: z.string(),
