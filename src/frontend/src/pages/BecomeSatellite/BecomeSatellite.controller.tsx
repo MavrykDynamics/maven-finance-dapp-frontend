@@ -100,6 +100,7 @@ export const BecomeSatellite = () => {
   const {
     maxLengths: { satelliteDelegation },
     contractAddresses: { delegationAddress },
+    preferences: { themeSelected },
     minimumStakedMvkBalance,
     setAction,
   } = useDappConfigContext()
@@ -126,7 +127,6 @@ export const BecomeSatellite = () => {
   }, [userAddress])
 
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })

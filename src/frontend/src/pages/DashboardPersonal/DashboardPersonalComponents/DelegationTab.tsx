@@ -1,7 +1,5 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import { State } from 'reducers'
 
 // consts
 import { BUTTON_SECONDARY, BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
@@ -24,14 +22,13 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 // providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // helpers
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 const DelegationTab = () => {
-  const dispatch = useDispatch()
-
   const {
     satelliteMapper,
     proposalsAmount,
@@ -40,10 +37,11 @@ const DelegationTab = () => {
     setSatelliteAddressToSubsctibe,
   } = useSatellitesContext()
   const { userTokensBalances, satelliteMvkIsDelegatedTo, availableSatellitesRewards, userAddress } = useUserContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
-
-  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   useEffect(() => {
     if (satelliteMvkIsDelegatedTo) {

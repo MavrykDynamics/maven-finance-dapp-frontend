@@ -72,7 +72,6 @@ import { sleep } from 'utils/api/sleep'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
 import { TezosWalletErrorPayload } from 'errors/error.type'
-import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
 import { unknownToError } from 'errors/error'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import {
@@ -101,6 +100,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const {
     setAction,
     contractAddresses: { delegationAddress, doormanAddress },
+    preferences: { themeSelected },
   } = useDappConfigContext()
   const { bug, info, loading } = useToasterContext()
 
@@ -115,7 +115,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   const dispatch = useDispatch()
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {

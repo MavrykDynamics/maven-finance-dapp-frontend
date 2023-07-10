@@ -1,13 +1,11 @@
 import { useHistory } from 'react-router-dom'
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
 
 // context
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useLoadingContext } from 'providers/LoadingProvider/loading.provider'
 import { stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
 import { rewardsCompound } from 'providers/UserProvider/actions/user.actions'
 
@@ -94,13 +92,15 @@ export const StakeUnstakeView = ({
   } = useUserContext()
   const {
     setAction,
+    toggleActionFullScreenLoader,
+    toggleActionCompletion,
     contractAddresses: { mvkTokenAddress, doormanAddress },
+    preferences: { themeSelected },
+    globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { info, loading, bug } = useToasterContext()
-  const { isActionActive, toggleActionFullScreenLoader, toggleActionCompletion } = useLoadingContext()
 
   const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
-  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   useEffect(() => {
     if (satelliteMvkIsDelegatedTo) {

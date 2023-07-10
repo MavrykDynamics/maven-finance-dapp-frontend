@@ -6,12 +6,13 @@ import type { AppDispatch } from '../app/App.controller'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { RpcClient } from '@taquito/rpc'
 import { State } from 'reducers'
-import { PreferencesState } from 'providers/PreferencesProvider/preferences.provider.types'
+import { PreferencesState } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 const isIPFS = require('is-ipfs')
 
 /**
  * File contains different functions used to validate input throughout the dapp
+ * @param input
  */
 export function isJsonString(input: string) {
   try {
