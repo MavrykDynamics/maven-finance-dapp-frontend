@@ -1,9 +1,9 @@
 import { GET_LOANS_STORAGE } from 'pages/Loans/Actions/getLoansData.actions'
-import { VaultsStorage } from 'utils/TypesAndInterfaces/Loans'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
+import { normalizeVaultsStorage } from 'pages/Vaults/Vaults.normalizer'
 
 export interface LoansState {
-  vaults: VaultsStorage
+  vaults: Awaited<ReturnType<typeof normalizeVaultsStorage>>
   isDataLoaded: boolean
 }
 

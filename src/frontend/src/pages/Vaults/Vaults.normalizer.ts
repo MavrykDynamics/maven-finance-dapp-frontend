@@ -1,19 +1,18 @@
 import { ANY_USER, WHITELIST_USERS, NONE_USER } from 'pages/Loans/Loans.const'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
 
-import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Loans'
-
 import { CollateralType, DepositorsFlagType, VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 import { calculateAccruedInterest } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount } from 'providers/LoansProvider/helpers/vaults.utils'
+import { Lending_Controller } from 'utils/__generated__/graphql'
 
 /**
  * @param storage vaults data from indexer
  * @returns nomalizer vaults data, all values are in indexer format
  */
 export const normalizeVaultsStorage = async (storage: {
-  lendingController: LendingControllerGQL
+  lendingController: Omit<Lending_Controller, '__typename'>
   accountPkh?: string
 }) => {
   try {
