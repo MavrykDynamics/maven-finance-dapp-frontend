@@ -47,11 +47,8 @@ export const TOASTER_UPDATE_DATA_AFTER_ACTION_DATA = {
 }
 
 export const ACTION_START_MESSAGE_TEXT = 'Please wait 30s'
+export const ACTION_START_MESSAGE_TEXT_15 = 'Please wait 30s'
 export const ACTION_COMPLETION_MESSAGE_TEXT = 'All good :)'
 
 // TOASTER TEXTS IDS
 export const TOASTER_SUBSCRIPTION_ERROR = 'TOASTER_SUBSCRIPTION_ERROR'
-
-export const getActionsStartMessageText = (v = 30) => {
-  return `Please wait ${v}s`
-}
