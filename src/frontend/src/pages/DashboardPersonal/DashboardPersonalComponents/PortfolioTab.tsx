@@ -59,7 +59,6 @@ const PortfolioTab = ({
     [secondaryTabId],
   )
 
-  const { loanTokens } = useSelector((state: State) => state.loans)
   const { userBorrowings, totalUserBorrowed, totalUserLended, userVaultsData, userLendings, isLoading } =
     useUserLoansData({ userAddress })
 
@@ -168,7 +167,6 @@ const PortfolioTab = ({
       <Switch>
         <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
           <LendBorrowPosition
-            markets={loanTokens}
             totalUserBorrowed={totalUserBorrowed}
             totalUserLended={totalUserLended}
             userVaultsData={userVaultsData}

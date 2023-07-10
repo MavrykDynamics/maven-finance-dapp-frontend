@@ -26,7 +26,6 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { TransactionHistory } from '../TransactionHistory'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import colors from 'styles/colors'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -38,6 +37,7 @@ import { CollateralType, DepositorsFlagType } from 'providers/LoansProvider/help
 import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
 import { EmptyContainer } from 'app/App.style'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { LoanMarketType } from 'providers/LoansProvider/loans.provider.types'
 
 type Props = {
   openAddNewCollateralPopup: () => void
@@ -59,10 +59,6 @@ type Props = {
   collateralRatio: number
   collateralBalance: number
   deporsitorsFlag: DepositorsFlagType
-  mappedMVKOperators: {
-    amount?: number
-    firstAddress?: string
-  }
   hideTransactionHistory?: boolean
 }
 
@@ -85,7 +81,6 @@ export const BorrowingExpandCardMenuSection = ({
   collateralRatio,
   collateralBalance,
   deporsitorsFlag,
-  mappedMVKOperators,
   hideTransactionHistory,
 }: Props) => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
@@ -335,7 +330,7 @@ export const BorrowingExpandCardMenuSection = ({
               </Button>
             </div>
 
-            {vaultHasSmvkCollateral ? (
+            {/* {vaultHasSmvkCollateral ? (
               <div className="useful-info-line">
                 <div className="name">
                   MVK Operators
@@ -359,7 +354,7 @@ export const BorrowingExpandCardMenuSection = ({
                   Update <Icon id="paginationArrowLeft" />
                 </Button>
               </div>
-            ) : null}
+            ) : null} */}
           </div>
         </BorrowingTabListItemTabInfo>
       )}

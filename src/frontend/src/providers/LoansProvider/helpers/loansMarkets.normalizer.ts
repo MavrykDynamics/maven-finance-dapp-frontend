@@ -7,7 +7,7 @@ export const normalizeLoansConfig = ({
   indexerData,
 }: {
   indexerData: GetLLoansConfigSubscription
-}): NonNullable<LoansContext['config']> => {
+}): LoansContext['config'] => {
   return {
     daoFee: indexerData.lending_controller[0].minimum_loan_fee_pct / 100,
     collateralFactor: indexerData.lending_controller[0].collateral_ratio / 10,

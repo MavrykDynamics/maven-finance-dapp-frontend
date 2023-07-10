@@ -1,7 +1,5 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
 
 // components
 import { Page } from 'styles'
@@ -16,19 +14,23 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 // types
 import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 
-// helpers
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-
-// actions
-import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
-
 // providers
-import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+
+// consts
+import {
+  LOANS_MARKETS_DATA,
+  LOANS_MARKETS_ADDRESSES,
+  DEFAULT_LOANS_ACTIVE_SUBS,
+} from 'providers/LoansProvider/helpers/loans.const'
+
+// helpers
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -40,7 +42,6 @@ const marketSettings: MarketSettingsType = {
 }
 
 export const LoansEarn = () => {
-  const dispatch = useDispatch()
   const history = useHistory()
 
   const {
@@ -54,16 +55,25 @@ export const LoansEarn = () => {
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress, userMTokens } = useUserContext()
+  const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
 
-  const { isDataLoaded, loanTokens } = useSelector((state: State) => state.loans)
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+      [LOANS_MARKETS_ADDRESSES]: true,
+    })
+
+    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+  }, [])
 
   const { totalBorrowed, totalLended } = useMemo(
     () =>
-      loanTokens.reduce<{
+      marketsAddresses.reduce<{
         totalLended: number
         totalBorrowed: number
       }>(
-        (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
+        (acc, marketAddress) => {
+          const { totalBorrowed, totalLended, loanTokenAddress } = marketsMapper[marketAddress]
           const token = getTokenDataByAddress({
             tokenAddress: loanTokenAddress,
             tokensPrices,
@@ -83,18 +93,19 @@ export const LoansEarn = () => {
           totalBorrowed: 0,
         },
       ),
-    [loanTokens, tokensMetadata, tokensPrices],
+    [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices],
   )
 
   const { openAddLendingAssetPopup } = useLoansPopupsContext()
 
   const markets: MarketType[] = useMemo(
     () =>
-      loanTokens.reduce<MarketType[]>((acc, item) => {
-        const chartData = marketLendingChart[item.loanTokenAddress] ?? []
+      marketsAddresses.reduce<MarketType[]>((acc, marketAddress) => {
+        const { lendingAPY, totalLended, loanMTokenAddress, loanTokenAddress } = marketsMapper[marketAddress]
+        const chartData = marketLendingChart[loanTokenAddress] ?? []
 
         const token = getTokenDataByAddress({
-          tokenAddress: item.loanTokenAddress,
+          tokenAddress: loanTokenAddress,
           tokensPrices,
           tokensMetadata,
         })
@@ -103,29 +114,30 @@ export const LoansEarn = () => {
 
         const { rate: price, decimals, icon, symbol, address } = token
 
-        const { lendValue = 0, interestEarned = 0 } = userMTokens[item.loanMTokenAddress] ?? {}
+        const { lendValue = 0, interestEarned = 0 } = userMTokens[loanMTokenAddress] ?? {}
 
         acc.push({
           icon,
           symbol,
           address,
-          annualRate: item.lendingAPY,
+          annualRate: lendingAPY,
           annualRateName: 'APY',
           leftValue: convertNumberForClient({ number: lendValue, grade: decimals }) * price,
           rightValue: convertNumberForClient({ number: interestEarned, grade: decimals }) * price,
-          totalAmount: convertNumberForClient({ number: item.totalLended, grade: decimals }),
+          totalAmount: convertNumberForClient({ number: totalLended, grade: decimals }),
           price,
           chartData,
         })
 
         return acc
       }, []),
-    [loanTokens, marketLendingChart, tokensMetadata, tokensPrices, userMTokens],
+    [marketLendingChart, marketsAddresses, marketsMapper, tokensMetadata, tokensPrices, userMTokens],
   )
 
   const handleEarn = (marketTokenAddress: string) => {
-    const market = loanTokens.find((item) => item.loanTokenAddress === marketTokenAddress)
-    if (!market) return
+    const marketAddress = marketsAddresses.find((marketCtxAddress) => marketCtxAddress === marketTokenAddress)
+    if (!marketAddress) return
+    const market = marketsMapper[marketAddress]
 
     const lendItem = userMTokens[market.loanMTokenAddress]
 
@@ -142,22 +154,11 @@ export const LoansEarn = () => {
     }
   }
 
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isDataLoaded || isDepsChanged) {
-          await dispatch(getLoansStorage())
-        }
-      } catch (e) {}
-    },
-    [userAddress],
-  )
-
   return (
     <Page>
       <PageHeader page={'loansEarn'} />
 
-      {isLoading ? (
+      {isLoansLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading charts of earnings</div>

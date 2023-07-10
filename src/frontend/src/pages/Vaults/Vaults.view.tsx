@@ -16,6 +16,7 @@ import { VaultsStyled } from './Vaults.style'
 import { VaultsList } from 'pages/Loans/Components/LoansComponents.style'
 
 // helpers
+import { LOANS_CONFIG, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
 import {
   VAULTS_LIST_NAME,
   getPageNumber,
@@ -24,6 +25,7 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // types
 import { State } from '../../reducers'
@@ -32,6 +34,7 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 // actions
 import { markForLiquidation } from './Vaults.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const pathname = '/vaults'
 
@@ -45,13 +48,23 @@ export const VaultsView = () => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()
+  const { tabId } = useParams<{ tabId: string }>()
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
     vaults: { permissinedVaultsIds, myVaultsIds, allVaultsIds, vaultsMapper },
     isDataLoaded,
   } = useSelector((state: State) => state.loans)
-  const { tabId } = useParams<{ tabId: string }>()
+
+  const { userAddress } = useUserContext()
+  const { changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
+
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_CONFIG]: true,
+    })
+
+    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+  }, [])
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -61,7 +74,7 @@ export const VaultsView = () => {
         }
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
   const [tabsList, setTabsList] = useState<TabItem[]>([])
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
@@ -108,7 +121,7 @@ export const VaultsView = () => {
       },
     ]
 
-    const tabsToUse = accountPkh
+    const tabsToUse = userAddress
       ? [
           ...baseTabs,
           {
@@ -122,17 +135,17 @@ export const VaultsView = () => {
             id: 3,
             active: vaultTabs.PERMISSIONED === tabId,
             path: vaultTabs.PERMISSIONED,
-            isDisabled: !accountPkh,
+            isDisabled: !userAddress,
           },
         ]
       : baseTabs
 
     setTabsList(tabsToUse)
 
-    if (accountPkh) return
+    if (userAddress) return
     // return back to "all vaults" tab if user is not connected
     history.replace(`${pathname}/${baseTabs[0].path}`)
-  }, [accountPkh, tabId])
+  }, [userAddress, tabId])
 
   return (
     <VaultsStyled>
@@ -145,7 +158,7 @@ export const VaultsView = () => {
         setVaultsIds={setVaultsIds}
       />
 
-      {isLoading ? (
+      {isLoading || isLoansLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
@@ -153,7 +166,7 @@ export const VaultsView = () => {
       ) : paginatedVaultsList.length ? (
         <VaultsList>
           {paginatedVaultsList.map((item) => {
-            const isOwner = vaultsMapper[item]?.ownerId === accountPkh
+            const isOwner = vaultsMapper[item]?.ownerId === userAddress
 
             return (
               <VaultsCard

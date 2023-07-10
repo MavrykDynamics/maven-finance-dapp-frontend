@@ -33,6 +33,7 @@ import { useHistory, useLocation } from 'react-router'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 type BorrowingExpandCardPropsType = {
   vault: VaultType
@@ -77,12 +78,12 @@ export const BorrowingExpandCard = ({
     liquidateVaultPopup,
     createVaultPopup,
   } = useLoansPopupsContext()
+  const { marketsAddresses, marketsMapper } = useLoansContext()
 
   const history = useHistory()
   const location = useLocation()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { loanTokens, mvkTokenOperators } = useSelector((state: State) => state.loans)
 
   const [activeRepayTab, setActiveRepayTab] = useState(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.active))
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
@@ -173,12 +174,7 @@ export const BorrowingExpandCard = ({
   // it scrolls until the current vault after the transaction and changing position
   const scrollToCurrentVault = () => scrollToFullView(ref.current, 'nearest')
 
-  const mappedMVKOperators = {
-    firstAddress: mvkTokenOperators?.[0],
-    ...(mvkTokenOperators ? { amount: mvkTokenOperators.length } : {}),
-  }
-
-  const currentToken = loanTokens.find(({ loanTokenAddress }) => loanTokenAddress === borrowedTokenAddress)
+  const currentToken = marketsMapper[borrowedTokenAddress]
 
   const handleOpenVault = () => {
     if (isExpanded) return
@@ -322,7 +318,8 @@ export const BorrowingExpandCard = ({
     openUpdateMvkOperatorsPopup?.({
       vaultAddress,
       tokenAddress: borrowedTokenAddress,
-      operators: mvkTokenOperators,
+      // TODO add data to this popup
+      operators: {} as any,
     })
   }
 
@@ -464,7 +461,6 @@ export const BorrowingExpandCard = ({
                 collateralRatio={collateralRatio}
                 collateralBalance={collateralBalance}
                 deporsitorsFlag={deporsitorsFlag}
-                mappedMVKOperators={mappedMVKOperators}
                 hideTransactionHistory={hideTransactionHistory}
               />
             )}

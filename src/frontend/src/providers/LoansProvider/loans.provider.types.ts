@@ -37,12 +37,12 @@ export type LoanMarketType = {
 }
 
 export type LoansContext = {
-  marketAddresses: Array<TokenAddressType>
+  marketsAddresses: Array<TokenAddressType>
   marketsMapper: Record<TokenAddressType, LoanMarketType>
   config: {
     daoFee: number
     collateralFactor: number
-  } | null
+  }
 
   isLoading: boolean
 
@@ -50,4 +50,4 @@ export type LoansContext = {
   setMarketAddressToSubscribe: (marketTokenAddress: TokenAddressType | null) => void
 }
 
-export type LoansContextState = Pick<LoansContext, 'marketAddresses' | 'marketsMapper' | 'config'>
+export type LoansContextState = Pick<LoansContext, 'marketsAddresses' | 'marketsMapper' | 'config'>

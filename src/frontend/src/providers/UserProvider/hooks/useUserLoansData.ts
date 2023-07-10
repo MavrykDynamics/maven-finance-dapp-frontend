@@ -4,13 +4,13 @@ import { useSubscription } from '@apollo/client'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 import { GET_USER_LOANS_DATA } from '../queries/userLoans.query'
-import { calcLendingAPY } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
 import { GetUserLoansDataSubscription } from 'utils/__generated__/graphql'
 import { UserLoansDataStateType } from '../user.provider.types'
+import { calcLendingAPY } from 'providers/LoansProvider/helpers/loans.utils'
 
 /**
  *

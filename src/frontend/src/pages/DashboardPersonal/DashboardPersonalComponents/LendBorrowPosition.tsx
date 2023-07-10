@@ -21,15 +21,14 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 export const LendBorrowPosition = ({
-  markets,
   userLoansRewards,
   totalUserBorrowed,
   totalUserLended,
   userVaultsData,
 }: {
-  markets: State['loans']['loanTokens']
   totalUserBorrowed: number
   totalUserLended: number
   userVaultsData: UserLoansDataStateType['userVaultsData']
@@ -37,6 +36,7 @@ export const LendBorrowPosition = ({
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userMTokens } = useUserContext()
+  const { marketsAddresses, marketsMapper } = useLoansContext()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
@@ -46,14 +46,15 @@ export const LendBorrowPosition = ({
     apyGaugeData: GaugeChartStateType
   } => {
     const { borrowedAmount, borrowCapacity, totalSuppliedValue, sumOfRatioSuppliedToAPY, sumOfRatioBorrowedToAPR } =
-      markets.reduce<{
+      marketsAddresses.reduce<{
         borrowedAmount: number
         borrowCapacity: number
         totalSuppliedValue: number
         sumOfRatioSuppliedToAPY: number
         sumOfRatioBorrowedToAPR: number
       }>(
-        (acc, { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress }) => {
+        (acc, marketTokenAddress) => {
+          const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress } = marketsMapper[marketTokenAddress]
           let borrowedPerMarket = 0
 
           const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
@@ -100,7 +101,7 @@ export const LendBorrowPosition = ({
         currentValue: apyNet,
       },
     }
-  }, [markets, tokensMetadata, tokensPrices, userMTokens, userVaultsData])
+  }, [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices, userMTokens, userVaultsData])
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
@@ -178,7 +179,7 @@ export const LendBorrowPosition = ({
         </div>
       </div>
 
-      <LoansPositionTable markets={markets} userVaultsData={userVaultsData} />
+      <LoansPositionTable userVaultsData={userVaultsData} />
     </LBHInfoBlock>
   )
 }

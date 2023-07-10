@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
@@ -28,6 +28,12 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import {
+  LOANS_MARKETS_DATA,
+  LOANS_MARKETS_ADDRESSES,
+  DEFAULT_LOANS_ACTIVE_SUBS,
+} from 'providers/LoansProvider/helpers/loans.const'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -50,9 +56,19 @@ export const LoansBorrow = () => {
 
   const {
     isDataLoaded,
-    loanTokens,
     vaults: { allVaultsIds, myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
+
+  const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
+
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+      [LOANS_MARKETS_ADDRESSES]: true,
+    })
+
+    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+  }, [])
 
   const {
     isLoading: isChartsLoading,
@@ -121,11 +137,12 @@ export const LoansBorrow = () => {
 
   const markets = useMemo(
     () =>
-      loanTokens.reduce<MarketType[]>((acc, item) => {
-        const chartData = marketCollateralChart[item.loanTokenAddress] ?? []
+      marketsAddresses.reduce<MarketType[]>((acc, marketTokenAddress) => {
+        const market = marketsMapper[marketTokenAddress]
+        const chartData = marketCollateralChart[marketTokenAddress] ?? []
 
         const token = getTokenDataByAddress({
-          tokenAddress: item.loanTokenAddress,
+          tokenAddress: marketTokenAddress,
           tokensPrices,
           tokensMetadata,
         })
@@ -138,18 +155,18 @@ export const LoansBorrow = () => {
           icon,
           symbol,
           address,
-          annualRate: item.borrowAPR,
+          annualRate: market.borrowAPR,
           annualRateName: 'APR',
-          leftValue: tokenTotals[item.loanTokenAddress]?.userTotalBorrowed ?? 0,
-          rightValue: tokenTotals[item.loanTokenAddress]?.userTotalCollateral ?? 0,
-          totalAmount: convertNumberForClient({ number: item.totalBorrowed, grade: decimals }),
+          leftValue: tokenTotals[marketTokenAddress]?.userTotalBorrowed ?? 0,
+          rightValue: tokenTotals[marketTokenAddress]?.userTotalCollateral ?? 0,
+          totalAmount: convertNumberForClient({ number: market.totalBorrowed, grade: decimals }),
           price,
           chartData,
         })
 
         return acc
       }, []),
-    [loanTokens, marketCollateralChart, tokenTotals, tokensMetadata, tokensPrices],
+    [marketsAddresses, marketCollateralChart, tokenTotals, tokensMetadata, tokensPrices],
   )
 
   const handleSetNewlyCreatedVaultAddress = (marketAddress: string) => (address: string) => {
@@ -182,7 +199,8 @@ export const LoansBorrow = () => {
 
     // if we don't have valid vault to borrow, open create new vault popup
     if (!validVaultId) {
-      const market = loanTokens.find(({ loanTokenAddress }) => marketTokenAddress === loanTokenAddress)
+      const marketAddress = marketsAddresses.find((marketCtxAddress) => marketTokenAddress === marketCtxAddress)
+      const market = marketAddress ? marketsMapper[marketAddress] : null
 
       const marketToken = getTokenDataByAddress({
         tokenAddress: marketTokenAddress,

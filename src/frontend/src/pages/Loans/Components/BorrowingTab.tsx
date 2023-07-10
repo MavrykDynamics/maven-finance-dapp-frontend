@@ -18,6 +18,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 type BorrowingTabPropsType = {
   loanTokenAddress: TokenAddressType
@@ -30,6 +31,9 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
 
   const { openCreateVaultPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const {
+    config: { daoFee },
+  } = useLoansContext()
 
   const loanToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: loanTokenAddress })
 
@@ -37,7 +41,6 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const {
-    config: { DAOFee },
     vaults: { myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
@@ -103,7 +106,7 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
           <VaultsList>
             {userMarketVaultsIds.map((vaultId) => {
               const vault = vaultsMapper[vaultId]
-              return <BorrowingExpandCard isOwner vault={vault} key={vault.address} DAOFee={DAOFee} />
+              return <BorrowingExpandCard isOwner vault={vault} key={vault.address} DAOFee={daoFee} />
             })}
           </VaultsList>
         </>

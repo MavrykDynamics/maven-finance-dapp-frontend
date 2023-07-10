@@ -34,6 +34,13 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getVaultBorrowCapacity, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import {
+  LOANS_MARKETS_DATA,
+  LOANS_MARKETS_ADDRESSES,
+  DEFAULT_LOANS_ACTIVE_SUBS,
+  LOANS_CONFIG,
+} from 'providers/LoansProvider/helpers/loans.const'
 
 export const Market = () => {
   const history = useHistory()
@@ -41,9 +48,25 @@ export const Market = () => {
   const { assetAddress, tabId } = useParams<{ assetAddress: string; tabId: string }>()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const {
+    marketsAddresses,
+    marketsMapper,
+    config: { collateralFactor },
+    changeLoansSubscriptionsList,
+    isLoading: isLoansLoading,
+  } = useLoansContext()
+
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+      [LOANS_MARKETS_ADDRESSES]: true,
+      [LOANS_CONFIG]: true,
+    })
+
+    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+  }, [])
 
   const {
-    loanTokens,
     vaults: { myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
@@ -61,13 +84,16 @@ export const Market = () => {
   }, [])
 
   const [prevMarket, nextMarket, currentToken] = useMemo(() => {
-    const currentTokenIdx = loanTokens.findIndex(({ loanTokenAddress }) => loanTokenAddress === assetAddress)
+    const currentTokenIdx = marketsAddresses.findIndex((marketTokenAddress) => marketTokenAddress === assetAddress)
+    const prevMarketAddress = marketsAddresses.at(currentTokenIdx - 1) ?? marketsAddresses.at(-1)
+    const nextMarketAddress = marketsAddresses.at(currentTokenIdx + 1) ?? marketsAddresses.at(0)
+    const currentMarketAddress = marketsAddresses.at(currentTokenIdx)
     return [
-      loanTokens.at(currentTokenIdx - 1) ?? loanTokens.at(-1),
-      loanTokens.at(currentTokenIdx + 1) ?? loanTokens.at(0),
-      loanTokens.at(currentTokenIdx),
+      prevMarketAddress ? marketsMapper[prevMarketAddress] : null,
+      nextMarketAddress ? marketsMapper[nextMarketAddress] : null,
+      currentMarketAddress ? marketsMapper[currentMarketAddress] : null,
     ]
-  }, [assetAddress, loanTokens])
+  }, [assetAddress, marketsAddresses, marketsMapper])
 
   const loanToken = getTokenDataByAddress({ tokenAddress: assetAddress, tokensMetadata, tokensPrices })
 
@@ -110,7 +136,7 @@ export const Market = () => {
 
   const { symbol, name, icon, decimals, rate } = loanToken
 
-  if (isLoading) {
+  if (isLoading || isLoansLoading) {
     return (
       <Page>
         <PageHeader page={'lending'} />
@@ -204,7 +230,7 @@ export const Market = () => {
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Collateral Factor</div>
-                <CommaNumber value={currentToken.collateralFactor} endingText="%" className="value" />
+                <CommaNumber value={collateralFactor} endingText="%" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Suppliers</div>

@@ -37,9 +37,12 @@ export const LoansProvider = ({ children }: Props) => {
   const [activeSubs, setActiveSubs] = useState<LoansSubsRecordType>(DEFAULT_LOANS_ACTIVE_SUBS)
   const [marketAddressToSubscribe, setMarketAddressToSubscribe] = useState<null | TokenAddressType>(null)
   const [loansCtxState, setLoansCtxState] = useState<LoansContextState>({
-    marketAddresses: [],
+    marketsAddresses: [],
     marketsMapper: {},
-    config: null,
+    config: {
+      collateralFactor: 0,
+      daoFee: 0,
+    },
   })
 
   const { loading: isMarketsLoading } = useSubscription(
@@ -70,7 +73,7 @@ export const LoansProvider = ({ children }: Props) => {
       if (!data) return
       setLoansCtxState((prev) => ({
         ...prev,
-        marketAddresses: Array.from(
+        marketsAddresses: Array.from(
           new Set(data.lending_controller[0].loan_tokens.map(({ token: { token_address } }) => token_address)),
         ),
       }))

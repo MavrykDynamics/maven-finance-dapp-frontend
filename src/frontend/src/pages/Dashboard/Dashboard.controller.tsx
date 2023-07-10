@@ -35,6 +35,12 @@ import {
   SATELLITE_PARTICIPATION_DATA_SUB,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
 } from 'providers/SatellitesProvider/satellites.const'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import {
+  DEFAULT_LOANS_ACTIVE_SUBS,
+  LOANS_MARKETS_ADDRESSES,
+  LOANS_MARKETS_DATA,
+} from 'providers/LoansProvider/helpers/loans.const'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -52,6 +58,7 @@ export const Dashboard = () => {
   } = useStakeContext()
   const { isLoading: isSatellitesLoading, changeSatellitesSubscriptionsList } = useSatellitesContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
 
   useEffect(() => {
     changeStakingSubscriptionsList({
@@ -62,10 +69,15 @@ export const Dashboard = () => {
       [SATELLITE_DATA_SUB]: true,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+      [LOANS_MARKETS_ADDRESSES]: true,
+    })
 
     return () => {
       changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
       changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
     }
   }, [])
 
@@ -77,15 +89,15 @@ export const Dashboard = () => {
   const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
   const {
     isDataLoaded: isLoansLoaded,
-    loanTokens,
     vaults: { vaultsMapper, allVaultsIds },
   } = useSelector((state: State) => state.loans)
 
-  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+  const { totalBorrowed, totalLended } = marketsAddresses.reduce<{
     totalLended: number
     totalBorrowed: number
   }>(
-    (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
+    (acc, marketTokenAddress) => {
+      const { totalBorrowed, totalLended, loanTokenAddress } = marketsMapper[marketTokenAddress]
       const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
       if (!token || !token.rate) return acc
 
@@ -160,7 +172,7 @@ export const Dashboard = () => {
         tvl={tvlValue}
         mvkStatsBlock={mvkStatsBlock}
         activeTab={activeTab}
-        isLoading={isPromiseLoading || isDoormanLoading || isSatellitesLoading}
+        isLoading={isPromiseLoading || isDoormanLoading || isSatellitesLoading || isLoansLoading}
       />
     </Page>
   )

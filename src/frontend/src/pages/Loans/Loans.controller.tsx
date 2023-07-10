@@ -40,6 +40,12 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import {
+  DEFAULT_LOANS_ACTIVE_SUBS,
+  LOANS_MARKETS_ADDRESSES,
+  LOANS_MARKETS_DATA,
+} from 'providers/LoansProvider/helpers/loans.const'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -68,19 +74,29 @@ export const Loans = () => {
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress, userMTokens } = useUserContext()
+  const { changeLoansSubscriptionsList, marketsAddresses, marketsMapper, isLoading: isLoansLoading } = useLoansContext()
+
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+      [LOANS_MARKETS_ADDRESSES]: true,
+    })
+
+    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+  }, [])
 
   const {
-    loanTokens,
     vaults: { allVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+  const { totalBorrowed, totalLended } = marketsAddresses.reduce<{
     totalLended: number
     totalBorrowed: number
   }>(
-    (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
+    (acc, marketTokenAddress) => {
+      const { totalBorrowed, totalLended, loanTokenAddress } = marketsMapper[marketTokenAddress]
       const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
 
       if (!loanToken || !loanToken.rate) return acc
@@ -151,12 +167,12 @@ export const Loans = () => {
     <Page>
       <PageHeader page={'lending'} />
 
-      {isLoading ? (
+      {isLoading || isLoansLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading loans markets</div>
         </DataLoaderWrapper>
-      ) : loanTokens.length ? (
+      ) : marketsAddresses.length ? (
         <LoansStyled>
           <MarketChartsContainer>
             {lendingPart}
@@ -165,7 +181,7 @@ export const Loans = () => {
 
           <MarketsOverviewContainer>
             <H2Title>Markets</H2Title>
-            {loanTokens.map((loanAsset) => {
+            {marketsAddresses.map((marketAddress) => {
               const {
                 loanTokenAddress,
                 loanMTokenAddress,
@@ -177,7 +193,7 @@ export const Loans = () => {
                 totalLended,
                 borrowAPR,
                 lendingAPY,
-              } = loanAsset
+              } = marketsMapper[marketAddress]
 
               const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
 

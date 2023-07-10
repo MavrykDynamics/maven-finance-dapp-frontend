@@ -1,9 +1,6 @@
 import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { State } from 'reducers'
-import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 import { PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -20,6 +17,7 @@ import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24h
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -30,15 +28,14 @@ export const emptyContainer = (
 
 export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
-
-  const { loanTokens } = useSelector((state: State) => state.loans)
+  const { marketsAddresses, marketsMapper } = useLoansContext()
 
   const { lending24hPersentChange, borrowing24hPersentChange, last24hBorrowingVol, last24hLendingVol } =
     useLendBorrow24hDiff()
 
   const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset, totalBorrowed, totalLended } =
     useMemo(() => {
-      return loanTokens.reduce<{
+      return marketsAddresses.reduce<{
         lendingSuppliers: number
         borrowers: number
         mostBorrowedAsset: { icon: string; symbol: string } | null
@@ -48,7 +45,9 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
         totalBorrowed: number
         totalLended: number
       }>(
-        (acc, { suppliers, borrowers, totalBorrowed, totalLended, loanTokenAddress }) => {
+        (acc, marketTokenAddress) => {
+          const { suppliers, borrowers, totalBorrowed, totalLended, loanTokenAddress } =
+            marketsMapper[marketTokenAddress]
           const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
           if (!token || !token.rate) return acc
           const { symbol, decimals, icon, rate } = token
@@ -84,7 +83,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
           mostLendedAsset: null,
         },
       )
-    }, [loanTokens, tokensMetadata, tokensPrices])
+    }, [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices])
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
