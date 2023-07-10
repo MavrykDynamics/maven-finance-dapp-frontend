@@ -22,6 +22,7 @@ import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.pr
 
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import { SingleValueData } from 'lightweight-charts'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -44,25 +45,6 @@ export const LoansEarn = () => {
     chartsData: { lendingChartData, borrowingChartData },
   } = useSelector((state: State) => state.loans)
 
-  const { totalBorrowed, totalLended } = useMemo(
-    () =>
-      loanTokens.reduce<{
-        totalLended: number
-        totalBorrowed: number
-      }>(
-        (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
-          acc.totalBorrowed += totalBorrowed * rate
-          acc.totalLended += totalLended * rate
-          return acc
-        },
-        {
-          totalLended: 0,
-          totalBorrowed: 0,
-        },
-      ),
-    [loanTokens],
-  )
-
   const { openAddLendingAssetPopup } = useContext(loansPopupsContext)
 
   const markets: MarketType[] = useMemo(
@@ -74,7 +56,7 @@ export const LoansEarn = () => {
         annualRateName: 'APY',
         leftValue: item.lendingItem?.lendValue ?? 0 * item.loanTokenData.rate,
         rightValue: item.lendingItem?.interestEarned ?? 0 * item.loanTokenData.rate,
-        totalAmount: item.totalLended,
+        totalAmount: (item.marketLiquidityChartData.at(-1) as SingleValueData)?.value ?? 0,
         price: item.loanTokenData.rate,
         chartData: item.marketLiquidityChartData,
       })),
@@ -124,11 +106,11 @@ export const LoansEarn = () => {
             // left chart
             leftChartData={lendingChartData}
             leftChartTitle="Total Earning"
-            leftTotalAmount={totalLended}
+            leftTotalAmount={lendingChartData.at(-1)?.value ?? 0}
             // right chart
             rightChartData={borrowingChartData}
             rightChartTitle="Total Borrowing"
-            rightTotalAmount={totalBorrowed}
+            rightTotalAmount={borrowingChartData.at(-1)?.value ?? 0}
           />
 
           <LoansEarnBorrow
