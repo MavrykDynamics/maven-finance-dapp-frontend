@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
 
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { getGaugeVaultRiskSimpleStatus } from './helpers/position.helpers'
-import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getClassNameBasedOnPersentValue } from './helpers/comparing.helpers'
 
 import Button from 'app/App.components/Button/NewButton'
@@ -32,6 +30,11 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import {
+  LOANS_MARKETS_DATA,
+  LOANS_MARKETS_ADDRESSES,
+  DEFAULT_LOANS_ACTIVE_SUBS,
+} from 'providers/LoansProvider/helpers/loans.const'
 
 export type GaugeChartStateType = {
   maxValue: number
@@ -64,7 +67,7 @@ export const LoansDashboard = () => {
     userAvatars: { mainAvatar },
     userMTokens,
   } = useUserContext()
-  const { marketsAddresses, marketsMapper, isLoading: isLoansLoading } = useLoansContext()
+  const { marketsAddresses, marketsMapper, isLoading: isLoansLoading, changeLoansSubscriptionsList } = useLoansContext()
 
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
@@ -76,6 +79,17 @@ export const LoansDashboard = () => {
     totalUserBorrowed,
     totalUserLended,
   } = useUserLoansData({ userAddress })
+
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+      [LOANS_MARKETS_ADDRESSES]: true,
+    })
+
+    return () => {
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+    }
+  }, [])
 
   const { totalBorrowed, totalLended } = marketsAddresses.reduce<{
     totalLended: number

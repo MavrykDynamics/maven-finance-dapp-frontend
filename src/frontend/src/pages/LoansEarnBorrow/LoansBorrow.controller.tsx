@@ -242,7 +242,7 @@ export const LoansBorrow = () => {
     <Page>
       <PageHeader page={'loansBorrow'} />
 
-      {isLoading ? (
+      {isLoading || isLoansLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading borrows charts</div>
