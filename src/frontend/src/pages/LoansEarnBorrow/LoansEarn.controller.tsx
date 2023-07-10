@@ -53,6 +53,7 @@ export const LoansEarn = () => {
     calcMarketLendingChart: true,
   })
 
+  const { openAddLendingAssetPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress, userMTokens } = useUserContext()
   const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
@@ -66,39 +67,7 @@ export const LoansEarn = () => {
     return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
   }, [])
 
-  const { totalBorrowed, totalLended } = useMemo(
-    () =>
-      marketsAddresses.reduce<{
-        totalLended: number
-        totalBorrowed: number
-      }>(
-        (acc, marketAddress) => {
-          const { totalBorrowed, totalLended, loanTokenAddress } = marketsMapper[marketAddress]
-          const token = getTokenDataByAddress({
-            tokenAddress: loanTokenAddress,
-            tokensPrices,
-            tokensMetadata,
-          })
-
-          if (!token || !token.rate) return acc
-
-          const { rate, decimals } = token
-
-          acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
-          acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
-          return acc
-        },
-        {
-          totalLended: 0,
-          totalBorrowed: 0,
-        },
-      ),
-    [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices],
-  )
-
-  const { openAddLendingAssetPopup } = useLoansPopupsContext()
-
-  const markets: MarketType[] = useMemo(
+  const markets = useMemo(
     () =>
       marketsAddresses.reduce<MarketType[]>((acc, marketAddress) => {
         const { lendingAPY, totalLended, loanMTokenAddress, loanTokenAddress } = marketsMapper[marketAddress]
@@ -169,11 +138,11 @@ export const LoansEarn = () => {
             // left chart
             leftChartData={totalLendingChart}
             leftChartTitle="Total Earning"
-            leftTotalAmount={totalLended}
+            leftTotalAmount={totalLendingChart.at(-1)?.value ?? 0}
             // right chart
             rightChartData={totalBorrowingChart}
             rightChartTitle="Total Borrowing"
-            rightTotalAmount={totalBorrowed}
+            rightTotalAmount={totalBorrowingChart.at(-1)?.value ?? 0}
           />
 
           <LoansEarnBorrow

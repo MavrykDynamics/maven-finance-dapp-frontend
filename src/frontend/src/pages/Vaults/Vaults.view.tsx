@@ -2,6 +2,10 @@ import { useState, useMemo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useHistory, useParams } from 'react-router'
 
+// context
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+
 // components
 import { VaultsSearchFilter } from './components/VaultsSearchFilter.view'
 import { VaultsCard } from './components/VaultsCard.view'
@@ -25,7 +29,6 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // types
 import { State } from '../../reducers'
@@ -34,7 +37,6 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 // actions
 import { markForLiquidation } from './Vaults.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const pathname = '/vaults'
 

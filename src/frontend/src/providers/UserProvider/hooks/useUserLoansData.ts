@@ -142,8 +142,6 @@ const useUserLoansData = ({ userAddress }: { userAddress: string | null }) => {
             tokensPrices,
           )
 
-          if (collateralAmount <= 0 || convertedBorrowedAmount <= 0) return acc
-
           if (!acc[borrowedToken.address]) {
             acc[borrowedToken.address] = {
               borrowedAmount: convertedBorrowedAmount,
