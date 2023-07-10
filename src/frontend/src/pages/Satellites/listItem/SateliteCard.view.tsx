@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
 
 // context, hooks
 import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
@@ -34,7 +33,6 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // types
-import { State } from 'reducers'
 import { SatelliteRecordType, SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 //styles
@@ -65,7 +63,6 @@ import {
 import { rewardsCompound } from 'providers/UserProvider/actions/user.actions'
 import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { REWARDS_COMPOUND_ACTION } from 'providers/UserProvider/helpers/user.consts'
 import { sleep } from 'utils/api/sleep'
@@ -99,7 +96,10 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
   const {
     setAction,
+    toggleActionCompletion,
+    toggleActionFullScreenLoader,
     contractAddresses: { delegationAddress, doormanAddress },
+    globalLoadingState: { isActionActive },
     preferences: { themeSelected },
   } = useDappConfigContext()
   const { bug, info, loading } = useToasterContext()
@@ -112,10 +112,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     satelliteGovActionsAmount,
     finRequestsAmount,
   })
-
-  const dispatch = useDispatch()
-
-  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {
     currentlyRegistered,
@@ -158,8 +154,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
 
         info(
           TOASTER_ACTIONS_TEXTS[DELEGATE_ACTION]['start']['message'],
@@ -174,8 +170,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
 
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+        toggleActionFullScreenLoader(false)
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
@@ -190,6 +185,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
     }
   }
 
@@ -209,8 +206,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
 
         info(
           TOASTER_ACTIONS_TEXTS[UNDELEGATE_ACTION]['start']['message'],
@@ -225,8 +222,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
 
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+        toggleActionFullScreenLoader(false)
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
@@ -241,6 +237,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
     }
   }
 
@@ -259,8 +257,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
 
         info(
           TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['message'],
@@ -275,8 +273,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
 
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+        toggleActionFullScreenLoader(false)
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
@@ -292,6 +289,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
     }
   }
 
@@ -312,8 +311,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
 
         info(
           TOASTER_ACTIONS_TEXTS[DISTRIBUTE_PROPOSALS_REWARDS_ACTION]['start']['message'],
@@ -328,8 +327,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
 
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+        toggleActionFullScreenLoader(false)
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
@@ -344,6 +342,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
     }
   }
 

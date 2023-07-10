@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 // Consts
@@ -24,7 +23,6 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // Types
-import { State } from 'reducers'
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 
 // Views
@@ -64,7 +62,6 @@ import {
 } from 'providers/SatellitesProvider/satellites.const'
 import { registerSatellite, updateSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
 import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
-import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { unknownToError } from 'errors/error'
@@ -101,13 +98,14 @@ export const BecomeSatellite = () => {
     maxLengths: { satelliteDelegation },
     contractAddresses: { delegationAddress },
     preferences: { themeSelected },
+    globalLoadingState: { isActionActive },
     minimumStakedMvkBalance,
     setAction,
+    toggleActionCompletion,
+    toggleActionFullScreenLoader,
   } = useDappConfigContext()
 
   const { bug, info, loading } = useToasterContext()
-
-  const dispatch = useDispatch()
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -126,7 +124,6 @@ export const BecomeSatellite = () => {
     return () => setSatelliteAddressToSubsctibe(null)
   }, [userAddress])
 
-  const { isActionActive } = useSelector((state: State) => state.loading)
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
@@ -249,8 +246,8 @@ export const BecomeSatellite = () => {
       )
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
         info(
           TOASTER_ACTIONS_TEXTS[REGISTER_SATELLITE_ACTION]['start']['message'],
           TOASTER_ACTIONS_TEXTS[REGISTER_SATELLITE_ACTION]['start']['title'],
@@ -261,8 +258,9 @@ export const BecomeSatellite = () => {
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+
+        toggleActionFullScreenLoader(false)
+
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
         setAction({ actionName: REGISTER_SATELLITE_ACTION, toasterId, operationLvl })
@@ -276,6 +274,8 @@ export const BecomeSatellite = () => {
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
     }
   }
 
@@ -293,8 +293,8 @@ export const BecomeSatellite = () => {
       const actionResult = await updateSatellite(requestData, delegationAddress)
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
         info(
           TOASTER_ACTIONS_TEXTS[UPDATE_SATELLITE_ACTION]['start']['message'],
           TOASTER_ACTIONS_TEXTS[UPDATE_SATELLITE_ACTION]['start']['title'],
@@ -305,8 +305,9 @@ export const BecomeSatellite = () => {
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+
+        toggleActionFullScreenLoader(false)
+
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
         setAction({ actionName: UPDATE_SATELLITE_ACTION, toasterId, operationLvl })
@@ -320,6 +321,8 @@ export const BecomeSatellite = () => {
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
     }
   }
 

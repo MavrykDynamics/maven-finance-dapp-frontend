@@ -1,5 +1,3 @@
-import { useDispatch, useSelector } from 'react-redux'
-
 import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 import { BUTTON_SECONDARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -13,12 +11,10 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { State } from 'reducers'
 import { unregisterSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
 import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 import { UNREGISTER_SATELLITE_ACTION } from 'providers/SatellitesProvider/satellites.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
-import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { sleep } from 'utils/api/sleep'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
@@ -35,10 +31,10 @@ export const UnregisterPopup = ({
   closePopup: () => void
   satellite: SatelliteRecordType
 }) => {
-  const dispatch = useDispatch()
-
   const {
     setAction,
+    toggleActionFullScreenLoader,
+    toggleActionCompletion,
     contractAddresses: { delegationAddress },
   } = useDappConfigContext()
   const { bug, info, loading } = useToasterContext()
@@ -58,8 +54,8 @@ export const UnregisterPopup = ({
       const actionResult = await unregisterSatellite(userAddress, delegationAddress, closePopup)
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
         info(
           TOASTER_ACTIONS_TEXTS[UNREGISTER_SATELLITE_ACTION]['start']['message'],
           TOASTER_ACTIONS_TEXTS[UNREGISTER_SATELLITE_ACTION]['start']['title'],
@@ -70,8 +66,10 @@ export const UnregisterPopup = ({
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+
+        toggleActionFullScreenLoader(false)
+        toggleActionCompletion(false)
+
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
         setAction({ actionName: UNREGISTER_SATELLITE_ACTION, toasterId, operationLvl })
@@ -85,6 +83,8 @@ export const UnregisterPopup = ({
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
     }
   }
 
