@@ -214,8 +214,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         dispatch(toggleActionCompletion(true))
 
         info(
-          TOASTER_ACTIONS_TEXTS[DISTRIBUTE_PROPOSALS_REWARDS_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[DISTRIBUTE_PROPOSALS_REWARDS_ACTION]['start']['title'],
+          TOASTER_ACTIONS_TEXTS[UNDELEGATE_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[UNDELEGATE_ACTION]['start']['title'],
         )
 
         await sleep(5000)
@@ -231,7 +231,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
-        setAction({ actionName: DISTRIBUTE_PROPOSALS_REWARDS_ACTION, toasterId, operationLvl })
+        setAction({ actionName: UNDELEGATE_ACTION, toasterId, operationLvl })
       } else if (isContractErrorPayload(actionResult.error)) {
         const { message, description } = actionResult.error as TezosWalletErrorPayload
         bug(description, message)
