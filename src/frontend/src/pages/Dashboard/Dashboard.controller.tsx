@@ -42,6 +42,7 @@ import {
   LOANS_MARKETS_DATA,
 } from 'providers/LoansProvider/helpers/loans.const'
 
+// TODO: add farms when their data loading will be fixed and up
 export const Dashboard = () => {
   const dispatch = useDispatch()
   const { search } = useLocation()
@@ -86,7 +87,7 @@ export const Dashboard = () => {
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
-  const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
+  // const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
   const {
     isDataLoaded: isLoansLoaded,
     vaults: { vaultsMapper, allVaultsIds },
@@ -132,9 +133,10 @@ export const Dashboard = () => {
   }, 0)
 
   // TODO: check this calculation with sam
-  const farmsTVL = farms.reduce((acc, farm) => {
-    return (acc += farm.lpBalance)
-  }, 0)
+  const farmsTVL = 0
+  // farms.reduce((acc, farm) => {
+  //   return (acc += farm.lpBalance)
+  // }, 0)
 
   const lendingTvl = totalBorrowed + totalLended
   const doormanTVL = totalStakedMvk * mvkExchangeRate
@@ -149,7 +151,7 @@ export const Dashboard = () => {
           (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
           (!isTreasuryLoaded || isDepsChanged) && dispatch(getTreasuryStorage()),
           (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
-          (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage(tokensMetadata)),
+          // (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage(tokensMetadata)),
         ].filter(Boolean),
       )
     } catch (e) {}

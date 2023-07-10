@@ -50,36 +50,37 @@ export const LoansProvider = ({ children }: Props) => {
     {
       skip: !activeSubs[LOANS_MARKETS_ADDRESSES],
       variables: {
-        marketAddressToSubscribe: marketAddressToSubscribe ?? '',
+        marketTokenAddress: marketAddressToSubscribe ?? '',
       },
       shouldResubscribe: true,
       onData: ({ data: { data } }) => {
         if (!data) return
 
-        const normalizedMarkets = normalizeLoansMarkets({ indexerData: data })
+        const { markets, addresses } = normalizeLoansMarkets({ indexerData: data })
         setLoansCtxState((prev) => ({
           ...prev,
-          marketsMapper: normalizedMarkets,
+          marketsMapper: markets,
+          marketsAddresses: addresses,
         }))
       },
       onError: (error) => handleSubError(error, LOANS_MARKETS_ADDRESSES),
     },
   )
 
-  const { loading: isMarketsAddressesLoading } = useSubscription(GET_LOANS_MARKET_ADDRESSES, {
-    skip: !activeSubs[LOANS_MARKETS_ADDRESSES],
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
-      setLoansCtxState((prev) => ({
-        ...prev,
-        marketsAddresses: Array.from(
-          new Set(data.lending_controller[0].loan_tokens.map(({ token: { token_address } }) => token_address)),
-        ),
-      }))
-    },
-    onError: (error) => handleSubError(error, LOANS_MARKETS_ADDRESSES),
-  })
+  // const { loading: isMarketsAddressesLoading } = useSubscription(GET_LOANS_MARKET_ADDRESSES, {
+  //   skip: !activeSubs[LOANS_MARKETS_ADDRESSES],
+  //   shouldResubscribe: true,
+  //   onData: ({ data: { data } }) => {
+  //     if (!data) return
+  //     setLoansCtxState((prev) => ({
+  //       ...prev,
+  //       marketsAddresses: Array.from(
+  //         new Set(data.lending_controller[0].loan_tokens.map(({ token: { token_address } }) => token_address)),
+  //       ),
+  //     }))
+  //   },
+  //   onError: (error) => handleSubError(error, LOANS_MARKETS_ADDRESSES),
+  // })
 
   const { loading: isLoansConfigLoading } = useSubscription(GET_LOANS_CONFIG, {
     skip: !activeSubs[LOANS_CONFIG],
@@ -101,7 +102,7 @@ export const LoansProvider = ({ children }: Props) => {
   const providerValue = useMemo(() => {
     return {
       ...loansCtxState,
-      isLoading: isMarketsAddressesLoading || isLoansConfigLoading || isMarketsLoading,
+      isLoading: isLoansConfigLoading || isMarketsLoading,
       changeLoansSubscriptionsList,
       setMarketAddressToSubscribe,
     }

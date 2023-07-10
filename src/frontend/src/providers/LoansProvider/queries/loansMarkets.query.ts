@@ -11,9 +11,7 @@ export function getLoansMarketsSubscription({
 }: {
   marketTokenAddress: string | null
 }): DocumentNode | TypedDocumentNode<GetLoansMarketsSubscriptionSubscription, OperationVariables> {
-  const filterByAddress = marketTokenAddress
-    ? `token: {token_address: {_eq: $marketTokenAddress}}`
-    : `token: {token_address: {_neq: ""}}`
+  const filterByAddress = `token: {token_address: {${marketTokenAddress ? '_eq' : '_neq'}: $marketTokenAddress}}`
 
   return apolloGql(`
     subscription getLoansMarketsSubscription($marketTokenAddress: String = "") {
