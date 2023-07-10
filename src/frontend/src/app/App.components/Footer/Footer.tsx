@@ -1,4 +1,5 @@
 import { FooterStyled } from './Footer.styles'
+import { mavrykLinks } from './footer.const'
 
 export const Footer = () => {
   return (
@@ -15,21 +16,11 @@ export const Footer = () => {
       </div>
 
       <div className="additional-links">
-        <a
-          href="https://docs.google.com/document/d/1jW-XtRPv3TsCV2meV2ajgkQ6dI0iEwuz9xgZwnyMliw/edit"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Privacy Policy
-        </a>
-
-        <a
-          href="https://docs.google.com/document/d/1R0LA7CmVQjH7vr-FvWOy96LRxJ_XU3HXLXnqNZjZlJQ/edit"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Terms of Use
-        </a>
+        {mavrykLinks.map(({ link, title }) => (
+          <a key={link} href={link} target="_blank" rel="noreferrer">
+            {title}
+          </a>
+        ))}
       </div>
     </FooterStyled>
   )

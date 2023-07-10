@@ -11,6 +11,12 @@ import {
   SATELLITE_STATUSES,
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
+  DELEGATE_ACTION,
+  UNDELEGATE_ACTION,
+  DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
+  REGISTER_SATELLITE_ACTION,
+  UNREGISTER_SATELLITE_ACTION,
+  UPDATE_SATELLITE_ACTION,
 } from './satellites.const'
 
 export type SatelliteRecordType = NonNullable<ReturnType<typeof normallizeSatellite>>
@@ -91,3 +97,11 @@ export type SatellitesStatisticsSubsSkipsType = {
 
 export type SatellitesSubsType = typeof SATELLITE_DATA_SUB | typeof SATELLITE_PARTICIPATION_DATA_SUB
 export type SatellitesSubsRecordType = Record<SatellitesSubsType, boolean>
+
+export type SatelliteActionsType =
+  | typeof DELEGATE_ACTION
+  | typeof UNDELEGATE_ACTION
+  | typeof DISTRIBUTE_PROPOSALS_REWARDS_ACTION
+  | typeof REGISTER_SATELLITE_ACTION
+  | typeof UNREGISTER_SATELLITE_ACTION
+  | typeof UPDATE_SATELLITE_ACTION

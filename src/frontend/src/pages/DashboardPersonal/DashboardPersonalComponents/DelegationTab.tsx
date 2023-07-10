@@ -29,9 +29,6 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
-// actions
-import { distributeProposalRewards } from 'pages/Satellites/Satellites.actions'
-
 const DelegationTab = () => {
   const dispatch = useDispatch()
 
@@ -64,7 +61,9 @@ const DelegationTab = () => {
   })
 
   // TODO: add valid data
-  const handleDistributeRewards = () => dispatch(distributeProposalRewards('', []))
+  const handleDistributeRewards = () => {
+    // TODO TAKE LOGIC FROM sATELLITEcARD COMPONENT FOR THIS CALLBACK FN
+  }
 
   return (
     <>
