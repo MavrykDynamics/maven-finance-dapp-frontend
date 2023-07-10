@@ -6,7 +6,7 @@ import { State } from 'reducers'
 // helpers, consts
 import {
   BUTTON_PRIMARY,
-  BUTTON_SECONDARY,
+  BUTTON_SECONDARY_CYAN,
   BUTTON_SECONDARY_PURPLE,
   BUTTON_SIMPLE,
   BUTTON_WIDE,
@@ -193,7 +193,7 @@ const Themes = () => {
       <div className="title">Choose the theme</div>
       <div className="buttons-wrapper">
         <Button
-          kind={themeSelected === SPACE_THEME ? BUTTON_SECONDARY : BUTTON_SECONDARY_PURPLE}
+          kind={themeSelected === SPACE_THEME ? BUTTON_SECONDARY_CYAN : BUTTON_SECONDARY_PURPLE}
           form={BUTTON_WIDE}
           isThin
           isSquare
@@ -202,7 +202,7 @@ const Themes = () => {
           Space
         </Button>
         <Button
-          kind={themeSelected === DARK_THEME ? BUTTON_SECONDARY : BUTTON_SECONDARY_PURPLE}
+          kind={themeSelected === DARK_THEME ? BUTTON_SECONDARY_CYAN : BUTTON_SECONDARY_PURPLE}
           form={BUTTON_WIDE}
           isThin
           isSquare
@@ -211,7 +211,7 @@ const Themes = () => {
           Dark
         </Button>
         <Button
-          kind={themeSelected === LIGHT_THEME ? BUTTON_SECONDARY : BUTTON_SECONDARY_PURPLE}
+          kind={themeSelected === LIGHT_THEME ? BUTTON_SECONDARY_CYAN : BUTTON_SECONDARY_PURPLE}
           form={BUTTON_WIDE}
           isThin
           isSquare

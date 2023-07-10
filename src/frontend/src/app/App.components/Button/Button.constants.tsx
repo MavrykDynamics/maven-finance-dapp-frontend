@@ -31,6 +31,7 @@ export type ButtonStyle =
 export const BUTTON_PRIMARY = 'primary'
 export const BUTTON_SECONDARY = 'secondary'
 export const BUTTON_SECONDARY_PURPLE = 'secondary-purple'
+export const BUTTON_SECONDARY_CYAN = 'secondary-cyan'
 export const BUTTON_THIRD = 'third'
 export const BUTTON_SIMPLE = 'simple'
 export const BUTTON_SIMPLE_SMALL = 'simpleSmall'
@@ -43,6 +44,7 @@ export type ButtonKind =
   | typeof BUTTON_PRIMARY
   | typeof BUTTON_SECONDARY
   | typeof BUTTON_SECONDARY_PURPLE
+  | typeof BUTTON_SECONDARY_CYAN
   | typeof BUTTON_THIRD
   | typeof BUTTON_SIMPLE
   | typeof BUTTON_SIMPLE_SMALL

@@ -79,6 +79,7 @@ export const dark = {
   pageHeaderColor: '#FFFFFF',
   scrollBlockColor: '#503EAA',
   cardHoverColor: 'rgba(134, 212, 201, 0.5)',
+  rpcNodeSelecledColor: '#86D4C9',
   // tabs
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
 
@@ -171,6 +172,7 @@ export const light = {
   pageHeaderColor: '#FFFFFF',
   scrollBlockColor: '#503EAA',
   cardHoverColor: 'rgba(134, 212, 201, 0.5)',
+  rpcNodeSelecledColor: '#86D4C9',
   // tabs
   forTabs: 'linear-gradient(90deg, #03C9A3 0.31%, #8D86EB 99.97%)',
 
@@ -263,6 +265,7 @@ export const space = {
   pageHeaderColor: '#FFFFFF',
   scrollBlockColor: '#503EAA',
   cardHoverColor: 'rgba(134, 212, 201, 0.5)',
+  rpcNodeSelecledColor: '#86D4C9',
   // tabs
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
 

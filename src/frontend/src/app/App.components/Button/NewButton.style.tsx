@@ -17,6 +17,7 @@ import {
   BUTTON_LARGE,
   BUTTON_REGULAR,
   BUTTON_SECONDARY_PURPLE,
+  BUTTON_SECONDARY_CYAN,
 } from './Button.constants'
 
 const BUTTONS_KIND_STYLES = css`
@@ -47,12 +48,20 @@ const BUTTONS_KIND_STYLES = css`
       fill: ${({ theme }) => theme.strokeColor};
     }
   }
+  &.${BUTTON_SECONDARY_CYAN} {
+    color: ${({ theme }) => theme.rpcNodeSelecledColor};
+    background-color: transparent;
+    border: 2px solid ${({ theme }) => theme.rpcNodeSelecledColor};
 
+    svg {
+      fill: ${({ theme }) => theme.rpcNodeSelecledColor};
+    }
+  }
   &.${BUTTON_THIRD} {
     width: fit-content;
     height: fit-content;
     padding: 0;
-    
+
     background-color: transparent;
     border: 1px solid ${({ theme }) => theme.divider};
 

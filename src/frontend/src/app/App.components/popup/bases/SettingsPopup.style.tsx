@@ -59,7 +59,7 @@ export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean; theme:
 
   border-radius: 10px;
   border: ${({ isSelected, theme }) =>
-    isSelected ? `1px solid ${theme.linksAndButtons}` : `1px solid ${theme.strokeColor};`};
+    isSelected ? `1px solid ${theme.rpcNodeSelecledColor}` : `1px solid ${theme.strokeColor};`};
 
   position: relative;
   height: 75px;
