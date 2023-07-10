@@ -100,13 +100,13 @@ export const Root = () => {
   return (
     <DappLibsProviders>
       <ToasterProvider>
-        <DarkThemeProvider>
-          <InitialDataDappProviders>
+        <InitialDataDappProviders>
+          <DarkThemeProvider>
             <DappSectionsDataProviders>
               <AppContainer />
             </DappSectionsDataProviders>
-          </InitialDataDappProviders>
-        </DarkThemeProvider>
+          </DarkThemeProvider>
+        </InitialDataDappProviders>
       </ToasterProvider>
     </DappLibsProviders>
   )

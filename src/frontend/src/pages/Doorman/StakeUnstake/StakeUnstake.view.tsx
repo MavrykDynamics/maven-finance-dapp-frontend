@@ -62,7 +62,6 @@ import {
 } from './StakeUnstake.style'
 
 // types
-import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
 import { TezosWalletErrorPayload } from 'errors/error.type'
@@ -204,11 +203,10 @@ export const StakeUnstakeView = ({
         )
 
         toggleActionFullScreenLoader(false)
-        toggleActionCompletion(false)
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
-        setInputData({ ...inputData, amount: '0' })
+
         setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
       } else if (isContractErrorPayload(actionResult.error)) {
         const { message, description } = actionResult.error as TezosWalletErrorPayload
@@ -220,6 +218,9 @@ export const StakeUnstakeView = ({
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      setInputData({ ...inputData, amount: '0' })
+      toggleActionCompletion(false)
     }
   }
 
@@ -266,7 +267,6 @@ export const StakeUnstakeView = ({
         )
 
         toggleActionFullScreenLoader(false)
-        toggleActionCompletion(false)
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
@@ -282,6 +282,8 @@ export const StakeUnstakeView = ({
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
     }
   }
 
