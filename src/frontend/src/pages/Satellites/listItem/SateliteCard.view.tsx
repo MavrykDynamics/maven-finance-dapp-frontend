@@ -98,7 +98,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     setAction,
     toggleActionCompletion,
     toggleActionFullScreenLoader,
-    contractAddresses: { delegationAddress, doormanAddress },
+    contractAddresses: { delegationAddress, doormanAddress, mvkTokenAddress },
     globalLoadingState: { isActionActive },
     preferences: { themeSelected },
   } = useDappConfigContext()
@@ -136,8 +136,12 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return
     }
 
-    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: MVK_TOKEN_SYMBOL })
+    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
     const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+
+    console.log(mvkTokenBalance)
+
+    console.log(sMvkTokenBalance)
 
     if (mvkTokenBalance === 0) {
       bug('Unable to Delegate', 'Please buy MVK and stake it')

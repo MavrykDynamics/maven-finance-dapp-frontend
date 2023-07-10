@@ -116,7 +116,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       return
     }
 
-    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: MVK_TOKEN_SYMBOL })
+    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
     const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
     if (mvkTokenBalance > 0 || sMvkTokenBalance > 0) {

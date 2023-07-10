@@ -68,7 +68,6 @@ export const UnregisterPopup = ({
         )
 
         toggleActionFullScreenLoader(false)
-        toggleActionCompletion(false)
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level

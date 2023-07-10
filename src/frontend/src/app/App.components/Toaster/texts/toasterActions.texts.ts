@@ -1,5 +1,5 @@
 import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
-import { ACTION_START_MESSAGE_TEXT, ACTION_START_MESSAGE_TEXT_15 } from '../Toaster.constants'
+import { ACTION_COMPLETION_MESSAGE_TEXT, ACTION_START_MESSAGE_TEXT } from '../Toaster.constants'
 import {
   CLAIM_ALL_REWARDS_ACTION,
   CLAIM_VESTING_REWARD_ACTION,
@@ -24,7 +24,7 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Staking done',
-      message: ACTION_START_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
   [UNSTAKE_ACTION]: {
@@ -34,13 +34,13 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Unstaking done',
-      message: ACTION_START_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
   [GET_MVK_FROM_FAUCET_ACTION]: {
     start: {
       title: 'Requesting MVK...',
-      message: ACTION_START_MESSAGE_TEXT_15,
+      message: ACTION_START_MESSAGE_TEXT,
     },
     end: {
       title: 'Received 1,000 MVK...',
@@ -51,17 +51,17 @@ export const TOASTER_ACTIONS_TEXTS = {
   [REWARDS_COMPOUND_ACTION]: {
     start: {
       title: 'Compounding rewards...',
-      message: ACTION_START_MESSAGE_TEXT_15,
+      message: ACTION_START_MESSAGE_TEXT,
     },
     end: {
       title: 'Compounding done',
-      message: ACTION_START_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
   [CLAIM_VESTING_REWARD_ACTION]: {
     start: {
       title: 'Claiming vesting reward...',
-      message: ACTION_START_MESSAGE_TEXT_15,
+      message: ACTION_START_MESSAGE_TEXT,
     },
     end: {
       title: 'Compounding done',
@@ -71,7 +71,7 @@ export const TOASTER_ACTIONS_TEXTS = {
   [CLAIM_ALL_REWARDS_ACTION]: {
     start: {
       title: 'Claiming rewards...',
-      message: ACTION_START_MESSAGE_TEXT_15,
+      message: ACTION_START_MESSAGE_TEXT,
     },
     end: {
       title: 'Compounding done',
@@ -86,7 +86,7 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Delegation done',
-      message: ACTION_START_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
   [UNDELEGATE_ACTION]: {
@@ -96,7 +96,7 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Undelegating done',
-      message: ACTION_START_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
   [DISTRIBUTE_PROPOSALS_REWARDS_ACTION]: {
@@ -106,7 +106,7 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Distributing proposal rewards done',
-      message: ACTION_START_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
   [REGISTER_SATELLITE_ACTION]: {
@@ -116,7 +116,7 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Satellite Registered.',
-      message: ACTION_START_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
   [UNREGISTER_SATELLITE_ACTION]: {
@@ -126,7 +126,7 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Satellite is no longer registered.',
-      message: ACTION_START_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
   [UPDATE_SATELLITE_ACTION]: {
@@ -136,7 +136,7 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Satellite record updated.',
-      message: ACTION_START_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
 }
