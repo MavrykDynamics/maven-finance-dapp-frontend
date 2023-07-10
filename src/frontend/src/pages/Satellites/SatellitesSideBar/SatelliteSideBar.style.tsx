@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { Card, CardHeader } from 'styles'
+import { Card } from 'styles'
 
 export const SatelliteSideBarStyled = styled(Card)`
   padding: 24px 0;
@@ -11,7 +11,6 @@ export const SatelliteSideBarStyled = styled(Card)`
     font-weight: 600;
     font-size: 18px;
     margin-bottom: 25px;
-    color: ${({ theme }) => theme.textColor};
 
     &::after {
       display: none;
@@ -32,7 +31,7 @@ export const SideBarSection = styled.aside<{ theme: MavrykTheme }>`
     content: '';
     width: calc(100% - 40px);
     height: 1px;
-    background-color: ${({ theme }) => theme.cardBorderColor};
+    background-color: ${({ theme }) => theme.divider};
     position: absolute;
     bottom: -1px;
   }
@@ -55,7 +54,7 @@ export const FAQLink = styled.div<{ theme: MavrykTheme }>`
     top: 8px;
     width: 5px;
     height: 5px;
-    background: ${({ theme }) => theme.valueColor};
+    background: ${({ theme }) => theme.linksAndButtons};
     left: 5px;
   }
 
@@ -72,7 +71,7 @@ export const FAQLink = styled.div<{ theme: MavrykTheme }>`
     font-weight: 500;
     font-size: 14px;
     line-height: 21px;
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
     text-decoration: underline;
   }
 `
@@ -89,18 +88,19 @@ export const SideBarItem = styled.div<{ theme: MavrykTheme }>`
   h3 {
     font-weight: 600;
     font-size: 14px;
-    color: ${({ theme }) => theme.textColor};
+
+    color: ${({ theme }) => theme.regularText};
   }
 
   var {
     max-width: 50%;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
 
     * {
       font-style: normal;
       font-weight: 600;
       font-size: 14px;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
       white-space: nowrap;
       max-width: 100%;
       overflow: hidden;
@@ -108,7 +108,7 @@ export const SideBarItem = styled.div<{ theme: MavrykTheme }>`
       margin: 0;
 
       svg {
-        stroke: ${({ theme }) => theme.dataColor};
+        stroke: ${({ theme }) => theme.primaryText};
         width: 16px;
         margin-left: 8px;
       }
