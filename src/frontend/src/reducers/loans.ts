@@ -1,30 +1,18 @@
 import { GET_LOANS_STORAGE } from 'pages/Loans/Actions/getLoansData.actions'
-import { LoansStorage, VaultsStorage } from 'utils/TypesAndInterfaces/Loans'
+import { VaultsStorage } from 'utils/TypesAndInterfaces/Loans'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface LoansState {
-  loanTokens: LoansStorage['loanTokens']
   vaults: VaultsStorage
-  mvkTokenOperators: LoansStorage['mvkTokenOperators']
-
-  config: {
-    DAOFee: number
-  }
-
   isDataLoaded: boolean
 }
 
 const loansDefaultState: LoansState = {
-  loanTokens: [],
   vaults: {
     permissinedVaultsIds: [],
     myVaultsIds: [],
     allVaultsIds: [],
     vaultsMapper: {},
-  },
-  mvkTokenOperators: [],
-  config: {
-    DAOFee: 0,
   },
   isDataLoaded: false,
 }

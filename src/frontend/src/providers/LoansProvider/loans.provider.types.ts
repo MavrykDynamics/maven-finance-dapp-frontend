@@ -27,7 +27,6 @@ export type LoanMarketType = {
   suppliers: number // amount of people who hold market mToken
   borrowAPR: number
   lendingAPY: number
-  collateralFactor: number
 
   availableLiquidity: number // how much tokens left in the market pool
   totalBorrowed: number // how much borrowed per market
@@ -42,11 +41,13 @@ export type LoansContext = {
   marketsMapper: Record<TokenAddressType, LoanMarketType>
   config: {
     daoFee: number
-  }
+    collateralFactor: number
+  } | null
 
   isLoading: boolean
 
   changeLoansSubscriptionsList: (skips: Partial<LoansSubsRecordType>) => void
+  setMarketAddressToSubscribe: (marketTokenAddress: TokenAddressType | null) => void
 }
 
 export type LoansContextState = Pick<LoansContext, 'marketAddresses' | 'marketsMapper' | 'config'>

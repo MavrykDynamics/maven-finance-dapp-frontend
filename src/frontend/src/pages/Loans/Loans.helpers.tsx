@@ -4,19 +4,6 @@ import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Inp
 
 import { convertNumberForClient, convertNumberForContractCall } from '../../utils/calcFunctions'
 import { assetDecimalsToShow } from './Loans.const'
-import { compareDatesByDay } from 'utils/compareDatesByDay'
-import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
-
-// TODO: move this utils to provider and add docs to them while loans live update
-// HELPER FOR LENDING APY
-export const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): number => {
-  const secondsPerYear = 60 * 60 * 24 * 365
-
-  const top = currentInterestRate - treasuryShare
-  const firstTerm = 1 + top / secondsPerYear
-  const power = firstTerm ** secondsPerYear
-  return (power - 1) * 100
-}
 
 // HELPER FOR BORROW FEE
 export const calculateAccruedInterest = (

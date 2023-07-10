@@ -3,14 +3,14 @@ import { DocumentNode } from 'graphql'
 import { gql as apolloGql, OperationVariables, TypedDocumentNode } from '@apollo/client'
 import { gql } from 'utils/__generated__'
 
-import { GetLoansHistoryForMarketDataSubscription } from 'utils/__generated__/graphql'
+import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
 
 // Loans market transaction history
 export function getLoansMarketsSubscription({
   marketTokenAddress,
 }: {
-  marketTokenAddress?: string
-}): DocumentNode | TypedDocumentNode<GetLoansHistoryForMarketDataSubscription, OperationVariables> {
+  marketTokenAddress: string | null
+}): DocumentNode | TypedDocumentNode<GetLoansMarketsSubscriptionSubscription, OperationVariables> {
   const filterByAddress = marketTokenAddress
     ? `token: {token_address: {_eq: $marketTokenAddress}}`
     : `token: {token_address: {_neq: ""}}`
@@ -18,6 +18,11 @@ export function getLoansMarketsSubscription({
   return apolloGql(`
     subscription getLoansMarketsSubscription($marketTokenAddress: String = "") {
       lending_controller(where: {mock_time: {_eq: false}}) {
+				collateral_ratio
+				interest_treasury_share
+				interest_rate_decimals
+				decimals
+
 				loan_tokens(where: {${filterByAddress}}) {
 					token {
 						token_address
@@ -57,11 +62,8 @@ export function getLoansMarketsSubscription({
 export const GET_LOANS_CONFIG = gql(`
 	subscription getLLoansConfig($currentTimestamp: timestamptz) {
 		lending_controller(where: {mock_time: {_eq: false}}) {
-			collateral_ratio
-			interest_treasury_share
-			interest_rate_decimals
 			minimum_loan_fee_pct
-			decimals
+			collateral_ratio
 		}
 	}
 `)
