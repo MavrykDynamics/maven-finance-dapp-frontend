@@ -23,6 +23,7 @@ import colors from 'styles/colors'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 export const ConfirmRepay = ({
   closePopup,
@@ -36,7 +37,7 @@ export const ConfirmRepay = ({
   useLockBodyScroll(show)
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const dispatch = useDispatch()
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 

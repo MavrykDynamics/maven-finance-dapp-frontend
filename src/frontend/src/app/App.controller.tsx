@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AnyAction } from 'redux'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useMedia } from 'react-use'
 import { ThunkDispatch } from 'redux-thunk'
 import { useCookies } from 'react-cookie'
@@ -24,9 +24,10 @@ import { PolicyPopup } from 'app/App.components/PolicyPopup/Policy.controller'
 import { Footer } from './App.components/Footer/Footer'
 
 // actions
-import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
 import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.actions'
-import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
+import { setItemInStorage } from 'utils/storage'
+import { RPC_NODE, ecadLabSUrl } from 'providers/PreferencesProvider/helpers/preferences.const'
 
 export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
@@ -38,14 +39,14 @@ export const App = () => {
   const showSidebarOpened = useMedia('(min-width: 1400px)')
   const [{ policyPopup }, setCookie] = useCookies(['policyPopup'])
 
-  const { changeNodePopupOpen, sidebarOpened } = useSelector((state: State) => state.preferences)
+  const { changeNodePopupOpen, sidebarOpened, toggleSidebarCollapsing, toggleRPCNodePopup } = usePreferencesContext()
 
   useEffect(() => {
     dispatch(getContractAddressesStorage())
   }, [])
 
   useEffect(() => {
-    dispatch(toggleSidebarCollapsing(showSidebarOpened))
+    toggleSidebarCollapsing(showSidebarOpened)
   }, [showSidebarOpened])
 
   // IOS mobile handle
@@ -57,7 +58,20 @@ export const App = () => {
     )
   }, [])
 
-  const closeModalHandler = useCallback(() => dispatch(toggleRPCNodePopup(false)), [])
+  // when user closes the tab - reset RPC node to the dafult one
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      setItemInStorage(RPC_NODE, ecadLabSUrl)
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [])
+
+  const closeModalHandler = useCallback(() => toggleRPCNodePopup(false), [])
   const proccedPolicy = useCallback(() => setCookie('policyPopup', true), [])
 
   return (

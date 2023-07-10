@@ -54,6 +54,7 @@ import { getBytesDiff, getPaymentsDiff } from './ProposalSubmission.helpers'
 import { dropProposal, lockProposal, submitProposal, updateProposalData } from './ProposalSubmission.actions'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const dispatch = useDispatch()
@@ -67,7 +68,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     proposalsMapper,
     config: { fee, governancePhase },
   } = useSelector((state: State) => state.governance)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [activeTab, setActiveTab] = useState(1)

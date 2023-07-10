@@ -40,6 +40,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -74,7 +75,7 @@ export const Loans = () => {
     vaults: { allVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
 
   const { totalBorrowed, totalLended } = loanTokens.reduce<{
     totalLended: number

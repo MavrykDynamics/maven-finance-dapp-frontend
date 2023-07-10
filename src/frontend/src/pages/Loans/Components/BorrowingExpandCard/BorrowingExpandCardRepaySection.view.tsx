@@ -40,6 +40,7 @@ import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.type
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 type Props = {
   vaultId: number
@@ -59,7 +60,7 @@ type Props = {
 export const BorrowingExpandCardRepaySection = (props: Props) => {
   const { userTokensBalances } = useUserContext()
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {

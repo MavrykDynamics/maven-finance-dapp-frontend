@@ -38,6 +38,7 @@ import { CollateralType, DepositorsFlagType } from 'providers/LoansProvider/help
 import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
 import { EmptyContainer } from 'app/App.style'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 type Props = {
   openAddNewCollateralPopup: () => void
@@ -94,7 +95,7 @@ export const BorrowingExpandCardMenuSection = ({
   } = useDappConfigContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
 
   const menuTabs = useMemo(
     () =>

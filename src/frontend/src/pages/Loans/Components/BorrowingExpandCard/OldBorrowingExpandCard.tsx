@@ -34,6 +34,7 @@ import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 type BorrowingExpandCardPropsType = {
   vault: VaultType
@@ -46,7 +47,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { openAddExistingCollateralPopup, addExistingCollateralPopup } = useLoansPopupsContext()
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)

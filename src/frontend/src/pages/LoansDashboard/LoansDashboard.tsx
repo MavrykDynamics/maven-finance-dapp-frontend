@@ -31,6 +31,7 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { convertNumberForClient } from 'utils/calcFunctions'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { usePreferencesContext } from 'providers/PreferencesProvider/preferences.provider'
 
 export type GaugeChartStateType = {
   maxValue: number
@@ -66,7 +67,7 @@ export const LoansDashboard = () => {
     userMTokens,
   } = useUserContext()
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { themeSelected } = usePreferencesContext()
   const { isDataLoaded: isLoansLoaded, loanTokens } = useSelector((state: State) => state.loans)
 
   const { lending24hPersentChange, borrowing24hPersentChange } = useLendBorrow24hDiff()

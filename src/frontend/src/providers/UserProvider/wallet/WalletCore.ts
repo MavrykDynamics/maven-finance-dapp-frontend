@@ -2,8 +2,8 @@ import { Network, NetworkType } from '@airgap/beacon-sdk'
 import type { BeaconWallet as BeaconWalletType } from '@taquito/beacon-wallet'
 import { BeaconWallet } from '@taquito/beacon-wallet'
 import { TezosToolkit } from '@taquito/taquito'
-
-import { store } from 'app/App.controller'
+import { RPC_NODE, ecadLabSUrl } from 'providers/PreferencesProvider/helpers/preferences.const'
+import { getItemFromStorage } from 'utils/storage'
 
 export const WALLET_NETWORK: Network['type'] = NetworkType.GHOSTNET
 const DAPP_METADATA = {
@@ -11,7 +11,10 @@ const DAPP_METADATA = {
   preferredNetwork: WALLET_NETWORK,
 }
 
-export const getRpcNode = () => store.getState().preferences.REACT_APP_RPC_PROVIDER
+const getRpcNode = () => {
+  const rpcNode = getItemFromStorage(RPC_NODE) ?? ecadLabSUrl
+  return rpcNode
+}
 
 export function dappClient() {
   let instance: BeaconWalletType | undefined
