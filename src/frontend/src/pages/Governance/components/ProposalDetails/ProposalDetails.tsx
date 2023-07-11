@@ -194,9 +194,13 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Source Code</div>
         <div className="proposal-data-block-value">
-          <a href={proposal.sourceCode} target="_blank" rel="noreferrer" className="isCyan">
-            {proposal.sourceCode}
-          </a>
+          {proposal.sourceCode ? (
+            <a href={proposal.sourceCode} target="_blank" rel="noreferrer" className="isCyan">
+              {proposal.sourceCode}
+            </a>
+          ) : (
+            <div className="proposal-data-block-no-value">No link to source code given</div>
+          )}
         </div>
       </div>
 
@@ -208,7 +212,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
               {proposal.invoice}
             </a>
           ) : (
-            'No link for an invoice given'
+            <span className="proposal-data-block-no-value">No link for an invoice given</span>
           )}
         </div>
       </div>
@@ -231,10 +235,12 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
                     <div className="proposal-data-block-value title-main">{item?.title || '–'}</div>
                   </div>
                   <div className="byte-text-wrapper">
-                    <div className="title" style={{ marginRight: '5px' }}>
-                      Description:
+                    <div className="proposal-data-block-value proposal-data-block-desc">
+                      <span className="title" style={{ marginRight: '5px' }}>
+                        Description:
+                      </span>
+                      {item.code_description || '–'}
                     </div>
-                    <div className="proposal-data-block-value">{item.code_description || '–'}</div>
                   </div>
 
                   <div className={`byte ${isByteOpened ? 'opened' : ''}`}>
@@ -267,7 +273,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
             })}
           </ul>
         ) : (
-          <div className="proposal-data-block-value">No proposal meta-data given</div>
+          <div className="proposal-data-block-value proposal-data-block-no-value">No proposal meta-data given</div>
         )}
       </div>
 
@@ -318,7 +324,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
             </TableBody>
           </Table>
         ) : (
-          <div className="proposal-data-block-value">No payment data given</div>
+          <div className="proposal-data-block-value proposal-data-block-no-value">No payment data given</div>
         )}
       </div>
 

@@ -81,6 +81,14 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     }
   }
 
+  .proposal-data-block-desc {
+    line-height: 22px;
+  }
+
+  .proposal-data-block-no-value {
+    color: ${({ theme }) => theme.textColor};
+  }
+
   .proposal-data-block-address {
     font-size: 16px;
   }
