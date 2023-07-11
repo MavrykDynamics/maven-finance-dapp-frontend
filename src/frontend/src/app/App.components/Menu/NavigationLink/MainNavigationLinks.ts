@@ -37,8 +37,8 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
   {
     title: 'Earn/Borrow',
     id: 7,
-    path: 'loans',
-    routePath: '/loans',
+    path: 'loans/dashboard',
+    routePath: '/loans/dashboard',
     icon: 'coin-loan',
     subPages: [
       {
