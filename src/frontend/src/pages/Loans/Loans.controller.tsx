@@ -62,8 +62,6 @@ const CHART_COLORS = {
 }
 
 export const Loans = () => {
-  const dispatch = useDispatch()
-
   const {
     isLoading: isChartsLoading,
     chartsData: { totalLendingChart, totalBorrowingChart },
@@ -73,7 +71,7 @@ export const Loans = () => {
   })
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { userAddress, userMTokens } = useUserContext()
+  const { userMTokens } = useUserContext()
   const { changeLoansSubscriptionsList, marketsAddresses, marketsMapper, isLoading: isLoansLoading } = useLoansContext()
 
   useEffect(() => {
@@ -96,6 +94,7 @@ export const Loans = () => {
     totalBorrowed: number
   }>(
     (acc, marketTokenAddress) => {
+      if (!marketsMapper[marketTokenAddress]) return acc
       const { totalBorrowed, totalLended, loanTokenAddress } = marketsMapper[marketTokenAddress]
       const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
 
@@ -112,12 +111,6 @@ export const Loans = () => {
       totalBorrowed: 0,
     },
   )
-
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      await dispatch(getLoansStorage())
-    } catch (e) {}
-  }, [userAddress])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -167,7 +160,7 @@ export const Loans = () => {
     <Page>
       <PageHeader page={'lending'} />
 
-      {isLoading || isLoansLoading ? (
+      {isLoansLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading loans markets</div>

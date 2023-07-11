@@ -63,6 +63,7 @@ export const SatellitesProvider = ({ children }: Props) => {
     const isLoadingNotLoadedSingleSatellite =
       satelliteAddressToSubsctibe && !satellitesCtxState.satelliteMapper[satelliteAddressToSubsctibe]
     const isLoadingAllSatellitesMetadata =
+      !satelliteAddressToSubsctibe &&
       Object.keys(satellitesCtxState.satelliteMapper).length !== satellitesCtxState.allSatellitesIds.length
 
     if (activeSubs[SATELLITE_DATA_SUB] && (isLoadingNotLoadedSingleSatellite || isLoadingAllSatellitesMetadata)) {

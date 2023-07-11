@@ -41,6 +41,7 @@ import {
   DEFAULT_LOANS_ACTIVE_SUBS,
   LOANS_CONFIG,
 } from 'providers/LoansProvider/helpers/loans.const'
+import { EmptyContainer } from 'app/App.style'
 
 export const Market = () => {
   const history = useHistory()
@@ -53,6 +54,7 @@ export const Market = () => {
     marketsMapper,
     config: { collateralFactor },
     changeLoansSubscriptionsList,
+    setMarketAddressToSubscribe,
     isLoading: isLoansLoading,
   } = useLoansContext()
 
@@ -65,6 +67,11 @@ export const Market = () => {
 
     return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
   }, [])
+
+  useEffect(() => {
+    setMarketAddressToSubscribe(assetAddress)
+    return () => setMarketAddressToSubscribe(null)
+  }, [assetAddress])
 
   const {
     vaults: { myVaultsIds, vaultsMapper },
@@ -83,17 +90,14 @@ export const Market = () => {
     window.scrollTo(0, 0)
   }, [])
 
-  const [prevMarket, nextMarket, currentToken] = useMemo(() => {
+  const [prevMarketAddress, nextMarketAddress, currentMarketAddress] = useMemo(() => {
     const currentTokenIdx = marketsAddresses.findIndex((marketTokenAddress) => marketTokenAddress === assetAddress)
-    const prevMarketAddress = marketsAddresses.at(currentTokenIdx - 1) ?? marketsAddresses.at(-1)
-    const nextMarketAddress = marketsAddresses.at(currentTokenIdx + 1) ?? marketsAddresses.at(0)
-    const currentMarketAddress = marketsAddresses.at(currentTokenIdx)
     return [
-      prevMarketAddress ? marketsMapper[prevMarketAddress] : null,
-      nextMarketAddress ? marketsMapper[nextMarketAddress] : null,
-      currentMarketAddress ? marketsMapper[currentMarketAddress] : null,
+      marketsAddresses.at(currentTokenIdx - 1) ?? marketsAddresses.at(-1),
+      marketsAddresses.at(currentTokenIdx + 1) ?? marketsAddresses.at(0),
+      marketsAddresses.at(currentTokenIdx),
     ]
-  }, [assetAddress, marketsAddresses, marketsMapper])
+  }, [assetAddress, marketsAddresses])
 
   const loanToken = getTokenDataByAddress({ tokenAddress: assetAddress, tokensMetadata, tokensPrices })
 
@@ -132,25 +136,38 @@ export const Market = () => {
     [accountPkh, myVaultsIds, assetAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
   )
 
-  if (!loanToken || !loanToken.rate) return null
+  console.log({
+    marketsMapper,
+    isLoading: isLoansLoading,
+  })
 
-  const { symbol, name, icon, decimals, rate } = loanToken
-
-  if (isLoading || isLoansLoading) {
+  if (isLoansLoading) {
     return (
       <Page>
         <PageHeader page={'lending'} />
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading {symbol} market</div>
+          <div className="text">Loading {loanToken?.symbol ?? currentMarketAddress} market</div>
         </DataLoaderWrapper>
       </Page>
     )
   }
 
-  if (!currentToken) {
-    return <Redirect to={'/loans'} />
+  const selectedMarket = currentMarketAddress ? marketsMapper[currentMarketAddress] : null
+
+  if (!selectedMarket || !loanToken || !loanToken.rate) {
+    return (
+      <Page>
+        <PageHeader page={'lending'} />
+        <EmptyContainer>
+          <img src="/images/not-found.svg" alt="No market to show" />
+          <figcaption>Market with address ({currentMarketAddress}) does not exist</figcaption>
+        </EmptyContainer>
+      </Page>
+    )
   }
+
+  const { symbol, name, icon, decimals, rate } = loanToken
 
   const marketPagination = (
     <MarketPagination>
@@ -163,16 +180,16 @@ export const Market = () => {
       />
 
       <div className="right-side-wrapper">
-        {prevMarket ? (
-          <Link to={`/loans/${prevMarket.loanTokenAddress}/${tabId}`}>
+        {prevMarketAddress ? (
+          <Link to={`/loans/${prevMarketAddress}/${tabId}`}>
             <span className="left">
               <Icon id="paginationArrowLeft" /> Previous Market
             </span>
           </Link>
         ) : null}
 
-        {nextMarket ? (
-          <Link to={`/loans/${nextMarket.loanTokenAddress}/${tabId}`}>
+        {nextMarketAddress ? (
+          <Link to={`/loans/${nextMarketAddress}/${tabId}`}>
             <span className="right">
               Next Market
               <Icon id="paginationArrowLeft" />
@@ -207,12 +224,12 @@ export const Market = () => {
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Earn APY</div>
-                <CommaNumber value={currentToken.lendingAPY} endingText="%" className="value" />
+                <CommaNumber value={selectedMarket.lendingAPY} endingText="%" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Total Lending</div>
                 <CommaNumber
-                  value={convertNumberForClient({ number: currentToken.totalLended, grade: decimals })}
+                  value={convertNumberForClient({ number: selectedMarket.totalLended, grade: decimals })}
                   beginningText="$"
                   className="value"
                 />
@@ -221,8 +238,10 @@ export const Market = () => {
                 <div className="name">Available Liquidity</div>
                 <CommaNumber
                   value={
-                    Math.max(convertNumberForClient({ number: currentToken.availableLiquidity, grade: decimals }), 0) *
-                    rate
+                    Math.max(
+                      convertNumberForClient({ number: selectedMarket.availableLiquidity, grade: decimals }),
+                      0,
+                    ) * rate
                   }
                   beginningText="$"
                   className="value"
@@ -234,7 +253,7 @@ export const Market = () => {
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Suppliers</div>
-                <CommaNumber value={currentToken.suppliers} className="value" />
+                <CommaNumber value={selectedMarket.suppliers} className="value" />
               </ThreeLevelListItem>
             </>
           ) : (
@@ -272,15 +291,15 @@ export const Market = () => {
 
         {tabId === LEND_TAB_ID ? (
           <LendingTab
-            loanMtokenAddress={currentToken.loanMTokenAddress}
-            loanTokenAddress={currentToken.loanTokenAddress}
-            lendAPY={currentToken.lendingAPY}
+            loanMtokenAddress={selectedMarket.loanMTokenAddress}
+            loanTokenAddress={selectedMarket.loanTokenAddress}
+            lendAPY={selectedMarket.lendingAPY}
           />
         ) : null}
         {tabId === BORROW_TAB_ID ? (
           <BorrowingTab
-            loanTokenAddress={currentToken.loanTokenAddress}
-            marketAvaliableLiquidity={currentToken.availableLiquidity}
+            loanTokenAddress={selectedMarket.loanTokenAddress}
+            marketAvaliableLiquidity={selectedMarket.availableLiquidity}
           />
         ) : null}
       </MarketStyled>
