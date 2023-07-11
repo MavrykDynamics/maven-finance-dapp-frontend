@@ -34,6 +34,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import classNames from 'classnames'
 
 export const LoansPositionTable = ({
   userVaultsData,
@@ -138,7 +139,7 @@ export const LoansPositionTable = ({
 
                       <TableCell
                         width="43%"
-                        className={`position-multy-cell lending ${!lendingItem ? 'one-item' : ''}`}
+                        className={classNames('position-multy-cell', 'lending', { 'one-item': !lendingItem })}
                       >
                         <div className="cell-content" style={{ marginRight: '20px' }}>
                           {lendingItem ? (
