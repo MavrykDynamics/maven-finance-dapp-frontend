@@ -35,7 +35,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
     ],
   },
   {
-    title: 'Lend/Borrow',
+    title: 'Earn/Borrow',
     id: 7,
     path: 'loans',
     routePath: '/loans',

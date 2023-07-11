@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux'
 import colors from 'styles/colors'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { getNumberInBounds } from 'utils/calcFunctions'
 
 export const LendBorrowPosition = ({
   markets,
@@ -54,7 +55,7 @@ export const LendBorrowPosition = ({
           const { borrowedAmount = 0, collateralAmount = 0 } = userLoansData.userVaultsData[gqlName] ?? {}
 
           // calculating value risk data & how much borrowed per vault
-          acc.borrowCapacity += collateralAmount / 2 - borrowedAmount
+          acc.borrowCapacity += collateralAmount / 2
           acc.borrowedAmount += borrowedAmount
           borrowedPerMarket += borrowedAmount
 
@@ -78,12 +79,12 @@ export const LendBorrowPosition = ({
     return {
       vaultRiskGaugeData: {
         ...GAUGE_STATE_RISK_PART,
-        currentValue: vaultRiskValue,
+        currentValue: getNumberInBounds(0, 100, vaultRiskValue),
         ...getGaugeVaultRiskSimpleStatus(vaultRiskValue),
       },
       apyGaugeData: {
         ...GAUGE_STATE_APY_PART,
-        currentValue: apyNet,
+        currentValue: getNumberInBounds(0, 100, apyNet),
       },
     }
   }, [markets, userLoansData.userVaultsData])
@@ -105,7 +106,7 @@ export const LendBorrowPosition = ({
 
   return (
     <LBHInfoBlock className="position-tab">
-      <H2Title>Lend/Borrow Position</H2Title>
+      <H2Title>Earn/Borrow Position</H2Title>
       <div className="view-markets">
         <Link to={'/loans'}>
           <Button kind={BUTTON_PRIMARY} size={BUTTON_LARGE}>

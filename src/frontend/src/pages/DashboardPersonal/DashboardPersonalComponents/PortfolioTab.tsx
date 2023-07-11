@@ -147,7 +147,7 @@ const PortfolioTab = ({
       <div className="tabs-switchers">
         <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
           <Button selected={portfolioActiveTab === PORTFOLIO_POSITION_TAB_ID} kind={BUTTON_NAVIGATION}>
-            Lend/Borrow Position
+            Earn/Borrow Position
           </Button>
         </Link>
         <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>

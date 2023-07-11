@@ -6,7 +6,7 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
 
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
+import { calcDiffBetweenTwoNumbersInPersentage, getNumberInBounds } from 'utils/calcFunctions'
 import { getGaugeVaultRiskSimpleStatus } from './helpers/position.helpers'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getClassNameBasedOnPersentValue } from './helpers/comparing.helpers'
@@ -128,7 +128,7 @@ export const LoansDashboard = () => {
           const { borrowedAmount = 0, collateralAmount = 0 } = userLoansData.userVaultsData[gqlName] ?? {}
 
           // calculating value risk data & how much borrowed per vault
-          acc.borrowCapacity += collateralAmount / 2 - borrowedAmount
+          acc.borrowCapacity += collateralAmount / 2
           acc.borrowedAmount += borrowedAmount
           borrowedPerMarket += borrowedAmount
 
@@ -154,12 +154,12 @@ export const LoansDashboard = () => {
     return {
       vaultRiskGaugeData: {
         ...GAUGE_STATE_RISK_PART,
-        currentValue: vaultRiskValue,
+        currentValue: getNumberInBounds(0, 100, vaultRiskValue),
         ...getGaugeVaultRiskSimpleStatus(vaultRiskValue),
       },
       apyGaugeData: {
         ...GAUGE_STATE_APY_PART,
-        currentValue: apyNet,
+        currentValue: getNumberInBounds(0, 100, apyNet),
       },
     }
   }, [loanTokens, accountPkh, userLoansData.userVaultsData])
