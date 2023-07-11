@@ -116,8 +116,6 @@ export const ConfirmRemoveAssetsFromLending = ({
         setAction(null)
         const parsedError = unknownToError(e)
         bug(parsedError.message)
-      } finally {
-        toggleActionCompletion(false)
       }
     }
   }
