@@ -174,7 +174,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
           text-overflow: ellipsis;
           overflow: hidden;
           font-size: 14px;
-          font-weight: 600;
+          font-weight: 500;
           color: ${({ theme }) => theme.dataColor};
           transition: 0.5s opacity;
 
