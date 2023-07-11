@@ -186,6 +186,8 @@ export const StakeUnstakeView = ({
 
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
+
+        console.log(operation, 'operation')
         toggleActionFullScreenLoader(true)
         toggleActionCompletion(true)
 
