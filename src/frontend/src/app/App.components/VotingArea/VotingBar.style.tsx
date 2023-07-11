@@ -104,8 +104,8 @@ export const VotingAgainst = styled.div<{ width: number; theme: MavrykTheme }>`
 `
 export const VotingAbstention = styled.div<{ width: number; theme: MavrykTheme }>`
   width: ${({ width }) => width}%;
-  background-color: ${({ theme }) => theme.primaryText};
-  color: ${({ theme }) => theme.primaryText};
+  background-color: ${({ theme }) => theme.neutralColor};
+  color: ${({ theme }) => theme.neutralColor};
   cursor: pointer;
 
   &:hover {
@@ -117,8 +117,8 @@ export const VotingAbstention = styled.div<{ width: number; theme: MavrykTheme }
 `
 export const NotYetVoted = styled.div<{ width: number; theme: MavrykTheme }>`
   width: ${({ width }) => width}%;
-  background-color: ${({ theme }) => theme.neutralColor};
-  color: ${({ theme }) => theme.neutralColor};
+  background-color: ${({ theme }) => theme.neutralSecondColor};
+  color: ${({ theme }) => theme.neutralSecondColor};
   cursor: pointer;
 
   &:hover {

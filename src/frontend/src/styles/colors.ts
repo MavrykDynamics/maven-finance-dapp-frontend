@@ -62,6 +62,7 @@ export const dark = {
   upColor: '#34F66A',
   downColor: '#FF4343',
   neutralColor: '#77A4F2',
+  neutralSecondColor: '#6A6A9B',
   warningColor: '#FE630C',
   riskColor: '#FBFF43',
   // third colors
@@ -156,6 +157,7 @@ export const light = {
   upColor: '#3FA65A',
   downColor: '#FF4343',
   neutralColor: '#6F50B5',
+  neutralSecondColor: '#6A6A9B',
   warningColor: '#FE630C',
   riskColor: '#FBBA39',
   // third colors
@@ -250,6 +252,7 @@ export const space = {
   upColor: '#34F66A',
   downColor: '#FF4343',
   neutralColor: '#77A4F2',
+  neutralSecondColor: '#6A6A9B',
   warningColor: '#FE630C',
   riskColor: '#FBFF43',
   // third colors

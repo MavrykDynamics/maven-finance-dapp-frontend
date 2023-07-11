@@ -59,7 +59,7 @@ export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
     width: 23px;
     height: 23px;
     border-radius: 50%;
-    background-color: ${({ theme }) => theme.selectedColor};
+    background-color: ${({ theme }) => theme.strokeColor};
     transition: 0.3s;
   }
 

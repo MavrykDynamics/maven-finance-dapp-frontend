@@ -92,7 +92,7 @@ export const ToasterContent = styled.div<{ status?: string; theme: MavrykTheme }
   .message {
     font-weight: 500;
     font-size: 14px;
-    color: ${({ theme }) => theme.mainHeadingText};
+    color: ${({ theme }) => theme.regularText};
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;

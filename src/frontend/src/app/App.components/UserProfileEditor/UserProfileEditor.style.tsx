@@ -47,7 +47,7 @@ export const UserProfileEditorZoom = styled.div`
     width: 100%;
     height: 7px;
 
-    background: ${({ theme }) => theme.messagesBackground};
+    background: ${({ theme }) => theme.divider};
     background-image: ${({ theme }) => `linear-gradient(${theme.linksAndButtons}, ${theme.linksAndButtons})`};
     background-repeat: no-repeat;
     background-size: 0% 100%;

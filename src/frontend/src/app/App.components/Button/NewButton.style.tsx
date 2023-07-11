@@ -128,7 +128,7 @@ const BUTTONS_KIND_STYLES = css`
 
   &.${VOTING_PASS} {
     color: ${({ theme }) => theme.cards};
-    background-color: ${({ theme }) => theme.primaryText};
+    background-color: ${({ theme }) => theme.neutralColor};
   }
 
   &.${VOTING_AGAINST} {
