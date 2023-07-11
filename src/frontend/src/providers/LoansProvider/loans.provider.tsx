@@ -1,5 +1,5 @@
 import { ApolloError, useSubscription } from '@apollo/client'
-import React, { useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 // context
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -56,7 +56,7 @@ export const LoansProvider = ({ children }: Props) => {
    *
    * NOTE: loader will be shown only when we set or unset specific satellite address
    **/
-  useLayoutEffect(() => {
+  useEffect(() => {
     const isLoadingNotLoadedSingleMarket =
       marketAddressToSubscribe && !loansCtxState.marketsMapper[marketAddressToSubscribe]
     const isLoadingAllSatellitesMetadata =

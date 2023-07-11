@@ -129,6 +129,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   })
 
   const { loading: finRequestsAmountLoading } = useSubscription(FINANCIAL_REQUESTS_AMOUNT_SUBSCRIPTION, {
+    skip: !activeSubs[SATELLITE_PARTICIPATION_DATA_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
       setSatellitesCtxState((prev) => ({
