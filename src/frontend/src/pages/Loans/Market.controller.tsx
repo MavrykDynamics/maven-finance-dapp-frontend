@@ -47,6 +47,9 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 export const Market = () => {
   const history = useHistory<{ from?: string }>()
+  const {
+    location: { state: historyState },
+  } = history
   const dispatch = useDispatch()
   const { assetAddress, tabId } = useParams<{ assetAddress: string; tabId: string }>()
 
@@ -170,7 +173,7 @@ export const Market = () => {
   const marketPagination = (
     <MarketPagination>
       <Button
-        onClick={() => history.push(history.location.state?.from ?? '/loans')}
+        onClick={() => history.push(historyState?.from ?? '/loans')}
         text="Go Back"
         icon="arrowRight"
         className="arrow"
@@ -182,7 +185,7 @@ export const Market = () => {
           <Link
             to={{
               pathname: `/loans/${prevMarketAddress}/${tabId}`,
-              state: { from: history.location.state?.from },
+              state: { from: historyState?.from },
             }}
           >
             <span className="left">
@@ -195,7 +198,7 @@ export const Market = () => {
           <Link
             to={{
               pathname: `/loans/${nextMarketAddress}/${tabId}`,
-              state: { from: history.location.state?.from },
+              state: { from: historyState?.from },
             }}
           >
             <span className="right">
