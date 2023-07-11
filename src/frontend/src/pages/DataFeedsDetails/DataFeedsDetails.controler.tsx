@@ -8,6 +8,9 @@ import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 // providers
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import { useFeedCharts } from 'providers/DataFeedsProvider/hooks/useFeedCharts'
 
 // view
 import DataFeedsPagination from './pagination/DataFeedsPagination.controler'
@@ -36,6 +39,7 @@ import {
 import { EmptyContainer } from 'app/App.style'
 
 // consts
+import { SATELLITE_DATA_SUB, DEFAULT_SATELLITES_ACTIVE_SUBS } from 'providers/SatellitesProvider/satellites.const'
 import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
 import {
   PAGINATION_SIDE_RIGHT,
@@ -51,11 +55,8 @@ import { Page, downColor, skyColor, cyanColor } from 'styles'
 import { parseDate } from 'utils/time'
 
 // actions
-import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useFeedCharts } from 'providers/DataFeedsProvider/hooks/useFeedCharts'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { SATELLITE_DATA_SUB, DEFAULT_SATELLITES_ACTIVE_SUBS } from 'providers/SatellitesProvider/satellites.const'
 
 const tabsList = [
   {
@@ -93,7 +94,9 @@ const DataFeedDetails = () => {
   }, [])
 
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const feed = feedsMapper[feedId]
 

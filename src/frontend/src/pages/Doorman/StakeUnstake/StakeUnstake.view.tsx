@@ -1,6 +1,5 @@
 import { useHistory } from 'react-router-dom'
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 
 // context
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -22,7 +21,6 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 // helpers
 import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { stakingInputValidation } from '../Doorman.converter'
-import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
 import { unknownToError } from 'errors/error'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
@@ -36,7 +34,7 @@ import {
   BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from '../../../app/App.components/Button/Button.constants'
-import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
 import { REWARDS_COMPOUND_ACTION } from 'providers/UserProvider/helpers/user.consts'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
@@ -64,13 +62,9 @@ import {
 } from './StakeUnstake.style'
 
 // types
-import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
-import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
 import { TezosWalletErrorPayload } from 'errors/error.type'
-import { Info } from 'app/App.components/Info/Info.view'
-import { INFO_ERROR, INFO_SMALL } from 'app/App.components/Info/info.constants'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -85,7 +79,6 @@ export const StakeUnstakeView = ({
   inputData,
   setInputData,
 }: StakeUnstakeViewProps) => {
-  const dispatch = useDispatch()
   const history = useHistory()
   const {
     userTokensBalances,
@@ -98,13 +91,15 @@ export const StakeUnstakeView = ({
   } = useUserContext()
   const {
     setAction,
+    toggleActionFullScreenLoader,
+    toggleActionCompletion,
     contractAddresses: { mvkTokenAddress, doormanAddress },
+    preferences: { themeSelected },
+    globalLoadingState: { isActionActive },
   } = useDappConfigContext()
-  const { info, loading, bug, sharedErrors } = useToasterContext()
+  const { info, loading, bug } = useToasterContext()
 
   const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
-  const { isActionActive } = useSelector((state: State) => state.loading)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   useEffect(() => {
     if (satelliteMvkIsDelegatedTo) {
@@ -124,9 +119,6 @@ export const StakeUnstakeView = ({
     availableSatellitesRewards +
     Object.values(availableFarmRewards).reduce((acc, farmReward) => (acc += farmReward), 0)
   const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
-  const hasError =
-    sharedErrors[WALLTET_ERROR_FIELD]?.actionId === STAKE_ACTION ||
-    sharedErrors[WALLTET_ERROR_FIELD]?.actionId === UNSTAKE_ACTION
 
   const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {
     handleInputData(String(mathRoundTwoDigit(balance === 'mvk' ? myMvkTokenBalance : mySMvkTokenBalance)))
@@ -194,8 +186,8 @@ export const StakeUnstakeView = ({
 
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
 
         info(
           TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
@@ -210,12 +202,11 @@ export const StakeUnstakeView = ({
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
 
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+        toggleActionFullScreenLoader(false)
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
-        setInputData({ ...inputData, amount: '0' })
+
         setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
       } else if (isContractErrorPayload(actionResult.error)) {
         const { message, description } = actionResult.error as TezosWalletErrorPayload
@@ -227,6 +218,9 @@ export const StakeUnstakeView = ({
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      setInputData({ ...inputData, amount: '0' })
+      toggleActionCompletion(false)
     }
   }
 
@@ -256,8 +250,8 @@ export const StakeUnstakeView = ({
 
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
 
         info(
           TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['message'],
@@ -272,8 +266,7 @@ export const StakeUnstakeView = ({
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
 
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+        toggleActionFullScreenLoader(false)
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
@@ -289,6 +282,8 @@ export const StakeUnstakeView = ({
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
     }
   }
 

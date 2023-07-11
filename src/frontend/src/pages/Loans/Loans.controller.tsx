@@ -36,10 +36,13 @@ import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -74,7 +77,9 @@ export const Loans = () => {
     vaults: { allVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const { totalBorrowed, totalLended } = loanTokens.reduce<{
     totalLended: number

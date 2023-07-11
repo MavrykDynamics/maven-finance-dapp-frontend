@@ -30,10 +30,13 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
 import { USER_AVAILABLE_BORROW } from 'texts/tooltips/loan.text'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getVaultBorrowCapacity, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const Market = () => {
   const history = useHistory()
@@ -48,7 +51,9 @@ export const Market = () => {
   } = useSelector((state: State) => state.loans)
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const { isLoading } = useDataLoader(async () => {
     try {

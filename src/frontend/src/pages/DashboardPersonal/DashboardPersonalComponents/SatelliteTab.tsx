@@ -1,4 +1,3 @@
-import { useSelector, useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -7,9 +6,6 @@ import { SATELLITE_ORACLE_STATUSES } from 'providers/SatellitesProvider/satellit
 import colors from 'styles/colors'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
-
-// types
-import { State } from 'reducers'
 
 // context
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
@@ -30,10 +26,9 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { UserActionHistory } from './UserOperationsHistory'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 const SatelliteTab = () => {
-  const dispatch = useDispatch()
-
   const { userAddress, availableSatellitesRewards } = useUserContext()
   const {
     satelliteMapper,
@@ -50,7 +45,9 @@ const SatelliteTab = () => {
     return () => setSatelliteAddressToSubsctibe(null)
   }, [userAddress])
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const satelliteRecord = userAddress ? satelliteMapper[userAddress] : null
 

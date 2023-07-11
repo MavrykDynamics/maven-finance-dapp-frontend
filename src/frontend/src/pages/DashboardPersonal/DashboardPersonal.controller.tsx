@@ -40,15 +40,12 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { claimAllRewardsAction } from 'providers/UserProvider/actions/user.actions'
 import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
-import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { sleep } from 'utils/api/sleep'
 import { CLAIM_ALL_REWARDS_ACTION } from 'providers/UserProvider/helpers/user.consts'
-import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
 import { unknownToError } from 'errors/error'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
 import { TezosWalletErrorPayload } from 'errors/error.type'
@@ -74,6 +71,8 @@ const DashboardPersonal = () => {
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
   const {
     contractAddresses: { mvkTokenAddress, doormanAddress },
+    toggleActionFullScreenLoader,
+    toggleActionCompletion,
     setAction,
   } = useDappConfigContext()
   const {
@@ -114,8 +113,8 @@ const DashboardPersonal = () => {
 
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
 
         info(
           TOASTER_ACTIONS_TEXTS[CLAIM_ALL_REWARDS_ACTION]['start']['message'],
@@ -130,8 +129,7 @@ const DashboardPersonal = () => {
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
 
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+        toggleActionFullScreenLoader(false)
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
@@ -147,6 +145,8 @@ const DashboardPersonal = () => {
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
     }
   }
 

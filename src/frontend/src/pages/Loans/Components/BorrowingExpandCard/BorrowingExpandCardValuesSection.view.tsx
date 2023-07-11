@@ -1,13 +1,19 @@
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+// styles
 import { LoansValuesSection, LoansValuesSectionInfo } from '../LoansComponents.style'
+
+// components
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+
+// consts & helpers
+import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import colors from 'styles/colors'
 import { ACCRUED_INTEREST, APR, BORROW_CAPACITY, COLLATERAL_VALUE, OUTSTANDING_DEBT } from 'texts/tooltips/vault.text'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
+
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type Props = {
   collateralRatio: number
@@ -30,7 +36,9 @@ export const BorrowingExpandCardValuesSection = ({
   apr,
   rate,
 }: Props) => {
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   return (
     <LoansValuesSection className="borrowing-tab">

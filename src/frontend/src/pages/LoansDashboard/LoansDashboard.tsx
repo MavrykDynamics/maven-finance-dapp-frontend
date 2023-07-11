@@ -25,12 +25,15 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24hDiff'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export type GaugeChartStateType = {
   maxValue: number
@@ -66,7 +69,9 @@ export const LoansDashboard = () => {
     userMTokens,
   } = useUserContext()
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const { isDataLoaded: isLoansLoaded, loanTokens } = useSelector((state: State) => state.loans)
 
   const { lending24hPersentChange, borrowing24hPersentChange } = useLendBorrow24hDiff()

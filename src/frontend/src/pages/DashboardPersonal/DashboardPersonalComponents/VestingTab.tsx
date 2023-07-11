@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import dayjs from 'dayjs'
 
@@ -16,27 +16,26 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 import { claimVestingReward } from 'providers/UserProvider/actions/user.actions'
-import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { sleep } from 'utils/api/sleep'
 import { CLAIM_VESTING_REWARD_ACTION } from 'providers/UserProvider/helpers/user.consts'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
 import { TezosWalletErrorPayload } from 'errors/error.type'
 import { unknownToError } from 'errors/error'
 
 const VestingTab = () => {
-  const dispatch = useDispatch()
   const { vesteesMapper } = useSelector((state: State) => state.vesting)
-  const { isActionActive } = useSelector((state: State) => state.loading)
   const { accountPkh = '' } = useSelector((state: State) => state.wallet)
 
-  const { bug, info, loading, setSharedError } = useToasterContext()
+  const { bug, info, loading } = useToasterContext()
   const {
     setAction,
+    toggleActionCompletion,
+    toggleActionFullScreenLoader,
     contractAddresses: { vestingAddress },
+    globalLoadingState: { isActionActive },
   } = useDappConfigContext()
 
   const vesteeRecord = vesteesMapper[accountPkh]
@@ -59,8 +58,8 @@ const VestingTab = () => {
 
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
 
         info(
           TOASTER_ACTIONS_TEXTS[CLAIM_VESTING_REWARD_ACTION]['start']['message'],
@@ -75,8 +74,7 @@ const VestingTab = () => {
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
 
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+        toggleActionFullScreenLoader(false)
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
@@ -92,6 +90,8 @@ const VestingTab = () => {
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
     }
   }
 

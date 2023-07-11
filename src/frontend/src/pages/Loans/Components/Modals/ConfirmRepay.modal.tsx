@@ -1,28 +1,35 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 
+// consts
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { ConfirmRepayPartPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
+import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 
+// components
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
+// styles
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
-import { State } from 'reducers'
 import colors from 'styles/colors'
+
+// utils
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const ConfirmRepay = ({
   closePopup,
@@ -36,7 +43,9 @@ export const ConfirmRepay = ({
   useLockBodyScroll(show)
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const dispatch = useDispatch()
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
