@@ -1,8 +1,13 @@
 import { Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
 
-// consts, helpers, actions
-import { getVoteText, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+// context, hooks
+import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+
+// consts
+import colors from 'styles/colors'
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
@@ -12,8 +17,11 @@ import {
   BUTTON_PRIMARY,
   BUTTON_SIMPLE,
 } from 'app/App.components/Button/Button.constants'
-import { delegate, undelegate, distributeProposalRewards } from '../Satellites.actions'
-import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
+import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
+
+// helpers
+import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -25,8 +33,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // types
-import { State } from 'reducers'
-import { SatelliteStatus, SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteRecordType, SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 //styles
 import { AvatarStyle } from 'app/App.components/Avatar/Avatar.style'
@@ -43,9 +50,32 @@ import {
   SatelliteCardButtons,
   SatelliteCardRow,
 } from './SatelliteCard.style'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
-import colors from 'styles/colors'
+import {
+  ACTIVE_SATELLITE_STATUS,
+  BANNED_SATELLITE_STATUS,
+  DELEGATE_ACTION,
+  DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
+  SATELLITE_ORACLE_STATUSES,
+  SATELLITE_STATUSES,
+  SATELLITE_VOTES_MAPPER,
+  UNDELEGATE_ACTION,
+} from 'providers/SatellitesProvider/satellites.const'
+import { rewardsCompound } from 'providers/UserProvider/actions/user.actions'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { REWARDS_COMPOUND_ACTION } from 'providers/UserProvider/helpers/user.consts'
+import { sleep } from 'utils/api/sleep'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { TezosWalletErrorPayload } from 'errors/error.type'
+import { unknownToError } from 'errors/error'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import {
+  delegate,
+  distributeProposalRewards,
+  undelegate,
+} from 'providers/SatellitesProvider/actions/satellites.actions'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -55,47 +85,267 @@ type SatelliteListItemProps = {
   children?: JSX.Element
 }
 
-const renderVotingHistoryItem = (vote: number) => {
-  const voteText = getVoteText(vote)
+const renderVotingHistoryItem = (vote: SatelliteVoteType) => {
+  const voteText = SATELLITE_VOTES_MAPPER[vote]
   return <span className={`voting-${voteText.toLowerCase()}`}>{voteText.toUpperCase()}</span>
 }
 
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
-  const dispatch = useDispatch()
-
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const { userTokensBalances, isSatellite, satelliteMvkIsDelegatedTo, availableSatellitesRewards, userAddress } =
+    useUserContext()
+  const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
   const {
-    accountPkh,
-    user: { isSatellite, userTokens, satelliteMvkIsDelegatedTo, availableSatellitesRewards },
-  } = useSelector((state: State) => state.wallet)
-  const { proposalsMapper } = useSelector((state: State) => state.governance)
+    setAction,
+    toggleActionCompletion,
+    toggleActionFullScreenLoader,
+    contractAddresses: { delegationAddress, doormanAddress, mvkTokenAddress },
+    globalLoadingState: { isActionActive },
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+  const { bug, info, loading } = useToasterContext()
 
-  // Card buttons handlers
-  const delegateCallback = async () => await dispatch(delegate(satellite.address))
-  const undelegateCallback = async () => await dispatch(undelegate(satellite.address))
-  const claimRewardsCallback = async () => (accountPkh ? await dispatch(rewardsCompound(accountPkh)) : null)
-  // TODO: add valid data
-  const distributeRewardsCallback = async () => await dispatch(distributeProposalRewards('', []))
+  const { oracleStatus, satelliteStatus } = useSatelliteStatuses(satellite)
 
-  const freesMVKSpace = Math.max(satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount, 0)
-  const isUserDelegatedToThisSatellite = satellite.address === satelliteMvkIsDelegatedTo
-  const balanceOver1SMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= 1
-  const { currentlyRegistered } = satellite
+  const { proposalParticipation, votingPartisipation } = getSatelliteParticipations({
+    satellite,
+    proposalsAmount,
+    satelliteGovActionsAmount,
+    finRequestsAmount,
+  })
 
-  // Latest vote data
-  const currentlySupportingProposalVote = satellite.proposalVotingHistory?.at(0)?.vote ?? null
-  const lastSupportedgProposalId = satellite.proposalVotingHistory?.at(0)?.proposalId ?? null
+  const {
+    currentlyRegistered,
+    sMvkBalance,
+    delegationRatio,
+    totalDelegatedAmount,
+    address: satelliteAddress,
+  } = satellite
 
-  // Satellite status data
-  const satelliteStatusColor =
-    satellite.status === SatelliteStatus.BANNED || !currentlyRegistered ? STATUS_FLAG_DOWN : STATUS_FLAG_WARNING
-  // if satellite is unregistered, show inactive status
-  const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE || !currentlyRegistered
+  const freesMVKSpace = Math.max(sMvkBalance * delegationRatio - totalDelegatedAmount, 0)
+  const isUserDelegatedToThisSatellite = satelliteAddress === satelliteMvkIsDelegatedTo
+  const balanceOver1SMvk = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) >= 1
 
-  const participation =
-    (satellite.satelliteMetrics.proposalParticipation + satellite.satelliteMetrics.votingPartisipation) / 2
+  // Actions
+  const delegateCallback = async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
+      return
+    }
+
+    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
+    const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+
+    if (mvkTokenBalance === 0) {
+      bug('Unable to Delegate', 'Please buy MVK and stake it')
+      return
+    }
+
+    if (sMvkTokenBalance === 0) {
+      bug('Unable to Delegate', 'Please stake your MVK')
+      return
+    }
+
+    try {
+      const actionResult = await delegate(userAddress, satelliteAddress, delegationAddress)
+
+      if (checkIfActionSuccess(actionResult)) {
+        const { operation } = actionResult
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
+
+        info(
+          TOASTER_ACTIONS_TEXTS[DELEGATE_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[DELEGATE_ACTION]['start']['title'],
+        )
+
+        await sleep(5000)
+
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        toggleActionFullScreenLoader(false)
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+        setAction({ actionName: DELEGATE_ACTION, toasterId, operationLvl })
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
+      setAction(null)
+      const parsedError = unknownToError(e)
+      bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
+    }
+  }
+
+  const undelegateCallback = async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
+      return
+    }
+
+    try {
+      const actionResult = await undelegate(userAddress, satelliteAddress, delegationAddress)
+
+      if (checkIfActionSuccess(actionResult)) {
+        const { operation } = actionResult
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
+
+        info(
+          TOASTER_ACTIONS_TEXTS[UNDELEGATE_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[UNDELEGATE_ACTION]['start']['title'],
+        )
+
+        await sleep(5000)
+
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        toggleActionFullScreenLoader(false)
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+        setAction({ actionName: UNDELEGATE_ACTION, toasterId, operationLvl })
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
+      setAction(null)
+      const parsedError = unknownToError(e)
+      bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
+    }
+  }
+
+  const claimRewardsCallback = async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!doormanAddress) {
+      bug('Bad doorman address')
+      return
+    }
+
+    try {
+      const actionResult = await rewardsCompound(userAddress, doormanAddress)
+
+      if (checkIfActionSuccess(actionResult)) {
+        const { operation } = actionResult
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
+
+        info(
+          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['title'],
+        )
+
+        await sleep(5000)
+
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        toggleActionFullScreenLoader(false)
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+
+        setAction({ actionName: REWARDS_COMPOUND_ACTION, toasterId, operationLvl })
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error.message)
+      }
+    } catch (e) {
+      setAction(null)
+      const parsedError = unknownToError(e)
+      bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
+    }
+  }
+
+  const distributeRewardsCallback = async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
+      return
+    }
+
+    // TODO: add valid data
+    try {
+      const actionResult = await distributeProposalRewards(delegationAddress, '', [])
+
+      if (checkIfActionSuccess(actionResult)) {
+        const { operation } = actionResult
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
+
+        info(
+          TOASTER_ACTIONS_TEXTS[DISTRIBUTE_PROPOSALS_REWARDS_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[DISTRIBUTE_PROPOSALS_REWARDS_ACTION]['start']['title'],
+        )
+
+        await sleep(5000)
+
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        toggleActionFullScreenLoader(false)
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+        setAction({ actionName: DISTRIBUTE_PROPOSALS_REWARDS_ACTION, toasterId, operationLvl })
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
+      setAction(null)
+      const parsedError = unknownToError(e)
+      bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
+    }
+  }
 
   const buttonToShow =
     isUserDelegatedToThisSatellite && currentlyRegistered ? (
@@ -105,7 +355,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           icon="man-close"
           kind={ACTION_SECONDARY}
           onClick={undelegateCallback}
-          disabled={!accountPkh || isActionActive}
+          disabled={!userAddress || isActionActive}
         />
         {isDetailsPage && availableSatellitesRewards > 0 ? (
           <Button
@@ -113,7 +363,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             icon="rewards"
             kind={ACTION_PRIMARY}
             onClick={claimRewardsCallback}
-            disabled={!accountPkh || isActionActive}
+            disabled={!userAddress || isActionActive}
             strokeWidth={0.3}
           />
         ) : null}
@@ -136,7 +386,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         icon="man-check"
         kind={ACTION_PRIMARY}
         onClick={delegateCallback}
-        disabled={!accountPkh || !balanceOver1SMvk || isActionActive}
+        disabled={!userAddress || !balanceOver1SMvk || isActionActive}
       />
     )
 
@@ -207,7 +457,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup>
               <SatelliteMainText>Participation</SatelliteMainText>
               <SatelliteSubText>
-                <CommaNumber value={participation} endingText="%" />
+                <CommaNumber value={(proposalParticipation + votingPartisipation) / 2} endingText="%" />
               </SatelliteSubText>
             </SatelliteTextGroup>
           </div>
@@ -215,8 +465,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup className="oracle-status">
               <SatelliteMainText>Oracle Status</SatelliteMainText>
               <SatelliteSubText>
-                <SatelliteOracleStatusComponent statusType={satellite.oracleStatus}>
-                  {ORACLE_STATUSES_MAPPER[satellite.oracleStatus]}
+                <SatelliteOracleStatusComponent statusType={oracleStatus}>
+                  {SATELLITE_ORACLE_STATUSES[oracleStatus]}
                 </SatelliteOracleStatusComponent>
               </SatelliteSubText>
             </SatelliteTextGroup>
@@ -224,28 +474,29 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         </div>
 
         <SatelliteCardButtons>
-          {isSatelliteInactive && (
+          {satelliteStatus !== ACTIVE_SATELLITE_STATUS && (
             <div>
-              <StatusFlag status={satelliteStatusColor} text={SatelliteStatus[SatelliteStatus.INACTIVE]} />
+              <StatusFlag
+                status={satelliteStatus !== BANNED_SATELLITE_STATUS ? STATUS_FLAG_DOWN : STATUS_FLAG_WARNING}
+                text={SATELLITE_STATUSES[satelliteStatus]}
+              />
             </div>
           )}
 
-          {!isSatelliteInactive && !isSatellite && buttonToShow}
+          {satelliteStatus !== ACTIVE_SATELLITE_STATUS && !isSatellite && buttonToShow}
         </SatelliteCardButtons>
       </SatelliteCardInner>
 
-      {children
-        ? children
-        : lastSupportedgProposalId &&
-          proposalsMapper[lastSupportedgProposalId] &&
-          currentlySupportingProposalVote !== null && (
-            <SatelliteCardRow>
-              <div>
-                Voted {renderVotingHistoryItem(currentlySupportingProposalVote)} on current Proposal{' '}
-                {lastSupportedgProposalId} - {proposalsMapper[lastSupportedgProposalId].title}
-              </div>
-            </SatelliteCardRow>
-          )}
+      {children ? (
+        children
+      ) : satellite.lastVotedProposal ? (
+        <SatelliteCardRow>
+          <div>
+            Voted {renderVotingHistoryItem(satellite.lastVotedProposal.vote)} on current Proposal{' '}
+            {satellite.lastVotedProposal.proposalId} - {satellite.lastVotedProposal.proposalTitle}
+          </div>
+        </SatelliteCardRow>
+      ) : null}
     </SatelliteCard>
   )
 }

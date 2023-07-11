@@ -108,3 +108,16 @@ export const hideToRight = (distance: number) => keyframes`
     transform: translateX(${distance}px);
   }
 `
+
+// error page animation
+export const hangInSpace = () => keyframes`
+  0% {
+    transform: translate(0, 0) rotate(0);
+  }
+  50% {
+    transform: translate(-50px, -150px) rotate(360deg);
+  }
+  100% {
+    transform: translate(50px, 50px) rotate(180deg);
+  }
+`

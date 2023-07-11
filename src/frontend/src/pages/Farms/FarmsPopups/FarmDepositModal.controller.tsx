@@ -24,6 +24,7 @@ import { deposit } from '../Farms.actions'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { FarmLpActionsPopupsContent } from '../Farms.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const FarmDepositModal = ({
   closeHandler,
@@ -36,6 +37,7 @@ export const FarmDepositModal = ({
 }) => {
   const { selectedFarmAddress = '' } = data ?? {}
 
+  const { tokensMetadata } = useTokensContext()
   const dispatch = useDispatch()
   useLockBodyScroll(show)
 
@@ -74,7 +76,7 @@ export const FarmDepositModal = ({
 
   const handleClick = () => {
     if (selectedFarmAddress && inputData.validation === INPUT_STATUS_SUCCESS) {
-      dispatch(deposit(selectedFarmAddress, Number(inputData.amount)))
+      dispatch(deposit(selectedFarmAddress, Number(inputData.amount), tokensMetadata))
     }
   }
 

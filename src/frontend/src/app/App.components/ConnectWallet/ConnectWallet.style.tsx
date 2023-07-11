@@ -87,6 +87,7 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
     flex-direction: column;
     max-height: 180px;
     overflow-y: auto;
+    overscroll-behavior: contain;
 
     .row {
       height: 60px;
@@ -101,10 +102,17 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
 
       .icon {
         margin-right: 13px;
-        svg {
+        svg,
+        .img-wrapper {
           height: 24px;
           width: 24px;
           fill: ${({ theme }) => theme.regularText};
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
         }
       }
 

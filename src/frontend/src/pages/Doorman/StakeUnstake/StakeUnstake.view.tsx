@@ -1,9 +1,13 @@
 import { useHistory } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
 
 // context
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
+import { rewardsCompound } from 'providers/UserProvider/actions/user.actions'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -16,10 +20,10 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // helpers
 import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
-import { rewardsCompound } from '../Doorman.actions'
 import { stakingInputValidation } from '../Doorman.converter'
-import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
 import { unknownToError } from 'errors/error'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 import { sleep } from 'utils/api/sleep'
 
 // consts
@@ -31,10 +35,11 @@ import {
   BUTTON_WIDE,
 } from '../../../app/App.components/Button/Button.constants'
 import { STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { REWARDS_COMPOUND_ACTION } from 'providers/UserProvider/helpers/user.consts'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
-import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 import colors from 'styles/colors'
 
@@ -57,10 +62,9 @@ import {
 } from './StakeUnstake.style'
 
 // types
-import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
-import { stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { TezosWalletErrorPayload } from 'errors/error.type'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -75,42 +79,45 @@ export const StakeUnstakeView = ({
   inputData,
   setInputData,
 }: StakeUnstakeViewProps) => {
-  const dispatch = useDispatch()
   const history = useHistory()
-  const { setAction } = useDappConfigContext()
+  const {
+    userTokensBalances,
+    userAddress,
+    availableDoormanRewards,
+    availableSatellitesRewards,
+    availableFarmRewards,
+    satelliteMvkIsDelegatedTo,
+    isSatellite,
+  } = useUserContext()
+  const {
+    setAction,
+    toggleActionFullScreenLoader,
+    toggleActionCompletion,
+    contractAddresses: { mvkTokenAddress, doormanAddress },
+    preferences: { themeSelected },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
   const { info, loading, bug } = useToasterContext()
 
-  const {
-    accountPkh,
-    user: {
-      userTokens,
-      availableDoormanRewards,
-      availableSatellitesRewards,
-      availableFarmRewards,
-      satelliteMvkIsDelegatedTo,
-      isSatellite,
-    },
-  } = useSelector((state: State) => state.wallet)
+  const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
 
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { isActionActive } = useSelector((state: State) => state.loading)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  useEffect(() => {
+    if (satelliteMvkIsDelegatedTo) {
+      setSatelliteAddressToSubsctibe(satelliteMvkIsDelegatedTo)
+    }
+    return () => setSatelliteAddressToSubsctibe(null)
+  }, [satelliteMvkIsDelegatedTo])
 
-  const {
-    doormanAddress: { address: doormanAddress },
-    mvkTokenAddress: { address: mvkTokenAddress },
-  } = useSelector((state: State) => state.contractAddresses)
-
-  const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
-  const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
-    myMvkTokenBalance = userTokens[MVK_TOKEN_SYMBOL].balance
+  const delegatedUser = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
+  const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+    myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
 
   const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
   const exchangeValue = mvkExchangeRate && inputData.amount ? Number(inputData.amount) * mvkExchangeRate : 0
   const rewardsToClaim =
     availableDoormanRewards +
     availableSatellitesRewards +
-    Object.values(availableFarmRewards).reduce((acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards), 0)
+    Object.values(availableFarmRewards).reduce((acc, farmReward) => (acc += farmReward), 0)
   const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
 
   const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {
@@ -126,7 +133,7 @@ export const StakeUnstakeView = ({
       amount: Number(value),
       myMvkTokenBalance,
       mySMvkTokenBalance,
-      accountPkh,
+      userAddress,
     })
 
     setInputData({ ...inputData, amount: value, validation: validationStatus })
@@ -155,8 +162,12 @@ export const StakeUnstakeView = ({
       })
     }
 
-    if (!accountPkh) {
+    if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!doormanAddress || !mvkTokenAddress) {
+      bug('Wrong doorman or mvkToken address was provided')
       return
     }
 
@@ -170,13 +181,13 @@ export const StakeUnstakeView = ({
       errorMessage: '',
     })
 
-    const actionResult = await stakeMVK(stakeAmount, accountPkh, doormanAddress, mvkTokenAddress)
+    try {
+      const actionResult = await stakeMVK(stakeAmount, userAddress, doormanAddress, mvkTokenAddress)
 
-    if (checkIfActionSuccess(actionResult)) {
-      try {
+      if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
 
         info(
           TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
@@ -191,18 +202,25 @@ export const StakeUnstakeView = ({
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
 
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+        toggleActionFullScreenLoader(false)
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
 
         setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else {
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error.message)
+      }
+    } catch (e) {
       setAction(null)
-      const parsedError = unknownToError(actionResult.error)
+      const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      setInputData({ ...inputData, amount: '0' })
+      toggleActionCompletion(false)
     }
   }
 
@@ -218,8 +236,54 @@ export const StakeUnstakeView = ({
   }
 
   const handleCompound = async () => {
-    if (accountPkh) {
-      await dispatch(rewardsCompound(accountPkh))
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!doormanAddress) {
+      bug('Bad doorman address')
+      return
+    }
+
+    try {
+      const actionResult = await rewardsCompound(userAddress, doormanAddress)
+
+      if (checkIfActionSuccess(actionResult)) {
+        const { operation } = actionResult
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
+
+        info(
+          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['title'],
+        )
+
+        await sleep(5000)
+
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        toggleActionFullScreenLoader(false)
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+
+        setAction({ actionName: REWARDS_COMPOUND_ACTION, toasterId, operationLvl })
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error.message)
+      }
+    } catch (e) {
+      setAction(null)
+      const parsedError = unknownToError(e)
+      bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
     }
   }
 
@@ -293,9 +357,9 @@ export const StakeUnstakeView = ({
                 onClick={handleDelegate}
                 kind={BUTTON_PRIMARY}
                 form={BUTTON_WIDE}
-                disabled={!accountPkh || isActionActive}
+                disabled={!userAddress || isActionActive}
                 isThin
-                animation={accountPkh ? BUTTON_PULSE : null}
+                animation={userAddress ? BUTTON_PULSE : null}
               >
                 <Icon id="satellites" />
                 Delegate

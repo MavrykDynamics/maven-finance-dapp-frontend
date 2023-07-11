@@ -61,7 +61,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
   .proposal-data-block-wrapper {
     display: flex;
     flex-direction: column;
-    row-gap: 5px;
+    row-gap: 10px;
     margin-bottom: 30px;
   }
 
@@ -79,6 +79,14 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     * {
       word-break: break-all;
     }
+  }
+
+  .proposal-data-block-desc {
+    line-height: 22px;
+  }
+
+  .proposal-data-block-no-value {
+    color: ${({ theme }) => theme.textColor};
   }
 
   .proposal-data-block-address {
@@ -111,10 +119,8 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     row-gap: 15px;
 
     list-style: none;
-    counter-reset: index;
 
     li {
-      counter-increment: index;
       position: relative;
       display: flex;
       flex-direction: column;
@@ -126,12 +132,22 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
         white-space: nowrap;
       }
 
-      .byte-descr {
+      .title-main {
+        font-weight: 600;
+        font-size: 16px;
+      }
+
+      .byte-text-wrapper {
         display: flex;
       }
 
       .byte {
         display: flex;
+        align-items: flex-end;
+
+        button {
+          text-decoration: underline;
+        }
 
         &.opened {
           flex-direction: column;
@@ -157,8 +173,8 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
           max-width: 335px;
           text-overflow: ellipsis;
           overflow: hidden;
-          font-size: 16px;
-          font-weight: 400;
+          font-size: 14px;
+          font-weight: 500;
           color: ${({ theme }) => theme.dataColor};
           transition: 0.5s opacity;
 
@@ -171,16 +187,6 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
           }
         }
       }
-    }
-
-    li:before {
-      position: absolute;
-      top: 3px;
-      left: 0px;
-      content: counter(index) '. ';
-      font-size: 14px;
-      color: ${({ theme }) => theme.textColor};
-      font-weight: 400;
     }
   }
 `

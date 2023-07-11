@@ -1,6 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
 import { createChart, BusinessDay, UTCTimestamp, CandlestickData } from 'lightweight-charts'
-import { useSelector } from 'react-redux'
 
 import styleColors from 'styles/colors'
 import { parseDate } from 'utils/time'
@@ -18,8 +17,8 @@ import {
 import ChartTooltip, { AMOUNT_DATE_TOOLTIP } from '../Tooltips/ChartTooltip'
 import { ChartStyled } from '../Chart.style'
 
-import { CandlestickChartPlotType, CandleStickPropsType } from '../helpers/Chart.types'
-import { State } from 'reducers'
+import { CandleStickPropsType } from '../helpers/Chart.types'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const CandlestickChart = ({
   settings,
@@ -28,7 +27,9 @@ export const CandlestickChart = ({
   tooltipName = AMOUNT_DATE_TOOLTIP,
   tooltipAsset,
 }: CandleStickPropsType) => {
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const {
     height,

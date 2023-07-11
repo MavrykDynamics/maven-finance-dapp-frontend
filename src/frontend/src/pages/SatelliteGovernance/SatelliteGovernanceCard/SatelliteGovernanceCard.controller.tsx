@@ -39,7 +39,7 @@ type Props = {
   nayVotesSmvkTotal: number
   passVoteSmvkTotal: number
   snapshotSmvkTotalSupply: number
-  accountPkh?: string
+  accountPkh: string | null
   isActionActive: boolean
   votes: SatelliteGovernance['satelliteGovIdsMapper'][0]['votes']
 }

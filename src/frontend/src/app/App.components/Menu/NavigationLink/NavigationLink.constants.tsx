@@ -9,7 +9,7 @@ export type NavigationLinkStyle = typeof PRIMARY | typeof SECONDARY | typeof TRA
 export const isSubLinkShown = (
   subNavLink: SubNavigationRoute,
   isUserSatellite: boolean,
-  accountPkh?: string,
+  accountPkh: string | null,
 ): boolean => {
   const { isSatellite, isAuth, authNotSatellite } = subNavLink.requires || {}
 

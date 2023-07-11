@@ -1,6 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
 // components
 import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -17,14 +20,13 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import {
   getCouncilPastActions,
   getCouncilPendingActions,
-  getCouncilStorage,
   getCouncilMembers,
   dropRequest,
   sign,
 } from './Council.actions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // types
-import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 const titles = {
   membersName: 'Council Members',
@@ -36,13 +38,15 @@ export const Council = () => {
   const dispatch = useDispatch()
 
   const {
-    accountPkh,
-    user: {
-      userAvatars: { counsilAvatar },
-    },
-  } = useSelector((state: State) => state.wallet)
+    maxLengths: { council: councilMaxLengths },
+  } = useDappConfigContext()
+
   const {
-    config: { councilMaxLength },
+    userAddress,
+    userAvatars: { counsilAvatar },
+  } = useUserContext()
+
+  const {
     councilMembers,
     councilActions: {
       allPendingActions,
@@ -70,7 +74,6 @@ export const Council = () => {
     try {
       await Promise.all(
         [
-          (!isStorageLoaded || isDepsChanged) && dispatch(getCouncilStorage()),
           (!isCouncilMembersLoaded || isDepsChanged) && dispatch(getCouncilMembers()),
           (!isCouncilPastActionsLoaded || isDepsChanged) && dispatch(getCouncilPastActions()),
         ].filter(Boolean),
@@ -80,7 +83,7 @@ export const Council = () => {
 
   useDataLoader(
     async (isDepsChanged) => {
-      if (!accountPkh) return
+      if (!userAddress) return
 
       try {
         await Promise.all(
@@ -91,7 +94,7 @@ export const Council = () => {
         )
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   return (
@@ -107,7 +110,7 @@ export const Council = () => {
         <CouncilView
           // general info
           pathnameOfPage="/mavryk-council"
-          maxLength={councilMaxLength}
+          maxLength={councilMaxLengths}
           titles={titles}
           // pending actions
           allPendingActions={allPendingActions}
@@ -126,7 +129,7 @@ export const Council = () => {
           handleDropAction={handleDropAction}
           // components
           getFormComponent={() => <CouncilForm />}
-          getFormUpdateMemberInfo={(maxLength: CouncilMaxLength, callback: () => void) => (
+          getFormUpdateMemberInfo={(maxLength, callback: () => void) => (
             <CouncilFormUpdateCouncilMemberInfo maxLength={maxLength} callback={callback} />
           )}
         />

@@ -1,3 +1,4 @@
+import { LIGHT_THEME, DARK_THEME, SPACE_THEME, ThemeType } from 'consts/theme.const'
 export const darkColor = '#080628'
 export const containerColor = '#160E3F'
 export const darkPurpleColor = '#38237C'
@@ -69,6 +70,7 @@ export const dark = {
   histogramChartColor: '#77A4F2',
   gaugeChartColor: '#86D4C9',
   gradientDiagramBackgroundColor: '#696969',
+  loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
   inputFocusColor: '#7068AA',
   ipfsBorderColor: 'rgb(80, 62, 170)',
   ipfsHoverBorderColor: '%2386D4C9FF',
@@ -162,6 +164,7 @@ export const light = {
   histogramChartColor: '#77A4F2',
   gaugeChartColor: '#86D4C9',
   gradientDiagramBackgroundColor: '#696969',
+  loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
   inputFocusColor: '#7068AA',
   ipfsBorderColor: 'rgb(31, 31, 31)',
   ipfsHoverBorderColor: '%238D86EBFF',
@@ -255,6 +258,7 @@ export const space = {
   histogramChartColor: '#77A4F2',
   gaugeChartColor: '#86D4C9',
   gradientDiagramBackgroundColor: '#696969',
+  loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
   inputFocusColor: '#7068AA',
   ipfsBorderColor: 'rgb(80, 62, 170)',
   ipfsHoverBorderColor: '%2386D4C9FF',
@@ -316,8 +320,15 @@ export const space = {
   dPurple_container_dPurple: darkPurpleColor,
 }
 
-export default {
-  space,
-  dark,
-  light,
+type Themes = {
+  // all themes have same color names
+  [key in ThemeType]: typeof light
 }
+
+const themes: Themes = {
+  [LIGHT_THEME]: light,
+  [DARK_THEME]: dark,
+  [SPACE_THEME]: space,
+}
+
+export default themes

@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 // components
@@ -28,24 +28,22 @@ import {
   STATUS_FLAG_WARNING,
   StatusFlagKind,
 } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
-import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 
 // helpers
 import { SECONDARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
-import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
-import { calculateCollateralShare } from '../calcFunctionsForVault'
 import { LIQUIDATION_COST, LIQUIDATION_PRICE, VAULT_RISK } from 'texts/tooltips/vault.text'
 import { getStringWithoutUnderline } from 'utils/parse'
-import {
-  getTimestampByLevelHeaders,
-  getTimestampByLevelSchema,
-  getTimestampByLevelUrl,
-} from 'utils/api/api-helpers/getTimestampByLevel'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
-import { isAbortError } from 'errors/error'
-import { api } from 'utils/api/api'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
+import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+
+const columnWidth = '33%'
 
 const findStatusInfo = (
   status: string,
@@ -106,93 +104,68 @@ const findFooterText = (status: string, statusColor: StatusFlagKind, timestamp?:
   }
 }
 
-type Props = LoansVaultType & {
+type Props = {
+  vault: VaultType
   isOwner: boolean
   handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
   vaultTab: string
 }
 
-export const VaultsCard = (props: Props) => {
-  const {
-    ownerId,
-    vaultId,
-    status,
-    levelOfEarly,
-    levelOfLate,
-    collateralData,
-    isOwner,
-    liquidationMax,
-    liquidationPrice,
-    handleMarkForLiquidation,
-    vaultTab,
-  } = props
-
-  const { bug } = useToasterContext()
+export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab }: Props) => {
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { openLiquidateVaultPopup } = useLoansPopupsContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { DAOFee } = useSelector((state: State) => state.loans.config)
 
-  const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
-
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
-  const { color: statusColor, text: statusText } = findStatusInfo(status)
-  const footerText = findFooterText(status, statusColor, timerTimestamp)
+  const vaultData = useFullVault(vault)
 
-  const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
+  useEffect(() => {
+    if (
+      vaultData?.liquidationTimestamp &&
+      (vaultData.status === vaultsStatuses.GRACE_PERIOD || vaultData.status === vaultsStatuses.LIQUIDATABLE)
+    ) {
+      setTimerTimestamp(new Date(vaultData?.liquidationTimestamp).getTime())
+    }
+  }, [vaultData])
+
+  if (!vaultData) return null
+
+  const {
+    status,
+    vaultId,
+    collateralBalance,
+    ownerId,
+    collateralData,
+    liquidationMax,
+    liquidationReward,
+    adminLiquidateFee,
+    borrowedTokenAddress,
+    liquidationPrice,
+  } = vaultData
 
   const isActiveFooter =
     status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
 
   const isMarkStatus = vaultsStatuses.MARK === status
 
+  const { color: statusColor, text: statusText } = findStatusInfo(status)
+  const footerText = findFooterText(status, statusColor, timerTimestamp)
+
   const liquidateModalHandler = () => {
-    openLiquidateVaultPopup({ ...props })
+    openLiquidateVaultPopup({
+      vaultId,
+      ownerAddress: ownerId,
+      tokenAddress: borrowedTokenAddress,
+      collateralBalance,
+      collateralData,
+      liquidationMax,
+      liquidationReward,
+      adminLiquidateFee,
+    })
   }
-
-  useEffect(() => {
-    if (status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.LIQUIDATABLE) {
-      if (!levelOfEarly || !levelOfLate) return
-
-      const abortEarlyController = new AbortController()
-      const abortLatelyController = new AbortController()
-
-      ;(async () => {
-        try {
-          const [{ data: timestampOfEarly }, { data: timestampOfLate }] = await Promise.all([
-            api(
-              getTimestampByLevelUrl(levelOfEarly),
-              { signal: abortEarlyController.signal, headers: getTimestampByLevelHeaders },
-              getTimestampByLevelSchema,
-            ),
-            api(
-              getTimestampByLevelUrl(levelOfLate),
-              { signal: abortLatelyController.signal, headers: getTimestampByLevelHeaders },
-              getTimestampByLevelSchema,
-            ),
-          ])
-
-          const timestamp =
-            new Date(timestampOfEarly).getTime() - new Date(timestampOfLate).getTime() + new Date().getTime()
-
-          setTimerTimestamp(timestamp)
-        } catch (e) {
-          // TODO: handle fetch errors when error boundary will be ready
-          if (!isAbortError(e)) {
-            console.error('getting timestamp by lvl error: ', e)
-          }
-          bug('Unexpected error happened occured, please reload the page')
-        }
-      })()
-
-      return () => {
-        abortEarlyController.abort()
-        abortLatelyController.abort()
-      }
-    }
-
-    return () => null
-  }, [status, levelOfEarly, levelOfLate])
 
   const headerSufix = <StatusFlag status={statusColor} text={getStringWithoutUnderline(status)} className="sufix" />
 
@@ -243,57 +216,81 @@ export const VaultsCard = (props: Props) => {
               </TableHeader>
 
               <TableBody>
-                {collateralData.map(({ symbol, icon, rate, amount }, index) => {
-                  const columnWidth = '33%'
-                  const isTotalRow = collateralData.length - 1 === index
+                {collateralData.map(({ tokenAddress, amount }, index) => {
+                  const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
 
-                  const collateralShare = isTotalRow
-                    ? 100
-                    : calculateCollateralShare(amount * rate, collateralTotalBalance)
+                  if (!collateralToken || !collateralToken.rate) return null
 
-                  if (isTotalRow && collateralData.length < 3) return null
+                  const { symbol, icon, rate, decimals } = collateralToken
+
+                  const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
+                  const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                   return (
                     <TableRow rowHeight={44} key={symbol + '-' + index}>
                       <TableCell width={columnWidth} className="vert-middle">
-                        {isTotalRow ? (
-                          'Total'
-                        ) : (
-                          <div className="cell-content row">
-                            {icon ? (
-                              <div className="img-wrapper">
-                                <img src={icon} alt={`${symbol} logo`} />
-                              </div>
-                            ) : (
-                              <div className="no-icon">
-                                <Icon id="noImage" />
-                              </div>
-                            )}
-                            {symbol}
-                          </div>
-                        )}
+                        <div className="cell-content row">
+                          {icon ? (
+                            <div className="img-wrapper">
+                              <img src={icon} alt={`${symbol} logo`} />
+                            </div>
+                          ) : (
+                            <div className="no-icon">
+                              <Icon id="noImage" />
+                            </div>
+                          )}
+                          {symbol}
+                        </div>
                       </TableCell>
 
                       <TableCell width={columnWidth}>
                         <div className="cell-content">
                           <CommaNumber
-                            value={amount}
-                            decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
-                            beginningText={isTotalRow ? '$' : ''}
+                            value={convertedAmount}
+                            decimalsToShow={assetDecimalsToShow}
                             className="balance"
                           />
                           {rate ? (
-                            <CommaNumber value={amount * rate} decimalsToShow={2} beginningText="~$" className="rate" />
+                            <CommaNumber
+                              value={convertedAmount * rate}
+                              decimalsToShow={2}
+                              beginningText="~$"
+                              className="rate"
+                            />
                           ) : null}
                         </div>
                       </TableCell>
 
                       <TableCell width={columnWidth}>
-                        <CommaNumber value={isTotalRow ? 100 : collateralShare} decimalsToShow={2} endingText="%" />
+                        <CommaNumber value={collateralShare} decimalsToShow={2} endingText="%" />
                       </TableCell>
                     </TableRow>
                   )
                 })}
+
+                {/* Total row */}
+                {collateralData.length >= 2 ? (
+                  <TableRow rowHeight={44}>
+                    <TableCell width={columnWidth} className="vert-middle">
+                      Total
+                    </TableCell>
+
+                    <TableCell width={columnWidth}>
+                      <div className="cell-content">
+                        <CommaNumber
+                          value={collateralBalance}
+                          decimalsToShow={2}
+                          beginningText="$"
+                          className="balance"
+                        />
+                      </div>
+                    </TableCell>
+
+                    <TableCell width={columnWidth}>
+                      <CommaNumber value={100} endingText="%" />
+                    </TableCell>
+                  </TableRow>
+                ) : null}
               </TableBody>
             </Table>
           </div>
@@ -321,7 +318,7 @@ export const VaultsCard = (props: Props) => {
     case vaultTabs.MY:
       return (
         <BorrowingExpandCard
-          {...props}
+          vault={vault}
           headerSufix={headerSufix}
           DAOFee={DAOFee}
           isOwner={isOwner}
@@ -333,13 +330,13 @@ export const VaultsCard = (props: Props) => {
       return (
         // TODO: use old component, because need old view for permission vaults.
         // After all redesign in the future, we will move everything into BorrowingExpandCard component
-        <OldBorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
+        <OldBorrowingExpandCard vault={vault} headerSufix={headerSufix} />
       )
 
     default:
       return (
         <BorrowingExpandCard
-          {...props}
+          vault={vault}
           headerSufix={headerSufix}
           DAOFee={DAOFee}
           isOwner={isOwner}

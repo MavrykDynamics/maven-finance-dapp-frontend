@@ -3,9 +3,10 @@ export const ROCKET_LOADER = 'rocket'
 export const WERT_IO_LOADER = 'wert-loader'
 
 // User tokens symbols
-export const MVK_TOKEN_SYMBOL = 'mvk'
-export const SMVK_TOKEN_SYMBOL = 'smvk'
-export const XTZ_TOKEN_SYMBOL = 'tezos'
+export const MVK_TOKEN_SYMBOL = 'MVK'
+export const XTZ_TOKEN_SYMBOL = 'XTZ'
+export const SMVK_TOKEN_ADDRESS = 'sMVK'
+export const XTZ_TOKEN_ADDRESS = 'tz1ZZZZZZZZZZZZZZZZZZZZZZZZZZZZNkiRg'
 
 // User token types
 export const USER_TOKEN_TYPE_COLLATERAL = 'collateralToken'
@@ -23,7 +24,7 @@ export const XTZ_DECIMALS = 6
 export const DECIMALS_TO_SHOW = 2
 export const ACCURATE_DECIMALS_TO_SHOW = 9
 
-export const BLOCKS_PER_MINUTE = 2
+export const BLOCKS_PER_MINUTE = 7.5
 export const SECONDS_PER_BLOCK = 30
 export const FIXED_POINT_ACCURACY = 10 ** 27
 export const SECONDS_PER_YEAR = 60 * 60 * 24 * 365

@@ -35,6 +35,14 @@ import {
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -52,23 +60,40 @@ const CHART_COLORS = {
 
 export const Loans = () => {
   const dispatch = useDispatch()
+
   const {
-    isDataLoaded,
+    isLoading: isChartsLoading,
+    chartsData: { totalLendingChart, totalBorrowingChart },
+  } = useLoansCharts({
+    calcTotalBorrowingChart: true,
+    calcTotalLendingChart: true,
+  })
+
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userAddress, userMTokens } = useUserContext()
+
+  const {
     loanTokens,
-    chartsData,
     vaults: { allVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const { totalBorrowed, totalLended } = loanTokens.reduce<{
     totalLended: number
     totalBorrowed: number
   }>(
-    (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
-      acc.totalBorrowed += totalBorrowed * rate
-      acc.totalLended += totalLended * rate
+    (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
+      const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
+
+      if (!loanToken || !loanToken.rate) return acc
+
+      const { decimals, rate } = loanToken
+
+      acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
+      acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
       return acc
     },
     {
@@ -77,16 +102,11 @@ export const Loans = () => {
     },
   )
 
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isDataLoaded || isDepsChanged) {
-          await dispatch(getLoansStorage())
-        }
-      } catch (e) {}
-    },
-    [accountPkh],
-  )
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await dispatch(getLoansStorage())
+    } catch (e) {}
+  }, [userAddress])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -98,11 +118,11 @@ export const Loans = () => {
         <span>Total Lending</span>
         <CommaNumber value={totalLended} beginningText={'$'} />
       </div>
-      <div className={classNames('chart', { emptyChart: chartsData.lendingChartData.length === 0 })}>
+      <div className={classNames('chart', { emptyChart: totalLendingChart.length === 0 })}>
         <Chart
-          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(chartsData.lendingChartData, 7) }}
+          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(totalLendingChart, 7) }}
           colors={CHART_COLORS}
-          settings={getChartSettingsBasedOnChartLength(chartsData.lendingChartData, CHART_SETTINGS)}
+          settings={getChartSettingsBasedOnChartLength(totalLendingChart, CHART_SETTINGS)}
           numberOfItemsToDisplay={0}
           tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
           tooltipAsset="$"
@@ -118,11 +138,11 @@ export const Loans = () => {
         <span>Total Borrowing</span>
         <CommaNumber value={totalBorrowed} beginningText={'$'} />
       </div>
-      <div className={classNames('chart', { emptyChart: chartsData.borrowingChartData.length === 0 })}>
+      <div className={classNames('chart', { emptyChart: totalBorrowingChart.length === 0 })}>
         <Chart
-          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(chartsData.borrowingChartData, 7) }}
+          data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(totalBorrowingChart, 7) }}
           colors={CHART_COLORS}
-          settings={getChartSettingsBasedOnChartLength(chartsData.borrowingChartData, CHART_SETTINGS)}
+          settings={getChartSettingsBasedOnChartLength(totalBorrowingChart, CHART_SETTINGS)}
           numberOfItemsToDisplay={0}
           tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
           tooltipAsset="$"
@@ -152,7 +172,8 @@ export const Loans = () => {
             <H2Title>Markets</H2Title>
             {loanTokens.map((loanAsset) => {
               const {
-                loanTokenData: { name, symbol, icon, rate, gqlName },
+                loanTokenAddress,
+                loanMTokenAddress,
                 utilisationRate,
                 availableLiquidity,
                 borrowers,
@@ -160,9 +181,18 @@ export const Loans = () => {
                 suppliers,
                 totalLended,
                 borrowAPR,
-                totalFeesEarned,
                 lendingAPY,
               } = loanAsset
+
+              const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
+
+              if (!loanToken || !loanToken.rate) return null
+
+              const { interestEarned } = userMTokens[loanMTokenAddress] ?? {
+                interestEarned: 0,
+              }
+
+              const { symbol, decimals, icon, rate, address } = loanToken
 
               const { loanTokenTotalCollaterals, loanTokenVaultsTotalBorrowed } = allVaultsIds.reduce<{
                 loanTokenTotalCollaterals: number
@@ -171,10 +201,25 @@ export const Loans = () => {
                 (acc, vaultId) => {
                   const vault = vaultsMapper[vaultId]
 
-                  if (vault.borrowedAsset.gqlName !== gqlName) return acc
+                  if (vault.borrowedTokenAddress !== loanTokenAddress) return acc
 
-                  acc.loanTokenTotalCollaterals += vault.collateralBalance
-                  acc.loanTokenVaultsTotalBorrowed += vault.borrowedAmount * vault.borrowedAsset.rate
+                  acc.loanTokenTotalCollaterals += vault.collateralData.reduce(
+                    (acc, { amount, tokenAddress: collateralTokenAddress }) => {
+                      const collateralToken = getTokenDataByAddress({
+                        tokenAddress: collateralTokenAddress,
+                        tokensPrices,
+                        tokensMetadata,
+                      })
+
+                      if (!collateralToken || !collateralToken.rate) return acc
+                      const { decimals, rate } = collateralToken
+                      return (acc += convertNumberForClient({ number: amount, grade: decimals }) * rate)
+                    },
+                    0,
+                  )
+
+                  acc.loanTokenVaultsTotalBorrowed +=
+                    convertNumberForClient({ number: vault.borrowedAmount, grade: decimals }) * rate
                   return acc
                 },
                 {
@@ -183,6 +228,9 @@ export const Loans = () => {
                 },
               )
 
+              const convertedMarketTotalLended = convertNumberForClient({ number: totalLended, grade: decimals })
+              const convertedMarketTotalBorrowed = convertNumberForClient({ number: totalBorrowed, grade: decimals })
+
               const totalCorratealColor =
                 loanTokenTotalCollaterals && loanTokenVaultsTotalBorrowed
                   ? loanTokenTotalCollaterals / loanTokenVaultsTotalBorrowed > 2
@@ -190,23 +238,21 @@ export const Loans = () => {
                     : 'down'
                   : 'neutral'
               return (
-                <MarketOverview key={`${name}-${symbol}`}>
+                <MarketOverview key={symbol}>
                   <div className="asset-info">
                     <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
                     <div className="name">{symbol}</div>
-                    {rate ? (
-                      <div className="rate">
-                        <CommaNumber beginningText="$" value={rate} decimalsToShow={4} showDecimal />
-                      </div>
-                    ) : null}
+                    <div className="rate">
+                      <CommaNumber beginningText="$" value={rate} decimalsToShow={4} showDecimal />
+                    </div>
                   </div>
 
                   <div className="content-wrapper">
                     <div className="row">
                       <ThreeLevelListItem>
                         <div className="name">Total Lending</div>
-                        {rate ? <CommaNumber beginningText="$" value={totalLended * rate} className="value" /> : null}
-                        <CommaNumber value={totalLended} className="rate" />
+                        <CommaNumber beginningText="$" value={convertedMarketTotalLended * rate} className="value" />
+                        <CommaNumber value={convertedMarketTotalLended} className="rate" />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Earn APY</div>
@@ -222,7 +268,11 @@ export const Loans = () => {
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Total Earned</div>
-                        <CommaNumber value={totalFeesEarned} className="value" beginningText="$" />
+                        <CommaNumber
+                          value={convertNumberForClient({ number: interestEarned, grade: decimals })}
+                          className="value"
+                          beginningText="$"
+                        />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Suppliers</div>
@@ -232,15 +282,15 @@ export const Loans = () => {
                         <div className="name">Utilization Rate</div>
                         <CommaNumber value={utilisationRate} className="value" endingText="%" />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${symbol}/${LEND_TAB_ID}`}>
+                      <Link to={`/loans/${address}/${LEND_TAB_ID}`}>
                         <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                       </Link>
                     </div>
                     <div className="row">
                       <ThreeLevelListItem>
                         <div className="name">Total Borrowed</div>
-                        {rate ? <CommaNumber beginningText="$" value={totalBorrowed * rate} className="value" /> : null}
-                        <CommaNumber value={totalBorrowed} className="rate" />
+                        <CommaNumber beginningText="$" value={convertedMarketTotalBorrowed * rate} className="value" />
+                        <CommaNumber value={convertedMarketTotalBorrowed} className="rate" />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Borrow APR</div>
@@ -257,7 +307,9 @@ export const Loans = () => {
                       <ThreeLevelListItem>
                         <div className="name">Available Liquidity</div>
                         <CommaNumber
-                          value={Math.max(availableLiquidity, 0) * rate}
+                          value={
+                            Math.max(convertNumberForClient({ number: availableLiquidity, grade: decimals }), 0) * rate
+                          }
                           className="value"
                           beginningText="$"
                         />
@@ -274,7 +326,7 @@ export const Loans = () => {
                           beginningText="$"
                         />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`}>
+                      <Link to={`/loans/${address}/${BORROW_TAB_ID}`}>
                         <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                       </Link>
                     </div>

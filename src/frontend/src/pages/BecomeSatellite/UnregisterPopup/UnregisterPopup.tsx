@@ -1,7 +1,5 @@
-import { useDispatch } from 'react-redux'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
-import { unregisterAsSatellite } from '../BecomeSatellite.actions'
-import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 import { BUTTON_SECONDARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton'
@@ -11,6 +9,18 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { UnregisterSatelliteModalBase } from '../BecomeSatellite.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { unregisterSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
+import { UNREGISTER_SATELLITE_ACTION } from 'providers/SatellitesProvider/satellites.const'
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+import { sleep } from 'utils/api/sleep'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { unknownToError } from 'errors/error'
+import { TezosWalletErrorPayload } from 'errors/error.type'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const UnregisterPopup = ({
   show,
@@ -21,8 +31,61 @@ export const UnregisterPopup = ({
   closePopup: () => void
   satellite: SatelliteRecordType
 }) => {
-  const dispatch = useDispatch()
-  const handleUnregisterSatellite = async () => await dispatch(unregisterAsSatellite(closePopup))
+  const {
+    setAction,
+    toggleActionFullScreenLoader,
+    toggleActionCompletion,
+    contractAddresses: { delegationAddress },
+  } = useDappConfigContext()
+  const { bug, info, loading } = useToasterContext()
+  const { userAddress } = useUserContext()
+
+  const handleUnregisterSatellite = async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
+      return
+    }
+
+    try {
+      const actionResult = await unregisterSatellite(userAddress, delegationAddress, closePopup)
+      if (checkIfActionSuccess(actionResult)) {
+        const { operation } = actionResult
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
+        info(
+          TOASTER_ACTIONS_TEXTS[UNREGISTER_SATELLITE_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[UNREGISTER_SATELLITE_ACTION]['start']['title'],
+        )
+        await sleep(5000)
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        toggleActionFullScreenLoader(false)
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+        setAction({ actionName: UNREGISTER_SATELLITE_ACTION, toasterId, operationLvl })
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
+      setAction(null)
+      const parsedError = unknownToError(e)
+      bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
+    }
+  }
 
   const { delegatorCount = 0, totalDelegatedAmount = 0 } = satellite ?? {}
 

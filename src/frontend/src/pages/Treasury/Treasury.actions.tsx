@@ -8,20 +8,15 @@ import {
   TREASURY_STORAGE_QUERY_VARIABLE,
 } from 'gql/queries/getTreasuryStorage'
 
-import { normalizeTreasury, normalizeTreasuryStorage, normalizeVestingStorage } from './Treasury.helpers'
+import { normalizeTreasuryStorage, normalizeVestingStorage } from './Treasury.normalizer'
 import { AppDispatch, GetState } from '../../app/App.controller'
 import { VESTING_STORAGE_QUERY, VESTING_STORAGE_QUERY_NAME, VESTING_STORAGE_QUERY_VARIABLE } from 'gql/queries'
 
 export const GET_TREASURY_STORAGE = 'GET_TREASURY_STORAGE'
 export const SET_TREASURY_STORAGE = 'SET_TREASURY_STORAGE'
 
-export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
+export const getTreasuryStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
-    const {
-      tokens: { tokensPrices },
-    } = getState()
-    const MVK_EXCHANGE_RATE = tokensPrices['mvk'] ?? 0
-
     // Get treasury addresses from gql
     const treasuryAddressesStorage = await fetchFromIndexer(
       GET_TREASURY_DATA,
@@ -29,28 +24,20 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
       TREASURY_STORAGE_QUERY_VARIABLE,
     )
 
-    // Parse gql data to understandable data format
-    const convertedStorage = normalizeTreasury(treasuryAddressesStorage)
+    const treasuryAddresses = treasuryAddressesStorage.treasury
 
     // Get sMVK assets in treasuries from gql
     const sMVKAmounts = await fetchFromIndexer(
       TREASURY_SMVK_QUERY,
       TREASURY_SMVK_QUERY_NAME,
-      TREASURY_SMVK_QUERY_VARIABLES(convertedStorage.treasury.map(({ address }: { address: string }) => address)),
+      TREASURY_SMVK_QUERY_VARIABLES(treasuryAddresses.map(({ address }: { address: string }) => address)),
     )
 
-    const normalizedTreasuryWithBalances = normalizeTreasuryStorage(
-      sMVKAmounts?.mavryk_user,
-      convertedStorage.treasury,
-      MVK_EXCHANGE_RATE,
-      tokensPrices,
-    )
+    const normalizedTreasuryWithBalances = normalizeTreasuryStorage(sMVKAmounts?.mavryk_user, treasuryAddresses)
 
     dispatch({
       type: SET_TREASURY_STORAGE,
-      treasuryStorage: normalizedTreasuryWithBalances.mappedTreasuries,
-      treasuryTokens: normalizedTreasuryWithBalances.tokenBalanceMapper,
-      treasuryFactoryAddress: convertedStorage.treasuryFactoryAddress,
+      treasuryStorage: normalizedTreasuryWithBalances,
     })
   } catch (error) {
     console.log('%c ---- error getTreasuryStorage', 'color:red', error)

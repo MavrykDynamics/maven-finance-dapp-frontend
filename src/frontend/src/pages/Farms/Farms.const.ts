@@ -1,4 +1,4 @@
-import { ModalStateType } from 'pages/Loans/Components/Modals/Modals.helpers'
+import { ModalStateType } from 'providers/LoansProvider/helpers/LoansModals.types'
 import FarmsPopupsProvider from './FarmsPopups/FarmsPopups.provider'
 
 export const LIVE_TAB_ID = 1

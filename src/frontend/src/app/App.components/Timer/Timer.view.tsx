@@ -1,8 +1,6 @@
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
-
 import { TimerStyled } from './Timer.style'
 import colors from 'styles/colors'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const LETTER_VIEW = 'letter'
 export const COLON_VIEW = 'colon'
@@ -24,7 +22,9 @@ type TimerViewProps = {
 }
 
 export const TimerView = ({ seconds, minutes, hours, days, options }: TimerViewProps) => {
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const {
     showZeros = true,

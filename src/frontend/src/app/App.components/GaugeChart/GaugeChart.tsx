@@ -1,6 +1,3 @@
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
-
 import Arrow from './svg/Arrow'
 import Backdrop from './svg/Backdrop'
 
@@ -8,6 +5,7 @@ import { GaugeChartStyled, ArrowStyled, ValueWrapper } from './GaugeChart.style'
 import BackgroundArc, { GRADIENT_NAME } from './svg/BackgroundArc'
 import { getNumberInBounds } from 'utils/calcFunctions'
 import colors from 'styles/colors'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type GaugeChartProps = {
   children: React.ReactNode
@@ -53,7 +51,9 @@ export const calcArcAngle = ({
  * @todo: if need add color as a prop
  */
 export const GaugeChart = ({ children, maxValue, minValue, currentValue, isProgress }: GaugeChartProps) => {
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const arrowAngle = Math.ceil(getNumberInBounds(0, 180, calcArrowAngle({ maxValue, currentValue, minValue })))
   const progressArcAngle = Math.ceil(getNumberInBounds(0, 180, calcArcAngle({ maxValue, currentValue, minValue })))

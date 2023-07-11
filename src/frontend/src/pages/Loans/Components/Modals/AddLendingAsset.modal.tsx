@@ -1,6 +1,6 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -8,11 +8,17 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
-import { INPUT_LARGE, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { State } from 'reducers'
-import { AddLendingAssetDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
+import {
+  INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
+  getOnBlurValue,
+  getOnFocusValue,
+} from 'app/App.components/Input/Input.constants'
+import { AddLendingAssetDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -23,6 +29,10 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { depositLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
@@ -34,34 +44,47 @@ export const AddLendingAsset = ({
   show: boolean
   data: AddLendingAssetDataType
 }) => {
-  const {
-    mBalance = 0,
-    rate = 0,
-    decimals = 0,
-    symbol = '',
-    address = '',
-    lendingAPY = 0,
-    icon = '',
-    gqlName = '',
-    tokenType = '',
-    id = 0,
-  } = data ?? {}
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userTokensBalances } = useUserContext()
+
   useLockBodyScroll(show)
 
-  const { userTokens } = useSelector((state: State) => state.wallet.user)
-
-  const balanceSymbol = isTezosAsset(symbol.toLowerCase() ?? '') ? 'tezos' : symbol.toLowerCase().toLowerCase() ?? ''
-  const tokenBalance = userTokens[balanceSymbol]?.balance ?? 0
-
   const dispatch = useDispatch()
-  const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
+  const [inputData, setInputData] = useState<{
+    amount: string
+    validationStatus: InputStatusType
+  }>({
+    amount: '0',
+    validationStatus: INPUT_STATUS_DEFAULT,
+  })
+
+  useEffect(() => {
+    if (!show) {
+      setInputData({
+        amount: '0',
+        validationStatus: INPUT_STATUS_DEFAULT,
+      })
+    }
+  }, [show])
+
+  const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
+
+  if (!data || !loanToken || !loanToken.rate) return null
+
+  const { mBalance, lendingAPY, tokenAddress } = data
+  const { symbol, icon, decimals, rate } = loanToken
+  const tokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: tokenAddress })
+
+  const isDepositDisabled = inputData.validationStatus !== INPUT_STATUS_SUCCESS
+
+  // TODO: handle user balances
 
   const onChangeHandler = (inputAmount: string, userBalance: number) => {
     const validationStatus = loansInputValidation({
       inputAmount,
       maxAmount: userBalance,
       options: {
-        byDecimalPlaces: decimals || assetDecimalsToShow,
+        byDecimalPlaces: loanToken.decimals || assetDecimalsToShow,
       },
     })
 
@@ -72,34 +95,21 @@ export const AddLendingAsset = ({
     })
   }
 
-  const inputOnBlurHandle = () => {
+  const inputOnBlurHandle = () =>
     setInputData({
       ...inputData,
       amount: getOnBlurValue(inputData.amount),
     })
-  }
 
-  const onFocusHandler = () => {
+  const onFocusHandler = () =>
     setInputData({
       ...inputData,
       amount: getOnFocusValue(inputData.amount),
     })
-  }
-
-  useEffect(() => {
-    if (!show) {
-      setInputData(DEFAULT_LOANS_INPUT_VALUE)
-    }
-  }, [show])
-  const isDepositDisabled = useMemo(() => {
-    return inputData.validationStatus !== INPUT_STATUS_SUCCESS
-  }, [inputData.validationStatus])
 
   const depositHandler = () => {
-    if (tokenType && address) {
-      dispatch(
-        depositLendingAssetAction(gqlName, Number(inputData.amount), address, id, tokenType, decimals, closePopup),
-      )
+    if (checkWhetherTokenIsLoanToken(loanToken)) {
+      dispatch(depositLendingAssetAction(loanToken, Number(inputData.amount), closePopup))
     }
   }
 
@@ -118,7 +128,7 @@ export const AddLendingAsset = ({
           </div>
 
           <Input
-            className={`${rate ? 'input-with-rate' : ''} pinned-dropdown`}
+            className={`input-with-tokenRate pinned-dropdown`}
             inputProps={{
               value: inputData.amount,
               type: 'number',
@@ -132,11 +142,11 @@ export const AddLendingAsset = ({
               useMaxHandler: () => onChangeHandler(getLoansInputMaxAmount(tokenBalance, decimals), tokenBalance),
               inputStatus: inputData.validationStatus,
               inputSize: INPUT_LARGE,
-              ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
+              convertedValue: rate * Number(inputData.amount),
             }}
           >
             <InputPinnedTokenInfo>
-              <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+              <ImageWithPlug imageLink={icon} alt={`${loanToken.symbol} icon`} />
               {symbol}
             </InputPinnedTokenInfo>
           </Input>

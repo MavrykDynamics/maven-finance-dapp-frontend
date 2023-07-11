@@ -1,12 +1,9 @@
 import { useSelector } from 'react-redux'
-import { useContext, useMemo } from 'react'
 
 import { State } from 'reducers'
-import { LendingItemType, LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
 import { SECONDARY_TRANSACTION_HISTORY_STYLE } from '../Loans.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { loansPopupsContext } from './Modals/LoansModals.provider'
 
 import { LendingTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
 
@@ -15,45 +12,30 @@ import { LendingTabValuesSection } from './LendingTabSections/LendingTabValuesSe
 import { LendingTabActionsSection } from './LendingTabSections/LendingTabActionsSection'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type LendingTabPropsType = {
-  lendingItem: LendingItemType
-  lendingControllerAddress: string
-  assetData: LoanMarketType['loanTokenData']
+  loanTokenAddress: TokenAddressType
+  loanMtokenAddress: TokenAddressType
   lendAPY: number
-  marketAvailableLiquidity: number
-  marketReserveAmount: number
 }
 
-export const LendingTab = ({
-  lendingItem,
-  lendingControllerAddress,
-  assetData,
-  lendAPY,
-  marketReserveAmount,
-  marketAvailableLiquidity,
-}: LendingTabPropsType) => {
-  const { openAddLendingAssetPopup } = useContext(loansPopupsContext)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { loanTokens } = useSelector((state: State) => state.loans)
+export const LendingTab = ({ loanTokenAddress, loanMtokenAddress, lendAPY }: LendingTabPropsType) => {
+  const { openAddLendingAssetPopup } = useLoansPopupsContext()
+  const { userMTokens, userAddress } = useUserContext()
+
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  const transactionHistory = useMemo(() => {
-    return loanTokens.find(({ loanTokenData }) => loanTokenData.symbol === assetData.symbol)?.transactionHistory ?? []
-  }, [assetData, loanTokens])
+  const lendingItem = userMTokens[loanMtokenAddress]
 
   return (
     <LendingTabStyled>
       {lendingItem ? (
         <div className="stats-and-actions">
-          <LendingTabValuesSection lendingItem={lendingItem} assetData={assetData} lendAPY={lendAPY} />
-          <LendingTabActionsSection
-            lendingItem={lendingItem}
-            assetData={assetData}
-            lendAPY={lendAPY}
-            marketReserveAmount={marketReserveAmount}
-            marketAvailableLiquidity={marketAvailableLiquidity}
-          />
+          <LendingTabValuesSection lendingItem={lendingItem} loanTokenAddress={loanTokenAddress} lendAPY={lendAPY} />
+          <LendingTabActionsSection lendingItem={lendingItem} loanTokenAddress={loanTokenAddress} lendAPY={lendAPY} />
         </div>
       ) : (
         <NoItemsInTabStyled>
@@ -63,12 +45,12 @@ export const LendingTab = ({
             <Button
               kind={BUTTON_PRIMARY}
               form={BUTTON_WIDE}
-              disabled={!Boolean(accountPkh) || isActionActive}
+              disabled={!Boolean(userAddress) || isActionActive}
               onClick={() =>
                 openAddLendingAssetPopup({
                   mBalance: 0,
                   lendingAPY: lendAPY,
-                  ...assetData,
+                  tokenAddress: loanTokenAddress,
                 })
               }
             >
@@ -79,12 +61,11 @@ export const LendingTab = ({
         </NoItemsInTabStyled>
       )}
 
-      {accountPkh && (
+      {userAddress && (
         <TransactionHistory
-          transactionHistory={transactionHistory}
-          filterByDescriptions={['Liquidity Added', 'Liquidity Removed']}
-          userAddress={accountPkh}
-          lendingControllerAddress={lendingControllerAddress}
+          loanTokenAddress={loanTokenAddress}
+          filterByDescriptions={[0, 1]}
+          userAddress={userAddress}
           styleType={SECONDARY_TRANSACTION_HISTORY_STYLE}
         />
       )}

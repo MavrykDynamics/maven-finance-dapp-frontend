@@ -2,25 +2,26 @@ import styled, { css } from 'styled-components/macro'
 
 import { MavrykTheme } from '../styles/interfaces'
 
-export const AppStyled = styled.div<{ theme: MavrykTheme; isExpandedMenu?: boolean; isVisible: boolean }>`
+export const AppStyled = styled.div<{
+  theme: MavrykTheme
+  isExpandedMenu?: boolean
+}>`
   --carousel-button-size: 30px;
   --carousel-button-bg: rgb(22 14 63 / 70%);
   --carousel-button-indent: -15px;
   min-height: 100vh;
   padding-left: ${({ isExpandedMenu }) => (isExpandedMenu ? '232px' : '72px')};
-  transition: 150ms opacity;
-
-  ${({ isVisible }) =>
-    !isVisible
-      ? css`
-          opacity: 0;
-          visibility: hidden;
-        `
-      : ''};
 
   @media screen and (max-width: 1399px) {
     padding-left: 72px;
   }
+`
+
+export const FullScreenLoadingApp = styled.div<{ theme: MavrykTheme }>`
+  position: fixed;
+  background-color: ${({ theme }) => theme.loaderBackgroundColor};
+  width: 100vw;
+  height: 100vh;
 `
 
 export const EmptyContainer = styled.figure<{ theme: MavrykTheme }>`

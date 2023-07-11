@@ -1,34 +1,50 @@
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { State } from 'reducers'
+// const
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
+// view
 import { emptyContainer } from './LendingTab.controller'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { StatBlock } from '../Dashboard.style'
 import { SatellitesContentStyled, TabWrapperStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
+// context
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+
+// helpers
+import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+
 export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const {
+    activeSatellitesIds,
+    satelliteMapper,
+    proposalsAmount,
+    satelliteGovActionsAmount,
+    finRequestsAmount,
+    isLoading: isSatellitesLoading,
+  } = useSatellitesContext()
 
   const satellitesInfo = activeSatellitesIds.reduce(
     (acc, satelliteAddress) => {
       const satelliteRecord = satelliteMapper[satelliteAddress]
       if (!satelliteRecord || satelliteRecord.status !== 0) return acc
 
+      const { proposalParticipation, votingPartisipation } = getSatelliteParticipations({
+        satellite: satelliteRecord,
+        proposalsAmount,
+        satelliteGovActionsAmount,
+        finRequestsAmount,
+      })
+
       acc.activeSatellites += 1
       acc.avgFee += satelliteRecord.satelliteFee
       acc.avgStakedMVK += satelliteRecord.sMvkBalance
-      acc.partisipationRate +=
-        (satelliteRecord.satelliteMetrics.proposalParticipation +
-          satelliteRecord.satelliteMetrics.votingPartisipation) /
-        2
+      acc.partisipationRate += (proposalParticipation + votingPartisipation) / 2
       acc.avgFreesMVKSpace += Math.max(
         satelliteRecord.sMvkBalance * satelliteRecord.delegationRatio - satelliteRecord.totalDelegatedAmount,
         0,

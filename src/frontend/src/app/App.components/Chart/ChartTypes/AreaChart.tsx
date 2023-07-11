@@ -1,6 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
-import { createChart, BusinessDay, UTCTimestamp, SingleValueData, Time } from 'lightweight-charts'
-import { useSelector } from 'react-redux'
+import { createChart, BusinessDay, UTCTimestamp, SingleValueData } from 'lightweight-charts'
 
 import styleColors from 'styles/colors'
 
@@ -20,7 +19,7 @@ import ChartTooltip, { AMOUNT_DATE_TOOLTIP } from '../Tooltips/ChartTooltip'
 import { ChartStyled } from '../Chart.style'
 
 import { AreaChartPropsType } from '../helpers/Chart.types'
-import { State } from 'reducers'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const AreaChart = ({
   settings,
@@ -29,7 +28,9 @@ export const AreaChart = ({
   tooltipName = AMOUNT_DATE_TOOLTIP,
   tooltipAsset,
 }: AreaChartPropsType) => {
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const {
     height,

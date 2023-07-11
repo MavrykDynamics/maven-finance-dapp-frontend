@@ -27,6 +27,8 @@ import { PortfolioWalletStyled, PortfolioChartStyled } from './DashboardPersonal
 import { LendBorrowPosition } from './LendBorrowPosition'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type PortfolioTabProps = {
   xtzAmount: number
@@ -52,16 +54,17 @@ const PortfolioTab = ({
   isUserLoansLoading,
 }: PortfolioTabProps) => {
   const { secondaryTabId } = useParams<{ secondaryTabId: string }>()
+
+  const { availableLoansRewards, userAddress } = useUserContext()
+
   const portfolioActiveTab = useMemo(
     () => (isValidPersonalDashboardSecondaryTabId(secondaryTabId) ? secondaryTabId : PORTFOLIO_LENDING_TAB_ID),
     [secondaryTabId],
   )
 
-  const {
-    user: { userLoansData, availableLoansRewards },
-    accountPkh,
-  } = useSelector((state: State) => state.wallet)
   const { loanTokens } = useSelector((state: State) => state.loans)
+  const { userBorrowings, totalUserBorrowed, totalUserLended, userVaultsData, userLendings, isLoading } =
+    useUserLoansData({ userAddress })
 
   const [toggleItems, setToggleItems] = useState<SlidingTabButtonType[]>(TOGGLE_VALUES)
   const lastSeria = CHART_TEST_DATA.at(-1)?.value ?? 0
@@ -104,8 +107,8 @@ const PortfolioTab = ({
           <div className="name">Staked MVK</div>
           <div className="value">
             <CommaNumber value={sMVKAmount} />
-            <Link to={accountPkh ? '/staking' : '#'}>
-              <Button kind={BUTTON_SIMPLE} disabled={!accountPkh}>
+            <Link to={userAddress ? '/staking' : '#'}>
+              <Button kind={BUTTON_SIMPLE} disabled={!userAddress}>
                 View
               </Button>
             </Link>
@@ -115,8 +118,8 @@ const PortfolioTab = ({
           <div className="name">MVK Not Staked</div>
           <div className="value">
             <CommaNumber value={MVKAmount} />
-            <Link to={accountPkh ? '/staking' : '#'}>
-              <Button kind={BUTTON_SIMPLE} disabled={!accountPkh}>
+            <Link to={userAddress ? '/staking' : '#'}>
+              <Button kind={BUTTON_SIMPLE} disabled={!userAddress}>
                 Stake
               </Button>
             </Link>
@@ -127,11 +130,11 @@ const PortfolioTab = ({
           <div className="value">
             <CommaNumber value={xtzAmount} />
             <a
-              href={accountPkh ? 'https://mavryk.finance/bakery' : '#'}
-              target={accountPkh ? '_blank' : undefined}
+              href={userAddress ? 'https://mavryk.finance/bakery' : '#'}
+              target={userAddress ? '_blank' : undefined}
               rel="noreferrer"
             >
-              <Button kind={BUTTON_SIMPLE} disabled={!accountPkh}>
+              <Button kind={BUTTON_SIMPLE} disabled={!userAddress}>
                 Delegate
               </Button>
             </a>
@@ -169,15 +172,17 @@ const PortfolioTab = ({
         <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
           <LendBorrowPosition
             markets={loanTokens}
-            userLoansData={userLoansData}
+            totalUserBorrowed={totalUserBorrowed}
+            totalUserLended={totalUserLended}
+            userVaultsData={userVaultsData}
             userLoansRewards={availableLoansRewards}
           />
         </Route>
         <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
-          <LoansTxTab txVariant="lending" userLoansData={userLoansData} isUserLoansLoading={isUserLoansLoading} />
+          <LoansTxTab txVariant="lending" userLoansData={userLendings} isUserLoansLoading={isUserLoansLoading} />
         </Route>
         <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}>
-          <LoansTxTab txVariant="borrowing" userLoansData={userLoansData} isUserLoansLoading={isUserLoansLoading} />
+          <LoansTxTab txVariant="borrowing" userLoansData={userBorrowings} isUserLoansLoading={isUserLoansLoading} />
         </Route>
 
         <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />

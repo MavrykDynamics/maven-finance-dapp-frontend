@@ -1,10 +1,3 @@
-import {
-  defaultProposalDescriptionMaxLength,
-  defaultProposalInvoiceMaxLength,
-  defaultProposalMetadataTitleMaxLength,
-  defaultProposalSourceCodeMaxLength,
-  defaultProposalTitleMaxLength,
-} from 'app/App.components/Input/Input.constants'
 import { State } from 'reducers'
 import { calcWithoutPrecision, calcWithoutMu, convertNumberForClient } from 'utils/calcFunctions'
 import {
@@ -15,10 +8,11 @@ import {
 } from 'utils/TypesAndInterfaces/Governance'
 import { getProposalStatus } from '../Governance.helpers'
 import { MVK_DECIMALS } from 'utils/constants'
+import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { satelliteVoteSchema } from 'providers/SatellitesProvider/satellites.const'
 
 export const normalizeProposal = (
   item: GovernanceProposalGraphQL,
-  dipDupTokens: State['tokens']['dipDupTokens'],
   { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: State['governance']['config'],
 ) => {
   const proposalConvertedStatus = getProposalStatus(
@@ -65,7 +59,24 @@ export const normalizeProposal = (
     downvoteMvkTotal: convertNumberForClient({ number: item.nay_vote_smvk_total, grade: MVK_DECIMALS }),
     abstainMvkTotal: convertNumberForClient({ number: item.pass_vote_smvk_total, grade: MVK_DECIMALS }),
     quorumMvkTotal: convertNumberForClient({ number: item.quorum_smvk_total, grade: MVK_DECIMALS }),
-    votes: item.votes,
+    votes: item.votes.reduce<
+      Array<{ vote: SatelliteVoteType; address: string; name: string; avatar: string; round: number }>
+    >((acc, vote) => {
+      try {
+        const voteValue = satelliteVoteSchema.parse(vote.vote)
+        acc.push({
+          round: vote.round,
+          address: vote.voter.address,
+          name: vote.voter.satellites[0].name,
+          vote: voteValue,
+          avatar: vote.voter.satellites[0].image,
+        })
+      } catch (e) {
+        console.error('governance_votes vote parse error: ', { e })
+      } finally {
+        return acc
+      }
+    }, []),
     minQuorumPercentage: convertNumberForClient({ number: item.min_quorum_percentage, grade: 4 }),
 
     proposalData: item.data.map((byte, idx) => ({
@@ -75,33 +86,21 @@ export const normalizeProposal = (
       isLocalBytes: false,
     })),
 
-    // TODO: update token usage
     proposalPayments: item.payments
-      .map(({ to_, title, id, token_id, token_amount, token }) => {
-        const tokenAddress = token?.token_address
-        // TODO: remove this check with tokens reorganization
-        const decimals =
-          tokenAddress?.toLowerCase() === 'xtz'
-            ? 6
-            : dipDupTokens?.find(({ token_address }) => token_address === tokenAddress)?.metadata?.decimals ?? 0
-
-        return {
-          id,
-          to__id: to_?.address,
-          title,
-          token_address: tokenAddress,
-          token_id,
-          // we're getting amount * by 10 in decimals grage, need to parse it to initial user input
-          token_amount: Number(token_amount) / Math.pow(10, Number(decimals)) ?? 0,
-        }
-      })
-      .filter(({ token_address, to__id }) => token_address && to__id),
+      .map(({ to_, title, id, token_id, token_amount, token }) => ({
+        id,
+        to__id: to_?.address,
+        title,
+        token_address: token?.token_address,
+        token_id,
+        token_amount,
+      }))
+      .filter(({ token_address, to__id, token_amount }) => token_address && to__id && token_amount),
   }
 }
 
 export const normalizeGovernanceProposals = (
   proposals: Array<GovernanceProposalGraphQL>,
-  dipDupTokens: State['tokens']['dipDupTokens'],
   governanceConfig: State['governance']['config'],
 ): Omit<Omit<State['governance'], 'isLoaded'>, 'config'> => {
   const { governancePhase, timelockProposalId } = governanceConfig
@@ -109,7 +108,7 @@ export const normalizeGovernanceProposals = (
 
   return proposals.reduce<Omit<Omit<State['governance'], 'isLoaded'>, 'config'>>(
     (acc, proposalFromGQL) => {
-      const normalizedProposal = normalizeProposal(proposalFromGQL, dipDupTokens, governanceConfig)
+      const normalizedProposal = normalizeProposal(proposalFromGQL, governanceConfig)
 
       const { id, executed, status, currentRoundProposal, paymentProcessed } = normalizedProposal
 
@@ -164,15 +163,6 @@ export const normalizeGovernanceConfig = (currentGovernance: GovernanceGraphQL):
     address: currentGovernance.address,
     fee: calcWithoutMu(currentGovernance.proposal_submission_fee_mutez),
     successReward: calcWithoutPrecision(currentGovernance.success_reward),
-    proposalDescriptionMaxLength:
-      currentGovernance.proposal_description_max_length ?? defaultProposalDescriptionMaxLength,
-    proposalInvoiceMaxLength: currentGovernance.proposal_invoice_max_length ?? defaultProposalInvoiceMaxLength,
-    proposalMetadataTitleMaxLength:
-      currentGovernance.proposal_source_code_max_length ?? defaultProposalMetadataTitleMaxLength,
-    proposalSourceCodeMaxLength:
-      currentGovernance.proposal_source_code_max_length ?? defaultProposalSourceCodeMaxLength,
-    proposalTitleMaxLength: currentGovernance.proposal_title_max_length ?? defaultProposalTitleMaxLength,
-
     currentRoundEndLevel: currentGovernance.current_round_end_level ?? 0,
     cycle: currentGovernance.cycle_id ?? 0,
     timelockProposalId: currentGovernance.timelock_proposal_id ?? 0,

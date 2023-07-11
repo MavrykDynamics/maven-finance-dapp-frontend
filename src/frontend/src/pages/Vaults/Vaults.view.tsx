@@ -27,7 +27,6 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getVaultAssets } from './Vaults.helpers'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 // types
@@ -69,7 +68,6 @@ export const VaultsView = () => {
   )
   const [tabsList, setTabsList] = useState<SlidingTabButtonType[]>([])
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
-  const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
 
   const currentListName =
     tabId === vaultTabs.ALL
@@ -144,9 +142,9 @@ export const VaultsView = () => {
       <SlidingTabButtons kind={SECONDARY_SLIDING_TAB_BUTTONS} tabItems={tabsList} onClick={handleChangeTabs} />
 
       <VaultsSearchFilter
-        assets={assets}
         vaultsMapper={vaultsMapper}
         currentVaultsIds={currentVaultsIds}
+        allVaultsIds={allVaultsIds}
         setVaultsIds={setVaultsIds}
       />
 
@@ -162,11 +160,11 @@ export const VaultsView = () => {
 
             return (
               <VaultsCard
+                vault={vaultsMapper[item]}
                 key={item}
                 isOwner={isOwner}
                 handleMarkForLiquidation={handleMarkForLiquidation}
                 vaultTab={tabId}
-                {...vaultsMapper[item]}
               />
             )
           })}

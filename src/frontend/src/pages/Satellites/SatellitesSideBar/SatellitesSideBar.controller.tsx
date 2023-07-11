@@ -1,17 +1,23 @@
-import dayjs from 'dayjs'
-import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+import { useFeedsStats } from 'providers/DataFeedsProvider/hooks/useFeedsStats'
+import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
+
+import { convertNumberForClient } from 'utils/calcFunctions'
+
 import { State } from 'reducers'
-import { calcWithoutPrecision } from 'utils/calcFunctions'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { getTotalDelegatedMVK } from '../helpers/Satellites.consts'
+import { MVK_DECIMALS } from 'utils/constants'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+
+import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -53,30 +59,19 @@ export const SateliteSideBarFAQ = () => (
 )
 
 const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
+  const { userAddress, isSatellite } = useUserContext()
   const {
-    accountPkh,
-    user: { isSatellite },
-  } = useSelector((state: State) => state.wallet)
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
-  const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { delegationAddress, aggregatorFactoryAddress } = useSelector((state: State) => state.contractAddresses)
+    contractAddresses: { delegationAddress, feedsFactoryAddress },
+  } = useDappConfigContext()
 
-  const dataPointsCount = useMemo(
-    () =>
-      feedsLedger?.filter(
-        ({ last_completed_data_last_updated_at }) =>
-          dayjs(Date.now()).diff(dayjs(last_completed_data_last_updated_at), 'minutes') <= 60,
-      ).length,
-    [feedsLedger],
-  )
-  const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
+  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics({
+    skipOracleRewardsTotal: true,
+  })
+  const { rewardsAmount } = useFeedsStats()
+  const { feedsAddresses } = useDataFeedsContext()
 
-  const averageRevard = calcWithoutPrecision(
-    feedsLedger.reduce((acc, { reward_amount_smvk }) => {
-      acc += reward_amount_smvk
-      return acc
-    }, 0) / Math.max(feedsLedger.length, 1),
-  )
+  const averageRevard =
+    convertNumberForClient({ number: rewardsAmount, grade: MVK_DECIMALS }) / Math.max(feedsAddresses.length, 1)
 
   return (
     <SatelliteSideBarStyled>
@@ -87,7 +82,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
               text={isSatellite ? 'Edit Satellite Profile' : 'Become a Satellite'}
               icon="satellite-stroke"
               kind={ACTION_PRIMARY}
-              disabled={!accountPkh}
+              disabled={!userAddress}
             />
           </Link>
         ) : null}
@@ -95,16 +90,12 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <h2>Info</h2>
         <SideBarItem>
           <h3>Satellite Contract</h3>
-          <var>{delegationAddress.address ? <TzAddress tzAddress={delegationAddress.address} hasIcon /> : '-'}</var>
+          <var>{<TzAddress tzAddress={delegationAddress} hasIcon />}</var>
         </SideBarItem>
         <SideBarItem>
           <h3>Oracles Contract</h3>
           <var>
-            {aggregatorFactoryAddress.address ? (
-              <TzAddress tzAddress={aggregatorFactoryAddress.address} hasIcon />
-            ) : (
-              '-'
-            )}
+            <TzAddress tzAddress={feedsFactoryAddress} hasIcon />
           </var>
         </SideBarItem>
       </SideBarSection>
@@ -114,19 +105,19 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <SideBarItem>
           <h3>Number of Satellites</h3>
           <var>
-            <CommaNumber value={activeSatellitesIds.length} showDecimal={false} />
+            <CommaNumber value={totalActiveSatellites} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>
           <h3>On-Chain Data Points</h3>
           <var>
-            <CommaNumber value={dataPointsCount} showDecimal={false} />
+            <CommaNumber value={feedsAddresses.length} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>
           <h3>Total Oracles</h3>
           <var>
-            <CommaNumber value={oraclesIds.length} showDecimal={false} />
+            <CommaNumber value={totalOracleNetworks} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>

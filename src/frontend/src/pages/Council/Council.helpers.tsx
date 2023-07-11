@@ -89,16 +89,6 @@ export function normalizeCouncilMembers(storage: CouncilMemberGraphQL[]) {
   })
 }
 
-export const normalizeMaxLength = (storage: CouncilGraphQL) => {
-  return {
-    councilMemberImageMaxLength: storage?.council_member_image_max_length ?? defaultCouncilMemberImageMaxLength,
-    councilMemberNameMaxLength: storage?.council_member_name_max_length ?? defaultCouncilMemberNameMaxLength,
-    councilMemberWebsiteMaxLength: storage?.council_member_website_max_length ?? defaultCouncilMemberWebsiteMaxLength,
-    requestPurposeMaxLength: storage?.request_purpose_max_length ?? defaultRequestPurposeMaxLength,
-    requestTokenNameMaxLength: storage?.request_token_name_max_length ?? defaultRequestTokenNameMaxLength,
-  }
-}
-
 export const memberIsFirstOfList = (list: CouncilMembers, address?: string) => {
   const indexOfMember = list.findIndex((item) => item.userId === address)
 

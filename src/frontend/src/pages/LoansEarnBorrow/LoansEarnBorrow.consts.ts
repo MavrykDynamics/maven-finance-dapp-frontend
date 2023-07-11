@@ -4,7 +4,7 @@ import { skyColor } from 'styles'
 export const numberOfItemsToDisplay = 0
 
 export const MINI_CHART_SETTINGS = {
-  width: 305,
+  width: 300,
   height: 103,
   hideXAxis: true,
   hideYAxis: true,
@@ -37,6 +37,7 @@ export type MarketSettingsType = {
 
 export type MarketType = {
   icon: string
+  address: string
   symbol: string
   annualRate: number
   annualRateName: 'APR' | 'APY'

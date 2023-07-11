@@ -5,13 +5,7 @@ import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // helpers
 import { parseDate } from 'utils/time'
-import {
-  normalizeCouncilActions,
-  normalizeCouncilMembers,
-  normalizeMaxLength,
-  PENDING_ACTIONS,
-  PAST_ACTIONS,
-} from './Council.helpers'
+import { normalizeCouncilActions, normalizeCouncilMembers, PENDING_ACTIONS, PAST_ACTIONS } from './Council.helpers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
@@ -29,9 +23,6 @@ import { fetchFromIndexerWithPromise } from '../../gql/fetchGraphQL'
 
 // gql
 import {
-  COUNCIL_STORAGE_QUERY,
-  COUNCIL_STORAGE_QUERY_NAME,
-  COUNCIL_STORAGE_QUERY_VARIABLE,
   COUNCIL_MEMBERS_QUERY,
   COUNCIL_MEMBERS_QUERY_NAME,
   COUNCIL_MEMBERS_QUERY_VARIABLE,
@@ -45,38 +36,13 @@ import {
 
 // actions
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
 const time = String(new Date())
 const timeFormat = 'YYYY-MM-DD'
 const timestamptz = parseDate({ time, timeFormat }) || undefined
 export const CLEAR_MY_COUNCIL_ACTIONS = 'CLEAR_MY_COUNCIL_ACTIONS'
-
-// getCouncilStorage
-export const GET_COUNCIL_STORAGE = 'GET_COUNCIL_STORAGE'
-export const getCouncilStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
-  try {
-    const storage = await fetchFromIndexerWithPromise(
-      COUNCIL_STORAGE_QUERY,
-      COUNCIL_STORAGE_QUERY_NAME,
-      COUNCIL_STORAGE_QUERY_VARIABLE,
-    )
-
-    const council = storage?.council[0]
-    const councilMaxLength = normalizeMaxLength(council)
-
-    dispatch({
-      type: GET_COUNCIL_STORAGE,
-      councilMaxLength,
-    })
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log('error', error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
-    }
-  }
-}
 
 // getCouncilPendingActions
 export const GET_COUNCIL_PENDING_ACTIONS = 'GET_COUNCIL_PENDING_ACTIONS'

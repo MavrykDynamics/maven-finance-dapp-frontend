@@ -46,7 +46,7 @@ export const TOASTER_UPDATE_DATA_AFTER_ACTION_DATA = {
   message: 'Waiting for transaction confirmation...',
 }
 
-export const ACTION_START_MESSAGE_TEXT = 'Please wait 30s'
+export const ACTION_START_MESSAGE_TEXT = 'Please wait ~30s'
 export const ACTION_COMPLETION_MESSAGE_TEXT = 'All good :)'
 
 // TOASTER TEXTS IDS

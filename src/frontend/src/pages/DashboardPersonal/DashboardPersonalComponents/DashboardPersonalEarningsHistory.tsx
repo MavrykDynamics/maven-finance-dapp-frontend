@@ -3,10 +3,10 @@ import Toggle from 'app/App.components/Toggle/Toggle.view'
 import { useState } from 'react'
 import { EarnHistoryStyled } from './DashboardPersonalComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL } from 'utils/constants'
 
 export type DashboardPersonalEarningsHistoryProps = {
-  mvkRate: number
-  xtzRate: number
   satelliteRewards: number
   farmsRewards: number
   exitRewards: number
@@ -14,14 +14,16 @@ export type DashboardPersonalEarningsHistoryProps = {
 }
 
 const DashboardPersonalEarningsHistory = ({
-  mvkRate,
-  xtzRate,
   lendingIncome,
   satelliteRewards,
   farmsRewards,
   exitRewards,
 }: DashboardPersonalEarningsHistoryProps) => {
+  const { tokensPrices } = useTokensContext()
   const [switcherActive, setSwithcerActive] = useState(true)
+
+  const mvkRate = tokensPrices[MVK_TOKEN_SYMBOL]
+  const xtzRate = tokensPrices[XTZ_TOKEN_SYMBOL]
 
   return (
     <EarnHistoryStyled>

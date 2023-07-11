@@ -1,22 +1,16 @@
+import { ApolloError, useSubscription } from '@apollo/client'
 import React, { useContext, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 
 // helpers
 import { normalizeDoormanChartsData } from './helpers/normalizer'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 // providers
-import { ApolloError, useSubscription } from '@apollo/client'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
-import {
-  Props,
-  StakeContext,
-  StakeContextStateType,
-  StakingSubsRecordType,
-  StakingSubsType,
-} from './stake.provider.types'
+import { StakeContext, StakeContextStateType, StakingSubsRecordType, StakingSubsType } from './stake.provider.types'
 import {
   SubscribeSmvkHistoryDataSubscription,
   SubscribeMvkTokenTotalSubscription,
@@ -24,41 +18,36 @@ import {
 } from 'utils/__generated__/graphql'
 
 // consts
-import { MVK_DECIMALS, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { UPDATE_USER_DATA } from 'reducers/actions/user.actions'
+import { MVK_DECIMALS } from 'utils/constants'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import {
   DEFAULT_STAKING_CTX,
   MVK_BALANCE_SUB,
   MVK_TOTAL_SUB,
-  DEFAULT_STAKING_SUBS,
+  DEFAULT_STAKING_ACTIVE_SUBS,
   SMVK_HISTORY_SUB,
 } from './helpers/stake.consts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import {
+  SUBSCRIPTION_STAKE_HISTORY,
   SUBSCRIPTION_ADDRESS_BALANCE_DATA,
   SUBSCRIPTION_MVK_TOKEN_TOTAL,
-  SUBSCRIPTION_STAKE_HISTORY,
-} from 'gql/subscriptions/stakingData'
-
-// TODO: remove after user balances live update is ready
-import { State as ReduxState } from 'reducers'
+} from './queries/doorman.query'
+import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
+type Props = {
+  children: React.ReactNode
+}
+
 const StakeProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
-
-  // TODO: remove after user balances live update is ready
-  const dispatch = useDispatch()
-  const { accountPkh, user } = useSelector((state: ReduxState) => state.wallet)
-  // TODO: move to context
   const {
-    doormanAddress: { address: doormanAddress },
-  } = useSelector((state: ReduxState) => state.contractAddresses)
+    contractAddresses: { doormanAddress },
+  } = useDappConfigContext()
 
   const [stakingCtxState, setStakingCtxState] = useState<StakeContextStateType>(DEFAULT_STAKING_CTX)
-  const [shouldSkip, setShouldSkip] = useState<StakingSubsRecordType>(DEFAULT_STAKING_SUBS)
+  const [activeSubs, setActiveSubs] = useState<StakingSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
 
   const handleSubError = (error: ApolloError, subName: StakingSubsType) => {
     console.error(`${subName} query error: `, error)
@@ -67,7 +56,7 @@ const StakeProvider = ({ children }: Props) => {
 
   // subscribes
   const { loading: isStakingHistoryLoading } = useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
-    skip: shouldSkip[SMVK_HISTORY_SUB],
+    skip: !activeSubs[SMVK_HISTORY_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
       updateStakeHistoryData(data)
@@ -76,7 +65,7 @@ const StakeProvider = ({ children }: Props) => {
   })
 
   const { loading: isMvkBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
-    skip: shouldSkip[MVK_BALANCE_SUB],
+    skip: !activeSubs[MVK_BALANCE_SUB] || !doormanAddress,
     variables: {
       _eq: doormanAddress,
     },
@@ -89,46 +78,12 @@ const StakeProvider = ({ children }: Props) => {
   })
 
   const { loading: isMvkTotalLoading } = useSubscription(SUBSCRIPTION_MVK_TOKEN_TOTAL, {
-    skip: shouldSkip[MVK_TOTAL_SUB],
+    skip: !activeSubs[MVK_TOTAL_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
       updateTotalMvkToken(data)
     },
     onError: (error) => handleSubError(error, MVK_TOTAL_SUB),
-    shouldResubscribe: true,
-  })
-
-  // TODO: remove after user balances live update is ready
-  const { loading: isUserBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
-    skip: shouldSkip.userBalance,
-    variables: {
-      _eq: accountPkh,
-    },
-    onData: ({ data: { data } }) => {
-      if (!data) return
-
-      const { mvk_balance = 0, smvk_balance = 0 } = data.mavryk_user[0]
-
-      dispatch({
-        type: UPDATE_USER_DATA,
-        userData: {
-          ...user,
-          userTokens: {
-            ...user.userTokens,
-            [MVK_TOKEN_SYMBOL]: {
-              ...user.userTokens[MVK_TOKEN_SYMBOL],
-              balance: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }),
-            },
-            [SMVK_TOKEN_SYMBOL]: {
-              ...user.userTokens[SMVK_TOKEN_SYMBOL],
-              balance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
-            },
-          },
-        },
-        accountPkh,
-      })
-    },
-    onError: (error) => handleSubError(error, 'userBalance'),
     shouldResubscribe: true,
   })
 
@@ -161,15 +116,17 @@ const StakeProvider = ({ children }: Props) => {
     }))
   }
 
+  const changeStakingSubscriptionsList = (newSkips: Partial<StakingSubsRecordType>) => {
+    setActiveSubs((prev) => ({ ...prev, ...newSkips }))
+  }
+
   const contextProviderValue = useMemo(() => {
-    const changeStakingSubscriptionsList = (newSkips: Partial<StakingSubsRecordType>) =>
-      setShouldSkip((prev) => ({ ...prev, ...newSkips }))
     return {
       ...stakingCtxState,
-      isLoading: isStakingHistoryLoading || isMvkBalanceLoading || isMvkTotalLoading || isUserBalanceLoading,
+      isLoading: isStakingHistoryLoading || isMvkBalanceLoading || isMvkTotalLoading,
       changeStakingSubscriptionsList,
     }
-  }, [isMvkBalanceLoading, isMvkTotalLoading, isStakingHistoryLoading, isUserBalanceLoading, stakingCtxState])
+  }, [stakingCtxState])
 
   return <stakeContext.Provider value={contextProviderValue}>{children}</stakeContext.Provider>
 }

@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 // Consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { SECONDARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { INFO_DEFAULT, INFO_ERROR } from 'app/App.components/Info/info.constants'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
 import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
@@ -17,16 +16,13 @@ import {
 } from './BecomeSatellite.conts'
 
 // providers
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // Actions
-import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
-import { getSatelliteConfig } from 'pages/Satellites/Satellites.actions'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // Types
-import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
-import { State } from 'reducers'
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 
 // Views
@@ -56,7 +52,23 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
+  REGISTER_SATELLITE_ACTION,
+  UPDATE_SATELLITE_ACTION,
+} from 'providers/SatellitesProvider/satellites.const'
+import { registerSatellite, updateSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+import { unknownToError } from 'errors/error'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { sleep } from 'utils/api/sleep'
+import { TezosWalletErrorPayload } from 'errors/error.type'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -68,51 +80,61 @@ const connectWalletMessage = (
 )
 
 export const BecomeSatellite = () => {
-  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
-  const dispatch = useDispatch()
-  const {
-    accountPkh = '',
-    user: {
-      userTokens,
-      isSatellite,
-      satelliteMvkIsDelegatedTo,
-      userAvatars: { mainAvatar = '/images/default-avatar.png' },
-    },
-  } = useSelector((state: State) => state.wallet)
   const {
     satelliteMapper,
-    config: { minimumStakedMvkBalance, isConfigLoaded, ...restSatelliteConfig },
-  } = useSelector((state: State) => state.satellites)
-  const { isActionActive } = useSelector((state: State) => state.loading)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
-  const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
+    setSatelliteAddressToSubsctibe,
+    changeSatellitesSubscriptionsList,
+    isLoading: isSatellitesLoading,
+  } = useSatellitesContext()
+  const {
+    userAddress,
+    isSatellite,
+    satelliteMvkIsDelegatedTo,
+    userAvatars: { mainAvatar },
+    userTokensBalances,
+  } = useUserContext()
+
+  const {
+    maxLengths: { satelliteDelegation },
+    contractAddresses: { delegationAddress },
+    preferences: { themeSelected },
+    globalLoadingState: { isActionActive },
+    minimumStakedMvkBalance,
+    setAction,
+    toggleActionCompletion,
+    toggleActionFullScreenLoader,
+  } = useDappConfigContext()
+
+  const { bug, info, loading } = useToasterContext()
 
   useEffect(() => {
-    changeStakingSubscriptionsList({
-      [MVK_BALANCE_SUB]: false,
-      [MVK_TOTAL_SUB]: false,
-      [SMVK_HISTORY_SUB]: false,
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: true,
     })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
   }, [])
 
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isConfigLoaded || isDepsChanged) {
-          await dispatch(getSatelliteConfig())
-        }
-      } catch (error) {}
-    },
-    [accountPkh],
-  )
+  useEffect(() => {
+    if (userAddress) {
+      setSatelliteAddressToSubsctibe(userAddress)
+    }
+    return () => setSatelliteAddressToSubsctibe(null)
+  }, [userAddress])
 
-  const balanceOverMinStakedMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= minimumStakedMvkBalance
-  const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null
+  const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
+
+  const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+
+  const balanceOverMinStakedMvk = userSmvkBalance >= minimumStakedMvkBalance
+  const usersSatelliteProfile = userAddress ? satelliteMapper[userAddress] : null
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
-  const [isChecked, setIsChecked] = useState(false)
   const pageText = getFormTextBasedOnUserRole(isSatellite)
   const isUserOracle = Boolean(usersSatelliteProfile?.peerId || usersSatelliteProfile?.publicKey)
+  const [isChecked, setIsChecked] = useState(isUserOracle)
   const showOracleWarning = isUserOracle && !isChecked
 
   const [showUnregisterPopup, setShowUnregisterPopup] = useState(false)
@@ -146,8 +168,8 @@ export const BecomeSatellite = () => {
       return text !== DEFAULT_BECOME_SATELLITE_FORM[key as keyof BecomeSatelliteFormStateType].text
     })
 
-    return !balanceOverMinStakedMvk || !accountPkh || !formIsValid || !hasChangedValues
-  }, [accountPkh, balanceOverMinStakedMvk, form, isChecked, usersSatelliteProfile])
+    return !balanceOverMinStakedMvk || !userAddress || !formIsValid || !hasChangedValues
+  }, [userAddress, balanceOverMinStakedMvk, form, isChecked, usersSatelliteProfile])
 
   // Set satellite data if user is satellite
   useEffect(() => {
@@ -170,13 +192,7 @@ export const BecomeSatellite = () => {
     } else {
       setForm(DEFAULT_BECOME_SATELLITE_FORM)
     }
-  }, [usersSatelliteProfile, accountPkh])
-
-  // Set checkbox === true if satellite is oracle
-  useEffect(() => {
-    if (isChecked === isUserOracle) return
-    setIsChecked(isUserOracle)
-  }, [isUserOracle])
+  }, [usersSatelliteProfile, userAddress])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string; value: string } },
@@ -194,7 +210,7 @@ export const BecomeSatellite = () => {
           ...form,
           [name]: {
             text: `${value.substring(0, value.length - 1)}%`,
-            status: getInputValidationStatus(name, value.substring(0, value.length - 1), restSatelliteConfig),
+            status: getInputValidationStatus(name, value.substring(0, value.length - 1), satelliteDelegation),
           },
         })
       } else {
@@ -202,12 +218,111 @@ export const BecomeSatellite = () => {
           ...form,
           [name]: {
             text: `${value.replace('%', '')}%`,
-            status: getInputValidationStatus(name, value.replace('%', ''), restSatelliteConfig),
+            status: getInputValidationStatus(name, value.replace('%', ''), satelliteDelegation),
           },
         })
       }
     } else {
-      setForm({ ...form, [name]: { text: value, status: getInputValidationStatus(name, value, restSatelliteConfig) } })
+      setForm({ ...form, [name]: { text: value, status: getInputValidationStatus(name, value, satelliteDelegation) } })
+    }
+  }
+
+  const handleRegister = async (requestData: RegisterAsSatelliteForm) => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!delegationAddress) {
+      bug('Wrong delegation address.')
+      return
+    }
+
+    try {
+      const actionResult = await registerSatellite(
+        userAddress,
+        requestData,
+        delegationAddress,
+        satelliteMvkIsDelegatedTo,
+      )
+      if (checkIfActionSuccess(actionResult)) {
+        const { operation } = actionResult
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
+        info(
+          TOASTER_ACTIONS_TEXTS[REGISTER_SATELLITE_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[REGISTER_SATELLITE_ACTION]['start']['title'],
+        )
+        await sleep(5000)
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        toggleActionFullScreenLoader(false)
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+        setAction({ actionName: REGISTER_SATELLITE_ACTION, toasterId, operationLvl })
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
+      setAction(null)
+      const parsedError = unknownToError(e)
+      bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
+    }
+  }
+
+  const handleUpdate = async (requestData: RegisterAsSatelliteForm) => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
+      return
+    }
+
+    try {
+      const actionResult = await updateSatellite(requestData, delegationAddress)
+      if (checkIfActionSuccess(actionResult)) {
+        const { operation } = actionResult
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
+        info(
+          TOASTER_ACTIONS_TEXTS[UPDATE_SATELLITE_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[UPDATE_SATELLITE_ACTION]['start']['title'],
+        )
+        await sleep(5000)
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        toggleActionFullScreenLoader(false)
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+        setAction({ actionName: UPDATE_SATELLITE_ACTION, toasterId, operationLvl })
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
+      setAction(null)
+      const parsedError = unknownToError(e)
+      bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
     }
   }
 
@@ -226,9 +341,10 @@ export const BecomeSatellite = () => {
       ? { ...mainRequestForm, peerId: form.oraclePeerId.text, publicKey: form.oraclePublicKey.text }
       : mainRequestForm
 
+    // TODO add try catch
     usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered
-      ? await dispatch(updateSatelliteRecord(requestData))
-      : await dispatch(registerAsSatellite(requestData))
+      ? await handleUpdate(requestData)
+      : await handleRegister(requestData)
   }
 
   const tooltipPublicKey = (
@@ -249,6 +365,9 @@ export const BecomeSatellite = () => {
     />
   )
 
+  // TODO: show no found, redirect?
+  if (!usersSatelliteProfile) return null
+
   return (
     <>
       <Page>
@@ -263,7 +382,7 @@ export const BecomeSatellite = () => {
 
         <PageContent>
           <div>
-            {isLoading || isDoormanLoading ? (
+            {isSatellitesLoading ? (
               <DataLoaderWrapper>
                 <ClockLoader width={150} height={150} />
                 <div className="text">Loading satellite data</div>
@@ -312,14 +431,10 @@ export const BecomeSatellite = () => {
                   endingText={'MVK'}
                 />
 
-                {accountPkh ? (
+                {userAddress ? (
                   <BecomeSatelliteFormBalanceCheck balanceOk={balanceOverMinStakedMvk}>
                     <Icon id={balanceOverMinStakedMvk ? 'check-stroke' : 'close-stroke'} />
-                    <CommaNumber
-                      value={userTokens[SMVK_TOKEN_SYMBOL].balance}
-                      beginningText={'Currently staking'}
-                      endingText={'MVK'}
-                    />
+                    <CommaNumber value={userSmvkBalance} beginningText={'Currently staking'} endingText={'MVK'} />
                   </BecomeSatelliteFormBalanceCheck>
                 ) : (
                   connectWalletMessage
@@ -361,7 +476,7 @@ export const BecomeSatellite = () => {
                   onChange={handleChange}
                   inputStatus={form.description.status}
                   name={'description'}
-                  textAreaMaxLimit={restSatelliteConfig.satelliteDescriptionMaxLength}
+                  textAreaMaxLimit={satelliteDelegation.satelliteDescriptionMaxLength}
                   label={pageText.descrInputLabel}
                 />
 
@@ -499,7 +614,7 @@ export const BecomeSatellite = () => {
       </Page>
 
       <UnregisterPopup
-        show={usersSatelliteProfile && showUnregisterPopup}
+        show={showUnregisterPopup}
         closePopup={() => setShowUnregisterPopup(false)}
         satellite={usersSatelliteProfile}
       />

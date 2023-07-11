@@ -2,9 +2,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { LoansPopupsAddressInputStateType, ManagePermissionsPopupDataType } from './Modals.helpers'
+import { ManagePermissionsPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { State } from 'reducers'
 import { validateTzAddress } from 'utils/validatorFunctions'
 
@@ -45,13 +45,11 @@ export const ManagePermissions = ({
   show: boolean
   data: ManagePermissionsPopupDataType
 }) => {
-  const { vaultAddress = '', deporsitorsFlag, depositors = [] } = data ?? {}
-
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const [tableData, setTableData] = useState<Array<LoansPopupsAddressInputStateType>>([
+  const [tableData, setTableData] = useState<Array<{ address: string; validationStatus: InputStatusType }>>([
     { address: '', validationStatus: '' },
   ])
 
@@ -73,38 +71,33 @@ export const ManagePermissions = ({
   }
 
   useEffect(() => {
-    if (!show) {
+    if (!show || !data) {
       setTableData([{ address: '', validationStatus: '' }])
       setChosenDdItem(undefined)
     } else {
+      const { deporsitorsFlag, depositors } = data
       // set initial data based on selected vault
       handleOnClickDropdownItem(deporsitorsFlag ?? '')
       setTableData(
         depositors.map((depositorAddress) => ({ address: depositorAddress, validationStatus: INPUT_STATUS_SUCCESS })),
       )
     }
-  }, [show])
+  }, [data, show])
 
-  const isActionDisabled = useMemo(() => {
-    const isInvalidTable =
-      chosenDdItem?.id === WHITELIST_USERS &&
-      tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS)
+  if (!data) return null
 
-    const isNoChanges =
-      tableData.length === depositors.length &&
+  const { vaultAddress, deporsitorsFlag, depositors } = data
+
+  const isActionDisabled =
+    (chosenDdItem?.id === WHITELIST_USERS &&
+      tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS)) ||
+    (tableData.length === depositors.length &&
       tableData.every(({ address }) => depositors.includes(address)) &&
-      deporsitorsFlag === chosenDdItem?.id
+      deporsitorsFlag === chosenDdItem?.id) ||
+    !chosenDdItem
 
-    return isInvalidTable || !chosenDdItem || !vaultAddress || isNoChanges
-  }, [chosenDdItem, deporsitorsFlag, depositors, tableData, vaultAddress])
-
-  const handleAddRow = () => {
-    setTableData(tableData.concat([{ address: '', validationStatus: '' }]))
-  }
-
-  const handleDeleteRow = (rowId: number) => {
-    setTableData(tableData.filter((_, idx) => idx !== rowId))
-  }
+  const handleAddRow = () => setTableData(tableData.concat([{ address: '', validationStatus: '' }]))
+  const handleDeleteRow = (rowId: number) => setTableData(tableData.filter((_, idx) => idx !== rowId))
 
   const updateTableDataState = (newValue: string, rowIdx: number) => {
     const validationStatus =

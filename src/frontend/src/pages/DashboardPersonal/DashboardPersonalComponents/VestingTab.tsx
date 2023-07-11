@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import dayjs from 'dayjs'
 
@@ -11,22 +11,89 @@ import Button from 'app/App.components/Button/NewButton'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { parseDate } from 'utils/time'
 import { PORTFOLIO_TAB_ID } from '../DashboardPersonal.utils'
-import { claimVestingReward } from '../DashboardPersonal.actions'
 import { UserActionHistory } from './UserOperationsHistory'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
+import { claimVestingReward } from 'providers/UserProvider/actions/user.actions'
+import { sleep } from 'utils/api/sleep'
+import { CLAIM_VESTING_REWARD_ACTION } from 'providers/UserProvider/helpers/user.consts'
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { TezosWalletErrorPayload } from 'errors/error.type'
+import { unknownToError } from 'errors/error'
 
 const VestingTab = () => {
-  const dispatch = useDispatch()
   const { vesteesMapper } = useSelector((state: State) => state.vesting)
-  const { isActionActive } = useSelector((state: State) => state.loading)
   const { accountPkh = '' } = useSelector((state: State) => state.wallet)
+
+  const { bug, info, loading } = useToasterContext()
+  const {
+    setAction,
+    toggleActionCompletion,
+    toggleActionFullScreenLoader,
+    contractAddresses: { vestingAddress },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
   const vesteeRecord = vesteesMapper[accountPkh]
 
   if (!vesteeRecord) return <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`} />
 
   // TODO: test claim vestee reward action
-  const handleClaimVestingReward = async () => await dispatch(claimVestingReward())
+  const handleClaimVestingReward = async () => {
+    if (!accountPkh) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return
+    }
+    if (!vestingAddress) {
+      bug('Wrong vesting address')
+      return
+    }
+
+    try {
+      const actionResult = await claimVestingReward(vestingAddress)
+
+      if (checkIfActionSuccess(actionResult)) {
+        const { operation } = actionResult
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
+
+        info(
+          TOASTER_ACTIONS_TEXTS[CLAIM_VESTING_REWARD_ACTION]['start']['message'],
+          TOASTER_ACTIONS_TEXTS[CLAIM_VESTING_REWARD_ACTION]['start']['title'],
+        )
+
+        await sleep(5000)
+
+        // show toaster loader after 5000ms after operation started
+        const toasterId = loading(
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+        )
+
+        toggleActionFullScreenLoader(false)
+
+        const operationConfirm = await operation.confirmation()
+        const operationLvl = operationConfirm.block.header.level
+
+        setAction({ actionName: CLAIM_VESTING_REWARD_ACTION, toasterId, operationLvl })
+      } else if (isContractErrorPayload(actionResult.error)) {
+        const { message, description } = actionResult.error as TezosWalletErrorPayload
+        bug(description, message)
+      } else {
+        throw new Error(actionResult.error?.message)
+      }
+    } catch (e) {
+      setAction(null)
+      const parsedError = unknownToError(e)
+      bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
+    }
+  }
 
   const { vestingMonth, totalAllocated, totalRemainded, rewardPerMonth, nextRewardDate, lastClaimDate } = vesteeRecord
 

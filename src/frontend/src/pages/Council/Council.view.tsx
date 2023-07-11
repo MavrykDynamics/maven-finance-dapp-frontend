@@ -30,7 +30,6 @@ import {
   calculateSlicePositions,
   getPageNumber,
 } from 'app/App.components/Pagination/pagination.consts'
-import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // styles
 import {
@@ -42,7 +41,9 @@ import {
 } from './Council.style'
 
 // types
-import { CouncilMaxLength, CouncilActionType, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
+import { CouncilActionType, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
+import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // actions
 import { propagateBreakGlass } from '../BreakGlassCouncil/BreakGlassCouncil.actions'

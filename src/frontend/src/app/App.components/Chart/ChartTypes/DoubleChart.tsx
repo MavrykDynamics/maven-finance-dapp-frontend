@@ -1,6 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
 import { createChart, BusinessDay, UTCTimestamp, SingleValueData, CandlestickData } from 'lightweight-charts'
-import { useSelector } from 'react-redux'
 
 import styleColors from 'styles/colors'
 import { parseDate } from 'utils/time'
@@ -24,7 +23,7 @@ import {
   DoubleChartPropsType,
   HISTOGRAM_CHART_TYPE,
 } from '../helpers/Chart.types'
-import { State } from 'reducers'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const DoubleChart = ({
   settings,
@@ -34,7 +33,9 @@ export const DoubleChart = ({
   tooltipAssetFirst,
   tooltipAssetSecond,
 }: DoubleChartPropsType) => {
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const {
     height,

@@ -1,6 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
 import { createChart, BusinessDay, UTCTimestamp, SingleValueData } from 'lightweight-charts'
-import { useSelector } from 'react-redux'
 
 import styleColors from 'styles/colors'
 import { parseDate } from 'utils/time'
@@ -14,12 +13,12 @@ import {
   DEFAULT_CROSSHAIR_SETTING,
   checkPlotType,
 } from '../helpers/Chart.const'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 import ChartTooltip, { AMOUNT_DATE_TOOLTIP } from '../Tooltips/ChartTooltip'
 import { ChartStyled } from '../Chart.style'
 
 import { AreaChartPropsType } from '../helpers/Chart.types'
-import { State } from 'reducers'
 
 export const HistogramChart = ({
   settings,
@@ -28,7 +27,9 @@ export const HistogramChart = ({
   tooltipName = AMOUNT_DATE_TOOLTIP,
   tooltipAsset,
 }: AreaChartPropsType) => {
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const {
     height,

@@ -23,6 +23,9 @@ import { parseDate } from 'utils/time'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { useSelector } from 'react-redux'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
 
 export const LoansTxTab = ({
   txVariant,
@@ -31,11 +34,11 @@ export const LoansTxTab = ({
 }: {
   txVariant: 'lending' | 'borrowing'
   isUserLoansLoading: boolean
-  userLoansData: State['wallet']['user']['userLoansData']
+  userLoansData: UserLoansDataStateType['userLendings'] | UserLoansDataStateType['userBorrowings']
 }) => {
+  const { tokensMetadata } = useTokensContext()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const isLending = txVariant === 'lending'
-  const dataToShow = isLending ? userLoansData.userLendings : userLoansData.userBorrowing
 
   return (
     <LBHInfoBlock>
@@ -45,7 +48,7 @@ export const LoansTxTab = ({
         <div className="loader-wrapper">
           <ClockLoader />
         </div>
-      ) : dataToShow.length ? (
+      ) : userLoansData.length ? (
         <TableScrollable bodyHeight={230} className="treasury-table dashboard-loans-table scroll-block">
           <Table>
             <TableHeader className="dashboard-loans">
@@ -59,7 +62,11 @@ export const LoansTxTab = ({
             </TableHeader>
 
             <TableBody className="dashboard-loans treasury">
-              {dataToShow.map(({ icon, amount, annualPecentage, operationHash, symbol, date, id }) => {
+              {userLoansData.map(({ amount, annualPecentage, operationHash, date, id, tokenAddress }) => {
+                const token = getTokenDataByAddress({ tokenAddress, tokensMetadata })
+                if (!token) return null
+
+                const { icon, symbol } = token
                 return (
                   <TableRow rowHeight={55} borderColor="cardBorderColor" className="add-hover" key={id + operationHash}>
                     <TableCell width="20%">

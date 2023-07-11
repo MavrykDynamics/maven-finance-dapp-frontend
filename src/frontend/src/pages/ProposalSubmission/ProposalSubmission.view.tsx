@@ -53,21 +53,26 @@ import {
 import { getBytesDiff, getPaymentsDiff } from './ProposalSubmission.helpers'
 import { dropProposal, lockProposal, submitProposal, updateProposalData } from './ProposalSubmission.actions'
 
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const dispatch = useDispatch()
   const history = useHistory()
 
-  const {
-    accountPkh,
-    user: { isNewlyRegisteredSatellite },
-  } = useSelector((state: State) => state.wallet)
+  const { tokensMetadata } = useTokensContext()
+  const { userAddress, isNewlyRegisteredSatellite } = useUserContext()
+
   const {
     currentRoundProposalsIds,
     proposalsMapper,
     config: { fee, governancePhase },
   } = useSelector((state: State) => state.governance)
-  const { whitelistTokens, dipDupTokens } = useSelector((state: State) => state.tokens)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [activeTab, setActiveTab] = useState(1)
@@ -76,7 +81,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   // this object represents ds we can use with stages, to interact with in tables, inputs, etc
   const [proposalKeys, mappedProposals, mappedValidation] = useMemo(() => {
     const { keys, mapper, validityObj } = currentRoundProposalsIds
-      .filter((proposalId) => proposalsMapper[proposalId].proposerId === accountPkh)
+      .filter((proposalId) => proposalsMapper[proposalId].proposerId === userAddress)
       .reduce<SubmittedProposalsMapper>(
         (acc, proposalId) => {
           const proposal = proposalsMapper[proposalId]
@@ -110,7 +115,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       ]
     }
     return [keys, mapper, validityObj]
-  }, [accountPkh, currentRoundProposalsIds, proposalsMapper])
+  }, [userAddress, currentRoundProposalsIds, proposalsMapper])
 
   // mapping user created proposals to tabs buttons data
   const usersProposalsToSwitch = useMemo(
@@ -190,8 +195,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       const payments = getPaymentsDiff(
         [],
         currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
-        whitelistTokens,
-        dipDupTokens,
+        tokensMetadata,
       )
 
       await dispatch(
@@ -218,8 +222,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       const paymentsDiff = getPaymentsDiff(
         currentProposalOnRemote.proposalPayments,
         currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
-        whitelistTokens,
-        dipDupTokens,
+        tokensMetadata,
       )
       await dispatch(updateProposalData(proposalId, bytesDiff, paymentsDiff))
     }
