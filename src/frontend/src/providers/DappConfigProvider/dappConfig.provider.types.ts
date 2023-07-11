@@ -8,8 +8,9 @@ import { SatelliteActionsType } from 'providers/SatellitesProvider/satellites.pr
 import { ExtendedError } from 'errors/error'
 import { TezosWalletErrorPayload } from 'errors/error.type'
 import { ThemeType } from 'consts/theme.const'
+import { LoansActionsType } from 'providers/LoansProvider/loans.provider.types'
 
-export type ActionTypes = StakeActionType | UserActionsType | SatelliteActionsType
+export type ActionTypes = StakeActionType | UserActionsType | SatelliteActionsType | LoansActionsType
 
 export type DappConfigContext = {
   // data
