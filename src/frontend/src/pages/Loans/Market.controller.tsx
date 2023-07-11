@@ -44,7 +44,7 @@ import {
 import { EmptyContainer } from 'app/App.style'
 
 export const Market = () => {
-  const history = useHistory()
+  const history = useHistory<{ from?: string }>()
   const dispatch = useDispatch()
   const { assetAddress, tabId } = useParams<{ assetAddress: string; tabId: string }>()
 
@@ -172,7 +172,7 @@ export const Market = () => {
   const marketPagination = (
     <MarketPagination>
       <Button
-        onClick={() => history.goBack()}
+        onClick={() => history.push(history.location.state?.from ?? '/loans')}
         text="Go Back"
         icon="arrowRight"
         className="arrow"
@@ -181,7 +181,12 @@ export const Market = () => {
 
       <div className="right-side-wrapper">
         {prevMarketAddress ? (
-          <Link to={`/loans/${prevMarketAddress}/${tabId}`}>
+          <Link
+            to={{
+              pathname: `/loans/${prevMarketAddress}/${tabId}`,
+              state: { from: history.location.state?.from },
+            }}
+          >
             <span className="left">
               <Icon id="paginationArrowLeft" /> Previous Market
             </span>
@@ -189,7 +194,12 @@ export const Market = () => {
         ) : null}
 
         {nextMarketAddress ? (
-          <Link to={`/loans/${nextMarketAddress}/${tabId}`}>
+          <Link
+            to={{
+              pathname: `/loans/${nextMarketAddress}/${tabId}`,
+              state: { from: history.location.state?.from },
+            }}
+          >
             <span className="right">
               Next Market
               <Icon id="paginationArrowLeft" />

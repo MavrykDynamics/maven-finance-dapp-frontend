@@ -145,12 +145,12 @@ export const LoansPositionTable = ({
                               <CommaNumber
                                 value={convertNumberForClient({ number: interestEarned, grade: decimals })}
                               />
-                              <Link to={`/loans/${address}/${LEND_TAB_ID}`}>
+                              <Link to={{ pathname: `/loans/${address}/${LEND_TAB_ID}`, state: { from: pathname } }}>
                                 <Button kind={BUTTON_SIMPLE}>View</Button>
                               </Link>
                             </>
                           ) : (
-                            <Link to={`/loans/${address}/${LEND_TAB_ID}`}>
+                            <Link to={{ pathname: `/loans/${address}/${LEND_TAB_ID}`, state: { from: pathname } }}>
                               <Button
                                 kind={BUTTON_SIMPLE}
                                 onClick={() => {
@@ -180,12 +180,12 @@ export const LoansPositionTable = ({
                               <div className={`vault-status ${averageVaultStatus.status}`}>
                                 {averageVaultStatus.text}
                               </div>
-                              <Link to={`/loans/${address}/${BORROW_TAB_ID}`}>
+                              <Link to={{ pathname: `/loans/${address}/${BORROW_TAB_ID}`, state: { from: pathname } }}>
                                 <Button kind={BUTTON_SIMPLE}>View</Button>
                               </Link>
                             </>
                           ) : (
-                            <Link to={`/loans/${address}/${BORROW_TAB_ID}`}>
+                            <Link to={{ pathname: `/loans/${address}/${BORROW_TAB_ID}`, state: { from: pathname } }}>
                               <Button
                                 kind={BUTTON_SIMPLE}
                                 onClick={() =>

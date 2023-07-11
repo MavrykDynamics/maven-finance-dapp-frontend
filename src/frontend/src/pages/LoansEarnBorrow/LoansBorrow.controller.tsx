@@ -95,7 +95,7 @@ export const LoansBorrow = () => {
           tokensMetadata,
         })
 
-        if (!token || !token.rate) return acc
+        if (!token || !token.rate || !market) return acc
 
         const { symbol, icon, rate: price, address } = token
 
@@ -118,7 +118,7 @@ export const LoansBorrow = () => {
   )
 
   const handleSetNewlyCreatedVaultAddress = (marketAddress: string) => (address: string) => {
-    history.replace(`/loans/${marketAddress}/borrowTab?vaultAddress=${address}`)
+    history.push(`/loans/${marketAddress}/borrowTab?vaultAddress=${address}`, { from: '/loans/borrow' })
   }
 
   const handleBorrow = (marketTokenAddress: string) => {
@@ -171,7 +171,7 @@ export const LoansBorrow = () => {
 
       if (!validVault) return
 
-      history.push(`/loans/${validVault.borrowedTokenAddress}/borrowTab`)
+      history.push(`/loans/${validVault.borrowedTokenAddress}/borrowTab`, { from: '/loans/borrow' })
     }
   }
 

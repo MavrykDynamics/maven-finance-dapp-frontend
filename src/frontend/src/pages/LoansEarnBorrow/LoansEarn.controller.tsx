@@ -70,18 +70,19 @@ export const LoansEarn = () => {
   const markets = useMemo(
     () =>
       marketsAddresses.reduce<MarketType[]>((acc, marketAddress) => {
-        const { lendingAPY, loanMTokenAddress, loanTokenAddress } = marketsMapper[marketAddress]
-        const chartData = marketLendingChart[loanTokenAddress] ?? []
+        const market = marketsMapper[marketAddress]
+        const chartData = marketLendingChart[marketAddress] ?? []
 
         const token = getTokenDataByAddress({
-          tokenAddress: loanTokenAddress,
+          tokenAddress: marketAddress,
           tokensPrices,
           tokensMetadata,
         })
 
-        if (!token || !token.rate) return acc
+        if (!token || !token.rate || !market) return acc
 
         const { rate: price, decimals, icon, symbol, address } = token
+        const { lendingAPY, loanMTokenAddress } = market
 
         const { lendValue = 0, interestEarned = 0 } = userMTokens[loanMTokenAddress] ?? {}
 
@@ -112,7 +113,7 @@ export const LoansEarn = () => {
 
     //  if the user has already supplied to the specific asset pool we will route to asset market
     if (lendItem) {
-      history.push(`/loans/${marketTokenAddress}/lendingTab`)
+      history.push(`/loans/${marketTokenAddress}/lendingTab`, { from: '/loans/earn' })
       return
     } else {
       openAddLendingAssetPopup({
