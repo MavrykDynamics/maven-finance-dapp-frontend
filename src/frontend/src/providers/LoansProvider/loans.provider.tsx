@@ -1,5 +1,5 @@
 import { ApolloError, useSubscription } from '@apollo/client'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
 // context
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -12,12 +12,7 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import { GET_LOANS_CONFIG, GET_LOANS_MARKET_ADDRESSES, getLoansMarketsSubscription } from './queries/loansMarkets.query'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import {
-  DEFAULT_LOANS_ACTIVE_SUBS,
-  LOANS_CONFIG,
-  LOANS_MARKETS_ADDRESSES,
-  LOANS_MARKETS_DATA,
-} from './helpers/loans.const'
+import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_CONFIG, LOANS_MARKETS_DATA } from './helpers/loans.const'
 
 // helpers
 import { normalizeLoansConfig, normalizeLoansMarkets } from './helpers/loansMarkets.normalizer'
@@ -61,14 +56,14 @@ export const LoansProvider = ({ children }: Props) => {
    *
    * NOTE: loader will be shown only when we set or unset specific satellite address
    **/
-  useEffect(() => {
+  useLayoutEffect(() => {
     const isLoadingNotLoadedSingleMarket =
       marketAddressToSubscribe && !loansCtxState.marketsMapper[marketAddressToSubscribe]
     const isLoadingAllSatellitesMetadata =
       !marketAddressToSubscribe &&
       Object.keys(loansCtxState.marketsMapper).length !== loansCtxState.marketsAddresses.length
 
-    if (activeSubs[LOANS_MARKETS_ADDRESSES] && (isLoadingNotLoadedSingleMarket || isLoadingAllSatellitesMetadata)) {
+    if (activeSubs[LOANS_MARKETS_DATA] && (isLoadingNotLoadedSingleMarket || isLoadingAllSatellitesMetadata)) {
       setIsMarketLoading(true)
     }
   }, [marketAddressToSubscribe])
@@ -84,12 +79,12 @@ export const LoansProvider = ({ children }: Props) => {
 
       updateMarketsContext(data)
     },
-    onError: (error) => handleSubError(error, LOANS_MARKETS_ADDRESSES),
+    onError: (error) => handleSubError(error, LOANS_MARKETS_DATA),
   })
 
   const { loading: isMarketsAddressesLoading } = useSubscription(GET_LOANS_MARKET_ADDRESSES, {
+    skip: !activeSubs[LOANS_MARKETS_DATA],
     shouldResubscribe: true,
-    skip: !activeSubs[LOANS_MARKETS_ADDRESSES],
     onData: ({ data: { data } }) => {
       if (!data) return
 
@@ -100,7 +95,7 @@ export const LoansProvider = ({ children }: Props) => {
         ),
       }))
     },
-    onError: (error) => handleSubError(error, LOANS_MARKETS_ADDRESSES),
+    onError: (error) => handleSubError(error, LOANS_MARKETS_DATA),
   })
 
   const { loading: isLoansConfigLoading } = useSubscription(GET_LOANS_CONFIG, {
@@ -121,6 +116,7 @@ export const LoansProvider = ({ children }: Props) => {
     setLoansCtxState((prev) => ({
       ...prev,
       marketsMapper: { ...prev.marketsMapper, ...newMarkets },
+      marketsAddresses: Array.from(new Set([...prev.marketsAddresses, ...Object.keys(newMarkets)])),
     }))
 
     if (isMarketLoading) setIsMarketLoading(false)

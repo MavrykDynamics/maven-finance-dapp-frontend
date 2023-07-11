@@ -90,7 +90,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   })
 
   const { loading: satellitesAddressesLoading } = useSubscription(SATELLITES_ADDRESSES_SUBSCRIPTION, {
-    skip: !activeSubs[SATELLITE_PARTICIPATION_DATA_SUB],
+    skip: !activeSubs[SATELLITE_DATA_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
       setSatellitesCtxState((prev) => ({

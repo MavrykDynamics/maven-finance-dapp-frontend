@@ -32,11 +32,7 @@ import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import {
-  LOANS_MARKETS_DATA,
-  LOANS_MARKETS_ADDRESSES,
-  DEFAULT_LOANS_ACTIVE_SUBS,
-} from 'providers/LoansProvider/helpers/loans.const'
+import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -66,7 +62,6 @@ export const LoansBorrow = () => {
   useEffect(() => {
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
-      [LOANS_MARKETS_ADDRESSES]: true,
     })
 
     return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
@@ -106,7 +101,7 @@ export const LoansBorrow = () => {
           annualRate: market.borrowAPR,
           annualRateName: 'APR',
           leftValue: userVaultsData[marketTokenAddress]?.borrowedAmount ?? 0,
-          rightValue: userVaultsData[marketTokenAddress]?.collateralAmount ?? 0,
+          rightValue: userVaultsData[marketTokenAddress]?.allVaultsCollateralAmount ?? 0,
           totalAmount: chartData.at(-1)?.value ?? 0,
           price,
           chartData,
@@ -147,9 +142,7 @@ export const LoansBorrow = () => {
 
     // if we don't have valid vault to borrow, open create new vault popup
     if (!validVaultId) {
-      const marketAddress = marketsAddresses.find((marketCtxAddress) => marketTokenAddress === marketCtxAddress)
-      const market = marketAddress ? marketsMapper[marketAddress] : null
-
+      const market = marketsMapper[marketTokenAddress]
       const marketToken = getTokenDataByAddress({
         tokenAddress: marketTokenAddress,
         tokensMetadata,

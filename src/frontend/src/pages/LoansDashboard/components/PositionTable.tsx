@@ -116,8 +116,10 @@ export const LoansPositionTable = ({
                   const { lendValue = 0, interestEarned = 0 } = lendingItem ?? {}
 
                   const averageVaultStatus = getGaugeVaultRiskSimpleStatus(
-                    marketVaultsUserData?.collateralAmount
-                      ? (marketVaultsUserData.borrowedAmount / (marketVaultsUserData.collateralAmount / 2)) * 100
+                    marketVaultsUserData?.borrowedVaultsCollateralAmount
+                      ? (marketVaultsUserData.borrowedAmount /
+                          (marketVaultsUserData.borrowedVaultsCollateralAmount / 2)) *
+                          100
                       : 0,
                   )
 

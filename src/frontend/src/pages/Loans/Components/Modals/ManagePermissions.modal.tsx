@@ -26,8 +26,8 @@ import {
   VAULT_ALLOWANCE_ANY,
   VAULT_ALLOWANCE_ACCOUNTS,
 } from 'pages/Loans/Loans.const'
-import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { LoanVaultAllowanceType } from 'providers/LoansProvider/loans.provider.types'
+import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
 const ddItems = [
   { text: 'Vault Owner', value: NONE_USER },

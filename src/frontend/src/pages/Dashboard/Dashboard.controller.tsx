@@ -36,11 +36,7 @@ import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
 } from 'providers/SatellitesProvider/satellites.const'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import {
-  DEFAULT_LOANS_ACTIVE_SUBS,
-  LOANS_MARKETS_ADDRESSES,
-  LOANS_MARKETS_DATA,
-} from 'providers/LoansProvider/helpers/loans.const'
+import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
 
 // TODO: add farms when their data loading will be fixed and up
 export const Dashboard = () => {
@@ -72,7 +68,6 @@ export const Dashboard = () => {
     })
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
-      [LOANS_MARKETS_ADDRESSES]: true,
     })
 
     return () => {

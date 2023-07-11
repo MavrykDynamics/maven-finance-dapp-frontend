@@ -1,10 +1,8 @@
-import { useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, Redirect, Route, Switch, useParams } from 'react-router-dom'
 
-import { State } from 'reducers'
-
 import { CHART_TEST_DATA } from '../tabs.const'
+import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
 import { BUTTON_NAVIGATION, BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import {
   isValidPersonalDashboardSecondaryTabId,
@@ -26,6 +24,7 @@ import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 type PortfolioTabProps = {
   xtzAmount: number
@@ -53,6 +52,16 @@ const PortfolioTab = ({
   const { secondaryTabId } = useParams<{ secondaryTabId: string }>()
 
   const { availableLoansRewards, userAddress } = useUserContext()
+
+  const { changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
+
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+    })
+
+    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+  }, [])
 
   const portfolioActiveTab = useMemo(
     () => (isValidPersonalDashboardSecondaryTabId(secondaryTabId) ? secondaryTabId : PORTFOLIO_LENDING_TAB_ID),

@@ -30,11 +30,7 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import {
-  LOANS_MARKETS_DATA,
-  LOANS_MARKETS_ADDRESSES,
-  DEFAULT_LOANS_ACTIVE_SUBS,
-} from 'providers/LoansProvider/helpers/loans.const'
+import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
 
 export type GaugeChartStateType = {
   maxValue: number
@@ -83,7 +79,6 @@ export const LoansDashboard = () => {
   useEffect(() => {
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
-      [LOANS_MARKETS_ADDRESSES]: true,
     })
 
     return () => {
@@ -91,74 +86,62 @@ export const LoansDashboard = () => {
     }
   }, [])
 
-  const { totalBorrowed, totalLended } = marketsAddresses.reduce<{
-    totalLended: number
-    totalBorrowed: number
-  }>(
-    (acc, marketTokenAddress) => {
-      const { totalBorrowed, totalLended, loanTokenAddress } = marketsMapper[marketTokenAddress]
-      const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
-      if (!token || !token.rate) return acc
-
-      const { decimals, rate } = token
-
-      acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
-      acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
-      return acc
-    },
-    {
-      totalLended: 0,
-      totalBorrowed: 0,
-    },
-  )
-
   // calc data for gauge chart
-  const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {
+  const { vaultRiskGaugeData, apyGaugeData, totalBorrowed, totalLended } = useMemo((): {
     vaultRiskGaugeData: GaugeChartStateType
     apyGaugeData: GaugeChartStateType
+    totalLended: number
+    totalBorrowed: number
   } => {
-    const { borrowedAmount, borrowCapacity, totalSuppliedValue, sumOfRatioSuppliedToAPY, sumOfRatioBorrowedToAPR } =
-      marketsAddresses.reduce<{
-        borrowedAmount: number
-        borrowCapacity: number
-        totalSuppliedValue: number
-        sumOfRatioSuppliedToAPY: number
-        sumOfRatioBorrowedToAPR: number
-      }>(
-        (acc, marketTokenAddress) => {
-          const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress } = marketsMapper[marketTokenAddress]
-          const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
-          if (!token || !token.rate) return acc
+    const {
+      borrowedAmount,
+      borrowCapacity,
+      totalSuppliedValue,
+      sumOfRatioSuppliedToAPY,
+      sumOfRatioBorrowedToAPR,
+      totalBorrowed,
+      totalLended,
+    } = marketsAddresses.reduce(
+      (acc, marketTokenAddress) => {
+        const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress, totalLended, totalBorrowed } =
+          marketsMapper[marketTokenAddress]
+        const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
+        if (!token || !token.rate) return acc
 
-          let borrowedPerMarket = 0
+        let borrowedPerMarket = 0
 
-          const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
+        const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
 
-          const { decimals, rate } = token
+        const { decimals, rate } = token
 
-          const conveterLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
+        const conveterLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
 
-          const { borrowedAmount = 0, collateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
+        const { borrowedAmount = 0, borrowedVaultsCollateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
 
-          // calculating value risk data & how much borrowed per vault
-          acc.borrowCapacity += collateralAmount / 2 - borrowedAmount
-          acc.borrowedAmount += borrowedAmount
-          borrowedPerMarket += borrowedAmount
+        acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
+        acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
 
-          // calculating net APY supplied & borrowed ratio's
-          acc.sumOfRatioSuppliedToAPY += conveterLendValue * rate * lendingAPY
-          acc.sumOfRatioBorrowedToAPR += borrowedPerMarket * borrowAPR
-          acc.totalSuppliedValue += conveterLendValue * rate
-          return acc
-        },
-        {
-          borrowedAmount: 0,
-          borrowCapacity: 0,
-          totalSuppliedValue: 0,
-          sumOfRatioSuppliedToAPY: 0,
-          sumOfRatioBorrowedToAPR: 0,
-        },
-      )
+        // calculating value risk data & how much borrowed per vault
+        acc.borrowCapacity += borrowedVaultsCollateralAmount / 2 - borrowedAmount
+        acc.borrowedAmount += borrowedAmount
+        borrowedPerMarket += borrowedAmount
+
+        // calculating net APY supplied & borrowed ratio's
+        acc.sumOfRatioSuppliedToAPY += conveterLendValue * rate * lendingAPY
+        acc.sumOfRatioBorrowedToAPR += borrowedPerMarket * borrowAPR
+        acc.totalSuppliedValue += conveterLendValue * rate
+        return acc
+      },
+      {
+        totalLended: 0,
+        totalBorrowed: 0,
+        borrowedAmount: 0,
+        borrowCapacity: 0,
+        totalSuppliedValue: 0,
+        sumOfRatioSuppliedToAPY: 0,
+        sumOfRatioBorrowedToAPR: 0,
+      },
+    )
 
     const vaultRiskValue = !userAddress || !borrowCapacity ? 0 : (borrowedAmount / borrowCapacity) * 100
     const apyNet =
@@ -174,8 +157,10 @@ export const LoansDashboard = () => {
         ...GAUGE_STATE_APY_PART,
         currentValue: apyNet,
       },
+      totalBorrowed,
+      totalLended,
     }
-  }, [marketsAddresses, userAddress, userMTokens, tokensMetadata, tokensPrices, userVaultsData])
+  }, [marketsAddresses, userAddress, marketsMapper, tokensMetadata, tokensPrices, userMTokens, userVaultsData])
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({

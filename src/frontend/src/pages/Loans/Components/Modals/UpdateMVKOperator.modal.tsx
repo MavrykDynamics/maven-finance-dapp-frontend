@@ -7,6 +7,7 @@ import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.co
 import { validateTzAddress } from 'utils/validatorFunctions'
 import { UpdateOperatorsPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { State } from 'reducers'
+import { UpdateTokenOperator, updateOperatorsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
@@ -17,7 +18,6 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { UpdateTokenOperator, updateOperatorsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 

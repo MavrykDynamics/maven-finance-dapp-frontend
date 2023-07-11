@@ -141,15 +141,18 @@ const useUserLoansData = ({ userAddress }: { userAddress: string | null }) => {
             tokensMetadata,
             tokensPrices,
           )
+          const isVaultBorrowed = convertedBorrowedAmount > 0
 
           if (!acc[borrowedToken.address]) {
             acc[borrowedToken.address] = {
               borrowedAmount: convertedBorrowedAmount,
-              collateralAmount,
+              borrowedVaultsCollateralAmount: isVaultBorrowed ? collateralAmount : 0,
+              allVaultsCollateralAmount: collateralAmount,
             }
           } else {
             acc[borrowedToken.address].borrowedAmount += convertedBorrowedAmount
-            acc[borrowedToken.address].collateralAmount += collateralAmount
+            acc[borrowedToken.address].borrowedVaultsCollateralAmount += isVaultBorrowed ? collateralAmount : 0
+            acc[borrowedToken.address].allVaultsCollateralAmount += collateralAmount
           }
 
           return acc

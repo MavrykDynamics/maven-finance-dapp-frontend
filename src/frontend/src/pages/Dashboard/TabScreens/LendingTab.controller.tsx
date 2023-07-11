@@ -46,11 +46,11 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
         totalLended: number
       }>(
         (acc, marketTokenAddress) => {
-          const { suppliers, borrowers, totalBorrowed, totalLended, loanTokenAddress } =
-            marketsMapper[marketTokenAddress]
-          const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
-          if (!token || !token.rate) return acc
+          const market = marketsMapper[marketTokenAddress]
+          const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
+          if (!token || !token.rate || !market) return acc
           const { symbol, decimals, icon, rate } = token
+          const { suppliers, borrowers, totalBorrowed, totalLended } = market
 
           const convetedTotalBorrowed = convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
           const convetedTotalLended = convertNumberForClient({ number: totalLended, grade: decimals }) * rate

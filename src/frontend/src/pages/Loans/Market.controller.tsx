@@ -1,11 +1,16 @@
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Redirect, useHistory, useParams } from 'react-router'
+import { useHistory, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 
 // const
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
+import {
+  LOANS_MARKETS_DATA,
+  DEFAULT_LOANS_ACTIVE_SUBS,
+  LOANS_CONFIG,
+} from 'providers/LoansProvider/helpers/loans.const'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -18,6 +23,7 @@ import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 
 // styles
 import { Page } from 'styles'
+import { EmptyContainer } from 'app/App.style'
 import { MarketPagination, MarketStyled, ThreeLevelListItem } from './Loans.style'
 
 // types
@@ -35,13 +41,6 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getVaultBorrowCapacity, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import {
-  LOANS_MARKETS_DATA,
-  LOANS_MARKETS_ADDRESSES,
-  DEFAULT_LOANS_ACTIVE_SUBS,
-  LOANS_CONFIG,
-} from 'providers/LoansProvider/helpers/loans.const'
-import { EmptyContainer } from 'app/App.style'
 
 export const Market = () => {
   const history = useHistory<{ from?: string }>()
@@ -61,7 +60,6 @@ export const Market = () => {
   useEffect(() => {
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
-      [LOANS_MARKETS_ADDRESSES]: true,
       [LOANS_CONFIG]: true,
     })
 
@@ -135,11 +133,6 @@ export const Market = () => {
       ),
     [accountPkh, myVaultsIds, assetAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
   )
-
-  console.log({
-    marketsMapper,
-    isLoading: isLoansLoading,
-  })
 
   if (isLoansLoading) {
     return (

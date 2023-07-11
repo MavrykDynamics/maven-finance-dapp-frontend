@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import classNames from 'classnames'
 
@@ -21,8 +21,6 @@ import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from './Loans.helpers'
 
 import { State } from 'reducers'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getLoansStorage } from './Actions/getLoansData.actions'
 
 import { Page } from 'styles'
 import {
@@ -41,11 +39,7 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import {
-  DEFAULT_LOANS_ACTIVE_SUBS,
-  LOANS_MARKETS_ADDRESSES,
-  LOANS_MARKETS_DATA,
-} from 'providers/LoansProvider/helpers/loans.const'
+import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -77,7 +71,6 @@ export const Loans = () => {
   useEffect(() => {
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
-      [LOANS_MARKETS_ADDRESSES]: true,
     })
 
     return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
@@ -94,12 +87,12 @@ export const Loans = () => {
     totalBorrowed: number
   }>(
     (acc, marketTokenAddress) => {
-      if (!marketsMapper[marketTokenAddress]) return acc
-      const { totalBorrowed, totalLended, loanTokenAddress } = marketsMapper[marketTokenAddress]
-      const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
+      const market = marketsMapper[marketTokenAddress]
+      const loanToken = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensPrices, tokensMetadata })
 
-      if (!loanToken || !loanToken.rate) return acc
+      if (!loanToken || !loanToken.rate || !market) return acc
 
+      const { totalBorrowed, totalLended } = market
       const { decimals, rate } = loanToken
 
       acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
@@ -175,6 +168,10 @@ export const Loans = () => {
           <MarketsOverviewContainer>
             <H2Title>Markets</H2Title>
             {marketsAddresses.map((marketAddress) => {
+              const market = marketsMapper[marketAddress]
+              const loanToken = getTokenDataByAddress({ tokenAddress: marketAddress, tokensPrices, tokensMetadata })
+
+              if (!loanToken || !loanToken.rate || !market) return null
               const {
                 loanTokenAddress,
                 loanMTokenAddress,
@@ -186,11 +183,7 @@ export const Loans = () => {
                 totalLended,
                 borrowAPR,
                 lendingAPY,
-              } = marketsMapper[marketAddress]
-
-              const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
-
-              if (!loanToken || !loanToken.rate) return null
+              } = market
 
               const { interestEarned } = userMTokens[loanMTokenAddress] ?? {
                 interestEarned: 0,

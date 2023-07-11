@@ -1,10 +1,10 @@
 import { VAULT_ALLOWANCE_ACCOUNTS, VAULT_ALLOWANCE_ANY } from 'pages/Loans/Loans.const'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { LOANS_MARKETS_ADDRESSES, LOANS_MARKETS_DATA, LOANS_CONFIG } from './helpers/loans.const'
+import { LOANS_MARKETS_DATA, LOANS_CONFIG } from './helpers/loans.const'
 
 export type LoanVaultAllowanceType = typeof VAULT_ALLOWANCE_ANY | typeof VAULT_ALLOWANCE_ACCOUNTS
 
-export type LoansSubsType = typeof LOANS_MARKETS_ADDRESSES | typeof LOANS_MARKETS_DATA | typeof LOANS_CONFIG
+export type LoansSubsType = typeof LOANS_MARKETS_DATA | typeof LOANS_CONFIG
 export type LoansSubsRecordType = Record<LoansSubsType, boolean>
 
 export type LendingItemType = {

@@ -23,7 +23,10 @@ export type UserLoansDataStateType = {
   totalUserBorrowed: number
   totalUserLended: number
   userLendings: Array<UserLendBorrowItem>
-  userVaultsData: Record<string, { borrowedAmount: number; collateralAmount: number }>
+  userVaultsData: Record<
+    string,
+    { borrowedAmount: number; borrowedVaultsCollateralAmount: number; allVaultsCollateralAmount: number }
+  >
 }
 
 // user tokens Types

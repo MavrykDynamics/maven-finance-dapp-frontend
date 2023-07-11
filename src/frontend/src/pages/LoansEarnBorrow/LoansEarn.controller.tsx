@@ -22,11 +22,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // consts
-import {
-  LOANS_MARKETS_DATA,
-  LOANS_MARKETS_ADDRESSES,
-  DEFAULT_LOANS_ACTIVE_SUBS,
-} from 'providers/LoansProvider/helpers/loans.const'
+import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
 
 // helpers
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
@@ -61,7 +57,6 @@ export const LoansEarn = () => {
   useEffect(() => {
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
-      [LOANS_MARKETS_ADDRESSES]: true,
     })
 
     return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
@@ -105,9 +100,8 @@ export const LoansEarn = () => {
   )
 
   const handleEarn = (marketTokenAddress: string) => {
-    const marketAddress = marketsAddresses.find((marketCtxAddress) => marketCtxAddress === marketTokenAddress)
-    if (!marketAddress) return
-    const market = marketsMapper[marketAddress]
+    const market = marketsMapper[marketTokenAddress]
+    if (!market) return
 
     const lendItem = userMTokens[market.loanMTokenAddress]
 

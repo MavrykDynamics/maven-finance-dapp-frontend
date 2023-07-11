@@ -26,6 +26,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { TransactionHistory } from '../TransactionHistory'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { LoanMarketType } from 'providers/LoansProvider/loans.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import colors from 'styles/colors'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -37,7 +38,6 @@ import { CollateralType, DepositorsFlagType } from 'providers/LoansProvider/help
 import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
 import { EmptyContainer } from 'app/App.style'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { LoanMarketType } from 'providers/LoansProvider/loans.provider.types'
 
 type Props = {
   openAddNewCollateralPopup: () => void
