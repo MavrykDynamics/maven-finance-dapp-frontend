@@ -199,9 +199,13 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Source Code</div>
         <div className="proposal-data-block-value">
-          <a href={proposal.sourceCode} target="_blank" rel="noreferrer" className="isCyan">
-            {proposal.sourceCode}
-          </a>
+          {proposal.sourceCode ? (
+            <a href={proposal.sourceCode} target="_blank" rel="noreferrer" className="isCyan">
+              {proposal.sourceCode}
+            </a>
+          ) : (
+            <div className="proposal-data-block-no-value">No link to source code given</div>
+          )}
         </div>
       </div>
 
@@ -213,7 +217,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
               {proposal.invoice}
             </a>
           ) : (
-            'No link for an invoice given'
+            <span className="proposal-data-block-no-value">No link for an invoice given</span>
           )}
         </div>
       </div>
@@ -221,16 +225,27 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Meta-Data</div>
         {proposal.proposalData?.length ? (
-          <ol className="bytes-list">
-            {proposal.proposalData.map((item) => {
+          <ul className="bytes-list">
+            {proposal.proposalData.map((item, idx) => {
               if (!item || typeof item.title !== 'string' || typeof item.encoded_code !== 'string') return null
 
               const isByteOpened = openedBytes.includes(item.id)
               const byteText = item.encoded_code
               return (
                 <li key={item.id}>
-                  <div className="title" style={{ paddingLeft: '15px' }}>
-                    {item.title}
+                  <div className="byte-text-wrapper" style={{ alignItems: 'center' }}>
+                    <div className="title" style={{ marginRight: '5px' }}>
+                      {idx + 1}. Title:
+                    </div>
+                    <div className="proposal-data-block-value title-main">{item?.title || '–'}</div>
+                  </div>
+                  <div className="byte-text-wrapper">
+                    <div className="proposal-data-block-value proposal-data-block-desc">
+                      <span className="title" style={{ marginRight: '5px' }}>
+                        Description:
+                      </span>
+                      {item.code_description || '–'}
+                    </div>
                   </div>
 
                   <div className={`byte ${isByteOpened ? 'opened' : ''}`}>
@@ -258,18 +273,12 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
                       {isByteOpened ? 'hide' : 'see all'}
                     </Button>
                   </div>
-                  <div className="byte-descr">
-                    <div className="title" style={{ marginRight: '5px' }}>
-                      Description:
-                    </div>
-                    <div className="proposal-data-block-value">{item.code_description || '–'}</div>
-                  </div>
                 </li>
               )
             })}
-          </ol>
+          </ul>
         ) : (
-          <div className="proposal-data-block-value">No proposal meta-data given</div>
+          <div className="proposal-data-block-value proposal-data-block-no-value">No proposal meta-data given</div>
         )}
       </div>
 
@@ -320,7 +329,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
             </TableBody>
           </Table>
         ) : (
-          <div className="proposal-data-block-value">No payment data given</div>
+          <div className="proposal-data-block-value proposal-data-block-no-value">No payment data given</div>
         )}
       </div>
 
