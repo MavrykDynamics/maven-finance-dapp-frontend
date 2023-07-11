@@ -18,7 +18,7 @@ const useLoansCharts = (chartsToCalc: LoansChartsType) => {
     totalLendingChart: [],
     totalBorrowingChart: [],
     totalCollateralChart: [],
-    marketCollateralChart: {},
+    marketBorrowChart: {},
     marketLendingChart: {},
   })
 

@@ -65,7 +65,7 @@ export const normalizeLoansCharts = ({
     calcTotalLendingChart = false,
     calcTotalBorrowingChart = false,
     calcTotalCollateralChart = false,
-    calcMarketCollateralChart = false,
+    calcMarketBorrowChart = false,
     calcMarketLendingChart = false,
   } = chartsToCalc
 
@@ -143,6 +143,25 @@ export const normalizeLoansCharts = ({
         }
       }
 
+      // getting data for total borrowed chart per markets
+      if (calcMarketBorrowChart && BORROWING_HISTORY_DATA_TYPES.includes(type)) {
+        if (!acc.marketBorrowChart[tokenAddress]) {
+          acc.marketBorrowChart[tokenAddress] = []
+        }
+
+        if (isLast14dOperation) {
+          acc.marketBorrowChart[tokenAddress].push({
+            value: (acc.marketBorrowChart[tokenAddress].at(-1)?.value ?? 0) + getCollateralAmount(type, amountInUsd),
+            time: operationTime,
+          })
+        } else {
+          acc.marketBorrowChart[tokenAddress][0] = {
+            value: (acc.marketBorrowChart[tokenAddress].at(0)?.value ?? 0) + getCollateralAmount(type, amountInUsd),
+            time: operationTime,
+          }
+        }
+      }
+
       // getting data for total collaterals chart
       if (calcTotalCollateralChart && COLLATERAL_HISTORY_DATA_TYPES.includes(type)) {
         if (isLast7dOperation) {
@@ -159,33 +178,13 @@ export const normalizeLoansCharts = ({
         }
       }
 
-      // getting data for total collateral chart per markets
-      if (calcMarketCollateralChart && COLLATERAL_HISTORY_DATA_TYPES.includes(type)) {
-        if (!acc.marketCollateralChart[tokenAddress]) {
-          acc.marketCollateralChart[tokenAddress] = []
-        }
-
-        if (isLast14dOperation) {
-          acc.marketCollateralChart[tokenAddress].push({
-            value:
-              (acc.marketCollateralChart[tokenAddress].at(-1)?.value ?? 0) + getCollateralAmount(type, amountInUsd),
-            time: operationTime,
-          })
-        } else {
-          acc.marketCollateralChart[tokenAddress][0] = {
-            value: (acc.marketCollateralChart[tokenAddress].at(0)?.value ?? 0) + getCollateralAmount(type, amountInUsd),
-            time: operationTime,
-          }
-        }
-      }
-
       return acc
     },
     {
       totalLendingChart: [],
       totalBorrowingChart: [],
       totalCollateralChart: [],
-      marketCollateralChart: {},
+      marketBorrowChart: {},
       marketLendingChart: {},
     },
   )

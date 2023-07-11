@@ -24,9 +24,10 @@ type ChartDataType = {
 
 type Props = {
   data: AreaChartPlotType[]
+  isBorrow: boolean
 }
 
-export const EarnBorrowChart = ({ data }: Props) => {
+export const EarnBorrowChart = ({ data, isBorrow }: Props) => {
   const [isGraph, setIsGraph] = useState(false)
 
   const chartData: ChartDataType = { type: isGraph ? HISTOGRAM_CHART_TYPE : AREA_CHART_TYPE, plots: data }
@@ -36,7 +37,7 @@ export const EarnBorrowChart = ({ data }: Props) => {
     <EarnBorrowChartStyled>
       {showChart && (
         <div className="switchMenu">
-          <span>Supply Vol / 14 Days</span>
+          <span>{isBorrow ? 'Borrow' : 'Supply'} Vol / 14 Days</span>
 
           <Button kind={BUTTON_THIRD} form={BUTTON_ROUND} onClick={() => setIsGraph(!isGraph)}>
             <Icon id={isGraph ? 'graph' : 'chart'} />

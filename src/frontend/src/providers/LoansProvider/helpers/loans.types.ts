@@ -6,7 +6,7 @@ export type LoansChartsType = {
   calcTotalLendingChart?: boolean
   calcTotalBorrowingChart?: boolean
   calcTotalCollateralChart?: boolean
-  calcMarketCollateralChart?: boolean
+  calcMarketBorrowChart?: boolean
   calcMarketLendingChart?: boolean
 }
 
@@ -14,7 +14,7 @@ export type UseLoansChartsStateType = {
   totalLendingChart: Array<SingleValueData>
   totalBorrowingChart: Array<SingleValueData>
   totalCollateralChart: Array<SingleValueData>
-  marketCollateralChart: Record<TokenAddressType, Array<SingleValueData>>
+  marketBorrowChart: Record<TokenAddressType, Array<SingleValueData>>
   marketLendingChart: Record<TokenAddressType, Array<SingleValueData>>
 }
 

@@ -70,7 +70,7 @@ export const LoansEarn = () => {
   const markets = useMemo(
     () =>
       marketsAddresses.reduce<MarketType[]>((acc, marketAddress) => {
-        const { lendingAPY, totalLended, loanMTokenAddress, loanTokenAddress } = marketsMapper[marketAddress]
+        const { lendingAPY, loanMTokenAddress, loanTokenAddress } = marketsMapper[marketAddress]
         const chartData = marketLendingChart[loanTokenAddress] ?? []
 
         const token = getTokenDataByAddress({
@@ -93,7 +93,7 @@ export const LoansEarn = () => {
           annualRateName: 'APY',
           leftValue: convertNumberForClient({ number: lendValue, grade: decimals }) * price,
           rightValue: convertNumberForClient({ number: interestEarned, grade: decimals }) * price,
-          totalAmount: convertNumberForClient({ number: totalLended, grade: decimals }),
+          totalAmount: chartData.at(-1)?.value ?? 0,
           price,
           chartData,
         })

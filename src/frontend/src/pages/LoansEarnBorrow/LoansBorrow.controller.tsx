@@ -3,6 +3,14 @@ import { useHistory } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
+// hooks
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
+import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+
 // components
 import { Page } from 'styles'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
@@ -21,11 +29,7 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
-import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
-import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import {
@@ -33,14 +37,11 @@ import {
   LOANS_MARKETS_ADDRESSES,
   DEFAULT_LOANS_ACTIVE_SUBS,
 } from 'providers/LoansProvider/helpers/loans.const'
-import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
   totalName: 'Total Borrowed',
-  leftValueName: 'Outstanding debt',
+  leftValueName: 'Outstanding Debt',
   rightValueName: 'Collateral Amount',
   buttonName: 'Borrow',
   isButtonSymbol: true,
@@ -73,11 +74,11 @@ export const LoansBorrow = () => {
 
   const {
     isLoading: isChartsLoading,
-    chartsData: { totalBorrowingChart, totalCollateralChart, marketCollateralChart },
+    chartsData: { totalBorrowingChart, totalCollateralChart, marketBorrowChart },
   } = useLoansCharts({
     calcTotalBorrowingChart: true,
     calcTotalCollateralChart: true,
-    calcMarketCollateralChart: true,
+    calcMarketBorrowChart: true,
   })
 
   const { userVaultsData } = useUserLoansData({ userAddress })
@@ -86,7 +87,7 @@ export const LoansBorrow = () => {
     () =>
       marketsAddresses.reduce<MarketType[]>((acc, marketTokenAddress) => {
         const market = marketsMapper[marketTokenAddress]
-        const chartData = marketCollateralChart[marketTokenAddress] ?? []
+        const chartData = marketBorrowChart[marketTokenAddress] ?? []
 
         const token = getTokenDataByAddress({
           tokenAddress: marketTokenAddress,
@@ -96,7 +97,7 @@ export const LoansBorrow = () => {
 
         if (!token || !token.rate) return acc
 
-        const { symbol, icon, rate: price, decimals, address } = token
+        const { symbol, icon, rate: price, address } = token
 
         acc.push({
           icon,
@@ -106,14 +107,14 @@ export const LoansBorrow = () => {
           annualRateName: 'APR',
           leftValue: userVaultsData[marketTokenAddress]?.borrowedAmount ?? 0,
           rightValue: userVaultsData[marketTokenAddress]?.collateralAmount ?? 0,
-          totalAmount: convertNumberForClient({ number: market.totalBorrowed, grade: decimals }),
+          totalAmount: chartData.at(-1)?.value ?? 0,
           price,
           chartData,
         })
 
         return acc
       }, []),
-    [marketsAddresses, marketsMapper, marketCollateralChart, tokensPrices, tokensMetadata, userVaultsData],
+    [marketsAddresses, marketsMapper, marketBorrowChart, tokensPrices, tokensMetadata, userVaultsData],
   )
 
   const handleSetNewlyCreatedVaultAddress = (marketAddress: string) => (address: string) => {
