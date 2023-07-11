@@ -90,54 +90,54 @@ export const changeVaultNameAction =
   }
 
 // trigger initial vault creation to get the id of future vault
-// export const triggerInitialVaultCreation =
-//   (loanTokenName: string, vaultName: string) => async (dispatch: AppDispatch, getState: GetState) => {
-//     const state: State = getState()
-//     const userAddress = state.wallet.accountPkh
+export const triggerInitialVaultCreation =
+  (loanTokenName: string, vaultName: string) => async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
+    const userAddress = state.wallet.accountPkh
 
-//     // check whether we can send transaction
-//     if (!userAddress) {
-//       await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-//       return
-//     }
+    // check whether we can send transaction
+    if (!userAddress) {
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
+    }
 
-//     try {
-//       // prepare and send transaction
-//       const tezos = await DAPP_INSTANCE.tezos()
-//       const contract = await tezos.wallet.at(state.contractAddresses.vaultFactory.address)
-//       const transaction = await contract?.methods.createVault(null, loanTokenName, vaultName, [], 'any').send()
+    try {
+      // prepare and send transaction
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.vaultFactory.address)
+      const transaction = await contract?.methods.createVault(null, loanTokenName, vaultName, [], 'any').send()
 
-//       // confirm query completion
-//       await transaction?.confirmation()
+      // confirm query completion
+      await transaction?.confirmation()
 
-//       // @ts-ignore don't have proper type to acees data, type has only methods
-//       const currentOperationLevel = transaction?.lastHead?.header?.level
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
 
-//       const { value } = await checkIndexerLevelAndRunDataUpdateCallback({
-//         callback: async () => {
-//           await dispatch(getLoansStorage())
+      const { value } = await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getLoansStorage())
 
-//           const newVaultData = await fetchFromIndexer(
-//             NEW_VAULT_QUERY,
-//             NEW_VAULT_QUERY_NAME,
-//             NEW_VAULT_QUERY_VARIABLE(userAddress, vaultName),
-//           )
+          const newVaultData = await fetchFromIndexer(
+            NEW_VAULT_QUERY,
+            NEW_VAULT_QUERY_NAME,
+            NEW_VAULT_QUERY_VARIABLE(userAddress, vaultName),
+          )
 
-//           return newVaultData.vault.at(-1)?.lending_controller_vaults?.[0]?.vault?.address
-//         },
-//         currentOperationLevel,
-//       })
+          return newVaultData.vault.at(-1)?.lending_controller_vaults?.[0]?.vault?.address
+        },
+        currentOperationLevel,
+      })
 
-//       return value
-//     } catch (error) {
-//       console.error('triggerInitialVaultCreation error:', error)
-//       if (error instanceof Error) {
-//         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-//       }
+      return value
+    } catch (error) {
+      console.error('triggerInitialVaultCreation error:', error)
+      if (error instanceof Error) {
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
+      }
 
-//       return
-//     }
-//   }
+      return
+    }
+  }
 
 // borrow asset from the vault
 export const borrowVaultAssetAction =

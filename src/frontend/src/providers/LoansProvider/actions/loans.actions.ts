@@ -15,6 +15,7 @@ export const triggerInitialVaultCreation = async (
   vaultName: string,
   vaultFactoryAddress: string,
 ) => {
+  // TODO when calling this action add userAddress comparance
   // check whether we can send transaction
   // if (!userAddress) {
   //   await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
@@ -27,8 +28,20 @@ export const triggerInitialVaultCreation = async (
     const contract = await tezos.wallet.at(vaultFactoryAddress)
     const vaultCreateMetaData = contract?.methods.createVault(null, loanTokenName, vaultName, [], 'any')
 
-    // confirm query completion
-    // await transaction?.confirmation()
+    // TODO handle return vault address
+    // const { value } = await checkIndexerLevelAndRunDataUpdateCallback({
+    //   callback: async () => {
+
+    //     const newVaultData = await fetchFromIndexer(
+    //       NEW_VAULT_QUERY,
+    //       NEW_VAULT_QUERY_NAME,
+    //       NEW_VAULT_QUERY_VARIABLE(userAddress, vaultName),
+    //     )
+
+    //     return newVaultData.vault.at(-1)?.lending_controller_vaults?.[0]?.vault?.address
+    //   },
+    //   currentOperationLevel,
+    // })
 
     // return value
     return await getEstimationResult(vaultCreateMetaData)

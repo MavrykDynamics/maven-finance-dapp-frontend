@@ -188,9 +188,6 @@ export const AddLendingAsset = ({
         setAction(null)
         const parsedError = unknownToError(e)
         bug(parsedError.message)
-      } finally {
-        // setInputData({ ...inputData, amount: '0' })
-        toggleActionCompletion(false)
       }
     }
   }

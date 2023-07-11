@@ -52,11 +52,11 @@ export type DappConfigContextStateType = Pick<
   | 'globalLoadingState'
 >
 
-// TODO: dont forget to add other action names with their transfer to context
 export type UserActionType = {
   actionName: ActionTypes
   toasterId: string
   operationLvl: number
+  callback?: () => void
 }
 
 export type ActionErrorReturnType = { actionSuccess: boolean; error: Error | ExtendedError | TezosWalletErrorPayload }

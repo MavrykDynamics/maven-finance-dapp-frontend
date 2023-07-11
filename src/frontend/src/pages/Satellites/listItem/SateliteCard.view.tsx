@@ -185,8 +185,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
-    } finally {
-      toggleActionCompletion(false)
     }
   }
 
@@ -237,8 +235,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
-    } finally {
-      toggleActionCompletion(false)
     }
   }
 
@@ -289,8 +285,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
-    } finally {
-      toggleActionCompletion(false)
     }
   }
 
@@ -342,8 +336,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
-    } finally {
-      toggleActionCompletion(false)
     }
   }
 

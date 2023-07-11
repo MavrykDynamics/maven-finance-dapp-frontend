@@ -116,7 +116,14 @@ export const ExitFeeModal = ({
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
 
-        setAction({ actionName: UNSTAKE_ACTION, toasterId, operationLvl })
+        setAction({
+          actionName: UNSTAKE_ACTION,
+          toasterId,
+          operationLvl,
+          callback: () => {
+            setInputData({ ...inputData, amount: '0' })
+          },
+        })
       } else if (isContractErrorPayload(actionResult.error)) {
         const { message, description } = actionResult.error as TezosWalletErrorPayload
         bug(description, message)
@@ -127,9 +134,6 @@ export const ExitFeeModal = ({
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
-    } finally {
-      setInputData({ ...inputData, amount: '0' })
-      toggleActionCompletion(false)
     }
   }
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

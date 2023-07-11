@@ -187,7 +187,6 @@ export const StakeUnstakeView = ({
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
 
-        console.log(operation, 'operation')
         toggleActionFullScreenLoader(true)
         toggleActionCompletion(true)
 
@@ -209,7 +208,14 @@ export const StakeUnstakeView = ({
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
 
-        setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
+        setAction({
+          actionName: STAKE_ACTION,
+          toasterId,
+          operationLvl,
+          callback: () => {
+            setInputData({ ...inputData, amount: '0' })
+          },
+        })
       } else if (isContractErrorPayload(actionResult.error)) {
         const { message, description } = actionResult.error as TezosWalletErrorPayload
         bug(description, message)
@@ -220,9 +226,6 @@ export const StakeUnstakeView = ({
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
-    } finally {
-      setInputData({ ...inputData, amount: '0' })
-      toggleActionCompletion(false)
     }
   }
 
@@ -284,8 +287,6 @@ export const StakeUnstakeView = ({
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
-    } finally {
-      toggleActionCompletion(false)
     }
   }
 
