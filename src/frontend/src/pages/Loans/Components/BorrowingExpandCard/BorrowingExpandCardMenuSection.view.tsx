@@ -2,7 +2,13 @@ import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { TabItem, TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+
+// styles
+import { EmptyContainer } from 'app/App.style'
 import { BorrowingTabListItemTabInfo } from '../LoansComponents.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+
+// consts
 import {
   ANY_USER,
   NONE_USER,
@@ -11,14 +17,17 @@ import {
   assetDecimalsToShow,
   loansTabNames,
 } from 'pages/Loans/Loans.const'
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import Button from 'app/App.components/Button/NewButton'
 import {
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
   BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from 'app/App.components/Button/Button.constants'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import colors from 'styles/colors'
+
+// components
+import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -26,18 +35,21 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { TransactionHistory } from '../TransactionHistory'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { LoanMarketType } from 'providers/LoansProvider/loans.provider.types'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import colors from 'styles/colors'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { State } from 'reducers'
+
+// providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+// utils
+import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
-import { CollateralType, DepositorsFlagType } from 'providers/LoansProvider/helpers/vaults.types'
 import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
-import { EmptyContainer } from 'app/App.style'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+// types
+import { LoanMarketType } from 'providers/LoansProvider/loans.provider.types'
+import { CollateralType, DepositorsFlagType } from 'providers/LoansProvider/helpers/vaults.types'
+import { State } from 'reducers'
 
 type Props = {
   openAddNewCollateralPopup: () => void
@@ -86,10 +98,10 @@ export const BorrowingExpandCardMenuSection = ({
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const {
     contractAddresses: { lendingControllerAddress },
+    preferences: { themeSelected },
   } = useDappConfigContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const menuTabs = useMemo(
     () =>

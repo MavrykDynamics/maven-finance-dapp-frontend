@@ -1,7 +1,9 @@
 import React, { useCallback, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useClickAway, useLockBodyScroll } from 'react-use'
-import { State } from 'reducers'
+
+// providers
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // helpers, consts
 import {
@@ -17,18 +19,11 @@ import { isValidRPCNode } from 'utils/validatorFunctions'
 import { stopPropagation } from 'utils/eventsHelpers/stopPropagation'
 
 // actions
-import { selectNewRPCNode, setNewRPCNodes } from './SettingsPopup.actions'
-import {
-  DARK_THEME,
-  LIGHT_THEME,
-  SPACE_THEME,
-  themeSetterAction,
-  ThemeType,
-} from '../DarkThemeProvider/DarkThemeProvider.actions'
+import { DARK_THEME, LIGHT_THEME, SPACE_THEME, ThemeType } from 'consts/theme.const'
 
 // types
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { RPCNodeType } from 'reducers/preferences'
+import { RPCNodeType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // views
 import Button from '../Button/NewButton'
@@ -39,6 +34,7 @@ import { Input } from '../Input/NewInput'
 // styles
 import { PopupContainer, PopupContainerWrapper } from '../popup/PopupMain.style'
 import { ChangeNodeNodesList, ChangeNodeNodesListItem, SettingsPopupBase } from '../popup/bases/SettingsPopup.style'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 const MAX_NODES_AMOUNT = 3
 const DEFAULT_NODE_INPUT_STATE: { node: string; nodeValidation: InputStatusType } = {
@@ -49,8 +45,12 @@ const DEFAULT_NODE_INPUT_STATE: { node: string; nodeValidation: InputStatusType 
 export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boolean; closeModal: () => void }) => {
   useLockBodyScroll(isModalOpened)
 
-  const dispatch = useDispatch()
-  const { RPC_NODES, REACT_APP_RPC_PROVIDER } = useSelector((state: State) => state.preferences)
+  const {
+    selectNewRPCNode,
+    setNewRPCNodes,
+    preferences: { RPC_NODES, REACT_APP_RPC_PROVIDER },
+  } = useDappConfigContext()
+  const { success } = useToasterContext()
 
   const inputRef = useRef<HTMLInputElement>(null)
   const inputWrapperRef = useRef<HTMLDivElement>(null)
@@ -86,12 +86,14 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
         ...RPC_NODES,
         { title: inputData.node, url: inputData.node, isUser: true },
       ]
-      dispatch(setNewRPCNodes(newRPCNodes))
-      dispatch(selectNewRPCNode(inputData.node))
+      setNewRPCNodes(newRPCNodes)
+      selectNewRPCNode(inputData.node)
       setSelectedNode(inputData.node)
       setInputData(DEFAULT_NODE_INPUT_STATE)
+      success('New RPC link added', 'The new RPC link has been added in the DAPP')
     } else {
-      dispatch(selectNewRPCNode(selectedNode))
+      selectNewRPCNode(selectedNode)
+      success('New RPC link selected', 'The new RPC link has been selected in the DAPP')
     }
   }
 
@@ -101,8 +103,8 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
     const newSelectedNode = filteredNodes[0].url
 
     setSelectedNode(newSelectedNode)
-    dispatch(setNewRPCNodes(filteredNodes, true))
-    dispatch(selectNewRPCNode(newSelectedNode, true))
+    setNewRPCNodes(filteredNodes, true)
+    selectNewRPCNode(newSelectedNode, true)
   }
 
   const nodeClickHandler = (nodeUrl: string) => {
@@ -185,8 +187,11 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
 
 const Themes = () => {
   const dispatch = useDispatch()
-  const { themeSelected } = useSelector((state: State) => state.preferences)
-  const setNewThemeHandler = useCallback((newTheme: ThemeType) => dispatch(themeSetterAction(newTheme)), [])
+  const {
+    toggleTheme,
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+  const setNewThemeHandler = useCallback((newTheme: ThemeType) => toggleTheme(newTheme), [])
 
   return (
     <div className="theme-switcher-block">

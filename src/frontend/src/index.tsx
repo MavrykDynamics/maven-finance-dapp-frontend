@@ -17,11 +17,14 @@ import ToasterProvider from 'providers/ToasterProvider/toaster.provider'
 import TokensProvider, { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import DataFeedsProvider, { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import UserProvider, { useUserContext } from 'providers/UserProvider/user.provider'
-import DappConfigProvider, { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import DarkThemeProvider from './app/App.components/DarkThemeProvider/DarkThemeProvider.view'
+import DappConfigProvider, {
+  useDappConfigContext,
+  dappConfigContext,
+} from 'providers/DappConfigProvider/dappConfig.provider'
 import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider'
 import LoansProvider from 'providers/LoansProvider/loans.provider'
 import StakeProvider from 'providers/StakeProvider/stake.provider'
+import { ThemeProvider } from 'styled-components'
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
@@ -31,6 +34,7 @@ import { LottieLoader } from 'app/App.components/Loader/Loader.view'
 import Mobile from './app/App.components/Mobile/Mobile.view'
 
 import { GlobalStyle } from './styles'
+import themeColors from 'styles/colors'
 import './styles/fonts.css'
 import './styles/animations.css'
 import './styles/index.css'
@@ -56,7 +60,13 @@ const InitialDataDappProviders = ({ children }: { children: React.ReactNode }) =
     <TokensProvider>
       <UserProvider>
         <DataFeedsProvider>
-          <DappConfigProvider>{children}</DappConfigProvider>
+          <DappConfigProvider>
+            <dappConfigContext.Consumer>
+              {({ preferences: { themeSelected } }) => (
+                <ThemeProvider theme={themeColors[themeSelected]}>{children}</ThemeProvider>
+              )}
+            </dappConfigContext.Consumer>
+          </DappConfigProvider>
         </DataFeedsProvider>
       </UserProvider>
     </TokensProvider>
@@ -103,15 +113,13 @@ const AppContainer = () => {
 export const Root = () => {
   return (
     <DappLibsProviders>
-      <DarkThemeProvider>
-        <ToasterProvider>
-          <InitialDataDappProviders>
-            <DappSectionsDataProviders>
-              <AppContainer />
-            </DappSectionsDataProviders>
-          </InitialDataDappProviders>
-        </ToasterProvider>
-      </DarkThemeProvider>
+      <ToasterProvider>
+        <InitialDataDappProviders>
+          <DappSectionsDataProviders>
+            <AppContainer />
+          </DappSectionsDataProviders>
+        </InitialDataDappProviders>
+      </ToasterProvider>
     </DappLibsProviders>
   )
 }

@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 import { BORROW_TAB_ID, LEND_TAB_ID } from 'pages/Loans/Loans.const'
@@ -25,13 +24,16 @@ import { Plug } from 'app/App.components/Chart/Chart.style'
 import { PositionTableStyled } from '../LoansDashboard.styles'
 import { getGaugeVaultRiskSimpleStatus } from '../helpers/position.helpers'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
-import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
+
+// providers
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const LoansPositionTable = ({
   userVaultsData,
@@ -43,7 +45,9 @@ export const LoansPositionTable = ({
   const { userAddress, userMTokens } = useUserContext()
   const { marketsAddresses, marketsMapper } = useLoansContext()
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const { search, pathname } = useLocation()
   const currentPage = getPageNumber(search, LOANS_POSITION_TABLE)

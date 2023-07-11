@@ -1,4 +1,8 @@
+import { getItemFromStorage } from 'utils/storage'
 import { DappConfigContextStateType } from '../dappConfig.provider.types'
+import { PreferencesState, LoadingState } from '../dappConfig.provider.types'
+
+// global loading default state
 
 // default max length
 export const defaultCouncilMemberImageMaxLength = 500
@@ -75,6 +79,32 @@ export const DAPP_DEFAULT_CONTRACT_ADDRESSES = {
   vaultFactoryAddress: null,
 }
 
+// preferences default variables
+export const mariGoldUrl = 'https://ghostnet.tezos.marigold.dev/'
+export const ecadLabSUrl = 'https://ghostnet.ecadinfra.com'
+
+export const RPC_NODE = 'selectedRpcNode'
+
+export const preferencesDefaultState: PreferencesState = {
+  themeSelected: getItemFromStorage('theme') || 'space',
+  changeNodePopupOpen: false,
+  sidebarOpened: false,
+  RPC_NODES: [
+    { title: 'ECADLABS', url: ecadLabSUrl, nodeLogoUrl: 'ECAD_logo.png', isUser: false },
+    { title: 'MARIGOLD', url: mariGoldUrl, nodeLogoUrl: 'marigold_logo.png', isUser: false },
+  ],
+  REACT_APP_RPC_PROVIDER: ecadLabSUrl,
+}
+
+export const defaultLoadingState: LoadingState = {
+  // isWertLoading – used for wert io payment system initialization
+  isWertLoading: false,
+  // isActiveFullScreenLoader – used for full screen rocket loader after operation confirmed
+  isActiveFullScreenLoader: false,
+  // isActionActive – user to track whether action is fullfilled with data update and we can unlock buttons
+  isActionActive: false,
+}
+
 export const DEFAULT_DAPP_CONFIG_CONTEXT: DappConfigContextStateType = {
   maxLengths: DAPP_DEFAULT_MAX_LENGHTS,
   minimumStakedMvkBalance: 0,
@@ -82,4 +112,6 @@ export const DEFAULT_DAPP_CONFIG_CONTEXT: DappConfigContextStateType = {
   contractAddresses: DAPP_DEFAULT_CONTRACT_ADDRESSES,
   // TODO: set default address to null, when contracts are updated
   mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh',
+  preferences: preferencesDefaultState,
+  globalLoadingState: defaultLoadingState,
 }

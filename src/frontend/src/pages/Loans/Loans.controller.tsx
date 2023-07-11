@@ -13,6 +13,7 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 import colors from 'styles/colors'
 import { skyColor } from 'styles'
@@ -34,12 +35,14 @@ import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -80,7 +83,9 @@ export const Loans = () => {
     vaults: { allVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const { totalBorrowed, totalLended } = marketsAddresses.reduce<{
     totalLended: number

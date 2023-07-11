@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
-import { State } from 'reducers'
 
 // view
 import Icon from '../Icon/Icon.view'
@@ -16,7 +14,6 @@ import { MainNavigationRoute } from '../../../utils/TypesAndInterfaces/Navigatio
 import { MenuFooter, MenuGrid, MenuSidebarContent, MenuSidebarStyled } from './Menu.style'
 
 // helpers, costants
-import { toggleSidebarCollapsing } from './Menu.actions'
 import { mainNavigationLinks } from './NavigationLink/MainNavigationLinks'
 import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
 import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -27,11 +24,9 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { getMVKTokensFromFaucet } from 'providers/UserProvider/actions/user.actions'
 import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
-import { toggleActionCompletion, toggleActionFullScreenLoader } from '../Loader/Loader.action'
 import { TOASTER_ACTIONS_TEXTS } from '../Toaster/texts/toasterActions.texts'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from '../Toaster/Toaster.constants'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
-import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
 import { TezosWalletErrorPayload } from 'errors/error.type'
 import { unknownToError } from 'errors/error'
 import { sleep } from 'utils/api/sleep'
@@ -69,19 +64,21 @@ export const SocialIcons = () => (
 )
 
 export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
-  const { bug, info, loading, setSharedError } = useToasterContext()
+  const { bug, info, loading } = useToasterContext()
   const {
     mvkFaucetAddress,
     setAction,
+    toggleSidebarCollapsing,
+    toggleActionCompletion,
+    toggleActionFullScreenLoader,
     contractAddresses: { mvkTokenAddress },
+    preferences: { sidebarOpened },
+    globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { userTokensBalances } = useUserContext()
   const { userAddress, isSatellite } = useUserContext()
 
-  const dispatch = useDispatch()
   const { pathname } = useLocation()
-  const { sidebarOpened } = useSelector((state: State) => state.preferences)
-  const { isActionActive } = useSelector((state: State) => state.loading)
   const [canGetInitThouthand, setCanGetInitThouthand] = useState(false)
 
   useEffect(() => {
@@ -119,7 +116,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       return
     }
 
-    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: MVK_TOKEN_SYMBOL })
+    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
     const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
     if (mvkTokenBalance > 0 || sMvkTokenBalance > 0) {
@@ -132,8 +129,8 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
 
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
 
         info(
           TOASTER_ACTIONS_TEXTS[GET_MVK_FROM_FAUCET_ACTION]['start']['message'],
@@ -148,8 +145,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
 
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+        toggleActionFullScreenLoader(false)
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
@@ -165,15 +161,17 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      toggleActionCompletion(false)
     }
   }
 
   const burgerClickHandler = useCallback(() => {
-    dispatch(toggleSidebarCollapsing())
+    toggleSidebarCollapsing()
   }, [])
 
   const sidebarBackdropClickHandler = useCallback(() => {
-    dispatch(toggleSidebarCollapsing(false))
+    toggleSidebarCollapsing(false)
   }, [])
 
   const navLinkClickHandler = useCallback(() => {

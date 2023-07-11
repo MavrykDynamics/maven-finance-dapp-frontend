@@ -37,12 +37,17 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
 import { checkNan } from 'utils/checkNan'
+
+// providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+
+// utils
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
 } from 'providers/TokensProvider/helpers/tokens.utils'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
 
@@ -59,7 +64,9 @@ export const WithdrawCollateral = ({
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userTokensBalances } = useUserContext()
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   useLockBodyScroll(show)

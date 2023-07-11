@@ -6,13 +6,11 @@ import Button from 'app/App.components/Button/NewButton'
 
 import { LBHInfoBlock } from './DashboardPersonalComponents.style'
 import { LoansPositionTable } from 'pages/LoansDashboard/components/PositionTable'
-import { State } from 'reducers'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
 import { getGaugeVaultRiskSimpleStatus } from 'pages/LoansDashboard/helpers/position.helpers'
 import { GaugeChartStateType, GAUGE_STATE_RISK_PART, GAUGE_STATE_APY_PART } from 'pages/LoansDashboard/LoansDashboard'
 import { useMemo, useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
 import colors from 'styles/colors'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
@@ -22,6 +20,7 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const LendBorrowPosition = ({
   userLoansRewards,
@@ -38,7 +37,9 @@ export const LendBorrowPosition = ({
   const { userMTokens } = useUserContext()
   const { marketsAddresses, marketsMapper } = useLoansContext()
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   // calc data for gauge chart
   const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {

@@ -1,3 +1,4 @@
+import { LIGHT_THEME, DARK_THEME, SPACE_THEME, ThemeType } from 'consts/theme.const'
 export const darkColor = '#080628'
 export const containerColor = '#160E3F'
 export const darkPurpleColor = '#38237C'
@@ -137,8 +138,15 @@ export const light = {
 
 export const space = dark
 
-export default {
-  space,
-  dark,
-  light,
+type Themes = {
+  // all themes have same color names
+  [key in ThemeType]: typeof light
 }
+
+const themes: Themes = {
+  [LIGHT_THEME]: light,
+  [DARK_THEME]: dark,
+  [SPACE_THEME]: space,
+}
+
+export default themes

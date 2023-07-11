@@ -1,27 +1,30 @@
-import { useSelector } from 'react-redux'
 import { useState } from 'react'
-import { State } from 'reducers'
+import { SingleValueData, Time } from 'lightweight-charts'
+import { cyanColor, skyColor } from 'styles'
 
 // styles
 import { DoormanChartCard, DoormanExitFeeCurrentValues, Wrapper } from './DoormanChart.style'
-import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // components
+import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { Chart } from '../../../app/App.components/Chart/Chart'
 import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import { cyanColor, skyColor } from 'styles'
-
-import { AREA_CHART_TYPE, AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
-import { MLI_FEE_CHART_DATA } from './MliFee-chart-data'
-import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
-import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
 import { CommaNumber, formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { DECIMALS_TO_SHOW } from 'utils/constants'
-import colors from 'styles/colors'
-import { SingleValueData, Time } from 'lightweight-charts'
-import { calcExitFee, calcMLI } from 'utils/calcFunctions'
-import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
+import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
+
+// providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+// types
+import { AREA_CHART_TYPE, AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+// consts & helpers
+import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
+import { MLI_FEE_CHART_DATA } from './MliFee-chart-data'
+import { calcExitFee, calcMLI } from 'utils/calcFunctions'
+import { DECIMALS_TO_SHOW } from 'utils/constants'
+import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
+import colors from 'styles/colors'
 
 const tabsList: TabItem[] = [
   {
@@ -67,7 +70,9 @@ const findExitFeeClosestTimePlot = (exitFeePlots: Array<AreaChartPlotType>, exit
 
 export function DoormanChart() {
   const { smvkHistoryData, mvkHistoryData, totalStakedMvk, totalSupply } = useStakeContext()
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const currentExitFee = calcExitFee(totalSupply, totalStakedMvk)
   const currentMLI = calcMLI(totalSupply, totalStakedMvk)

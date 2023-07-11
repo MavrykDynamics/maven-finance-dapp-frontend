@@ -1,15 +1,37 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import classNames from 'classnames'
+
+// components
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { Input } from 'app/App.components/Input/NewInput'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import NewButton from 'app/App.components/Button/NewButton'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+
+// types
+import { State } from 'reducers'
+import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
+import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+
+// styles
+import { silverColor } from 'styles'
+import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
+import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
+
+// consts
+import colors from 'styles/colors'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import {
   COLLATERAL_RATIO_GRADIENT,
   assetDecimalsToShow,
   getCollateralRationPersent,
   loansTabNames,
 } from 'pages/Loans/Loans.const'
-import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
-import { State } from 'reducers'
 import {
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
@@ -18,28 +40,19 @@ import {
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { Input } from 'app/App.components/Input/NewInput'
-import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { silverColor } from 'styles'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import NewButton from 'app/App.components/Button/NewButton'
-import Icon from 'app/App.components/Icon/Icon.view'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
-import colors from 'styles/colors'
-import { TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
-import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT } from 'texts/banners/vault.text'
 import { AVALIABLE_TO_BORROW, FEES_DUE } from 'texts/tooltips/vault.text'
+import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT } from 'texts/banners/vault.text'
+
+// urils
+import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { checkNan } from 'utils/checkNan'
-import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
+
+// providers
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type Props = {
   vaultId: number
@@ -59,7 +72,9 @@ type Props = {
 export const BorrowingExpandCardRepaySection = (props: Props) => {
   const { userTokensBalances } = useUserContext()
 
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {

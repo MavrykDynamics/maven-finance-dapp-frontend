@@ -1,12 +1,11 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 // helpers
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
-import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
 import { stakingInputValidation } from '../Doorman.converter'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
-import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
 import { unknownToError } from 'errors/error'
 import { UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
@@ -35,7 +34,6 @@ import { unstakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
 import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
 import { TezosWalletErrorPayload } from 'errors/error.type'
-import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -59,9 +57,10 @@ export const ExitFeeModal = ({
   inputData,
   setInputData,
 }: ExitFeeModalPropsType) => {
-  const dispatch = useDispatch()
   const {
     setAction,
+    toggleActionFullScreenLoader,
+    toggleActionCompletion,
     contractAddresses: { doormanAddress },
   } = useDappConfigContext()
   const { bug, info, loading } = useToasterContext()
@@ -96,8 +95,8 @@ export const ExitFeeModal = ({
 
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
+        toggleActionFullScreenLoader(true)
+        toggleActionCompletion(true)
 
         info(
           TOASTER_ACTIONS_TEXTS[UNSTAKE_ACTION]['start']['message'],
@@ -112,13 +111,11 @@ export const ExitFeeModal = ({
           TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
         )
 
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
+        toggleActionFullScreenLoader(false)
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
 
-        setInputData({ ...inputData, amount: '0' })
         setAction({ actionName: UNSTAKE_ACTION, toasterId, operationLvl })
       } else if (isContractErrorPayload(actionResult.error)) {
         const { message, description } = actionResult.error as TezosWalletErrorPayload
@@ -130,6 +127,9 @@ export const ExitFeeModal = ({
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
+    } finally {
+      setInputData({ ...inputData, amount: '0' })
+      toggleActionCompletion(false)
     }
   }
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
