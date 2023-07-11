@@ -6,7 +6,7 @@ import { ApolloError, useQuery, useSubscription } from '@apollo/client'
 
 // types
 import { DappConfigContext, DappConfigContextStateType, RPCNodeType, UserActionType } from './dappConfig.provider.types'
-import { ThemeType } from 'app/App.components/DarkThemeProvider/DarkThemeProvider.const'
+import { ThemeType } from 'consts/theme.const'
 
 // consts
 import { SUBSCRIPTION_INDEXER_LVL } from './queries/indexerLvl.query'
@@ -154,17 +154,6 @@ const DappConfigProvider = ({ children }: Props) => {
     setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, themeSelected: theme } }))
   }
 
-  const getHeadData = async () => {
-    try {
-      const headData = await getChainInfo()
-      if (JSON.stringify(dappConfigCtxState.preferences.headData) !== JSON.stringify(headData)) {
-        setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, headData } }))
-      }
-    } catch (e) {
-      throw e
-    }
-  }
-
   const toggleRPCNodePopup = (isOpened: boolean) => {
     setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, changeNodePopupOpen: isOpened } }))
   }
@@ -178,8 +167,6 @@ const DappConfigProvider = ({ children }: Props) => {
   }
 
   const setNewRPCNodes = (newRPCNodes: Array<RPCNodeType>) => {
-    // setItemInStorage(RPC_NODE, newRPCNode)
-
     setDappConfigCtxState((prev) => ({
       ...prev,
       preferences: { ...prev.preferences, RPC_NODES: newRPCNodes },
@@ -194,24 +181,24 @@ const DappConfigProvider = ({ children }: Props) => {
   }
 
   // loading actions
-  const toggleActionFullScreenLoader = (v: boolean) => {
+  const toggleActionFullScreenLoader = (value: boolean) => {
     setDappConfigCtxState((prev) => ({
       ...prev,
-      globalLoadingState: { ...prev.globalLoadingState, isActiveFullScreenLoader: v },
+      globalLoadingState: { ...prev.globalLoadingState, isActiveFullScreenLoader: value },
     }))
   }
 
-  const toggleActionCompletion = (v: boolean) => {
+  const toggleActionCompletion = (value: boolean) => {
     setDappConfigCtxState((prev) => ({
       ...prev,
-      globalLoadingState: { ...prev.globalLoadingState, isActionActive: v },
+      globalLoadingState: { ...prev.globalLoadingState, isActionActive: value },
     }))
   }
 
-  const toggleWertLoader = (v: boolean) => {
+  const toggleWertLoader = (value: boolean) => {
     setDappConfigCtxState((prev) => ({
       ...prev,
-      globalLoadingState: { ...prev.globalLoadingState, isWertLoading: v },
+      globalLoadingState: { ...prev.globalLoadingState, isWertLoading: value },
     }))
   }
 
@@ -221,7 +208,6 @@ const DappConfigProvider = ({ children }: Props) => {
       setAction,
       // preferences
       toggleTheme,
-      getHeadData,
       toggleRPCNodePopup,
       selectNewRPCNode,
       setNewRPCNodes,

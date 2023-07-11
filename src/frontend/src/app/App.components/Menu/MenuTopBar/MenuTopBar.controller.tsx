@@ -7,7 +7,7 @@ import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { toggleWertLoader } from 'app/App.components/Loader/Loader.action'
 import { State } from 'reducers'
 
-import { LIGHT_THEME } from 'app/App.components/DarkThemeProvider/DarkThemeProvider.const'
+import { LIGHT_THEME } from 'consts/theme.const'
 import { getWertOptions } from 'app/App.components/ConnectWallet/Wert/WertIO.const'
 import { TOASTER_ERROR } from 'app/App.components/Toaster/Toaster.constants'
 

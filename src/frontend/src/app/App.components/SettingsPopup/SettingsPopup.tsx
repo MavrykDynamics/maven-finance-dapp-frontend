@@ -19,7 +19,7 @@ import { isValidRPCNode } from 'utils/validatorFunctions'
 import { stopPropagation } from 'utils/eventsHelpers/stopPropagation'
 
 // actions
-import { DARK_THEME, LIGHT_THEME, SPACE_THEME, ThemeType } from '../DarkThemeProvider/DarkThemeProvider.const'
+import { DARK_THEME, LIGHT_THEME, SPACE_THEME, ThemeType } from 'consts/theme.const'
 
 // types
 import { InputStatusType } from 'app/App.components/Input/Input.constants'

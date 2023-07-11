@@ -7,7 +7,7 @@ import { UserActionsType } from 'providers/UserProvider/user.provider.types'
 import { SatelliteActionsType } from 'providers/SatellitesProvider/satellites.provider.types'
 import { ExtendedError } from 'errors/error'
 import { TezosWalletErrorPayload } from 'errors/error.type'
-import { ThemeType } from 'app/App.components/DarkThemeProvider/DarkThemeProvider.const'
+import { ThemeType } from 'consts/theme.const'
 
 export type ActionTypes = StakeActionType | UserActionsType | SatelliteActionsType
 
@@ -30,7 +30,6 @@ export type DappConfigContext = {
   setAction: (actionName: null | UserActionType) => void
   // preferences actions
   toggleTheme: (theme: ThemeType) => void
-  getHeadData: () => void
   toggleRPCNodePopup: (isOpened: boolean) => void
   selectNewRPCNode: (newRPCNode: string, isRemove?: boolean) => void
   setNewRPCNodes: (newRPCNodes: Array<RPCNodeType>, isRemove?: boolean) => void
@@ -43,7 +42,13 @@ export type DappConfigContext = {
 
 export type DappConfigContextStateType = Pick<
   DappConfigContext,
-  'maxLengths' | 'mvkFaucetAddress' | 'xtzBakers' | 'minimumStakedMvkBalance' | 'contractAddresses' | 'preferences' | 'globalLoadingState'
+  | 'maxLengths'
+  | 'mvkFaucetAddress'
+  | 'xtzBakers'
+  | 'minimumStakedMvkBalance'
+  | 'contractAddresses'
+  | 'preferences'
+  | 'globalLoadingState'
 >
 
 // TODO: dont forget to add other action names with their transfer to context
@@ -108,12 +113,7 @@ export type DappMaxLengths = {
   satelliteDelegation: SatelliteDelegationMaxLength
 }
 
-
 // preferences
-export type HeadDataType = {
-  knownLevel: number
-  level: number
-}
 
 export type RPCNodeType = {
   url: string
@@ -124,7 +124,6 @@ export type RPCNodeType = {
 
 export type PreferencesState = {
   themeSelected: ThemeType
-  headData?: HeadDataType
   changeNodePopupOpen: boolean
   RPC_NODES: Array<RPCNodeType>
   REACT_APP_RPC_PROVIDER: string
