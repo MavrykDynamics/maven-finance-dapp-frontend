@@ -65,17 +65,10 @@ export const dark = {
   neutralSecondColor: '#6A6A9B',
   warningColor: '#FE630C',
   riskColor: '#FBFF43',
-  // third colors
-  primaryChartColor: '#77A4F2',
-  secondaryChartColor: '#77A4F2',
-  histogramChartColor: '#77A4F2',
-  gaugeChartColor: '#86D4C9',
-  gradientDiagramBackgroundColor: '#696969',
-  loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
+  // specific colors
   inputFocusColor: '#7068AA',
   ipfsBorderColor: 'rgb(80, 62, 170)',
   ipfsHoverBorderColor: '%2386D4C9FF',
-  shineAnimationGradient: `linear-gradient(to right, ${headerColor} 0, ${cyanColor} 10%, ${headerColor} 20%)`,
   menuBackdropColor: '#08062880',
   menuBackgroundActiveColor: 'linear-gradient(90deg, #38237c 0%, rgba(80, 80, 142, 0) 100%)',
   popupBackdropColor: '#0000007a',
@@ -83,6 +76,15 @@ export const dark = {
   scrollBlockColor: '#503EAA',
   cardHoverColor: 'rgba(134, 212, 201, 0.5)',
   rpcNodeSelecledColor: '#86D4C9',
+  // charts
+  primaryChartColor: '#77A4F2',
+  secondaryChartColor: '#77A4F2',
+  histogramChartColor: '#77A4F2',
+  gaugeChartColor: '#86D4C9',
+  gradientDiagramBackgroundColor: '#696969',
+  // loaders
+  shineAnimationGradient: `linear-gradient(to right, #8D86EB 0, #86D4C9 10%, #8D86EB 20%)`,
+  loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
   // tabs
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
 
@@ -160,17 +162,10 @@ export const light = {
   neutralSecondColor: '#6A6A9B',
   warningColor: '#FE630C',
   riskColor: '#FBBA39',
-  // third colors
-  primaryChartColor: '#77A4F2',
-  secondaryChartColor: '#77A4F2',
-  histogramChartColor: '#77A4F2',
-  gaugeChartColor: '#86D4C9',
-  gradientDiagramBackgroundColor: '#696969',
-  loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
+  // specific colors
   inputFocusColor: '#7068AA',
   ipfsBorderColor: 'rgb(31, 31, 31)',
   ipfsHoverBorderColor: '%238D86EBFF',
-  shineAnimationGradient: `linear-gradient(to right, ${headerColor} 0, ${cyanColor} 10%, ${headerColor} 20%)`,
   menuBackdropColor: '#08062880',
   menuBackgroundActiveColor: 'linear-gradient(90deg, rgba(134, 212, 201, 0.5) 0%, rgba(134, 212, 201, 0) 100%);',
   popupBackdropColor: '#0000007a',
@@ -178,6 +173,15 @@ export const light = {
   scrollBlockColor: '#503EAA',
   cardHoverColor: 'rgba(134, 212, 201, 0.5)',
   rpcNodeSelecledColor: '#86D4C9',
+  // charts
+  primaryChartColor: '#77A4F2',
+  secondaryChartColor: '#77A4F2',
+  histogramChartColor: '#77A4F2',
+  gaugeChartColor: '#86D4C9',
+  gradientDiagramBackgroundColor: '#696969',
+  // loaders
+  shineAnimationGradient: `linear-gradient(to right, #8D86EB 0, #86D4C9 10%, #8D86EB 20%)`,
+  loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
   // tabs
   forTabs: 'linear-gradient(90deg, #03C9A3 0.31%, #8D86EB 99.97%)',
 
@@ -255,17 +259,10 @@ export const space = {
   neutralSecondColor: '#6A6A9B',
   warningColor: '#FE630C',
   riskColor: '#FBFF43',
-  // third colors
-  primaryChartColor: '#77A4F2',
-  secondaryChartColor: '#86D4C9',
-  histogramChartColor: '#77A4F2',
-  gaugeChartColor: '#86D4C9',
-  gradientDiagramBackgroundColor: '#696969',
-  loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
+  // specific colors
   inputFocusColor: '#7068AA',
   ipfsBorderColor: 'rgb(80, 62, 170)',
   ipfsHoverBorderColor: '%2386D4C9FF',
-  shineAnimationGradient: `linear-gradient(to right, ${headerColor} 0, ${cyanColor} 10%, ${headerColor} 20%)`,
   menuBackdropColor: '#08062880',
   menuBackgroundActiveColor: 'linear-gradient(90deg, #38237c 0%, rgba(80, 80, 142, 0) 100%)',
   popupBackdropColor: '#0000007a',
@@ -273,6 +270,15 @@ export const space = {
   scrollBlockColor: '#503EAA',
   cardHoverColor: 'rgba(134, 212, 201, 0.5)',
   rpcNodeSelecledColor: '#86D4C9',
+  // charts
+  primaryChartColor: '#77A4F2',
+  secondaryChartColor: '#86D4C9',
+  histogramChartColor: '#77A4F2',
+  gaugeChartColor: '#86D4C9',
+  gradientDiagramBackgroundColor: '#696969',
+  // loaders
+  shineAnimationGradient: `linear-gradient(to right, #8D86EB 0, #86D4C9 10%, #8D86EB 20%)`,
+  loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
   // tabs
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
 
