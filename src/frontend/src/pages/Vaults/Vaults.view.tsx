@@ -28,7 +28,6 @@ import {
   PERMISSIONED_VAULTS_LIST_NAME,
 } from 'app/App.components/Pagination/pagination.consts'
 import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // types
 import { State } from '../../reducers'
@@ -36,7 +35,6 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
 import { markForLiquidation } from './Vaults.actions'
-import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
 const pathname = '/vaults'
 
@@ -68,16 +66,6 @@ export const VaultsView = () => {
     return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
   }, [])
 
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isDataLoaded || isDepsChanged) {
-          await dispatch(getLoansStorage())
-        }
-      } catch (e) {}
-    },
-    [userAddress],
-  )
   const [tabsList, setTabsList] = useState<TabItem[]>([])
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
 
@@ -160,7 +148,7 @@ export const VaultsView = () => {
         setVaultsIds={setVaultsIds}
       />
 
-      {isLoading || isLoansLoading ? (
+      {isLoansLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>

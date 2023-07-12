@@ -3,7 +3,6 @@ import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-o
 
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { getLoansStorage } from './getLoansData.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
 import {
@@ -74,8 +73,6 @@ export const changeBakerAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(getLoansStorage())
-
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Baker changed.', ACTION_COMPLETION_MESSAGE_TEXT))
             await dispatch(toggleActionCompletion(false))
@@ -195,8 +192,6 @@ export const managePermissionsAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(getLoansStorage())
-
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Depositors updated.', ACTION_COMPLETION_MESSAGE_TEXT))
             await dispatch(toggleActionCompletion(false))
@@ -256,8 +251,6 @@ export const updateOperatorsAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(getLoansStorage())
-
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Operators updated.', ACTION_COMPLETION_MESSAGE_TEXT))
             await dispatch(toggleActionCompletion(false))

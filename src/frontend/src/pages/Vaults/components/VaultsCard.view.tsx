@@ -39,7 +39,7 @@ import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provi
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
-import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
+import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'

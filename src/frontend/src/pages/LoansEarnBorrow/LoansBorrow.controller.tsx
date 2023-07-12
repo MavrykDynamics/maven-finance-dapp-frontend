@@ -28,7 +28,6 @@ import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // actions
-import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
@@ -168,22 +167,11 @@ export const LoansBorrow = () => {
     }
   }
 
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isDataLoaded || isDepsChanged) {
-          await dispatch(getLoansStorage())
-        }
-      } catch (e) {}
-    },
-    [userAddress],
-  )
-
   return (
     <Page>
       <PageHeader page={'loansBorrow'} />
 
-      {isLoading || isLoansLoading ? (
+      {isLoansLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading borrows charts</div>

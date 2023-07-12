@@ -29,9 +29,7 @@ import { MarketPagination, MarketStyled, ThreeLevelListItem } from './Loans.styl
 // types
 import { State } from 'reducers'
 import { MarketPageHeader } from './Components/LoansPageHeader'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { getLoansStorage } from './Actions/getLoansData.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
@@ -85,12 +83,6 @@ export const Market = () => {
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
-
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      await dispatch(getLoansStorage())
-    } catch (e) {}
-  }, [accountPkh])
 
   useEffect(() => {
     window.scrollTo(0, 0)

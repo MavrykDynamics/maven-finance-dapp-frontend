@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
-import { FullLoansVaultType, VaultType } from '../../VaultsProvider/vaults.provider.types'
+import { FullLoansVaultType, VaultType } from '../vaults.provider.types'
 
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -13,7 +13,7 @@ import {
   getVaultCollateralRatio,
   getVaultLiquidationPrice,
   getVaultStatus,
-} from '../../VaultsProvider/helpers/vaults.utils'
+} from '../helpers/vaults.utils'
 import {
   getTimestampByLevelHeaders,
   getTimestampByLevelSchema,

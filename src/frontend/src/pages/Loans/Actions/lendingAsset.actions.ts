@@ -3,7 +3,6 @@ import { OpKind, TransactionWalletOperation } from '@taquito/taquito'
 
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { getLoansStorage } from './getLoansData.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
 import {
@@ -133,8 +132,6 @@ export const depositLendingAssetAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(getLoansStorage())
-
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Liquidity added.', ACTION_COMPLETION_MESSAGE_TEXT))
             await dispatch(toggleActionCompletion(false))
@@ -198,8 +195,6 @@ export const withdrawLendingAssetAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(getLoansStorage())
-
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Liquidity removed.', ACTION_COMPLETION_MESSAGE_TEXT))
             await dispatch(toggleActionCompletion(false))

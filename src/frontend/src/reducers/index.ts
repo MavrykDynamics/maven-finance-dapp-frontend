@@ -10,7 +10,6 @@ import { council, CouncilState } from './council'
 import { vesting, VestingState } from './vesting'
 import { farm, FarmState } from './farm'
 import { contractAddresses, ContractAddressesState } from './contractAddresses'
-import { loans, LoansState } from './loans'
 import { financialRequest, FinancialRequestStoreType } from './financialRequests'
 import { satelliteGovernance, SatelliteGovernanceState } from './satelliteGovernance'
 
@@ -26,7 +25,6 @@ export const reducers = combineReducers({
   emergencyGovernance,
 
   satelliteGovernance,
-  loans,
   treasury,
   farm,
   vesting,
@@ -44,6 +42,5 @@ export interface State {
   vesting: VestingState
   farm: FarmState
   contractAddresses: ContractAddressesState
-  loans: LoansState
   satelliteGovernance: SatelliteGovernanceState
 }
