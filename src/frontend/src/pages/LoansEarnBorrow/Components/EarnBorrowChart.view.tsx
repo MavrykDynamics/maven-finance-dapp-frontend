@@ -11,11 +11,12 @@ import { EarnBorrowChartStyled } from '../LoansEarnBorrow.styles'
 // helpers
 import { CHART_COLORS, MINI_CHART_SETTINGS, numberOfItemsToDisplay } from '../LoansEarnBorrow.consts'
 import { BUTTON_THIRD, BUTTON_ROUND } from 'app/App.components/Button/Button.constants'
-import { AREA_CHART_TYPE, HISTOGRAM_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { AREA_CHART_TYPE, HISTOGRAM_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+import { useLoansEarnBorrowContext } from '../context/loansEarnBorrowContext'
 
 type ChartDataType = {
   type: typeof AREA_CHART_TYPE | typeof HISTOGRAM_CHART_TYPE
@@ -29,6 +30,7 @@ type Props = {
 
 export const EarnBorrowChart = ({ data, isBorrow }: Props) => {
   const [isGraph, setIsGraph] = useState(false)
+  const { isLoading } = useLoansEarnBorrowContext()
 
   const chartData: ChartDataType = { type: isGraph ? HISTOGRAM_CHART_TYPE : AREA_CHART_TYPE, plots: data }
   const showChart = chartData.plots.length >= numberOfItemsToDisplay
@@ -52,6 +54,7 @@ export const EarnBorrowChart = ({ data, isBorrow }: Props) => {
         numberOfItemsToDisplay={numberOfItemsToDisplay}
         tooltipAsset="$"
         tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
+        isLoading={isLoading}
       />
     </EarnBorrowChartStyled>
   )

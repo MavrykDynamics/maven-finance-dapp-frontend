@@ -1,7 +1,12 @@
 import { formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { CandlestickData, ColorType, MouseEventParams, SingleValueData } from 'lightweight-charts'
-import { DECIMALS_TO_SHOW } from 'utils/constants'
-import { CandlestickChartPlotType } from './Chart.types'
+import { ColorType, MouseEventParams } from 'lightweight-charts'
+
+// Chart types
+export const AREA_CHART_TYPE = 'area'
+export const CANDLESTICK_CHART_TYPE = 'candle'
+export const HISTOGRAM_CHART_TYPE = 'histogram'
+
+export const chartTypesArr = [AREA_CHART_TYPE, CANDLESTICK_CHART_TYPE, HISTOGRAM_CHART_TYPE]
 
 /**
  *

@@ -20,7 +20,7 @@ import Button from 'app/App.components/Button/NewButton'
 
 import { PortfolioChartStyled, PortfolioWalletStyled } from './DashboardPersonalComponents.style'
 import { LendBorrowPosition } from './LendBorrowPosition'
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
 import { useUserContext } from 'providers/UserProvider/user.provider'
