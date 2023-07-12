@@ -6,10 +6,16 @@ import Icon from '../Icon/Icon.view'
 import { AreaChart } from './ChartTypes/AreaChart'
 import { CandlestickChart } from './ChartTypes/CandlestickChart'
 import { HistogramChart } from './ChartTypes/HistogramChart'
+
+// consts
 import { AREA_CHART_TYPE, CANDLESTICK_CHART_TYPE, HISTOGRAM_CHART_TYPE } from './helpers/Chart.const'
-import { ChartWrapperPropsType } from './helpers/Chart.types'
-import { SpinnerCircleLoaderStyled } from '../Loader/Loader.style'
 import { SPINNER_LOADER_MEDIUM } from '../Loader/loader.const'
+
+// types
+import { ChartWrapperPropsType } from './helpers/Chart.types'
+
+// styles
+import { SpinnerCircleLoaderStyled } from '../Loader/Loader.style'
 
 /**
  *
@@ -68,7 +74,6 @@ export const Chart = ({
   isLoading = false,
   loaderSize = SPINNER_LOADER_MEDIUM,
 }: ChartWrapperPropsType) => {
-  console.log(isLoading, 'isLoading', data)
   if (comingSoon) {
     return (
       <Plug>

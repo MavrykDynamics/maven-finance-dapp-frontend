@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import classNames from 'classnames'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -119,7 +118,7 @@ export const Loans = () => {
         <span>Total Earning</span>
         <CommaNumber value={totalLended} beginningText={'$'} />
       </div>
-      <div className={classNames('chart')}>
+      <div className={'chart'}>
         <Chart
           isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(totalLendingChart, 7) }}
@@ -140,7 +139,7 @@ export const Loans = () => {
         <span>Total Borrowing</span>
         <CommaNumber value={totalBorrowed} beginningText={'$'} />
       </div>
-      <div className={classNames('chart')}>
+      <div className={'chart'}>
         <Chart
           isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(totalBorrowingChart, 7) }}

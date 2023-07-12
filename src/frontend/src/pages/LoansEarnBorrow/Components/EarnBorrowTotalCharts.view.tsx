@@ -1,5 +1,3 @@
-import classNames from 'classnames'
-
 // styles
 import { MarketChartsContainer } from 'pages/Loans/Loans.style'
 
@@ -45,7 +43,7 @@ export const EarnBorrowTotalCharts = ({
         <CommaNumber value={leftTotalAmount ?? 0} beginningText={'$'} />
       </div>
 
-      <div className={classNames('chart')}>
+      <div className={'chart'}>
         <Chart
           isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(leftChartData, 7) }}
@@ -67,7 +65,7 @@ export const EarnBorrowTotalCharts = ({
         <CommaNumber value={rightTotalAmount ?? 0} beginningText={'$'} />
       </div>
 
-      <div className={classNames('chart')}>
+      <div className={'chart'}>
         <Chart
           isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(rightChartData, 7) }}
