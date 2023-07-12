@@ -5289,6 +5289,7 @@ export type Break_Glass_Action = {
   execution_datetime: Scalars['timestamptz'];
   execution_level: Scalars['bigint'];
   expiration_datetime: Scalars['timestamptz'];
+  flushed_datetime?: Maybe<Scalars['timestamptz']>;
   id: Scalars['bigint'];
   /** An object relationship */
   initiator: Mavryk_User;
@@ -5460,6 +5461,7 @@ export type Break_Glass_Action_Bool_Exp = {
   execution_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   execution_level?: InputMaybe<Bigint_Comparison_Exp>;
   expiration_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
+  flushed_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   initiator?: InputMaybe<Mavryk_User_Bool_Exp>;
   initiator_id?: InputMaybe<Bigint_Comparison_Exp>;
@@ -5482,6 +5484,7 @@ export type Break_Glass_Action_Max_Fields = {
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level?: Maybe<Scalars['bigint']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
+  flushed_datetime?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['bigint']>;
   initiator_id?: Maybe<Scalars['bigint']>;
   internal_id?: Maybe<Scalars['bigint']>;
@@ -5499,6 +5502,7 @@ export type Break_Glass_Action_Max_Order_By = {
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
+  flushed_datetime?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   initiator_id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5517,6 +5521,7 @@ export type Break_Glass_Action_Min_Fields = {
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level?: Maybe<Scalars['bigint']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
+  flushed_datetime?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['bigint']>;
   initiator_id?: Maybe<Scalars['bigint']>;
   internal_id?: Maybe<Scalars['bigint']>;
@@ -5534,6 +5539,7 @@ export type Break_Glass_Action_Min_Order_By = {
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
+  flushed_datetime?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   initiator_id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5553,6 +5559,7 @@ export type Break_Glass_Action_Order_By = {
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
+  flushed_datetime?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   initiator?: InputMaybe<Mavryk_User_Order_By>;
   initiator_id?: InputMaybe<Order_By>;
@@ -5834,6 +5841,8 @@ export enum Break_Glass_Action_Select_Column {
   ExecutionLevel = 'execution_level',
   /** column name */
   ExpirationDatetime = 'expiration_datetime',
+  /** column name */
+  FlushedDatetime = 'flushed_datetime',
   /** column name */
   Id = 'id',
   /** column name */
@@ -6222,6 +6231,7 @@ export type Break_Glass_Action_Stream_Cursor_Value_Input = {
   execution_datetime?: InputMaybe<Scalars['timestamptz']>;
   execution_level?: InputMaybe<Scalars['bigint']>;
   expiration_datetime?: InputMaybe<Scalars['timestamptz']>;
+  flushed_datetime?: InputMaybe<Scalars['timestamptz']>;
   id?: InputMaybe<Scalars['bigint']>;
   initiator_id?: InputMaybe<Scalars['bigint']>;
   internal_id?: InputMaybe<Scalars['bigint']>;
@@ -8029,6 +8039,7 @@ export type Council_Action = {
   execution_datetime: Scalars['timestamptz'];
   execution_level: Scalars['bigint'];
   expiration_datetime: Scalars['timestamptz'];
+  flushed_datetime?: Maybe<Scalars['timestamptz']>;
   id: Scalars['bigint'];
   /** An object relationship */
   initiator: Mavryk_User;
@@ -8200,6 +8211,7 @@ export type Council_Action_Bool_Exp = {
   execution_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   execution_level?: InputMaybe<Bigint_Comparison_Exp>;
   expiration_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
+  flushed_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   initiator?: InputMaybe<Mavryk_User_Bool_Exp>;
   initiator_id?: InputMaybe<Bigint_Comparison_Exp>;
@@ -8222,6 +8234,7 @@ export type Council_Action_Max_Fields = {
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level?: Maybe<Scalars['bigint']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
+  flushed_datetime?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['bigint']>;
   initiator_id?: Maybe<Scalars['bigint']>;
   internal_id?: Maybe<Scalars['bigint']>;
@@ -8239,6 +8252,7 @@ export type Council_Action_Max_Order_By = {
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
+  flushed_datetime?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   initiator_id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -8257,6 +8271,7 @@ export type Council_Action_Min_Fields = {
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level?: Maybe<Scalars['bigint']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
+  flushed_datetime?: Maybe<Scalars['timestamptz']>;
   id?: Maybe<Scalars['bigint']>;
   initiator_id?: Maybe<Scalars['bigint']>;
   internal_id?: Maybe<Scalars['bigint']>;
@@ -8274,6 +8289,7 @@ export type Council_Action_Min_Order_By = {
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
+  flushed_datetime?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   initiator_id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -8293,6 +8309,7 @@ export type Council_Action_Order_By = {
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
+  flushed_datetime?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   initiator?: InputMaybe<Mavryk_User_Order_By>;
   initiator_id?: InputMaybe<Order_By>;
@@ -8574,6 +8591,8 @@ export enum Council_Action_Select_Column {
   ExecutionLevel = 'execution_level',
   /** column name */
   ExpirationDatetime = 'expiration_datetime',
+  /** column name */
+  FlushedDatetime = 'flushed_datetime',
   /** column name */
   Id = 'id',
   /** column name */
@@ -8962,6 +8981,7 @@ export type Council_Action_Stream_Cursor_Value_Input = {
   execution_datetime?: InputMaybe<Scalars['timestamptz']>;
   execution_level?: InputMaybe<Scalars['bigint']>;
   expiration_datetime?: InputMaybe<Scalars['timestamptz']>;
+  flushed_datetime?: InputMaybe<Scalars['timestamptz']>;
   id?: InputMaybe<Scalars['bigint']>;
   initiator_id?: InputMaybe<Scalars['bigint']>;
   internal_id?: InputMaybe<Scalars['bigint']>;
@@ -24695,6 +24715,7 @@ export type Governance_Financial_Order_By = {
 /** columns and relationships of "governance_financial_request" */
 export type Governance_Financial_Request = {
   __typename?: 'governance_financial_request';
+  dropped_datetime?: Maybe<Scalars['timestamptz']>;
   executed: Scalars['Boolean'];
   execution_datetime: Scalars['timestamptz'];
   expiration_datetime: Scalars['timestamptz'];
@@ -24940,6 +24961,7 @@ export type Governance_Financial_Request_Bool_Exp = {
   _and?: InputMaybe<Array<Governance_Financial_Request_Bool_Exp>>;
   _not?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
   _or?: InputMaybe<Array<Governance_Financial_Request_Bool_Exp>>;
+  dropped_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   executed?: InputMaybe<Boolean_Comparison_Exp>;
   execution_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   expiration_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -24971,6 +24993,7 @@ export type Governance_Financial_Request_Bool_Exp = {
 /** aggregate max on columns */
 export type Governance_Financial_Request_Max_Fields = {
   __typename?: 'governance_financial_request_max_fields';
+  dropped_datetime?: Maybe<Scalars['timestamptz']>;
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
   governance_financial_id?: Maybe<Scalars['bigint']>;
@@ -24995,6 +25018,7 @@ export type Governance_Financial_Request_Max_Fields = {
 
 /** order by max() on columns of table "governance_financial_request" */
 export type Governance_Financial_Request_Max_Order_By = {
+  dropped_datetime?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
   governance_financial_id?: InputMaybe<Order_By>;
@@ -25020,6 +25044,7 @@ export type Governance_Financial_Request_Max_Order_By = {
 /** aggregate min on columns */
 export type Governance_Financial_Request_Min_Fields = {
   __typename?: 'governance_financial_request_min_fields';
+  dropped_datetime?: Maybe<Scalars['timestamptz']>;
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
   governance_financial_id?: Maybe<Scalars['bigint']>;
@@ -25044,6 +25069,7 @@ export type Governance_Financial_Request_Min_Fields = {
 
 /** order by min() on columns of table "governance_financial_request" */
 export type Governance_Financial_Request_Min_Order_By = {
+  dropped_datetime?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
   governance_financial_id?: InputMaybe<Order_By>;
@@ -25068,6 +25094,7 @@ export type Governance_Financial_Request_Min_Order_By = {
 
 /** Ordering options when selecting data from "governance_financial_request". */
 export type Governance_Financial_Request_Order_By = {
+  dropped_datetime?: InputMaybe<Order_By>;
   executed?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
@@ -25097,6 +25124,8 @@ export type Governance_Financial_Request_Order_By = {
 
 /** select columns of table "governance_financial_request" */
 export enum Governance_Financial_Request_Select_Column {
+  /** column name */
+  DroppedDatetime = 'dropped_datetime',
   /** column name */
   Executed = 'executed',
   /** column name */
@@ -25406,6 +25435,7 @@ export type Governance_Financial_Request_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Governance_Financial_Request_Stream_Cursor_Value_Input = {
+  dropped_datetime?: InputMaybe<Scalars['timestamptz']>;
   executed?: InputMaybe<Scalars['Boolean']>;
   execution_datetime?: InputMaybe<Scalars['timestamptz']>;
   expiration_datetime?: InputMaybe<Scalars['timestamptz']>;
@@ -27328,6 +27358,7 @@ export type Governance_Proposal = {
   /** An aggregate relationship */
   data_aggregate: Governance_Proposal_Data_Aggregate;
   description: Scalars['String'];
+  dropped_datetime?: Maybe<Scalars['timestamptz']>;
   executed: Scalars['Boolean'];
   execution_counter: Scalars['smallint'];
   execution_datetime: Scalars['timestamptz'];
@@ -27654,6 +27685,7 @@ export type Governance_Proposal_Bool_Exp = {
   data?: InputMaybe<Governance_Proposal_Data_Bool_Exp>;
   data_aggregate?: InputMaybe<Governance_Proposal_Data_Aggregate_Bool_Exp>;
   description?: InputMaybe<String_Comparison_Exp>;
+  dropped_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   executed?: InputMaybe<Boolean_Comparison_Exp>;
   execution_counter?: InputMaybe<Smallint_Comparison_Exp>;
   execution_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -27991,6 +28023,7 @@ export type Governance_Proposal_Max_Fields = {
   current_cycle_start_level?: Maybe<Scalars['bigint']>;
   cycle?: Maybe<Scalars['bigint']>;
   description?: Maybe<Scalars['String']>;
+  dropped_datetime?: Maybe<Scalars['timestamptz']>;
   execution_counter?: Maybe<Scalars['smallint']>;
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   governance_id?: Maybe<Scalars['bigint']>;
@@ -28027,6 +28060,7 @@ export type Governance_Proposal_Max_Order_By = {
   current_cycle_start_level?: InputMaybe<Order_By>;
   cycle?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
+  dropped_datetime?: InputMaybe<Order_By>;
   execution_counter?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   governance_id?: InputMaybe<Order_By>;
@@ -28064,6 +28098,7 @@ export type Governance_Proposal_Min_Fields = {
   current_cycle_start_level?: Maybe<Scalars['bigint']>;
   cycle?: Maybe<Scalars['bigint']>;
   description?: Maybe<Scalars['String']>;
+  dropped_datetime?: Maybe<Scalars['timestamptz']>;
   execution_counter?: Maybe<Scalars['smallint']>;
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   governance_id?: Maybe<Scalars['bigint']>;
@@ -28100,6 +28135,7 @@ export type Governance_Proposal_Min_Order_By = {
   current_cycle_start_level?: InputMaybe<Order_By>;
   cycle?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
+  dropped_datetime?: InputMaybe<Order_By>;
   execution_counter?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   governance_id?: InputMaybe<Order_By>;
@@ -28138,6 +28174,7 @@ export type Governance_Proposal_Order_By = {
   cycle?: InputMaybe<Order_By>;
   data_aggregate?: InputMaybe<Governance_Proposal_Data_Aggregate_Order_By>;
   description?: InputMaybe<Order_By>;
+  dropped_datetime?: InputMaybe<Order_By>;
   executed?: InputMaybe<Order_By>;
   execution_counter?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
@@ -28667,6 +28704,8 @@ export enum Governance_Proposal_Select_Column {
   /** column name */
   Description = 'description',
   /** column name */
+  DroppedDatetime = 'dropped_datetime',
+  /** column name */
   Executed = 'executed',
   /** column name */
   ExecutionCounter = 'execution_counter',
@@ -29122,6 +29161,7 @@ export type Governance_Proposal_Stream_Cursor_Value_Input = {
   current_round_proposal?: InputMaybe<Scalars['Boolean']>;
   cycle?: InputMaybe<Scalars['bigint']>;
   description?: InputMaybe<Scalars['String']>;
+  dropped_datetime?: InputMaybe<Scalars['timestamptz']>;
   executed?: InputMaybe<Scalars['Boolean']>;
   execution_counter?: InputMaybe<Scalars['smallint']>;
   execution_datetime?: InputMaybe<Scalars['timestamptz']>;
@@ -30688,6 +30728,7 @@ export type Governance_SatelliteWhitelist_Contracts_AggregateArgs = {
 /** columns and relationships of "governance_satellite_action" */
 export type Governance_Satellite_Action = {
   __typename?: 'governance_satellite_action';
+  dropped_datetime?: Maybe<Scalars['timestamptz']>;
   executed: Scalars['Boolean'];
   execution_datetime: Scalars['timestamptz'];
   expiration_datetime: Scalars['timestamptz'];
@@ -30944,6 +30985,7 @@ export type Governance_Satellite_Action_Bool_Exp = {
   _and?: InputMaybe<Array<Governance_Satellite_Action_Bool_Exp>>;
   _not?: InputMaybe<Governance_Satellite_Action_Bool_Exp>;
   _or?: InputMaybe<Array<Governance_Satellite_Action_Bool_Exp>>;
+  dropped_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   executed?: InputMaybe<Boolean_Comparison_Exp>;
   execution_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   expiration_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -30972,6 +31014,7 @@ export type Governance_Satellite_Action_Bool_Exp = {
 /** aggregate max on columns */
 export type Governance_Satellite_Action_Max_Fields = {
   __typename?: 'governance_satellite_action_max_fields';
+  dropped_datetime?: Maybe<Scalars['timestamptz']>;
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
   governance_purpose?: Maybe<Scalars['String']>;
@@ -30993,6 +31036,7 @@ export type Governance_Satellite_Action_Max_Fields = {
 
 /** order by max() on columns of table "governance_satellite_action" */
 export type Governance_Satellite_Action_Max_Order_By = {
+  dropped_datetime?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
   governance_purpose?: InputMaybe<Order_By>;
@@ -31015,6 +31059,7 @@ export type Governance_Satellite_Action_Max_Order_By = {
 /** aggregate min on columns */
 export type Governance_Satellite_Action_Min_Fields = {
   __typename?: 'governance_satellite_action_min_fields';
+  dropped_datetime?: Maybe<Scalars['timestamptz']>;
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
   governance_purpose?: Maybe<Scalars['String']>;
@@ -31036,6 +31081,7 @@ export type Governance_Satellite_Action_Min_Fields = {
 
 /** order by min() on columns of table "governance_satellite_action" */
 export type Governance_Satellite_Action_Min_Order_By = {
+  dropped_datetime?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
   governance_purpose?: InputMaybe<Order_By>;
@@ -31057,6 +31103,7 @@ export type Governance_Satellite_Action_Min_Order_By = {
 
 /** Ordering options when selecting data from "governance_satellite_action". */
 export type Governance_Satellite_Action_Order_By = {
+  dropped_datetime?: InputMaybe<Order_By>;
   executed?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
@@ -31337,6 +31384,8 @@ export type Governance_Satellite_Action_Parameter_Variance_Order_By = {
 /** select columns of table "governance_satellite_action" */
 export enum Governance_Satellite_Action_Select_Column {
   /** column name */
+  DroppedDatetime = 'dropped_datetime',
+  /** column name */
   Executed = 'executed',
   /** column name */
   ExecutionDatetime = 'execution_datetime',
@@ -31605,6 +31654,7 @@ export type Governance_Satellite_Action_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Governance_Satellite_Action_Stream_Cursor_Value_Input = {
+  dropped_datetime?: InputMaybe<Scalars['timestamptz']>;
   executed?: InputMaybe<Scalars['Boolean']>;
   execution_datetime?: InputMaybe<Scalars['timestamptz']>;
   expiration_datetime?: InputMaybe<Scalars['timestamptz']>;
@@ -54725,14 +54775,18 @@ export type Satellite = {
   delegations_aggregate: Delegation_Record_Aggregate;
   description: Scalars['String'];
   fee: Scalars['smallint'];
+  financial_request_counter: Scalars['bigint'];
+  governance_proposal_counter: Scalars['bigint'];
   id: Scalars['bigint'];
   image: Scalars['String'];
   name: Scalars['String'];
   peer_id?: Maybe<Scalars['String']>;
   public_key?: Maybe<Scalars['String']>;
   registration_timestamp: Scalars['timestamptz'];
+  satellite_action_counter: Scalars['bigint'];
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status: Scalars['smallint'];
+  total_delegated_amount: Scalars['float8'];
   /** An object relationship */
   user: Mavryk_User;
   user_id: Scalars['bigint'];
@@ -54767,9 +54821,24 @@ export type Satellite_Aggregate = {
 };
 
 export type Satellite_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Satellite_Aggregate_Bool_Exp_Avg>;
   bool_and?: InputMaybe<Satellite_Aggregate_Bool_Exp_Bool_And>;
   bool_or?: InputMaybe<Satellite_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Satellite_Aggregate_Bool_Exp_Corr>;
   count?: InputMaybe<Satellite_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Satellite_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Satellite_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Satellite_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Satellite_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Satellite_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Satellite_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Avg = {
+  arguments: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 export type Satellite_Aggregate_Bool_Exp_Bool_And = {
@@ -54786,11 +54855,70 @@ export type Satellite_Aggregate_Bool_Exp_Bool_Or = {
   predicate: Boolean_Comparison_Exp;
 };
 
+export type Satellite_Aggregate_Bool_Exp_Corr = {
+  arguments: Satellite_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
 export type Satellite_Aggregate_Bool_Exp_Count = {
   arguments?: InputMaybe<Array<Satellite_Select_Column>>;
   distinct?: InputMaybe<Scalars['Boolean']>;
   filter?: InputMaybe<Satellite_Bool_Exp>;
   predicate: Int_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Satellite_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Max = {
+  arguments: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Min = {
+  arguments: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Sum = {
+  arguments: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 /** aggregate fields of "satellite" */
@@ -54836,9 +54964,13 @@ export type Satellite_Avg_Fields = {
   __typename?: 'satellite_avg_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
+  total_delegated_amount?: Maybe<Scalars['Float']>;
   user_id?: Maybe<Scalars['Float']>;
 };
 
@@ -54846,9 +54978,13 @@ export type Satellite_Avg_Fields = {
 export type Satellite_Avg_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -54864,13 +55000,17 @@ export type Satellite_Bool_Exp = {
   delegations_aggregate?: InputMaybe<Delegation_Record_Aggregate_Bool_Exp>;
   description?: InputMaybe<String_Comparison_Exp>;
   fee?: InputMaybe<Smallint_Comparison_Exp>;
+  financial_request_counter?: InputMaybe<Bigint_Comparison_Exp>;
+  governance_proposal_counter?: InputMaybe<Bigint_Comparison_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   image?: InputMaybe<String_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   peer_id?: InputMaybe<String_Comparison_Exp>;
   public_key?: InputMaybe<String_Comparison_Exp>;
   registration_timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
+  satellite_action_counter?: InputMaybe<Bigint_Comparison_Exp>;
   status?: InputMaybe<Smallint_Comparison_Exp>;
+  total_delegated_amount?: InputMaybe<Float8_Comparison_Exp>;
   user?: InputMaybe<Mavryk_User_Bool_Exp>;
   user_id?: InputMaybe<Bigint_Comparison_Exp>;
   website?: InputMaybe<String_Comparison_Exp>;
@@ -54882,14 +55022,18 @@ export type Satellite_Max_Fields = {
   delegation_id?: Maybe<Scalars['bigint']>;
   description?: Maybe<Scalars['String']>;
   fee?: Maybe<Scalars['smallint']>;
+  financial_request_counter?: Maybe<Scalars['bigint']>;
+  governance_proposal_counter?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
   image?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   peer_id?: Maybe<Scalars['String']>;
   public_key?: Maybe<Scalars['String']>;
   registration_timestamp?: Maybe<Scalars['timestamptz']>;
+  satellite_action_counter?: Maybe<Scalars['bigint']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['smallint']>;
+  total_delegated_amount?: Maybe<Scalars['float8']>;
   user_id?: Maybe<Scalars['bigint']>;
   website?: Maybe<Scalars['String']>;
 };
@@ -54899,14 +55043,18 @@ export type Satellite_Max_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   peer_id?: InputMaybe<Order_By>;
   public_key?: InputMaybe<Order_By>;
   registration_timestamp?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
   website?: InputMaybe<Order_By>;
 };
@@ -54917,14 +55065,18 @@ export type Satellite_Min_Fields = {
   delegation_id?: Maybe<Scalars['bigint']>;
   description?: Maybe<Scalars['String']>;
   fee?: Maybe<Scalars['smallint']>;
+  financial_request_counter?: Maybe<Scalars['bigint']>;
+  governance_proposal_counter?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
   image?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   peer_id?: Maybe<Scalars['String']>;
   public_key?: Maybe<Scalars['String']>;
   registration_timestamp?: Maybe<Scalars['timestamptz']>;
+  satellite_action_counter?: Maybe<Scalars['bigint']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['smallint']>;
+  total_delegated_amount?: Maybe<Scalars['float8']>;
   user_id?: Maybe<Scalars['bigint']>;
   website?: Maybe<Scalars['String']>;
 };
@@ -54934,14 +55086,18 @@ export type Satellite_Min_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   peer_id?: InputMaybe<Order_By>;
   public_key?: InputMaybe<Order_By>;
   registration_timestamp?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
   website?: InputMaybe<Order_By>;
 };
@@ -54954,13 +55110,17 @@ export type Satellite_Order_By = {
   delegations_aggregate?: InputMaybe<Delegation_Record_Aggregate_Order_By>;
   description?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   image?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   peer_id?: InputMaybe<Order_By>;
   public_key?: InputMaybe<Order_By>;
   registration_timestamp?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user?: InputMaybe<Mavryk_User_Order_By>;
   user_id?: InputMaybe<Order_By>;
   website?: InputMaybe<Order_By>;
@@ -55572,6 +55732,10 @@ export enum Satellite_Select_Column {
   /** column name */
   Fee = 'fee',
   /** column name */
+  FinancialRequestCounter = 'financial_request_counter',
+  /** column name */
+  GovernanceProposalCounter = 'governance_proposal_counter',
+  /** column name */
   Id = 'id',
   /** column name */
   Image = 'image',
@@ -55584,11 +55748,21 @@ export enum Satellite_Select_Column {
   /** column name */
   RegistrationTimestamp = 'registration_timestamp',
   /** column name */
+  SatelliteActionCounter = 'satellite_action_counter',
+  /** column name */
   Status = 'status',
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount',
   /** column name */
   UserId = 'user_id',
   /** column name */
   Website = 'website'
+}
+
+/** select "satellite_aggregate_bool_exp_avg_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
 }
 
 /** select "satellite_aggregate_bool_exp_bool_and_arguments_columns" columns of table "satellite" */
@@ -55603,14 +55777,60 @@ export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Bool_Or_Argumen
   CurrentlyRegistered = 'currently_registered'
 }
 
+/** select "satellite_aggregate_bool_exp_corr_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
+}
+
+/** select "satellite_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
+}
+
+/** select "satellite_aggregate_bool_exp_max_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
+}
+
+/** select "satellite_aggregate_bool_exp_min_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
+}
+
+/** select "satellite_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
+}
+
+/** select "satellite_aggregate_bool_exp_sum_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
+}
+
+/** select "satellite_aggregate_bool_exp_var_samp_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount'
+}
+
 /** aggregate stddev on columns */
 export type Satellite_Stddev_Fields = {
   __typename?: 'satellite_stddev_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
+  total_delegated_amount?: Maybe<Scalars['Float']>;
   user_id?: Maybe<Scalars['Float']>;
 };
 
@@ -55618,9 +55838,13 @@ export type Satellite_Stddev_Fields = {
 export type Satellite_Stddev_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -55629,9 +55853,13 @@ export type Satellite_Stddev_Pop_Fields = {
   __typename?: 'satellite_stddev_pop_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
+  total_delegated_amount?: Maybe<Scalars['Float']>;
   user_id?: Maybe<Scalars['Float']>;
 };
 
@@ -55639,9 +55867,13 @@ export type Satellite_Stddev_Pop_Fields = {
 export type Satellite_Stddev_Pop_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -55650,9 +55882,13 @@ export type Satellite_Stddev_Samp_Fields = {
   __typename?: 'satellite_stddev_samp_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
+  total_delegated_amount?: Maybe<Scalars['Float']>;
   user_id?: Maybe<Scalars['Float']>;
 };
 
@@ -55660,9 +55896,13 @@ export type Satellite_Stddev_Samp_Fields = {
 export type Satellite_Stddev_Samp_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -55680,14 +55920,18 @@ export type Satellite_Stream_Cursor_Value_Input = {
   delegation_id?: InputMaybe<Scalars['bigint']>;
   description?: InputMaybe<Scalars['String']>;
   fee?: InputMaybe<Scalars['smallint']>;
+  financial_request_counter?: InputMaybe<Scalars['bigint']>;
+  governance_proposal_counter?: InputMaybe<Scalars['bigint']>;
   id?: InputMaybe<Scalars['bigint']>;
   image?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   peer_id?: InputMaybe<Scalars['String']>;
   public_key?: InputMaybe<Scalars['String']>;
   registration_timestamp?: InputMaybe<Scalars['timestamptz']>;
+  satellite_action_counter?: InputMaybe<Scalars['bigint']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Scalars['smallint']>;
+  total_delegated_amount?: InputMaybe<Scalars['float8']>;
   user_id?: InputMaybe<Scalars['bigint']>;
   website?: InputMaybe<Scalars['String']>;
 };
@@ -55697,9 +55941,13 @@ export type Satellite_Sum_Fields = {
   __typename?: 'satellite_sum_fields';
   delegation_id?: Maybe<Scalars['bigint']>;
   fee?: Maybe<Scalars['smallint']>;
+  financial_request_counter?: Maybe<Scalars['bigint']>;
+  governance_proposal_counter?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
+  satellite_action_counter?: Maybe<Scalars['bigint']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['smallint']>;
+  total_delegated_amount?: Maybe<Scalars['float8']>;
   user_id?: Maybe<Scalars['bigint']>;
 };
 
@@ -55707,9 +55955,13 @@ export type Satellite_Sum_Fields = {
 export type Satellite_Sum_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -55718,9 +55970,13 @@ export type Satellite_Var_Pop_Fields = {
   __typename?: 'satellite_var_pop_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
+  total_delegated_amount?: Maybe<Scalars['Float']>;
   user_id?: Maybe<Scalars['Float']>;
 };
 
@@ -55728,9 +55984,13 @@ export type Satellite_Var_Pop_Fields = {
 export type Satellite_Var_Pop_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -55739,9 +55999,13 @@ export type Satellite_Var_Samp_Fields = {
   __typename?: 'satellite_var_samp_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
+  total_delegated_amount?: Maybe<Scalars['Float']>;
   user_id?: Maybe<Scalars['Float']>;
 };
 
@@ -55749,9 +56013,13 @@ export type Satellite_Var_Samp_Fields = {
 export type Satellite_Var_Samp_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -55760,9 +56028,13 @@ export type Satellite_Variance_Fields = {
   __typename?: 'satellite_variance_fields';
   delegation_id?: Maybe<Scalars['Float']>;
   fee?: Maybe<Scalars['Float']>;
+  financial_request_counter?: Maybe<Scalars['Float']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  satellite_action_counter?: Maybe<Scalars['Float']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['Float']>;
+  total_delegated_amount?: Maybe<Scalars['Float']>;
   user_id?: Maybe<Scalars['Float']>;
 };
 
@@ -55770,9 +56042,13 @@ export type Satellite_Variance_Fields = {
 export type Satellite_Variance_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   fee?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
