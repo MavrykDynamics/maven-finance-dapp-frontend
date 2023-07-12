@@ -1,15 +1,11 @@
 import { VAULT_ALLOWANCE_ACCOUNTS, VAULT_ALLOWANCE_ANY } from 'pages/Loans/Loans.const'
-import { Lending_Controller, Mvk_Token_Operator } from 'utils/generated/graphqlTypes'
-import { normalizeLoans } from 'pages/Loans/Loans.normalizer'
-import { normalizeVaultsStorage } from 'pages/Vaults/Vaults.normalizer'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-
-export type MvkTokenOperatorGQL = Omit<Mvk_Token_Operator, '__typename'>
-export type LendingControllerGQL = Omit<Lending_Controller, '__typename'>
-export type LoansStorage = Awaited<ReturnType<typeof normalizeLoans>>
-export type VaultsStorage = Awaited<ReturnType<typeof normalizeVaultsStorage>>
+import { LOANS_MARKETS_DATA, LOANS_CONFIG } from './helpers/loans.const'
 
 export type LoanVaultAllowanceType = typeof VAULT_ALLOWANCE_ANY | typeof VAULT_ALLOWANCE_ACCOUNTS
+
+export type LoansSubsType = typeof LOANS_MARKETS_DATA | typeof LOANS_CONFIG
+export type LoansSubsRecordType = Record<LoansSubsType, boolean>
 
 export type LendingItemType = {
   lendValue: number
@@ -26,7 +22,6 @@ export type LoanMarketType = {
   suppliers: number // amount of people who hold market mToken
   borrowAPR: number
   lendingAPY: number
-  collateralFactor: number
 
   availableLiquidity: number // how much tokens left in the market pool
   totalBorrowed: number // how much borrowed per market
@@ -36,13 +31,18 @@ export type LoanMarketType = {
   reserveAmount: number
 }
 
-type TokenOperator = {
-  owner: string
-  operator: string
-  token_id: number
+export type LoansContext = {
+  marketsAddresses: Array<TokenAddressType>
+  marketsMapper: Record<TokenAddressType, LoanMarketType>
+  config: {
+    daoFee: number
+    collateralFactor: number
+  }
+
+  isLoading: boolean
+
+  changeLoansSubscriptionsList: (skips: Partial<LoansSubsRecordType>) => void
+  setMarketAddressToSubscribe: (marketTokenAddress: TokenAddressType | null) => void
 }
 
-export type UpdateTokenOperator = {
-  add_operator?: TokenOperator
-  remove_operator?: TokenOperator
-}
+export type LoansContextState = Pick<LoansContext, 'marketsAddresses' | 'marketsMapper' | 'config'>

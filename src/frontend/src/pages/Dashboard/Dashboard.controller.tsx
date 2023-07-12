@@ -35,7 +35,10 @@ import {
   SATELLITE_PARTICIPATION_DATA_SUB,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
 } from 'providers/SatellitesProvider/satellites.const'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
 
+// TODO: add farms when their data loading will be fixed and up
 export const Dashboard = () => {
   const dispatch = useDispatch()
   const { search } = useLocation()
@@ -52,6 +55,7 @@ export const Dashboard = () => {
   } = useStakeContext()
   const { isLoading: isSatellitesLoading, changeSatellitesSubscriptionsList } = useSatellitesContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
 
   useEffect(() => {
     changeStakingSubscriptionsList({
@@ -62,10 +66,14 @@ export const Dashboard = () => {
       [SATELLITE_DATA_SUB]: true,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+    })
 
     return () => {
       changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
       changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
     }
   }, [])
 
@@ -74,18 +82,18 @@ export const Dashboard = () => {
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
-  const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
+  // const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
   const {
     isDataLoaded: isLoansLoaded,
-    loanTokens,
     vaults: { vaultsMapper, allVaultsIds },
   } = useSelector((state: State) => state.loans)
 
-  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+  const { totalBorrowed, totalLended } = marketsAddresses.reduce<{
     totalLended: number
     totalBorrowed: number
   }>(
-    (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
+    (acc, marketTokenAddress) => {
+      const { totalBorrowed, totalLended, loanTokenAddress } = marketsMapper[marketTokenAddress]
       const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
       if (!token || !token.rate) return acc
 
@@ -120,9 +128,10 @@ export const Dashboard = () => {
   }, 0)
 
   // TODO: check this calculation with sam
-  const farmsTVL = farms.reduce((acc, farm) => {
-    return (acc += farm.lpBalance)
-  }, 0)
+  const farmsTVL = 0
+  // farms.reduce((acc, farm) => {
+  //   return (acc += farm.lpBalance)
+  // }, 0)
 
   const lendingTvl = totalBorrowed + totalLended
   const doormanTVL = totalStakedMvk * mvkExchangeRate
@@ -137,7 +146,7 @@ export const Dashboard = () => {
           (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
           (!isTreasuryLoaded || isDepsChanged) && dispatch(getTreasuryStorage()),
           (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
-          (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage(tokensMetadata)),
+          // (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage(tokensMetadata)),
         ].filter(Boolean),
       )
     } catch (e) {}
@@ -160,7 +169,7 @@ export const Dashboard = () => {
         tvl={tvlValue}
         mvkStatsBlock={mvkStatsBlock}
         activeTab={activeTab}
-        isLoading={isPromiseLoading || isDoormanLoading || isSatellitesLoading}
+        isLoading={isPromiseLoading || isDoormanLoading || isSatellitesLoading || isLoansLoading}
       />
     </Page>
   )

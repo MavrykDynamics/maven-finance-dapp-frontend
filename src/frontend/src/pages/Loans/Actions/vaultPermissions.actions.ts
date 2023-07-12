@@ -19,9 +19,20 @@ import { VAULT_ALLOWANCE_ACCOUNTS, VAULT_ALLOWANCE_ANY } from '../Loans.const'
 
 import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
-import { LoanVaultAllowanceType, UpdateTokenOperator } from 'utils/TypesAndInterfaces/Loans'
 
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
+import { LoanVaultAllowanceType } from 'providers/LoansProvider/loans.provider.types'
+
+type TokenOperator = {
+  owner: string
+  operator: string
+  token_id: number
+}
+
+export type UpdateTokenOperator = {
+  add_operator?: TokenOperator
+  remove_operator?: TokenOperator
+}
 
 export const changeBakerAction =
   (bakerAddress: string, vaultAddress: string, callback: () => void) =>

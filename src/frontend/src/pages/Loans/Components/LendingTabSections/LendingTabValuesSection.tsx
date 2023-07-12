@@ -1,16 +1,19 @@
-import { LoansValuesSectionInfo, LoansValuesSection } from './../LoansComponents.style'
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-
-import { LendingItemType } from 'utils/TypesAndInterfaces/Loans'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { EARN_APY, INTEREST_EARNED, M_TOKEN_BALANCE, SUPPLIED_AMOUNT } from 'texts/tooltips/loan.text'
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+
+import { LendingItemType } from 'providers/LoansProvider/loans.provider.types'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { useUserContext } from 'providers/UserProvider/user.provider'
+import { EARN_APY, INTEREST_EARNED, M_TOKEN_BALANCE, SUPPLIED_AMOUNT } from 'texts/tooltips/loan.text'
+
+import { LoansValuesSectionInfo, LoansValuesSection } from './../LoansComponents.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 type Props = {
   lendingItem: LendingItemType

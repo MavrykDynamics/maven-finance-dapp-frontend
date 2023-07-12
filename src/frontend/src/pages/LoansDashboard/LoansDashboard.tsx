@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
 
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { getGaugeVaultRiskSimpleStatus } from './helpers/position.helpers'
-import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getClassNameBasedOnPersentValue } from './helpers/comparing.helpers'
 
 import Button from 'app/App.components/Button/NewButton'
@@ -33,6 +31,8 @@ import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export type GaugeChartStateType = {
@@ -59,8 +59,6 @@ export const GAUGE_STATE_APY_PART = {
 }
 
 export const LoansDashboard = () => {
-  const dispatch = useDispatch()
-
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const {
     userAddress,
@@ -68,44 +66,13 @@ export const LoansDashboard = () => {
     userAvatars: { mainAvatar },
     userMTokens,
   } = useUserContext()
+  const { marketsAddresses, marketsMapper, isLoading: isLoansLoading, changeLoansSubscriptionsList } = useLoansContext()
 
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
-  const { isDataLoaded: isLoansLoaded, loanTokens } = useSelector((state: State) => state.loans)
 
   const { lending24hPersentChange, borrowing24hPersentChange } = useLendBorrow24hDiff()
-
-  const { totalBorrowed, totalLended } = loanTokens.reduce<{
-    totalLended: number
-    totalBorrowed: number
-  }>(
-    (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
-      const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
-      if (!token || !token.rate) return acc
-
-      const { decimals, rate } = token
-
-      acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
-      acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
-      return acc
-    },
-    {
-      totalLended: 0,
-      totalBorrowed: 0,
-    },
-  )
-
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isLoansLoaded || isDepsChanged) {
-          await dispatch(getLoansStorage())
-        }
-      } catch (e) {}
-    },
-    [userAddress],
-  )
 
   const {
     isLoading: userLoansDataLoading,
@@ -114,52 +81,72 @@ export const LoansDashboard = () => {
     totalUserLended,
   } = useUserLoansData({ userAddress })
 
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+    })
+
+    return () => {
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+    }
+  }, [])
+
   // calc data for gauge chart
-  const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {
+  const { vaultRiskGaugeData, apyGaugeData, totalBorrowed, totalLended } = useMemo((): {
     vaultRiskGaugeData: GaugeChartStateType
     apyGaugeData: GaugeChartStateType
+    totalLended: number
+    totalBorrowed: number
   } => {
-    const { borrowedAmount, borrowCapacity, totalSuppliedValue, sumOfRatioSuppliedToAPY, sumOfRatioBorrowedToAPR } =
-      loanTokens.reduce<{
-        borrowedAmount: number
-        borrowCapacity: number
-        totalSuppliedValue: number
-        sumOfRatioSuppliedToAPY: number
-        sumOfRatioBorrowedToAPR: number
-      }>(
-        (acc, { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress }) => {
-          const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
-          if (!token || !token.rate) return acc
+    const {
+      borrowedAmount,
+      borrowCapacity,
+      totalSuppliedValue,
+      sumOfRatioSuppliedToAPY,
+      sumOfRatioBorrowedToAPR,
+      totalBorrowed,
+      totalLended,
+    } = marketsAddresses.reduce(
+      (acc, marketTokenAddress) => {
+        const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress, totalLended, totalBorrowed } =
+          marketsMapper[marketTokenAddress]
+        const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
+        if (!token || !token.rate) return acc
 
-          let borrowedPerMarket = 0
+        let borrowedPerMarket = 0
 
-          const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
+        const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
 
-          const { decimals, rate } = token
+        const { decimals, rate } = token
 
-          const conveterLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
+        const conveterLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
 
-          const { borrowedAmount = 0, collateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
+        const { borrowedAmount = 0, borrowedVaultsCollateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
 
-          // calculating value risk data & how much borrowed per vault
-          acc.borrowCapacity += collateralAmount / 2 - borrowedAmount
-          acc.borrowedAmount += borrowedAmount
-          borrowedPerMarket += borrowedAmount
+        acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
+        acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
 
-          // calculating net APY supplied & borrowed ratio's
-          acc.sumOfRatioSuppliedToAPY += conveterLendValue * rate * lendingAPY
-          acc.sumOfRatioBorrowedToAPR += borrowedPerMarket * borrowAPR
-          acc.totalSuppliedValue += conveterLendValue * rate
-          return acc
-        },
-        {
-          borrowedAmount: 0,
-          borrowCapacity: 0,
-          totalSuppliedValue: 0,
-          sumOfRatioSuppliedToAPY: 0,
-          sumOfRatioBorrowedToAPR: 0,
-        },
-      )
+        // calculating value risk data & how much borrowed per vault
+        acc.borrowCapacity += borrowedVaultsCollateralAmount / 2 - borrowedAmount
+        acc.borrowedAmount += borrowedAmount
+        borrowedPerMarket += borrowedAmount
+
+        // calculating net APY supplied & borrowed ratio's
+        acc.sumOfRatioSuppliedToAPY += conveterLendValue * rate * lendingAPY
+        acc.sumOfRatioBorrowedToAPR += borrowedPerMarket * borrowAPR
+        acc.totalSuppliedValue += conveterLendValue * rate
+        return acc
+      },
+      {
+        totalLended: 0,
+        totalBorrowed: 0,
+        borrowedAmount: 0,
+        borrowCapacity: 0,
+        totalSuppliedValue: 0,
+        sumOfRatioSuppliedToAPY: 0,
+        sumOfRatioBorrowedToAPR: 0,
+      },
+    )
 
     const vaultRiskValue = !userAddress || !borrowCapacity ? 0 : (borrowedAmount / borrowCapacity) * 100
     const apyNet =
@@ -175,8 +162,10 @@ export const LoansDashboard = () => {
         ...GAUGE_STATE_APY_PART,
         currentValue: apyNet,
       },
+      totalBorrowed,
+      totalLended,
     }
-  }, [loanTokens, userAddress, userMTokens, tokensMetadata, tokensPrices, userVaultsData])
+  }, [marketsAddresses, userAddress, marketsMapper, tokensMetadata, tokensPrices, userMTokens, userVaultsData])
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
@@ -198,7 +187,7 @@ export const LoansDashboard = () => {
       <PageHeader page={'loansDashboard'} avatar={mainAvatar} />
 
       <LoansDashboardStyled>
-        {isLoading ? (
+        {isLoansLoading || userLoansDataLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
             <div className="text">Loading lend & borrow data</div>
@@ -306,7 +295,7 @@ export const LoansDashboard = () => {
                   <ConnectWalletBtn />
                 )}
               </div>
-              <LoansPositionTable markets={loanTokens} userVaultsData={userVaultsData} />
+              <LoansPositionTable userVaultsData={userVaultsData} />
             </LBHInfoBlock>
           </>
         )}

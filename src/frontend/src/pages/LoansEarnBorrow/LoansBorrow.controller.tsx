@@ -1,7 +1,15 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
+
+// hooks
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
+import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // components
 import { Page } from 'styles'
@@ -21,18 +29,15 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
-import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
-import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
   totalName: 'Total Borrowed',
-  leftValueName: 'Outstanding debt',
+  leftValueName: 'Outstanding Debt',
   rightValueName: 'Collateral Amount',
   buttonName: 'Borrow',
   isButtonSymbol: true,
@@ -45,115 +50,70 @@ export const LoansBorrow = () => {
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { openCreateVaultPopup } = useLoansPopupsContext()
-
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { userAddress } = useUserContext()
 
   const {
     isDataLoaded,
-    loanTokens,
-    vaults: { allVaultsIds, myVaultsIds, vaultsMapper },
+    vaults: { myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
+
+  const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
+
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+    })
+
+    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+  }, [])
 
   const {
     isLoading: isChartsLoading,
-    chartsData: { totalBorrowingChart, totalCollateralChart, marketCollateralChart },
+    chartsData: { totalBorrowingChart, totalCollateralChart, marketBorrowChart },
   } = useLoansCharts({
     calcTotalBorrowingChart: true,
     calcTotalCollateralChart: true,
-    calcMarketCollateralChart: true,
+    calcMarketBorrowChart: true,
   })
 
-  const { totalCollaterals, totalBorrowed, tokenTotals } = useMemo(
-    () =>
-      allVaultsIds.reduce<{
-        totalCollaterals: 0
-        totalBorrowed: 0
-        tokenTotals: Record<
-          TokenAddressType,
-          {
-            userTotalBorrowed: number
-            userTotalCollateral: number
-          }
-        >
-      }>(
-        (acc, vaultId) => {
-          const { ownerId, borrowedTokenAddress, borrowedAmount, collateralData } = vaultsMapper[vaultId]
-
-          const borrowToken = getTokenDataByAddress({
-            tokenAddress: borrowedTokenAddress,
-            tokensPrices,
-            tokensMetadata,
-          })
-
-          if (!borrowToken || !borrowToken.rate) return acc
-
-          const { decimals: borrowTokenDecimals, rate: borrowTokenRate } = borrowToken
-
-          const vaultBorrowedInUsd =
-            convertNumberForClient({ number: borrowedAmount, grade: borrowTokenDecimals }) * borrowTokenRate
-          const vaultCollateralInUsd = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
-
-          acc.totalCollaterals += vaultCollateralInUsd
-          acc.totalBorrowed += vaultBorrowedInUsd
-
-          if (ownerId === accountPkh) {
-            if (!acc.tokenTotals[borrowedTokenAddress]) {
-              acc.tokenTotals[borrowedTokenAddress] = {
-                userTotalBorrowed: vaultBorrowedInUsd,
-                userTotalCollateral: vaultCollateralInUsd,
-              }
-            } else {
-              acc.tokenTotals[borrowedTokenAddress].userTotalBorrowed += vaultBorrowedInUsd
-              acc.tokenTotals[borrowedTokenAddress].userTotalCollateral += vaultCollateralInUsd
-            }
-          }
-
-          return acc
-        },
-        {
-          totalCollaterals: 0,
-          totalBorrowed: 0,
-          tokenTotals: {},
-        },
-      ),
-    [accountPkh, allVaultsIds, tokensMetadata, tokensPrices, vaultsMapper],
-  )
+  const { userVaultsData } = useUserLoansData({ userAddress })
 
   const markets = useMemo(
     () =>
-      loanTokens.reduce<MarketType[]>((acc, item) => {
-        const chartData = marketCollateralChart[item.loanTokenAddress] ?? []
+      marketsAddresses.reduce<MarketType[]>((acc, marketTokenAddress) => {
+        const market = marketsMapper[marketTokenAddress]
+        const chartData = marketBorrowChart[marketTokenAddress] ?? []
 
         const token = getTokenDataByAddress({
-          tokenAddress: item.loanTokenAddress,
+          tokenAddress: marketTokenAddress,
           tokensPrices,
           tokensMetadata,
         })
 
-        if (!token || !token.rate) return acc
+        if (!token || !token.rate || !market) return acc
 
-        const { symbol, icon, rate: price, decimals, address } = token
+        const { symbol, icon, rate: price, address } = token
 
         acc.push({
           icon,
           symbol,
           address,
-          annualRate: item.borrowAPR,
+          annualRate: market.borrowAPR,
           annualRateName: 'APR',
-          leftValue: tokenTotals[item.loanTokenAddress]?.userTotalBorrowed ?? 0,
-          rightValue: tokenTotals[item.loanTokenAddress]?.userTotalCollateral ?? 0,
-          totalAmount: convertNumberForClient({ number: item.totalBorrowed, grade: decimals }),
+          leftValue: userVaultsData[marketTokenAddress]?.borrowedAmount ?? 0,
+          rightValue: userVaultsData[marketTokenAddress]?.allVaultsCollateralAmount ?? 0,
+          totalAmount: chartData.at(-1)?.value ?? 0,
           price,
           chartData,
         })
 
         return acc
       }, []),
-    [loanTokens, marketCollateralChart, tokenTotals, tokensMetadata, tokensPrices],
+    [marketsAddresses, marketsMapper, marketBorrowChart, tokensPrices, tokensMetadata, userVaultsData],
   )
 
   const handleSetNewlyCreatedVaultAddress = (marketAddress: string) => (address: string) => {
-    history.replace(`/loans/${marketAddress}/borrowTab?vaultAddress=${address}`)
+    history.push(`/loans/${marketAddress}/borrowTab?vaultAddress=${address}`, { from: '/loans/borrow' })
   }
 
   const handleBorrow = (marketTokenAddress: string) => {
@@ -182,8 +142,7 @@ export const LoansBorrow = () => {
 
     // if we don't have valid vault to borrow, open create new vault popup
     if (!validVaultId) {
-      const market = loanTokens.find(({ loanTokenAddress }) => marketTokenAddress === loanTokenAddress)
-
+      const market = marketsMapper[marketTokenAddress]
       const marketToken = getTokenDataByAddress({
         tokenAddress: marketTokenAddress,
         tokensMetadata,
@@ -205,7 +164,7 @@ export const LoansBorrow = () => {
 
       if (!validVault) return
 
-      history.push(`/loans/${validVault.borrowedTokenAddress}/borrowTab`)
+      history.push(`/loans/${validVault.borrowedTokenAddress}/borrowTab`, { from: '/loans/borrow' })
     }
   }
 
@@ -217,14 +176,14 @@ export const LoansBorrow = () => {
         }
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   return (
     <Page>
       <PageHeader page={'loansBorrow'} />
 
-      {isLoading ? (
+      {isLoading || isLoansLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading borrows charts</div>
@@ -235,11 +194,11 @@ export const LoansBorrow = () => {
             // left chart
             leftChartData={totalCollateralChart}
             leftChartTitle="Total Collateral"
-            leftTotalAmount={totalCollaterals}
+            leftTotalAmount={totalCollateralChart.at(-1)?.value ?? 0}
             // right chart
             rightChartData={totalBorrowingChart}
             rightChartTitle="Total Borrowing"
-            rightTotalAmount={totalBorrowed}
+            rightTotalAmount={totalBorrowingChart.at(-1)?.value ?? 0}
           />
 
           <LoansEarnBorrow
@@ -247,7 +206,7 @@ export const LoansBorrow = () => {
             markets={markets}
             settings={marketSettings}
             handleClick={handleBorrow}
-            isDisabledButton={!accountPkh}
+            isDisabledButton={!userAddress}
           />
         </>
       )}

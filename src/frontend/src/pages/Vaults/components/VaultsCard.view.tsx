@@ -42,6 +42,7 @@ import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
 import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 const columnWidth = '33%'
 
@@ -114,9 +115,11 @@ type Props = {
 export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab }: Props) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { openLiquidateVaultPopup } = useLoansPopupsContext()
+  const {
+    config: { daoFee },
+  } = useLoansContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { DAOFee } = useSelector((state: State) => state.loans.config)
 
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
@@ -320,7 +323,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
         <BorrowingExpandCard
           vault={vault}
           headerSufix={headerSufix}
-          DAOFee={DAOFee}
+          DAOFee={daoFee}
           isOwner={isOwner}
           hideTransactionHistory
         />
@@ -338,7 +341,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
         <BorrowingExpandCard
           vault={vault}
           headerSufix={headerSufix}
-          DAOFee={DAOFee}
+          DAOFee={daoFee}
           isOwner={isOwner}
           hideTransactionHistory
         >

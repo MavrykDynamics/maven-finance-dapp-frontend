@@ -22,9 +22,11 @@ import DappConfigProvider, {
   dappConfigContext,
 } from 'providers/DappConfigProvider/dappConfig.provider'
 import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider'
+import LoansProvider from 'providers/LoansProvider/loans.provider'
 import StakeProvider from 'providers/StakeProvider/stake.provider'
 import { ThemeProvider } from 'styled-components'
 
+// components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
 import { App, store } from './app/App.controller'
 import { FullScreenLoadingApp } from 'app/App.style'
@@ -87,7 +89,9 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
         <FullScreenLoadingApp />
       ) : (
         <StakeProvider>
-          <SatellitesProvider>{children}</SatellitesProvider>
+          <SatellitesProvider>
+            <LoansProvider>{children}</LoansProvider>
+          </SatellitesProvider>
         </StakeProvider>
       )}
     </>

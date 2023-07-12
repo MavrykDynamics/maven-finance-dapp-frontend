@@ -32,3 +32,13 @@ export const getDescrByType = (type: number) => {
       return null
   }
 }
+
+// HELPER FOR LENDING APY
+export const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): number => {
+  const secondsPerYear = 60 * 60 * 24 * 365
+
+  const top = currentInterestRate - treasuryShare
+  const firstTerm = 1 + top / secondsPerYear
+  const power = firstTerm ** secondsPerYear
+  return (power - 1) * 100
+}

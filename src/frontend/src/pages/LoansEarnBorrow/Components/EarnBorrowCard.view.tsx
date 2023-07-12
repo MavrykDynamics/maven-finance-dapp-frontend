@@ -28,6 +28,8 @@ export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: 
   const { icon, symbol, address, annualRate, annualRateName, leftValue, rightValue, totalAmount, price, chartData } =
     market
 
+  const isBorrowCard = marketTabName === 'borrowTab'
+
   return (
     <EarnBorrowCardStyled>
       <EarnBorrowCardHeader>
@@ -52,7 +54,7 @@ export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: 
           <CommaNumber beginningText="$" value={totalAmount} />
         </div>
 
-        <EarnBorrowChart data={chartData} />
+        <EarnBorrowChart data={chartData} isBorrow={isBorrowCard} />
 
         <div>
           <div className="info">
@@ -71,7 +73,12 @@ export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: 
             {`${buttonName} ${isButtonSymbol ? symbol : ''}`}
           </Button>
 
-          <Link to={`/loans/${address}/${marketTabName}`}>
+          <Link
+            to={{
+              pathname: `/loans/${address}/${marketTabName}`,
+              state: { from: `/loans/${isBorrowCard ? 'borrow' : 'earn'}` },
+            }}
+          >
             <Button kind={BUTTON_SIMPLE}>
               View Stats
               <Icon id="arrow" className="arrowIcon" />

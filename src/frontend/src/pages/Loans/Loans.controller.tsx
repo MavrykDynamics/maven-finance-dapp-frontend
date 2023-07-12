@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import classNames from 'classnames'
 
@@ -13,6 +13,7 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 import colors from 'styles/colors'
 import { skyColor } from 'styles'
@@ -21,8 +22,6 @@ import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from './Loans.helpers'
 
 import { State } from 'reducers'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getLoansStorage } from './Actions/getLoansData.actions'
 
 import { Page } from 'styles'
 import {
@@ -42,6 +41,7 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 const CHART_SETTINGS = {
@@ -59,8 +59,6 @@ const CHART_COLORS = {
 }
 
 export const Loans = () => {
-  const dispatch = useDispatch()
-
   const {
     isLoading: isChartsLoading,
     chartsData: { totalLendingChart, totalBorrowingChart },
@@ -70,10 +68,18 @@ export const Loans = () => {
   })
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { userAddress, userMTokens } = useUserContext()
+  const { userMTokens } = useUserContext()
+  const { changeLoansSubscriptionsList, marketsAddresses, marketsMapper, isLoading: isLoansLoading } = useLoansContext()
+
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+    })
+
+    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+  }, [])
 
   const {
-    loanTokens,
     vaults: { allVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
@@ -81,15 +87,17 @@ export const Loans = () => {
     preferences: { themeSelected },
   } = useDappConfigContext()
 
-  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+  const { totalBorrowed, totalLended } = marketsAddresses.reduce<{
     totalLended: number
     totalBorrowed: number
   }>(
-    (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
-      const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
+    (acc, marketTokenAddress) => {
+      const market = marketsMapper[marketTokenAddress]
+      const loanToken = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensPrices, tokensMetadata })
 
-      if (!loanToken || !loanToken.rate) return acc
+      if (!loanToken || !loanToken.rate || !market) return acc
 
+      const { totalBorrowed, totalLended } = market
       const { decimals, rate } = loanToken
 
       acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
@@ -101,12 +109,6 @@ export const Loans = () => {
       totalBorrowed: 0,
     },
   )
-
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      await dispatch(getLoansStorage())
-    } catch (e) {}
-  }, [userAddress])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -156,12 +158,12 @@ export const Loans = () => {
     <Page>
       <PageHeader page={'lending'} />
 
-      {isLoading ? (
+      {isLoansLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading loans markets</div>
         </DataLoaderWrapper>
-      ) : loanTokens.length ? (
+      ) : marketsAddresses.length ? (
         <LoansStyled>
           <MarketChartsContainer>
             {lendingPart}
@@ -170,7 +172,11 @@ export const Loans = () => {
 
           <MarketsOverviewContainer>
             <H2Title>Markets</H2Title>
-            {loanTokens.map((loanAsset) => {
+            {marketsAddresses.map((marketAddress) => {
+              const market = marketsMapper[marketAddress]
+              const loanToken = getTokenDataByAddress({ tokenAddress: marketAddress, tokensPrices, tokensMetadata })
+
+              if (!loanToken || !loanToken.rate || !market) return null
               const {
                 loanTokenAddress,
                 loanMTokenAddress,
@@ -182,11 +188,7 @@ export const Loans = () => {
                 totalLended,
                 borrowAPR,
                 lendingAPY,
-              } = loanAsset
-
-              const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
-
-              if (!loanToken || !loanToken.rate) return null
+              } = market
 
               const { interestEarned } = userMTokens[loanMTokenAddress] ?? {
                 interestEarned: 0,
@@ -282,7 +284,7 @@ export const Loans = () => {
                         <div className="name">Utilization Rate</div>
                         <CommaNumber value={utilisationRate} className="value" endingText="%" />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${address}/${LEND_TAB_ID}`}>
+                      <Link to={{ pathname: `/loans/${address}/${LEND_TAB_ID}`, state: { from: '/loans' } }}>
                         <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                       </Link>
                     </div>
@@ -326,7 +328,7 @@ export const Loans = () => {
                           beginningText="$"
                         />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${address}/${BORROW_TAB_ID}`}>
+                      <Link to={{ pathname: `/loans/${address}/${BORROW_TAB_ID}`, state: { from: '/loans' } }}>
                         <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                       </Link>
                     </div>
