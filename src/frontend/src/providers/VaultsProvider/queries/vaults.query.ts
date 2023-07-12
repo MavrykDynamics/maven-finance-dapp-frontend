@@ -1,4 +1,4 @@
-import { VAULTS_DATA } from './../vaults.provider.consts'
+import { VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR, VAULTS_USER_MARKET } from './../vaults.provider.consts'
 import { DocumentNode } from 'graphql'
 import { gql as apolloGql, OperationVariables, TypedDocumentNode } from '@apollo/client'
 
@@ -11,20 +11,26 @@ const getVaultsQueryFilters = (
   filters: VaultsSubsRecordType[typeof VAULTS_DATA],
   userAddress: string | null,
 ): string => {
-  if (typeof filters === 'boolean') return VAULT_OPEN_FILTER
+  if (!filters) return VAULT_OPEN_FILTER
 
-  switch (filters.subType) {
-    case 'userAll':
-      return `${VAULT_OPEN_FILTER} ${userAddress ? ', owner: {address: {_eq: $userAddress}}' : ''}`
-    case 'userMarket':
-      return `${VAULT_OPEN_FILTER} ${userAddress ? ', owner: {address: {_eq: $userAddress}}' : ''} ${
-        filters.marketAddress ? ', loan_token: {token: {token_address: {_eq: $marketAddress}}' : ''
-      }`
-    case 'userPermissioned':
-      return ``
-    default:
-      return VAULT_OPEN_FILTER
+  const { subType } = filters
+  // get all vaults where current user is owner
+  if (userAddress && subType === VAULTS_USER_ALL) {
+    return `${VAULT_OPEN_FILTER} , owner: {address: {_eq: $userAddress}}`
   }
+
+  // get all vaults where current user is owner and they all from market user al looking at
+  if (userAddress && subType === VAULTS_USER_MARKET) {
+    return `${VAULT_OPEN_FILTER}, owner: {address: {_eq: $userAddress}}, loan_token: {token: {token_address: {_eq: $marketAddress}}`
+  }
+
+  // get all vault where user is depositor
+  if (userAddress && subType === VAULTS_USER_DEPOSITOR) {
+    return `${VAULT_OPEN_FILTER},vault: {_or: [{allowance: {_eq: "0"}}, {_and: {depositors: {depositor: {address: {_eq: $userAddress}}}, allowance: {_eq: "1"}}}]}`
+  }
+
+  // get all vaults
+  return VAULT_OPEN_FILTER
 }
 
 export function getVaultsSubscription({

@@ -2,7 +2,13 @@ import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { LoansTokenMetadataType, TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { VAULTS_DATA } from './vaults.provider.consts'
+import {
+  VAULTS_ALL,
+  VAULTS_DATA,
+  VAULTS_USER_ALL,
+  VAULTS_USER_DEPOSITOR,
+  VAULTS_USER_MARKET,
+} from './vaults.provider.consts'
 
 // context types
 export type VaultsContext = {
@@ -15,11 +21,17 @@ export type VaultsContext = {
 export type VaultsCtxState = Pick<VaultsContext, 'vaultsMapper'>
 
 export type VaultsSubsType = typeof VAULTS_DATA
-export type VaultDataSubValuesType = {
-  subType: 'all' | 'userAll' | 'userPermissioned' | 'userMarket'
-  marketAddress?: string
+export type VaultsSubsRecordType = {
+  [VAULTS_DATA]:
+    | {
+        subType: typeof VAULTS_ALL | typeof VAULTS_USER_ALL | typeof VAULTS_USER_DEPOSITOR
+      }
+    | {
+        subType: typeof VAULTS_USER_MARKET
+        marketAddress: string
+      }
+    | null
 }
-export type VaultsSubsRecordType = Record<VaultsSubsType, boolean | VaultDataSubValuesType>
 
 // TODO: add descr to liquidation fields while testing liquidation functionality and popup
 export type VaultType = {

@@ -10,10 +10,10 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { VaultDataSubValuesType, VaultsContext, VaultsCtxState, VaultsSubsRecordType } from './vaults.provider.types'
+import { VaultsContext, VaultsCtxState, VaultsSubsRecordType } from './vaults.provider.types'
 import { getVaultsSubscription } from './queries/vaults.query'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_DATA } from './vaults.provider.consts'
+import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_DATA, VAULTS_USER_MARKET } from './vaults.provider.consts'
 import { GetVaultsSubscriptionSubscription } from 'utils/__generated__/graphql'
 import { normalizeVaults } from './helpers/vaults.normalizer'
 
@@ -46,6 +46,8 @@ export const VaultsProvider = ({ children }: Props) => {
       shouldResubscribe: true,
       variables: {
         userAddress: userAddress ?? '',
+        marketAddress:
+          activeSubs[VAULTS_DATA]?.subType === VAULTS_USER_MARKET ? activeSubs[VAULTS_DATA].marketAddress : '',
       },
       onData: ({ data: { data } }) => {
         if (!data) return
