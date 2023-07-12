@@ -30,13 +30,13 @@ type Props = {
 
 export const EarnBorrowChart = ({ data, isBorrow }: Props) => {
   const [isGraph, setIsGraph] = useState(false)
-  const { isLoading } = useLoansEarnBorrowContext()
+  const { isChartsLoading } = useLoansEarnBorrowContext()
 
   const chartData: ChartDataType = { type: isGraph ? HISTOGRAM_CHART_TYPE : AREA_CHART_TYPE, plots: data }
   const showChart = chartData.plots.length >= numberOfItemsToDisplay
 
   return (
-    <EarnBorrowChartStyled>
+    <EarnBorrowChartStyled isChartLoading={isChartsLoading}>
       {showChart && (
         <div className="switchMenu">
           <span>{isBorrow ? 'Borrow' : 'Supply'} Vol / 14 Days</span>
@@ -46,7 +46,6 @@ export const EarnBorrowChart = ({ data, isBorrow }: Props) => {
           </Button>
         </div>
       )}
-
       <Chart
         data={chartData}
         colors={CHART_COLORS}
@@ -54,7 +53,7 @@ export const EarnBorrowChart = ({ data, isBorrow }: Props) => {
         numberOfItemsToDisplay={numberOfItemsToDisplay}
         tooltipAsset="$"
         tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
-        isLoading={isLoading}
+        isLoading={isChartsLoading}
       />
     </EarnBorrowChartStyled>
   )

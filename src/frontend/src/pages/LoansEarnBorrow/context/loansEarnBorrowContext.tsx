@@ -1,7 +1,7 @@
 import React from 'react'
 
 export type LoansEarnBorrowContext = {
-  isLoading: boolean
+  isChartsLoading: boolean
 }
 
 export const loansEarnBorrowContext = React.createContext<LoansEarnBorrowContext>(undefined!)

@@ -36,7 +36,7 @@ export const EarnBorrowTotalCharts = ({
   rightChartTitle,
   rightTotalAmount,
 }: Props) => {
-  const { isLoading } = useLoansEarnBorrowContext()
+  const { isChartsLoading } = useLoansEarnBorrowContext()
 
   const leftPart = (
     <div className="chart-wrapper">
@@ -47,7 +47,7 @@ export const EarnBorrowTotalCharts = ({
 
       <div className={classNames('chart')}>
         <Chart
-          isLoading={isLoading}
+          isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(leftChartData, 7) }}
           colors={CHART_COLORS}
           settings={getChartSettingsBasedOnChartLength(leftChartData, CHART_SETTINGS)}
@@ -69,7 +69,7 @@ export const EarnBorrowTotalCharts = ({
 
       <div className={classNames('chart')}>
         <Chart
-          isLoading={isLoading}
+          isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(rightChartData, 7) }}
           colors={CHART_COLORS}
           settings={getChartSettingsBasedOnChartLength(rightChartData, CHART_SETTINGS)}

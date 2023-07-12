@@ -121,7 +121,7 @@ export const LoansEarn = () => {
 
   const contextValue = useMemo(
     () => ({
-      isLoading: isChartsLoading,
+      isChartsLoading,
     }),
     [isChartsLoading],
   )

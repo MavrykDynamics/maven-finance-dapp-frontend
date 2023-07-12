@@ -6,8 +6,6 @@ export const AREA_CHART_TYPE = 'area'
 export const CANDLESTICK_CHART_TYPE = 'candle'
 export const HISTOGRAM_CHART_TYPE = 'histogram'
 
-export const chartTypesArr = [AREA_CHART_TYPE, CANDLESTICK_CHART_TYPE, HISTOGRAM_CHART_TYPE]
-
 /**
  *
  * @param price can be any from lightweight typings
