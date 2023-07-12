@@ -1,6 +1,3 @@
-import { UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
-import { convertNumberForClient } from 'utils/calcFunctions'
-
 // HELPER TO GET OPERATION NAME BY ITS TYPE
 export const getDescrByType = (type: number) => {
   switch (type) {
@@ -15,11 +12,11 @@ export const getDescrByType = (type: number) => {
     case 4:
       return 'Deposited'
     case 5:
-      return 'Withdrawed'
+      return 'Withdrawn'
     case 6:
       return 'Deposited SMVK'
     case 7:
-      return 'Withdrawed SMVK'
+      return 'Withdrew SMVK'
     case 8:
       return 'Vault Created'
     case 9:

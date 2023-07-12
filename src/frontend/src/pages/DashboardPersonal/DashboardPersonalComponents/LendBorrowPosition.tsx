@@ -1,26 +1,33 @@
+import { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-
-import Button from 'app/App.components/Button/NewButton'
-
-import { LBHInfoBlock } from './DashboardPersonalComponents.style'
-import { LoansPositionTable } from 'pages/LoansDashboard/components/PositionTable'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
-import { getGaugeVaultRiskSimpleStatus } from 'pages/LoansDashboard/helpers/position.helpers'
+// consts
 import { GaugeChartStateType, GAUGE_STATE_RISK_PART, GAUGE_STATE_APY_PART } from 'pages/LoansDashboard/LoansDashboard'
-import { useMemo, useState, useEffect } from 'react'
+import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import colors from 'styles/colors'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
+
+// types
 import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
+
+// helpers
+import { getGaugeVaultRiskSimpleStatus } from 'pages/LoansDashboard/helpers/position.helpers'
+import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// context
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+
+// view
+import { LBHInfoBlock } from './DashboardPersonalComponents.style'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { LoansPositionTable } from 'pages/LoansDashboard/components/PositionTable'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
+import Button from 'app/App.components/Button/NewButton'
 
 export const LendBorrowPosition = ({
   userLoansRewards,
@@ -70,7 +77,7 @@ export const LendBorrowPosition = ({
           const { borrowedAmount = 0, borrowedVaultsCollateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
 
           // calculating value risk data & how much borrowed per vault
-          acc.borrowCapacity += borrowedVaultsCollateralAmount / 2 - borrowedAmount
+          acc.borrowCapacity += borrowedVaultsCollateralAmount / 2
           acc.borrowedAmount += borrowedAmount
           borrowedPerMarket += borrowedAmount
 
@@ -94,12 +101,12 @@ export const LendBorrowPosition = ({
     return {
       vaultRiskGaugeData: {
         ...GAUGE_STATE_RISK_PART,
-        currentValue: vaultRiskValue,
+        currentValue: getNumberInBounds(0, 100, vaultRiskValue),
         ...getGaugeVaultRiskSimpleStatus(vaultRiskValue),
       },
       apyGaugeData: {
         ...GAUGE_STATE_APY_PART,
-        currentValue: apyNet,
+        currentValue: getNumberInBounds(0, 100, apyNet),
       },
     }
   }, [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices, userMTokens, userVaultsData])
@@ -121,7 +128,7 @@ export const LendBorrowPosition = ({
 
   return (
     <LBHInfoBlock className="position-tab">
-      <H2Title>Lend/Borrow Position</H2Title>
+      <H2Title>Earn/Borrow Position</H2Title>
       <div className="view-markets">
         <Link to={'/loans'}>
           <Button kind={BUTTON_PRIMARY} size={BUTTON_LARGE}>
@@ -134,7 +141,7 @@ export const LendBorrowPosition = ({
         <div className="gauge-chart">
           <CustomTooltip
             iconId="info"
-            text="Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral will be liquidated. 
+            text="Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral will be liquidated.
                       Risk value = Total Borrow/Borrow Limit*100 
                       Net APY = [Σ(Value of Supplied Assets*Supply APY) - Σ(Value of Borrowed Assets*Borrow APY)] / Value of Supplied Assets"
             defaultStrokeColor={colors[themeSelected].textColor}
@@ -164,17 +171,17 @@ export const LendBorrowPosition = ({
 
         <div className="stats">
           <div className="column">
-            <div className="name">Total Lend</div>
+            <div className="name">Total Supplied</div>
             <CommaNumber value={totalUserLended} className="value" beginningText="$" />
           </div>
 
           <div className="column">
-            <div className="name">Total Borrow</div>
+            <div className="name">Total Borrowed</div>
             <CommaNumber value={totalUserBorrowed} className="value" beginningText="$" />
           </div>
 
           <div className="column">
-            <div className="name">Rewards to be Distrubuted</div>
+            <div className="name">Earned To Date</div>
             <CommaNumber value={userLoansRewards} className="value" beginningText="$" />
           </div>
         </div>

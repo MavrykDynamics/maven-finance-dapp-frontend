@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-import { BUTTON_SIMPLE, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { State } from 'reducers'
 
 import Button from 'app/App.components/Button/NewButton'
@@ -10,13 +10,13 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 import {
-  TableScrollable,
   Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
   TableBody,
   TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+  TableScrollable,
 } from 'app/App.components/Table'
 import { LBHInfoBlock } from './DashboardPersonalComponents.style'
 import { parseDate } from 'utils/time'
@@ -42,7 +42,7 @@ export const LoansTxTab = ({
 
   return (
     <LBHInfoBlock>
-      <H2Title>{isLending ? 'Lending TXs' : 'Borrow TXs'}</H2Title>
+      <H2Title>{isLending ? 'Earn TXs' : 'Borrow TXs'}</H2Title>
 
       {isUserLoansLoading ? (
         <div className="loader-wrapper">
@@ -106,7 +106,7 @@ export const LoansTxTab = ({
                 <Link to="/loans">
                   <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
                     <Icon id={isLending ? 'lend' : 'borrow'} />
-                    {isLending ? 'Lend Asset' : 'Borrow Asset'}
+                    {isLending ? 'Supply Asset' : 'Borrow Asset'}
                   </Button>
                 </Link>
               </div>
