@@ -5,7 +5,7 @@ import { gql } from 'utils/__generated__'
 
 import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
 
-export function getLoansMarketsSubscription({
+export function getVaultsSubscription({
   marketTokenAddress,
 }: {
   marketTokenAddress: string | null
@@ -55,25 +55,3 @@ export function getLoansMarketsSubscription({
     }
 `)
 }
-
-export const GET_LOANS_CONFIG = gql(`
-	subscription getLLoansConfig($currentTimestamp: timestamptz) {
-		lending_controller(where: {mock_time: {_eq: false}}) {
-			minimum_loan_fee_pct
-			collateral_ratio
-		}
-	}
-`)
-
-// get markets addresses for pagination
-export const GET_LOANS_MARKET_ADDRESSES = gql(`
-	subscription getLoansConfig($currentTimestamp: timestamptz) {
-		lending_controller(where: {mock_time: {_eq: false}}) {
-			loan_tokens {
-				token {
-					token_address
-				}
-			}
-		}
-	}
-`)

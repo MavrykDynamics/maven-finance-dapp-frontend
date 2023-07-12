@@ -29,7 +29,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'
-import { reduceVaultsAssets } from 'providers/LoansProvider/helpers/vaults.utils'
+import { reduceVaultsAssets } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)

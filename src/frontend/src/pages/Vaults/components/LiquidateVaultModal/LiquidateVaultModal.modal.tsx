@@ -30,7 +30,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { calculateAdminLiquidationFee, calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
+import { calculateAdminLiquidationFee, calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 const columnWidth = '33%'

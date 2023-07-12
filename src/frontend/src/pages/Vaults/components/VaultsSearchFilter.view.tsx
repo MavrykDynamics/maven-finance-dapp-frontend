@@ -24,8 +24,8 @@ import { stringFullCharsCompare } from 'utils/stringFullCharsCompare'
 
 // types
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getVaultCollateralBalance, sortVaultsByStatus } from 'providers/LoansProvider/helpers/vaults.utils'
-import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { getVaultCollateralBalance, sortVaultsByStatus } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 type Filters = Record<string, string>

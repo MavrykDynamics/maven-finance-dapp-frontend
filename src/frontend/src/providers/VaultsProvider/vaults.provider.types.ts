@@ -3,12 +3,12 @@ import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { LoansTokenMetadataType, TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 
-export type DepositorsFlagType = typeof ANY_USER | typeof NONE_USER | typeof WHITELIST_USERS
-
-export type CollateralType = {
-  amount: number
-  tokenAddress: TokenAddressType
+// context types
+export type VaultsContext = {
+  vaultsMapper: Record<string, VaultType>
 }
+
+export type VaultsCtxState = Pick<VaultsContext, 'vaultsMapper'>
 
 // TODO: add descr to liquidation fields while testing liquidation functionality and popup
 export type VaultType = {
@@ -54,6 +54,13 @@ export type FullLoansVaultType = VaultType & {
   collateralRatio: number // relation of collaterals in vault to borrowed amount
   status: (typeof vaultsStatuses)[keyof typeof vaultsStatuses] // status of the vault, depends on collateralRatio
   borrowedToken: LoansTokenMetadataType & { rate: number } // metadata of borrowed token
+}
+
+export type DepositorsFlagType = typeof ANY_USER | typeof NONE_USER | typeof WHITELIST_USERS
+
+export type CollateralType = {
+  amount: number
+  tokenAddress: TokenAddressType
 }
 
 export type DepositCollateralType = {

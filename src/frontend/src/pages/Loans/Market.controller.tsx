@@ -38,7 +38,7 @@ import colors from 'styles/colors'
 import { USER_AVAILABLE_BORROW } from 'texts/tooltips/loan.text'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getVaultBorrowCapacity, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getVaultBorrowCapacity, getVaultCollateralBalance } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // providers

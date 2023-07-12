@@ -1,7 +1,7 @@
 import { TreasuryBalanceType } from 'utils/TypesAndInterfaces/Treasury'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { PieChartDataType } from 'app/App.components/Chart/helpers/Chart.types'
-import { VaultAssetData } from 'providers/LoansProvider/helpers/vaults.types'
+import { VaultAssetData } from 'providers/VaultsProvider/vaults.provider.types'
 
 import { HIGHLIGHTED_STROKE_WIDTH, DEFAULT_STROKE_WIDTH } from 'app/App.components/PieСhart/pieChart.const'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'

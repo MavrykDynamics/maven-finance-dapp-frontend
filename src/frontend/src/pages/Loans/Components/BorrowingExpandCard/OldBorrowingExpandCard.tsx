@@ -29,10 +29,10 @@ import { getCollateralRatioByPersentage } from '../../Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
-import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
 import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
-import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
+import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'

@@ -1,10 +1,10 @@
 import { ANY_USER, WHITELIST_USERS, NONE_USER } from 'pages/Loans/Loans.const'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
 
-import { CollateralType, DepositorsFlagType, VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { CollateralType, DepositorsFlagType, VaultType } from 'providers/VaultsProvider/vaults.provider.types'
 import { calculateAccruedInterest } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { calculateVaultMaxLiquidationAmount } from 'providers/LoansProvider/helpers/vaults.utils'
+import { calculateVaultMaxLiquidationAmount } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { Lending_Controller } from 'utils/__generated__/graphql'
 
 /**

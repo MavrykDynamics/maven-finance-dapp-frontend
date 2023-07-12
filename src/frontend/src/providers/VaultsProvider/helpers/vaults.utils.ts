@@ -2,7 +2,7 @@ import { statusSortPriority, vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
-import { FullLoansVaultType, VaultAssetData, VaultType } from './vaults.types'
+import { FullLoansVaultType, VaultAssetData, VaultType } from '../vaults.provider.types'
 import dayjs from 'dayjs'
 import { api } from 'utils/api/api'
 import {

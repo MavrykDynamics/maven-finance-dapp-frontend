@@ -52,7 +52,7 @@ import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
 
 type CurrentActiveModalScreen =
   | typeof INITIAL_SCREEN_ID

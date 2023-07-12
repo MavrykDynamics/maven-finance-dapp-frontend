@@ -8,7 +8,7 @@ import { calcLendingAPY } from 'providers/LoansProvider/helpers/loans.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getVaultCollateralBalance } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { GetUserLoansDataSubscription } from 'utils/__generated__/graphql'
 import { UserLoansDataStateType } from '../user.provider.types'
 

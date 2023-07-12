@@ -30,7 +30,7 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
 
