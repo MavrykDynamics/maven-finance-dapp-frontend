@@ -1,7 +1,7 @@
 import { GetLLoansConfigSubscription, GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
 import { LoansContext } from '../loans.provider.types'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
-import { calcLendingAPY } from './loans.utils'
+import { calcLendingAPY, calcMarketAvaliableLiquidity } from './loans.utils'
 
 export const normalizeLoansConfig = ({
   indexerData,
@@ -25,8 +25,6 @@ export const normalizeLoansMarkets = ({ indexerData }: { indexerData: GetLoansMa
   return loan_tokens?.reduce<LoansContext['marketsMapper']>((acc, loanToken) => {
     const {
       utilisation_rate,
-      total_remaining,
-      reserve_ratio,
       token_pool_total,
       total_borrowed,
       current_interest_rate,
@@ -38,7 +36,8 @@ export const normalizeLoansMarkets = ({ indexerData }: { indexerData: GetLoansMa
       vaults_aggregate: { aggregate: borrowers },
     } = loanToken
 
-    const reserveAmount = token_pool_total * (reserve_ratio / 10000)
+    const { reserveAmount, reserveFactor, availableLiquidity } = calcMarketAvaliableLiquidity(loanToken)
+
     const tokenCurrentInterestRate = convertNumberForClient({
       number: current_interest_rate,
       grade: interestRateDecimals,
@@ -53,14 +52,14 @@ export const normalizeLoansMarkets = ({ indexerData }: { indexerData: GetLoansMa
         convertNumberForClient({ number: utilisation_rate, grade: interestRateDecimals }) * 100,
       ),
 
-      availableLiquidity: total_remaining - reserveAmount,
+      availableLiquidity,
       totalLended: token_pool_total,
       totalBorrowed: total_borrowed,
 
       borrowers: borrowers?.count ?? 0,
       suppliers: suppliers?.count ?? 0,
 
-      reserveFactor: reserve_ratio / 100,
+      reserveFactor,
       reserveAmount,
       borrowAPR: tokenCurrentInterestRate * 100,
       lendingAPY: calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare),

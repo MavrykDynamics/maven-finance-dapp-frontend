@@ -1,3 +1,5 @@
+import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
+
 // HELPER TO GET OPERATION NAME BY ITS TYPE
 export const getDescrByType = (type: number) => {
   switch (type) {
@@ -38,4 +40,21 @@ export const calcLendingAPY = (currentInterestRate: number, treasuryShare: numbe
   const firstTerm = 1 + top / secondsPerYear
   const power = firstTerm ** secondsPerYear
   return (power - 1) * 100
+}
+
+export const calcMarketAvaliableLiquidity = ({
+  total_remaining,
+  token_pool_total,
+  reserve_ratio,
+}: Pick<
+  GetLoansMarketsSubscriptionSubscription['lending_controller'][number]['loan_tokens'][number],
+  'total_remaining' | 'token_pool_total' | 'reserve_ratio'
+>) => {
+  const reserveAmount = token_pool_total * (reserve_ratio / 10000)
+
+  return {
+    reserveAmount,
+    availableLiquidity: total_remaining - reserveAmount,
+    reserveFactor: reserve_ratio / 100,
+  }
 }

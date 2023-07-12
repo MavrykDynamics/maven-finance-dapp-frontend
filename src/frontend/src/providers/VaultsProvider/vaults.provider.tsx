@@ -10,7 +10,12 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { VaultsContext, VaultsCtxState } from './vaults.provider.types'
+import { VaultDataSubValuesType, VaultsContext, VaultsCtxState, VaultsSubsRecordType } from './vaults.provider.types'
+import { getVaultsSubscription } from './queries/vaults.query'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_DATA } from './vaults.provider.consts'
+import { GetVaultsSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { normalizeVaults } from './helpers/vaults.normalizer'
 
 // helpers
 
@@ -21,13 +26,54 @@ type Props = {
 }
 
 export const VaultsProvider = ({ children }: Props) => {
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+
+  const handleSubError = (error: ApolloError, subName: string) => {
+    console.error(`${subName} query error: `, error)
+    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+  }
+
+  const [activeSubs, setActiveSubs] = useState<VaultsSubsRecordType>(DEFAULT_VAULTS_ACTIVE_SUBS)
   const [vaultsCtxState, setVaultsCtxState] = useState<VaultsCtxState>({
     vaultsMapper: {},
   })
 
+  const { loading: isVaultsLoading } = useSubscription(
+    getVaultsSubscription({ userAddress, filters: activeSubs[VAULTS_DATA] }),
+    {
+      skip: !activeSubs[VAULTS_DATA],
+      shouldResubscribe: true,
+      variables: {
+        userAddress: userAddress ?? '',
+      },
+      onData: ({ data: { data } }) => {
+        if (!data) return
+
+        updateVaultsData(data)
+      },
+      onError: (error) => handleSubError(error, 'getVaultsSubscription'),
+    },
+  )
+
+  const updateVaultsData = (indexerData: GetVaultsSubscriptionSubscription) => {
+    const { vaultsMapper } = normalizeVaults({ indexerData })
+
+    setVaultsCtxState((prev) => ({
+      ...prev,
+      vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
+    }))
+  }
+
+  const changeVaultsSubscriptionsList = (newSkips: Partial<VaultsSubsRecordType>) => {
+    setActiveSubs((prev) => ({ ...prev, ...newSkips }))
+  }
+
   const providerValue = useMemo(() => {
     return {
       ...vaultsCtxState,
+      changeVaultsSubscriptionsList,
+      isLoading: isVaultsLoading,
     }
   }, [vaultsCtxState])
   return <vaultsContext.Provider value={providerValue}>{children}</vaultsContext.Provider>

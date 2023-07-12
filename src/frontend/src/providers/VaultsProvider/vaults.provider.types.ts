@@ -2,13 +2,24 @@ import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { LoansTokenMetadataType, TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
+import { VAULTS_DATA } from './vaults.provider.consts'
 
 // context types
 export type VaultsContext = {
   vaultsMapper: Record<string, VaultType>
+
+  changeVaultsSubscriptionsList: (skips: Partial<VaultsSubsRecordType>) => void
+  isLoading: boolean
 }
 
 export type VaultsCtxState = Pick<VaultsContext, 'vaultsMapper'>
+
+export type VaultsSubsType = typeof VAULTS_DATA
+export type VaultDataSubValuesType = {
+  subType: 'all' | 'userAll' | 'userPermissioned' | 'userMarket'
+  marketAddress?: string
+}
+export type VaultsSubsRecordType = Record<VaultsSubsType, boolean | VaultDataSubValuesType>
 
 // TODO: add descr to liquidation fields while testing liquidation functionality and popup
 export type VaultType = {
@@ -33,7 +44,7 @@ export type VaultType = {
   // permissions
   xtzDelegatedTo: string | null // if vault has xtz, as collateral, those xtz can be delegated to baker, here's the address of the delegated baker
   sMVKDelegatedTo?: string // if vault has smvk, as collateral, those smvk can be delegated to satellite, here's the address of the delegated satellite
-  ownerId: string // address of the vault owner
+  ownerAddress: string // address of the vault owner
   depositors: Array<string> // list of people who are allowed to deposit in the vault
   deporsitorsFlag: DepositorsFlagType // vault has 3 permissions states any -≥ anyone can deposit in it, none -> only owner can, whitelist -> only allowed users can deposit
 

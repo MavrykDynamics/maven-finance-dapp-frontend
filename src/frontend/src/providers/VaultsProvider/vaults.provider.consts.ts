@@ -1,0 +1,7 @@
+// CONSTS FOR VAULTS PROVIDER STATES
+export const VAULTS_DATA = 'vaultsData'
+
+// VAULTS PROVIDER DEFAULT CONSTS
+export const DEFAULT_VAULTS_ACTIVE_SUBS = {
+  [VAULTS_DATA]: false,
+} as const
