@@ -39,7 +39,7 @@ export const LendingTab = ({ loanTokenAddress, loanMtokenAddress, lendAPY }: Len
         </div>
       ) : (
         <NoItemsInTabStyled>
-          <span>Lend assets to earn interest.</span>
+          <span>Supply assets to earn interest.</span>
 
           <div className="manage-btn">
             <Button
@@ -55,7 +55,7 @@ export const LendingTab = ({ loanTokenAddress, loanMtokenAddress, lendAPY }: Len
               }
             >
               <Icon id="plus" />
-              Lend Asset
+              Supply Asset
             </Button>
           </div>
         </NoItemsInTabStyled>

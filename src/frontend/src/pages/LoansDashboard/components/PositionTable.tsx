@@ -68,7 +68,7 @@ export const LoansPositionTable = ({
                 <TableHeaderCell className="position-multy-cell lending">
                   <div className="cell-content" style={{ marginRight: '20px' }}>
                     <span>
-                      Lend APY{' '}
+                      Earn APY{' '}
                       <CustomTooltip
                         iconId="info"
                         text="Current yield suppliers are earning on their deposits."

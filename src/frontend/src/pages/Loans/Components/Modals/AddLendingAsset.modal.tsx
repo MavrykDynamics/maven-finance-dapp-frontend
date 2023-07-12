@@ -120,7 +120,7 @@ export const AddLendingAsset = ({
           <button onClick={closePopup} className="close-modal" />
 
           <GovRightContainerTitleArea>
-            <h2>Supplying Assets to Lending</h2>
+            <h2>Supply Assets to Earn</h2>
           </GovRightContainerTitleArea>
           <div className="modalDescr">
             Earn yield by depositing assets to Mavryk’s lending pools. Loans are secured by 200% collateral. Supplied
@@ -154,7 +154,7 @@ export const AddLendingAsset = ({
           <div className="lending-stats" style={{ marginTop: '45px' }}>
             <ThreeLevelListItem>
               <div className="name">
-                Lending APY{' '}
+                Earn APY{' '}
                 <CustomTooltip
                   iconId="info"
                   defaultStrokeColor={silverColor}

@@ -16,14 +16,13 @@ import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 import colors from 'styles/colors'
-import { skyColor } from 'styles'
+import { Page, skyColor } from 'styles'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from './Loans.helpers'
 
 import { State } from 'reducers'
 
-import { Page } from 'styles'
 import {
   LoansStyled,
   MarketChartsContainer,
@@ -117,7 +116,7 @@ export const Loans = () => {
   const lendingPart = (
     <div className="chart-wrapper">
       <div className="summary">
-        <span>Total Lending</span>
+        <span>Total Earning</span>
         <CommaNumber value={totalLended} beginningText={'$'} />
       </div>
       <div className={classNames('chart', { emptyChart: totalLendingChart.length === 0 })}>
@@ -252,7 +251,7 @@ export const Loans = () => {
                   <div className="content-wrapper">
                     <div className="row">
                       <ThreeLevelListItem>
-                        <div className="name">Total Lending</div>
+                        <div className="name">Total Earning</div>
                         <CommaNumber beginningText="$" value={convertedMarketTotalLended * rate} className="value" />
                         <CommaNumber value={convertedMarketTotalLended} className="rate" />
                       </ThreeLevelListItem>
@@ -290,7 +289,7 @@ export const Loans = () => {
                     </div>
                     <div className="row">
                       <ThreeLevelListItem>
-                        <div className="name">Total Borrowed</div>
+                        <div className="name">Total Borrow</div>
                         <CommaNumber beginningText="$" value={convertedMarketTotalBorrowed * rate} className="value" />
                         <CommaNumber value={convertedMarketTotalBorrowed} className="rate" />
                       </ThreeLevelListItem>

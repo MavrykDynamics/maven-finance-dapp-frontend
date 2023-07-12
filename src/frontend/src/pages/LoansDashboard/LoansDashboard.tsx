@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { State } from 'reducers'
-
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { getNumberInBounds } from 'utils/calcFunctions'
 import { getGaugeVaultRiskSimpleStatus } from './helpers/position.helpers'
 import { getClassNameBasedOnPersentValue } from './helpers/comparing.helpers'
 
@@ -127,7 +125,7 @@ export const LoansDashboard = () => {
         acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
 
         // calculating value risk data & how much borrowed per vault
-        acc.borrowCapacity += borrowedVaultsCollateralAmount / 2 - borrowedAmount
+        acc.borrowCapacity += borrowedVaultsCollateralAmount / 2
         acc.borrowedAmount += borrowedAmount
         borrowedPerMarket += borrowedAmount
 
@@ -155,12 +153,12 @@ export const LoansDashboard = () => {
     return {
       vaultRiskGaugeData: {
         ...GAUGE_STATE_RISK_PART,
-        currentValue: vaultRiskValue,
+        currentValue: getNumberInBounds(0, 100, vaultRiskValue),
         ...getGaugeVaultRiskSimpleStatus(vaultRiskValue),
       },
       apyGaugeData: {
         ...GAUGE_STATE_APY_PART,
-        currentValue: apyNet,
+        currentValue: getNumberInBounds(0, 100, apyNet),
       },
       totalBorrowed,
       totalLended,
@@ -190,7 +188,7 @@ export const LoansDashboard = () => {
         {isLoansLoading || userLoansDataLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
-            <div className="text">Loading lend & borrow data</div>
+            <div className="text">Loading earn & borrow data</div>
           </DataLoaderWrapper>
         ) : (
           <>
@@ -202,7 +200,7 @@ export const LoansDashboard = () => {
 
                 <div className="details">
                   <div className="column">
-                    <div className="label">Total Lending</div>
+                    <div className="label">Total Earning</div>
                     <div className="value-wrap">
                       <CommaNumber value={totalLended} beginningText="$" className="value" />
                       <CommaNumber
@@ -215,7 +213,7 @@ export const LoansDashboard = () => {
                   </div>
 
                   <div className="column">
-                    <div className="label">Total Borrowed</div>
+                    <div className="label">Total Borrow</div>
                     <div className="value-wrap">
                       <CommaNumber value={totalBorrowed} beginningText="$" className="value" />
                       <CommaNumber
@@ -236,7 +234,7 @@ export const LoansDashboard = () => {
                   <div className="gauge-chart">
                     <CustomTooltip
                       iconId="info"
-                      text="Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral will be liquidated. 
+                      text="Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral will be liquidated.
                       Risk value = Total Borrow/Borrow Limit*100 
                       Net APY = [Σ(Value of Supplied Assets*Supply APY) - Σ(Value of Borrowed Assets*Borrow APY)] / Value of Supplied Assets"
                       defaultStrokeColor={colors[themeSelected].textColor}
@@ -266,7 +264,7 @@ export const LoansDashboard = () => {
 
                   <div className="details">
                     <div className="column">
-                      <div className="label">Total Lend</div>
+                      <div className="label">Total Supplied</div>
                       <CommaNumber value={totalUserLended} beginningText="$" className="value" />
                     </div>
                     <div className="column">
@@ -274,7 +272,7 @@ export const LoansDashboard = () => {
                       <CommaNumber value={totalUserBorrowed} beginningText="$" className="value" />
                     </div>
                     <div className="column">
-                      <div className="label">Rewards to be Distrubuted</div>
+                      <div className="label">Earned To Date</div>
                       <CommaNumber value={availableLoansRewards} beginningText="$" className="value" />
                     </div>
                   </div>
