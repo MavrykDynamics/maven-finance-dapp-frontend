@@ -1,5 +1,4 @@
 import { ColorBreakpoint } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { lightTextColor, placeholderColor } from 'styles'
 
 export const LEND_TAB_ID = 'lendingTab'

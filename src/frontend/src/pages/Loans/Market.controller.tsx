@@ -240,7 +240,7 @@ export const Market = () => {
                   <CustomTooltip
                     iconId="info"
                     text={USER_AVAILABLE_BORROW(assetAddress)}
-                    defaultStrokeColor={colors[themeSelected].textColor}
+                    defaultStrokeColor={colors[themeSelected].subHeadingText}
                   />
                 </div>
                 <CommaNumber value={userAvailableBorrow} beginningText="$" className="value" />

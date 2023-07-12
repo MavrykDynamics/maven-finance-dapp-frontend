@@ -3,11 +3,11 @@ import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useState } from 'react'
 
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { ACTION_PRIMARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { State } from 'reducers'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
-import { Button } from 'app/App.components/Button/Button.controller'
+import Button from 'app/App.components/Button/NewButton'
 import { BorrowingExpandCard } from './BorrowingExpandCard/BorrowingExpandCard'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 
@@ -18,6 +18,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 type BorrowingTabPropsType = {
   loanTokenAddress: TokenAddressType
@@ -75,8 +76,8 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
             <H2Title>Your {symbol} Vaults</H2Title>
 
             <Button
-              text="New Vault"
-              icon="plus"
+              kind={BUTTON_PRIMARY}
+              form={BUTTON_WIDE}
               disabled={!Boolean(accountPkh) || isActionActive}
               onClick={() =>
                 openCreateVaultPopup({
@@ -86,9 +87,10 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
                     convertNumberForClient({ number: marketAvaliableLiquidity, grade: decimals }) * rate,
                 })
               }
-              kind={ACTION_PRIMARY}
-              className="lending-tab-no-items-btn has-items-borrow-btn"
-            />
+            >
+              <Icon id="plus" />
+              New Vault
+            </Button>
           </div>
 
           <Checkbox
@@ -110,21 +112,25 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
       ) : (
         <NoItemsInTabStyled>
           <span>To borrow, you must first create a vault and add collateral.</span>
-          <Button
-            text="New Vault"
-            icon="plus"
-            kind={ACTION_PRIMARY}
-            disabled={!Boolean(accountPkh)}
-            onClick={() =>
-              openCreateVaultPopup({
-                marketTokenAddress: loanTokenAddress,
-                setCreatedVaultAddress: handleCreatedVaultAddress,
-                avaliableLiquidity:
-                  convertNumberForClient({ number: marketAvaliableLiquidity, grade: decimals }) * rate,
-              })
-            }
-            className="lending-tab-no-items-btn"
-          />
+
+          <div className="manage-btn">
+            <Button
+              kind={BUTTON_PRIMARY}
+              form={BUTTON_WIDE}
+              disabled={!Boolean(accountPkh)}
+              onClick={() =>
+                openCreateVaultPopup({
+                  marketTokenAddress: loanTokenAddress,
+                  setCreatedVaultAddress: handleCreatedVaultAddress,
+                  avaliableLiquidity:
+                    convertNumberForClient({ number: marketAvaliableLiquidity, grade: decimals }) * rate,
+                })
+              }
+            >
+              <Icon id="plus" />
+              New Vault
+            </Button>
+          </div>
         </NoItemsInTabStyled>
       )}
     </BorrowingTabStyled>

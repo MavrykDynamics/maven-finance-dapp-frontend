@@ -1,21 +1,21 @@
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import classNames from 'classnames'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { Button } from 'app/App.components/Button/Button.controller'
+import Button from 'app/App.components/Button/NewButton'
 import { Chart } from 'app/App.components/Chart/Chart'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 import colors from 'styles/colors'
-import { skyColor } from 'styles'
+
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from './Loans.helpers'
@@ -43,19 +43,13 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 const CHART_SETTINGS = {
   width: 450,
   height: 270,
   hideXAxis: true,
   hideYAxis: true,
-}
-
-const CHART_COLORS = {
-  lineColor: skyColor,
-  areaTopColor: skyColor,
-  areaBottomColor: 'rgba(119, 164, 242, 0)',
-  textColor: '#CDCDCD',
 }
 
 export const Loans = () => {
@@ -80,6 +74,16 @@ export const Loans = () => {
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
+
+  const CHART_COLORS = useMemo(
+    () => ({
+      lineColor: colors[themeSelected].primaryChartColor,
+      areaTopColor: colors[themeSelected].primaryChartColor,
+      areaBottomColor: 'rgba(119, 164, 242, 0)',
+      textColor: colors[themeSelected].regularText,
+    }),
+    [themeSelected],
+  )
 
   const { totalBorrowed, totalLended } = loanTokens.reduce<{
     totalLended: number
@@ -260,7 +264,7 @@ export const Loans = () => {
                           <CommaNumber value={lendingAPY} className="value" endingText="%" />{' '}
                           <CustomTooltip
                             iconId="info"
-                            defaultStrokeColor={colors[themeSelected].dataColor}
+                            defaultStrokeColor={colors[themeSelected].primaryText}
                             text="Current yield suppliers are earning on their deposits."
                             className="tooltip"
                           />
@@ -283,7 +287,9 @@ export const Loans = () => {
                         <CommaNumber value={utilisationRate} className="value" endingText="%" />
                       </ThreeLevelListItem>
                       <Link to={`/loans/${address}/${LEND_TAB_ID}`}>
-                        <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
+                        <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+                          Lend <Icon id="arrowRight" />
+                        </Button>
                       </Link>
                     </div>
                     <div className="row">
@@ -298,7 +304,7 @@ export const Loans = () => {
                           <CommaNumber value={borrowAPR} className="value" endingText="%" />{' '}
                           <CustomTooltip
                             iconId="info"
-                            defaultStrokeColor={colors[themeSelected].dataColor}
+                            defaultStrokeColor={colors[themeSelected].primaryText}
                             text="Current interest rate being charged to borrowers."
                             className="tooltip"
                           />
@@ -327,7 +333,9 @@ export const Loans = () => {
                         />
                       </ThreeLevelListItem>
                       <Link to={`/loans/${address}/${BORROW_TAB_ID}`}>
-                        <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
+                        <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+                          Borrow <Icon id="arrowRight" />
+                        </Button>
                       </Link>
                     </div>
                   </div>
