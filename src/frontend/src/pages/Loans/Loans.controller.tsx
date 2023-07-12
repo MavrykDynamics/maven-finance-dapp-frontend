@@ -15,7 +15,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 import colors from 'styles/colors'
-import { skyColor } from 'styles'
+import { Page, skyColor } from 'styles'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from './Loans.helpers'
@@ -23,8 +23,6 @@ import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from '.
 import { State } from 'reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getLoansStorage } from './Actions/getLoansData.actions'
-
-import { Page } from 'styles'
 import {
   LoansStyled,
   MarketChartsContainer,
@@ -95,7 +93,7 @@ export const Loans = () => {
   const lendingPart = (
     <div className="chart-wrapper">
       <div className="summary">
-        <span>Total Lending</span>
+        <span>Total Earning</span>
         <CommaNumber value={totalLended} beginningText={'$'} />
       </div>
       <div className={classNames('chart', { emptyChart: chartsData.lendingChartData.length === 0 })}>
@@ -204,7 +202,7 @@ export const Loans = () => {
                   <div className="content-wrapper">
                     <div className="row">
                       <ThreeLevelListItem>
-                        <div className="name">Total Lending</div>
+                        <div className="name">Total Earning</div>
                         {rate ? <CommaNumber beginningText="$" value={totalLended * rate} className="value" /> : null}
                         <CommaNumber value={totalLended} className="rate" />
                       </ThreeLevelListItem>
@@ -238,7 +236,7 @@ export const Loans = () => {
                     </div>
                     <div className="row">
                       <ThreeLevelListItem>
-                        <div className="name">Total Borrowed</div>
+                        <div className="name">Total Borrow</div>
                         {rate ? <CommaNumber beginningText="$" value={totalBorrowed * rate} className="value" /> : null}
                         <CommaNumber value={totalBorrowed} className="rate" />
                       </ThreeLevelListItem>

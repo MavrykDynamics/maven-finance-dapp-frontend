@@ -57,7 +57,7 @@ export const LendingTab = ({
         </div>
       ) : (
         <NoItemsInTabStyled>
-          <span>Lend assets to earn interest.</span>
+          <span>Supply assets to earn interest.</span>
 
           <div className="manage-btn">
             <Button
@@ -73,7 +73,7 @@ export const LendingTab = ({
               }
             >
               <Icon id="plus" />
-              Lend Asset
+              Supply Asset
             </Button>
           </div>
         </NoItemsInTabStyled>

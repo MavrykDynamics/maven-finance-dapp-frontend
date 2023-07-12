@@ -6,10 +6,10 @@ import { UserState } from 'reducers/wallet'
 import { Lending_Controller_History_Data } from 'utils/generated/graphqlTypes'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import {
-  LendingItemType,
-  LoansChartsDataType,
-  LoanMarketType,
   BaseLoansAssetDataType,
+  LendingItemType,
+  LoanMarketType,
+  LoansChartsDataType,
 } from 'utils/TypesAndInterfaces/Loans'
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 
@@ -129,7 +129,10 @@ export const getTransactionHistory = (
         if (descrByType) {
           acc.transactionHistory.push({
             amount: transformedAmount,
-            date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
+            date: parseDate({
+              time: new Date(timestamp).getTime(),
+              timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC',
+            }),
             vaultAddress: vault?.vault?.address,
             userAddress: senderAddress,
             operationHash: operation_hash,
@@ -486,11 +489,11 @@ const getDescrByType = (type: number) => {
     case 4:
       return 'Deposited'
     case 5:
-      return 'Withdrawed'
+      return 'Withdrawn'
     case 6:
-      return 'Deposited SMVK'
+      return 'Deposited sMVK'
     case 7:
-      return 'Withdrawed SMVK'
+      return 'Withdrew sMVK'
     case 8:
       return 'Vault Created'
     case 9:

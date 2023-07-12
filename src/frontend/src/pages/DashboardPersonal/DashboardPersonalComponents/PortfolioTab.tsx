@@ -20,7 +20,7 @@ import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons
 import { LoansTxTab } from './LoansTxTab'
 import Button from 'app/App.components/Button/NewButton'
 
-import { PortfolioWalletStyled, PortfolioChartStyled } from './DashboardPersonalComponents.style'
+import { PortfolioChartStyled, PortfolioWalletStyled } from './DashboardPersonalComponents.style'
 import { LendBorrowPosition } from './LendBorrowPosition'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
@@ -147,12 +147,12 @@ const PortfolioTab = ({
       <div className="tabs-switchers">
         <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
           <Button selected={portfolioActiveTab === PORTFOLIO_POSITION_TAB_ID} kind={BUTTON_NAVIGATION}>
-            Lend/Borrow Position
+            Earn/Borrow Position
           </Button>
         </Link>
         <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
           <Button selected={portfolioActiveTab === PORTFOLIO_LENDING_TAB_ID} kind={BUTTON_NAVIGATION}>
-            Lending TXs
+            Earn TXs
           </Button>
         </Link>
         <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}>

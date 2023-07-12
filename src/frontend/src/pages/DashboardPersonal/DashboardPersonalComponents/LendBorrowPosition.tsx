@@ -10,12 +10,13 @@ import { State } from 'reducers'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
 import { getGaugeVaultRiskSimpleStatus } from 'pages/LoansDashboard/helpers/position.helpers'
-import { GaugeChartStateType, GAUGE_STATE_RISK_PART, GAUGE_STATE_APY_PART } from 'pages/LoansDashboard/LoansDashboard'
-import { useMemo, useState, useEffect } from 'react'
+import { GAUGE_STATE_APY_PART, GAUGE_STATE_RISK_PART, GaugeChartStateType } from 'pages/LoansDashboard/LoansDashboard'
+import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import colors from 'styles/colors'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { getNumberInBounds } from 'utils/calcFunctions'
 
 export const LendBorrowPosition = ({
   markets,
@@ -54,7 +55,7 @@ export const LendBorrowPosition = ({
           const { borrowedAmount = 0, collateralAmount = 0 } = userLoansData.userVaultsData[gqlName] ?? {}
 
           // calculating value risk data & how much borrowed per vault
-          acc.borrowCapacity += collateralAmount / 2 - borrowedAmount
+          acc.borrowCapacity += collateralAmount / 2
           acc.borrowedAmount += borrowedAmount
           borrowedPerMarket += borrowedAmount
 
@@ -78,12 +79,12 @@ export const LendBorrowPosition = ({
     return {
       vaultRiskGaugeData: {
         ...GAUGE_STATE_RISK_PART,
-        currentValue: vaultRiskValue,
+        currentValue: getNumberInBounds(0, 100, vaultRiskValue),
         ...getGaugeVaultRiskSimpleStatus(vaultRiskValue),
       },
       apyGaugeData: {
         ...GAUGE_STATE_APY_PART,
-        currentValue: apyNet,
+        currentValue: getNumberInBounds(0, 100, apyNet),
       },
     }
   }, [markets, userLoansData.userVaultsData])
@@ -105,7 +106,7 @@ export const LendBorrowPosition = ({
 
   return (
     <LBHInfoBlock className="position-tab">
-      <H2Title>Lend/Borrow Position</H2Title>
+      <H2Title>Earn/Borrow Position</H2Title>
       <div className="view-markets">
         <Link to={'/loans'}>
           <Button kind={BUTTON_PRIMARY} size={BUTTON_LARGE}>
@@ -118,7 +119,7 @@ export const LendBorrowPosition = ({
         <div className="gauge-chart">
           <CustomTooltip
             iconId="info"
-            text="Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral will be liquidated. 
+            text="Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral will be liquidated.
                       Risk value = Total Borrow/Borrow Limit*100 
                       Net APY = [Σ(Value of Supplied Assets*Supply APY) - Σ(Value of Borrowed Assets*Borrow APY)] / Value of Supplied Assets"
             defaultStrokeColor={colors[themeSelected].textColor}
@@ -148,17 +149,17 @@ export const LendBorrowPosition = ({
 
         <div className="stats">
           <div className="column">
-            <div className="name">Total Lend</div>
+            <div className="name">Total Supplied</div>
             <CommaNumber value={totalUserLended} className="value" beginningText="$" />
           </div>
 
           <div className="column">
-            <div className="name">Total Borrow</div>
+            <div className="name">Total Borrowed</div>
             <CommaNumber value={totalUserBorrowed} className="value" beginningText="$" />
           </div>
 
           <div className="column">
-            <div className="name">Rewards to be Distrubuted</div>
+            <div className="name">Earned To Date</div>
             <CommaNumber value={userLoansRewards} className="value" beginningText="$" />
           </div>
         </div>

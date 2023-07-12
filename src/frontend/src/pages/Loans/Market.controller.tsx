@@ -179,7 +179,7 @@ export const Market = () => {
                 <CommaNumber value={currentToken.lendingAPY} endingText="%" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Total Lending</div>
+                <div className="name">Total Earning</div>
                 <CommaNumber value={currentToken.totalLended} beginningText="$" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
