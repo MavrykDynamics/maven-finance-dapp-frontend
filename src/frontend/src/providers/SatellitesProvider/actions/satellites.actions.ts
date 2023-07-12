@@ -133,7 +133,7 @@ export const unregisterSatellite = async (
     const contract = await tezos.wallet.at(delegationAddress)
     const unregisterSatelliteMetaData = await contract?.methods.unregisterAsSatellite(accountPkh)
 
-    return await getEstimationResult(unregisterSatelliteMetaData, callback)
+    return await getEstimationResult(unregisterSatelliteMetaData, { callback })
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }

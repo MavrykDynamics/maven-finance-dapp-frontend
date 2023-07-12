@@ -1,5 +1,10 @@
 export const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 
+// actions
+export const CREATE_NEW_VAULT_ACTION = 'createNewVaultAction'
+export const DEPOSIT_LENDING_ASSET_ACTION = 'depositLendingAssetAction'
+export const WITHDRAW_LENDING_ASSET_ACTION = 'withdrawLendingAssetAction'
+
 export const LOANS_HISTORY_DATA_TYPES = {
   addLiquidity: 0,
   removeLiquidity: 1,

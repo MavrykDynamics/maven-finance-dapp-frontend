@@ -274,8 +274,6 @@ export const BecomeSatellite = () => {
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
-    } finally {
-      toggleActionCompletion(false)
     }
   }
 
@@ -321,8 +319,6 @@ export const BecomeSatellite = () => {
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
-    } finally {
-      toggleActionCompletion(false)
     }
   }
 
