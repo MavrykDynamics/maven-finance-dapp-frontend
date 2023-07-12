@@ -73,7 +73,10 @@ export const depositLendingAssetAction = async (
     if (type === 'tez') {
       const depositTezMetaData = contract?.methods.addLiquidity(indexerName, convertedAssetAmount)
 
-      return await getEstimationResult(depositTezMetaData, { amount: convertedAssetAmount, mutez: true }, callback)
+      return await getEstimationResult(depositTezMetaData, {
+        params: { amount: convertedAssetAmount, mutez: true },
+        callback,
+      })
     } else if (type === 'fa12') {
       const assetContract = await tezos.wallet.at(address)
 
@@ -152,7 +155,7 @@ export const withdrawLendingAssetAction = async (
     const contract = await tezos.wallet.at(lendingControllerAddress)
     const withdrawLendingAssetMetaData = contract?.methods.removeLiquidity(indexerName, convertedAssetAmount)
 
-    return await getEstimationResult(withdrawLendingAssetMetaData, undefined, callback)
+    return await getEstimationResult(withdrawLendingAssetMetaData, { callback })
   } catch (error) {
     return { actionSuccess: false, error: unknownToError(error) }
   }

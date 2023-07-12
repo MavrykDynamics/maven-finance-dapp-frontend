@@ -2,10 +2,14 @@ import { ContractMethod, OpKind, SendParams, TezosToolkit, TransferParams, Walle
 import { estimateBatchOperation, estimateExecution } from './walletError.helper'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
+type EstimationResultParams = {
+  callback?: () => void
+  params?: Partial<SendParams>
+}
+
 export async function getEstimationResult(
   metadata: ContractMethod<Wallet>,
-  params?: Partial<SendParams>,
-  cb?: () => void,
+  args?: EstimationResultParams,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> {
   const op = await estimateExecution(metadata)
 
@@ -13,9 +17,9 @@ export async function getEstimationResult(
     return { actionSuccess: false, error: op.error }
   }
 
-  const operation = await metadata.send(params)
+  const operation = await metadata.send(args?.params)
 
-  cb?.()
+  args?.callback?.()
 
   return { actionSuccess: true, operation }
 }

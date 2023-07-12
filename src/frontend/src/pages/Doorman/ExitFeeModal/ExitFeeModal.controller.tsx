@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 
 // helpers
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
-import { INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
 import { stakingInputValidation } from '../Doorman.converter'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
@@ -121,7 +121,7 @@ export const ExitFeeModal = ({
           toasterId,
           operationLvl,
           callback: () => {
-            setInputData({ ...inputData, amount: '0' })
+            setInputData({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
           },
         })
       } else if (isContractErrorPayload(actionResult.error)) {
