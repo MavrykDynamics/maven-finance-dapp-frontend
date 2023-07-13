@@ -105,14 +105,4 @@ export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
       pointer-events: none;
     }
   }
-
-  &.farm-toggle {
-    .slider::before {
-      background-color: ${({ theme }) => theme.headerColor};
-    }
-
-    .checked {
-      background-color: ${({ theme }) => theme.cardBorderColor};
-    }
-  }
 `

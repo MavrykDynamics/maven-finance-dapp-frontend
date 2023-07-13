@@ -1,6 +1,5 @@
 import { useContext } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { useDispatch } from 'react-redux'
 
 // types
 import type { FarmsViewVariantType } from '../Farms.const'

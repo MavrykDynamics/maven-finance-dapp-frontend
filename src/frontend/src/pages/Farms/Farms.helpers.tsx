@@ -1,5 +1,5 @@
 // types
-import { FarmAccountsType, FarmContractType, FarmGraphQL, Normalizedfarm } from '../../utils/TypesAndInterfaces/Farm'
+import { FarmContractType, FarmGraphQL, Normalizedfarm } from '../../utils/TypesAndInterfaces/Farm'
 
 // helpers
 import { getContractBigmapKeys, network } from 'utils/blockchainApi'

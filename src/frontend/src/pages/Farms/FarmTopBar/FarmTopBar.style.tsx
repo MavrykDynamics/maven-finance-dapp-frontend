@@ -16,7 +16,7 @@ export const FarmTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
     svg {
       width: 20px;
       height: 20px;
-      fill: ${cyanColor};
+      fill: ${({ theme }) => theme.linksAndButtons};
     }
 
     .btn-vertical {
@@ -26,7 +26,7 @@ export const FarmTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
 
   &.vertical .change-view .btn-vertical svg,
   &.horizontal .change-view .btn-horizontal svg {
-    fill: ${headerColor};
+    fill: ${({ theme }) => theme.selectedColor};
   }
 
   ul {
@@ -53,5 +53,9 @@ export const FarmTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
   .farm-toggle {
     flex-shrink: 0;
     margin-right: 15px;
+
+    .sufix {
+      color: ${({ theme }) => theme.mainHeadingText};
+    }
   }
 `

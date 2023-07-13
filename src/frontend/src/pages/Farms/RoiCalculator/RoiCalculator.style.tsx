@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { Card, skyColor, cyanColor, headerColor, royalPurpleColor } from 'styles'
+import { skyColor, cyanColor, headerColor, royalPurpleColor } from 'styles'
 
-export const RoiCalculatorStyled = styled.section`
+export const RoiCalculatorStyled = styled.section<{ theme: MavrykTheme }>`
   padding: 40px 40px;
   padding-bottom: 30px;
 
@@ -12,7 +12,6 @@ export const RoiCalculatorStyled = styled.section`
     margin-bottom: 21px;
 
     h2 {
-      color: ${cyanColor};
       font-weight: 600;
       font-size: 18px;
       line-height: 18px;
@@ -37,7 +36,7 @@ export const RoiCalculatorStyled = styled.section`
     font-weight: 600;
     font-size: 12px;
     line-height: 18px;
-    color: ${skyColor};
+    color: ${({ theme }) => theme.regularText};
     padding-left: 8px;
     padding-bottom: 2px;
   }
@@ -48,18 +47,22 @@ export const RoiCalculatorStyled = styled.section`
     font-weight: 600;
     font-size: 12px;
     line-height: 18px;
-    color: ${skyColor};
+    color: ${({ theme }) => theme.placeholders};
     padding: 0 20px;
     margin-top: -24px;
     position: relative;
+
+    & span:last-of-type {
+      color: ${({ theme }) => theme.subHeadingText};
+    }
   }
 
   .current-rates {
-    background: linear-gradient(180deg, #503eaa 0%, rgba(80, 62, 170, 0) 100%);
+    background: ${({ theme }) => theme.roiCalculatorBackground};
     border-radius: 10px;
     margin-top: 40px;
     padding: 20px 30px;
-    color: ${cyanColor};
+    color: ${({ theme }) => theme.regularText};
     font-weight: 700;
     font-size: 14px;
     line-height: 14px;
@@ -71,6 +74,8 @@ export const RoiCalculatorStyled = styled.section`
       font-size: 14px;
       font-weight: 700;
       margin-bottom: 10px;
+
+      color: ${({ theme }) => theme.regularText};
     }
 
     p {
@@ -85,12 +90,12 @@ export const RoiCalculatorStyled = styled.section`
       svg {
         width: 24px;
         height: 24px;
-        stroke: ${headerColor};
+        stroke: ${({ theme }) => theme.linksAndButtons};
       }
 
       &.active {
         svg {
-          stroke: ${cyanColor};
+          opacity: 0.8;
         }
       }
     }
@@ -130,7 +135,7 @@ export const RoiCalculatorStyled = styled.section`
               font-weight: 600;
               font-size: 12px;
               line-height: 18px;
-              color: ${skyColor};
+              color: ${({ theme }) => theme.placeholders};
             }
           }
         }
@@ -145,7 +150,6 @@ export const RoiCalculatorStyled = styled.section`
       font-weight: 700;
       font-size: 14px;
       line-height: 14px;
-      color: ${headerColor};
       padding-left: 4px;
       margin-bottom: 12px;
     }
@@ -227,13 +231,12 @@ export const RoiExpandStyled = styled.div`
           margin: 0;
           font-weight: 600;
           font-size: 14px;
-          color: ${headerColor};
         }
 
         var {
           font-weight: 600;
           font-size: 14px;
-          color: ${cyanColor};
+          color: ${({ theme }) => theme.primaryText};
 
           p {
             margin: 0;
