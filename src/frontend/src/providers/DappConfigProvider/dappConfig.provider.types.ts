@@ -8,8 +8,9 @@ import { SatelliteActionsType } from 'providers/SatellitesProvider/satellites.pr
 import { ExtendedError } from 'errors/error'
 import { TezosWalletErrorPayload } from 'errors/error.type'
 import { ThemeType } from 'consts/theme.const'
+import { LoansActionsType } from 'providers/LoansProvider/loans.provider.types'
 
-export type ActionTypes = StakeActionType | UserActionsType | SatelliteActionsType
+export type ActionTypes = StakeActionType | UserActionsType | SatelliteActionsType | LoansActionsType
 
 export type DappConfigContext = {
   // data
@@ -51,11 +52,11 @@ export type DappConfigContextStateType = Pick<
   | 'globalLoadingState'
 >
 
-// TODO: dont forget to add other action names with their transfer to context
 export type UserActionType = {
   actionName: ActionTypes
   toasterId: string
   operationLvl: number
+  callback?: () => void
 }
 
 export type ActionErrorReturnType = { actionSuccess: boolean; error: Error | ExtendedError | TezosWalletErrorPayload }

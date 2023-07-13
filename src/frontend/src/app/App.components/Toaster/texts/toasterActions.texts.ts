@@ -14,6 +14,11 @@ import {
   UNREGISTER_SATELLITE_ACTION,
   UPDATE_SATELLITE_ACTION,
 } from 'providers/SatellitesProvider/satellites.const'
+import {
+  CREATE_NEW_VAULT_ACTION,
+  DEPOSIT_LENDING_ASSET_ACTION,
+  WITHDRAW_LENDING_ASSET_ACTION,
+} from 'providers/LoansProvider/helpers/loans.const'
 
 export const TOASTER_ACTIONS_TEXTS = {
   // doorman actions -----------------------------
@@ -136,6 +141,37 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Satellite record updated.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  // loans actions
+  [CREATE_NEW_VAULT_ACTION]: {
+    start: {
+      title: 'Creating new vault...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'New vault created.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DEPOSIT_LENDING_ASSET_ACTION]: {
+    start: {
+      title: 'Adding liquidity...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Liquidity added.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [WITHDRAW_LENDING_ASSET_ACTION]: {
+    start: {
+      title: 'Removing liquidity...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Liquidity removed.',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },

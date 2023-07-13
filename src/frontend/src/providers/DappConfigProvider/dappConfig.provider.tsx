@@ -71,13 +71,16 @@ const DappConfigProvider = ({ children }: Props) => {
   useEffect(() => {
     if (!action || !currentIndexedLevel) return
 
-    const { actionName, toasterId, operationLvl } = action
+    const { actionName, toasterId, operationLvl, callback } = action
     const turnOffAction = async () => {
       await sleep(500)
       hideToasterMessage(toasterId)
       await sleep(500)
       success(TOASTER_ACTIONS_TEXTS[actionName]['end']['message'], TOASTER_ACTIONS_TEXTS[actionName]['end']['title'])
 
+      toggleActionCompletion(false)
+      // some callback f.e. to reset input, clear form data etc.
+      callback?.()
       setAction(null)
     }
 
