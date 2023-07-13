@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useState } from 'react'
 
@@ -12,12 +12,12 @@ import Icon from 'app/App.components/Icon/Icon.view'
 
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { State } from 'reducers'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { changeVaultNameAction } from 'pages/Loans/Actions/vault.actions'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { validateVaultLength } from './CreateNewVault.modal'
 import { containSpaces } from 'app/App.utils/input'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 
 export const ChangeVaultName = ({
   closePopup,
@@ -28,9 +28,11 @@ export const ChangeVaultName = ({
   show: boolean
   data: ChangeVaultNamePopupDataType
 }) => {
+  // TODO: test it
   const {
-    vaults: { myVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.loans)
+    myVaultsIds: { all: myVaultsIds },
+    vaultsMapper,
+  } = useVaultsContext()
 
   const dispatch = useDispatch()
   useLockBodyScroll(show)

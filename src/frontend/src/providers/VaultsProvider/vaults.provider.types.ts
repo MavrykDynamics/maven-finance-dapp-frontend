@@ -27,24 +27,32 @@ export type VaultsActionsType =
 // context types
 export type VaultsContext = {
   vaultsMapper: Record<string, VaultType>
+  permissionedVaultsIds: string[]
+  myVaultsIds: { all: string[] } & Record<string, string[]>
+  allVaultsIds: string[]
 
   changeVaultsSubscriptionsList: (skips: Partial<VaultsSubsRecordType>) => void
+  setVaultsMarketToSub: (address: string | null) => void
   isLoading: boolean
 }
 
-export type VaultsCtxState = Pick<VaultsContext, 'vaultsMapper'>
+export type VaultsCtxState = Pick<
+  VaultsContext,
+  'vaultsMapper' | 'permissionedVaultsIds' | 'allVaultsIds' | 'myVaultsIds'
+>
 
 export type VaultsSubsType = typeof VAULTS_DATA
 export type VaultsSubsRecordType = {
   [VAULTS_DATA]:
-    | {
-        subType: typeof VAULTS_ALL | typeof VAULTS_USER_ALL | typeof VAULTS_USER_DEPOSITOR
-      }
-    | {
-        subType: typeof VAULTS_USER_MARKET
-        marketAddress: string
-      }
+    | typeof VAULTS_ALL
+    | typeof VAULTS_USER_ALL
+    | typeof VAULTS_USER_DEPOSITOR
+    | typeof VAULTS_USER_MARKET
     | null
+}
+
+export type VaultsSubsLoadingsRecordType = {
+  [VAULTS_DATA]: boolean
 }
 
 // TODO: add descr to liquidation fields while testing liquidation functionality and popup

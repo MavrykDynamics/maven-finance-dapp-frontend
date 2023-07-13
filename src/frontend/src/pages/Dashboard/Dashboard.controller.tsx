@@ -10,20 +10,13 @@ import { Page } from 'styles'
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // const & types
 import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
 import { MVK_TOKEN_SYMBOL } from 'utils/constants'
-import { State } from '../../reducers'
-
-// actions
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
-import { getFarmStorage } from 'pages/Farms/Farms.actions'
-import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
 import {
   MVK_TOTAL_SUB,
   MVK_BALANCE_SUB,
@@ -34,8 +27,17 @@ import {
   SATELLITE_PARTICIPATION_DATA_SUB,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
 } from 'providers/SatellitesProvider/satellites.const'
-import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
+import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
+import { State } from '../../reducers'
+
+// actions
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
+import { getFarmStorage } from 'pages/Farms/Farms.actions'
+import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 // TODO: add farms when their data loading will be fixed and up
 export const Dashboard = () => {
@@ -55,6 +57,7 @@ export const Dashboard = () => {
   const { isLoading: isSatellitesLoading, changeSatellitesSubscriptionsList } = useSatellitesContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
+  const { vaultsMapper, allVaultsIds, isLoading: isVaultsLoading, changeVaultsSubscriptionsList } = useVaultsContext()
 
   useEffect(() => {
     changeStakingSubscriptionsList({
@@ -68,11 +71,15 @@ export const Dashboard = () => {
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
     })
+    changeVaultsSubscriptionsList({
+      [VAULTS_DATA]: VAULTS_ALL,
+    })
 
     return () => {
       changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
       changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
       changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
     }
   }, [])
 
@@ -82,16 +89,13 @@ export const Dashboard = () => {
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   // const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
-  const {
-    isDataLoaded: isLoansLoaded,
-    vaults: { vaultsMapper, allVaultsIds },
-  } = useSelector((state: State) => state.loans)
 
   const { totalBorrowed, totalLended } = marketsAddresses.reduce<{
     totalLended: number
     totalBorrowed: number
   }>(
     (acc, marketTokenAddress) => {
+      if (!marketsMapper[marketTokenAddress]) return acc
       const { totalBorrowed, totalLended, loanTokenAddress } = marketsMapper[marketTokenAddress]
       const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
       if (!token || !token.rate) return acc
@@ -167,7 +171,7 @@ export const Dashboard = () => {
         tvl={tvlValue}
         mvkStatsBlock={mvkStatsBlock}
         activeTab={activeTab}
-        isLoading={isPromiseLoading || isDoormanLoading || isSatellitesLoading || isLoansLoading}
+        isLoading={isPromiseLoading || isDoormanLoading || isSatellitesLoading || isLoansLoading || isVaultsLoading}
       />
     </Page>
   )

@@ -140,7 +140,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     status,
     vaultId,
     collateralBalance,
-    ownerId,
+    ownerAddress,
     collateralData,
     liquidationMax,
     liquidationReward,
@@ -160,7 +160,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
   const liquidateModalHandler = () => {
     openLiquidateVaultPopup({
       vaultId,
-      ownerAddress: ownerId,
+      ownerAddress,
       tokenAddress: borrowedTokenAddress,
       collateralBalance,
       collateralData,
@@ -181,7 +181,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
           <div className="group">
             <div>
               Vault Owner
-              <TzAddress type={CYAN} tzAddress={ownerId} />
+              <TzAddress type={CYAN} tzAddress={ownerAddress} />
             </div>
             <div>
               Vault Risk
@@ -308,7 +308,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
             text={isMarkStatus ? 'Mark for Liquidation' : 'Liquidate Vault'}
             kind={ACTION_PRIMARY}
             onClick={() => {
-              return isMarkStatus ? handleMarkForLiquidation(vaultId, ownerId) : liquidateModalHandler()
+              return isMarkStatus ? handleMarkForLiquidation(vaultId, ownerAddress) : liquidateModalHandler()
             }}
             disabled={vaultsStatuses.GRACE_PERIOD === status || isActionActive}
           />

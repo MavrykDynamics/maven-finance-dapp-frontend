@@ -8,29 +8,29 @@ import { VaultsSubsRecordType } from '../vaults.provider.types'
 const VAULT_OPEN_FILTER = `open: {_eq: true}`
 
 const getVaultsQueryFilters = (
-  filters: VaultsSubsRecordType[typeof VAULTS_DATA],
+  filter: VaultsSubsRecordType[typeof VAULTS_DATA],
   userAddress: string | null,
 ): string => {
-  if (!filters) return VAULT_OPEN_FILTER
+  if (!filter)
+    return `${VAULT_OPEN_FILTER}, owner: {address: {_neq: $userAddress}}, loan_token: {token: {token_address: {_neq: $marketAddress}}}`
 
-  const { subType } = filters
   // get all vaults where current user is owner
-  if (userAddress && subType === VAULTS_USER_ALL) {
-    return `${VAULT_OPEN_FILTER} , owner: {address: {_eq: $userAddress}}`
+  if (userAddress && filter === VAULTS_USER_ALL) {
+    return `${VAULT_OPEN_FILTER} , owner: {address: {_eq: $userAddress}}, loan_token: {token: {token_address: {_neq: $marketAddress}}}`
   }
 
   // get all vaults where current user is owner and they all from market user al looking at
-  if (userAddress && subType === VAULTS_USER_MARKET) {
-    return `${VAULT_OPEN_FILTER}, owner: {address: {_eq: $userAddress}}, loan_token: {token: {token_address: {_eq: $marketAddress}}`
+  if (userAddress && filter === VAULTS_USER_MARKET) {
+    return `${VAULT_OPEN_FILTER}, owner: {address: {_eq: $userAddress}}, loan_token: {token: {token_address: {_eq: $marketAddress}}}`
   }
 
   // get all vault where user is depositor
-  if (userAddress && subType === VAULTS_USER_DEPOSITOR) {
-    return `${VAULT_OPEN_FILTER},vault: {_or: [{allowance: {_eq: "0"}}, {_and: {depositors: {depositor: {address: {_eq: $userAddress}}}, allowance: {_eq: "1"}}}]}`
+  if (userAddress && filter === VAULTS_USER_DEPOSITOR) {
+    return `${VAULT_OPEN_FILTER}, vault: {_or: [{allowance: {_eq: "0"}}, {_and: {depositors: {depositor: {address: {_eq: $userAddress}}}, allowance: {_eq: "1"}}}]}, loan_token: {token: {token_address: {_neq: $marketAddress}}}`
   }
 
   // get all vaults
-  return VAULT_OPEN_FILTER
+  return `${VAULT_OPEN_FILTER}, owner: {address: {_neq: $userAddress}}, loan_token: {token: {token_address: {_neq: $marketAddress}}}`
 }
 
 export function getVaultsSubscription({
@@ -43,7 +43,7 @@ export function getVaultsSubscription({
   const vaultsFilters = getVaultsQueryFilters(filters, userAddress)
 
   return apolloGql(`
-		subscription getVaultsSubscription($userAddress: String = "", $marketAddress: String = "") {
+		subscription getVaultsSubscription($userAddress: String, $marketAddress: String) {
 			lending_controller(where: {mock_time: {_eq: false}}) {
 				max_vault_liquidation_pct
 				decimals

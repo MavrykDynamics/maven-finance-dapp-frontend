@@ -11,3 +11,8 @@ export const VAULTS_USER_DEPOSITOR = 'userIsDepositor'
 export const DEFAULT_VAULTS_ACTIVE_SUBS = {
   [VAULTS_DATA]: null,
 } as const
+
+// VAULTS PROVIDER DEFAULT CONSTS
+export const DEFAULT_VAULTS_SUBS_LOADINGS = {
+  [VAULTS_DATA]: true,
+} as const
