@@ -53,6 +53,7 @@ import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 
 type CurrentActiveModalScreen =
   | typeof INITIAL_SCREEN_ID
@@ -75,12 +76,12 @@ export const CreateNewVault = ({
 }) => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const { userTokensBalances } = useUserContext()
+  const {
+    myVaultsIds: { all: myVaultsIds },
+    vaultsMapper,
+  } = useVaultsContext()
 
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
-
-  const {
-    vaults: { myVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.loans)
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()

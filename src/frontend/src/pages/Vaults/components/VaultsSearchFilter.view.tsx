@@ -107,7 +107,7 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
       filteredVaultsIds = searchData.filter((vaultId) => {
         const vault = vaultsMapper[vaultId]
         const isIncludedInLoanAddress = vault.address.toLowerCase().includes(searchQuery)
-        const isIncludedInOwnerAddress = vault.ownerId.toLowerCase().includes(searchQuery)
+        const isIncludedInOwnerAddress = vault.ownerAddress.toLowerCase().includes(searchQuery)
 
         return isIncludedInLoanAddress || isIncludedInOwnerAddress
       })

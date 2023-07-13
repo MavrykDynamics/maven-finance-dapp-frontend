@@ -13,7 +13,7 @@ import { SUBSCRIPTION_INDEXER_LVL } from './queries/indexerLvl.query'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { MVK_DECIMALS } from 'utils/constants'
-import { DAPP_DEFAULT_MAX_LENGHTS, DEFAULT_DAPP_CONFIG_CONTEXT, RPC_NODE } from './helpers/dappConfig.const'
+import { DEFAULT_DAPP_CONFIG_CONTEXT, RPC_NODE } from './helpers/dappConfig.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 
 // helpers
@@ -28,7 +28,6 @@ import { GET_MVK_FAUCET_QUERY, GET_SATELLITE_MIN_STAKED_AMOUNT_QUERY } from './q
 import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
 
 // utils
-import { getChainInfo } from 'utils/blockchainApi'
 import { setItemInStorage } from 'utils/storage'
 
 export const dappConfigContext = React.createContext<DappConfigContext>(undefined!)

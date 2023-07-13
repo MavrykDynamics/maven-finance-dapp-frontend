@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useLocation, useHistory, useParams } from 'react-router'
 
 // context
@@ -30,11 +30,18 @@ import {
 import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
 
 // types
-import { State } from '../../reducers'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
 import { markForLiquidation } from './Vaults.actions'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import {
+  DEFAULT_VAULTS_ACTIVE_SUBS,
+  VAULTS_ALL,
+  VAULTS_DATA,
+  VAULTS_USER_ALL,
+  VAULTS_USER_DEPOSITOR,
+} from 'providers/VaultsProvider/vaults.provider.consts'
 
 const pathname = '/vaults'
 
@@ -50,21 +57,34 @@ export const VaultsView = () => {
   const { search } = useLocation()
   const { tabId } = useParams<{ tabId: string }>()
 
-  const {
-    vaults: { permissinedVaultsIds, myVaultsIds, allVaultsIds, vaultsMapper },
-    isDataLoaded,
-  } = useSelector((state: State) => state.loans)
-
   const { userAddress } = useUserContext()
   const { changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
+  const {
+    changeVaultsSubscriptionsList,
+    isLoading: isVaultsLoading,
+    myVaultsIds: { all: myVaultsIds },
+    allVaultsIds,
+    vaultsMapper,
+    permissionedVaultsIds,
+  } = useVaultsContext()
 
   useEffect(() => {
     changeLoansSubscriptionsList({
       [LOANS_CONFIG]: true,
     })
 
-    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+    return () => {
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+    }
   }, [])
+
+  useEffect(() => {
+    changeVaultsSubscriptionsList({
+      [VAULTS_DATA]:
+        tabId === vaultTabs.ALL ? VAULTS_ALL : tabId === vaultTabs.MY ? VAULTS_USER_ALL : VAULTS_USER_DEPOSITOR,
+    })
+  }, [tabId])
 
   const [tabsList, setTabsList] = useState<TabItem[]>([])
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
@@ -77,7 +97,7 @@ export const VaultsView = () => {
       : PERMISSIONED_VAULTS_LIST_NAME
 
   const currentVaultsIds =
-    tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissinedVaultsIds
+    tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissionedVaultsIds
 
   const currentPage = getPageNumber(search, currentListName)
 
@@ -148,7 +168,7 @@ export const VaultsView = () => {
         setVaultsIds={setVaultsIds}
       />
 
-      {isLoansLoading ? (
+      {isLoansLoading || isVaultsLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
@@ -156,7 +176,7 @@ export const VaultsView = () => {
       ) : paginatedVaultsList.length ? (
         <VaultsList>
           {paginatedVaultsList.map((item) => {
-            const isOwner = vaultsMapper[item]?.ownerId === userAddress
+            const isOwner = vaultsMapper[item]?.ownerAddress === userAddress
 
             return (
               <VaultsCard

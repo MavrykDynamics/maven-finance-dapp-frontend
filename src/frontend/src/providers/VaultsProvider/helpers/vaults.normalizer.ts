@@ -1,16 +1,22 @@
 import { ANY_USER, WHITELIST_USERS, NONE_USER } from 'pages/Loans/Loans.const'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
 
-import { CollateralType, DepositorsFlagType, VaultType } from 'providers/VaultsProvider/vaults.provider.types'
+import {
+  CollateralType,
+  DepositorsFlagType,
+  VaultType,
+  VaultsSubsRecordType,
+} from 'providers/VaultsProvider/vaults.provider.types'
 import { calculateAccruedInterest } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { GetVaultsSubscriptionSubscription } from 'utils/__generated__/graphql'
 import { calcMarketAvaliableLiquidity } from 'providers/LoansProvider/helpers/loans.utils'
+import { VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR, VAULTS_USER_MARKET } from '../vaults.provider.consts'
 
 type ReducedVaultsType = {
-  permissinedVaultsIds: string[]
-  myVaultsIds: string[]
+  permissionedVaultsIds: string[]
+  myVaultsIds: { all: string[] } & Record<string, string[]>
   allVaultsIds: string[]
   vaultsMapper: Record<string, VaultType>
 }
@@ -50,7 +56,15 @@ const normalizeCollaterals = (
   }, [])
 }
 
-export const normalizeVaults = ({ indexerData }: { indexerData: GetVaultsSubscriptionSubscription }) => {
+export const normalizeVaults = ({
+  indexerData,
+  userAddress,
+  marketAddress,
+}: {
+  indexerData: GetVaultsSubscriptionSubscription
+  userAddress: string | null
+  marketAddress: string | null
+}) => {
   const {
     lending_controller: [controller],
   } = indexerData
@@ -139,29 +153,36 @@ export const normalizeVaults = ({ indexerData }: { indexerData: GetVaultsSubscri
         deporsitorsFlag,
       }
 
-      // Add vault object to mapper id => vault
       acc.vaultsMapper[vault.address] = normallizedVault
-      // Add vault id to all valts list
-      // acc.allVaultsIds.push(vault.address)
 
       // If user is owner add vault id to my vaults list
-      // if (accountPkh === item.owner.address) {
-      //   acc.myVaultsIds.push(vault.address)
-      // }
+      if (userAddress) {
+        if (userAddress === normallizedVault.ownerAddress) {
+          acc.myVaultsIds.all.push(vault.address)
 
-      // If user is depositor of the vault, or vault is visible to anyone, add it to permissioned vaults list
-      // if (
-      //   ((accountPkh && depositors.includes(accountPkh)) || deporsitorsFlag === ANY_USER) &&
-      //   accountPkh !== item.owner.address
-      // ) {
-      //   acc.permissinedVaultsIds.push(vault.address)
-      // }
+          if (marketAddress) {
+            if (!acc.myVaultsIds[marketAddress]) {
+              acc.myVaultsIds[marketAddress] = [vault.address]
+            } else {
+              acc.myVaultsIds[marketAddress].push(vault.address)
+            }
+          }
+        } else {
+          if (depositors.includes(userAddress) || deporsitorsFlag === ANY_USER) {
+            acc.permissionedVaultsIds.push(vault.address)
+          }
+        }
+      }
+
+      acc.allVaultsIds.push(vault.address)
 
       return acc
     },
     {
-      permissinedVaultsIds: [],
-      myVaultsIds: [],
+      permissionedVaultsIds: [],
+      myVaultsIds: {
+        all: [],
+      },
       allVaultsIds: [],
       vaultsMapper: {},
     },

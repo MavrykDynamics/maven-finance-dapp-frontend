@@ -42,6 +42,8 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { VAULTS_DATA, VAULTS_USER_MARKET } from 'providers/VaultsProvider/vaults.provider.consts'
 
 export const Market = () => {
   const history = useHistory<{ from?: string }>()
@@ -52,6 +54,13 @@ export const Market = () => {
   const { assetAddress, tabId } = useParams<{ assetAddress: string; tabId: string }>()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const {
+    myVaultsIds,
+    vaultsMapper,
+    isLoading: isVaultsLoading,
+    changeVaultsSubscriptionsList,
+    setVaultsMarketToSub,
+  } = useVaultsContext()
   const {
     marketsAddresses,
     marketsMapper,
@@ -66,18 +75,21 @@ export const Market = () => {
       [LOANS_MARKETS_DATA]: true,
       [LOANS_CONFIG]: true,
     })
+    changeVaultsSubscriptionsList({
+      [VAULTS_DATA]: VAULTS_USER_MARKET,
+    })
 
     return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
   }, [])
 
   useEffect(() => {
     setMarketAddressToSubscribe(assetAddress)
-    return () => setMarketAddressToSubscribe(null)
+    setVaultsMarketToSub(assetAddress)
+    return () => {
+      setMarketAddressToSubscribe(null)
+      setVaultsMarketToSub(null)
+    }
   }, [assetAddress])
-
-  const {
-    vaults: { myVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.loans)
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
@@ -101,12 +113,11 @@ export const Market = () => {
 
   const { userTotalBorrowed, userTotalCollateral, userAccruedInterest, userAvailableBorrow } = useMemo(
     () =>
-      myVaultsIds.reduce(
+      myVaultsIds[assetAddress].reduce(
         (acc, itemId) => {
           const vault = vaultsMapper[itemId]
 
-          if (vault.ownerId !== accountPkh || vault.borrowedTokenAddress !== assetAddress || !loanToken?.rate)
-            return acc
+          if (!loanToken?.rate) return acc
           const { decimals: loanTokenDecimals, rate: loanTokenRate } = loanToken
 
           const vaultCollateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices)
@@ -134,7 +145,7 @@ export const Market = () => {
     [accountPkh, myVaultsIds, assetAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
   )
 
-  if (isLoansLoading) {
+  if (isLoansLoading || isVaultsLoading) {
     return (
       <Page>
         <PageHeader page={'lending'} />

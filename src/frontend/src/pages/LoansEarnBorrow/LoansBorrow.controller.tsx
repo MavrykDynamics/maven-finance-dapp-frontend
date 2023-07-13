@@ -1,7 +1,5 @@
 import { useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
 
 // hooks
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
@@ -25,13 +23,14 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 
 // helpers
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // actions
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { VAULTS_DATA, VAULTS_USER_ALL } from 'providers/VaultsProvider/vaults.provider.consts'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -44,23 +43,26 @@ const marketSettings: MarketSettingsType = {
 }
 
 export const LoansBorrow = () => {
-  const dispatch = useDispatch()
   const history = useHistory()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { openCreateVaultPopup } = useLoansPopupsContext()
   const { userAddress } = useUserContext()
-
   const {
-    isDataLoaded,
-    vaults: { myVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.loans)
+    vaultsMapper,
+    myVaultsIds: { all: myVaultsIds },
+    changeVaultsSubscriptionsList,
+    isLoading: isVaultsLoading,
+  } = useVaultsContext()
 
   const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
 
   useEffect(() => {
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
+    })
+    changeVaultsSubscriptionsList({
+      [VAULTS_DATA]: VAULTS_USER_ALL,
     })
 
     return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
@@ -171,7 +173,7 @@ export const LoansBorrow = () => {
     <Page>
       <PageHeader page={'loansBorrow'} />
 
-      {isLoansLoading ? (
+      {isLoansLoading || isVaultsLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading borrows charts</div>
