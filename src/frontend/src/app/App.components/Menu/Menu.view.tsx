@@ -161,8 +161,6 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
-    } finally {
-      toggleActionCompletion(false)
     }
   }
 

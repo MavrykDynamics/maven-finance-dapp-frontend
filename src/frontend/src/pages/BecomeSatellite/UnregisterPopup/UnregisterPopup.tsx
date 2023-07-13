@@ -82,8 +82,6 @@ export const UnregisterPopup = ({
       setAction(null)
       const parsedError = unknownToError(e)
       bug(parsedError.message)
-    } finally {
-      toggleActionCompletion(false)
     }
   }
 
