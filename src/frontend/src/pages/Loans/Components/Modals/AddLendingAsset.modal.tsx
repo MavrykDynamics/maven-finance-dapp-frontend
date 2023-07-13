@@ -23,7 +23,6 @@ import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { silverColor } from 'styles'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { depositLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
@@ -33,6 +32,8 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import colors from 'styles/colors'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
@@ -46,6 +47,9 @@ export const AddLendingAsset = ({
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userTokensBalances } = useUserContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   useLockBodyScroll(show)
 
@@ -154,10 +158,10 @@ export const AddLendingAsset = ({
           <div className="lending-stats" style={{ marginTop: '45px' }}>
             <ThreeLevelListItem>
               <div className="name">
-                Lending APY{' '}
+                Lending APY
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={silverColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                   text={`You will receive m${symbol} instead of your ${symbol}`}
                   className="tooltip"
                 />

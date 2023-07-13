@@ -38,6 +38,8 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import colors from 'styles/colors'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -49,6 +51,9 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   const { openConfirmAddLendingAssetPopup, openConfirmRemoveLendingAssetPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userTokensBalances } = useUserContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
 
@@ -205,7 +210,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
           <ThreeLevelListItem>
             <div className="name">
               Earn APY
-              <CustomTooltip iconId="info" text={EARN_APY} />
+              <CustomTooltip iconId="info" text={EARN_APY} defaultStrokeColor={colors[themeSelected].subHeadingText} />
             </div>
             <CommaNumber value={lendAPY} className="value" endingText="%" />
           </ThreeLevelListItem>

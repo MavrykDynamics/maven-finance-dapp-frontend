@@ -182,7 +182,7 @@ export const WithdrawCollateral = ({
           <VaultModalOverview>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(collateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
@@ -203,7 +203,7 @@ export const WithdrawCollateral = ({
                 <CustomTooltip
                   iconId="info"
                   text="Dollar value of collateral you are able to withdraw without making your vault under-collateralized for this specific collateral asset"
-                  defaultStrokeColor={colors[themeSelected].textColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                 />
               </div>
               <CommaNumber value={currentCollateralToWithdraw * collateralRate} className="value" beginningText="$" />
@@ -243,7 +243,7 @@ export const WithdrawCollateral = ({
           <VaultModalOverview>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(futureCollateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
@@ -265,7 +265,7 @@ export const WithdrawCollateral = ({
                 <CustomTooltip
                   iconId="info"
                   text="Dollar value of collateral you are able to withdraw without making your vault under-collateralized for this specific collateral asset"
-                  defaultStrokeColor={colors[themeSelected].textColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                 />
               </div>
               <CommaNumber value={futureCollateralWithdraw * collateralRate} className="value" beginningText="$" />

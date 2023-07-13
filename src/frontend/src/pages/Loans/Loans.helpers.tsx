@@ -4,8 +4,6 @@ import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Inp
 
 import { convertNumberForClient, convertNumberForContractCall } from '../../utils/calcFunctions'
 import { assetDecimalsToShow } from './Loans.const'
-import { compareDatesByDay } from 'utils/compareDatesByDay'
-import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 
 // TODO: move this utils to provider and add docs to them while loans live update
 // HELPER FOR LENDING APY

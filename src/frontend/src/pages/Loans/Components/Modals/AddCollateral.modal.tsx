@@ -29,7 +29,6 @@ import { depositCollateralsAction } from 'pages/Loans/Actions/vaultCollateral.ac
 import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { silverColor } from 'styles'
 import { checkNan } from 'utils/checkNan'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import {
@@ -40,6 +39,8 @@ import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
+import colors from 'styles/colors'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -53,6 +54,9 @@ export const AddCollateral = ({
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userTokensBalances } = useUserContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const dispatch = useDispatch()
   useLockBodyScroll(show)
@@ -183,7 +187,7 @@ export const AddCollateral = ({
           <VaultModalOverview>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(collateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
@@ -200,11 +204,11 @@ export const AddCollateral = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">
-                Available to Borrow{' '}
+                Available to Borrow
                 <CustomTooltip
                   text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
                   iconId="info"
-                  defaultStrokeColor={silverColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                 />
               </div>
               <CommaNumber value={borrowCapacity} className="value" beginningText="$" />
@@ -241,7 +245,7 @@ export const AddCollateral = ({
           <VaultModalOverview>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(futureCollateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
@@ -259,11 +263,11 @@ export const AddCollateral = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">
-                Available to Borrow{' '}
+                Available to Borrow
                 <CustomTooltip
                   text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
                   iconId="info"
-                  defaultStrokeColor={silverColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                 />
               </div>
               <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />

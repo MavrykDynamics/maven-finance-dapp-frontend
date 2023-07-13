@@ -42,7 +42,6 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { silverColor } from 'styles'
 import { StatusMessageStyled } from '../LoansComponents.style'
 import colors from 'styles/colors'
 
@@ -199,7 +198,7 @@ export const BorrowAsset = ({
                     DAO Fee{' '}
                     <CustomTooltip
                       iconId="info"
-                      defaultStrokeColor={colors[themeSelected].textColor}
+                      defaultStrokeColor={colors[themeSelected].subHeadingText}
                       text={`Amount paid to the DAO as the origination fee for borrowing. Each time you borrow, a fee is paid.`}
                       className="tooltip"
                     />
@@ -237,7 +236,7 @@ export const BorrowAsset = ({
               <VaultModalOverview>
                 <ThreeLevelListItem
                   className="collateral-diagram"
-                  customColor={getCollateralRationPersent(futureCollateralRatio)}
+                  customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
                 >
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}
@@ -293,7 +292,7 @@ export const BorrowAsset = ({
                     Total Amount
                     <CustomTooltip
                       iconId="info"
-                      defaultStrokeColor={silverColor}
+                      defaultStrokeColor={colors[themeSelected].subHeadingText}
                       text={`Total amount you are borrowing, a portion of which is paid to the treasury as the DAO fee. The amount you will actually receive is the Total Amount minus the DAO fee.`}
                       className="tooltip"
                     />
@@ -313,7 +312,7 @@ export const BorrowAsset = ({
                     DAO Fee
                     <CustomTooltip
                       iconId="info"
-                      defaultStrokeColor={silverColor}
+                      defaultStrokeColor={colors[themeSelected].subHeadingText}
                       text={`Amount paid to the DAO as the origination fee for borrowing. Each time you borrow, a fee is paid.`}
                       className="tooltip"
                     />
@@ -338,7 +337,7 @@ export const BorrowAsset = ({
               <VaultModalOverview>
                 <ThreeLevelListItem
                   className="collateral-diagram"
-                  customColor={getCollateralRationPersent(futureCollateralRatio)}
+                  customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
                 >
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}

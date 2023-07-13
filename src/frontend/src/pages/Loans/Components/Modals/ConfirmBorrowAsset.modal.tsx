@@ -89,7 +89,7 @@ export const ConfirmBorrowAsset = ({
                 Total Amount
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={colors[themeSelected].textColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                   text={`Total amount you are borrowing, a portion of which is paid to the treasury as the DAO fee. The amount you will actually receive is the Total Amount minus the DAO fee.`}
                   className="tooltip"
                 />
@@ -109,7 +109,7 @@ export const ConfirmBorrowAsset = ({
                 DAO Fee
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={colors[themeSelected].textColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                   text={`Amount paid to the DAO as the origination fee for borrowing. Each time you borrow, a fee is paid.`}
                   className="tooltip"
                 />
@@ -134,7 +134,7 @@ export const ConfirmBorrowAsset = ({
           <VaultModalOverview>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(futureCollateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
@@ -155,7 +155,7 @@ export const ConfirmBorrowAsset = ({
                 Available To Borrow
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={colors[themeSelected].textColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                   text={AVALIABLE_TO_BORROW}
                   className="tooltip"
                 />

@@ -143,7 +143,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
             </ThreeLevelListItem>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(collateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
@@ -206,7 +206,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                   <CustomTooltip
                     iconId="info"
                     text="Interest, compounded over time every time you borrow"
-                    defaultStrokeColor={colors[themeSelected].textColor}
+                    defaultStrokeColor={colors[themeSelected].subHeadingText}
                   />
                 </div>
                 <CommaNumber value={fee} decimalsToShow={decimals} className="value" />

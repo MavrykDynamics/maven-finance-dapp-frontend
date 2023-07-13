@@ -1,5 +1,5 @@
 import { ColorBreakpoint } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { lightTextColor, placeholderColor } from 'styles'
+import { MavrykTheme } from 'styles/interfaces'
 
 export const LEND_TAB_ID = 'lendingTab'
 export const BORROW_TAB_ID = 'borrowTab'
@@ -112,8 +112,8 @@ export const REPAY_AND_CLOSE_MODAL_ID = 'repayAndCloseVault'
 export const UPDATE_MVK_OPERATORS_MODAL_ID = 'updateMVKOperators'
 export const WITHDRAW_COLLATERAL_MODAL_ID = 'withdrawCollateral'
 
-export const getCollateralRationPersent = (persentage: number) => {
-  if (persentage === 0) return lightTextColor
+export const getCollateralRationPersent = (theme: MavrykTheme, persentage: number) => {
+  if (persentage === 0) return theme.subHeadingText
 
   const color = COLLATERAL_RATIO_GRADIENT.find(({ value }) => {
     if (persentage < 100) {
@@ -127,7 +127,7 @@ export const getCollateralRationPersent = (persentage: number) => {
     return value + 50 > persentage && value - 50 < persentage
   })?.color
 
-  return color ? `rgb(${color.r}, ${color.g}, ${color.b})` : placeholderColor
+  return color ? `rgb(${color.r}, ${color.g}, ${color.b})` : theme.placeholders
 }
 
 export const COLLATERAL_RATIO_GRADIENT: Array<ColorBreakpoint> = [

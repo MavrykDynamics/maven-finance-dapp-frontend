@@ -17,6 +17,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 import { ThreeLevelListItem } from '../../Loans.style'
 import { LoansActionsSection, BorrowingExpandedCard } from '../LoansComponents.style'
+import colors from 'styles/colors'
 
 import { scrollToFullView } from 'utils/scrollToFullView'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
@@ -33,6 +34,7 @@ import { useHistory, useLocation } from 'react-router'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type BorrowingExpandCardPropsType = {
   vault: VaultType
@@ -80,6 +82,9 @@ export const BorrowingExpandCard = ({
 
   const history = useHistory()
   const location = useLocation()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { loanTokens, mvkTokenOperators } = useSelector((state: State) => state.loans)
@@ -347,7 +352,7 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(collateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />

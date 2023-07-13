@@ -45,6 +45,8 @@ import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import colors from 'styles/colors'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({
@@ -58,6 +60,9 @@ export const AddNewCollateral = ({
 }) => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const { userTokensBalances } = useUserContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
 
@@ -232,7 +237,7 @@ export const AddNewCollateral = ({
           <VaultModalOverview style={{ marginBottom: '45px' }}>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(collateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
@@ -311,7 +316,11 @@ export const AddNewCollateral = ({
                     <ThreeLevelListItem>
                       <div className="name">Bakery Address</div>
                       {choosenBaker?.bakerAddress ? (
-                        <TzAddress className="value" tzAddress={choosenBaker.bakerAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
+                        <TzAddress
+                          className="value"
+                          tzAddress={choosenBaker.bakerAddress}
+                          type={PRIMARY_TZ_ADDRESS_COLOR}
+                        />
                       ) : (
                         <div className="value">-</div>
                       )}
@@ -342,7 +351,7 @@ export const AddNewCollateral = ({
           <VaultModalOverview>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(futureCollateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}

@@ -17,7 +17,7 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
     margin-bottom: 30px;
 
     p {
@@ -29,7 +29,7 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
     padding-left: 7px;
     padding-bottom: 3px;
   }
@@ -58,7 +58,7 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
   }
 
   hr {
-    background: ${({ theme }) => theme.cardBorderColor};
+    background: ${({ theme }) => theme.divider};
     margin: 40px 0;
     height: 0.5px;
     border: none;
@@ -104,26 +104,12 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     font-weight: 500;
     font-size: 12px;
     line-height: 21px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
   }
 
   .lending-stats {
     display: flex;
     justify-content: space-between;
-
-    .left-divider {
-      position: relative;
-      &::before {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        left: -25px;
-        content: '';
-        height: 100%;
-        width: 1px;
-        background: ${({ theme }) => theme.cardBorderColor};
-      }
-    }
 
     .name {
       .tooltip {
@@ -153,7 +139,7 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
 export const VaultModalOverview = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: space-between;
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border: 1px solid ${({ theme }) => theme.strokeCards};
   padding: 14px 15px 24px 20px;
   border-radius: 10px;
 

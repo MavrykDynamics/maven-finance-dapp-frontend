@@ -17,7 +17,6 @@ import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 
 // styles
-import { silverColor } from 'styles'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -286,7 +285,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
                 Fees Due
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={colors[themeSelected].textColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                   text={FEES_DUE(fee)}
                   className="tooltip"
                 />
@@ -306,7 +305,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           <div className="line">
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(futureCollateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio:
@@ -324,7 +323,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
                 Available To Borrow
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={silverColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                   text={AVALIABLE_TO_BORROW}
                   className="tooltip"
                 />

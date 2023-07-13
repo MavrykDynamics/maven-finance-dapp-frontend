@@ -31,7 +31,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { State } from 'reducers'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { silverColor } from 'styles'
+import colors from 'styles/colors'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { triggerInitialVaultCreation } from 'pages/Loans/Actions/vault.actions'
 import { depositCollateralsAction } from 'pages/Loans/Actions/vaultCollateral.actions'
@@ -53,6 +53,7 @@ import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type CurrentActiveModalScreen =
   | typeof INITIAL_SCREEN_ID
@@ -75,7 +76,9 @@ export const CreateNewVault = ({
 }) => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const { userTokensBalances } = useUserContext()
-
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
 
   const {
@@ -593,7 +596,7 @@ export const CreateNewVault = ({
                     Borrowing Capacity{' '}
                     <CustomTooltip
                       iconId="info"
-                      defaultStrokeColor={silverColor}
+                      defaultStrokeColor={colors[themeSelected].subHeadingText}
                       text="How much you are able to borrow given your current collateral ratio including the amount you wish to borrow and the total amount available to borrow from the pool."
                       className="tooltip"
                     />

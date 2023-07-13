@@ -20,7 +20,6 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { silverColor } from 'styles'
 import { BUTTON_PRIMARY, BUTTON_PULSE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -37,6 +36,8 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import colors from 'styles/colors'
 
 type Props = {
   borrowedAssetAddress: TokenAddressType
@@ -51,6 +52,9 @@ type Props = {
 
 export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const { userTokensBalances } = useUserContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -203,14 +207,24 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
             <ThreeLevelListItem>
               <div className="name">
                 Total Amount
-                <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={TOTAL_AMOUNT} className="tooltip" />
+                <CustomTooltip
+                  iconId="info"
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
+                  text={TOTAL_AMOUNT}
+                  className="tooltip"
+                />
               </div>
               <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">
                 DAO Fee
-                <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={DAO_FEE} className="tooltip" />
+                <CustomTooltip
+                  iconId="info"
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
+                  text={DAO_FEE}
+                  className="tooltip"
+                />
               </div>
               <CommaNumber
                 value={inputAmount * (DAOFee / 100)}
@@ -236,7 +250,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
           <div className="line">
             <ThreeLevelListItem
               className="collateral-diagram right"
-              customColor={getCollateralRationPersent(futureCollateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio:
@@ -254,7 +268,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
                 Available To Borrow
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={silverColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                   text={AVALIABLE_TO_BORROW}
                   className="tooltip"
                 />
