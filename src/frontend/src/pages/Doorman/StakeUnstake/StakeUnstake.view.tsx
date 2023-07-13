@@ -1,5 +1,5 @@
 import { useHistory } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 
 // context
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -65,6 +65,7 @@ import {
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
 import { TezosWalletErrorPayload } from 'errors/error.type'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -149,85 +150,60 @@ export const StakeUnstakeView = ({
       validation: INPUT_STATUS_SUCCESS,
     })
 
-    await handleStake(myMvkTokenBalance)
+    await handleStake()
   }
 
-  const handleStake = async (stakeAmount: number) => {
-    const canStakeAmount = stakeAmount <= Number(myMvkTokenBalance)
+  const stakeAction = useCallback(
+    async (stakeAmount: number) => {
+      const canStakeAmount = stakeAmount <= Number(myMvkTokenBalance)
 
-    if (!canStakeAmount) {
+      if (!canStakeAmount) {
+        setInputData({
+          ...inputData,
+          errorMessage: "You don't have enought MVK to stake",
+        })
+
+        return null
+      }
+
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!doormanAddress || !mvkTokenAddress) {
+        bug('Wrong doorman or mvkToken address was provided')
+        return null
+      }
+
+      if (stakeAmount <= 0) {
+        bug('Please enter an amount superior to zero', 'Incorrect amount')
+        return null
+      }
+
       setInputData({
         ...inputData,
-        errorMessage: "You don't have enought MVK to stake",
+        errorMessage: '',
       })
-    }
 
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return
-    }
-    if (!doormanAddress || !mvkTokenAddress) {
-      bug('Wrong doorman or mvkToken address was provided')
-      return
-    }
+      return await stakeMVK(stakeAmount, userAddress, doormanAddress, mvkTokenAddress)
+    },
+    [bug, doormanAddress, inputData, mvkTokenAddress, myMvkTokenBalance, setInputData, userAddress],
+  )
 
-    if (stakeAmount <= 0) {
-      bug('Please enter an amount superior to zero', 'Incorrect amount')
-      return
-    }
+  const dappCallback = useCallback(() => {
+    setInputData({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
+  }, [inputData, setInputData])
 
-    setInputData({
-      ...inputData,
-      errorMessage: '',
-    })
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: STAKE_ACTION,
+      actionFn: stakeAction.bind(null, Number(inputData.amount)),
+      dappActionCallback: dappCallback,
+    }),
+    [dappCallback, inputData.amount, stakeAction],
+  )
 
-    try {
-      const actionResult = await stakeMVK(stakeAmount, userAddress, doormanAddress, mvkTokenAddress)
-
-      if (checkIfActionSuccess(actionResult)) {
-        const { operation } = actionResult
-
-        toggleActionFullScreenLoader(true)
-        toggleActionCompletion(true)
-
-        info(
-          TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['title'],
-        )
-
-        await sleep(5000)
-
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
-
-        toggleActionFullScreenLoader(false)
-
-        const operationConfirm = await operation.confirmation()
-        const operationLvl = operationConfirm.block.header.level
-
-        setAction({
-          actionName: STAKE_ACTION,
-          toasterId,
-          operationLvl,
-          callback: () => {
-            setInputData({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
-          },
-        })
-      } else if (isContractErrorPayload(actionResult.error)) {
-        const { message, description } = actionResult.error as TezosWalletErrorPayload
-        bug(description, message)
-      } else {
-        throw new Error(actionResult.error.message)
-      }
-    } catch (e) {
-      setAction(null)
-      const parsedError = unknownToError(e)
-      bug(parsedError.message)
-    }
-  }
+  const handleStake = useContractAction(contractActionProps)
 
   const handleUnstakeAll = () => {
     if (!mySMvkTokenBalance) return
@@ -463,12 +439,7 @@ export const StakeUnstakeView = ({
         </StakeUnstakeRate>
 
         <StakeUnstakeButtonGrid>
-          <NewButton
-            kind={BUTTON_PRIMARY}
-            onClick={() => handleStake(Number(inputData.amount))}
-            form={BUTTON_WIDE}
-            disabled={isActionActive}
-          >
+          <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE} disabled={isActionActive}>
             <Icon id="in" /> Stake
           </NewButton>
 

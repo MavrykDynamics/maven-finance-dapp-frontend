@@ -10,10 +10,14 @@ import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // types
 import { LoansTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // change vault name
-export const changeVaultNameAction = async (newVaultName: string, vaultAddress: string, callback: () => void) => {
-
+export const changeVaultNameAction = async (
+  newVaultName: string,
+  vaultAddress: string,
+  callback: () => void,
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
@@ -35,7 +39,7 @@ export const borrowVaultAssetAction = async (
   amountToBorrow: number,
   borrowedToken: LoansTokenMetadataType,
   callback: () => void,
-) => {
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     const { decimals } = borrowedToken
     // prepare and send transaction
@@ -61,7 +65,7 @@ export const repayPartOfVaultAction = async (
   repayAmount: number,
   borrowedToken: LoansTokenMetadataType,
   callback: () => void,
-) => {
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     const { decimals, address, type } = borrowedToken
     // prepare and send transaction
@@ -145,7 +149,7 @@ export const repayFullAndCloseVaultAction = async (
   repayAmount: number,
   borrowedToken: LoansTokenMetadataType,
   callback: () => void,
-) => {
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     const { decimals, address, type } = borrowedToken
     // prepare and send transaction

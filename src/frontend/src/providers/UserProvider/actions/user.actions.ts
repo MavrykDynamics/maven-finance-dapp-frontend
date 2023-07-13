@@ -19,7 +19,10 @@ export const claimVestingReward = async (
   }
 }
 
-export const claimAllRewardsAction = async (userAddress: string, doormanAddress: string) => {
+export const claimAllRewardsAction = async (
+  userAddress: string,
+  doormanAddress: string,
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // update it to be from args after moving to context
     const availableDoormanRewards = 0,
