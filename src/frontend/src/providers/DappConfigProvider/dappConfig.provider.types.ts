@@ -9,8 +9,9 @@ import { ExtendedError } from 'errors/error'
 import { TezosWalletErrorPayload } from 'errors/error.type'
 import { ThemeType } from 'consts/theme.const'
 import { LoansActionsType } from 'providers/LoansProvider/loans.provider.types'
+import { VaultsActionsType } from 'providers/VaultsProvider/vaults.provider.types'
 
-export type ActionTypes = StakeActionType | UserActionsType | SatelliteActionsType | LoansActionsType
+export type ActionTypes = StakeActionType | UserActionsType | SatelliteActionsType | LoansActionsType | VaultsActionsType
 
 export type DappConfigContext = {
   // data

@@ -9,6 +9,20 @@ import {
   VAULTS_USER_DEPOSITOR,
   VAULTS_USER_MARKET,
 } from './vaults.provider.consts'
+import {
+  BORROW_VAULT_ASSET_ACTION,
+  CHANGE_VAULT_NAME_ACTION,
+  REPAY_FULL_VAULT_ACTION,
+  REPAY_PART_OF_VAULT_ACTION,
+} from './helpers/vaults.const'
+
+// actions type
+
+export type VaultsActionsType =
+  | typeof CHANGE_VAULT_NAME_ACTION
+  | typeof BORROW_VAULT_ASSET_ACTION
+  | typeof REPAY_PART_OF_VAULT_ACTION
+  | typeof REPAY_FULL_VAULT_ACTION
 
 // context types
 export type VaultsContext = {

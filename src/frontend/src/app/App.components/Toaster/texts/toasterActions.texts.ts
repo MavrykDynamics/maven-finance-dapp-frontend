@@ -1,11 +1,17 @@
-import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
 import { ACTION_COMPLETION_MESSAGE_TEXT, ACTION_START_MESSAGE_TEXT } from '../Toaster.constants'
+
+// doorman
+import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+
+// user
 import {
   CLAIM_ALL_REWARDS_ACTION,
   CLAIM_VESTING_REWARD_ACTION,
   GET_MVK_FROM_FAUCET_ACTION,
   REWARDS_COMPOUND_ACTION,
 } from 'providers/UserProvider/helpers/user.consts'
+
+// satellites
 import {
   DELEGATE_ACTION,
   DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
@@ -14,14 +20,19 @@ import {
   UNREGISTER_SATELLITE_ACTION,
   UPDATE_SATELLITE_ACTION,
 } from 'providers/SatellitesProvider/satellites.const'
+
+// loans
 import {
   CREATE_NEW_VAULT_ACTION,
   DEPOSIT_LENDING_ASSET_ACTION,
   WITHDRAW_LENDING_ASSET_ACTION,
 } from 'providers/LoansProvider/helpers/loans.const'
 
+// vaults
+import { BORROW_VAULT_ASSET_ACTION, CHANGE_VAULT_NAME_ACTION, REPAY_FULL_VAULT_ACTION, REPAY_PART_OF_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+
 export const TOASTER_ACTIONS_TEXTS = {
-  // doorman actions -----------------------------
+  // doorman actions -------------------------------------
   [STAKE_ACTION]: {
     start: {
       title: 'Staking...',
@@ -52,7 +63,7 @@ export const TOASTER_ACTIONS_TEXTS = {
       message: 'Enjoy using Mavryk Finance :)',
     },
   },
-  // user actions -------------------------------
+  // user actions -------------------------------------
   [REWARDS_COMPOUND_ACTION]: {
     start: {
       title: 'Compounding rewards...',
@@ -83,7 +94,7 @@ export const TOASTER_ACTIONS_TEXTS = {
       message: 'Rewards claimed.',
     },
   },
-  // satellites actions
+  // satellites actions -------------------------------------
   [DELEGATE_ACTION]: {
     start: {
       title: 'Delegating...',
@@ -144,7 +155,7 @@ export const TOASTER_ACTIONS_TEXTS = {
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  // loans actions
+  // loans actions -------------------------------------
   [CREATE_NEW_VAULT_ACTION]: {
     start: {
       title: 'Creating new vault...',
@@ -172,6 +183,48 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Liquidity removed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // vaults actions -------------------------------------
+  [CHANGE_VAULT_NAME_ACTION]: {
+    start: {
+      title: 'Changing vault name...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Vault name is changed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [BORROW_VAULT_ASSET_ACTION]: {
+    start: {
+      title: 'Borrowing from the vault...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Asset borrowed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REPAY_PART_OF_VAULT_ACTION]: {
+    start: {
+      title: 'Repaying asset...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Asset repayed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REPAY_FULL_VAULT_ACTION]: {
+    start: {
+      title: 'Repaying asset...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Asset repayed.',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
