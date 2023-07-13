@@ -1,22 +1,34 @@
 import { ApolloError, useSubscription } from '@apollo/client'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 // context
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
-import { LoansContext, LoansContextState, LoansSubsRecordType, LoansSubsType } from './loans.provider.types'
+import {
+  LoansContext,
+  LoansContextState,
+  LoansSubsLoadingsRecordType,
+  LoansSubsRecordType,
+  LoansSubsType,
+} from './loans.provider.types'
+import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 // consts
 import { GET_LOANS_CONFIG, GET_LOANS_MARKET_ADDRESSES, getLoansMarketsSubscription } from './queries/loansMarkets.query'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_CONFIG, LOANS_MARKETS_DATA } from './helpers/loans.const'
+import {
+  DEFAULT_LOANS_ACTIVE_SUBS,
+  LOANS_CONFIG,
+  LOANS_MARKETS_DATA,
+  DEFAULT_LOANS_SUBS_LOADINGS,
+  LOANS_MARKETS_ADDRESSES,
+} from './helpers/loans.const'
 
 // helpers
 import { normalizeLoansConfig, normalizeLoansMarkets } from './helpers/loansMarkets.normalizer'
-import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
 
 export const loansContext = React.createContext<LoansContext>(undefined!)
 
@@ -24,20 +36,17 @@ type Props = {
   children: React.ReactNode
 }
 
-/**
- * TODO: add mvk operators later, or even add it to vault
- */
 export const LoansProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
 
-  const handleSubError = (error: ApolloError, subName: LoansSubsType) => {
-    console.error(`${subName} query error: `, error)
-    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-  }
+  // ref to have initial loading to prevent showing no data when component mount and subscribe effect hadn't subscribed
+  const initialLoadings = useRef<LoansSubsLoadingsRecordType>(DEFAULT_LOANS_SUBS_LOADINGS)
+  const [isMarketLoading, setIsMarketLoading] = useState(false)
 
   const [activeSubs, setActiveSubs] = useState<LoansSubsRecordType>(DEFAULT_LOANS_ACTIVE_SUBS)
   const [marketAddressToSubscribe, setMarketAddressToSubscribe] = useState<null | TokenAddressType>(null)
   const [loansCtxState, setLoansCtxState] = useState<LoansContextState>({
+    allMarketsAddresses: [],
     marketsAddresses: [],
     marketsMapper: {},
     config: {
@@ -45,7 +54,6 @@ export const LoansProvider = ({ children }: Props) => {
       daoFee: 0,
     },
   })
-  const [isMarketLoading, setIsMarketLoading] = useState(false)
 
   /**
    * need to handle market loading status manually cun on queyry variable change it resets the loading status, in some cases it shows loading instead of already loaded data
@@ -61,13 +69,19 @@ export const LoansProvider = ({ children }: Props) => {
       marketAddressToSubscribe && !loansCtxState.marketsMapper[marketAddressToSubscribe]
     const isLoadingAllSatellitesMetadata =
       !marketAddressToSubscribe &&
-      Object.keys(loansCtxState.marketsMapper).length !== loansCtxState.marketsAddresses.length
+      Object.keys(loansCtxState.marketsMapper).length !== loansCtxState.allMarketsAddresses.length
 
     if (activeSubs[LOANS_MARKETS_DATA] && (isLoadingNotLoadedSingleMarket || isLoadingAllSatellitesMetadata)) {
       setIsMarketLoading(true)
     }
   }, [marketAddressToSubscribe])
 
+  const handleSubError = (error: ApolloError, subName: LoansSubsType) => {
+    console.error(`${subName} query error: `, error)
+    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+  }
+
+  // subscribe to markets or market data
   useSubscription(getLoansMarketsSubscription({ marketTokenAddress: marketAddressToSubscribe }), {
     skip: !activeSubs[LOANS_MARKETS_DATA],
     variables: {
@@ -82,27 +96,33 @@ export const LoansProvider = ({ children }: Props) => {
     onError: (error) => handleSubError(error, LOANS_MARKETS_DATA),
   })
 
-  const { loading: isMarketsAddressesLoading } = useSubscription(GET_LOANS_MARKET_ADDRESSES, {
-    skip: !activeSubs[LOANS_MARKETS_DATA],
+  // subscribe to all markets addresses, used for pagination
+  useSubscription(GET_LOANS_MARKET_ADDRESSES, {
     shouldResubscribe: true,
     onData: ({ data: { data } }) => {
       if (!data) return
 
       setLoansCtxState((prev) => ({
         ...prev,
-        marketsAddresses: Array.from(
+        allMarketsAddresses: Array.from(
           new Set(data.lending_controller[0].loan_tokens.map(({ token: { token_address } }) => token_address)),
         ),
       }))
+
+      if (initialLoadings.current[LOANS_MARKETS_ADDRESSES]) initialLoadings.current[LOANS_MARKETS_ADDRESSES] = false
     },
     onError: (error) => handleSubError(error, LOANS_MARKETS_DATA),
   })
 
-  const { loading: isLoansConfigLoading } = useSubscription(GET_LOANS_CONFIG, {
+  // subscribe to markets config
+  useSubscription(GET_LOANS_CONFIG, {
     skip: !activeSubs[LOANS_CONFIG],
     shouldResubscribe: true,
     onData: ({ data: { data } }) => {
       if (!data) return
+
+      if (initialLoadings.current[LOANS_CONFIG]) initialLoadings.current[LOANS_CONFIG] = false
+
       setLoansCtxState((prev) => ({
         ...prev,
         config: normalizeLoansConfig({ indexerData: data }),
@@ -111,8 +131,12 @@ export const LoansProvider = ({ children }: Props) => {
     onError: (error) => handleSubError(error, LOANS_CONFIG),
   })
 
+  // set markets to context and turn off loaders
   const updateMarketsContext = (indexerData: GetLoansMarketsSubscriptionSubscription) => {
     const newMarkets = normalizeLoansMarkets({ indexerData })
+
+    if (initialLoadings.current[LOANS_MARKETS_DATA]) initialLoadings.current[LOANS_MARKETS_DATA] = false
+
     setLoansCtxState((prev) => ({
       ...prev,
       marketsMapper: { ...prev.marketsMapper, ...newMarkets },
@@ -127,13 +151,20 @@ export const LoansProvider = ({ children }: Props) => {
   }
 
   const providerValue = useMemo(() => {
+    const marketsDataLoading = activeSubs[LOANS_MARKETS_DATA]
+      ? initialLoadings.current[LOANS_MARKETS_DATA] ||
+        initialLoadings.current[LOANS_MARKETS_ADDRESSES] ||
+        isMarketLoading
+      : false
+    const marketsConfigLoading = activeSubs[LOANS_CONFIG] ? initialLoadings.current[LOANS_CONFIG] : false
+
     return {
       ...loansCtxState,
-      isLoading: isLoansConfigLoading || isMarketLoading || isMarketsAddressesLoading,
+      isLoading: marketsConfigLoading || marketsDataLoading,
       changeLoansSubscriptionsList,
       setMarketAddressToSubscribe,
     }
-  }, [loansCtxState, isMarketLoading])
+  }, [loansCtxState, activeSubs, isMarketLoading])
   return <loansContext.Provider value={providerValue}>{children}</loansContext.Provider>
 }
 

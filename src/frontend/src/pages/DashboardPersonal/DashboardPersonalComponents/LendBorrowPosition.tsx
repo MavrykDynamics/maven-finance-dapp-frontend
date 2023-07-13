@@ -62,12 +62,14 @@ export const LendBorrowPosition = ({
         sumOfRatioBorrowedToAPR: number
       }>(
         (acc, marketTokenAddress) => {
-          const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress } = marketsMapper[marketTokenAddress]
+          const market = marketsMapper[marketTokenAddress]
+          const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
+
+          if (!token || !token.rate || !market) return acc
+
           let borrowedPerMarket = 0
 
-          const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
-          if (!token || !token.rate) return acc
-
+          const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress } = market
           const { decimals, rate } = token
 
           const { lendValue = 0 } = userMTokens[loanMTokenAddress] ?? {}
