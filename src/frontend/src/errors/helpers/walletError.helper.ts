@@ -68,6 +68,7 @@ export const estimateExecution = async (tezosOperation: ContractMethod<Wallet>):
 /**
  * estimates the operations before the actual contract calls
  * @param tezosOperation instance of contact method inside array
+ * @param tezosBatchOperation
  * @returns estimation info with OR without error
  */
 export const estimateBatchOperation = async (

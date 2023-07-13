@@ -1,12 +1,14 @@
-import { useDispatch } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 
 // consts
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { ConfirmRepayPartPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
+import { repayPartOfVaultAction } from 'providers/VaultsProvider/actions/vaults.actions'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
+import { REPAY_PART_OF_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 
 // components
 import NewButton from 'app/App.components/Button/NewButton'
@@ -26,10 +28,19 @@ import colors from 'styles/colors'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { unknownToError } from 'errors/error'
+import { sleep } from 'utils/api/sleep'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// types
+import { TezosWalletErrorPayload } from 'errors/error.type'
 
 export const ConfirmRepay = ({
   closePopup,
@@ -42,9 +53,14 @@ export const ConfirmRepay = ({
 }) => {
   useLockBodyScroll(show)
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const dispatch = useDispatch()
+  const { userAddress } = useUserContext()
+  const { bug, loading, info } = useToasterContext()
   const {
     preferences: { themeSelected },
+    contractAddresses: { lendingControllerAddress },
+    setAction,
+    toggleActionCompletion,
+    toggleActionFullScreenLoader,
   } = useDappConfigContext()
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
@@ -60,12 +76,64 @@ export const ConfirmRepay = ({
 
   const repayBtnHandler = async () => {
     if (vaultId && vaultAddress && checkWhetherTokenIsLoanToken(borrowedToken)) {
-      await dispatch(
-        repayPartOfVaultAction(vaultId, vaultAddress, inputAmount, borrowedToken, () => {
-          closePopup()
-          callback()
-        }),
-      )
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return
+      }
+      if (!lendingControllerAddress) {
+        bug('Wrong lending address')
+        return
+      }
+
+      try {
+        const actionResult = await repayPartOfVaultAction(
+          lendingControllerAddress,
+          userAddress,
+          vaultId,
+          vaultAddress,
+          inputAmount,
+          borrowedToken,
+          () => {
+            closePopup()
+            callback()
+          },
+        )
+
+        if (checkIfActionSuccess(actionResult)) {
+          const { operation } = actionResult
+          toggleActionFullScreenLoader(true)
+          toggleActionCompletion(true)
+
+          info(
+            TOASTER_ACTIONS_TEXTS[REPAY_PART_OF_VAULT_ACTION]['start']['message'],
+            TOASTER_ACTIONS_TEXTS[REPAY_PART_OF_VAULT_ACTION]['start']['title'],
+          )
+
+          await sleep(5000)
+
+          // show toaster loader after 5000ms after operation started
+          const toasterId = loading(
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          )
+
+          toggleActionFullScreenLoader(false)
+
+          const operationConfirm = await operation.confirmation()
+          const operationLvl = operationConfirm.block.header.level
+
+          setAction({ actionName: REPAY_PART_OF_VAULT_ACTION, toasterId, operationLvl })
+        } else if (isContractErrorPayload(actionResult.error)) {
+          const { message, description } = actionResult.error as TezosWalletErrorPayload
+          bug(description, message)
+        } else {
+          throw new Error(actionResult.error.message)
+        }
+      } catch (e) {
+        setAction(null)
+        const parsedError = unknownToError(e)
+        bug(parsedError.message)
+      }
     }
   }
 

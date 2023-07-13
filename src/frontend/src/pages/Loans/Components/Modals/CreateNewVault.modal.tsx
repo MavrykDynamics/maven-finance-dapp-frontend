@@ -33,7 +33,7 @@ import { State } from 'reducers'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { silverColor } from 'styles'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
-import { triggerInitialVaultCreation } from 'pages/Loans/Actions/vault.actions'
+import { triggerInitialVaultCreation } from 'providers/LoansProvider/actions/loans.actions'
 import { depositCollateralsAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
@@ -256,17 +256,17 @@ export const CreateNewVault = ({
     }))
 
   const createVaultAction = async () => {
-    try {
-      setVaultCreating(true)
-      const newVaultData = await dispatch(triggerInitialVaultCreation(marketTokenAddress, vaultName.name))
-      setCreatedVaultAddress?.(String(newVaultData))
-      setNewVaultAddress(String(newVaultData))
-    } catch (e) {
-      setShownScreen(INITIAL_SCREEN_ID)
-      console.log('Fetching new vault data error', e)
-    } finally {
-      setVaultCreating(false)
-    }
+    // try {
+    //   setVaultCreating(true)
+    //   const newVaultData = await dispatch(triggerInitialVaultCreation(marketTokenAddress, vaultName.name))
+    //   setCreatedVaultAddress?.(String(newVaultData))
+    //   setNewVaultAddress(String(newVaultData))
+    // } catch (e) {
+    //   setShownScreen(INITIAL_SCREEN_ID)
+    //   console.log('Fetching new vault data error', e)
+    // } finally {
+    //   setVaultCreating(false)
+    // }
   }
 
   const depositCollateralHandler = () => {

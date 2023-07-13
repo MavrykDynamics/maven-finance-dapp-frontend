@@ -1,4 +1,3 @@
-import { useDispatch } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 
 // consts
@@ -22,7 +21,7 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 
 // helpers & actions
-import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
+import { borrowVaultAssetAction } from 'providers/VaultsProvider/actions/vaults.actions'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
@@ -30,6 +29,16 @@ import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
+import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { BORROW_VAULT_ASSET_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+import { sleep } from 'utils/api/sleep'
+import { TezosWalletErrorPayload } from 'errors/error.type'
+import { unknownToError } from 'errors/error'
 
 export const ConfirmBorrowAsset = ({
   closePopup,
@@ -41,14 +50,18 @@ export const ConfirmBorrowAsset = ({
   data: ConfirmBorrowPopupDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userAddress } = useUserContext()
+  const { bug, loading, info } = useToasterContext()
 
   const {
     preferences: { themeSelected },
+    contractAddresses: { lendingControllerAddress },
+    toggleActionCompletion,
+    toggleActionFullScreenLoader,
+    setAction,
   } = useDappConfigContext()
 
   useLockBodyScroll(show)
-  const dispatch = useDispatch()
-
   const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
   if (!data || !borrowedToken || !borrowedToken.rate) return null
@@ -61,14 +74,65 @@ export const ConfirmBorrowAsset = ({
 
   const futureBorrowCapacity = borrowCapacity - inputAmount * rate
 
-  const borrowAsserHandler = () => {
+  const borrowAsserHandler = async () => {
     if (vaultId && checkWhetherTokenIsLoanToken(borrowedToken)) {
-      dispatch(
-        borrowVaultAssetAction(vaultId, inputAmount, borrowedToken, () => {
-          closePopup()
-          callback()
-        }),
-      )
+      // --------------------
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return
+      }
+      if (!lendingControllerAddress) {
+        bug('Wrong lending address')
+        return
+      }
+
+      try {
+        const actionResult = await borrowVaultAssetAction(
+          lendingControllerAddress,
+          vaultId,
+          inputAmount,
+          borrowedToken,
+          () => {
+            closePopup()
+            callback()
+          },
+        )
+
+        if (checkIfActionSuccess(actionResult)) {
+          const { operation } = actionResult
+          toggleActionFullScreenLoader(true)
+          toggleActionCompletion(true)
+
+          info(
+            TOASTER_ACTIONS_TEXTS[BORROW_VAULT_ASSET_ACTION]['start']['message'],
+            TOASTER_ACTIONS_TEXTS[BORROW_VAULT_ASSET_ACTION]['start']['title'],
+          )
+
+          await sleep(5000)
+
+          // show toaster loader after 5000ms after operation started
+          const toasterId = loading(
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          )
+
+          toggleActionFullScreenLoader(false)
+
+          const operationConfirm = await operation.confirmation()
+          const operationLvl = operationConfirm.block.header.level
+
+          setAction({ actionName: BORROW_VAULT_ASSET_ACTION, toasterId, operationLvl })
+        } else if (isContractErrorPayload(actionResult.error)) {
+          const { message, description } = actionResult.error as TezosWalletErrorPayload
+          bug(description, message)
+        } else {
+          throw new Error(actionResult.error.message)
+        }
+      } catch (e) {
+        setAction(null)
+        const parsedError = unknownToError(e)
+        bug(parsedError.message)
+      }
     }
   }
 
