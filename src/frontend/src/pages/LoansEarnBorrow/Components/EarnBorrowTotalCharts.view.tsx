@@ -12,6 +12,7 @@ import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from 'p
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { useLoansEarnBorrowContext } from '../context/loansEarnBorrowContext'
+import classNames from 'classnames'
 
 type Props = {
   // left chart
@@ -43,7 +44,7 @@ export const EarnBorrowTotalCharts = ({
         <CommaNumber value={leftTotalAmount ?? 0} beginningText={'$'} />
       </div>
 
-      <div className={'chart'}>
+      <div className={classNames('chart', { emptyChart: !isChartsLoading && leftChartData.length === 0 })}>
         <Chart
           isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(leftChartData, 7) }}
@@ -65,7 +66,7 @@ export const EarnBorrowTotalCharts = ({
         <CommaNumber value={rightTotalAmount ?? 0} beginningText={'$'} />
       </div>
 
-      <div className={'chart'}>
+      <div className={classNames('chart', { emptyChart: !isChartsLoading && rightChartData.length === 0 })}>
         <Chart
           isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(rightChartData, 7) }}

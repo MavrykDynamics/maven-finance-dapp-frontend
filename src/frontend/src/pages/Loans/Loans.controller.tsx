@@ -41,6 +41,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import classNames from 'classnames'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -118,7 +119,7 @@ export const Loans = () => {
         <span>Total Earning</span>
         <CommaNumber value={totalLended} beginningText={'$'} />
       </div>
-      <div className={'chart'}>
+      <div className={classNames('chart', { emptyChart: !isChartsLoading && totalLendingChart.length === 0 })}>
         <Chart
           isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(totalLendingChart, 7) }}
@@ -139,7 +140,7 @@ export const Loans = () => {
         <span>Total Borrowing</span>
         <CommaNumber value={totalBorrowed} beginningText={'$'} />
       </div>
-      <div className={'chart'}>
+      <div className={classNames('chart', { emptyChart: !isChartsLoading && totalBorrowingChart.length === 0 })}>
         <Chart
           isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(totalBorrowingChart, 7) }}
