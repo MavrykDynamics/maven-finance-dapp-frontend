@@ -1,24 +1,7 @@
-import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { ManagePermissionsPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
-import { State } from 'reducers'
-import { validateTzAddress } from 'utils/validatorFunctions'
-
-import Icon from 'app/App.components/Icon/Icon.view'
-import { Input } from 'app/App.components/Input/NewInput'
-import NewButton from 'app/App.components/Button/NewButton'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { DDItemId, DropDown, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
-
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
-import { LoansModalBase } from './Modals.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { managePermissionsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
+// consts
 import {
   NONE_USER,
   WHITELIST_USERS,
@@ -26,8 +9,40 @@ import {
   VAULT_ALLOWANCE_ANY,
   VAULT_ALLOWANCE_ACCOUNTS,
 } from 'pages/Loans/Loans.const'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { MANAGE_PERMISSIONS_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+
+// types
 import { LoanVaultAllowanceType } from 'providers/LoansProvider/loans.provider.types'
+import { ManagePermissionsPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+
+// helpers
+import { validateTzAddress } from 'utils/validatorFunctions'
+
+// components
+import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { Input } from 'app/App.components/Input/NewInput'
+import NewButton from 'app/App.components/Button/NewButton'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { DDItemId, DropDown, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
+
+// styles
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { LoansModalBase } from './Modals.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
+
+// actions
+import { managePermissionsAction } from 'providers/VaultsProvider/actions/vaultPermissions.actions'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// providers
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 const ddItems = [
   { text: 'Vault Owner', value: NONE_USER },
@@ -46,9 +61,8 @@ export const ManagePermissions = ({
   data: ManagePermissionsPopupDataType
 }) => {
   useLockBodyScroll(show)
-  const dispatch = useDispatch()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
   const [tableData, setTableData] = useState<Array<{ address: string; validationStatus: InputStatusType }>>([
     { address: '', validationStatus: '' },
   ])
@@ -84,9 +98,7 @@ export const ManagePermissions = ({
     }
   }, [data, show])
 
-  if (!data) return null
-
-  const { vaultAddress, deporsitorsFlag, depositors } = data
+  const { vaultAddress = '', deporsitorsFlag, depositors = [] } = data ?? {}
 
   const isActionDisabled =
     (chosenDdItem?.id === WHITELIST_USERS &&
@@ -101,7 +113,7 @@ export const ManagePermissions = ({
 
   const updateTableDataState = (newValue: string, rowIdx: number) => {
     const validationStatus =
-      validateTzAddress(newValue) && !tableData.some(({ address }) => address === newValue) && newValue !== accountPkh
+      validateTzAddress(newValue) && !tableData.some(({ address }) => address === newValue) && newValue !== userAddress
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
 
@@ -110,13 +122,32 @@ export const ManagePermissions = ({
     )
   }
 
-  const updateHandler = () => {
+  // manage permissions action
+  const managePermissionsActionCb = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
     const depostiorAllowance: LoanVaultAllowanceType =
       chosenDdItem?.id === ANY_USER ? VAULT_ALLOWANCE_ANY : VAULT_ALLOWANCE_ACCOUNTS
     const newDepositors: Array<string> =
       chosenDdItem?.id === NONE_USER ? [] : tableData.map(({ address }) => address).filter(Boolean)
-    dispatch(managePermissionsAction(vaultAddress, depostiorAllowance, newDepositors, depositors, closePopup))
-  }
+
+    return await managePermissionsAction(vaultAddress, depostiorAllowance, newDepositors, depositors, closePopup)
+  }, [bug, chosenDdItem?.id, closePopup, depositors, tableData, userAddress, vaultAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: MANAGE_PERMISSIONS_ACTION,
+      actionFn: managePermissionsActionCb,
+    }),
+    [managePermissionsActionCb],
+  )
+
+  const updateHandler = useContractAction(contractActionProps)
+
+  if (!data) return null
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
