@@ -31,10 +31,13 @@ import {
 // vaults
 import {
   BORROW_VAULT_ASSET_ACTION,
+  CHANGE_BAKER_ACTION,
   CHANGE_VAULT_NAME_ACTION,
   DEPOSIT_COLLATERAL_ACTION,
+  MANAGE_PERMISSIONS_ACTION,
   REPAY_FULL_VAULT_ACTION,
   REPAY_PART_OF_VAULT_ACTION,
+  UPDATE_OPERATORS_ACTION,
   WITHDRAW_COLLATERAL_ACTION,
 } from 'providers/VaultsProvider/helpers/vaults.const'
 
@@ -253,6 +256,38 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Collateral added.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // vault permission actions
+  [CHANGE_BAKER_ACTION]: {
+    start: {
+      title: 'Changing XTZ Baker...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Baker changed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [MANAGE_PERMISSIONS_ACTION]: {
+    start: {
+      title: 'Updating depositors...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Depositors updated.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UPDATE_OPERATORS_ACTION]: {
+    start: {
+      title: 'Updating operators...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Operators updated.',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
