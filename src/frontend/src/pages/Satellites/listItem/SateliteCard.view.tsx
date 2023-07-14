@@ -191,7 +191,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
     if (!doormanAddress) {
-      bug('Bad doorman address')
+      bug('Wrong doorman address')
       return null
     }
 

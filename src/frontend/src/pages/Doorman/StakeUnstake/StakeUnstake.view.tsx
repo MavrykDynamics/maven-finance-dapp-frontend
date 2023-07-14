@@ -153,6 +153,19 @@ export const StakeUnstakeView = ({
     await handleStake()
   }
 
+  const handleUnstakeAll = () => {
+    if (!mySMvkTokenBalance) return
+
+    setInputData({
+      ...inputData,
+      amount: String(mathRoundTwoDigit(mySMvkTokenBalance)),
+      validation: INPUT_STATUS_SUCCESS,
+    })
+    openExitFeePopup()
+  }
+
+  // stake action -------------------------
+
   const stakeAction = useCallback(
     async (stakeAmount: number) => {
       const canStakeAmount = stakeAmount <= Number(myMvkTokenBalance)
@@ -205,66 +218,30 @@ export const StakeUnstakeView = ({
 
   const handleStake = useContractAction(contractActionProps)
 
-  const handleUnstakeAll = () => {
-    if (!mySMvkTokenBalance) return
+  // compound action ---------------------------
 
-    setInputData({
-      ...inputData,
-      amount: String(mathRoundTwoDigit(mySMvkTokenBalance)),
-      validation: INPUT_STATUS_SUCCESS,
-    })
-    openExitFeePopup()
-  }
-
-  const handleCompound = async () => {
+  const rewardsCompoundAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
-      return
+      return null
     }
     if (!doormanAddress) {
-      bug('Bad doorman address')
-      return
+      bug('Wrong doorman address')
+      return null
     }
 
-    try {
-      const actionResult = await rewardsCompound(userAddress, doormanAddress)
+    return await rewardsCompound(userAddress, doormanAddress)
+  }, [bug, doormanAddress, userAddress])
 
-      if (checkIfActionSuccess(actionResult)) {
-        const { operation } = actionResult
-        toggleActionFullScreenLoader(true)
-        toggleActionCompletion(true)
+  const compoundContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: REWARDS_COMPOUND_ACTION,
+      actionFn: rewardsCompoundAction,
+    }),
+    [rewardsCompoundAction],
+  )
 
-        info(
-          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['title'],
-        )
-
-        await sleep(5000)
-
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
-
-        toggleActionFullScreenLoader(false)
-
-        const operationConfirm = await operation.confirmation()
-        const operationLvl = operationConfirm.block.header.level
-
-        setAction({ actionName: REWARDS_COMPOUND_ACTION, toasterId, operationLvl })
-      } else if (isContractErrorPayload(actionResult.error)) {
-        const { message, description } = actionResult.error as TezosWalletErrorPayload
-        bug(description, message)
-      } else {
-        throw new Error(actionResult.error.message)
-      }
-    } catch (e) {
-      setAction(null)
-      const parsedError = unknownToError(e)
-      bug(parsedError.message)
-    }
-  }
+  const handleCompound = useContractAction(compoundContractActionProps)
 
   const handleFocus = () => {
     if (inputData.amount === '0') {

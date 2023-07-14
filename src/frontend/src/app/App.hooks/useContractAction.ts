@@ -15,7 +15,6 @@ import {
   ActionSuccessReturnType,
   ActionTypes,
 } from 'providers/DappConfigProvider/dappConfig.provider.types'
-import { TezosWalletErrorPayload } from 'errors/error.type'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -24,8 +23,8 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 export type HookContractActionArgs = {
   actionType: ActionTypes
   actionFn: () => Promise<ActionErrorReturnType | ActionSuccessReturnType | null>
-  dappActionCallback?: (() => void)
-  beforeActionCallback?: (() => void)
+  dappActionCallback?: () => void
+  afterActionCallback?: () => void
   willUseSharedError?: boolean
 }
 
@@ -33,7 +32,7 @@ export const useContractAction = ({
   actionType,
   actionFn,
   dappActionCallback,
-  beforeActionCallback,
+  afterActionCallback,
   willUseSharedError = false,
 }: HookContractActionArgs): (() => Promise<void>) => {
   const { bug, info, loading, setSharedError } = useToasterContext()
@@ -41,9 +40,12 @@ export const useContractAction = ({
 
   return async () => {
     try {
-      beforeActionCallback?.()
       // call the actual action
       const actionResult = await actionFn()
+
+      // optional callback which us triggered right after action call
+      // used f.e. to close some popup etc.
+      afterActionCallback?.()
 
       if (!actionResult) return
 
@@ -71,11 +73,11 @@ export const useContractAction = ({
       } else if (isContractErrorPayload(actionResult.error)) {
         if (willUseSharedError) {
           setSharedError(WALLTET_ERROR_FIELD, {
-            ...(actionResult.error as TezosWalletErrorPayload),
+            ...actionResult.error,
             actionId: actionType,
           })
         } else {
-          const { message, description } = actionResult.error as TezosWalletErrorPayload
+          const { message, description } = actionResult.error
           bug(description, message)
         }
       } else {

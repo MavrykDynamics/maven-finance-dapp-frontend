@@ -11,3 +11,8 @@ export const walletOparationErrorPayload = z.object({
   message: z.string(),
   scope: z.string().optional(),
 })
+
+export const tezosErrorPayload = z.object({
+  message: z.string(),
+  description: z.string(),
+})

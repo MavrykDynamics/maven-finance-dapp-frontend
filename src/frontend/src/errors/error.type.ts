@@ -1,7 +1,11 @@
 import type { ApiError, FatalError, ValidationError, TezosOperationError } from './error'
 import { ERROR_TYPE_FATAL, ERROR_TYPE_ROUTER } from './error.const'
 import { z } from 'zod'
-import { walletOparationErrorPayload, walletOperationErrorPayloadErrorItemSchema } from './error.schema'
+import {
+  tezosErrorPayload,
+  walletOparationErrorPayload,
+  walletOperationErrorPayloadErrorItemSchema,
+} from './error.schema'
 import { WALLTET_ERROR_FIELD } from './consts/error.const'
 import { WalletActionType } from 'types/actions.type'
 
@@ -30,10 +34,7 @@ export type ErrorType =
   | ApiError
   | TezosOperationError
 
-export type TezosWalletErrorPayload = {
-  message: string
-  description: string
-}
+export type TezosWalletErrorPayload = z.infer<typeof tezosErrorPayload>
 
 export type EstimatedOperation = {
   gasLimit: number

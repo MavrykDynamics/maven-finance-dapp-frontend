@@ -73,7 +73,7 @@ export const ExitFeeModal = ({
       }
 
       if (!doormanAddress) {
-        bug('Bad doorman address')
+        bug('Wrong doorman address')
         return null
       }
 
@@ -96,7 +96,7 @@ export const ExitFeeModal = ({
       actionType: UNSTAKE_ACTION,
       actionFn: unstakeAction.bind(null, Number(inputData.amount)),
       dappActionCallback: dappActionCallback,
-      beforeActionCallback: closePopup,
+      afterActionCallback: closePopup,
     }),
     [unstakeAction, inputData.amount, dappActionCallback, closePopup],
   )

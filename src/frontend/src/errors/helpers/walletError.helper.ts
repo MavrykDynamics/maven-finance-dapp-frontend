@@ -3,9 +3,10 @@ import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { SPECIFIC_CONTRACT_ERROR_CODES } from 'errors/consts/customWalletErrorCodes'
 import { DEFAULT_TEZOS_ERROR } from 'errors/consts/error.const'
 import { CONTRACT_ERROR_CODES } from 'errors/consts/walletErrorCodes'
-import { isTezosOperationError } from 'errors/error'
+import { ExtendedError, isTezosOperationError } from 'errors/error'
 import { EstimatedBatchCall, EstimatedOperation, TezosWalletErrorPayload } from 'errors/error.type'
 import { toSentenceCase } from 'utils/toSentenceCase'
+import { tezosErrorPayload } from 'errors/error.schema'
 
 /**
  * checks is it's wallet error and is yes - gets the error info by that specific code
@@ -37,7 +38,6 @@ export const getContractErrorMessage = (e: unknown): TezosWalletErrorPayload => 
   return DEFAULT_TEZOS_ERROR
 }
 
-
 /**
  * estimates the operation before the actual contract call
  * @param tezosOperation instance of contact method
@@ -63,7 +63,6 @@ export const estimateExecution = async (tezosOperation: ContractMethod<Wallet>):
     }
   }
 }
-
 
 /**
  * estimates the operations before the actual contract calls
@@ -104,17 +103,12 @@ export const estimateBatchOperation = async (
   }
 }
 /**
- * 
- * @param obj in most cases it would be object to check data returned by "getContractErrorMessage"
+ *
+ * @param error in most cases it would be object to check data returned by "getContractErrorMessage"
  * @returns boolean
  */
-export const isContractErrorPayload = (obj: any) => {
-  return (
-    typeof obj === 'object' &&
-    obj !== null &&
-    'message' in obj &&
-    'description' in obj &&
-    typeof obj.message === 'string' &&
-    typeof obj.description === 'string'
-  )
+export const isContractErrorPayload = (
+  error: Error | ExtendedError | TezosWalletErrorPayload,
+): error is TezosWalletErrorPayload => {
+  return tezosErrorPayload.safeParse(error).success
 }
