@@ -1,5 +1,5 @@
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 // components
 import NewButton from 'app/App.components/Button/NewButton'
@@ -12,21 +12,14 @@ import { changeVaultNameAction } from 'providers/VaultsProvider/actions/vaults.a
 // consts
 import { INPUT_LARGE, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { CHANGE_VAULT_NAME_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 
 // helpers
-import { sleep } from 'utils/api/sleep'
-import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
 import { validateVaultLength } from './CreateNewVault.modal'
 import { containSpaces } from 'app/App.utils/input'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
-import { unknownToError } from 'errors/error'
 
 // types
 import { ChangeVaultNamePopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
-import { TezosWalletErrorPayload } from 'errors/error.type'
 
 // styles
 import { LoansModalBase } from './Modals.style'
@@ -38,7 +31,9 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 export const ChangeVaultName = ({
   closePopup,
@@ -55,8 +50,7 @@ export const ChangeVaultName = ({
     vaultsMapper,
   } = useVaultsContext()
   const { userAddress } = useUserContext()
-  const { setAction, toggleActionCompletion, toggleActionFullScreenLoader } = useDappConfigContext()
-  const { bug, loading, info } = useToasterContext()
+  const { bug } = useToasterContext()
 
   useLockBodyScroll(show)
 
@@ -76,62 +70,39 @@ export const ChangeVaultName = ({
     }
   }, [show])
 
-  if (!data) return null
+  const { vaultAddress = '', vaultName = '' } = data ?? {}
 
-  const { vaultAddress, vaultName } = data
+  // change name action -------------------
+  const changeNameAction = useCallback(async () => {
+    // is there is a vault address - do nothing
+    if (vaultAddress) {
+      return null
+    }
+
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    return await changeVaultNameAction(newVaultName.name, vaultAddress, closePopup)
+  }, [bug, closePopup, newVaultName.name, userAddress, vaultAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: CHANGE_VAULT_NAME_ACTION,
+      actionFn: changeNameAction,
+    }),
+    [changeNameAction],
+  )
+
+  const changeVaultNameHandler = useContractAction(contractActionProps)
+
+  if (!data) return null
 
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     const validationStatus = validateVaultLength(value, myVaultsIds, vaultsMapper)
     setNewVaultName((prev) => ({ ...prev, name: value, validationStatus }))
-  }
-
-  const changeVaultNameHandler = async () => {
-    if (!vaultAddress) {
-      if (!userAddress) {
-        bug('Click Connect in the left menu', 'Please connect your wallet')
-        return
-      }
-
-      try {
-        const actionResult = await changeVaultNameAction(newVaultName.name, vaultAddress, closePopup)
-
-        if (checkIfActionSuccess(actionResult)) {
-          const { operation } = actionResult
-          toggleActionFullScreenLoader(true)
-          toggleActionCompletion(true)
-
-          info(
-            TOASTER_ACTIONS_TEXTS[CHANGE_VAULT_NAME_ACTION]['start']['message'],
-            TOASTER_ACTIONS_TEXTS[CHANGE_VAULT_NAME_ACTION]['start']['title'],
-          )
-
-          await sleep(5000)
-
-          // show toaster loader after 5000ms after operation started
-          const toasterId = loading(
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          )
-
-          toggleActionFullScreenLoader(false)
-
-          const operationConfirm = await operation.confirmation()
-          const operationLvl = operationConfirm.block.header.level
-
-          setAction({ actionName: CHANGE_VAULT_NAME_ACTION, toasterId, operationLvl })
-        } else if (isContractErrorPayload(actionResult.error)) {
-          const { message, description } = actionResult.error as TezosWalletErrorPayload
-          bug(description, message)
-        } else {
-          throw new Error(actionResult.error.message)
-        }
-      } catch (e) {
-        setAction(null)
-        const parsedError = unknownToError(e)
-        bug(parsedError.message)
-      }
-    }
   }
 
   const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {

@@ -41,6 +41,8 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
 import { TezosWalletErrorPayload } from 'errors/error.type'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useCallback, useMemo } from 'react'
 
 export const ConfirmRepay = ({
   closePopup,
@@ -65,77 +67,71 @@ export const ConfirmRepay = ({
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
-  if (!data || !borrowedToken || !borrowedToken.rate) return null
+  const {
+    vaultId = 0,
+    vaultAddress = '',
+    collateralBalance = 0,
+    borrowCapacity = 0,
+    borrowedAmount = 0,
+    inputAmount = 0,
+    callback = () => {},
+  } = data ?? {}
 
-  const { vaultId, vaultAddress, collateralBalance, borrowCapacity, borrowedAmount, inputAmount, callback } = data
-
-  const { symbol, rate } = borrowedToken
+  const { symbol = '', rate: originalRate } = borrowedToken ?? {}
+  const rate = originalRate ?? 0
 
   const futureCollateralRatio = getVaultCollateralRatio(collateralBalance, (borrowedAmount - inputAmount) * rate)
   const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
 
-  const repayBtnHandler = async () => {
-    if (vaultId && vaultAddress && checkWhetherTokenIsLoanToken(borrowedToken)) {
-      if (!userAddress) {
-        bug('Click Connect in the left menu', 'Please connect your wallet')
-        return
-      }
-      if (!lendingControllerAddress) {
-        bug('Wrong lending address')
-        return
-      }
-
-      try {
-        const actionResult = await repayPartOfVaultAction(
-          lendingControllerAddress,
-          userAddress,
-          vaultId,
-          vaultAddress,
-          inputAmount,
-          borrowedToken,
-          () => {
-            closePopup()
-            callback()
-          },
-        )
-
-        if (checkIfActionSuccess(actionResult)) {
-          const { operation } = actionResult
-          toggleActionFullScreenLoader(true)
-          toggleActionCompletion(true)
-
-          info(
-            TOASTER_ACTIONS_TEXTS[REPAY_PART_OF_VAULT_ACTION]['start']['message'],
-            TOASTER_ACTIONS_TEXTS[REPAY_PART_OF_VAULT_ACTION]['start']['title'],
-          )
-
-          await sleep(5000)
-
-          // show toaster loader after 5000ms after operation started
-          const toasterId = loading(
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          )
-
-          toggleActionFullScreenLoader(false)
-
-          const operationConfirm = await operation.confirmation()
-          const operationLvl = operationConfirm.block.header.level
-
-          setAction({ actionName: REPAY_PART_OF_VAULT_ACTION, toasterId, operationLvl })
-        } else if (isContractErrorPayload(actionResult.error)) {
-          const { message, description } = actionResult.error as TezosWalletErrorPayload
-          bug(description, message)
-        } else {
-          throw new Error(actionResult.error.message)
-        }
-      } catch (e) {
-        setAction(null)
-        const parsedError = unknownToError(e)
-        bug(parsedError.message)
-      }
+  // partly repay action ---------------------
+  const partlyRepayAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
     }
-  }
+    if (!lendingControllerAddress) {
+      bug('Wrong lending address')
+      return null
+    }
+    if (borrowedToken && vaultId && vaultAddress && checkWhetherTokenIsLoanToken(borrowedToken)) {
+      return await repayPartOfVaultAction(
+        lendingControllerAddress,
+        userAddress,
+        vaultId,
+        vaultAddress,
+        inputAmount,
+        borrowedToken,
+        () => {
+          closePopup()
+          callback()
+        },
+      )
+    }
+
+    return null
+  }, [
+    borrowedToken,
+    bug,
+    callback,
+    closePopup,
+    inputAmount,
+    lendingControllerAddress,
+    userAddress,
+    vaultAddress,
+    vaultId,
+  ])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: REPAY_PART_OF_VAULT_ACTION,
+      actionFn: partlyRepayAction,
+    }),
+    [partlyRepayAction],
+  )
+
+  const repayBtnHandler = useContractAction(contractActionProps)
+
+  if (!data || !borrowedToken || !borrowedToken.rate) return null
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
