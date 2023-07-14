@@ -93,10 +93,12 @@ export const Dashboard = () => {
     totalBorrowed: number
   }>(
     (acc, marketTokenAddress) => {
-      const { totalBorrowed, totalLended, loanTokenAddress } = marketsMapper[marketTokenAddress]
-      const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
-      if (!token || !token.rate) return acc
+      const market = marketsMapper[marketTokenAddress]
+      const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
 
+      if (!token || !token.rate || !market) return acc
+
+      const { totalBorrowed, totalLended } = market
       const { decimals, rate } = token
 
       acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate

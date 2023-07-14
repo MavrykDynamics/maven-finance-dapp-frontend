@@ -48,7 +48,9 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
         (acc, marketTokenAddress) => {
           const market = marketsMapper[marketTokenAddress]
           const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
+
           if (!token || !token.rate || !market) return acc
+
           const { symbol, decimals, icon, rate } = token
           const { suppliers, borrowers, totalBorrowed, totalLended } = market
 

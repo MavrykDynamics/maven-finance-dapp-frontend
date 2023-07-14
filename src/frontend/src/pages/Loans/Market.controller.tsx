@@ -51,11 +51,14 @@ export const Market = () => {
     location: { state: historyState },
   } = history
   const dispatch = useDispatch()
-  const { assetAddress, tabId } = useParams<{ assetAddress: string; tabId: string }>()
+  const { assetAddress: currentMarketAddress, tabId } = useParams<{
+    assetAddress: string
+    tabId: string
+  }>()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const {
-    marketsAddresses,
+    allMarketsAddresses,
     marketsMapper,
     config: { collateralFactor },
     changeLoansSubscriptionsList,
@@ -73,9 +76,9 @@ export const Market = () => {
   }, [])
 
   useEffect(() => {
-    setMarketAddressToSubscribe(assetAddress)
+    setMarketAddressToSubscribe(currentMarketAddress)
     return () => setMarketAddressToSubscribe(null)
-  }, [assetAddress])
+  }, [currentMarketAddress])
 
   const {
     vaults: { myVaultsIds, vaultsMapper },
@@ -96,16 +99,17 @@ export const Market = () => {
     window.scrollTo(0, 0)
   }, [])
 
-  const [prevMarketAddress, nextMarketAddress, currentMarketAddress] = useMemo(() => {
-    const currentTokenIdx = marketsAddresses.findIndex((marketTokenAddress) => marketTokenAddress === assetAddress)
+  const [prevMarketAddress, nextMarketAddress] = useMemo(() => {
+    const currentTokenIdx = allMarketsAddresses.findIndex(
+      (marketTokenAddress) => marketTokenAddress === currentMarketAddress,
+    )
     return [
-      marketsAddresses.at(currentTokenIdx - 1) ?? marketsAddresses.at(-1),
-      marketsAddresses.at(currentTokenIdx + 1) ?? marketsAddresses.at(0),
-      marketsAddresses.at(currentTokenIdx),
+      allMarketsAddresses.at(currentTokenIdx - 1) ?? allMarketsAddresses.at(-1),
+      allMarketsAddresses.at(currentTokenIdx + 1) ?? allMarketsAddresses.at(0),
     ]
-  }, [assetAddress, marketsAddresses])
+  }, [currentMarketAddress, allMarketsAddresses])
 
-  const loanToken = getTokenDataByAddress({ tokenAddress: assetAddress, tokensMetadata, tokensPrices })
+  const loanToken = getTokenDataByAddress({ tokenAddress: currentMarketAddress, tokensMetadata, tokensPrices })
 
   const { userTotalBorrowed, userTotalCollateral, userAccruedInterest, userAvailableBorrow } = useMemo(
     () =>
@@ -113,7 +117,7 @@ export const Market = () => {
         (acc, itemId) => {
           const vault = vaultsMapper[itemId]
 
-          if (vault.ownerId !== accountPkh || vault.borrowedTokenAddress !== assetAddress || !loanToken?.rate)
+          if (vault.ownerId !== accountPkh || vault.borrowedTokenAddress !== currentMarketAddress || !loanToken?.rate)
             return acc
           const { decimals: loanTokenDecimals, rate: loanTokenRate } = loanToken
 
@@ -139,7 +143,7 @@ export const Market = () => {
           userAvailableBorrow: 0,
         },
       ),
-    [accountPkh, myVaultsIds, assetAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
+    [accountPkh, myVaultsIds, currentMarketAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
   )
 
   if (isLoansLoading) {
@@ -213,7 +217,7 @@ export const Market = () => {
 
   return (
     <Page>
-      <MarketPageHeader assetAddress={assetAddress} />
+      <MarketPageHeader assetAddress={currentMarketAddress} />
 
       {marketPagination}
 
@@ -290,7 +294,7 @@ export const Market = () => {
                   Your Total Available Borrow
                   <CustomTooltip
                     iconId="info"
-                    text={USER_AVAILABLE_BORROW(assetAddress)}
+                    text={USER_AVAILABLE_BORROW(currentMarketAddress)}
                     defaultStrokeColor={colors[themeSelected].textColor}
                   />
                 </div>
