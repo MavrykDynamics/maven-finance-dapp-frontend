@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
@@ -33,6 +33,7 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
+import { loansEarnBorrowContext } from './context/loansEarnBorrowContext'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -179,37 +180,46 @@ export const LoansBorrow = () => {
     [userAddress],
   )
 
+  const contextValue = useMemo(
+    () => ({
+      isChartsLoading,
+    }),
+    [isChartsLoading],
+  )
+
   return (
-    <Page>
-      <PageHeader page={'loansBorrow'} />
+    <loansEarnBorrowContext.Provider value={contextValue}>
+      <Page>
+        <PageHeader page={'loansBorrow'} />
 
-      {isLoading || isLoansLoading ? (
-        <DataLoaderWrapper>
-          <ClockLoader width={150} height={150} />
-          <div className="text">Loading borrows charts</div>
-        </DataLoaderWrapper>
-      ) : (
-        <>
-          <EarnBorrowTotalCharts
-            // left chart
-            leftChartData={totalCollateralChart}
-            leftChartTitle="Total Collateral"
-            leftTotalAmount={totalCollateralChart.at(-1)?.value ?? 0}
-            // right chart
-            rightChartData={totalBorrowingChart}
-            rightChartTitle="Total Borrowing"
-            rightTotalAmount={totalBorrowingChart.at(-1)?.value ?? 0}
-          />
+        {isLoading || isLoansLoading ? (
+          <DataLoaderWrapper>
+            <ClockLoader width={150} height={150} />
+            <div className="text">Loading borrows charts</div>
+          </DataLoaderWrapper>
+        ) : (
+          <>
+            <EarnBorrowTotalCharts
+              // left chart
+              leftChartData={totalCollateralChart}
+              leftChartTitle="Total Collateral"
+              leftTotalAmount={totalCollateralChart.at(-1)?.value ?? 0}
+              // right chart
+              rightChartData={totalBorrowingChart}
+              rightChartTitle="Total Borrowing"
+              rightTotalAmount={totalBorrowingChart.at(-1)?.value ?? 0}
+            />
 
-          <LoansEarnBorrow
-            title="Borrow"
-            markets={markets}
-            settings={marketSettings}
-            handleClick={handleBorrow}
-            isDisabledButton={!userAddress}
-          />
-        </>
-      )}
-    </Page>
+            <LoansEarnBorrow
+              title="Borrow"
+              markets={markets}
+              settings={marketSettings}
+              handleClick={handleBorrow}
+              isDisabledButton={!userAddress}
+            />
+          </>
+        )}
+      </Page>
+    </loansEarnBorrowContext.Provider>
   )
 }

@@ -1,11 +1,8 @@
 import { CandlestickData, SeriesMarker, SingleValueData, Time, WhitespaceData } from 'lightweight-charts'
 import { ChartTooltipsTypes } from '../Tooltips/ChartTooltip'
 import { DoubleChartTooltipsTypes } from '../Tooltips/DoubleChartTooltip'
-
-// Chart types
-export const AREA_CHART_TYPE = 'area'
-export const CANDLESTICK_CHART_TYPE = 'candle'
-export const HISTOGRAM_CHART_TYPE = 'histogram'
+import { AREA_CHART_TYPE, CANDLESTICK_CHART_TYPE, HISTOGRAM_CHART_TYPE } from './Chart.const'
+import { SpinnerLoaderSizes } from 'app/App.components/Loader/loader.const'
 
 // Chart data prot types
 export type AreaChartPlotType = SingleValueData | WhitespaceData
@@ -89,6 +86,8 @@ export type ChartWrapperPropsType = ChartBasePropsType & {
   tooltipName?: ChartTooltipsTypes
   tooltipAsset: string
   comingSoon?: boolean
+  isLoading?: boolean
+  loaderSize?: SpinnerLoaderSizes
 }
 
 // Double chart props

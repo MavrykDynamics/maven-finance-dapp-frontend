@@ -6,7 +6,8 @@ export const LoansEarnBorrowStyled = styled.div<{ theme: MavrykTheme }>`
   margin-top: 30px;
 `
 
-export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme }>`
+export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme; isChartLoading: boolean }>`
+  position: relative;
   margin: 23px 0 30px 0;
   height: 152px;
 
@@ -14,8 +15,8 @@ export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme }>`
   border-radius: 10px;
 
   & > div:last-child {
-    position: relative;
-    left: 3px;
+    position: ${({ isChartLoading }) => (isChartLoading ? 'absolute' : 'relative')};
+    position: ${({ isChartLoading }) => (isChartLoading ? '0' : '3px')};
   }
 
   .switchMenu {
