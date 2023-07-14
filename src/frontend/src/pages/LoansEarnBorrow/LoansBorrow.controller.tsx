@@ -30,7 +30,11 @@ import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/Va
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import { VAULTS_DATA, VAULTS_USER_ALL } from 'providers/VaultsProvider/vaults.provider.consts'
+import {
+  DEFAULT_VAULTS_ACTIVE_SUBS,
+  VAULTS_DATA,
+  VAULTS_USER_ALL,
+} from 'providers/VaultsProvider/vaults.provider.consts'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -48,12 +52,7 @@ export const LoansBorrow = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { openCreateVaultPopup } = useLoansPopupsContext()
   const { userAddress } = useUserContext()
-  const {
-    vaultsMapper,
-    myVaultsIds: { all: myVaultsIds },
-    changeVaultsSubscriptionsList,
-    isLoading: isVaultsLoading,
-  } = useVaultsContext()
+  const { vaultsMapper, myVaultsIds, changeVaultsSubscriptionsList, isLoading: isVaultsLoading } = useVaultsContext()
 
   const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
 
@@ -65,7 +64,10 @@ export const LoansBorrow = () => {
       [VAULTS_DATA]: VAULTS_USER_ALL,
     })
 
-    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+    return () => {
+      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+    }
   }, [])
 
   const {

@@ -25,10 +25,12 @@ import {
   LOANS_MARKETS_DATA,
   DEFAULT_LOANS_SUBS_LOADINGS,
   LOANS_MARKETS_ADDRESSES,
+  EMPTY_LOANS_CONTEXT,
 } from './helpers/loans.const'
 
 // helpers
 import { normalizeLoansConfig, normalizeLoansMarkets } from './helpers/loansMarkets.normalizer'
+import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 
 export const loansContext = React.createContext<LoansContext>(undefined!)
 
@@ -39,20 +41,15 @@ type Props = {
 export const LoansProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
 
-  // ref to have initial loading to prevent showing no data when component mount and subscribe effect hadn't subscribed
-  const initialLoadings = useRef<LoansSubsLoadingsRecordType>(DEFAULT_LOANS_SUBS_LOADINGS)
   const [isMarketLoading, setIsMarketLoading] = useState(false)
 
   const [activeSubs, setActiveSubs] = useState<LoansSubsRecordType>(DEFAULT_LOANS_ACTIVE_SUBS)
   const [marketAddressToSubscribe, setMarketAddressToSubscribe] = useState<null | TokenAddressType>(null)
   const [loansCtxState, setLoansCtxState] = useState<LoansContextState>({
-    allMarketsAddresses: [],
-    marketsAddresses: [],
-    marketsMapper: {},
-    config: {
-      collateralFactor: 0,
-      daoFee: 0,
-    },
+    allMarketsAddresses: null,
+    marketsAddresses: null,
+    marketsMapper: null,
+    config: null,
   })
 
   /**
@@ -65,11 +62,12 @@ export const LoansProvider = ({ children }: Props) => {
    * NOTE: loader will be shown only when we set or unset specific satellite address
    **/
   useEffect(() => {
-    const isLoadingNotLoadedSingleMarket =
-      marketAddressToSubscribe && !loansCtxState.marketsMapper[marketAddressToSubscribe]
+    const { marketsMapper, allMarketsAddresses } = loansCtxState
+    if (!marketsMapper || !allMarketsAddresses) return
+
+    const isLoadingNotLoadedSingleMarket = marketAddressToSubscribe && !marketsMapper[marketAddressToSubscribe]
     const isLoadingAllSatellitesMetadata =
-      !marketAddressToSubscribe &&
-      Object.keys(loansCtxState.marketsMapper).length !== loansCtxState.allMarketsAddresses.length
+      !marketAddressToSubscribe && Object.keys(marketsMapper).length !== allMarketsAddresses.length
 
     if (activeSubs[LOANS_MARKETS_DATA] && (isLoadingNotLoadedSingleMarket || isLoadingAllSatellitesMetadata)) {
       setIsMarketLoading(true)
@@ -108,8 +106,6 @@ export const LoansProvider = ({ children }: Props) => {
           new Set(data.lending_controller[0].loan_tokens.map(({ token: { token_address } }) => token_address)),
         ),
       }))
-
-      if (initialLoadings.current[LOANS_MARKETS_ADDRESSES]) initialLoadings.current[LOANS_MARKETS_ADDRESSES] = false
     },
     onError: (error) => handleSubError(error, LOANS_MARKETS_DATA),
   })
@@ -120,8 +116,6 @@ export const LoansProvider = ({ children }: Props) => {
     shouldResubscribe: true,
     onData: ({ data: { data } }) => {
       if (!data) return
-
-      if (initialLoadings.current[LOANS_CONFIG]) initialLoadings.current[LOANS_CONFIG] = false
 
       setLoansCtxState((prev) => ({
         ...prev,
@@ -135,12 +129,10 @@ export const LoansProvider = ({ children }: Props) => {
   const updateMarketsContext = (indexerData: GetLoansMarketsSubscriptionSubscription) => {
     const newMarkets = normalizeLoansMarkets({ indexerData })
 
-    if (initialLoadings.current[LOANS_MARKETS_DATA]) initialLoadings.current[LOANS_MARKETS_DATA] = false
-
     setLoansCtxState((prev) => ({
       ...prev,
       marketsMapper: { ...prev.marketsMapper, ...newMarkets },
-      marketsAddresses: Array.from(new Set([...prev.marketsAddresses, ...Object.keys(newMarkets)])),
+      marketsAddresses: Array.from(new Set([...(prev?.marketsAddresses ?? []), ...Object.keys(newMarkets)])),
     }))
 
     if (isMarketLoading) setIsMarketLoading(false)
@@ -151,20 +143,34 @@ export const LoansProvider = ({ children }: Props) => {
   }
 
   const providerValue = useMemo(() => {
-    const marketsDataLoading = activeSubs[LOANS_MARKETS_DATA]
-      ? initialLoadings.current[LOANS_MARKETS_DATA] ||
-        initialLoadings.current[LOANS_MARKETS_ADDRESSES] ||
-        isMarketLoading
-      : false
-    const marketsConfigLoading = activeSubs[LOANS_CONFIG] ? initialLoadings.current[LOANS_CONFIG] : false
-
-    return {
-      ...loansCtxState,
-      isLoading: marketsConfigLoading || marketsDataLoading,
+    const commonToReturn = {
       changeLoansSubscriptionsList,
       setMarketAddressToSubscribe,
     }
+
+    const { marketsMapper, config, allMarketsAddresses } = loansCtxState
+    const isLoading =
+      isMarketLoading ||
+      (activeSubs['loansMarkets'] && (marketsMapper === null || allMarketsAddresses === null)) ||
+      (activeSubs['loansConfig'] && config === null) ||
+      (!activeSubs['loansMarkets'] && !activeSubs['loansConfig'])
+
+    if (isLoading) {
+      return {
+        ...commonToReturn,
+        ...EMPTY_LOANS_CONTEXT,
+        isLoading: true,
+      }
+    }
+    const nonNullableProviderValue = replaceNullValuesWithDefault<LoansContextState>(loansCtxState, EMPTY_LOANS_CONTEXT)
+    return {
+      ...commonToReturn,
+      ...nonNullableProviderValue,
+      isLoading: false,
+    }
   }, [loansCtxState, activeSubs, isMarketLoading])
+
+  console.log('loans', { providerValue, activeSubs, loansCtxState })
   return <loansContext.Provider value={providerValue}>{children}</loansContext.Provider>
 }
 

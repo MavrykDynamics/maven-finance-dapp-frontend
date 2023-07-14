@@ -29,10 +29,7 @@ export const ChangeVaultName = ({
   data: ChangeVaultNamePopupDataType
 }) => {
   // TODO: test it
-  const {
-    myVaultsIds: { all: myVaultsIds },
-    vaultsMapper,
-  } = useVaultsContext()
+  const { myVaultsIds, vaultsMapper } = useVaultsContext()
 
   const dispatch = useDispatch()
   useLockBodyScroll(show)

@@ -79,6 +79,7 @@ export const BorrowingExpandCard = ({
     createVaultPopup,
   } = useLoansPopupsContext()
   const { marketsMapper } = useLoansContext()
+  console.log({ marketsMapper })
 
   const history = useHistory()
   const location = useLocation()

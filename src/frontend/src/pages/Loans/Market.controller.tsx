@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useLayoutEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
@@ -43,18 +43,45 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import { VAULTS_DATA, VAULTS_USER_MARKET } from 'providers/VaultsProvider/vaults.provider.consts'
+import {
+  DEFAULT_VAULTS_ACTIVE_SUBS,
+  VAULTS_DATA,
+  VAULTS_USER_MARKET,
+} from 'providers/VaultsProvider/vaults.provider.consts'
 
 export const Market = () => {
   const history = useHistory<{ from?: string }>()
   const {
     location: { state: historyState },
   } = history
-  const dispatch = useDispatch()
   const { assetAddress: currentMarketAddress, tabId } = useParams<{
     assetAddress: string
     tabId: string
   }>()
+
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+      [LOANS_CONFIG]: true,
+    })
+    changeVaultsSubscriptionsList({
+      [VAULTS_DATA]: VAULTS_USER_MARKET,
+    })
+
+    return () => {
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+    }
+  }, [])
+
+  useEffect(() => {
+    setMarketAddressToSubscribe(currentMarketAddress)
+    setVaultsMarketToSub(currentMarketAddress)
+    return () => {
+      setMarketAddressToSubscribe(null)
+      setVaultsMarketToSub(null)
+    }
+  }, [currentMarketAddress])
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const {
@@ -73,26 +100,12 @@ export const Market = () => {
     isLoading: isLoansLoading,
   } = useLoansContext()
 
-  useEffect(() => {
-    changeLoansSubscriptionsList({
-      [LOANS_MARKETS_DATA]: true,
-      [LOANS_CONFIG]: true,
-    })
-    changeVaultsSubscriptionsList({
-      [VAULTS_DATA]: VAULTS_USER_MARKET,
-    })
-
-    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
-  }, [])
-
-  useEffect(() => {
-    setMarketAddressToSubscribe(currentMarketAddress)
-    setVaultsMarketToSub(currentMarketAddress)
-    return () => {
-      setMarketAddressToSubscribe(null)
-      setVaultsMarketToSub(null)
-    }
-  }, [currentMarketAddress])
+  console.log({
+    allMarketsAddresses,
+    marketsMapper,
+    collateralFactor,
+    isLoansLoading,
+  })
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
@@ -117,7 +130,7 @@ export const Market = () => {
 
   const { userTotalBorrowed, userTotalCollateral, userAccruedInterest, userAvailableBorrow } = useMemo(
     () =>
-      myVaultsIds[currentMarketAddress].reduce(
+      myVaultsIds.reduce(
         (acc, itemId) => {
           const vault = vaultsMapper[itemId]
 

@@ -5,21 +5,13 @@ import {
   CollateralType,
   DepositorsFlagType,
   VaultType,
-  VaultsSubsRecordType,
+  VaultsCtxState,
 } from 'providers/VaultsProvider/vaults.provider.types'
 import { calculateAccruedInterest } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { GetVaultsSubscriptionSubscription } from 'utils/__generated__/graphql'
 import { calcMarketAvaliableLiquidity } from 'providers/LoansProvider/helpers/loans.utils'
-import { VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR, VAULTS_USER_MARKET } from '../vaults.provider.consts'
-
-type ReducedVaultsType = {
-  permissionedVaultsIds: string[]
-  myVaultsIds: { all: string[] } & Record<string, string[]>
-  allVaultsIds: string[]
-  vaultsMapper: Record<string, VaultType>
-}
 
 const getVaultsDepositorsData = (
   vault: Exclude<
@@ -59,11 +51,9 @@ const normalizeCollaterals = (
 export const normalizeVaults = ({
   indexerData,
   userAddress,
-  marketAddress,
 }: {
   indexerData: GetVaultsSubscriptionSubscription
   userAddress: string | null
-  marketAddress: string | null
 }) => {
   const {
     lending_controller: [controller],
@@ -80,7 +70,7 @@ export const normalizeVaults = ({
     liquidation_delay_in_minutes,
   } = controller
 
-  return vaults.reduce<ReducedVaultsType>(
+  return vaults.reduce<DeepNonNullable<VaultsCtxState>>(
     (acc, item) => {
       const {
         vault,
@@ -158,15 +148,13 @@ export const normalizeVaults = ({
       // If user is owner add vault id to my vaults list
       if (userAddress) {
         if (userAddress === normallizedVault.ownerAddress) {
-          acc.myVaultsIds.all.push(vault.address)
+          acc.myVaultsIds.push(vault.address)
 
-          if (marketAddress) {
-            if (!acc.myVaultsIds[marketAddress]) {
-              acc.myVaultsIds[marketAddress] = [vault.address]
-            } else {
-              acc.myVaultsIds[marketAddress].push(vault.address)
-            }
-          }
+          // if (!acc.myVaultsMarketsIds[borrowedTokenAddress]) {
+          //   acc.myVaultsMarketsIds[borrowedTokenAddress] = [vault.address]
+          // } else {
+          //   acc.myVaultsMarketsIds[borrowedTokenAddress].push(vault.address)
+          // }
         } else {
           if (depositors.includes(userAddress) || deporsitorsFlag === ANY_USER) {
             acc.permissionedVaultsIds.push(vault.address)
@@ -180,9 +168,8 @@ export const normalizeVaults = ({
     },
     {
       permissionedVaultsIds: [],
-      myVaultsIds: {
-        all: [],
-      },
+      myVaultsIds: [],
+      // myVaultsMarketsIds: {},
       allVaultsIds: [],
       vaultsMapper: {},
     },

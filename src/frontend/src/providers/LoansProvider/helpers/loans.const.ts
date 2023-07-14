@@ -1,3 +1,5 @@
+import { LoansContextState } from '../loans.provider.types'
+
 export const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 
 // actions
@@ -46,3 +48,13 @@ export const DEFAULT_LOANS_SUBS_LOADINGS = {
   [LOANS_MARKETS_ADDRESSES]: true,
   [LOANS_CONFIG]: true,
 } as const
+
+export const EMPTY_LOANS_CONTEXT: DeepNonNullable<LoansContextState> = {
+  allMarketsAddresses: [],
+  marketsAddresses: [],
+  marketsMapper: {},
+  config: {
+    daoFee: 0,
+    collateralFactor: 0,
+  },
+}

@@ -77,7 +77,8 @@ export const CreateNewVault = ({
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const { userTokensBalances } = useUserContext()
   const {
-    myVaultsIds: { all: myVaultsIds },
+    // TODO: test it
+    myVaultsIds,
     vaultsMapper,
   } = useVaultsContext()
 
