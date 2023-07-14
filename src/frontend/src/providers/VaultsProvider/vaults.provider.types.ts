@@ -12,8 +12,10 @@ import {
 import {
   BORROW_VAULT_ASSET_ACTION,
   CHANGE_VAULT_NAME_ACTION,
+  DEPOSIT_COLLATERAL_ACTION,
   REPAY_FULL_VAULT_ACTION,
   REPAY_PART_OF_VAULT_ACTION,
+  WITHDRAW_COLLATERAL_ACTION,
 } from './helpers/vaults.const'
 
 // actions type
@@ -23,6 +25,8 @@ export type VaultsActionsType =
   | typeof BORROW_VAULT_ASSET_ACTION
   | typeof REPAY_PART_OF_VAULT_ACTION
   | typeof REPAY_FULL_VAULT_ACTION
+  | typeof WITHDRAW_COLLATERAL_ACTION
+  | typeof DEPOSIT_COLLATERAL_ACTION
 
 // context types
 export type VaultsContext = {

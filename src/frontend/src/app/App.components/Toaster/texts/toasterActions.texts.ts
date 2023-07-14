@@ -29,7 +29,14 @@ import {
 } from 'providers/LoansProvider/helpers/loans.const'
 
 // vaults
-import { BORROW_VAULT_ASSET_ACTION, CHANGE_VAULT_NAME_ACTION, REPAY_FULL_VAULT_ACTION, REPAY_PART_OF_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import {
+  BORROW_VAULT_ASSET_ACTION,
+  CHANGE_VAULT_NAME_ACTION,
+  DEPOSIT_COLLATERAL_ACTION,
+  REPAY_FULL_VAULT_ACTION,
+  REPAY_PART_OF_VAULT_ACTION,
+  WITHDRAW_COLLATERAL_ACTION,
+} from 'providers/VaultsProvider/helpers/vaults.const'
 
 export const TOASTER_ACTIONS_TEXTS = {
   // doorman actions -------------------------------------
@@ -225,6 +232,27 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Asset repayed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  // vaults collateral actions ---------------------------------
+  [WITHDRAW_COLLATERAL_ACTION]: {
+    start: {
+      title: 'Withdrawing collateral from the vault...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Collateral withdrawn.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DEPOSIT_COLLATERAL_ACTION]: {
+    start: {
+      title: 'Depositing collateral in the vault...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Collateral added.',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
