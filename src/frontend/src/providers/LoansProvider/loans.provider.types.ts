@@ -3,7 +3,6 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import {
   LOANS_MARKETS_DATA,
   LOANS_CONFIG,
-  LOANS_MARKETS_ADDRESSES,
   CREATE_NEW_VAULT_ACTION,
   DEPOSIT_LENDING_ASSET_ACTION,
   WITHDRAW_LENDING_ASSET_ACTION,
@@ -18,7 +17,6 @@ export type LoansActionsType =
 
 export type LoansSubsType = typeof LOANS_MARKETS_DATA | typeof LOANS_CONFIG
 export type LoansSubsRecordType = Record<LoansSubsType, boolean>
-export type LoansSubsLoadingsRecordType = Record<LoansSubsType | typeof LOANS_MARKETS_ADDRESSES, boolean>
 
 export type LendingItemType = {
   lendValue: number

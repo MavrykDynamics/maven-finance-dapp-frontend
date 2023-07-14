@@ -1,17 +1,11 @@
 import { ApolloError, useSubscription } from '@apollo/client'
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 // context
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
-import {
-  LoansContext,
-  LoansContextState,
-  LoansSubsLoadingsRecordType,
-  LoansSubsRecordType,
-  LoansSubsType,
-} from './loans.provider.types'
+import { LoansContext, LoansContextState, LoansSubsRecordType, LoansSubsType } from './loans.provider.types'
 import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
@@ -21,10 +15,9 @@ import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.pr
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import {
   DEFAULT_LOANS_ACTIVE_SUBS,
+  DEFAULT_LOANS_CONTEXT,
   LOANS_CONFIG,
   LOANS_MARKETS_DATA,
-  DEFAULT_LOANS_SUBS_LOADINGS,
-  LOANS_MARKETS_ADDRESSES,
   EMPTY_LOANS_CONTEXT,
 } from './helpers/loans.const'
 
@@ -45,12 +38,7 @@ export const LoansProvider = ({ children }: Props) => {
 
   const [activeSubs, setActiveSubs] = useState<LoansSubsRecordType>(DEFAULT_LOANS_ACTIVE_SUBS)
   const [marketAddressToSubscribe, setMarketAddressToSubscribe] = useState<null | TokenAddressType>(null)
-  const [loansCtxState, setLoansCtxState] = useState<LoansContextState>({
-    allMarketsAddresses: null,
-    marketsAddresses: null,
-    marketsMapper: null,
-    config: null,
-  })
+  const [loansCtxState, setLoansCtxState] = useState<LoansContextState>(DEFAULT_LOANS_CONTEXT)
 
   /**
    * need to handle market loading status manually cun on queyry variable change it resets the loading status, in some cases it shows loading instead of already loaded data
@@ -62,12 +50,12 @@ export const LoansProvider = ({ children }: Props) => {
    * NOTE: loader will be shown only when we set or unset specific satellite address
    **/
   useEffect(() => {
-    const { marketsMapper, allMarketsAddresses } = loansCtxState
-    if (!marketsMapper || !allMarketsAddresses) return
+    const { marketsAddresses, marketsMapper, allMarketsAddresses } = loansCtxState
+    if (!marketsAddresses || !allMarketsAddresses || !marketsMapper) return
 
     const isLoadingNotLoadedSingleMarket = marketAddressToSubscribe && !marketsMapper[marketAddressToSubscribe]
     const isLoadingAllSatellitesMetadata =
-      !marketAddressToSubscribe && Object.keys(marketsMapper).length !== allMarketsAddresses.length
+      !marketAddressToSubscribe && marketsAddresses.length !== allMarketsAddresses.length
 
     if (activeSubs[LOANS_MARKETS_DATA] && (isLoadingNotLoadedSingleMarket || isLoadingAllSatellitesMetadata)) {
       setIsMarketLoading(true)
@@ -170,6 +158,7 @@ export const LoansProvider = ({ children }: Props) => {
     }
   }, [loansCtxState, activeSubs, isMarketLoading])
 
+  // TODO: debug log
   console.log('loans', { providerValue, activeSubs, loansCtxState })
   return <loansContext.Provider value={providerValue}>{children}</loansContext.Provider>
 }

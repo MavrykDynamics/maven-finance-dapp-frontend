@@ -3,31 +3,29 @@ import { usePrevious } from 'react-use'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 // context
+import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
+import { GetVaultsSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { VaultsContext, VaultsCtxState, VaultsSubsRecordType } from './vaults.provider.types'
 
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { VaultsContext, VaultsCtxState, VaultsSubsRecordType } from './vaults.provider.types'
 import {
   SUBSCRIBE_TO_ALL_VAULTS,
-  SUBSCRIBE_TO_USER_MARKET_VAULTS,
+  // SUBSCRIBE_TO_USER_MARKET_VAULTS,
   getUserVaultsSubscription,
 } from './queries/vaults.query'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   DEFAULT_VAULTS_CONTEXT,
   EMPTY_VAULTS_CONTEXT,
   VAULTS_ALL,
   VAULTS_DATA,
-  VAULTS_USER_ALL,
   VAULTS_USER_DEPOSITOR,
-  VAULTS_USER_MARKET,
 } from './vaults.provider.consts'
-import { GetVaultsSubscriptionSubscription } from 'utils/__generated__/graphql'
 
 // helpers
 import { normalizeVaults } from './helpers/vaults.normalizer'
@@ -60,7 +58,6 @@ export const VaultsProvider = ({ children }: Props) => {
         ...prev,
         permissionedVaultsIds: null,
         myVaultsIds: null,
-        myVaultsMarketsIds: null,
       }))
     }
   }, [userAddress])
@@ -90,20 +87,22 @@ export const VaultsProvider = ({ children }: Props) => {
     onError: (error) => handleSubError(error, 'getVaultsSubscription'),
   })
 
-  useSubscription(SUBSCRIBE_TO_USER_MARKET_VAULTS, {
-    skip: activeSubs[VAULTS_DATA] !== 'userIsOwnerAndCertainMarket',
-    shouldResubscribe: true,
-    variables: {
-      userAddress: userAddress ?? '',
-      marketAddress: vaultsMarketToSub ?? '',
-    },
-    onData: ({ data: { data } }) => {
-      if (!data) return
+  // get all vaults for user on certain market
+  // TODO: implement later if it will improve performance
+  // useSubscription(SUBSCRIBE_TO_USER_MARKET_VAULTS, {
+  //   skip: activeSubs[VAULTS_DATA] !== 'userIsOwnerAndCertainMarket',
+  //   shouldResubscribe: true,
+  //   variables: {
+  //     userAddress: userAddress ?? '',
+  //     marketAddress: vaultsMarketToSub ?? '',
+  //   },
+  //   onData: ({ data: { data } }) => {
+  //     if (!data) return
 
-      updateVaultsData(data, userAddress, activeSubs[VAULTS_DATA])
-    },
-    onError: (error) => handleSubError(error, 'getVaultsSubscription'),
-  })
+  //     updateVaultsData(data, userAddress, activeSubs[VAULTS_DATA])
+  //   },
+  //   onError: (error) => handleSubError(error, 'getVaultsSubscription'),
+  // })
 
   const updateVaultsData = (
     indexerData: GetVaultsSubscriptionSubscription,
@@ -115,25 +114,20 @@ export const VaultsProvider = ({ children }: Props) => {
       userAddress,
     })
 
+    const isAllVaultsQuery = filterType === VAULTS_ALL
+    const isPermissionedVaultsQuery = filterType === VAULTS_USER_DEPOSITOR
+
     setVaultsCtxState((prev) => ({
       ...prev,
       vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
-      allVaultsIds:
-        filterType === VAULTS_ALL
-          ? allVaultsIds
-          : Array.from(new Set([...(prev?.allVaultsIds ?? []), ...allVaultsIds])),
+      allVaultsIds: isAllVaultsQuery
+        ? allVaultsIds
+        : Array.from(new Set([...(prev?.allVaultsIds ?? []), ...allVaultsIds])),
       permissionedVaultsIds:
-        filterType === VAULTS_ALL || filterType === VAULTS_USER_DEPOSITOR
+        isAllVaultsQuery || isPermissionedVaultsQuery
           ? permissionedVaultsIds
           : Array.from(new Set([...(prev?.permissionedVaultsIds ?? []), ...permissionedVaultsIds])),
-      myVaultsIds:
-        filterType === VAULTS_ALL || filterType === VAULTS_USER_ALL
-          ? myVaultsIds
-          : Array.from(new Set([...(prev?.myVaultsIds ?? []), ...myVaultsIds])),
-      // myVaultsMarketsIds:
-      //   filterType === VAULTS_USER_MARKET || filterType === VAULTS_ALL || filterType === VAULTS_USER_ALL
-      //     ? myVaultsMarketsIds
-      //     : { ...prev.myVaultsMarketsIds, ...myVaultsMarketsIds },
+      myVaultsIds: Array.from(new Set([...(prev?.myVaultsIds ?? []), ...myVaultsIds])),
     }))
   }
 
@@ -169,6 +163,7 @@ export const VaultsProvider = ({ children }: Props) => {
     }
   }, [vaultsCtxState, activeSubs])
 
+  // TODO: debug log
   console.log('vaults', { vaultsCtxState, providerValue, activeSubs })
   return <vaultsContext.Provider value={providerValue}>{children}</vaultsContext.Provider>
 }

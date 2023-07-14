@@ -34,7 +34,6 @@ export const LIQUIDITY_HISTORY_DATA_TYPES = [
 
 // CONSTS FOR STAKING PROVIDER STATES
 export const LOANS_MARKETS_DATA = 'loansMarkets'
-export const LOANS_MARKETS_ADDRESSES = 'loansMarketsAllAddresses'
 export const LOANS_CONFIG = 'loansConfig'
 
 // PROVIDER DEFAULT CONSTS
@@ -43,11 +42,12 @@ export const DEFAULT_LOANS_ACTIVE_SUBS = {
   [LOANS_CONFIG]: false,
 } as const
 
-export const DEFAULT_LOANS_SUBS_LOADINGS = {
-  [LOANS_MARKETS_DATA]: true,
-  [LOANS_MARKETS_ADDRESSES]: true,
-  [LOANS_CONFIG]: true,
-} as const
+export const DEFAULT_LOANS_CONTEXT: LoansContextState = {
+  allMarketsAddresses: null,
+  marketsAddresses: null,
+  marketsMapper: null,
+  config: null,
+}
 
 export const EMPTY_LOANS_CONTEXT: DeepNonNullable<LoansContextState> = {
   allMarketsAddresses: [],
