@@ -37,6 +37,7 @@ import {
   BGWhitelist,
 } from './BreakGlass.style'
 import { Page } from 'styles'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 
 const ALL = 'All Contracts'
 const GENERAL = 'General Contracts'
@@ -132,7 +133,7 @@ export const BreakGlass = () => {
                 <div className="adress-list">
                   {whitelistDevelopers.length > 0 ? (
                     whitelistDevelopers.map((devAddress) => (
-                      <TzAddress key={devAddress} tzAddress={devAddress} hasIcon />
+                      <TzAddress key={devAddress} tzAddress={devAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
                     ))
                   ) : (
                     <div>None</div>

@@ -31,7 +31,7 @@ export const CouncilMemberView = (props: Props) => {
 
   const isMe = userId === userAddress
   const content = (
-    <CouncilMemberStyled className={isMe ? 'is-me' : ''}>
+    <CouncilMemberStyled>
       <div className="inner">
         <AvatarStyle>
           <img

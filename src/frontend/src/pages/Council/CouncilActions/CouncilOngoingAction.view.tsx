@@ -12,6 +12,7 @@ import { getSeparateCamelCase } from '../../../utils/parse'
 import { scrollToFullView } from 'utils/scrollToFullView'
 import { bytesToText, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
 import { convertBytesAddressToAddress } from 'app/App.helpers'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // styles
 import { CouncilActionStyled } from '../Council.style'
@@ -86,14 +87,24 @@ export function CouncilOngoingAction(props: Props) {
           {isChangeCouncilMember && (
             <div className="column">
               <div className="column-name">Council Member to change</div>
-              <TzAddress className="column-address" tzAddress={oldAddress} hasIcon={true} />
+              <TzAddress
+                type={PRIMARY_TZ_ADDRESS_COLOR}
+                className="column-address"
+                tzAddress={oldAddress}
+                hasIcon={true}
+              />
             </div>
           )}
 
           {isAddCouncilMember && (
             <div className="column">
               <div className="column-name">Council Member Address</div>
-              <TzAddress className="column-address" tzAddress={address} hasIcon={true} />
+              <TzAddress
+                type={PRIMARY_TZ_ADDRESS_COLOR}
+                className="column-address"
+                tzAddress={address}
+                hasIcon={true}
+              />
             </div>
           )}
 
@@ -116,7 +127,12 @@ export function CouncilOngoingAction(props: Props) {
           {isChangeCouncilMember ? (
             <div className="column">
               <div className="column-name">New Council Member Address</div>
-              <TzAddress className="column-address" tzAddress={address} hasIcon={true} />
+              <TzAddress
+                type={PRIMARY_TZ_ADDRESS_COLOR}
+                className="column-address"
+                tzAddress={address}
+                hasIcon={true}
+              />
             </div>
           ) : (
             <div className="column-value"></div>
@@ -150,7 +166,7 @@ export function CouncilOngoingAction(props: Props) {
         <div className="row two-columns">
           <div className="column">
             <div className="column-name">Council Member to remove</div>
-            <TzAddress className="column-address" tzAddress={address} hasIcon={true} />
+            <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} className="column-address" tzAddress={address} hasIcon={true} />
           </div>
 
           <div className="column">

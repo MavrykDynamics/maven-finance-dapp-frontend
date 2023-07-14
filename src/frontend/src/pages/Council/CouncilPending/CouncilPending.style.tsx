@@ -18,7 +18,7 @@ export const CouncilPendingStyled = styled(Card)`
     font-size: 14px;
     line-height: 21px;
 
-    color: ${({ theme }) => theme.cardBorderColor};
+    color: ${({ theme }) => theme.strokeColor};
   }
 
   &.addVestee,
@@ -109,7 +109,6 @@ export const CouncilPendingStyled = styled(Card)`
     font-weight: 600;
     font-size: 18px;
     line-height: 18px;
-    color: ${({ theme }) => theme.textColor};
     margin-bottom: 20px;
 
     &::first-letter {
@@ -125,7 +124,7 @@ export const CouncilPendingStyled = styled(Card)`
   .parameters-link {
     display: block;
 
-    color: ${({ theme }) => theme.textColorHovered};
+    color: ${({ theme }) => theme.linksAndButtons};
     font-weight: 500;
     font-size: 14px;
     line-height: 24px;
@@ -156,14 +155,12 @@ export const CouncilPendingStyled = styled(Card)`
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
-
-      color: ${({ theme }) => theme.textColor};
     }
 
     .parameters-value,
     .parameters-value p {
       margin: 0;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
       font-weight: 600;
       font-size: 16px;
       line-height: 16px;
@@ -182,7 +179,7 @@ export const CouncilPendingStyled = styled(Card)`
       font-weight: 600;
       font-size: 14px;
       line-height: 14px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.subHeadingText};
       margin-top: 0;
       margin-bottom: 10px;
     }
@@ -252,6 +249,8 @@ export const CouncilModalBase = styled.div<{ theme: MavrykTheme }>`
     font-size: 18px;
     line-height: 27px;
 
+    color: ${({ theme }) => theme.subHeadingText};
+
     &::-webkit-scrollbar {
       position: relative;
       width: 15px;
@@ -265,7 +264,7 @@ export const CouncilModalBase = styled.div<{ theme: MavrykTheme }>`
       border-right: 5px solid rgba(0, 0, 0, 0);
       border-radius: 6px;
       -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-      background-color: ${({ theme }) => theme.cardBorderColor};
+      background-color: ${({ theme }) => theme.scrollBlockColor};
     }
   }
 
@@ -274,6 +273,6 @@ export const CouncilModalBase = styled.div<{ theme: MavrykTheme }>`
     bottom: 25px;
     height: 50px;
     width: 85%;
-    background: linear-gradient(to bottom, transparent 0%, #160e3f 60%);
+    background: ${({ theme }) => `linear-gradient(to bottom, transparent 0%, ${theme.cards} 60%)`};
   }
 `

@@ -38,6 +38,7 @@ export const ffff = 'rgba(119, 164, 242, 0)'
 export const dropDownColor = '#0000007a'
 export const modalsBackdropColor = 'rgba(0, 0, 0, 0.5)'
 
+// TODO: add loader bg to themes
 export const dark = {
   // primary colors
   selectedColor: '#8D86EB',
@@ -54,7 +55,7 @@ export const dark = {
   strokeColor: '#8D86EB',
   divider: '#282F3A',
   messagesBackground: '#1E1E1E',
-  strokeCards: '#00000033',
+  strokeCards: '#282F3A',
   footerColor: '#121212',
   strokeForForms: '#8D86EB',
   // secondary colors
@@ -73,7 +74,7 @@ export const dark = {
   menuBackgroundActiveColor: 'linear-gradient(90deg, #38237c 0%, rgba(80, 80, 142, 0) 100%)',
   popupBackdropColor: '#0000007a',
   pageHeaderColor: '#FFFFFF',
-  scrollBlockColor: '#503EAA',
+  scrollBlockColor: '#8D86EB',
   cardHoverColor: 'rgba(134, 212, 201, 0.5)',
   rpcNodeSelecledColor: '#86D4C9',
   roiCalculatorBackground: 'linear-gradient(180deg, #503eaa 0%, rgba(80, 62, 170, 0) 100%)',
@@ -171,7 +172,7 @@ export const light = {
   menuBackgroundActiveColor: 'linear-gradient(90deg, rgba(134, 212, 201, 0.5) 0%, rgba(134, 212, 201, 0) 100%);',
   popupBackdropColor: '#0000007a',
   pageHeaderColor: '#FFFFFF',
-  scrollBlockColor: '#503EAA',
+  scrollBlockColor: '#8D86EB',
   cardHoverColor: 'rgba(134, 212, 201, 0.5)',
   rpcNodeSelecledColor: '#86D4C9',
   roiCalculatorBackground: 'linear-gradient(180deg, rgba(80, 62, 170, 0.20) 0%, rgba(80, 62, 170, 0.00) 100%)',

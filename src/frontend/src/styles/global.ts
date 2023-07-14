@@ -142,7 +142,8 @@ p {
   {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 10px;
-    background-color: ${({ theme }) => theme.scrollBlockColor}4d;
+    // TODO: is displayed when there is no scroll, you need to fix or remove
+    /* background-color: ${({ theme }) => theme.scrollBlockColor}4d; */
   }
 .scroll-block::-webkit-scrollbar
   {

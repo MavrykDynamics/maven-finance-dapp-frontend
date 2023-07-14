@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { cyanColor, headerColor, royalPurpleColor } from 'styles/colors'
 
 export const AccordionWrapper = styled.div<{ theme: MavrykTheme }>`
   transition: 0.5s all;
@@ -16,10 +15,11 @@ export const AccordionToggler = styled.div<{ theme: MavrykTheme }>`
   cursor: pointer;
   font-weight: 400;
   font-size: 14px;
-  color: ${cyanColor};
+  color: ${({ theme }) => theme.linksAndButtons};
 
   svg {
-    stroke: ${cyanColor};
+    stroke: ${({ theme }) => theme.linksAndButtons};
+    fill: transparent;
   }
 
   .accordion-icon {
@@ -53,26 +53,6 @@ export const AccordionContent = styled.div<{ theme: MavrykTheme }>`
     opacity: 1;
     max-height: 185px;
     margin-top: 10px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0);
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-  }
-
-  &::-webkit-scrollbar {
-    width: 15px;
-    background-color: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-clip: padding-box;
-    border-left: 5px solid rgba(0, 0, 0, 0);
-    border-right: 5px solid rgba(0, 0, 0, 0);
-    border-radius: 6px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: ${royalPurpleColor};
   }
 `
 

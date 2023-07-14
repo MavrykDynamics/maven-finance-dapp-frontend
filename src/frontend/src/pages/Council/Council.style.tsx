@@ -61,6 +61,8 @@ export const PropagateBreakGlassCouncilCard = styled(Card)<{ theme: MavrykTheme 
     font-weight: 500;
     font-size: 14px;
     line-height: 24px;
+
+    color: ${({ theme }) => theme.regularText};;
   }
 
   button {
@@ -77,23 +79,6 @@ export const ReviewCard = styled(Card)<{
   padding: 30px;
   margin: 0;
   height: 201px;
-`
-
-export const GoBack = styled(Card)`
-  display: flex;
-  align-items: center;
-  padding: 0 26px;
-  height: 75px;
-
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 21px;
-  color: ${({ theme }) => theme.headerColor};
-  cursor: pointer;
-
-  svg {
-    margin-right: 8px;
-  }
 `
 
 export const AvaliableActions = styled(Card)<{ theme: MavrykTheme }>`
@@ -139,7 +124,7 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
 
   .bottom {
     padding: 20px 30px;
-    border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border-top: 1px solid ${({ theme }) => theme.divider};
   }
 
   .row {
@@ -167,7 +152,7 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
       line-height: 21px;
 
       text-transform: capitalize;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.subHeadingText};
     }
 
     .column-value {
@@ -175,7 +160,7 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
       font-size: 16px;
       line-height: 22px;
 
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
       text-transform: capitalize;
       text-overflow: ellipsis;
       max-width: inherit;
@@ -194,7 +179,7 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
       font-size: 14px;
       line-height: 24px;
 
-      color: ${({ theme }) => theme.topBarLinkColor};
+      color: ${({ theme }) => theme.linksAndButtons};
       text-decoration: underline;
       text-overflow: ellipsis;
       max-width: inherit;
@@ -207,13 +192,6 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
       font-weight: 600;
       font-size: 16px;
       line-height: 22px;
-
-      color: ${({ theme }) => theme.dataColor};
-
-      svg {
-        stroke: ${({ theme }) => theme.dataColor};
-        width: 20px;
-      }
     }
 
     .is-green {
@@ -238,7 +216,7 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
 
     .icon-send {
       svg {
-        fill: ${({ theme }) => theme.topBarLinkColor};
+        fill: ${({ theme }) => theme.linksAndButtons};
       }
 
       &:hover {

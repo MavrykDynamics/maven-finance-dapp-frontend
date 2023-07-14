@@ -1,27 +1,25 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
 
-import { headerColor, cyanColor, royalPurpleColor, skyColor } from '../../../styles/colors'
-
 export const ContractCardWrapper = styled.div<{ theme: MavrykTheme }>`
   width: 48%;
   min-height: 135px;
   height: fit-content;
-  border: 1px solid ${royalPurpleColor};
+  border: 1px solid ${({ theme }) => theme.strokeCards};
   border-radius: 10px;
   display: flex;
   flex-direction: column;
 
   &:hover,
   &.active {
-    border: 1px solid ${cyanColor};
-    box-shadow: 0px 4px 4px rgba(134, 212, 201, 0.5);
+    border: 1px solid ${({ theme }) => theme.linksAndButtons};
+    box-shadow: 0px 4px 4px ${({ theme }) => theme.cardHoverColor};
   }
 `
 
 export const ContractCardTopSection = styled.div<{ theme: MavrykTheme }>`
   padding: 22px 20px 18px 20px;
-  background-color: ${({ theme }) => theme.containerColor};
+  background-color: ${({ theme }) => theme.cards};
   display: flex;
   border-radius: 10px;
   flex-direction: column;
@@ -43,7 +41,7 @@ export const ContractCardTopSection = styled.div<{ theme: MavrykTheme }>`
     line-height: 24px;
     width: 180px;
     height: 60px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
     padding-right: 10px;
     text-transform: capitalize;
   }
@@ -52,18 +50,18 @@ export const ContractCardTopSection = styled.div<{ theme: MavrykTheme }>`
     margin-top: 5px;
     justify-content: space-between;
     display: flex;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
     column-gap: 15px;
     font-weight: 600;
     font-size: 14px;
 
     > div {
       font-size: 16px;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
     }
 
     svg {
-      stroke: ${({ theme }) => theme.dataColor};
+      stroke: ${({ theme }) => theme.primaryText};
     }
   }
 `
