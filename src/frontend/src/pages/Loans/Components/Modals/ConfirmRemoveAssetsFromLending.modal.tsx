@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // components
@@ -8,9 +9,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 // consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { ConfirmRemoveLendingAssetDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
-import { DEPOSIT_LENDING_ASSET_ACTION } from 'providers/LoansProvider/helpers/loans.const'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+import { WITHDRAW_LENDING_ASSET_ACTION } from 'providers/LoansProvider/helpers/loans.const'
 
 // actions
 import { withdrawLendingAssetAction } from 'providers/LoansProvider/actions/loans.actions'
@@ -22,11 +21,7 @@ import { LoansModalBase } from './Modals.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // helpers
-import { sleep } from 'utils/api/sleep'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
-import { unknownToError } from 'errors/error'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -35,7 +30,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
-import { TezosWalletErrorPayload } from 'errors/error.type'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 export const ConfirmRemoveAssetsFromLending = ({
   closePopup,
@@ -49,76 +44,49 @@ export const ConfirmRemoveAssetsFromLending = ({
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const {
     contractAddresses: { lendingControllerAddress },
-    toggleActionFullScreenLoader,
-    toggleActionCompletion,
-    setAction,
   } = useDappConfigContext()
-  const { bug, info, loading } = useToasterContext()
+  const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
 
   useLockBodyScroll(show)
 
   const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
-  if (!data || !loanToken || !loanToken.rate) return null
+  const { currentLendedAmount = 0, inputAmount = 0, callback = () => {} } = data ?? {}
+  const { symbol = '', rate: originalRate } = loanToken ?? {}
+  const rate = originalRate ?? 0
 
-  const { currentLendedAmount, inputAmount, callback } = data
-  const { symbol, rate } = loanToken
-
-  const withdrawHandler = async () => {
-    if (checkWhetherTokenIsLoanToken(loanToken)) {
-      if (!userAddress) {
-        bug('Click Connect in the left menu', 'Please connect your wallet')
-        return
-      }
-      if (!lendingControllerAddress) {
-        bug('Wrong lending address')
-        return
-      }
-
-      try {
-        const actionResult = await withdrawLendingAssetAction(lendingControllerAddress, inputAmount, loanToken, () => {
-          closePopup()
-          callback()
-        })
-
-        if (checkIfActionSuccess(actionResult)) {
-          const { operation } = actionResult
-          toggleActionFullScreenLoader(true)
-          toggleActionCompletion(true)
-
-          info(
-            TOASTER_ACTIONS_TEXTS[DEPOSIT_LENDING_ASSET_ACTION]['start']['message'],
-            TOASTER_ACTIONS_TEXTS[DEPOSIT_LENDING_ASSET_ACTION]['start']['title'],
-          )
-
-          await sleep(5000)
-
-          // show toaster loader after 5000ms after operation started
-          const toasterId = loading(
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          )
-
-          toggleActionFullScreenLoader(false)
-
-          const operationConfirm = await operation.confirmation()
-          const operationLvl = operationConfirm.block.header.level
-
-          setAction({ actionName: DEPOSIT_LENDING_ASSET_ACTION, toasterId, operationLvl })
-        } else if (isContractErrorPayload(actionResult.error)) {
-          const { message, description } = actionResult.error as TezosWalletErrorPayload
-          bug(description, message)
-        } else {
-          throw new Error(actionResult.error.message)
-        }
-      } catch (e) {
-        setAction(null)
-        const parsedError = unknownToError(e)
-        bug(parsedError.message)
-      }
+  const withdrawCb = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
     }
-  }
+    if (!lendingControllerAddress) {
+      bug('Wrong lending address')
+      return null
+    }
+
+    if (loanToken && checkWhetherTokenIsLoanToken(loanToken)) {
+      return await withdrawLendingAssetAction(lendingControllerAddress, inputAmount, loanToken, () => {
+        closePopup()
+        callback()
+      })
+    }
+
+    return null
+  }, [bug, callback, closePopup, inputAmount, lendingControllerAddress, loanToken, userAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: WITHDRAW_LENDING_ASSET_ACTION,
+      actionFn: withdrawCb,
+    }),
+    [withdrawCb],
+  )
+
+  const withdrawHandler = useContractAction(contractActionProps)
+
+  if (!data || !loanToken || !loanToken.rate) return null
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
