@@ -18,6 +18,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { validateVaultLength } from './CreateNewVault.modal'
 import { containSpaces } from 'app/App.utils/input'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { useUserVaultsNames } from 'providers/VaultsProvider/hooks/useVaultsNames'
 
 export const ChangeVaultName = ({
   closePopup,
@@ -28,8 +29,7 @@ export const ChangeVaultName = ({
   show: boolean
   data: ChangeVaultNamePopupDataType
 }) => {
-  // TODO: test it
-  const { myVaultsIds, vaultsMapper } = useVaultsContext()
+  const { vaultNames, isLoading: isVaultsNamesLoading } = useUserVaultsNames()
 
   const dispatch = useDispatch()
   useLockBodyScroll(show)
@@ -56,7 +56,7 @@ export const ChangeVaultName = ({
 
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus = validateVaultLength(value, myVaultsIds, vaultsMapper)
+    const validationStatus = validateVaultLength(value, vaultNames)
     setNewVaultName((prev) => ({ ...prev, name: value, validationStatus }))
   }
 
@@ -69,7 +69,7 @@ export const ChangeVaultName = ({
   const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (containSpaces(e.target.value)) {
       const trimmedValue = e.target.value.trim()
-      const validationStatus = validateVaultLength(trimmedValue, myVaultsIds, vaultsMapper)
+      const validationStatus = validateVaultLength(trimmedValue, vaultNames)
       setNewVaultName((prev) => ({ ...prev, validationStatus, name: trimmedValue }))
     }
   }

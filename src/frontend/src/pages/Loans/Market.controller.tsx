@@ -27,7 +27,6 @@ import { EmptyContainer } from 'app/App.style'
 import { MarketPagination, MarketStyled, ThreeLevelListItem } from './Loans.style'
 
 // types
-import { State } from 'reducers'
 import { MarketPageHeader } from './Components/LoansPageHeader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -46,7 +45,7 @@ import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   VAULTS_DATA,
-  VAULTS_USER_MARKET,
+  VAULTS_USER_ALL,
 } from 'providers/VaultsProvider/vaults.provider.consts'
 
 export const Market = () => {
@@ -59,13 +58,24 @@ export const Market = () => {
     tabId: string
   }>()
 
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { myVaultsIds, vaultsMapper, isLoading: isVaultsLoading, changeVaultsSubscriptionsList } = useVaultsContext()
+  const {
+    allMarketsAddresses,
+    marketsMapper,
+    config: { collateralFactor },
+    changeLoansSubscriptionsList,
+    setMarketAddressToSubscribe,
+    isLoading: isLoansLoading,
+  } = useLoansContext()
+
   useEffect(() => {
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
       [LOANS_CONFIG]: true,
     })
     changeVaultsSubscriptionsList({
-      [VAULTS_DATA]: VAULTS_USER_MARKET,
+      [VAULTS_DATA]: VAULTS_USER_ALL,
     })
 
     return () => {
@@ -76,38 +86,12 @@ export const Market = () => {
 
   useEffect(() => {
     setMarketAddressToSubscribe(currentMarketAddress)
-    setVaultsMarketToSub(currentMarketAddress)
+
     return () => {
       setMarketAddressToSubscribe(null)
-      setVaultsMarketToSub(null)
     }
   }, [currentMarketAddress])
 
-  const { tokensMetadata, tokensPrices } = useTokensContext()
-  const {
-    myVaultsIds,
-    vaultsMapper,
-    isLoading: isVaultsLoading,
-    changeVaultsSubscriptionsList,
-    setVaultsMarketToSub,
-  } = useVaultsContext()
-  const {
-    allMarketsAddresses,
-    marketsMapper,
-    config: { collateralFactor },
-    changeLoansSubscriptionsList,
-    setMarketAddressToSubscribe,
-    isLoading: isLoansLoading,
-  } = useLoansContext()
-
-  console.log({
-    allMarketsAddresses,
-    marketsMapper,
-    collateralFactor,
-    isLoansLoading,
-  })
-
-  const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
@@ -134,7 +118,7 @@ export const Market = () => {
         (acc, itemId) => {
           const vault = vaultsMapper[itemId]
 
-          if (!loanToken?.rate) return acc
+          if (!loanToken?.rate || vault.borrowedTokenAddress !== currentMarketAddress) return acc
           const { decimals: loanTokenDecimals, rate: loanTokenRate } = loanToken
 
           const vaultCollateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices)
@@ -159,7 +143,7 @@ export const Market = () => {
           userAvailableBorrow: 0,
         },
       ),
-    [accountPkh, myVaultsIds, currentMarketAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
+    [myVaultsIds, currentMarketAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
   )
 
   if (isLoansLoading || isVaultsLoading) {

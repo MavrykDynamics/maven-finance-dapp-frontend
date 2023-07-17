@@ -149,16 +149,8 @@ export const normalizeVaults = ({
       if (userAddress) {
         if (userAddress === normallizedVault.ownerAddress) {
           acc.myVaultsIds.push(vault.address)
-
-          // if (!acc.myVaultsMarketsIds[borrowedTokenAddress]) {
-          //   acc.myVaultsMarketsIds[borrowedTokenAddress] = [vault.address]
-          // } else {
-          //   acc.myVaultsMarketsIds[borrowedTokenAddress].push(vault.address)
-          // }
-        } else {
-          if (depositors.includes(userAddress) || deporsitorsFlag === ANY_USER) {
-            acc.permissionedVaultsIds.push(vault.address)
-          }
+        } else if (depositors.includes(userAddress) || deporsitorsFlag === ANY_USER) {
+          acc.permissionedVaultsIds.push(vault.address)
         }
       }
 
@@ -169,7 +161,6 @@ export const normalizeVaults = ({
     {
       permissionedVaultsIds: [],
       myVaultsIds: [],
-      // myVaultsMarketsIds: {},
       allVaultsIds: [],
       vaultsMapper: {},
     },

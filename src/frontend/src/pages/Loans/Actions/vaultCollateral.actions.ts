@@ -20,7 +20,7 @@ import { State } from 'reducers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { DepositCollateralType } from 'providers/VaultsProvider/vaults.provider.types'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // remove collateral from the vault
 export const withdrawCollateralAction =
@@ -95,7 +95,13 @@ export const withdrawCollateralAction =
 export const depositCollateralsAction =
   (
     vaultAddress: string,
-    collateralTokens: Array<DepositCollateralType>,
+    collateralTokens: Array<{
+      collateralName: string
+      amount: number
+      id: number
+      address: string
+      type: TokenType
+    }>,
     callback: () => void,
     bakerAddress?: string | null,
   ) =>

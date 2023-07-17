@@ -13,11 +13,7 @@ import { VaultsContext, VaultsCtxState, VaultsSubsRecordType } from './vaults.pr
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import {
-  SUBSCRIBE_TO_ALL_VAULTS,
-  // SUBSCRIBE_TO_USER_MARKET_VAULTS,
-  getUserVaultsSubscription,
-} from './queries/vaults.query'
+import { SUBSCRIBE_TO_ALL_VAULTS, getUserVaultsSubscription } from './queries/vaults.query'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   DEFAULT_VAULTS_CONTEXT,
@@ -49,7 +45,6 @@ export const VaultsProvider = ({ children }: Props) => {
   }
 
   const [activeSubs, setActiveSubs] = useState<VaultsSubsRecordType>(DEFAULT_VAULTS_ACTIVE_SUBS)
-  const [vaultsMarketToSub, setVaultsMarketToSub] = useState<string | null>(null)
   const [vaultsCtxState, setVaultsCtxState] = useState<VaultsCtxState>(DEFAULT_VAULTS_CONTEXT)
 
   useEffect(() => {
@@ -87,23 +82,6 @@ export const VaultsProvider = ({ children }: Props) => {
     onError: (error) => handleSubError(error, 'getVaultsSubscription'),
   })
 
-  // get all vaults for user on certain market
-  // TODO: implement later if it will improve performance
-  // useSubscription(SUBSCRIBE_TO_USER_MARKET_VAULTS, {
-  //   skip: activeSubs[VAULTS_DATA] !== 'userIsOwnerAndCertainMarket',
-  //   shouldResubscribe: true,
-  //   variables: {
-  //     userAddress: userAddress ?? '',
-  //     marketAddress: vaultsMarketToSub ?? '',
-  //   },
-  //   onData: ({ data: { data } }) => {
-  //     if (!data) return
-
-  //     updateVaultsData(data, userAddress, activeSubs[VAULTS_DATA])
-  //   },
-  //   onError: (error) => handleSubError(error, 'getVaultsSubscription'),
-  // })
-
   const updateVaultsData = (
     indexerData: GetVaultsSubscriptionSubscription,
     userAddress: string | null,
@@ -120,14 +98,10 @@ export const VaultsProvider = ({ children }: Props) => {
     setVaultsCtxState((prev) => ({
       ...prev,
       vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
-      allVaultsIds: isAllVaultsQuery
-        ? allVaultsIds
-        : Array.from(new Set([...(prev?.allVaultsIds ?? []), ...allVaultsIds])),
+      allVaultsIds: isAllVaultsQuery ? allVaultsIds : prev.allVaultsIds,
       permissionedVaultsIds:
-        isAllVaultsQuery || isPermissionedVaultsQuery
-          ? permissionedVaultsIds
-          : Array.from(new Set([...(prev?.permissionedVaultsIds ?? []), ...permissionedVaultsIds])),
-      myVaultsIds: Array.from(new Set([...(prev?.myVaultsIds ?? []), ...myVaultsIds])),
+        isAllVaultsQuery || isPermissionedVaultsQuery ? permissionedVaultsIds : prev.permissionedVaultsIds,
+      myVaultsIds,
     }))
   }
 
@@ -136,17 +110,25 @@ export const VaultsProvider = ({ children }: Props) => {
   }
 
   const providerValue = useMemo(() => {
+    const { vaultsMapper, myVaultsIds, allVaultsIds, permissionedVaultsIds } = vaultsCtxState
     const commonToReturn = {
       changeVaultsSubscriptionsList,
-      setVaultsMarketToSub,
     }
-    const { vaultsMapper, myVaultsIds, allVaultsIds, permissionedVaultsIds } = vaultsCtxState
+
+    /**
+     * isLoading indicates whethet provider is loading smth, so we need to show loader, not load in background, cases:
+     * 1. if provider subscriptions don't used and don't have any data loaded
+     * 2. if we subscribed to all vaults and allVaultsIds list is empty
+     * 3. if we subscribed to vaults where user is depositor and permissionedVaultsIds list is empty
+     * 4. if we subscribed to vaults where user is owner and myVaultsIds list is empty
+     */
     const isLoading =
-      vaultsMapper === null ||
+      (!activeSubs[VAULTS_DATA] && vaultsMapper === null) ||
       (activeSubs[VAULTS_DATA] === 'allVaults' && allVaultsIds === null) ||
       (activeSubs[VAULTS_DATA] === 'userIsDepositor' && permissionedVaultsIds === null) ||
       (activeSubs[VAULTS_DATA] === 'userIsOwner' && myVaultsIds === null)
 
+    // if provider is loading smth return loading true and default empty context (nonNullable)
     if (isLoading) {
       return {
         ...commonToReturn,
@@ -155,6 +137,7 @@ export const VaultsProvider = ({ children }: Props) => {
       }
     }
 
+    // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
     const nonNullableProviderValue = replaceNullValuesWithDefault<VaultsCtxState>(vaultsCtxState, EMPTY_VAULTS_CONTEXT)
     return {
       ...commonToReturn,
@@ -163,7 +146,7 @@ export const VaultsProvider = ({ children }: Props) => {
     }
   }, [vaultsCtxState, activeSubs])
 
-  // TODO: debug log
+  // TODO: debug log, remove when no need
   console.log('vaults', { vaultsCtxState, providerValue, activeSubs })
   return <vaultsContext.Provider value={providerValue}>{children}</vaultsContext.Provider>
 }
