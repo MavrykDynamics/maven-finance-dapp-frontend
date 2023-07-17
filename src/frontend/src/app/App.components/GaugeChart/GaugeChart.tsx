@@ -63,13 +63,17 @@ export const GaugeChart = ({ children, maxValue, minValue, currentValue, isProgr
       <BackgroundArc
         className={`colored-arc`}
         offset={isProgress ? progressArcAngle : 0}
-        paint={isProgress ? colors[themeSelected]['gaugeChartColor'] : `url(#${GRADIENT_NAME})`}
+        paint={isProgress ? colors[themeSelected]['gaugeChartArcColor'] : `url(#${GRADIENT_NAME})`}
       />
 
-      <Backdrop className="backdrop" />
+      <Backdrop
+        className="backdrop"
+        color={colors[themeSelected].backgroundColor}
+        opacity={themeSelected === 'light' ? 1 : 0.3}
+      />
       <ValueWrapper>{children}</ValueWrapper>
       <ArrowStyled angle={arrowAngle}>
-        <Arrow />
+        <Arrow color={colors[themeSelected].regularText} />
       </ArrowStyled>
     </GaugeChartStyled>
   )

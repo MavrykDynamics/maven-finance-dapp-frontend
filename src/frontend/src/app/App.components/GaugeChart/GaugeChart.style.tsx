@@ -55,7 +55,7 @@ export const ValueWrapper = styled.div<{ theme: MavrykTheme }>`
   align-items: center;
   justify-content: center;
 
-  background: ${({ theme }) => theme.messagesBackground};
+  background: ${({ theme }) => theme.gaugeChartCircleBackgroundColor};
   color: ${({ theme }) => theme.primaryText};
 
   > * {

@@ -87,7 +87,8 @@ export const dark = {
   primaryChartColor: '#77A4F2',
   secondaryChartColor: '#77A4F2',
   histogramChartColor: '#77A4F2',
-  gaugeChartColor: '#86D4C9',
+  gaugeChartArcColor: '#86D4C9',
+  gaugeChartCircleBackgroundColor: '#1E1E1E',
   gradientDiagramBackgroundColor: '#696969',
   // loaders
   shineAnimationGradient: `linear-gradient(to right, #8D86EB 0, #86D4C9 10%, #8D86EB 20%)`,
@@ -177,7 +178,8 @@ export const light = {
   primaryChartColor: '#77A4F2',
   secondaryChartColor: '#77A4F2',
   histogramChartColor: '#77A4F2',
-  gaugeChartColor: '#86D4C9',
+  gaugeChartArcColor: '#86D4C9',
+  gaugeChartCircleBackgroundColor: '#FFFFFF',
   gradientDiagramBackgroundColor: '#696969',
   // loaders
   shineAnimationGradient: `linear-gradient(to right, #8D86EB 0, #86D4C9 10%, #8D86EB 20%)`,
@@ -267,7 +269,8 @@ export const space = {
   primaryChartColor: '#77A4F2',
   secondaryChartColor: '#86D4C9',
   histogramChartColor: '#77A4F2',
-  gaugeChartColor: '#86D4C9',
+  gaugeChartArcColor: '#86D4C9',
+  gaugeChartCircleBackgroundColor: '#38237C',
   gradientDiagramBackgroundColor: '#696969',
   // loaders
   shineAnimationGradient: `linear-gradient(to right, #8D86EB 0, #86D4C9 10%, #8D86EB 20%)`,
