@@ -1,4 +1,4 @@
-import type { Emergency_Governance } from '../generated/graphqlTypes'
+import type { Emergency_Governance } from '../__generated__/graphql'
 
 import { normalizeEmergencyGovernance } from '../../pages/EmergencyGovernance/EmergencyGovernance.helpers'
 
