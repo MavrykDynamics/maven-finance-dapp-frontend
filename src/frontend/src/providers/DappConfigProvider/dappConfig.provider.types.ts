@@ -10,8 +10,15 @@ import { TezosWalletErrorPayload } from 'errors/error.type'
 import { ThemeType } from 'consts/theme.const'
 import { LoansActionsType } from 'providers/LoansProvider/loans.provider.types'
 import { VaultsActionsType } from 'providers/VaultsProvider/vaults.provider.types'
+import { ProposalActionsTypes } from 'providers/ProposalsProvider/helpers/proposals.types'
 
-export type ActionTypes = StakeActionType | UserActionsType | SatelliteActionsType | LoansActionsType | VaultsActionsType
+export type ActionTypes =
+  | StakeActionType
+  | UserActionsType
+  | SatelliteActionsType
+  | LoansActionsType
+  | VaultsActionsType
+  | ProposalActionsTypes
 
 export type DappConfigContext = {
   // data

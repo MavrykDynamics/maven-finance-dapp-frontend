@@ -1,22 +1,3 @@
-import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
-import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
-import { getGovernanceStorage } from './GovernanseData.actions'
-import { showToaster, hideToaster } from 'app/App.components/Toaster/Toaster.actions'
-
-import {
-  TOASTER_ERROR,
-  TOASTER_INFO,
-  ACTION_START_MESSAGE_TEXT,
-  TOASTER_LOADING,
-  TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
-  TOASTER_SUCCESS,
-  ACTION_COMPLETION_MESSAGE_TEXT,
-} from 'app/App.components/Toaster/Toaster.constants'
-
-import { AppDispatch, GetState } from 'app/App.controller'
-import { State } from 'reducers'
-import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
-
 export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 

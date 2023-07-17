@@ -1,4 +1,8 @@
-import { ACTION_COMPLETION_MESSAGE_TEXT, ACTION_START_MESSAGE_TEXT } from '../Toaster.constants'
+import {
+  ACTION_COMPLETION_MESSAGE_TEXT,
+  ACTION_START_MESSAGE_TEXT,
+  DEFAULT_REQUEST_COMPLETION_MESSAGE_TEXT,
+} from '../Toaster.constants'
 
 // doorman
 import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
@@ -40,6 +44,19 @@ import {
   UPDATE_OPERATORS_ACTION,
   WITHDRAW_COLLATERAL_ACTION,
 } from 'providers/VaultsProvider/helpers/vaults.const'
+import {
+  DROP_PROPOSAL_ACTION,
+  EXECUTE_PROPOSAL_ACTION,
+  LOCK_PROPOSAL_ACTION,
+  PROCESS_PROPOSAL_ACTION,
+  PROPOSAL_ROUND_VOTE_ACTION,
+  START_NEXT_ROUND_ACTION,
+  START_PROPOSAL_ROUND_ACTION,
+  START_VOTING_ROUND_ACTION,
+  SUBMIT_PROPOSAL_ACTION,
+  UPDATE_PROPOSAL_DATA_ACTION,
+  VOTING_ROUND_VOTE_ACTION,
+} from 'providers/ProposalsProvider/helpers/proposals.const'
 
 export const TOASTER_ACTIONS_TEXTS = {
   // doorman actions -------------------------------------
@@ -73,6 +90,7 @@ export const TOASTER_ACTIONS_TEXTS = {
       message: 'Enjoy using Mavryk Finance :)',
     },
   },
+
   // user actions -------------------------------------
   [REWARDS_COMPOUND_ACTION]: {
     start: {
@@ -104,6 +122,7 @@ export const TOASTER_ACTIONS_TEXTS = {
       message: 'Rewards claimed.',
     },
   },
+
   // satellites actions -------------------------------------
   [DELEGATE_ACTION]: {
     start: {
@@ -165,6 +184,7 @@ export const TOASTER_ACTIONS_TEXTS = {
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
+
   // loans actions -------------------------------------
   [CREATE_NEW_VAULT_ACTION]: {
     start: {
@@ -238,7 +258,8 @@ export const TOASTER_ACTIONS_TEXTS = {
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  // vaults collateral actions ---------------------------------
+
+  // vaults collateral actions -------------------------------------
   [WITHDRAW_COLLATERAL_ACTION]: {
     start: {
       title: 'Withdrawing collateral from the vault...',
@@ -288,6 +309,124 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Operators updated.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // proposals actions -------------------------------------
+  [PROPOSAL_ROUND_VOTE_ACTION]: {
+    start: {
+      title: 'Proposal Vote executing...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Voting done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [VOTING_ROUND_VOTE_ACTION]: {
+    start: {
+      title: 'Voting...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Voting done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [EXECUTE_PROPOSAL_ACTION]: {
+    start: {
+      title: 'Request Execute Proposal round start...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: DEFAULT_REQUEST_COMPLETION_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [PROCESS_PROPOSAL_ACTION]: {
+    start: {
+      title: 'Process Proposal Payment round start...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Process Proposal Payment confirmed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // proposal submission actions -------------------------------------
+  [SUBMIT_PROPOSAL_ACTION]: {
+    // text is different cuz the the button text is related to the current message text __ATTENTION__
+    start: {
+      title: 'Saving proposal...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Proposal saved.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DROP_PROPOSAL_ACTION]: {
+    start: {
+      title: 'Drop proposal...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Proposal dropped.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [LOCK_PROPOSAL_ACTION]: {
+    // text is different cuz the the button text is related to the current message text  __ATTENTION__
+    start: {
+      title: 'Submitting proposal...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Proposal submitted.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UPDATE_PROPOSAL_DATA_ACTION]: {
+    start: {
+      title: 'Updating proposal...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Proposal updated.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // proposal governance interaction actions -------------------------------------
+  [START_PROPOSAL_ROUND_ACTION]: {
+    start: {
+      title: 'Request Proposal round start...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: DEFAULT_REQUEST_COMPLETION_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [START_VOTING_ROUND_ACTION]: {
+    start: {
+      title: 'Request Voting round start...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: DEFAULT_REQUEST_COMPLETION_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [START_NEXT_ROUND_ACTION]: {
+    start: {
+      title: 'Request Next round start...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: DEFAULT_REQUEST_COMPLETION_MESSAGE_TEXT,
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
