@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-
 import { PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // utils
@@ -23,6 +22,8 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import colors from 'styles/colors'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -33,6 +34,9 @@ export const emptyContainer = (
 
 export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
   const { totalSupply, totalStakedMvk, smvkHistoryData } = useStakeContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const mli = calcMLI(totalSupply, totalStakedMvk)
   const fee = calcExitFee(totalSupply, totalStakedMvk)
@@ -63,6 +67,7 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
                 <CustomTooltip
                   text="The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees are paid directly to sMVK stakeholders for remaining active participants in securing the network. Click to read more."
                   iconId={'info'}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                 />
               </div>
               <div className="value">
@@ -76,6 +81,7 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
                   className="tooltip"
                   text="The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and the exit fee will rise. Click here to read more."
                   iconId={'info'}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                 />
               </div>
               <div className="value">

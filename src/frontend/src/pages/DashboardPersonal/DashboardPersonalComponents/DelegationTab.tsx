@@ -99,7 +99,7 @@ const DelegationTab = () => {
                   <CustomTooltip
                     text={TOTAL_VOTING_POWER_TOOLTIP_TEXT}
                     iconId="info"
-                    defaultStrokeColor={colors[themeSelected]['textColor']}
+                    defaultStrokeColor={colors[themeSelected]['subHeadingText']}
                   />
                 </div>
                 <div className="value">

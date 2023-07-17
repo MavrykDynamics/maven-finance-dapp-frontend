@@ -71,7 +71,7 @@ export const LoansPositionTable = ({
                       <CustomTooltip
                         iconId="info"
                         text="Current yield suppliers are earning on their deposits."
-                        defaultStrokeColor={colors[themeSelected].textColor}
+                        defaultStrokeColor={colors[themeSelected].mainHeadingText}
                       />
                     </span>
                     <span>Total Supplied</span>
@@ -80,7 +80,7 @@ export const LoansPositionTable = ({
                       <CustomTooltip
                         iconId="info"
                         text="Rewards To Date"
-                        defaultStrokeColor={colors[themeSelected].textColor}
+                        defaultStrokeColor={colors[themeSelected].mainHeadingText}
                       />
                     </span>
                     <span></span>
@@ -125,7 +125,7 @@ export const LoansPositionTable = ({
                     )
 
                     return (
-                      <TableRow rowHeight={60} borderColor="cardBorderColor" className="add-hover" key={symbol}>
+                      <TableRow rowHeight={60} borderColor="divider" className="add-hover" key={symbol}>
                         <TableCell width="15%">
                           <div className="cell-content row with-icon asset-name">
                             <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />

@@ -131,7 +131,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
                     const treasuryTokenBalance = convertNumberForClient({ number: balance, grade: decimals })
 
                     return (
-                      <TableRow rowHeight={25} borderColor="dataColor" className="add-hover" key={symbol}>
+                      <TableRow rowHeight={25} borderColor="primaryText" className="add-hover" key={symbol}>
                         <TableCell width="33%">{symbol}</TableCell>
                         <TableCell width="33%">
                           {treasuryTokenBalance < 0.01 ? (

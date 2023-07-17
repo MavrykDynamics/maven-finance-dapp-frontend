@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { State } from 'reducers'
-import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 import { PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -149,7 +148,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               </StatBlock>
             </div>
           </div>
-          <div className="spacer" />
+
           <div className="right">
             <StatBlock className="large">
               <div className="name">Total Borrowed</div>

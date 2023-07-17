@@ -569,7 +569,7 @@ export const CreateNewVault = ({
                       const { symbol, rate } = collateralToken
 
                       return (
-                        <TableRow rowHeight={40} borderColor="dataColor" className="add-hover" key={symbol}>
+                        <TableRow rowHeight={40} borderColor="primaryText" className="add-hover" key={symbol}>
                           <TableCell width="42%">{symbol}</TableCell>
                           <TableCell width="28%">
                             <CommaNumber value={Number(amount)} />

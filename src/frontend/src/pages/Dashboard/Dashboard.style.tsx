@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../styles/interfaces'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { H2SimpleTitle } from 'styles/generalStyledComponents/Titles.style'
 
 export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
   margin-bottom: -20px;
@@ -14,34 +15,26 @@ export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
     > div {
       width: 50%;
       height: 100%;
-      border: 1px solid #503eaa;
+      border: 1px solid ${({ theme }) => theme.strokeCards};
       padding: 25px 0 0 30px;
       border-radius: 10px;
-
-      h1 {
-        color: ${({ theme }) => theme.textColor};
-
-        &:after {
-          background-color: ${({ theme }) => theme.textColor};
-        }
-      }
     }
 
     .tvlBlock {
-      background-image: url('/images/dashboard/dashboardTVLbg.svg?v=0'), ${({ theme }) => theme.dashboardTvlGradient};
+      background-image: url('/images/dashboard/dashboardTVLbg.svg'), ${({ theme }) => theme.dashboardTvlBackground};
       background-size: cover;
       background-repeat: no-repeat;
 
       > div {
         font-weight: 600;
         font-size: 32px;
-        color: ${({ theme }) => theme.dataColor};
+        color: ${({ theme }) => theme.primaryText};
         margin-top: 30px;
       }
     }
 
     .mvkStats {
-      background-color: ${({ theme }) => theme.containerColor};
+      background-color: ${({ theme }) => theme.cards};
 
       .statsWrapper {
         margin-top: 15px;
@@ -64,7 +57,7 @@ export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
       line-height: 22px;
       position: relative;
       transition: 0.3s all;
-      color: ${({ theme }) => theme.navTitleColor};
+      color: ${({ theme }) => theme.menuButtonText};
 
       &.selected,
       &:hover {
@@ -77,9 +70,9 @@ export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
           content: '';
           width: 30px;
           height: 1px;
-          background-color: ${({ theme }) => theme.navLinkSubTitleActive};
+          background-color: ${({ theme }) => theme.selectedColor};
         }
-        color: ${({ theme }) => theme.navLinkSubTitleActive};
+        color: ${({ theme }) => theme.selectedColor};
       }
     }
   }
@@ -105,7 +98,7 @@ export const StatBlock = styled.div`
       position: absolute;
       top: 0;
       left: 0;
-      fill: ${({ theme }) => theme.textColor};
+      fill: ${({ theme }) => theme.subHeadingText};
 
       img {
         width: 100%;
@@ -118,12 +111,12 @@ export const StatBlock = styled.div`
   .name {
     font-weight: 600;
     font-size: 14px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
   }
 
   .value {
     display: flex;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
     font-weight: 600;
     font-size: 16px;
     column-gap: 4px;
@@ -142,7 +135,7 @@ export const StatBlock = styled.div`
         object-fit: cover;
       }
 
-      fill: ${({ theme }) => theme.dataColor};
+      fill: ${({ theme }) => theme.primaryText};
     }
 
     .impact {
@@ -167,7 +160,7 @@ export const StatBlock = styled.div`
       }
 
       &.neutral {
-        color: ${({ theme }) => theme.dataColor};
+        color: ${({ theme }) => theme.primaryText};
         background: rgba(119, 164, 242, 0.2);
       }
     }
@@ -177,7 +170,7 @@ export const StatBlock = styled.div`
     font-weight: 500;
     font-size: 12px;
     display: flex;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
     column-gap: 4px;
     align-items: center;
     margin-top: -5px;
@@ -200,11 +193,10 @@ export const StatBlock = styled.div`
   }
 `
 
-export const BlockName = styled.div`
+export const BlockName = styled(H2SimpleTitle)`
   font-weight: 600;
   font-size: 18px;
   line-height: 18px;
-  color: ${({ theme }) => theme.textColor};
 `
 export const BGPrimaryTitleStyled = styled(BGPrimaryTitle)`
   font-size: 22px;

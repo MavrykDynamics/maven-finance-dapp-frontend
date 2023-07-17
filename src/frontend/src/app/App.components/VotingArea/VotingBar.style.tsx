@@ -117,8 +117,8 @@ export const VotingAbstention = styled.div<{ width: number; theme: MavrykTheme }
 `
 export const NotYetVoted = styled.div<{ width: number; theme: MavrykTheme }>`
   width: ${({ width }) => width}%;
-  background-color: ${({ theme }) => theme.neutralSecondColor};
-  color: ${({ theme }) => theme.neutralSecondColor};
+  background-color: ${({ theme }) => theme.neutralSecondaryColor};
+  color: ${({ theme }) => theme.neutralSecondaryColor};
   cursor: pointer;
 
   &:hover {

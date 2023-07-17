@@ -1,8 +1,6 @@
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { parseDate } from 'utils/time'
-import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import colors from 'styles/colors'
 

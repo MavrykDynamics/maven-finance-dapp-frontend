@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { silverColor } from 'styles'
+import colors from 'styles/colors'
 import { State } from 'reducers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -29,10 +29,14 @@ import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { BlockName, StatBlock } from '../Dashboard.style'
 import { TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
   const { treasuryStorage } = useSelector((state: State) => state.treasury)
   const { totalVestedAmount, totalClaimedAmount } = useSelector((state: State) => state.vesting)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
@@ -98,7 +102,7 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                 Treasury Assets
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={silverColor}
+                  defaultStrokeColor={colors[themeSelected].mainHeadingText}
                   text="Only tokens whitelisted by the DAO are shown in the treasuries. This is because the DAO can only interact with whitelisted tokens."
                 />
               </BlockName>
@@ -122,7 +126,7 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                       const treasuryTokenBalance = convertNumberForClient({ number: balance, grade: decimals })
 
                       return (
-                        <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
+                        <TableRow key={symbol} rowHeight={25} borderColor="primaryText" className="add-hover">
                           <TableCell width="33%">{symbol}</TableCell>
                           <TableCell width="33%">
                             {treasuryTokenBalance < 0.01 ? (
@@ -157,8 +161,8 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
 
                 <TreasuryVesting
                   totalPersent={(totalVestedAmount / amountOfTokens || 0.5) * 100}
-                  claimedColor={'navTitleColor'}
-                  totalColor={'primaryColor'}
+                  claimedColor={'linksAndButtons'}
+                  totalColor={'selectedColor'}
                 >
                   <div className="vest-stat">
                     <div className="name">
