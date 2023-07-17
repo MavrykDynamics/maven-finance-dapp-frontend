@@ -17,7 +17,7 @@ import type {
   Governance_Proxy,
   Lending_Controller,
   Vault_Factory,
-} from '../generated/graphqlTypes'
+} from '../__generated__/graphql'
 
 export type AddressesGraphQl = {
   farm: { address: Farm['address'] }[]
