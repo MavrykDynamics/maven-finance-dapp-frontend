@@ -126,8 +126,8 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
                 <CommaNumber beginningText="$" value={totalLended} />
                 <div className={`impact ${getClassNameBasedOnPersentValue(lending24hPersentChange)}`}>
                   <CommaNumber
-                    value={lending24hPersentChange}
-                    beginningText={lending24hPersentChange > 0 ? '+' : ''}
+                    value={Math.abs(lending24hPersentChange)}
+                    beginningText={lending24hPersentChange > 0 ? '+' : lending24hPersentChange < 0 ? '-' : ''}
                     endingText={'% 24h'}
                   />
                 </div>
@@ -171,8 +171,8 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
                 <CommaNumber beginningText="$" value={totalBorrowed} />
                 <div className={`impact ${getClassNameBasedOnPersentValue(borrowing24hPersentChange)}`}>
                   <CommaNumber
-                    value={borrowing24hPersentChange}
-                    beginningText={borrowing24hPersentChange > 0 ? '+' : ''}
+                    value={Math.abs(borrowing24hPersentChange)}
+                    beginningText={borrowing24hPersentChange > 0 ? '+' : borrowing24hPersentChange < 0 ? '-' : ''}
                     endingText={'% 24h'}
                   />
                 </div>

@@ -148,10 +148,10 @@ export const StatBlock = styled.div`
     .impact {
       border-radius: 5px;
       font-weight: 400;
-      font-size: 12px;
-      padding: 3px 3px;
+      font-size: 14px;
+      padding: 3px 5px;
+      margin-left: 5px;
       height: fit-content;
-      min-width: 55px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -193,8 +193,6 @@ export const StatBlock = styled.div`
       font-size: 24px;
       .impact {
         font-size: 20px;
-        padding: 2px 3px;
-        margin-left: 5px;
       }
     }
   }

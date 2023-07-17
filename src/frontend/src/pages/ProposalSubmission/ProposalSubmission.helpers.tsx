@@ -347,7 +347,6 @@ export const getPaymentsDiff = (
 }
 
 // CONSTS
-
 export const PROPOSAL_BYTE = {
   encoded_code: '',
   id: 1,
