@@ -45,7 +45,7 @@ import { api } from 'utils/api/api'
 import { isAbortError } from 'errors/error'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
-export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
+export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRecordType; isHistory: boolean }) => {
   const dispatch = useDispatch()
 
   const { bug } = useToasterContext()
@@ -93,16 +93,33 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   // Loading voting till time for proposal
   const [votingTill, setVotingTill] = useState<null | number>(null)
   useEffect(() => {
+    const { droppedTime, currentCycleEndLevel, executionTime, executed } = proposal
+    if (droppedTime) {
+      setVotingTill(new Date(droppedTime).getTime())
+      return
+    }
+
+    if (executionTime && executed) {
+      setVotingTill(new Date(executionTime).getTime())
+      return
+    }
+
     const abortController = new AbortController()
 
     ;(async () => {
       try {
         const { data: votingEndTimestamp } = await api(
-          getTimestampByLevelUrl(proposal.currentCycleEndLevel),
+          getTimestampByLevelUrl(currentCycleEndLevel),
           { signal: abortController.signal, headers: getTimestampByLevelHeaders },
           getTimestampByLevelSchema,
         )
         setVotingTill(new Date(votingEndTimestamp).getTime())
+
+        console.log({
+          endLvl: currentCycleEndLevel,
+          time: parseDate({ time: new Date(votingEndTimestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
+          dropTime: droppedTime,
+        })
       } catch (e) {
         // TODO: handle fetch errors when error boundary will be ready
         if (!isAbortError(e)) {
@@ -113,7 +130,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
     })()
 
     return () => abortController.abort()
-  }, [proposal.currentCycleEndLevel])
+  }, [proposal])
 
   // store bytes that are opened
   const [openedBytes, setOpenedBytes] = useState<Array<number>>([])
@@ -137,8 +154,13 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
 
       {votingTill ? (
         <div className="voting-ends">
-          Voting {votingTill <= Date.now() ? 'ended' : 'ending'} on{' '}
-          {parseDate({ time: votingTill, timeFormat: 'MMMM Do HH:mm Z' })} CEST
+          {votingTill
+            ? isHistory
+              ? `Voting has ended on ${parseDate({ time: votingTill, timeFormat: 'MMMM Do HH:mm Z' })} CEST`
+              : votingTill <= Date.now()
+              ? 'Voting has ended, please start next round'
+              : `Voting ending on ${parseDate({ time: votingTill, timeFormat: 'MMMM Do HH:mm Z' })} CEST`
+            : null}
         </div>
       ) : null}
 
@@ -332,7 +354,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         </div>
       </div>
 
-      {isUserOwnerIfTheProposal ? (
+      {isUserOwnerIfTheProposal && !isHistory ? (
         <div className="drop-proposal">
           <Button kind={BUTTON_SECONDARY} onClick={handleDeleteProposal} disabled={!userCanDropProposal}>
             <Icon id="navigation-menu_close" />

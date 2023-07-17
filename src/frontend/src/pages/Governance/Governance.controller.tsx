@@ -313,7 +313,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
 
             {/* Selected proposal */}
             {rightSideContentId && rightSideContentId !== 0 ? (
-              <ProposalDetails proposal={proposalsMapper[rightSideContentId]} />
+              <ProposalDetails proposal={proposalsMapper[rightSideContentId]} isHistory={isHistory} />
             ) : null}
           </GovernanceStyled>
         )

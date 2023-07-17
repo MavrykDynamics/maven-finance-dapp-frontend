@@ -55,6 +55,10 @@ export const normalizeProposal = (
     currentRoundProposal: item.current_round_proposal,
 
     currentCycleEndLevel: item.current_cycle_end_level,
+    // ignore cuz it don't appars in schema
+    // @ts-ignore
+    droppedTime: item?.dropped_datetime,
+    executionTime: item?.execution_datetime,
     cycle: item.cycle,
     successReward: item.success_reward,
     sourceCode: item.source_code,

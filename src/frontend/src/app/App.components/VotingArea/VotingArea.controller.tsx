@@ -14,7 +14,7 @@ import { VotingBar } from './VotingBar.controller'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import ConnectWalletBtn from '../ConnectWallet/ConnectWalletBtn'
 import Button from '../Button/NewButton'
-import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
+import { GovPhases, ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
 import { Info } from '../Info/Info.view'
 import { INFO_DEFAULT } from '../Info/info.constants'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
@@ -22,6 +22,7 @@ import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text
 type VotingType = VotingProps & {
   className?: string
   disableButtonByVote?: number
+  currentVote?: ProposalRecordType['votes'][number]
 }
 
 export const VotingArea = ({
@@ -34,6 +35,7 @@ export const VotingArea = ({
   className,
   buttonsToShow,
   disableButtonByVote,
+  currentVote,
 }: VotingType) => {
   const { forBtn, againsBtn, passBtn } = buttonsToShow ?? { forBtn: {}, againsBtn: {}, passBtn: {} }
   const {
@@ -41,6 +43,8 @@ export const VotingArea = ({
     user: { isSatellite, isNewlyRegisteredSatellite },
   } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
+
+  const { current_round_vote, vote, round } = currentVote ?? {}
 
   const votingButtons = accountPkh ? (
     isSatellite && handleVote ? (
@@ -54,7 +58,8 @@ export const VotingArea = ({
               disableVotingButtons ||
               isActionActive ||
               disableButtonByVote === VoteList.YES ||
-              isNewlyRegisteredSatellite
+              isNewlyRegisteredSatellite ||
+              (round === 1 && current_round_vote && vote === 1)
             }
           >
             {forBtn.text ?? 'Vote YES'}
@@ -69,7 +74,8 @@ export const VotingArea = ({
               disableVotingButtons ||
               isActionActive ||
               disableButtonByVote === VoteList.PASS ||
-              isNewlyRegisteredSatellite
+              isNewlyRegisteredSatellite ||
+              (round === 1 && current_round_vote && vote === 0)
             }
           >
             {passBtn.text ?? 'Vote PASS'}
@@ -84,7 +90,8 @@ export const VotingArea = ({
               disableVotingButtons ||
               isActionActive ||
               disableButtonByVote === VoteList.NO ||
-              isNewlyRegisteredSatellite
+              isNewlyRegisteredSatellite ||
+              (round === 1 && current_round_vote && vote === 2)
             }
           >
             {againsBtn.text ?? 'Vote NO'}
@@ -187,7 +194,9 @@ export const VotingProposalsArea = ({
 
   // stage voting, user can vote, yes, no, pass
   if (govPhase === GovPhases.VOTING) {
-    return <VotingArea voteStatistics={voteStatistics} isVotingActive handleVote={votingPhaseHandler} />
+    return (
+      <VotingArea voteStatistics={voteStatistics} isVotingActive handleVote={votingPhaseHandler} currentVote={vote} />
+    )
   }
 
   return null

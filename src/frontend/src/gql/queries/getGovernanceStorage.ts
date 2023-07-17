@@ -54,6 +54,8 @@ query GetGovernanceProposalsQuery {
     invoice
     
     current_round_proposal
+    dropped_datetime
+    execution_datetime
     locked
     executed
     status
