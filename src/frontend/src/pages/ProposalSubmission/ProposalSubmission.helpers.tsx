@@ -5,7 +5,6 @@ import {
   INPUT_STATUS_SUCCESS,
   defaultProposalMetadataTitleMaxLength,
 } from 'app/App.components/Input/Input.constants'
-import { Governance_Proposal } from 'utils/generated/graphqlTypes'
 import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
   PaymentsDataChangesType,
@@ -18,6 +17,7 @@ import { State } from 'reducers'
 // helpers
 import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { Governance_Proposal } from 'utils/__generated__/graphql'
 
 // VALIDATION FN'S TODO: add some checking in future (no cond for it now)
 export const getBytesPairValidationStatus = (
