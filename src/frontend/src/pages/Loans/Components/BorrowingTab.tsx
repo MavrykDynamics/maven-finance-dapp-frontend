@@ -45,10 +45,13 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
 
   const userMarketVaultsIds = useMemo(
     () =>
-      myVaultsIds[loanTokenAddress].filter((vaultId) => {
+      myVaultsIds.filter((vaultId) => {
         const vault = vaultsMapper[vaultId]
 
-        return vault.collateralData.find(({ amount }) => amount) || vault.borrowedAmount
+        return (
+          vault.borrowedTokenAddress === loanTokenAddress &&
+          (vault.collateralData.find(({ amount }) => amount) || vault.borrowedAmount)
+        )
       }),
     [loanTokenAddress, myVaultsIds, showZeroVaults, vaultsMapper],
   )

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useHistory, useParams } from 'react-router'
 
@@ -62,7 +62,7 @@ export const VaultsView = () => {
   const {
     changeVaultsSubscriptionsList,
     isLoading: isVaultsLoading,
-    myVaultsIds: { all: myVaultsIds },
+    myVaultsIds,
     allVaultsIds,
     vaultsMapper,
     permissionedVaultsIds,
@@ -86,6 +86,13 @@ export const VaultsView = () => {
     })
   }, [tabId])
 
+  useLayoutEffect(() => {
+    if (!isVaultsLoading)
+      setVaultsIds(
+        tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissionedVaultsIds,
+      )
+  }, [isVaultsLoading])
+
   const [tabsList, setTabsList] = useState<TabItem[]>([])
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
 
@@ -96,8 +103,10 @@ export const VaultsView = () => {
       ? MY_VAULTS_LIST_NAME
       : PERMISSIONED_VAULTS_LIST_NAME
 
-  const currentVaultsIds =
-    tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissionedVaultsIds
+  const currentVaultsIds = useMemo(
+    () => (tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissionedVaultsIds),
+    [tabId],
+  )
 
   const currentPage = getPageNumber(search, currentListName)
 
@@ -108,7 +117,13 @@ export const VaultsView = () => {
     if (!foundTab?.path || currentTabId === id) return
 
     history.replace(`${pathname}/${foundTab.path}`)
-    setVaultsIds(foundTab.path === vaultTabs.ALL ? allVaultsIds : myVaultsIds)
+    setVaultsIds(
+      foundTab.path === vaultTabs.ALL
+        ? allVaultsIds
+        : foundTab.path === vaultTabs.MY
+        ? myVaultsIds
+        : permissionedVaultsIds,
+    )
   }
 
   const paginatedVaultsList = useMemo(() => {

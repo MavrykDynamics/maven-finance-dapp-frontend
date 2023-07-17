@@ -1,3 +1,5 @@
+import { VaultsSubsRecordType, VaultsCtxState } from './vaults.provider.types'
+
 // CONSTS FOR VAULTS PROVIDER STATES
 export const VAULTS_DATA = 'vaultsData'
 
@@ -8,11 +10,22 @@ export const VAULTS_USER_MARKET = 'userIsOwnerAndCertainMarket'
 export const VAULTS_USER_DEPOSITOR = 'userIsDepositor'
 
 // VAULTS PROVIDER DEFAULT CONSTS
-export const DEFAULT_VAULTS_ACTIVE_SUBS = {
+export const DEFAULT_VAULTS_ACTIVE_SUBS: VaultsSubsRecordType = {
   [VAULTS_DATA]: null,
-} as const
+}
 
-// VAULTS PROVIDER DEFAULT CONSTS
-export const DEFAULT_VAULTS_SUBS_LOADINGS = {
-  [VAULTS_DATA]: true,
-} as const
+export const EMPTY_VAULTS_CONTEXT: DeepNonNullable<VaultsCtxState> = {
+  vaultsMapper: {},
+  myVaultsIds: [],
+  // myVaultsMarketsIds: {},
+  allVaultsIds: [],
+  permissionedVaultsIds: [],
+}
+
+export const DEFAULT_VAULTS_CONTEXT: VaultsCtxState = {
+  vaultsMapper: null,
+  myVaultsIds: null,
+  // myVaultsMarketsIds: null,
+  allVaultsIds: null,
+  permissionedVaultsIds: null,
+}

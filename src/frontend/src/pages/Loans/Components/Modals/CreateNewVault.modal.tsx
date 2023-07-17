@@ -92,7 +92,8 @@ export const CreateNewVault = ({
   const { bug } = useToasterContext()
   const { userTokensBalances, userAddress } = useUserContext()
   const {
-    myVaultsIds: { all: myVaultsIds },
+    // TODO: test it
+    myVaultsIds,
     vaultsMapper,
   } = useVaultsContext()
 

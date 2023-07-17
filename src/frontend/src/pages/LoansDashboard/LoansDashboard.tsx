@@ -106,10 +106,11 @@ export const LoansDashboard = () => {
       totalLended,
     } = marketsAddresses.reduce(
       (acc, marketTokenAddress) => {
-        const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress, totalLended, totalBorrowed } =
-          marketsMapper[marketTokenAddress]
-        const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
-        if (!token || !token.rate) return acc
+        const market = marketsMapper[marketTokenAddress]
+        const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
+
+        if (!token || !token.rate || !market) return acc
+        const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress, totalLended, totalBorrowed } = market
 
         let borrowedPerMarket = 0
 

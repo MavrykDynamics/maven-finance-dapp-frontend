@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 import classNames from 'classnames'
 
 // view
