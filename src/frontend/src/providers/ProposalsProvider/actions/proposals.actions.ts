@@ -1,217 +1,88 @@
-export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
+import { unknownToError } from 'errors/error'
+import { getEstimationResult } from 'errors/helpers/estimateAction.helper'
+import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
-  if (!state.wallet.accountPkh) {
-    dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
+export const proposalRoundVote = async (
+  governanceAddress: string,
+  proposalId: number,
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
+  // add user address check when calling this method
 
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
-    const transaction = await contract?.methods.proposalRoundVote(proposalId).send()
+    const contract = await tezos.wallet.at(governanceAddress)
+    const proposeRoundVoteMetaData = contract?.methods.proposalRoundVote(proposalId)
 
-    dispatch(toggleActionFullScreenLoader(true))
-    dispatch(toggleActionCompletion(true))
-    dispatch(showToaster(TOASTER_INFO, 'Proposal Vote executing...', ACTION_START_MESSAGE_TEXT))
+    // for dapp callback
+    // await dispatch(getGovernanceStorage())
 
-    // turn off fs actions loader and start data updating after 5s after operation started
-    setTimeout(async () => {
-      await dispatch(toggleActionFullScreenLoader(false))
-      await dispatch(
-        showToaster(
-          TOASTER_LOADING,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        ),
-      )
-
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
-
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(getGovernanceStorage())
-
-          await dispatch(hideToaster())
-          await dispatch(showToaster(TOASTER_SUCCESS, 'Voting done', ACTION_COMPLETION_MESSAGE_TEXT))
-          await dispatch(toggleActionCompletion(false))
-        },
-        currentOperationLevel,
-      })
-    }, 5000)
+    return await getEstimationResult(proposeRoundVoteMetaData)
   } catch (error) {
-    console.error('proposalRoundVote error: ', error)
-    if (error instanceof Error) {
-      await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-    }
-    dispatch(toggleActionFullScreenLoader(false))
-    dispatch(toggleActionCompletion(false))
+    return { actionSuccess: false, error: unknownToError(error) }
   }
 }
 
-export const votingRoundVote = (vote: string) => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
-
-  if (!state.wallet.accountPkh) {
-    dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
+export const votingRoundVote = async (
+  governanceAddress: string,
+  vote: string,
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
+  // add user address check when calling this method
 
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
-    const transaction = await contract?.methods.votingRoundVote(vote).send()
+    const contract = await tezos.wallet.at(governanceAddress)
+    const votingRoundVoteMetaData = contract?.methods.votingRoundVote(vote)
 
-    dispatch(toggleActionFullScreenLoader(true))
-    dispatch(toggleActionCompletion(true))
-    dispatch(showToaster(TOASTER_INFO, 'Voting...', ACTION_START_MESSAGE_TEXT))
+    // for dapp callback
+    // await dispatch(getGovernanceStorage())
 
-    // turn off fs actions loader and start data updating after 5s after operation started
-    setTimeout(async () => {
-      await dispatch(toggleActionFullScreenLoader(false))
-      await dispatch(
-        showToaster(
-          TOASTER_LOADING,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        ),
-      )
-
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
-
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(getGovernanceStorage())
-
-          await dispatch(hideToaster())
-          await dispatch(showToaster(TOASTER_SUCCESS, 'Voting done', ACTION_COMPLETION_MESSAGE_TEXT))
-          await dispatch(toggleActionCompletion(false))
-        },
-        currentOperationLevel,
-      })
-    }, 5000)
+    return await getEstimationResult(votingRoundVoteMetaData)
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(error)
-      await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-    }
-    dispatch(toggleActionFullScreenLoader(false))
-    dispatch(toggleActionCompletion(false))
+    return { actionSuccess: false, error: unknownToError(error) }
   }
 }
 
-export const executeProposal = (proposalId: number) => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
-
-  if (!state.wallet.accountPkh) {
-    dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
+export const executeProposal = async (
+  governanceAddress: string,
+  proposalId: number,
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
+  // add user address check when calling this method
 
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
-    const transaction = await contract?.methods.executeProposal(proposalId).send()
+    const contract = await tezos.wallet.at(governanceAddress)
+    const executeProposalMetaData = contract?.methods.executeProposal(proposalId)
 
-    dispatch(toggleActionFullScreenLoader(true))
-    dispatch(toggleActionCompletion(true))
-    dispatch(showToaster(TOASTER_INFO, 'Request Execute Proposal round start...', ACTION_START_MESSAGE_TEXT))
+    // for dapp callback
+    // await dispatch(getGovernanceStorage())
 
-    // turn off fs actions loader and start data updating after 5s after operation started
-    setTimeout(async () => {
-      await dispatch(toggleActionFullScreenLoader(false))
-      await dispatch(
-        showToaster(
-          TOASTER_LOADING,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        ),
-      )
-
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
-
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(getGovernanceStorage())
-
-          await dispatch(hideToaster())
-          await dispatch(showToaster(TOASTER_SUCCESS, 'Request confirmed', ACTION_COMPLETION_MESSAGE_TEXT))
-          await dispatch(toggleActionCompletion(false))
-        },
-        currentOperationLevel,
-      })
-    }, 5000)
+    return await getEstimationResult(executeProposalMetaData)
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(error)
-      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-    }
-    dispatch(toggleActionFullScreenLoader(false))
-    dispatch(toggleActionCompletion(false))
+    return { actionSuccess: false, error: unknownToError(error) }
   }
 }
 
-export const processProposalPayment = (proposalId: number) => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
-
-  if (!state.wallet.accountPkh) {
-    dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
+export const processProposalPayment = async (
+  governanceAddress: string,
+  proposalId: number,
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
+  // add user address check when calling this method
 
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
-    const transaction = await contract?.methods.processProposalPayment(proposalId).send()
+    const contract = await tezos.wallet.at(governanceAddress)
+    const processProposalPaymentMetaData = contract?.methods.processProposalPayment(proposalId)
 
-    dispatch(toggleActionFullScreenLoader(true))
-    dispatch(toggleActionCompletion(true))
-    dispatch(showToaster(TOASTER_INFO, 'Process Proposal Payment round start...', ACTION_START_MESSAGE_TEXT))
+    // for dapp callback
+    // await dispatch(getGovernanceStorage())
 
-    // turn off fs actions loader and start data updating after 5s after operation started
-    setTimeout(async () => {
-      await dispatch(toggleActionFullScreenLoader(false))
-      await dispatch(
-        showToaster(
-          TOASTER_LOADING,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        ),
-      )
-
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
-
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(getGovernanceStorage())
-
-          await dispatch(hideToaster())
-          await dispatch(
-            showToaster(TOASTER_SUCCESS, 'Process Proposal Payment confirmed', ACTION_COMPLETION_MESSAGE_TEXT),
-          )
-          await dispatch(toggleActionCompletion(false))
-        },
-        currentOperationLevel,
-      })
-    }, 5000)
+    return await getEstimationResult(processProposalPaymentMetaData)
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(error)
-      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-    }
-    dispatch(toggleActionFullScreenLoader(false))
-    dispatch(toggleActionCompletion(false))
+    return { actionSuccess: false, error: unknownToError(error) }
   }
 }
