@@ -24,6 +24,7 @@ import {
 // helpers
 import { normalizeLoansConfig, normalizeLoansMarkets } from './helpers/loansMarkets.normalizer'
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { getLoansProviderReturnValue } from './helpers/loans.utils'
 
 export const loansContext = React.createContext<LoansContext>(undefined!)
 
@@ -130,46 +131,17 @@ export const LoansProvider = ({ children }: Props) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }
 
-  const providerValue = useMemo(() => {
-    const { marketsMapper, config, allMarketsAddresses } = loansCtxState
-    const commonToReturn = {
-      changeLoansSubscriptionsList,
-      setMarketAddressToSubscribe,
-    }
-
-    /**
-     * isLoading indicates whethet provider is loading smth, so we need to show loader, not load in background, cases:
-     * 1. if we switch between markets, subscribed to 1 cetrain market and it's not loaded yet
-     * 2. if we subscribe to markets and markets context data is empty
-     * 3. if we subscribe to config and config context data is empty
-     * 4. if we haven't subscribed to anything and don't have any data loaded, need this to fix time which component init its subscribes in useEffect as it's async operation
-     */
-    const isLoading =
-      isMarketLoading ||
-      (activeSubs['loansMarkets'] && (marketsMapper === null || allMarketsAddresses === null)) ||
-      (activeSubs['loansConfig'] && config === null) ||
-      (!activeSubs['loansConfig'] &&
-        config === null &&
-        !activeSubs['loansMarkets'] &&
-        (marketsMapper === null || allMarketsAddresses === null))
-
-    // if provider is loading smth return loading true and default empty context (nonNullable)
-    if (isLoading) {
-      return {
-        ...commonToReturn,
-        ...EMPTY_LOANS_CONTEXT,
-        isLoading: true,
-      }
-    }
-
-    // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-    const nonNullableProviderValue = replaceNullValuesWithDefault<LoansContextState>(loansCtxState, EMPTY_LOANS_CONTEXT)
-    return {
-      ...commonToReturn,
-      ...nonNullableProviderValue,
-      isLoading: false,
-    }
-  }, [loansCtxState, activeSubs, isMarketLoading])
+  const providerValue = useMemo(
+    () =>
+      getLoansProviderReturnValue({
+        loansCtxState,
+        isMarketLoading,
+        activeSubs,
+        changeLoansSubscriptionsList,
+        setMarketAddressToSubscribe,
+      }),
+    [loansCtxState, activeSubs, isMarketLoading],
+  )
 
   // TODO: debug log, remove when no need
   console.log('loans', { providerValue, activeSubs, loansCtxState })

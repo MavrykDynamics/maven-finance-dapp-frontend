@@ -17,7 +17,6 @@ import { SUBSCRIBE_TO_ALL_VAULTS, getUserVaultsSubscription } from './queries/va
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   DEFAULT_VAULTS_CONTEXT,
-  EMPTY_VAULTS_CONTEXT,
   VAULTS_ALL,
   VAULTS_DATA,
   VAULTS_USER_DEPOSITOR,
@@ -25,7 +24,7 @@ import {
 
 // helpers
 import { normalizeVaults } from './helpers/vaults.normalizer'
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { getVaultsProviderReturnValue } from './helpers/vaults.utils'
 
 export const vaultsContext = React.createContext<VaultsContext>(undefined!)
 
@@ -110,42 +109,15 @@ export const VaultsProvider = ({ children }: Props) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }
 
-  const providerValue = useMemo(() => {
-    const { vaultsMapper, myVaultsIds, allVaultsIds, permissionedVaultsIds } = vaultsCtxState
-    const commonToReturn = {
-      changeVaultsSubscriptionsList,
-    }
-
-    /**
-     * isLoading indicates whethet provider is loading smth, so we need to show loader, not load in background, cases:
-     * 1. if provider subscriptions don't used and don't have any data loaded
-     * 2. if we subscribed to all vaults and allVaultsIds list is empty
-     * 3. if we subscribed to vaults where user is depositor and permissionedVaultsIds list is empty
-     * 4. if we subscribed to vaults where user is owner and myVaultsIds list is empty
-     */
-    const isLoading =
-      (!activeSubs[VAULTS_DATA] && vaultsMapper === null) ||
-      (activeSubs[VAULTS_DATA] === 'allVaults' && allVaultsIds === null) ||
-      (activeSubs[VAULTS_DATA] === 'userIsDepositor' && permissionedVaultsIds === null) ||
-      (activeSubs[VAULTS_DATA] === 'userIsOwner' && myVaultsIds === null)
-
-    // if provider is loading smth return loading true and default empty context (nonNullable)
-    if (isLoading) {
-      return {
-        ...commonToReturn,
-        ...EMPTY_VAULTS_CONTEXT,
-        isLoading: true,
-      }
-    }
-
-    // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-    const nonNullableProviderValue = replaceNullValuesWithDefault<VaultsCtxState>(vaultsCtxState, EMPTY_VAULTS_CONTEXT)
-    return {
-      ...commonToReturn,
-      ...nonNullableProviderValue,
-      isLoading: false,
-    }
-  }, [vaultsCtxState, activeSubs])
+  const providerValue = useMemo(
+    () =>
+      getVaultsProviderReturnValue({
+        vaultsCtxState,
+        activeSubs,
+        changeVaultsSubscriptionsList,
+      }),
+    [vaultsCtxState, activeSubs],
+  )
 
   // TODO: debug log, remove when no need
   console.log('vaults', { vaultsCtxState, providerValue, activeSubs })
