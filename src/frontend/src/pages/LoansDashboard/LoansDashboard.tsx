@@ -114,10 +114,10 @@ export const LoansDashboard = () => {
     vaultRiskGaugeData: GaugeChartStateType
     apyGaugeData: GaugeChartStateType
   } => {
-    const { borrowedAmount, borrowCapacity, totalSuppliedValue, sumOfRatioSuppliedToAPY, sumOfRatioBorrowedToAPR } =
+    const { borrowedAmount, collateralAmount, totalSuppliedValue, sumOfRatioSuppliedToAPY, sumOfRatioBorrowedToAPR } =
       loanTokens.reduce<{
         borrowedAmount: number
-        borrowCapacity: number
+        collateralAmount: number
         totalSuppliedValue: number
         sumOfRatioSuppliedToAPY: number
         sumOfRatioBorrowedToAPR: number
@@ -128,7 +128,7 @@ export const LoansDashboard = () => {
           const { borrowedAmount = 0, collateralAmount = 0 } = userLoansData.userVaultsData[gqlName] ?? {}
 
           // calculating value risk data & how much borrowed per vault
-          acc.borrowCapacity += collateralAmount / 2
+          acc.collateralAmount += collateralAmount
           acc.borrowedAmount += borrowedAmount
           borrowedPerMarket += borrowedAmount
 
@@ -140,14 +140,14 @@ export const LoansDashboard = () => {
         },
         {
           borrowedAmount: 0,
-          borrowCapacity: 0,
+          collateralAmount: 0,
           totalSuppliedValue: 0,
           sumOfRatioSuppliedToAPY: 0,
           sumOfRatioBorrowedToAPR: 0,
         },
       )
 
-    const vaultRiskValue = !accountPkh || !borrowCapacity ? 0 : (borrowedAmount / borrowCapacity) * 100
+    const vaultRiskValue = !accountPkh || !collateralAmount ? 0 : (borrowedAmount / collateralAmount) * 100
     const apyNet =
       !accountPkh || !totalSuppliedValue ? 0 : (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue
 
@@ -166,7 +166,7 @@ export const LoansDashboard = () => {
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
-    ...GAUGE_STATE_RISK_PART,
+    ...GAUGE_STATE_APY_PART,
     currentValue: 0,
     text: '',
     status: null,
@@ -174,10 +174,10 @@ export const LoansDashboard = () => {
 
   // Set gauge chart data for vault risk
   useEffect(() => {
-    if (!gaugeData.isAPY) {
-      setGaugeData(vaultRiskGaugeData)
+    if (gaugeData.isAPY) {
+      setGaugeData(apyGaugeData)
     }
-  }, [vaultRiskGaugeData])
+  }, [apyGaugeData])
 
   return (
     <Page>
@@ -247,8 +247,8 @@ export const LoansDashboard = () => {
                     >
                       <div
                         className={`lend-borrow-position ${gaugeData.status ?? ''}`}
-                        onMouseEnter={() => setGaugeData(apyGaugeData)}
-                        onMouseLeave={() => setGaugeData(vaultRiskGaugeData)}
+                        onMouseEnter={() => setGaugeData(vaultRiskGaugeData)}
+                        onMouseLeave={() => setGaugeData(apyGaugeData)}
                       >
                         <CommaNumber
                           value={gaugeData.currentValue}

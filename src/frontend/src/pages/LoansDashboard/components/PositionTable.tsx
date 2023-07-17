@@ -24,8 +24,9 @@ import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } f
 import { Plug } from 'app/App.components/Chart/Chart.style'
 import { PositionTableStyled } from '../LoansDashboard.styles'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
-import { getGaugeVaultRiskSimpleStatus } from '../helpers/position.helpers'
+import { getVaultSimpleStatus } from '../helpers/position.helpers'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
+import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
 
 export const LoansPositionTable = ({
   markets,
@@ -97,11 +98,21 @@ export const LoansPositionTable = ({
 
                   const marketVaultsUserData = userVaultsData[loanTokenData.gqlName.toLowerCase()]
 
-                  const averageVaultStatus = getGaugeVaultRiskSimpleStatus(
-                    marketVaultsUserData?.collateralAmount
-                      ? (marketVaultsUserData.borrowedAmount / (marketVaultsUserData.collateralAmount / 2)) * 100
-                      : 0,
+                  const collateralRatio = calcCollateralRatio(
+                    marketVaultsUserData?.collateralAmount ?? 0,
+                    marketVaultsUserData.borrowedAmount,
+                    1,
                   )
+
+                  const averageVaultStatus = getVaultSimpleStatus(collateralRatio)
+
+                  console.log({
+                    market: loanTokenData.gqlName,
+                    collateralAmount: marketVaultsUserData?.collateralAmount,
+                    borrowedAmount: marketVaultsUserData.borrowedAmount,
+                    collateralRatio,
+                    averageVaultStatus,
+                  })
 
                   return (
                     <TableRow
