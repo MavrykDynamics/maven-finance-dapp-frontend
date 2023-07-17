@@ -114,12 +114,6 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
           getTimestampByLevelSchema,
         )
         setVotingTill(new Date(votingEndTimestamp).getTime())
-
-        console.log({
-          endLvl: currentCycleEndLevel,
-          time: parseDate({ time: new Date(votingEndTimestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
-          dropTime: droppedTime,
-        })
       } catch (e) {
         // TODO: handle fetch errors when error boundary will be ready
         if (!isAbortError(e)) {
