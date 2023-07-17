@@ -62,7 +62,7 @@ export const LoansProvider = ({ children }: Props) => {
     }
   }, [marketAddressToSubscribe])
 
-  const handleSubError = (error: ApolloError, subName: LoansSubsType) => {
+  const handleSubError = (error: ApolloError, subName: string) => {
     console.error(`${subName} query error: `, error)
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
@@ -79,7 +79,7 @@ export const LoansProvider = ({ children }: Props) => {
 
       updateMarketsContext(data)
     },
-    onError: (error) => handleSubError(error, LOANS_MARKETS_DATA),
+    onError: (error) => handleSubError(error, 'getLoansMarketsSubscription'),
   })
 
   // subscribe to all markets addresses, used for pagination
@@ -95,7 +95,7 @@ export const LoansProvider = ({ children }: Props) => {
         ),
       }))
     },
-    onError: (error) => handleSubError(error, LOANS_MARKETS_DATA),
+    onError: (error) => handleSubError(error, 'GET_LOANS_MARKET_ADDRESSES'),
   })
 
   // subscribe to markets config
@@ -110,7 +110,7 @@ export const LoansProvider = ({ children }: Props) => {
         config: normalizeLoansConfig({ indexerData: data }),
       }))
     },
-    onError: (error) => handleSubError(error, LOANS_CONFIG),
+    onError: (error) => handleSubError(error, 'GET_LOANS_CONFIG'),
   })
 
   // set markets to context and turn off loaders

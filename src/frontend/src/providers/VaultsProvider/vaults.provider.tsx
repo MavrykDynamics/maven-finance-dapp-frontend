@@ -33,6 +33,7 @@ type Props = {
   children: React.ReactNode
 }
 
+// TODO: if will need implement query that will take vaults where owner === current user and market token === vault loan token
 export const VaultsProvider = ({ children }: Props) => {
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
@@ -79,7 +80,7 @@ export const VaultsProvider = ({ children }: Props) => {
 
       updateVaultsData(data, userAddress, activeSubs[VAULTS_DATA])
     },
-    onError: (error) => handleSubError(error, 'getVaultsSubscription'),
+    onError: (error) => handleSubError(error, 'SUBSCRIBE_TO_ALL_VAULTS'),
   })
 
   const updateVaultsData = (
