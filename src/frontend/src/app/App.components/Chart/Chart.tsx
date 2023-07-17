@@ -1,5 +1,5 @@
 // styles
-import { Plug } from './Chart.style'
+import { ChartLoaderBlock, ChartWrapper, Plug } from './Chart.style'
 
 // components
 import Icon from '../Icon/Icon.view'
@@ -7,12 +7,15 @@ import { AreaChart } from './ChartTypes/AreaChart'
 import { CandlestickChart } from './ChartTypes/CandlestickChart'
 import { HistogramChart } from './ChartTypes/HistogramChart'
 
-import {
-  AREA_CHART_TYPE,
-  CANDLESTICK_CHART_TYPE,
-  ChartWrapperPropsType,
-  HISTOGRAM_CHART_TYPE,
-} from './helpers/Chart.types'
+// consts
+import { AREA_CHART_TYPE, CANDLESTICK_CHART_TYPE, HISTOGRAM_CHART_TYPE } from './helpers/Chart.const'
+import { SPINNER_LOADER_MEDIUM } from '../Loader/loader.const'
+
+// types
+import { ChartWrapperPropsType } from './helpers/Chart.types'
+
+// styles
+import { SpinnerCircleLoaderStyled } from '../Loader/Loader.style'
 
 /**
  *
@@ -68,6 +71,8 @@ export const Chart = ({
   tooltipName,
   tooltipAsset,
   comingSoon = false,
+  isLoading = false,
+  loaderSize = SPINNER_LOADER_MEDIUM,
 }: ChartWrapperPropsType) => {
   if (comingSoon) {
     return (
@@ -84,7 +89,7 @@ export const Chart = ({
 
   if (data.plots.length < numberOfItemsToDisplay) {
     return (
-      <Plug className='chartPlug'>
+      <Plug className="chartPlug">
         <div>
           <Icon id="stars" className="icon-stars" />
           <Icon id="cow" className="icon-cow" />
@@ -95,38 +100,50 @@ export const Chart = ({
     )
   }
 
-  if (data.type === AREA_CHART_TYPE)
-    return (
-      <AreaChart
-        colors={colors}
-        settings={settings}
-        data={data.plots}
-        tooltipName={tooltipName}
-        tooltipAsset={tooltipAsset}
-      />
-    )
+  const renderChart = () => {
+    if (data.type === AREA_CHART_TYPE)
+      return (
+        <AreaChart
+          colors={colors}
+          settings={settings}
+          data={data.plots}
+          tooltipName={tooltipName}
+          tooltipAsset={tooltipAsset}
+        />
+      )
 
-  if (data.type === CANDLESTICK_CHART_TYPE)
-    return (
-      <CandlestickChart
-        colors={colors}
-        settings={settings}
-        data={data.plots}
-        tooltipName={tooltipName}
-        tooltipAsset={tooltipAsset}
-      />
-    )
+    if (data.type === CANDLESTICK_CHART_TYPE)
+      return (
+        <CandlestickChart
+          colors={colors}
+          settings={settings}
+          data={data.plots}
+          tooltipName={tooltipName}
+          tooltipAsset={tooltipAsset}
+        />
+      )
 
-  if (data.type === HISTOGRAM_CHART_TYPE)
-    return (
-      <HistogramChart
-        colors={colors}
-        settings={settings}
-        data={data.plots}
-        tooltipName={tooltipName}
-        tooltipAsset={tooltipAsset}
-      />
-    )
+    if (data.type === HISTOGRAM_CHART_TYPE)
+      return (
+        <HistogramChart
+          colors={colors}
+          settings={settings}
+          data={data.plots}
+          tooltipName={tooltipName}
+          tooltipAsset={tooltipAsset}
+        />
+      )
 
-  return null
+    return null
+  }
+
+  return isLoading ? (
+    <ChartWrapper>
+      <ChartLoaderBlock>
+        <SpinnerCircleLoaderStyled className={loaderSize} />
+      </ChartLoaderBlock>
+    </ChartWrapper>
+  ) : (
+    renderChart()
+  )
 }

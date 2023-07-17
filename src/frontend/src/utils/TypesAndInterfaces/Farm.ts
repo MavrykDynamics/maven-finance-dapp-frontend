@@ -1,5 +1,5 @@
 // type
-import type { Farm } from '../generated/graphqlTypes'
+import type { Farm } from '../__generated__/graphql'
 
 // helpers
 import { normalizeFarmStorage } from '../../pages/Farms/Farms.helpers'

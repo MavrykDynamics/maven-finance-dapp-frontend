@@ -35,6 +35,7 @@ import {
   VAULTS_DATA,
   VAULTS_USER_ALL,
 } from 'providers/VaultsProvider/vaults.provider.consts'
+import { loansEarnBorrowContext } from './context/loansEarnBorrowContext'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -171,37 +172,46 @@ export const LoansBorrow = () => {
     }
   }
 
+  const contextValue = useMemo(
+    () => ({
+      isChartsLoading,
+    }),
+    [isChartsLoading],
+  )
+
   return (
-    <Page>
-      <PageHeader page={'loansBorrow'} />
+    <loansEarnBorrowContext.Provider value={contextValue}>
+      <Page>
+        <PageHeader page={'loansBorrow'} />
 
-      {isLoansLoading || isVaultsLoading ? (
-        <DataLoaderWrapper>
-          <ClockLoader width={150} height={150} />
-          <div className="text">Loading borrows charts</div>
-        </DataLoaderWrapper>
-      ) : (
-        <>
-          <EarnBorrowTotalCharts
-            // left chart
-            leftChartData={totalCollateralChart}
-            leftChartTitle="Total Collateral"
-            leftTotalAmount={totalCollateralChart.at(-1)?.value ?? 0}
-            // right chart
-            rightChartData={totalBorrowingChart}
-            rightChartTitle="Total Borrowing"
-            rightTotalAmount={totalBorrowingChart.at(-1)?.value ?? 0}
-          />
+        {isLoansLoading || isVaultsLoading ? (
+          <DataLoaderWrapper>
+            <ClockLoader width={150} height={150} />
+            <div className="text">Loading borrows charts</div>
+          </DataLoaderWrapper>
+        ) : (
+          <>
+            <EarnBorrowTotalCharts
+              // left chart
+              leftChartData={totalCollateralChart}
+              leftChartTitle="Total Collateral"
+              leftTotalAmount={totalCollateralChart.at(-1)?.value ?? 0}
+              // right chart
+              rightChartData={totalBorrowingChart}
+              rightChartTitle="Total Borrowing"
+              rightTotalAmount={totalBorrowingChart.at(-1)?.value ?? 0}
+            />
 
-          <LoansEarnBorrow
-            title="Borrow"
-            markets={markets}
-            settings={marketSettings}
-            handleClick={handleBorrow}
-            isDisabledButton={!userAddress}
-          />
-        </>
-      )}
-    </Page>
+            <LoansEarnBorrow
+              title="Borrow"
+              markets={markets}
+              settings={marketSettings}
+              handleClick={handleBorrow}
+              isDisabledButton={!userAddress}
+            />
+          </>
+        )}
+      </Page>
+    </loansEarnBorrowContext.Provider>
   )
 }

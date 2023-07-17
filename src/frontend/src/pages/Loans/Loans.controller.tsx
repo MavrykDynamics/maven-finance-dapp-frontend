@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { useEffect } from 'react'
 import classNames from 'classnames'
+import { useEffect } from 'react'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -17,7 +17,7 @@ import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 import colors from 'styles/colors'
 import { Page, skyColor } from 'styles'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from './Loans.helpers'
 
 import {
@@ -121,8 +121,9 @@ export const Loans = () => {
         <span>Total Earning</span>
         <CommaNumber value={totalLended} beginningText={'$'} />
       </div>
-      <div className={classNames('chart', { emptyChart: totalLendingChart.length === 0 })}>
+      <div className={classNames('chart', { emptyChart: !isChartsLoading && totalLendingChart.length === 0 })}>
         <Chart
+          isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(totalLendingChart, 7) }}
           colors={CHART_COLORS}
           settings={getChartSettingsBasedOnChartLength(totalLendingChart, CHART_SETTINGS)}
@@ -141,8 +142,9 @@ export const Loans = () => {
         <span>Total Borrowing</span>
         <CommaNumber value={totalBorrowed} beginningText={'$'} />
       </div>
-      <div className={classNames('chart', { emptyChart: totalBorrowingChart.length === 0 })}>
+      <div className={classNames('chart', { emptyChart: !isChartsLoading && totalBorrowingChart.length === 0 })}>
         <Chart
+          isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(totalBorrowingChart, 7) }}
           colors={CHART_COLORS}
           settings={getChartSettingsBasedOnChartLength(totalBorrowingChart, CHART_SETTINGS)}

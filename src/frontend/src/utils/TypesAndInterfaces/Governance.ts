@@ -4,9 +4,8 @@ import type {
   Governance_Financial_Request,
   Governance_Proposal,
   Governance_Satellite_Action,
-} from '../generated/graphqlTypes'
+} from '../__generated__/graphql'
 
-import { normalizeFinancialRequests } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { normalizeProposal } from 'pages/Governance/actions/governanceNormalizers'
 import { normalizerSatelliteGovernance } from 'pages/SatelliteGovernance/SatelliteGovernance.helpers'
 

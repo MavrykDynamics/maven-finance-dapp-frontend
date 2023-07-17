@@ -1,5 +1,3 @@
-import classNames from 'classnames'
-
 // styles
 import { MarketChartsContainer } from 'pages/Loans/Loans.style'
 
@@ -7,12 +5,14 @@ import { MarketChartsContainer } from 'pages/Loans/Loans.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Chart } from 'app/App.components/Chart/Chart'
 import { CHART_COLORS, CHART_SETTINGS, numberOfItemsToDisplay } from '../LoansEarnBorrow.consts'
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from 'pages/Loans/Loans.helpers'
 
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+import { useLoansEarnBorrowContext } from '../context/loansEarnBorrowContext'
+import classNames from 'classnames'
 
 type Props = {
   // left chart
@@ -35,6 +35,8 @@ export const EarnBorrowTotalCharts = ({
   rightChartTitle,
   rightTotalAmount,
 }: Props) => {
+  const { isChartsLoading } = useLoansEarnBorrowContext()
+
   const leftPart = (
     <div className="chart-wrapper">
       <div className="summary">
@@ -42,8 +44,9 @@ export const EarnBorrowTotalCharts = ({
         <CommaNumber value={leftTotalAmount ?? 0} beginningText={'$'} />
       </div>
 
-      <div className={classNames('chart', { emptyChart: leftChartData.length === 0 })}>
+      <div className={classNames('chart', { emptyChart: !isChartsLoading && leftChartData.length === 0 })}>
         <Chart
+          isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(leftChartData, 7) }}
           colors={CHART_COLORS}
           settings={getChartSettingsBasedOnChartLength(leftChartData, CHART_SETTINGS)}
@@ -63,8 +66,9 @@ export const EarnBorrowTotalCharts = ({
         <CommaNumber value={rightTotalAmount ?? 0} beginningText={'$'} />
       </div>
 
-      <div className={classNames('chart', { emptyChart: rightChartData.length === 0 })}>
+      <div className={classNames('chart', { emptyChart: !isChartsLoading && rightChartData.length === 0 })}>
         <Chart
+          isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(rightChartData, 7) }}
           colors={CHART_COLORS}
           settings={getChartSettingsBasedOnChartLength(rightChartData, CHART_SETTINGS)}

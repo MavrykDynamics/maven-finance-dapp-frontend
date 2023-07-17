@@ -1,5 +1,5 @@
 import { VestingRecord } from 'reducers/vesting'
-import { Mavryk_User, Vesting_Vestee } from 'utils/generated/graphqlTypes'
+import { Mavryk_User, Vesting_Vestee } from 'utils/__generated__/graphql'
 import { VestingGraphQL } from 'utils/TypesAndInterfaces/Vesting'
 import type { TreasuryGraphQL, TreasuryBalanceType } from '../../utils/TypesAndInterfaces/Treasury'
 
