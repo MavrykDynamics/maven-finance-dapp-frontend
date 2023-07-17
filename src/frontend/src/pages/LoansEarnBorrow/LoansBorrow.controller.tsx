@@ -7,6 +7,7 @@ import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
 import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // components
@@ -29,7 +30,6 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   VAULTS_DATA,

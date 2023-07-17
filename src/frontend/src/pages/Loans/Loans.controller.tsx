@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { useEffect, useLayoutEffect } from 'react'
+import { useEffect } from 'react'
 import classNames from 'classnames'
 
 // view
@@ -20,8 +19,6 @@ import { Page, skyColor } from 'styles'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from './Loans.helpers'
-
-import { State } from 'reducers'
 
 import {
   LoansStyled,
