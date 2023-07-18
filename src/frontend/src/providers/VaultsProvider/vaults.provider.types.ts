@@ -1,7 +1,4 @@
-import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { LoansTokenMetadataType, TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-
 import {
   BORROW_VAULT_ASSET_ACTION,
   CHANGE_BAKER_ACTION,
@@ -13,6 +10,9 @@ import {
   UPDATE_OPERATORS_ACTION,
   WITHDRAW_COLLATERAL_ACTION,
 } from './helpers/vaults.const'
+import { VAULTS_ALL, VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR } from './vaults.provider.consts'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
 
 // actions type
 export type VaultsActionsType =
