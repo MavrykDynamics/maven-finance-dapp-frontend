@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { Redirect, useHistory, useLocation } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import QueryString from 'qs'
@@ -105,7 +105,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   // Show details of the proposal
   // const [rightSideContentId, setRightSideContentId] = useState<number | undefined>(undefined)
   const handleItemSelect = (chosenProposal: ProposalRecordType) =>
-    history.replace(`/${proposalPage}?${QueryString.stringify({ proposalId: chosenProposal.id })}`)
+    history.replace(`/${proposalPage}?${QueryString.stringify({ ...parsedQp, proposalId: chosenProposal.id })}`)
 
   // filters handlers TODO: add all cycles option
   const dropDownOptions = useMemo<Array<DropDownItemType>>(() => generateCyclesDdOptions(cycle), [cycle])

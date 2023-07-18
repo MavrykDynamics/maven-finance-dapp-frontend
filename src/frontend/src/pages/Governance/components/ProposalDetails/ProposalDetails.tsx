@@ -146,20 +146,23 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
         ) : null}
       </div>
 
-      {isHistory && ((proposal.executionTime && proposal.executed) || proposal.defeatedTime || proposal.droppedTime) ? (
+      {isHistory &&
+      ((proposal.executionTime && proposal.executed) ||
+        proposal.defeatedTime ||
+        (proposal.droppedTime && proposal.status === ProposalStatus.DROPPED)) ? (
         <div className="voting-ends">
           {proposal.executionTime && proposal.executed
             ? `Proposal was executed on ${parseDate({
                 time: proposal.executionTime,
                 timeFormat: 'MMMM Do HH:mm Z',
               })} CEST`
-            : proposal.defeatedTime
-            ? `Proposal was defeated on ${parseDate({
-                time: proposal.defeatedTime,
+            : proposal.droppedTime && proposal.status === ProposalStatus.DROPPED
+            ? `Proposal was dropped on ${parseDate({
+                time: proposal.droppedTime,
                 timeFormat: 'MMMM Do HH:mm Z',
               })} CEST`
-            : `Proposal was dropped on ${parseDate({
-                time: proposal.droppedTime,
+            : `Proposal was defeated on ${parseDate({
+                time: proposal.defeatedTime,
                 timeFormat: 'MMMM Do HH:mm Z',
               })} CEST`}
         </div>
