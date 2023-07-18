@@ -72,6 +72,6 @@ export const unstakeMVK = async (
 
     return await getEstimationResult(unstakeOperationMetaData)
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    return { actionSuccess: false, error }
   }
 }

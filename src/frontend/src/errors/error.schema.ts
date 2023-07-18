@@ -12,7 +12,7 @@ export const walletOparationErrorPayload = z.object({
   scope: z.string().optional(),
 })
 
-export const tezosErrorPayload = z.object({
+export const walletErrorPayload = z.object({
   message: z.string(),
   description: z.string(),
 })

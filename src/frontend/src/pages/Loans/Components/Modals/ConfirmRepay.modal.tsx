@@ -28,10 +28,6 @@ import colors from 'styles/colors'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
-import { unknownToError } from 'errors/error'
-import { sleep } from 'utils/api/sleep'
-import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -40,7 +36,6 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
-import { TezosWalletErrorPayload } from 'errors/error.type'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useCallback, useMemo } from 'react'
 

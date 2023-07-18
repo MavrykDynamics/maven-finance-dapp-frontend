@@ -1,26 +1,26 @@
 import { ContractMethod, OpKind, TezosOperationError, TransferParams, Wallet } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { SPECIFIC_CONTRACT_ERROR_CODES } from 'errors/consts/customWalletErrorCodes'
-import { DEFAULT_TEZOS_ERROR } from 'errors/consts/error.const'
+import { DEFAULT_WALLET_ERROR } from 'errors/consts/error.const'
 import { CONTRACT_ERROR_CODES } from 'errors/consts/walletErrorCodes'
-import { ExtendedError, isTezosOperationError } from 'errors/error'
-import { EstimatedBatchCall, EstimatedOperation, TezosWalletErrorPayload } from 'errors/error.type'
+import { ExtendedError, isWalletOperationError } from 'errors/error'
+import { EstimatedBatchCall, EstimatedOperation, WalletErrorPayload } from 'errors/error.type'
 import { toSentenceCase } from 'utils/toSentenceCase'
-import { tezosErrorPayload } from 'errors/error.schema'
+import { walletErrorPayload } from 'errors/error.schema'
 
 /**
  * checks is it's wallet error and is yes - gets the error info by that specific code
  * @param e Error instance
  * @returns {Message, description} object which contains info from error code
  */
-export const getContractErrorMessage = (e: unknown): TezosWalletErrorPayload => {
-  const isTezosError = isTezosOperationError(e)
+export const getContractErrorMessage = (e: unknown): WalletErrorPayload => {
+  const isTezosError = isWalletOperationError(e)
   if (isTezosError) {
     const error = e as TezosOperationError
     const errorCode = Number(error.message) ? Number(error.message) : error.message ? error.message : null
 
     const isNumberKey = typeof errorCode === 'number'
-    let _error: TezosWalletErrorPayload = DEFAULT_TEZOS_ERROR
+    let _error: WalletErrorPayload = DEFAULT_WALLET_ERROR
 
     if (errorCode !== null) {
       if (isNumberKey) {
@@ -35,7 +35,7 @@ export const getContractErrorMessage = (e: unknown): TezosWalletErrorPayload => 
     return _error
   }
 
-  return DEFAULT_TEZOS_ERROR
+  return DEFAULT_WALLET_ERROR
 }
 
 /**
@@ -107,8 +107,6 @@ export const estimateBatchOperation = async (
  * @param error in most cases it would be object to check data returned by "getContractErrorMessage"
  * @returns boolean
  */
-export const isContractErrorPayload = (
-  error: Error | ExtendedError | TezosWalletErrorPayload,
-): error is TezosWalletErrorPayload => {
-  return tezosErrorPayload.safeParse(error).success
+export const isContractErrorPayload = (error: unknown): error is WalletErrorPayload => {
+  return walletErrorPayload.safeParse(error).success
 }

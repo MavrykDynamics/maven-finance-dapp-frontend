@@ -1,8 +1,8 @@
-import type { ApiError, FatalError, ValidationError, TezosOperationError } from './error'
+import type { ApiError, FatalError, ValidationError, WalletOperationError } from './error'
 import { ERROR_TYPE_FATAL, ERROR_TYPE_ROUTER } from './error.const'
 import { z } from 'zod'
 import {
-  tezosErrorPayload,
+  walletErrorPayload,
   walletOparationErrorPayload,
   walletOperationErrorPayloadErrorItemSchema,
 } from './error.schema'
@@ -32,9 +32,9 @@ export type ErrorType =
   | FatalError
   | ValidationError
   | ApiError
-  | TezosOperationError
+  | WalletOperationError
 
-export type TezosWalletErrorPayload = z.infer<typeof tezosErrorPayload>
+export type WalletErrorPayload = z.infer<typeof walletErrorPayload>
 
 export type EstimatedOperation = {
   gasLimit: number
@@ -43,7 +43,7 @@ export type EstimatedOperation = {
   suggestedFeeMutez: number
   totalCost: number
   usingBaseFeeMutez: number
-  error?: TezosWalletErrorPayload
+  error?: WalletErrorPayload
 }
 
 export type EstimatedBatchCall = {
@@ -52,10 +52,10 @@ export type EstimatedBatchCall = {
   totalCost: number
   totalMinimalFeeMutez: number
   totalSuggestedFeeMutez: number
-  error?: TezosWalletErrorPayload
+  error?: WalletErrorPayload
 }
 
 export type SharedErrorFileds = typeof WALLTET_ERROR_FIELD
-export type SharedErrors = TezosWalletErrorPayload & { actionId: WalletActionType }
+export type SharedErrors = WalletErrorPayload & { actionId: WalletActionType }
 
 export type InternalErrorType = typeof ERROR_TYPE_ROUTER | typeof ERROR_TYPE_FATAL
