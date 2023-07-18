@@ -150,6 +150,16 @@ export const TableBody = styled.tbody<{ theme: MavrykTheme }>`
       width: 60px;
       height: 60px;
     }
+
+    th,
+    td {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    td:first-child {
+      font-size: 18px;
+    }
   }
 
   &.transaction-history {
