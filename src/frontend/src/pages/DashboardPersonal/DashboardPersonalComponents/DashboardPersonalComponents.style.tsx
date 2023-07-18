@@ -422,13 +422,19 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
     }
   }
 
-  > a {
-    margin: 0 auto;
+  .bottom-links {
     margin-top: auto;
-    font-weight: 500;
-    font-size: 14px;
-    color: ${({ theme }) => theme.valueColor};
     position: relative;
+
+    display: flex;
+    column-gap: 40px;
+    justify-content: center;
+    align-items: center;
+    a {
+      font-weight: 600;
+      font-size: 16px;
+      color: ${({ theme }) => theme.valueColor};
+    }
 
     &::before {
       position: absolute;

@@ -132,12 +132,15 @@ const SatelliteTab = () => {
                 <div className="grid-item grid-item-last">
                   <div className="name">Website</div>
                   <div className="value">
-                    <a href={satelliteRecord.website}>{satelliteRecord.website}</a>
+                    <a href={satelliteRecord.website}>View Website</a>
                   </div>
                 </div>
               </div>
             </div>
-            <Link to="/become-satellite">Edit My Profile</Link>
+            <div className="bottom-links">
+              <Link to="/become-satellite">Edit My Profile</Link>
+              <Link to={`/satellites/satellite-details/${satelliteRecord.address}`}>View Satellite Profile</Link>
+            </div>
           </>
         ) : (
           <div className="no-data">
