@@ -3,7 +3,6 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import {
   LOANS_MARKETS_DATA,
   LOANS_CONFIG,
-  LOANS_MARKETS_ADDRESSES,
   CREATE_NEW_VAULT_ACTION,
   DEPOSIT_LENDING_ASSET_ACTION,
   WITHDRAW_LENDING_ASSET_ACTION,
@@ -18,7 +17,6 @@ export type LoansActionsType =
 
 export type LoansSubsType = typeof LOANS_MARKETS_DATA | typeof LOANS_CONFIG
 export type LoansSubsRecordType = Record<LoansSubsType, boolean>
-export type LoansSubsLoadingsRecordType = Record<LoansSubsType | typeof LOANS_MARKETS_ADDRESSES, boolean>
 
 export type LendingItemType = {
   lendValue: number
@@ -44,22 +42,19 @@ export type LoanMarketType = {
   reserveAmount: number
 }
 
-export type LoansContext = {
-  allMarketsAddresses: Array<TokenAddressType>
-  marketsAddresses: Array<TokenAddressType>
-  marketsMapper: Record<TokenAddressType, LoanMarketType>
-  config: {
-    daoFee: number
-    collateralFactor: number
-  }
-
+export type LoansContext = DeepNonNullable<LoansContextState> & {
   isLoading: boolean
 
   changeLoansSubscriptionsList: (skips: Partial<LoansSubsRecordType>) => void
   setMarketAddressToSubscribe: (marketTokenAddress: TokenAddressType | null) => void
 }
 
-export type LoansContextState = Pick<
-  LoansContext,
-  'marketsAddresses' | 'allMarketsAddresses' | 'marketsMapper' | 'config'
->
+export type LoansContextState = {
+  allMarketsAddresses: Array<TokenAddressType> | null
+  marketsAddresses: Array<TokenAddressType> | null
+  marketsMapper: Record<TokenAddressType, LoanMarketType> | null
+  config: {
+    daoFee: number
+    collateralFactor: number
+  } | null
+}

@@ -1,7 +1,5 @@
-import React, { useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
 
 // hooks
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
@@ -9,6 +7,7 @@ import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
 import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // components
@@ -25,14 +24,17 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 
 // helpers
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // actions
-import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
+import {
+  DEFAULT_VAULTS_ACTIVE_SUBS,
+  VAULTS_DATA,
+  VAULTS_USER_ALL,
+} from 'providers/VaultsProvider/vaults.provider.consts'
 import { loansEarnBorrowContext } from './context/loansEarnBorrowContext'
 
 const marketSettings: MarketSettingsType = {
@@ -46,17 +48,12 @@ const marketSettings: MarketSettingsType = {
 }
 
 export const LoansBorrow = () => {
-  const dispatch = useDispatch()
   const history = useHistory()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { openCreateVaultPopup } = useLoansPopupsContext()
   const { userAddress } = useUserContext()
-
-  const {
-    isDataLoaded,
-    vaults: { myVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.loans)
+  const { vaultsMapper, myVaultsIds, changeVaultsSubscriptionsList, isLoading: isVaultsLoading } = useVaultsContext()
 
   const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
 
@@ -64,8 +61,14 @@ export const LoansBorrow = () => {
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
     })
+    changeVaultsSubscriptionsList({
+      [VAULTS_DATA]: VAULTS_USER_ALL,
+    })
 
-    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+    return () => {
+      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+    }
   }, [])
 
   const {
@@ -169,17 +172,6 @@ export const LoansBorrow = () => {
     }
   }
 
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isDataLoaded || isDepsChanged) {
-          await dispatch(getLoansStorage())
-        }
-      } catch (e) {}
-    },
-    [userAddress],
-  )
-
   const contextValue = useMemo(
     () => ({
       isChartsLoading,
@@ -192,7 +184,7 @@ export const LoansBorrow = () => {
       <Page>
         <PageHeader page={'loansBorrow'} />
 
-        {isLoading || isLoansLoading ? (
+        {isLoansLoading || isVaultsLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
             <div className="text">Loading borrows charts</div>

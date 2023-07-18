@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useLayoutEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
@@ -27,36 +27,39 @@ import { EmptyContainer } from 'app/App.style'
 import { MarketPagination, MarketStyled, ThreeLevelListItem } from './Loans.style'
 
 // types
-import { State } from 'reducers'
 import { MarketPageHeader } from './Components/LoansPageHeader'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { getLoansStorage } from './Actions/getLoansData.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
 import { USER_AVAILABLE_BORROW } from 'texts/tooltips/loan.text'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getVaultBorrowCapacity, getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getVaultBorrowCapacity, getVaultCollateralBalance } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import {
+  DEFAULT_VAULTS_ACTIVE_SUBS,
+  VAULTS_DATA,
+  VAULTS_USER_ALL,
+} from 'providers/VaultsProvider/vaults.provider.consts'
 
 export const Market = () => {
   const history = useHistory<{ from?: string }>()
   const {
     location: { state: historyState },
   } = history
-  const dispatch = useDispatch()
   const { assetAddress: currentMarketAddress, tabId } = useParams<{
     assetAddress: string
     tabId: string
   }>()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { myVaultsIds, vaultsMapper, isLoading: isVaultsLoading, changeVaultsSubscriptionsList } = useVaultsContext()
   const {
     allMarketsAddresses,
     marketsMapper,
@@ -71,29 +74,27 @@ export const Market = () => {
       [LOANS_MARKETS_DATA]: true,
       [LOANS_CONFIG]: true,
     })
+    changeVaultsSubscriptionsList({
+      [VAULTS_DATA]: VAULTS_USER_ALL,
+    })
 
-    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+    return () => {
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+    }
   }, [])
 
   useEffect(() => {
     setMarketAddressToSubscribe(currentMarketAddress)
-    return () => setMarketAddressToSubscribe(null)
+
+    return () => {
+      setMarketAddressToSubscribe(null)
+    }
   }, [currentMarketAddress])
 
   const {
-    vaults: { myVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.loans)
-
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-  const {
     preferences: { themeSelected },
   } = useDappConfigContext()
-
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      await dispatch(getLoansStorage())
-    } catch (e) {}
-  }, [accountPkh])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -117,8 +118,7 @@ export const Market = () => {
         (acc, itemId) => {
           const vault = vaultsMapper[itemId]
 
-          if (vault.ownerId !== accountPkh || vault.borrowedTokenAddress !== currentMarketAddress || !loanToken?.rate)
-            return acc
+          if (!loanToken?.rate || vault.borrowedTokenAddress !== currentMarketAddress) return acc
           const { decimals: loanTokenDecimals, rate: loanTokenRate } = loanToken
 
           const vaultCollateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices)
@@ -143,10 +143,10 @@ export const Market = () => {
           userAvailableBorrow: 0,
         },
       ),
-    [accountPkh, myVaultsIds, currentMarketAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
+    [myVaultsIds, currentMarketAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
   )
 
-  if (isLoansLoading) {
+  if (isLoansLoading || isVaultsLoading) {
     return (
       <Page>
         <PageHeader page={'lending'} />

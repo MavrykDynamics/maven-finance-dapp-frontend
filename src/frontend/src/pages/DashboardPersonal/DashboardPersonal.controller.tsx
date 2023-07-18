@@ -32,7 +32,6 @@ import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
 import VestingTab from './DashboardPersonalComponents/VestingTab'
 import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -95,7 +94,6 @@ const DashboardPersonal = () => {
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
-  const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
 
   const claimRewards = async () => {
@@ -153,7 +151,6 @@ const DashboardPersonal = () => {
       [MVK_TOTAL_SUB]: true,
       [MVK_BALANCE_SUB]: true,
     })
-
     changeSatellitesSubscriptionsList({
       [SATELLITE_DATA_SUB]: true,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
@@ -173,7 +170,6 @@ const DashboardPersonal = () => {
             (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
             (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
             isVestee && (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
-            (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
           ].filter(Boolean),
         )
       } catch (e) {}

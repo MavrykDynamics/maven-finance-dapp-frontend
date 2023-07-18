@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
-import { FullLoansVaultType, VaultType } from '../helpers/vaults.types'
+import { FullLoansVaultType, VaultType } from '../vaults.provider.types'
 
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'

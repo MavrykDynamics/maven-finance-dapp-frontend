@@ -1,13 +1,28 @@
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { LoansTokenMetadataType, TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
+import { VAULTS_ALL, VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR } from './vaults.provider.consts'
 
-export type DepositorsFlagType = typeof ANY_USER | typeof NONE_USER | typeof WHITELIST_USERS
+// context types
+export type VaultsContext = DeepNonNullable<VaultsCtxState> & {
+  changeVaultsSubscriptionsList: (skips: Partial<VaultsSubsRecordType>) => void
+  isLoading: boolean
+}
 
-export type CollateralType = {
-  amount: number
-  tokenAddress: TokenAddressType
+export type VaultsCtxState = {
+  vaultsMapper: Record<string, VaultType> | null
+  permissionedVaultsIds: string[] | null
+  myVaultsIds: string[] | null
+  allVaultsIds: string[] | null
+}
+
+export type VaultsSubsType = typeof VAULTS_DATA
+export type VaultsSubsRecordType = {
+  [VAULTS_DATA]: typeof VAULTS_ALL | typeof VAULTS_USER_ALL | typeof VAULTS_USER_DEPOSITOR | null
+}
+
+export type VaultsSubsLoadingsRecordType = {
+  [VAULTS_DATA]: boolean
 }
 
 // TODO: add descr to liquidation fields while testing liquidation functionality and popup
@@ -33,7 +48,7 @@ export type VaultType = {
   // permissions
   xtzDelegatedTo: string | null // if vault has xtz, as collateral, those xtz can be delegated to baker, here's the address of the delegated baker
   sMVKDelegatedTo?: string // if vault has smvk, as collateral, those smvk can be delegated to satellite, here's the address of the delegated satellite
-  ownerId: string // address of the vault owner
+  ownerAddress: string // address of the vault owner
   depositors: Array<string> // list of people who are allowed to deposit in the vault
   deporsitorsFlag: DepositorsFlagType // vault has 3 permissions states any -≥ anyone can deposit in it, none -> only owner can, whitelist -> only allowed users can deposit
 
@@ -56,12 +71,11 @@ export type FullLoansVaultType = VaultType & {
   borrowedToken: LoansTokenMetadataType & { rate: number } // metadata of borrowed token
 }
 
-export type DepositCollateralType = {
-  collateralName: string
+export type DepositorsFlagType = typeof ANY_USER | typeof NONE_USER | typeof WHITELIST_USERS
+
+export type CollateralType = {
   amount: number
-  id: number
-  address: string
-  type: TokenType
+  tokenAddress: TokenAddressType
 }
 
 export type VaultAssetData = {

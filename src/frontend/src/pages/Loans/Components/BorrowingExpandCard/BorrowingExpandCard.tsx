@@ -31,8 +31,8 @@ import {
 import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 import { useHistory, useLocation } from 'react-router'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
-import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
-import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
+import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
+import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 type BorrowingExpandCardPropsType = {
@@ -79,6 +79,7 @@ export const BorrowingExpandCard = ({
     createVaultPopup,
   } = useLoansPopupsContext()
   const { marketsMapper } = useLoansContext()
+  console.log({ marketsMapper })
 
   const history = useHistory()
   const location = useLocation()

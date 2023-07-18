@@ -5,7 +5,6 @@ import { gql } from 'utils/__generated__'
 
 import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
 
-// Loans market transaction history
 export function getLoansMarketsSubscription({
   marketTokenAddress,
 }: {

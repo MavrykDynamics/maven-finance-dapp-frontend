@@ -25,7 +25,7 @@ import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'

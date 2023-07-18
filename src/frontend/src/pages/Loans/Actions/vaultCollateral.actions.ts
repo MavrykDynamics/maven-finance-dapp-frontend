@@ -3,7 +3,6 @@ import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { getLoansStorage } from './getLoansData.actions'
 
 import {
   ACTION_COMPLETION_MESSAGE_TEXT,
@@ -21,7 +20,7 @@ import { State } from 'reducers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { DepositCollateralType } from 'providers/LoansProvider/helpers/vaults.types'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // remove collateral from the vault
 export const withdrawCollateralAction =
@@ -74,8 +73,6 @@ export const withdrawCollateralAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(getLoansStorage())
-
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Collateral withdrawn.', ACTION_COMPLETION_MESSAGE_TEXT))
             await dispatch(toggleActionCompletion(false))
@@ -98,7 +95,13 @@ export const withdrawCollateralAction =
 export const depositCollateralsAction =
   (
     vaultAddress: string,
-    collateralTokens: Array<DepositCollateralType>,
+    collateralTokens: Array<{
+      collateralName: string
+      amount: number
+      id: number
+      address: string
+      type: TokenType
+    }>,
     callback: () => void,
     bakerAddress?: string | null,
   ) =>
@@ -223,8 +226,6 @@ export const depositCollateralsAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(getLoansStorage())
-
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Collateral added.', ACTION_COMPLETION_MESSAGE_TEXT))
             await dispatch(toggleActionCompletion(false))

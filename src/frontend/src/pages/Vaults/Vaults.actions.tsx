@@ -1,5 +1,4 @@
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
 import { convertNumberForContractCall } from 'utils/calcFunctions'
@@ -69,8 +68,6 @@ export const liquidateVault =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(getLoansStorage())
-
             // Add here call for update data actions
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Vault Liquidated', ACTION_COMPLETION_MESSAGE_TEXT))

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import classNames from 'classnames'
 import { useEffect } from 'react'
 
 // view
@@ -20,8 +20,6 @@ import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from './Loans.helpers'
 
-import { State } from 'reducers'
-
 import {
   LoansStyled,
   MarketChartsContainer,
@@ -41,7 +39,8 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import classNames from 'classnames'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -69,18 +68,21 @@ export const Loans = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userMTokens } = useUserContext()
   const { changeLoansSubscriptionsList, marketsAddresses, marketsMapper, isLoading: isLoansLoading } = useLoansContext()
+  const { changeVaultsSubscriptionsList, vaultsMapper, allVaultsIds, isLoading: isVaultsLoading } = useVaultsContext()
 
   useEffect(() => {
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
     })
+    changeVaultsSubscriptionsList({
+      [VAULTS_DATA]: VAULTS_ALL,
+    })
 
-    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+    return () => {
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+    }
   }, [])
-
-  const {
-    vaults: { allVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.loans)
 
   const {
     preferences: { themeSelected },
@@ -159,7 +161,7 @@ export const Loans = () => {
     <Page>
       <PageHeader page={'lending'} />
 
-      {isLoansLoading ? (
+      {isLoansLoading || isVaultsLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading loans markets</div>

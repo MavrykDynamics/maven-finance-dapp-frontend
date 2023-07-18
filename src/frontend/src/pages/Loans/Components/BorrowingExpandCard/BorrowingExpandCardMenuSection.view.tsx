@@ -44,11 +44,11 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
-import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
+import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // types
 import { LoanMarketType } from 'providers/LoansProvider/loans.provider.types'
-import { CollateralType, DepositorsFlagType } from 'providers/LoansProvider/helpers/vaults.types'
+import { CollateralType, DepositorsFlagType } from 'providers/VaultsProvider/vaults.provider.types'
 import { State } from 'reducers'
 
 type Props = {

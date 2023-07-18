@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { Provider as ReduxProvider } from 'react-redux'
+import { ThemeProvider } from 'styled-components'
 import { ApolloProvider } from '@apollo/client'
 
 // apollo
@@ -24,7 +25,7 @@ import DappConfigProvider, {
 import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider'
 import LoansProvider from 'providers/LoansProvider/loans.provider'
 import StakeProvider from 'providers/StakeProvider/stake.provider'
-import { ThemeProvider } from 'styled-components'
+import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
@@ -90,7 +91,9 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
       ) : (
         <StakeProvider>
           <SatellitesProvider>
-            <LoansProvider>{children}</LoansProvider>
+            <LoansProvider>
+              <VaultsProvider>{children}</VaultsProvider>
+            </LoansProvider>
           </SatellitesProvider>
         </StakeProvider>
       )}

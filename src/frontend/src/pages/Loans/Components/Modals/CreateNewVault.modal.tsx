@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -29,7 +29,6 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
-import { State } from 'reducers'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { silverColor } from 'styles'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
@@ -52,7 +51,7 @@ import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { useUserVaultsNames } from 'providers/VaultsProvider/hooks/useVaultsNames'
 
 type CurrentActiveModalScreen =
   | typeof INITIAL_SCREEN_ID
@@ -77,10 +76,7 @@ export const CreateNewVault = ({
   const { userTokensBalances } = useUserContext()
 
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
-
-  const {
-    vaults: { myVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.loans)
+  const { vaultNames, isLoading: isVaultsNamesLoading } = useUserVaultsNames()
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
@@ -198,7 +194,7 @@ export const CreateNewVault = ({
 
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus = validateVaultLength(value, myVaultsIds, vaultsMapper)
+    const validationStatus = validateVaultLength(value, vaultNames)
 
     setVaultName((prev) => ({ ...prev, name: value, validationStatus }))
   }
@@ -206,7 +202,7 @@ export const CreateNewVault = ({
   const handleVaultNameOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (containSpaces(e.target.value)) {
       const trimmedValue = e.target.value.trim()
-      const validationStatus = validateVaultLength(trimmedValue, myVaultsIds, vaultsMapper)
+      const validationStatus = validateVaultLength(trimmedValue, vaultNames)
       setVaultName((prev) => ({ ...prev, validationStatus, name: trimmedValue }))
     }
   }
@@ -634,14 +630,10 @@ export const CreateNewVault = ({
 }
 
 // validation helper
-export function validateVaultLength(
-  value: string,
-  myVaultsIds: string[],
-  vaultsMapper: Record<string, VaultType>,
-): InputStatusType {
+export function validateVaultLength(value: string, myVaultsNames: string[]): InputStatusType {
   return value &&
     value.length <= 15 &&
-    !myVaultsIds.find((vaultId) => vaultsMapper[vaultId].name.trim().toLowerCase() === value.trim().toLowerCase())
+    !myVaultsNames.find((vaultName) => vaultName.trim().toLowerCase() === value.trim().toLowerCase())
     ? INPUT_STATUS_SUCCESS
     : INPUT_STATUS_ERROR
 }

@@ -32,7 +32,7 @@ import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
 import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { checkNan } from 'utils/checkNan'
 

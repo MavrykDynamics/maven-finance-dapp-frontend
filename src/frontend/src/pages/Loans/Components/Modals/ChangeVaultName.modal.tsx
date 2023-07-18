@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useState } from 'react'
 
@@ -12,12 +12,13 @@ import Icon from 'app/App.components/Icon/Icon.view'
 
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { State } from 'reducers'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { changeVaultNameAction } from 'pages/Loans/Actions/vault.actions'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { validateVaultLength } from './CreateNewVault.modal'
 import { containSpaces } from 'app/App.utils/input'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { useUserVaultsNames } from 'providers/VaultsProvider/hooks/useVaultsNames'
 
 export const ChangeVaultName = ({
   closePopup,
@@ -28,9 +29,7 @@ export const ChangeVaultName = ({
   show: boolean
   data: ChangeVaultNamePopupDataType
 }) => {
-  const {
-    vaults: { myVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.loans)
+  const { vaultNames, isLoading: isVaultsNamesLoading } = useUserVaultsNames()
 
   const dispatch = useDispatch()
   useLockBodyScroll(show)
@@ -57,7 +56,7 @@ export const ChangeVaultName = ({
 
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus = validateVaultLength(value, myVaultsIds, vaultsMapper)
+    const validationStatus = validateVaultLength(value, vaultNames)
     setNewVaultName((prev) => ({ ...prev, name: value, validationStatus }))
   }
 
@@ -70,7 +69,7 @@ export const ChangeVaultName = ({
   const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (containSpaces(e.target.value)) {
       const trimmedValue = e.target.value.trim()
-      const validationStatus = validateVaultLength(trimmedValue, myVaultsIds, vaultsMapper)
+      const validationStatus = validateVaultLength(trimmedValue, vaultNames)
       setNewVaultName((prev) => ({ ...prev, validationStatus, name: trimmedValue }))
     }
   }

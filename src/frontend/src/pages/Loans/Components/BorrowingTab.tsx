@@ -19,6 +19,7 @@ import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provi
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 
 type BorrowingTabPropsType = {
   loanTokenAddress: TokenAddressType
@@ -31,6 +32,7 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
 
   const { openCreateVaultPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { myVaultsIds, vaultsMapper, isLoading: isVaultsLoading } = useVaultsContext()
   const {
     config: { daoFee },
   } = useLoansContext()
@@ -40,20 +42,16 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
   const [showZeroVaults, setShowZeroVaults] = useState(false)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const {
-    vaults: { myVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.loans)
 
   const userMarketVaultsIds = useMemo(
     () =>
       myVaultsIds.filter((vaultId) => {
         const vault = vaultsMapper[vaultId]
 
-        const vaultHasBalance = vault.collateralData.find(({ amount }) => amount) || vault.borrowedAmount
-
-        const isVaultValidForMarket = vault.borrowedTokenAddress === loanTokenAddress
-
-        return isVaultValidForMarket && (showZeroVaults ? vaultHasBalance : true)
+        return (
+          vault.borrowedTokenAddress === loanTokenAddress &&
+          (vault.collateralData.find(({ amount }) => amount) || vault.borrowedAmount)
+        )
       }),
     [loanTokenAddress, myVaultsIds, showZeroVaults, vaultsMapper],
   )
