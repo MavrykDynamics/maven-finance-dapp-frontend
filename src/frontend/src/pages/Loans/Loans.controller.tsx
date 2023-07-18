@@ -79,7 +79,7 @@ export const Loans = () => {
     () => ({
       lineColor: colors[themeSelected].primaryChartColor,
       areaTopColor: colors[themeSelected].primaryChartColor,
-      areaBottomColor: 'rgba(119, 164, 242, 0)',
+      areaBottomColor: colors[themeSelected].primaryChartBottomColor,
       textColor: colors[themeSelected].regularText,
     }),
     [themeSelected],

@@ -388,7 +388,7 @@ export const StakeUnstakeView = ({
                 <CustomTooltip
                   text="Amount of MVK you have earned and not yet claimed. This resets every time you stake, unstake, or compound as doing one of those actions will automatically credit your staked MVK balance with any unclaimed rewards."
                   iconId="info"
-                  defaultStrokeColor={colors[themeSelected].textColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                 />
               </h3>
               <CommaNumber value={rewardsToClaim} className="amount" />
@@ -413,7 +413,7 @@ export const StakeUnstakeView = ({
               }
               iconId="info"
               className="tooltip"
-              defaultStrokeColor={colors[themeSelected].textColor}
+              defaultStrokeColor={colors[themeSelected].linksAndButtons}
             />
           </StakeUnstakeRightPart>
         </StakeUnstakeCard>

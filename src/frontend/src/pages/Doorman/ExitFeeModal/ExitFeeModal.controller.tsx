@@ -19,7 +19,6 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { ExitFeeModalButtons, ExitFeeModalContent, ExitFeeModalStats } from './ExitFeeModal.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import NewButton from 'app/App.components/Button/NewButton'
-import { containerColor } from 'styles'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 
@@ -231,7 +230,7 @@ export const ExitFeeModal = ({
               disabled={inputData.validation !== INPUT_STATUS_SUCCESS || isActionActive}
               onClick={() => handleUnstake(Number(inputData.amount))}
             >
-              <Icon id="success-fill" fill={containerColor} /> Proceed
+              <Icon id="doubleCheckmark" /> Proceed
             </NewButton>
 
             <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={closePopup}>

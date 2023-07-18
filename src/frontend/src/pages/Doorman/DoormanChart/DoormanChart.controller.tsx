@@ -107,9 +107,9 @@ export function DoormanChart() {
                   plots: mvkHistoryData,
                 },
                 colors: {
-                  lineColor: skyColor,
-                  areaTopColor: skyColor,
-                  areaBottomColor: 'rgba(119, 164, 242, 0.01)',
+                  lineColor: colors[themeSelected].primaryChartColor,
+                  areaTopColor: colors[themeSelected].primaryChartColor,
+                  areaBottomColor: colors[themeSelected].primaryChartBottomColor,
                 },
               }}
               secondChart={{
@@ -118,9 +118,9 @@ export function DoormanChart() {
                   plots: smvkHistoryData,
                 },
                 colors: {
-                  lineColor: cyanColor,
-                  areaTopColor: cyanColor,
-                  areaBottomColor: 'rgba(134, 212, 201, 0.01)',
+                  lineColor: colors[themeSelected].secondaryChartColor,
+                  areaTopColor: colors[themeSelected].secondaryChartColor,
+                  areaBottomColor: colors[themeSelected].secondaryChartBottomColor,
                 },
               }}
               tooltipAssetFirst={'MVK'}
@@ -169,7 +169,7 @@ export function DoormanChart() {
                   {
                     time: exitFeeMarkerTime,
                     position: 'inBar',
-                    color: colors[themeSelected].valueColor,
+                    color: colors[themeSelected].primaryChartColor,
                     shape: 'circle',
                   },
                 ],

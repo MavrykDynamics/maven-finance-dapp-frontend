@@ -85,7 +85,9 @@ export const dark = {
   dashboardTvlBackground: 'linear-gradient(180deg, #1E1E1E 3.55%, #1E1E1E 83.47%, #1E1E1E 103.84%)',
   // charts
   primaryChartColor: '#77A4F2',
-  secondaryChartColor: '#77A4F2',
+  primaryChartBottomColor: 'rgba(119, 164, 242, 0)',
+  secondaryChartColor: '#86D4C9',
+  secondaryChartBottomColor: 'rgba(134, 212, 201, 0.01)',
   histogramChartColor: '#77A4F2',
   gaugeChartArcColor: '#86D4C9',
   gaugeChartCircleBackgroundColor: '#1E1E1E',
@@ -176,7 +178,9 @@ export const light = {
   dashboardTvlBackground: 'linear-gradient(180deg, #FFFFFF 3.55%, #FFFFFF 83.47%, #FFFFFF 103.84%)',
   // charts
   primaryChartColor: '#77A4F2',
-  secondaryChartColor: '#77A4F2',
+  primaryChartBottomColor: 'rgba(119, 164, 242, 0)',
+  secondaryChartColor: '#86D4C9',
+  secondaryChartBottomColor: 'rgba(134, 212, 201, 0.01)',
   histogramChartColor: '#77A4F2',
   gaugeChartArcColor: '#86D4C9',
   gaugeChartCircleBackgroundColor: '#FFFFFF',
@@ -267,7 +271,9 @@ export const space = {
   dashboardTvlBackground: 'linear-gradient(180deg, #160e3f 3.55%, #26185c 83.47%, #321f71 103.84%)',
   // charts
   primaryChartColor: '#77A4F2',
+  primaryChartBottomColor: 'rgba(119, 164, 242, 0)',
   secondaryChartColor: '#86D4C9',
+  secondaryChartBottomColor: 'rgba(134, 212, 201, 0.01)',
   histogramChartColor: '#77A4F2',
   gaugeChartArcColor: '#86D4C9',
   gaugeChartCircleBackgroundColor: '#38237C',

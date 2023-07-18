@@ -11,13 +11,13 @@ export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavrykT
   .name {
     font-weight: 600;
     font-size: 14px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
   }
 
   .value {
     margin-bottom: 0;
     margin-top: 0;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
     font-weight: 600;
     font-size: 16px;
 
@@ -28,7 +28,7 @@ export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavrykT
     }
 
     svg {
-      fill: ${({ theme }) => theme.dataColor};
+      fill: ${({ theme }) => theme.primaryText};
     }
   }
 `
@@ -46,7 +46,7 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
   &::before {
     content: '';
     position: absolute;
-    border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border-top: 1px solid ${({ theme }) => theme.divider};
     width: 100%;
     left: 0;
     top: 1px;
@@ -56,7 +56,7 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
     margin: 0;
     font-weight: 600;
     font-size: 18px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
   }
 
   ul {
@@ -68,7 +68,7 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
     font-weight: 400;
     font-size: 14px;
     line-height: 21px;
-    color: ${({ theme }) => theme.headerSkyColor};
+    color: ${({ theme }) => theme.regularText};
     list-style: none;
   }
 `
