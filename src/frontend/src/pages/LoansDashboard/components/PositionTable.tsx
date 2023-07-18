@@ -106,14 +106,6 @@ export const LoansPositionTable = ({
 
                   const averageVaultStatus = getVaultSimpleStatus(collateralRatio)
 
-                  console.log({
-                    market: loanTokenData.gqlName,
-                    collateralAmount: marketVaultsUserData?.collateralAmount,
-                    borrowedAmount: marketVaultsUserData.borrowedAmount,
-                    collateralRatio,
-                    averageVaultStatus,
-                  })
-
                   return (
                     <TableRow
                       rowHeight={60}

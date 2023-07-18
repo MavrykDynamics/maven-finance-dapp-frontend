@@ -140,7 +140,7 @@ export const TableBody = styled.tbody<{ theme: MavrykTheme }>`
   &.treasury {
     th,
     td {
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 600;
     }
   }

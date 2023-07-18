@@ -146,15 +146,30 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
         ) : null}
       </div>
 
-      {votingTill ? (
+      {isHistory && ((proposal.executionTime && proposal.executed) || proposal.defeatedTime || proposal.droppedTime) ? (
         <div className="voting-ends">
-          {votingTill
-            ? isHistory
-              ? `Voting has ended on ${parseDate({ time: votingTill, timeFormat: 'MMMM Do HH:mm Z' })} CEST`
-              : votingTill <= Date.now()
-              ? 'Voting has ended, please start next round'
-              : `Voting ending on ${parseDate({ time: votingTill, timeFormat: 'MMMM Do HH:mm Z' })} CEST`
-            : null}
+          {proposal.executionTime && proposal.executed
+            ? `Proposal was executed on ${parseDate({
+                time: proposal.executionTime,
+                timeFormat: 'MMMM Do HH:mm Z',
+              })} CEST`
+            : proposal.defeatedTime
+            ? `Proposal was defeated on ${parseDate({
+                time: proposal.defeatedTime,
+                timeFormat: 'MMMM Do HH:mm Z',
+              })} CEST`
+            : `Proposal was dropped on ${parseDate({
+                time: proposal.droppedTime,
+                timeFormat: 'MMMM Do HH:mm Z',
+              })} CEST`}
+        </div>
+      ) : null}
+
+      {votingTill && !isHistory ? (
+        <div className="voting-ends">
+          {votingTill <= Date.now()
+            ? `Voting has ended on ${parseDate({ time: votingTill, timeFormat: 'MMMM Do HH:mm Z' })} CEST`
+            : `Voting ending on ${parseDate({ time: votingTill, timeFormat: 'MMMM Do HH:mm Z' })} CEST`}
         </div>
       ) : null}
 

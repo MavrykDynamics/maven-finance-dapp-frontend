@@ -56,6 +56,7 @@ export const normalizeProposal = (
 
     currentCycleEndLevel: item.current_cycle_end_level,
     droppedTime: item?.dropped_datetime,
+    defeatedTime: item?.defeated_datetime,
     executionTime: item?.execution_datetime,
     cycle: item.cycle,
     successReward: item.success_reward,

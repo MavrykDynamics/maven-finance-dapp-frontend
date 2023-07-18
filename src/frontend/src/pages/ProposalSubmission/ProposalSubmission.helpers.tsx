@@ -366,6 +366,7 @@ export const DEFAULT_PROPOSAL: ProposalRecordType = {
   governanceId: '',
   droppedTime: '',
   executionTime: '',
+  defeatedTime: '',
   status: ProposalStatus.UNLOCKED,
   title: '',
   description: '',

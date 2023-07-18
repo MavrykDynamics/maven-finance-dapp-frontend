@@ -27357,6 +27357,7 @@ export type Governance_Proposal = {
   data: Array<Governance_Proposal_Data>;
   /** An aggregate relationship */
   data_aggregate: Governance_Proposal_Data_Aggregate;
+  defeated_datetime?: Maybe<Scalars['timestamptz']>;
   description: Scalars['String'];
   dropped_datetime?: Maybe<Scalars['timestamptz']>;
   executed: Scalars['Boolean'];
@@ -27684,6 +27685,7 @@ export type Governance_Proposal_Bool_Exp = {
   cycle?: InputMaybe<Bigint_Comparison_Exp>;
   data?: InputMaybe<Governance_Proposal_Data_Bool_Exp>;
   data_aggregate?: InputMaybe<Governance_Proposal_Data_Aggregate_Bool_Exp>;
+  defeated_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   description?: InputMaybe<String_Comparison_Exp>;
   dropped_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   executed?: InputMaybe<Boolean_Comparison_Exp>;
@@ -28022,6 +28024,7 @@ export type Governance_Proposal_Max_Fields = {
   current_cycle_end_level?: Maybe<Scalars['bigint']>;
   current_cycle_start_level?: Maybe<Scalars['bigint']>;
   cycle?: Maybe<Scalars['bigint']>;
+  defeated_datetime?: Maybe<Scalars['timestamptz']>;
   description?: Maybe<Scalars['String']>;
   dropped_datetime?: Maybe<Scalars['timestamptz']>;
   execution_counter?: Maybe<Scalars['smallint']>;
@@ -28059,6 +28062,7 @@ export type Governance_Proposal_Max_Order_By = {
   current_cycle_end_level?: InputMaybe<Order_By>;
   current_cycle_start_level?: InputMaybe<Order_By>;
   cycle?: InputMaybe<Order_By>;
+  defeated_datetime?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
   dropped_datetime?: InputMaybe<Order_By>;
   execution_counter?: InputMaybe<Order_By>;
@@ -28097,6 +28101,7 @@ export type Governance_Proposal_Min_Fields = {
   current_cycle_end_level?: Maybe<Scalars['bigint']>;
   current_cycle_start_level?: Maybe<Scalars['bigint']>;
   cycle?: Maybe<Scalars['bigint']>;
+  defeated_datetime?: Maybe<Scalars['timestamptz']>;
   description?: Maybe<Scalars['String']>;
   dropped_datetime?: Maybe<Scalars['timestamptz']>;
   execution_counter?: Maybe<Scalars['smallint']>;
@@ -28134,6 +28139,7 @@ export type Governance_Proposal_Min_Order_By = {
   current_cycle_end_level?: InputMaybe<Order_By>;
   current_cycle_start_level?: InputMaybe<Order_By>;
   cycle?: InputMaybe<Order_By>;
+  defeated_datetime?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
   dropped_datetime?: InputMaybe<Order_By>;
   execution_counter?: InputMaybe<Order_By>;
@@ -28173,6 +28179,7 @@ export type Governance_Proposal_Order_By = {
   current_round_proposal?: InputMaybe<Order_By>;
   cycle?: InputMaybe<Order_By>;
   data_aggregate?: InputMaybe<Governance_Proposal_Data_Aggregate_Order_By>;
+  defeated_datetime?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
   dropped_datetime?: InputMaybe<Order_By>;
   executed?: InputMaybe<Order_By>;
@@ -28702,6 +28709,8 @@ export enum Governance_Proposal_Select_Column {
   /** column name */
   Cycle = 'cycle',
   /** column name */
+  DefeatedDatetime = 'defeated_datetime',
+  /** column name */
   Description = 'description',
   /** column name */
   DroppedDatetime = 'dropped_datetime',
@@ -29160,6 +29169,7 @@ export type Governance_Proposal_Stream_Cursor_Value_Input = {
   current_cycle_start_level?: InputMaybe<Scalars['bigint']>;
   current_round_proposal?: InputMaybe<Scalars['Boolean']>;
   cycle?: InputMaybe<Scalars['bigint']>;
+  defeated_datetime?: InputMaybe<Scalars['timestamptz']>;
   description?: InputMaybe<Scalars['String']>;
   dropped_datetime?: InputMaybe<Scalars['timestamptz']>;
   executed?: InputMaybe<Scalars['Boolean']>;
