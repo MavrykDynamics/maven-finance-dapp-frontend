@@ -296,6 +296,7 @@ export const Market = () => {
                     iconId="info"
                     text={USER_AVAILABLE_BORROW(currentMarketAddress)}
                     defaultStrokeColor={colors[themeSelected].textColor}
+                    className='tooltip'
                   />
                 </div>
                 <CommaNumber value={userAvailableBorrow} beginningText="$" className="value" />
