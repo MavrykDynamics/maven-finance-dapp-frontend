@@ -6,7 +6,6 @@ export const VAULTS_DATA = 'vaultsData'
 // CONST FOR VAULTS FILTERS TYPES
 export const VAULTS_ALL = 'allVaults'
 export const VAULTS_USER_ALL = 'userIsOwner'
-export const VAULTS_USER_MARKET = 'userIsOwnerAndCertainMarket'
 export const VAULTS_USER_DEPOSITOR = 'userIsDepositor'
 
 // VAULTS PROVIDER DEFAULT CONSTS
@@ -17,7 +16,6 @@ export const DEFAULT_VAULTS_ACTIVE_SUBS: VaultsSubsRecordType = {
 export const EMPTY_VAULTS_CONTEXT: DeepNonNullable<VaultsCtxState> = {
   vaultsMapper: {},
   myVaultsIds: [],
-  // myVaultsMarketsIds: {},
   allVaultsIds: [],
   permissionedVaultsIds: [],
 }
@@ -25,7 +23,6 @@ export const EMPTY_VAULTS_CONTEXT: DeepNonNullable<VaultsCtxState> = {
 export const DEFAULT_VAULTS_CONTEXT: VaultsCtxState = {
   vaultsMapper: null,
   myVaultsIds: null,
-  // myVaultsMarketsIds: null,
   allVaultsIds: null,
   permissionedVaultsIds: null,
 }

@@ -5,7 +5,7 @@ import {
   Council_Council_Member,
   Break_Glass_Action,
   Break_Glass_Action_Signer,
-} from '../generated/graphqlTypes'
+} from '../__generated__/graphql'
 import { normalizeCouncilMembers } from '../../pages/Council/Council.helpers'
 
 export type CouncilGraphQL = Omit<Council, '__typename'>

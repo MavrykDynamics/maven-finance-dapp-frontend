@@ -1,4 +1,8 @@
 import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { LoansContext, LoansContextState, LoansSubsRecordType } from '../loans.provider.types'
+
+import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { EMPTY_LOANS_CONTEXT } from './loans.const'
 
 // HELPER TO GET OPERATION NAME BY ITS TYPE
 export const getDescrByType = (type: number) => {
@@ -56,5 +60,58 @@ export const calcMarketAvaliableLiquidity = ({
     reserveAmount,
     availableLiquidity: total_remaining - reserveAmount,
     reserveFactor: reserve_ratio / 100,
+  }
+}
+
+export const getLoansProviderReturnValue = ({
+  loansCtxState,
+  isMarketLoading,
+  activeSubs,
+  changeLoansSubscriptionsList,
+  setMarketAddressToSubscribe,
+}: {
+  loansCtxState: LoansContextState
+  isMarketLoading: boolean
+  activeSubs: LoansSubsRecordType
+  changeLoansSubscriptionsList: LoansContext['changeLoansSubscriptionsList']
+  setMarketAddressToSubscribe: LoansContext['setMarketAddressToSubscribe']
+}) => {
+  const { marketsMapper, config, allMarketsAddresses } = loansCtxState
+  const commonToReturn = {
+    changeLoansSubscriptionsList,
+    setMarketAddressToSubscribe,
+  }
+
+  /**
+   * isLoading indicates whethet provider is loading smth, so we need to show loader, not load in background, cases:
+   * 1. if we switch between markets, subscribed to 1 cetrain market and it's not loaded yet
+   * 2. if we subscribe to markets and markets context data is empty
+   * 3. if we subscribe to config and config context data is empty
+   * 4. if we haven't subscribed to anything and don't have any data loaded, need this to fix time which component init its subscribes in useEffect as it's async operation
+   */
+  const isLoading =
+    isMarketLoading ||
+    (activeSubs['loansMarkets'] && (marketsMapper === null || allMarketsAddresses === null)) ||
+    (activeSubs['loansConfig'] && config === null) ||
+    (!activeSubs['loansConfig'] &&
+      config === null &&
+      !activeSubs['loansMarkets'] &&
+      (marketsMapper === null || allMarketsAddresses === null))
+
+  // if provider is loading smth return loading true and default empty context (nonNullable)
+  if (isLoading) {
+    return {
+      ...commonToReturn,
+      ...EMPTY_LOANS_CONTEXT,
+      isLoading: true,
+    }
+  }
+
+  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
+  const nonNullableProviderValue = replaceNullValuesWithDefault<LoansContextState>(loansCtxState, EMPTY_LOANS_CONTEXT)
+  return {
+    ...commonToReturn,
+    ...nonNullableProviderValue,
+    isLoading: false,
   }
 }

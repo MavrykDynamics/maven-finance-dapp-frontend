@@ -68,6 +68,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useUserVaultsNames } from 'providers/VaultsProvider/hooks/useVaultsNames'
 
 type CurrentActiveModalScreen =
   | typeof INITIAL_SCREEN_ID
@@ -91,11 +92,7 @@ export const CreateNewVault = ({
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const { bug } = useToasterContext()
   const { userTokensBalances, userAddress } = useUserContext()
-  const {
-    // TODO: test it
-    myVaultsIds,
-    vaultsMapper,
-  } = useVaultsContext()
+  const { vaultNames, isLoading: isVaultsNamesLoading } = useUserVaultsNames()
 
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
 
@@ -212,7 +209,7 @@ export const CreateNewVault = ({
 
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus = validateVaultLength(value, myVaultsIds, vaultsMapper)
+    const validationStatus = validateVaultLength(value, vaultNames)
 
     setVaultName((prev) => ({ ...prev, name: value, validationStatus }))
   }
@@ -220,7 +217,7 @@ export const CreateNewVault = ({
   const handleVaultNameOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (containSpaces(e.target.value)) {
       const trimmedValue = e.target.value.trim()
-      const validationStatus = validateVaultLength(trimmedValue, myVaultsIds, vaultsMapper)
+      const validationStatus = validateVaultLength(trimmedValue, vaultNames)
       setVaultName((prev) => ({ ...prev, validationStatus, name: trimmedValue }))
     }
   }
@@ -685,14 +682,10 @@ export const CreateNewVault = ({
 }
 
 // validation helper
-export function validateVaultLength(
-  value: string,
-  myVaultsIds: string[],
-  vaultsMapper: Record<string, VaultType>,
-): InputStatusType {
+export function validateVaultLength(value: string, myVaultsNames: string[]): InputStatusType {
   return value &&
     value.length <= 15 &&
-    !myVaultsIds.find((vaultId) => vaultsMapper[vaultId].name.trim().toLowerCase() === value.trim().toLowerCase())
+    !myVaultsNames.find((vaultName) => vaultName.trim().toLowerCase() === value.trim().toLowerCase())
     ? INPUT_STATUS_SUCCESS
     : INPUT_STATUS_ERROR
 }

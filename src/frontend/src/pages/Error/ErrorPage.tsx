@@ -19,6 +19,11 @@ import {
   Vector1,
   Vector2,
 } from './ErrorPage.style'
+import themeColors from 'styles/colors'
+
+// providers
+import { ThemeProvider } from 'styled-components'
+import { SPACE_THEME } from 'consts/theme.const'
 
 type ErrorPageProps = {
   headerText?: string
@@ -30,24 +35,28 @@ export const ErrorPage = ({ headerText = errorHeaderDefaultText, descText = erro
     window.location.assign('/')
   }, [])
 
+  // TODO take theme from localStorage when the logic for themes will be done.
+  const themeSelected = SPACE_THEME
   return (
     <Router>
-      <ErrorPageWrapper>
-        <ErrorTopbar handleRedirect={handleRedirect} />
-        <ErrorPageInner>
-          <ErrorTopHeader>Error</ErrorTopHeader>
-          <Vector1 src="/images/satellite-error.svg" />
-          <ErrorLogoImage src="/images/404.svg" alt="404-logo" />
-          <Vector2 src="/images/space-cow.svg" />
-          <ErrorMidHeader>{headerText}</ErrorMidHeader>
-          <ErrorParagraph>{descText}</ErrorParagraph>
-          <NewButton kind={BUTTON_PRIMARY} onClick={handleRedirect}>
-            <Icon id="menu-compass" />
-            Go To Dashboard
-          </NewButton>
-        </ErrorPageInner>
-        <ErrorFooter handleRedirect={handleRedirect} />
-      </ErrorPageWrapper>
+      <ThemeProvider theme={themeColors[themeSelected]}>
+        <ErrorPageWrapper>
+          <ErrorTopbar handleRedirect={handleRedirect} />
+          <ErrorPageInner>
+            <ErrorTopHeader>Error</ErrorTopHeader>
+            <Vector1 src="/images/satellite-error.svg" />
+            <ErrorLogoImage src="/images/404.svg" alt="404-logo" />
+            <Vector2 src="/images/space-cow.svg" />
+            <ErrorMidHeader>{headerText}</ErrorMidHeader>
+            <ErrorParagraph>{descText}</ErrorParagraph>
+            <NewButton kind={BUTTON_PRIMARY} onClick={handleRedirect}>
+              <Icon id="menu-compass" />
+              Go To Dashboard
+            </NewButton>
+          </ErrorPageInner>
+          <ErrorFooter handleRedirect={handleRedirect} />
+        </ErrorPageWrapper>
+      </ThemeProvider>
     </Router>
   )
 }

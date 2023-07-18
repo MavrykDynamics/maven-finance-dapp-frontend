@@ -4,6 +4,7 @@ import { useLocation, useHistory, useParams } from 'react-router'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // components
@@ -34,7 +35,6 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
 import { markForLiquidation } from './Vaults.actions'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   VAULTS_ALL,

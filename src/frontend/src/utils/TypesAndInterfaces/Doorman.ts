@@ -1,5 +1,5 @@
 // type
-import type { Doorman, Smvk_History_Data, Mvk_Token, Mvk_Transfer_History_Data } from '../generated/graphqlTypes'
+import type { Doorman, Smvk_History_Data, Mvk_Token } from '../__generated__/graphql'
 
 // conterters
 import { normalizeDoormanStorage, normalizeDoormanChartsData } from '../../pages/Doorman/Doorman.converter'

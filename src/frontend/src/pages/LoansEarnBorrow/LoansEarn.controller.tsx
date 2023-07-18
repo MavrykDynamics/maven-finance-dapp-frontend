@@ -27,6 +27,7 @@ import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansPr
 // helpers
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { loansEarnBorrowContext } from './context/loansEarnBorrowContext'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -118,37 +119,46 @@ export const LoansEarn = () => {
     }
   }
 
+  const contextValue = useMemo(
+    () => ({
+      isChartsLoading,
+    }),
+    [isChartsLoading],
+  )
+
   return (
-    <Page>
-      <PageHeader page={'loansEarn'} />
+    <loansEarnBorrowContext.Provider value={contextValue}>
+      <Page>
+        <PageHeader page={'loansEarn'} />
 
-      {isLoansLoading ? (
-        <DataLoaderWrapper>
-          <ClockLoader width={150} height={150} />
-          <div className="text">Loading charts of earnings</div>
-        </DataLoaderWrapper>
-      ) : (
-        <>
-          <EarnBorrowTotalCharts
-            // left chart
-            leftChartData={totalLendingChart}
-            leftChartTitle="Total Earning"
-            leftTotalAmount={totalLendingChart.at(-1)?.value ?? 0}
-            // right chart
-            rightChartData={totalBorrowingChart}
-            rightChartTitle="Total Borrowing"
-            rightTotalAmount={totalBorrowingChart.at(-1)?.value ?? 0}
-          />
+        {isLoansLoading ? (
+          <DataLoaderWrapper>
+            <ClockLoader width={150} height={150} />
+            <div className="text">Loading charts of earnings</div>
+          </DataLoaderWrapper>
+        ) : (
+          <>
+            <EarnBorrowTotalCharts
+              // left chart
+              leftChartData={totalLendingChart}
+              leftChartTitle="Total Earning"
+              leftTotalAmount={totalLendingChart.at(-1)?.value ?? 0}
+              // right chart
+              rightChartData={totalBorrowingChart}
+              rightChartTitle="Total Borrowing"
+              rightTotalAmount={totalBorrowingChart.at(-1)?.value ?? 0}
+            />
 
-          <LoansEarnBorrow
-            title="Earn"
-            markets={markets}
-            settings={marketSettings}
-            handleClick={handleEarn}
-            isDisabledButton={!userAddress}
-          />
-        </>
-      )}
-    </Page>
+            <LoansEarnBorrow
+              title="Earn"
+              markets={markets}
+              settings={marketSettings}
+              handleClick={handleEarn}
+              isDisabledButton={!userAddress}
+            />
+          </>
+        )}
+      </Page>
+    </loansEarnBorrowContext.Provider>
   )
 }
