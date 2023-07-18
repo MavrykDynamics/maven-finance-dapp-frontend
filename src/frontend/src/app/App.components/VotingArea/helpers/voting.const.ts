@@ -5,7 +5,7 @@ export enum VotingTypes {
 }
 
 export const VoteList = {
-  PASS: 2,
+  PASS: 0,
   YES: 1,
-  NO: 0,
+  NO: 2,
 }

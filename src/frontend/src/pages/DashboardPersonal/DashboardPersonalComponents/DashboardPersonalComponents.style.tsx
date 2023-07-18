@@ -421,33 +421,6 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
       white-space: break-spaces;
     }
   }
-
-  .bottom-links {
-    margin-top: auto;
-    position: relative;
-
-    display: flex;
-    column-gap: 40px;
-    justify-content: center;
-    align-items: center;
-    a {
-      font-weight: 600;
-      font-size: 16px;
-      color: ${({ theme }) => theme.valueColor};
-    }
-
-    &::before {
-      position: absolute;
-      content: '';
-      width: 1000px;
-      top: -25px;
-      left: 50%;
-      transform: translateX(-50%);
-      height: 1px;
-      background: ${({ theme }) => theme.cardBorderColor};
-      cursor: default;
-    }
-  }
 `
 
 export const DelegationStatusBlock = styled(SatelliteStatusBlock)<{ theme: MavrykTheme }>`
@@ -469,4 +442,31 @@ export const DashboardPersonalTabStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+`
+
+export const DashboardPersonalSatellitesBottomLinks = styled.div<{ theme: MavrykTheme }>`
+  margin-top: auto;
+  position: relative;
+
+  display: flex;
+  column-gap: 40px;
+  justify-content: center;
+  align-items: center;
+  a {
+    font-weight: 600;
+    font-size: 16px;
+    color: ${({ theme }) => theme.valueColor};
+  }
+
+  &::before {
+    position: absolute;
+    content: '';
+    width: 1000px;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 1px;
+    background: ${({ theme }) => theme.cardBorderColor};
+    cursor: default;
+  }
 `
