@@ -27,13 +27,14 @@ import {
   BUTTON_WIDE,
 } from 'app/App.components/Button/Button.constants'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
-import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import { CREATE_VAULT_ACTION, DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // helpers
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import {
   checkWhetherTokenIsCollateralToken,
+  checkWhetherTokenIsLoanToken,
   getTokenDataByAddress,
   isTezosAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
@@ -54,21 +55,22 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
 
 // types
-import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { CreateVaultPopupDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
+import { LoansCollateralTokenMetadataType, TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useUserVaultsNames } from 'providers/VaultsProvider/hooks/useVaultsNames'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { createVault } from 'providers/VaultsProvider/actions/vaults.actions'
+import { apolloClient } from 'apollo'
+import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
 
 type CurrentActiveModalScreen =
   | typeof INITIAL_SCREEN_ID
@@ -92,6 +94,9 @@ export const CreateNewVault = ({
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const { bug } = useToasterContext()
   const { userTokensBalances, userAddress } = useUserContext()
+  const {
+    contractAddresses: { vaultFactoryAddress, lendingControllerAddress },
+  } = useDappConfigContext()
   const { vaultNames, isLoading: isVaultsNamesLoading } = useUserVaultsNames()
 
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
@@ -107,7 +112,7 @@ export const CreateNewVault = ({
     },
   )
   const [isVaultCreating, setVaultCreating] = useState(false)
-  const [newVaultAddress, setNewVaultAddress] = useState('')
+  const [newVault, setNewVault] = useState<{ id: number; address: string } | null>(null)
   const [selectedCollaterals, setSelectedCollaterals] = useState<
     Record<TokenAddressType, { tokenAddress: TokenAddressType; amount: string; validation: InputStatusType }>
   >({})
@@ -117,7 +122,7 @@ export const CreateNewVault = ({
     if (!show) {
       setShownScreen(INITIAL_SCREEN_ID)
       setVaultCreating(false)
-      setNewVaultAddress('')
+      setNewVault(null)
       setVaultName({ name: '', validationStatus: '', errorMessage: '' })
     }
   }, [show])
@@ -266,20 +271,62 @@ export const CreateNewVault = ({
     }))
 
   // Actions --------------------------------------------------------------------
+  const getNewVaultData = useCallback(async () => {
+    try {
+      const newVaultData = await apolloClient.query({
+        query: GET_NEW_VAULT,
+        variables: {
+          userAddress,
+          vaultName: vaultName.name,
+        },
+      })
+
+      if (newVaultData.error) {
+        console.error('loading new vault error', newVaultData.error)
+        throw new Error(newVaultData.error.message)
+      }
+
+      if (newVaultData.data.vault.length) {
+        const { address, id } = newVaultData.data.vault[0]
+        setCreatedVaultAddress?.(address)
+        setNewVault({
+          address,
+          id,
+        })
+      }
+    } catch (e) {
+      bug('Fetch Error', 'Error occured while loading latest created vault, please reload the page')
+    }
+  }, [setCreatedVaultAddress, userAddress, vaultName.name])
+
   // create vault action
-  const createVaultAction = async () => {
-    // try {
-    //   setVaultCreating(true)
-    //   const newVaultData = await dispatch(triggerInitialVaultCreation(marketTokenAddress, vaultName.name))
-    //   setCreatedVaultAddress?.(String(newVaultData))
-    //   setNewVaultAddress(String(newVaultData))
-    // } catch (e) {
-    //   setShownScreen(INITIAL_SCREEN_ID)
-    //   console.log('Fetching new vault data error', e)
-    // } finally {
-    //   setVaultCreating(false)
-    // }
-  }
+  const createVaultAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    const loanToken = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata })
+
+    if (loanToken && checkWhetherTokenIsLoanToken(loanToken) && vaultFactoryAddress) {
+      setVaultCreating(true)
+      return await createVault(loanToken.loanData.indexerName, vaultName.name, vaultFactoryAddress)
+    }
+
+    return null
+  }, [marketTokenAddress, tokensMetadata, userAddress, vaultFactoryAddress, vaultName.name])
+
+  const createVaultActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: CREATE_VAULT_ACTION,
+      actionFn: createVaultAction,
+      dappActionCallback: () => setVaultCreating(false),
+      afterActionCallback: getNewVaultData,
+    }),
+    [createVaultAction, getNewVaultData],
+  )
+
+  const createVaultHandler = useContractAction(createVaultActionProps)
 
   // deposit action -------------
   const depositAction = useCallback(async () => {
@@ -288,24 +335,19 @@ export const CreateNewVault = ({
       return null
     }
 
-    if (newVaultAddress) {
+    if (newVault && lendingControllerAddress) {
       const collaretalsToDeposit = selectedCollateralsAddresses.reduce<
-        Array<{
-          collateralName: string
-          amount: number
-          id: number
-          address: string
-          type: TokenType
-        }>
+        Array<
+          LoansCollateralTokenMetadataType & {
+            amount: number
+          }
+        >
       >((acc, tokenAddress) => {
         const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata })
 
         if (collateralToken && checkWhetherTokenIsCollateralToken(collateralToken)) {
           acc.push({
-            collateralName: collateralToken.loanData.indexerName,
-            address: tokenAddress,
-            id: collateralToken.id,
-            type: collateralToken.type,
+            ...collateralToken,
             amount: convertNumberForContractCall({
               number: Number(selectedCollaterals[tokenAddress].amount),
               grade: collateralToken.decimals,
@@ -318,8 +360,10 @@ export const CreateNewVault = ({
 
       return await depositCollateralsAction(
         userAddress,
-        newVaultAddress,
+        newVault.address,
         collaretalsToDeposit,
+        newVault.id,
+        lendingControllerAddress,
         closePopup,
         choosenBaker?.bakerAddress,
       )
@@ -327,10 +371,9 @@ export const CreateNewVault = ({
 
     return null
   }, [
-    bug,
     choosenBaker?.bakerAddress,
-    closePopup,
-    newVaultAddress,
+    lendingControllerAddress,
+    newVault,
     selectedCollaterals,
     selectedCollateralsAddresses,
     tokensMetadata,
@@ -419,7 +462,7 @@ export const CreateNewVault = ({
                   form={BUTTON_WIDE}
                   onClick={() => {
                     setShownScreen(ADD_COLLATERAL_SCREEN_ID)
-                    createVaultAction()
+                    createVaultHandler()
                   }}
                   disabled={vaultName.validationStatus !== INPUT_STATUS_SUCCESS}
                 >

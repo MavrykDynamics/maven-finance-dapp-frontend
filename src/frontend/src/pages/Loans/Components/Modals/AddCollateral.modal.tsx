@@ -55,6 +55,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -68,6 +69,9 @@ export const AddCollateral = ({
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userTokensBalances, userAddress } = useUserContext()
+  const {
+    contractAddresses: { lendingControllerAddress },
+  } = useDappConfigContext()
   const { bug } = useToasterContext()
 
   useLockBodyScroll(show)
@@ -103,6 +107,7 @@ export const AddCollateral = ({
   const {
     collateralBalance = 0,
     vaultAddress = '',
+    vaultId = 0,
     collateralRatio = 0,
     borrowedAmount = 0,
     borrowCapacity = 0,
@@ -138,22 +143,26 @@ export const AddCollateral = ({
       return null
     }
 
-    if (collateralToken && vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
+    if (
+      collateralToken &&
+      vaultAddress &&
+      lendingControllerAddress &&
+      checkWhetherTokenIsCollateralToken(collateralToken)
+    ) {
       return await depositCollateralsAction(
         userAddress,
         vaultAddress,
         [
           {
-            collateralName: collateralToken.loanData.indexerName,
-            address: collateralToken.address,
-            id: collateralToken.id,
-            type: collateralToken.type,
+            ...collateralToken,
             amount: convertNumberForContractCall({
               number: Number(inputData.amount),
               grade: decimals,
             }),
           },
         ],
+        vaultId,
+        lendingControllerAddress,
         closePopup,
       )
     }
