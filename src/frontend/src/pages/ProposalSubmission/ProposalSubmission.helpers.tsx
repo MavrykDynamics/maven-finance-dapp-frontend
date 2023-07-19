@@ -5,7 +5,7 @@ import {
   INPUT_STATUS_SUCCESS,
   defaultProposalMetadataTitleMaxLength,
 } from 'app/App.components/Input/Input.constants'
-import { Governance_Proposal } from 'utils/generated/graphqlTypes'
+import { Governance_Proposal } from 'utils/__generated__/graphql'
 import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
   PaymentsDataChangesType,

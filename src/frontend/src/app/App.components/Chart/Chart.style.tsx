@@ -1,6 +1,20 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
 
+export const ChartWrapper = styled.div`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+`
+export const ChartLoaderBlock = styled.div`
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+`
+
 export const Plug = styled.div`
   display: flex;
   flex-direction: column;

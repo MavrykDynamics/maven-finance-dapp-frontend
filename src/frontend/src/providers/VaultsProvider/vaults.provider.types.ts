@@ -1,14 +1,4 @@
-import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { LoansTokenMetadataType, TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
-import {
-  VAULTS_ALL,
-  VAULTS_DATA,
-  VAULTS_USER_ALL,
-  VAULTS_USER_DEPOSITOR,
-  VAULTS_USER_MARKET,
-} from './vaults.provider.consts'
 import {
   BORROW_VAULT_ASSET_ACTION,
   CHANGE_BAKER_ACTION,
@@ -20,6 +10,9 @@ import {
   UPDATE_OPERATORS_ACTION,
   WITHDRAW_COLLATERAL_ACTION,
 } from './helpers/vaults.const'
+import { VAULTS_ALL, VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR } from './vaults.provider.consts'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
 
 // actions type
 export type VaultsActionsType =
@@ -36,7 +29,6 @@ export type VaultsActionsType =
 // context types
 export type VaultsContext = DeepNonNullable<VaultsCtxState> & {
   changeVaultsSubscriptionsList: (skips: Partial<VaultsSubsRecordType>) => void
-  setVaultsMarketToSub: (address: string | null) => void
   isLoading: boolean
 }
 
@@ -44,18 +36,12 @@ export type VaultsCtxState = {
   vaultsMapper: Record<string, VaultType> | null
   permissionedVaultsIds: string[] | null
   myVaultsIds: string[] | null
-  // myVaultsMarketsIds: Record<string, string[]> | null
   allVaultsIds: string[] | null
 }
 
 export type VaultsSubsType = typeof VAULTS_DATA
 export type VaultsSubsRecordType = {
-  [VAULTS_DATA]:
-    | typeof VAULTS_ALL
-    | typeof VAULTS_USER_ALL
-    | typeof VAULTS_USER_DEPOSITOR
-    | typeof VAULTS_USER_MARKET
-    | null
+  [VAULTS_DATA]: typeof VAULTS_ALL | typeof VAULTS_USER_ALL | typeof VAULTS_USER_DEPOSITOR | null
 }
 
 export type VaultsSubsLoadingsRecordType = {
@@ -113,14 +99,6 @@ export type DepositorsFlagType = typeof ANY_USER | typeof NONE_USER | typeof WHI
 export type CollateralType = {
   amount: number
   tokenAddress: TokenAddressType
-}
-
-export type DepositCollateralType = {
-  collateralName: string
-  amount: number
-  id: number
-  address: string
-  type: TokenType
 }
 
 export type VaultAssetData = {

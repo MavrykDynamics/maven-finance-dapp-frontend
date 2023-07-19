@@ -81,7 +81,8 @@ export const useContractAction = ({
           bug(description, message)
         }
       } else {
-        throw new Error(actionResult.error.message)
+        const { message } = actionResult?.error
+        throw new Error(message)
       }
     } catch (e) {
       setAction(null)

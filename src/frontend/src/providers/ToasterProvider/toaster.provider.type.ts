@@ -1,4 +1,4 @@
-import { TezosWalletErrorPayload } from 'errors/error.type'
+import { WalletErrorPayload } from 'errors/error.type'
 import type { CustomErrors } from '../../errors/error'
 import type ToasterProvider from './toaster.provider'
 import {
@@ -49,7 +49,7 @@ export type ToasterContextType = {
   loading: InstanceType<typeof ToasterProvider>['loading']
   error: CustomErrors | null
   sharedErrors: {
-    [WALLTET_ERROR_FIELD]: (TezosWalletErrorPayload & { actionId: WalletActionType }) | null
+    [WALLTET_ERROR_FIELD]: (WalletErrorPayload & { actionId: WalletActionType }) | null
   }
   hideToasterMessage: InstanceType<typeof ToasterProvider>['hideToasterMessage']
   deleteToasterFromArray: InstanceType<typeof ToasterProvider>['deleteToasterFromArray']

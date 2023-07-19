@@ -63,8 +63,6 @@ import {
 
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
-import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
-import { TezosWalletErrorPayload } from 'errors/error.type'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 type StakeUnstakeViewProps = {

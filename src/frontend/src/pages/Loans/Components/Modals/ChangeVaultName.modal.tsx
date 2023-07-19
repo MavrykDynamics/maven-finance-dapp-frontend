@@ -28,7 +28,7 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // providers
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { useUserVaultsNames } from 'providers/VaultsProvider/hooks/useVaultsNames'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
@@ -45,9 +45,9 @@ export const ChangeVaultName = ({
   data: ChangeVaultNamePopupDataType
 }) => {
   // TODO: test it
-  const { myVaultsIds, vaultsMapper } = useVaultsContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
+  const { vaultNames, isLoading: isVaultsNamesLoading } = useUserVaultsNames()
 
   useLockBodyScroll(show)
 
@@ -98,14 +98,14 @@ export const ChangeVaultName = ({
 
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus = validateVaultLength(value, myVaultsIds, vaultsMapper)
+    const validationStatus = validateVaultLength(value, vaultNames)
     setNewVaultName((prev) => ({ ...prev, name: value, validationStatus }))
   }
 
   const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (containSpaces(e.target.value)) {
       const trimmedValue = e.target.value.trim()
-      const validationStatus = validateVaultLength(trimmedValue, myVaultsIds, vaultsMapper)
+      const validationStatus = validateVaultLength(trimmedValue, vaultNames)
       setNewVaultName((prev) => ({ ...prev, validationStatus, name: trimmedValue }))
     }
   }

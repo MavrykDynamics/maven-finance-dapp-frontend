@@ -1,7 +1,7 @@
 import { OpKind, TransferParams } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { LoanVaultAllowanceType } from 'providers/LoansProvider/loans.provider.types'
-import { unknownToError } from 'errors/error'
+import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { VAULT_ALLOWANCE_ACCOUNTS, VAULT_ALLOWANCE_ANY } from 'pages/Loans/Loans.const'
 
@@ -28,7 +28,8 @@ export const changeBakerAction = async (bakerAddress: string, vaultAddress: stri
     })
   } catch (error) {
     callback()
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -103,7 +104,8 @@ export const managePermissionsAction = async (
     throw new Error(`Cant't update depositors.`)
   } catch (error) {
     callback()
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -128,6 +130,7 @@ export const updateOperatorsAction = async (
     })
   } catch (error) {
     callback()
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }

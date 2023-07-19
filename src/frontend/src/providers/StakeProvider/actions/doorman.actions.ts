@@ -1,5 +1,5 @@
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
-import { unknownToError } from 'errors/error'
+import { WalletOperationError, unknownToError } from 'errors/error'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { OpKind } from '@taquito/taquito'
@@ -56,7 +56,8 @@ export const stakeMVK = async (
 
     return await getEstimationBatchResult(tezos, batchArr)
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -72,6 +73,7 @@ export const unstakeMVK = async (
 
     return await getEstimationResult(unstakeOperationMetaData)
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }

@@ -1,10 +1,10 @@
 import { OpKind, TransferParams } from '@taquito/taquito'
-import { unknownToError } from 'errors/error'
+import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
-import { DepositCollateralType } from '../vaults.provider.types'
 
 // remove collateral from the vault
 export const withdrawCollateralAction = async (
@@ -26,7 +26,8 @@ export const withdrawCollateralAction = async (
 
     return await getEstimationResult(withdrawCollateralMetaData, { callback })
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -34,7 +35,13 @@ export const withdrawCollateralAction = async (
 export const depositCollateralsAction = async (
   userAddress: string,
   vaultAddress: string,
-  collateralTokens: Array<DepositCollateralType>,
+  collateralTokens: Array<{
+    collateralName: string
+    amount: number
+    id: number
+    address: string
+    type: TokenType
+  }>,
   callback: () => void,
   bakerAddress?: string | null,
 ) => {
@@ -127,6 +134,7 @@ export const depositCollateralsAction = async (
     return await getEstimationBatchResult(tezos, batchArr, callback)
   } catch (error) {
     callback()
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }

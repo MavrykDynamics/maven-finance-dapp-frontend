@@ -60,7 +60,7 @@ export class FatalError extends ExtendedErrorClass {
 /**
  *
  */
-export class TezosOperationError extends ExtendedErrorClass {
+export class WalletOperationError extends ExtendedErrorClass {
   id?: string
   kind?: string
   errors?: WalletOperationErrorPayloadErrorItem[]
@@ -68,9 +68,9 @@ export class TezosOperationError extends ExtendedErrorClass {
 }
 
 // this one for all errors
-export type CustomErrors = Error | ApiError | ValidationError | FatalError | TezosOperationError | null
+export type CustomErrors = Error | ApiError | ValidationError | FatalError | WalletOperationError | null
 // this one only for extended error, so you know it is NOT null and NOT simple Error
-export type ExtendedError = FatalError | ApiError | ValidationError | TezosOperationError
+export type ExtendedError = FatalError | ApiError | ValidationError | WalletOperationError
 
 /**
  * Function checks the error type based on payload similarity
@@ -80,11 +80,14 @@ export type ExtendedError = FatalError | ApiError | ValidationError | TezosOpera
  */
 export function isExtendedError(e: unknown): e is ExtendedError {
   return (
-    e instanceof FatalError || e instanceof ApiError || e instanceof ValidationError || e instanceof TezosOperationError
+    e instanceof FatalError ||
+    e instanceof ApiError ||
+    e instanceof ValidationError ||
+    e instanceof WalletOperationError
   )
 }
 
-export function isTezosOperationError(e: unknown) {
+export function isWalletOperationError(e: unknown) {
   const result = walletOparationErrorPayload.safeParse(Object.assign({}, e))
   return result.success
 }

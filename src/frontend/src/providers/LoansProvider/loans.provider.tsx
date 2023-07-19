@@ -24,6 +24,7 @@ import {
 // helpers
 import { normalizeLoansConfig, normalizeLoansMarkets } from './helpers/loansMarkets.normalizer'
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { getLoansProviderReturnValue } from './helpers/loans.utils'
 
 export const loansContext = React.createContext<LoansContext>(undefined!)
 
@@ -62,7 +63,7 @@ export const LoansProvider = ({ children }: Props) => {
     }
   }, [marketAddressToSubscribe])
 
-  const handleSubError = (error: ApolloError, subName: LoansSubsType) => {
+  const handleSubError = (error: ApolloError, subName: string) => {
     console.error(`${subName} query error: `, error)
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
@@ -79,7 +80,7 @@ export const LoansProvider = ({ children }: Props) => {
 
       updateMarketsContext(data)
     },
-    onError: (error) => handleSubError(error, LOANS_MARKETS_DATA),
+    onError: (error) => handleSubError(error, 'getLoansMarketsSubscription'),
   })
 
   // subscribe to all markets addresses, used for pagination
@@ -95,7 +96,7 @@ export const LoansProvider = ({ children }: Props) => {
         ),
       }))
     },
-    onError: (error) => handleSubError(error, LOANS_MARKETS_DATA),
+    onError: (error) => handleSubError(error, 'GET_LOANS_MARKET_ADDRESSES'),
   })
 
   // subscribe to markets config
@@ -110,7 +111,7 @@ export const LoansProvider = ({ children }: Props) => {
         config: normalizeLoansConfig({ indexerData: data }),
       }))
     },
-    onError: (error) => handleSubError(error, LOANS_CONFIG),
+    onError: (error) => handleSubError(error, 'GET_LOANS_CONFIG'),
   })
 
   // set markets to context and turn off loaders
@@ -130,35 +131,19 @@ export const LoansProvider = ({ children }: Props) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }
 
-  const providerValue = useMemo(() => {
-    const commonToReturn = {
-      changeLoansSubscriptionsList,
-      setMarketAddressToSubscribe,
-    }
+  const providerValue = useMemo(
+    () =>
+      getLoansProviderReturnValue({
+        loansCtxState,
+        isMarketLoading,
+        activeSubs,
+        changeLoansSubscriptionsList,
+        setMarketAddressToSubscribe,
+      }),
+    [loansCtxState, activeSubs, isMarketLoading],
+  )
 
-    const { marketsMapper, config, allMarketsAddresses } = loansCtxState
-    const isLoading =
-      isMarketLoading ||
-      (activeSubs['loansMarkets'] && (marketsMapper === null || allMarketsAddresses === null)) ||
-      (activeSubs['loansConfig'] && config === null) ||
-      (!activeSubs['loansMarkets'] && !activeSubs['loansConfig'])
-
-    if (isLoading) {
-      return {
-        ...commonToReturn,
-        ...EMPTY_LOANS_CONTEXT,
-        isLoading: true,
-      }
-    }
-    const nonNullableProviderValue = replaceNullValuesWithDefault<LoansContextState>(loansCtxState, EMPTY_LOANS_CONTEXT)
-    return {
-      ...commonToReturn,
-      ...nonNullableProviderValue,
-      isLoading: false,
-    }
-  }, [loansCtxState, activeSubs, isMarketLoading])
-
-  // TODO: debug log
+  // TODO: debug log, remove when no need
   console.log('loans', { providerValue, activeSubs, loansCtxState })
   return <loansContext.Provider value={providerValue}>{children}</loansContext.Provider>
 }
