@@ -1,4 +1,4 @@
-import { unknownToError } from 'errors/error'
+import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
@@ -19,7 +19,8 @@ export const startProposalRound = async (
 
     return await getEstimationResult(startProposalRoundMetaData)
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -39,7 +40,8 @@ export const startVotingRound = async (
 
     return await getEstimationResult(startVotingRoundMetaData)
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -60,6 +62,7 @@ export const startNextRound = async (
 
     return await getEstimationResult(startNextRoundMetaData)
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
