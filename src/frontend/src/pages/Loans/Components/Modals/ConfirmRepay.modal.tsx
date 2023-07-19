@@ -1,12 +1,14 @@
-import { useDispatch } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 
 // consts
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { ConfirmRepayPartPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
+import { repayPartOfVaultAction } from 'providers/VaultsProvider/actions/vaults.actions'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
+import { REPAY_PART_OF_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 
 // components
 import NewButton from 'app/App.components/Button/NewButton'
@@ -30,6 +32,12 @@ import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// types
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useCallback, useMemo } from 'react'
 
 export const ConfirmRepay = ({
   closePopup,
@@ -42,32 +50,83 @@ export const ConfirmRepay = ({
 }) => {
   useLockBodyScroll(show)
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const dispatch = useDispatch()
+  const { userAddress } = useUserContext()
+  const { bug, loading, info } = useToasterContext()
   const {
     preferences: { themeSelected },
+    contractAddresses: { lendingControllerAddress },
+    setAction,
+    toggleActionCompletion,
+    toggleActionFullScreenLoader,
   } = useDappConfigContext()
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
-  if (!data || !borrowedToken || !borrowedToken.rate) return null
+  const {
+    vaultId = 0,
+    vaultAddress = '',
+    collateralBalance = 0,
+    borrowCapacity = 0,
+    borrowedAmount = 0,
+    inputAmount = 0,
+    callback = () => {},
+  } = data ?? {}
 
-  const { vaultId, vaultAddress, collateralBalance, borrowCapacity, borrowedAmount, inputAmount, callback } = data
-
-  const { symbol, rate } = borrowedToken
+  const { symbol = '', rate: originalRate } = borrowedToken ?? {}
+  const rate = originalRate ?? 0
 
   const futureCollateralRatio = getVaultCollateralRatio(collateralBalance, (borrowedAmount - inputAmount) * rate)
   const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
 
-  const repayBtnHandler = async () => {
-    if (vaultId && vaultAddress && checkWhetherTokenIsLoanToken(borrowedToken)) {
-      await dispatch(
-        repayPartOfVaultAction(vaultId, vaultAddress, inputAmount, borrowedToken, () => {
+  // partly repay action ---------------------
+  const partlyRepayAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+    if (!lendingControllerAddress) {
+      bug('Wrong lending address')
+      return null
+    }
+    if (borrowedToken && vaultId && vaultAddress && checkWhetherTokenIsLoanToken(borrowedToken)) {
+      return await repayPartOfVaultAction(
+        lendingControllerAddress,
+        userAddress,
+        vaultId,
+        vaultAddress,
+        inputAmount,
+        borrowedToken,
+        () => {
           closePopup()
           callback()
-        }),
+        },
       )
     }
-  }
+
+    return null
+  }, [
+    borrowedToken,
+    bug,
+    callback,
+    closePopup,
+    inputAmount,
+    lendingControllerAddress,
+    userAddress,
+    vaultAddress,
+    vaultId,
+  ])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: REPAY_PART_OF_VAULT_ACTION,
+      actionFn: partlyRepayAction,
+    }),
+    [partlyRepayAction],
+  )
+
+  const repayBtnHandler = useContractAction(contractActionProps)
+
+  if (!data || !borrowedToken || !borrowedToken.rate) return null
 
   return (
     <PopupContainer onClick={closePopup} show={show}>

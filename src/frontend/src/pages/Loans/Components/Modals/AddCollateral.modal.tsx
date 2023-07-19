@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
-import { useDispatch } from 'react-redux'
 
+// consts
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import {
@@ -12,34 +12,49 @@ import {
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
+import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+
+// types
 import { AddCollateralPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 
+// components
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
+// styles
+import { silverColor } from 'styles'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { depositCollateralsAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { silverColor } from 'styles'
+
+// actions
+import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
+
+// helpers
 import { checkNan } from 'utils/checkNan'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+
+// providers
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -52,9 +67,9 @@ export const AddCollateral = ({
   data: AddCollateralPopupDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { userTokensBalances } = useUserContext()
+  const { userTokensBalances, userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
-  const dispatch = useDispatch()
   useLockBodyScroll(show)
 
   const [inputData, setInputData] = useState<{
@@ -85,24 +100,24 @@ export const AddCollateral = ({
     tokensPrices,
   })
 
-  if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
-
   const {
-    collateralBalance,
-    vaultAddress,
-    collateralRatio,
-    borrowedAmount,
-    borrowCapacity,
-    availableLiquidity,
-    collateralTokenAddress,
-  } = data
+    collateralBalance = 0,
+    vaultAddress = '',
+    collateralRatio = 0,
+    borrowedAmount = 0,
+    borrowCapacity = 0,
+    availableLiquidity = 0,
+    collateralTokenAddress = '',
+  } = data ?? {}
 
-  const { rate: collateralRate, decimals, symbol, name, icon } = collateralToken
+  const { rate: originalCollateralRate = 0, decimals = 0, symbol = '', name = '', icon = '' } = collateralToken ?? {}
+  const collateralRate = originalCollateralRate ?? 0
   const userCollateralBalance = getUserTokenBalanceByAddress({
     userTokensBalances,
     tokenAddress: collateralTokenAddress,
   })
-  const { rate: borrowedTokenRate } = borrowedToken
+  const { rate: originalBorrowedTokenRate } = borrowedToken ?? {}
+  const borrowedTokenRate = originalBorrowedTokenRate ?? 0
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const futureCollateralRatio = getVaultCollateralRatio(
@@ -115,6 +130,46 @@ export const AddCollateral = ({
     Math.max(availableLiquidity, 0),
     futureCollateralBalance / 2 - borrowedAmount * borrowedTokenRate,
   )
+
+  // deposit action
+  const depositAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (collateralToken && vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
+      return await depositCollateralsAction(
+        userAddress,
+        vaultAddress,
+        [
+          {
+            collateralName: collateralToken.loanData.indexerName,
+            address: collateralToken.address,
+            id: collateralToken.id,
+            type: collateralToken.type,
+            amount: convertNumberForContractCall({
+              number: Number(inputData.amount),
+              grade: decimals,
+            }),
+          },
+        ],
+        closePopup,
+      )
+    }
+
+    return null
+  }, [userAddress, collateralToken, vaultAddress, bug, inputData.amount, decimals, closePopup])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DEPOSIT_COLLATERAL_ACTION,
+      actionFn: depositAction,
+    }),
+    [depositAction],
+  )
+
+  const depositCollateralHandler = useContractAction(contractActionProps)
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
@@ -147,28 +202,7 @@ export const AddCollateral = ({
     })
   }
 
-  const depositCollateralHandler = async () => {
-    if (vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
-      dispatch(
-        depositCollateralsAction(
-          vaultAddress,
-          [
-            {
-              collateralName: collateralToken.loanData.indexerName,
-              address: collateralToken.address,
-              id: collateralToken.id,
-              type: collateralToken.type,
-              amount: convertNumberForContractCall({
-                number: Number(inputData.amount),
-                grade: decimals,
-              }),
-            },
-          ],
-          closePopup,
-        ),
-      )
-    }
-  }
+  if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
 
   return (
     <PopupContainer onClick={closePopup} show={show}>

@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 // context, hooks
@@ -7,7 +8,7 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 
 // consts
 import colors from 'styles/colors'
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
@@ -61,21 +62,17 @@ import {
   UNDELEGATE_ACTION,
 } from 'providers/SatellitesProvider/satellites.const'
 import { rewardsCompound } from 'providers/UserProvider/actions/user.actions'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { REWARDS_COMPOUND_ACTION } from 'providers/UserProvider/helpers/user.consts'
-import { sleep } from 'utils/api/sleep'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
-import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
-import { TezosWalletErrorPayload } from 'errors/error.type'
-import { unknownToError } from 'errors/error'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import {
   delegate,
   distributeProposalRewards,
   undelegate,
 } from 'providers/SatellitesProvider/actions/satellites.actions'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -95,14 +92,11 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     useUserContext()
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
   const {
-    setAction,
-    toggleActionCompletion,
-    toggleActionFullScreenLoader,
     contractAddresses: { delegationAddress, doormanAddress, mvkTokenAddress },
     globalLoadingState: { isActionActive },
     preferences: { themeSelected },
   } = useDappConfigContext()
-  const { bug, info, loading } = useToasterContext()
+  const { bug } = useToasterContext()
 
   const { oracleStatus, satelliteStatus } = useSatelliteStatuses(satellite)
 
@@ -125,15 +119,17 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const isUserDelegatedToThisSatellite = satelliteAddress === satelliteMvkIsDelegatedTo
   const balanceOver1SMvk = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) >= 1
 
-  // Actions
-  const delegateCallback = async () => {
+  // Actions ---------------------------------------------------------
+
+  // delegate action --------------
+  const delegeteAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
-      return
+      return null
     }
     if (!delegationAddress) {
       bug('Wrong delegation address')
-      return
+      return null
     }
 
     const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
@@ -141,203 +137,102 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
     if (mvkTokenBalance === 0) {
       bug('Unable to Delegate', 'Please buy MVK and stake it')
-      return
+      return null
     }
 
     if (sMvkTokenBalance === 0) {
       bug('Unable to Delegate', 'Please stake your MVK')
-      return
+      return null
     }
 
-    try {
-      const actionResult = await delegate(userAddress, satelliteAddress, delegationAddress)
+    return await delegate(userAddress, satelliteAddress, delegationAddress)
+  }, [bug, delegationAddress, mvkTokenAddress, satelliteAddress, userAddress, userTokensBalances])
 
-      if (checkIfActionSuccess(actionResult)) {
-        const { operation } = actionResult
-        toggleActionFullScreenLoader(true)
-        toggleActionCompletion(true)
+  const delegateContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DELEGATE_ACTION,
+      actionFn: delegeteAction,
+    }),
+    [delegeteAction],
+  )
 
-        info(
-          TOASTER_ACTIONS_TEXTS[DELEGATE_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[DELEGATE_ACTION]['start']['title'],
-        )
+  const delegateCallback = useContractAction(delegateContractActionProps)
 
-        await sleep(5000)
-
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
-
-        toggleActionFullScreenLoader(false)
-
-        const operationConfirm = await operation.confirmation()
-        const operationLvl = operationConfirm.block.header.level
-        setAction({ actionName: DELEGATE_ACTION, toasterId, operationLvl })
-      } else if (isContractErrorPayload(actionResult.error)) {
-        const { message, description } = actionResult.error as TezosWalletErrorPayload
-        bug(description, message)
-      } else {
-        throw new Error(actionResult.error?.message)
-      }
-    } catch (e) {
-      setAction(null)
-      const parsedError = unknownToError(e)
-      bug(parsedError.message)
-    }
-  }
-
-  const undelegateCallback = async () => {
+  // undelegate action --------------
+  const undelegeteAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
-      return
+      return null
     }
 
     if (!delegationAddress) {
       bug('Wrong delegation address')
-      return
+      return null
     }
 
-    try {
-      const actionResult = await undelegate(userAddress, satelliteAddress, delegationAddress)
+    return await undelegate(userAddress, satelliteAddress, delegationAddress)
+  }, [bug, delegationAddress, satelliteAddress, userAddress])
 
-      if (checkIfActionSuccess(actionResult)) {
-        const { operation } = actionResult
-        toggleActionFullScreenLoader(true)
-        toggleActionCompletion(true)
+  const unDelegateContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: UNDELEGATE_ACTION,
+      actionFn: undelegeteAction,
+    }),
+    [undelegeteAction],
+  )
 
-        info(
-          TOASTER_ACTIONS_TEXTS[UNDELEGATE_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[UNDELEGATE_ACTION]['start']['title'],
-        )
+  const undelegateCallback = useContractAction(unDelegateContractActionProps)
 
-        await sleep(5000)
-
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
-
-        toggleActionFullScreenLoader(false)
-
-        const operationConfirm = await operation.confirmation()
-        const operationLvl = operationConfirm.block.header.level
-        setAction({ actionName: UNDELEGATE_ACTION, toasterId, operationLvl })
-      } else if (isContractErrorPayload(actionResult.error)) {
-        const { message, description } = actionResult.error as TezosWalletErrorPayload
-        bug(description, message)
-      } else {
-        throw new Error(actionResult.error?.message)
-      }
-    } catch (e) {
-      setAction(null)
-      const parsedError = unknownToError(e)
-      bug(parsedError.message)
-    }
-  }
-
-  const claimRewardsCallback = async () => {
+  // claim rewards action ------------
+  // TODO check if it's right action name and method
+  const claimRewardsAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
-      return
+      return null
     }
     if (!doormanAddress) {
-      bug('Bad doorman address')
-      return
+      bug('Wrong doorman address')
+      return null
     }
 
-    try {
-      const actionResult = await rewardsCompound(userAddress, doormanAddress)
+    return await rewardsCompound(userAddress, doormanAddress)
+  }, [bug, doormanAddress, userAddress])
 
-      if (checkIfActionSuccess(actionResult)) {
-        const { operation } = actionResult
-        toggleActionFullScreenLoader(true)
-        toggleActionCompletion(true)
+  const claimRewardsContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: REWARDS_COMPOUND_ACTION,
+      actionFn: claimRewardsAction,
+    }),
+    [claimRewardsAction],
+  )
 
-        info(
-          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[REWARDS_COMPOUND_ACTION]['start']['title'],
-        )
+  const claimRewardsCallback = useContractAction(claimRewardsContractActionProps)
 
-        await sleep(5000)
+  // distributeRewards action
 
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
-
-        toggleActionFullScreenLoader(false)
-
-        const operationConfirm = await operation.confirmation()
-        const operationLvl = operationConfirm.block.header.level
-
-        setAction({ actionName: REWARDS_COMPOUND_ACTION, toasterId, operationLvl })
-      } else if (isContractErrorPayload(actionResult.error)) {
-        const { message, description } = actionResult.error as TezosWalletErrorPayload
-        bug(description, message)
-      } else {
-        throw new Error(actionResult.error.message)
-      }
-    } catch (e) {
-      setAction(null)
-      const parsedError = unknownToError(e)
-      bug(parsedError.message)
-    }
-  }
-
-  const distributeRewardsCallback = async () => {
+  const distributeRewardsAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
-      return
+      return null
     }
 
     if (!delegationAddress) {
       bug('Wrong delegation address')
-      return
+      return null
     }
 
-    // TODO: add valid data
-    try {
-      const actionResult = await distributeProposalRewards(delegationAddress, '', [])
+    return await distributeProposalRewards(delegationAddress, '', [])
+  }, [bug, delegationAddress, userAddress])
 
-      if (checkIfActionSuccess(actionResult)) {
-        const { operation } = actionResult
-        toggleActionFullScreenLoader(true)
-        toggleActionCompletion(true)
+  const distributeRewardsContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
+      actionFn: distributeRewardsAction,
+    }),
+    [distributeRewardsAction],
+  )
 
-        info(
-          TOASTER_ACTIONS_TEXTS[DISTRIBUTE_PROPOSALS_REWARDS_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[DISTRIBUTE_PROPOSALS_REWARDS_ACTION]['start']['title'],
-        )
-
-        await sleep(5000)
-
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
-
-        toggleActionFullScreenLoader(false)
-
-        const operationConfirm = await operation.confirmation()
-        const operationLvl = operationConfirm.block.header.level
-        setAction({ actionName: DISTRIBUTE_PROPOSALS_REWARDS_ACTION, toasterId, operationLvl })
-      } else if (isContractErrorPayload(actionResult.error)) {
-        const { message, description } = actionResult.error as TezosWalletErrorPayload
-        bug(description, message)
-      } else {
-        throw new Error(actionResult.error?.message)
-      }
-    } catch (e) {
-      setAction(null)
-      const parsedError = unknownToError(e)
-      bug(parsedError.message)
-    }
-  }
+  const distributeRewardsCallback = useContractAction(distributeRewardsContractActionProps)
 
   const buttonToShow =
     isUserDelegatedToThisSatellite && currentlyRegistered ? (

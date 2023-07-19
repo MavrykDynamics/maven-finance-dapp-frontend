@@ -5,11 +5,7 @@ import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
 import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
 import { stakingInputValidation } from '../Doorman.converter'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
-import { unknownToError } from 'errors/error'
 import { UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
-import { sleep } from 'utils/api/sleep'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 
 // components
@@ -31,9 +27,8 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { State } from 'reducers'
 import { unstakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
-import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
-import { TezosWalletErrorPayload } from 'errors/error.type'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useCallback, useMemo } from 'react'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -58,12 +53,9 @@ export const ExitFeeModal = ({
   setInputData,
 }: ExitFeeModalPropsType) => {
   const {
-    setAction,
-    toggleActionFullScreenLoader,
-    toggleActionCompletion,
     contractAddresses: { doormanAddress },
   } = useDappConfigContext()
-  const { bug, info, loading } = useToasterContext()
+  const { bug } = useToasterContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -73,69 +65,44 @@ export const ExitFeeModal = ({
   const mli = calcMLI(totalMVKSupply, totalStakedMvk)
   const fee = calcExitFee(totalMVKSupply, totalStakedMvk)
 
-  const handleUnstake = async (unstakeAmount: number) => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return
-    }
-
-    if (!doormanAddress) {
-      bug('Bad doorman address')
-      return
-    }
-
-    if (unstakeAmount <= 0) {
-      bug('Please enter an amount superior to zero', 'Incorrect amount')
-      return
-    }
-
-    try {
-      const actionResult = await unstakeMVK(unstakeAmount, doormanAddress)
-      closePopup()
-
-      if (checkIfActionSuccess(actionResult)) {
-        const { operation } = actionResult
-        toggleActionFullScreenLoader(true)
-        toggleActionCompletion(true)
-
-        info(
-          TOASTER_ACTIONS_TEXTS[UNSTAKE_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[UNSTAKE_ACTION]['start']['title'],
-        )
-
-        await sleep(5000)
-
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
-
-        toggleActionFullScreenLoader(false)
-
-        const operationConfirm = await operation.confirmation()
-        const operationLvl = operationConfirm.block.header.level
-
-        setAction({
-          actionName: UNSTAKE_ACTION,
-          toasterId,
-          operationLvl,
-          callback: () => {
-            setInputData({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
-          },
-        })
-      } else if (isContractErrorPayload(actionResult.error)) {
-        const { message, description } = actionResult.error as TezosWalletErrorPayload
-        bug(description, message)
-      } else {
-        throw new Error(actionResult.error?.message)
+  const unstakeAction = useCallback(
+    async (unstakeAmount: number) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
       }
-    } catch (e) {
-      setAction(null)
-      const parsedError = unknownToError(e)
-      bug(parsedError.message)
-    }
-  }
+
+      if (!doormanAddress) {
+        bug('Wrong doorman address')
+        return null
+      }
+
+      if (unstakeAmount <= 0) {
+        bug('Please enter an amount superior to zero', 'Incorrect amount')
+        return null
+      }
+
+      return await unstakeMVK(unstakeAmount, doormanAddress)
+    },
+    [bug, doormanAddress, userAddress],
+  )
+
+  const dappActionCallback = useCallback(() => {
+    setInputData({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
+  }, [inputData, setInputData])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: UNSTAKE_ACTION,
+      actionFn: unstakeAction.bind(null, Number(inputData.amount)),
+      dappActionCallback: dappActionCallback,
+      afterActionCallback: closePopup,
+    }),
+    [unstakeAction, inputData.amount, dappActionCallback, closePopup],
+  )
+
+  const handleUnstake = useContractAction(contractActionProps)
+
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
 
@@ -233,7 +200,7 @@ export const ExitFeeModal = ({
               kind={BUTTON_PRIMARY}
               form={BUTTON_WIDE}
               disabled={inputData.validation !== INPUT_STATUS_SUCCESS || isActionActive}
-              onClick={() => handleUnstake(Number(inputData.amount))}
+              onClick={handleUnstake}
             >
               <Icon id="success-fill" fill={containerColor} /> Proceed
             </NewButton>

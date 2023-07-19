@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // components
@@ -20,22 +20,15 @@ import {
 } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 import { DEPOSIT_LENDING_ASSET_ACTION } from 'providers/LoansProvider/helpers/loans.const'
 
 // types
 import { AddLendingAssetDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
-import { TezosWalletErrorPayload } from 'errors/error.type'
 
 // helpers
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
-import { sleep } from 'utils/api/sleep'
-import { unknownToError } from 'errors/error'
-import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
 
 // styles
 import { silverColor } from 'styles'
@@ -54,6 +47,9 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
   closePopup,
@@ -67,12 +63,9 @@ export const AddLendingAsset = ({
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const {
     contractAddresses: { lendingControllerAddress },
-    toggleActionFullScreenLoader,
-    toggleActionCompletion,
-    setAction,
   } = useDappConfigContext()
   const { userTokensBalances, userAddress } = useUserContext()
-  const { bug, info, loading } = useToasterContext()
+  const { bug } = useToasterContext()
 
   useLockBodyScroll(show)
 
@@ -94,6 +87,40 @@ export const AddLendingAsset = ({
   }, [show])
 
   const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
+
+  const depositAction = useCallback(async () => {
+    if ((loanToken && !checkWhetherTokenIsLoanToken(loanToken)) || !loanToken) {
+      return null
+    }
+
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!lendingControllerAddress) {
+      bug('Wrong lending address')
+      return null
+    }
+
+    return await depositLendingAssetAction(
+      userAddress,
+      loanToken,
+      Number(inputData.amount),
+      lendingControllerAddress,
+      closePopup,
+    )
+  }, [bug, closePopup, inputData.amount, lendingControllerAddress, loanToken, userAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DEPOSIT_LENDING_ASSET_ACTION,
+      actionFn: depositAction,
+    }),
+    [depositAction],
+  )
+
+  const depositHandler = useContractAction(contractActionProps)
 
   if (!data || !loanToken || !loanToken.rate) return null
 
@@ -132,65 +159,6 @@ export const AddLendingAsset = ({
       ...inputData,
       amount: getOnFocusValue(inputData.amount),
     })
-
-  const depositHandler = async () => {
-    if (checkWhetherTokenIsLoanToken(loanToken)) {
-      if (!userAddress) {
-        bug('Click Connect in the left menu', 'Please connect your wallet')
-        return
-      }
-
-      if (!lendingControllerAddress) {
-        bug('Wrong lending address')
-        return
-      }
-
-      try {
-        const actionResult = await depositLendingAssetAction(
-          userAddress,
-          loanToken,
-          Number(inputData.amount),
-          lendingControllerAddress,
-          closePopup,
-        )
-
-        if (checkIfActionSuccess(actionResult)) {
-          const { operation } = actionResult
-          toggleActionFullScreenLoader(true)
-          toggleActionCompletion(true)
-
-          info(
-            TOASTER_ACTIONS_TEXTS[DEPOSIT_LENDING_ASSET_ACTION]['start']['message'],
-            TOASTER_ACTIONS_TEXTS[DEPOSIT_LENDING_ASSET_ACTION]['start']['title'],
-          )
-
-          await sleep(5000)
-
-          // show toaster loader after 5000ms after operation started
-          const toasterId = loading(
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-          )
-
-          toggleActionFullScreenLoader(false)
-
-          const operationConfirm = await operation.confirmation()
-          const operationLvl = operationConfirm.block.header.level
-
-          setAction({ actionName: DEPOSIT_LENDING_ASSET_ACTION, toasterId, operationLvl })
-        } else if (isContractErrorPayload(actionResult.error)) {
-          const { message, description } = actionResult.error as TezosWalletErrorPayload
-          bug(description, message)
-        } else {
-          throw new Error(actionResult.error.message)
-        }
-      } catch (e) {
-        setAction(null)
-        const parsedError = unknownToError(e)
-        bug(parsedError.message)
-      }
-    }
-  }
 
   return (
     <PopupContainer onClick={closePopup} show={show}>

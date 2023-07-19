@@ -3,7 +3,7 @@ import { OpKind } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // helpers
-import { unknownToError } from 'errors/error'
+import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
@@ -46,7 +46,8 @@ export const triggerInitialVaultCreation = async (
     // return value
     return await getEstimationResult(vaultCreateMetaData)
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -134,7 +135,8 @@ export const depositLendingAssetAction = async (
     ]
     return await getEstimationBatchResult(tezos, batchArr, callback)
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -157,6 +159,7 @@ export const withdrawLendingAssetAction = async (
 
     return await getEstimationResult(withdrawLendingAssetMetaData, { callback })
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
