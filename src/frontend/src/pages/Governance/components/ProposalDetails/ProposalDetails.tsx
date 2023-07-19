@@ -139,7 +139,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
             className="tooltip"
             text={statusTooltipText}
             iconId="info"
-            defaultStrokeColor={colors[themeSelected]['textColor']}
+            defaultStrokeColor={colors[themeSelected].subHeadingText}
           />
         ) : null}
       </div>
@@ -200,7 +200,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         <div className="proposal-data-block-name">Source Code</div>
         <div className="proposal-data-block-value">
           {proposal.sourceCode ? (
-            <a href={proposal.sourceCode} target="_blank" rel="noreferrer" className="isCyan">
+            <a href={proposal.sourceCode} target="_blank" rel="noreferrer">
               {proposal.sourceCode}
             </a>
           ) : (

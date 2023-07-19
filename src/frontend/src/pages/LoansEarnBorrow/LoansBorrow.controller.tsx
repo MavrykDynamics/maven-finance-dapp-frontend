@@ -55,7 +55,6 @@ export const LoansBorrow = () => {
   } = useSelector((state: State) => state.loans)
 
   const {
-    isLoading: isChartsLoading,
     chartsData: { totalBorrowingChart, totalCollateralChart, marketCollateralChart },
   } = useLoansCharts({
     calcTotalBorrowingChart: true,

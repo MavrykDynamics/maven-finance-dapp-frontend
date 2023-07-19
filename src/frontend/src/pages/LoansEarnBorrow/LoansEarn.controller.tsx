@@ -44,7 +44,6 @@ export const LoansEarn = () => {
   const history = useHistory()
 
   const {
-    isLoading: isChartsLoading,
     chartsData: { totalBorrowingChart, totalLendingChart, marketLendingChart },
   } = useLoansCharts({
     calcTotalBorrowingChart: true,

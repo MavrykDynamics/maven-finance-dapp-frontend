@@ -70,7 +70,7 @@ export const Card = styled.div<{ theme: MavrykTheme }>`
 
 export const CardHover = styled(Card)`
   &:hover {
-    border-color: ${({ theme }) => theme.cardHoverColor};
+    border-color: ${({ theme }) => theme.linksAndButtons};
     box-shadow: 0px 4px 4px ${({ theme }) => theme.cardHoverColor};
   }
 `

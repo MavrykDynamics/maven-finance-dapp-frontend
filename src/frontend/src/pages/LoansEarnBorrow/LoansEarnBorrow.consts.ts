@@ -1,5 +1,4 @@
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
-import { skyColor } from 'styles'
 
 export const numberOfItemsToDisplay = 0
 
@@ -15,14 +14,6 @@ export const CHART_SETTINGS = {
   height: 270,
   hideXAxis: true,
   hideYAxis: true,
-}
-
-// TODO: use colors[theme]
-export const CHART_COLORS = {
-  lineColor: skyColor,
-  areaTopColor: skyColor,
-  areaBottomColor: 'rgba(119, 164, 242, 0)',
-  textColor: '#CDCDCD',
 }
 
 export type MarketSettingsType = {
