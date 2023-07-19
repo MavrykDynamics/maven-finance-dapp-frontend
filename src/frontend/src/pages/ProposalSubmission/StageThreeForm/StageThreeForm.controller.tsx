@@ -44,6 +44,7 @@ export const StageThreeForm = ({
   proposalId,
   currentProposal,
   currentProposalValidation,
+  isFormDisabled,
   updateLocalProposalValidation,
   updateLocalProposalData,
 }: StageThreeFormProps) => {
@@ -242,6 +243,7 @@ export const StageThreeForm = ({
                             type: 'text',
                             name: 'to__id',
                             onChange: (e) => handleChange(e, rowIdx),
+                            disabled: isFormDisabled,
                           }}
                         />
                       )}
@@ -262,6 +264,7 @@ export const StageThreeForm = ({
                             type: 'text',
                             name: 'title',
                             onChange: (e) => handleChange(e, rowIdx, { maxLength: proposalMetadataTitleMaxLength }),
+                            disabled: isFormDisabled,
                           }}
                         />
                       )}
@@ -282,6 +285,7 @@ export const StageThreeForm = ({
                             type: 'number',
                             name: 'token_amount',
                             onChange: (e) => handleChange(e, rowIdx, { tokenBalance: balance }),
+                            disabled: isFormDisabled,
                           }}
                         />
                       )}
@@ -295,6 +299,7 @@ export const StageThreeForm = ({
                           placeholder={'Select payment method'}
                           className="stage-3-dropDown"
                           items={ddItems}
+                          disabled={isFormDisabled}
                           activeItem={ddItems.find(({ id }) => tokenAddress === id)}
                           clickItem={(newSelectedAddress: DDItemId) => {
                             handleChange(

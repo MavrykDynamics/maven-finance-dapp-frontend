@@ -32,6 +32,7 @@ export const StageTwoForm = ({
   proposalId,
   currentProposal: { proposalData = [], title, locked },
   currentProposalValidation,
+  isFormDisabled,
   updateLocalProposalValidation,
   updateLocalProposalData,
 }: StageTwoFormProps) => {
@@ -320,7 +321,7 @@ export const StageTwoForm = ({
                   inputSize: INPUT_MEDIUM,
                 }}
                 inputProps={{
-                  disabled: existInServer || locked || !isProposalPeriod,
+                  disabled: existInServer || locked || !isProposalPeriod || isFormDisabled,
                   value: title,
                   type: 'text',
                   name: 'title',
@@ -338,7 +339,7 @@ export const StageTwoForm = ({
                   handleOnChange(item, e.target.value, e.target.name)
                 }
                 inputStatus={validityObject?.validBytes}
-                disabled={!isProposalPeriod || locked}
+                disabled={!isProposalPeriod || locked || isFormDisabled}
               />
 
               <TextArea
@@ -350,7 +351,7 @@ export const StageTwoForm = ({
                 }
                 onBlur={(e: React.FocusEvent<HTMLTextAreaElement>) => handleOnBlur(item, e)}
                 inputStatus={validityObject?.validDescr}
-                disabled={!isProposalPeriod || locked}
+                disabled={!isProposalPeriod || locked || isFormDisabled}
                 textAreaMaxLimit={proposalDescriptionMaxLength}
               />
 
@@ -359,7 +360,7 @@ export const StageTwoForm = ({
                   <Button
                     kind={BUTTON_SIMPLE}
                     onClick={() => handleDeletePair(item.id)}
-                    disabled={!isProposalPeriod || locked}
+                    disabled={!isProposalPeriod || locked || isFormDisabled}
                   >
                     <Icon id="delete" />
                   </Button>
@@ -382,7 +383,11 @@ export const StageTwoForm = ({
 
         <div className={`add-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
           <CustomTooltip text="Add bytes pair" className="tooltip">
-            <Button kind={BUTTON_SIMPLE_SMALL} disabled={!isProposalPeriod || locked} onClick={handleCreateNewByte}>
+            <Button
+              kind={BUTTON_SIMPLE_SMALL}
+              disabled={!isProposalPeriod || locked || isFormDisabled}
+              onClick={handleCreateNewByte}
+            >
               <Icon id="plus" /> Add New Bytes
             </Button>
           </CustomTooltip>

@@ -32,6 +32,7 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
 
   const { allVaultsIds, vaultsMapper } = useSelector((state: State) => state.loans.vaults)
+  const { dipDupTokens } = useSelector((state: State) => state.tokens)
   const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio } = useMemo(
     () => reduceVaultsAssets(allVaultsIds, vaultsMapper),
     [allVaultsIds, vaultsMapper],
@@ -93,14 +94,26 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
 
                   <TableBody className="treasury">
                     {assetsBalances.map(({ symbol, balance, usdValue, rate }) => {
+                      const decimals =
+                        dipDupTokens.find(({ metadata }) => metadata?.symbol.toLowerCase() === symbol.toLowerCase())
+                          ?.metadata?.decimals ?? assetDecimalsToShow
+
                       return (
                         <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
                           <TableCell width="33%">{symbol}</TableCell>
                           <TableCell width="33%">
-                            <CommaNumber value={balance} decimalsToShow={assetDecimalsToShow} useAccurateParsing />
+                            <CommaNumber
+                              value={balance}
+                              decimalsToShow={Number(decimals)}
+                              useAccurateParsing={balance < 1}
+                            />
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
-                            <CommaNumber value={usdValue} beginningText={rate ? '$' : symbol} useAccurateParsing />
+                            <CommaNumber
+                              value={usdValue}
+                              beginningText={rate ? '$' : symbol}
+                              useAccurateParsing={balance < 1}
+                            />
                           </TableCell>
                         </TableRow>
                       )

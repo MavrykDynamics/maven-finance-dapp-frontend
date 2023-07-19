@@ -565,13 +565,16 @@ export const getCollateralRatioByPersentage = (collateralRatio: number) => {
 export const getChartDataBasedOnLength = (chartData: AreaChartPlotType[], period: number) => {
   const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 
-  const emptyChartData = Array.apply(null, Array(period)).map((item, index, array) => ({
-    // get 0 value for each day in period
-    time: new Date().getTime() - ONE_DAY_IN_MS * (array.length - index - 1),
-    value: 0,
+  const lastValue = (chartData.at(-1) as SingleValueData)?.value ?? 0
+
+  const itemsToAdd = Array.from({ length: period - chartData.length }, (_, index) => ({
+    time: new Date().getTime() - ONE_DAY_IN_MS * (period - chartData.length - index - 1),
+    value: lastValue,
   })) as AreaChartPlotType[]
 
-  return chartData.length !== 0 ? chartData : emptyChartData
+  const emptyChartData = chartData.concat(itemsToAdd)
+
+  return chartData.length >= period ? chartData : emptyChartData
 }
 
 /**

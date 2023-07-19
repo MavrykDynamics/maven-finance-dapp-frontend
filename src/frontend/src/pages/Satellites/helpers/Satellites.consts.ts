@@ -34,15 +34,15 @@ export function getTotalDelegatedMVK(
 }
 
 export const VOTE_NUM_MAPPER: Record<number, string> = {
-  0: 'Pass',
-  1: 'Yes',
-  2: 'No',
+  0: 'PASS',
+  1: 'YES',
+  2: 'NO',
 }
 
 export const getVoteText = (voteType?: number): string => {
-  if (voteType === 0) return 'Pass'
-  if (voteType === 1) return 'Yes'
-  if (voteType === 2) return 'No'
+  if (voteType === 0) return 'PASS'
+  if (voteType === 1) return 'YES'
+  if (voteType === 2) return 'NO'
 
   return voteType ? VOTE_NUM_MAPPER[voteType] ?? '' : ''
 }

@@ -79,8 +79,12 @@ export const LoansTxTab = ({
                     </TableCell>
                     <TableCell width="10%" contentPosition="right">
                       <div style={{ width: 'fit-content' }}>
-                        <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
-                          <Button kind={BUTTON_SIMPLE}>View TX</Button>
+                        <Link
+                          to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }}
+                          target="_blank"
+                          className="isCyan"
+                        >
+                          View TX
                         </Link>
                       </div>
                     </TableCell>

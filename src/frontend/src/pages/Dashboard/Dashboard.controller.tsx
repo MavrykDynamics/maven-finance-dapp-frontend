@@ -102,7 +102,7 @@ export const Dashboard = () => {
     circuatingSupply: totalSupply,
     maxSupply: maximumTotalSupply,
     livePrice: mvkExchangeRate,
-    prevPrice: mvkExchangeRate - 0.1,
+    prevPrice: mvkExchangeRate - 0.00999,
   }
 
   return (

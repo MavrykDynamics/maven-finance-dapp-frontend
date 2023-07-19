@@ -187,7 +187,14 @@ export const VotingProposalsArea = ({
 
   // stage voting, user can vote, yes, no, pass
   if (govPhase === GovPhases.VOTING) {
-    return <VotingArea voteStatistics={voteStatistics} isVotingActive handleVote={votingPhaseHandler} />
+    return (
+      <VotingArea
+        voteStatistics={voteStatistics}
+        isVotingActive
+        handleVote={votingPhaseHandler}
+        disableButtonByVote={vote?.vote}
+      />
+    )
   }
 
   return null

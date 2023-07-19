@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { Redirect, useHistory, useLocation } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import QueryString from 'qs'
@@ -46,7 +46,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
-import { STATUS_FLAG_DOWN, STATUS_FLAG_UP } from 'app/App.components/StatusFlag/StatusFlag.constants'
+import { STATUS_FLAG_DOWN, STATUS_FLAG_INFO, STATUS_FLAG_UP } from 'app/App.components/StatusFlag/StatusFlag.constants'
 
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const dispatch = useDispatch()
@@ -105,7 +105,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   // Show details of the proposal
   // const [rightSideContentId, setRightSideContentId] = useState<number | undefined>(undefined)
   const handleItemSelect = (chosenProposal: ProposalRecordType) =>
-    history.replace(`/${proposalPage}?${QueryString.stringify({ proposalId: chosenProposal.id })}`)
+    history.replace(`/${proposalPage}?${QueryString.stringify({ ...parsedQp, proposalId: chosenProposal.id })}`)
 
   // filters handlers TODO: add all cycles option
   const dropDownOptions = useMemo<Array<DropDownItemType>>(() => generateCyclesDdOptions(cycle), [cycle])
@@ -302,7 +302,10 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                             <TzAddress tzAddress={address} />
                           </div>
                         </div>
-                        <StatusFlag status={vote === 1 ? STATUS_FLAG_UP : STATUS_FLAG_DOWN} text={getVoteText(vote)} />
+                        <StatusFlag
+                          status={vote === 1 ? STATUS_FLAG_UP : vote === 2 ? STATUS_FLAG_DOWN : STATUS_FLAG_INFO}
+                          text={getVoteText(vote)}
+                        />
                       </VoterListItem>
                     )
                   })}
@@ -313,7 +316,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
 
             {/* Selected proposal */}
             {rightSideContentId && rightSideContentId !== 0 ? (
-              <ProposalDetails proposal={proposalsMapper[rightSideContentId]} />
+              <ProposalDetails proposal={proposalsMapper[rightSideContentId]} isHistory={isHistory} />
             ) : null}
           </GovernanceStyled>
         )

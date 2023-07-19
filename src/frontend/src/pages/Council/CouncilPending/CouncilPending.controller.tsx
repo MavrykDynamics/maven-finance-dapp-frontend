@@ -743,7 +743,6 @@ export const CouncilPending = (props: Props) => {
     isSetBaker ||
     isSetContractBaker
   ) {
-    // console.log({ value, name, valuelength: value.length, parameters, actionType })
     let address = findAddress(actionType)
 
     return (

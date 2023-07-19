@@ -59,7 +59,7 @@ export const Market = () => {
           acc.userTotalBorrowed += vault.borrowedAmount * vault.borrowedAsset.rate
           acc.userTotalCollateral += vault.collateralBalance
           acc.userAccruedInterest += vault.fee * vault.borrowedAsset.rate
-          acc.userAvailableBorrow += vault.borrowCapacity * vault.borrowedAsset.rate
+          acc.userAvailableBorrow += vault.borrowCapacity
           return acc
         },
         {

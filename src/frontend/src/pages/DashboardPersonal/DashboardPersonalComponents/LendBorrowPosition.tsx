@@ -41,10 +41,10 @@ export const LendBorrowPosition = ({
     vaultRiskGaugeData: GaugeChartStateType
     apyGaugeData: GaugeChartStateType
   } => {
-    const { borrowedAmount, borrowCapacity, totalSuppliedValue, sumOfRatioSuppliedToAPY, sumOfRatioBorrowedToAPR } =
+    const { borrowedAmount, collateralAmount, totalSuppliedValue, sumOfRatioSuppliedToAPY, sumOfRatioBorrowedToAPR } =
       markets.reduce<{
         borrowedAmount: number
-        borrowCapacity: number
+        collateralAmount: number
         totalSuppliedValue: number
         sumOfRatioSuppliedToAPY: number
         sumOfRatioBorrowedToAPR: number
@@ -55,7 +55,7 @@ export const LendBorrowPosition = ({
           const { borrowedAmount = 0, collateralAmount = 0 } = userLoansData.userVaultsData[gqlName] ?? {}
 
           // calculating value risk data & how much borrowed per vault
-          acc.borrowCapacity += collateralAmount / 2
+          acc.collateralAmount += collateralAmount
           acc.borrowedAmount += borrowedAmount
           borrowedPerMarket += borrowedAmount
 
@@ -67,13 +67,13 @@ export const LendBorrowPosition = ({
         },
         {
           borrowedAmount: 0,
-          borrowCapacity: 0,
+          collateralAmount: 0,
           totalSuppliedValue: 0,
           sumOfRatioSuppliedToAPY: 0,
           sumOfRatioBorrowedToAPR: 0,
         },
       )
-    const vaultRiskValue = borrowCapacity ? (borrowedAmount / borrowCapacity) * 100 : 0
+    const vaultRiskValue = collateralAmount ? (borrowedAmount / collateralAmount) * 100 : 0
     const apyNet = totalSuppliedValue ? (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue : 0
 
     return {
@@ -91,7 +91,7 @@ export const LendBorrowPosition = ({
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
-    ...GAUGE_STATE_RISK_PART,
+    ...GAUGE_STATE_APY_PART,
     currentValue: 0,
     text: '',
     status: null,
@@ -99,10 +99,10 @@ export const LendBorrowPosition = ({
 
   // Set gauge chart data for vault risk
   useEffect(() => {
-    if (!gaugeData.isAPY) {
-      setGaugeData(vaultRiskGaugeData)
+    if (gaugeData.isAPY) {
+      setGaugeData(apyGaugeData)
     }
-  }, [vaultRiskGaugeData])
+  }, [apyGaugeData])
 
   return (
     <LBHInfoBlock className="position-tab">
@@ -133,8 +133,8 @@ export const LendBorrowPosition = ({
           >
             <div
               className={`lend-borrow-position ${gaugeData.status ?? ''}`}
-              onMouseEnter={() => setGaugeData(apyGaugeData)}
-              onMouseLeave={() => setGaugeData(vaultRiskGaugeData)}
+              onMouseEnter={() => setGaugeData(vaultRiskGaugeData)}
+              onMouseLeave={() => setGaugeData(apyGaugeData)}
             >
               <CommaNumber
                 value={gaugeData.currentValue}
