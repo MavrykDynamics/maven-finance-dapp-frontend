@@ -41,7 +41,7 @@ export const LendBorrowPosition = ({
   userLoansRewards: number
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { userMTokens } = useUserContext()
+  const { userAddress, userMTokens } = useUserContext()
   const { marketsAddresses, marketsMapper } = useLoansContext()
 
   const {
@@ -53,33 +53,26 @@ export const LendBorrowPosition = ({
     vaultRiskGaugeData: GaugeChartStateType
     apyGaugeData: GaugeChartStateType
   } => {
-    const { borrowedAmount, borrowCapacity, totalSuppliedValue, sumOfRatioSuppliedToAPY, sumOfRatioBorrowedToAPR } =
-      marketsAddresses.reduce<{
-        borrowedAmount: number
-        borrowCapacity: number
-        totalSuppliedValue: number
-        sumOfRatioSuppliedToAPY: number
-        sumOfRatioBorrowedToAPR: number
-      }>(
+    const { borrowedAmount, collateralAmount, totalSuppliedValue, sumOfRatioSuppliedToAPY, sumOfRatioBorrowedToAPR } =
+      marketsAddresses.reduce(
         (acc, marketTokenAddress) => {
           const market = marketsMapper[marketTokenAddress]
           const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
-
-          if (!token || !token.rate || !market) return acc
-
           let borrowedPerMarket = 0
 
+          if (!token || !token.rate || !market) return acc
           const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress } = market
-          const { decimals, rate } = token
 
-          const { lendValue = 0 } = userMTokens[loanMTokenAddress] ?? {}
+          const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
+
+          const { decimals, rate } = token
 
           const conveterLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
 
           const { borrowedAmount = 0, borrowedVaultsCollateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
 
-          // calculating value risk data & how much borrowed per vault
-          acc.borrowCapacity += borrowedVaultsCollateralAmount / 2
+          //  calculating value risk data & how much borrowed per vault
+          acc.collateralAmount += borrowedVaultsCollateralAmount
           acc.borrowedAmount += borrowedAmount
           borrowedPerMarket += borrowedAmount
 
@@ -91,14 +84,16 @@ export const LendBorrowPosition = ({
         },
         {
           borrowedAmount: 0,
-          borrowCapacity: 0,
+          collateralAmount: 0,
           totalSuppliedValue: 0,
           sumOfRatioSuppliedToAPY: 0,
           sumOfRatioBorrowedToAPR: 0,
         },
       )
-    const vaultRiskValue = borrowCapacity ? (borrowedAmount / borrowCapacity) * 100 : 0
-    const apyNet = totalSuppliedValue ? (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue : 0
+
+    const vaultRiskValue = !userAddress || !collateralAmount ? 0 : (borrowedAmount / collateralAmount) * 100
+    const apyNet =
+      !userAddress || !totalSuppliedValue ? 0 : (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue
 
     return {
       vaultRiskGaugeData: {
@@ -111,11 +106,11 @@ export const LendBorrowPosition = ({
         currentValue: getNumberInBounds(0, 100, apyNet),
       },
     }
-  }, [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices, userMTokens, userVaultsData])
+  }, [marketsAddresses, userAddress, marketsMapper, tokensMetadata, tokensPrices, userMTokens, userVaultsData])
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
-    ...GAUGE_STATE_RISK_PART,
+    ...GAUGE_STATE_APY_PART,
     currentValue: 0,
     text: '',
     status: null,
@@ -123,10 +118,10 @@ export const LendBorrowPosition = ({
 
   // Set gauge chart data for vault risk
   useEffect(() => {
-    if (!gaugeData.isAPY) {
-      setGaugeData(vaultRiskGaugeData)
+    if (gaugeData.isAPY) {
+      setGaugeData(apyGaugeData)
     }
-  }, [vaultRiskGaugeData])
+  }, [apyGaugeData])
 
   return (
     <LBHInfoBlock className="position-tab">
@@ -157,8 +152,8 @@ export const LendBorrowPosition = ({
           >
             <div
               className={`lend-borrow-position ${gaugeData.status ?? ''}`}
-              onMouseEnter={() => setGaugeData(apyGaugeData)}
-              onMouseLeave={() => setGaugeData(vaultRiskGaugeData)}
+              onMouseEnter={() => setGaugeData(vaultRiskGaugeData)}
+              onMouseLeave={() => setGaugeData(apyGaugeData)}
             >
               <CommaNumber
                 value={gaugeData.currentValue}

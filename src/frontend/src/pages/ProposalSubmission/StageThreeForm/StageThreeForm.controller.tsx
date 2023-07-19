@@ -50,6 +50,7 @@ export const StageThreeForm = ({
   proposalId,
   currentProposal,
   currentProposalValidation,
+  isFormDisabled,
   updateLocalProposalValidation,
   updateLocalProposalData,
 }: StageThreeFormProps) => {
@@ -275,6 +276,7 @@ export const StageThreeForm = ({
                             type: 'text',
                             name: 'to__id',
                             onChange: (e) => handleChange(e, rowIdx),
+                            disabled: isFormDisabled,
                           }}
                         />
                       )}
@@ -295,6 +297,7 @@ export const StageThreeForm = ({
                             type: 'text',
                             name: 'title',
                             onChange: (e) => handleChange(e, rowIdx, { maxLength: proposalMetadataTitleMaxLength }),
+                            disabled: isFormDisabled,
                           }}
                         />
                       )}

@@ -10,7 +10,7 @@ import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 // view
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { DelegationStatusBlock } from './DashboardPersonalComponents.style'
+import { DashboardPersonalSatellitesBottomLinks, DelegationStatusBlock } from './DashboardPersonalComponents.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -143,7 +143,10 @@ const DelegationTab = () => {
                 </div>
               </div>
             </div>
-            <Link to="/satellites">Satellites Overview</Link>
+            <DashboardPersonalSatellitesBottomLinks>
+              <Link to="/satellites">Satellites Overview</Link>
+              <Link to={`/satellites/satellite-details/${satelliteRecord.address}`}>View Satellite Profile</Link>
+            </DashboardPersonalSatellitesBottomLinks>
           </>
         ) : userSmvkBalance === 0 && userAddress ? (
           <div className="no-data">
