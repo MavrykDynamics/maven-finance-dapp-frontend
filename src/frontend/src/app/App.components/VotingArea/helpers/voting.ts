@@ -33,9 +33,9 @@ export type VotingProps = {
 export type VotingProposalsProps = {
   voteStatistics: VoteStatistics
   selectedProposal: ProposalRecordType
-  votingPhaseHandler?: (vote: `${VotingTypes}`) => void
+  votingPhaseHandler?: () => void
   isAbleToMakeProposalRoundVote?: boolean
-  handleProposalVote: (vote: number) => void
+  handleProposalVote: () => void
   vote?: ProposalRecordType['votes'][number]
   govPhase: `${GovPhases}`
 }

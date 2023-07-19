@@ -167,7 +167,7 @@ export const VotingProposalsArea = ({
           )}
           {userAddress ? (
             <Button
-              onClick={() => handleProposalVote(Number(selectedProposal.id))}
+              onClick={handleProposalVote}
               kind={BUTTON_PRIMARY}
               disabled={vote?.round === 0 || !isSatellite || isActionActive || isNewlyRegisteredSatellite}
             >

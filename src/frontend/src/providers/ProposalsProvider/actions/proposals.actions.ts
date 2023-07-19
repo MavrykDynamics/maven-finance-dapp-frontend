@@ -27,7 +27,7 @@ export const proposalRoundVote = async (
 
 export const votingRoundVote = async (
   governanceAddress: string,
-  vote: string,
+  vote: number,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   // add user address check when calling this method
 
@@ -35,7 +35,7 @@ export const votingRoundVote = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(governanceAddress)
-    const votingRoundVoteMetaData = contract?.methods.votingRoundVote(vote)
+    const votingRoundVoteMetaData = contract?.methods.votingRoundVote(vote.toString())
 
     // for dapp callback
     // await dispatch(getGovernanceStorage())

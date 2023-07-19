@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // consts
@@ -15,13 +15,7 @@ import {
   getTimestampByLevelSchema,
   getTimestampByLevelUrl,
 } from 'utils/api/api-helpers/getTimestampByLevel'
-import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
-import {
-  executeProposal,
-  processProposalPayment,
-  proposalRoundVote,
-  votingRoundVote,
-} from 'pages/Governance/actions/Proposals.actions'
+import { dropProposal } from 'providers/ProposalsProvider/actions/proposalsSubmission.actions'
 
 // types
 import { State } from 'reducers'
@@ -50,22 +44,41 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import {
+  DROP_PROPOSAL_ACTION,
+  EXECUTE_PROPOSAL_ACTION,
+  PROCESS_PROPOSAL_ACTION,
+  PROPOSAL_ROUND_VOTE_ACTION,
+  VOTING_ROUND_VOTE_ACTION,
+} from 'providers/ProposalsProvider/helpers/proposals.const'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import {
+  executeProposal,
+  processProposalPayment,
+  proposalRoundVote,
+  votingRoundVote,
+} from 'providers/ProposalsProvider/actions/proposals.actions'
+import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
   const dispatch = useDispatch()
 
   const { bug } = useToasterContext()
+  const { userAddress } = useUserContext()
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { isActionActive } = useSelector((state: State) => state.loading)
   const { governancePhase } = useSelector((state: State) => state.governance.config)
   const {
     preferences: { themeSelected },
+    contractAddresses: { governanceAddress },
+    globalLoadingState: { isActionActive },
   } = useDappConfigContext()
 
   const { tokensMetadata } = useTokensContext()
+  const [selectedVote, setSelectedVote] = useState<VotingTypes | null>(null)
 
-  const isUserOwnerIfTheProposal = proposal.proposerId === accountPkh
+  const isUserOwnerIfTheProposal = proposal.proposerId === userAddress
 
   // User can drop proposal only if he is owner and proposal in newly created, or on voting stage
   const userCanDropProposal =
@@ -74,15 +87,106 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       proposal.status === ProposalStatus.ONGOING ||
       proposal.status === ProposalStatus.UNLOCKED)
 
-  const isExecuteProposal = proposal.anyCanExecute && accountPkh
-  const isPaymentProposal = proposal.anyCanPay && accountPkh
+  const isExecuteProposal = proposal.anyCanExecute && userAddress
+  const isPaymentProposal = proposal.anyCanPay && userAddress
 
   // Proposal actions
-  const handleDeleteProposal = async () => await dispatch(dropProposal(proposal.id))
-  const handleClickExecuteProposal = async () => await dispatch(executeProposal(proposal.id))
-  const handleClickProcessPayment = async () => await dispatch(processProposalPayment(proposal.id))
-  const handleProposalRoundVote = async (proposalId: number) => await dispatch(proposalRoundVote(proposalId))
-  const handleVotingRoundVote = async (vote: `${VotingTypes}`) => await dispatch(votingRoundVote(vote))
+  // const handleDeleteProposal = async () => await dispatch(dropProposal(proposal.id))
+  // const handleClickExecuteProposal = async () => await dispatch(executeProposal(proposal.id))
+  // const handleClickProcessPayment = async () => await dispatch(processProposalPayment(proposal.id))
+  // const handleProposalRoundVote = async (proposalId: number) => await dispatch(proposalRoundVote(proposalId))
+  // const handleVotingRoundVote = async (vote: `${VotingTypes}`) => await dispatch(votingRoundVote(vote))
+
+  // Actions
+
+  // this callback is similar to all action down here
+  const dappActionCallback = useCallback(() => {
+    dispatch(getGovernanceStorage())
+  }, [dispatch])
+
+  // action fn helper cuz params are identical -----------------------------------------------------------------
+  const executeActionFn = useCallback(
+    async (
+      actionFn: (
+        governanceAddress: string,
+        proposalId: number,
+      ) => Promise<ActionErrorReturnType | ActionSuccessReturnType>,
+    ) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!governanceAddress) {
+        bug('Wrong governance address')
+        return null
+      }
+
+      return await actionFn(governanceAddress, Number(proposal.id))
+    },
+    [bug, governanceAddress, proposal.id, userAddress],
+  )
+
+  // drop proposal ------------------------------------------------------------------------
+  const dropProposalContractProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DROP_PROPOSAL_ACTION,
+      actionFn: executeActionFn.bind(null, dropProposal),
+      dappActionCallback: dappActionCallback,
+    }),
+    [executeActionFn, dappActionCallback],
+  )
+
+  const handleDeleteProposal = useContractAction(dropProposalContractProps)
+
+  // execute proposal ------------------------------------------------------------------------
+
+  const executeProposalContractProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: EXECUTE_PROPOSAL_ACTION,
+      actionFn: executeActionFn.bind(null, executeProposal),
+      dappActionCallback,
+    }),
+    [executeActionFn, dappActionCallback],
+  )
+
+  const handleClickExecuteProposal = useContractAction(executeProposalContractProps)
+
+  //  process proposal payment ---------------------------------------------------------------------------
+  const processProposalPaymentContractProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: PROCESS_PROPOSAL_ACTION,
+      actionFn: executeActionFn.bind(null, processProposalPayment),
+      dappActionCallback,
+    }),
+    [executeActionFn, dappActionCallback],
+  )
+
+  const handleClickProcessPayment = useContractAction(processProposalPaymentContractProps)
+
+  // propocal round vote action  ---------------------------------------------------------------------------
+  const proposaRoundVoteContractProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: PROPOSAL_ROUND_VOTE_ACTION,
+      actionFn: executeActionFn.bind(null, proposalRoundVote),
+      dappActionCallback,
+    }),
+    [executeActionFn, dappActionCallback],
+  )
+
+  const handleProposalRoundVote = useContractAction(proposaRoundVoteContractProps)
+
+  // TODO add VOTE types to fn args
+  // handleVotingRoundVote action ---------------------------------------------------------------------------
+  const handleVotingRoundContractProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: VOTING_ROUND_VOTE_ACTION,
+      actionFn: executeActionFn.bind(null, votingRoundVote),
+      dappActionCallback,
+    }),
+    [executeActionFn, dappActionCallback],
+  )
+
+  const handleVotingRoundVote = useContractAction(handleVotingRoundContractProps)
 
   // Voting stuff
   const voteStatistics = useMemo<VoteStatistics>(
@@ -130,7 +234,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   const statusTooltipText = getTooltipForStatus(proposal.status)
 
   return (
-    <ProposalDetailsStyled isAuthorized={Boolean(accountPkh)}>
+    <ProposalDetailsStyled isAuthorized={Boolean(userAddress)}>
       <div className="title-status">
         <H2Title>{proposal.title}</H2Title>
         <StatusFlag text={proposal.status} status={proposal.status} />
@@ -168,7 +272,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         handleProposalVote={handleProposalRoundVote}
         selectedProposal={proposal}
         vote={proposal.votes.find(
-          ({ address, round }) => address === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
+          ({ address, round }) => address === userAddress && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
         )}
         isVoteActive={(votingTill ?? 0) >= Date.now()}
         govPhase={governancePhase}
