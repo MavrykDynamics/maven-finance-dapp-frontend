@@ -47,6 +47,8 @@ export const TokensProvider = ({ children }: Props) => {
   const updateTokensMetadata = (tokensGql: TokensMetadataSubscription['token']) => {
     const tokensMetadata = normalizeTokensMetadata(tokensGql)
 
+    console.log({ tokensGql, tokensMetadata })
+
     setTokensCtxState({
       ...tokensCtxState,
       tokensMetadata: { ...tokensCtxState.tokensMetadata, ...tokensMetadata.tokensMetadata },
