@@ -143,7 +143,6 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
 
       .byte {
         display: flex;
-        align-items: flex-end;
 
         button {
           text-decoration: underline;
