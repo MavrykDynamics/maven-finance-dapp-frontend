@@ -76,7 +76,6 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   } = useDappConfigContext()
 
   const { tokensMetadata } = useTokensContext()
-  const [selectedVote, setSelectedVote] = useState<VotingTypes | null>(null)
 
   const isUserOwnerIfTheProposal = proposal.proposerId === userAddress
 

@@ -248,18 +248,6 @@ export const updateProposalData =
       dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, 'Updating proposal...', ACTION_START_MESSAGE_TEXT))
 
-      // TODO: if need uncomment, estimation for transaction
-      // try {
-      //   const tezos = await DAPP_INSTANCE.tezos()
-      //   const operationEstimate = await tezos.estimate.transfer(
-      //     contract.methods.updateProposalData(proposalId, bytesChanges, paymentChanges).toTransferParams(),
-      //   )
-
-      //   console.log('operationEstimate', operationEstimate)
-      // } catch (e) {
-      //   console.log('estimate error', e)
-      // }
-
       await sleep(5000)
 
       // turn off fs actions loader and start data updating after 5s after operation started

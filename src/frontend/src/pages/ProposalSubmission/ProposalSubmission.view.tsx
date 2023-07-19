@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import QueryString from 'qs'
 import { useHistory } from 'react-router'
@@ -40,6 +40,12 @@ import {
   BUTTON_NAVIGATION,
   BUTTON_WIDE,
 } from 'app/App.components/Button/Button.constants'
+import {
+  DROP_PROPOSAL_ACTION,
+  LOCK_PROPOSAL_ACTION,
+  SUBMIT_PROPOSAL_ACTION,
+  UPDATE_PROPOSAL_DATA_ACTION,
+} from 'providers/ProposalsProvider/helpers/proposals.const'
 
 import colors from 'styles/colors'
 import {
@@ -50,19 +56,31 @@ import {
 } from 'texts/tooltips/governance'
 
 // helpers & actions
+import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import {
+  submitProposal,
+  updateProposalData,
+  lockProposal,
+  dropProposal,
+} from 'providers/ProposalsProvider/actions/proposalsSubmission.actions'
 import { getBytesDiff, getPaymentsDiff } from './ProposalSubmission.helpers'
-import { dropProposal, lockProposal, submitProposal, updateProposalData } from './ProposalSubmission.actions'
+import { unknownToError } from 'errors/error'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const dispatch = useDispatch()
   const history = useHistory()
 
   const { tokensMetadata } = useTokensContext()
+  const { bug } = useToasterContext()
   const { userAddress, isNewlyRegisteredSatellite } = useUserContext()
 
   const {
@@ -72,8 +90,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   } = useSelector((state: State) => state.governance)
   const {
     preferences: { themeSelected },
+    contractAddresses: { governanceAddress },
+    globalLoadingState: { isActionActive },
   } = useDappConfigContext()
-  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [activeTab, setActiveTab] = useState(1)
 
@@ -147,10 +166,13 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
   // ------ ACTIONS HANDLERDS START ------
   // Change user's vieving proposal
-  const changeActiveProposal = (proposalId: number) => {
-    if (proposalId !== selectedUserProposalId)
-      history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
-  }
+  const changeActiveProposal = useCallback(
+    (proposalId: number) => {
+      if (proposalId !== selectedUserProposalId)
+        history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
+    },
+    [history, selectedUserProposalId],
+  )
 
   const updateLocalProposalData = (newProposalData: Partial<ProposalRecordType>, proposalId: number) => {
     setProposalsState({
@@ -173,60 +195,194 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   }
 
   const handleNextStep = (tabId: number) => setActiveTab(tabId)
-  const handleLockProposal = async (proposalId: number) => await dispatch(lockProposal(proposalId))
-  const handleDropProposal = async (proposalId: number) =>
-    proposalId && proposalId !== -1 ? await dispatch(dropProposal(proposalId)) : null
+
+  // actions helper for dapp data update callback --------------------------------
+  const dappCallback = useCallback(() => {
+    // TODO remove when proposal context will be done
+    dispatch(getGovernanceStorage())
+  }, [dispatch])
+
+  // drop proposal action --------------------------------------------------------
+  const dropActionFn = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+    if (!governanceAddress) {
+      bug('Wrong governance address')
+      return null
+    }
+    if (selectedUserProposalId && selectedUserProposalId !== -1) {
+      return await dropProposal(governanceAddress, selectedUserProposalId)
+    }
+
+    return null
+  }, [bug, governanceAddress, selectedUserProposalId, userAddress])
+
+  const dropContractProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DROP_PROPOSAL_ACTION,
+      actionFn: dropActionFn,
+      dappCallback,
+    }),
+    [dappCallback, dropActionFn],
+  )
+
+  const handleDropProposal = useContractAction(dropContractProps)
+
+  // lock proposal action --------------------------------------------------------
+  const lockActionFn = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+    if (!governanceAddress) {
+      bug('Wrong governance address')
+      return null
+    }
+
+    return await lockProposal(governanceAddress, selectedUserProposalId)
+  }, [bug, governanceAddress, selectedUserProposalId, userAddress])
+
+  const lockContractProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: LOCK_PROPOSAL_ACTION,
+      actionFn: lockActionFn,
+      dappCallback,
+    }),
+    [dappCallback, lockActionFn],
+  )
+
+  const handleLockProposal = useContractAction(lockContractProps)
+
+  // submit proposal action handler ----------------------------------------------
+  const submitActionFn = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+    if (!governanceAddress) {
+      bug('Wrong governance address')
+      return null
+    }
+
+    const bytes = getBytesDiff(
+      [],
+      currentProposal.proposalData.filter(
+        ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
+      ),
+    )
+
+    const payments = getPaymentsDiff(
+      [],
+      currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
+      tokensMetadata,
+    )
+
+    return await submitProposal(
+      governanceAddress,
+      {
+        title: currentProposal.title,
+        description: currentProposal.description,
+        sourceCode: currentProposal.sourceCode,
+        invoice: currentProposal.invoice,
+      },
+      fee,
+      bytes,
+      payments,
+      changeActiveProposal,
+    )
+  }, [
+    bug,
+    changeActiveProposal,
+    currentProposal.description,
+    currentProposal.invoice,
+    currentProposal.proposalData,
+    currentProposal.proposalPayments,
+    currentProposal.sourceCode,
+    currentProposal.title,
+    fee,
+    governanceAddress,
+    tokensMetadata,
+    userAddress,
+  ])
+
+  const submitContractProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: SUBMIT_PROPOSAL_ACTION,
+      actionFn: submitActionFn,
+      dappCallback,
+    }),
+    [dappCallback, submitActionFn],
+  )
+
+  const handleProposalSubmit = useContractAction(submitContractProps)
+
+  // update proposal action handler ----------------------------------------------
+  const updateActionFn = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+    if (!governanceAddress) {
+      bug('Wrong governance address')
+      return null
+    }
+
+    const bytesDiff = getBytesDiff(
+      currentProposalOnRemote.proposalData,
+      currentProposal.proposalData.filter(
+        ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
+      ),
+    )
+    const paymentsDiff = getPaymentsDiff(
+      currentProposalOnRemote.proposalPayments,
+      currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
+      tokensMetadata,
+    )
+
+    return await updateProposalData(governanceAddress, selectedUserProposalId, bytesDiff, paymentsDiff)
+  }, [
+    bug,
+    currentProposal.proposalData,
+    currentProposal.proposalPayments,
+    currentProposalOnRemote.proposalData,
+    currentProposalOnRemote.proposalPayments,
+    governanceAddress,
+    tokensMetadata,
+    userAddress,
+    selectedUserProposalId,
+  ])
+
+  const updateContractProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: UPDATE_PROPOSAL_DATA_ACTION,
+      actionFn: updateActionFn,
+      dappCallback,
+    }),
+    [dappCallback, updateActionFn],
+  )
+
+  const handleProposalUpdate = useContractAction(updateContractProps)
 
   /**
-   * @param proposalId id of proposal to save | update
    *
    * if proposal exists in indexer @currentProposalOnRemote !== null we update it with diff between stage 2 & 3 on client and remote via @updateProposalData method
    * if proposal doesn't exists save it via @submitProposal action call
    */
-  const handleUpdateData = async (proposalId: number) => {
-    if (!currentProposalOnRemote) {
-      const bytes = getBytesDiff(
-        [],
-        currentProposal.proposalData.filter(
-          ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
-        ),
-      )
-
-      const payments = getPaymentsDiff(
-        [],
-        currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
-        tokensMetadata,
-      )
-
-      await dispatch(
-        submitProposal(
-          {
-            title: currentProposal.title,
-            description: currentProposal.description,
-            sourceCode: currentProposal.sourceCode,
-            invoice: currentProposal.invoice,
-          },
-          fee,
-          bytes,
-          payments,
-          changeActiveProposal,
-        ),
-      )
-    } else {
-      const bytesDiff = getBytesDiff(
-        currentProposalOnRemote.proposalData,
-        currentProposal.proposalData.filter(
-          ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
-        ),
-      )
-      const paymentsDiff = getPaymentsDiff(
-        currentProposalOnRemote.proposalPayments,
-        currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
-        tokensMetadata,
-      )
-      await dispatch(updateProposalData(proposalId, bytesDiff, paymentsDiff))
+  const handleUpdateData = async () => {
+    try {
+      if (!currentProposalOnRemote) {
+        await handleProposalSubmit()
+      } else {
+        await handleProposalUpdate()
+      }
+    } catch (e) {
+      const err = unknownToError(e)
+      bug(err.message)
     }
   }
+
   // ------ ACTIONS HANDLERDS END ------
 
   // disabling action buttons
@@ -358,7 +514,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               kind={BUTTON_SECONDARY}
               form={BUTTON_WIDE}
               disabled={isDropDisabled || isActionActive}
-              onClick={() => handleDropProposal(selectedUserProposalId)}
+              onClick={handleDropProposal}
             >
               <Icon id="navigation-menu_close" /> Drop Proposal
             </Button>
@@ -376,7 +532,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               kind={BUTTON_SECONDARY}
               form={BUTTON_WIDE}
               disabled={isSubmitDisabled || isActionActive}
-              onClick={() => handleLockProposal(selectedUserProposalId)}
+              onClick={handleLockProposal}
             >
               <Icon id="submit" /> Submit Proposal
             </Button>
@@ -394,7 +550,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               kind={activeTab !== 3 ? BUTTON_SECONDARY : BUTTON_PRIMARY}
               form={BUTTON_WIDE}
               disabled={isSaveProposalDisabled || isActionActive}
-              onClick={() => handleUpdateData(selectedUserProposalId)}
+              onClick={handleUpdateData}
             >
               <Icon id="save" /> {isProposalSubmitted ? 'Save Changes' : 'Save Proposal'}
             </Button>
