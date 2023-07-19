@@ -1,7 +1,16 @@
-import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
+// components
+import NewButton from 'app/App.components/Button/NewButton'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { DDItemId, DropDown, DropdownInputCustomChild, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
+import { Input } from 'app/App.components/Input/NewInput'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
+
+// consts
 import {
   InputStatusType,
   INPUT_LARGE,
@@ -11,49 +20,55 @@ import {
   getOnFocusValue,
   getOnBlurValue,
 } from 'app/App.components/Input/Input.constants'
-import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import {
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
   BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from 'app/App.components/Button/Button.constants'
-
-import NewButton from 'app/App.components/Button/NewButton'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { DDItemId, DropDown, DropdownInputCustomChild, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
-import { Input } from 'app/App.components/Input/NewInput'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import Icon from 'app/App.components/Icon/Icon.view'
-
-import { LoansModalBase } from './Modals.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
-import { State } from 'reducers'
-import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import colors from 'styles/colors'
-import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
-import { triggerInitialVaultCreation } from 'pages/Loans/Actions/vault.actions'
-import { depositCollateralsAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
-import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { containSpaces } from 'app/App.utils/input'
-import { CreateVaultPopupDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+
+// helpers
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
   isTezosAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { containSpaces } from 'app/App.utils/input'
+
+// styles
+import { LoansModalBase } from './Modals.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
+import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
+import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import colors from 'styles/colors'
+
+// actions
+// import { triggerInitialVaultCreation } from 'providers/LoansProvider/actions/loans.actions'
+import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
+
+// types
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { CreateVaultPopupDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useUserVaultsNames } from 'providers/VaultsProvider/hooks/useVaultsNames'
 
 type CurrentActiveModalScreen =
   | typeof INITIAL_SCREEN_ID
@@ -75,18 +90,16 @@ export const CreateNewVault = ({
   data: CreateVaultPopupDataType
 }) => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
-  const { userTokensBalances } = useUserContext()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
+  const { bug } = useToasterContext()
+  const { userTokensBalances, userAddress } = useUserContext()
+  const { vaultNames } = useUserVaultsNames()
+
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
 
-  const {
-    vaults: { myVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.loans)
-
   useLockBodyScroll(show)
-  const dispatch = useDispatch()
 
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [vaultName, setVaultName] = useState<{ name: string; validationStatus: InputStatusType; errorMessage: string }>(
@@ -155,9 +168,7 @@ export const CreateNewVault = ({
     return reducedCollaterals
   }, [collateralTokens, selectedCollaterals, selectedCollateralsAddresses, tokensMetadata, tokensPrices])
 
-  if (!data) return null
-
-  const { avaliableLiquidity, marketTokenAddress, setCreatedVaultAddress } = data
+  const { avaliableLiquidity = 0, marketTokenAddress, setCreatedVaultAddress } = data ?? {}
 
   const hasXTZTokenSelected = selectedCollateralsAddresses.find((tokenAddress) => isTezosAsset(tokenAddress))
   const isAddCollateralContinueDisabled = Boolean(
@@ -201,7 +212,7 @@ export const CreateNewVault = ({
 
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus = validateVaultLength(value, myVaultsIds, vaultsMapper)
+    const validationStatus = validateVaultLength(value, vaultNames)
 
     setVaultName((prev) => ({ ...prev, name: value, validationStatus }))
   }
@@ -209,7 +220,7 @@ export const CreateNewVault = ({
   const handleVaultNameOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (containSpaces(e.target.value)) {
       const trimmedValue = e.target.value.trim()
-      const validationStatus = validateVaultLength(trimmedValue, myVaultsIds, vaultsMapper)
+      const validationStatus = validateVaultLength(trimmedValue, vaultNames)
       setVaultName((prev) => ({ ...prev, validationStatus, name: trimmedValue }))
     }
   }
@@ -257,52 +268,89 @@ export const CreateNewVault = ({
       },
     }))
 
+  // Actions --------------------------------------------------------------------
+  // create vault action
   const createVaultAction = async () => {
-    try {
-      setVaultCreating(true)
-      const newVaultData = await dispatch(triggerInitialVaultCreation(marketTokenAddress, vaultName.name))
-      setCreatedVaultAddress?.(String(newVaultData))
-      setNewVaultAddress(String(newVaultData))
-    } catch (e) {
-      setShownScreen(INITIAL_SCREEN_ID)
-      console.log('Fetching new vault data error', e)
-    } finally {
-      setVaultCreating(false)
-    }
+    // try {
+    //   setVaultCreating(true)
+    //   const newVaultData = await dispatch(triggerInitialVaultCreation(marketTokenAddress, vaultName.name))
+    //   setCreatedVaultAddress?.(String(newVaultData))
+    //   setNewVaultAddress(String(newVaultData))
+    // } catch (e) {
+    //   setShownScreen(INITIAL_SCREEN_ID)
+    //   console.log('Fetching new vault data error', e)
+    // } finally {
+    //   setVaultCreating(false)
+    // }
   }
 
-  const depositCollateralHandler = () => {
-    const collaretalsToDeposit = selectedCollateralsAddresses.reduce<
-      Array<{
-        collateralName: string
-        amount: number
-        id: number
-        address: string
-        type: TokenType
-      }>
-    >((acc, tokenAddress) => {
-      const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata })
-
-      if (collateralToken && checkWhetherTokenIsCollateralToken(collateralToken)) {
-        acc.push({
-          collateralName: collateralToken.loanData.indexerName,
-          address: tokenAddress,
-          id: collateralToken.id,
-          type: collateralToken.type,
-          amount: convertNumberForContractCall({
-            number: Number(selectedCollaterals[tokenAddress].amount),
-            grade: collateralToken.decimals,
-          }),
-        })
-      }
-
-      return acc
-    }, [])
+  // deposit action -------------
+  const depositAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
 
     if (newVaultAddress) {
-      dispatch(depositCollateralsAction(newVaultAddress, collaretalsToDeposit, closePopup, choosenBaker?.bakerAddress))
+      const collaretalsToDeposit = selectedCollateralsAddresses.reduce<
+        Array<{
+          collateralName: string
+          amount: number
+          id: number
+          address: string
+          type: TokenType
+        }>
+      >((acc, tokenAddress) => {
+        const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata })
+
+        if (collateralToken && checkWhetherTokenIsCollateralToken(collateralToken)) {
+          acc.push({
+            collateralName: collateralToken.loanData.indexerName,
+            address: tokenAddress,
+            id: collateralToken.id,
+            type: collateralToken.type,
+            amount: convertNumberForContractCall({
+              number: Number(selectedCollaterals[tokenAddress].amount),
+              grade: collateralToken.decimals,
+            }),
+          })
+        }
+
+        return acc
+      }, [])
+
+      return await depositCollateralsAction(
+        userAddress,
+        newVaultAddress,
+        collaretalsToDeposit,
+        closePopup,
+        choosenBaker?.bakerAddress,
+      )
     }
-  }
+
+    return null
+  }, [
+    bug,
+    choosenBaker?.bakerAddress,
+    closePopup,
+    newVaultAddress,
+    selectedCollaterals,
+    selectedCollateralsAddresses,
+    tokensMetadata,
+    userAddress,
+  ])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DEPOSIT_COLLATERAL_ACTION,
+      actionFn: depositAction,
+    }),
+    [depositAction],
+  )
+
+  const depositCollateralHandler = useContractAction(contractActionProps)
+
+  if (!data) return null
 
   const firstSelectedCollateralTokenData = getTokenDataByAddress({
     tokenAddress: selectedCollateralsAddresses[0],
@@ -637,14 +685,10 @@ export const CreateNewVault = ({
 }
 
 // validation helper
-export function validateVaultLength(
-  value: string,
-  myVaultsIds: string[],
-  vaultsMapper: Record<string, VaultType>,
-): InputStatusType {
+export function validateVaultLength(value: string, myVaultsNames: string[]): InputStatusType {
   return value &&
     value.length <= 15 &&
-    !myVaultsIds.find((vaultId) => vaultsMapper[vaultId].name.trim().toLowerCase() === value.trim().toLowerCase())
+    !myVaultsNames.find((vaultName) => vaultName.trim().toLowerCase() === value.trim().toLowerCase())
     ? INPUT_STATUS_SUCCESS
     : INPUT_STATUS_ERROR
 }

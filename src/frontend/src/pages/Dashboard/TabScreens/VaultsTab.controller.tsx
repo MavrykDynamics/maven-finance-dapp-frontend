@@ -1,10 +1,7 @@
 import { useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { State } from 'reducers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -29,14 +26,14 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'
-import { reduceVaultsAssets } from 'providers/LoansProvider/helpers/vaults.utils'
+import { reduceVaultsAssets } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 
 export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
-
-  const { allVaultsIds, vaultsMapper } = useSelector((state: State) => state.loans.vaults)
+  const { allVaultsIds, vaultsMapper } = useVaultsContext()
 
   const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio, chartData } = useMemo(() => {
     const { assetsBalances, globalVaultTVL, ...restVaultsStats } = reduceVaultsAssets(
@@ -115,15 +112,15 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
                           <TableCell width="33%">
                             <CommaNumber
                               value={convertedBalance}
-                              decimalsToShow={assetDecimalsToShow}
-                              useAccurateParsing
+                              decimalsToShow={Number(decimals)}
+                              useAccurateParsing={balance < 1}
                             />
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
                             <CommaNumber
                               value={convertedBalance * rate}
                               beginningText={rate ? '$' : symbol}
-                              useAccurateParsing
+                              useAccurateParsing={balance < 1}
                             />
                           </TableCell>
                         </TableRow>

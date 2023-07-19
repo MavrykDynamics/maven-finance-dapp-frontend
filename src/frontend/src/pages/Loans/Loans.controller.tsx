@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useMemo } from 'react'
 import classNames from 'classnames'
+import { useEffect, useMemo } from 'react'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -13,18 +12,14 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 import colors from 'styles/colors'
-
+import { Page } from 'styles'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from './Loans.helpers'
 
-import { State } from 'reducers'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getLoansStorage } from './Actions/getLoansData.actions'
-
-import { Page } from 'styles'
 import {
   LoansStyled,
   MarketChartsContainer,
@@ -42,8 +37,11 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -53,8 +51,6 @@ const CHART_SETTINGS = {
 }
 
 export const Loans = () => {
-  const dispatch = useDispatch()
-
   const {
     isLoading: isChartsLoading,
     chartsData: { totalLendingChart, totalBorrowingChart },
@@ -64,12 +60,23 @@ export const Loans = () => {
   })
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { userAddress, userMTokens } = useUserContext()
+  const { userMTokens } = useUserContext()
+  const { changeLoansSubscriptionsList, marketsAddresses, marketsMapper, isLoading: isLoansLoading } = useLoansContext()
+  const { changeVaultsSubscriptionsList, vaultsMapper, allVaultsIds, isLoading: isVaultsLoading } = useVaultsContext()
 
-  const {
-    loanTokens,
-    vaults: { allVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.loans)
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+    })
+    changeVaultsSubscriptionsList({
+      [VAULTS_DATA]: VAULTS_ALL,
+    })
+
+    return () => {
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+    }
+  }, [])
 
   const {
     preferences: { themeSelected },
@@ -85,15 +92,17 @@ export const Loans = () => {
     [themeSelected],
   )
 
-  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+  const { totalBorrowed, totalLended } = marketsAddresses.reduce<{
     totalLended: number
     totalBorrowed: number
   }>(
-    (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
-      const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
+    (acc, marketTokenAddress) => {
+      const market = marketsMapper[marketTokenAddress]
+      const loanToken = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensPrices, tokensMetadata })
 
-      if (!loanToken || !loanToken.rate) return acc
+      if (!loanToken || !loanToken.rate || !market) return acc
 
+      const { totalBorrowed, totalLended } = market
       const { decimals, rate } = loanToken
 
       acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
@@ -106,12 +115,6 @@ export const Loans = () => {
     },
   )
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      await dispatch(getLoansStorage())
-    } catch (e) {}
-  }, [userAddress])
-
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
@@ -119,11 +122,12 @@ export const Loans = () => {
   const lendingPart = (
     <div className="chart-wrapper">
       <div className="summary">
-        <span>Total Lending</span>
+        <span>Total Earning</span>
         <CommaNumber value={totalLended} beginningText={'$'} />
       </div>
-      <div className={classNames('chart', { emptyChart: totalLendingChart.length === 0 })}>
+      <div className={classNames('chart', { emptyChart: !isChartsLoading && totalLendingChart.length === 0 })}>
         <Chart
+          isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(totalLendingChart, 7) }}
           colors={CHART_COLORS}
           settings={getChartSettingsBasedOnChartLength(totalLendingChart, CHART_SETTINGS)}
@@ -142,8 +146,9 @@ export const Loans = () => {
         <span>Total Borrowing</span>
         <CommaNumber value={totalBorrowed} beginningText={'$'} />
       </div>
-      <div className={classNames('chart', { emptyChart: totalBorrowingChart.length === 0 })}>
+      <div className={classNames('chart', { emptyChart: !isChartsLoading && totalBorrowingChart.length === 0 })}>
         <Chart
+          isLoading={isChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(totalBorrowingChart, 7) }}
           colors={CHART_COLORS}
           settings={getChartSettingsBasedOnChartLength(totalBorrowingChart, CHART_SETTINGS)}
@@ -160,12 +165,12 @@ export const Loans = () => {
     <Page>
       <PageHeader page={'lending'} />
 
-      {isLoading ? (
+      {isLoansLoading || isVaultsLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading loans markets</div>
         </DataLoaderWrapper>
-      ) : loanTokens.length ? (
+      ) : marketsAddresses.length ? (
         <LoansStyled>
           <MarketChartsContainer>
             {lendingPart}
@@ -174,7 +179,11 @@ export const Loans = () => {
 
           <MarketsOverviewContainer>
             <H2Title>Markets</H2Title>
-            {loanTokens.map((loanAsset) => {
+            {marketsAddresses.map((marketAddress) => {
+              const market = marketsMapper[marketAddress]
+              const loanToken = getTokenDataByAddress({ tokenAddress: marketAddress, tokensPrices, tokensMetadata })
+
+              if (!loanToken || !loanToken.rate || !market) return null
               const {
                 loanTokenAddress,
                 loanMTokenAddress,
@@ -186,11 +195,7 @@ export const Loans = () => {
                 totalLended,
                 borrowAPR,
                 lendingAPY,
-              } = loanAsset
-
-              const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
-
-              if (!loanToken || !loanToken.rate) return null
+              } = market
 
               const { interestEarned } = userMTokens[loanMTokenAddress] ?? {
                 interestEarned: 0,
@@ -254,7 +259,7 @@ export const Loans = () => {
                   <div className="content-wrapper">
                     <div className="row">
                       <ThreeLevelListItem>
-                        <div className="name">Total Lending</div>
+                        <div className="name">Total Earning</div>
                         <CommaNumber beginningText="$" value={convertedMarketTotalLended * rate} className="value" />
                         <CommaNumber value={convertedMarketTotalLended} className="rate" />
                       </ThreeLevelListItem>
@@ -286,7 +291,7 @@ export const Loans = () => {
                         <div className="name">Utilization Rate</div>
                         <CommaNumber value={utilisationRate} className="value" endingText="%" />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${address}/${LEND_TAB_ID}`}>
+                      <Link to={{ pathname: `/loans/${address}/${LEND_TAB_ID}`, state: { from: '/loans' } }}>
                         <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
                           Lend <Icon id="arrowRight" />
                         </Button>
@@ -294,7 +299,7 @@ export const Loans = () => {
                     </div>
                     <div className="row">
                       <ThreeLevelListItem>
-                        <div className="name">Total Borrowed</div>
+                        <div className="name">Total Borrow</div>
                         <CommaNumber beginningText="$" value={convertedMarketTotalBorrowed * rate} className="value" />
                         <CommaNumber value={convertedMarketTotalBorrowed} className="rate" />
                       </ThreeLevelListItem>
@@ -332,7 +337,7 @@ export const Loans = () => {
                           beginningText="$"
                         />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${address}/${BORROW_TAB_ID}`}>
+                      <Link to={{ pathname: `/loans/${address}/${BORROW_TAB_ID}`, state: { from: '/loans' } }}>
                         <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
                           Borrow <Icon id="arrowRight" />
                         </Button>

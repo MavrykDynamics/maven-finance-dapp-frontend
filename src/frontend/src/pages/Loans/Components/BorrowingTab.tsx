@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useState } from 'react'
 
-import { ACTION_PRIMARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { State } from 'reducers'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
@@ -19,6 +19,8 @@ import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provi
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 
 type BorrowingTabPropsType = {
   loanTokenAddress: TokenAddressType
@@ -31,27 +33,26 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
 
   const { openCreateVaultPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { myVaultsIds, vaultsMapper } = useVaultsContext()
+  const {
+    config: { daoFee },
+  } = useLoansContext()
 
   const loanToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: loanTokenAddress })
 
   const [showZeroVaults, setShowZeroVaults] = useState(false)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const {
-    config: { DAOFee },
-    vaults: { myVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.loans)
 
   const userMarketVaultsIds = useMemo(
     () =>
       myVaultsIds.filter((vaultId) => {
         const vault = vaultsMapper[vaultId]
 
-        const vaultHasBalance = vault.collateralData.find(({ amount }) => amount) || vault.borrowedAmount
-
-        const isVaultValidForMarket = vault.borrowedTokenAddress === loanTokenAddress
-
-        return isVaultValidForMarket && (showZeroVaults ? vaultHasBalance : true)
+        return (
+          vault.borrowedTokenAddress === loanTokenAddress &&
+          (vault.collateralData.find(({ amount }) => amount) || vault.borrowedAmount)
+        )
       }),
     [loanTokenAddress, myVaultsIds, showZeroVaults, vaultsMapper],
   )
@@ -105,7 +106,7 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
           <VaultsList>
             {userMarketVaultsIds.map((vaultId) => {
               const vault = vaultsMapper[vaultId]
-              return <BorrowingExpandCard isOwner vault={vault} key={vault.address} DAOFee={DAOFee} />
+              return <BorrowingExpandCard isOwner vault={vault} key={vault.address} DAOFee={daoFee} />
             })}
           </VaultsList>
         </>

@@ -1,26 +1,40 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
+// consts
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { validateTzAddress } from 'utils/validatorFunctions'
-import { UpdateOperatorsPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
-import { State } from 'reducers'
-import { UpdateTokenOperator } from 'utils/TypesAndInterfaces/Loans'
+import { UPDATE_OPERATORS_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
+// helpers
+import { validateTzAddress } from 'utils/validatorFunctions'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// types
+import { UpdateOperatorsPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+
+// actions
+import { UpdateTokenOperator, updateOperatorsAction } from 'providers/VaultsProvider/actions/vaultPermissions.actions'
+
+// components
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
+
+// styles
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { updateOperatorsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17307%3A226700&t=Sx2aEpp3ifrGxBtQ-0
 export const UpdateMVKOperator = ({
@@ -35,8 +49,8 @@ export const UpdateMVKOperator = ({
   const { tokensMetadata } = useTokensContext()
 
   useLockBodyScroll(show)
-  const dispatch = useDispatch()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
   const [tableData, setTableData] = useState<Array<{ address: string; validationStatus: InputStatusType }>>([
     { address: '', validationStatus: '' },
@@ -96,16 +110,14 @@ export const UpdateMVKOperator = ({
 
   const loanToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: data?.tokenAddress })
 
-  if (!data || !loanToken) return null
-
-  const { vaultAddress = '' } = data
+  const { vaultAddress = '' } = data ?? {}
 
   const handleAddRow = () => setTableData(tableData.concat([{ address: '', validationStatus: '' }]))
   const handleDeleteRow = (rowId: number) => setTableData(tableData.filter((_, idx) => idx !== rowId))
 
   const updateTableDataState = (newValue: string, rowIdx: number) => {
     const validationStatus =
-      validateTzAddress(newValue) && !tableData.some(({ address }) => address === newValue) && newValue !== accountPkh
+      validateTzAddress(newValue) && !tableData.some(({ address }) => address === newValue) && newValue !== userAddress
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
     setTableData(
@@ -113,11 +125,31 @@ export const UpdateMVKOperator = ({
     )
   }
 
-  const updateHandler = () => {
-    if (checkWhetherTokenIsLoanToken(loanToken)) {
-      dispatch(updateOperatorsAction(vaultAddress, loanToken.loanData.indexerName, updatedOperators, closePopup))
+  // update operators action ------------------------------
+  const updateOperatorsActionCb = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
     }
-  }
+
+    if (loanToken && checkWhetherTokenIsLoanToken(loanToken)) {
+      return await updateOperatorsAction(vaultAddress, loanToken.loanData.indexerName, updatedOperators, closePopup)
+    }
+
+    return null
+  }, [bug, closePopup, loanToken, updatedOperators, userAddress, vaultAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: UPDATE_OPERATORS_ACTION,
+      actionFn: updateOperatorsActionCb,
+    }),
+    [updateOperatorsActionCb],
+  )
+
+  const updateHandler = useContractAction(contractActionProps)
+
+  if (!data || !loanToken) return null
 
   const isActionDisabled =
     tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS) || updatedOperators.length === 0

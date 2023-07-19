@@ -63,6 +63,7 @@ export const SatellitesProvider = ({ children }: Props) => {
     const isLoadingNotLoadedSingleSatellite =
       satelliteAddressToSubsctibe && !satellitesCtxState.satelliteMapper[satelliteAddressToSubsctibe]
     const isLoadingAllSatellitesMetadata =
+      !satelliteAddressToSubsctibe &&
       Object.keys(satellitesCtxState.satelliteMapper).length !== satellitesCtxState.allSatellitesIds.length
 
     if (activeSubs[SATELLITE_DATA_SUB] && (isLoadingNotLoadedSingleSatellite || isLoadingAllSatellitesMetadata)) {
@@ -89,7 +90,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   })
 
   const { loading: satellitesAddressesLoading } = useSubscription(SATELLITES_ADDRESSES_SUBSCRIPTION, {
-    skip: !activeSubs[SATELLITE_PARTICIPATION_DATA_SUB],
+    skip: !activeSubs[SATELLITE_DATA_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
       setSatellitesCtxState((prev) => ({
@@ -128,6 +129,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   })
 
   const { loading: finRequestsAmountLoading } = useSubscription(FINANCIAL_REQUESTS_AMOUNT_SUBSCRIPTION, {
+    skip: !activeSubs[SATELLITE_PARTICIPATION_DATA_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
       setSatellitesCtxState((prev) => ({

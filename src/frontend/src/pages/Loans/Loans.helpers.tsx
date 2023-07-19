@@ -4,17 +4,7 @@ import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Inp
 
 import { convertNumberForClient, convertNumberForContractCall } from '../../utils/calcFunctions'
 import { assetDecimalsToShow } from './Loans.const'
-
-// TODO: move this utils to provider and add docs to them while loans live update
-// HELPER FOR LENDING APY
-export const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): number => {
-  const secondsPerYear = 60 * 60 * 24 * 365
-
-  const top = currentInterestRate - treasuryShare
-  const firstTerm = 1 + top / secondsPerYear
-  const power = firstTerm ** secondsPerYear
-  return (power - 1) * 100
-}
+import { SingleValueData } from 'lightweight-charts'
 
 // HELPER FOR BORROW FEE
 export const calculateAccruedInterest = (
@@ -113,13 +103,16 @@ export const getCollateralRatioByPersentage = (collateralRatio: number) => {
 export const getChartDataBasedOnLength = (chartData: AreaChartPlotType[], period: number) => {
   const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 
-  const emptyChartData = Array.apply(null, Array(period)).map((item, index, array) => ({
-    // get 0 value for each day in period
-    time: new Date().getTime() - ONE_DAY_IN_MS * (array.length - index - 1),
-    value: 0,
+  const lastValue = (chartData.at(-1) as SingleValueData)?.value ?? 0
+
+  const itemsToAdd = Array.from({ length: period - chartData.length }, (_, index) => ({
+    time: new Date().getTime() - ONE_DAY_IN_MS * (period - chartData.length - index - 1),
+    value: lastValue,
   })) as AreaChartPlotType[]
 
-  return chartData.length !== 0 ? chartData : emptyChartData
+  const emptyChartData = chartData.concat(itemsToAdd)
+
+  return chartData.length >= period ? chartData : emptyChartData
 }
 
 /**

@@ -1,6 +1,6 @@
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import { INDEXER_LEVEL_QUERY, INDEXER_LEVEL_QUERY_NAME, INDEXER_LEVEL_QUERY_VARIABLES } from './indexerLevel.query'
-import { Dipdup_Head } from 'utils/generated/graphqlTypes'
+import { Dipdup_Head } from 'utils/__generated__/graphql'
 
 type UpdateDataReturnType = {
   value: unknown | null

@@ -1,9 +1,7 @@
-import { statusSortPriority, vaultsStatuses } from 'pages/Vaults/Vaults.consts'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
-import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
-import { FullLoansVaultType, VaultAssetData, VaultType } from './vaults.types'
 import dayjs from 'dayjs'
+
+// helpers
+import { statusSortPriority, vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { api } from 'utils/api/api'
 import {
   getTimestampByLevelUrl,
@@ -11,7 +9,24 @@ import {
   getTimestampByLevelSchema,
   TimestampByLevelResponceType,
 } from 'utils/api/api-helpers/getTimestampByLevel'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getAssetColor } from 'pages/Treasury/helpers/treasury.utils'
+import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
+
+// types
+import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+import {
+  FullLoansVaultType,
+  VaultAssetData,
+  VaultType,
+  VaultsContext,
+  VaultsCtxState,
+  VaultsSubsRecordType,
+} from '../vaults.provider.types'
+
+// consts
+import { EMPTY_VAULTS_CONTEXT, VAULTS_DATA } from '../vaults.provider.consts'
 
 // sort vaults by status
 export const sortVaultsByStatus = async ({
@@ -306,5 +321,50 @@ export const reduceVaultsAssets = (
     globalVaultTVL,
     collateralRatio,
     avgCollateralRatio: collateralRatio / vaultWithBalances,
+  }
+}
+
+export const getVaultsProviderReturnValue = ({
+  vaultsCtxState,
+  activeSubs,
+  changeVaultsSubscriptionsList,
+}: {
+  vaultsCtxState: VaultsCtxState
+  activeSubs: VaultsSubsRecordType
+  changeVaultsSubscriptionsList: VaultsContext['changeVaultsSubscriptionsList']
+}) => {
+  const { vaultsMapper, myVaultsIds, allVaultsIds, permissionedVaultsIds } = vaultsCtxState
+  const commonToReturn = {
+    changeVaultsSubscriptionsList,
+  }
+
+  /**
+   * isLoading indicates whethet provider is loading smth, so we need to show loader, not load in background, cases:
+   * 1. if provider subscriptions don't used and don't have any data loaded
+   * 2. if we subscribed to all vaults and allVaultsIds list is empty
+   * 3. if we subscribed to vaults where user is depositor and permissionedVaultsIds list is empty
+   * 4. if we subscribed to vaults where user is owner and myVaultsIds list is empty
+   */
+  const isLoading =
+    (!activeSubs[VAULTS_DATA] && vaultsMapper === null) ||
+    (activeSubs[VAULTS_DATA] === 'allVaults' && allVaultsIds === null) ||
+    (activeSubs[VAULTS_DATA] === 'userIsDepositor' && permissionedVaultsIds === null) ||
+    (activeSubs[VAULTS_DATA] === 'userIsOwner' && myVaultsIds === null)
+
+  // if provider is loading smth return loading true and default empty context (nonNullable)
+  if (isLoading) {
+    return {
+      ...commonToReturn,
+      ...EMPTY_VAULTS_CONTEXT,
+      isLoading: true,
+    }
+  }
+
+  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
+  const nonNullableProviderValue = replaceNullValuesWithDefault<VaultsCtxState>(vaultsCtxState, EMPTY_VAULTS_CONTEXT)
+  return {
+    ...commonToReturn,
+    ...nonNullableProviderValue,
+    isLoading: false,
   }
 }

@@ -1,7 +1,5 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
 
 // components
 import { Page } from 'styles'
@@ -16,19 +14,20 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 // types
 import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 
-// helpers
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-
-// actions
-import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
-
 // providers
-import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+
+// consts
+import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
+
+// helpers
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { useUserContext } from 'providers/UserProvider/user.provider'
+import { loansEarnBorrowContext } from './context/loansEarnBorrowContext'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
@@ -40,10 +39,10 @@ const marketSettings: MarketSettingsType = {
 }
 
 export const LoansEarn = () => {
-  const dispatch = useDispatch()
   const history = useHistory()
 
   const {
+    isLoading: isChartsLoading,
     chartsData: { totalBorrowingChart, totalLendingChart, marketLendingChart },
   } = useLoansCharts({
     calcTotalBorrowingChart: true,
@@ -51,86 +50,65 @@ export const LoansEarn = () => {
     calcMarketLendingChart: true,
   })
 
+  const { openAddLendingAssetPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress, userMTokens } = useUserContext()
+  const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
 
-  const { isDataLoaded, loanTokens } = useSelector((state: State) => state.loans)
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+    })
 
-  const { totalBorrowed, totalLended } = useMemo(
+    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+  }, [])
+
+  const markets = useMemo(
     () =>
-      loanTokens.reduce<{
-        totalLended: number
-        totalBorrowed: number
-      }>(
-        (acc, { totalBorrowed, totalLended, loanTokenAddress }) => {
-          const token = getTokenDataByAddress({
-            tokenAddress: loanTokenAddress,
-            tokensPrices,
-            tokensMetadata,
-          })
-
-          if (!token || !token.rate) return acc
-
-          const { rate, decimals } = token
-
-          acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
-          acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
-          return acc
-        },
-        {
-          totalLended: 0,
-          totalBorrowed: 0,
-        },
-      ),
-    [loanTokens, tokensMetadata, tokensPrices],
-  )
-
-  const { openAddLendingAssetPopup } = useLoansPopupsContext()
-
-  const markets: MarketType[] = useMemo(
-    () =>
-      loanTokens.reduce<MarketType[]>((acc, item) => {
-        const chartData = marketLendingChart[item.loanTokenAddress] ?? []
+      marketsAddresses.reduce<MarketType[]>((acc, marketAddress) => {
+        const market = marketsMapper[marketAddress]
+        const chartData = marketLendingChart[marketAddress] ?? []
 
         const token = getTokenDataByAddress({
-          tokenAddress: item.loanTokenAddress,
+          tokenAddress: marketAddress,
           tokensPrices,
           tokensMetadata,
         })
 
-        if (!token || !token.rate) return acc
+        if (!token || !token.rate || !market) return acc
 
         const { rate: price, decimals, icon, symbol, address } = token
+        const { lendingAPY, loanMTokenAddress } = market
 
-        const { lendValue = 0, interestEarned = 0 } = userMTokens[item.loanMTokenAddress] ?? {}
+        const { lendValue = 0, interestEarned = 0 } = userMTokens[loanMTokenAddress] ?? {}
 
         acc.push({
           icon,
           symbol,
           address,
-          annualRate: item.lendingAPY,
+          annualRate: lendingAPY,
           annualRateName: 'APY',
           leftValue: convertNumberForClient({ number: lendValue, grade: decimals }) * price,
           rightValue: convertNumberForClient({ number: interestEarned, grade: decimals }) * price,
-          totalAmount: convertNumberForClient({ number: item.totalLended, grade: decimals }),
+          totalAmount: chartData.at(-1)?.value ?? 0,
           price,
           chartData,
         })
 
         return acc
       }, []),
-    [loanTokens, marketLendingChart, tokensMetadata, tokensPrices, userMTokens],
+    [marketLendingChart, marketsAddresses, marketsMapper, tokensMetadata, tokensPrices, userMTokens],
   )
 
   const handleEarn = (marketTokenAddress: string) => {
-    const market = loanTokens.find((item) => item.loanTokenAddress === marketTokenAddress)
+    const market = marketsMapper[marketTokenAddress]
     if (!market) return
 
     const lendItem = userMTokens[market.loanMTokenAddress]
 
     //  if the user has already supplied to the specific asset pool we will route to asset market
     if (lendItem) {
-      history.push(`/loans/${marketTokenAddress}/lendingTab`)
+      history.push(`/loans/${marketTokenAddress}/lendingTab`, { from: '/loans/earn' })
       return
     } else {
       openAddLendingAssetPopup({
@@ -141,48 +119,46 @@ export const LoansEarn = () => {
     }
   }
 
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isDataLoaded || isDepsChanged) {
-          await dispatch(getLoansStorage())
-        }
-      } catch (e) {}
-    },
-    [userAddress],
+  const contextValue = useMemo(
+    () => ({
+      isChartsLoading,
+    }),
+    [isChartsLoading],
   )
 
   return (
-    <Page>
-      <PageHeader page={'loansEarn'} />
+    <loansEarnBorrowContext.Provider value={contextValue}>
+      <Page>
+        <PageHeader page={'loansEarn'} />
 
-      {isLoading ? (
-        <DataLoaderWrapper>
-          <ClockLoader width={150} height={150} />
-          <div className="text">Loading charts of earnings</div>
-        </DataLoaderWrapper>
-      ) : (
-        <>
-          <EarnBorrowTotalCharts
-            // left chart
-            leftChartData={totalLendingChart}
-            leftChartTitle="Total Earning"
-            leftTotalAmount={totalLended}
-            // right chart
-            rightChartData={totalBorrowingChart}
-            rightChartTitle="Total Borrowing"
-            rightTotalAmount={totalBorrowed}
-          />
+        {isLoansLoading ? (
+          <DataLoaderWrapper>
+            <ClockLoader width={150} height={150} />
+            <div className="text">Loading charts of earnings</div>
+          </DataLoaderWrapper>
+        ) : (
+          <>
+            <EarnBorrowTotalCharts
+              // left chart
+              leftChartData={totalLendingChart}
+              leftChartTitle="Total Earning"
+              leftTotalAmount={totalLendingChart.at(-1)?.value ?? 0}
+              // right chart
+              rightChartData={totalBorrowingChart}
+              rightChartTitle="Total Borrowing"
+              rightTotalAmount={totalBorrowingChart.at(-1)?.value ?? 0}
+            />
 
-          <LoansEarnBorrow
-            title="Earn"
-            markets={markets}
-            settings={marketSettings}
-            handleClick={handleEarn}
-            isDisabledButton={!userAddress}
-          />
-        </>
-      )}
-    </Page>
+            <LoansEarnBorrow
+              title="Earn"
+              markets={markets}
+              settings={marketSettings}
+              handleClick={handleEarn}
+              isDisabledButton={!userAddress}
+            />
+          </>
+        )}
+      </Page>
+    </loansEarnBorrowContext.Provider>
   )
 }

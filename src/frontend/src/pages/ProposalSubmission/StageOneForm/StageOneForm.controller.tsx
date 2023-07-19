@@ -28,6 +28,7 @@ export const StageOneForm = ({
   proposalId,
   currentProposal,
   currentProposalValidation,
+  isFormDisabled,
   updateLocalProposalValidation,
   updateLocalProposalData,
 }: StageOneFormProps) => {
@@ -123,7 +124,7 @@ export const StageOneForm = ({
               inputSize: INPUT_SMALL,
             }}
             inputProps={{
-              disabled: isProposalSubmitted || !isProposalPeriod,
+              disabled: isProposalSubmitted || !isProposalPeriod || isFormDisabled,
               value: currentProposal.title,
               type: 'text',
               placeholder: 'Proposal Title',
@@ -159,7 +160,7 @@ export const StageOneForm = ({
             onChange={inputHandler}
             onBlur={handleOnBlur}
             inputStatus={currentProposalValidation.description}
-            disabled={isProposalSubmitted || !isProposalPeriod}
+            disabled={isProposalSubmitted || !isProposalPeriod || isFormDisabled}
             textAreaMaxLimit={proposalDescriptionMaxLength}
           />
         )}
@@ -179,7 +180,7 @@ export const StageOneForm = ({
               inputSize: INPUT_SMALL,
             }}
             inputProps={{
-              disabled: isProposalSubmitted || !isProposalPeriod,
+              disabled: isProposalSubmitted || !isProposalPeriod || isFormDisabled,
               value: currentProposal.sourceCode,
               type: 'text',
               placeholder: 'Source code link',
@@ -223,7 +224,7 @@ export const StageOneForm = ({
                 })
               }}
               title={'Add an Invoice Image'}
-              disabled={isProposalSubmitted || !isProposalPeriod}
+              disabled={isProposalSubmitted || !isProposalPeriod || isFormDisabled}
               listNumber={6}
             />
           </div>

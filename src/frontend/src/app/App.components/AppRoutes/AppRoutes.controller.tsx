@@ -1,7 +1,5 @@
 import { useEffect } from 'react'
-import { Redirect, Route, Switch, useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { Route, Switch, useLocation } from 'react-router-dom'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'

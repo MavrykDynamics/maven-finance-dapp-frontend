@@ -1,13 +1,15 @@
-import { useDispatch } from 'react-redux'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useState } from 'react'
 
+// components
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
+// consts
 import {
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
@@ -16,24 +18,37 @@ import {
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
-import { AddLendingAssetDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+import { DEPOSIT_LENDING_ASSET_ACTION } from 'providers/LoansProvider/helpers/loans.const'
 
+// types
+import { AddLendingAssetDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+
+// helpers
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// styles
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { depositLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+
+// actions
+import { depositLendingAssetAction } from 'providers/LoansProvider/actions/loans.actions'
+
+// providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import colors from 'styles/colors'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
@@ -46,14 +61,17 @@ export const AddLendingAsset = ({
   data: AddLendingAssetDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { userTokensBalances } = useUserContext()
+
   const {
     preferences: { themeSelected },
+    contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
+  
+  const { userTokensBalances, userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
   useLockBodyScroll(show)
 
-  const dispatch = useDispatch()
   const [inputData, setInputData] = useState<{
     amount: string
     validationStatus: InputStatusType
@@ -72,6 +90,40 @@ export const AddLendingAsset = ({
   }, [show])
 
   const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
+
+  const depositAction = useCallback(async () => {
+    if ((loanToken && !checkWhetherTokenIsLoanToken(loanToken)) || !loanToken) {
+      return null
+    }
+
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!lendingControllerAddress) {
+      bug('Wrong lending address')
+      return null
+    }
+
+    return await depositLendingAssetAction(
+      userAddress,
+      loanToken,
+      Number(inputData.amount),
+      lendingControllerAddress,
+      closePopup,
+    )
+  }, [bug, closePopup, inputData.amount, lendingControllerAddress, loanToken, userAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DEPOSIT_LENDING_ASSET_ACTION,
+      actionFn: depositAction,
+    }),
+    [depositAction],
+  )
+
+  const depositHandler = useContractAction(contractActionProps)
 
   if (!data || !loanToken || !loanToken.rate) return null
 
@@ -111,12 +163,6 @@ export const AddLendingAsset = ({
       amount: getOnFocusValue(inputData.amount),
     })
 
-  const depositHandler = () => {
-    if (checkWhetherTokenIsLoanToken(loanToken)) {
-      dispatch(depositLendingAssetAction(loanToken, Number(inputData.amount), closePopup))
-    }
-  }
-
   return (
     <PopupContainer onClick={closePopup} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
@@ -124,7 +170,7 @@ export const AddLendingAsset = ({
           <button onClick={closePopup} className="close-modal" />
 
           <GovRightContainerTitleArea>
-            <h2>Supplying Assets to Lending</h2>
+            <h2>Supply Assets to Earn</h2>
           </GovRightContainerTitleArea>
           <div className="modalDescr">
             Earn yield by depositing assets to Mavryk’s lending pools. Loans are secured by 200% collateral. Supplied
@@ -158,7 +204,7 @@ export const AddLendingAsset = ({
           <div className="lending-stats" style={{ marginTop: '45px' }}>
             <ThreeLevelListItem>
               <div className="name">
-                Lending APY
+                Earn APY{' '}
                 <CustomTooltip
                   iconId="info"
                   defaultStrokeColor={colors[themeSelected].subHeadingText}

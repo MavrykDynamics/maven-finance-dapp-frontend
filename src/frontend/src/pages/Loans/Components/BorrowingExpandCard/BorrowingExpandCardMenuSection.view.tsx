@@ -39,7 +39,6 @@ import {
   SlidingTabButtonType,
 } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
-import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -49,10 +48,11 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
-import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
+import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // types
-import { CollateralType, DepositorsFlagType } from 'providers/LoansProvider/helpers/vaults.types'
+import { LoanMarketType } from 'providers/LoansProvider/loans.provider.types'
+import { CollateralType, DepositorsFlagType } from 'providers/VaultsProvider/vaults.provider.types'
 import { State } from 'reducers'
 
 type Props = {
@@ -75,10 +75,6 @@ type Props = {
   collateralRatio: number
   collateralBalance: number
   deporsitorsFlag: DepositorsFlagType
-  mappedMVKOperators: {
-    amount?: number
-    firstAddress?: string
-  }
   hideTransactionHistory?: boolean
 }
 
@@ -101,7 +97,6 @@ export const BorrowingExpandCardMenuSection = ({
   collateralRatio,
   collateralBalance,
   deporsitorsFlag,
-  mappedMVKOperators,
   hideTransactionHistory,
 }: Props) => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
@@ -363,7 +358,7 @@ export const BorrowingExpandCardMenuSection = ({
               </Button>
             </div>
 
-            {vaultHasSmvkCollateral ? (
+            {/* {vaultHasSmvkCollateral ? (
               <div className="useful-info-line">
                 <div className="name">
                   MVK Operators
@@ -387,7 +382,7 @@ export const BorrowingExpandCardMenuSection = ({
                   Update <Icon id="paginationArrowLeft" />
                 </Button>
               </div>
-            ) : null}
+            ) : null} */}
           </div>
         </BorrowingTabListItemTabInfo>
       )}

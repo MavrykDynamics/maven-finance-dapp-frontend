@@ -38,10 +38,11 @@ import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
-import { useFullVault } from 'providers/LoansProvider/hooks/useFullVault'
-import { calculateCollateralShare } from 'providers/LoansProvider/helpers/vaults.utils'
+import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
+import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
+import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 const columnWidth = '33%'
 
@@ -114,9 +115,11 @@ type Props = {
 export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab }: Props) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { openLiquidateVaultPopup } = useLoansPopupsContext()
+  const {
+    config: { daoFee },
+  } = useLoansContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { DAOFee } = useSelector((state: State) => state.loans.config)
 
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
@@ -137,7 +140,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     status,
     vaultId,
     collateralBalance,
-    ownerId,
+    ownerAddress,
     collateralData,
     liquidationMax,
     liquidationReward,
@@ -157,7 +160,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
   const liquidateModalHandler = () => {
     openLiquidateVaultPopup({
       vaultId,
-      ownerAddress: ownerId,
+      ownerAddress,
       tokenAddress: borrowedTokenAddress,
       collateralBalance,
       collateralData,
@@ -178,7 +181,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
           <div className="group">
             <div>
               Vault Owner
-              <TzAddress type={SECONDARY_TZ_ADDRESS_COLOR} tzAddress={ownerId} />
+              <TzAddress type={SECONDARY_TZ_ADDRESS_COLOR} tzAddress={ownerAddress} />
             </div>
             <div>
               Vault Risk
@@ -305,7 +308,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
             text={isMarkStatus ? 'Mark for Liquidation' : 'Liquidate Vault'}
             kind={ACTION_PRIMARY}
             onClick={() => {
-              return isMarkStatus ? handleMarkForLiquidation(vaultId, ownerId) : liquidateModalHandler()
+              return isMarkStatus ? handleMarkForLiquidation(vaultId, ownerAddress) : liquidateModalHandler()
             }}
             disabled={vaultsStatuses.GRACE_PERIOD === status || isActionActive}
           />
@@ -320,7 +323,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
         <BorrowingExpandCard
           vault={vault}
           headerSufix={headerSufix}
-          DAOFee={DAOFee}
+          DAOFee={daoFee}
           isOwner={isOwner}
           hideTransactionHistory
         />
@@ -338,7 +341,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
         <BorrowingExpandCard
           vault={vault}
           headerSufix={headerSufix}
-          DAOFee={DAOFee}
+          DAOFee={daoFee}
           isOwner={isOwner}
           hideTransactionHistory
         >

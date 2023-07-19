@@ -10,7 +10,6 @@ import {
   SlidingTabButtons,
   SlidingTabButtonType,
 } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import { cyanColor, skyColor } from 'styles'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
@@ -18,9 +17,12 @@ import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButt
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // consts & helpers
-import { AREA_CHART_TYPE, AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { CommaNumber, formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
+// types
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+// consts & helpers
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { MLI_FEE_CHART_DATA } from './MliFee-chart-data'
 import { calcExitFee, calcMLI } from 'utils/calcFunctions'

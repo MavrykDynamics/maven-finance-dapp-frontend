@@ -4,7 +4,7 @@ import { FarmContractType, FarmGraphQL, Normalizedfarm } from '../../utils/Types
 // helpers
 import { getContractBigmapKeys, network } from 'utils/blockchainApi'
 import { STAKED } from './Farms.const'
-import { Farm_Account } from 'utils/generated/graphqlTypes'
+import { Farm_Account } from 'utils/__generated__/graphql'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 
 type EndsInType = {

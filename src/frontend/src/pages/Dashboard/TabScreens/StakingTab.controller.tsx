@@ -9,7 +9,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Chart } from 'app/App.components/Chart/Chart'
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 
 import { StatBlock } from '../Dashboard.style'
 import {

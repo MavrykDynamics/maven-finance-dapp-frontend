@@ -24,8 +24,8 @@ import { stringFullCharsCompare } from 'utils/stringFullCharsCompare'
 
 // types
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getVaultCollateralBalance, sortVaultsByStatus } from 'providers/LoansProvider/helpers/vaults.utils'
-import { VaultType } from 'providers/LoansProvider/helpers/vaults.types'
+import { getVaultCollateralBalance, sortVaultsByStatus } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 type Filters = Record<string, string>
@@ -107,7 +107,7 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
       filteredVaultsIds = searchData.filter((vaultId) => {
         const vault = vaultsMapper[vaultId]
         const isIncludedInLoanAddress = vault.address.toLowerCase().includes(searchQuery)
-        const isIncludedInOwnerAddress = vault.ownerId.toLowerCase().includes(searchQuery)
+        const isIncludedInOwnerAddress = vault.ownerAddress.toLowerCase().includes(searchQuery)
 
         return isIncludedInLoanAddress || isIncludedInOwnerAddress
       })

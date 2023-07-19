@@ -1,11 +1,17 @@
-import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
 import { ACTION_COMPLETION_MESSAGE_TEXT, ACTION_START_MESSAGE_TEXT } from '../Toaster.constants'
+
+// doorman
+import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+
+// user
 import {
   CLAIM_ALL_REWARDS_ACTION,
   CLAIM_VESTING_REWARD_ACTION,
   GET_MVK_FROM_FAUCET_ACTION,
   REWARDS_COMPOUND_ACTION,
 } from 'providers/UserProvider/helpers/user.consts'
+
+// satellites
 import {
   DELEGATE_ACTION,
   DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
@@ -15,8 +21,28 @@ import {
   UPDATE_SATELLITE_ACTION,
 } from 'providers/SatellitesProvider/satellites.const'
 
+// loans
+import {
+  CREATE_NEW_VAULT_ACTION,
+  DEPOSIT_LENDING_ASSET_ACTION,
+  WITHDRAW_LENDING_ASSET_ACTION,
+} from 'providers/LoansProvider/helpers/loans.const'
+
+// vaults
+import {
+  BORROW_VAULT_ASSET_ACTION,
+  CHANGE_BAKER_ACTION,
+  CHANGE_VAULT_NAME_ACTION,
+  DEPOSIT_COLLATERAL_ACTION,
+  MANAGE_PERMISSIONS_ACTION,
+  REPAY_FULL_VAULT_ACTION,
+  REPAY_PART_OF_VAULT_ACTION,
+  UPDATE_OPERATORS_ACTION,
+  WITHDRAW_COLLATERAL_ACTION,
+} from 'providers/VaultsProvider/helpers/vaults.const'
+
 export const TOASTER_ACTIONS_TEXTS = {
-  // doorman actions -----------------------------
+  // doorman actions -------------------------------------
   [STAKE_ACTION]: {
     start: {
       title: 'Staking...',
@@ -47,7 +73,7 @@ export const TOASTER_ACTIONS_TEXTS = {
       message: 'Enjoy using Mavryk Finance :)',
     },
   },
-  // user actions -------------------------------
+  // user actions -------------------------------------
   [REWARDS_COMPOUND_ACTION]: {
     start: {
       title: 'Compounding rewards...',
@@ -78,7 +104,7 @@ export const TOASTER_ACTIONS_TEXTS = {
       message: 'Rewards claimed.',
     },
   },
-  // satellites actions
+  // satellites actions -------------------------------------
   [DELEGATE_ACTION]: {
     start: {
       title: 'Delegating...',
@@ -136,6 +162,132 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Satellite record updated.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  // loans actions -------------------------------------
+  [CREATE_NEW_VAULT_ACTION]: {
+    start: {
+      title: 'Creating new vault...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'New vault created.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DEPOSIT_LENDING_ASSET_ACTION]: {
+    start: {
+      title: 'Adding liquidity...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Liquidity added.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [WITHDRAW_LENDING_ASSET_ACTION]: {
+    start: {
+      title: 'Removing liquidity...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Liquidity removed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // vaults actions -------------------------------------
+  [CHANGE_VAULT_NAME_ACTION]: {
+    start: {
+      title: 'Changing vault name...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Vault name is changed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [BORROW_VAULT_ASSET_ACTION]: {
+    start: {
+      title: 'Borrowing from the vault...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Asset borrowed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REPAY_PART_OF_VAULT_ACTION]: {
+    start: {
+      title: 'Repaying asset...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Asset repayed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REPAY_FULL_VAULT_ACTION]: {
+    start: {
+      title: 'Repaying asset...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Asset repayed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  // vaults collateral actions ---------------------------------
+  [WITHDRAW_COLLATERAL_ACTION]: {
+    start: {
+      title: 'Withdrawing collateral from the vault...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Collateral withdrawn.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DEPOSIT_COLLATERAL_ACTION]: {
+    start: {
+      title: 'Depositing collateral in the vault...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Collateral added.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // vault permission actions
+  [CHANGE_BAKER_ACTION]: {
+    start: {
+      title: 'Changing XTZ Baker...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Baker changed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [MANAGE_PERMISSIONS_ACTION]: {
+    start: {
+      title: 'Updating depositors...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Depositors updated.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UPDATE_OPERATORS_ACTION]: {
+    start: {
+      title: 'Updating operators...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Operators updated.',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },

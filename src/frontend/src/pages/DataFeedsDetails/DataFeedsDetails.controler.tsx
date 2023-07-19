@@ -4,7 +4,7 @@ import { useLocation, useParams } from 'react-router-dom'
 
 // types
 import { State } from 'reducers'
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 
 // providers
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
@@ -55,8 +55,9 @@ import { Page } from 'styles'
 import { parseDate } from 'utils/time'
 
 // actions
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
 
 const tabsList = [
   {
@@ -326,7 +327,7 @@ const DataFeedDetails = () => {
               <FeedDetailsChartWrapper>
                 {isFeedsChartsLoading ? (
                   <DataLoaderWrapper className="no-margin">
-                    <ClockLoader width={150} height={150} />
+                    <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
                     <div className="text">Loading feed history data...</div>
                   </DataLoaderWrapper>
                 ) : (
@@ -346,7 +347,7 @@ const DataFeedDetails = () => {
             <H2Title>Oracles data</H2Title>
             {isSatellitesLoading ? (
               <DataLoaderWrapper>
-                <ClockLoader width={150} height={150} />
+                <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
                 <div className="text">Loading oracles data...</div>
               </DataLoaderWrapper>
             ) : paginatedFeedsOracles.length ? (

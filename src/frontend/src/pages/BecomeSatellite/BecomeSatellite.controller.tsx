@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // Consts
@@ -61,14 +61,8 @@ import {
   UPDATE_SATELLITE_ACTION,
 } from 'providers/SatellitesProvider/satellites.const'
 import { registerSatellite, updateSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
-import { unknownToError } from 'errors/error'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { sleep } from 'utils/api/sleep'
-import { TezosWalletErrorPayload } from 'errors/error.type'
-import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -100,12 +94,9 @@ export const BecomeSatellite = () => {
     preferences: { themeSelected },
     globalLoadingState: { isActionActive },
     minimumStakedMvkBalance,
-    setAction,
-    toggleActionCompletion,
-    toggleActionFullScreenLoader,
   } = useDappConfigContext()
 
-  const { bug, info, loading } = useToasterContext()
+  const { bug } = useToasterContext()
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -171,6 +162,26 @@ export const BecomeSatellite = () => {
     return !balanceOverMinStakedMvk || !userAddress || !formIsValid || !hasChangedValues
   }, [userAddress, balanceOverMinStakedMvk, form, isChecked, usersSatelliteProfile])
 
+  const mainRequestForm: RegisterAsSatelliteForm = useMemo(
+    () => ({
+      name: form.name.text,
+      description: form.description.text,
+      website: form.website.text,
+      fee: Number(form.satelliteFee.text.replace('%', '')),
+      image: form.image.text,
+    }),
+    [form],
+  )
+
+  // Remove peerId and publicKey fields from request if checkbox 'Register as Oracle" not chosen
+  const requestData = useMemo(
+    () =>
+      isChecked
+        ? { ...mainRequestForm, peerId: form.oraclePeerId.text, publicKey: form.oraclePublicKey.text }
+        : mainRequestForm,
+    [form.oraclePeerId.text, form.oraclePublicKey.text, isChecked, mainRequestForm],
+  )
+
   // Set satellite data if user is satellite
   useEffect(() => {
     if (usersSatelliteProfile) {
@@ -227,124 +238,65 @@ export const BecomeSatellite = () => {
     }
   }
 
-  const handleRegister = async (requestData: RegisterAsSatelliteForm) => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return
-    }
-    if (!delegationAddress) {
-      bug('Wrong delegation address.')
-      return
-    }
+  // Actions ------------------------------------------------
 
-    try {
-      const actionResult = await registerSatellite(
-        userAddress,
-        requestData,
-        delegationAddress,
-        satelliteMvkIsDelegatedTo,
-      )
-      if (checkIfActionSuccess(actionResult)) {
-        const { operation } = actionResult
-        toggleActionFullScreenLoader(true)
-        toggleActionCompletion(true)
-        info(
-          TOASTER_ACTIONS_TEXTS[REGISTER_SATELLITE_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[REGISTER_SATELLITE_ACTION]['start']['title'],
-        )
-        await sleep(5000)
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
-
-        toggleActionFullScreenLoader(false)
-
-        const operationConfirm = await operation.confirmation()
-        const operationLvl = operationConfirm.block.header.level
-        setAction({ actionName: REGISTER_SATELLITE_ACTION, toasterId, operationLvl })
-      } else if (isContractErrorPayload(actionResult.error)) {
-        const { message, description } = actionResult.error as TezosWalletErrorPayload
-        bug(description, message)
-      } else {
-        throw new Error(actionResult.error?.message)
+  // register action -------------
+  const registerAction = useCallback(
+    async (requestData: RegisterAsSatelliteForm) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
       }
-    } catch (e) {
-      setAction(null)
-      const parsedError = unknownToError(e)
-      bug(parsedError.message)
-    } finally {
-      toggleActionCompletion(false)
-    }
-  }
-
-  const handleUpdate = async (requestData: RegisterAsSatelliteForm) => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return
-    }
-    if (!delegationAddress) {
-      bug('Wrong delegation address')
-      return
-    }
-
-    try {
-      const actionResult = await updateSatellite(requestData, delegationAddress)
-      if (checkIfActionSuccess(actionResult)) {
-        const { operation } = actionResult
-        toggleActionFullScreenLoader(true)
-        toggleActionCompletion(true)
-        info(
-          TOASTER_ACTIONS_TEXTS[UPDATE_SATELLITE_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[UPDATE_SATELLITE_ACTION]['start']['title'],
-        )
-        await sleep(5000)
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
-
-        toggleActionFullScreenLoader(false)
-
-        const operationConfirm = await operation.confirmation()
-        const operationLvl = operationConfirm.block.header.level
-        setAction({ actionName: UPDATE_SATELLITE_ACTION, toasterId, operationLvl })
-      } else if (isContractErrorPayload(actionResult.error)) {
-        const { message, description } = actionResult.error as TezosWalletErrorPayload
-        bug(description, message)
-      } else {
-        throw new Error(actionResult.error?.message)
+      if (!delegationAddress) {
+        bug('Wrong delegation address.')
+        return null
       }
-    } catch (e) {
-      setAction(null)
-      const parsedError = unknownToError(e)
-      bug(parsedError.message)
-    } finally {
-      toggleActionCompletion(false)
-    }
-  }
+
+      return await registerSatellite(userAddress, requestData, delegationAddress, satelliteMvkIsDelegatedTo)
+    },
+    [bug, delegationAddress, satelliteMvkIsDelegatedTo, userAddress],
+  )
+
+  const registerContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: REGISTER_SATELLITE_ACTION,
+      actionFn: registerAction.bind(null, requestData),
+    }),
+    [registerAction, requestData],
+  )
+
+  const handleRegister = useContractAction(registerContractActionProps)
+
+  // update action -------------
+  const updateAction = useCallback(
+    async (requestData: RegisterAsSatelliteForm) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!delegationAddress) {
+        bug('Wrong delegation address')
+        return null
+      }
+
+      return await updateSatellite(requestData, delegationAddress)
+    },
+    [bug, delegationAddress, userAddress],
+  )
+
+  const updateContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: UPDATE_SATELLITE_ACTION,
+      actionFn: updateAction.bind(null, requestData),
+    }),
+    [updateAction, requestData],
+  )
+
+  const handleUpdate = useContractAction(updateContractActionProps)
 
   // Handlers for register/unregister and update data
   const handleRegisterOrUpdateSatellite = async () => {
-    const mainRequestForm: RegisterAsSatelliteForm = {
-      name: form.name.text,
-      description: form.description.text,
-      website: form.website.text,
-      fee: Number(form.satelliteFee.text.replace('%', '')),
-      image: form.image.text,
-    }
-
-    // Remove peerId and publicKey fields from request if checkbox 'Register as Oracle" not chosen
-    const requestData = isChecked
-      ? { ...mainRequestForm, peerId: form.oraclePeerId.text, publicKey: form.oraclePublicKey.text }
-      : mainRequestForm
-
-    // TODO add try catch
-    usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered
-      ? await handleUpdate(requestData)
-      : await handleRegister(requestData)
+    usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered ? await handleUpdate() : await handleRegister()
   }
 
   const tooltipPublicKey = (

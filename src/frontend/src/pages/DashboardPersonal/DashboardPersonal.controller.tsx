@@ -1,12 +1,29 @@
+import { useCallback, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router'
-import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
 
+// types
 import { State } from 'reducers'
 
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
+// components
+import Button from 'app/App.components/Button/NewButton'
+import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
+import DashboardPersonalEarningsHistory from './DashboardPersonalComponents/DashboardPersonalEarningsHistory'
+import DashboardPersonalMyRewards from './DashboardPersonalComponents/DashboardPersonalMyRewards'
+import DelegationTab from './DashboardPersonalComponents/DelegationTab'
+import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
+import VestingTab from './DashboardPersonalComponents/VestingTab'
+
+// styles
+import { Page } from 'styles/components'
+import { DashboardPersonalTabStyled } from './DashboardPersonalComponents/DashboardPersonalComponents.style'
+import { DashboardPersonalStyled } from './DashboardPersonal.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+
+// helpers
 import {
   isValidPersonalDashboardTabId,
   PORTFOLIO_TAB_ID,
@@ -15,54 +32,41 @@ import {
   VESTING_TAB_ID,
   PORTFOLIO_POSITION_TAB_ID,
 } from './DashboardPersonal.utils'
-import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
-
-import Button from 'app/App.components/Button/NewButton'
-import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-import { Page } from 'styles/components'
-import DashboardPersonalEarningsHistory from './DashboardPersonalComponents/DashboardPersonalEarningsHistory'
-import DashboardPersonalMyRewards from './DashboardPersonalComponents/DashboardPersonalMyRewards'
-import DelegationTab from './DashboardPersonalComponents/DelegationTab'
-import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
-
-import { DashboardPersonalTabStyled } from './DashboardPersonalComponents/DashboardPersonalComponents.style'
-import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
-import VestingTab from './DashboardPersonalComponents/VestingTab'
-import { DashboardPersonalStyled } from './DashboardPersonal.style'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
-import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+
+// actions
+import { claimAllRewardsAction } from 'providers/UserProvider/actions/user.actions'
+import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
+import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
+
+// providers
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { claimAllRewardsAction } from 'providers/UserProvider/actions/user.actions'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
-import { sleep } from 'utils/api/sleep'
-import { CLAIM_ALL_REWARDS_ACTION } from 'providers/UserProvider/helpers/user.consts'
-import { unknownToError } from 'errors/error'
-import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
-import { TezosWalletErrorPayload } from 'errors/error.type'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
+// consts
+import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
+import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
+import { CLAIM_ALL_REWARDS_ACTION } from 'providers/UserProvider/helpers/user.consts'
 import {
   MVK_BALANCE_SUB,
   MVK_TOTAL_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
 } from 'providers/StakeProvider/helpers/stake.consts'
-import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
+
+// hooks
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -71,9 +75,6 @@ const DashboardPersonal = () => {
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
   const {
     contractAddresses: { mvkTokenAddress, doormanAddress },
-    toggleActionFullScreenLoader,
-    toggleActionCompletion,
-    setAction,
   } = useDappConfigContext()
   const {
     userTokensBalances,
@@ -90,72 +91,42 @@ const DashboardPersonal = () => {
     isVestee,
   } = useUserContext()
   const { changeSatellitesSubscriptionsList, isLoading: isSatellitesLoading } = useSatellitesContext()
-  const { bug, info, loading } = useToasterContext()
+  const { bug } = useToasterContext()
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
-  const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
 
-  const claimRewards = async () => {
+  // claim rewards action
+  const claimRewardsAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
-      return
+      return null
     }
     if (!doormanAddress) {
-      bug('Bad doorman address')
-      return
+      bug('Wrong doorman address')
+      return null
     }
 
-    try {
-      const actionResult = await claimAllRewardsAction(userAddress, doormanAddress)
+    return await claimAllRewardsAction(userAddress, doormanAddress)
+  }, [bug, doormanAddress, userAddress])
 
-      if (checkIfActionSuccess(actionResult)) {
-        const { operation } = actionResult
-        toggleActionFullScreenLoader(true)
-        toggleActionCompletion(true)
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: CLAIM_ALL_REWARDS_ACTION,
+      actionFn: claimRewardsAction,
+    }),
+    [claimRewardsAction],
+  )
 
-        info(
-          TOASTER_ACTIONS_TEXTS[CLAIM_ALL_REWARDS_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[CLAIM_ALL_REWARDS_ACTION]['start']['title'],
-        )
-
-        await sleep(5000)
-
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
-
-        toggleActionFullScreenLoader(false)
-
-        const operationConfirm = await operation.confirmation()
-        const operationLvl = operationConfirm.block.header.level
-
-        setAction({ actionName: CLAIM_ALL_REWARDS_ACTION, toasterId, operationLvl })
-      } else if (isContractErrorPayload(actionResult.error)) {
-        const { message, description } = actionResult.error as TezosWalletErrorPayload
-        bug(description, message)
-      } else {
-        throw new Error(actionResult.error?.message)
-      }
-    } catch (e) {
-      setAction(null)
-      const parsedError = unknownToError(e)
-      bug(parsedError.message)
-    } finally {
-      toggleActionCompletion(false)
-    }
-  }
+  const claimRewards = useContractAction(contractActionProps)
 
   useEffect(() => {
     changeStakingSubscriptionsList({
       [MVK_TOTAL_SUB]: true,
       [MVK_BALANCE_SUB]: true,
     })
-
     changeSatellitesSubscriptionsList({
       [SATELLITE_DATA_SUB]: true,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
@@ -175,7 +146,6 @@ const DashboardPersonal = () => {
             (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
             (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
             isVestee && (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
-            (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
           ].filter(Boolean),
         )
       } catch (e) {}

@@ -49,8 +49,9 @@ const LOANS_DASHBOARD_CELL_STYLES = css`
       justify-content: space-between;
 
       a {
-        display: block;
+        display: flex;
         margin-left: auto;
+        align-items: center;
       }
     }
 

@@ -1,5 +1,5 @@
 import { OpKind, TransferParams } from '@taquito/taquito'
-import { unknownToError } from 'errors/error'
+import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
@@ -18,7 +18,8 @@ export const delegate = async (
 
     return await getEstimationResult(delegateMetaData)
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -35,7 +36,8 @@ export const undelegate = async (
 
     return await getEstimationResult(unDelegateMetaData)
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -52,7 +54,8 @@ export const distributeProposalRewards = async (
 
     return await getEstimationResult(distributeProposalsMetaData)
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -94,7 +97,8 @@ export const registerSatellite = async (
 
     return await getEstimationBatchResult(tezos, batchArr)
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -118,7 +122,8 @@ export const updateSatellite = async (
 
     return await getEstimationResult(updateSatelliteMetaData)
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -133,8 +138,9 @@ export const unregisterSatellite = async (
     const contract = await tezos.wallet.at(delegationAddress)
     const unregisterSatelliteMetaData = await contract?.methods.unregisterAsSatellite(accountPkh)
 
-    return await getEstimationResult(unregisterSatelliteMetaData, callback)
+    return await getEstimationResult(unregisterSatelliteMetaData, { callback })
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }

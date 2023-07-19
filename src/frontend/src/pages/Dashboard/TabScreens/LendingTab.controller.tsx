@@ -1,24 +1,25 @@
 import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { State } from 'reducers'
-import { PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_WIDE, PRIMARY } from 'app/App.components/Button/Button.constants'
 
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { getClassNameBasedOnPersentValue } from 'pages/LoansDashboard/helpers/comparing.helpers'
+import { Impact } from 'app/App.components/Impact/Impact'
 
 import { StatBlock } from '../Dashboard.style'
-import { LendingContentStyled, TabWrapperStyled, EmptyContainer } from './DashboardTabs.style'
+import { EmptyContainer, LendingContentStyled, TabWrapperStyled } from './DashboardTabs.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24hDiff'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+
+// context
+import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24hDiff'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -29,15 +30,14 @@ export const emptyContainer = (
 
 export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
-
-  const { loanTokens } = useSelector((state: State) => state.loans)
+  const { marketsAddresses, marketsMapper } = useLoansContext()
 
   const { lending24hPersentChange, borrowing24hPersentChange, last24hBorrowingVol, last24hLendingVol } =
     useLendBorrow24hDiff()
 
   const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset, totalBorrowed, totalLended } =
     useMemo(() => {
-      return loanTokens.reduce<{
+      return marketsAddresses.reduce<{
         lendingSuppliers: number
         borrowers: number
         mostBorrowedAsset: { icon: string; symbol: string } | null
@@ -47,10 +47,14 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
         totalBorrowed: number
         totalLended: number
       }>(
-        (acc, { suppliers, borrowers, totalBorrowed, totalLended, loanTokenAddress }) => {
-          const token = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
-          if (!token || !token.rate) return acc
+        (acc, marketTokenAddress) => {
+          const market = marketsMapper[marketTokenAddress]
+          const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
+
+          if (!token || !token.rate || !market) return acc
+
           const { symbol, decimals, icon, rate } = token
+          const { suppliers, borrowers, totalBorrowed, totalLended } = market
 
           const convetedTotalBorrowed = convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
           const convetedTotalLended = convertNumberForClient({ number: totalLended, grade: decimals }) * rate
@@ -83,16 +87,16 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
           mostLendedAsset: null,
         },
       )
-    }, [loanTokens, tokensMetadata, tokensPrices])
+    }, [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices])
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
       <div className="top">
-        <BGPrimaryTitle>Lending</BGPrimaryTitle>
+        <BGPrimaryTitle>Earn/Borrow</BGPrimaryTitle>
         <Link to="/loans" className="dashboard-sectionLink">
           <NewButton kind={PRIMARY} form={BUTTON_WIDE}>
             <Icon id="coin-loan" />
-            Lending
+            Earn/Borrow
           </NewButton>
         </Link>
       </div>
@@ -100,21 +104,17 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
       {isLoading ? (
         <DataLoaderWrapper className="tabLoader">
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading lending</div>
+          <div className="text">Loading Earn/Borrow</div>
         </DataLoaderWrapper>
       ) : (
         <LendingContentStyled>
           <div className="left">
             <StatBlock className="large">
-              <div className="name">Total Supplied</div>
+              <div className="name">Total Earning</div>
               <div className="value">
                 <CommaNumber beginningText="$" value={totalLended} />
-                <div className={`impact ${getClassNameBasedOnPersentValue(lending24hPersentChange)}`}>
-                  <CommaNumber
-                    value={lending24hPersentChange}
-                    beginningText={lending24hPersentChange > 0 ? '+' : ''}
-                    endingText={'% 24h'}
-                  />
+                <div className="impact-wrapper">
+                  <Impact value={lending24hPersentChange} endingText="% 24h" />
                 </div>
               </div>
             </StatBlock>
@@ -154,12 +154,8 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="name">Total Borrowed</div>
               <div className="value">
                 <CommaNumber beginningText="$" value={totalBorrowed} />
-                <div className={`impact ${getClassNameBasedOnPersentValue(borrowing24hPersentChange)}`}>
-                  <CommaNumber
-                    value={borrowing24hPersentChange}
-                    beginningText={borrowing24hPersentChange > 0 ? '+' : ''}
-                    endingText={'% 24h'}
-                  />
+                <div className="impact-wrapper">
+                  <Impact value={borrowing24hPersentChange} endingText="% 24h" />
                 </div>
               </div>
             </StatBlock>
@@ -197,10 +193,10 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
       )}
 
       <div className="descr">
-        <div className="title">How does Lending work on Mavryk?</div>
+        <div className="title">How does Mavryk Finance's Earn & Borrow module work?</div>
         <div className="text">
-          Mavryk allows its users to put up existing crypto-assets as collateral for a loan, up to a 50% loan-to-value
-          ratio. Likewise, suppliers can loan out their crypto-assets to receive interest.{' '}
+          Mavryk Finance allows its users to put up existing crypto-assets as collateral for a loan, up to a 50%
+          loan-to-value ratio. Likewise, suppliers can loan out their crypto-assets to earn interest.{' '}
           <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
             Read More
           </a>

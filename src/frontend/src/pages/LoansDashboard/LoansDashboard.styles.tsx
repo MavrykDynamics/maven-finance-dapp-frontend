@@ -123,6 +123,7 @@ export const AccountStyledStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    column-gap: 20px;
 
     .value {
       font-size: 22px;

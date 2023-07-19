@@ -140,7 +140,7 @@ export const TableBody = styled.tbody<{ theme: MavrykTheme }>`
   &.treasury {
     th,
     td {
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 600;
     }
   }
@@ -149,6 +149,16 @@ export const TableBody = styled.tbody<{ theme: MavrykTheme }>`
     svg {
       width: 60px;
       height: 60px;
+    }
+
+    th,
+    td {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    td:first-child {
+      font-size: 18px;
     }
   }
 

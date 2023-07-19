@@ -12,12 +12,13 @@ import colors from 'styles/colors'
 // helpers
 import { MINI_CHART_SETTINGS, numberOfItemsToDisplay } from '../LoansEarnBorrow.consts'
 import { BUTTON_THIRD, BUTTON_ROUND } from 'app/App.components/Button/Button.constants'
-import { AREA_CHART_TYPE, HISTOGRAM_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { AREA_CHART_TYPE, HISTOGRAM_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+import { useLoansEarnBorrowContext } from '../context/loansEarnBorrowContext'
 
 type ChartDataType = {
   type: typeof AREA_CHART_TYPE | typeof HISTOGRAM_CHART_TYPE
@@ -26,14 +27,16 @@ type ChartDataType = {
 
 type Props = {
   data: AreaChartPlotType[]
+  isBorrow: boolean
 }
 
-export const EarnBorrowChart = ({ data }: Props) => {
+export const EarnBorrowChart = ({ data, isBorrow }: Props) => {
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
 
   const [isGraph, setIsGraph] = useState(false)
+  const { isChartsLoading } = useLoansEarnBorrowContext()
 
   const CHART_COLORS = useMemo(
     () => ({
@@ -49,17 +52,16 @@ export const EarnBorrowChart = ({ data }: Props) => {
   const showChart = chartData.plots.length >= numberOfItemsToDisplay
 
   return (
-    <EarnBorrowChartStyled>
+    <EarnBorrowChartStyled isChartLoading={isChartsLoading}>
       {showChart && (
         <div className="switchMenu">
-          <span>Supply Vol / 14 Days</span>
+          <span>{isBorrow ? 'Borrow' : 'Supply'} Vol / 14 Days</span>
 
           <Button kind={BUTTON_THIRD} form={BUTTON_ROUND} onClick={() => setIsGraph(!isGraph)}>
             <Icon id={isGraph ? 'graph' : 'chart'} />
           </Button>
         </div>
       )}
-
       <Chart
         data={chartData}
         colors={CHART_COLORS}
@@ -67,6 +69,7 @@ export const EarnBorrowChart = ({ data }: Props) => {
         numberOfItemsToDisplay={numberOfItemsToDisplay}
         tooltipAsset="$"
         tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
+        isLoading={isChartsLoading}
       />
     </EarnBorrowChartStyled>
   )

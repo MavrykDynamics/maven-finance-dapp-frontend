@@ -5,7 +5,7 @@ import {
   INPUT_STATUS_SUCCESS,
   defaultProposalMetadataTitleMaxLength,
 } from 'app/App.components/Input/Input.constants'
-import { Governance_Proposal } from 'utils/generated/graphqlTypes'
+import { Governance_Proposal } from 'utils/__generated__/graphql'
 import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
   PaymentsDataChangesType,
@@ -13,7 +13,6 @@ import {
   ProposalValidityObj,
   StageThreeValidityItem,
 } from './ProposalSubmission.types'
-import { State } from 'reducers'
 
 // helpers
 import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
@@ -343,7 +342,6 @@ export const getPaymentsDiff = (
 }
 
 // CONSTS
-
 export const PROPOSAL_BYTE = {
   encoded_code: '',
   id: 1,
@@ -361,6 +359,9 @@ export const DEFAULT_PROPOSAL: ProposalRecordType = {
   id: -1,
   proposerId: '',
   governanceId: '',
+  droppedTime: '',
+  executionTime: '',
+  defeatedTime: '',
   status: ProposalStatus.UNLOCKED,
   title: '',
   description: '',

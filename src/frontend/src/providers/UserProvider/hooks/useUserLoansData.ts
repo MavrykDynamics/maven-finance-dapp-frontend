@@ -4,11 +4,11 @@ import { useSubscription } from '@apollo/client'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 import { GET_USER_LOANS_DATA } from '../queries/userLoans.query'
-import { calcLendingAPY } from 'pages/Loans/Loans.helpers'
+import { calcLendingAPY } from 'providers/LoansProvider/helpers/loans.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { getVaultCollateralBalance } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getVaultCollateralBalance } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { GetUserLoansDataSubscription } from 'utils/__generated__/graphql'
 import { UserLoansDataStateType } from '../user.provider.types'
 
@@ -141,17 +141,18 @@ const useUserLoansData = ({ userAddress }: { userAddress: string | null }) => {
             tokensMetadata,
             tokensPrices,
           )
-
-          if (collateralAmount <= 0 || convertedBorrowedAmount <= 0) return acc
+          const isVaultBorrowed = convertedBorrowedAmount > 0
 
           if (!acc[borrowedToken.address]) {
             acc[borrowedToken.address] = {
               borrowedAmount: convertedBorrowedAmount,
-              collateralAmount,
+              borrowedVaultsCollateralAmount: isVaultBorrowed ? collateralAmount : 0,
+              allVaultsCollateralAmount: collateralAmount,
             }
           } else {
             acc[borrowedToken.address].borrowedAmount += convertedBorrowedAmount
-            acc[borrowedToken.address].collateralAmount += collateralAmount
+            acc[borrowedToken.address].borrowedVaultsCollateralAmount += isVaultBorrowed ? collateralAmount : 0
+            acc[borrowedToken.address].allVaultsCollateralAmount += collateralAmount
           }
 
           return acc

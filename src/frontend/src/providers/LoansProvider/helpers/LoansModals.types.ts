@@ -1,7 +1,7 @@
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { VaultType, DepositorsFlagType } from './vaults.types'
+import { VaultType, DepositorsFlagType } from '../../VaultsProvider/vaults.provider.types'
 
 // Vaults actions popups data types
 export type ConfirmBorrowPopupDataType = {

@@ -1,5 +1,8 @@
-import { UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
-import { convertNumberForClient } from 'utils/calcFunctions'
+import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { LoansContext, LoansContextState, LoansSubsRecordType } from '../loans.provider.types'
+
+import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { EMPTY_LOANS_CONTEXT } from './loans.const'
 
 // HELPER TO GET OPERATION NAME BY ITS TYPE
 export const getDescrByType = (type: number) => {
@@ -15,11 +18,11 @@ export const getDescrByType = (type: number) => {
     case 4:
       return 'Deposited'
     case 5:
-      return 'Withdrawed'
+      return 'Withdrawn'
     case 6:
       return 'Deposited SMVK'
     case 7:
-      return 'Withdrawed SMVK'
+      return 'Withdrew SMVK'
     case 8:
       return 'Vault Created'
     case 9:
@@ -30,5 +33,85 @@ export const getDescrByType = (type: number) => {
       return 'Vault Closed'
     default:
       return null
+  }
+}
+
+// HELPER FOR LENDING APY
+export const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): number => {
+  const secondsPerYear = 60 * 60 * 24 * 365
+
+  const top = currentInterestRate - treasuryShare
+  const firstTerm = 1 + top / secondsPerYear
+  const power = firstTerm ** secondsPerYear
+  return (power - 1) * 100
+}
+
+export const calcMarketAvaliableLiquidity = ({
+  total_remaining,
+  token_pool_total,
+  reserve_ratio,
+}: Pick<
+  GetLoansMarketsSubscriptionSubscription['lending_controller'][number]['loan_tokens'][number],
+  'total_remaining' | 'token_pool_total' | 'reserve_ratio'
+>) => {
+  const reserveAmount = token_pool_total * (reserve_ratio / 10000)
+
+  return {
+    reserveAmount,
+    availableLiquidity: total_remaining - reserveAmount,
+    reserveFactor: reserve_ratio / 100,
+  }
+}
+
+export const getLoansProviderReturnValue = ({
+  loansCtxState,
+  isMarketLoading,
+  activeSubs,
+  changeLoansSubscriptionsList,
+  setMarketAddressToSubscribe,
+}: {
+  loansCtxState: LoansContextState
+  isMarketLoading: boolean
+  activeSubs: LoansSubsRecordType
+  changeLoansSubscriptionsList: LoansContext['changeLoansSubscriptionsList']
+  setMarketAddressToSubscribe: LoansContext['setMarketAddressToSubscribe']
+}) => {
+  const { marketsMapper, config, allMarketsAddresses } = loansCtxState
+  const commonToReturn = {
+    changeLoansSubscriptionsList,
+    setMarketAddressToSubscribe,
+  }
+
+  /**
+   * isLoading indicates whethet provider is loading smth, so we need to show loader, not load in background, cases:
+   * 1. if we switch between markets, subscribed to 1 cetrain market and it's not loaded yet
+   * 2. if we subscribe to markets and markets context data is empty
+   * 3. if we subscribe to config and config context data is empty
+   * 4. if we haven't subscribed to anything and don't have any data loaded, need this to fix time which component init its subscribes in useEffect as it's async operation
+   */
+  const isLoading =
+    isMarketLoading ||
+    (activeSubs['loansMarkets'] && (marketsMapper === null || allMarketsAddresses === null)) ||
+    (activeSubs['loansConfig'] && config === null) ||
+    (!activeSubs['loansConfig'] &&
+      config === null &&
+      !activeSubs['loansMarkets'] &&
+      (marketsMapper === null || allMarketsAddresses === null))
+
+  // if provider is loading smth return loading true and default empty context (nonNullable)
+  if (isLoading) {
+    return {
+      ...commonToReturn,
+      ...EMPTY_LOANS_CONTEXT,
+      isLoading: true,
+    }
+  }
+
+  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
+  const nonNullableProviderValue = replaceNullValuesWithDefault<LoansContextState>(loansCtxState, EMPTY_LOANS_CONTEXT)
+  return {
+    ...commonToReturn,
+    ...nonNullableProviderValue,
+    isLoading: false,
   }
 }

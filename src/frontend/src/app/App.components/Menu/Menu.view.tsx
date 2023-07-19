@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 // view
@@ -17,20 +17,16 @@ import { MenuFooter, MenuGrid, MenuSidebarContent, MenuSidebarStyled } from './M
 import { mainNavigationLinks } from './NavigationLink/MainNavigationLinks'
 import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
 import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { getMVKTokensFromFaucet } from 'providers/UserProvider/actions/user.actions'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
-import { TOASTER_ACTIONS_TEXTS } from '../Toaster/texts/toasterActions.texts'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from '../Toaster/Toaster.constants'
-import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
-import { TezosWalletErrorPayload } from 'errors/error.type'
-import { unknownToError } from 'errors/error'
-import { sleep } from 'utils/api/sleep'
 import { GET_MVK_FROM_FAUCET_ACTION } from 'providers/UserProvider/helpers/user.consts'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 type MenuViewProps = {
   openChangeNodePopupHandler: () => void
@@ -64,13 +60,10 @@ export const SocialIcons = () => (
 )
 
 export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
-  const { bug, info, loading } = useToasterContext()
+  const { bug } = useToasterContext()
   const {
     mvkFaucetAddress,
-    setAction,
     toggleSidebarCollapsing,
-    toggleActionCompletion,
-    toggleActionFullScreenLoader,
     contractAddresses: { mvkTokenAddress },
     preferences: { sidebarOpened },
     globalLoadingState: { isActionActive },
@@ -105,15 +98,16 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
 
   const [selectedMainLink, setSelectedMainLink] = useState<number>(0)
 
-  const handleRequestMVK = async () => {
+  // requestMVK action  ----------------------
+  const requestMVKAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
-      return
+      return null
     }
 
     if (!mvkFaucetAddress) {
-      bug('Bad MVK Faucet address')
-      return
+      bug('Wrong MVK Faucet address')
+      return null
     }
 
     const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
@@ -121,50 +115,21 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
 
     if (mvkTokenBalance > 0 || sMvkTokenBalance > 0) {
       bug('You have already claimed MVK', 'You are unable to claim MVK, you have already claimed')
-      return
+      return null
     }
 
-    try {
-      const actionResult = await getMVKTokensFromFaucet(mvkFaucetAddress)
+    return await getMVKTokensFromFaucet(mvkFaucetAddress)
+  }, [bug, mvkFaucetAddress, mvkTokenAddress, userAddress, userTokensBalances])
 
-      if (checkIfActionSuccess(actionResult)) {
-        const { operation } = actionResult
-        toggleActionFullScreenLoader(true)
-        toggleActionCompletion(true)
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: GET_MVK_FROM_FAUCET_ACTION,
+      actionFn: requestMVKAction,
+    }),
+    [requestMVKAction],
+  )
 
-        info(
-          TOASTER_ACTIONS_TEXTS[GET_MVK_FROM_FAUCET_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[GET_MVK_FROM_FAUCET_ACTION]['start']['title'],
-        )
-
-        await sleep(5000)
-
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
-
-        toggleActionFullScreenLoader(false)
-
-        const operationConfirm = await operation.confirmation()
-        const operationLvl = operationConfirm.block.header.level
-
-        setAction({ actionName: GET_MVK_FROM_FAUCET_ACTION, toasterId, operationLvl })
-      } else if (isContractErrorPayload(actionResult.error)) {
-        const { message, description } = actionResult.error as TezosWalletErrorPayload
-        bug(description, message)
-      } else {
-        throw new Error(actionResult.error?.message)
-      }
-    } catch (e) {
-      setAction(null)
-      const parsedError = unknownToError(e)
-      bug(parsedError.message)
-    } finally {
-      toggleActionCompletion(false)
-    }
-  }
+  const handleRequestMVK = useContractAction(contractActionProps)
 
   const burgerClickHandler = useCallback(() => {
     toggleSidebarCollapsing()

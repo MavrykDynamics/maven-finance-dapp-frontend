@@ -1,5 +1,5 @@
 // type
-import type { Vesting } from '../generated/graphqlTypes'
+import type { Vesting } from '../__generated__/graphql'
 
 // helpers
 import { normalizeVestingStorage } from 'pages/Treasury/Treasury.normalizer'

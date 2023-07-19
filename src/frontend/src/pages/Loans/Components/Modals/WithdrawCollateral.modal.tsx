@@ -1,7 +1,8 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
+// consts
 import {
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
@@ -11,10 +12,15 @@ import {
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { WITHDRAW_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+
+// types
 import { WithdrawCollateralPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
-import { withdrawCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
+import { State } from 'reducers'
+
+// actions
+import { withdrawCollateralAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
 
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -42,6 +48,7 @@ import { checkNan } from 'utils/checkNan'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // utils
 import {
@@ -49,7 +56,9 @@ import {
   getTokenDataByAddress,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultCollateralRatio } from 'providers/LoansProvider/helpers/vaults.utils'
+import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -62,7 +71,8 @@ export const WithdrawCollateral = ({
   data: WithdrawCollateralPopupDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { userTokensBalances } = useUserContext()
+  const { userTokensBalances, userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
   const {
     preferences: { themeSelected },
@@ -70,7 +80,6 @@ export const WithdrawCollateral = ({
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   useLockBodyScroll(show)
-  const dispatch = useDispatch()
 
   const [inputData, setInputData] = useState<{
     amount: string
@@ -102,16 +111,22 @@ export const WithdrawCollateral = ({
     tokensPrices,
   })
 
-  if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
+  const {
+    vaultAddress = '',
+    collateralBalance = 0,
+    collateralRatio = 0,
+    borrowedAmount = 0,
+    collateralTokenAddress = '',
+  } = data ?? {}
 
-  const { vaultAddress, collateralBalance, collateralRatio, borrowedAmount, collateralTokenAddress } = data
-
-  const { rate: collateralRate, decimals, name, icon } = collateralToken
+  const { rate: originalCollateralRate, decimals, name, icon } = collateralToken ?? {}
+  const collateralRate = originalCollateralRate ?? 0
   const userCollateralBalance = getUserTokenBalanceByAddress({
     userTokensBalances,
     tokenAddress: collateralTokenAddress,
   })
-  const { rate: borrowedTokenRate } = borrowedToken
+  const { rate: originalborrowedTokenRate } = borrowedToken ?? {}
+  const borrowedTokenRate = originalborrowedTokenRate ?? 0
 
   const futureCollateralRatio = getVaultCollateralRatio(
     collateralBalance - inputAmount * collateralRate,
@@ -131,6 +146,30 @@ export const WithdrawCollateral = ({
 
   const isActionBtnDisabled =
     isActionActive || inputData.validationStatus !== INPUT_STATUS_SUCCESS || futureCollateralRatio <= 200
+
+  // withdraw collateral action ----------------------------------------------
+  const withdrawAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (collateralToken && vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
+      return await withdrawCollateralAction(Number(inputData.amount), collateralToken, vaultAddress, closePopup)
+    }
+
+    return null
+  }, [userAddress, collateralToken, vaultAddress, bug, inputData.amount, closePopup])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: WITHDRAW_COLLATERAL_ACTION,
+      actionFn: withdrawAction,
+    }),
+    [withdrawAction],
+  )
+
+  const withdrawHandler = useContractAction(contractActionProps)
 
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
     const validationStatus = loansInputValidation({
@@ -162,11 +201,7 @@ export const WithdrawCollateral = ({
     })
   }
 
-  const withdrawHandler = () => {
-    if (vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
-      dispatch(withdrawCollateralAction(Number(inputData.amount), collateralToken, vaultAddress, closePopup))
-    }
-  }
+  if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
 
   return (
     <PopupContainer onClick={closePopup} show={show}>

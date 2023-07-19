@@ -16,14 +16,10 @@ import {
 
 import { ChartStyled } from '../Chart.style'
 import DoubleChartTooltip, { DOUBLE_AMOUNT_DATE_TOOLTIP } from '../Tooltips/DoubleChartTooltip'
-
-import {
-  AREA_CHART_TYPE,
-  CANDLESTICK_CHART_TYPE,
-  DoubleChartPropsType,
-  HISTOGRAM_CHART_TYPE,
-} from '../helpers/Chart.types'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { AREA_CHART_TYPE, CANDLESTICK_CHART_TYPE, HISTOGRAM_CHART_TYPE } from '../helpers/Chart.const'
+
+import { DoubleChartPropsType } from '../helpers/Chart.types'
 
 export const DoubleChart = ({
   settings,

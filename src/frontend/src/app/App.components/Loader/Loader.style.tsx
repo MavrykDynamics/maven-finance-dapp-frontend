@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components/macro'
 import { shine, ellipsis } from 'styles/animations'
 import { MavrykTheme } from 'styles/interfaces'
+import { SPINNER_LOADER_LARGE, SPINNER_LOADER_MEDIUM, SPINNER_LOADER_SMALL } from './loader.const'
 
 export const LoaderStyledWithBackdrop = styled.div<{ theme: MavrykTheme; backdropAlpha?: number; isActive: boolean }>`
   position: fixed;
@@ -68,6 +69,18 @@ export const SpinnerCircleLoaderStyled = styled.div<{ theme: MavrykTheme }>`
   -ms-transform: translateZ(0);
   transform: translateZ(0);
   transform: scale(0.1);
+
+  &.${SPINNER_LOADER_SMALL} {
+    font-size: 20px;
+  }
+
+  &.${SPINNER_LOADER_MEDIUM} {
+    font-size: 50px;
+  }
+
+  &.${SPINNER_LOADER_LARGE} {
+    font-size: 80px;
+  }
 `
 
 export const ClockLoaderWrapper = styled.svg<{ width: number; height: number }>`
