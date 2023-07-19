@@ -1,5 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useMemo } from 'react'
 import { useHistory, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 
@@ -296,6 +295,7 @@ export const Market = () => {
                     iconId="info"
                     text={USER_AVAILABLE_BORROW(currentMarketAddress)}
                     defaultStrokeColor={colors[themeSelected].textColor}
+                    className="tooltip"
                   />
                 </div>
                 <CommaNumber value={userAvailableBorrow} beginningText="$" className="value" />

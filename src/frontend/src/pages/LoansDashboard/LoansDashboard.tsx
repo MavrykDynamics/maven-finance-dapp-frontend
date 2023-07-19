@@ -98,56 +98,53 @@ export const LoansDashboard = () => {
   } => {
     const {
       borrowedAmount,
-      borrowCapacity,
+      collateralAmount,
       totalSuppliedValue,
       sumOfRatioSuppliedToAPY,
       sumOfRatioBorrowedToAPR,
-      totalBorrowed,
       totalLended,
+      totalBorrowed,
     } = marketsAddresses.reduce(
       (acc, marketTokenAddress) => {
         const market = marketsMapper[marketTokenAddress]
         const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
+        let borrowedPerMarket = 0
 
         if (!token || !token.rate || !market) return acc
         const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress, totalLended, totalBorrowed } = market
 
-        let borrowedPerMarket = 0
-
         const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
 
         const { decimals, rate } = token
-
-        const conveterLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
 
         const { borrowedAmount = 0, borrowedVaultsCollateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
 
         acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
         acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
 
-        // calculating value risk data & how much borrowed per vault
-        acc.borrowCapacity += borrowedVaultsCollateralAmount / 2
+        //  calculating value risk data & how much borrowed per vault
+        acc.collateralAmount += borrowedVaultsCollateralAmount
         acc.borrowedAmount += borrowedAmount
         borrowedPerMarket += borrowedAmount
 
         // calculating net APY supplied & borrowed ratio's
-        acc.sumOfRatioSuppliedToAPY += conveterLendValue * rate * lendingAPY
+        acc.sumOfRatioSuppliedToAPY += lendValue * rate * lendingAPY
         acc.sumOfRatioBorrowedToAPR += borrowedPerMarket * borrowAPR
-        acc.totalSuppliedValue += conveterLendValue * rate
+        acc.totalSuppliedValue += lendValue * rate
         return acc
       },
       {
         totalLended: 0,
         totalBorrowed: 0,
         borrowedAmount: 0,
-        borrowCapacity: 0,
+        collateralAmount: 0,
         totalSuppliedValue: 0,
         sumOfRatioSuppliedToAPY: 0,
         sumOfRatioBorrowedToAPR: 0,
       },
     )
 
-    const vaultRiskValue = !userAddress || !borrowCapacity ? 0 : (borrowedAmount / borrowCapacity) * 100
+    const vaultRiskValue = !userAddress || !collateralAmount ? 0 : (borrowedAmount / collateralAmount) * 100
     const apyNet =
       !userAddress || !totalSuppliedValue ? 0 : (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue
 
@@ -168,7 +165,7 @@ export const LoansDashboard = () => {
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
-    ...GAUGE_STATE_RISK_PART,
+    ...GAUGE_STATE_APY_PART,
     currentValue: 0,
     text: '',
     status: null,
@@ -176,10 +173,10 @@ export const LoansDashboard = () => {
 
   // Set gauge chart data for vault risk
   useEffect(() => {
-    if (!gaugeData.isAPY) {
-      setGaugeData(vaultRiskGaugeData)
+    if (gaugeData.isAPY) {
+      setGaugeData(apyGaugeData)
     }
-  }, [vaultRiskGaugeData])
+  }, [apyGaugeData])
 
   return (
     <Page>
@@ -249,8 +246,8 @@ export const LoansDashboard = () => {
                     >
                       <div
                         className={`lend-borrow-position ${gaugeData.status ?? ''}`}
-                        onMouseEnter={() => setGaugeData(apyGaugeData)}
-                        onMouseLeave={() => setGaugeData(vaultRiskGaugeData)}
+                        onMouseEnter={() => setGaugeData(vaultRiskGaugeData)}
+                        onMouseLeave={() => setGaugeData(apyGaugeData)}
                       >
                         <CommaNumber
                           value={gaugeData.currentValue}

@@ -1,7 +1,30 @@
-import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { LoansTokenMetadataType, TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import {
+  BORROW_VAULT_ASSET_ACTION,
+  CHANGE_BAKER_ACTION,
+  CHANGE_VAULT_NAME_ACTION,
+  DEPOSIT_COLLATERAL_ACTION,
+  MANAGE_PERMISSIONS_ACTION,
+  REPAY_FULL_VAULT_ACTION,
+  REPAY_PART_OF_VAULT_ACTION,
+  UPDATE_OPERATORS_ACTION,
+  WITHDRAW_COLLATERAL_ACTION,
+} from './helpers/vaults.const'
 import { VAULTS_ALL, VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR } from './vaults.provider.consts'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
+
+// actions type
+export type VaultsActionsType =
+  | typeof CHANGE_VAULT_NAME_ACTION
+  | typeof BORROW_VAULT_ASSET_ACTION
+  | typeof REPAY_PART_OF_VAULT_ACTION
+  | typeof REPAY_FULL_VAULT_ACTION
+  | typeof WITHDRAW_COLLATERAL_ACTION
+  | typeof DEPOSIT_COLLATERAL_ACTION
+  | typeof CHANGE_BAKER_ACTION
+  | typeof MANAGE_PERMISSIONS_ACTION
+  | typeof UPDATE_OPERATORS_ACTION
 
 // context types
 export type VaultsContext = DeepNonNullable<VaultsCtxState> & {

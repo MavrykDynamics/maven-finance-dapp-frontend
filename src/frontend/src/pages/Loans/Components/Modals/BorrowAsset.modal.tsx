@@ -1,6 +1,5 @@
-import { useDispatch } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 // consts
 import {
@@ -14,6 +13,7 @@ import {
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import { BORROW_VAULT_ASSET_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // types
 import { BorrowPopupDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
@@ -28,7 +28,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // actions & helpers
-import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
+import { borrowVaultAssetAction } from 'providers/VaultsProvider/actions/vaults.actions'
 import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
@@ -50,6 +50,8 @@ import colors from 'styles/colors'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
 export const BorrowAsset = ({
@@ -62,14 +64,15 @@ export const BorrowAsset = ({
   data: BorrowPopupDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { userTokensBalances } = useUserContext()
+  const { userTokensBalances, userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
   const {
     preferences: { themeSelected },
+    contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
 
   useLockBodyScroll(show)
-  const dispatch = useDispatch()
 
   const [inputData, setInputData] = useState<{
     amount: string
@@ -92,21 +95,20 @@ export const BorrowAsset = ({
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
-  if (!data || !borrowedToken || !borrowedToken.rate) return null
-
   const {
-    vaultId,
-    borrowedAmount,
-    borrowCapacity,
-    collateralRatio,
-    collateralBalance,
-    scrollToCurrentVault,
-    borrowAPR,
-    DAOFee,
-  } = data
+    vaultId = 0,
+    borrowedAmount = 0,
+    borrowCapacity = 0,
+    collateralRatio = 0,
+    collateralBalance = 0,
+    scrollToCurrentVault = () => {},
+    borrowAPR = 0,
+    DAOFee = 0,
+  } = data ?? {}
 
-  const { symbol, decimals, icon, rate } = borrowedToken
-  const userAssetBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: borrowedToken.address })
+  const { symbol = '', decimals = 0, icon = '', rate: originalRate } = borrowedToken ?? {}
+  const rate = originalRate ?? 0
+  const userAssetBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: borrowedToken?.address })
 
   const convertedBorrowedAmount = convertNumberForClient({ number: borrowedAmount, grade: decimals }),
     inputAmount = checkNan(parseFloat(inputData.amount))
@@ -116,6 +118,46 @@ export const BorrowAsset = ({
     (convertedBorrowedAmount + inputAmount) * rate,
   )
   const futureBorrowCapacity = borrowCapacity - inputAmount * rate
+
+  // borrow vault asset action
+  const borrowAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+    if (!lendingControllerAddress) {
+      bug('Wrong lending address')
+      return null
+    }
+
+    // call action only when there is vault if and correct loan token
+    if (borrowedToken && vaultId && checkWhetherTokenIsLoanToken(borrowedToken)) {
+      return await borrowVaultAssetAction(lendingControllerAddress, vaultId, inputAmount, borrowedToken, () => {
+        closePopup()
+        scrollToCurrentVault()
+      })
+    }
+    return null
+  }, [
+    borrowedToken,
+    bug,
+    closePopup,
+    inputAmount,
+    lendingControllerAddress,
+    scrollToCurrentVault,
+    userAddress,
+    vaultId,
+  ])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: BORROW_VAULT_ASSET_ACTION,
+      actionFn: borrowAction,
+    }),
+    [borrowAction],
+  )
+
+  const borrowAsserHandler = useContractAction(contractActionProps)
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
@@ -151,17 +193,7 @@ export const BorrowAsset = ({
   const continueBtnHandler = () => setShownScreen('confitmation')
   const backBtnHandler = () => setShownScreen('initial')
 
-  const borrowAsserHandler = async () => {
-    if (vaultId && checkWhetherTokenIsLoanToken(borrowedToken)) {
-      await dispatch(
-        borrowVaultAssetAction(vaultId, inputAmount, borrowedToken, () => {
-          closePopup()
-          scrollToCurrentVault()
-        }),
-      )
-    }
-  }
-
+  if (!data || !borrowedToken || !borrowedToken.rate) return null
   return (
     <PopupContainer onClick={closePopup} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">

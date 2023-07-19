@@ -1,24 +1,38 @@
 import { useLockBodyScroll } from 'react-use'
-import { useState, useMemo, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { changeBakerAction } from 'pages/Loans/Actions/vaultPermissions.actions'
+// actions
+import { changeBakerAction } from 'providers/VaultsProvider/actions/vaultPermissions.actions'
+
+// types
 import { ChangeBakerPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 
+// components
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 
+// styles
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+// consts
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { CHANGE_BAKER_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// providers
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const MAVRYK_DYNAMICS_BAKERY = 1
 const DAO_BAKERY = 2
@@ -38,10 +52,10 @@ export const ChangeBaker = ({
   const { bakerAddress = null, vaultAddress = '' } = data ?? {}
 
   const { xtzBakers } = useDappConfigContext()
+  const { bug } = useToasterContext()
+  const { userAddress } = useUserContext()
   const { otherBakers = [], dao, mavrykDynamics } = xtzBakers ?? {}
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD(true)
-
-  const dispatch = useDispatch()
 
   const [activeTab, setActiveSliding] = useState<BakersSlidingButtonTab>(MAVRYK_DYNAMICS_BAKERY)
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
@@ -126,11 +140,29 @@ export const ChangeBaker = ({
     )
   }
 
-  const updateBakerHandler = () => {
-    if (selectedAddress && vaultAddress) {
-      dispatch(changeBakerAction(selectedAddress, vaultAddress, closePopup))
+  // change baker action ---------------------------------
+  const changeBakerActionCb = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
     }
-  }
+
+    if (selectedAddress && vaultAddress) {
+      return await changeBakerAction(selectedAddress, vaultAddress, closePopup)
+    }
+
+    return null
+  }, [bug, closePopup, selectedAddress, userAddress, vaultAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: CHANGE_BAKER_ACTION,
+      actionFn: changeBakerActionCb,
+    }),
+    [changeBakerActionCb],
+  )
+
+  const updateBakerHandler = useContractAction(contractActionProps)
 
   return (
     <PopupContainer onClick={closePopup} show={show}>

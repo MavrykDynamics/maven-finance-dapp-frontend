@@ -244,6 +244,19 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
     .name {
       text-align: center;
       line-height: 23px;
+
+      .tooltip {
+        .text {
+          visibility: visible;
+          display: none;
+        }
+
+        &:hover {
+          .text {
+            display: block;
+          }
+        }
+      }
     }
 
     .asset-info {

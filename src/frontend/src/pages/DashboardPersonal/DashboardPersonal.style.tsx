@@ -15,7 +15,7 @@ export const DashboardPersonalStyled = styled.div`
 
   .tabs-switchers {
     display: flex;
-    column-gap: 15px;
+    column-gap: 20px;
     margin: 5px 0;
   }
 `

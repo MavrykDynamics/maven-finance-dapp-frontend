@@ -1,6 +1,6 @@
+import classNames from 'classnames'
 import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { State } from 'reducers'
 
 import { BORROW_TAB_ID, LEND_TAB_ID } from 'pages/Loans/Loans.const'
 import colors from 'styles/colors'
@@ -17,13 +17,13 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
+import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { Plug } from 'app/App.components/Chart/Chart.style'
 import { PositionTableStyled } from '../LoansDashboard.styles'
-import { getGaugeVaultRiskSimpleStatus } from '../helpers/position.helpers'
-import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
+import { getVaultSimpleStatus } from '../helpers/position.helpers'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
@@ -34,7 +34,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import classNames from 'classnames'
+import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 export const LoansPositionTable = ({
   userVaultsData,
@@ -120,13 +120,12 @@ export const LoansPositionTable = ({
 
                   const { lendValue = 0, interestEarned = 0 } = lendingItem ?? {}
 
-                  const averageVaultStatus = getGaugeVaultRiskSimpleStatus(
-                    marketVaultsUserData?.borrowedVaultsCollateralAmount
-                      ? (marketVaultsUserData.borrowedAmount /
-                          (marketVaultsUserData.borrowedVaultsCollateralAmount / 2)) *
-                          100
-                      : 0,
+                  const collateralRatio = getVaultCollateralRatio(
+                    marketVaultsUserData?.borrowedVaultsCollateralAmount ?? 0,
+                    marketVaultsUserData.borrowedAmount,
                   )
+
+                  const averageVaultStatus = getVaultSimpleStatus(collateralRatio)
 
                   return (
                     <TableRow rowHeight={60} borderColor="cardBorderColor" className="add-hover" key={symbol}>
@@ -145,13 +144,8 @@ export const LoansPositionTable = ({
                           {lendingItem ? (
                             <>
                               <CommaNumber value={lendingAPY} endingText="%" />
-                              <CommaNumber
-                                value={convertNumberForClient({ number: lendValue, grade: decimals }) * rate}
-                                beginningText="$"
-                              />
-                              <CommaNumber
-                                value={convertNumberForClient({ number: interestEarned, grade: decimals })}
-                              />
+                              <CommaNumber value={lendValue * rate} beginningText="$" />
+                              <CommaNumber value={interestEarned} />
                               <Link to={{ pathname: `/loans/${address}/${LEND_TAB_ID}`, state: { from: pathname } }}>
                                 <Button kind={BUTTON_SIMPLE}>View</Button>
                               </Link>

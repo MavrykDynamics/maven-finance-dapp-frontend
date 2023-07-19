@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -113,15 +112,15 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
                           <TableCell width="33%">
                             <CommaNumber
                               value={convertedBalance}
-                              decimalsToShow={assetDecimalsToShow}
-                              useAccurateParsing
+                              decimalsToShow={Number(decimals)}
+                              useAccurateParsing={balance < 1}
                             />
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
                             <CommaNumber
                               value={convertedBalance * rate}
                               beginningText={rate ? '$' : symbol}
-                              useAccurateParsing
+                              useAccurateParsing={balance < 1}
                             />
                           </TableCell>
                         </TableRow>

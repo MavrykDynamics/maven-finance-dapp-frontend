@@ -5,12 +5,18 @@ import { XtzBakerType } from './bakers/getXtzBakers'
 import { normalizeContractAddresses } from './helpers/dappConfig.normalizers'
 import { UserActionsType } from 'providers/UserProvider/user.provider.types'
 import { SatelliteActionsType } from 'providers/SatellitesProvider/satellites.provider.types'
-import { ExtendedError } from 'errors/error'
-import { TezosWalletErrorPayload } from 'errors/error.type'
+import { WalletErrorPayload } from 'errors/error.type'
 import { ThemeType } from 'consts/theme.const'
 import { LoansActionsType } from 'providers/LoansProvider/loans.provider.types'
+import { VaultsActionsType } from 'providers/VaultsProvider/vaults.provider.types'
+import { WalletOperationError } from 'errors/error'
 
-export type ActionTypes = StakeActionType | UserActionsType | SatelliteActionsType | LoansActionsType
+export type ActionTypes =
+  | StakeActionType
+  | UserActionsType
+  | SatelliteActionsType
+  | LoansActionsType
+  | VaultsActionsType
 
 export type DappConfigContext = {
   // data
@@ -59,7 +65,7 @@ export type UserActionType = {
   callback?: () => void
 }
 
-export type ActionErrorReturnType = { actionSuccess: boolean; error: Error | ExtendedError | TezosWalletErrorPayload }
+export type ActionErrorReturnType = { actionSuccess: boolean; error: WalletErrorPayload | WalletOperationError }
 export type ActionSuccessReturnType = {
   actionSuccess: boolean
   operation: TransactionWalletOperation | BatchWalletOperation

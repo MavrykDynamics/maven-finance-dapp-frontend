@@ -12,7 +12,11 @@ export const tokenMetadataSchema = z.object({
 })
 
 export const mTokenMetadataSchema = z.object({
-  decimals: z.string(),
+  assets: z.array(
+    z.object({
+      decimals: z.string(),
+    }),
+  ),
 })
 
 export type TokenAddressType = string

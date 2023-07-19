@@ -47,8 +47,12 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
-import { STATUS_FLAG_DOWN, STATUS_FLAG_UP } from 'app/App.components/StatusFlag/StatusFlag.constants'
-import { SATELLITE_VOTES_MAPPER } from 'providers/SatellitesProvider/satellites.const'
+import { STATUS_FLAG_DOWN, STATUS_FLAG_INFO, STATUS_FLAG_UP } from 'app/App.components/StatusFlag/StatusFlag.constants'
+import {
+  SATELLITE_VOTE_NO,
+  SATELLITE_VOTE_YES,
+  SATELLITE_VOTES_MAPPER,
+} from 'providers/SatellitesProvider/satellites.const'
 
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const dispatch = useDispatch()
@@ -106,7 +110,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   // Show details of the proposal
   // const [rightSideContentId, setRightSideContentId] = useState<number | undefined>(undefined)
   const handleItemSelect = (chosenProposal: ProposalRecordType) =>
-    history.replace(`/${proposalPage}?${QueryString.stringify({ proposalId: chosenProposal.id })}`)
+    history.replace(`/${proposalPage}?${QueryString.stringify({ ...parsedQp, proposalId: chosenProposal.id })}`)
 
   // filters handlers TODO: add all cycles option
   const dropDownOptions = useMemo<Array<DropDownItemType>>(() => generateCyclesDdOptions(cycle), [cycle])
@@ -280,6 +284,12 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                   {paginatedVotersList.map(({ vote, address, name, avatar, round }) => {
                     // if vote for proposal round, don't show it
                     if (round === 0) return null
+                    const voteColor =
+                      vote === SATELLITE_VOTE_YES
+                        ? STATUS_FLAG_UP
+                        : vote === SATELLITE_VOTE_NO
+                        ? STATUS_FLAG_DOWN
+                        : STATUS_FLAG_INFO
                     return (
                       <VoterListItem key={address}>
                         <div className="left">
@@ -289,10 +299,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                             <TzAddress tzAddress={address} />
                           </div>
                         </div>
-                        <StatusFlag
-                          status={vote === 1 ? STATUS_FLAG_UP : STATUS_FLAG_DOWN}
-                          text={SATELLITE_VOTES_MAPPER[vote]}
-                        />
+                        <StatusFlag status={voteColor} text={SATELLITE_VOTES_MAPPER[vote]} />
                       </VoterListItem>
                     )
                   })}
@@ -303,7 +310,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
 
             {/* Selected proposal */}
             {rightSideContentId && rightSideContentId !== 0 ? (
-              <ProposalDetails proposal={proposalsMapper[rightSideContentId]} />
+              <ProposalDetails proposal={proposalsMapper[rightSideContentId]} isHistory={isHistory} />
             ) : null}
           </GovernanceStyled>
         )

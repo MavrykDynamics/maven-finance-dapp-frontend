@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
-import { useDispatch } from 'react-redux'
 
+// components
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { DDItemId, DropDown, DropDownItemType, DropdownInputCustomChild } from 'app/App.components/DropDown/NewDropdown'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
@@ -9,12 +9,25 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
+// helpers
+import {
+  checkWhetherTokenIsCollateralToken,
+  getTokenDataByAddress,
+  isTezosAsset,
+} from 'providers/TokensProvider/helpers/tokens.utils'
+import { checkNan } from 'utils/checkNan'
 import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+
+// consts
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { depositCollateralsAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { AddNewCollateralDataProps } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import {
   InputStatusType,
@@ -24,27 +37,29 @@ import {
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
+import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
+// actions
+import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
+
+// styles
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
-import { checkNan } from 'utils/checkNan'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import {
-  checkWhetherTokenIsCollateralToken,
-  getTokenDataByAddress,
-  isTezosAsset,
-} from 'providers/TokensProvider/helpers/tokens.utils'
+
+// types
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({
@@ -57,12 +72,12 @@ export const AddNewCollateral = ({
   data: AddNewCollateralDataProps
 }) => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
-  const { userTokensBalances } = useUserContext()
+  const { userTokensBalances, userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
 
   useLockBodyScroll(show)
-  const dispatch = useDispatch()
 
   const [selectedCollateral, setSelectedCollateral] = useState<TokenAddressType | undefined>()
   const [inputData, setInputData] = useState<{
@@ -139,13 +154,21 @@ export const AddNewCollateral = ({
     tokensPrices,
   })
 
-  if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
+  const {
+    collateralBalance = 0,
+    vaultAddress = '',
+    collateralRatio = 0,
+    borrowedAmount = 0,
+    availableLiquidity = 0,
+    borrowCapacity = 0,
+  } = data ?? {}
 
-  const { collateralBalance, vaultAddress, collateralRatio, borrowedAmount, availableLiquidity, borrowCapacity } = data
-
-  const { symbol, decimals, rate } = collateralToken
+  const { symbol = '', decimals = 0, rate: originalRate } = collateralToken ?? {}
+  const rate = originalRate ?? 0
   const userCollateralBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: selectedCollateral })
-  const { rate: borrowedTokenRate } = borrowedToken
+  const { rate: originalBorrowedTokenRate } = borrowedToken ?? {}
+
+  const borrowedTokenRate = originalBorrowedTokenRate ?? 0
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const futureCollateralRatio = getVaultCollateralRatio(
@@ -158,29 +181,46 @@ export const AddNewCollateral = ({
     futureCollateralBalance / 2 - borrowedAmount * borrowedTokenRate,
   )
 
-  const depositCollateralHandler = () => {
-    if (vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
-      dispatch(
-        depositCollateralsAction(
-          vaultAddress,
-          [
-            {
-              collateralName: collateralToken.loanData.indexerName,
-              address: collateralToken.address,
-              id: collateralToken.id,
-              type: collateralToken.type,
-              amount: convertNumberForContractCall({
-                number: Number(inputData.amount),
-                grade: collateralToken.decimals,
-              }),
-            },
-          ],
-          closePopup,
-          choosenBaker?.bakerAddress,
-        ),
+  // deposit collateral action --------------------------
+  const depositAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (collateralToken && vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
+      return depositCollateralsAction(
+        userAddress,
+        vaultAddress,
+        [
+          {
+            collateralName: collateralToken.loanData.indexerName,
+            address: collateralToken.address,
+            id: collateralToken.id,
+            type: collateralToken.type,
+            amount: convertNumberForContractCall({
+              number: Number(inputData.amount),
+              grade: collateralToken.decimals,
+            }),
+          },
+        ],
+        closePopup,
+        choosenBaker?.bakerAddress,
       )
     }
-  }
+
+    return null
+  }, [bug, choosenBaker?.bakerAddress, closePopup, collateralToken, inputData.amount, userAddress, vaultAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DEPOSIT_COLLATERAL_ACTION,
+      actionFn: depositAction,
+    }),
+    [depositAction],
+  )
+
+  const depositCollateralHandler = useContractAction(contractActionProps)
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
@@ -217,6 +257,8 @@ export const AddNewCollateral = ({
 
   const isDepositBtnDisabled =
     (isTezosAsset(selectedCollateral) && !choosenBaker) || inputData.validationStatus === INPUT_STATUS_ERROR
+
+  if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
 
   return (
     <PopupContainer onClick={closePopup} show={show}>

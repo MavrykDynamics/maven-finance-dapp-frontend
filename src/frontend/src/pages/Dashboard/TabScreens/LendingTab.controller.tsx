@@ -7,16 +7,18 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { getClassNameBasedOnPersentValue } from 'pages/LoansDashboard/helpers/comparing.helpers'
+import { Impact } from 'app/App.components/Impact/Impact'
 
 import { StatBlock } from '../Dashboard.style'
 import { EmptyContainer, LendingContentStyled, TabWrapperStyled } from './DashboardTabs.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24hDiff'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+
+// context
+import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24hDiff'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 export const emptyContainer = (
@@ -111,12 +113,8 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="name">Total Earning</div>
               <div className="value">
                 <CommaNumber beginningText="$" value={totalLended} />
-                <div className={`impact ${getClassNameBasedOnPersentValue(lending24hPersentChange)}`}>
-                  <CommaNumber
-                    value={lending24hPersentChange}
-                    beginningText={lending24hPersentChange > 0 ? '+' : ''}
-                    endingText={'% 24h'}
-                  />
+                <div className="impact-wrapper">
+                  <Impact value={lending24hPersentChange} endingText="% 24h" />
                 </div>
               </div>
             </StatBlock>
@@ -156,12 +154,8 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="name">Total Borrowed</div>
               <div className="value">
                 <CommaNumber beginningText="$" value={totalBorrowed} />
-                <div className={`impact ${getClassNameBasedOnPersentValue(borrowing24hPersentChange)}`}>
-                  <CommaNumber
-                    value={borrowing24hPersentChange}
-                    beginningText={borrowing24hPersentChange > 0 ? '+' : ''}
-                    endingText={'% 24h'}
-                  />
+                <div className="impact-wrapper">
+                  <Impact value={borrowing24hPersentChange} endingText="% 24h" />
                 </div>
               </div>
             </StatBlock>
