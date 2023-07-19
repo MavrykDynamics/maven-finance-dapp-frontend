@@ -65,9 +65,7 @@ export const LendBorrowPosition = ({
 
           const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
 
-          const { decimals, rate } = token
-
-          const conveterLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
+          const { rate } = token
 
           const { borrowedAmount = 0, borrowedVaultsCollateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
 
@@ -77,9 +75,9 @@ export const LendBorrowPosition = ({
           borrowedPerMarket += borrowedAmount
 
           // calculating net APY supplied & borrowed ratio's
-          acc.sumOfRatioSuppliedToAPY += conveterLendValue * rate * lendingAPY
+          acc.sumOfRatioSuppliedToAPY += lendValue * rate * lendingAPY
           acc.sumOfRatioBorrowedToAPR += borrowedPerMarket * borrowAPR
-          acc.totalSuppliedValue += conveterLendValue * rate
+          acc.totalSuppliedValue += lendValue * rate
           return acc
         },
         {
