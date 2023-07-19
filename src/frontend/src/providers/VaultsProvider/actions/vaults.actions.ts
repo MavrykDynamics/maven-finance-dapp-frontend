@@ -1,6 +1,6 @@
 // helpers
 import { scrollUpPage } from 'utils/scrollUpPage'
-import { unknownToError } from 'errors/error'
+import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
@@ -28,7 +28,8 @@ export const changeVaultNameAction = async (
       callback, // close popup
     })
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -52,7 +53,8 @@ export const borrowVaultAssetAction = async (
       callback, // close popup
     })
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -136,7 +138,8 @@ export const repayPartOfVaultAction = async (
       callback,
     })
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -240,6 +243,7 @@ export const repayFullAndCloseVaultAction = async (
 
     return await getEstimationBatchResult(tezos, batchArr, cb)
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }

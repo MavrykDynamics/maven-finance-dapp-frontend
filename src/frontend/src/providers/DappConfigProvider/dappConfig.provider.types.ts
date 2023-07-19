@@ -9,6 +9,7 @@ import { WalletErrorPayload } from 'errors/error.type'
 import { ThemeType } from 'consts/theme.const'
 import { LoansActionsType } from 'providers/LoansProvider/loans.provider.types'
 import { VaultsActionsType } from 'providers/VaultsProvider/vaults.provider.types'
+import { WalletOperationError } from 'errors/error'
 
 export type ActionTypes =
   | StakeActionType
@@ -64,7 +65,7 @@ export type UserActionType = {
   callback?: () => void
 }
 
-export type ActionErrorReturnType = { actionSuccess: boolean; error: WalletErrorPayload | unknown }
+export type ActionErrorReturnType = { actionSuccess: boolean; error: WalletErrorPayload | WalletOperationError }
 export type ActionSuccessReturnType = {
   actionSuccess: boolean
   operation: TransactionWalletOperation | BatchWalletOperation

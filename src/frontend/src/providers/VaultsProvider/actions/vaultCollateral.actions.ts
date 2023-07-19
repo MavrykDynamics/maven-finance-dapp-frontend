@@ -1,5 +1,5 @@
 import { OpKind, TransferParams } from '@taquito/taquito'
-import { unknownToError } from 'errors/error'
+import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
@@ -26,7 +26,8 @@ export const withdrawCollateralAction = async (
 
     return await getEstimationResult(withdrawCollateralMetaData, { callback })
   } catch (error) {
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
 
@@ -133,6 +134,7 @@ export const depositCollateralsAction = async (
     return await getEstimationBatchResult(tezos, batchArr, callback)
   } catch (error) {
     callback()
-    return { actionSuccess: false, error: unknownToError(error) }
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
