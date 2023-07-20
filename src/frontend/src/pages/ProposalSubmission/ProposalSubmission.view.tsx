@@ -65,12 +65,20 @@ import {
 } from 'providers/ProposalsProvider/actions/proposalsSubmission.actions'
 import { getBytesDiff, getPaymentsDiff } from './ProposalSubmission.helpers'
 import { unknownToError } from 'errors/error'
+import { isAbortError } from 'errors/error'
+import { api } from 'utils/api/api'
+import {
+  getTimestampByLevelUrl,
+  getTimestampByLevelHeaders,
+  getTimestampByLevelSchema,
+} from 'utils/api/api-helpers/getTimestampByLevel'
+import dayjs from 'dayjs'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
@@ -78,15 +86,15 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const dispatch = useDispatch()
   const history = useHistory()
+  const { bug } = useToasterContext()
 
   const { tokensMetadata } = useTokensContext()
-  const { bug } = useToasterContext()
   const { userAddress, isNewlyRegisteredSatellite } = useUserContext()
 
   const {
     currentRoundProposalsIds,
     proposalsMapper,
-    config: { fee, governancePhase },
+    config: { fee, governancePhase, currentRoundEndLevel },
   } = useSelector((state: State) => state.governance)
   const {
     preferences: { themeSelected },
@@ -95,6 +103,31 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   } = useDappConfigContext()
 
   const [activeTab, setActiveTab] = useState(1)
+  const [isFormDisabled, setIsFormDisabled] = useState(true)
+
+  useEffect(() => {
+    const abortController = new AbortController()
+
+    ;(async () => {
+      try {
+        const { data: votingEndTimestamp } = await api(
+          getTimestampByLevelUrl(currentRoundEndLevel),
+          { signal: abortController.signal, headers: getTimestampByLevelHeaders },
+          getTimestampByLevelSchema,
+        )
+
+        setIsFormDisabled(dayjs(votingEndTimestamp).diff() <= 0)
+      } catch (e) {
+        // TODO: handle fetch errors when error boundary will be ready
+        if (!isAbortError(e)) {
+          console.error('getting timestamp by lvl error: ', e)
+        }
+        bug('Unexpected error happened occured, please reload the page')
+      }
+    })()
+
+    return () => abortController.abort()
+  }, [currentRoundEndLevel])
 
   // proposals that user has submitted, reduced to object mapper and arr of keys for this object
   // this object represents ds we can use with stages, to interact with in tables, inputs, etc
@@ -482,6 +515,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         {activeTab === 1 && (
           <StageOneForm
             proposalId={selectedUserProposalId}
+            isFormDisabled={isFormDisabled}
             currentProposal={currentProposal}
             currentProposalValidation={currentProposalValidation}
             updateLocalProposalValidation={updateLocalProposalValidation}
@@ -491,6 +525,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         {activeTab === 2 && (
           <StageTwoForm
             proposalId={selectedUserProposalId}
+            isFormDisabled={isFormDisabled}
             currentProposal={currentProposal}
             currentProposalValidation={currentProposalValidation}
             updateLocalProposalValidation={updateLocalProposalValidation}
@@ -500,6 +535,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         {activeTab === 3 && (
           <StageThreeForm
             proposalId={selectedUserProposalId}
+            isFormDisabled={isFormDisabled}
             currentProposal={currentProposal}
             currentProposalValidation={currentProposalValidation}
             updateLocalProposalValidation={updateLocalProposalValidation}

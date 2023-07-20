@@ -27,7 +27,6 @@ import {
 
 // loans
 import {
-  CREATE_NEW_VAULT_ACTION,
   DEPOSIT_LENDING_ASSET_ACTION,
   WITHDRAW_LENDING_ASSET_ACTION,
 } from 'providers/LoansProvider/helpers/loans.const'
@@ -37,6 +36,7 @@ import {
   BORROW_VAULT_ASSET_ACTION,
   CHANGE_BAKER_ACTION,
   CHANGE_VAULT_NAME_ACTION,
+  CREATE_VAULT_ACTION,
   DEPOSIT_COLLATERAL_ACTION,
   MANAGE_PERMISSIONS_ACTION,
   REPAY_FULL_VAULT_ACTION,
@@ -186,7 +186,7 @@ export const TOASTER_ACTIONS_TEXTS = {
   },
 
   // loans actions -------------------------------------
-  [CREATE_NEW_VAULT_ACTION]: {
+  [CREATE_VAULT_ACTION]: {
     start: {
       title: 'Creating new vault...',
       message: ACTION_START_MESSAGE_TEXT,

@@ -49,6 +49,18 @@ export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
         grid-template-columns: repeat(3, auto);
         column-gap: 30px;
         row-gap: 20px;
+
+        > div {
+          row-gap: 0;
+        }
+
+        .impact-wrapper {
+          margin-left: 5px;
+        }
+
+        .value {
+          font-size: 16px;
+        }
       }
     }
   }
@@ -56,7 +68,7 @@ export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
   .dashboard-navigation {
     display: flex;
     margin: 30px 0 20px 0;
-    column-gap: 15px;
+    column-gap: 20px;
 
     > a {
       font-weight: 600;
@@ -123,12 +135,14 @@ export const StatBlock = styled.div`
 
   .value {
     display: flex;
+    width: fit-content;
     color: ${({ theme }) => theme.dataColor};
     font-weight: 600;
-    font-size: 16px;
+    font-size: 22px;
     column-gap: 4px;
     height: 36px;
     align-items: center;
+    position: relative;
 
     svg,
     .image-wrapper {
@@ -143,33 +157,6 @@ export const StatBlock = styled.div`
       }
 
       fill: ${({ theme }) => theme.dataColor};
-    }
-
-    .impact {
-      border-radius: 5px;
-      font-weight: 400;
-      font-size: 12px;
-      padding: 3px 3px;
-      height: fit-content;
-      min-width: 55px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      &.up {
-        color: ${({ theme }) => theme.upColor};
-        background: rgba(52, 246, 106, 0.2);
-      }
-
-      &.down {
-        color: ${({ theme }) => theme.downColor};
-        background: rgba(255, 67, 67, 0.2);
-      }
-
-      &.neutral {
-        color: ${({ theme }) => theme.dataColor};
-        background: rgba(119, 164, 242, 0.2);
-      }
     }
   }
 
@@ -193,8 +180,6 @@ export const StatBlock = styled.div`
       font-size: 24px;
       .impact {
         font-size: 20px;
-        padding: 2px 3px;
-        margin-left: 5px;
       }
     }
   }

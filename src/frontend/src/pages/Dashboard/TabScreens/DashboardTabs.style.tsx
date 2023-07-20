@@ -59,7 +59,7 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
     max-width: 600px;
 
     .title {
-      font-weight: 600;
+      font-weight: 700;
       font-size: 18px;
       line-height: 27px;
       color: ${({ theme }) => theme.textColor};
@@ -72,7 +72,6 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
 
       a {
         color: ${cyanColor};
-        text-decoration: underline;
       }
     }
   }
@@ -108,6 +107,12 @@ export const LendingContentStyled = styled.div<{ theme: MavrykTheme }>`
     background-color: ${({ theme }) => theme.footerColor};
   }
 
+  .impact-wrapper {
+    position: absolute;
+    top: 100%;
+    right: -30px;
+  }
+
   .left,
   .right {
     padding-top: 10px;
@@ -120,6 +125,10 @@ export const LendingContentStyled = styled.div<{ theme: MavrykTheme }>`
       margin-top: 54px;
       display: flex;
       justify-content: space-between;
+
+      > div {
+        row-gap: 0;
+      }
     }
   }
 `
@@ -141,7 +150,7 @@ export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
     left: 40px;
     top: 50px;
 
-    font-weight: 700;
+    font-weight: 600;
     font-size: 18px;
     line-height: 18px;
     color: ${({ theme }) => theme.textColor};
@@ -188,7 +197,8 @@ export const SatellitesContentStyled = styled.div<{ theme: MavrykTheme }>`
   flex-direction: column;
   margin-top: 20px;
   row-gap: 20px;
-  column-gap: 50px;
+  column-gap: 10px;
+  justify-content: space-between;
   max-width: 600px;
 `
 
@@ -395,8 +405,8 @@ export const VaultsContentStyled = styled.div<{ theme: MavrykTheme }>`
   margin-top: 20px;
 
   .top {
-    width: fit-content;
-    column-gap: 50px;
+    width: 50%;
+    justify-content: space-between;
 
     .value {
       height: 25px;
@@ -590,6 +600,10 @@ export const PopularFeed = styled(CardHover)`
   margin-top: 0;
   padding: 10px 20px 10px 19px;
   border: 1px solid transparent;
+
+  .value {
+    font-size: 16px;
+  }
 `
 
 export const EmptyContainer = styled(EmptyContainerBase)`

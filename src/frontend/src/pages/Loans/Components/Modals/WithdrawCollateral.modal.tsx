@@ -20,7 +20,10 @@ import { WithdrawCollateralPopupDataType } from '../../../../providers/LoansProv
 import { State } from 'reducers'
 
 // actions
-import { withdrawCollateralAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
+import {
+  withdrawCollateralAction,
+  withdrawStakedCollateralAction,
+} from 'providers/VaultsProvider/actions/vaultCollateral.actions'
 
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -72,6 +75,9 @@ export const WithdrawCollateral = ({
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userTokensBalances, userAddress } = useUserContext()
+  const {
+    contractAddresses: { lendingControllerAddress },
+  } = useDappConfigContext()
   const { bug } = useToasterContext()
 
   const {
@@ -113,6 +119,7 @@ export const WithdrawCollateral = ({
 
   const {
     vaultAddress = '',
+    vaultId = 0,
     collateralBalance = 0,
     collateralRatio = 0,
     borrowedAmount = 0,
@@ -154,8 +161,23 @@ export const WithdrawCollateral = ({
       return null
     }
 
-    if (collateralToken && vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
-      return await withdrawCollateralAction(Number(inputData.amount), collateralToken, vaultAddress, closePopup)
+    if (
+      collateralToken &&
+      vaultAddress &&
+      lendingControllerAddress &&
+      checkWhetherTokenIsCollateralToken(collateralToken)
+    ) {
+      if (collateralToken.loanData.isStaked) {
+        return await withdrawStakedCollateralAction(
+          Number(inputData.amount),
+          collateralToken,
+          vaultId,
+          lendingControllerAddress,
+          closePopup,
+        )
+      } else {
+        return await withdrawCollateralAction(Number(inputData.amount), collateralToken, vaultAddress, closePopup)
+      }
     }
 
     return null

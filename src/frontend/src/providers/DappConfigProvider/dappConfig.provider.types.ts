@@ -62,7 +62,7 @@ export type DappConfigContextStateType = Pick<
 
 export type UserActionType = {
   actionName: ActionTypes
-  toasterId: string
+  toasterId: string | null
   operationLvl: number
   callback?: () => void
 }

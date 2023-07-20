@@ -63,9 +63,9 @@ export const CommaNumber = ({
   }
 
   if (useAccurateParsing && numberWithCommas && numberWithCommas.length > 12) {
-    const splittedDigits = numberWithCommas.split(',')
+    const splittedDigits = numberWithCommas.split('.')
     titleForNumber = numberWithCommas
-    numberWithCommas = `${splittedDigits.at(0)},${splittedDigits.at(1)}...${splittedDigits.at(-1)}`
+    numberWithCommas = `${splittedDigits.at(0)},${splittedDigits.at(1)}...${splittedDigits.at(0)?.at(-1) ?? 0}`
   }
 
   return beginningText || endingText ? (

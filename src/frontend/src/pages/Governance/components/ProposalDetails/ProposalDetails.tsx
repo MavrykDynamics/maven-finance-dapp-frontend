@@ -62,7 +62,7 @@ import {
 } from 'providers/ProposalsProvider/actions/proposals.actions'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
-export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
+export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRecordType; isHistory: boolean }) => {
   const dispatch = useDispatch()
 
   const { bug } = useToasterContext()
@@ -222,12 +222,23 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   // Loading voting till time for proposal
   const [votingTill, setVotingTill] = useState<null | number>(null)
   useEffect(() => {
+    const { droppedTime, currentCycleEndLevel, executionTime, executed } = proposal
+    if (droppedTime) {
+      setVotingTill(new Date(droppedTime).getTime())
+      return
+    }
+
+    if (executionTime && executed) {
+      setVotingTill(new Date(executionTime).getTime())
+      return
+    }
+
     const abortController = new AbortController()
 
     ;(async () => {
       try {
         const { data: votingEndTimestamp } = await api(
-          getTimestampByLevelUrl(proposal.currentCycleEndLevel),
+          getTimestampByLevelUrl(currentCycleEndLevel),
           { signal: abortController.signal, headers: getTimestampByLevelHeaders },
           getTimestampByLevelSchema,
         )
@@ -242,7 +253,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
     })()
 
     return () => abortController.abort()
-  }, [proposal.currentCycleEndLevel])
+  }, [proposal])
 
   // store bytes that are opened
   const [openedBytes, setOpenedBytes] = useState<Array<number>>([])
@@ -264,10 +275,33 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         ) : null}
       </div>
 
-      {votingTill ? (
+      {isHistory &&
+      ((proposal.executionTime && proposal.executed) ||
+        proposal.defeatedTime ||
+        (proposal.droppedTime && proposal.status === ProposalStatus.DROPPED)) ? (
         <div className="voting-ends">
-          Voting {votingTill <= Date.now() ? 'ended' : 'ending'} on{' '}
-          {parseDate({ time: votingTill, timeFormat: 'MMMM Do HH:mm Z' })} CEST
+          {proposal.executionTime && proposal.executed
+            ? `Proposal was executed on ${parseDate({
+                time: proposal.executionTime,
+                timeFormat: 'MMMM Do HH:mm Z',
+              })} CEST`
+            : proposal.droppedTime && proposal.status === ProposalStatus.DROPPED
+            ? `Proposal was dropped on ${parseDate({
+                time: proposal.droppedTime,
+                timeFormat: 'MMMM Do HH:mm Z',
+              })} CEST`
+            : `Proposal was defeated on ${parseDate({
+                time: proposal.defeatedTime,
+                timeFormat: 'MMMM Do HH:mm Z',
+              })} CEST`}
+        </div>
+      ) : null}
+
+      {votingTill && !isHistory ? (
+        <div className="voting-ends">
+          {votingTill <= Date.now()
+            ? `Voting has ended on ${parseDate({ time: votingTill, timeFormat: 'MMMM Do HH:mm Z' })} CEST`
+            : `Voting ending on ${parseDate({ time: votingTill, timeFormat: 'MMMM Do HH:mm Z' })} CEST`}
         </div>
       ) : null}
 
@@ -472,7 +506,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         </div>
       </div>
 
-      {isUserOwnerIfTheProposal ? (
+      {isUserOwnerIfTheProposal && !isHistory ? (
         <div className="drop-proposal">
           <Button kind={BUTTON_SECONDARY} onClick={handleDeleteProposal} disabled={!userCanDropProposal}>
             <Icon id="navigation-menu_close" />

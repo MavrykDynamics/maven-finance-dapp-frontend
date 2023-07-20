@@ -18,7 +18,7 @@ import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers
 // view
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { SatelliteStatusBlock } from './DashboardPersonalComponents.style'
+import { DashboardPersonalSatellitesBottomLinks, SatelliteStatusBlock } from './DashboardPersonalComponents.style'
 import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/SatelliteCard.style'
 import { DashboardCardHeader } from '../DashboardPersonal.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
@@ -157,12 +157,15 @@ const SatelliteTab = () => {
                 <div className="grid-item grid-item-last">
                   <div className="name">Website</div>
                   <div className="value">
-                    <a href={satelliteRecord.website}>{satelliteRecord.website}</a>
+                    <a href={satelliteRecord.website}>View Website</a>
                   </div>
                 </div>
               </div>
             </div>
-            <Link to="/become-satellite">Edit My Profile</Link>
+            <DashboardPersonalSatellitesBottomLinks>
+              <Link to="/become-satellite">Edit My Profile</Link>
+              <Link to={`/satellites/satellite-details/${satelliteRecord.address}`}>View Satellite Profile</Link>
+            </DashboardPersonalSatellitesBottomLinks>
           </>
         ) : (
           <div className="no-data">

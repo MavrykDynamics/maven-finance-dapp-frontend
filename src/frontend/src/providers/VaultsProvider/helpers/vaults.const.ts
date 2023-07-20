@@ -1,3 +1,4 @@
+export const CREATE_VAULT_ACTION = 'createVault'
 export const CHANGE_VAULT_NAME_ACTION = 'changeVaultName'
 export const BORROW_VAULT_ASSET_ACTION = 'borrowVaultAssetAction'
 export const REPAY_PART_OF_VAULT_ACTION = 'repayPartOfVaultAction'

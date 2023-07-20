@@ -19,6 +19,8 @@ import { SatellitesTab } from './TabScreens/SatellitesTab.controller'
 import { TreasuryTab } from './TabScreens/TreasuryTab.controller'
 import { VaultsTab } from './TabScreens/VaultsTab.controller'
 import { StakingTab } from './TabScreens/StakingTab.controller'
+import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
+import { Impact } from 'app/App.components/Impact/Impact'
 
 const TabById = ({ activeTab, isDataLoading }: { activeTab: TabId; isDataLoading: boolean }) => {
   switch (activeTab) {
@@ -50,6 +52,8 @@ export const DashboardView = ({
   activeTab: TabId
   isLoading: boolean
 }) => {
+  const mvkRateChange = calcDiffBetweenTwoNumbersInPersentage(mvkStatsBlock.livePrice, mvkStatsBlock.prevPrice)
+
   return (
     <DashboardStyled>
       <div className="top">
@@ -79,9 +83,8 @@ export const DashboardView = ({
               <div className="name">Live Price</div>
               <div className="value">
                 <CommaNumber beginningText="$" value={mvkStatsBlock.livePrice} />
-                <div className={`impact ${mvkStatsBlock.livePrice >= mvkStatsBlock.prevPrice ? 'up' : 'down'}`}>
-                  {mvkStatsBlock.livePrice >= mvkStatsBlock.prevPrice ? '+' : '-'}{' '}
-                  {mvkStatsBlock.livePrice * 100 - mvkStatsBlock.prevPrice * 100}%
+                <div className="impact-wrapper">
+                  <Impact value={mvkRateChange} endingText="% 24h" />
                 </div>
               </div>
             </StatBlock>
