@@ -151,7 +151,7 @@ export const normalizeLoansCharts = ({
       const amountInUsd = convertedAmount * rate
 
       const isLast7dOperation = dayjs().diff(timestamp) <= ONE_DAY_IN_MS * 6
-      const isLast14dOperation = dayjs().diff(timestamp) <= ONE_DAY_IN_MS * 14
+      const isLast14dOperation = dayjs().diff(timestamp) <= ONE_DAY_IN_MS * 13
       const operationTime = dayjs(timestamp).valueOf() as UTCTimestamp
 
       // getting data for total lending chart
