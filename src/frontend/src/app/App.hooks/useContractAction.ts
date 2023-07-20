@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 // consts
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
@@ -38,10 +40,10 @@ export const useContractAction = ({
   const { bug, info, loading, setSharedError } = useToasterContext()
   const { setAction, toggleActionCompletion, toggleActionFullScreenLoader } = useDappConfigContext()
 
-  return async () => {
+  return async (...args) => {
     try {
       // call the actual action
-      const actionResult = await actionFn()
+      const actionResult = await actionFn(...args)
 
       // optional callback which us triggered right after action call
       // used f.e. to close some popup etc.

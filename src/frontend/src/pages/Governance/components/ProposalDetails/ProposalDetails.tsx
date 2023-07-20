@@ -174,15 +174,32 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
 
   const handleProposalRoundVote = useContractAction(proposaRoundVoteContractProps)
 
-  // TODO add VOTE types to fn args
   // handleVotingRoundVote action ---------------------------------------------------------------------------
+  const votingRoundVoteActionFn = useCallback(
+    async (vote: VotingTypes) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!governanceAddress) {
+        bug('Wrong governance address')
+        return null
+      }
+
+      return await votingRoundVote(governanceAddress, vote)
+    },
+    [bug, governanceAddress, userAddress],
+  )
+
+  // @ts-ignore
   const handleVotingRoundContractProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: VOTING_ROUND_VOTE_ACTION,
-      actionFn: executeActionFn.bind(null, votingRoundVote),
+      actionFn: votingRoundVoteActionFn,
       dappActionCallback,
+      isCurried: true,
     }),
-    [executeActionFn, dappActionCallback],
+    [votingRoundVoteActionFn, dappActionCallback],
   )
 
   const handleVotingRoundVote = useContractAction(handleVotingRoundContractProps)

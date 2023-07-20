@@ -1,3 +1,4 @@
+import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
 import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
@@ -27,7 +28,7 @@ export const proposalRoundVote = async (
 
 export const votingRoundVote = async (
   governanceAddress: string,
-  vote: number,
+  vote: VotingTypes,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   // add user address check when calling this method
 
@@ -35,7 +36,7 @@ export const votingRoundVote = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(governanceAddress)
-    const votingRoundVoteMetaData = contract?.methods.votingRoundVote(vote.toString())
+    const votingRoundVoteMetaData = contract?.methods.votingRoundVote(vote)
 
     // for dapp callback
     // await dispatch(getGovernanceStorage())
