@@ -26,6 +26,7 @@ export type HookContractActionArgs = {
   dappActionCallback?: () => void
   afterActionCallback?: () => void
   willUseSharedError?: boolean
+  isSilentAction?: boolean
 }
 
 export const useContractAction = ({
@@ -34,6 +35,7 @@ export const useContractAction = ({
   dappActionCallback,
   afterActionCallback,
   willUseSharedError = false,
+  isSilentAction = false,
 }: HookContractActionArgs): (() => Promise<void>) => {
   const { bug, info, loading, setSharedError } = useToasterContext()
   const { setAction, toggleActionCompletion, toggleActionFullScreenLoader } = useDappConfigContext()
@@ -49,22 +51,30 @@ export const useContractAction = ({
 
       if (!actionResult) return
 
+      let toasterId = null
+
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        toggleActionFullScreenLoader(true)
+
         toggleActionCompletion(true)
+        if (!isSilentAction) {
+          toggleActionFullScreenLoader(true)
 
-        info(TOASTER_ACTIONS_TEXTS[actionType]['start']['message'], TOASTER_ACTIONS_TEXTS[actionType]['start']['title'])
+          info(
+            TOASTER_ACTIONS_TEXTS[actionType]['start']['message'],
+            TOASTER_ACTIONS_TEXTS[actionType]['start']['title'],
+          )
 
-        await sleep(5000)
+          await sleep(5000)
 
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
+          // show toaster loader after 5000ms after operation started
+          toasterId = loading(
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          )
 
-        toggleActionFullScreenLoader(false)
+          toggleActionFullScreenLoader(false)
+        }
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level

@@ -3,6 +3,7 @@ import {
   BORROW_VAULT_ASSET_ACTION,
   CHANGE_BAKER_ACTION,
   CHANGE_VAULT_NAME_ACTION,
+  CREATE_VAULT_ACTION,
   DEPOSIT_COLLATERAL_ACTION,
   MANAGE_PERMISSIONS_ACTION,
   REPAY_FULL_VAULT_ACTION,
@@ -25,6 +26,7 @@ export type VaultsActionsType =
   | typeof CHANGE_BAKER_ACTION
   | typeof MANAGE_PERMISSIONS_ACTION
   | typeof UPDATE_OPERATORS_ACTION
+  | typeof CREATE_VAULT_ACTION
 
 // context types
 export type VaultsContext = DeepNonNullable<VaultsCtxState> & {

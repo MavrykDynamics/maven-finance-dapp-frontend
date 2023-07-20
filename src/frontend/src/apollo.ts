@@ -58,7 +58,7 @@ const errorLink = onError(({ operation, networkError }) => {
   }
 })
 
-export const client = new ApolloClient({
+export const apolloClient = new ApolloClient({
   link: errorLink.concat(retryLink.concat(splitLink(wsLink, httpLink))),
   cache: new InMemoryCache(),
 })

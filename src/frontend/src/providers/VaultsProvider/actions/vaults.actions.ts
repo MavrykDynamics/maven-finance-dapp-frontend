@@ -33,6 +33,21 @@ export const changeVaultNameAction = async (
   }
 }
 
+// create vault
+export const createVault = async (loanTokenName: string, vaultName: string, vaultFactoryAddress: string) => {
+  try {
+    // prepare and send transaction
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(vaultFactoryAddress)
+    const vaultCreateMetaData = contract?.methods.createVault(null, loanTokenName, vaultName, [], 'any')
+
+    return await getEstimationResult(vaultCreateMetaData)
+  } catch (error) {
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
+  }
+}
+
 // borrow asset from the vault
 export const borrowVaultAssetAction = async (
   lendingControllerAddress: string,

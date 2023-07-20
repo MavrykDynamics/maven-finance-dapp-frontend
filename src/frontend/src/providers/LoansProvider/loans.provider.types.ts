@@ -3,17 +3,13 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import {
   LOANS_MARKETS_DATA,
   LOANS_CONFIG,
-  CREATE_NEW_VAULT_ACTION,
   DEPOSIT_LENDING_ASSET_ACTION,
   WITHDRAW_LENDING_ASSET_ACTION,
 } from './helpers/loans.const'
 
 export type LoanVaultAllowanceType = typeof VAULT_ALLOWANCE_ANY | typeof VAULT_ALLOWANCE_ACCOUNTS
 
-export type LoansActionsType =
-  | typeof CREATE_NEW_VAULT_ACTION
-  | typeof DEPOSIT_LENDING_ASSET_ACTION
-  | typeof WITHDRAW_LENDING_ASSET_ACTION
+export type LoansActionsType = typeof DEPOSIT_LENDING_ASSET_ACTION | typeof WITHDRAW_LENDING_ASSET_ACTION
 
 export type LoansSubsType = typeof LOANS_MARKETS_DATA | typeof LOANS_CONFIG
 export type LoansSubsRecordType = Record<LoansSubsType, boolean>

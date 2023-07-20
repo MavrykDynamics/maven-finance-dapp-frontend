@@ -28,7 +28,11 @@ import { State } from 'reducers'
 import { getCollateralRatioByPersentage } from '../../Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
-import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
+import {
+  checkWhetherTokenIsCollateralToken,
+  getTokenDataByAddress,
+  isTezosAsset,
+} from 'providers/TokensProvider/helpers/tokens.utils'
 import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
@@ -86,6 +90,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
   const {
     collateralData,
     address,
+    vaultId,
     borrowedToken,
     name,
     collateralRatio,
@@ -236,7 +241,12 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                     {collateralData.map(({ tokenAddress, amount }, idx) => {
                       const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
 
-                      if (!collateralToken || !collateralToken.rate) return null
+                      if (
+                        !collateralToken ||
+                        !collateralToken.rate ||
+                        !checkWhetherTokenIsCollateralToken(collateralToken)
+                      )
+                        return null
 
                       const { symbol, icon, rate, decimals } = collateralToken
 
@@ -279,6 +289,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                                 onClick={() =>
                                   openAddExistingCollateralPopup?.({
                                     vaultAddress: vault.address,
+                                    vaultId,
                                     borrowedAmount,
                                     collateralBalance,
                                     collateralRatio,
@@ -290,7 +301,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                                 }
                                 form={BUTTON_WIDE}
                                 kind={BUTTON_SECONDARY}
-                                disabled={isActionActive}
+                                disabled={isActionActive || collateralToken.loanData.isPausedCollateral}
                               >
                                 <Icon id="plus" /> Add
                               </Button>

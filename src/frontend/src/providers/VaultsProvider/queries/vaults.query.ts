@@ -55,6 +55,7 @@ export function getUserVaultsSubscription({
 					collateral_balances {
 						balance
 						collateral_token {
+							token_name
 							token {
 								token_address
 							}
@@ -121,6 +122,7 @@ export const SUBSCRIBE_TO_ALL_VAULTS = gql(`
 				collateral_balances {
 					balance
 					collateral_token {
+						token_name
 						token {
 							token_address
 						}

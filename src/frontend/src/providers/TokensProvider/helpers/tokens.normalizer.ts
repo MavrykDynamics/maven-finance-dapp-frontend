@@ -2,7 +2,13 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenSymbolAndName } from './tokenNames'
 import { isValidTokenType } from 'utils/TypesAndInterfaces/General'
 
-import { TokenMetadataType, TokensContext, tokenMetadataSchema } from '../tokens.provider.types'
+import {
+  LoansCollateralTokenMetadataType,
+  LoansTokenMetadataType,
+  TokenMetadataType,
+  TokensContext,
+  tokenMetadataSchema,
+} from '../tokens.provider.types'
 import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from 'utils/__generated__/graphql'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
@@ -90,31 +96,48 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
           if (mvk_tokens?.[0]?.address) {
             acc.collateralTokens.push(SMVK_TOKEN_ADDRESS)
 
-            acc.tokensMetadata[SMVK_TOKEN_ADDRESS] = {
+            const collateralTokenData: LoansCollateralTokenMetadataType = {
               ...acc.tokensMetadata[SMVK_TOKEN_ADDRESS],
               loanData: {
                 indexerName: lending_controller_collateral_tokens[0].token_name,
                 // sMVK collateral is disabled on demo, so we set isProtectedCollateral true when it's demo env
-                isProtectedCollateral: process.env.REACT_APP_IS_DEMO === 'true',
+                isPausedCollateral: process.env.REACT_APP_IS_DEMO === 'true',
+                isScaled: lending_controller_collateral_tokens[0].is_scaled_token,
+                isStaked: lending_controller_collateral_tokens[0].is_staked_token,
               },
             }
+
+            acc.tokensMetadata[SMVK_TOKEN_ADDRESS] = collateralTokenData
           } else {
             // handling all another collateral tokens
             acc.collateralTokens.push(tokenAddress)
-
-            tokenMetadata.loanData = {
-              indexerName: lending_controller_collateral_tokens[0].token_name,
-              isProtectedCollateral: lending_controller_collateral_tokens[0].protected,
+            const collateralTokenData: LoansCollateralTokenMetadataType = {
+              ...tokenMetadata,
+              loanData: {
+                indexerName: lending_controller_collateral_tokens[0].token_name,
+                isPausedCollateral: lending_controller_collateral_tokens[0].paused,
+                isScaled: lending_controller_collateral_tokens[0].is_scaled_token,
+                isStaked: lending_controller_collateral_tokens[0].is_staked_token,
+              },
             }
+
+            acc.tokensMetadata[tokenAddress] = { ...acc.tokensMetadata[tokenAddress], ...collateralTokenData }
           }
+
+          return acc
         }
 
         // if token is loan token (market token)
         if (lending_controller_loan_tokens?.[0]) {
-          tokenMetadata.loanData = {
-            ...tokenMetadata.loanData,
-            indexerName: lending_controller_loan_tokens[0].loan_token_name,
+          const loanTokenData: LoansTokenMetadataType = {
+            ...tokenMetadata,
+            loanData: {
+              indexerName: lending_controller_collateral_tokens[0].token_name,
+            },
           }
+
+          acc.tokensMetadata[tokenAddress] = { ...acc.tokensMetadata[tokenAddress], ...loanTokenData }
+          return acc
         }
 
         // if token is mToken

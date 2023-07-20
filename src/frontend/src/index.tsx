@@ -6,7 +6,7 @@ import { ThemeProvider } from 'styled-components'
 import { ApolloProvider } from '@apollo/client'
 
 // apollo
-import { client } from './apollo'
+import { apolloClient } from './apollo'
 
 // utils
 import reportWebVitals from './reportWebVitals'
@@ -47,7 +47,7 @@ const DappLibsProviders = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey} language="en">
-      <ApolloProvider client={client}>
+      <ApolloProvider client={apolloClient}>
         <ReduxProvider store={store}>
           <Router>{children}</Router>
         </ReduxProvider>
