@@ -24,6 +24,7 @@ import {
 import { EmptyContainer } from '../../app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { H2SimpleTitle } from 'styles/generalStyledComponents/Titles.style'
+import colors from 'styles/colors'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -89,6 +90,7 @@ export const SatelliteGovernance = () => {
     skipOracleRewardsTotal: true,
   })
   const {
+    preferences: { themeSelected },
     maxLengths: {
       governanceSatellite: { purposeMaxLength },
       dataFeeds: { feedNameMaxLength },
@@ -221,7 +223,7 @@ export const SatelliteGovernance = () => {
             <h3>Total Delegated MVK</h3>
             <div className="value">
               <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />
-              <CustomTooltip iconId="info" text={TOTAL_DELEGATED_MVK} />
+              <CustomTooltip iconId="info" text={TOTAL_DELEGATED_MVK} defaultStrokeColor={colors[themeSelected].primaryText} />
             </div>
           </SatelliteGovernanceStatsInfo>
           <SatelliteGovernanceStatsInfo>

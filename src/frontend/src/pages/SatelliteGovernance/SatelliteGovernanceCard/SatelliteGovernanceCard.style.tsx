@@ -79,7 +79,7 @@ export const SatelliteGovernanceCardPurposeBlock = styled.div`
   justify-content: space-between;
 
   .purpose {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
     font-weight: 500;
     max-width: 520px;
   }
@@ -88,7 +88,7 @@ export const SatelliteGovernanceCardPurposeBlock = styled.div`
     font-weight: 500;
     font-size: 14px;
     text-decoration: underline;
-    color: ${({ theme }) => theme.navLinkTextActive};
+    color: ${({ theme }) => theme.linksAndButtons};
   }
 
   .btn-wrapper {
@@ -107,7 +107,7 @@ export const SatelliteGovernanceCardVotingBlock = styled.div`
   }
 
   .voting-ends {
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
     font-weight: 700;
     font-size: 14px;
     line-height: 21px;
