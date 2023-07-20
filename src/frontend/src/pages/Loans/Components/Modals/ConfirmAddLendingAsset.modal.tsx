@@ -85,7 +85,7 @@ export const ConfirmAddLendingAsset = ({
     [depositAction],
   )
 
-  const depositHandler = useContractAction(contractActionProps)
+  const { action: depositHandler } = useContractAction(contractActionProps)
 
   if (!data || !loanToken || !loanToken.rate || !symbol) return null
 

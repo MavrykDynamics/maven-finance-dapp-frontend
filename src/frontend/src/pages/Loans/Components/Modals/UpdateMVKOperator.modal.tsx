@@ -147,7 +147,7 @@ export const UpdateMVKOperator = ({
     [updateOperatorsActionCb],
   )
 
-  const updateHandler = useContractAction(contractActionProps)
+  const { action: updateHandler } = useContractAction(contractActionProps)
 
   if (!data || !loanToken) return null
 

@@ -145,7 +145,7 @@ export const ManagePermissions = ({
     [managePermissionsActionCb],
   )
 
-  const updateHandler = useContractAction(contractActionProps)
+  const { action: updateHandler } = useContractAction(contractActionProps)
 
   if (!data) return null
 

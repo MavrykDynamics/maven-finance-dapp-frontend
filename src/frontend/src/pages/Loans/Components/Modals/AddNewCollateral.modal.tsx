@@ -229,7 +229,7 @@ export const AddNewCollateral = ({
     [depositAction],
   )
 
-  const depositCollateralHandler = useContractAction(contractActionProps)
+  const { action: depositCollateralHandler } = useContractAction(contractActionProps)
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {

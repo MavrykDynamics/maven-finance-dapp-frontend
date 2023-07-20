@@ -20,31 +20,30 @@ import {
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
-export type HookContractActionArgs = {
+export type HookContractActionArgs<G = unknown> = {
   actionType: ActionTypes
-  actionFn: () => Promise<ActionErrorReturnType | ActionSuccessReturnType | null>
+  actionFn:
+    | ((args?: G) => Promise<ActionErrorReturnType | ActionSuccessReturnType | null>)
+    | (() => Promise<ActionErrorReturnType | ActionSuccessReturnType | null>)
   dappActionCallback?: () => void
   afterActionCallback?: () => void
   willUseSharedError?: boolean
   isSilentAction?: boolean
 }
 
-export const useContractAction = ({
+export const useContractAction = <G>({
   actionType,
   actionFn,
   dappActionCallback,
   afterActionCallback,
   willUseSharedError = false,
   isSilentAction = false,
-}: HookContractActionArgs): (() => Promise<void>) => {
+}: HookContractActionArgs<G>): { action: () => Promise<void>; actionWithArgs: (args: G) => Promise<void> } => {
   const { bug, info, loading, setSharedError } = useToasterContext()
   const { setAction, toggleActionCompletion, toggleActionFullScreenLoader } = useDappConfigContext()
 
-  return async () => {
+  async function invokeAction(actionResult: ActionErrorReturnType | ActionSuccessReturnType | null) {
     try {
-      // call the actual action
-      const actionResult = await actionFn()
-
       // optional callback which us triggered right after action call
       // used f.e. to close some popup etc.
       afterActionCallback?.()
@@ -100,4 +99,18 @@ export const useContractAction = ({
       bug(parsedError.message)
     }
   }
+
+  const actionWithArgs: (args: G) => Promise<void> = async (...args) => {
+    // call the actual action
+    const actionResult = await actionFn(...args)
+    return await invokeAction(actionResult)
+  }
+
+  const action: () => Promise<void> = async () => {
+    // call the actual action
+    const actionResult = await actionFn()
+    return await invokeAction(actionResult)
+  }
+
+  return { action, actionWithArgs }
 }

@@ -66,7 +66,7 @@ export const UnregisterPopup = ({
     [unregisterAction],
   )
 
-  const handleUnregisterSatellite = useContractAction(contractActionProps)
+  const { action: handleUnregisterSatellite } = useContractAction(contractActionProps)
 
   const { delegatorCount = 0, totalDelegatedAmount = 0 } = satellite ?? {}
 

@@ -129,7 +129,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     [requestMVKAction],
   )
 
-  const handleRequestMVK = useContractAction(contractActionProps)
+  const { action: handleRequestMVK } = useContractAction(contractActionProps)
 
   const burgerClickHandler = useCallback(() => {
     toggleSidebarCollapsing()
