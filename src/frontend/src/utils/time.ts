@@ -25,6 +25,7 @@ type TimeFormatTypes =
   | 'MMM DD, HH:mm Z'
   | 'MMMM Do HH:mm Z'
   | 'MMM Do, YYYY'
+  | 'MMM DD'
 
 export const parseDate = ({ time, timeFormat }: { time?: string | number | null; timeFormat: TimeFormatTypes }) => {
   if (!time) return null

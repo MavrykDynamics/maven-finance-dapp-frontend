@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
+import dayjs from 'dayjs'
 import { createChart, BusinessDay, UTCTimestamp, SingleValueData } from 'lightweight-charts'
 
 import { lightTextColor, headerColor } from 'styles'
@@ -34,6 +35,7 @@ export const HistogramChart = ({
     textColor = lightTextColor,
     borderColor = headerColor,
     seriesMarkers,
+    isPeriod = false,
   } = {},
   colors: { barColor = '#77A4F2' } = {},
   data,
@@ -46,6 +48,7 @@ export const HistogramChart = ({
   const [tooltipData, setTooltipData] = useState<{
     xAxis: number
     yAxis: number
+    isLastPlot: boolean
   } | null>(null)
 
   useEffect(() => {
@@ -124,10 +127,22 @@ export const HistogramChart = ({
         if (!checkPlotType<SingleValueData>(plot, ['value'])) return
         const { value, time } = plot
 
-        setTooltipData({
-          yAxis: Number(time),
-          xAxis: parseFloat(String(value)),
-        })
+        if (isPeriod) {
+          const dayStart = dayjs().hour(0).minute(0).second(0).millisecond(0).valueOf()
+          const dayEnd = dayjs().hour(23).minute(59).second(59).millisecond(999).valueOf()
+
+          setTooltipData({
+            yAxis: Number(time),
+            xAxis: parseFloat(String(value)),
+            isLastPlot: Number(time) <= dayEnd && Number(time) >= dayStart,
+          })
+        } else {
+          setTooltipData({
+            yAxis: Number(time),
+            xAxis: parseFloat(String(value)),
+            isLastPlot: false,
+          })
+        }
 
         if (mainChartWrapperRef.current && param.point) {
           mainChartWrapperRef.current.style.setProperty('--translateX', `${param.point.x + 15}`)
@@ -157,6 +172,8 @@ export const HistogramChart = ({
     priceMargins,
     yAxisSide,
     crosshairOptions,
+    isPeriod,
+    seriesMarkers,
   ])
 
   return (
@@ -164,6 +181,8 @@ export const HistogramChart = ({
       <ChartTooltip
         xAxis={tooltipData?.xAxis}
         yAxis={tooltipData?.yAxis}
+        isLastPlot={tooltipData?.isLastPlot}
+        isPeriod={isPeriod}
         asset={tooltipAsset}
         tooltipName={tooltipName}
         dateTooltipFormatter={dateTooltipFormatter}

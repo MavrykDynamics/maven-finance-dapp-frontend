@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
-import { createChart, BusinessDay, UTCTimestamp, SingleValueData, Time } from 'lightweight-charts'
+import dayjs from 'dayjs'
+import { createChart, BusinessDay, UTCTimestamp, SingleValueData } from 'lightweight-charts'
 
 import { skyColor, lightTextColor, headerColor } from 'styles'
 import { parseDate } from 'utils/time'
@@ -34,6 +35,7 @@ export const AreaChart = ({
     textColor = lightTextColor,
     borderColor = headerColor,
     seriesMarkers,
+    isPeriod = false,
   } = {},
   colors: { lineColor = skyColor, areaTopColor = skyColor, areaBottomColor = 'transparent' } = {},
   data,
@@ -46,6 +48,7 @@ export const AreaChart = ({
   const [tooltipData, setTooltipData] = useState<{
     xAxis: number
     yAxis: number
+    isLastPlot: boolean
   } | null>(null)
 
   useEffect(() => {
@@ -128,10 +131,22 @@ export const AreaChart = ({
         if (!checkPlotType<SingleValueData>(plot, ['value'])) return
         const { value, time } = plot
 
-        setTooltipData({
-          yAxis: Number(time),
-          xAxis: parseFloat(String(value)),
-        })
+        if (isPeriod) {
+          const dayStart = dayjs().hour(0).minute(0).second(0).millisecond(0).valueOf()
+          const dayEnd = dayjs().hour(23).minute(59).second(59).millisecond(999).valueOf()
+
+          setTooltipData({
+            yAxis: Number(time),
+            xAxis: parseFloat(String(value)),
+            isLastPlot: Number(time) <= dayEnd && Number(time) >= dayStart,
+          })
+        } else {
+          setTooltipData({
+            yAxis: Number(time),
+            xAxis: parseFloat(String(value)),
+            isLastPlot: false,
+          })
+        }
 
         if (mainChartWrapperRef.current && param.point) {
           mainChartWrapperRef.current.style.setProperty('--translateX', `${param.point.x + 15}`)
@@ -157,6 +172,7 @@ export const AreaChart = ({
     height,
     hideXAxis,
     hideYAxis,
+    isPeriod,
     lineColor,
     priceMargins,
     seriesMarkers,
@@ -171,6 +187,8 @@ export const AreaChart = ({
       <ChartTooltip
         xAxis={tooltipData?.xAxis}
         yAxis={tooltipData?.yAxis}
+        isLastPlot={tooltipData?.isLastPlot}
+        isPeriod={isPeriod}
         asset={tooltipAsset}
         tooltipName={tooltipName}
         dateTooltipFormatter={dateTooltipFormatter}

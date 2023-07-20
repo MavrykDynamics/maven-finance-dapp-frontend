@@ -59,7 +59,7 @@ const initChartDataForPeriod = (period: number) =>
       return {
         value: 0,
         time: dayjs()
-          .subtract(6 - idx, 'day')
+          .subtract(period - 1 - idx, 'day')
           .valueOf() as UTCTimestamp,
       }
     },

@@ -47,6 +47,7 @@ const CHART_SETTINGS = {
   height: 270,
   hideXAxis: true,
   hideYAxis: true,
+  isPeriod: true,
 }
 
 const CHART_COLORS = {
