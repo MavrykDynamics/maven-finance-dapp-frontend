@@ -82,6 +82,9 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { apolloClient } from 'apollo'
+import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
+import { GOVERNANCE_LATEST_USER_PROPOSAL_QUERY } from 'gql/queries'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const dispatch = useDispatch()
@@ -289,6 +292,33 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const handleLockProposal = useContractAction(lockContractProps)
 
   // submit proposal action handler ----------------------------------------------
+  // submission callback to update data
+
+  const getNewProposalId = useCallback(async () => {
+    try {
+      const newProposalData = await apolloClient.query({
+        query: GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
+        variables: {
+          userAddress,
+        },
+      })
+
+      if (newProposalData.error) {
+        console.error('loading new proposal error', newProposalData.error)
+        throw new Error(newProposalData.error.message)
+      }
+
+      if (newProposalData.data.governance_proposal.length) {
+        const { id } = newProposalData.data.governance_proposal[0]
+        changeActiveProposal(id ?? DEFAULT_PROPOSAL.id)
+      }
+
+      // changeActiveProposal
+    } catch (e) {
+      bug('Fetch Error', 'Error occured while loading latest proposal id, please reload the page')
+    }
+  }, [bug, changeActiveProposal, userAddress])
+
   const submitActionFn = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -323,11 +353,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       fee,
       bytes,
       payments,
-      changeActiveProposal,
     )
   }, [
     bug,
-    changeActiveProposal,
     currentProposal.description,
     currentProposal.invoice,
     currentProposal.proposalData,
@@ -340,13 +368,18 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     userAddress,
   ])
 
+  const submissionDappCallback = useCallback(async () => {
+    dappCallback() // default cb for dapp actions when redux is still here
+    await getNewProposalId() // update proposal id after successful action
+  }, [dappCallback, getNewProposalId])
+
   const submitContractProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: SUBMIT_PROPOSAL_ACTION,
       actionFn: submitActionFn,
-      dappCallback,
+      dappCallback: submissionDappCallback,
     }),
-    [dappCallback, submitActionFn],
+    [submissionDappCallback, submitActionFn],
   )
 
   const handleProposalSubmit = useContractAction(submitContractProps)

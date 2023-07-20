@@ -11,7 +11,6 @@ export const submitProposal = async (
   fee: number,
   proposalBytes: ProposalDataChangesType,
   proposalPayments: PaymentsDataChangesType,
-  callback: (latestProposalId: number) => void,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   // add user address check when calling this method
 
@@ -43,7 +42,6 @@ export const submitProposal = async (
 
     return await getEstimationResult(submitProposalMetaData, {
       params: { amount: fee },
-      // callback: () => callback(latestProposalId)
     })
   } catch (error) {
     const e = unknownToError(error)
