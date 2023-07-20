@@ -86,6 +86,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
   const {
     collateralData,
     address,
+    vaultId,
     borrowedToken,
     name,
     collateralRatio,
@@ -279,7 +280,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                                 onClick={() =>
                                   openAddExistingCollateralPopup?.({
                                     vaultAddress: vault.address,
-                                    vaultId: vault.vaultId,
+                                    vaultId,
                                     borrowedAmount,
                                     collateralBalance,
                                     collateralRatio,

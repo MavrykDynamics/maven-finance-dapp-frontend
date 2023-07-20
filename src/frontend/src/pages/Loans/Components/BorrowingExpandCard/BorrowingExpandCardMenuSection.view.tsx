@@ -171,6 +171,8 @@ export const BorrowingExpandCardMenuSection = ({
               {collateralData.map(({ amount, tokenAddress }, idx) => {
                 const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
 
+                console.log({ collateralToken })
+
                 if (!collateralToken || !collateralToken.rate) return null
 
                 const { symbol, icon, rate, decimals } = collateralToken

@@ -176,9 +176,9 @@ export const CreateNewVault = ({
   const isAddCollateralContinueDisabled = Boolean(
     isVaultCreating ||
       (hasXTZTokenSelected && choosenBaker) ||
-      !selectedCollateralsAddresses.find(
-        (tokenAddress) => selectedCollaterals[tokenAddress].validation !== INPUT_STATUS_SUCCESS,
-      ),
+      !selectedCollateralsAddresses.every((tokenAddress) => {
+        return selectedCollaterals[tokenAddress].validation === INPUT_STATUS_SUCCESS
+      }),
   )
 
   const nextAvaliableCollateralToAdd = Object.values(mappedAvaliableCollaterals).find(
@@ -281,6 +281,8 @@ export const CreateNewVault = ({
         },
       })
 
+      console.log({ newVaultData })
+
       if (newVaultData.error) {
         console.error('loading new vault error', newVaultData.error)
         throw new Error(newVaultData.error.message)
@@ -320,8 +322,11 @@ export const CreateNewVault = ({
     () => ({
       actionType: CREATE_VAULT_ACTION,
       actionFn: createVaultAction,
-      dappActionCallback: () => setVaultCreating(false),
-      afterActionCallback: getNewVaultData,
+      dappActionCallback: () => {
+        getNewVaultData()
+        setVaultCreating(false)
+      },
+      isSilentAction: true,
     }),
     [createVaultAction, getNewVaultData],
   )

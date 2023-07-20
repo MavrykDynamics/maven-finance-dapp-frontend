@@ -61,7 +61,7 @@ const DappConfigProvider = ({ children }: Props) => {
       console.error(`SUBSCRIPTION_INDEXER_LVL query error: `, error)
       bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
 
-      if (action) {
+      if (action && action.toasterId) {
         hideToasterMessage(action.toasterId)
         setAction(null)
       }
@@ -73,12 +73,16 @@ const DappConfigProvider = ({ children }: Props) => {
 
     const { actionName, toasterId, operationLvl, callback } = action
     const turnOffAction = async () => {
-      await sleep(500)
-      hideToasterMessage(toasterId)
-      await sleep(500)
-      success(TOASTER_ACTIONS_TEXTS[actionName]['end']['message'], TOASTER_ACTIONS_TEXTS[actionName]['end']['title'])
+      // if we don't have toasterId it means that action is silent, and we don't show anything to user
+      if (toasterId) {
+        await sleep(500)
+        hideToasterMessage(toasterId)
+        await sleep(500)
+        success(TOASTER_ACTIONS_TEXTS[actionName]['end']['message'], TOASTER_ACTIONS_TEXTS[actionName]['end']['title'])
 
-      toggleActionCompletion(false)
+        toggleActionCompletion(false)
+      }
+
       // some callback f.e. to reset input, clear form data etc.
       callback?.()
       setAction(null)

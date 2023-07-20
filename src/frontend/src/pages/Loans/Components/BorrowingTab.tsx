@@ -49,8 +49,9 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
         const vault = vaultsMapper[vaultId]
 
         return (
-          vault.borrowedTokenAddress === loanTokenAddress &&
-          (vault.collateralData.find(({ amount }) => amount) || vault.borrowedAmount)
+          vault.borrowedTokenAddress === loanTokenAddress
+          // TODO: clarify with sam for what this cond stands for
+          // && (vault.collateralData.find(({ amount }) => amount) || vault.borrowedAmount)
         )
       }),
     [loanTokenAddress, myVaultsIds, showZeroVaults, vaultsMapper],
