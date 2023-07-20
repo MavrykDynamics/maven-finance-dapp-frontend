@@ -37,7 +37,7 @@ type PropertiesFromDifferentTokenTypes = DeepPartial<{
   // loan & collateral tokens properties
   loanData: {
     indexerName: string
-    isProtectedCollateral: boolean
+    isPausedCollateral: boolean
     isScaled: boolean
     isStaked: boolean
   }
@@ -54,7 +54,7 @@ export interface LoansTokenMetadataType extends TokenMetadataType {
 export interface LoansCollateralTokenMetadataType extends LoansTokenMetadataType {
   loanData: {
     indexerName: string
-    isProtectedCollateral: boolean
+    isPausedCollateral: boolean
     isScaled: boolean
     isStaked: boolean
   }

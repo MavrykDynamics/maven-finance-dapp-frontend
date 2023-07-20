@@ -140,7 +140,7 @@ export const CreateNewVault = ({
         const { address, icon, symbol } = collateral
 
         const isCollateralDisabled = Boolean(
-          collateral.loanData.isProtectedCollateral || selectedCollaterals[collateralTokenAddress],
+          collateral.loanData.isPausedCollateral || selectedCollaterals[collateralTokenAddress],
         )
 
         if (!isCollateralDisabled && !firstNotDisabledCollateralAddress)

@@ -42,7 +42,11 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 // utils
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
+import {
+  checkWhetherTokenIsCollateralToken,
+  getTokenDataByAddress,
+  isTezosAsset,
+} from 'providers/TokensProvider/helpers/tokens.utils'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
 
@@ -171,9 +175,8 @@ export const BorrowingExpandCardMenuSection = ({
               {collateralData.map(({ amount, tokenAddress }, idx) => {
                 const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
 
-                console.log({ collateralToken })
-
-                if (!collateralToken || !collateralToken.rate) return null
+                if (!collateralToken || !collateralToken.rate || !checkWhetherTokenIsCollateralToken(collateralToken))
+                  return null
 
                 const { symbol, icon, rate, decimals } = collateralToken
 
@@ -211,7 +214,7 @@ export const BorrowingExpandCardMenuSection = ({
                           onClick={() => openAddExistingCollateralPopup(idx)}
                           form={BUTTON_WIDE}
                           kind={BUTTON_SECONDARY}
-                          disabled={isActionActive}
+                          disabled={isActionActive || collateralToken.loanData.isPausedCollateral}
                         >
                           <Icon id="plus" /> Add
                         </Button>

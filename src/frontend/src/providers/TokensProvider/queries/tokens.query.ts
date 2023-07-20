@@ -12,7 +12,7 @@ export const SUBSCRIBE_TOKENS_METADATA = gql(`
       # check whether tokens is collateral token
       lending_controller_collateral_tokens {
         token_name
-        protected
+        paused
         is_scaled_token
         is_staked_token
       }

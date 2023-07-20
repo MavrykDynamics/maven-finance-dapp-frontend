@@ -101,7 +101,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
               loanData: {
                 indexerName: lending_controller_collateral_tokens[0].token_name,
                 // sMVK collateral is disabled on demo, so we set isProtectedCollateral true when it's demo env
-                isProtectedCollateral: process.env.REACT_APP_IS_DEMO === 'true',
+                isPausedCollateral: process.env.REACT_APP_IS_DEMO === 'true',
                 isScaled: lending_controller_collateral_tokens[0].is_scaled_token,
                 isStaked: lending_controller_collateral_tokens[0].is_staked_token,
               },
@@ -115,7 +115,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
               ...tokenMetadata,
               loanData: {
                 indexerName: lending_controller_collateral_tokens[0].token_name,
-                isProtectedCollateral: lending_controller_collateral_tokens[0].protected,
+                isPausedCollateral: lending_controller_collateral_tokens[0].paused,
                 isScaled: lending_controller_collateral_tokens[0].is_scaled_token,
                 isStaked: lending_controller_collateral_tokens[0].is_staked_token,
               },

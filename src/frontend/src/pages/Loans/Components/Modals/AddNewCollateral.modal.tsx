@@ -119,7 +119,7 @@ export const AddNewCollateral = ({
         const { address, icon, symbol } = collateral
 
         const isCollateralDisabled = Boolean(
-          collateral.loanData.isProtectedCollateral ||
+          collateral.loanData.isPausedCollateral ||
             collateralData?.find(({ tokenAddress }) => address === tokenAddress) ||
             selectedCollateral === collateralTokenAddress,
         )

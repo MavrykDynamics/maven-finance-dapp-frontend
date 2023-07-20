@@ -41,22 +41,6 @@ export const createVault = async (loanTokenName: string, vaultName: string, vaul
     const contract = await tezos.wallet.at(vaultFactoryAddress)
     const vaultCreateMetaData = contract?.methods.createVault(null, loanTokenName, vaultName, [], 'any')
 
-    // TODO handle return vault address
-    // const { value } = await checkIndexerLevelAndRunDataUpdateCallback({
-    //   callback: async () => {
-
-    //     const newVaultData = await fetchFromIndexer(
-    //       NEW_VAULT_QUERY,
-    //       NEW_VAULT_QUERY_NAME,
-    //       NEW_VAULT_QUERY_VARIABLE(userAddress, vaultName),
-    //     )
-
-    //     return newVaultData.vault.at(-1)?.lending_controller_vaults?.[0]?.vault?.address
-    //   },
-    //   currentOperationLevel,
-    // })
-
-    // return value
     return await getEstimationResult(vaultCreateMetaData)
   } catch (error) {
     const e = unknownToError(error)
