@@ -44,7 +44,7 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useContractAction, HookContractActionArgs } from 'app/App.hooks/useContractAction'
 import {
   DROP_PROPOSAL_ACTION,
   EXECUTE_PROPOSAL_ACTION,
@@ -162,7 +162,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
 
   const handleClickProcessPayment = useContractAction(processProposalPaymentContractProps)
 
-  // propocal round vote action  ---------------------------------------------------------------------------
+  // proposal round vote action  ---------------------------------------------------------------------------
   const proposaRoundVoteContractProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: PROPOSAL_ROUND_VOTE_ACTION,
@@ -192,17 +192,16 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
   )
 
   // @ts-ignore
-  const handleVotingRoundContractProps: HookContractActionArgs = useMemo(
+  const handleVotingRoundContractProps: HookContractActionArgs<VotingTypes> = useMemo(
     () => ({
       actionType: VOTING_ROUND_VOTE_ACTION,
       actionFn: votingRoundVoteActionFn,
       dappActionCallback,
-      isCurried: true,
     }),
     [votingRoundVoteActionFn, dappActionCallback],
   )
 
-  const handleVotingRoundVote = useContractAction(handleVotingRoundContractProps)
+  const handleVotingRoundVote = useContractAction<VotingTypes>(handleVotingRoundContractProps)
 
   // Voting stuff
   const voteStatistics = useMemo<VoteStatistics>(

@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 // consts
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
@@ -22,23 +20,23 @@ import {
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
-export type HookContractActionArgs = {
+export type HookContractActionArgs<G = unknown> = {
   actionType: ActionTypes
-  actionFn: () => Promise<ActionErrorReturnType | ActionSuccessReturnType | null>
+  actionFn: (args?: G) => Promise<ActionErrorReturnType | ActionSuccessReturnType | null>
   dappActionCallback?: () => void
   afterActionCallback?: () => void
   willUseSharedError?: boolean
   isSilentAction?: boolean
 }
 
-export const useContractAction = ({
+export const useContractAction = <G>({
   actionType,
   actionFn,
   dappActionCallback,
   afterActionCallback,
   willUseSharedError = false,
   isSilentAction = false,
-}: HookContractActionArgs): (() => Promise<void>) => {
+}: HookContractActionArgs<G>): ((args?: G) => Promise<void>) => {
   const { bug, info, loading, setSharedError } = useToasterContext()
   const { setAction, toggleActionCompletion, toggleActionFullScreenLoader } = useDappConfigContext()
 
