@@ -79,9 +79,8 @@ const DappConfigProvider = ({ children }: Props) => {
         hideToasterMessage(toasterId)
         await sleep(500)
         success(TOASTER_ACTIONS_TEXTS[actionName]['end']['message'], TOASTER_ACTIONS_TEXTS[actionName]['end']['title'])
-
-        toggleActionCompletion(false)
       }
+      toggleActionCompletion(false)
 
       // some callback f.e. to reset input, clear form data etc.
       callback?.()

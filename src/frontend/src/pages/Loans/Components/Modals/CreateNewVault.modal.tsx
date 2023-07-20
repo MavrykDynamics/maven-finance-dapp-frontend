@@ -281,8 +281,6 @@ export const CreateNewVault = ({
         },
       })
 
-      console.log({ newVaultData })
-
       if (newVaultData.error) {
         console.error('loading new vault error', newVaultData.error)
         throw new Error(newVaultData.error.message)

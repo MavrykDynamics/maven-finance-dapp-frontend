@@ -56,9 +56,9 @@ export const useContractAction = ({
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
 
+        toggleActionCompletion(true)
         if (!isSilentAction) {
           toggleActionFullScreenLoader(true)
-          toggleActionCompletion(true)
 
           info(
             TOASTER_ACTIONS_TEXTS[actionType]['start']['message'],
