@@ -143,7 +143,7 @@ export const useDoormanContext = () => {
   const context = useContext(doormanContext)
 
   if (!context) {
-    throw new Error('StakeContext should be used withing StakeProvider')
+    throw new Error('useDoormanContext should be used within DoormanProvider')
   }
 
   return context
