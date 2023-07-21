@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { SingleValueData } from 'lightweight-charts'
 
 // components
 import { Chart } from 'app/App.components/Chart/Chart'
@@ -24,7 +25,7 @@ type ChartDataType = {
 }
 
 type Props = {
-  data: AreaChartPlotType[]
+  data: { total: Array<SingleValueData>; volume: Array<SingleValueData> }
   isBorrow: boolean
 }
 
@@ -32,7 +33,11 @@ export const EarnBorrowChart = ({ data, isBorrow }: Props) => {
   const [isGraph, setIsGraph] = useState(false)
   const { isChartsLoading } = useLoansEarnBorrowContext()
 
-  const chartData: ChartDataType = { type: isGraph ? HISTOGRAM_CHART_TYPE : AREA_CHART_TYPE, plots: data }
+  const chartData: ChartDataType = {
+    type: isGraph ? HISTOGRAM_CHART_TYPE : AREA_CHART_TYPE,
+    plots: isGraph ? data.volume : data.total,
+  }
+
   const showChart = chartData.plots.length >= numberOfItemsToDisplay
 
   return (

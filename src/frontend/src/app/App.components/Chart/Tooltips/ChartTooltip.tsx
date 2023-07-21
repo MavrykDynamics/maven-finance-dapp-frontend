@@ -31,10 +31,6 @@ const AmountDateTooltip = ({
   dateTooltipFormatter,
   valueTooltipFormatter,
 }: TooltipProps) => {
-  console.log({
-    isPeriod,
-    isLastPlot,
-  })
   return (
     <AmountDateTooltipStyled>
       <div className="value">

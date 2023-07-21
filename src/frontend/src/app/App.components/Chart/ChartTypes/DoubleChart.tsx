@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import { createChart, BusinessDay, UTCTimestamp, SingleValueData, CandlestickData } from 'lightweight-charts'
 
 import { lightTextColor, headerColor } from 'styles'
-import { parseDate } from 'utils/time'
+import { getDateEnd, getDateStart, parseDate } from 'utils/time'
 import {
   DEFAULT_LAYOUT_SETTING,
   CHART_GRID_SETTING,
@@ -214,12 +214,12 @@ export const DoubleChart = ({
         }
 
         if (isPeriod) {
-          const dayStart = dayjs().hour(0).minute(0).second(0).millisecond(0).valueOf()
-          const dayEnd = dayjs().hour(23).minute(59).second(59).millisecond(999).valueOf()
+          const currentDayStart = getDateStart(dayjs().valueOf()),
+            currentDayEnd = getDateEnd(dayjs().valueOf())
 
           setTooltipData({
             ...newTooltiData,
-            isLastPlot: Number(newTooltiData.xAxis) <= dayEnd && Number(newTooltiData.xAxis) >= dayStart,
+            isLastPlot: Number(newTooltiData.xAxis) <= currentDayEnd && Number(newTooltiData.xAxis) >= currentDayStart,
           })
         } else {
           setTooltipData({

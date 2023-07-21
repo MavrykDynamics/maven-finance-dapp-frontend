@@ -9,6 +9,7 @@ import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 // utils
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { getDateStart, getDateEnd, checkWhetherTimeIsLastNdays } from 'utils/time'
 
 // consts
 import {
@@ -16,7 +17,6 @@ import {
   COLLATERAL_HISTORY_DATA_TYPES,
   LIQUIDITY_HISTORY_DATA_TYPES,
   LOANS_HISTORY_DATA_TYPES,
-  ONE_DAY_IN_MS,
 } from './loans.const'
 
 const getLiquidityAmount = (
@@ -70,15 +70,17 @@ const getChartWithOperationInPeriod = ({
   chartData,
   operationValue,
   operationTime,
+  isVolume = false,
 }: {
   chartData: Array<SingleValueData>
   operationValue: number
   operationTime: number
+  isVolume?: boolean
 }): Array<SingleValueData> | null => {
   // find day that matches operation time
   const operationDayIdx = chartData.findIndex(({ time }) => {
-    const dayStart = dayjs(Number(time)).hour(0).minute(0).second(0).millisecond(0).valueOf()
-    const dayEnd = dayjs(Number(time)).hour(23).minute(59).second(59).millisecond(999).valueOf()
+    const dayStart = getDateStart(Number(time)),
+      dayEnd = getDateEnd(Number(time))
 
     return Number(operationTime) <= dayEnd && Number(operationTime) >= dayStart
   })
@@ -86,7 +88,7 @@ const getChartWithOperationInPeriod = ({
   // if we have day in period, that === operation day, update values to be sum of operation value and day value
   if (operationDayIdx) {
     return chartData.reduce((acc, { value, time }, idx) => {
-      if (idx >= operationDayIdx) {
+      if (isVolume ? idx === operationDayIdx : idx >= operationDayIdx) {
         acc[idx] = {
           value: value + operationValue,
           time,
@@ -99,6 +101,7 @@ const getChartWithOperationInPeriod = ({
   return null
 }
 
+// if operation is out of period, update all days to be initial value of prev initialValue + operation amount
 const getChartWithOperationOutOfPeriod = ({
   chartData,
   operationValue,
@@ -111,6 +114,7 @@ const getChartWithOperationOutOfPeriod = ({
     time,
   })))
 
+// normalize charts, calc only charts we passed
 export const normalizeLoansCharts = ({
   indexerData,
   chartsToCalc,
@@ -150,8 +154,8 @@ export const normalizeLoansCharts = ({
       const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
       const amountInUsd = convertedAmount * rate
 
-      const isLast7dOperation = dayjs().diff(timestamp) <= ONE_DAY_IN_MS * 6
-      const isLast14dOperation = dayjs().diff(timestamp) <= ONE_DAY_IN_MS * 13
+      const isLast7dOperation = checkWhetherTimeIsLastNdays(timestamp, 7)
+      const isLast14dOperation = checkWhetherTimeIsLastNdays(timestamp, 14)
       const operationTime = dayjs(timestamp).valueOf() as UTCTimestamp
 
       // getting data for total lending chart
@@ -176,23 +180,36 @@ export const normalizeLoansCharts = ({
       // getting data for total lending chart per markets
       if (calcMarketLendingChart && LIQUIDITY_HISTORY_DATA_TYPES.includes(type)) {
         if (!acc.marketLendingChart[tokenAddress]) {
-          acc.marketLendingChart[tokenAddress] = initChartDataForPeriod(14)
+          acc.marketLendingChart[tokenAddress] = {
+            total: initChartDataForPeriod(14),
+            volume: initChartDataForPeriod(14),
+          }
         }
 
         // if it's out of the period need to sum this value with values of every day, cuz init value for period is > 0
         if (!isLast14dOperation) {
-          acc.marketLendingChart[tokenAddress] = getChartWithOperationOutOfPeriod({
-            chartData: acc.marketLendingChart[tokenAddress],
+          acc.marketLendingChart[tokenAddress].total = getChartWithOperationOutOfPeriod({
+            chartData: acc.marketLendingChart[tokenAddress].total,
             operationValue: getLiquidityAmount(type, amountInUsd),
           })
         } else {
-          const updatedChartWithOperation = getChartWithOperationInPeriod({
-            chartData: acc.marketLendingChart[tokenAddress],
+          const updatedTotalChartWithOperation = getChartWithOperationInPeriod({
+            chartData: acc.marketLendingChart[tokenAddress].total,
             operationTime: Number(operationTime),
             operationValue: getLiquidityAmount(type, amountInUsd),
           })
 
-          if (updatedChartWithOperation) acc.marketLendingChart[tokenAddress] = updatedChartWithOperation
+          const updatedVolumeChartWithOperation = getChartWithOperationInPeriod({
+            chartData: acc.marketLendingChart[tokenAddress].volume,
+            operationTime: Number(operationTime),
+            operationValue: getLiquidityAmount(type, amountInUsd),
+            isVolume: true,
+          })
+
+          if (updatedTotalChartWithOperation)
+            acc.marketLendingChart[tokenAddress].total = updatedTotalChartWithOperation
+          if (updatedVolumeChartWithOperation)
+            acc.marketLendingChart[tokenAddress].volume = updatedVolumeChartWithOperation
         }
       }
 
@@ -218,23 +235,35 @@ export const normalizeLoansCharts = ({
       // getting data for total borrowed chart per markets
       if (calcMarketBorrowChart && BORROWING_HISTORY_DATA_TYPES.includes(type)) {
         if (!acc.marketBorrowChart[tokenAddress]) {
-          acc.marketBorrowChart[tokenAddress] = initChartDataForPeriod(14)
+          acc.marketBorrowChart[tokenAddress] = {
+            total: initChartDataForPeriod(14),
+            volume: initChartDataForPeriod(14),
+          }
         }
 
         // if it's out of the period need to sum this value with values of every day, cuz init value for period is > 0
         if (!isLast14dOperation) {
-          acc.marketBorrowChart[tokenAddress] = getChartWithOperationOutOfPeriod({
-            chartData: acc.marketBorrowChart[tokenAddress],
+          acc.marketBorrowChart[tokenAddress].total = getChartWithOperationOutOfPeriod({
+            chartData: acc.marketBorrowChart[tokenAddress].total,
             operationValue: getBorrowedAmount(type, amountInUsd),
           })
         } else {
-          const updatedChartWithOperation = getChartWithOperationInPeriod({
-            chartData: acc.marketBorrowChart[tokenAddress],
+          const updatedTotalChartWithOperation = getChartWithOperationInPeriod({
+            chartData: acc.marketBorrowChart[tokenAddress].total,
             operationTime: Number(operationTime),
             operationValue: getBorrowedAmount(type, amountInUsd),
           })
 
-          if (updatedChartWithOperation) acc.marketBorrowChart[tokenAddress] = updatedChartWithOperation
+          const updatedVolumeChartWithOperation = getChartWithOperationInPeriod({
+            chartData: acc.marketBorrowChart[tokenAddress].volume,
+            operationTime: Number(operationTime),
+            operationValue: getBorrowedAmount(type, amountInUsd),
+            isVolume: true,
+          })
+
+          if (updatedTotalChartWithOperation) acc.marketBorrowChart[tokenAddress].total = updatedTotalChartWithOperation
+          if (updatedVolumeChartWithOperation)
+            acc.marketBorrowChart[tokenAddress].volume = updatedVolumeChartWithOperation
         }
       }
 

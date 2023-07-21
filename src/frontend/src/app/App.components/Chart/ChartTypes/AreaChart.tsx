@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import { createChart, BusinessDay, UTCTimestamp, SingleValueData } from 'lightweight-charts'
 
 import { skyColor, lightTextColor, headerColor } from 'styles'
-import { parseDate } from 'utils/time'
+import { getDateEnd, getDateStart, parseDate } from 'utils/time'
 import {
   DEFAULT_LAYOUT_SETTING,
   CHART_GRID_SETTING,
@@ -132,13 +132,13 @@ export const AreaChart = ({
         const { value, time } = plot
 
         if (isPeriod) {
-          const dayStart = dayjs().hour(0).minute(0).second(0).millisecond(0).valueOf()
-          const dayEnd = dayjs().hour(23).minute(59).second(59).millisecond(999).valueOf()
+          const currentDayStart = getDateStart(dayjs().valueOf()),
+            currentDayEnd = getDateEnd(dayjs().valueOf())
 
           setTooltipData({
             yAxis: Number(time),
             xAxis: parseFloat(String(value)),
-            isLastPlot: Number(time) <= dayEnd && Number(time) >= dayStart,
+            isLastPlot: Number(time) <= currentDayEnd && Number(time) >= currentDayStart,
           })
         } else {
           setTooltipData({

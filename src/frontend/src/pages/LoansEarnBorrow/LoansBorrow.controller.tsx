@@ -86,7 +86,7 @@ export const LoansBorrow = () => {
     () =>
       marketsAddresses.reduce<MarketType[]>((acc, marketTokenAddress) => {
         const market = marketsMapper[marketTokenAddress]
-        const chartData = marketBorrowChart[marketTokenAddress] ?? []
+        const chartData = marketBorrowChart[marketTokenAddress] ?? {}
 
         const token = getTokenDataByAddress({
           tokenAddress: marketTokenAddress,
@@ -106,7 +106,7 @@ export const LoansBorrow = () => {
           annualRateName: 'APR',
           leftValue: userVaultsData[marketTokenAddress]?.borrowedAmount ?? 0,
           rightValue: userVaultsData[marketTokenAddress]?.allVaultsCollateralAmount ?? 0,
-          totalAmount: chartData.at(-1)?.value ?? 0,
+          totalAmount: chartData.total?.at(-1)?.value ?? 0,
           price,
           chartData,
         })

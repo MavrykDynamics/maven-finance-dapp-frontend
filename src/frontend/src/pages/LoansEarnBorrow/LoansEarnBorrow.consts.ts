@@ -1,4 +1,4 @@
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+import { LoansMarketMiniChartType } from 'providers/LoansProvider/helpers/loans.types'
 import { skyColor } from 'styles'
 
 export const numberOfItemsToDisplay = 0
@@ -47,5 +47,5 @@ export type MarketType = {
   price: number
   leftValue: number
   rightValue: number
-  chartData: AreaChartPlotType[]
+  chartData: LoansMarketMiniChartType
 }

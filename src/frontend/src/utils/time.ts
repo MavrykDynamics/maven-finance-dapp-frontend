@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
+import { ONE_DAY_IN_MS } from 'providers/LoansProvider/helpers/loans.const'
 
 dayjs.extend(advancedFormat)
 
@@ -10,6 +11,14 @@ export function toHHMMSS(sec: number): string {
 
   return `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
 }
+
+export const getDateStart = (date: string | number): number =>
+  dayjs(date).hour(0).minute(0).second(0).millisecond(0).valueOf()
+export const getDateEnd = (date: string | number): number =>
+  dayjs(date).hour(23).minute(59).second(59).millisecond(999).valueOf()
+
+export const checkWhetherTimeIsLastNdays = (time: number | string, period: number) =>
+  dayjs().diff(time) <= ONE_DAY_IN_MS * (period - 1)
 
 type TimeFormatTypes =
   | 'MMM DD, HH:mm:ss'
