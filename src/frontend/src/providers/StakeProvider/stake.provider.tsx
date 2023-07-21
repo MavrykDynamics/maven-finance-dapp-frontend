@@ -1,5 +1,5 @@
 import { ApolloError, useSubscription } from '@apollo/client'
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 // helpers
 import { normalizeDoormanChartsData } from './helpers/normalizer'
@@ -33,6 +33,7 @@ import {
   SUBSCRIPTION_MVK_TOKEN_TOTAL,
 } from './queries/doorman.query'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import { getDoormanProviderReturnValue } from './helpers/doorman.utils'
 
 export const stakeContext = React.createContext<StakeContext>(undefined!)
 
@@ -55,7 +56,7 @@ const StakeProvider = ({ children }: Props) => {
   }
 
   // subscribes
-  const { loading: isStakingHistoryLoading } = useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
+  useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
     skip: !activeSubs[SMVK_HISTORY_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
@@ -64,7 +65,7 @@ const StakeProvider = ({ children }: Props) => {
     onError: (error) => handleSubError(error, SMVK_HISTORY_SUB),
   })
 
-  const { loading: isMvkBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
+  useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
     skip: !activeSubs[MVK_BALANCE_SUB] || !doormanAddress,
     variables: {
       _eq: doormanAddress,
@@ -77,7 +78,7 @@ const StakeProvider = ({ children }: Props) => {
     shouldResubscribe: true,
   })
 
-  const { loading: isMvkTotalLoading } = useSubscription(SUBSCRIPTION_MVK_TOKEN_TOTAL, {
+  useSubscription(SUBSCRIPTION_MVK_TOKEN_TOTAL, {
     skip: !activeSubs[MVK_TOTAL_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
@@ -120,13 +121,15 @@ const StakeProvider = ({ children }: Props) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }
 
-  const contextProviderValue = useMemo(() => {
-    return {
-      ...stakingCtxState,
-      isLoading: isStakingHistoryLoading || isMvkBalanceLoading || isMvkTotalLoading,
-      changeStakingSubscriptionsList,
-    }
-  }, [stakingCtxState])
+  const contextProviderValue = useMemo(
+    () =>
+      getDoormanProviderReturnValue({
+        stakingCtxState,
+        changeStakingSubscriptionsList,
+        activeSubs,
+      }),
+    [activeSubs, stakingCtxState],
+  )
 
   return <stakeContext.Provider value={contextProviderValue}>{children}</stakeContext.Provider>
 }

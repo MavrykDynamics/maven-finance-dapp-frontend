@@ -5,23 +5,20 @@ import { MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB, STAKE_ACTION, UNSTAKE
 export type SmvkHistoryData = ReturnType<typeof normalizeDoormanChartsData>
 export type StakeActionType = typeof STAKE_ACTION | typeof UNSTAKE_ACTION
 export type StakingSubsType = typeof SMVK_HISTORY_SUB | typeof MVK_TOTAL_SUB | typeof MVK_BALANCE_SUB
-export type StakeContext = {
-  // data
-  mvkHistoryData: SmvkHistoryData['mvkHistoryData']
-  smvkHistoryData: SmvkHistoryData['smvkHistoryData']
-  totalStakedMvk: number
-  totalSupply: number
-  maximumTotalSupply: number
 
-  // additional data & methods
-  isLoading: boolean
-  changeStakingSubscriptionsList: (skips: Partial<StakingSubsRecordType>) => void
+export type StakeContextStateType = {
+  mvkHistoryData: SmvkHistoryData['mvkHistoryData'] | null
+  smvkHistoryData: SmvkHistoryData['smvkHistoryData'] | null
+  totalStakedMvk: number | null
+  totalSupply: number | null
+  maximumTotalSupply: number | null
 }
 
-export type StakeContextStateType = Pick<
-  StakeContext,
-  'totalStakedMvk' | 'totalSupply' | 'maximumTotalSupply' | 'mvkHistoryData' | 'smvkHistoryData'
->
+export type StakeContext = DeepNonNullable<StakeContextStateType> & {
+  isLoading: boolean
+
+  changeStakingSubscriptionsList: (skips: Partial<StakingSubsRecordType>) => void
+}
 
 export type StakingActionData = {
   loadingToasterId: string
