@@ -1,5 +1,5 @@
 import { ApolloError, useSubscription } from '@apollo/client'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 
 // helpers
 import { normalizeDoormanChartsData } from './helpers/normalizer'
@@ -10,7 +10,12 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
-import { StakeContext, StakeContextStateType, StakingSubsRecordType, StakingSubsType } from './stake.provider.types'
+import {
+  DoormanContext,
+  DoormanContextStateType,
+  DoormanSubsRecordType,
+  StakingSubsType,
+} from './doorman.provider.types'
 import {
   SubscribeSmvkHistoryDataSubscription,
   SubscribeMvkTokenTotalSubscription,
@@ -26,7 +31,7 @@ import {
   MVK_TOTAL_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
   SMVK_HISTORY_SUB,
-} from './helpers/stake.consts'
+} from './helpers/doorman.consts'
 import {
   SUBSCRIPTION_STAKE_HISTORY,
   SUBSCRIPTION_ADDRESS_BALANCE_DATA,
@@ -35,20 +40,20 @@ import {
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { getDoormanProviderReturnValue } from './helpers/doorman.utils'
 
-export const stakeContext = React.createContext<StakeContext>(undefined!)
+export const doormanContext = React.createContext<DoormanContext>(undefined!)
 
 type Props = {
   children: React.ReactNode
 }
 
-const StakeProvider = ({ children }: Props) => {
+const DoormanProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
   const {
     contractAddresses: { doormanAddress },
   } = useDappConfigContext()
 
-  const [stakingCtxState, setStakingCtxState] = useState<StakeContextStateType>(DEFAULT_STAKING_CTX)
-  const [activeSubs, setActiveSubs] = useState<StakingSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
+  const [stakingCtxState, setStakingCtxState] = useState<DoormanContextStateType>(DEFAULT_STAKING_CTX)
+  const [activeSubs, setActiveSubs] = useState<DoormanSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
 
   const handleSubError = (error: ApolloError, subName: StakingSubsType) => {
     console.error(`${subName} query error: `, error)
@@ -117,7 +122,7 @@ const StakeProvider = ({ children }: Props) => {
     }))
   }
 
-  const changeStakingSubscriptionsList = (newSkips: Partial<StakingSubsRecordType>) => {
+  const changeStakingSubscriptionsList = (newSkips: Partial<DoormanSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }
 
@@ -131,11 +136,11 @@ const StakeProvider = ({ children }: Props) => {
     [activeSubs, stakingCtxState],
   )
 
-  return <stakeContext.Provider value={contextProviderValue}>{children}</stakeContext.Provider>
+  return <doormanContext.Provider value={contextProviderValue}>{children}</doormanContext.Provider>
 }
 
-export const useStakeContext = () => {
-  const context = useContext(stakeContext)
+export const useDoormanContext = () => {
+  const context = useContext(doormanContext)
 
   if (!context) {
     throw new Error('StakeContext should be used withing StakeProvider')
@@ -144,4 +149,4 @@ export const useStakeContext = () => {
   return context
 }
 
-export default StakeProvider
+export default DoormanProvider

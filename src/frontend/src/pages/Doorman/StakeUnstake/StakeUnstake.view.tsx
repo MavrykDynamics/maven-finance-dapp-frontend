@@ -6,7 +6,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
+import { stakeMVK } from 'providers/DoormanProvider/actions/doorman.actions'
 import { rewardsCompound } from 'providers/UserProvider/actions/user.actions'
 
 // view
@@ -21,10 +21,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 // helpers
 import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { stakingInputValidation } from '../Doorman.converter'
-import { unknownToError } from 'errors/error'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
-import { sleep } from 'utils/api/sleep'
 
 // consts
 import {
@@ -34,10 +31,8 @@ import {
   BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from '../../../app/App.components/Button/Button.constants'
-import { STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { STAKE_ACTION } from 'providers/DoormanProvider/helpers/doorman.consts'
 import { REWARDS_COMPOUND_ACTION } from 'providers/UserProvider/helpers/user.consts'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'

@@ -1,7 +1,7 @@
 import { ACTION_COMPLETION_MESSAGE_TEXT, ACTION_START_MESSAGE_TEXT } from '../Toaster.constants'
 
 // doorman
-import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/DoormanProvider/helpers/doorman.consts'
 
 // user
 import {

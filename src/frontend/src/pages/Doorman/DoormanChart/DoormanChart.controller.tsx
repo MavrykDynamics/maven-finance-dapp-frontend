@@ -13,7 +13,7 @@ import { CommaNumber, formatNumber } from 'app/App.components/CommaNumber/CommaN
 import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
 
 // providers
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // types
@@ -70,7 +70,7 @@ const findExitFeeClosestTimePlot = (exitFeePlots: Array<AreaChartPlotType>, exit
 }
 
 export function DoormanChart() {
-  const { smvkHistoryData, mvkHistoryData, totalStakedMvk, totalSupply } = useStakeContext()
+  const { smvkHistoryData, mvkHistoryData, totalStakedMvk, totalSupply } = useDoormanContext()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()

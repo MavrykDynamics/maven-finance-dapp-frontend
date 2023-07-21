@@ -1,11 +1,11 @@
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-import { StakeContext, StakeContextStateType, StakingSubsRecordType } from '../stake.provider.types'
-import { EMPTY_DOORMAN_CTX, MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from './stake.consts'
+import { DoormanContext, DoormanContextStateType, DoormanSubsRecordType } from '../doorman.provider.types'
+import { EMPTY_DOORMAN_CTX, MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from './doorman.consts'
 
 type DoormanContextReturnValueArgs = {
-  stakingCtxState: StakeContextStateType
-  changeStakingSubscriptionsList: StakeContext['changeStakingSubscriptionsList']
-  activeSubs: StakingSubsRecordType
+  stakingCtxState: DoormanContextStateType
+  changeStakingSubscriptionsList: DoormanContext['changeStakingSubscriptionsList']
+  activeSubs: DoormanSubsRecordType
 }
 
 export const getDoormanProviderReturnValue = ({
@@ -34,7 +34,7 @@ export const getDoormanProviderReturnValue = ({
   }
 
   // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<StakeContextStateType>(
+  const nonNullableProviderValue = replaceNullValuesWithDefault<DoormanContextStateType>(
     stakingCtxState,
     EMPTY_DOORMAN_CTX,
   )
