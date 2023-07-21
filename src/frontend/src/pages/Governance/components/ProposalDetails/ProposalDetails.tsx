@@ -89,13 +89,6 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
   const isExecuteProposal = proposal.anyCanExecute && userAddress
   const isPaymentProposal = proposal.anyCanPay && userAddress
 
-  // Proposal actions
-  // const handleDeleteProposal = async () => await dispatch(dropProposal(proposal.id))
-  // const handleClickExecuteProposal = async () => await dispatch(executeProposal(proposal.id))
-  // const handleClickProcessPayment = async () => await dispatch(processProposalPayment(proposal.id))
-  // const handleProposalRoundVote = async (proposalId: number) => await dispatch(proposalRoundVote(proposalId))
-  // const handleVotingRoundVote = async (vote: `${VotingTypes}`) => await dispatch(votingRoundVote(vote))
-
   // Actions
 
   // this callback is similar to all action down here

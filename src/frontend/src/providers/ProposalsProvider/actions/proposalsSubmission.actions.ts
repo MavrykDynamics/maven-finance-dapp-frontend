@@ -12,8 +12,6 @@ export const submitProposal = async (
   proposalBytes: ProposalDataChangesType,
   proposalPayments: PaymentsDataChangesType,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
-  // add user address check when calling this method
-
   try {
     // prepare and send transaction
     const { title, description, invoice, sourceCode } = form
@@ -28,18 +26,6 @@ export const submitProposal = async (
       proposalPayments.length ? proposalPayments : undefined,
     )
 
-    // for dapp callback
-    // await dispatch(getGovernanceStorage())
-
-    // const usersLatestCreatedProposalId = await fetchFromIndexer(
-    //   GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
-    //   GOVERNANCE_LATEST_USER_PROPOSAL_NAME,
-    //   GOVERNANCE_LATEST_USER_PROPOSAL_VARIABLE(state.wallet.accountPkh ?? ''),
-    // )
-    // const latestProposalId = usersLatestCreatedProposalId?.['governance_proposal']?.[0]?.id ?? DEFAULT_PROPOSAL.id
-
-    // callback(latestProposalId)
-
     return await getEstimationResult(submitProposalMetaData, {
       params: { amount: fee },
     })
@@ -53,16 +39,11 @@ export const dropProposal = async (
   governanceAddress: string,
   proposalId: number,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
-  // add user address check when calling this method
-
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(governanceAddress)
     const dropProposalMetaData = await contract?.methods.dropProposal(proposalId)
-
-    // for dapp callback
-    // await dispatch(getGovernanceStorage())
 
     return await getEstimationResult(dropProposalMetaData)
   } catch (error) {
@@ -75,16 +56,11 @@ export const lockProposal = async (
   governanceAddress: string,
   proposalId: number,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
-  // add user address check when calling this method
-
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(governanceAddress)
     const lockProposalMetaData = contract?.methods.lockProposal(proposalId)
-
-    // for dapp callback
-    // await dispatch(getGovernanceStorage())
 
     return await getEstimationResult(lockProposalMetaData)
   } catch (error) {
@@ -100,16 +76,11 @@ export const updateProposalData = async (
   bytesChanges?: ProposalDataChangesType | null,
   paymentChanges?: PaymentsDataChangesType | null,
 ) => {
-  // add user address check when calling this method
-
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(governanceAddress)
     const updateProposalMetaData = contract.methods.updateProposalData(proposalId, bytesChanges, paymentChanges)
-
-    // for dapp callback
-    // await dispatch(getGovernanceStorage())
 
     return await getEstimationResult(updateProposalMetaData)
   } catch (error) {
