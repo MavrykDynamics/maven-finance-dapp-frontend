@@ -1,8 +1,9 @@
 import { useRef, useEffect, useState } from 'react'
+import dayjs from 'dayjs'
 import { createChart, BusinessDay, UTCTimestamp, SingleValueData, CandlestickData } from 'lightweight-charts'
 
 import { lightTextColor, headerColor } from 'styles'
-import { parseDate } from 'utils/time'
+import { getDateEnd, getDateStart, parseDate } from 'utils/time'
 import {
   DEFAULT_LAYOUT_SETTING,
   CHART_GRID_SETTING,
@@ -37,6 +38,7 @@ export const DoubleChart = ({
     borderColor = headerColor,
     firstChartSeriesMarkers,
     secondChartSeriesMarkers,
+    isPeriod = false,
   } = {},
   firstChart: {
     data: { type: firstChartType, plots: firstChartPlots },
@@ -55,6 +57,7 @@ export const DoubleChart = ({
 
   const [tooltipData, setTooltipData] = useState<{
     xAxis: number
+    isLastPlot: boolean
     firstChartYAxis: number | undefined
     secondChartYAxis: number | undefined
   } | null>(null)
@@ -105,7 +108,7 @@ export const DoubleChart = ({
         if (tickDateFormatter) {
           return tickDateFormatter(Number(time))
         }
-        return parseDate({ time: Number(time), timeFormat: 'HH:mm' })
+        return parseDate({ time: Number(time), timeFormat: 'MMM DD' })
       },
     })
 
@@ -210,7 +213,20 @@ export const DoubleChart = ({
           newTooltiData.xAxis = Number(secondChartPlot.time)
         }
 
-        setTooltipData(newTooltiData)
+        if (isPeriod) {
+          const currentDayStart = getDateStart(dayjs().valueOf()),
+            currentDayEnd = getDateEnd(dayjs().valueOf())
+
+          setTooltipData({
+            ...newTooltiData,
+            isLastPlot: Number(newTooltiData.xAxis) <= currentDayEnd && Number(newTooltiData.xAxis) >= currentDayStart,
+          })
+        } else {
+          setTooltipData({
+            ...newTooltiData,
+            isLastPlot: false,
+          })
+        }
 
         if (mainChartWrapperRef.current && param.point) {
           mainChartWrapperRef.current.style.setProperty('--translateX', `${param.point.x + 15}`)
@@ -232,6 +248,7 @@ export const DoubleChart = ({
     dateTooltipFormatter,
     firstChartColors,
     firstChartPlots,
+    isPeriod,
     firstChartType,
     height,
     hideXAxis,
@@ -244,6 +261,8 @@ export const DoubleChart = ({
     tickDateFormatter,
     width,
     yAxisSide,
+    firstChartSeriesMarkers,
+    secondChartSeriesMarkers,
   ])
 
   return (
@@ -252,6 +271,8 @@ export const DoubleChart = ({
         xAxis={tooltipData?.xAxis ?? 0}
         yAxisFirst={tooltipData?.firstChartYAxis}
         yAxisSecond={tooltipData?.secondChartYAxis}
+        isLastPlot={tooltipData?.isLastPlot}
+        isPeriod={isPeriod}
         assetFirst={tooltipAssetFirst}
         assetSecond={tooltipAssetSecond}
         tooltipName={tooltipName}

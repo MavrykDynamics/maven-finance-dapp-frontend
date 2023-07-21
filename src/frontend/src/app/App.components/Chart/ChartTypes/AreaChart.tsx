@@ -1,8 +1,9 @@
 import { useRef, useEffect, useState } from 'react'
-import { createChart, BusinessDay, UTCTimestamp, SingleValueData, Time } from 'lightweight-charts'
+import dayjs from 'dayjs'
+import { createChart, BusinessDay, UTCTimestamp, SingleValueData } from 'lightweight-charts'
 
 import { skyColor, lightTextColor, headerColor } from 'styles'
-import { parseDate } from 'utils/time'
+import { getDateEnd, getDateStart, parseDate } from 'utils/time'
 import {
   DEFAULT_LAYOUT_SETTING,
   CHART_GRID_SETTING,
@@ -34,6 +35,7 @@ export const AreaChart = ({
     textColor = lightTextColor,
     borderColor = headerColor,
     seriesMarkers,
+    isPeriod = false,
   } = {},
   colors: { lineColor = skyColor, areaTopColor = skyColor, areaBottomColor = 'transparent' } = {},
   data,
@@ -46,6 +48,7 @@ export const AreaChart = ({
   const [tooltipData, setTooltipData] = useState<{
     xAxis: number
     yAxis: number
+    isLastPlot: boolean
   } | null>(null)
 
   useEffect(() => {
@@ -94,7 +97,7 @@ export const AreaChart = ({
         if (tickDateFormatter) {
           return tickDateFormatter(Number(time))
         }
-        return parseDate({ time: Number(time), timeFormat: 'HH:mm' })
+        return parseDate({ time: Number(time), timeFormat: 'MMM DD' })
       },
     })
 
@@ -128,10 +131,22 @@ export const AreaChart = ({
         if (!checkPlotType<SingleValueData>(plot, ['value'])) return
         const { value, time } = plot
 
-        setTooltipData({
-          yAxis: Number(time),
-          xAxis: parseFloat(String(value)),
-        })
+        if (isPeriod) {
+          const currentDayStart = getDateStart(dayjs().valueOf()),
+            currentDayEnd = getDateEnd(dayjs().valueOf())
+
+          setTooltipData({
+            yAxis: Number(time),
+            xAxis: parseFloat(String(value)),
+            isLastPlot: Number(time) <= currentDayEnd && Number(time) >= currentDayStart,
+          })
+        } else {
+          setTooltipData({
+            yAxis: Number(time),
+            xAxis: parseFloat(String(value)),
+            isLastPlot: false,
+          })
+        }
 
         if (mainChartWrapperRef.current && param.point) {
           mainChartWrapperRef.current.style.setProperty('--translateX', `${param.point.x + 15}`)
@@ -157,6 +172,7 @@ export const AreaChart = ({
     height,
     hideXAxis,
     hideYAxis,
+    isPeriod,
     lineColor,
     priceMargins,
     seriesMarkers,
@@ -171,6 +187,8 @@ export const AreaChart = ({
       <ChartTooltip
         xAxis={tooltipData?.xAxis}
         yAxis={tooltipData?.yAxis}
+        isLastPlot={tooltipData?.isLastPlot}
+        isPeriod={isPeriod}
         asset={tooltipAsset}
         tooltipName={tooltipName}
         dateTooltipFormatter={dateTooltipFormatter}

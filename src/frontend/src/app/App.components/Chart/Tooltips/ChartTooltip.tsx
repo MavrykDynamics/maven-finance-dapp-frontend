@@ -17,6 +17,8 @@ type TooltipProps = {
   valueTooltipFormatter?: (date: number) => string
   asset: string
   isCurrency?: boolean
+  isPeriod: boolean
+  isLastPlot: boolean
 }
 
 const AmountDateTooltip = ({
@@ -24,6 +26,8 @@ const AmountDateTooltip = ({
   yAxis,
   asset,
   isCurrency,
+  isPeriod,
+  isLastPlot,
   dateTooltipFormatter,
   valueTooltipFormatter,
 }: TooltipProps) => {
@@ -39,7 +43,8 @@ const AmountDateTooltip = ({
         />
       </div>
       <div className="date">
-        {dateTooltipFormatter?.(yAxis) ?? parseDate({ time: yAxis, timeFormat: 'MMM DD, HH:mm Z' })}
+        {dateTooltipFormatter?.(yAxis) ??
+          parseDate({ time: yAxis, timeFormat: isPeriod && !isLastPlot ? 'MMM DD' : 'MMM DD, HH:mm Z' })}
       </div>
     </AmountDateTooltipStyled>
   )
@@ -83,6 +88,8 @@ const ChartTooltip = ({
   tooltipName,
   dateTooltipFormatter,
   valueTooltipFormatter,
+  isLastPlot = false,
+  isPeriod = false,
 }: TooltipsWrapperProps) => {
   if (xAxis === undefined || yAxis === undefined) {
     return null
@@ -96,6 +103,8 @@ const ChartTooltip = ({
           xAxis={xAxis}
           yAxis={yAxis}
           asset={asset}
+          isPeriod={isPeriod}
+          isLastPlot={isLastPlot}
           dateTooltipFormatter={dateTooltipFormatter}
           valueTooltipFormatter={valueTooltipFormatter}
         />
@@ -107,6 +116,8 @@ const ChartTooltip = ({
           xAxis={xAxis}
           yAxis={yAxis}
           asset={asset}
+          isPeriod={isPeriod}
+          isLastPlot={isLastPlot}
           isCurrency
           dateTooltipFormatter={dateTooltipFormatter}
           valueTooltipFormatter={valueTooltipFormatter}
@@ -118,6 +129,8 @@ const ChartTooltip = ({
           xAxis={xAxis}
           yAxis={yAxis}
           asset={asset}
+          isPeriod={false}
+          isLastPlot={false}
           dateTooltipFormatter={dateTooltipFormatter}
           valueTooltipFormatter={valueTooltipFormatter}
         />
