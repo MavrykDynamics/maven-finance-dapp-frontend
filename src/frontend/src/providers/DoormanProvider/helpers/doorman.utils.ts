@@ -19,6 +19,12 @@ export const getDoormanProviderReturnValue = ({
     changeStakingSubscriptionsList,
   }
 
+  /**
+   * isLoading indicates whethet provider is loading smth, so we need to show loader, not load in background, cases:
+   * 1. if we subscribe to smvk & mvk history data and data is empty
+   * 2. if we subscribe to balances and balances are empty
+   * 3. if we subscribe to total supply and total supply is empty
+   */
   const isLoading =
     (activeSubs[SMVK_HISTORY_SUB] && (mvkHistoryData === null || smvkHistoryData === null)) ||
     (activeSubs[MVK_BALANCE_SUB] && totalStakedMvk === null) ||
