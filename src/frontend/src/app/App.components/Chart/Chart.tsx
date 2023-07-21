@@ -48,6 +48,7 @@ import { SpinnerCircleLoaderStyled } from '../Loader/Loader.style'
  *    @tickDateFormatter -> custom formatter for xAxis labels
  *    @dateTooltipFormatter -> custom formatter for date in tooltip
  *    @valueTooltipFormatter -> custom formatter for amount in tooltip
+ *    @isPeriod -> tells whether chart is for period to apply default period time formatter
  *
  * @data -> array of plots according to the chart type & type of the chart
  *

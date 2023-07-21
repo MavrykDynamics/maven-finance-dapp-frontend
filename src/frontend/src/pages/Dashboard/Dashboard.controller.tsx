@@ -21,6 +21,7 @@ import {
   MVK_TOTAL_SUB,
   MVK_BALANCE_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
+  SMVK_HISTORY_SUB,
 } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   SATELLITE_DATA_SUB,
@@ -63,6 +64,7 @@ export const Dashboard = () => {
     changeStakingSubscriptionsList({
       [MVK_TOTAL_SUB]: true,
       [MVK_BALANCE_SUB]: true,
+      [SMVK_HISTORY_SUB]: true,
     })
     changeSatellitesSubscriptionsList({
       [SATELLITE_DATA_SUB]: true,
