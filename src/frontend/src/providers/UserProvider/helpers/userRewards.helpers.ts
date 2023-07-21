@@ -2,6 +2,7 @@ import { GetUserDataSubscription } from 'utils/__generated__/graphql'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { FIXED_POINT_ACCURACY, MVK_DECIMALS } from 'utils/constants'
 
+// TODO: check on back-end why unclaimed rewards are not changing with compound
 export function getUserDoomanRewards({
   userSmvkBalance,
   userDoormanRewardsDataFromIndexer,
@@ -17,7 +18,8 @@ export function getUserDoomanRewards({
   const currentFeesPerShare = accumulated_fees_per_share - participation_fees_per_share
   const usersRewardsForStaking = (userSmvkBalance * currentFeesPerShare) / FIXED_POINT_ACCURACY
 
-  return convertNumberForClient({ number: Math.trunc(usersRewardsForStaking + unclaimed_rewards), grade: MVK_DECIMALS })
+  // return convertNumberForClient({ number: Math.trunc(usersRewardsForStaking + unclaimed_rewards), grade: MVK_DECIMALS })
+  return convertNumberForClient({ number: Math.trunc(usersRewardsForStaking), grade: MVK_DECIMALS })
 }
 
 export function getUserSatelliteRewards({
