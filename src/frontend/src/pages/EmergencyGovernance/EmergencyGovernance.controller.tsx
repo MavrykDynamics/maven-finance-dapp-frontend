@@ -15,13 +15,13 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 // providers
 import { SUB_SKIP } from 'utils/api/apollo.consts'
 import { useContractStatusConfig } from 'providers/ContractStatuses/hooks/useContractStatusesConfig'
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { MVK_TOTAL_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/StakeProvider/helpers/stake.consts'
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
+import { MVK_TOTAL_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
 
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
 
-  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useDoormanContext()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { eGovProposals, isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 

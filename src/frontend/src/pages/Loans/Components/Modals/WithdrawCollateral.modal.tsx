@@ -191,7 +191,7 @@ export const WithdrawCollateral = ({
     [withdrawAction],
   )
 
-  const withdrawHandler = useContractAction(contractActionProps)
+  const { action: withdrawHandler } = useContractAction(contractActionProps)
 
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
     const validationStatus = loansInputValidation({

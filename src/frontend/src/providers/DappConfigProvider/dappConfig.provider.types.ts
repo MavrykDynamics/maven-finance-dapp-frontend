@@ -1,6 +1,6 @@
 import { TransactionWalletOperation } from '@taquito/taquito'
 import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
-import { StakeActionType } from 'providers/StakeProvider/stake.provider.types'
+import { StakeActionType } from 'providers/DoormanProvider/doorman.provider.types'
 import { XtzBakerType } from './bakers/getXtzBakers'
 import { normalizeContractAddresses } from './helpers/dappConfig.normalizers'
 import { UserActionsType } from 'providers/UserProvider/user.provider.types'

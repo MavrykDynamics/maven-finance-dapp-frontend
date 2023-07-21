@@ -67,7 +67,7 @@ export const LoansEarn = () => {
     () =>
       marketsAddresses.reduce<MarketType[]>((acc, marketAddress) => {
         const market = marketsMapper[marketAddress]
-        const chartData = marketLendingChart[marketAddress] ?? []
+        const chartData = marketLendingChart[marketAddress] ?? {}
 
         const token = getTokenDataByAddress({
           tokenAddress: marketAddress,
@@ -90,7 +90,7 @@ export const LoansEarn = () => {
           annualRateName: 'APY',
           leftValue: convertNumberForClient({ number: lendValue, grade: decimals }) * price,
           rightValue: convertNumberForClient({ number: interestEarned, grade: decimals }) * price,
-          totalAmount: chartData.at(-1)?.value ?? 0,
+          totalAmount: chartData.total?.at(-1)?.value ?? 0,
           price,
           chartData,
         })

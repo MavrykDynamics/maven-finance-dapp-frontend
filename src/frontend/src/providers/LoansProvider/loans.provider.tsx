@@ -18,12 +18,10 @@ import {
   DEFAULT_LOANS_CONTEXT,
   LOANS_CONFIG,
   LOANS_MARKETS_DATA,
-  EMPTY_LOANS_CONTEXT,
 } from './helpers/loans.const'
 
 // helpers
 import { normalizeLoansConfig, normalizeLoansMarkets } from './helpers/loansMarkets.normalizer'
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 import { getLoansProviderReturnValue } from './helpers/loans.utils'
 
 export const loansContext = React.createContext<LoansContext>(undefined!)

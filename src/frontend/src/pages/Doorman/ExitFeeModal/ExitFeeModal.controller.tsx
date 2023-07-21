@@ -5,7 +5,7 @@ import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
 import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
 import { stakingInputValidation } from '../Doorman.converter'
-import { UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
+import { UNSTAKE_ACTION } from 'providers/DoormanProvider/helpers/doorman.consts'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 
 // components
@@ -26,7 +26,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { State } from 'reducers'
-import { unstakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
+import { unstakeMVK } from 'providers/DoormanProvider/actions/doorman.actions'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useCallback, useMemo } from 'react'
 
@@ -101,7 +101,7 @@ export const ExitFeeModal = ({
     [unstakeAction, inputData.amount, dappActionCallback, closePopup],
   )
 
-  const handleUnstake = useContractAction(contractActionProps)
+  const { action: handleUnstake } = useContractAction(contractActionProps)
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target

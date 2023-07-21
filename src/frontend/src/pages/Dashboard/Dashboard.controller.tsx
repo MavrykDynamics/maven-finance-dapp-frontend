@@ -8,7 +8,7 @@ import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.contr
 import { Page } from 'styles'
 
 // providers
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
@@ -21,7 +21,8 @@ import {
   MVK_TOTAL_SUB,
   MVK_BALANCE_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
-} from 'providers/StakeProvider/helpers/stake.consts'
+  SMVK_HISTORY_SUB,
+} from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
@@ -53,7 +54,7 @@ export const Dashboard = () => {
     maximumTotalSupply,
     isLoading: isDoormanLoading,
     changeStakingSubscriptionsList,
-  } = useStakeContext()
+  } = useDoormanContext()
   const { isLoading: isSatellitesLoading, changeSatellitesSubscriptionsList } = useSatellitesContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
@@ -63,6 +64,7 @@ export const Dashboard = () => {
     changeStakingSubscriptionsList({
       [MVK_TOTAL_SUB]: true,
       [MVK_BALANCE_SUB]: true,
+      [SMVK_HISTORY_SUB]: true,
     })
     changeSatellitesSubscriptionsList({
       [SATELLITE_DATA_SUB]: true,

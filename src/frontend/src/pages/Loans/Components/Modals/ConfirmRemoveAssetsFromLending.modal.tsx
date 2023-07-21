@@ -84,7 +84,7 @@ export const ConfirmRemoveAssetsFromLending = ({
     [withdrawCb],
   )
 
-  const withdrawHandler = useContractAction(contractActionProps)
+  const { action: withdrawHandler } = useContractAction(contractActionProps)
 
   if (!data || !loanToken || !loanToken.rate) return null
 

@@ -156,7 +156,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     [delegeteAction],
   )
 
-  const delegateCallback = useContractAction(delegateContractActionProps)
+  const { action: delegateCallback } = useContractAction(delegateContractActionProps)
 
   // undelegate action --------------
   const undelegeteAction = useCallback(async () => {
@@ -181,7 +181,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     [undelegeteAction],
   )
 
-  const undelegateCallback = useContractAction(unDelegateContractActionProps)
+  const { action: undelegateCallback } = useContractAction(unDelegateContractActionProps)
 
   // claim rewards action ------------
   // TODO check if it's right action name and method
@@ -206,7 +206,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     [claimRewardsAction],
   )
 
-  const claimRewardsCallback = useContractAction(claimRewardsContractActionProps)
+  const { action: claimRewardsCallback } = useContractAction(claimRewardsContractActionProps)
 
   // distributeRewards action
 
@@ -232,7 +232,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     [distributeRewardsAction],
   )
 
-  const distributeRewardsCallback = useContractAction(distributeRewardsContractActionProps)
+  const { action: distributeRewardsCallback } = useContractAction(distributeRewardsContractActionProps)
 
   const buttonToShow =
     isUserDelegatedToThisSatellite && currentlyRegistered ? (

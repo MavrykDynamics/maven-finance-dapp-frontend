@@ -10,7 +10,12 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
-import { StakeContext, StakeContextStateType, StakingSubsRecordType, StakingSubsType } from './stake.provider.types'
+import {
+  DoormanContext,
+  DoormanContextStateType,
+  DoormanSubsRecordType,
+  StakingSubsType,
+} from './doorman.provider.types'
 import {
   SubscribeSmvkHistoryDataSubscription,
   SubscribeMvkTokenTotalSubscription,
@@ -26,28 +31,29 @@ import {
   MVK_TOTAL_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
   SMVK_HISTORY_SUB,
-} from './helpers/stake.consts'
+} from './helpers/doorman.consts'
 import {
   SUBSCRIPTION_STAKE_HISTORY,
   SUBSCRIPTION_ADDRESS_BALANCE_DATA,
   SUBSCRIPTION_MVK_TOKEN_TOTAL,
 } from './queries/doorman.query'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import { getDoormanProviderReturnValue } from './helpers/doorman.utils'
 
-export const stakeContext = React.createContext<StakeContext>(undefined!)
+export const doormanContext = React.createContext<DoormanContext>(undefined!)
 
 type Props = {
   children: React.ReactNode
 }
 
-const StakeProvider = ({ children }: Props) => {
+const DoormanProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
   const {
     contractAddresses: { doormanAddress },
   } = useDappConfigContext()
 
-  const [stakingCtxState, setStakingCtxState] = useState<StakeContextStateType>(DEFAULT_STAKING_CTX)
-  const [activeSubs, setActiveSubs] = useState<StakingSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
+  const [stakingCtxState, setStakingCtxState] = useState<DoormanContextStateType>(DEFAULT_STAKING_CTX)
+  const [activeSubs, setActiveSubs] = useState<DoormanSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
 
   const handleSubError = (error: ApolloError, subName: StakingSubsType) => {
     console.error(`${subName} query error: `, error)
@@ -55,7 +61,7 @@ const StakeProvider = ({ children }: Props) => {
   }
 
   // subscribes
-  const { loading: isStakingHistoryLoading } = useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
+  useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
     skip: !activeSubs[SMVK_HISTORY_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
@@ -64,7 +70,7 @@ const StakeProvider = ({ children }: Props) => {
     onError: (error) => handleSubError(error, SMVK_HISTORY_SUB),
   })
 
-  const { loading: isMvkBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
+  useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
     skip: !activeSubs[MVK_BALANCE_SUB] || !doormanAddress,
     variables: {
       _eq: doormanAddress,
@@ -77,7 +83,7 @@ const StakeProvider = ({ children }: Props) => {
     shouldResubscribe: true,
   })
 
-  const { loading: isMvkTotalLoading } = useSubscription(SUBSCRIPTION_MVK_TOKEN_TOTAL, {
+  useSubscription(SUBSCRIPTION_MVK_TOKEN_TOTAL, {
     skip: !activeSubs[MVK_TOTAL_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
@@ -116,29 +122,31 @@ const StakeProvider = ({ children }: Props) => {
     }))
   }
 
-  const changeStakingSubscriptionsList = (newSkips: Partial<StakingSubsRecordType>) => {
+  const changeStakingSubscriptionsList = (newSkips: Partial<DoormanSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }
 
-  const contextProviderValue = useMemo(() => {
-    return {
-      ...stakingCtxState,
-      isLoading: isStakingHistoryLoading || isMvkBalanceLoading || isMvkTotalLoading,
-      changeStakingSubscriptionsList,
-    }
-  }, [stakingCtxState])
+  const contextProviderValue = useMemo(
+    () =>
+      getDoormanProviderReturnValue({
+        stakingCtxState,
+        changeStakingSubscriptionsList,
+        activeSubs,
+      }),
+    [activeSubs, stakingCtxState],
+  )
 
-  return <stakeContext.Provider value={contextProviderValue}>{children}</stakeContext.Provider>
+  return <doormanContext.Provider value={contextProviderValue}>{children}</doormanContext.Provider>
 }
 
-export const useStakeContext = () => {
-  const context = useContext(stakeContext)
+export const useDoormanContext = () => {
+  const context = useContext(doormanContext)
 
   if (!context) {
-    throw new Error('StakeContext should be used withing StakeProvider')
+    throw new Error('useDoormanContext should be used within DoormanProvider')
   }
 
   return context
 }
 
-export default StakeProvider
+export default DoormanProvider

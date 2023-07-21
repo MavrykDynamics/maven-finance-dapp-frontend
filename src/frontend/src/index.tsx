@@ -24,7 +24,7 @@ import DappConfigProvider, {
 } from 'providers/DappConfigProvider/dappConfig.provider'
 import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider'
 import LoansProvider from 'providers/LoansProvider/loans.provider'
-import StakeProvider from 'providers/StakeProvider/stake.provider'
+import DoormanProvider from 'providers/DoormanProvider/doorman.provider'
 import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
 
 // components
@@ -89,13 +89,13 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
       {isInitialLoading ? (
         <FullScreenLoadingApp />
       ) : (
-        <StakeProvider>
+        <DoormanProvider>
           <SatellitesProvider>
             <LoansProvider>
               <VaultsProvider>{children}</VaultsProvider>
             </LoansProvider>
           </SatellitesProvider>
-        </StakeProvider>
+        </DoormanProvider>
       )}
     </>
   )
