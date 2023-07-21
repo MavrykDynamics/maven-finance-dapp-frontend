@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { FinancialRequestsView } from './FinancialRequests.view'
@@ -6,10 +7,31 @@ import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { useFinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.provider'
+import {
+  DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS,
+  ONGOING_FIN_REQUESTS_SUB,
+  PAST_FIN_REQUESTS_SUB,
+} from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
 
 export const FinancialRequests = () => {
-  const { pastFinancialRequestsIds, ongoingFinancialRequestsIds, financialRequestsMapper, isLoading } =
-    useFinancialRequestsContext()
+  const {
+    pastFinancialRequestsIds,
+    ongoingFinancialRequestsIds,
+    financialRequestsMapper,
+    isLoading,
+    changeFinancialRequestsSubscriptionList,
+  } = useFinancialRequestsContext()
+
+  useEffect(() => {
+    changeFinancialRequestsSubscriptionList({
+      [ONGOING_FIN_REQUESTS_SUB]: true,
+      [PAST_FIN_REQUESTS_SUB]: true,
+    })
+
+    return () => {
+      changeFinancialRequestsSubscriptionList(DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS)
+    }
+  }, [])
 
   return (
     <Page>

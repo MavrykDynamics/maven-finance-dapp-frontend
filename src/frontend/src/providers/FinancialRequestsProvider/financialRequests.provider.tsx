@@ -37,6 +37,8 @@ const FinancialRequestsProvider = ({ children }: Props) => {
   const [activeSubs, setActiveSubs] = useState<FinancialRequestsSubsRecordType>(DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS)
   const [ISOTimestamp, setISOTimestamp] = useState(dayjs().toISOString())
 
+  console.log(finRequestsCtxState, '------------------------------')
+
   const handleSubError = (error: ApolloError, subName: FinancialRequestsSubsType) => {
     console.error(`${subName} query error: `, error)
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
@@ -68,8 +70,6 @@ const FinancialRequestsProvider = ({ children }: Props) => {
 
   const updateFinRequestsData = (data: GetFinRequestsStorageSubscription, type: FinancialRequestType) => {
     const { financialRequestsIds, financialRequestMapper } = normalizeFinancialRequests(data)
-
-    console.log(financialRequestMapper, '___________________________________________________')
 
     setFinRequestsCtxState((prev) => ({
       ...prev,

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
 // const
@@ -18,6 +18,10 @@ import { useFinancialRequestsContext } from 'providers/FinancialRequestsProvider
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import {
+  DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS,
+  ONGOING_FIN_REQUESTS_SUB,
+} from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
 
 export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()
@@ -25,7 +29,18 @@ export const CouncilFormDropFinancialRequest = () => {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
 
-  const { ongoingFinancialRequestsIds, financialRequestsMapper, isLoading } = useFinancialRequestsContext()
+  const { ongoingFinancialRequestsIds, financialRequestsMapper, isLoading, changeFinancialRequestsSubscriptionList } =
+    useFinancialRequestsContext()
+
+  useEffect(() => {
+    changeFinancialRequestsSubscriptionList({
+      [ONGOING_FIN_REQUESTS_SUB]: true,
+    })
+
+    return () => {
+      changeFinancialRequestsSubscriptionList(DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS)
+    }
+  }, [])
 
   const dropDownItems = useMemo(
     () =>
