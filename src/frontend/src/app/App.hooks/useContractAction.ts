@@ -20,11 +20,11 @@ import {
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
+type ActionReturnPayload = Promise<ActionErrorReturnType | ActionSuccessReturnType | null>
+
 export type HookContractActionArgs<G = unknown> = {
   actionType: ActionTypes
-  actionFn:
-    | ((args?: G) => Promise<ActionErrorReturnType | ActionSuccessReturnType | null>)
-    | (() => Promise<ActionErrorReturnType | ActionSuccessReturnType | null>)
+  actionFn: ((args: G) => ActionReturnPayload) | (() => ActionReturnPayload)
   dappActionCallback?: () => void
   afterActionCallback?: () => void
   willUseSharedError?: boolean
@@ -108,7 +108,7 @@ export const useContractAction = <G>({
 
   const action: () => Promise<void> = async () => {
     // call the actual action
-    const actionResult = await actionFn()
+    const actionResult = await (actionFn as () => ActionReturnPayload)()
     return await invokeAction(actionResult)
   }
 
