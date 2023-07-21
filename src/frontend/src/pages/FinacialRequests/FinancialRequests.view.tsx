@@ -3,7 +3,7 @@ import { useLocation } from 'react-router'
 import { useDispatch } from 'react-redux'
 
 // helpers, actions, consts
-import { distinctRequestsByExecuting, getRequestStatus } from './FinancialRequests.helpers'
+import { getRequestStatus } from 'providers/FinancialRequestsProvider/helpers/financialRequests.utils'
 import {
   calculateSlicePositions,
   getPageNumber,
@@ -17,8 +17,6 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // types
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
-import { State } from 'reducers'
-import { FinancialRequestStoreType } from 'reducers/financialRequests'
 
 // view
 import { StatusFlag } from '../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -40,22 +38,22 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { FinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.types'
 
 export const FinancialRequestsView = ({
-  financialRequestsIds,
-  financialRequestMapper,
+  ongoingFinancialRequestsIds: ongoing,
+  pastFinancialRequestsIds: past,
+  financialRequestsMapper,
 }: {
-  financialRequestsIds: FinancialRequestStoreType['financialRequestsIds']
-  financialRequestMapper: FinancialRequestStoreType['financialRequestMapper']
+  ongoingFinancialRequestsIds: FinancialRequestsContext['ongoingFinancialRequestsIds']
+  pastFinancialRequestsIds: FinancialRequestsContext['pastFinancialRequestsIds']
+  financialRequestsMapper: FinancialRequestsContext['financialRequestsMapper']
 }) => {
   const dispatch = useDispatch()
   const { search } = useLocation()
 
   const { tokensMetadata } = useTokensContext()
   const { userAddress, isSatellite: isUserSatellite } = useUserContext()
-
-  // Handling lists data
-  const { ongoing, past } = distinctRequestsByExecuting(financialRequestsIds, financialRequestMapper)
 
   const currentOngoingPage = getPageNumber(search, ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST)
   const currentPastPage = getPageNumber(search, PAST_REQUESTS_FINANCIAL_REQUESTS_LIST)
@@ -70,8 +68,10 @@ export const FinancialRequestsView = ({
     return ongoing.slice(from, to)
   }, [currentOngoingPage, ongoing])
 
-  const [rightSideContentId, setRightSideContentId] = useState(ongoing[0] ?? past[0] ?? 0)
-  const rightSideContent = financialRequestMapper[rightSideContentId]
+  const [rightSideContentId, setRightSideContentId] = useState<
+    keyof FinancialRequestsContext['financialRequestsMapper']
+  >(ongoing[0] ?? past[0] ?? '0')
+  const rightSideContent = financialRequestsMapper[rightSideContentId]
 
   // Full view item data handling
   const rightItemStatus = rightSideContent && getRequestStatus(rightSideContent)
@@ -214,13 +214,13 @@ export const FinancialRequestsView = ({
           <>
             <H2Title>Ongoing Requests</H2Title>
             <div className="list">
-              {paginatedOngoingItemsList.map((frId, idx) => (
+              {paginatedOngoingItemsList.map((frId: keyof FinancialRequestsContext['financialRequestsMapper'], idx) => (
                 <FRSListItem
                   key={frId}
                   id={idx + 1}
                   onClickHandler={() => setRightSideContentId(frId)}
-                  request={financialRequestMapper[frId]}
-                  selected={rightSideContent?.id === frId}
+                  request={financialRequestsMapper[frId]}
+                  selected={rightSideContent?.id.toString() === frId}
                 />
               ))}
 
@@ -242,8 +242,8 @@ export const FinancialRequestsView = ({
                   key={frId}
                   id={idx + 1}
                   onClickHandler={() => setRightSideContentId(frId)}
-                  request={financialRequestMapper[frId]}
-                  selected={rightSideContent?.id === frId}
+                  request={financialRequestsMapper[frId]}
+                  selected={rightSideContent?.id.toString() === frId}
                 />
               ))}
 

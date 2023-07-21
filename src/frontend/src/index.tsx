@@ -26,6 +26,7 @@ import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider
 import LoansProvider from 'providers/LoansProvider/loans.provider'
 import DoormanProvider from 'providers/DoormanProvider/doorman.provider'
 import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
+import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
@@ -92,7 +93,9 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
         <DoormanProvider>
           <SatellitesProvider>
             <LoansProvider>
-              <VaultsProvider>{children}</VaultsProvider>
+              <VaultsProvider>
+                <FinancialRequestsProvider>{children}</FinancialRequestsProvider>
+              </VaultsProvider>
             </LoansProvider>
           </SatellitesProvider>
         </DoormanProvider>

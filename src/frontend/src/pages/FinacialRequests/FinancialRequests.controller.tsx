@@ -1,12 +1,3 @@
-import { useDispatch, useSelector } from 'react-redux'
-
-// types
-import { State } from '../../reducers'
-
-//  actions
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getFinancialRequestStorage } from './FinancialRequest.actions'
-
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { FinancialRequestsView } from './FinancialRequests.view'
@@ -14,21 +5,11 @@ import { Page } from 'styles'
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { useFinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.provider'
 
 export const FinancialRequests = () => {
-  const dispatch = useDispatch()
-
-  const {
-    financialRequestsIds,
-    financialRequestMapper,
-    isLoaded: isFinancialRequestsLoaded,
-  } = useSelector((state: State) => state.financialRequest)
-
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    if (!isFinancialRequestsLoaded || isDepsChanged) {
-      await dispatch(getFinancialRequestStorage())
-    }
-  }, [])
+  const { pastFinancialRequestsIds, ongoingFinancialRequestsIds, financialRequestsMapper, isLoading } =
+    useFinancialRequestsContext()
 
   return (
     <Page>
@@ -38,10 +19,11 @@ export const FinancialRequests = () => {
           <ClockLoader width={150} height={150} />
           <div className="text">Loading financial requests</div>
         </DataLoaderWrapper>
-      ) : financialRequestsIds?.length ? (
+      ) : Object.keys(financialRequestsMapper)?.length ? (
         <FinancialRequestsView
-          financialRequestsIds={financialRequestsIds}
-          financialRequestMapper={financialRequestMapper}
+          ongoingFinancialRequestsIds={ongoingFinancialRequestsIds}
+          pastFinancialRequestsIds={pastFinancialRequestsIds}
+          financialRequestsMapper={financialRequestsMapper}
         />
       ) : (
         <EmptyContainer className="centered">

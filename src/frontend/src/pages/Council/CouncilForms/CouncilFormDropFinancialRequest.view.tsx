@@ -1,9 +1,7 @@
 import { useState, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { useDispatch } from 'react-redux'
 
 // const
-import { distinctRequestsByExecuting } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
@@ -13,40 +11,32 @@ import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/D
 
 // action
 import { dropFinancialRequest } from '../Council.actions'
-import { getFinancialRequestStorage } from 'pages/FinacialRequests/FinancialRequest.actions'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
+import { useFinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()
-  const { isActionActive } = useSelector((state: State) => state.loading)
-
   const {
-    financialRequestMapper,
-    financialRequestsIds,
-    isLoaded: isFinancialRequestsLoaded,
-  } = useSelector((state: State) => state.financialRequest)
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
-  useDataLoader(async (isDepsChanged) => {
-    try {
-      if (!isFinancialRequestsLoaded || isDepsChanged) {
-        await dispatch(getFinancialRequestStorage())
-      }
-    } catch (e) {}
-  }, [])
+  const { ongoingFinancialRequestsIds, financialRequestsMapper, isLoading } = useFinancialRequestsContext()
 
   const dropDownItems = useMemo(
     () =>
-      distinctRequestsByExecuting(financialRequestsIds, financialRequestMapper).ongoing.map((frId) => {
-        const fr = financialRequestMapper[frId]
+      ongoingFinancialRequestsIds.map((frId) => {
+        const fr = financialRequestsMapper[frId]
         return {
           content: <DropdownTruncateOption text={`${fr.type} ${fr.purpose}`} />,
           id: frId,
         }
       }),
-    [financialRequestMapper, financialRequestsIds],
+    [ongoingFinancialRequestsIds, financialRequestsMapper],
   )
 
   type DropDownItemType = (typeof dropDownItems)[number]
@@ -55,7 +45,7 @@ export const CouncilFormDropFinancialRequest = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      const financialReqID = chosenDdItem?.id
+      const financialReqID = Number(chosenDdItem?.id)
       if (!financialReqID) return
 
       await dispatch(dropFinancialRequest(financialReqID))
@@ -72,7 +62,13 @@ export const CouncilFormDropFinancialRequest = () => {
     setChosenDdItem(foundItem)
   }
 
-  return (
+  // TODO CHECK loader stuff (it wan not there before)
+  return isLoading ? (
+    <DataLoaderWrapper>
+      <ClockLoader width={150} height={150} />
+      <div className="text">Loading financial requests</div>
+    </DataLoaderWrapper>
+  ) : (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />

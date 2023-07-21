@@ -21,7 +21,7 @@ import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 
-import { normalizeFinancialRequests } from './FinancialRequests.helpers'
+import { normalizeFinancialRequests } from 'providers/FinancialRequestsProvider/helpers/financialRequests.utils'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 export const GET_FINANCIAL_REQUEST_STORAGE = 'GET_FINANCIAL_REQUEST_STORAGE'
