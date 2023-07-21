@@ -24,15 +24,15 @@ export const getDoormanProviderReturnValue = ({
    * 1. if we subscribe to smvk & mvk history data and data is empty
    * 2. if we subscribe to balances and balances are empty
    * 3. if we subscribe to total supply and total supply is empty
-   * 4. if we don’t have active subs isLoading === true
+   * 4. if we don’t have active subs isLoading === true and default data is null
    */
   const isLoading =
     (activeSubs[SMVK_HISTORY_SUB] && (mvkHistoryData === null || smvkHistoryData === null)) ||
     (activeSubs[MVK_BALANCE_SUB] && totalStakedMvk === null) ||
     (activeSubs[MVK_TOTAL_SUB] && (totalSupply === null || maximumTotalSupply === null)) ||
-    !activeSubs[SMVK_HISTORY_SUB] ||
-    !activeSubs[MVK_BALANCE_SUB] ||
-    !activeSubs[MVK_TOTAL_SUB]
+    (!activeSubs[SMVK_HISTORY_SUB] && (mvkHistoryData === null || smvkHistoryData === null)) ||
+    (!activeSubs[MVK_BALANCE_SUB] && totalStakedMvk === null) ||
+    (!activeSubs[MVK_TOTAL_SUB] && (mvkHistoryData === null || smvkHistoryData === null))
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {
