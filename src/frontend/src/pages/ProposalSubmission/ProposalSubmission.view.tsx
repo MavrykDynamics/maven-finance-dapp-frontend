@@ -83,7 +83,6 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { apolloClient } from 'apollo'
-import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
 import { GOVERNANCE_LATEST_USER_PROPOSAL_QUERY } from 'gql/queries'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
@@ -264,7 +263,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     [dappCallback, dropActionFn],
   )
 
-  const handleDropProposal = useContractAction(dropContractProps)
+  const { action: handleDropProposal } = useContractAction(dropContractProps)
 
   // lock proposal action --------------------------------------------------------
   const lockActionFn = useCallback(async () => {
@@ -289,7 +288,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     [dappCallback, lockActionFn],
   )
 
-  const handleLockProposal = useContractAction(lockContractProps)
+  const { action: handleLockProposal } = useContractAction(lockContractProps)
 
   // submit proposal action handler ----------------------------------------------
   // submission callback to update data
@@ -382,7 +381,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     [submissionDappCallback, submitActionFn],
   )
 
-  const handleProposalSubmit = useContractAction(submitContractProps)
+  const { action: handleProposalSubmit } = useContractAction(submitContractProps)
 
   // update proposal action handler ----------------------------------------------
   const updateActionFn = useCallback(async () => {
@@ -429,7 +428,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     [dappCallback, updateActionFn],
   )
 
-  const handleProposalUpdate = useContractAction(updateContractProps)
+  const { action: handleProposalUpdate } = useContractAction(updateContractProps)
 
   /**
    *

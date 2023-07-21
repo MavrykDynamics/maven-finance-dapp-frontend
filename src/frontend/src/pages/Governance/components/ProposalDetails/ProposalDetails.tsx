@@ -135,7 +135,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     [executeActionFn, dappActionCallback],
   )
 
-  const handleDeleteProposal = useContractAction(dropProposalContractProps)
+  const { action: handleDeleteProposal } = useContractAction(dropProposalContractProps)
 
   // execute proposal ------------------------------------------------------------------------
 
@@ -148,7 +148,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     [executeActionFn, dappActionCallback],
   )
 
-  const handleClickExecuteProposal = useContractAction(executeProposalContractProps)
+  const { action: handleClickExecuteProposal } = useContractAction(executeProposalContractProps)
 
   //  process proposal payment ---------------------------------------------------------------------------
   const processProposalPaymentContractProps: HookContractActionArgs = useMemo(
@@ -160,7 +160,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     [executeActionFn, dappActionCallback],
   )
 
-  const handleClickProcessPayment = useContractAction(processProposalPaymentContractProps)
+  const { action: handleClickProcessPayment } = useContractAction(processProposalPaymentContractProps)
 
   // proposal round vote action  ---------------------------------------------------------------------------
   const proposaRoundVoteContractProps: HookContractActionArgs = useMemo(
@@ -172,7 +172,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     [executeActionFn, dappActionCallback],
   )
 
-  const handleProposalRoundVote = useContractAction(proposaRoundVoteContractProps)
+  const { action: handleProposalRoundVote } = useContractAction(proposaRoundVoteContractProps)
 
   // handleVotingRoundVote action ---------------------------------------------------------------------------
   const votingRoundVoteActionFn = useCallback(
@@ -201,7 +201,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     [votingRoundVoteActionFn, dappActionCallback],
   )
 
-  const handleVotingRoundVote = useContractAction<VotingTypes>(handleVotingRoundContractProps)
+  const { actionWithArgs: handleVotingRoundVote } = useContractAction<VotingTypes>(handleVotingRoundContractProps)
 
   // Voting stuff
   const voteStatistics = useMemo<VoteStatistics>(

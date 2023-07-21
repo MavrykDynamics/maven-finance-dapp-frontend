@@ -78,22 +78,21 @@ export default function TimeRemaining() {
     dispatch(getGovernanceStorage())
   }, [dispatch])
 
-  const nextRoundContractProps: (executePastProposal: boolean) => HookContractActionArgs = useCallback(
-    (executePastProposal: boolean) => ({
+  const nextRoundContractProps: HookContractActionArgs<boolean> = useMemo(
+    () => ({
       actionType: START_NEXT_ROUND_ACTION,
-      actionFn: handleNextRoundActionFn.bind(null, executePastProposal),
+      actionFn: handleNextRoundActionFn,
       dappActionCallback,
     }),
     [dappActionCallback, handleNextRoundActionFn],
   )
 
   // same action with 2 different boolean values, so need 2 seperate fns to handle it
-  const handleNextRound = useContractAction(nextRoundContractProps(false))
-  const handleExecuteRound = useContractAction(nextRoundContractProps(true))
+  const { actionWithArgs: handleNextRound } = useContractAction<boolean>(nextRoundContractProps)
 
   const modalMoveNext = async () => {
     try {
-      await handleNextRound()
+      await handleNextRound(false)
       handleCloseModal()
     } catch (e) {
       const err = unknownToError(e)
@@ -103,7 +102,7 @@ export default function TimeRemaining() {
 
   const modalExecute = async () => {
     try {
-      await handleExecuteRound()
+      await handleNextRound(true)
       handleCloseModal()
     } catch (e) {
       const err = unknownToError(e)
