@@ -95,7 +95,7 @@ export const CandlestickChart = ({
         if (tickDateFormatter) {
           return tickDateFormatter(Number(time))
         }
-        return parseDate({ time: Number(time), timeFormat: 'HH:mm' })
+        return parseDate({ time: Number(time), timeFormat: 'MMM DD' })
       },
     })
 

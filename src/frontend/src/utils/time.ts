@@ -12,11 +12,25 @@ export function toHHMMSS(sec: number): string {
   return `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
 }
 
+/**
+ * @param date timestamp of the day
+ * @returns timestamp for the start of the day, if we passed 2023-06-19 18:05:23 it will retrun timestamp for 2023-06-19 00:00:00
+ */
 export const getDateStart = (date: string | number): number =>
   dayjs(date).hour(0).minute(0).second(0).millisecond(0).valueOf()
+
+/**
+ * @param date timestamp of the day
+ * @returns timestamp for the end of the day, if we passed 2023-06-19 18:05:23 it will retrun timestamp for 2023-06-19 23:59:59
+ */
 export const getDateEnd = (date: string | number): number =>
   dayjs(date).hour(23).minute(59).second(59).millisecond(999).valueOf()
 
+/**
+ * @param time timestamp of the day
+ * @param period period we want to check whether time is in
+ * @returns boolean value whether time in passed period
+ */
 export const checkWhetherTimeIsLastNdays = (time: number | string, period: number) =>
   dayjs().diff(time) <= ONE_DAY_IN_MS * (period - 1)
 
