@@ -24,6 +24,7 @@ export const getDoormanProviderReturnValue = ({
    * 1. if we subscribe to smvk & mvk history data and data is empty
    * 2. if we subscribe to balances and balances are empty
    * 3. if we subscribe to total supply and total supply is empty
+   * 4. if we don’t have active subs isLoading === true
    */
   const isLoading =
     (activeSubs[SMVK_HISTORY_SUB] && (mvkHistoryData === null || smvkHistoryData === null)) ||
