@@ -44,7 +44,7 @@ import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/Emergen
 // providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
@@ -57,7 +57,7 @@ import {
   MVK_BALANCE_SUB,
   MVK_TOTAL_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
-} from 'providers/StakeProvider/helpers/stake.consts'
+} from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
@@ -92,7 +92,7 @@ const DashboardPersonal = () => {
   } = useUserContext()
   const { changeSatellitesSubscriptionsList, isLoading: isSatellitesLoading } = useSatellitesContext()
   const { bug } = useToasterContext()
-  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useDoormanContext()
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)

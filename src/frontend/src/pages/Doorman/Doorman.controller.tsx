@@ -15,7 +15,7 @@ import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 
 // providers
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 
 // actions
 import { SMVK_TOKEN_ADDRESS, MVK_TOKEN_SYMBOL } from 'utils/constants'
@@ -28,7 +28,7 @@ import {
   MVK_TOTAL_SUB,
   SMVK_HISTORY_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
-} from 'providers/StakeProvider/helpers/stake.consts'
+} from 'providers/DoormanProvider/helpers/doorman.consts'
 import { DEFAULT_SATELLITES_ACTIVE_SUBS, SATELLITE_DATA_SUB } from 'providers/SatellitesProvider/satellites.const'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
@@ -51,7 +51,7 @@ export const Doorman = () => {
     totalSupply,
     isLoading: isDoormanLoading,
     changeStakingSubscriptionsList,
-  } = useStakeContext()
+  } = useDoormanContext()
 
   useEffect(() => {
     changeStakingSubscriptionsList({
