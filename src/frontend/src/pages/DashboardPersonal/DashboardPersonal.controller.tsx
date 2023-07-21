@@ -120,7 +120,7 @@ const DashboardPersonal = () => {
     [claimRewardsAction],
   )
 
-  const claimRewards = useContractAction(contractActionProps)
+  const { action: claimRewards } = useContractAction(contractActionProps)
 
   useEffect(() => {
     changeStakingSubscriptionsList({

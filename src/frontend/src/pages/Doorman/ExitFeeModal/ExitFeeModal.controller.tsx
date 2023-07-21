@@ -101,7 +101,7 @@ export const ExitFeeModal = ({
     [unstakeAction, inputData.amount, dappActionCallback, closePopup],
   )
 
-  const handleUnstake = useContractAction(contractActionProps)
+  const { action: handleUnstake } = useContractAction(contractActionProps)
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target

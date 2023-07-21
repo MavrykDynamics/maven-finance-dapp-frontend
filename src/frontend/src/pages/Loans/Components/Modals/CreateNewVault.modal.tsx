@@ -329,7 +329,7 @@ export const CreateNewVault = ({
     [createVaultAction, getNewVaultData],
   )
 
-  const createVaultHandler = useContractAction(createVaultActionProps)
+  const { action: createVaultHandler } = useContractAction(createVaultActionProps)
 
   // deposit action -------------
   const depositAction = useCallback(async () => {
@@ -391,7 +391,7 @@ export const CreateNewVault = ({
     [depositAction],
   )
 
-  const depositCollateralHandler = useContractAction(contractActionProps)
+  const { action: depositCollateralHandler } = useContractAction(contractActionProps)
 
   if (!data) return null
 

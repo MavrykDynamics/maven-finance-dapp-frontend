@@ -265,7 +265,7 @@ export const BecomeSatellite = () => {
     [registerAction, requestData],
   )
 
-  const handleRegister = useContractAction(registerContractActionProps)
+  const { action: handleRegister } = useContractAction(registerContractActionProps)
 
   // update action -------------
   const updateAction = useCallback(
@@ -292,7 +292,7 @@ export const BecomeSatellite = () => {
     [updateAction, requestData],
   )
 
-  const handleUpdate = useContractAction(updateContractActionProps)
+  const { action: handleUpdate } = useContractAction(updateContractActionProps)
 
   // Handlers for register/unregister and update data
   const handleRegisterOrUpdateSatellite = async () => {

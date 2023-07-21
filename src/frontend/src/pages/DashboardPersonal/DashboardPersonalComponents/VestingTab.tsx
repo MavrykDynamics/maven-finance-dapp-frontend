@@ -67,7 +67,7 @@ const VestingTab = () => {
     [vestingAction],
   )
 
-  const handleClaimVestingReward = useContractAction(contractActionProps)
+  const { action: handleClaimVestingReward } = useContractAction(contractActionProps)
 
   if (!vesteeRecord) return <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`} />
   const { vestingMonth, totalAllocated, totalRemainded, rewardPerMonth, nextRewardDate, lastClaimDate } = vesteeRecord

@@ -162,7 +162,7 @@ export const ChangeBaker = ({
     [changeBakerActionCb],
   )
 
-  const updateBakerHandler = useContractAction(contractActionProps)
+  const { action: updateBakerHandler } = useContractAction(contractActionProps)
 
   return (
     <PopupContainer onClick={closePopup} show={show}>

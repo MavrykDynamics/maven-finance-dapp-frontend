@@ -214,7 +214,7 @@ export const StakeUnstakeView = ({
     [dappCallback, inputData.amount, stakeAction],
   )
 
-  const handleStake = useContractAction(contractActionProps)
+  const { action: handleStake } = useContractAction(contractActionProps)
 
   // compound action ---------------------------
 
@@ -239,7 +239,7 @@ export const StakeUnstakeView = ({
     [rewardsCompoundAction],
   )
 
-  const handleCompound = useContractAction(compoundContractActionProps)
+  const { action: handleCompound } = useContractAction(compoundContractActionProps)
 
   const handleFocus = () => {
     if (inputData.amount === '0') {
