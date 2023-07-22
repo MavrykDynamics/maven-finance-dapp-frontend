@@ -32,6 +32,7 @@ import {
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITES_DATA_ALL_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 
 const itemsForDropDown = [
@@ -60,7 +61,7 @@ const SatelliteNodes = () => {
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_ALL_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
 

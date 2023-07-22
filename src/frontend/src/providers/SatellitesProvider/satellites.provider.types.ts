@@ -17,41 +17,36 @@ import {
   REGISTER_SATELLITE_ACTION,
   UNREGISTER_SATELLITE_ACTION,
   UPDATE_SATELLITE_ACTION,
+  SATELLITES_DATA_ACTIVE_SUB,
+  SATELLITES_DATA_ALL_SUB,
+  SATELLITES_DATA_ORACLES_SUB,
+  SATELLITE_ALL_ADDRESSES_SUB,
+  SATELLITES_DATA_SINGLE_SUB,
 } from './satellites.const'
 
 export type SatelliteRecordType = NonNullable<ReturnType<typeof normallizeSatellite>>
 export type SatelliteMapper = Record<string, SatelliteRecordType>
 
-export type SatellitesContext = {
+export type SatellitesContextState = {
   // data
-  satelliteMapper: SatelliteMapper
-  activeSatellitesIds: string[]
-  allSatellitesIds: string[]
-  oraclesIds: string[]
+  satelliteMapper: SatelliteMapper | null
+  activeSatellitesIds: string[] | null
+  allSatellitesIds: string[] | null
+  oraclesIds: string[] | null
 
   // values to calc satellite metrix
-  proposalsAmount: number
-  satelliteGovActionsAmount: number
-  finRequestsAmount: number
+  proposalsAmount: number | null
+  satelliteGovActionsAmount: number | null
+  finRequestsAmount: number | null
+}
 
-  // additional data
+export type SatellitesContext = DeepNonNullable<SatellitesContextState> & {
   isLoading: boolean
 
   // api
   setSatelliteAddressToSubsctibe: (satelliteAddress: string | null) => void
   changeSatellitesSubscriptionsList: (skips: Partial<SatellitesSubsRecordType>) => void
 }
-
-export type SatellitesCtxState = Pick<
-  SatellitesContext,
-  | 'satelliteMapper'
-  | 'activeSatellitesIds'
-  | 'allSatellitesIds'
-  | 'oraclesIds'
-  | 'proposalsAmount'
-  | 'satelliteGovActionsAmount'
-  | 'finRequestsAmount'
->
 
 // Satellite status
 export type SatelliteIndexerStatusType = z.infer<typeof satelliteStatusSchema> | typeof INACTIVE_SATELLITE_STATUS
@@ -79,15 +74,6 @@ export type SatelliteGovernanceTransfer = {
   token: TokenType
 }
 
-export type SatellitesSubsSkipsType = {
-  skipSatelliteData?: string
-  skipGovProposal?: string
-  skipEmergencyGov?: string
-  skipFinancialRequest?: string
-  skipAggregatorOracles?: string
-  skipSatelliteCycle?: string
-}
-
 export type SatellitesStatisticsSubsSkipsType = {
   skipOracleCount?: boolean
   skipActiveSatellitesCount?: boolean
@@ -96,7 +82,17 @@ export type SatellitesStatisticsSubsSkipsType = {
 }
 
 export type SatellitesSubsType = typeof SATELLITE_DATA_SUB | typeof SATELLITE_PARTICIPATION_DATA_SUB
-export type SatellitesSubsRecordType = Record<SatellitesSubsType, boolean>
+export type SatellitesDataDubsType =
+  | typeof SATELLITES_DATA_ACTIVE_SUB
+  | typeof SATELLITES_DATA_ALL_SUB
+  | typeof SATELLITES_DATA_ORACLES_SUB
+  | typeof SATELLITES_DATA_SINGLE_SUB
+  | null
+export type SatellitesSubsRecordType = {
+  [SATELLITE_DATA_SUB]: SatellitesDataDubsType
+  [SATELLITE_PARTICIPATION_DATA_SUB]: boolean
+  [SATELLITE_ALL_ADDRESSES_SUB]: boolean
+}
 
 export type SatelliteActionsType =
   | typeof DELEGATE_ACTION

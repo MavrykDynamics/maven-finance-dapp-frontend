@@ -1,9 +1,27 @@
 import { calcPersent } from 'utils/calcFunctions'
 
-import { RESPONDED_ORACLE_STATUS, NO_RESPONSE_ORACLE_STATUS, NOT_AN_ORACLE_ORACLE_STATUS } from '../satellites.const'
+import {
+  RESPONDED_ORACLE_STATUS,
+  NO_RESPONSE_ORACLE_STATUS,
+  NOT_AN_ORACLE_ORACLE_STATUS,
+  EMPTY_SATELLITES_CONTEXT,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+  SATELLITE_DATA_SUB,
+  SATELLITES_DATA_ORACLES_SUB,
+  SATELLITES_DATA_ACTIVE_SUB,
+  SATELLITES_DATA_ALL_SUB,
+  SATELLITES_DATA_SINGLE_SUB,
+} from '../satellites.const'
 
-import { SatelliteOracleStatusType, SatelliteRecordType } from '../satellites.provider.types'
+import {
+  SatelliteOracleStatusType,
+  SatelliteRecordType,
+  SatellitesContext,
+  SatellitesContextState,
+  SatellitesSubsRecordType,
+} from '../satellites.provider.types'
 import { MavrykTheme } from 'styles/interfaces'
+import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 
 /**
  *
@@ -81,4 +99,114 @@ export function getTotalDelegatedMVK(
       Number(satellitesMapper[currentAddress].totalDelegatedAmount + satellitesMapper[currentAddress].sMvkBalance),
     0,
   )
+}
+
+export const getSatellitesProviderReturnValue = ({
+  satellitesCtxState,
+  satelliteAddressToSubsctibe,
+  activeSubs,
+  changeSatellitesSubscriptionsList,
+  setSatelliteAddressToSubsctibe,
+}: {
+  satellitesCtxState: SatellitesContextState
+  satelliteAddressToSubsctibe: string | null
+  activeSubs: SatellitesSubsRecordType
+  changeSatellitesSubscriptionsList: SatellitesContext['changeSatellitesSubscriptionsList']
+  setSatelliteAddressToSubsctibe: SatellitesContext['setSatelliteAddressToSubsctibe']
+}) => {
+  const {
+    satelliteGovActionsAmount,
+    finRequestsAmount,
+    proposalsAmount,
+    satelliteMapper,
+    activeSatellitesIds,
+    allSatellitesIds,
+    oraclesIds,
+  } = satellitesCtxState
+  const commonToReturn = {
+    setSatelliteAddressToSubsctibe,
+    changeSatellitesSubscriptionsList,
+  }
+
+  const isSatelliteParticipationEmpty =
+    satelliteGovActionsAmount === null || finRequestsAmount === null || proposalsAmount === null
+
+  // check for loading values to calc satellite participation
+  const isLoadingSatelliteParticipation =
+    (activeSubs[SATELLITE_PARTICIPATION_DATA_SUB] && isSatelliteParticipationEmpty) ||
+    (!activeSubs[SATELLITE_PARTICIPATION_DATA_SUB] && isSatelliteParticipationEmpty)
+
+  // checking whether we loading all satellites
+  const isLoadingAllSatellites =
+    activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ALL_SUB &&
+    Object.keys(satelliteMapper ?? []).length !== allSatellitesIds?.length
+
+  // check if we loading single satellite NOTE: checking whether satellite exists should be on component, not in provider
+  const isLoadingSingleSatellite =
+    activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_SINGLE_SUB &&
+    satelliteAddressToSubsctibe &&
+    !satelliteMapper?.[satelliteAddressToSubsctibe]
+
+  // when we first visit page it will return empty satellites ctx and then apge will subscribe, so we need this cond to prevent empty page blinking
+  const isAnySatellitesTypeInitialLoading =
+    (activeSubs[SATELLITE_DATA_SUB] && !satelliteMapper) || (!activeSubs[SATELLITE_DATA_SUB] && !satelliteMapper)
+
+  /**
+   * isLoading indicates whethet provider is loading smth, so we need to show loader, not load in background, cases:
+   * 1. handling initial loading, when provider returned value before component subscribed
+   * 2. handling oracles satellites loading
+   * 3. handling active satellites loading
+   * 4. handling single satellite loading
+   * 5. handling all satellites loading
+   * 6. handling satellite participation loading
+   */
+  const isLoading =
+    isAnySatellitesTypeInitialLoading ||
+    (activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ORACLES_SUB && !oraclesIds) ||
+    (activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ACTIVE_SUB && !activeSatellitesIds) ||
+    isLoadingSingleSatellite ||
+    isLoadingAllSatellites ||
+    isLoadingSatelliteParticipation
+
+  // TODO: loading satellites debug log, remove right before merge to dev
+  // console.log({
+  //   1: activeSubs[SATELLITE_DATA_SUB] && !satelliteMapper,
+  //   2: !activeSubs[SATELLITE_DATA_SUB] && !satelliteMapper,
+  //   3:
+  //     activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_SINGLE_SUB &&
+  //     satelliteAddressToSubsctibe &&
+  //     !satelliteMapper?.[satelliteAddressToSubsctibe],
+  //   4: activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ORACLES_SUB && !oraclesIds,
+  //   5: activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ACTIVE_SUB && !activeSatellitesIds,
+  //   6:
+  //     activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ALL_SUB &&
+  //     Object.keys(satelliteMapper ?? []).length !== allSatellitesIds?.length,
+  //   7: activeSubs[SATELLITE_PARTICIPATION_DATA_SUB] && isSatelliteParticipationEmpty,
+  //   8: !activeSubs[SATELLITE_PARTICIPATION_DATA_SUB] && isSatelliteParticipationEmpty,
+  //   activeSubs,
+  //   satelliteAddressToSubsctibe,
+  //   satellitesCtxState,
+  //   isSatelliteSubLoading,
+  //   isLoading,
+  // })
+
+  // if provider is loading smth return loading true and default empty context (nonNullable)
+  if (isLoading) {
+    return {
+      ...commonToReturn,
+      ...EMPTY_SATELLITES_CONTEXT,
+      isLoading: true,
+    }
+  }
+
+  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
+  const nonNullableProviderValue = replaceNullValuesWithDefault<SatellitesContextState>(
+    satellitesCtxState,
+    EMPTY_SATELLITES_CONTEXT,
+  )
+  return {
+    ...commonToReturn,
+    ...nonNullableProviderValue,
+    isLoading: false,
+  }
 }

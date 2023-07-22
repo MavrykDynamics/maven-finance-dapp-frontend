@@ -35,7 +35,7 @@ export const EarnBorrowChart = ({ data, isBorrow }: Props) => {
 
   const chartData: ChartDataType = {
     type: isGraph ? HISTOGRAM_CHART_TYPE : AREA_CHART_TYPE,
-    plots: isGraph ? data.volume : data.total,
+    plots: (isGraph ? data.volume : data.total) ?? [],
   }
 
   const showChart = chartData.plots.length >= numberOfItemsToDisplay

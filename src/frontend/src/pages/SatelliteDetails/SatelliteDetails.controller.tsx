@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 // context
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
@@ -32,6 +32,8 @@ import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers
 // consts
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITES_DATA_SINGLE_SUB,
+  SATELLITE_ALL_ADDRESSES_SUB,
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITE_VOTES_MAPPER,
@@ -39,6 +41,8 @@ import {
 
 // types
 import { SatelliteVotesType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { apolloClient } from 'apollo'
+import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
 
 const SatellitesVotingHistory = ({
   satelliteVotes: { proposalsVotes, satelliteActionVotes, financialRequestsVotes },
@@ -97,10 +101,13 @@ export const SatelliteDetails = () => {
     finRequestsAmount,
   })
 
+  const [satelliteAddressError, setSatelliteAddressError] = useState(false)
+
   useEffect(() => {
     changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+      [SATELLITE_ALL_ADDRESSES_SUB]: true,
     })
 
     return () => {
@@ -109,7 +116,25 @@ export const SatelliteDetails = () => {
   }, [])
 
   useEffect(() => {
-    setSatelliteAddressToSubsctibe(satelliteId)
+    setSatelliteAddressError(false)
+
+    const checkWhetherSatelliteExists = async () => {
+      const satelliteFromGql = await apolloClient.query({
+        query: CHECK_WHETHER_SATELLITE_EXISTS,
+        variables: {
+          userAddress: satelliteId,
+        },
+      })
+
+      if (satelliteFromGql.data.satellite[0]?.user.address === satelliteId) {
+        setSatelliteAddressToSubsctibe(satelliteId)
+      } else {
+        setSatelliteAddressError(true)
+      }
+    }
+
+    checkWhetherSatelliteExists()
+
     return () => setSatelliteAddressToSubsctibe(null)
   }, [satelliteId])
 
@@ -122,7 +147,7 @@ export const SatelliteDetails = () => {
         <div>
           <SatellitePagination />
 
-          {isSatellitesLoading && !currentSatellite ? (
+          {isSatellitesLoading && !currentSatellite && !satelliteAddressError ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellite profile data</div>

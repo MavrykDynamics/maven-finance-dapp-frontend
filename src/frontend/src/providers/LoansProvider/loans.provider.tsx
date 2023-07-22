@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
-import { LoansContext, LoansContextState, LoansSubsRecordType, LoansSubsType } from './loans.provider.types'
+import { LoansContext, LoansContextState, LoansSubsRecordType } from './loans.provider.types'
 import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 

@@ -2,14 +2,24 @@ import { OperationVariables, TypedDocumentNode } from '@apollo/client'
 import { DocumentNode } from 'graphql'
 import { gql as apolloGql } from '@apollo/client'
 import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
+import { gql } from 'utils/__generated__'
 
 export function getSatelliteDataSubscription(
   userAddress: string | null,
+  isOnlyActive?: boolean,
+  isOnlyOracles?: boolean,
 ): DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables> {
-  const filteredCondition = `user: {address: {${userAddress ? '_eq' : '_neq'}: $userAddress}}`
+  const filteredByUserAddressCondition = `user: {address: {${userAddress ? '_eq' : '_neq'}: $userAddress}}`
+  const activeSatellitesOnlyFilter = isOnlyActive ? `currently_registered: {_eq: true}, status: {_eq: "0"}` : ''
+  const activeOraclesOnlyFilter = isOnlyOracles
+    ? `user: {aggregator_oracles_aggregate: {count: {filter: {observations_aggregate: {count: {predicate: {_gte: 1}}}}, predicate: {_gte: 1}}}}`
+    : ''
+  const filters = `${filteredByUserAddressCondition} ${
+    activeSatellitesOnlyFilter ? `, ${activeSatellitesOnlyFilter}` : ''
+  } ${activeOraclesOnlyFilter ? `, ${activeOraclesOnlyFilter}` : ''}`
 
   return apolloGql`subscription satelliteDataSub($userAddress: String!) {
-    satellite(where: {registration_timestamp: {_is_null: false}, ${filteredCondition}}, order_by: {currently_registered: desc}) {
+    satellite(where: {registration_timestamp: {_is_null: false}, ${filters}}, order_by: {currently_registered: desc}) {
       description
       fee
       image
@@ -150,6 +160,15 @@ export function getSatelliteDataSubscription(
       }
     }
   }
-  
   ` as DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables>
 }
+
+export const CHECK_WHETHER_SATELLITE_EXISTS = gql(`
+query checkWitherSatelliteExists($userAddress: String = "") {
+  satellite(where: {registration_timestamp: {_is_null: false}, user: {address: {_eq: $userAddress}}}) {
+    user {
+      address
+    }
+  }
+}
+`)
