@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { apolloClient } from 'apollo'
 
 // context
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
@@ -38,11 +39,11 @@ import {
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITE_VOTES_MAPPER,
 } from 'providers/SatellitesProvider/satellites.const'
+import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
 
 // types
 import { SatelliteVotesType } from 'providers/SatellitesProvider/satellites.provider.types'
-import { apolloClient } from 'apollo'
-import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 const SatellitesVotingHistory = ({
   satelliteVotes: { proposalsVotes, satelliteActionVotes, financialRequestsVotes },
@@ -83,6 +84,7 @@ const SatellitesVotingHistory = ({
 
 export const SatelliteDetails = () => {
   const { satelliteId } = useParams<{ satelliteId: string }>()
+  const { bug } = useToasterContext()
   const {
     satelliteMapper,
     proposalsAmount,
@@ -122,9 +124,14 @@ export const SatelliteDetails = () => {
       const satelliteFromGql = await apolloClient.query({
         query: CHECK_WHETHER_SATELLITE_EXISTS,
         variables: {
-          userAddress: satelliteId,
+          userAddress: satelliteId ?? '',
         },
       })
+
+      if (satelliteFromGql.error) {
+        bug('Loading satellite error, please, try to reload page')
+        return
+      }
 
       if (satelliteFromGql.data.satellite[0]?.user.address === satelliteId) {
         setSatelliteAddressToSubsctibe(satelliteId)

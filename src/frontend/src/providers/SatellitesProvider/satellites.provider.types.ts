@@ -81,7 +81,6 @@ export type SatellitesStatisticsSubsSkipsType = {
   skipOracleRewardsTotal?: boolean
 }
 
-export type SatellitesSubsType = typeof SATELLITE_DATA_SUB | typeof SATELLITE_PARTICIPATION_DATA_SUB
 export type SatellitesDataDubsType =
   | typeof SATELLITES_DATA_ACTIVE_SUB
   | typeof SATELLITES_DATA_ALL_SUB
