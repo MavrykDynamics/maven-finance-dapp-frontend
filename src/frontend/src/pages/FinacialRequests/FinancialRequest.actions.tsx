@@ -11,11 +11,6 @@ import {
   TOASTER_SUCCESS,
   TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
 } from 'app/App.components/Toaster/Toaster.constants'
-import {
-  FINANCIAL_REQUESTS_STORAGE_QUERY,
-  FINANCIAL_REQUESTS_STORAGE_QUERY_NAME,
-  FINANCIAL_REQUESTS_STORAGE_QUERY_VARIABLE,
-} from 'gql/queries/getFinancialRequestStorage'
 
 import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
@@ -25,25 +20,6 @@ import { normalizeFinancialRequests } from 'providers/FinancialRequestsProvider/
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 export const GET_FINANCIAL_REQUEST_STORAGE = 'GET_FINANCIAL_REQUEST_STORAGE'
-export const getFinancialRequestStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
-  try {
-    const storage = await fetchFromIndexer(
-      FINANCIAL_REQUESTS_STORAGE_QUERY,
-      FINANCIAL_REQUESTS_STORAGE_QUERY_NAME,
-      FINANCIAL_REQUESTS_STORAGE_QUERY_VARIABLE,
-    )
-
-    const { financialRequestMapper, financialRequestsIds } = normalizeFinancialRequests(storage)
-
-    dispatch({
-      type: GET_FINANCIAL_REQUEST_STORAGE,
-      financialRequestMapper,
-      financialRequestsIds,
-    })
-  } catch (error) {
-    dispatch(showToaster(TOASTER_ERROR, 'Error while loading financial requests', 'Please try to reload page'))
-  }
-}
 
 export const votingFinancialRequestVote =
   (vote: string, requestId: number) => async (dispatch: AppDispatch, getState: GetState) => {
@@ -81,7 +57,7 @@ export const votingFinancialRequestVote =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(getFinancialRequestStorage())
+            // await dispatch(getFinancialRequestStorage())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Voting done', ACTION_COMPLETION_MESSAGE_TEXT))

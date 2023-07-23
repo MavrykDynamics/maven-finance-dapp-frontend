@@ -51,9 +51,9 @@ const FinancialRequestsProvider = ({ children }: Props) => {
       if (!data) return
       updateFinRequestsData(data, FIN_REQUSTS_ONGOING)
     },
-    variables: {
-      timestamp: ISOTimestamp,
-    },
+    // variables: {
+    //   currentTime: ISOTimestamp,
+    // },
     onError: (error) => handleSubError(error, ONGOING_FIN_REQUESTS_SUB),
     shouldResubscribe: true,
   })
@@ -64,6 +64,9 @@ const FinancialRequestsProvider = ({ children }: Props) => {
       if (!data) return
       updateFinRequestsData(data, FIN_REQUSTS_PAST)
     },
+    // variables: {
+    //   currentTime: ISOTimestamp,
+    // },
     onError: (error) => handleSubError(error, PAST_FIN_REQUESTS_SUB),
     shouldResubscribe: true,
   })
