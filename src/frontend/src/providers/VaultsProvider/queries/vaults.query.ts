@@ -26,7 +26,7 @@ const getUserVaultsQueryFilters = (
     }
   }
 
-  return `${VAULT_OPEN_FILTER}`
+  return `${VAULT_OPEN_FILTER} , owner: {address: {_neq: $userAddress}}`
 }
 
 export function getUserVaultsSubscription({

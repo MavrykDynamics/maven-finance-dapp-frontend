@@ -118,12 +118,14 @@ export const SatelliteDetails = () => {
     }
   }, [])
 
-  const handleCheckSatelliteExistanseError = () => {
-    bug('Loading satellite error, please, try to reload page')
+  const handleCheckSatelliteExistanseError = (msg: string) => {
+    bug(msg)
     setSatelliteAddressError(true)
   }
 
   useLayoutEffect(() => {
+    if (satelliteId && satelliteMapper[satelliteId]) return
+
     setSatelliteAddressError(false)
     setIsSatelliteExistanseLoading(true)
 
@@ -141,9 +143,9 @@ export const SatelliteDetails = () => {
           return
         }
 
-        handleCheckSatelliteExistanseError()
+        handleCheckSatelliteExistanseError(`Satellite with address ${satelliteId} does not exist`)
       } catch (e) {
-        handleCheckSatelliteExistanseError()
+        handleCheckSatelliteExistanseError('Loading satellite error, please, try to reload page')
       } finally {
         setIsSatelliteExistanseLoading(false)
       }

@@ -1,5 +1,5 @@
 import { ApolloError, useSubscription } from '@apollo/client'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 
 // context
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -30,36 +30,20 @@ type Props = {
   children: React.ReactNode
 }
 
+/**
+ * NOTES:
+ *
+ * Single market sub: need to use SATELLITES_DATA_SINGLE_SUB sub type along with providing satellite addres
+ * via setSatelliteAddressToSubsctibe, if this address is from indexer (userAddress, when isSatelliteTrue, or satelliteDelegatedTo)
+ * you don't need to check whether satellite exists, if address can be modified by user, or we not sure whether satellite exists, we need to check it first
+ * with apolloClient and CHECK_WHETHER_SATELLITE_EXISTS query, othervise if satellite is not exists it will show infinity loader
+ */
 export const LoansProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
-
-  const [isMarketLoading, setIsMarketLoading] = useState(false)
 
   const [activeSubs, setActiveSubs] = useState<LoansSubsRecordType>(DEFAULT_LOANS_ACTIVE_SUBS)
   const [marketAddressToSubscribe, setMarketAddressToSubscribe] = useState<null | TokenAddressType>(null)
   const [loansCtxState, setLoansCtxState] = useState<LoansContextState>(DEFAULT_LOANS_CONTEXT)
-
-  /**
-   * need to handle market loading status manually cun on queyry variable change it resets the loading status, in some cases it shows loading instead of already loaded data
-   * we need to show loader for market metadata in 2 cases:
-   *
-   *    1. we are loading single market, whose data is not in context yet
-   *    2. markets context provider have data for less amount of satellites, that are exists
-   *
-   * NOTE: loader will be shown only when we set or unset specific satellite address
-   **/
-  useEffect(() => {
-    const { marketsAddresses, marketsMapper, allMarketsAddresses } = loansCtxState
-    if (!marketsAddresses || !allMarketsAddresses || !marketsMapper) return
-
-    const isLoadingNotLoadedSingleMarket = marketAddressToSubscribe && !marketsMapper[marketAddressToSubscribe]
-    const isLoadingAllSatellitesMetadata =
-      !marketAddressToSubscribe && marketsAddresses.length !== allMarketsAddresses.length
-
-    if (activeSubs[LOANS_MARKETS_DATA] && (isLoadingNotLoadedSingleMarket || isLoadingAllSatellitesMetadata)) {
-      setIsMarketLoading(true)
-    }
-  }, [marketAddressToSubscribe])
 
   const handleSubError = (error: ApolloError, subName: string) => {
     console.error(`${subName} query error: `, error)
@@ -121,8 +105,6 @@ export const LoansProvider = ({ children }: Props) => {
       marketsMapper: { ...prev.marketsMapper, ...newMarkets },
       marketsAddresses: Array.from(new Set([...(prev?.marketsAddresses ?? []), ...Object.keys(newMarkets)])),
     }))
-
-    if (isMarketLoading) setIsMarketLoading(false)
   }
 
   const changeLoansSubscriptionsList = (newSkips: Partial<LoansSubsRecordType>) => {
@@ -133,16 +115,14 @@ export const LoansProvider = ({ children }: Props) => {
     () =>
       getLoansProviderReturnValue({
         loansCtxState,
-        isMarketLoading,
+        marketAddressToSubscribe,
         activeSubs,
         changeLoansSubscriptionsList,
         setMarketAddressToSubscribe,
       }),
-    [loansCtxState, activeSubs, isMarketLoading],
+    [loansCtxState, activeSubs, marketAddressToSubscribe],
   )
 
-  // TODO: debug log, remove when no need
-  console.log('loans', { providerValue, activeSubs, loansCtxState })
   return <loansContext.Provider value={providerValue}>{children}</loansContext.Provider>
 }
 
