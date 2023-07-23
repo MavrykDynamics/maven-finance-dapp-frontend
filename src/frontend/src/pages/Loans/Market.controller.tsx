@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useHistory, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
+import { apolloClient } from 'apollo'
 
 // const
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
@@ -39,14 +40,13 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   VAULTS_DATA,
   VAULTS_USER_ALL,
 } from 'providers/VaultsProvider/vaults.provider.consts'
-import { apolloClient } from 'apollo'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { CHECK_WHETHER_MARKET_EXISTS } from 'providers/LoansProvider/queries/loansMarkets.query'
 
 export const Market = () => {
@@ -94,12 +94,13 @@ export const Market = () => {
     setMarketAddressError(true)
   }
 
+  // check whether market exists, cuz address is stored in url and user can change it
   useLayoutEffect(() => {
     if (currentMarketAddress && marketsMapper[currentMarketAddress]) return
 
-    setMarketAddressToSubscribe(currentMarketAddress)
-    setIsMarketExistanseLoading(true)
+    // renew error flag
     setMarketAddressError(false)
+    setIsMarketExistanseLoading(true)
 
     const checkWhetherMarketExists = async () => {
       try {
@@ -355,7 +356,7 @@ export const Market = () => {
       ) : (
         <EmptyContainer>
           <img src="/images/not-found.svg" alt="No market to show" />
-          <figcaption>Market with address ({currentMarketAddress}) does not exist</figcaption>
+          <figcaption>Market with address "{currentMarketAddress}" does not exist</figcaption>
         </EmptyContainer>
       )}
     </Page>

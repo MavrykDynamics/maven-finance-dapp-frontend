@@ -2,7 +2,7 @@ import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/gra
 import { LoansContext, LoansContextState, LoansSubsRecordType } from '../loans.provider.types'
 
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-import { EMPTY_LOANS_CONTEXT } from './loans.const'
+import { EMPTY_LOANS_CONTEXT, LOANS_CONFIG, LOANS_MARKETS_DATA } from './loans.const'
 
 // HELPER TO GET OPERATION NAME BY ITS TYPE
 export const getDescrByType = (type: number) => {
@@ -84,7 +84,7 @@ export const getLoansProviderReturnValue = ({
 
   const isLoadingSingleMarket = marketAddressToSubscribe && !marketsMapper?.[marketAddressToSubscribe]
   const isLoadingAllMarkets = !marketAddressToSubscribe && marketsAddresses?.length !== allMarketsAddresses?.length
-
+  const isMarketsConfigEmpty = marketsMapper === null || allMarketsAddresses === null
   /**
    * isLoading indicates whethet provider is loading smth, so we need to show loader, not load in background, cases:
    * 1,2. if we switch between markets, subscribed to 1 cetrain market and it's not loaded yet
@@ -95,12 +95,9 @@ export const getLoansProviderReturnValue = ({
   const isLoading =
     isLoadingSingleMarket ||
     isLoadingAllMarkets ||
-    (activeSubs['loansMarkets'] && (marketsMapper === null || allMarketsAddresses === null)) ||
-    (activeSubs['loansConfig'] && config === null) ||
-    (!activeSubs['loansConfig'] &&
-      config === null &&
-      !activeSubs['loansMarkets'] &&
-      (marketsMapper === null || allMarketsAddresses === null))
+    (activeSubs[LOANS_MARKETS_DATA] && isMarketsConfigEmpty) ||
+    (activeSubs[LOANS_CONFIG] && config === null) ||
+    (!activeSubs[LOANS_CONFIG] && config === null && !activeSubs[LOANS_CONFIG] && isMarketsConfigEmpty)
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {

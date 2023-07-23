@@ -4,6 +4,7 @@ import { apolloClient } from 'apollo'
 
 // context
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // view
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
@@ -43,7 +44,6 @@ import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/que
 
 // types
 import { SatelliteVotesType } from 'providers/SatellitesProvider/satellites.provider.types'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 const SatellitesVotingHistory = ({
   satelliteVotes: { proposalsVotes, satelliteActionVotes, financialRequestsVotes },
@@ -123,9 +123,11 @@ export const SatelliteDetails = () => {
     setSatelliteAddressError(true)
   }
 
+  // check whether satellite exists, cuz address is stored in url and user can change it
   useLayoutEffect(() => {
     if (satelliteId && satelliteMapper[satelliteId]) return
 
+    // renew error flag
     setSatelliteAddressError(false)
     setIsSatelliteExistanseLoading(true)
 
@@ -233,7 +235,7 @@ export const SatelliteDetails = () => {
           ) : (
             <EmptyContainer>
               <img src="/images/not-found.svg" alt="No satellite to show" />
-              <figcaption>Satellite with address ({satelliteId}) does not exist</figcaption>
+              <figcaption>Satellite with address "{satelliteId}" does not exist</figcaption>
             </EmptyContainer>
           )}
         </div>
