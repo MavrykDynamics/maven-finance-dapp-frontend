@@ -17,11 +17,13 @@ import { CouncilFormStyled } from './CouncilForm.style'
 import { useFinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import {
   DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS,
   ONGOING_FIN_REQUESTS_SUB,
+  PAST_FIN_REQUESTS_SUB,
 } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
+import { SPINNER_LOADER_MEDIUM } from 'app/App.components/Loader/loader.const'
 
 export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()
@@ -35,6 +37,7 @@ export const CouncilFormDropFinancialRequest = () => {
   useEffect(() => {
     changeFinancialRequestsSubscriptionList({
       [ONGOING_FIN_REQUESTS_SUB]: true,
+      [PAST_FIN_REQUESTS_SUB]: true,
     })
 
     return () => {
@@ -77,11 +80,10 @@ export const CouncilFormDropFinancialRequest = () => {
     setChosenDdItem(foundItem)
   }
 
-  // TODO CHECK loader stuff (it wan not there before)
+  // TODO maybe get data when council is loading and remove this spinner
   return isLoading ? (
     <DataLoaderWrapper>
-      <ClockLoader width={150} height={150} />
-      <div className="text">Loading financial requests</div>
+      <SpinnerCircleLoaderStyled className={SPINNER_LOADER_MEDIUM} />
     </DataLoaderWrapper>
   ) : (
     <CouncilFormStyled onSubmit={handleSubmit}>

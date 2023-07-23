@@ -80,7 +80,6 @@ export const getFinRequestsProviderReturnValue = ({
   activeSubs,
 }: DoormanContextReturnValueArgs) => {
   const { pastFinancialRequestsIds, ongoingFinancialRequestsIds, financialRequestsMapper } = finRequestsCtxState
-
   const commonToReturn = {
     changeFinancialRequestsSubscriptionList,
   }
@@ -93,6 +92,8 @@ export const getFinRequestsProviderReturnValue = ({
     (activeSubs[PAST_FIN_REQUESTS_SUB] && arePastRequestsNullable) ||
     (!activeSubs[ONGOING_FIN_REQUESTS_SUB] && areOngoingRequestsNullable) ||
     (!activeSubs[PAST_FIN_REQUESTS_SUB] && arePastRequestsNullable)
+
+  console.log(isLoading, 'isLoading')
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {

@@ -1,5 +1,5 @@
 import { ApolloError, useSubscription } from '@apollo/client'
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   FinancialRequestType,
   FinancialRequestsContext,
@@ -35,9 +35,13 @@ const FinancialRequestsProvider = ({ children }: Props) => {
   const [finRequestsCtxState, setFinRequestsCtxState] =
     useState<FinancialRequestsStateType>(DEFAULT_FINANCIAL_REQUESTS_CTX)
   const [activeSubs, setActiveSubs] = useState<FinancialRequestsSubsRecordType>(DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS)
-  const [ISOTimestamp, setISOTimestamp] = useState(dayjs().toISOString())
+  const currentTimeRef = useRef(dayjs().toISOString())
 
   console.log(finRequestsCtxState, '------------------------------')
+
+  useEffect(() => {
+    currentTimeRef.current = dayjs().toISOString()
+  }, [activeSubs])
 
   const handleSubError = (error: ApolloError, subName: FinancialRequestsSubsType) => {
     console.error(`${subName} query error: `, error)
@@ -51,9 +55,9 @@ const FinancialRequestsProvider = ({ children }: Props) => {
       if (!data) return
       updateFinRequestsData(data, FIN_REQUSTS_ONGOING)
     },
-    // variables: {
-    //   currentTime: ISOTimestamp,
-    // },
+    variables: {
+      currentTime: currentTimeRef.current,
+    },
     onError: (error) => handleSubError(error, ONGOING_FIN_REQUESTS_SUB),
     shouldResubscribe: true,
   })
@@ -64,9 +68,9 @@ const FinancialRequestsProvider = ({ children }: Props) => {
       if (!data) return
       updateFinRequestsData(data, FIN_REQUSTS_PAST)
     },
-    // variables: {
-    //   currentTime: ISOTimestamp,
-    // },
+    variables: {
+      currentTime: currentTimeRef.current,
+    },
     onError: (error) => handleSubError(error, PAST_FIN_REQUESTS_SUB),
     shouldResubscribe: true,
   })
@@ -81,8 +85,6 @@ const FinancialRequestsProvider = ({ children }: Props) => {
       ],
       financialRequestsMapper: { ...prev.financialRequestsMapper, ...financialRequestMapper },
     }))
-
-    // setISOTimestamp(dayjs().toISOString())
   }
 
   const changeFinancialRequestsSubscriptionList = (newSkips: Partial<FinancialRequestsSubsRecordType>) => {

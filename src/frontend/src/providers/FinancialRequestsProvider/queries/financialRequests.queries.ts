@@ -8,17 +8,15 @@ export const SUBSCRIPTION_FINANCIAL_REQUESTS_STORAGE = ''
 
 export function getFinancialRequestsStorageSubscription({
   requestType,
-  timestamp,
 }: {
   requestType: FinancialRequestType | null
-  timestamp?: string
 }): DocumentNode | TypedDocumentNode<GetFinRequestsStorageSubscription, OperationVariables> {
-  // const timeOperator = requestType === FIN_REQUSTS_ONGOING ? '_gte' : '_lte'
-  // const filterByrequestPast = `order_by: {requested_datetime: desc}, where: {_or: [{executed: {_eq: false}, expiration_datetime: {${timeOperator}: $timestamp}}, {executed: {_eq: true}, execution_datetime: {${timeOperator}: $timestamp}}]}`
+  const timeOperator = requestType === FIN_REQUSTS_ONGOING ? '_gte' : '_lte'
+  const filteredQuery = `_or: [{executed: {_eq: false}, expiration_datetime: {${timeOperator}: $currentTime}}, {executed: {_eq: true}, execution_datetime: {${timeOperator}: $currentTime}}]`
 
   return gql(`
-    subscription getFinRequestsStorage {
-      governance_financial_request {
+   subscription getFinRequestsStorage($currentTime: timestamptz = "1970-01-01T00:00:00.000Z") {
+     governance_financial_request(order_by: {requested_datetime: desc}, where: {${filteredQuery}}) {
         executed
         expiration_datetime
         execution_datetime
