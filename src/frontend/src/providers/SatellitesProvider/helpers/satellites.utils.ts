@@ -132,9 +132,7 @@ export const getSatellitesProviderReturnValue = ({
     satelliteGovActionsAmount === null || finRequestsAmount === null || proposalsAmount === null
 
   // check for loading values to calc satellite participation
-  const isLoadingSatelliteParticipation =
-    (activeSubs[SATELLITE_PARTICIPATION_DATA_SUB] && isSatelliteParticipationEmpty) ||
-    (!activeSubs[SATELLITE_PARTICIPATION_DATA_SUB] && isSatelliteParticipationEmpty)
+  const isLoadingSatelliteParticipation = activeSubs[SATELLITE_PARTICIPATION_DATA_SUB] && isSatelliteParticipationEmpty
 
   // checking whether we loading all satellites
   const isLoadingAllSatellites =
@@ -170,23 +168,15 @@ export const getSatellitesProviderReturnValue = ({
 
   // TODO: loading satellites debug log, remove right before merge to dev
   // console.log({
-  //   1: activeSubs[SATELLITE_DATA_SUB] && !satelliteMapper,
-  //   2: !activeSubs[SATELLITE_DATA_SUB] && !satelliteMapper,
-  //   3:
-  //     activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_SINGLE_SUB &&
-  //     satelliteAddressToSubsctibe &&
-  //     !satelliteMapper?.[satelliteAddressToSubsctibe],
-  //   4: activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ORACLES_SUB && !oraclesIds,
-  //   5: activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ACTIVE_SUB && !activeSatellitesIds,
-  //   6:
-  //     activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ALL_SUB &&
-  //     Object.keys(satelliteMapper ?? []).length !== allSatellitesIds?.length,
-  //   7: activeSubs[SATELLITE_PARTICIPATION_DATA_SUB] && isSatelliteParticipationEmpty,
-  //   8: !activeSubs[SATELLITE_PARTICIPATION_DATA_SUB] && isSatelliteParticipationEmpty,
+  //   1: isAnySatellitesTypeInitialLoading,
+  //   2: activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ORACLES_SUB && !oraclesIds,
+  //   3: activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ACTIVE_SUB && !activeSatellitesIds,
+  //   4: isLoadingSingleSatellite,
+  //   5: isLoadingAllSatellites,
+  //   6: isLoadingSatelliteParticipation,
   //   activeSubs,
   //   satelliteAddressToSubsctibe,
   //   satellitesCtxState,
-  //   isSatelliteSubLoading,
   //   isLoading,
   // })
 
@@ -195,6 +185,8 @@ export const getSatellitesProviderReturnValue = ({
     return {
       ...commonToReturn,
       ...EMPTY_SATELLITES_CONTEXT,
+      // need to return allSatelliteIds from context to prevent pagination on satellite details page blinking
+      allSatellitesIds: allSatellitesIds ?? EMPTY_SATELLITES_CONTEXT['allSatellitesIds'],
       isLoading: true,
     }
   }

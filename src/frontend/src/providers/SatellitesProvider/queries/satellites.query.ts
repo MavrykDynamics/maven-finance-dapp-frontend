@@ -9,14 +9,15 @@ export function getSatelliteDataSubscription(
   isOnlyActive?: boolean,
   isOnlyOracles?: boolean,
 ): DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables> {
-  const filteredByUserAddressCondition = `user: {address: {${userAddress ? '_eq' : '_neq'}: $userAddress}}`
-  const activeSatellitesOnlyFilter = isOnlyActive ? `currently_registered: {_eq: true}, status: {_eq: "0"}` : ''
-  const activeOraclesOnlyFilter = isOnlyOracles
-    ? `user: {aggregator_oracles_aggregate: {count: {filter: {observations_aggregate: {count: {predicate: {_gte: 1}}}}, predicate: {_gte: 1}}}}`
-    : ''
-  const filters = `${filteredByUserAddressCondition} ${
-    activeSatellitesOnlyFilter ? `, ${activeSatellitesOnlyFilter}` : ''
-  } ${activeOraclesOnlyFilter ? `, ${activeOraclesOnlyFilter}` : ''}`
+  const filteredByUserTable = `user: {address: {${userAddress ? '_eq' : '_neq'}: $userAddress} ${
+    isOnlyOracles
+      ? ', _and: {aggregator_oracles_aggregate: {count: {predicate: {_gte: 1}, filter: {observations_aggregate: {count: {predicate: {_gte: 1}}}}}}}'
+      : ''
+  }}`
+
+  const activeSatellitesFilter = isOnlyActive ? `currently_registered: {_eq: true}, status: {_eq: "0"}` : null
+
+  const filters = [filteredByUserTable, activeSatellitesFilter].filter(Boolean).join(',')
 
   return apolloGql`subscription satelliteDataSub($userAddress: String!) {
     satellite(where: {registration_timestamp: {_is_null: false}, ${filters}}, order_by: {currently_registered: desc}) {

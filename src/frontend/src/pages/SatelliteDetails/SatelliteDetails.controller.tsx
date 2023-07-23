@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { apolloClient } from 'apollo'
 
 // context
@@ -104,6 +104,7 @@ export const SatelliteDetails = () => {
   })
 
   const [satelliteAddressError, setSatelliteAddressError] = useState(false)
+  const [isSatelliteExistanseLoading, setIsSatelliteExistanseLoading] = useState(false)
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -117,26 +118,34 @@ export const SatelliteDetails = () => {
     }
   }, [])
 
-  useEffect(() => {
+  const handleCheckSatelliteExistanseError = () => {
+    bug('Loading satellite error, please, try to reload page')
+    setSatelliteAddressError(true)
+  }
+
+  useLayoutEffect(() => {
     setSatelliteAddressError(false)
+    setIsSatelliteExistanseLoading(true)
 
     const checkWhetherSatelliteExists = async () => {
-      const satelliteFromGql = await apolloClient.query({
-        query: CHECK_WHETHER_SATELLITE_EXISTS,
-        variables: {
-          userAddress: satelliteId ?? '',
-        },
-      })
+      try {
+        const satelliteFromGql = await apolloClient.query({
+          query: CHECK_WHETHER_SATELLITE_EXISTS,
+          variables: {
+            userAddress: satelliteId ?? '',
+          },
+        })
 
-      if (satelliteFromGql.error) {
-        bug('Loading satellite error, please, try to reload page')
-        return
-      }
+        if (satelliteFromGql.data.satellite[0]?.user.address === satelliteId) {
+          setSatelliteAddressToSubsctibe(satelliteId)
+          return
+        }
 
-      if (satelliteFromGql.data.satellite[0]?.user.address === satelliteId) {
-        setSatelliteAddressToSubsctibe(satelliteId)
-      } else {
-        setSatelliteAddressError(true)
+        handleCheckSatelliteExistanseError()
+      } catch (e) {
+        handleCheckSatelliteExistanseError()
+      } finally {
+        setIsSatelliteExistanseLoading(false)
       }
     }
 
@@ -154,12 +163,12 @@ export const SatelliteDetails = () => {
         <div>
           <SatellitePagination />
 
-          {isSatellitesLoading && !currentSatellite && !satelliteAddressError ? (
+          {isSatellitesLoading || isSatelliteExistanseLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellite profile data</div>
             </DataLoaderWrapper>
-          ) : currentSatellite ? (
+          ) : currentSatellite && !satelliteAddressError ? (
             <SatelliteListItem satellite={currentSatellite} isDetailsPage>
               <SatelliteCardBottomRow>
                 <SatelliteDescrBlock>
