@@ -2,7 +2,7 @@ import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/gra
 import { LoansContext, LoansContextState, LoansSubsRecordType } from '../loans.provider.types'
 
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-import { EMPTY_LOANS_CONTEXT } from './loans.const'
+import { EMPTY_LOANS_CONTEXT, LOANS_CONFIG, LOANS_MARKETS_DATA } from './loans.const'
 
 // HELPER TO GET OPERATION NAME BY ITS TYPE
 export const getDescrByType = (type: number) => {
@@ -65,44 +65,46 @@ export const calcMarketAvaliableLiquidity = ({
 
 export const getLoansProviderReturnValue = ({
   loansCtxState,
-  isMarketLoading,
+  marketAddressToSubscribe,
   activeSubs,
   changeLoansSubscriptionsList,
   setMarketAddressToSubscribe,
 }: {
   loansCtxState: LoansContextState
-  isMarketLoading: boolean
+  marketAddressToSubscribe: string | null
   activeSubs: LoansSubsRecordType
   changeLoansSubscriptionsList: LoansContext['changeLoansSubscriptionsList']
   setMarketAddressToSubscribe: LoansContext['setMarketAddressToSubscribe']
 }) => {
-  const { marketsMapper, config, allMarketsAddresses } = loansCtxState
+  const { marketsMapper, marketsAddresses, config, allMarketsAddresses } = loansCtxState
   const commonToReturn = {
     changeLoansSubscriptionsList,
     setMarketAddressToSubscribe,
   }
 
+  const isLoadingSingleMarket = marketAddressToSubscribe && !marketsMapper?.[marketAddressToSubscribe]
+  const isLoadingAllMarkets = !marketAddressToSubscribe && marketsAddresses?.length !== allMarketsAddresses?.length
+  const isMarketsConfigEmpty = marketsMapper === null || allMarketsAddresses === null
   /**
    * isLoading indicates whethet provider is loading smth, so we need to show loader, not load in background, cases:
-   * 1. if we switch between markets, subscribed to 1 cetrain market and it's not loaded yet
-   * 2. if we subscribe to markets and markets context data is empty
-   * 3. if we subscribe to config and config context data is empty
-   * 4. if we haven't subscribed to anything and don't have any data loaded, need this to fix time which component init its subscribes in useEffect as it's async operation
+   * 1,2. if we switch between markets, subscribed to 1 cetrain market and it's not loaded yet
+   * 3. if we subscribe to markets and markets context data is empty
+   * 4. if we subscribe to config and config context data is empty
+   * 5. if we haven't subscribed to anything and don't have any data loaded, need this to fix time which component init its subscribes in useEffect as it's async operation
    */
   const isLoading =
-    isMarketLoading ||
-    (activeSubs['loansMarkets'] && (marketsMapper === null || allMarketsAddresses === null)) ||
-    (activeSubs['loansConfig'] && config === null) ||
-    (!activeSubs['loansConfig'] &&
-      config === null &&
-      !activeSubs['loansMarkets'] &&
-      (marketsMapper === null || allMarketsAddresses === null))
+    isLoadingSingleMarket ||
+    isLoadingAllMarkets ||
+    (activeSubs[LOANS_MARKETS_DATA] && isMarketsConfigEmpty) ||
+    (activeSubs[LOANS_CONFIG] && config === null) ||
+    (!activeSubs[LOANS_CONFIG] && config === null && !activeSubs[LOANS_CONFIG] && isMarketsConfigEmpty)
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {
     return {
       ...commonToReturn,
       ...EMPTY_LOANS_CONTEXT,
+      allMarketsAddresses: allMarketsAddresses ?? EMPTY_LOANS_CONTEXT['allMarketsAddresses'],
       isLoading: true,
     }
   }

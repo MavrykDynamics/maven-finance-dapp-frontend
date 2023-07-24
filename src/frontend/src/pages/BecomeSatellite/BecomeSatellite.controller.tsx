@@ -59,6 +59,7 @@ import {
   SATELLITE_DATA_SUB,
   REGISTER_SATELLITE_ACTION,
   UPDATE_SATELLITE_ACTION,
+  SATELLITES_DATA_SINGLE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { registerSatellite, updateSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -100,7 +101,7 @@ export const BecomeSatellite = () => {
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
     })
 
     return () => {

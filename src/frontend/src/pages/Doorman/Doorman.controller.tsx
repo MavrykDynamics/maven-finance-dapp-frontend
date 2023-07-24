@@ -29,7 +29,11 @@ import {
   SMVK_HISTORY_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
 } from 'providers/DoormanProvider/helpers/doorman.consts'
-import { DEFAULT_SATELLITES_ACTIVE_SUBS, SATELLITE_DATA_SUB } from 'providers/SatellitesProvider/satellites.const'
+import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITES_DATA_SINGLE_SUB,
+  SATELLITE_DATA_SUB,
+} from 'providers/SatellitesProvider/satellites.const'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const DEFAULT_STAKE_UNSTAKE_INPUT: { amount: string; validation: InputStatusType; errorMessage: string } = {
@@ -60,7 +64,7 @@ export const Doorman = () => {
       [SMVK_HISTORY_SUB]: true,
     })
 
-    changeSatellitesSubscriptionsList({ [SATELLITE_DATA_SUB]: true })
+    changeSatellitesSubscriptionsList({ [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB })
 
     return () => {
       changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)

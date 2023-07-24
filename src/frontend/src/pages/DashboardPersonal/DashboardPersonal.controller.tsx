@@ -60,6 +60,7 @@ import {
 } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITES_DATA_SINGLE_SUB,
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
@@ -128,7 +129,7 @@ const DashboardPersonal = () => {
       [MVK_BALANCE_SUB]: true,
     })
     changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
 
