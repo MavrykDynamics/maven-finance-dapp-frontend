@@ -3,6 +3,11 @@ import { useDispatch } from 'react-redux'
 
 // const
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import {
+  DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS,
+  ONGOING_FIN_REQUESTS_SUB,
+} from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
+import { SPINNER_LOADER_MEDIUM } from 'app/App.components/Loader/loader.const'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -13,17 +18,10 @@ import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/D
 import { dropFinancialRequest } from '../Council.actions'
 
 // style
-import { CouncilFormStyled } from './CouncilForm.style'
+import { CouncilFormDropFinancialRequestLoaderWrapper, CouncilFormStyled } from './CouncilForm.style'
 import { useFinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
-import {
-  DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS,
-  ONGOING_FIN_REQUESTS_SUB,
-  PAST_FIN_REQUESTS_SUB,
-} from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
-import { SPINNER_LOADER_MEDIUM } from 'app/App.components/Loader/loader.const'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 
 export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()
@@ -37,7 +35,6 @@ export const CouncilFormDropFinancialRequest = () => {
   useEffect(() => {
     changeFinancialRequestsSubscriptionList({
       [ONGOING_FIN_REQUESTS_SUB]: true,
-      [PAST_FIN_REQUESTS_SUB]: true,
     })
 
     return () => {
@@ -80,11 +77,10 @@ export const CouncilFormDropFinancialRequest = () => {
     setChosenDdItem(foundItem)
   }
 
-  // TODO maybe get data when council is loading and remove this spinner
   return isLoading ? (
-    <DataLoaderWrapper>
+    <CouncilFormDropFinancialRequestLoaderWrapper>
       <SpinnerCircleLoaderStyled className={SPINNER_LOADER_MEDIUM} />
-    </DataLoaderWrapper>
+    </CouncilFormDropFinancialRequestLoaderWrapper>
   ) : (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">

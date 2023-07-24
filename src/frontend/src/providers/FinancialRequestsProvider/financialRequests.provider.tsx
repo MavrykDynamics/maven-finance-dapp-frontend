@@ -37,8 +37,6 @@ const FinancialRequestsProvider = ({ children }: Props) => {
   const [activeSubs, setActiveSubs] = useState<FinancialRequestsSubsRecordType>(DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS)
   const currentTimeRef = useRef(dayjs().toISOString())
 
-  console.log(finRequestsCtxState, '------------------------------')
-
   useEffect(() => {
     currentTimeRef.current = dayjs().toISOString()
   }, [activeSubs])

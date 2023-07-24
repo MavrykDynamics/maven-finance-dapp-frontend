@@ -2,11 +2,17 @@ import { useEffect } from 'react'
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { FinancialRequestsView } from './FinancialRequests.view'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+
+// styles
 import { Page } from 'styles'
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+
+// providers
 import { useFinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.provider'
+
+// consts
 import {
   DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS,
   ONGOING_FIN_REQUESTS_SUB,

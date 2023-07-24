@@ -87,13 +87,22 @@ export const getFinRequestsProviderReturnValue = ({
   const areOngoingRequestsNullable = ongoingFinancialRequestsIds === null || financialRequestsMapper === null
   const arePastRequestsNullable = pastFinancialRequestsIds === null || financialRequestsMapper === null
 
+  /**
+   * 1. If ongoing active sub & ongoing data is null
+   * 2. If past active sub & past data is null
+   * 3. If both subs for ongong and past requests are inactive and data is null
+   *
+   *
+   * Id you will subscribe f.e. only to ongoing requests, it will show loading true while fetching them and than the actual data while
+   * past requests are null. Same logic applies in another way.
+   */
   const isLoading =
     (activeSubs[ONGOING_FIN_REQUESTS_SUB] && areOngoingRequestsNullable) ||
     (activeSubs[PAST_FIN_REQUESTS_SUB] && arePastRequestsNullable) ||
-    (!activeSubs[ONGOING_FIN_REQUESTS_SUB] && areOngoingRequestsNullable) ||
-    (!activeSubs[PAST_FIN_REQUESTS_SUB] && arePastRequestsNullable)
-
-  console.log(isLoading, 'isLoading')
+    (!activeSubs[ONGOING_FIN_REQUESTS_SUB] &&
+      areOngoingRequestsNullable &&
+      !activeSubs[PAST_FIN_REQUESTS_SUB] &&
+      arePastRequestsNullable)
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {
