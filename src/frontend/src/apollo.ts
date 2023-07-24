@@ -46,7 +46,7 @@ const retryLink = new RetryLink({
 
 const errorLink = onError(({ networkError }) => {
   // @ts-ignore
-  if (networkError && (networkError?.statusCode >= 500 || networkError?.statusCode)) {
+  if (networkError && (networkError?.statusCode >= 500 || networkError?.statusCode === 404)) {
     console.log('Network error')
     window.location.replace(window.location.origin.concat('/404'))
   }
