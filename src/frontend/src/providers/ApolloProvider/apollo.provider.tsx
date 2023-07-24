@@ -48,7 +48,7 @@ export const ApolloProvider = ({ children }: Props) => {
         link: from([errorLink, retryLink, splitLink(wsLink, httpLink)]),
         cache: new InMemoryCache(),
       }),
-    [],
+    [errorLink],
   )
 
   const backupApolloClient = useMemo(
@@ -57,7 +57,7 @@ export const ApolloProvider = ({ children }: Props) => {
         link: from([errorLink, retryLink, splitLink(backupwsLink, backuphttpLink)]),
         cache: new InMemoryCache(),
       }),
-    [],
+    [errorLink],
   )
 
   const internalApolloClient = useMemo(() => (hasNetworkError ? backupApolloClient : apolloClient), [hasNetworkError])
