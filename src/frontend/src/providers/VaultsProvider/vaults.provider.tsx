@@ -119,8 +119,6 @@ export const VaultsProvider = ({ children }: Props) => {
     [vaultsCtxState, activeSubs],
   )
 
-  // TODO: debug log, remove when no need
-  console.log('vaults', { vaultsCtxState, providerValue, activeSubs })
   return <vaultsContext.Provider value={providerValue}>{children}</vaultsContext.Provider>
 }
 

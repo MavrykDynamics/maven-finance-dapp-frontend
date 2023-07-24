@@ -26,7 +26,8 @@ const getUserVaultsQueryFilters = (
     }
   }
 
-  return `${VAULT_OPEN_FILTER}`
+  // need to have userAddress variable used, othervise apolo query error can occur
+  return `${VAULT_OPEN_FILTER} , owner: {address: {_neq: $userAddress}}`
 }
 
 export function getUserVaultsSubscription({
