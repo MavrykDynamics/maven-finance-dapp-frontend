@@ -5,6 +5,8 @@ import { State } from 'reducers'
 
 import { ClockLoaderWrapper, LoaderShineTextAnimation, LoaderStyledWithBackdrop } from './Loader.style'
 import { lightTextColor } from 'styles'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // Page data loader
 export const ClockLoader = ({
@@ -72,7 +74,7 @@ export const ClockLoader = ({
   )
 }
 
-export const LottieLoader = ({ isActive, backdropAlpha = 0.5 }: { isActive: boolean; backdropAlpha?: number }) => {
+export const LottieLoader = ({ isActive, backdropAlpha }: { isActive: boolean; backdropAlpha: number }) => {
   return (
     <LoaderStyledWithBackdrop isActive={isActive} backdropAlpha={backdropAlpha}>
       <figure>
@@ -84,19 +86,45 @@ export const LottieLoader = ({ isActive, backdropAlpha = 0.5 }: { isActive: bool
   )
 }
 
-export const ActionLoader = () => {
-  const { isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
-  useLockBodyScroll(isActiveFullScreenLoader)
-  return <LottieLoader isActive={isActiveFullScreenLoader} />
-}
+export const Loaders = () => {
+  const {
+    globalLoadingState: {
+      isActiveFullScreenLoader: CONTEXT_isActiveFullScreenLoader,
+      isWertLoading: CONTEXT_isWertLoading,
+    },
+  } = useDappConfigContext()
+  const { isLoading: isUserLoading, isInitialUserLoadingDone } = useUserContext()
 
-// Wert initialization loader
-export const WertLoader = () => {
-  const { isWertLoading } = useSelector((state: State) => state.loading)
-  useLockBodyScroll(isWertLoading)
+  // TODO: remove when redux loading won't be used
+  const { isWertLoading: REDUX_isWertLoading } = useSelector((state: State) => state.loading)
+  const { isActiveFullScreenLoader: REDUX_isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
+
+  const isChangeUserLoading = isInitialUserLoadingDone ? isUserLoading : false
+
+  console.log({ isChangeUserLoading })
+
+  const isLoadingActive =
+    CONTEXT_isWertLoading ||
+    CONTEXT_isActiveFullScreenLoader ||
+    REDUX_isWertLoading ||
+    REDUX_isActiveFullScreenLoader ||
+    isChangeUserLoading
+
+  useLockBodyScroll(isLoadingActive)
+
+  const isWertLoading = CONTEXT_isWertLoading || REDUX_isWertLoading
+  const isActiveFullScreenLoader = CONTEXT_isActiveFullScreenLoader || REDUX_isActiveFullScreenLoader
+
   return (
-    <LoaderStyledWithBackdrop backdropAlpha={0.8} isActive={isWertLoading}>
-      <LoaderShineTextAnimation>Initializating Wert IO widget...</LoaderShineTextAnimation>
-    </LoaderStyledWithBackdrop>
+    <>
+      <LoaderStyledWithBackdrop backdropAlpha={0.8} isActive={isWertLoading && !isActiveFullScreenLoader}>
+        <LoaderShineTextAnimation>Initializating Wert IO widget...</LoaderShineTextAnimation>
+      </LoaderStyledWithBackdrop>
+
+      <LottieLoader
+        isActive={(isActiveFullScreenLoader || isChangeUserLoading) && !isWertLoading}
+        backdropAlpha={0.5}
+      />
+    </>
   )
 }

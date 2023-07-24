@@ -58,6 +58,7 @@ export const UserProvider = ({ children }: Props) => {
 
   const ws = useRef<null | signalR.HubConnection>(null)
   const lastSavedLevel = useRef<number>(0)
+  const isInitialUserLoadingDone = useRef<boolean>(false)
 
   const [userCtxState, setUserCtxState] = useState<UserContextStateType>(DEFAULT_USER)
   const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
@@ -83,6 +84,7 @@ export const UserProvider = ({ children }: Props) => {
 
     return () => {
       ws?.current?.stop()
+      isInitialUserLoadingDone.current = false
     }
   }, [])
 
@@ -182,6 +184,8 @@ export const UserProvider = ({ children }: Props) => {
     } catch (e) {
       console.error(`Failed to connect wallet:`, e)
       bug('Failed to connect wallet', TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+    } finally {
+      isInitialUserLoadingDone.current = true
     }
   }, [updateUserTzktTokenBalances, loadInitialTzktTokensForNewlyConnectedUser, handleDisconnect, handleOnReconnected])
 
@@ -313,6 +317,7 @@ export const UserProvider = ({ children }: Props) => {
     () => ({
       ...userCtxState,
       isLoading: userDataLoading || isTzktBalancesLoading,
+      isInitialUserLoadingDone: isInitialUserLoadingDone.current,
       connect,
       signOut,
       changeUser,
