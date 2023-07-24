@@ -93,13 +93,13 @@ export const Loaders = () => {
       isWertLoading: CONTEXT_isWertLoading,
     },
   } = useDappConfigContext()
-  const { isLoading: isUserLoading, isInitialUserLoadingDone } = useUserContext()
+  const { isLoading: isUserLoading, isRunnedInitialConnect } = useUserContext()
 
   // TODO: remove when redux loading won't be used
   const { isWertLoading: REDUX_isWertLoading } = useSelector((state: State) => state.loading)
   const { isActiveFullScreenLoader: REDUX_isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
 
-  const isChangeUserLoading = isInitialUserLoadingDone ? isUserLoading : false
+  const isChangeUserLoading = isRunnedInitialConnect ? isUserLoading : false
 
   console.log({ isChangeUserLoading })
 

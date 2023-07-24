@@ -78,10 +78,10 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
   const { isLoading: isDappGeneralLoading } = useDappConfigContext()
   const { isLoading: isTokensLoading } = useTokensContext()
   const { isLoading: isFeedsLoading } = useDataFeedsContext()
-  const { isLoading: isUserLoading, isInitialUserLoadingDone } = useUserContext()
+  const { isLoading: isUserLoading, isRunnedInitialConnect } = useUserContext()
 
   // do not show only loader on user change
-  const isInitialUserLoading = isInitialUserLoadingDone ? false : isUserLoading
+  const isInitialUserLoading = !isRunnedInitialConnect ? isUserLoading : false
 
   const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isInitialUserLoading
 

@@ -91,7 +91,7 @@ export type UserContext = {
   userMTokens: Record<TokenAddressType, UserMTokenType>
 
   isLoading: boolean
-  isInitialUserLoadingDone: boolean
+  isRunnedInitialConnect: boolean
 
   // actions
   connect: () => void
