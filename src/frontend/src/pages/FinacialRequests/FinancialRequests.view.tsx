@@ -104,7 +104,7 @@ export const FinancialRequestsView = ({
         return null
       }
       if (!governanceFinancialAddress) {
-        bug('Wrong delegation address')
+        bug('Wrong governanceFinancial address')
         return null
       }
 

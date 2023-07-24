@@ -93,7 +93,7 @@ export const getFinRequestsProviderReturnValue = ({
    * 3. If both subs for ongong and past requests are inactive and data is null
    *
    *
-   * Id you will subscribe f.e. only to ongoing requests, it will show loading true while fetching them and than the actual data while
+   * If you will subscribe f.e. only to ongoing requests, it will show loading true while fetching them and than the actual data while
    * past requests are null. Same logic applies in another way.
    */
   const isLoading =
