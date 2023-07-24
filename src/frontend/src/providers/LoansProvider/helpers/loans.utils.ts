@@ -104,6 +104,7 @@ export const getLoansProviderReturnValue = ({
     return {
       ...commonToReturn,
       ...EMPTY_LOANS_CONTEXT,
+      allMarketsAddresses: allMarketsAddresses ?? EMPTY_LOANS_CONTEXT['allMarketsAddresses'],
       isLoading: true,
     }
   }
