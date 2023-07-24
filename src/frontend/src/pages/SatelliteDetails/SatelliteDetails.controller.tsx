@@ -167,7 +167,7 @@ export const SatelliteDetails = () => {
         <div>
           <SatellitePagination />
 
-          {isSatellitesLoading || isSatelliteExistanseLoading ? (
+          {!satelliteAddressError && (isSatellitesLoading || isSatelliteExistanseLoading) ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellite profile data</div>

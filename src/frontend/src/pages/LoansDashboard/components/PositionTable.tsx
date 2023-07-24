@@ -114,17 +114,18 @@ export const LoansPositionTable = ({
 
                   const marketVaultsUserData = userVaultsData[loanTokenAddress]
 
-                  if (!loanToken || !loanToken.rate || !marketVaultsUserData) return null
+                  if (!loanToken || !loanToken.rate) return null
 
                   const { symbol, icon, rate, decimals, address } = loanToken
 
                   const { lendValue = 0, interestEarned = 0 } = lendingItem ?? {}
 
-                  const collateralRatio = getVaultCollateralRatio(
-                    marketVaultsUserData?.borrowedVaultsCollateralAmount ?? 0,
-                    marketVaultsUserData.borrowedAmount,
-                  )
-
+                  const collateralRatio = marketVaultsUserData
+                    ? getVaultCollateralRatio(
+                        marketVaultsUserData?.borrowedVaultsCollateralAmount ?? 0,
+                        marketVaultsUserData.borrowedAmount,
+                      )
+                    : 0
                   const averageVaultStatus = getVaultSimpleStatus(collateralRatio)
 
                   return (
