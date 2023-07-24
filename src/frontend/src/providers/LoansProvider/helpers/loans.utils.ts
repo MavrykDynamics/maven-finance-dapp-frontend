@@ -83,7 +83,10 @@ export const getLoansProviderReturnValue = ({
   }
 
   const isLoadingSingleMarket = marketAddressToSubscribe && !marketsMapper?.[marketAddressToSubscribe]
-  const isLoadingAllMarkets = !marketAddressToSubscribe && marketsAddresses?.length !== allMarketsAddresses?.length
+  const isLoadingAllMarkets =
+    activeSubs[LOANS_MARKETS_DATA] &&
+    !marketAddressToSubscribe &&
+    marketsAddresses?.length !== allMarketsAddresses?.length
   const isMarketsConfigEmpty = marketsMapper === null || allMarketsAddresses === null
   /**
    * isLoading indicates whethet provider is loading smth, so we need to show loader, not load in background, cases:
@@ -97,7 +100,7 @@ export const getLoansProviderReturnValue = ({
     isLoadingAllMarkets ||
     (activeSubs[LOANS_MARKETS_DATA] && isMarketsConfigEmpty) ||
     (activeSubs[LOANS_CONFIG] && config === null) ||
-    (!activeSubs[LOANS_CONFIG] && config === null && !activeSubs[LOANS_CONFIG] && isMarketsConfigEmpty)
+    (!activeSubs[LOANS_CONFIG] && config === null && !activeSubs[LOANS_MARKETS_DATA] && isMarketsConfigEmpty)
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {
