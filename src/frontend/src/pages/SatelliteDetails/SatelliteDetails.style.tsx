@@ -137,3 +137,9 @@ export const SatelliteVotingHistoryListItem = styled.div`
     }
   }
 `
+
+export const SatelliteDetailsDivider = styled.div`
+  height: 0px;
+  width: 100%;
+  margin-top: 30px;
+`
