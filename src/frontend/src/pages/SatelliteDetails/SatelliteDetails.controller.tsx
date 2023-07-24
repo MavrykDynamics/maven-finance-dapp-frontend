@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom'
 import { useEffect, useLayoutEffect, useState } from 'react'
-import { apolloClient } from 'apollo'
 
 // context
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
@@ -44,6 +43,7 @@ import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/que
 
 // types
 import { SatelliteVotesType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 const SatellitesVotingHistory = ({
   satelliteVotes: { proposalsVotes, satelliteActionVotes, financialRequestsVotes },
@@ -84,6 +84,7 @@ const SatellitesVotingHistory = ({
 
 export const SatelliteDetails = () => {
   const { satelliteId } = useParams<{ satelliteId: string }>()
+  const { apolloClient } = useApolloContext()
   const { bug } = useToasterContext()
   const {
     satelliteMapper,

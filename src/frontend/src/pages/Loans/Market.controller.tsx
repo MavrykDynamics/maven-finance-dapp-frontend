@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useHistory, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { apolloClient } from 'apollo'
 
 // const
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
@@ -48,6 +47,7 @@ import {
   VAULTS_USER_ALL,
 } from 'providers/VaultsProvider/vaults.provider.consts'
 import { CHECK_WHETHER_MARKET_EXISTS } from 'providers/LoansProvider/queries/loansMarkets.query'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 export const Market = () => {
   const history = useHistory<{ from?: string }>()
@@ -59,6 +59,7 @@ export const Market = () => {
     tabId: string
   }>()
 
+  const { apolloClient } = useApolloContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { bug } = useToasterContext()
   const { myVaultsIds, vaultsMapper, isLoading: isVaultsLoading, changeVaultsSubscriptionsList } = useVaultsContext()
