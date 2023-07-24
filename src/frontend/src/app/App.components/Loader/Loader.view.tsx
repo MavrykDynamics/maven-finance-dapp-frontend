@@ -101,8 +101,6 @@ export const Loaders = () => {
 
   const isChangeUserLoading = isRunnedInitialConnect ? isUserLoading : false
 
-  console.log({ isChangeUserLoading })
-
   const isLoadingActive =
     CONTEXT_isWertLoading ||
     CONTEXT_isActiveFullScreenLoader ||
