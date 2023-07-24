@@ -101,7 +101,7 @@ export const VaultsProvider = ({ children }: Props) => {
       allVaultsIds: isAllVaultsQuery ? allVaultsIds : prev.allVaultsIds,
       permissionedVaultsIds:
         isAllVaultsQuery || isPermissionedVaultsQuery ? permissionedVaultsIds : prev.permissionedVaultsIds,
-      myVaultsIds,
+      myVaultsIds: isPermissionedVaultsQuery ? prev.myVaultsIds : myVaultsIds,
     }))
   }
 

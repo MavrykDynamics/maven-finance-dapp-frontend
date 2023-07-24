@@ -43,7 +43,7 @@ import { Info } from 'app/App.components/Info/Info.view'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
+import { convertNumberForClient, convertNumberForContractCall } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const StageThreeForm = ({
@@ -91,6 +91,8 @@ export const StageThreeForm = ({
     options?: { tokenBalance?: number; maxLength?: number },
   ) => {
     let { name, value } = e.target
+
+    console.log({ value, tokenBalance: options?.tokenBalance })
 
     // update input value
     updateLocalProposalData(
@@ -250,10 +252,14 @@ export const StageThreeForm = ({
                   grade: decimals,
                 })
 
-                const tokenAmount = convertNumberForClient({
-                  number: payment.token_amount ?? 0,
-                  grade: decimals,
-                })
+                // if value is from indexer convert it to client format othervise, it's user enter, and show as it is
+                const tokenAmount =
+                  validationObj?.token_amount === ''
+                    ? convertNumberForClient({
+                        number: payment.token_amount ?? 0,
+                        grade: decimals,
+                      })
+                    : payment.token_amount ?? 0
 
                 return (
                   <TableRow className="editable-row" key={payment.id}>
@@ -314,7 +320,7 @@ export const StageThreeForm = ({
                           }}
                           inputProps={{
                             placeholder: 'Enter Tokens Amount',
-                            value: String(tokenAmount),
+                            value: tokenAmount,
                             type: 'number',
                             name: 'token_amount',
                             onChange: (e) => handleChange(e, rowIdx, { tokenBalance: maxAmount }),

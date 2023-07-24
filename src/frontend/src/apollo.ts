@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache, split } from '@apollo/client'
+import { ApolloClient, InMemoryCache, split, from } from '@apollo/client'
 import { HttpLink } from '@apollo/client/link/http'
 import { RetryLink } from '@apollo/client/link/retry'
 import { onError } from '@apollo/client/link/error'
@@ -44,21 +44,15 @@ const retryLink = new RetryLink({
   },
 })
 
-const errorLink = onError(({ operation, networkError }) => {
+const errorLink = onError(({ networkError }) => {
   // @ts-ignore
-  if (networkError && networkError?.statusCode === 500) {
-    console.log('Switching to backup server for HTTP and WSS requests...')
-    const context = operation.getContext()
-    operation.setContext(() => {
-      return {
-        ...context,
-        link: splitLink(backupwsLink, backuphttpLink),
-      }
-    })
+  if (networkError && (networkError?.statusCode >= 500 || networkError?.statusCode)) {
+    console.log('Network error')
+    window.location.replace(window.location.origin.concat('/404'))
   }
 })
 
 export const apolloClient = new ApolloClient({
-  link: errorLink.concat(retryLink.concat(splitLink(wsLink, httpLink))),
+  link: from([errorLink, splitLink(wsLink, httpLink)]),
   cache: new InMemoryCache(),
 })

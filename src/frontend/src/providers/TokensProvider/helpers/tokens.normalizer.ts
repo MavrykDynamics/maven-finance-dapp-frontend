@@ -93,7 +93,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         // if token is collateral
         if (lending_controller_collateral_tokens?.[0]) {
           // if mvk_tokens?.[0]?.address present and token is collateral that means, that sMVK is collateral, but for smvk we need to manually change it's collateral data
-          if (mvk_tokens?.[0]?.address) {
+          if (isSMVKToken) {
             acc.collateralTokens.push(SMVK_TOKEN_ADDRESS)
 
             const collateralTokenData: LoansCollateralTokenMetadataType = {
