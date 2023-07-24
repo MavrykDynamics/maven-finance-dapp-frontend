@@ -1,4 +1,5 @@
 import {
+  FINANCIAL_REQUEST_VOTE_ACTION,
   FIN_REQUSTS_ONGOING,
   FIN_REQUSTS_PAST,
   ONGOING_FIN_REQUESTS_SUB,
@@ -6,6 +7,10 @@ import {
 } from './helpers/financialRequests.consts'
 import { FinancialRequestRecord } from './helpers/financialRequests.types'
 
+// actions
+export type FinancialRequestsActionsTypes = typeof FINANCIAL_REQUEST_VOTE_ACTION
+
+// subs
 export type FinancialRequestsSubsType = typeof ONGOING_FIN_REQUESTS_SUB | typeof PAST_FIN_REQUESTS_SUB
 
 export type FinancialRequestsStateType = {

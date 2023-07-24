@@ -1,5 +1,8 @@
 import { FinancialRequestsStateType } from '../financialRequests.types'
 
+// actions
+export const FINANCIAL_REQUEST_VOTE_ACTION = 'votingFinancialRequestVote'
+
 // CONSTS FOR STAKING PROVIDER STATES
 export const ONGOING_FIN_REQUESTS_SUB = 'ongoingFinRequestsSub'
 export const PAST_FIN_REQUESTS_SUB = 'pastFinRequestsSub'

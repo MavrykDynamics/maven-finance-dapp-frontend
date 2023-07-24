@@ -9,6 +9,7 @@ import { WalletErrorPayload } from 'errors/error.type'
 import { ThemeType } from 'consts/theme.const'
 import { LoansActionsType } from 'providers/LoansProvider/loans.provider.types'
 import { VaultsActionsType } from 'providers/VaultsProvider/vaults.provider.types'
+import { FinancialRequestsActionsTypes } from 'providers/FinancialRequestsProvider/financialRequests.types'
 import { WalletOperationError } from 'errors/error'
 
 export type ActionTypes =
@@ -17,6 +18,7 @@ export type ActionTypes =
   | SatelliteActionsType
   | LoansActionsType
   | VaultsActionsType
+  | FinancialRequestsActionsTypes
 
 export type DappConfigContext = {
   // data

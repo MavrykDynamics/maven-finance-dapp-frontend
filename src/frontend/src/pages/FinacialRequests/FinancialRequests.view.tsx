@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useLocation } from 'react-router'
 import { useDispatch } from 'react-redux'
 
@@ -11,7 +11,7 @@ import {
   PAGINATION_SIDE_RIGHT,
   PAST_REQUESTS_FINANCIAL_REQUESTS_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
-import { votingFinancialRequestVote } from './FinancialRequest.actions'
+import { votingFinancialRequestVote } from 'providers/FinancialRequestsProvider/actions/financialRequests.actions'
 import { parseDate } from 'utils/time'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
@@ -39,6 +39,11 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { FinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.types'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { FINANCIAL_REQUEST_VOTE_ACTION } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
+import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const FinancialRequestsView = ({
   ongoingFinancialRequestsIds: ongoing,
@@ -49,10 +54,13 @@ export const FinancialRequestsView = ({
   pastFinancialRequestsIds: FinancialRequestsContext['pastFinancialRequestsIds']
   financialRequestsMapper: FinancialRequestsContext['financialRequestsMapper']
 }) => {
-  const dispatch = useDispatch()
   const { search } = useLocation()
 
   const { tokensMetadata } = useTokensContext()
+  const { bug } = useToasterContext()
+  const {
+    contractAddresses: { governanceFinancialAddress },
+  } = useDappConfigContext()
   const { userAddress, isSatellite: isUserSatellite } = useUserContext()
 
   const currentOngoingPage = getPageNumber(search, ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST)
@@ -88,9 +96,32 @@ export const FinancialRequestsView = ({
     quorum: rightSideContent.quorum,
   }
 
-  const handleVotingRoundVote = (vote: string) => {
-    dispatch(votingFinancialRequestVote(vote, rightSideContent.id))
-  }
+  // financial request voting action -------------------------------------------------
+  const finVotingRoundVoteActionFn = useCallback(
+    async (vote: `${VotingTypes}`) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!governanceFinancialAddress) {
+        bug('Wrong delegation address')
+        return null
+      }
+
+      return await votingFinancialRequestVote(governanceFinancialAddress, vote, rightSideContent.id)
+    },
+    [bug, governanceFinancialAddress, rightSideContent.id, userAddress],
+  )
+
+  const contractActionProps: HookContractActionArgs<`${VotingTypes}`> = useMemo(
+    () => ({
+      actionType: FINANCIAL_REQUEST_VOTE_ACTION,
+      actionFn: finVotingRoundVoteActionFn,
+    }),
+    [finVotingRoundVoteActionFn],
+  )
+
+  const { actionWithArgs: handleVotingRoundVote } = useContractAction<`${VotingTypes}`>(contractActionProps)
 
   const RightSideBlock = () => {
     if (!rightSideContent) return null
