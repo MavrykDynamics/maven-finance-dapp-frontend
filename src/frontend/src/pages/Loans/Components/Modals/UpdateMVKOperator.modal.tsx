@@ -1,24 +1,40 @@
-import { useDispatch, useSelector } from 'react-redux'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+// consts
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { validateTzAddress } from 'utils/validatorFunctions'
-import { LoansPopupsAddressInputStateType, UpdateOperatorsPopupDataType } from './Modals.helpers'
-import { State } from 'reducers'
-import { UpdateTokenOperator } from 'utils/TypesAndInterfaces/Loans'
+import { UPDATE_OPERATORS_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
+// helpers
+import { validateTzAddress } from 'utils/validatorFunctions'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// types
+import { UpdateOperatorsPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+
+// actions
+import { UpdateTokenOperator, updateOperatorsAction } from 'providers/VaultsProvider/actions/vaultPermissions.actions'
+
+// components
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
+
+// styles
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { updateOperatorsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17307%3A226700&t=Sx2aEpp3ifrGxBtQ-0
 export const UpdateMVKOperator = ({
@@ -30,43 +46,21 @@ export const UpdateMVKOperator = ({
   show: boolean
   data: UpdateOperatorsPopupDataType
 }) => {
-  const { vaultAddress = '', tokenName = '', operators = [] } = data ?? {}
+  const { tokensMetadata } = useTokensContext()
 
   useLockBodyScroll(show)
-  const dispatch = useDispatch()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
-  const [tableData, setTableData] = useState<Array<LoansPopupsAddressInputStateType>>([
+  const [tableData, setTableData] = useState<Array<{ address: string; validationStatus: InputStatusType }>>([
     { address: '', validationStatus: '' },
   ])
 
-  useEffect(() => {
-    if (!show) {
-      setTableData([{ address: '', validationStatus: '' }])
-    } else {
-      const currentOperators: LoansPopupsAddressInputStateType[] = operators.map((item) => ({
-        address: item,
-        validationStatus: INPUT_STATUS_SUCCESS,
-      }))
+  const updatedOperators = useMemo(() => {
+    if (!data) return []
 
-      setTableData([{ address: '', validationStatus: '' }, ...currentOperators])
-    }
-  }, [show])
+    const { operators, vaultAddress } = data
 
-  const handleAddRow = () => setTableData(tableData.concat([{ address: '', validationStatus: '' }]))
-  const handleDeleteRow = (rowId: number) => setTableData(tableData.filter((_, idx) => idx !== rowId))
-
-  const updateTableDataState = (newValue: string, rowIdx: number) => {
-    const validationStatus =
-      validateTzAddress(newValue) && !tableData.some(({ address }) => address === newValue) && newValue !== accountPkh
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR
-    setTableData(
-      tableData.map((item, idx) => (idx === rowIdx ? { address: String(newValue), validationStatus } : item)),
-    )
-  }
-
-  const getUpdatedOperators = useCallback(() => {
     const updateOperators: UpdateTokenOperator[] = []
     const tableAddresses = tableData.filter((item) => item.address).map((item) => item.address)
 
@@ -97,21 +91,68 @@ export const UpdateMVKOperator = ({
     })
 
     return updateOperators
-  }, [operators, tableData, vaultAddress])
+  }, [data, tableData])
 
-  const updateHandler = () => {
-    const updateOperators = getUpdatedOperators()
-    dispatch(updateOperatorsAction(vaultAddress, tokenName, updateOperators, closePopup))
+  useEffect(() => {
+    if (!show || !data) {
+      setTableData([{ address: '', validationStatus: '' }])
+    } else {
+      const { operators } = data
+
+      const currentOperators: { address: string; validationStatus: InputStatusType }[] = operators.map((item) => ({
+        address: item,
+        validationStatus: INPUT_STATUS_SUCCESS,
+      }))
+
+      setTableData([{ address: '', validationStatus: '' }, ...currentOperators])
+    }
+  }, [show, data])
+
+  const loanToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: data?.tokenAddress })
+
+  const { vaultAddress = '' } = data ?? {}
+
+  const handleAddRow = () => setTableData(tableData.concat([{ address: '', validationStatus: '' }]))
+  const handleDeleteRow = (rowId: number) => setTableData(tableData.filter((_, idx) => idx !== rowId))
+
+  const updateTableDataState = (newValue: string, rowIdx: number) => {
+    const validationStatus =
+      validateTzAddress(newValue) && !tableData.some(({ address }) => address === newValue) && newValue !== userAddress
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR
+    setTableData(
+      tableData.map((item, idx) => (idx === rowIdx ? { address: String(newValue), validationStatus } : item)),
+    )
   }
 
-  const isActionDisabled = useMemo(() => {
-    // if length === 0 it means that the user has no changes to update
-    const updatedOperatorLength = getUpdatedOperators().length
+  // update operators action ------------------------------
+  const updateOperatorsActionCb = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
 
-    return (
-      tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS) || updatedOperatorLength === 0
-    )
-  }, [getUpdatedOperators, tableData])
+    if (loanToken && checkWhetherTokenIsLoanToken(loanToken)) {
+      return await updateOperatorsAction(vaultAddress, loanToken.loanData.indexerName, updatedOperators, closePopup)
+    }
+
+    return null
+  }, [bug, closePopup, loanToken, updatedOperators, userAddress, vaultAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: UPDATE_OPERATORS_ACTION,
+      actionFn: updateOperatorsActionCb,
+    }),
+    [updateOperatorsActionCb],
+  )
+
+  const { action: updateHandler } = useContractAction(contractActionProps)
+
+  if (!data || !loanToken) return null
+
+  const isActionDisabled =
+    tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS) || updatedOperators.length === 0
 
   return (
     <PopupContainer onClick={closePopup} show={show}>

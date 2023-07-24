@@ -2,13 +2,12 @@ import type {
   Governance,
   Governance_Satellite,
   Governance_Financial_Request,
-  Governance_Proposal,
   Governance_Satellite_Action,
-} from '../generated/graphqlTypes'
+} from '../__generated__/graphql'
 
-import { normalizeFinancialRequests } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { normalizeProposal } from 'pages/Governance/actions/governanceNormalizers'
 import { normalizerSatelliteGovernance } from 'pages/SatelliteGovernance/SatelliteGovernance.helpers'
+import { Governance_Proposal } from 'utils/__generated__/graphql'
 
 // Governance proposals types
 export type GovernanceProposalGraphQL = Omit<Governance_Proposal, '__typename'>
@@ -57,7 +56,6 @@ export type FinancialRequestRecord = {
   votingTillTime?: string | null
   tokensAmount: number
   status: number
-  tokenName: string
   executed: boolean
 
   // Votes data

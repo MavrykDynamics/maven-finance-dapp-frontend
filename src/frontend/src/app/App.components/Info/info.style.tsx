@@ -1,6 +1,14 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from 'styles/interfaces'
-import { INFO_DEFAULT, INFO_ERROR, INFO_SUCCESS, INFO_WARNING } from './info.constants'
+import {
+  INFO_DEFAULT,
+  INFO_ERROR,
+  INFO_SUCCESS,
+  INFO_WARNING,
+  INFO_MEDIUM,
+  INFO_LARGE,
+  INFO_SMALL,
+} from './info.constants'
 
 export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   border-radius: 10px;
@@ -37,14 +45,22 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
     flex-shrink: 0;
   }
 
-  &.isLarge {
-    padding: 22px 40px;
-  }
-
   &.hasChild {
     p {
       max-width: 65%;
     }
+  }
+
+  &.${INFO_SMALL} {
+    padding: 0 20px;
+  }
+
+  &.${INFO_MEDIUM} {
+    padding: 10px 20px;
+  }
+
+  &.${INFO_LARGE} {
+    padding: 22px 40px;
   }
 
   &.hasBorder {

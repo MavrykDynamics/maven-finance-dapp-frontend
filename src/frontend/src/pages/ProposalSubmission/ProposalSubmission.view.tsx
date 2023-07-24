@@ -52,31 +52,71 @@ import {
 // helpers & actions
 import { getBytesDiff, getPaymentsDiff } from './ProposalSubmission.helpers'
 import { dropProposal, lockProposal, submitProposal, updateProposalData } from './ProposalSubmission.actions'
+import { isAbortError } from 'errors/error'
+import { api } from 'utils/api/api'
+import {
+  getTimestampByLevelUrl,
+  getTimestampByLevelHeaders,
+  getTimestampByLevelSchema,
+} from 'utils/api/api-helpers/getTimestampByLevel'
+import dayjs from 'dayjs'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const dispatch = useDispatch()
   const history = useHistory()
+  const { bug } = useToasterContext()
 
-  const {
-    accountPkh,
-    user: { isNewlyRegisteredSatellite },
-  } = useSelector((state: State) => state.wallet)
+  const { tokensMetadata } = useTokensContext()
+  const { userAddress, isNewlyRegisteredSatellite } = useUserContext()
+
   const {
     currentRoundProposalsIds,
     proposalsMapper,
-    config: { fee, governancePhase },
+    config: { fee, governancePhase, currentRoundEndLevel },
   } = useSelector((state: State) => state.governance)
-  const { whitelistTokens, dipDupTokens } = useSelector((state: State) => state.tokens)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [activeTab, setActiveTab] = useState(1)
+  const [isFormDisabled, setIsFormDisabled] = useState(true)
+
+  useEffect(() => {
+    const abortController = new AbortController()
+
+    ;(async () => {
+      try {
+        const { data: votingEndTimestamp } = await api(
+          getTimestampByLevelUrl(currentRoundEndLevel),
+          { signal: abortController.signal, headers: getTimestampByLevelHeaders },
+          getTimestampByLevelSchema,
+        )
+
+        setIsFormDisabled(dayjs(votingEndTimestamp).diff() <= 0)
+      } catch (e) {
+        // TODO: handle fetch errors when error boundary will be ready
+        if (!isAbortError(e)) {
+          console.error('getting timestamp by lvl error: ', e)
+        }
+        bug('Unexpected error happened occured, please reload the page')
+      }
+    })()
+
+    return () => abortController.abort()
+  }, [currentRoundEndLevel])
 
   // proposals that user has submitted, reduced to object mapper and arr of keys for this object
   // this object represents ds we can use with stages, to interact with in tables, inputs, etc
   const [proposalKeys, mappedProposals, mappedValidation] = useMemo(() => {
     const { keys, mapper, validityObj } = currentRoundProposalsIds
-      .filter((proposalId) => proposalsMapper[proposalId].proposerId === accountPkh)
+      .filter((proposalId) => proposalsMapper[proposalId].proposerId === userAddress)
       .reduce<SubmittedProposalsMapper>(
         (acc, proposalId) => {
           const proposal = proposalsMapper[proposalId]
@@ -110,7 +150,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       ]
     }
     return [keys, mapper, validityObj]
-  }, [accountPkh, currentRoundProposalsIds, proposalsMapper])
+  }, [userAddress, currentRoundProposalsIds, proposalsMapper])
 
   // mapping user created proposals to tabs buttons data
   const usersProposalsToSwitch = useMemo(
@@ -190,8 +230,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       const payments = getPaymentsDiff(
         [],
         currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
-        whitelistTokens,
-        dipDupTokens,
+        tokensMetadata,
       )
 
       await dispatch(
@@ -218,8 +257,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       const paymentsDiff = getPaymentsDiff(
         currentProposalOnRemote.proposalPayments,
         currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
-        whitelistTokens,
-        dipDupTokens,
+        tokensMetadata,
       )
       await dispatch(updateProposalData(proposalId, bytesDiff, paymentsDiff))
     }
@@ -323,6 +361,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         {activeTab === 1 && (
           <StageOneForm
             proposalId={selectedUserProposalId}
+            isFormDisabled={isFormDisabled}
             currentProposal={currentProposal}
             currentProposalValidation={currentProposalValidation}
             updateLocalProposalValidation={updateLocalProposalValidation}
@@ -332,6 +371,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         {activeTab === 2 && (
           <StageTwoForm
             proposalId={selectedUserProposalId}
+            isFormDisabled={isFormDisabled}
             currentProposal={currentProposal}
             currentProposalValidation={currentProposalValidation}
             updateLocalProposalValidation={updateLocalProposalValidation}
@@ -341,6 +381,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         {activeTab === 3 && (
           <StageThreeForm
             proposalId={selectedUserProposalId}
+            isFormDisabled={isFormDisabled}
             currentProposal={currentProposal}
             currentProposalValidation={currentProposalValidation}
             updateLocalProposalValidation={updateLocalProposalValidation}

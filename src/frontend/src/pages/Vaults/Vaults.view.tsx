@@ -1,6 +1,11 @@
-import { useState, useMemo, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import { useLocation, useHistory, useParams } from 'react-router'
+
+// context
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // components
 import { VaultsSearchFilter } from './components/VaultsSearchFilter.view'
@@ -16,6 +21,7 @@ import { VaultsStyled } from './Vaults.style'
 import { VaultsList } from 'pages/Loans/Components/LoansComponents.style'
 
 // helpers
+import { LOANS_CONFIG, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
 import {
   VAULTS_LIST_NAME,
   getPageNumber,
@@ -23,16 +29,19 @@ import {
   PERMISSIONED_VAULTS_LIST_NAME,
 } from 'app/App.components/Pagination/pagination.consts'
 import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getVaultAssets } from './Vaults.helpers'
 
 // types
-import { State } from '../../reducers'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
 import { markForLiquidation } from './Vaults.actions'
-import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import {
+  DEFAULT_VAULTS_ACTIVE_SUBS,
+  VAULTS_ALL,
+  VAULTS_DATA,
+  VAULTS_USER_ALL,
+  VAULTS_USER_DEPOSITOR,
+} from 'providers/VaultsProvider/vaults.provider.consts'
 
 const pathname = '/vaults'
 
@@ -46,27 +55,46 @@ export const VaultsView = () => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()
-
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-  const {
-    vaults: { permissinedVaultsIds, myVaultsIds, allVaultsIds, vaultsMapper },
-    isDataLoaded,
-  } = useSelector((state: State) => state.loans)
   const { tabId } = useParams<{ tabId: string }>()
 
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isDataLoaded || isDepsChanged) {
-          await dispatch(getLoansStorage())
-        }
-      } catch (e) {}
-    },
-    [accountPkh],
-  )
+  const { userAddress } = useUserContext()
+  const { changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
+  const {
+    changeVaultsSubscriptionsList,
+    isLoading: isVaultsLoading,
+    myVaultsIds,
+    allVaultsIds,
+    vaultsMapper,
+    permissionedVaultsIds,
+  } = useVaultsContext()
+
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_CONFIG]: true,
+    })
+
+    return () => {
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+    }
+  }, [])
+
+  useEffect(() => {
+    changeVaultsSubscriptionsList({
+      [VAULTS_DATA]:
+        tabId === vaultTabs.ALL ? VAULTS_ALL : tabId === vaultTabs.MY ? VAULTS_USER_ALL : VAULTS_USER_DEPOSITOR,
+    })
+  }, [tabId])
+
+  useLayoutEffect(() => {
+    if (!isVaultsLoading)
+      setVaultsIds(
+        tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissionedVaultsIds,
+      )
+  }, [isVaultsLoading])
+
   const [tabsList, setTabsList] = useState<TabItem[]>([])
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
-  const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
 
   const currentListName =
     tabId === vaultTabs.ALL
@@ -75,8 +103,10 @@ export const VaultsView = () => {
       ? MY_VAULTS_LIST_NAME
       : PERMISSIONED_VAULTS_LIST_NAME
 
-  const currentVaultsIds =
-    tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissinedVaultsIds
+  const currentVaultsIds = useMemo(
+    () => (tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissionedVaultsIds),
+    [tabId],
+  )
 
   const currentPage = getPageNumber(search, currentListName)
 
@@ -87,7 +117,13 @@ export const VaultsView = () => {
     if (!foundTab?.path || currentTabId === id) return
 
     history.replace(`${pathname}/${foundTab.path}`)
-    setVaultsIds(foundTab.path === vaultTabs.ALL ? allVaultsIds : myVaultsIds)
+    setVaultsIds(
+      foundTab.path === vaultTabs.ALL
+        ? allVaultsIds
+        : foundTab.path === vaultTabs.MY
+        ? myVaultsIds
+        : permissionedVaultsIds,
+    )
   }
 
   const paginatedVaultsList = useMemo(() => {
@@ -110,7 +146,7 @@ export const VaultsView = () => {
       },
     ]
 
-    const tabsToUse = accountPkh
+    const tabsToUse = userAddress
       ? [
           ...baseTabs,
           {
@@ -124,30 +160,30 @@ export const VaultsView = () => {
             id: 3,
             active: vaultTabs.PERMISSIONED === tabId,
             path: vaultTabs.PERMISSIONED,
-            isDisabled: !accountPkh,
+            isDisabled: !userAddress,
           },
         ]
       : baseTabs
 
     setTabsList(tabsToUse)
 
-    if (accountPkh) return
+    if (userAddress) return
     // return back to "all vaults" tab if user is not connected
     history.replace(`${pathname}/${baseTabs[0].path}`)
-  }, [accountPkh, tabId])
+  }, [userAddress, tabId])
 
   return (
     <VaultsStyled>
       <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="primary-switcher" />
 
       <VaultsSearchFilter
-        assets={assets}
         vaultsMapper={vaultsMapper}
         currentVaultsIds={currentVaultsIds}
+        allVaultsIds={allVaultsIds}
         setVaultsIds={setVaultsIds}
       />
 
-      {isLoading ? (
+      {isLoansLoading || isVaultsLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
@@ -155,15 +191,15 @@ export const VaultsView = () => {
       ) : paginatedVaultsList.length ? (
         <VaultsList>
           {paginatedVaultsList.map((item) => {
-            const isOwner = vaultsMapper[item]?.ownerId === accountPkh
+            const isOwner = vaultsMapper[item]?.ownerAddress === userAddress
 
             return (
               <VaultsCard
+                vault={vaultsMapper[item]}
                 key={item}
                 isOwner={isOwner}
                 handleMarkForLiquidation={handleMarkForLiquidation}
                 vaultTab={tabId}
-                {...vaultsMapper[item]}
               />
             )
           })}

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-import { BUTTON_SIMPLE, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { State } from 'reducers'
 
 import Button from 'app/App.components/Button/NewButton'
@@ -10,19 +10,22 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 import {
-  TableScrollable,
   Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
   TableBody,
   TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+  TableScrollable,
 } from 'app/App.components/Table'
 import { LBHInfoBlock } from './DashboardPersonalComponents.style'
 import { parseDate } from 'utils/time'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { useSelector } from 'react-redux'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
 
 export const LoansTxTab = ({
   txVariant,
@@ -31,21 +34,21 @@ export const LoansTxTab = ({
 }: {
   txVariant: 'lending' | 'borrowing'
   isUserLoansLoading: boolean
-  userLoansData: State['wallet']['user']['userLoansData']
+  userLoansData: UserLoansDataStateType['userLendings'] | UserLoansDataStateType['userBorrowings']
 }) => {
+  const { tokensMetadata } = useTokensContext()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const isLending = txVariant === 'lending'
-  const dataToShow = isLending ? userLoansData.userLendings : userLoansData.userBorrowing
 
   return (
     <LBHInfoBlock>
-      <H2Title>{isLending ? 'Lending TXs' : 'Borrow TXs'}</H2Title>
+      <H2Title>{isLending ? 'Earn TXs' : 'Borrow TXs'}</H2Title>
 
       {isUserLoansLoading ? (
         <div className="loader-wrapper">
           <ClockLoader />
         </div>
-      ) : dataToShow.length ? (
+      ) : userLoansData.length ? (
         <TableScrollable bodyHeight={230} className="treasury-table dashboard-loans-table scroll-block">
           <Table>
             <TableHeader className="dashboard-loans">
@@ -59,7 +62,11 @@ export const LoansTxTab = ({
             </TableHeader>
 
             <TableBody className="dashboard-loans treasury">
-              {dataToShow.map(({ icon, amount, annualPecentage, operationHash, symbol, date, id }) => {
+              {userLoansData.map(({ amount, annualPecentage, operationHash, date, id, tokenAddress }) => {
+                const token = getTokenDataByAddress({ tokenAddress, tokensMetadata })
+                if (!token) return null
+
+                const { icon, symbol } = token
                 return (
                   <TableRow rowHeight={55} borderColor="cardBorderColor" className="add-hover" key={id + operationHash}>
                     <TableCell width="20%">
@@ -79,8 +86,12 @@ export const LoansTxTab = ({
                     </TableCell>
                     <TableCell width="10%" contentPosition="right">
                       <div style={{ width: 'fit-content' }}>
-                        <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
-                          <Button kind={BUTTON_SIMPLE}>View TX</Button>
+                        <Link
+                          to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }}
+                          target="_blank"
+                          className="isCyan"
+                        >
+                          View TX
                         </Link>
                       </div>
                     </TableCell>
@@ -99,7 +110,7 @@ export const LoansTxTab = ({
                 <Link to="/loans">
                   <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
                     <Icon id={isLending ? 'lend' : 'borrow'} />
-                    {isLending ? 'Lend Asset' : 'Borrow Asset'}
+                    {isLending ? 'Supply Asset' : 'Borrow Asset'}
                   </Button>
                 </Link>
               </div>

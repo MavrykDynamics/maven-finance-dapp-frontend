@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import colors from 'styles/colors'
 
 // helpers & actions
 import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
@@ -40,21 +41,29 @@ import { ProposalDetailsStyled } from './ProposalDetails.style'
 import { TzAddress, handleCopyToClipboard } from 'app/App.components/TzAddress/TzAddress.view'
 import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.helpers'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import colors from 'styles/colors'
+import { convertNumberForClient } from 'utils/calcFunctions'
 import { api } from 'utils/api/api'
 import { isAbortError } from 'errors/error'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
-export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
+export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRecordType; isHistory: boolean }) => {
   const dispatch = useDispatch()
 
   const { bug } = useToasterContext()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
-  const { whitelistTokens } = useSelector((state: State) => state.tokens)
   const { governancePhase } = useSelector((state: State) => state.governance.config)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
+  const { tokensMetadata } = useTokensContext()
 
   const isUserOwnerIfTheProposal = proposal.proposerId === accountPkh
 
@@ -93,12 +102,23 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   // Loading voting till time for proposal
   const [votingTill, setVotingTill] = useState<null | number>(null)
   useEffect(() => {
+    const { droppedTime, currentCycleEndLevel, executionTime, executed } = proposal
+    if (droppedTime) {
+      setVotingTill(new Date(droppedTime).getTime())
+      return
+    }
+
+    if (executionTime && executed) {
+      setVotingTill(new Date(executionTime).getTime())
+      return
+    }
+
     const abortController = new AbortController()
 
     ;(async () => {
       try {
         const { data: votingEndTimestamp } = await api(
-          getTimestampByLevelUrl(proposal.currentCycleEndLevel),
+          getTimestampByLevelUrl(currentCycleEndLevel),
           { signal: abortController.signal, headers: getTimestampByLevelHeaders },
           getTimestampByLevelSchema,
         )
@@ -113,7 +133,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
     })()
 
     return () => abortController.abort()
-  }, [proposal.currentCycleEndLevel])
+  }, [proposal])
 
   // store bytes that are opened
   const [openedBytes, setOpenedBytes] = useState<Array<number>>([])
@@ -135,10 +155,33 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         ) : null}
       </div>
 
-      {votingTill ? (
+      {isHistory &&
+      ((proposal.executionTime && proposal.executed) ||
+        proposal.defeatedTime ||
+        (proposal.droppedTime && proposal.status === ProposalStatus.DROPPED)) ? (
         <div className="voting-ends">
-          Voting {votingTill <= Date.now() ? 'ended' : 'ending'} on{' '}
-          {parseDate({ time: votingTill, timeFormat: 'MMMM Do HH:mm Z' })} CEST
+          {proposal.executionTime && proposal.executed
+            ? `Proposal was executed on ${parseDate({
+                time: proposal.executionTime,
+                timeFormat: 'MMMM Do HH:mm Z',
+              })} CEST`
+            : proposal.droppedTime && proposal.status === ProposalStatus.DROPPED
+            ? `Proposal was dropped on ${parseDate({
+                time: proposal.droppedTime,
+                timeFormat: 'MMMM Do HH:mm Z',
+              })} CEST`
+            : `Proposal was defeated on ${parseDate({
+                time: proposal.defeatedTime,
+                timeFormat: 'MMMM Do HH:mm Z',
+              })} CEST`}
+        </div>
+      ) : null}
+
+      {votingTill && !isHistory ? (
+        <div className="voting-ends">
+          {votingTill <= Date.now()
+            ? `Voting has ended on ${parseDate({ time: votingTill, timeFormat: 'MMMM Do HH:mm Z' })} CEST`
+            : `Voting ending on ${parseDate({ time: votingTill, timeFormat: 'MMMM Do HH:mm Z' })} CEST`}
         </div>
       ) : null}
 
@@ -159,8 +202,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         handleProposalVote={handleProposalRoundVote}
         selectedProposal={proposal}
         vote={proposal.votes.find(
-          ({ voter: { address }, round }) =>
-            address === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
+          ({ address, round }) => address === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
         )}
         isVoteActive={(votingTill ?? 0) >= Date.now()}
         govPhase={governancePhase}
@@ -191,9 +233,13 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Source Code</div>
         <div className="proposal-data-block-value">
-          <a href={proposal.sourceCode} target="_blank" rel="noreferrer" className="isCyan">
-            {proposal.sourceCode}
-          </a>
+          {proposal.sourceCode ? (
+            <a href={proposal.sourceCode} target="_blank" rel="noreferrer" className="isCyan">
+              {proposal.sourceCode}
+            </a>
+          ) : (
+            <div className="proposal-data-block-no-value">No link to source code given</div>
+          )}
         </div>
       </div>
 
@@ -205,7 +251,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
               {proposal.invoice}
             </a>
           ) : (
-            'No link for an invoice given'
+            <span className="proposal-data-block-no-value">No link for an invoice given</span>
           )}
         </div>
       </div>
@@ -213,16 +259,27 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Meta-Data</div>
         {proposal.proposalData?.length ? (
-          <ol className="bytes-list">
-            {proposal.proposalData.map((item) => {
+          <ul className="bytes-list">
+            {proposal.proposalData.map((item, idx) => {
               if (!item || typeof item.title !== 'string' || typeof item.encoded_code !== 'string') return null
 
               const isByteOpened = openedBytes.includes(item.id)
               const byteText = item.encoded_code
               return (
                 <li key={item.id}>
-                  <div className="title" style={{ paddingLeft: '15px' }}>
-                    {item.title}
+                  <div className="byte-text-wrapper" style={{ alignItems: 'center' }}>
+                    <div className="title" style={{ marginRight: '5px' }}>
+                      {idx + 1}. Title:
+                    </div>
+                    <div className="proposal-data-block-value title-main">{item?.title || '–'}</div>
+                  </div>
+                  <div className="byte-text-wrapper">
+                    <div className="proposal-data-block-value proposal-data-block-desc">
+                      <span className="title" style={{ marginRight: '5px' }}>
+                        Description:
+                      </span>
+                      {item.code_description || '–'}
+                    </div>
                   </div>
 
                   <div className={`byte ${isByteOpened ? 'opened' : ''}`}>
@@ -250,18 +307,12 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
                       {isByteOpened ? 'hide' : 'see all'}
                     </Button>
                   </div>
-                  <div className="byte-descr">
-                    <div className="title" style={{ marginRight: '5px' }}>
-                      Description:
-                    </div>
-                    <div className="proposal-data-block-value">{item.code_description || '–'}</div>
-                  </div>
                 </li>
               )
             })}
-          </ol>
+          </ul>
         ) : (
-          <div className="proposal-data-block-value">No proposal meta-data given</div>
+          <div className="proposal-data-block-value proposal-data-block-no-value">No proposal meta-data given</div>
         )}
       </div>
 
@@ -279,12 +330,20 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
             </TableHeader>
             <TableBody>
               {proposal.proposalPayments.map((payment) => {
-                if (payment.to__id === null || payment.title === null) return null
+                if (
+                  payment.to__id === null ||
+                  payment.title === null ||
+                  payment.token_address === null ||
+                  payment.token_address === undefined
+                )
+                  return null
 
-                const selectedSymbol =
-                  whitelistTokens.find(({ address }) => address === payment.token_address)?.symbol?.toUpperCase() ??
-                  whitelistTokens?.[0]?.symbol?.toUpperCase() ??
-                  'MVK'
+                const token = getTokenDataByAddress({ tokenAddress: payment.token_address, tokensMetadata })
+
+                if (!token) return null
+
+                const { symbol, decimals } = token
+                const tokenAmount = convertNumberForClient({ number: Number(payment.token_amount), grade: decimals })
 
                 return (
                   <TableRow className="editable-row proposal-details-payments" key={payment.id}>
@@ -293,15 +352,10 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
                     </TableCell>
                     <TableCell width="25%">{String(payment.title)}</TableCell>
                     <TableCell width="25%">
-                      <CommaNumber
-                        value={Number(payment.token_amount)}
-                        // TODO: add decimals of max asset decimals, and check design with large decimals amount
-                        decimalsToShow={4}
-                        endingText={selectedSymbol}
-                      />
+                      <CommaNumber value={tokenAmount} decimalsToShow={decimals} endingText={symbol} />
                     </TableCell>
                     <TableCell className="no-right-border" width="25%">
-                      {selectedSymbol}
+                      {symbol}
                     </TableCell>
                   </TableRow>
                 )
@@ -309,7 +363,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
             </TableBody>
           </Table>
         ) : (
-          <div className="proposal-data-block-value">No payment data given</div>
+          <div className="proposal-data-block-value proposal-data-block-no-value">No payment data given</div>
         )}
       </div>
 
@@ -332,7 +386,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         </div>
       </div>
 
-      {isUserOwnerIfTheProposal ? (
+      {isUserOwnerIfTheProposal && !isHistory ? (
         <div className="drop-proposal">
           <Button kind={BUTTON_SECONDARY} onClick={handleDeleteProposal} disabled={!userCanDropProposal}>
             <Icon id="navigation-menu_close" />

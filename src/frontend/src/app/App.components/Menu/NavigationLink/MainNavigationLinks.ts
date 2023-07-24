@@ -35,10 +35,10 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
     ],
   },
   {
-    title: 'Lend/Borrow',
+    title: 'Earn/Borrow',
     id: 7,
-    path: 'loans',
-    routePath: '/loans',
+    path: 'loans/dashboard',
+    routePath: '/loans/dashboard',
     icon: 'coin-loan',
     subPages: [
       {
@@ -63,7 +63,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
         id: 57792,
         subTitle: 'Markets',
         subPath: `loans`,
-        routeSubPath: ['/loans', '/loans/:assetId/:tabId'],
+        routeSubPath: ['/loans', '/loans/:assetAddress/:tabId', '/loans/:assetAddress/:tabId/:cardId'],
       },
     ],
   },

@@ -1,16 +1,32 @@
-import { useDispatch } from 'react-redux'
+import { useCallback, useMemo } from 'react'
 
-import { unregisterAsSatellite } from '../BecomeSatellite.actions'
-import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
+// types
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
+
+// consts
 import { BUTTON_SECONDARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { UNREGISTER_SATELLITE_ACTION } from 'providers/SatellitesProvider/satellites.const'
 
+// components
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
+// styles
 import { UnregisterSatelliteModalBase } from '../BecomeSatellite.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+
+// providers
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+// actions
+import { unregisterSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 export const UnregisterPopup = ({
   show,
@@ -21,8 +37,36 @@ export const UnregisterPopup = ({
   closePopup: () => void
   satellite: SatelliteRecordType
 }) => {
-  const dispatch = useDispatch()
-  const handleUnregisterSatellite = async () => await dispatch(unregisterAsSatellite(closePopup))
+  const {
+    contractAddresses: { delegationAddress },
+  } = useDappConfigContext()
+  const { bug } = useToasterContext()
+  const { userAddress } = useUserContext()
+
+  // unregister action ---------------------
+
+  const unregisterAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
+      return null
+    }
+
+    return await unregisterSatellite(userAddress, delegationAddress, closePopup)
+  }, [bug, closePopup, delegationAddress, userAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: UNREGISTER_SATELLITE_ACTION,
+      actionFn: unregisterAction,
+    }),
+    [unregisterAction],
+  )
+
+  const { action: handleUnregisterSatellite } = useContractAction(contractActionProps)
 
   const { delegatorCount = 0, totalDelegatedAmount = 0 } = satellite ?? {}
 

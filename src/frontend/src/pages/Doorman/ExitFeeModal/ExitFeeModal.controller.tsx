@@ -1,16 +1,11 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 // helpers
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
-import { INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
 import { stakingInputValidation } from '../Doorman.converter'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
-import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
-import { unknownToError } from 'errors/error'
-import { STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
-import { sleep } from 'utils/api/sleep'
+import { UNSTAKE_ACTION } from 'providers/DoormanProvider/helpers/doorman.consts'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 
 // components
@@ -25,12 +20,15 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 
 // context
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { State } from 'reducers'
+import { unstakeMVK } from 'providers/DoormanProvider/actions/doorman.actions'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useCallback, useMemo } from 'react'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -41,7 +39,7 @@ type ExitFeeModalPropsType = {
     myMvkTokenBalance: number
     totalStakedMvk: number
     totalMVKSupply: number
-    accountPkh?: string
+    userAddress: string | null
   }
   inputData: typeof DEFAULT_STAKE_UNSTAKE_INPUT
   setInputData: (data: typeof DEFAULT_STAKE_UNSTAKE_INPUT) => void
@@ -50,18 +48,15 @@ type ExitFeeModalPropsType = {
 export const ExitFeeModal = ({
   closePopup,
   show,
-  data: { mvkExchangeRate, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, accountPkh, totalMVKSupply },
+  data: { mvkExchangeRate, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, userAddress, totalMVKSupply },
   inputData,
   setInputData,
 }: ExitFeeModalPropsType) => {
-  const dispatch = useDispatch()
-
-  const { unstakeMVK, updateStakeActionContext, updateStakeLoadingToasterId, loadingToasterId } = useStakeContext()
-  const { bug, info, loading, hideToasterMessage } = useToasterContext()
-
   const {
-    doormanAddress: { address: doormanAddress },
-  } = useSelector((state: State) => state.contractAddresses)
+    contractAddresses: { doormanAddress },
+  } = useDappConfigContext()
+  const { bug } = useToasterContext()
+
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const parsedInputAmount = Number(inputData.amount)
@@ -70,47 +65,43 @@ export const ExitFeeModal = ({
   const mli = calcMLI(totalMVKSupply, totalStakedMvk)
   const fee = calcExitFee(totalMVKSupply, totalStakedMvk)
 
-  const handleUnstake = async (unstakeAmount: number) => {
-    if (!accountPkh) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return
-    }
+  const unstakeAction = useCallback(
+    async (unstakeAmount: number) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
 
-    if (unstakeAmount <= 0) {
-      bug('Please enter an amount superior to zero', 'Incorrect amount')
-      return
-    }
+      if (!doormanAddress) {
+        bug('Wrong doorman address')
+        return null
+      }
 
-    const { actionSuccess, error } = await unstakeMVK(unstakeAmount, doormanAddress)
+      if (unstakeAmount <= 0) {
+        bug('Please enter an amount superior to zero', 'Incorrect amount')
+        return null
+      }
 
-    closePopup()
+      return await unstakeMVK(unstakeAmount, doormanAddress)
+    },
+    [bug, doormanAddress, userAddress],
+  )
 
-    if (actionSuccess && !error) {
-      updateStakeActionContext(STAKE_ACTION)
-      dispatch(toggleActionFullScreenLoader(true))
-      dispatch(toggleActionCompletion(true))
+  const dappActionCallback = useCallback(() => {
+    setInputData({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
+  }, [inputData, setInputData])
 
-      info(
-        TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
-        TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['title'],
-      )
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: UNSTAKE_ACTION,
+      actionFn: unstakeAction.bind(null, Number(inputData.amount)),
+      dappActionCallback: dappActionCallback,
+      afterActionCallback: closePopup,
+    }),
+    [unstakeAction, inputData.amount, dappActionCallback, closePopup],
+  )
 
-      await sleep(5000)
-
-      // show toaster loader after 5000ms after operation started
-      const loadingToasterId = loading(
-        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-        TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-      )
-      updateStakeLoadingToasterId(loadingToasterId)
-    } else {
-      if (loadingToasterId) hideToasterMessage(loadingToasterId)
-      dispatch(toggleActionFullScreenLoader(false))
-      dispatch(toggleActionCompletion(false))
-      const parsedError = unknownToError(error)
-      bug(parsedError.message)
-    }
-  }
+  const { action: handleUnstake } = useContractAction(contractActionProps)
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
@@ -119,7 +110,7 @@ export const ExitFeeModal = ({
       amount: Number(value),
       myMvkTokenBalance,
       mySMvkTokenBalance,
-      accountPkh,
+      userAddress,
     })
 
     const errorMessage = Number(value) > Number(mySMvkTokenBalance) ? "You don't have enought sMVK to unstake" : ''
@@ -209,7 +200,7 @@ export const ExitFeeModal = ({
               kind={BUTTON_PRIMARY}
               form={BUTTON_WIDE}
               disabled={inputData.validation !== INPUT_STATUS_SUCCESS || isActionActive}
-              onClick={() => handleUnstake(Number(inputData.amount))}
+              onClick={handleUnstake}
             >
               <Icon id="success-fill" fill={containerColor} /> Proceed
             </NewButton>

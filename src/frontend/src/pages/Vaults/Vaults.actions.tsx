@@ -1,12 +1,8 @@
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
-import { normalizeOracleLatestPrice } from './Vaults.helpers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
-import { fetchFromIndexer } from 'gql/fetchGraphQL'
 
 import { AppDispatch, GetState } from '../../app/App.controller'
 import { State } from 'reducers'
@@ -20,11 +16,7 @@ import {
   TOASTER_SUCCESS,
   TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
 } from 'app/App.components/Toaster/Toaster.constants'
-import {
-  ORACLE_AGGREGATOR_LATEST_PRICE_QUERY,
-  ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME,
-  ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE,
-} from 'gql/queries/getVaultsStorage'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // Liquidate Vault
 export const liquidateVault =
@@ -76,8 +68,6 @@ export const liquidateVault =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            await dispatch(getLoansStorage())
-
             // Add here call for update data actions
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Vault Liquidated', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -150,20 +140,3 @@ export const markForLiquidation =
       dispatch(toggleActionCompletion(false))
     }
   }
-
-// Oracle Latest Price
-export const getOracleAggregatorLatestPrice = async (oracleId: string) => {
-  try {
-    const storage = await fetchFromIndexer(
-      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY,
-      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME,
-      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE(oracleId),
-    )
-
-    const oracleLatestPrice = normalizeOracleLatestPrice(storage)
-    return oracleLatestPrice
-  } catch (e) {
-    console.error('getOracleAggregatorLatestPrice error: ', e)
-    return null
-  }
-}

@@ -1,8 +1,9 @@
 import { useRef, useEffect, useState } from 'react'
+import dayjs from 'dayjs'
 import { createChart, BusinessDay, UTCTimestamp, CandlestickData } from 'lightweight-charts'
 
 import { upColor, downColor, lightTextColor, headerColor } from 'styles'
-import { parseDate } from 'utils/time'
+import { getDateEnd, getDateStart, parseDate } from 'utils/time'
 import {
   DEFAULT_LAYOUT_SETTING,
   CHART_GRID_SETTING,
@@ -17,7 +18,7 @@ import {
 import ChartTooltip, { AMOUNT_DATE_TOOLTIP } from '../Tooltips/ChartTooltip'
 import { ChartStyled } from '../Chart.style'
 
-import { CandlestickChartPlotType, CandleStickPropsType } from '../helpers/Chart.types'
+import { CandleStickPropsType } from '../helpers/Chart.types'
 
 export const CandlestickChart = ({
   settings: {
@@ -34,6 +35,7 @@ export const CandlestickChart = ({
     textColor = lightTextColor,
     borderColor = headerColor,
     seriesMarkers,
+    isPeriod = false,
   } = {},
   colors: { chandleUpColor = upColor, chandleDownColor = downColor } = {},
   data,
@@ -46,6 +48,7 @@ export const CandlestickChart = ({
   const [tooltipData, setTooltipData] = useState<{
     xAxis: number
     yAxis: number
+    isLastPlot: boolean
   } | null>(null)
 
   useEffect(() => {
@@ -92,7 +95,7 @@ export const CandlestickChart = ({
         if (tickDateFormatter) {
           return tickDateFormatter(Number(time))
         }
-        return parseDate({ time: Number(time), timeFormat: 'HH:mm' })
+        return parseDate({ time: Number(time), timeFormat: 'MMM DD' })
       },
     })
 
@@ -124,10 +127,22 @@ export const CandlestickChart = ({
         if (!checkPlotType<CandlestickData>(plot, ['close'])) return
         const { close, time } = plot
 
-        setTooltipData({
-          yAxis: Number(time),
-          xAxis: parseFloat(String(close)),
-        })
+        if (isPeriod) {
+          const currentDayStart = getDateStart(dayjs().valueOf()),
+            currentDayEnd = getDateEnd(dayjs().valueOf())
+
+          setTooltipData({
+            yAxis: Number(time),
+            xAxis: parseFloat(String(close)),
+            isLastPlot: Number(time) <= currentDayEnd && Number(time) >= currentDayStart,
+          })
+        } else {
+          setTooltipData({
+            yAxis: Number(time),
+            xAxis: parseFloat(String(close)),
+            isLastPlot: false,
+          })
+        }
 
         if (mainChartWrapperRef.current && param.point) {
           mainChartWrapperRef.current.style.setProperty('--translateX', `${param.point.x + 15}`)
@@ -158,6 +173,8 @@ export const CandlestickChart = ({
     tickDateFormatter,
     width,
     yAxisSide,
+    isPeriod,
+    seriesMarkers,
   ])
 
   return (
@@ -165,6 +182,8 @@ export const CandlestickChart = ({
       <ChartTooltip
         xAxis={tooltipData?.xAxis}
         yAxis={tooltipData?.yAxis}
+        isLastPlot={tooltipData?.isLastPlot}
+        isPeriod={isPeriod}
         asset={tooltipAsset}
         tooltipName={tooltipName}
         dateTooltipFormatter={dateTooltipFormatter}

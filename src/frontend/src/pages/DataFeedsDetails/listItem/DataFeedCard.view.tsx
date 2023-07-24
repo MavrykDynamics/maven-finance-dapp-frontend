@@ -1,28 +1,16 @@
-import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 
-import { State } from 'reducers'
 import { parseDate } from 'utils/time'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Trim } from 'app/App.components/Trim/Trim.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { DataFeedsCardStyled, FeedsListItem } from 'pages/DataFeeds/DataFeeds.styles'
+import { Feed } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 
-export const DataFeedCard = ({ feed }: { feed: Feed }) => {
+export const DataFeedCard = ({ feed, oracleNodes }: { feed: Feed; oracleNodes: number }) => {
   const { pathname } = useLocation()
-  const { oraclesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
-
-  const oracleNodes = useMemo(
-    () =>
-      oraclesIds.filter((address) =>
-        satelliteMapper[address].oracleRecords.find(({ feedAddress }) => feed.address === feedAddress),
-      ),
-    [feed.address, oraclesIds, satelliteMapper],
-  )
 
   const showAllColumns = pathname === '/data-feeds'
 
@@ -45,7 +33,7 @@ export const DataFeedCard = ({ feed }: { feed: Feed }) => {
         </FeedsListItem>
         <FeedsListItem>
           <h5>Oracle Nodes</h5>
-          <var>{oracleNodes.length}</var>
+          <var>{oracleNodes}</var>
         </FeedsListItem>
         {showAllColumns && (
           <FeedsListItem>

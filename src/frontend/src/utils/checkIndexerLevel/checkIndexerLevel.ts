@@ -1,6 +1,6 @@
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import { INDEXER_LEVEL_QUERY, INDEXER_LEVEL_QUERY_NAME, INDEXER_LEVEL_QUERY_VARIABLES } from './indexerLevel.query'
-import { Dipdup_Head } from 'utils/generated/graphqlTypes'
+import { Dipdup_Head } from 'utils/__generated__/graphql'
 
 type UpdateDataReturnType = {
   value: unknown | null
@@ -39,8 +39,8 @@ export const checkIndexerLevelAndRunDataUpdateCallback = ({
         )) as { dipdup_head: Array<Dipdup_Head> }
 
         // as we're getting levels for mainnet and ghostnet, we need to select level for current env, by default use ghostnet
-        const indexerLevel = indexerLevelGQL.dipdup_head?.find(({ name }) =>
-          name.toLowerCase().includes((process.env.REACT_APP_NETWORK ?? 'ghostnet').toLowerCase()),
+        const indexerLevel = indexerLevelGQL.dipdup_head?.find(
+          ({ name }) => name === process.env.REACT_APP_RPC_TZKT_API,
         )?.level
 
         // TODO: debug log, remove later

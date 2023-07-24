@@ -1,6 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
+// prviders
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
 // components
 import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -21,11 +24,9 @@ import {
   dropBreakGlass,
   signAction,
 } from './BreakGlassCouncil.actions'
-import { getCouncilStorage } from 'pages/Council/Council.actions'
-import { getBreakGlassConfig } from 'pages/BreakGlass/BreakGlass.actions'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // types
-import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 const titles = {
   membersName: 'Break Glass Council',
@@ -37,14 +38,15 @@ export function BreakGlassCouncil() {
   const dispatch = useDispatch()
 
   const {
-    accountPkh,
-    user: {
-      userAvatars: { breakGlassAvatar },
-    },
-  } = useSelector((state: State) => state.wallet)
-  const { isConfigLoaded } = useSelector((state: State) => state.breakGlass.config)
+    maxLengths: { council: councilMaxLengths },
+  } = useDappConfigContext()
+
   const {
-    config: { councilMaxLength },
+    userAddress,
+    userAvatars: { breakGlassAvatar },
+  } = useUserContext()
+
+  const {
     breakGlassCouncilMembers,
     breakGlassCouncilActions: {
       allPendingActions,
@@ -75,8 +77,6 @@ export function BreakGlassCouncil() {
     try {
       await Promise.all(
         [
-          (!isConfigLoaded || isDepsChanged) && dispatch(getBreakGlassConfig()),
-          (!isStorageLoaded || isDepsChanged) && dispatch(getCouncilStorage()),
           (!isBreakGlassCouncilMembersLoaded || isDepsChanged) && dispatch(getBreakGlassCouncilMembers()),
           (!isBreakGlassCouncilPastActionsLoaded || isDepsChanged) && dispatch(getBreakGlassCouncilPastActions()),
         ].filter(Boolean),
@@ -87,7 +87,7 @@ export function BreakGlassCouncil() {
   // getting data after auth
   useDataLoader(
     async (isDepsChanged) => {
-      if (!accountPkh) return
+      if (!userAddress) return
 
       try {
         await Promise.all(
@@ -99,7 +99,7 @@ export function BreakGlassCouncil() {
         )
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   return (
@@ -115,7 +115,8 @@ export function BreakGlassCouncil() {
         <CouncilView
           // general info
           pathnameOfPage="/break-glass-council"
-          maxLength={councilMaxLength}
+          maxLength={councilMaxLengths}
+          // TODO: clarify this field with @CasualJackie & @Sam-M-Israel
           glassBroken={!emergencyGovActive}
           showPropagateBreakGlass
           titles={titles}
@@ -136,7 +137,7 @@ export function BreakGlassCouncil() {
           handleDropAction={handleDropAction}
           // components
           getFormComponent={() => <BreakGlassCouncilForm />}
-          getFormUpdateMemberInfo={(maxLength: CouncilMaxLength, callback: () => void) => (
+          getFormUpdateMemberInfo={(maxLength, callback: () => void) => (
             <FormUpdateCouncilMemberView maxLength={maxLength} callback={callback} />
           )}
         />

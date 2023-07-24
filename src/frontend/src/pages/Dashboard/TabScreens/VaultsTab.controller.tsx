@@ -1,12 +1,7 @@
 import { useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { State } from 'reducers'
-import { getPieChartData } from 'pages/Treasury/helpers/calculateChartData'
-import { reduceVaultsAssets } from 'pages/Vaults/Vaults.helpers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -27,19 +22,30 @@ import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { StatBlock, BlockName } from '../Dashboard.style'
 import { TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'
+import { reduceVaultsAssets } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 
 export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
 
-  const { allVaultsIds, vaultsMapper } = useSelector((state: State) => state.loans.vaults)
-  const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio } = useMemo(
-    () => reduceVaultsAssets(allVaultsIds, vaultsMapper),
-    [allVaultsIds, vaultsMapper],
-  )
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { allVaultsIds, vaultsMapper } = useVaultsContext()
 
-  const chartData = useMemo(() => {
-    return getPieChartData(assetsBalances, globalVaultTVL, hoveredPath)
-  }, [hoveredPath, assetsBalances, globalVaultTVL])
+  const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio, chartData } = useMemo(() => {
+    const { assetsBalances, globalVaultTVL, ...restVaultsStats } = reduceVaultsAssets(
+      allVaultsIds,
+      vaultsMapper,
+      tokensMetadata,
+      tokensPrices,
+    )
+    const chartData = getPieChartData(assetsBalances, globalVaultTVL, hoveredPath, tokensMetadata, tokensPrices)
+
+    return { assetsBalances, globalVaultTVL, chartData, ...restVaultsStats }
+  }, [allVaultsIds, hoveredPath, tokensMetadata, tokensPrices, vaultsMapper])
 
   return (
     <TabWrapperStyled className="vaults">
@@ -92,15 +98,30 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
                   </TableHeader>
 
                   <TableBody className="treasury">
-                    {assetsBalances.map(({ symbol, balance, usdValue, rate }) => {
+                    {assetsBalances.map(({ balance, tokenAddress }) => {
+                      const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                      if (!token || !token.rate) return null
+
+                      const { symbol, rate, decimals } = token
+
+                      const convertedBalance = convertNumberForClient({ number: balance, grade: decimals })
+
                       return (
                         <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
                           <TableCell width="33%">{symbol}</TableCell>
                           <TableCell width="33%">
-                            <CommaNumber value={balance} decimalsToShow={assetDecimalsToShow} useAccurateParsing />
+                            <CommaNumber
+                              value={convertedBalance}
+                              decimalsToShow={Number(decimals)}
+                              useAccurateParsing={balance < 1}
+                            />
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
-                            <CommaNumber value={usdValue} beginningText={rate ? '$' : symbol} useAccurateParsing />
+                            <CommaNumber
+                              value={convertedBalance * rate}
+                              beginningText={rate ? '$' : symbol}
+                              useAccurateParsing={balance < 1}
+                            />
                           </TableCell>
                         </TableRow>
                       )
@@ -120,25 +141,27 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
               <PieChartView chartData={chartData} />
 
               <div className="asset-lables scroll-block">
-                {assetsBalances.map((balanceValue) => (
-                  <div
-                    style={{
-                      background: `linear-gradient(90deg,${
-                        chartData.find(
-                          ({ title }) => title === balanceValue.symbol || title.includes(balanceValue.symbol),
-                        )?.color
-                      } 0%,rgba(255,255,255,0) 100%)`,
-                    }}
-                    className="asset-lable"
-                    onMouseEnter={() => {
-                      setHoveredPath(balanceValue.symbol)
-                    }}
-                    onMouseLeave={() => setHoveredPath(null)}
-                    key={balanceValue.symbol}
-                  >
-                    <p className="asset-lable-text">{balanceValue.symbol}</p>
-                  </div>
-                ))}
+                {assetsBalances.map(({ tokenAddress }) => {
+                  const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                  if (!token || !token.rate) return null
+
+                  const { symbol } = token
+                  return (
+                    <div
+                      style={{
+                        background: `linear-gradient(90deg,${
+                          chartData.find(({ title }) => title === symbol || title.includes(symbol))?.color
+                        } 0%,rgba(255,255,255,0) 100%)`,
+                      }}
+                      className="asset-lable"
+                      onMouseEnter={() => setHoveredPath(symbol)}
+                      onMouseLeave={() => setHoveredPath(null)}
+                      key={symbol}
+                    >
+                      <p className="asset-lable-text">{symbol}</p>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>

@@ -1,29 +1,10 @@
-import {
-  ClockLoaderWrapper,
-  LoaderShineTextAnimation,
-  LoaderStyled,
-  LoaderStyledWithBackdrop,
-  SpinnerCircleLoaderStyled,
-} from './Loader.style'
 import { useSelector } from 'react-redux'
-import { State } from 'reducers'
 import { useLockBodyScroll } from 'react-use'
-import { lightTextColor } from 'styles'
 
-// Details page loader
-export const SpinnerLoader = () => (
-  <LoaderStyled>
-    <div className="loading">
-      <div className="loading__square"></div>
-      <div className="loading__square"></div>
-      <div className="loading__square"></div>
-      <div className="loading__square"></div>
-      <div className="loading__square"></div>
-      <div className="loading__square"></div>
-      <div className="loading__square"></div>
-    </div>
-  </LoaderStyled>
-)
+import { State } from 'reducers'
+
+import { ClockLoaderWrapper, LoaderShineTextAnimation, LoaderStyledWithBackdrop } from './Loader.style'
+import { lightTextColor } from 'styles'
 
 // Page data loader
 export const ClockLoader = ({
@@ -91,30 +72,31 @@ export const ClockLoader = ({
   )
 }
 
-// Action full screen & initial data loader
-export const LoaderRocket = () => (
-  <LoaderStyledWithBackdrop>
-    <figure>
-      <div>
-        <img src={`/icons/lottie-rocket.gif?v=0`} alt={`Loader Image`} />
-      </div>
-    </figure>
-  </LoaderStyledWithBackdrop>
-)
+export const LottieLoader = ({ isActive, backdropAlpha = 0.5 }: { isActive: boolean; backdropAlpha?: number }) => {
+  return (
+    <LoaderStyledWithBackdrop isActive={isActive} backdropAlpha={backdropAlpha}>
+      <figure>
+        <div>
+          <img src={`/icons/lottie-rocket.gif?v=0`} alt={`Loader Image`} />
+        </div>
+      </figure>
+    </LoaderStyledWithBackdrop>
+  )
+}
 
 export const ActionLoader = () => {
   const { isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
   useLockBodyScroll(isActiveFullScreenLoader)
-  return isActiveFullScreenLoader ? <LoaderRocket /> : null
+  return <LottieLoader isActive={isActiveFullScreenLoader} />
 }
 
 // Wert initialization loader
 export const WertLoader = () => {
   const { isWertLoading } = useSelector((state: State) => state.loading)
   useLockBodyScroll(isWertLoading)
-  return isWertLoading ? (
-    <LoaderStyledWithBackdrop backdropAlpha={0.8}>
+  return (
+    <LoaderStyledWithBackdrop backdropAlpha={0.8} isActive={isWertLoading}>
       <LoaderShineTextAnimation>Initializating Wert IO widget...</LoaderShineTextAnimation>
     </LoaderStyledWithBackdrop>
-  ) : null
+  )
 }

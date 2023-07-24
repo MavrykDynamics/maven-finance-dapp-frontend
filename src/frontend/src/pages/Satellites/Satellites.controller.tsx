@@ -1,12 +1,8 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
 
 // providers
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
-
-// types
-import { State } from 'reducers'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
 // view
 import SatellitesSideBar from './SatellitesSideBar/SatellitesSideBar.controller'
@@ -19,11 +15,9 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
-import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
-import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 // styles
 import { SatelliteGovernanceStatsInfo } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
@@ -34,34 +28,35 @@ import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { USER_MVK_BALANCE_SUB } from 'providers/StakeProvider/helpers/stake.consts'
-import { SUB_SKIP } from 'utils/api/apollo.consts'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import {
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITES_DATA_ACTIVE_SUB,
+} from 'providers/SatellitesProvider/satellites.const'
 
 const Satellites = () => {
-  const dispatch = useDispatch()
-  const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
-  const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
-
-  const { isInitialLoading: isDoormanLoading } = useStakeUpdater({
-    skipAddressBalance: SUB_SKIP,
-    skipStakeHistory: SUB_SKIP,
-    skipMvkTokenTotal: SUB_SKIP,
-  })
+  const { feedsAddresses, feedsMapper } = useDataFeedsContext()
   const {
-    user: { isSatellite, userTokens },
-  } = useSelector((state: State) => state.wallet)
+    activeSatellitesIds,
+    satelliteMapper,
+    isLoading: isSatellitesLoading,
+    changeSatellitesSubscriptionsList,
+  } = useSatellitesContext()
+  const { userTokensBalances, isSatellite } = useUserContext()
 
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    try {
-      await Promise.all(
-        [
-          (!isFeedsLoaded || isDepsChanged) && dispatch(getFeedsStorage()),
-          (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
-        ].filter(Boolean),
-      )
-    } catch (e) {}
+  useEffect(() => {
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_ACTIVE_SUB,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
   }, [])
 
   const tabsInfo = useMemo(
@@ -70,15 +65,15 @@ const Satellites = () => {
         <CommaNumber value={getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)} endingText={'MVK'} />
       ),
       totalSatelliteOracles: activeSatellitesIds.length,
-      numberOfDataFeeds: feedsLedger.length > 50 ? feedsLedger.length + '+' : feedsLedger.length,
+      numberOfDataFeeds: feedsAddresses.length > 50 ? feedsAddresses.length + '+' : feedsAddresses.length,
     }),
-    [activeSatellitesIds, feedsLedger, satelliteMapper],
+    [activeSatellitesIds, feedsAddresses, satelliteMapper],
   )
 
   return (
     <Page>
       <PageHeader page={'satellites'} />
-      {!isSatellite && userTokens[SMVK_TOKEN_SYMBOL].balance === 0 ? (
+      {!isSatellite && getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 ? (
         <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
       ) : null}
       <PageContent>
@@ -94,19 +89,19 @@ const Satellites = () => {
               </div>
             </SatelliteGovernanceStatsInfo>
             <SatelliteGovernanceStatsInfo>
-              <h3>Total Satellites & Oracles</h3>
-              <div className="value">{tabsInfo.totalSatelliteOracles}</div>
-            </SatelliteGovernanceStatsInfo>
-            <SatelliteGovernanceStatsInfo>
               <h3>Number of Data Feeds</h3>
               <div className="value">{tabsInfo.numberOfDataFeeds}</div>
             </SatelliteGovernanceStatsInfo>
+            <SatelliteGovernanceStatsInfo>
+              <h3>Total Satellites & Oracles</h3>
+              <div className="value">{tabsInfo.totalSatelliteOracles}</div>
+            </SatelliteGovernanceStatsInfo>
           </InfoBlockWrapper>
 
-          {isLoading || isDoormanLoading ? (
+          {isSatellitesLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
-              <div className="text">Loading satellites and data feeds data</div>
+              <div className="text">Loading satellites and feeds data</div>
             </DataLoaderWrapper>
           ) : (
             <>
@@ -124,14 +119,15 @@ const Satellites = () => {
                   </div>
 
                   <div className={`satellitesList`}>
-                    {activeSatellitesIds.slice(0, 3).map((satelliteAddress) => (
-                      <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
-                    ))}
+                    {activeSatellitesIds.slice(0, 3).map((satelliteAddress) => {
+                      if (!satelliteMapper[satelliteAddress]) return null
+                      return <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
+                    })}
                   </div>
                 </>
               ) : null}
 
-              {feedsLedger.length ? (
+              {feedsAddresses.length ? (
                 <>
                   <div className="top-list">
                     <H2Title>Popular Feeds</H2Title>
@@ -145,14 +141,18 @@ const Satellites = () => {
                   </div>
 
                   <div className={`satellitesList`}>
-                    {feedsLedger.slice(0, 3).map((feed) => (
-                      <DataFeedCard feed={feed} key={feed.address} />
+                    {feedsAddresses.slice(0, 3).map((feedAddress) => (
+                      <DataFeedCard
+                        feed={feedsMapper[feedAddress]}
+                        oracleNodes={tabsInfo.totalSatelliteOracles}
+                        key={feedAddress}
+                      />
                     ))}
                   </div>
                 </>
               ) : null}
 
-              {feedsLedger.length === 0 && activeSatellitesIds.length === 0 ? (
+              {feedsAddresses.length === 0 && activeSatellitesIds.length === 0 ? (
                 <EmptyContainer>
                   <img src="/images/not-found.svg" alt={`no satellites and data feeds`} />
                   <figcaption>No satellites and data feeds</figcaption>

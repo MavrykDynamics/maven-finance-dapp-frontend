@@ -17,13 +17,13 @@ const backuphttpLink = new HttpLink({
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: process.env.REACT_APP_BACKUP_GRAPHQL_WSS_API ?? '',
+    url: process.env.REACT_APP_GRAPHQL_WSS_API ?? '',
   }),
 )
 
 const backupwsLink = new GraphQLWsLink(
   createClient({
-    url: process.env.REACT_APP_GRAPHQL_WSS_API ?? '',
+    url: process.env.REACT_APP_BACKUP_GRAPHQL_WSS_API ?? '',
   }),
 )
 
@@ -58,7 +58,7 @@ const errorLink = onError(({ operation, networkError }) => {
   }
 })
 
-export const client = new ApolloClient({
+export const apolloClient = new ApolloClient({
   link: errorLink.concat(retryLink.concat(splitLink(wsLink, httpLink))),
   cache: new InMemoryCache(),
 })

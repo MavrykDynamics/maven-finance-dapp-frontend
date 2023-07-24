@@ -10,13 +10,13 @@ export const vaultsStatuses = {
   MARK: 'MARK',
   AT_RISK: 'AT_RISK',
   ACTIVE: 'ACTIVE',
-}
+} as const
 
 export const vaultsFilters = {
   SORT: 'sort',
   ASSETS: 'assets',
   ZERO: 'zero',
-}
+} as const
 
 export const sortVaultItems = {
   MOST_RECENT: 'Most Recent',
@@ -25,7 +25,7 @@ export const sortVaultItems = {
   COLLATERAL_LOW: 'Collateral Amount ↓',
   BORROWED_HIGH: 'Borrowed Amount ↑',
   BORROWED_LOW: 'Borrowed Amount ↓',
-}
+} as const
 
 export const sortingList = Object.values(sortVaultItems)
 

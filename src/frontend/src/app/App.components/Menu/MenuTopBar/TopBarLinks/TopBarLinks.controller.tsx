@@ -4,7 +4,7 @@ import { TopBarLinksStyled } from './TopBarLinks.style'
 
 type TopBarLinksProps = {
   groupName: string | JSX.Element
-  groupLinks: Array<{ name: string; href: string, disabled?: boolean, path?: string }>
+  groupLinks: Array<{ name: string; href: string; disabled?: boolean; path?: string }>
   useClickOpening?: boolean
   selectedLinksBlock?: null | string
   setSelectedLinksBlock?: () => void

@@ -42,6 +42,7 @@ export type ProposalValidityObj = {
 export type StageOneFormProps = {
   proposalId: number
   currentProposal: ProposalRecordType
+  isFormDisabled: boolean
   currentProposalValidation: ProposalValidityObj
   updateLocalProposalValidation: ChangeProposalValidationFnType
   updateLocalProposalData: ChangeProposalFnType
@@ -50,6 +51,7 @@ export type StageOneFormProps = {
 export type StageTwoFormProps = {
   proposalId: number
   currentProposal: ProposalRecordType
+  isFormDisabled: boolean
   currentProposalValidation: ProposalValidityObj
   updateLocalProposalValidation: ChangeProposalValidationFnType
   updateLocalProposalData: ChangeProposalFnType
@@ -58,6 +60,7 @@ export type StageTwoFormProps = {
 export type StageThreeFormProps = {
   proposalId: number
   currentProposal: ProposalRecordType
+  isFormDisabled: boolean
   currentProposalValidation: ProposalValidityObj
   updateLocalProposalValidation: ChangeProposalValidationFnType
   updateLocalProposalData: ChangeProposalFnType

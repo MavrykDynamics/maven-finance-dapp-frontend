@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { useLocation, useParams, useHistory } from 'react-router'
 
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
 // const
 import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
 
 // actions
 import { getSatelliteGovernanceStorage } from './SatelliteGovernance.actions'
-import { getTotalDelegatedMVK } from 'pages/Satellites/helpers/Satellites.consts'
 
 // style
 import {
@@ -31,6 +33,7 @@ import {
   PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST,
   MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
+import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
 import {
   SATELLITE_GOVERNANCE_ACTIONS,
   SATELLITE_GOVERNANCE_MENU_TABS,
@@ -49,6 +52,7 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const getCurrentListNameById = (tabId: string) => {
   switch (tabId) {
@@ -78,25 +82,22 @@ export const SatelliteGovernance = () => {
 
   const { tabId = SATELLITE_GOVERNANCE_MENU_TABS.ONGOING } = useParams<{ tabId: string }>()
 
+  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics({
+    skipOracleRewardsTotal: true,
+  })
   const {
-    accountPkh,
-    user: { isSatellite, govActionsCount },
-  } = useSelector((state: State) => state.wallet)
+    maxLengths: {
+      governanceSatellite: { purposeMaxLength },
+      dataFeeds: { feedNameMaxLength },
+    },
+  } = useDappConfigContext()
+  const { userAddress, isSatellite, govActionsCount } = useUserContext()
 
   const { maxActionsCount } = useSelector((state: State) => state.satelliteGovernance.config)
-
-  const {
-    isLoaded,
-    ongoingSatelliteGovIds,
-    pastSatelliteGovIds,
-    mySatelliteGovIds,
-    satelliteGovIdsMapper,
-    config: { purposeMaxLength },
-  } = useSelector((state: State) => state.satelliteGovernance)
-
-  const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { feedNameMaxLength } = useSelector((state: State) => state.dataFeeds.config)
   const { isActionActive } = useSelector((state: State) => state.loading)
+
+  const { isLoaded, ongoingSatelliteGovIds, pastSatelliteGovIds, mySatelliteGovIds, satelliteGovIdsMapper } =
+    useSelector((state: State) => state.satelliteGovernance)
 
   const dropDownItems = useMemo(() => SATELLITE_GOVERNANCE_ACTIONS.map((item) => getDdItem(item)), [])
   type DropDownItemType = (typeof dropDownItems)[0]
@@ -104,7 +105,6 @@ export const SatelliteGovernance = () => {
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
   const [tabsList, setTabsList] = useState<TabItem[]>([])
 
-  const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
   const ongoingActionsLength = ongoingSatelliteGovIds.length
 
   const maxLength = {
@@ -161,7 +161,7 @@ export const SatelliteGovernance = () => {
         }
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
 
   // set tabs list
@@ -187,7 +187,7 @@ export const SatelliteGovernance = () => {
         id: 3,
         active: SATELLITE_GOVERNANCE_MENU_TABS.MY === tabId,
         path: SATELLITE_GOVERNANCE_MENU_TABS.MY,
-        isDisabled: !accountPkh,
+        isDisabled: !userAddress,
       }
 
       baseTabs.push(satelliteTab)
@@ -195,10 +195,10 @@ export const SatelliteGovernance = () => {
 
     setTabsList(baseTabs)
 
-    if (accountPkh) return
+    if (userAddress) return
     // return back to "ongoing actions" tab if user is not connected
     history.replace(`${SATELLITE_GOVERNANCE_PATHNAME}/${SATELLITE_GOVERNANCE_MENU_TABS.ONGOING}`)
-  }, [accountPkh, isSatellite, tabId])
+  }, [userAddress, isSatellite, tabId])
 
   return (
     <Page>
@@ -208,11 +208,11 @@ export const SatelliteGovernance = () => {
         <SatelliteGovernanceStats>
           <SatelliteGovernanceStatsInfo>
             <h3>Total Active Satellites</h3>
-            <div className="value">{activeSatellitesIds.length}</div>
+            <div className="value">{totalActiveSatellites}</div>
           </SatelliteGovernanceStatsInfo>
           <SatelliteGovernanceStatsInfo>
             <h3>Total Oracle Networks</h3>
-            <div className="value">{oraclesIds.length}</div>
+            <div className="value">{totalOracleNetworks}</div>
           </SatelliteGovernanceStatsInfo>
           <SatelliteGovernanceStatsInfo>
             <h3>Total Delegated MVK</h3>
@@ -245,7 +245,7 @@ export const SatelliteGovernance = () => {
 
             <SatelliteGovernanceForm
               maxLength={maxLength}
-              isActionActive={isActionActive}
+              isActionActive={isActionActive || govActionsCount >= maxActionsCount}
               variant={chosenDdItem?.id}
             />
           </SatelliteGovernanceAvailableActions>
@@ -271,7 +271,8 @@ export const SatelliteGovernance = () => {
                         id={action.id}
                         satelliteId={convertBytesAddressToAddress(action.parameters[0].value)}
                         initiatorId={action.initiatorId}
-                        date={action.expirationDatetime}
+                        actionExpirationDate={action.expirationDatetime}
+                        actionStartDate={action.startDatetime}
                         statusFlag={action.statusFlag}
                         purpose={action.purpose}
                         governanceType={action.type}
@@ -280,7 +281,7 @@ export const SatelliteGovernance = () => {
                         yayVotesSmvkTotal={action.yayVoteSmvkTotal}
                         nayVotesSmvkTotal={action.nayVoteSmvkTotal}
                         passVoteSmvkTotal={action.passVoteSmvkTotal}
-                        accountPkh={accountPkh}
+                        accountPkh={userAddress}
                         isActionActive={isActionActive}
                         votes={action.votes}
                       />

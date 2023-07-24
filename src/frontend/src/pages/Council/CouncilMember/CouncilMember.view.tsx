@@ -10,6 +10,7 @@ import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.
 
 // style
 import { CouncilMemberStyled } from './CouncilMember.style'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type Props = {
   image: string
@@ -20,17 +21,14 @@ type Props = {
 }
 
 export const CouncilMemberView = (props: Props) => {
-  const {
-    accountPkh,
-    user: { isSatellite },
-  } = useSelector((state: State) => state.wallet)
+  const { userAddress, isSatellite } = useUserContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const { image, name, userId, openModal, showUpdateInfo = true } = props
   const href = `/satellites/satellite-details/${userId}`
 
-  const isMe = userId === accountPkh
+  const isMe = userId === userAddress
   const content = (
     <CouncilMemberStyled className={isMe ? 'is-me' : ''}>
       <div className="inner">

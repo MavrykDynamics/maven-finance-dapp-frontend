@@ -5,7 +5,7 @@ import {
   INPUT_STATUS_SUCCESS,
   defaultProposalMetadataTitleMaxLength,
 } from 'app/App.components/Input/Input.constants'
-import { Governance_Proposal } from 'utils/generated/graphqlTypes'
+import { Governance_Proposal } from 'utils/__generated__/graphql'
 import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
   PaymentsDataChangesType,
@@ -13,11 +13,12 @@ import {
   ProposalValidityObj,
   StageThreeValidityItem,
 } from './ProposalSubmission.types'
-import { State } from 'reducers'
 
 // helpers
 import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // VALIDATION FN'S TODO: add some checking in future (no cond for it now)
 export const getBytesPairValidationStatus = (
@@ -246,32 +247,27 @@ export const getBytesDiff = (
   return changes
 }
 
+// TODO: review it & add docs for it
 export const getPaymentsDiff = (
   originalData: ProposalRecordType['proposalPayments'],
   updatedData: ProposalRecordType['proposalPayments'],
-  paymentMethods: Array<{ symbol: string; address: string; shortSymbol: string; id: number }>,
-  dipDupTokens: State['tokens']['dipDupTokens'],
+  tokensMetadata: TokensContext['tokensMetadata'],
 ): PaymentsDataChangesType => {
   let originalIdx = 0
 
   const changes = updatedData
-    .map<PaymentsDataChangesType[number] | null>((item1) => {
+    .reduce<PaymentsDataChangesType>((acc, item1) => {
       const item2 = originalData?.[originalIdx]
 
-      // default decimals is 6 cuz 6 is xtz decimals, and dipDupTokens don't contain xtz asset
-      const decimals =
-        item1.token_address === 'XTZ'
-          ? 6
-          : dipDupTokens.find(({ token_address }) => token_address === item1.token_address)?.metadata?.decimals ?? 0
+      const token1Metadata = getTokenDataByAddress({ tokensMetadata, tokenAddress: item1.token_address })
 
-      const symbol =
-        item1.token_address === 'XTZ'
-          ? 'tez'
-          : paymentMethods.find(({ address }) => address === item1.token_address)?.shortSymbol ?? 'fa2'
+      if (!token1Metadata) return acc
+
+      const { type, decimals } = token1Metadata
 
       let token = {}
 
-      switch (symbol.toLowerCase()) {
+      switch (type) {
         case 'fa12':
           token = {
             fa12: item1.token_address,
@@ -294,8 +290,8 @@ export const getPaymentsDiff = (
       }
 
       // if we have more items on client than on server, when we reach end of the items that stored on client array, just add everything to the end
-      if (!item2) {
-        return {
+      if (!item2 && typeof item1.token_amount === 'number') {
+        acc.push({
           addOrSetPaymentData: {
             title: item1.title ?? '',
             transaction: {
@@ -306,20 +302,19 @@ export const getPaymentsDiff = (
               ),
             },
           },
-        }
+        })
       }
 
-      if (!checkPaymentExists(item1)) {
-        return null
-      }
+      if (!checkPaymentExists(item1)) return acc
 
       // if local is different frin back one, we update this element
       if (
-        (item2.title !== item1.title && item1.title !== null) ||
-        (item2.to__id !== item1.to__id && item1.to__id !== null) ||
-        (item2.token_address !== item1.token_address && item1.token_address !== null)
+        ((item2.title !== item1.title && item1.title !== null) ||
+          (item2.to__id !== item1.to__id && item1.to__id !== null) ||
+          (item2.token_address !== item1.token_address && item1.token_address !== null)) &&
+        typeof item1.token_amount === 'number'
       ) {
-        return {
+        acc.push({
           addOrSetPaymentData: {
             title: item1.title ?? '',
             transaction: {
@@ -331,23 +326,22 @@ export const getPaymentsDiff = (
             },
             index: String(originalIdx++),
           },
-        }
+        })
       }
       originalIdx++
-      return null
-    })
+
+      return acc
+    }, [])
     .concat(
       Array.from({ length: originalData.length - updatedData.length }, (_, idx) => ({
         removePaymentData: String(Number(updatedData.length) + Number(idx)),
       })),
     )
-    .filter(Boolean) as PaymentsDataChangesType
 
   return changes
 }
 
 // CONSTS
-
 export const PROPOSAL_BYTE = {
   encoded_code: '',
   id: 1,
@@ -365,6 +359,9 @@ export const DEFAULT_PROPOSAL: ProposalRecordType = {
   id: -1,
   proposerId: '',
   governanceId: '',
+  droppedTime: '',
+  executionTime: '',
+  defeatedTime: '',
   status: ProposalStatus.UNLOCKED,
   title: '',
   description: '',

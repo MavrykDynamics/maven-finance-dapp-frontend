@@ -11,11 +11,13 @@ import { EarnBorrowChartStyled } from '../LoansEarnBorrow.styles'
 // helpers
 import { CHART_COLORS, MINI_CHART_SETTINGS, numberOfItemsToDisplay } from '../LoansEarnBorrow.consts'
 import { BUTTON_THIRD, BUTTON_ROUND } from 'app/App.components/Button/Button.constants'
-import { AREA_CHART_TYPE, HISTOGRAM_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { AREA_CHART_TYPE, HISTOGRAM_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+import { useLoansEarnBorrowContext } from '../context/loansEarnBorrowContext'
+import { LoansMarketMiniChartType } from 'providers/LoansProvider/helpers/loans.types'
 
 type ChartDataType = {
   type: typeof AREA_CHART_TYPE | typeof HISTOGRAM_CHART_TYPE
@@ -23,27 +25,32 @@ type ChartDataType = {
 }
 
 type Props = {
-  data: AreaChartPlotType[]
+  data: LoansMarketMiniChartType
+  isBorrow: boolean
 }
 
-export const EarnBorrowChart = ({ data }: Props) => {
+export const EarnBorrowChart = ({ data, isBorrow }: Props) => {
   const [isGraph, setIsGraph] = useState(false)
+  const { isChartsLoading } = useLoansEarnBorrowContext()
 
-  const chartData: ChartDataType = { type: isGraph ? HISTOGRAM_CHART_TYPE : AREA_CHART_TYPE, plots: data }
+  const chartData: ChartDataType = {
+    type: isGraph ? HISTOGRAM_CHART_TYPE : AREA_CHART_TYPE,
+    plots: (isGraph ? data.volume : data.total) ?? [],
+  }
+
   const showChart = chartData.plots.length >= numberOfItemsToDisplay
 
   return (
-    <EarnBorrowChartStyled>
+    <EarnBorrowChartStyled isChartLoading={isChartsLoading}>
       {showChart && (
         <div className="switchMenu">
-          <span>Supply Vol / 14 Days</span>
+          <span>{isBorrow ? 'Borrow' : 'Supply'} Vol / 14 Days</span>
 
           <Button kind={BUTTON_THIRD} form={BUTTON_ROUND} onClick={() => setIsGraph(!isGraph)}>
             <Icon id={isGraph ? 'graph' : 'chart'} />
           </Button>
         </div>
       )}
-
       <Chart
         data={chartData}
         colors={CHART_COLORS}
@@ -51,6 +58,7 @@ export const EarnBorrowChart = ({ data }: Props) => {
         numberOfItemsToDisplay={numberOfItemsToDisplay}
         tooltipAsset="$"
         tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
+        isLoading={isChartsLoading}
       />
     </EarnBorrowChartStyled>
   )

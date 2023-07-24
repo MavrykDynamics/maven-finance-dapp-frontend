@@ -1,6 +1,5 @@
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { getBreakGlassConfig } from 'pages/BreakGlass/BreakGlass.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { hideToaster, showToaster } from '../../app/App.components/Toaster/Toaster.actions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 import { normalizeEmergencyGovernance } from '../EmergencyGovernance/EmergencyGovernance.helpers'
@@ -86,7 +85,6 @@ export const submitEmergencyGovernanceProposal =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(getEmergencyGovernanceStorage())
-            await dispatch(getBreakGlassConfig())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Emergency Proposal Submitted', ACTION_COMPLETION_MESSAGE_TEXT))

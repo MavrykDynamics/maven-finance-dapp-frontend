@@ -1,5 +1,4 @@
 // helpres, actions
-import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
@@ -15,7 +14,7 @@ import {
   TOASTER_SUCCESS,
   TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
 } from 'app/App.components/Toaster/Toaster.constants'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // types
 import type { AppDispatch, GetState } from '../../app/App.controller'
@@ -65,7 +64,7 @@ export const submitProposal =
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
-      dispatch(showToaster(TOASTER_INFO, 'Submitting proposal...', ACTION_START_MESSAGE_TEXT))
+      dispatch(showToaster(TOASTER_INFO, 'Saving proposal...', ACTION_START_MESSAGE_TEXT))
 
       await sleep(5000)
 
@@ -96,14 +95,14 @@ export const submitProposal =
 
           // Add here call for update data actions
           await dispatch(hideToaster())
-          await dispatch(showToaster(TOASTER_SUCCESS, 'Unstaking done', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal saved.', ACTION_COMPLETION_MESSAGE_TEXT))
           await dispatch(toggleActionCompletion(false))
           callback(latestProposalId)
         },
         currentOperationLevel,
       })
     } catch (error) {
-      console.error('submitProposal error:', error)
+      console.error('submitProposal action error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
@@ -149,7 +148,7 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     await checkIndexerLevelAndRunDataUpdateCallback({
       callback: async () => {
         await dispatch(getGovernanceStorage())
-        await dispatch(getSatellitesStorage())
+        // await dispatch(getSatellitesStorage())
 
         // Add here call for update data actions
         await dispatch(hideToaster())
@@ -184,7 +183,7 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
 
     dispatch(toggleActionFullScreenLoader(true))
     dispatch(toggleActionCompletion(true))
-    dispatch(showToaster(TOASTER_INFO, 'Locking proposal...', ACTION_START_MESSAGE_TEXT))
+    dispatch(showToaster(TOASTER_INFO, 'Submitting proposal...', ACTION_START_MESSAGE_TEXT))
 
     await sleep(5000)
 
@@ -205,17 +204,17 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     await checkIndexerLevelAndRunDataUpdateCallback({
       callback: async () => {
         await dispatch(getGovernanceStorage())
-        await dispatch(getSatellitesStorage())
+        // await dispatch(getSatellitesStorage())
 
         // Add here call for update data actions
         await dispatch(hideToaster())
-        await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal locked.', ACTION_COMPLETION_MESSAGE_TEXT))
+        await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal submitted.', ACTION_COMPLETION_MESSAGE_TEXT))
         await dispatch(toggleActionCompletion(false))
       },
       currentOperationLevel,
     })
   } catch (error) {
-    console.error('lockProposal error:', error)
+    console.error('lockProposal action error:', error)
     if (error instanceof Error) {
       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
@@ -280,7 +279,7 @@ export const updateProposalData =
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(getGovernanceStorage())
-          await dispatch(getSatellitesStorage())
+          // await dispatch(getSatellitesStorage())
 
           // Add here call for update data actions
           await dispatch(hideToaster())

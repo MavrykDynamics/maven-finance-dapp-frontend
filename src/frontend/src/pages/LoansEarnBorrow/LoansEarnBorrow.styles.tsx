@@ -6,12 +6,18 @@ export const LoansEarnBorrowStyled = styled.div<{ theme: MavrykTheme }>`
   margin-top: 30px;
 `
 
-export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme }>`
+export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme; isChartLoading: boolean }>`
+  position: relative;
   margin: 23px 0 30px 0;
   height: 152px;
 
   border: 1px solid ${({ theme }) => theme.borderColor};
   border-radius: 10px;
+
+  & > div:last-child {
+    position: ${({ isChartLoading }) => (isChartLoading ? 'absolute' : 'relative')};
+    position: ${({ isChartLoading }) => (isChartLoading ? '0' : '3px')};
+  }
 
   .switchMenu {
     display: flex;
@@ -145,9 +151,5 @@ export const EarnBorrowCardBody = styled.div<{ theme: MavrykTheme }>`
 
       fill: ${({ theme }) => theme.dataColor};
     }
-  }
-
-  .hidden {
-    visibility: hidden;
   }
 `

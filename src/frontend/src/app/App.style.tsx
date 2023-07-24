@@ -2,7 +2,10 @@ import styled, { css } from 'styled-components/macro'
 
 import { MavrykTheme } from '../styles/interfaces'
 
-export const AppStyled = styled.div<{ theme: MavrykTheme; isExpandedMenu?: boolean }>`
+export const AppStyled = styled.div<{
+  theme: MavrykTheme
+  isExpandedMenu?: boolean
+}>`
   --carousel-button-size: 30px;
   --carousel-button-bg: rgb(22 14 63 / 70%);
   --carousel-button-indent: -15px;
@@ -14,26 +17,11 @@ export const AppStyled = styled.div<{ theme: MavrykTheme; isExpandedMenu?: boole
   }
 `
 
-export const AppBg = styled.div<{ theme: MavrykTheme }>`
+export const FullScreenLoadingApp = styled.div<{ theme: MavrykTheme }>`
   position: fixed;
-  top: 0;
-  left: 0;
-  min-width: 100vw;
-  min-height: 100vh;
-  background-color: ${({ theme }) => theme.containerColor};
-  /* background-image: url('/images/bg.png');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover; */
-`
-
-export const AppWrapper = styled.div`
-  position: absolute;
+  background-color: rgba(8, 6, 40, 1);
   width: 100vw;
-  top: 0;
-  background: url('/images/grid.svg') repeat center top;
-  /* height: 100vh; */
-  will-change: transform, opacity;
+  height: 100vh;
 `
 
 export const EmptyContainer = styled.figure<{ theme: MavrykTheme }>`
