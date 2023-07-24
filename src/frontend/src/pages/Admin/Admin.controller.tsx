@@ -27,7 +27,7 @@ export const Admin = () => {
   const dispatch = useDispatch()
 
   const { changeLoansSubscriptionsList } = useLoansContext()
-  const { vaultsMapper, changeVaultsSubscriptionsList } = useVaultsContext()
+  const { vaultsMapper, changeVaultsSubscriptionsList, isLoading: isVaultsLoading } = useVaultsContext()
   const { collateralTokens, tokensMetadata } = useTokensContext()
 
   useEffect(() => {
@@ -78,6 +78,7 @@ export const Admin = () => {
   return (
     <Page>
       <PageHeader page={'admin'} />
+      {isVaultsLoading ? 'vaults loading, do not use vaults actions)' : null}
       <AdminView
         handleChangeGovernancePeriod={handleChangeGovernancePeriod}
         handleCreateFarm={handleCreateFarm}
