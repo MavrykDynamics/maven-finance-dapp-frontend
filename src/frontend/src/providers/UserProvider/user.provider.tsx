@@ -188,8 +188,8 @@ export const UserProvider = ({ children }: Props) => {
   // effect to perform resotring user from localStorage
   useEffect(() => {
     if (canStartUserInitialLoading) {
-      isRunnedInitialConnect.current = true
       connect()
+      isRunnedInitialConnect.current = true
     }
   }, [canStartUserInitialLoading, connect])
 
@@ -313,6 +313,7 @@ export const UserProvider = ({ children }: Props) => {
     () => ({
       ...userCtxState,
       isLoading: userDataLoading || isTzktBalancesLoading,
+      isRunnedInitialConnect: Boolean(isRunnedInitialConnect.current),
       connect,
       signOut,
       changeUser,

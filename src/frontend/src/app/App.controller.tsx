@@ -16,8 +16,8 @@ import { State } from '../reducers'
 // view, styles
 import { Toaster } from './App.components/Toaster/Toaster.controller'
 import { Menu } from './App.components/Menu/Menu.controller'
-import { ActionLoader, WertLoader } from './App.components/Loader/Loader.view'
 import { SettingPopup } from './App.components/SettingsPopup/SettingsPopup'
+import { Loaders } from './App.components/Loader/Loader.view'
 import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
 import { AppStyled } from './App.style'
 import { PolicyPopup } from 'app/App.components/PolicyPopup/Policy.controller'
@@ -80,9 +80,9 @@ export const App = () => {
 
   return (
     <AppStyled isExpandedMenu={sidebarOpened}>
-      <ActionLoader />
+      <Loaders />
+
       <Toaster />
-      <WertLoader />
       <Menu />
 
       <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />

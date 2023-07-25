@@ -78,9 +78,12 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
   const { isLoading: isDappGeneralLoading } = useDappConfigContext()
   const { isLoading: isTokensLoading } = useTokensContext()
   const { isLoading: isFeedsLoading } = useDataFeedsContext()
-  const { isLoading: isUserLoading } = useUserContext()
+  const { isLoading: isUserLoading, isRunnedInitialConnect } = useUserContext()
 
-  const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isUserLoading
+  // use user loading status only on dapp init loading
+  const isInitialUserLoading = !isRunnedInitialConnect ? isUserLoading : false
+
+  const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isInitialUserLoading
 
   return (
     <>
