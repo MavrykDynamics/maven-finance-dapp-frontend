@@ -201,7 +201,13 @@ export const UserProvider = ({ children }: Props) => {
     },
     shouldResubscribe: true,
     onData: ({ data: { data } }) => {
-      if (!data) return
+      // if user does not exists, TODO: should not be an option
+      if (!data || data.mavryk_user.length === 0) {
+        bug('User does not exists in DB')
+        signOut()
+        return
+      }
+
       const { tokensBalances, availableLoansRewards, userMTokens } = normalizeUserIndexerTokensBalances({
         indexerData: data,
         tokensMetadata,
@@ -318,7 +324,7 @@ export const UserProvider = ({ children }: Props) => {
       signOut,
       changeUser,
     }),
-    [connect, signOut, changeUser, userCtxState],
+    [connect, signOut, changeUser, userCtxState, isTzktBalancesLoading],
   )
 
   return <userContext.Provider value={providerValue}>{children}</userContext.Provider>
