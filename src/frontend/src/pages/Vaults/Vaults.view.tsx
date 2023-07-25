@@ -93,7 +93,35 @@ export const VaultsView = () => {
       )
   }, [isVaultsLoading])
 
-  const [tabsList, setTabsList] = useState<TabItem[]>([])
+  useEffect(() => {
+    if (!userAddress && (tabId === vaultTabs.MY || tabId === vaultTabs.PERMISSIONED)) {
+      setVaultsIds([])
+    }
+  }, [userAddress])
+
+  const tabsList = useMemo(
+    () => [
+      {
+        text: 'All Vaults',
+        id: 1,
+        active: vaultTabs.ALL === tabId,
+        path: vaultTabs.ALL,
+      },
+      {
+        text: 'My Vaults',
+        id: 2,
+        active: vaultTabs.MY === tabId,
+        path: vaultTabs.MY,
+      },
+      {
+        text: 'Permissioned Vaults',
+        id: 3,
+        active: vaultTabs.PERMISSIONED === tabId,
+        path: vaultTabs.PERMISSIONED,
+      },
+    ],
+    [tabId, userAddress],
+  )
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
 
   const currentListName =
@@ -134,43 +162,6 @@ export const VaultsView = () => {
   const handleMarkForLiquidation = async (vaultId: number, vaultOwner: string) => {
     await dispatch(markForLiquidation(vaultId, vaultOwner))
   }
-
-  // switch to "all" tab if user is disabled and set tabs
-  useEffect(() => {
-    const baseTabs = [
-      {
-        text: 'All Vaults',
-        id: 1,
-        active: vaultTabs.ALL === tabId,
-        path: vaultTabs.ALL,
-      },
-    ]
-
-    const tabsToUse = userAddress
-      ? [
-          ...baseTabs,
-          {
-            text: 'My Vaults',
-            id: 2,
-            active: vaultTabs.MY === tabId,
-            path: vaultTabs.MY,
-          },
-          {
-            text: 'Permissioned Vaults',
-            id: 3,
-            active: vaultTabs.PERMISSIONED === tabId,
-            path: vaultTabs.PERMISSIONED,
-            isDisabled: !userAddress,
-          },
-        ]
-      : baseTabs
-
-    setTabsList(tabsToUse)
-
-    if (userAddress) return
-    // return back to "all vaults" tab if user is not connected
-    history.replace(`${pathname}/${baseTabs[0].path}`)
-  }, [userAddress, tabId])
 
   return (
     <VaultsStyled>

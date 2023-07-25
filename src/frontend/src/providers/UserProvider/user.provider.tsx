@@ -188,7 +188,11 @@ export const UserProvider = ({ children }: Props) => {
 
   // effect to perform resotring user from localStorage
   useEffect(() => {
-    if (canStartUserInitialLoading) connect()
+    if (canStartUserInitialLoading) {
+      connect()
+    }
+
+    isRunnedInitialConnect.current = true
   }, [canStartUserInitialLoading, connect])
 
   // subscribe to user's indexer data
