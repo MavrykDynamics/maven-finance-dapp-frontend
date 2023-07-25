@@ -83,6 +83,7 @@ export const UserProvider = ({ children }: Props) => {
 
     return () => {
       ws?.current?.stop()
+      isRunnedInitialConnect.current = false
     }
   }, [])
 
@@ -182,15 +183,14 @@ export const UserProvider = ({ children }: Props) => {
     } catch (e) {
       console.error(`Failed to connect wallet:`, e)
       bug('Failed to connect wallet', TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+    } finally {
+      isRunnedInitialConnect.current = true
     }
   }, [updateUserTzktTokenBalances, loadInitialTzktTokensForNewlyConnectedUser, handleDisconnect, handleOnReconnected])
 
   // effect to perform resotring user from localStorage
   useEffect(() => {
-    if (canStartUserInitialLoading) {
-      connect()
-      isRunnedInitialConnect.current = true
-    }
+    if (canStartUserInitialLoading) connect()
   }, [canStartUserInitialLoading, connect])
 
   // subscribe to user's indexer data
