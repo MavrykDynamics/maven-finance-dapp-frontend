@@ -33,3 +33,12 @@ export const screenDescriptions = {
   [BORROW_SCREEN_ID]: 'Select the amount you would like to borrow. You cannot borrow more than your borrow capacity.',
   [CONFIRMATION_SCREEN_ID]: 'Please confirm the following details.',
 }
+
+export const stepperItemsObj = {
+  [INITIAL_SCREEN_ID]: 'Create Vault',
+  [ADD_COLLATERAL_SCREEN_ID]: 'Add Collateral',
+  [BORROW_SCREEN_ID]: 'Borrow',
+  [CONFIRMATION_SCREEN_ID]: 'Confirmation',
+}
+
+export const stepperItems = Object.values(stepperItemsObj)
