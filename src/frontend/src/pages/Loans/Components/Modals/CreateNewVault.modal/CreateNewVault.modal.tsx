@@ -14,7 +14,6 @@ import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } f
 import {
   InputStatusType,
   INPUT_LARGE,
-  INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
   INPUT_STATUS_DEFAULT,
   getOnFocusValue,
@@ -43,7 +42,7 @@ import { containSpaces } from 'app/App.utils/input'
 
 // styles
 import { silverColor } from 'styles'
-import { LoansModalBase } from './Modals.style'
+import { LoansModalBase } from '../Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
@@ -71,6 +70,9 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { createVault } from 'providers/VaultsProvider/actions/vaults.actions'
 import { apolloClient } from 'apollo'
 import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
+import { validateVaultLength } from './helpers/createNewVault.helpers'
+import { CreateVaultModalProvider } from './CreateVaultModal.provider'
+import { useCreateVaultContext } from './helpers/createVaultModalContext'
 
 type CurrentActiveModalScreen =
   | typeof INITIAL_SCREEN_ID
@@ -81,28 +83,30 @@ const INITIAL_SCREEN_ID = 'initial'
 const ADD_COLLATERAL_SCREEN_ID = 'addCollateral'
 const CONFIRMATION_SCREEN_ID = 'confirmation'
 
-// TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17480%3A229353&t=Sx2aEpp3ifrGxBtQ-0
-export const CreateNewVault = ({
-  closePopup,
-  show,
-  data,
-}: {
+type CreateNewModalProps = {
   closePopup: () => void
   show: boolean
   data: CreateVaultPopupDataType
-}) => {
+}
+
+// TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17480%3A229353&t=Sx2aEpp3ifrGxBtQ-0
+export const CreateNewVaultConsumer = ({ closePopup, show, data }: CreateNewModalProps) => {
+  // global context
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const { bug } = useToasterContext()
   const { userTokensBalances, userAddress } = useUserContext()
   const {
     contractAddresses: { vaultFactoryAddress, lendingControllerAddress },
   } = useDappConfigContext()
-  const { vaultNames, isLoading: isVaultsNamesLoading } = useUserVaultsNames()
-
+  const { vaultNames } = useUserVaultsNames()
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
+
+  //   internal create vault context
+  const { screenToShow } = useCreateVaultContext()
 
   useLockBodyScroll(show)
 
+  //   TODO take from context
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [vaultName, setVaultName] = useState<{ name: string; validationStatus: InputStatusType; errorMessage: string }>(
     {
@@ -118,6 +122,7 @@ export const CreateNewVault = ({
   >({})
   const selectedCollateralsAddresses = useMemo(() => Object.keys(selectedCollaterals), [selectedCollaterals])
 
+  //   TODO reset modal fn from ctx
   useEffect(() => {
     if (!show) {
       setShownScreen(INITIAL_SCREEN_ID)
@@ -727,11 +732,10 @@ export const CreateNewVault = ({
   )
 }
 
-// validation helper
-export function validateVaultLength(value: string, myVaultsNames: string[]): InputStatusType {
-  return value &&
-    value.length <= 15 &&
-    !myVaultsNames.find((vaultName) => vaultName.trim().toLowerCase() === value.trim().toLowerCase())
-    ? INPUT_STATUS_SUCCESS
-    : INPUT_STATUS_ERROR
+export const CreateNewVault = (props: CreateNewModalProps) => {
+  return (
+    <CreateVaultModalProvider>
+      <CreateNewVaultConsumer {...props} />
+    </CreateVaultModalProvider>
+  )
 }
