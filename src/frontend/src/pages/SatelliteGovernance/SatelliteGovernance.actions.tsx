@@ -5,7 +5,7 @@ import { SatelliteGovernanceTransfer } from 'providers/SatellitesProvider/satell
 
 // helpers
 import { fetchFromIndexerWithPromise } from '../../gql/fetchGraphQL'
-import { normalizerSatelliteGovernance } from './SatelliteGovernance.helpers'
+import { normalizerSatelliteGovernance, createBatchForExpiredActions } from './SatelliteGovernance.helpers'
 import {
   ACTION_COMPLETION_MESSAGE_TEXT,
   ACTION_START_MESSAGE_TEXT,
@@ -28,6 +28,7 @@ import {
   SATELLITE_GOVERNANCE_STORAGE_QUERY_NAME,
   SATELLITE_GOVERNANCE_STORAGE_QUERY_VARIABLE,
 } from '../../gql/queries/getSatelliteGovernanceStorage'
+import { OpKind, Wallet } from '@taquito/taquito'
 
 // getSatelliteGovernanceStorage
 export const GET_SATELLITE_GOVERNANCE_STORAGE = 'GET_SATELLITE_GOVERNANCE_STORAGE'
@@ -59,6 +60,8 @@ export const getSatelliteGovernanceStorage = () => async (dispatch: AppDispatch,
   }
 }
 
+// hepers
+
 // Suspend Satellite
 export const suspendSatellite =
   (satelliteAddress: string, purpose: string) => async (dispatch: AppDispatch, getState: GetState) => {
@@ -73,7 +76,13 @@ export const suspendSatellite =
     try {
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
-      const transaction = await contract?.methods.suspendSatellite(satelliteAddress, purpose).send()
+      const bathedArray = createBatchForExpiredActions(getState, contract)
+      const currentActionObjectToBatch = {
+        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+        ...contract?.methods.suspendSatellite(satelliteAddress, purpose).toTransferParams(),
+      }
+
+      const transaction = await tezos.wallet.batch([...bathedArray, currentActionObjectToBatch]).send()
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
@@ -129,7 +138,13 @@ export const unsuspendSatellite =
     try {
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
-      const transaction = await contract?.methods.restoreSatellite(satelliteAddress, purpose).send()
+
+      const bathedArray = createBatchForExpiredActions(getState, contract)
+      const currentActionObjectToBatch = {
+        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+        ...contract?.methods.restoreSatellite(satelliteAddress, purpose).toTransferParams(),
+      }
+      const transaction = await tezos.wallet.batch([...bathedArray, currentActionObjectToBatch]).send()
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
@@ -186,7 +201,13 @@ export const banSatellite =
     try {
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
-      const transaction = await contract?.methods.banSatellite(satelliteAddress, purpose).send()
+
+      const bathedArray = createBatchForExpiredActions(getState, contract)
+      const currentActionObjectToBatch = {
+        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+        ...contract?.methods.banSatellite(satelliteAddress, purpose).toTransferParams(),
+      }
+      const transaction = await tezos.wallet.batch([...bathedArray, currentActionObjectToBatch]).send()
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
@@ -242,7 +263,13 @@ export const unbanSatellite =
     try {
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
-      const transaction = await contract?.methods.restoreSatellite(satelliteAddress, purpose).send()
+
+      const bathedArray = createBatchForExpiredActions(getState, contract)
+      const currentActionObjectToBatch = {
+        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+        ...contract?.methods.restoreSatellite(satelliteAddress, purpose).toTransferParams(),
+      }
+      const transaction = await tezos.wallet.batch([...bathedArray, currentActionObjectToBatch]).send()
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
@@ -300,7 +327,13 @@ export const removeOracles =
     try {
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
-      const transaction = await contract?.methods.removeAllSatelliteOracles(satelliteAddress, purpose).send()
+
+      const bathedArray = createBatchForExpiredActions(getState, contract)
+      const currentActionObjectToBatch = {
+        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+        ...contract?.methods.removeAllSatelliteOracles(satelliteAddress, purpose).toTransferParams(),
+      }
+      const transaction = await tezos.wallet.batch([...bathedArray, currentActionObjectToBatch]).send()
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
@@ -359,9 +392,13 @@ export const removeOracleInAggregator =
     try {
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
-      const transaction = await contract?.methods
-        .removeOracleInAggregator(oracleAddress, satelliteAddress, purpose)
-        .send()
+
+      const bathedArray = createBatchForExpiredActions(getState, contract)
+      const currentActionObjectToBatch = {
+        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+        ...contract?.methods.removeOracleInAggregator(oracleAddress, satelliteAddress, purpose).toTransferParams(),
+      }
+      const transaction = await tezos.wallet.batch([...bathedArray, currentActionObjectToBatch]).send()
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
@@ -418,7 +455,13 @@ export const addOracleToAggregator =
     try {
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
-      const transaction = await contract?.methods.addOracleToAggregator(oracleAddress, satelliteAddress, purpose).send()
+
+      const bathedArray = createBatchForExpiredActions(getState, contract)
+      const currentActionObjectToBatch = {
+        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+        ...contract?.methods.addOracleToAggregator(oracleAddress, satelliteAddress, purpose).toTransferParams(),
+      }
+      const transaction = await tezos.wallet.batch([...bathedArray, currentActionObjectToBatch]).send()
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
@@ -652,7 +695,13 @@ export const restoreSatellite =
     try {
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
-      const transaction = await contract?.methods.restoreSatellite(satelliteAddress, purpose).send()
+
+      const bathedArray = createBatchForExpiredActions(getState, contract)
+      const currentActionObjectToBatch = {
+        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+        ...contract?.methods.restoreSatellite(satelliteAddress, purpose).toTransferParams(),
+      }
+      const transaction = await tezos.wallet.batch([...bathedArray, currentActionObjectToBatch]).send()
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
@@ -821,9 +870,13 @@ export const fixMistakenTransfer =
     try {
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
-      const transaction = await contract?.methods
-        .fixMistakenTransfer(targetContractAddress, purpose, transferList)
-        .send()
+
+      const bathedArray = createBatchForExpiredActions(getState, contract)
+      const currentActionObjectToBatch = {
+        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+        ...contract?.methods.fixMistakenTransfer(targetContractAddress, purpose, transferList).toTransferParams(),
+      }
+      const transaction = await tezos.wallet.batch([...bathedArray, currentActionObjectToBatch]).send()
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
