@@ -1,24 +1,24 @@
 import dayjs from 'dayjs'
-import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
+import {SingleValueData, UTCTimestamp} from 'lightweight-charts'
 
-import { State } from 'reducers'
-import { UserState } from 'reducers/wallet'
-import { Lending_Controller_History_Data } from 'utils/generated/graphqlTypes'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
+import {State} from 'reducers'
+import {UserState} from 'reducers/wallet'
+import {Lending_Controller_History_Data} from 'utils/generated/graphqlTypes'
+import {Feed} from 'utils/TypesAndInterfaces/DataFeeds'
 import {
   BaseLoansAssetDataType,
   LendingItemType,
   LoanMarketType,
   LoansChartsDataType,
 } from 'utils/TypesAndInterfaces/Loans'
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+import {AreaChartPlotType} from 'app/App.components/Chart/helpers/Chart.types'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS} from 'app/App.components/Input/Input.constants'
 
-import { parseDate } from 'utils/time'
-import { convertNumberForClient, convertNumberForContractCall, getNumberInBounds } from '../../utils/calcFunctions'
-import { assetDecimalsToShow } from './Loans.const'
-import { compareDatesByDay } from 'utils/compareDatesByDay'
+import {parseDate} from 'utils/time'
+import {convertNumberForClient, convertNumberForContractCall, getNumberInBounds} from '../../utils/calcFunctions'
+import {assetDecimalsToShow} from './Loans.const'
+import {compareDatesByDay} from 'utils/compareDatesByDay'
 
 // CONST FOR HELPERS
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
@@ -414,16 +414,32 @@ export const getLendingItem = (
   return null
 }
 
-// HELPER FOR LENDING APY
-export const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): number => {
+/**
+ * HELPER FOR LENDING APY
+ *
+ * @param utilizationRate     The current Utilization rate of the specific market, value between 0-1
+ * @param currentInterestRate Current interest rate of the specific asset, value between 0-1
+ * @param treasuryShare       How much of the interest paid is sent to the DAOs treasury
+ */
+export const calcLendingAPY = (utilizationRate: number, currentInterestRate: number, treasuryShare: number): number => {
+  // S_t = U_t * (SB_t * S_t)(1 - R_t)
+  // SB_t is 1 for our module
+  const leftSide = utilizationRate * currentInterestRate
+  const fullSupplyAPY = leftSide * (1 - treasuryShare)
   const secondsPerYear = 60 * 60 * 24 * 365
 
-  const top = currentInterestRate - treasuryShare
+  const top = fullSupplyAPY
   const firstTerm = 1 + top / secondsPerYear
   const power = firstTerm ** secondsPerYear
   return (power - 1) * 100
 }
 
+export const calcSupplyAPY = (utilizationRate: number, currentInterestRate: number, treasuryShare: number): number => {
+  // S_t = U_t * (SB_t * S_t)(1 - R_t)
+  // SB_t is 1 for our module
+  const leftSide = utilizationRate * 1 * currentInterestRate
+  return leftSide * (1 - treasuryShare)
+}
 // HELPER FOR BORROW FEE
 export const calculateAccruedInterest = (
   currentLoanOutstandingTotal: number,

@@ -1,16 +1,16 @@
-import { State } from 'reducers'
+import {State} from 'reducers'
 import {
-  LoanMarketType,
-  LendingControllerGQL,
-  UserLendObjType,
-  MvkTokenOperatorGQL,
+    LendingControllerGQL,
+    LoanMarketType,
+    MvkTokenOperatorGQL,
+    UserLendObjType,
 } from 'utils/TypesAndInterfaces/Loans'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { UserState } from 'reducers/wallet'
-import { Mavryk_User } from 'utils/generated/graphqlTypes'
+import {TokenType} from 'utils/TypesAndInterfaces/General'
+import {UserState} from 'reducers/wallet'
+import {Mavryk_User} from 'utils/generated/graphqlTypes'
 
-import { convertNumberForClient, calcWithoutDecimals, getNumberInBounds } from 'utils/calcFunctions'
-import { calcLendingAPY, getAssetMetadata, getChartData, getLendingItem, getTransactionHistory } from './Loans.helpers'
+import {calcWithoutDecimals, convertNumberForClient, getNumberInBounds} from 'utils/calcFunctions'
+import {calcLendingAPY, getAssetMetadata, getChartData, getLendingItem, getTransactionHistory} from './Loans.helpers'
 
 // Normalize user loans data
 export const normalizeUserLending = ({
@@ -51,16 +51,19 @@ export const normalizeUserLending = ({
 
       if (!assetData) return acc
       const convertedAmount = convertNumberForClient({ number: amount, grade: assetData.decimals })
+      //TODO: @maksym, I need access to the loan_token.utilisation_rate here to make this equation work.
+      const annualPercentage = calcLendingAPY(
+        calcWithoutDecimals(loan_token.utilisation_rate, interest_rate_decimals),
+        calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals),
+        calcWithoutDecimals(interest_treasury_share, decimals),
+      )
       const commonUserData = {
         icon: assetData.icon,
         id,
         date: timestamp,
         symbol: assetData.symbol,
         operationHash: operation_hash,
-        annualPecentage: calcLendingAPY(
-          calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals),
-          calcWithoutDecimals(interest_treasury_share, decimals),
-        ),
+        annualPecentage: annualPercentage,
       }
 
       switch (type) {
@@ -135,7 +138,10 @@ export const normalizeUserLending = ({
         )
 
         const convertedBorrowedAmountInUSD =
-          convertNumberForClient({ number: loan_principal_total, grade: vaultAssetData.decimals }) * vaultAssetData.rate
+          convertNumberForClient({
+            number: loan_principal_total,
+            grade: vaultAssetData.decimals,
+          }) * vaultAssetData.rate
 
         if (convertedBorrowedAmountInUSD <= 0 || collateralAmount <= 0) return acc
 
@@ -228,7 +234,11 @@ export const normalizeLoans = async ({
           convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }) *
           (reserve_ratio / 10000)
         const availableLiquidity =
-          (convertNumberForClient({ number: total_remaining, grade: loanTokenMetadata.decimals }) - reserveAmount) *
+          (convertNumberForClient({
+            number: total_remaining,
+            grade: loanTokenMetadata.decimals,
+          }) -
+            reserveAmount) *
           loanTokenMetadata.rate
 
         const {
@@ -242,9 +252,17 @@ export const normalizeLoans = async ({
         const lendingItem = getLendingItem(m_token?.address ?? null, userMTokens, userAddres)
 
         const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
-        const lendAPY = calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare)
-        const borrowAPR = tokenCurrentInterestRate * 100
+        // TODO: @maksym, this is how the apy function should be called.
+        const lendAPY = calcLendingAPY(
+          convertNumberForClient({
+            number: utilisation_rate,
+            grade: interestRateDecimals,
+          }),
+          tokenCurrentInterestRate,
+          interestTreasuryShare,
+        )
 
+        const borrowAPR = tokenCurrentInterestRate * 100
         acc.push({
           loanTokenData: {
             ...loanTokenMetadata,
