@@ -183,8 +183,6 @@ export const UserProvider = ({ children }: Props) => {
     } catch (e) {
       console.error(`Failed to connect wallet:`, e)
       bug('Failed to connect wallet', TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-    } finally {
-      isRunnedInitialConnect.current = true
     }
   }, [updateUserTzktTokenBalances, loadInitialTzktTokensForNewlyConnectedUser, handleDisconnect, handleOnReconnected])
 
@@ -315,17 +313,21 @@ export const UserProvider = ({ children }: Props) => {
     handleOnReconnected,
   ])
 
-  const providerValue = useMemo(
-    () => ({
+  const providerValue = useMemo(() => {
+    // set initial connect to true, when we have user address set (subs runned and loading statuses set to true) and loading statuses are off
+    if (!isRunnedInitialConnect.current && userCtxState.userAddress && !(userDataLoading || isTzktBalancesLoading)) {
+      isRunnedInitialConnect.current = true
+    }
+
+    return {
       ...userCtxState,
       isLoading: userDataLoading || isTzktBalancesLoading,
       isRunnedInitialConnect: Boolean(isRunnedInitialConnect.current),
       connect,
       signOut,
       changeUser,
-    }),
-    [connect, signOut, changeUser, userCtxState, isTzktBalancesLoading],
-  )
+    }
+  }, [connect, signOut, changeUser, userCtxState])
 
   return <userContext.Provider value={providerValue}>{children}</userContext.Provider>
 }

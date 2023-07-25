@@ -1,16 +1,16 @@
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenSymbolAndName } from './tokenNames'
-import { isValidTokenType } from 'utils/TypesAndInterfaces/General'
+import { TokenType, isValidTokenType } from 'utils/TypesAndInterfaces/General'
 
 import {
-  LoansCollateralTokenMetadataType,
-  LoansTokenMetadataType,
+  TokenIndexerMetadataType,
   TokenMetadataType,
   TokensContext,
   tokenMetadataSchema,
 } from '../tokens.provider.types'
 import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from 'utils/__generated__/graphql'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { checkWhetherTokenIsCollateralToken } from './tokens.utils'
 
 /**
  * normalizing token prices
@@ -26,6 +26,63 @@ export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscrip
     }
     return acc
   }, {})
+}
+
+// TODO: if need add support of loan tokens and mTokens to mvk | smvk
+const handleMvkToken = ({
+  token_address,
+  token_id,
+  tokenType,
+  parsedMetadata,
+  lending_controller_collateral_tokens,
+}: {
+  token_address: string
+  token_id: number
+  tokenType: TokenType
+  parsedMetadata: TokenIndexerMetadataType
+  lending_controller_collateral_tokens: TokensMetadataSubscription['token'][number]['lending_controller_collateral_tokens']
+}): {
+  smvk: TokenMetadataType | null
+  mvk: TokenMetadataType | null
+} => {
+  const smvkTokenData = getTokenSymbolAndName('smvk')
+  const mvkTokenData = getTokenSymbolAndName('mvk')
+  const collateralData = {
+    indexerName: lending_controller_collateral_tokens[0].token_name,
+    // sMVK collateral is disabled on demo, so we set isProtectedCollateral true when it's demo env
+    isPausedCollateral: process.env.REACT_APP_IS_DEMO === 'true',
+    isScaled: lending_controller_collateral_tokens[0].is_scaled_token,
+    isStaked: lending_controller_collateral_tokens[0].is_staked_token,
+  }
+
+  const smvkTokenMetadata: TokenMetadataType | null = smvkTokenData
+    ? {
+        ...smvkTokenData,
+        id: token_id,
+        type: tokenType,
+        decimals: Number(parsedMetadata.decimals),
+        address: SMVK_TOKEN_ADDRESS,
+        ...(lending_controller_collateral_tokens[0]?.token_name === 'smvk'
+          ? {
+              loanData: collateralData,
+            }
+          : {}),
+      }
+    : null
+  const mvkTokenMetadata: TokenMetadataType | null = mvkTokenData
+    ? {
+        ...mvkTokenData,
+        id: token_id,
+        type: tokenType,
+        decimals: Number(parsedMetadata.decimals),
+        address: token_address,
+      }
+    : null
+
+  return {
+    smvk: smvkTokenMetadata,
+    mvk: mvkTokenMetadata,
+  }
 }
 
 /**
@@ -64,9 +121,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         // parsing metadata schema, to have icon and decimals for token
         const parsedMetadata = tokenMetadataSchema.parse(metadata)
 
-        // check whether token is sMVK cuz it's token that don't really exists, and it's special case
-        const isSMVKToken = parsedMetadata.symbol === 'MVK' && !mvk_tokens?.[0]?.address
-        const symbolFromIndexer = isSMVKToken ? SMVK_TOKEN_ADDRESS : parsedMetadata.symbol
+        const symbolFromIndexer = parsedMetadata.symbol
 
         // getting symbol, name, icon from tokens mapper, cuz metadata from indexer is not valid for display
         const { symbol, name, icon } = getTokenSymbolAndName(symbolFromIndexer) ?? {}
@@ -77,12 +132,9 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
           throw new Error(`Token do not have valid symbol, name or icon ${symbol}, ${name}, ${tokenIcon}`)
         }
 
-        // sMVK don't have it's address so we hardcode it on frontend
-        const tokenAddress = isSMVKToken ? SMVK_TOKEN_ADDRESS : token_address
-
-        const tokenMetadata: TokenMetadataType = {
+        let tokenMetadata: TokenMetadataType = {
           id: token_id,
-          address: tokenAddress,
+          address: token_address,
           symbol,
           name,
           icon: tokenIcon,
@@ -90,60 +142,61 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
           decimals: Number(parsedMetadata.decimals),
         }
 
-        // if token is collateral
-        if (lending_controller_collateral_tokens?.[0]) {
-          // if mvk_tokens?.[0]?.address present and token is collateral that means, that sMVK is collateral, but for smvk we need to manually change it's collateral data
-          if (isSMVKToken) {
-            acc.collateralTokens.push(SMVK_TOKEN_ADDRESS)
+        // if token is mvk we need to add mvk & smvk tokens, it's special case
+        if (mvk_tokens?.[0]?.address) {
+          const { smvk, mvk } = handleMvkToken({
+            token_id,
+            token_address,
+            tokenType,
+            parsedMetadata,
+            lending_controller_collateral_tokens,
+          })
 
-            const collateralTokenData: LoansCollateralTokenMetadataType = {
-              ...acc.tokensMetadata[SMVK_TOKEN_ADDRESS],
-              loanData: {
-                indexerName: lending_controller_collateral_tokens[0].token_name,
-                // sMVK collateral is disabled on demo, so we set isProtectedCollateral true when it's demo env
-                isPausedCollateral: process.env.REACT_APP_IS_DEMO === 'true',
-                isScaled: lending_controller_collateral_tokens[0].is_scaled_token,
-                isStaked: lending_controller_collateral_tokens[0].is_staked_token,
-              },
-            }
+          if (mvk) {
+            if (checkWhetherTokenIsCollateralToken(mvk)) acc.collateralTokens.push(mvk.address)
 
-            acc.tokensMetadata[SMVK_TOKEN_ADDRESS] = collateralTokenData
-          } else {
-            // handling all another collateral tokens
-            acc.collateralTokens.push(tokenAddress)
-            const collateralTokenData: LoansCollateralTokenMetadataType = {
-              ...tokenMetadata,
-              loanData: {
-                indexerName: lending_controller_collateral_tokens[0].token_name,
-                isPausedCollateral: lending_controller_collateral_tokens[0].paused,
-                isScaled: lending_controller_collateral_tokens[0].is_scaled_token,
-                isStaked: lending_controller_collateral_tokens[0].is_staked_token,
-              },
-            }
-
-            acc.tokensMetadata[tokenAddress] = { ...acc.tokensMetadata[tokenAddress], ...collateralTokenData }
+            acc.tokensMetadata[mvk.address] = { ...acc.tokensMetadata[mvk.address], ...smvk }
           }
 
+          if (smvk) {
+            acc.tokensMetadata[smvk.address] = { ...acc.tokensMetadata[smvk.address], ...smvk }
+
+            if (checkWhetherTokenIsCollateralToken(smvk)) acc.collateralTokens.push(smvk.address)
+          }
           return acc
+        }
+
+        // if token is collateral
+        if (lending_controller_collateral_tokens?.[0]) {
+          // handling all another collateral tokens
+          acc.collateralTokens.push(token_address)
+          tokenMetadata = {
+            ...tokenMetadata,
+            loanData: {
+              ...tokenMetadata.loanData,
+              indexerName: lending_controller_collateral_tokens[0].token_name,
+              isPausedCollateral: lending_controller_collateral_tokens[0].paused,
+              isScaled: lending_controller_collateral_tokens[0].is_scaled_token,
+              isStaked: lending_controller_collateral_tokens[0].is_staked_token,
+            },
+          }
         }
 
         // if token is loan token (market token)
         if (lending_controller_loan_tokens?.[0]) {
-          const loanTokenData: LoansTokenMetadataType = {
+          tokenMetadata = {
             ...tokenMetadata,
             loanData: {
+              ...tokenMetadata.loanData,
               indexerName: lending_controller_collateral_tokens[0].token_name,
             },
           }
-
-          acc.tokensMetadata[tokenAddress] = { ...acc.tokensMetadata[tokenAddress], ...loanTokenData }
-          return acc
         }
 
         // if token is mToken
-        if (m_tokens?.[0]?.address) acc.mTokens.push(tokenAddress)
+        if (m_tokens?.[0]?.address) acc.mTokens.push(token_address)
 
-        acc.tokensMetadata[tokenAddress] = { ...acc.tokensMetadata[tokenAddress], ...tokenMetadata }
+        acc.tokensMetadata[token_address] = { ...acc.tokensMetadata[token_address], ...tokenMetadata }
       } catch (e) {
         console.error('normalizeTokensMetadata error: ', { e })
       } finally {

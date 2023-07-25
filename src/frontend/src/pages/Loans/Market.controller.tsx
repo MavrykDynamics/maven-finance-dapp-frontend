@@ -48,6 +48,7 @@ import {
   VAULTS_USER_ALL,
 } from 'providers/VaultsProvider/vaults.provider.consts'
 import { CHECK_WHETHER_MARKET_EXISTS } from 'providers/LoansProvider/queries/loansMarkets.query'
+import { FatalError } from 'errors/error'
 
 export const Market = () => {
   const history = useHistory<{ from?: string }>()
@@ -60,7 +61,7 @@ export const Market = () => {
   }>()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { bug } = useToasterContext()
+  const { fatal } = useToasterContext()
   const { myVaultsIds, vaultsMapper, isLoading: isVaultsLoading, changeVaultsSubscriptionsList } = useVaultsContext()
   const {
     allMarketsAddresses,
@@ -72,7 +73,6 @@ export const Market = () => {
   } = useLoansContext()
 
   const [isMarketExistanseLoading, setIsMarketExistanseLoading] = useState(false)
-  const [marketAddressError, setMarketAddressError] = useState(false)
 
   useEffect(() => {
     changeLoansSubscriptionsList({
@@ -89,17 +89,10 @@ export const Market = () => {
     }
   }, [])
 
-  const handleCheckMarketExistanseError = (msg: string) => {
-    bug(msg)
-    setMarketAddressError(true)
-  }
-
   // check whether market exists, cuz address is stored in url and user can change it
   useLayoutEffect(() => {
     if (currentMarketAddress && marketsMapper[currentMarketAddress]) return
 
-    // renew error flag
-    setMarketAddressError(false)
     setIsMarketExistanseLoading(true)
 
     const checkWhetherMarketExists = async () => {
@@ -116,9 +109,9 @@ export const Market = () => {
           return
         }
 
-        handleCheckMarketExistanseError(`Market with address "${currentMarketAddress}" does not exist`)
+        fatal(new FatalError(`Market with address "${currentMarketAddress}" does not exist`))
       } catch (e) {
-        handleCheckMarketExistanseError('Loading market error, please, try to reload page')
+        fatal(new FatalError('Loading market error, please, try to reload page'))
       } finally {
         setIsMarketExistanseLoading(false)
       }
@@ -234,12 +227,12 @@ export const Market = () => {
 
       {marketPagination}
 
-      {(isLoansLoading || isVaultsLoading || isMarketExistanseLoading) && !marketAddressError ? (
+      {isLoansLoading || isVaultsLoading || isMarketExistanseLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading {loanToken?.symbol ?? currentMarketAddress} market</div>
         </DataLoaderWrapper>
-      ) : selectedMarket && loanToken && loanToken.rate && !marketAddressError ? (
+      ) : selectedMarket && loanToken && loanToken.rate ? (
         <MarketStyled>
           <div className="gen-info">
             <div className="asset-info">
