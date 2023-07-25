@@ -318,9 +318,6 @@ export const BecomeSatellite = () => {
     />
   )
 
-  // TODO: show no found, redirect?
-  if (!usersSatelliteProfile) return null
-
   return (
     <>
       <Page>
@@ -567,7 +564,7 @@ export const BecomeSatellite = () => {
       </Page>
 
       <UnregisterPopup
-        show={showUnregisterPopup}
+        show={Boolean(usersSatelliteProfile) && showUnregisterPopup}
         closePopup={() => setShowUnregisterPopup(false)}
         satellite={usersSatelliteProfile}
       />
