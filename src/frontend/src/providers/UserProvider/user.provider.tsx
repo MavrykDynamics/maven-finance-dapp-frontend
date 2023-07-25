@@ -188,12 +188,8 @@ export const UserProvider = ({ children }: Props) => {
 
   // effect to perform resotring user from localStorage
   useEffect(() => {
-    if (canStartUserInitialLoading) {
-      connect()
-    }
-
-    isRunnedInitialConnect.current = true
-  }, [canStartUserInitialLoading, connect])
+    if (canStartUserInitialLoading) connect()
+  }, [canStartUserInitialLoading, , connect])
 
   // subscribe to user's indexer data
   const { loading: userDataLoading } = useSubscription(SUBSCRIBE_USER_DATA, {
@@ -318,8 +314,12 @@ export const UserProvider = ({ children }: Props) => {
   ])
 
   const providerValue = useMemo(() => {
-    // set initial connect to true, when we have user address set (subs runned and loading statuses set to true) and loading statuses are off
-    if (!isRunnedInitialConnect.current && userCtxState.userAddress && !(userDataLoading || isTzktBalancesLoading)) {
+    // set initial connect to true, when we have user address set (subs runned and loading statuses set to true) and loading statuses are off,
+    // or we don't have user wallet in LC and we are unable to restore it
+    if (
+      (!isRunnedInitialConnect.current && userCtxState.userAddress && !(userDataLoading || isTzktBalancesLoading)) ||
+      !hasUserInLocalStorage
+    ) {
       isRunnedInitialConnect.current = true
     }
 
