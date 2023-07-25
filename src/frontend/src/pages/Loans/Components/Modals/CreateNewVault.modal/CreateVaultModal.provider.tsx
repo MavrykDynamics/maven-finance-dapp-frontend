@@ -8,6 +8,7 @@ import {
   VaultInputState,
 } from './helpers/createNewVault.types'
 import { DEFAULT_CREATE_VAULT_STATE } from './helpers/createNewVault.consts'
+import { isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 
 type Props = {
   children: React.ReactNode
@@ -30,7 +31,7 @@ export const CreateVaultModalProvider = ({ children }: Props) => {
   const updateInputVaultState = (vaultData: Partial<VaultInputState>) => {
     setModalState((prev) => ({
       ...prev,
-      vault: { ...prev.vault, ...vaultData },
+      vault: { ...prev.vaultInputState, ...vaultData },
     }))
   }
 
@@ -49,10 +50,13 @@ export const CreateVaultModalProvider = ({ children }: Props) => {
   }
 
   const updateSelectedCollaterals = (selectedCollaterals: SelectedCollateralsType) => {
+    const addresses = Object.keys(selectedCollaterals)
+
     setModalState((prev) => ({
       ...prev,
       selectedCollaterals,
-      selectedCollateralsAddresses: Object.keys(selectedCollaterals),
+      selectedCollateralsAddresses: addresses,
+      hasXTZTokenSelected: addresses.find((tokenAddress) => isTezosAsset(tokenAddress)),
     }))
   }
 

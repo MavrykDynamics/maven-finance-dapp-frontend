@@ -1,0 +1,277 @@
+import React, { useMemo } from 'react'
+import { useCreateVaultContext } from '../helpers/createVaultModalContext'
+import {
+  checkWhetherTokenIsCollateralToken,
+  getTokenDataByAddress,
+  isTezosAsset,
+} from 'providers/TokensProvider/helpers/tokens.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { Input } from 'app/App.components/Input/NewInput'
+import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
+import { DDItemId, DropDown, DropDownItemType, DropdownInputCustomChild } from 'app/App.components/DropDown/NewDropdown'
+import NewButton from 'app/App.components/Button/NewButton'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import {
+  INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_SUCCESS,
+  getOnBlurValue,
+  getOnFocusValue,
+} from 'app/App.components/Input/Input.constants'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
+import { CONFIRMATION_SCREEN_ID } from '../helpers/createNewVault.consts'
+
+export const AddCollateralScreen = () => {
+  const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
+  const { userTokensBalances } = useUserContext()
+  const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
+  const {
+    selectedCollateralsAddresses,
+    selectedCollaterals,
+    updateSelectedCollaterals,
+    updateScreenToShow,
+    isVaultCreating,
+    hasXTZTokenSelected,
+  } = useCreateVaultContext()
+
+  // TODO: consider esctract to hook, cuz it's repeated twice (2nd add new collateral)
+  const mappedAvaliableCollaterals = useMemo(() => {
+    let firstNotDisabledCollateralAddress: string | null = null
+
+    const reducedCollaterals = collateralTokens.reduce<
+      Record<DDItemId, DropDownItemType & { tokenAddress: TokenAddressType }>
+    >((acc, collateralTokenAddress) => {
+      const collateral = getTokenDataByAddress({ tokenAddress: collateralTokenAddress, tokensMetadata, tokensPrices })
+
+      if (collateral && checkWhetherTokenIsCollateralToken(collateral)) {
+        const { address, icon, symbol } = collateral
+
+        const isCollateralDisabled = Boolean(
+          collateral.loanData.isPausedCollateral || selectedCollaterals[collateralTokenAddress],
+        )
+
+        if (!isCollateralDisabled && !firstNotDisabledCollateralAddress)
+          firstNotDisabledCollateralAddress = collateralTokenAddress
+
+        acc[address] = {
+          id: address,
+          tokenAddress: address,
+          content: <DropdownInputCustomChild iconSrc={icon} symbol={symbol} />,
+          disabled: isCollateralDisabled,
+        }
+      }
+      return acc
+    }, {})
+
+    if (!selectedCollateralsAddresses.length && firstNotDisabledCollateralAddress) {
+      reducedCollaterals[firstNotDisabledCollateralAddress].disabled = true
+      updateSelectedCollaterals({
+        [firstNotDisabledCollateralAddress]: {
+          tokenAddress: firstNotDisabledCollateralAddress,
+          amount: '0',
+          validation: INPUT_STATUS_DEFAULT,
+        },
+      })
+    }
+
+    return reducedCollaterals
+  }, [collateralTokens, selectedCollaterals, selectedCollateralsAddresses, tokensMetadata, tokensPrices])
+
+  const nextAvaliableCollateralToAdd = Object.values(mappedAvaliableCollaterals).find(
+    ({ disabled, tokenAddress }) => disabled === false && !selectedCollateralsAddresses.includes(tokenAddress),
+  )
+
+  const isAddCollateralContinueDisabled = Boolean(
+    isVaultCreating ||
+      (hasXTZTokenSelected && choosenBaker) ||
+      !selectedCollateralsAddresses.every((tokenAddress) => {
+        return selectedCollaterals[tokenAddress].validation === INPUT_STATUS_SUCCESS
+      }),
+  )
+
+  // handlers
+  const addNewCollateralHandler = () => {
+    if (nextAvaliableCollateralToAdd) {
+      updateSelectedCollaterals({
+        ...selectedCollaterals,
+        [nextAvaliableCollateralToAdd.tokenAddress]: {
+          tokenAddress: nextAvaliableCollateralToAdd.tokenAddress,
+          amount: '0',
+          validation: INPUT_STATUS_DEFAULT,
+        },
+      })
+    }
+  }
+
+  //  handle inputs
+  const inputOnChangeHandle = (
+    newInputAmount: string,
+    userCollateralBalance: number,
+    collateralAddress: TokenAddressType,
+    collateralDecimals: number,
+  ) => {
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount: userCollateralBalance,
+      options: {
+        byDecimalPlaces: collateralDecimals,
+      },
+    })
+
+    updateSelectedCollaterals({
+      ...selectedCollaterals,
+      [collateralAddress]: {
+        ...selectedCollaterals[collateralAddress],
+        amount: newInputAmount,
+        validation: validationStatus,
+      },
+    })
+  }
+
+  const inputOnBlurHandle = (collateralAddress: TokenAddressType) =>
+    updateSelectedCollaterals({
+      ...selectedCollaterals,
+      [collateralAddress]: {
+        ...selectedCollaterals[collateralAddress],
+        amount: getOnBlurValue(selectedCollaterals[collateralAddress].amount),
+      },
+    })
+
+  const onFocusHandler = (collateralAddress: TokenAddressType) =>
+    updateSelectedCollaterals({
+      ...selectedCollaterals,
+      [collateralAddress]: {
+        ...selectedCollaterals[collateralAddress],
+        amount: getOnFocusValue(selectedCollaterals[collateralAddress].amount),
+      },
+    })
+
+  return (
+    <>
+      <div className="collateral-list">
+        {selectedCollateralsAddresses.map((collateralAddress) => {
+          const collateralToken = getTokenDataByAddress({
+            tokenAddress: collateralAddress,
+            tokensMetadata,
+            tokensPrices,
+          })
+
+          if (!collateralToken || !collateralToken.rate) return null
+
+          const { amount, validation } = selectedCollaterals[collateralAddress]
+          const { symbol, rate, decimals, icon } = collateralToken
+
+          const userAssetBalance = getUserTokenBalanceByAddress({
+            userTokensBalances,
+            tokenAddress: collateralAddress,
+          })
+
+          return (
+            <div className="collateral-block" key={symbol}>
+              <div className="block-name">Select Collateral Asset and Amount</div>
+              <Input
+                className={`input-with-rate pinned-dropdown`}
+                inputProps={{
+                  value: amount,
+                  type: 'number',
+                  onChange: (e) => inputOnChangeHandle(e.target.value, userAssetBalance, collateralAddress, decimals),
+                  onBlur: () => inputOnBlurHandle(collateralAddress),
+                  onFocus: () => onFocusHandler(collateralAddress),
+                }}
+                settings={{
+                  balanceAsset: symbol,
+                  useMaxHandler: () =>
+                    inputOnChangeHandle(
+                      getLoansInputMaxAmount(userAssetBalance, decimals),
+                      userAssetBalance,
+                      collateralAddress,
+                      decimals,
+                    ),
+                  inputStatus: validation,
+                  convertedValue: rate * Number(amount),
+                  balance: userAssetBalance,
+                  inputSize: INPUT_LARGE,
+                }}
+              >
+                <InputPinnedDropDown>
+                  <DropDown
+                    placeholder=""
+                    activeItem={{
+                      content: <DropdownInputCustomChild iconSrc={icon} symbol={symbol} />,
+                      id: collateralAddress,
+                    }}
+                    items={Object.values(mappedAvaliableCollaterals)}
+                    clickItem={(newCollateralAddress: DDItemId) => {
+                      if (typeof newCollateralAddress === 'string') {
+                        const { [collateralAddress]: currentCollateralObj, ...collateralsWithoutCurrentCollateral } =
+                          selectedCollaterals
+
+                        updateSelectedCollaterals({
+                          ...collateralsWithoutCurrentCollateral,
+                          [newCollateralAddress]: {
+                            ...currentCollateralObj,
+                            tokenAddress: newCollateralAddress,
+                          },
+                        })
+                      }
+                    }}
+                    className="input-dropdown"
+                  />
+                </InputPinnedDropDown>
+              </Input>
+            </div>
+          )
+        })}
+      </div>
+
+      {hasXTZTokenSelected ? (
+        <div className="xtz-baker">
+          <div className="block-name">Select Baker</div>
+          <DropDown
+            placeholder="Select Bakery"
+            activeItem={choosenBaker}
+            items={bakers}
+            className="select-xtz-baker"
+            clickItem={(bakerAddress: DDItemId) =>
+              typeof bakerAddress === 'string' ? setChoosenBaker(bakerAddress) : null
+            }
+          />
+        </div>
+      ) : null}
+
+      {/* button for depositting more than 1 collateral */}
+      <NewButton
+        kind={BUTTON_SIMPLE}
+        disabled={!Boolean(nextAvaliableCollateralToAdd)}
+        onClick={addNewCollateralHandler}
+      >
+        + Add more assets as collateral
+      </NewButton>
+
+      <div className="manage-btn">
+        <NewButton
+          kind={BUTTON_PRIMARY}
+          form={BUTTON_WIDE}
+          onClick={() => updateScreenToShow(CONFIRMATION_SCREEN_ID)}
+          disabled={isAddCollateralContinueDisabled}
+        >
+          Continue
+          <Icon id="arrowRight" />
+        </NewButton>
+      </div>
+
+      {isVaultCreating ? (
+        <div className="creating-vault-loader-wrapper">
+          Creating Vault
+          <SpinnerCircleLoaderStyled />
+        </div>
+      ) : null}
+    </>
+  )
+}

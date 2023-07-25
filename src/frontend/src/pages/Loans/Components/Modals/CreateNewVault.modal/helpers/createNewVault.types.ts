@@ -32,11 +32,12 @@ export type SelectedCollateralsType = Record<
 // create vault modal context
 export type CreateVaultModalState = {
   screenToShow: ScreenType
-  vault: VaultInputState
+  vaultInputState: VaultInputState
   selectedCollaterals: SelectedCollateralsType
   selectedCollateralsAddresses: string[]
   isVaultCreating: boolean
   newVault: NewVaultType
+  hasXTZTokenSelected: string | undefined
 }
 
 export type CreateVaultModalContext = CreateVaultModalState & {
