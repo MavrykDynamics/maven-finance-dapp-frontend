@@ -24,6 +24,7 @@ import {
   SatelliteMetricsBlock,
   SatelliteVotingInfoWrapper,
   SatelliteVotingHistoryListItem,
+  SatelliteDetailsDivider,
 } from './SatelliteDetails.style'
 
 // helpers
@@ -156,6 +157,8 @@ export const SatelliteDetails = () => {
   return (
     <Page>
       <PageHeader page={'satellites'} />
+
+      <SatelliteDetailsDivider />
       <PageContent>
         <div>
           <SatellitePagination />

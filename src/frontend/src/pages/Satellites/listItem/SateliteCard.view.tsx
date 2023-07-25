@@ -56,6 +56,7 @@ import {
   BANNED_SATELLITE_STATUS,
   DELEGATE_ACTION,
   DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
+  INACTIVE_SATELLITE_STATUS,
   SATELLITE_ORACLE_STATUSES,
   SATELLITE_STATUSES,
   SATELLITE_VOTES_MAPPER,
@@ -370,7 +371,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             </div>
           )}
 
-          {satelliteStatus !== ACTIVE_SATELLITE_STATUS && !isSatellite && buttonToShow}
+          {satelliteStatus !== INACTIVE_SATELLITE_STATUS && !isSatellite && buttonToShow}
         </SatelliteCardButtons>
       </SatelliteCardInner>
 
