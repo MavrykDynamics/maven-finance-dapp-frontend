@@ -67,3 +67,8 @@ export const DeleteCollateralInputIconWrapper = styled.div`
 export const CollateralInputWrapper = styled.div`
   position: relative;
 `
+
+export const CollateralScreeenWrapper = styled.div`
+  & > div {
+  }
+`

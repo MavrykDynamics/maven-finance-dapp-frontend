@@ -27,6 +27,7 @@ import { ConfirmationScreen } from './modalScreens/ConfirmationScreen'
 import { CreateVaultModalStepper } from './CreateVaultModalStepper'
 import { VaultModalStepperWrapper } from './createNewVault.style'
 import { BorrowScreen } from './modalScreens/BorrowScreen'
+import classNames from 'classnames'
 
 type CreateNewModalProps = {
   closePopup: () => void
@@ -60,7 +61,10 @@ export const CreateNewVaultConsumer = ({ closePopup, show, data }: CreateNewModa
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
-      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
+      <PopupContainerWrapper
+        onClick={(e) => e.stopPropagation()}
+        className={classNames('loans', 'loans-overflow', 'scroll-block')}
+      >
         <LoansModalBase>
           <button onClick={closePopup} className="close-modal" />
           {/* <button onClick={() => updateScreenToShow('addCollateral')}> Add collateral</button>

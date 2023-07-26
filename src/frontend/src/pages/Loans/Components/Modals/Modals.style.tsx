@@ -80,19 +80,19 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
   }
 
   .collateral-list {
-    overscroll-behavior: contain;
+    /* overscroll-behavior: contain; */
     display: flex;
     flex-direction: column;
     row-gap: 50px;
-    margin-bottom: 10px;
-    min-height: 100px;
-    max-height: 250px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    margin-bottom: 20px;
+    min-height: 77px;
+    /* max-height: 250px; */
+    /* overflow-y: auto; */
+    /* overflow-x: hidden; */
 
     -ms-overflow-style: none; /* Internet Explorer 10+ */
     scrollbar-width: none; /* Firefox */
-    padding-right: 18px;
+    /* padding-right: 18px; */
   }
 
   .collateral-list::-webkit-scrollbar {
@@ -103,7 +103,16 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     margin: 30px 0 -20px 0;
   }
 
-  .collateral-block {
+  .collateral-block-wrapper:last-of-type {
+    & > div:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
+  .collateral-block-wrapper:last-of-type {
+    & > div:first-of-type {
+      margin-bottom: 20px;
+    }
   }
 
   .creating-vault-loader-wrapper {

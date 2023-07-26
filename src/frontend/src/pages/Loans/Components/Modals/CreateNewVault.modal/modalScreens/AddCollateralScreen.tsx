@@ -26,7 +26,12 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { CONFIRMATION_SCREEN_ID } from '../helpers/createNewVault.consts'
-import { CollateralInputWrapper, DeleteCollateralInputIconWrapper, ModalStatsBlock } from '../createNewVault.style'
+import {
+  CollateralInputWrapper,
+  CollateralScreeenWrapper,
+  DeleteCollateralInputIconWrapper,
+  ModalStatsBlock,
+} from '../createNewVault.style'
 import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
@@ -174,192 +179,179 @@ export const AddCollateralScreen = () => {
     })
 
   return (
-    <>
-      <div className="block-name">Select Collateral Asset and Amount</div>
-      <div className="collateral-list">
-        {selectedCollateralsAddresses.map((collateralAddress, idx) => {
-          const collateralToken = getTokenDataByAddress({
-            tokenAddress: collateralAddress,
-            tokensMetadata,
-            tokensPrices,
-          })
+    <CollateralScreeenWrapper>
+      <div>
+        <div className="block-name">Select Collateral Asset and Amount</div>
+        <div className="collateral-list">
+          {selectedCollateralsAddresses.map((collateralAddress, idx) => {
+            const collateralToken = getTokenDataByAddress({
+              tokenAddress: collateralAddress,
+              tokensMetadata,
+              tokensPrices,
+            })
 
-          if (!collateralToken || !collateralToken.rate) return null
+            if (!collateralToken || !collateralToken.rate) return null
 
-          const { amount, validation } = selectedCollaterals[collateralAddress]
-          const { symbol, rate, decimals, icon } = collateralToken
+            const { amount, validation } = selectedCollaterals[collateralAddress]
+            const { symbol, rate, decimals, icon } = collateralToken
 
-          const userAssetBalance = getUserTokenBalanceByAddress({
-            userTokensBalances,
-            tokenAddress: collateralAddress,
-          })
+            const userAssetBalance = getUserTokenBalanceByAddress({
+              userTokensBalances,
+              tokenAddress: collateralAddress,
+            })
 
-          return (
-            <div key={symbol}>
-              <div className="collateral-block">
-                <CollateralInputWrapper>
-                  <Input
-                    className={`input-with-rate pinned-dropdown`}
-                    inputProps={{
-                      value: amount,
-                      type: 'number',
-                      onChange: (e) =>
-                        inputOnChangeHandle(e.target.value, userAssetBalance, collateralAddress, decimals),
-                      onBlur: () => inputOnBlurHandle(collateralAddress),
-                      onFocus: () => onFocusHandler(collateralAddress),
-                    }}
-                    settings={{
-                      balanceAsset: symbol,
-                      useMaxHandler: () =>
-                        inputOnChangeHandle(
-                          getLoansInputMaxAmount(userAssetBalance, decimals),
-                          userAssetBalance,
-                          collateralAddress,
-                          decimals,
-                        ),
-                      inputStatus: validation,
-                      convertedValue: rate * Number(amount),
-                      balance: userAssetBalance,
-                      inputSize: INPUT_LARGE,
-                    }}
-                  >
-                    <InputPinnedDropDown>
-                      <DropDown
-                        placeholder=""
-                        activeItem={{
-                          content: <DropdownInputCustomChild iconSrc={icon} symbol={symbol} />,
-                          id: collateralAddress,
-                        }}
-                        items={Object.values(mappedAvaliableCollaterals)}
-                        clickItem={(newCollateralAddress: DDItemId) => {
-                          if (typeof newCollateralAddress === 'string') {
-                            const {
-                              [collateralAddress]: currentCollateralObj,
-                              ...collateralsWithoutCurrentCollateral
-                            } = selectedCollaterals
+            return (
+              <div className="collateral-block-wrapper" key={symbol}>
+                <div className="collateral-block">
+                  <CollateralInputWrapper>
+                    <Input
+                      className={`input-with-rate pinned-dropdown`}
+                      inputProps={{
+                        value: amount,
+                        type: 'number',
+                        onChange: (e) =>
+                          inputOnChangeHandle(e.target.value, userAssetBalance, collateralAddress, decimals),
+                        onBlur: () => inputOnBlurHandle(collateralAddress),
+                        onFocus: () => onFocusHandler(collateralAddress),
+                      }}
+                      settings={{
+                        balanceAsset: symbol,
+                        useMaxHandler: () =>
+                          inputOnChangeHandle(
+                            getLoansInputMaxAmount(userAssetBalance, decimals),
+                            userAssetBalance,
+                            collateralAddress,
+                            decimals,
+                          ),
+                        inputStatus: validation,
+                        convertedValue: rate * Number(amount),
+                        balance: userAssetBalance,
+                        inputSize: INPUT_LARGE,
+                      }}
+                    >
+                      <InputPinnedDropDown>
+                        <DropDown
+                          placeholder=""
+                          activeItem={{
+                            content: <DropdownInputCustomChild iconSrc={icon} symbol={symbol} />,
+                            id: collateralAddress,
+                          }}
+                          items={Object.values(mappedAvaliableCollaterals)}
+                          clickItem={(newCollateralAddress: DDItemId) => {
+                            if (typeof newCollateralAddress === 'string') {
+                              const {
+                                [collateralAddress]: currentCollateralObj,
+                                ...collateralsWithoutCurrentCollateral
+                              } = selectedCollaterals
 
-                            updateSelectedCollaterals({
-                              ...collateralsWithoutCurrentCollateral,
-                              [newCollateralAddress]: {
-                                ...currentCollateralObj,
-                                tokenAddress: newCollateralAddress,
-                              },
-                            })
-                          }
-                        }}
-                        className="input-dropdown"
-                      />
-                    </InputPinnedDropDown>
-                  </Input>
-                  {idx !== 0 && (
-                    <DeleteCollateralInputIconWrapper>
-                      <CustomTooltip text="Remove collateral asset" className="tooltip">
-                        <Button
-                          kind={BUTTON_SIMPLE}
-                          onClick={() => removeCollateralHandler(selectedCollaterals[collateralAddress].tokenAddress)}
-                        >
-                          <Icon id="delete" />
-                        </Button>
-                      </CustomTooltip>
-                    </DeleteCollateralInputIconWrapper>
-                  )}
-                </CollateralInputWrapper>
+                              updateSelectedCollaterals({
+                                ...collateralsWithoutCurrentCollateral,
+                                [newCollateralAddress]: {
+                                  ...currentCollateralObj,
+                                  tokenAddress: newCollateralAddress,
+                                },
+                              })
+                            }
+                          }}
+                          className="input-dropdown"
+                        />
+                      </InputPinnedDropDown>
+                    </Input>
+                    {idx !== 0 && (
+                      <DeleteCollateralInputIconWrapper>
+                        <CustomTooltip text="Remove collateral asset" className="tooltip">
+                          <Button
+                            kind={BUTTON_SIMPLE}
+                            onClick={() => removeCollateralHandler(selectedCollaterals[collateralAddress].tokenAddress)}
+                          >
+                            <Icon id="delete" />
+                          </Button>
+                        </CustomTooltip>
+                      </DeleteCollateralInputIconWrapper>
+                    )}
+                  </CollateralInputWrapper>
+                </div>
+                {isTezosAsset(collateralAddress) && (
+                  <div className="xtz-baker">
+                    <div className="block-name">Select Baker</div>
+                    <DropDown
+                      placeholder="Select Bakery"
+                      activeItem={choosenBaker}
+                      items={bakers}
+                      className="select-xtz-baker"
+                      clickItem={(bakerAddress: DDItemId) =>
+                        typeof bakerAddress === 'string' ? setChoosenBaker(bakerAddress) : null
+                      }
+                    />
+                  </div>
+                )}
               </div>
-              {isTezosAsset(collateralAddress) && (
-                <div className="xtz-baker">
-                  <div className="block-name">Select Baker</div>
-                  <DropDown
-                    placeholder="Select Bakery"
-                    activeItem={choosenBaker}
-                    items={bakers}
-                    className="select-xtz-baker"
-                    clickItem={(bakerAddress: DDItemId) =>
-                      typeof bakerAddress === 'string' ? setChoosenBaker(bakerAddress) : null
-                    }
-                  />
-                </div>
-              )}
-            </div>
-          )
-        })}
-      </div>
-
-      {/* {hasXTZTokenSelected ? (
-        <div className="xtz-baker">
-          <div className="block-name">Select Baker</div>
-          <DropDown
-            placeholder="Select Bakery"
-            activeItem={choosenBaker}
-            items={bakers}
-            className="select-xtz-baker"
-            clickItem={(bakerAddress: DDItemId) =>
-              typeof bakerAddress === 'string' ? setChoosenBaker(bakerAddress) : null
-            }
-          />
+            )
+          })}
         </div>
-      ) : null} */}
 
-      {/* button for depositting more than 1 collateral */}
-      <NewButton
-        kind={BUTTON_SIMPLE}
-        disabled={!Boolean(nextAvaliableCollateralToAdd)}
-        onClick={addNewCollateralHandler}
-      >
-        + Add more assets as collateral
-      </NewButton>
-
-      <ModalStatsBlock>
-        <div className="block-name">New Vault stats</div>
-        <div className="collateral-screen">
-          <VaultOverview>
-            <div className="line">
-              <ThreeLevelListItem>
-                <div className="name">
-                  Total Collateral Value
-                  <CustomTooltip
-                    iconId="info"
-                    defaultStrokeColor={colors[themeSelected].textColor}
-                    text={'tooltip text'}
-                    className="tooltip"
-                  />
-                </div>
-                <CommaNumber value={289021} decimalsToShow={0} className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">
-                  Borrow Capacity
-                  <CustomTooltip
-                    iconId="info"
-                    defaultStrokeColor={colors[themeSelected].textColor}
-                    text={'tooltip text'}
-                    className="tooltip"
-                  />
-                </div>
-                <CommaNumber value={132916489} decimalsToShow={0} className="value" />
-              </ThreeLevelListItem>
-            </div>
-          </VaultOverview>
-        </div>
-      </ModalStatsBlock>
-
-      <div className="manage-btn">
+        {/* button for depositting more than 1 collateral */}
         <NewButton
-          kind={BUTTON_PRIMARY}
-          form={BUTTON_WIDE}
-          onClick={() => updateScreenToShow(CONFIRMATION_SCREEN_ID)}
-          disabled={isAddCollateralContinueDisabled}
+          kind={BUTTON_SIMPLE}
+          disabled={!Boolean(nextAvaliableCollateralToAdd)}
+          onClick={addNewCollateralHandler}
         >
-          Continue
-          <Icon id="arrowRight" />
+          + Add more assets as collateral
         </NewButton>
-      </div>
 
-      {isVaultCreating ? (
-        <div className="creating-vault-loader-wrapper">
-          Creating Vault
-          <SpinnerCircleLoaderStyled />
+        <ModalStatsBlock>
+          <div className="block-name">New Vault stats</div>
+          <div className="collateral-screen">
+            <VaultOverview>
+              <div className="line">
+                <ThreeLevelListItem>
+                  <div className="name">
+                    Total Collateral Value
+                    <CustomTooltip
+                      iconId="info"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                      text={'tooltip text'}
+                      className="tooltip"
+                    />
+                  </div>
+                  <CommaNumber value={289021} decimalsToShow={0} className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">
+                    Borrow Capacity
+                    <CustomTooltip
+                      iconId="info"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                      text={'tooltip text'}
+                      className="tooltip"
+                    />
+                  </div>
+                  <CommaNumber value={132916489} decimalsToShow={0} className="value" />
+                </ThreeLevelListItem>
+              </div>
+            </VaultOverview>
+          </div>
+        </ModalStatsBlock>
+
+        <div className="manage-btn">
+          <NewButton
+            kind={BUTTON_PRIMARY}
+            form={BUTTON_WIDE}
+            onClick={() => updateScreenToShow(CONFIRMATION_SCREEN_ID)}
+            disabled={isAddCollateralContinueDisabled}
+          >
+            Continue
+            <Icon id="arrowRight" />
+          </NewButton>
         </div>
-      ) : null}
-    </>
+
+        {isVaultCreating ? (
+          <div className="creating-vault-loader-wrapper">
+            Creating Vault
+            <SpinnerCircleLoaderStyled />
+          </div>
+        ) : null}
+      </div>
+    </CollateralScreeenWrapper>
   )
 }
