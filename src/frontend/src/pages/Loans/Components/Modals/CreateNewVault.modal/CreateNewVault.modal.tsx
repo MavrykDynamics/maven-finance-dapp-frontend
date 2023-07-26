@@ -26,6 +26,7 @@ import { AddCollateralScreen } from './modalScreens/AddCollateralScreen'
 import { ConfirmationScreen } from './modalScreens/ConfirmationScreen'
 import { CreateVaultModalStepper } from './CreateVaultModalStepper'
 import { VaultModalStepperWrapper } from './createNewVault.style'
+import { BorrowScreen } from './modalScreens/BorrowScreen'
 
 type CreateNewModalProps = {
   closePopup: () => void
@@ -80,7 +81,7 @@ export const CreateNewVaultConsumer = ({ closePopup, show, data }: CreateNewModa
             />
           ) : null}
           {screenToShow === ADD_COLLATERAL_SCREEN_ID ? <AddCollateralScreen /> : null}
-          {/* {screenToShow === BORROW_SCREEN_ID && <BorrowScreen />} */}
+          {screenToShow === BORROW_SCREEN_ID && <BorrowScreen />}
           {screenToShow === CONFIRMATION_SCREEN_ID ? (
             <ConfirmationScreen avaliableLiquidity={avaliableLiquidity} closePopup={closePopup} />
           ) : null}

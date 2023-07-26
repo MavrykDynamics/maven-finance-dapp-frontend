@@ -80,18 +80,26 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
   }
 
   .collateral-list {
-    overflow-y: auto;
     overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
-    row-gap: 40px;
-    max-height: 250px;
-    margin-bottom: 20px;
+    row-gap: 50px;
+    margin-bottom: 10px;
     min-height: 100px;
+    max-height: 250px;
+    overflow-y: auto;
+    /* overflow-x: hidden; */
+
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .collateral-list::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
   }
 
   .xtz-baker {
-    margin: 20px 0;
+    margin: 30px 0 -20px 0;
   }
 
   .creating-vault-loader-wrapper {

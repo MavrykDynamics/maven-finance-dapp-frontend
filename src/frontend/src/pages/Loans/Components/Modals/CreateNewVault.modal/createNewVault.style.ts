@@ -28,3 +28,42 @@ export const VaultModalStepperWrapper = styled.div`
   width: 100%;
   margin-bottom: 20px;
 `
+
+export const ModalStatsBlock = styled.div<{ theme: MavrykTheme }>`
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .collateral-screen {
+    .line {
+      justify-content: start;
+      gap: 60px;
+    }
+  }
+`
+
+export const DeleteCollateralInputIconWrapper = styled.div`
+  display: inline-block;
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  height: 12px; // same as svg icon
+  transform: translate(10px, -50%);
+
+  & > div:first-of-type {
+    display: inline-block;
+  }
+
+  .text {
+    bottom: 170%;
+  }
+
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+`
+export const CollateralInputWrapper = styled.div`
+  position: relative;
+`
