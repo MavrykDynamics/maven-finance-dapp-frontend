@@ -370,7 +370,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             </div>
           )}
 
-          {satelliteStatus !== ACTIVE_SATELLITE_STATUS && !isSatellite && buttonToShow}
+          {satelliteStatus === ACTIVE_SATELLITE_STATUS && !isSatellite ? buttonToShow : null}
         </SatelliteCardButtons>
       </SatelliteCardInner>
 
