@@ -464,7 +464,7 @@ export const BecomeSatellite = () => {
 
                 <BecomeSatelliteRegisterAsOracle>
                   <div className="checkbox">
-                    {pageText.registerAsOracle}
+                    <div className="label">{pageText.registerAsOracle}</div>
 
                     <Checkbox
                       id="become-satellite-is-oracle"
