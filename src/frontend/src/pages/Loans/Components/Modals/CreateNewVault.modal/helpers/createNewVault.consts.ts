@@ -10,7 +10,7 @@ export const DEFAULT_VAULT_STATE: VaultInputState = { name: '', validationStatus
 
 export const DEFAULT_CREATE_VAULT_STATE: CreateVaultModalState = {
   vaultInputState: DEFAULT_VAULT_STATE,
-  screenToShow: ADD_COLLATERAL_SCREEN_ID,
+  screenToShow: BORROW_SCREEN_ID,
   isVaultCreating: false,
   selectedCollaterals: {},
   selectedCollateralsAddresses: [],

@@ -67,10 +67,10 @@ export const CreateNewVaultConsumer = ({ closePopup, show, data }: CreateNewModa
       >
         <LoansModalBase>
           <button onClick={closePopup} className="close-modal" />
-          {/* <button onClick={() => updateScreenToShow('addCollateral')}> Add collateral</button>
+          <button onClick={() => updateScreenToShow('addCollateral')}> Add collateral</button>
           <button onClick={() => updateScreenToShow('borrow')}> Borrow</button>
           <button onClick={() => updateScreenToShow('confirmation')}> Confirmation</button>
-          <button onClick={() => updateScreenToShow('createVault')}> Create vault</button> */}
+          <button onClick={() => updateScreenToShow('createVault')}> Create vault</button>
 
           <VaultModalStepperWrapper>
             <CreateVaultModalStepper items={stepperItems} activeIndex={activeStepperIndex} />

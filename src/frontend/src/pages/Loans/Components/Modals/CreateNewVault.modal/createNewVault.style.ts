@@ -33,7 +33,7 @@ export const ModalStatsBlock = styled.div<{ theme: MavrykTheme }>`
   margin-top: 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 7px;
 
   .collateral-screen {
     .line {
@@ -70,5 +70,24 @@ export const CollateralInputWrapper = styled.div`
 
 export const CollateralScreeenWrapper = styled.div`
   & > div {
+  }
+`
+
+export const BorrowScreenWrapper = styled.div`
+  .borrow-screen-top-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .borrow-screen-bottom-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .borrow-screen-input-wrapper {
+    margin-bottom: 40px;
   }
 `
