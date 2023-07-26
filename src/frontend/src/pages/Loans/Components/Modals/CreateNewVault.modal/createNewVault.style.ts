@@ -91,3 +91,36 @@ export const BorrowScreenWrapper = styled.div`
     margin-bottom: 40px;
   }
 `
+
+export const ConfirmationScreenWrapper = styled.div`
+  .stats-table-wrapper {
+    margin-top: 20px;
+  }
+
+  .table-wrapper,
+  .bottom-stats-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 20px;
+  }
+
+  .bottom-stats-wrapper {
+    margin-bottom: 0px;
+  }
+
+  .block-name {
+    padding: 0;
+  }
+
+  .confirmation-top-stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    & > div:last-of-type {
+      display: grid;
+      justify-items: flex-end;
+    }
+  }
+`

@@ -16,14 +16,12 @@ import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
 } from 'providers/TokensProvider/helpers/tokens.utils'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import { ADD_COLLATERAL_SCREEN_ID } from '../helpers/createNewVault.consts'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { useCreateVaultContext } from '../helpers/createVaultModalContext'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { silverColor } from 'styles/colors'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
-import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -36,6 +34,12 @@ import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaul
 import { BlockName } from 'pages/Dashboard/Dashboard.style'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { reduceVaultsAssets } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
+import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
+import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { ConfirmationScreenWrapper } from '../createNewVault.style'
+import colors from 'styles/colors'
 
 type ConfirmationScreenProps = {
   avaliableLiquidity: number
@@ -45,6 +49,7 @@ type ConfirmationScreenProps = {
 export const ConfirmationScreen = ({ avaliableLiquidity, closePopup }: ConfirmationScreenProps) => {
   const {
     contractAddresses: { lendingControllerAddress },
+    preferences: { themeSelected },
   } = useDappConfigContext()
   const { choosenBaker } = useXtzBakersForDD()
   const { tokensMetadata, tokensPrices } = useTokensContext()
@@ -58,9 +63,25 @@ export const ConfirmationScreen = ({ avaliableLiquidity, closePopup }: Confirmat
     isVaultCreating,
     newVault,
   } = useCreateVaultContext()
+  const { changeLoansSubscriptionsList } = useLoansContext()
 
-  const { allVaultsIds, vaultsMapper } = useVaultsContext()
+  const { allVaultsIds, vaultsMapper, changeVaultsSubscriptionsList } = useVaultsContext()
 
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+    })
+    changeVaultsSubscriptionsList({
+      [VAULTS_DATA]: VAULTS_ALL,
+    })
+
+    return () => {
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+    }
+  }, [])
+
+  // TODO add sub
   const { assetsBalances } = useMemo(() => {
     const { assetsBalances, globalVaultTVL, ...restVaultsStats } = reduceVaultsAssets(
       allVaultsIds,
@@ -163,53 +184,81 @@ export const ConfirmationScreen = ({ avaliableLiquidity, closePopup }: Confirmat
   )
 
   return (
-    <>
-      <div>
-        <BlockName>Vaults Assets</BlockName>
+    <ConfirmationScreenWrapper>
+      <div className="table-wrapper">
+        <div className="block-name">New Vault stats</div>
+        <VaultOverview>
+          <div className="confirmation-top-stats">
+            <ThreeLevelListItem>
+              <div className="name">Vault name</div>
+              <div className="value">Vault name</div>
+            </ThreeLevelListItem>
+            <ThreeLevelListItem>
+              <div className="name">Selected Baker</div>
+              <div className="value">baker name</div>
+            </ThreeLevelListItem>
+            <ThreeLevelListItem>
+              <div className="name">
+                Total Collateral Deposited
+                <CustomTooltip
+                  iconId="info"
+                  defaultStrokeColor={colors[themeSelected].textColor}
+                  text={'tooltip text'}
+                  className="tooltip"
+                />
+              </div>
+              <CommaNumber value={132916489} decimalsToShow={2} className="value" beginningText="$" />
+            </ThreeLevelListItem>
+          </div>
+          <TableScrollable bodyHeight={108} className="stats-table-wrapper scroll-block">
+            <Table>
+              <TableHeader className="treasury">
+                <TableRow>
+                  <TableHeaderCell>Asset</TableHeaderCell>
+                  <TableHeaderCell>Amount</TableHeaderCell>
+                  <TableHeaderCell contentPosition="right">USD Value</TableHeaderCell>
+                </TableRow>
+              </TableHeader>
 
-        <TableScrollable bodyHeight={90} className="treasury-table scroll-block">
-          <Table>
-            <TableHeader className="treasury">
-              <TableRow>
-                <TableHeaderCell>Asset</TableHeaderCell>
-                <TableHeaderCell>Amount</TableHeaderCell>
-                <TableHeaderCell contentPosition="right">USD Value</TableHeaderCell>
-              </TableRow>
-            </TableHeader>
+              <TableBody className="treasury">
+                {assetsBalances.map(({ balance, tokenAddress }) => {
+                  const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                  if (!token || !token.rate) return null
 
-            <TableBody className="treasury">
-              {assetsBalances.map(({ balance, tokenAddress }) => {
-                const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
-                if (!token || !token.rate) return null
+                  const { symbol, rate, decimals } = token
 
-                const { symbol, rate, decimals } = token
+                  const convertedBalance = convertNumberForClient({ number: balance, grade: decimals })
 
-                const convertedBalance = convertNumberForClient({ number: balance, grade: decimals })
-
-                return (
-                  <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
-                    <TableCell width="33%">{symbol}</TableCell>
-                    <TableCell width="33%">
-                      <CommaNumber
-                        value={convertedBalance}
-                        decimalsToShow={Number(decimals)}
-                        useAccurateParsing={balance < 1}
-                      />
-                    </TableCell>
-                    <TableCell width="33%" contentPosition="right">
-                      <CommaNumber
-                        value={convertedBalance * rate}
-                        beginningText={rate ? '$' : symbol}
-                        useAccurateParsing={balance < 1}
-                      />
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
-        </TableScrollable>
+                  return (
+                    <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
+                      <TableCell width="33%">{symbol}</TableCell>
+                      <TableCell width="33%">
+                        <CommaNumber
+                          value={convertedBalance}
+                          decimalsToShow={Number(decimals)}
+                          useAccurateParsing={balance < 1}
+                        />
+                      </TableCell>
+                      <TableCell width="33%" contentPosition="right">
+                        <CommaNumber
+                          value={convertedBalance * rate}
+                          beginningText={rate ? '$' : symbol}
+                          useAccurateParsing={balance < 1}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </TableScrollable>
+        </VaultOverview>
       </div>
+
+      <div className="bottom-stats-wrapper">
+        <div className="block-name">New Borrow XTZ Stats</div>
+      </div>
+
       <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
         <NewButton
           kind={BUTTON_SECONDARY}
@@ -229,6 +278,6 @@ export const ConfirmationScreen = ({ avaliableLiquidity, closePopup }: Confirmat
           Deposit
         </NewButton>
       </div>
-    </>
+    </ConfirmationScreenWrapper>
   )
 }
