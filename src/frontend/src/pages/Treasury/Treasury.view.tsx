@@ -112,7 +112,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
             </>
           ) : null}
 
-          <TableScrollable bodyHeight={filteredBalance.length === 0 ? 60 : 90} className="treasury-table scroll-block">
+          <TableScrollable bodyHeight={filteredBalance.length === 0 ? 60 : 120} className="treasury-table scroll-block">
             <Table>
               <TableHeader className="treasury">
                 <TableRow>
@@ -132,15 +132,15 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
 
                     return (
                       <TableRow rowHeight={25} borderColor="dataColor" className="add-hover" key={symbol}>
-                        <TableCell width="33%">{symbol}</TableCell>
-                        <TableCell width="33%">
+                        <TableCell width="37%">{symbol}</TableCell>
+                        <TableCell width="31%">
                           {treasuryTokenBalance < 0.01 ? (
                             '<0.01'
                           ) : (
                             <CommaNumber value={treasuryTokenBalance} showDecimal />
                           )}
                         </TableCell>
-                        <TableCell width="33%" contentPosition="right">
+                        <TableCell width="32%" contentPosition="right">
                           {treasuryTokenBalance * rate < 0.01 ? (
                             `<0.01 ${rate ? '$' : symbol}`
                           ) : (
