@@ -36,6 +36,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { CONFIRMATION_SCREEN_ID } from '../helpers/createNewVault.consts'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { BorrowScreenBottomStats } from '../components/BorrowScreenBottomStats'
 
 // ------------------------------------------------------------------
 
@@ -250,69 +251,14 @@ export const BorrowScreen = () => {
           </InputPinnedTokenInfo>
         </Input>
       </div>
-      <div className="borrow-screen-bottom-stats">
-        <div className="block-name">New Vault stats</div>
-        <VaultOverview>
-          <div className="line">
-            <ThreeLevelListItem>
-              <div className="name">
-                Total Amount
-                <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={TOTAL_AMOUNT} className="tooltip" />
-              </div>
-              <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">
-                DAO Fee
-                <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={DAO_FEE} className="tooltip" />
-              </div>
-              <CommaNumber
-                value={inputAmount * (daoFee / 100)}
-                decimalsToShow={assetDecimalsToShow}
-                className="value"
-              />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">Amount Received</div>
-              <CommaNumber
-                value={inputAmount - inputAmount * (daoFee / 100)}
-                decimalsToShow={assetDecimalsToShow}
-                className="value"
-              />
-            </ThreeLevelListItem>
-          </div>
-
-          <div className="line">
-            <ThreeLevelListItem
-              className="collateral-diagram right"
-              customColor={getCollateralRationPersent(futureCollateralRatio)}
-            >
-              <div className={`percentage`}>
-                Collateral Ratio:
-                <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
-              </div>
-              <GradientDiagram
-                className="diagram"
-                colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
-              />
-            </ThreeLevelListItem>
-
-            <ThreeLevelListItem className="right">
-              <div className="name">
-                Available To Borrow
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={silverColor}
-                  text={AVALIABLE_TO_BORROW}
-                  className="tooltip"
-                />
-              </div>
-              <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
-            </ThreeLevelListItem>
-          </div>
-        </VaultOverview>
-      </div>
+      <BorrowScreenBottomStats
+        inputAmount={inputAmount}
+        assetDecimalsToShow={assetDecimalsToShow}
+        daoFee={daoFee}
+        futureCollateralRatio={futureCollateralRatio}
+        futureBorrowCapacity={futureBorrowCapacity}
+        headerText="New Vault stats"
+      />
 
       <div className="manage-btn">
         <NewButton

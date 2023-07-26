@@ -1,7 +1,15 @@
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+  TableScrollable,
+} from 'app/App.components/Table'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import {
@@ -21,10 +29,13 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { convertNumberForClient, convertNumberForContractCall } from 'utils/calcFunctions'
 import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import { BlockName } from 'pages/Dashboard/Dashboard.style'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { reduceVaultsAssets } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 type ConfirmationScreenProps = {
   avaliableLiquidity: number
@@ -43,11 +54,23 @@ export const ConfirmationScreen = ({ avaliableLiquidity, closePopup }: Confirmat
     hasXTZTokenSelected,
     selectedCollateralsAddresses,
     selectedCollaterals,
-    vaultInputState,
     updateScreenToShow,
     isVaultCreating,
     newVault,
   } = useCreateVaultContext()
+
+  const { allVaultsIds, vaultsMapper } = useVaultsContext()
+
+  const { assetsBalances } = useMemo(() => {
+    const { assetsBalances, globalVaultTVL, ...restVaultsStats } = reduceVaultsAssets(
+      allVaultsIds,
+      vaultsMapper,
+      tokensMetadata,
+      tokensPrices,
+    )
+
+    return { assetsBalances, globalVaultTVL, ...restVaultsStats }
+  }, [allVaultsIds, tokensMetadata, tokensPrices, vaultsMapper])
 
   // deposit action ----------------------------------------------
   const depositAction = useCallback(async () => {
@@ -141,97 +164,51 @@ export const ConfirmationScreen = ({ avaliableLiquidity, closePopup }: Confirmat
 
   return (
     <>
-      {selectedCollateralsAddresses.length === 1 &&
-      firstSelectedCollateralTokenData &&
-      firstSelectedCollateralTokenData.rate ? (
-        <div className="confirm-create-vault" style={{ marginBottom: '30px' }}>
-          <ThreeLevelListItem>
-            <div className="name">Asset</div>
-            <div className="value">{firstSelectedCollateralTokenData.symbol}</div>
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Amount</div>
-            <CommaNumber
-              value={Number(selectedCollaterals[firstSelectedCollateralTokenData.address].amount)}
-              decimalsToShow={assetDecimalsToShow}
-              className="value"
-            />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">USD Value</div>
-            <CommaNumber
-              value={
-                Number(selectedCollaterals[firstSelectedCollateralTokenData.address].amount) *
-                firstSelectedCollateralTokenData.rate
-              }
-              className="value"
-              beginningText="$"
-            />
-          </ThreeLevelListItem>
-        </div>
-      ) : (
-        <Table className="treasury-table">
-          <TableHeader className="treasury">
-            <TableRow>
-              <TableHeaderCell>Asset</TableHeaderCell>
-              <TableHeaderCell>Amount</TableHeaderCell>
-              <TableHeaderCell contentPosition="right">USD Value</TableHeaderCell>
-            </TableRow>
-          </TableHeader>
+      <div>
+        <BlockName>Vaults Assets</BlockName>
 
-          <TableBody className="treasury">
-            {selectedCollateralsAddresses.map((collateralAddress, idx) => {
-              const collateralToken = getTokenDataByAddress({
-                tokenAddress: collateralAddress,
-                tokensMetadata,
-                tokensPrices,
-              })
+        <TableScrollable bodyHeight={90} className="treasury-table scroll-block">
+          <Table>
+            <TableHeader className="treasury">
+              <TableRow>
+                <TableHeaderCell>Asset</TableHeaderCell>
+                <TableHeaderCell>Amount</TableHeaderCell>
+                <TableHeaderCell contentPosition="right">USD Value</TableHeaderCell>
+              </TableRow>
+            </TableHeader>
 
-              if (!collateralToken || !collateralToken.rate) return null
+            <TableBody className="treasury">
+              {assetsBalances.map(({ balance, tokenAddress }) => {
+                const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                if (!token || !token.rate) return null
 
-              const { amount } = selectedCollaterals[collateralAddress]
-              const { symbol, rate } = collateralToken
+                const { symbol, rate, decimals } = token
 
-              return (
-                <TableRow rowHeight={40} borderColor="dataColor" className="add-hover" key={symbol}>
-                  <TableCell width="42%">{symbol}</TableCell>
-                  <TableCell width="28%">
-                    <CommaNumber value={Number(amount)} />
-                  </TableCell>
-                  <TableCell contentPosition="right" width="28%">
-                    <CommaNumber value={Number(amount) * rate} className="value" beginningText="$" />
-                  </TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      )}
-      <div className="confirm-create-vault">
-        {hasXTZTokenSelected && choosenBaker ? (
-          <ThreeLevelListItem>
-            <div className="name">Selected Baker</div>
-            <div className="value">{choosenBaker.bakerName}</div>
-          </ThreeLevelListItem>
-        ) : null}
+                const convertedBalance = convertNumberForClient({ number: balance, grade: decimals })
 
-        <ThreeLevelListItem>
-          <div className="name">
-            Borrowing Capacity{' '}
-            <CustomTooltip
-              iconId="info"
-              defaultStrokeColor={silverColor}
-              text="How much you are able to borrow given your current collateral ratio including the amount you wish to borrow and the total amount available to borrow from the pool."
-              className="tooltip"
-            />
-          </div>
-          <CommaNumber value={borrowCapacity} className="value" beginningText="$" />
-        </ThreeLevelListItem>
-
-        <ThreeLevelListItem>
-          <div className="name">Vault Name</div>
-          <div className="value">{vaultInputState.name}</div>
-        </ThreeLevelListItem>
+                return (
+                  <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
+                    <TableCell width="33%">{symbol}</TableCell>
+                    <TableCell width="33%">
+                      <CommaNumber
+                        value={convertedBalance}
+                        decimalsToShow={Number(decimals)}
+                        useAccurateParsing={balance < 1}
+                      />
+                    </TableCell>
+                    <TableCell width="33%" contentPosition="right">
+                      <CommaNumber
+                        value={convertedBalance * rate}
+                        beginningText={rate ? '$' : symbol}
+                        useAccurateParsing={balance < 1}
+                      />
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        </TableScrollable>
       </div>
       <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
         <NewButton
