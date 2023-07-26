@@ -88,10 +88,11 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     min-height: 100px;
     max-height: 250px;
     overflow-y: auto;
-    /* overflow-x: hidden; */
+    overflow-x: hidden;
 
     -ms-overflow-style: none; /* Internet Explorer 10+ */
     scrollbar-width: none; /* Firefox */
+    padding-right: 18px;
   }
 
   .collateral-list::-webkit-scrollbar {
@@ -100,6 +101,9 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
 
   .xtz-baker {
     margin: 30px 0 -20px 0;
+  }
+
+  .collateral-block {
   }
 
   .creating-vault-loader-wrapper {
