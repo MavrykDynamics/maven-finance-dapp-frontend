@@ -17,6 +17,7 @@ export const GET_USER_LOANS_DATA = gql(`
             token_address
           }
           current_interest_rate
+          utilisation_rate
         }
         lending_controller {
           interest_rate_decimals
