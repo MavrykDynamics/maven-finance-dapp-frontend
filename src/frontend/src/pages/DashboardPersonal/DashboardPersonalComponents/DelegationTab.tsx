@@ -28,7 +28,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
-const DelegationTab = () => {
+const DelegationTab = ({ distributeProposalRewards }: { distributeProposalRewards: () => void }) => {
   const {
     satelliteMapper,
     proposalsAmount,
@@ -36,7 +36,13 @@ const DelegationTab = () => {
     finRequestsAmount,
     setSatelliteAddressToSubsctibe,
   } = useSatellitesContext()
-  const { userTokensBalances, satelliteMvkIsDelegatedTo, availableSatellitesRewards, userAddress } = useUserContext()
+  const {
+    userTokensBalances,
+    satelliteMvkIsDelegatedTo,
+    availableSatellitesRewards,
+    userAddress,
+    availableProposalRewards,
+  } = useUserContext()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
@@ -58,11 +64,6 @@ const DelegationTab = () => {
     finRequestsAmount,
   })
 
-  // TODO: add valid data
-  const handleDistributeRewards = () => {
-    // TODO TAKE LOGIC FROM sATELLITEcARD COMPONENT FOR THIS CALLBACK FN
-  }
-
   return (
     <>
       <DelegationStatusBlock>
@@ -72,9 +73,8 @@ const DelegationTab = () => {
           <NewButton
             kind={BUTTON_PRIMARY}
             form={BUTTON_WIDE}
-            onClick={handleDistributeRewards}
-            // TODO:  we are waiting new Query for getting proposals
-            disabled={true || availableSatellitesRewards === 0}
+            onClick={distributeProposalRewards}
+            disabled={availableProposalRewards.length === 0}
           >
             <Icon id="loans" />
             Distribute Gov. Rewards
