@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useState } from 'react'
 // context
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 // view
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
@@ -39,11 +40,11 @@ import {
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITE_VOTES_MAPPER,
 } from 'providers/SatellitesProvider/satellites.const'
+import { FatalError } from 'errors/error'
 import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
 
 // types
 import { SatelliteVotesType } from 'providers/SatellitesProvider/satellites.provider.types'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 const SatellitesVotingHistory = ({
   satelliteVotes: { proposalsVotes, satelliteActionVotes, financialRequestsVotes },
@@ -85,7 +86,7 @@ const SatellitesVotingHistory = ({
 export const SatelliteDetails = () => {
   const { satelliteId } = useParams<{ satelliteId: string }>()
   const { apolloClient } = useApolloContext()
-  const { bug } = useToasterContext()
+  const { fatal } = useToasterContext()
   const {
     satelliteMapper,
     proposalsAmount,
@@ -104,7 +105,6 @@ export const SatelliteDetails = () => {
     finRequestsAmount,
   })
 
-  const [satelliteAddressError, setSatelliteAddressError] = useState(false)
   const [isSatelliteExistanseLoading, setIsSatelliteExistanseLoading] = useState(false)
 
   useEffect(() => {
@@ -119,17 +119,10 @@ export const SatelliteDetails = () => {
     }
   }, [])
 
-  const handleCheckSatelliteExistanseError = (msg: string) => {
-    bug(msg)
-    setSatelliteAddressError(true)
-  }
-
   // check whether satellite exists, cuz address is stored in url and user can change it
   useLayoutEffect(() => {
     if (satelliteId && satelliteMapper[satelliteId]) return
 
-    // renew error flag
-    setSatelliteAddressError(false)
     setIsSatelliteExistanseLoading(true)
 
     const checkWhetherSatelliteExists = async () => {
@@ -146,9 +139,9 @@ export const SatelliteDetails = () => {
           return
         }
 
-        handleCheckSatelliteExistanseError(`Satellite with address ${satelliteId} does not exist`)
+        fatal(new FatalError(`Satellite with address ${satelliteId} does not exist`))
       } catch (e) {
-        handleCheckSatelliteExistanseError('Loading satellite error, please, try to reload page')
+        fatal(new FatalError('Loading satellite error, please, try to reload page'))
       } finally {
         setIsSatelliteExistanseLoading(false)
       }
@@ -168,12 +161,12 @@ export const SatelliteDetails = () => {
         <div>
           <SatellitePagination />
 
-          {!satelliteAddressError && (isSatellitesLoading || isSatelliteExistanseLoading) ? (
+          {isSatellitesLoading || isSatelliteExistanseLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellite profile data</div>
             </DataLoaderWrapper>
-          ) : currentSatellite && !satelliteAddressError ? (
+          ) : currentSatellite ? (
             <SatelliteListItem satellite={currentSatellite} isDetailsPage>
               <SatelliteCardBottomRow>
                 <SatelliteDescrBlock>

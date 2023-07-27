@@ -11,7 +11,7 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
   position: relative;
 
   .content-wrapper {
-    max-width: 460px;
+    max-width: 480px;
 
     .treasury-checkbox {
       margin-top: 25px;

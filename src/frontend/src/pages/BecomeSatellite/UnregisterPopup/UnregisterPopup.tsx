@@ -35,7 +35,7 @@ export const UnregisterPopup = ({
 }: {
   show: boolean
   closePopup: () => void
-  satellite: SatelliteRecordType
+  satellite: SatelliteRecordType | null
 }) => {
   const {
     contractAddresses: { delegationAddress },

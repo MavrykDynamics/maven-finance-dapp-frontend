@@ -83,6 +83,7 @@ export const UserProvider = ({ children }: Props) => {
 
     return () => {
       ws?.current?.stop()
+      isRunnedInitialConnect.current = false
     }
   }, [])
 
@@ -187,11 +188,8 @@ export const UserProvider = ({ children }: Props) => {
 
   // effect to perform resotring user from localStorage
   useEffect(() => {
-    if (canStartUserInitialLoading) {
-      isRunnedInitialConnect.current = true
-      connect()
-    }
-  }, [canStartUserInitialLoading, connect])
+    if (canStartUserInitialLoading) connect()
+  }, [canStartUserInitialLoading, , connect])
 
   // subscribe to user's indexer data
   const { loading: userDataLoading } = useSubscription(SUBSCRIBE_USER_DATA, {
@@ -201,7 +199,13 @@ export const UserProvider = ({ children }: Props) => {
     },
     shouldResubscribe: true,
     onData: ({ data: { data } }) => {
-      if (!data) return
+      // if user does not exists, TODO: should not be an option
+      if (!data || data.mavryk_user.length === 0) {
+        bug('User does not exists in DB')
+        signOut()
+        return
+      }
+
       const { tokensBalances, availableLoansRewards, userMTokens } = normalizeUserIndexerTokensBalances({
         indexerData: data,
         tokensMetadata,
@@ -279,7 +283,6 @@ export const UserProvider = ({ children }: Props) => {
       const newUserAddress = await DAPP_INSTANCE.swapAccount()
 
       if (newUserAddress && newUserAddress !== userCtxState.userAddress) {
-        setUserCtxState(DEFAULT_USER)
         loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress, useLoader: false })
 
         dispatch({ type: SET_REDUX_USER, accountPkh: newUserAddress })
@@ -309,16 +312,25 @@ export const UserProvider = ({ children }: Props) => {
     handleOnReconnected,
   ])
 
-  const providerValue = useMemo(
-    () => ({
+  const providerValue = useMemo(() => {
+    // set initial connect to true, when we have user address set (subs runned and loading statuses set to true) and loading statuses are off,
+    // or we don't have user wallet in LC and we are unable to restore it
+    if (
+      (!isRunnedInitialConnect.current && userCtxState.userAddress && !(userDataLoading || isTzktBalancesLoading)) ||
+      !hasUserInLocalStorage
+    ) {
+      isRunnedInitialConnect.current = true
+    }
+
+    return {
       ...userCtxState,
       isLoading: userDataLoading || isTzktBalancesLoading,
+      isRunnedInitialConnect: Boolean(isRunnedInitialConnect.current),
       connect,
       signOut,
       changeUser,
-    }),
-    [connect, signOut, changeUser, userCtxState],
-  )
+    }
+  }, [connect, signOut, changeUser, userCtxState])
 
   return <userContext.Provider value={providerValue}>{children}</userContext.Provider>
 }

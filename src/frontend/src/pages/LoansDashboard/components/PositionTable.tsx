@@ -238,7 +238,7 @@ export const LoansPositionTable = ({
             <Icon id="cow" className="icon-cow" />
           </div>
 
-          <p>There is not active markets</p>
+          <p>There are not active markets</p>
         </Plug>
       )}
     </PositionTableStyled>

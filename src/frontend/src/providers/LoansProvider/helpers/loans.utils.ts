@@ -36,14 +36,31 @@ export const getDescrByType = (type: number) => {
   }
 }
 
-// HELPER FOR LENDING APY
-export const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): number => {
+/**
+ * CALC LENDING APY
+ * @param utilizationRate     The current Utilization rate of the specific market, value between 0-1
+ * @param currentInterestRate Current interest rate of the specific asset, value between 0-1
+ * @param treasuryShare       How much of the interest paid is sent to the DAOs treasury
+ * @returns apy of the market
+ */
+export const calcLendingAPY = (utilizationRate: number, currentInterestRate: number, treasuryShare: number): number => {
+  // S_t = U_t * (SB_t * S_t)(1 - R_t)
+  // SB_t is 1 for our module
+  const leftSide = utilizationRate * currentInterestRate
+  const fullSupplyAPY = leftSide * (1 - treasuryShare)
   const secondsPerYear = 60 * 60 * 24 * 365
 
-  const top = currentInterestRate - treasuryShare
+  const top = fullSupplyAPY
   const firstTerm = 1 + top / secondsPerYear
   const power = firstTerm ** secondsPerYear
   return (power - 1) * 100
+}
+
+export const calcSupplyAPY = (utilizationRate: number, currentInterestRate: number, treasuryShare: number): number => {
+  // S_t = U_t * (SB_t * S_t)(1 - R_t)
+  // SB_t is 1 for our module
+  const leftSide = utilizationRate * 1 * currentInterestRate
+  return leftSide * (1 - treasuryShare)
 }
 
 export const calcMarketAvaliableLiquidity = ({

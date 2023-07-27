@@ -328,10 +328,12 @@ export const getVaultsProviderReturnValue = ({
   vaultsCtxState,
   activeSubs,
   changeVaultsSubscriptionsList,
+  userAddress,
 }: {
   vaultsCtxState: VaultsCtxState
   activeSubs: VaultsSubsRecordType
   changeVaultsSubscriptionsList: VaultsContext['changeVaultsSubscriptionsList']
+  userAddress: string | null
 }) => {
   const { vaultsMapper, myVaultsIds, allVaultsIds, permissionedVaultsIds } = vaultsCtxState
   const commonToReturn = {
@@ -348,8 +350,8 @@ export const getVaultsProviderReturnValue = ({
   const isLoading =
     (!activeSubs[VAULTS_DATA] && vaultsMapper === null) ||
     (activeSubs[VAULTS_DATA] === 'allVaults' && allVaultsIds === null) ||
-    (activeSubs[VAULTS_DATA] === 'userIsDepositor' && permissionedVaultsIds === null) ||
-    (activeSubs[VAULTS_DATA] === 'userIsOwner' && myVaultsIds === null)
+    (userAddress && activeSubs[VAULTS_DATA] === 'userIsDepositor' && permissionedVaultsIds === null) ||
+    (userAddress && activeSubs[VAULTS_DATA] === 'userIsOwner' && myVaultsIds === null)
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {

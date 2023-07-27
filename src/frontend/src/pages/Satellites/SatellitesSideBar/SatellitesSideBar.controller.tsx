@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { useFeedsStats } from 'providers/DataFeedsProvider/hooks/useFeedsStats'
@@ -6,11 +5,9 @@ import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSa
 
 import { convertNumberForClient } from 'utils/calcFunctions'
 
-import { State } from 'reducers'
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { ACTION_PRIMARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { MVK_DECIMALS } from 'utils/constants'
 
-import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
@@ -18,6 +15,8 @@ import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarIte
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import Button from 'app/App.components/Button/NewButton'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -78,12 +77,9 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
       <SideBarSection>
         {isButton ? (
           <Link to="/become-satellite">
-            <Button
-              text={isSatellite ? 'Edit Satellite Profile' : 'Become a Satellite'}
-              icon="satellite-stroke"
-              kind={ACTION_PRIMARY}
-              disabled={!userAddress}
-            />
+            <Button kind={BUTTON_PRIMARY} disabled={!userAddress} form={BUTTON_WIDE}>
+              <Icon id="satellite-stroke" /> {isSatellite ? 'Edit Satellite Profile' : 'Become a Satellite'}
+            </Button>
           </Link>
         ) : null}
 

@@ -67,6 +67,7 @@ const useUserLoansData = ({ userAddress }: { userAddress: string | null }) => {
             tokenAddress: address,
             operationHash: operation_hash,
             annualPecentage: calcLendingAPY(
+              convertNumberForClient({ number: loan_token.utilisation_rate, grade: interest_rate_decimals }),
               convertNumberForClient({ number: loan_token.current_interest_rate, grade: interest_rate_decimals }),
               convertNumberForClient({ number: interest_treasury_share, grade: decimals }),
             ),

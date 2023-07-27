@@ -141,6 +141,10 @@ a {
   &.isCyan {
     color: ${({ theme }) => theme.valueColor};
   }
+
+  &.underline {
+    text-decoration: underline;
+  }
 }
 
 
