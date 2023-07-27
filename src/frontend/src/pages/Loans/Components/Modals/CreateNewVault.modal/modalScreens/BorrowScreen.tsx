@@ -22,7 +22,6 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import colors, { silverColor } from 'styles/colors'
-import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
 import { BorrowScreenWrapper } from '../createNewVault.style'
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
@@ -36,40 +35,6 @@ import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.co
 import { CONFIRMATION_SCREEN_ID } from '../helpers/createNewVault.consts'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { BorrowScreenBottomStats } from '../components/BorrowScreenBottomStats'
-import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
-import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
-
-// ------------------------------------------------------------------
-
-const vaultObj = {
-  borrowedTokenAddress: 'KT1H9hKtcqcMHuCoaisu8Qy7wutoUPFELcLm',
-  name: 'Jupiter 2',
-  address: 'KT1UCFPPgutMkkt3xBpSyAxH6piRjzxyiyiz',
-  ownerAddress: 'tz1byTGaUKjJqkwSXPnM3dpf9N39pYwRfnTm',
-  vaultId: 148,
-  apr: 25.77473656078835,
-  creationTimestamp: 1683191753000,
-  borrowedAmount: 1000000,
-  availableLiquidity: 35244409.30000001,
-  minimumRepay: 10000,
-  fee: 48858.27958072885,
-  collateralData: [
-    {
-      tokenAddress: 'tz1ZZZZZZZZZZZZZZZZZZZZZZZZZZZZNkiRg',
-      amount: 23000000,
-    },
-  ],
-  liquidationMax: 509741,
-  liquidationReward: 0.06,
-  adminLiquidateFee: 600,
-  liquidationRatio: 1500,
-  liquidationLvl: null,
-  sMVKDelegatedTo: '',
-  xtzDelegatedTo: 'tz1Qf1pSbJzMN4VtGFfVJRgbXhBksRv36TxW',
-  depositors: [],
-  deporsitorsFlag: 'any',
-}
-// ------------------------------------------------------------------
 
 export const BorrowScreen = () => {
   const {
@@ -86,8 +51,7 @@ export const BorrowScreen = () => {
 
   const currentVault = vaultsMapper[newVault?.id.toString() ?? '']
   // TODO replace with NewVault data from modal screens context
-  // const vaultData = useFullVault(currentVault)
-  const vaultData = useFullVault(vaultObj as any)
+  const vaultData = useFullVault(currentVault)
 
   const {
     borrowedTokenAddress: borrowedAssetAddress = '',

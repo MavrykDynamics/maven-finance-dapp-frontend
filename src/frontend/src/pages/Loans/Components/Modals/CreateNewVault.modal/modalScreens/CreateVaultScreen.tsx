@@ -116,7 +116,7 @@ export const CreateVaultScreen = ({ marketTokenAddress, setCreatedVaultAddress }
 
   const handleButtonClick = () => {
     updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)
-    createVaultHandler()
+    // createVaultHandler()
   }
 
   return (

@@ -45,8 +45,12 @@ export const CreateVaultModalProvider = ({ children }: Props) => {
   const updateNewVault = (newVault: NewVaultType) => {
     setModalState((prev) => ({
       ...prev,
-      newVault,
+      newVault: { id: 148, address: 'KT1UCFPPgutMkkt3xBpSyAxH6piRjzxyiyiz' },
     }))
+    // setModalState((prev) => ({
+    //   ...prev,
+    //   newVault,
+    // }))
   }
 
   const updateSelectedCollaterals = (selectedCollaterals: SelectedCollateralsType) => {
