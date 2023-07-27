@@ -38,7 +38,7 @@ type CreateNewModalProps = {
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17480%3A229353&t=Sx2aEpp3ifrGxBtQ-0
 export const CreateNewVaultConsumer = ({ closePopup, show, data }: CreateNewModalProps) => {
   //   internal create vault context
-  const { screenToShow, resetCreateVaultModalState, updateScreenToShow } = useCreateVaultContext()
+  const { screenToShow, resetCreateVaultModalState } = useCreateVaultContext()
 
   useLockBodyScroll(show)
 
@@ -66,12 +66,6 @@ export const CreateNewVaultConsumer = ({ closePopup, show, data }: CreateNewModa
         className={classNames('loans', 'loans-overflow', 'scroll-block')}
       >
         <LoansModalBase>
-          <button onClick={closePopup} className="close-modal" />
-          <button onClick={() => updateScreenToShow('addCollateral')}> Add collateral</button>
-          <button onClick={() => updateScreenToShow('borrow')}> Borrow</button>
-          <button onClick={() => updateScreenToShow('confirmation')}> Confirmation</button>
-          <button onClick={() => updateScreenToShow('createVault')}> Create vault</button>
-
           <VaultModalStepperWrapper>
             <CreateVaultModalStepper items={stepperItems} activeIndex={activeStepperIndex} />
           </VaultModalStepperWrapper>
@@ -84,8 +78,10 @@ export const CreateNewVaultConsumer = ({ closePopup, show, data }: CreateNewModa
               setCreatedVaultAddress={setCreatedVaultAddress}
             />
           ) : null}
-          {screenToShow === ADD_COLLATERAL_SCREEN_ID ? <AddCollateralScreen /> : null}
-          {screenToShow === BORROW_SCREEN_ID && <BorrowScreen />}
+          {screenToShow === ADD_COLLATERAL_SCREEN_ID ? (
+            <AddCollateralScreen avaliableLiquidity={avaliableLiquidity} />
+          ) : null}
+          {screenToShow === BORROW_SCREEN_ID && <BorrowScreen avaliableLiquidity={avaliableLiquidity} />}
           {screenToShow === CONFIRMATION_SCREEN_ID ? (
             <ConfirmationScreen avaliableLiquidity={avaliableLiquidity} closePopup={closePopup} />
           ) : null}

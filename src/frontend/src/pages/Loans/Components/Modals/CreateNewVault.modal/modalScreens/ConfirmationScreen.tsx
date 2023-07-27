@@ -40,6 +40,8 @@ import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/V
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { ConfirmationScreenWrapper } from '../createNewVault.style'
 import colors from 'styles/colors'
+import { BorrowScreenBottomStats } from '../components/BorrowScreenBottomStats'
+import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 
 type ConfirmationScreenProps = {
   avaliableLiquidity: number
@@ -62,10 +64,19 @@ export const ConfirmationScreen = ({ avaliableLiquidity, closePopup }: Confirmat
     updateScreenToShow,
     isVaultCreating,
     newVault,
+    vaultInputState,
   } = useCreateVaultContext()
   const { changeLoansSubscriptionsList } = useLoansContext()
 
   const { allVaultsIds, vaultsMapper, changeVaultsSubscriptionsList } = useVaultsContext()
+
+  // TODO move to context
+  const currentVault = vaultsMapper[newVault?.id.toString() ?? 'KT1UCFPPgutMkkt3xBpSyAxH6piRjzxyiyiz']
+  const vaultData = useFullVault(currentVault)
+
+  const { borrowedTokenAddress: borrowedAssetAddress = '' } = vaultData ?? {}
+
+  const { symbol } = tokensMetadata[borrowedAssetAddress]
 
   useEffect(() => {
     changeLoansSubscriptionsList({
@@ -257,6 +268,14 @@ export const ConfirmationScreen = ({ avaliableLiquidity, closePopup }: Confirmat
 
       <div className="bottom-stats-wrapper">
         <div className="block-name">New Borrow XTZ Stats</div>
+        {/* <BorrowScreenBottomStats
+          inputAmount={inputAmount}
+          assetDecimalsToShow={assetDecimalsToShow}
+          daoFee={daoFee}
+          futureCollateralRatio={futureCollateralRatio}
+          futureBorrowCapacity={futureBorrowCapacity}
+          headerText={`New Borrow ${symbol} stats`}
+        /> */}
       </div>
 
       <div className="buttons-wrapper" style={{ marginTop: '30px' }}>

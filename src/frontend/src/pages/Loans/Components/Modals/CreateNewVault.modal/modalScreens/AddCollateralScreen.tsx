@@ -25,7 +25,7 @@ import {
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
-import { CONFIRMATION_SCREEN_ID } from '../helpers/createNewVault.consts'
+import { BORROW_SCREEN_ID, CONFIRMATION_SCREEN_ID } from '../helpers/createNewVault.consts'
 import {
   CollateralInputWrapper,
   CollateralScreeenWrapper,
@@ -39,8 +39,15 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import colors from 'styles/colors'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import Button from 'app/App.components/Button/NewButton'
+import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { BORROW_CAPACITY, COLLATERAL_VALUE } from 'texts/tooltips/vault.text'
 
-export const AddCollateralScreen = () => {
+type AddCollateralScreenProps = {
+  avaliableLiquidity: number
+}
+
+export const AddCollateralScreen = ({ avaliableLiquidity }: AddCollateralScreenProps) => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const { userTokensBalances } = useUserContext()
   const {
@@ -54,7 +61,27 @@ export const AddCollateralScreen = () => {
     updateScreenToShow,
     isVaultCreating,
     hasXTZTokenSelected,
+    newVault,
   } = useCreateVaultContext()
+  const { vaultsMapper } = useVaultsContext()
+
+  const currentVault = vaultsMapper[newVault?.id.toString() ?? 'KT1UCFPPgutMkkt3xBpSyAxH6piRjzxyiyiz']
+  // TODO replace with NewVault data from modal screens context
+  const vaultData = useFullVault(currentVault)
+
+  const { collateralBalance = 0 } = vaultData ?? {}
+  const collateralsBalance =
+    selectedCollateralsAddresses.reduce((acc, collateralAddress) => {
+      const collateralToken = getTokenDataByAddress({ tokenAddress: collateralAddress, tokensPrices, tokensMetadata })
+
+      if (!collateralToken || !collateralToken.rate) return acc
+
+      const { amount } = selectedCollaterals[collateralAddress]
+      const { rate } = collateralToken
+
+      return (acc += Number(amount) * Number(rate))
+    }, 0) / 2
+  const borrowCapacity = Math.min(Math.max(collateralsBalance, avaliableLiquidity, 0))
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd add new collateral)
   const mappedAvaliableCollaterals = useMemo(() => {
@@ -310,11 +337,11 @@ export const AddCollateralScreen = () => {
                     <CustomTooltip
                       iconId="info"
                       defaultStrokeColor={colors[themeSelected].textColor}
-                      text={'tooltip text'}
+                      text={COLLATERAL_VALUE}
                       className="tooltip"
                     />
                   </div>
-                  <CommaNumber value={289021} decimalsToShow={0} className="value" />
+                  <CommaNumber value={borrowCapacity} decimalsToShow={0} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">
@@ -322,11 +349,11 @@ export const AddCollateralScreen = () => {
                     <CustomTooltip
                       iconId="info"
                       defaultStrokeColor={colors[themeSelected].textColor}
-                      text={'tooltip text'}
+                      text={BORROW_CAPACITY}
                       className="tooltip"
                     />
                   </div>
-                  <CommaNumber value={132916489} decimalsToShow={0} className="value" />
+                  <CommaNumber value={collateralBalance} decimalsToShow={0} className="value" />
                 </ThreeLevelListItem>
               </div>
             </VaultOverview>
@@ -337,7 +364,7 @@ export const AddCollateralScreen = () => {
           <NewButton
             kind={BUTTON_PRIMARY}
             form={BUTTON_WIDE}
-            onClick={() => updateScreenToShow(CONFIRMATION_SCREEN_ID)}
+            onClick={() => updateScreenToShow(BORROW_SCREEN_ID)}
             disabled={isAddCollateralContinueDisabled}
           >
             Continue
