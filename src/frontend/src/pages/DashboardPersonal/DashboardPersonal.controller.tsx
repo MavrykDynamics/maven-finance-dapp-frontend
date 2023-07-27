@@ -264,12 +264,6 @@ const DashboardPersonal = () => {
       : {}),
   }
 
-  console.log({
-    isLoading,
-    isDoormanLoading,
-    isSatellitesLoading,
-  })
-
   const activeTab = useMemo(() => (isValidPersonalDashboardTabId(tabId) ? tabId : PORTFOLIO_TAB_ID), [tabId])
 
   return (
