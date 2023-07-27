@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useHistory, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { apolloClient } from 'apollo'
 
 // const
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
@@ -11,6 +10,7 @@ import {
   DEFAULT_LOANS_ACTIVE_SUBS,
   LOANS_CONFIG,
 } from 'providers/LoansProvider/helpers/loans.const'
+import { FatalError } from 'errors/error'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -41,6 +41,7 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
@@ -48,7 +49,6 @@ import {
   VAULTS_USER_ALL,
 } from 'providers/VaultsProvider/vaults.provider.consts'
 import { CHECK_WHETHER_MARKET_EXISTS } from 'providers/LoansProvider/queries/loansMarkets.query'
-import { FatalError } from 'errors/error'
 
 export const Market = () => {
   const history = useHistory<{ from?: string }>()
@@ -60,6 +60,7 @@ export const Market = () => {
     tabId: string
   }>()
 
+  const { apolloClient } = useApolloContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { fatal } = useToasterContext()
   const { myVaultsIds, vaultsMapper, isLoading: isVaultsLoading, changeVaultsSubscriptionsList } = useVaultsContext()
