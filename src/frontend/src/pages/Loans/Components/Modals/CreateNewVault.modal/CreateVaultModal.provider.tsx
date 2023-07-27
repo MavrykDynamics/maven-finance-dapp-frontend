@@ -29,9 +29,11 @@ export const CreateVaultModalProvider = ({ children }: Props) => {
   }
 
   const updateInputVaultState = (vaultData: Partial<VaultInputState>) => {
+    console.log(vaultData)
+
     setModalState((prev) => ({
       ...prev,
-      vault: { ...prev.vaultInputState, ...vaultData },
+      vaultInputState: { ...prev.vaultInputState, ...vaultData },
     }))
   }
 
