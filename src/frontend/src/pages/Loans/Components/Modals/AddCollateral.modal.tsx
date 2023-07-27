@@ -276,7 +276,7 @@ export const AddCollateral = ({
             }}
           >
             <InputPinnedTokenInfo>
-              <ImageWithPlug imageLink={icon} alt={`${name} icon`} /> {name}
+              <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
             </InputPinnedTokenInfo>
           </Input>
 
