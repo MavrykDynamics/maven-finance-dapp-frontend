@@ -44,7 +44,7 @@ export const undelegate = async (
 export const distributeProposalRewards = async (
   delegationAddress: string,
   satelliteAddress: string,
-  proposals: string[],
+  proposals: number[],
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction

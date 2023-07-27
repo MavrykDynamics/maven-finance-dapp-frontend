@@ -84,6 +84,7 @@ export type UserContext = {
   availableDoormanRewards: number
   availableSatellitesRewards: number
   availableLoansRewards: number
+  availableProposalRewards: Array<number>
   availableFarmRewards: Record<string, number>
 
   // user tokens
@@ -123,6 +124,7 @@ export type UserMetadataType = Pick<
   | 'gatheredDoormanRewards'
   | 'availableDoormanRewards'
   | 'availableSatellitesRewards'
+  | 'availableProposalRewards'
 > & {
   farmAccounts: UserIndexerFarmRewardsType
 }

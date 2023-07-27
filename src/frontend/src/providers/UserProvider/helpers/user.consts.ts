@@ -26,6 +26,7 @@ export const DEFAULT_USER: UserContextStateType = {
   userTokensBalances: {},
   userMTokens: {},
   farmAccounts: [],
+  availableProposalRewards: [],
 }
 
 // CONSTS FOR USER ACTIONS

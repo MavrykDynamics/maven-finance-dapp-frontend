@@ -88,8 +88,14 @@ const renderVotingHistoryItem = (vote: SatelliteVoteType) => {
 }
 
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
-  const { userTokensBalances, isSatellite, satelliteMvkIsDelegatedTo, availableSatellitesRewards, userAddress } =
-    useUserContext()
+  const {
+    userTokensBalances,
+    isSatellite,
+    satelliteMvkIsDelegatedTo,
+    availableSatellitesRewards,
+    userAddress,
+    availableProposalRewards,
+  } = useUserContext()
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
   const {
     contractAddresses: { delegationAddress, doormanAddress, mvkTokenAddress },
@@ -221,8 +227,15 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    return await distributeProposalRewards(delegationAddress, '', [])
-  }, [bug, delegationAddress, userAddress])
+    const satelliteAddressToDistribute = isSatellite ? userAddress : satelliteMvkIsDelegatedTo
+
+    if (!satelliteAddressToDistribute) {
+      bug('Wrong satellite address to distribute rewards')
+      return null
+    }
+
+    return await distributeProposalRewards(delegationAddress, satelliteAddressToDistribute, availableProposalRewards)
+  }, [userAddress, delegationAddress, isSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
 
   const distributeRewardsContractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -234,9 +247,11 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   const { action: distributeRewardsCallback } = useContractAction(distributeRewardsContractActionProps)
 
-  const buttonToShow =
-    isUserDelegatedToThisSatellite && currentlyRegistered ? (
-      <>
+  const SatelliteActions = () => {
+    const isActiveSatellite = satelliteStatus === ACTIVE_SATELLITE_STATUS && currentlyRegistered
+
+    const delegateButton =
+      isUserDelegatedToThisSatellite && !isSatellite && isActiveSatellite ? (
         <Button
           text="Undelegate"
           icon="man-close"
@@ -244,38 +259,104 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           onClick={undelegateCallback}
           disabled={!userAddress || isActionActive}
         />
-        {isDetailsPage && availableSatellitesRewards > 0 ? (
-          <Button
-            text="Claim Rewards"
-            icon="rewards"
-            kind={ACTION_PRIMARY}
-            onClick={claimRewardsCallback}
-            disabled={!userAddress || isActionActive}
-            strokeWidth={0.3}
-          />
-        ) : null}
-        {isDetailsPage && (
-          <NewButton
-            kind={BUTTON_PRIMARY}
-            form={BUTTON_WIDE}
-            onClick={distributeRewardsCallback}
-            // TODO:  we are waiting new Query for getting proposals
-            disabled={true || availableSatellitesRewards === 0 || isActionActive}
-          >
-            <Icon id="commision" />
-            Distribute Rewards
-          </NewButton>
-        )}
+      ) : null
+    const unDelegateButton =
+      !isUserDelegatedToThisSatellite && !isSatellite && isActiveSatellite ? (
+        <Button
+          text="Delegate"
+          icon="man-check"
+          kind={ACTION_PRIMARY}
+          onClick={delegateCallback}
+          disabled={!userAddress || !balanceOver1SMvk || isActionActive}
+        />
+      ) : null
+
+    const claimSatelliteRewards =
+      isUserDelegatedToThisSatellite &&
+      currentlyRegistered &&
+      !isSatellite &&
+      isActiveSatellite &&
+      availableSatellitesRewards > 0 ? (
+        <Button
+          text="Claim Rewards"
+          icon="rewards"
+          kind={ACTION_PRIMARY}
+          onClick={claimRewardsCallback}
+          disabled={!userAddress || isActionActive}
+          strokeWidth={0.3}
+        />
+      ) : null
+
+    const distributeProposalRewards =
+      availableProposalRewards.length > 0 ? (
+        <NewButton
+          kind={BUTTON_PRIMARY}
+          form={BUTTON_WIDE}
+          onClick={distributeRewardsCallback}
+          disabled={isActionActive}
+        >
+          <Icon id="commision" />
+          Distribute Rewards
+        </NewButton>
+      ) : null
+
+    console.log({
+      availableProposalRewards,
+      isUserDelegatedToThisSatellite,
+      isSatellite,
+      isActiveSatellite,
+      availableSatellitesRewards,
+    })
+    return (
+      <>
+        {delegateButton}
+        {unDelegateButton}
+        {claimSatelliteRewards}
+        {distributeProposalRewards}
       </>
-    ) : (
-      <Button
-        text="Delegate"
-        icon="man-check"
-        kind={ACTION_PRIMARY}
-        onClick={delegateCallback}
-        disabled={!userAddress || !balanceOver1SMvk || isActionActive}
-      />
     )
+  }
+  // isUserDelegatedToThisSatellite && currentlyRegistered ? (
+  //   <>
+  //     <Button
+  //       text="Undelegate"
+  //       icon="man-close"
+  //       kind={ACTION_SECONDARY}
+  //       onClick={undelegateCallback}
+  //       disabled={!userAddress || isActionActive}
+  //     />
+  //     {isDetailsPage && availableSatellitesRewards > 0 ? (
+  //       <Button
+  //         text="Claim Rewards"
+  //         icon="rewards"
+  //         kind={ACTION_PRIMARY}
+  //         onClick={claimRewardsCallback}
+  //         disabled={!userAddress || isActionActive}
+  //         strokeWidth={0.3}
+  //       />
+  //     ) : null}
+  //     {isDetailsPage && (
+  //       <NewButton
+  //         kind={BUTTON_PRIMARY}
+  //         form={BUTTON_WIDE}
+  //         onClick={distributeRewardsCallback}
+  //         // TODO:  we are waiting new Query for getting proposals
+  //         disabled={true || availableSatellitesRewards === 0 || isActionActive}
+  //       >
+  //         <Icon id="commision" />
+  //         Distribute Rewards
+  //       </NewButton>
+  //     )}
+  //   </>
+  // ) : (
+  //   <Button
+  //     text="Delegate"
+  //     icon="man-check"
+  //     kind={ACTION_PRIMARY}
+  //     onClick={delegateCallback}
+  //     disabled={!userAddress || !balanceOver1SMvk || isActionActive}
+  //   />
+  // )
 
   return (
     <SatelliteCard key={String(`satellite${satellite.address}`)}>
@@ -370,7 +451,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             </div>
           )}
 
-          {satelliteStatus === ACTIVE_SATELLITE_STATUS && !isSatellite ? buttonToShow : null}
+          <SatelliteActions />
         </SatelliteCardButtons>
       </SatelliteCardInner>
 

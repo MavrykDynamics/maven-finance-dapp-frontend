@@ -26,7 +26,7 @@ import { sleep } from 'utils/api/sleep'
 import { getUsersFarmRewards } from './helpers/userRewards.helpers'
 
 // queries
-import { SUBSCRIBE_USER_DATA } from './queries/userData.query'
+import { SUBSCRIBE_USER_DATA, SUBSCRIBE_USER_PROPOSAL_REWARDS_DATA } from './queries/userData.query'
 
 // types
 import { UserContext, UserContextStateType, UserTzktTokensBalancesType } from './user.provider.types'
@@ -233,10 +233,12 @@ export const UserProvider = ({ children }: Props) => {
    * User farm rewards depends on current indexed level, and every time level updates we need to recalc farm rewards
    * to reduce amount of needed rerenders, we recalc farm rewards every 3rd level change
    *
+   * skip when user don't participated any farms
+   *
    * Subscribe to level change only when user's wallet is connected and he has farms where he has deposited
    */
   useSubscription(SUBSCRIPTION_INDEXER_LVL, {
-    skip: !userCtxState.userAddress && Object.keys(userCtxState.farmAccounts).length > 0,
+    skip: Object.keys(userCtxState.farmAccounts).length === 0,
     shouldResubscribe: true,
     onData: ({ data: { data } }) => {
       if (!data) return
@@ -253,6 +255,32 @@ export const UserProvider = ({ children }: Props) => {
         }
         lastSavedLevel.current = indexerLvl
       }
+    },
+    onError: (e) => {
+      console.error(`UserProvider query error: `, e)
+      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+    },
+  })
+
+  /**
+   * user proposal rewards, user can have them if he votes on proposals (means he is satellite), or it's just a regular user and he delegated
+   * to satellite who is making all work
+   *
+   * skip is user is not a satellite and haven't delegated to any
+   */
+  useSubscription(SUBSCRIBE_USER_PROPOSAL_REWARDS_DATA, {
+    skip: !userCtxState.isSatellite && !userCtxState.satelliteMvkIsDelegatedTo,
+    variables: {
+      userAddress: userCtxState.isSatellite ? userCtxState.userAddress : userCtxState.satelliteMvkIsDelegatedTo ?? '',
+    },
+    shouldResubscribe: true,
+    onData: ({ data: { data } }) => {
+      if (!data) return
+
+      setUserCtxState((prev) => ({
+        ...prev,
+        availableProposalRewards: data.governance_proposal.map(({ id }) => id),
+      }))
     },
     onError: (e) => {
       console.error(`UserProvider query error: `, e)
@@ -283,6 +311,7 @@ export const UserProvider = ({ children }: Props) => {
       const newUserAddress = await DAPP_INSTANCE.swapAccount()
 
       if (newUserAddress && newUserAddress !== userCtxState.userAddress) {
+        setUserCtxState(DEFAULT_USER)
         loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress, useLoader: false })
 
         dispatch({ type: SET_REDUX_USER, accountPkh: newUserAddress })
