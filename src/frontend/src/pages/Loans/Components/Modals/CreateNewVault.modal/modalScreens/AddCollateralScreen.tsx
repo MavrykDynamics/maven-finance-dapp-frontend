@@ -63,6 +63,8 @@ export const AddCollateralScreen = () => {
   } = useCreateVaultContext()
   const { vaultsMapper } = useVaultsContext()
 
+  console.log(selectedCollaterals)
+
   const currentVault = vaultsMapper[(newVault as NewVaultType).address]
   const vaultData = useFullVault(currentVault)
 

@@ -27,28 +27,13 @@ import { VaultModalStepperWrapper } from './createNewVault.style'
 import { BorrowScreen } from './modalScreens/BorrowScreen'
 import classNames from 'classnames'
 import { CreateNewModalProps } from './helpers/createNewVault.types'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
-import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17480%3A229353&t=Sx2aEpp3ifrGxBtQ-0
 export const CreateNewVaultConsumer = () => {
   //   internal create vault context
   const { screenToShow, resetCreateVaultModalState, closePopup, show, data } = useCreateVaultContext()
 
-  const { changeVaultsSubscriptionsList } = useVaultsContext()
-
   useLockBodyScroll(show)
-
-  // useEffect(() => {
-  //   changeVaultsSubscriptionsList({
-  //     [VAULTS_DATA]: VAULTS_ALL,
-  //   })
-
-  //   return () => {
-  //     changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
-  //   }
-  // }, [])
 
   useEffect(() => {
     if (!show) {

@@ -187,6 +187,21 @@ export const ConfirmationScreen = () => {
 
   const { action: depositCollateralHandler } = useContractAction(contractActionProps)
 
+  const totalCollateralDepositedValue = useMemo(
+    () =>
+      assetsBalances.reduce<number>((acc, { balance, tokenAddress }) => {
+        const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+        if (!token || !token.rate) return acc
+
+        const { rate, decimals } = token
+
+        const convertedBalance = convertNumberForClient({ number: balance, grade: decimals }) * rate
+
+        return acc + convertedBalance
+      }, 0),
+    [assetsBalances, tokensMetadata, tokensPrices],
+  )
+
   const isAddCollateralContinueDisabled = Boolean(
     isVaultCreating ||
       (hasXTZTokenSelected && choosenBaker) ||
@@ -219,7 +234,12 @@ export const ConfirmationScreen = () => {
                   className="tooltip"
                 />
               </div>
-              <CommaNumber value={132916489} decimalsToShow={2} className="value" beginningText="$" />
+              <CommaNumber
+                value={totalCollateralDepositedValue}
+                decimalsToShow={2}
+                className="value"
+                beginningText="$"
+              />
             </ThreeLevelListItem>
           </div>
           <TableScrollable bodyHeight={108} className="stats-table-wrapper scroll-block">
