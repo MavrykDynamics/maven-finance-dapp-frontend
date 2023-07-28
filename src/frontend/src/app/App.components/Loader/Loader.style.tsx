@@ -89,13 +89,13 @@ export const ClockLoaderWrapper = styled.svg<{ width: number; height: number }>`
   display: inline-block;
 `
 
-export const DataLoaderWrapper = styled.div<{ theme: MavrykTheme }>`
+export const DataLoaderWrapper = styled.div<{ theme: MavrykTheme; margin?: string }>`
   width: 100%;
   display: flex;
   flex-direction: column;
   row-gap: 20px;
   align-items: center;
-  margin: 150px 0 0 0;
+  margin: ${({ margin = '150px 0 0 0' }) => margin};
 
   .text {
     font-size: 18px;
@@ -111,9 +111,5 @@ export const DataLoaderWrapper = styled.div<{ theme: MavrykTheme }>`
       width: 0px;
       color: ${({ theme }) => theme.textColor};
     }
-  }
-
-  &.no-margin {
-    margin: 0;
   }
 `
