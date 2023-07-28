@@ -324,7 +324,7 @@ export const BecomeSatellite = () => {
       <Page>
         <PageHeader page={isSatellite ? 'my satellite profile' : 'satellites'} avatar={mainAvatar} />
 
-        {!balanceOverMinStakedMvk && !(isSatellitesLoading || isUserLoading) && (
+        {!balanceOverMinStakedMvk && (
           <NotStakingBanner
             className="become-satellite"
             text={`To become a satellite you need to stake ${minimumStakedMvkBalance} MVK`}

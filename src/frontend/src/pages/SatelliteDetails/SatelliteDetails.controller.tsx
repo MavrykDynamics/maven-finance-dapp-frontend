@@ -45,6 +45,8 @@ import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/que
 
 // types
 import { SatelliteVotesType } from 'providers/SatellitesProvider/satellites.provider.types'
+import classNames from 'classnames'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const SatellitesVotingHistory = ({
   satelliteVotes: { proposalsVotes, satelliteActionVotes, financialRequestsVotes },
@@ -96,6 +98,7 @@ export const SatelliteDetails = () => {
     setSatelliteAddressToSubsctibe,
     changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
+  const { userAddress } = useUserContext()
   const currentSatellite = satelliteMapper[satelliteId]
 
   const { proposalParticipation, votingPartisipation } = getSatelliteParticipations({
@@ -157,7 +160,11 @@ export const SatelliteDetails = () => {
   return (
     <Page>
       <PageHeader page={'satellites'} />
-      <PageContent>
+      <PageContent
+        className={classNames({
+          'mt-30': !userAddress,
+        })}
+      >
         <div>
           <SatellitePagination />
 
