@@ -114,8 +114,8 @@ const DelegationTab = ({ distributeProposalRewards }: { distributeProposalReward
                 <div className="value">
                   <CommaNumber
                     value={Math.max(
-                      satelliteRecord.sMvkBalance ??
-                        0 * satelliteRecord.delegationRatio - satelliteRecord.totalDelegatedAmount,
+                      satelliteRecord.sMvkBalance * satelliteRecord.delegationRatio -
+                        satelliteRecord.totalDelegatedAmount,
                       0,
                     )}
                   />
