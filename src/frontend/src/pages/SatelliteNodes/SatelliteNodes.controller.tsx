@@ -129,7 +129,7 @@ const SatelliteNodes = () => {
         {isSatellitesLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
-            <div className="text">Loading satellites data...</div>
+            <div className="text">Loading satellites data</div>
           </DataLoaderWrapper>
         ) : (
           <SatelliteNodesStyled>

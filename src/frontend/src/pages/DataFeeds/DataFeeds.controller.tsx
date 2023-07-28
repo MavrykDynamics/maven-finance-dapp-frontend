@@ -126,7 +126,7 @@ export const DataFeeds = () => {
       {isOraclesDataLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading feeds data...</div>
+          <div className="text">Loading feeds data</div>
         </DataLoaderWrapper>
       ) : (
         <DataFeedsStyled>
