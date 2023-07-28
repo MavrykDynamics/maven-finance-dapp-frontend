@@ -36,7 +36,7 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // actions
-import { claimAllRewardsAction } from 'providers/UserProvider/actions/user.actions'
+import { claimAllRewardsAction, distributeProposalRewards } from 'providers/UserProvider/actions/user.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
@@ -60,6 +60,7 @@ import {
 } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
+  DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
   SATELLITES_DATA_SINGLE_SUB,
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
@@ -75,7 +76,7 @@ const DashboardPersonal = () => {
 
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
   const {
-    contractAddresses: { mvkTokenAddress, doormanAddress },
+    contractAddresses: { mvkTokenAddress, doormanAddress, delegationAddress },
   } = useDappConfigContext()
   const {
     userTokensBalances,
@@ -88,40 +89,18 @@ const DashboardPersonal = () => {
     gatheredDoormanRewards,
     gatheredFarmRewards,
     gatheredSatellitesRewards,
+    satelliteMvkIsDelegatedTo,
+    availableProposalRewards,
     isSatellite,
     isVestee,
   } = useUserContext()
-  const { changeSatellitesSubscriptionsList, isLoading: isSatellitesLoading } = useSatellitesContext()
+  const { changeSatellitesSubscriptionsList } = useSatellitesContext()
   const { bug } = useToasterContext()
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useDoormanContext()
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
-
-  // claim rewards action
-  const claimRewardsAction = useCallback(async () => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return null
-    }
-    if (!doormanAddress) {
-      bug('Wrong doorman address')
-      return null
-    }
-
-    return await claimAllRewardsAction(userAddress, doormanAddress)
-  }, [bug, doormanAddress, userAddress])
-
-  const contractActionProps: HookContractActionArgs = useMemo(
-    () => ({
-      actionType: CLAIM_ALL_REWARDS_ACTION,
-      actionFn: claimRewardsAction,
-    }),
-    [claimRewardsAction],
-  )
-
-  const { action: claimRewards } = useContractAction(contractActionProps)
 
   useEffect(() => {
     changeStakingSubscriptionsList({
@@ -153,6 +132,62 @@ const DashboardPersonal = () => {
     },
     [userAddress],
   )
+
+  // claim rewards action
+  const claimRewardsAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+    if (!doormanAddress) {
+      bug('Wrong doorman address')
+      return null
+    }
+
+    return await claimAllRewardsAction(userAddress, doormanAddress)
+  }, [bug, doormanAddress, userAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: CLAIM_ALL_REWARDS_ACTION,
+      actionFn: claimRewardsAction,
+    }),
+    [claimRewardsAction],
+  )
+
+  const { action: claimRewards } = useContractAction(contractActionProps)
+
+  // distributeRewards action
+  const distributeRewardsAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
+      return null
+    }
+
+    const satelliteAddressToDistribute = isSatellite ? userAddress : satelliteMvkIsDelegatedTo
+
+    if (!satelliteAddressToDistribute) {
+      bug('Wrong satellite address to distribute rewards')
+      return null
+    }
+
+    return await distributeProposalRewards(delegationAddress, satelliteAddressToDistribute, availableProposalRewards)
+  }, [userAddress, delegationAddress, isSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
+
+  const distributeRewardsContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
+      actionFn: distributeRewardsAction,
+    }),
+    [distributeRewardsAction],
+  )
+
+  const { action: distributeRewardsCallback } = useContractAction(distributeRewardsContractActionProps)
 
   const rewards = {
     rewardsToClaim:
@@ -241,7 +276,7 @@ const DashboardPersonal = () => {
           <DashboardPersonalEarningsHistory {...earnings} />
         </div>
 
-        {isLoading || isDoormanLoading || isSatellitesLoading ? (
+        {isLoading || isDoormanLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
             <div className="text">Loading your statistic</div>
@@ -278,10 +313,10 @@ const DashboardPersonal = () => {
                     <PortfolioTab {...walletData} isUserLoansLoading={isLoading} />
                   </Route>
                   <Route exact path={`/dashboard-personal/${DELEGATION_TAB_ID}`}>
-                    <DelegationTab />
+                    <DelegationTab distributeProposalRewards={distributeRewardsCallback} />
                   </Route>
                   <Route exact path={`/dashboard-personal/${SATELLITE_TAB_ID}`}>
-                    <SatelliteTab />
+                    <SatelliteTab distributeProposalRewards={distributeRewardsCallback} />
                   </Route>
                   <Route exact path={`/dashboard-personal/${VESTING_TAB_ID}`}>
                     <VestingTab />
