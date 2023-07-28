@@ -5,7 +5,7 @@ import { useSubscription } from '@apollo/client'
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { SUBSCRIPTION_INDEXER_LVL } from 'providers/DappConfigProvider/queries/indexerLvl.query'
-import { DEFAULT_USER } from './helpers/user.consts'
+import { DEFAULT_USER, DEFAULT_USER_TZKT_TOKENS } from './helpers/user.consts'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { dappClient } from 'providers/UserProvider/wallet/WalletCore'
 
@@ -29,7 +29,12 @@ import { getUsersFarmRewards } from './helpers/userRewards.helpers'
 import { SUBSCRIBE_USER_DATA, SUBSCRIBE_USER_PROPOSAL_REWARDS_DATA } from './queries/userData.query'
 
 // types
-import { UserContext, UserContextStateType, UserTzktTokensBalancesType } from './user.provider.types'
+import {
+  UserContext,
+  UserContextStateType,
+  UserTzktTokensBalancesType,
+  userTzKtTokenBalances,
+} from './user.provider.types'
 
 // TODO: remove after user addres won't be needed in redux actions
 import { useDispatch } from 'react-redux'
@@ -59,21 +64,24 @@ export const UserProvider = ({ children }: Props) => {
   const ws = useRef<null | signalR.HubConnection>(null)
   const lastSavedLevel = useRef<number>(0)
 
+  // store all data for user, that comes from hasura
   const [userCtxState, setUserCtxState] = useState<UserContextStateType>(DEFAULT_USER)
+  // store user tokens from tzkt
+  const [userTzktTokens, setUserTzktTokens] = useState<userTzKtTokenBalances>(DEFAULT_USER_TZKT_TOKENS)
   const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
 
   // track whether we've loaded user on init, if we have his wallet data in local storage
   const isRunnedInitialConnect = useRef<null | boolean>(false)
-  // we can startInitialUserLoading if:
+
+  /**
+   * we can startInitialUserLoading if:
+   * 1. we have his data in localStorage
+   * 2. we have tokensAddresses we need to load balances for
+   * 3. we haven't loaded user data previously in this app mount
+   * 4. we have tzktSocket started to attach listeners to it
+   */
   const canStartUserInitialLoading =
-    // we have his data in localStorage
-    hasUserInLocalStorage &&
-    // we have tokensAddresses we need to load balances for
-    Object.keys(tokensMetadata).length &&
-    // we haven't loaded user data previously in this app mount
-    !isRunnedInitialConnect.current &&
-    // we have tzktSocket started to attach listeners to it
-    ws.current
+    hasUserInLocalStorage && Object.keys(tokensMetadata).length && !isRunnedInitialConnect.current && ws.current
 
   // open socket for tzkt without listeners, cuz don't have user address to subscribe
   useEffect(() => {
@@ -98,10 +106,10 @@ export const UserProvider = ({ children }: Props) => {
         userAddress,
         tokensMetadata,
       })
-      setUserCtxState((prev) => ({
+      setUserTzktTokens((prev) => ({
         ...prev,
-        userTokensBalances: {
-          ...prev.userTokensBalances,
+        tokens: {
+          ...prev.tokens,
           ...normalizedTzktUserTokens,
         },
       }))
@@ -123,12 +131,10 @@ export const UserProvider = ({ children }: Props) => {
         tokensMetadata,
       })
 
-      setUserCtxState((prev) => ({
-        ...prev,
-        userTokensBalances: {
-          ...fetchedTokens,
-        },
-      }))
+      setUserTzktTokens({
+        userAddress,
+        tokens: fetchedTokens,
+      })
 
       if (useLoader) setIsTzktBalancesLoading(false)
     },
@@ -311,7 +317,6 @@ export const UserProvider = ({ children }: Props) => {
       const newUserAddress = await DAPP_INSTANCE.swapAccount()
 
       if (newUserAddress && newUserAddress !== userCtxState.userAddress) {
-        setUserCtxState(DEFAULT_USER)
         loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress, useLoader: false })
 
         dispatch({ type: SET_REDUX_USER, accountPkh: newUserAddress })
@@ -353,13 +358,17 @@ export const UserProvider = ({ children }: Props) => {
 
     return {
       ...userCtxState,
+      userTokensBalances: {
+        ...userCtxState.userTokensBalances,
+        ...(userCtxState.userAddress === userTzktTokens.userAddress ? userTzktTokens.tokens : {}),
+      },
       isLoading: userDataLoading || isTzktBalancesLoading,
       isRunnedInitialConnect: Boolean(isRunnedInitialConnect.current),
       connect,
       signOut,
       changeUser,
     }
-  }, [connect, signOut, changeUser, userCtxState])
+  }, [connect, signOut, changeUser, userCtxState, userTzktTokens])
 
   return <userContext.Provider value={providerValue}>{children}</userContext.Provider>
 }

@@ -3,10 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { Provider as ReduxProvider } from 'react-redux'
 import { ThemeProvider } from 'styled-components'
-import { ApolloProvider } from '@apollo/client'
-
-// apollo
-import { apolloClient } from './apollo'
+import { ApolloProvider } from 'providers/ApolloProvider/apollo.provider'
 
 // utils
 import reportWebVitals from './reportWebVitals'
@@ -47,11 +44,9 @@ const DappLibsProviders = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey} language="en">
-      <ApolloProvider client={apolloClient}>
-        <ReduxProvider store={store}>
-          <Router>{children}</Router>
-        </ReduxProvider>
-      </ApolloProvider>
+      <ReduxProvider store={store}>
+        <Router>{children}</Router>
+      </ReduxProvider>
     </GoogleReCaptchaProvider>
   )
 }
@@ -120,11 +115,13 @@ export const Root = () => {
   return (
     <DappLibsProviders>
       <ToasterProvider>
-        <InitialDataDappProviders>
-          <DappSectionsDataProviders>
-            <AppContainer />
-          </DappSectionsDataProviders>
-        </InitialDataDappProviders>
+        <ApolloProvider>
+          <InitialDataDappProviders>
+            <DappSectionsDataProviders>
+              <AppContainer />
+            </DappSectionsDataProviders>
+          </InitialDataDappProviders>
+        </ApolloProvider>
       </ToasterProvider>
     </DappLibsProviders>
   )

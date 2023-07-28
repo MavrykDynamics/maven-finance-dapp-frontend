@@ -55,9 +55,35 @@ export const userTzktWSAccountSchema = z.array(userTzktAccountSchema)
 export type UserTzktWSAccountType = z.infer<typeof userTzktWSAccountSchema>
 
 // Context types
-export type UserContext = {
-  // user's metadata
+export type UserContext = UserContextStateType & {
+  isLoading: boolean
+  isRunnedInitialConnect: boolean
+
+  // actions
+  connect: () => void
+  signOut: () => void
+  changeUser: () => void
+}
+
+export type UserIndexerFarmRewardsType = GetUserDataSubscription['mavryk_user'][number]['farm_accounts']
+
+export type UserContextStateType = UserMetadataType & {
   userAddress: string | null
+  availableProposalRewards: Array<number>
+  availableLoansRewards: number
+  availableFarmRewards: Record<string, number>
+
+  // user tokens
+  userTokensBalances: Record<TokenAddressType, number>
+  userMTokens: Record<TokenAddressType, UserMTokenType>
+}
+
+export type userTzKtTokenBalances = {
+  userAddress: string | null
+  tokens: Record<TokenAddressType, number>
+}
+
+export type UserMetadataType = {
   satelliteMvkIsDelegatedTo: string | null
   isSatellite: boolean
   isVestee: boolean
@@ -83,49 +109,7 @@ export type UserContext = {
   gatheredDoormanRewards: number
   availableDoormanRewards: number
   availableSatellitesRewards: number
-  availableLoansRewards: number
-  availableProposalRewards: Array<number>
-  availableFarmRewards: Record<string, number>
 
-  // user tokens
-  userTokensBalances: Record<TokenAddressType, number>
-  userMTokens: Record<TokenAddressType, UserMTokenType>
-
-  isLoading: boolean
-  isRunnedInitialConnect: boolean
-
-  // actions
-  connect: () => void
-  signOut: () => void
-  changeUser: () => void
-}
-
-export type UserIndexerFarmRewardsType = GetUserDataSubscription['mavryk_user'][number]['farm_accounts']
-
-export type UserContextStateType = UserMetadataType &
-  Pick<
-    UserContext,
-    'userTokensBalances' | 'userMTokens' | 'userAddress' | 'availableLoansRewards' | 'availableFarmRewards'
-  > & {
-    farmAccounts: UserIndexerFarmRewardsType
-  }
-
-export type UserMetadataType = Pick<
-  UserContext,
-  | 'actionsHistory'
-  | 'govActionsCount'
-  | 'isNewlyRegisteredSatellite'
-  | 'isSatellite'
-  | 'isVestee'
-  | 'userAvatars'
-  | 'satelliteMvkIsDelegatedTo'
-  | 'gatheredFarmRewards'
-  | 'gatheredSatellitesRewards'
-  | 'gatheredDoormanRewards'
-  | 'availableDoormanRewards'
-  | 'availableSatellitesRewards'
-  | 'availableProposalRewards'
-> & {
   farmAccounts: UserIndexerFarmRewardsType
 }
 

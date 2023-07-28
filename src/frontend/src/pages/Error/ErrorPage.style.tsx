@@ -4,6 +4,7 @@ import { hangInSpace } from 'styles/animations'
 import { Z_INDEX_DEFAULT } from 'styles/constants'
 
 export const ErrorPageWrapper = styled.div<{ theme: MavrykTheme }>`
+  font-family: 'Metropolis', Helvetica, Arial, sans-serif;
   margin: auto;
   width: 100vw;
   position: relative;
@@ -16,7 +17,10 @@ export const ErrorPageWrapper = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Metropolis', Helvetica, Arial, sans-serif;
+
+  .left-side {
+    position: absolute;
+  }
 `
 
 export const ErrorPageInner = styled.div<{ theme: MavrykTheme }>`
@@ -29,6 +33,7 @@ export const ErrorPageInner = styled.div<{ theme: MavrykTheme }>`
   button {
     border: none;
     outline: none;
+    font-family: inherit;
   }
 
   button svg {
@@ -48,6 +53,7 @@ export const ErrorTopHeader = styled.div<{ theme: MavrykTheme }>`
   font-style: normal;
   font-weight: 600;
   line-height: 27px;
+  text-transform: uppercase;
 `
 
 export const ErrorMidHeader = styled.div<{ theme: MavrykTheme }>`

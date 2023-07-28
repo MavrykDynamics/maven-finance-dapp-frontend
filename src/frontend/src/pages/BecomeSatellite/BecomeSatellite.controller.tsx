@@ -14,15 +14,29 @@ import {
   getFormTextBasedOnUserRole,
   getInputValidationStatus,
 } from './BecomeSatellite.conts'
+import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
+  REGISTER_SATELLITE_ACTION,
+  UPDATE_SATELLITE_ACTION,
+  SATELLITES_DATA_SINGLE_SUB,
+} from 'providers/SatellitesProvider/satellites.const'
+import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
 
 // providers
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // Actions
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { registerSatellite, updateSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // Types
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 
 // Views
@@ -52,20 +66,6 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
-import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-import {
-  DEFAULT_SATELLITES_ACTIVE_SUBS,
-  SATELLITE_DATA_SUB,
-  REGISTER_SATELLITE_ACTION,
-  UPDATE_SATELLITE_ACTION,
-  SATELLITES_DATA_SINGLE_SUB,
-} from 'providers/SatellitesProvider/satellites.const'
-import { registerSatellite, updateSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { apolloClient } from 'apollo'
-import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -101,8 +101,10 @@ export const BecomeSatellite = () => {
   } = useDappConfigContext()
 
   const { bug } = useToasterContext()
+  const { apolloClient } = useApolloContext()
 
   const [isSatelliteExistanseLoading, setIsSatelliteExistanseLoading] = useState(false)
+  const [isSatelliteExistanseError, setIsSatelliteExistanseError] = useState(false)
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -116,7 +118,9 @@ export const BecomeSatellite = () => {
 
   // check whether satellite exists, cuz address is stored in url and user can change it
   useLayoutEffect(() => {
-    if (userAddress && satelliteMapper[userAddress]) return
+    setIsSatelliteExistanseError(false)
+
+    if ((userAddress && satelliteMapper[userAddress]) || !userAddress) return
 
     setIsSatelliteExistanseLoading(true)
 
@@ -134,9 +138,9 @@ export const BecomeSatellite = () => {
           return
         }
 
-        setSatelliteAddressToSubsctibe(null)
+        setIsSatelliteExistanseError(true)
       } catch (e) {
-        setSatelliteAddressToSubsctibe(null)
+        setIsSatelliteExistanseError(true)
       } finally {
         setIsSatelliteExistanseLoading(false)
       }
@@ -349,7 +353,8 @@ export const BecomeSatellite = () => {
     />
   )
 
-  const isPageLoading = (isSatellitesLoading && userAddress) || isUserLoading || isSatelliteExistanseLoading
+  const isPageLoading =
+    (!isSatelliteExistanseError && isSatellitesLoading && userAddress) || isUserLoading || isSatelliteExistanseLoading
 
   return (
     <>
