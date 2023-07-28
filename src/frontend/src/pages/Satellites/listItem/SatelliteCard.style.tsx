@@ -28,8 +28,8 @@ export const SatelliteCard = styled(Card)<{ theme: MavrykTheme }>`
 export const SatelliteCardInner = styled.div<{ isExtendedListItem?: boolean }>`
   display: grid;
   grid-template-columns: ${({ isExtendedListItem }) => (isExtendedListItem ? 'auto 220px' : 'auto 180px')};
-  column-gap: 10px;
-  padding: 25px;
+  column-gap: 20px;
+  padding: 20px;
 
   .grid-container {
     display: grid;
@@ -55,6 +55,7 @@ export const SatelliteCardButtons = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  row-gap: 10px;
   flex-shrink: 0;
   justify-content: space-around;
 `

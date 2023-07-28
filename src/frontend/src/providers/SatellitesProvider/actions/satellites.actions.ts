@@ -41,24 +41,6 @@ export const undelegate = async (
   }
 }
 
-export const distributeProposalRewards = async (
-  delegationAddress: string,
-  satelliteAddress: string,
-  proposals: string[],
-): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
-  try {
-    // prepare and send transaction
-    const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(delegationAddress)
-    const distributeProposalsMetaData = await contract?.methods.distributeProposalRewards(satelliteAddress, proposals)
-
-    return await getEstimationResult(distributeProposalsMetaData)
-  } catch (error) {
-    const e = unknownToError(error)
-    return { actionSuccess: false, error: new WalletOperationError(e) }
-  }
-}
-
 // become satellite actions
 export const registerSatellite = async (
   accountPkh: string,

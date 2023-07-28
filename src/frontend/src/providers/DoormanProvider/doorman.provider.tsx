@@ -67,6 +67,7 @@ const DoormanProvider = ({ children }: Props) => {
       if (!data) return
       updateStakeHistoryData(data)
     },
+    shouldResubscribe: true,
     onError: (error) => handleSubError(error, SMVK_HISTORY_SUB),
   })
 

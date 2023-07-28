@@ -5,7 +5,7 @@ import { useSubscription } from '@apollo/client'
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { SUBSCRIPTION_INDEXER_LVL } from 'providers/DappConfigProvider/queries/indexerLvl.query'
-import { DEFAULT_USER } from './helpers/user.consts'
+import { DEFAULT_USER, DEFAULT_USER_TZKT_TOKENS } from './helpers/user.consts'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { dappClient } from 'providers/UserProvider/wallet/WalletCore'
 
@@ -26,10 +26,15 @@ import { sleep } from 'utils/api/sleep'
 import { getUsersFarmRewards } from './helpers/userRewards.helpers'
 
 // queries
-import { SUBSCRIBE_USER_DATA } from './queries/userData.query'
+import { SUBSCRIBE_USER_DATA, SUBSCRIBE_USER_PROPOSAL_REWARDS_DATA } from './queries/userData.query'
 
 // types
-import { UserContext, UserContextStateType, UserTzktTokensBalancesType } from './user.provider.types'
+import {
+  UserContext,
+  UserContextStateType,
+  UserTzktTokensBalancesType,
+  userTzKtTokenBalances,
+} from './user.provider.types'
 
 // TODO: remove after user addres won't be needed in redux actions
 import { useDispatch } from 'react-redux'
@@ -49,10 +54,6 @@ const hasUserInLocalStorage =
 /**
  * ADJUSTMENTS:
  * 1. on changing user do not reopen socket, just update filter (invoke), currently hadn't found any example of it
- *
- * NOTES:
- * on user change we make user null and then, set's userx fetched data, it's cuz on update we merge data, cuz for tokens we fetch them via 2 different sockets and we might not clear tokens from prev loggined user,
- * so if you have blinking on user change, add check for loading for block that blinking, is userLoading is true data is not relevant
  */
 export const UserProvider = ({ children }: Props) => {
   const { tokensMetadata } = useTokensContext()
@@ -63,21 +64,24 @@ export const UserProvider = ({ children }: Props) => {
   const ws = useRef<null | signalR.HubConnection>(null)
   const lastSavedLevel = useRef<number>(0)
 
+  // store all data for user, that comes from hasura
   const [userCtxState, setUserCtxState] = useState<UserContextStateType>(DEFAULT_USER)
+  // store user tokens from tzkt
+  const [userTzktTokens, setUserTzktTokens] = useState<userTzKtTokenBalances>(DEFAULT_USER_TZKT_TOKENS)
   const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
 
   // track whether we've loaded user on init, if we have his wallet data in local storage
   const isRunnedInitialConnect = useRef<null | boolean>(false)
-  // we can startInitialUserLoading if:
+
+  /**
+   * we can startInitialUserLoading if:
+   * 1. we have his data in localStorage
+   * 2. we have tokensAddresses we need to load balances for
+   * 3. we haven't loaded user data previously in this app mount
+   * 4. we have tzktSocket started to attach listeners to it
+   */
   const canStartUserInitialLoading =
-    // we have his data in localStorage
-    hasUserInLocalStorage &&
-    // we have tokensAddresses we need to load balances for
-    Object.keys(tokensMetadata).length &&
-    // we haven't loaded user data previously in this app mount
-    !isRunnedInitialConnect.current &&
-    // we have tzktSocket started to attach listeners to it
-    ws.current
+    hasUserInLocalStorage && Object.keys(tokensMetadata).length && !isRunnedInitialConnect.current && ws.current
 
   // open socket for tzkt without listeners, cuz don't have user address to subscribe
   useEffect(() => {
@@ -102,10 +106,10 @@ export const UserProvider = ({ children }: Props) => {
         userAddress,
         tokensMetadata,
       })
-      setUserCtxState((prev) => ({
+      setUserTzktTokens((prev) => ({
         ...prev,
-        userTokensBalances: {
-          ...prev.userTokensBalances,
+        tokens: {
+          ...prev.tokens,
           ...normalizedTzktUserTokens,
         },
       }))
@@ -127,12 +131,10 @@ export const UserProvider = ({ children }: Props) => {
         tokensMetadata,
       })
 
-      setUserCtxState((prev) => ({
-        ...prev,
-        userTokensBalances: {
-          ...fetchedTokens,
-        },
-      }))
+      setUserTzktTokens({
+        userAddress,
+        tokens: fetchedTokens,
+      })
 
       if (useLoader) setIsTzktBalancesLoading(false)
     },
@@ -237,10 +239,12 @@ export const UserProvider = ({ children }: Props) => {
    * User farm rewards depends on current indexed level, and every time level updates we need to recalc farm rewards
    * to reduce amount of needed rerenders, we recalc farm rewards every 3rd level change
    *
+   * skip when user don't participated any farms
+   *
    * Subscribe to level change only when user's wallet is connected and he has farms where he has deposited
    */
   useSubscription(SUBSCRIPTION_INDEXER_LVL, {
-    skip: !userCtxState.userAddress && Object.keys(userCtxState.farmAccounts).length > 0,
+    skip: Object.keys(userCtxState.farmAccounts).length === 0,
     shouldResubscribe: true,
     onData: ({ data: { data } }) => {
       if (!data) return
@@ -257,6 +261,32 @@ export const UserProvider = ({ children }: Props) => {
         }
         lastSavedLevel.current = indexerLvl
       }
+    },
+    onError: (e) => {
+      console.error(`UserProvider query error: `, e)
+      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+    },
+  })
+
+  /**
+   * user proposal rewards, user can have them if he votes on proposals (means he is satellite), or it's just a regular user and he delegated
+   * to satellite who is making all work
+   *
+   * skip is user is not a satellite and haven't delegated to any
+   */
+  useSubscription(SUBSCRIBE_USER_PROPOSAL_REWARDS_DATA, {
+    skip: !userCtxState.isSatellite && !userCtxState.satelliteMvkIsDelegatedTo,
+    variables: {
+      userAddress: userCtxState.isSatellite ? userCtxState.userAddress : userCtxState.satelliteMvkIsDelegatedTo ?? '',
+    },
+    shouldResubscribe: true,
+    onData: ({ data: { data } }) => {
+      if (!data) return
+
+      setUserCtxState((prev) => ({
+        ...prev,
+        availableProposalRewards: data.governance_proposal.map(({ id }) => id),
+      }))
     },
     onError: (e) => {
       console.error(`UserProvider query error: `, e)
@@ -287,7 +317,6 @@ export const UserProvider = ({ children }: Props) => {
       const newUserAddress = await DAPP_INSTANCE.swapAccount()
 
       if (newUserAddress && newUserAddress !== userCtxState.userAddress) {
-        setUserCtxState(DEFAULT_USER)
         loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress, useLoader: false })
 
         dispatch({ type: SET_REDUX_USER, accountPkh: newUserAddress })
@@ -329,13 +358,17 @@ export const UserProvider = ({ children }: Props) => {
 
     return {
       ...userCtxState,
+      userTokensBalances: {
+        ...userCtxState.userTokensBalances,
+        ...(userCtxState.userAddress === userTzktTokens.userAddress ? userTzktTokens.tokens : {}),
+      },
       isLoading: userDataLoading || isTzktBalancesLoading,
       isRunnedInitialConnect: Boolean(isRunnedInitialConnect.current),
       connect,
       signOut,
       changeUser,
     }
-  }, [connect, signOut, changeUser, userCtxState])
+  }, [connect, signOut, changeUser, userCtxState, userTzktTokens])
 
   return <userContext.Provider value={providerValue}>{children}</userContext.Provider>
 }

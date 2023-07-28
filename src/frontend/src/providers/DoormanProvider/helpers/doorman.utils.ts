@@ -30,9 +30,12 @@ export const getDoormanProviderReturnValue = ({
     (activeSubs[SMVK_HISTORY_SUB] && (mvkHistoryData === null || smvkHistoryData === null)) ||
     (activeSubs[MVK_BALANCE_SUB] && totalStakedMvk === null) ||
     (activeSubs[MVK_TOTAL_SUB] && (totalSupply === null || maximumTotalSupply === null)) ||
-    (!activeSubs[SMVK_HISTORY_SUB] && (mvkHistoryData === null || smvkHistoryData === null)) ||
-    (!activeSubs[MVK_BALANCE_SUB] && totalStakedMvk === null) ||
-    (!activeSubs[MVK_TOTAL_SUB] && (mvkHistoryData === null || smvkHistoryData === null))
+    (!activeSubs[SMVK_HISTORY_SUB] &&
+      (mvkHistoryData === null || smvkHistoryData === null) &&
+      !activeSubs[MVK_BALANCE_SUB] &&
+      totalStakedMvk === null &&
+      !activeSubs[MVK_TOTAL_SUB] &&
+      (totalSupply === null || maximumTotalSupply === null))
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {

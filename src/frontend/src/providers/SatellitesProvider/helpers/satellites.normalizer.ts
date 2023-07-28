@@ -108,14 +108,10 @@ export const normallizeSatellite = (satelliteRecord: SatelliteDataSubSubscriptio
     const satelliteUser = satelliteRecord.user
     const lastVotedProposal = satelliteUser.lastVotedProposal[0]
 
-    const totalVotingPower =
-      satelliteUser.governance_satellite_snapshots[0].cycle ===
-      satelliteUser.governance_satellite_snapshots[0].governance.cycle_id
-        ? convertNumberForClient({
-            number: satelliteUser.governance_satellite_snapshots?.[0]?.total_voting_power ?? 0,
-            grade: MVK_DECIMALS,
-          })
-        : 0
+    const totalVotingPower = convertNumberForClient({
+      number: satelliteUser.governance_satellite_snapshots?.[0]?.total_voting_power ?? 0,
+      grade: MVK_DECIMALS,
+    })
 
     const { sMVKRewards, XTZRewards, participatedFeeds } = getSatelliteOracleRewards(
       satelliteUser['aggregator_oracles'],
