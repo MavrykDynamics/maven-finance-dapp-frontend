@@ -88,11 +88,11 @@ const DelegationTab = ({ distributeProposalRewards }: { distributeProposalReward
             <div className="delegated-to">Delegated To</div>
             <div className="top-row">
               <div className="grid-item info">
-                <ImageWithPlug imageLink={satelliteRecord?.image} alt={satelliteRecord?.name + ' avatar'} />
+                <ImageWithPlug imageLink={satelliteRecord.image} alt={satelliteRecord.name + ' avatar'} />
                 <div className="text">
-                  <div className="name">{satelliteRecord?.name}</div>
+                  <div className="name">{satelliteRecord.name}</div>
                   <div className="value">
-                    <TzAddress tzAddress={satelliteRecord?.address} />
+                    <TzAddress tzAddress={satelliteRecord.address} />
                   </div>
                 </div>
               </div>
@@ -106,7 +106,7 @@ const DelegationTab = ({ distributeProposalRewards }: { distributeProposalReward
                   />
                 </div>
                 <div className="value">
-                  <CommaNumber value={satelliteRecord?.totalVotingPower ?? 0} endingText="sMVK" />
+                  <CommaNumber value={satelliteRecord.totalVotingPower} endingText="sMVK" />
                 </div>
               </div>
               <div className="grid-item space">
@@ -114,8 +114,8 @@ const DelegationTab = ({ distributeProposalRewards }: { distributeProposalReward
                 <div className="value">
                   <CommaNumber
                     value={Math.max(
-                      satelliteRecord?.sMvkBalance ??
-                        0 * (satelliteRecord?.delegationRatio ?? 0) - (satelliteRecord?.totalDelegatedAmount ?? 0),
+                      satelliteRecord.sMvkBalance ??
+                        0 * satelliteRecord.delegationRatio - satelliteRecord.totalDelegatedAmount,
                       0,
                     )}
                   />
@@ -130,27 +130,25 @@ const DelegationTab = ({ distributeProposalRewards }: { distributeProposalReward
               <div className="grid-item delegated">
                 <div className="name">Delegated MVK</div>
                 <div className="value">
-                  <CommaNumber
-                    value={satelliteRecord?.totalDelegatedAmount ?? 0 + (satelliteRecord?.sMvkBalance ?? 0)}
-                  />
+                  <CommaNumber value={satelliteRecord.totalDelegatedAmount + satelliteRecord.sMvkBalance} />
                 </div>
               </div>
               <div className="grid-item fee">
                 <div className="name">Fee</div>
                 <div className="value">
-                  <CommaNumber value={satelliteRecord?.satelliteFee ?? 0} endingText="%" />
+                  <CommaNumber value={satelliteRecord.satelliteFee} endingText="%" />
                 </div>
               </div>
               <div className="grid-item oraclePart">
                 <div className="name">Oracle Participation</div>
                 <div className="value">
-                  <CommaNumber value={satelliteRecord?.oracleEfficiency ?? 0} endingText="%" />
+                  <CommaNumber value={satelliteRecord.oracleEfficiency} endingText="%" />
                 </div>
               </div>
             </div>
             <DashboardPersonalSatellitesBottomLinks>
               <Link to="/satellites">Satellites Overview</Link>
-              <Link to={`/satellites/satellite-details/${satelliteRecord?.address}`}>View Satellite Profile</Link>
+              <Link to={`/satellites/satellite-details/${satelliteRecord.address}`}>View Satellite Profile</Link>
             </DashboardPersonalSatellitesBottomLinks>
           </>
         ) : userSmvkBalance === 0 && userAddress ? (
