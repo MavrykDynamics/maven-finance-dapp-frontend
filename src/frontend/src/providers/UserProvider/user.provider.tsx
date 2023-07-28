@@ -49,6 +49,10 @@ const hasUserInLocalStorage =
 /**
  * ADJUSTMENTS:
  * 1. on changing user do not reopen socket, just update filter (invoke), currently hadn't found any example of it
+ *
+ * NOTES:
+ * on user change we make user null and then, set's userx fetched data, it's cuz on update we merge data, cuz for tokens we fetch them via 2 different sockets and we might not clear tokens from prev loggined user,
+ * so if you have blinking on user change, add check for loading for block that blinking, is userLoading is true data is not relevant
  */
 export const UserProvider = ({ children }: Props) => {
   const { tokensMetadata } = useTokensContext()
@@ -283,6 +287,7 @@ export const UserProvider = ({ children }: Props) => {
       const newUserAddress = await DAPP_INSTANCE.swapAccount()
 
       if (newUserAddress && newUserAddress !== userCtxState.userAddress) {
+        setUserCtxState(DEFAULT_USER)
         loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress, useLoader: false })
 
         dispatch({ type: SET_REDUX_USER, accountPkh: newUserAddress })
