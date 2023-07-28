@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // Consts
@@ -64,6 +64,8 @@ import {
 import { registerSatellite, updateSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { apolloClient } from 'apollo'
+import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -87,6 +89,7 @@ export const BecomeSatellite = () => {
     satelliteMvkIsDelegatedTo,
     userAvatars: { mainAvatar },
     userTokensBalances,
+    isLoading: isUserLoading,
   } = useUserContext()
 
   const {
@@ -99,6 +102,8 @@ export const BecomeSatellite = () => {
 
   const { bug } = useToasterContext()
 
+  const [isSatelliteExistanseLoading, setIsSatelliteExistanseLoading] = useState(false)
+
   useEffect(() => {
     changeSatellitesSubscriptionsList({
       [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
@@ -109,10 +114,36 @@ export const BecomeSatellite = () => {
     }
   }, [])
 
-  useEffect(() => {
-    if (userAddress) {
-      setSatelliteAddressToSubsctibe(userAddress)
+  // check whether satellite exists, cuz address is stored in url and user can change it
+  useLayoutEffect(() => {
+    if (userAddress && satelliteMapper[userAddress]) return
+
+    setIsSatelliteExistanseLoading(true)
+
+    const checkWhetherSatelliteExists = async () => {
+      try {
+        const satelliteFromGql = await apolloClient.query({
+          query: CHECK_WHETHER_SATELLITE_EXISTS,
+          variables: {
+            userAddress: userAddress ?? '',
+          },
+        })
+
+        if (satelliteFromGql.data.satellite[0]?.user.address === userAddress) {
+          setSatelliteAddressToSubsctibe(userAddress)
+          return
+        }
+
+        setSatelliteAddressToSubsctibe(null)
+      } catch (e) {
+        setSatelliteAddressToSubsctibe(null)
+      } finally {
+        setIsSatelliteExistanseLoading(false)
+      }
     }
+
+    checkWhetherSatelliteExists()
+
     return () => setSatelliteAddressToSubsctibe(null)
   }, [userAddress])
 
@@ -318,21 +349,23 @@ export const BecomeSatellite = () => {
     />
   )
 
+  const isPageLoading = (isSatellitesLoading && userAddress) || isUserLoading || isSatelliteExistanseLoading
+
   return (
     <>
       <Page>
         <PageHeader page={isSatellite ? 'my satellite profile' : 'satellites'} avatar={mainAvatar} />
 
-        {!balanceOverMinStakedMvk && (
+        {!balanceOverMinStakedMvk && !isPageLoading ? (
           <NotStakingBanner
             className="become-satellite"
             text={`To become a satellite you need to stake ${minimumStakedMvkBalance} MVK`}
           />
-        )}
+        ) : null}
 
         <PageContent>
           <div>
-            {isSatellitesLoading ? (
+            {isPageLoading ? (
               <DataLoaderWrapper>
                 <ClockLoader width={150} height={150} />
                 <div className="text">Loading satellite data</div>
