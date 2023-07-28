@@ -134,7 +134,7 @@ export const LoansEarn = () => {
         {isLoansLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
-            <div className="text">Loading charts of earnings</div>
+            <div className="text">Loading your earn data</div>
           </DataLoaderWrapper>
         ) : (
           <>
