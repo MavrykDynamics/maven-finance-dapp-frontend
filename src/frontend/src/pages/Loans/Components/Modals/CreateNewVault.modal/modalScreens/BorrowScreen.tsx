@@ -25,21 +25,14 @@ import { BorrowScreenBottomStats } from '../components/BorrowScreenBottomStats'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useBorrowInputData } from '../components/useBorrowInputData'
 import { DAO_FEE } from 'texts/tooltips/vault.text'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
-type BorrowScreenProps = {
-  avaliableLiquidity: number
-}
-
-export const BorrowScreen = ({ avaliableLiquidity }: BorrowScreenProps) => {
+export const BorrowScreen = () => {
   const {
     preferences: { themeSelected },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
 
-  const { newVault, updateScreenToShow, selectedCollateralsAddresses, selectedCollaterals } = useCreateVaultContext()
-  const { tokensPrices, tokensMetadata } = useTokensContext()
+  const { newVault, updateScreenToShow, borrowCapacity } = useCreateVaultContext()
   const { vaultsMapper } = useVaultsContext()
   const {
     config: { daoFee },
@@ -49,24 +42,11 @@ export const BorrowScreen = ({ avaliableLiquidity }: BorrowScreenProps) => {
   const vaultData = useFullVault(currentVault)
 
   const {
-    // borrowCapacity = 0,
     borrowedAmount: currentBorrowedAmount = 0,
     collateralBalance: currentCollateralBalance = 0,
     collateralRatio = 0,
     apr = 0,
   } = vaultData ?? {}
-  const collateralsBalance =
-    selectedCollateralsAddresses.reduce((acc, collateralAddress) => {
-      const collateralToken = getTokenDataByAddress({ tokenAddress: collateralAddress, tokensPrices, tokensMetadata })
-
-      if (!collateralToken || !collateralToken.rate) return acc
-
-      const { amount } = selectedCollaterals[collateralAddress]
-      const { rate } = collateralToken
-
-      return (acc += Number(amount) * Number(rate))
-    }, 0) / 2
-  const borrowCapacity = Math.min(Math.max(collateralsBalance, avaliableLiquidity, 0))
 
   const { inputData, settings, inputProps, rate, icon, symbol, clearData, decimals } = useBorrowInputData(vaultData)
 

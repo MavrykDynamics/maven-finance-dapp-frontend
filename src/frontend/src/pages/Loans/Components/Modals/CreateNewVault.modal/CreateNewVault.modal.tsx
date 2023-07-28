@@ -28,19 +28,35 @@ import { CreateVaultModalStepper } from './CreateVaultModalStepper'
 import { VaultModalStepperWrapper } from './createNewVault.style'
 import { BorrowScreen } from './modalScreens/BorrowScreen'
 import classNames from 'classnames'
-
-type CreateNewModalProps = {
-  closePopup: () => void
-  show: boolean
-  data: CreateVaultPopupDataType
-}
+import { CreateNewModalProps } from './helpers/createNewVault.types'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
+import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17480%3A229353&t=Sx2aEpp3ifrGxBtQ-0
-export const CreateNewVaultConsumer = ({ closePopup, show, data }: CreateNewModalProps) => {
+export const CreateNewVaultConsumer = () => {
   //   internal create vault context
-  const { screenToShow, resetCreateVaultModalState } = useCreateVaultContext()
+  const { screenToShow, resetCreateVaultModalState, closePopup, show, data } = useCreateVaultContext()
+
+  const { changeVaultsSubscriptionsList } = useVaultsContext()
+  const { changeLoansSubscriptionsList } = useLoansContext()
 
   useLockBodyScroll(show)
+
+  useEffect(() => {
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+    })
+    changeVaultsSubscriptionsList({
+      [VAULTS_DATA]: VAULTS_ALL,
+    })
+
+    return () => {
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+    }
+  }, [])
 
   useEffect(() => {
     if (!show) {
@@ -48,7 +64,7 @@ export const CreateNewVaultConsumer = ({ closePopup, show, data }: CreateNewModa
     }
   }, [show])
 
-  const { avaliableLiquidity = 0, marketTokenAddress, setCreatedVaultAddress } = data ?? {}
+  const { marketTokenAddress, setCreatedVaultAddress } = data ?? {}
   const activeStepperIndex = useMemo(
     () => stepperItems.findIndex((item) => item === stepperItemsObj[screenToShow]),
     [screenToShow],
@@ -78,13 +94,9 @@ export const CreateNewVaultConsumer = ({ closePopup, show, data }: CreateNewModa
               setCreatedVaultAddress={setCreatedVaultAddress}
             />
           ) : null}
-          {screenToShow === ADD_COLLATERAL_SCREEN_ID ? (
-            <AddCollateralScreen avaliableLiquidity={avaliableLiquidity} />
-          ) : null}
-          {screenToShow === BORROW_SCREEN_ID && <BorrowScreen avaliableLiquidity={avaliableLiquidity} />}
-          {screenToShow === CONFIRMATION_SCREEN_ID ? (
-            <ConfirmationScreen avaliableLiquidity={avaliableLiquidity} closePopup={closePopup} />
-          ) : null}
+          {screenToShow === ADD_COLLATERAL_SCREEN_ID ? <AddCollateralScreen /> : null}
+          {screenToShow === BORROW_SCREEN_ID && <BorrowScreen />}
+          {screenToShow === CONFIRMATION_SCREEN_ID ? <ConfirmationScreen /> : null}
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>
@@ -93,8 +105,8 @@ export const CreateNewVaultConsumer = ({ closePopup, show, data }: CreateNewModa
 
 export const CreateNewVault = (props: CreateNewModalProps) => {
   return (
-    <CreateVaultModalProvider>
-      <CreateNewVaultConsumer {...props} />
+    <CreateVaultModalProvider {...props}>
+      <CreateNewVaultConsumer />
     </CreateVaultModalProvider>
   )
 }

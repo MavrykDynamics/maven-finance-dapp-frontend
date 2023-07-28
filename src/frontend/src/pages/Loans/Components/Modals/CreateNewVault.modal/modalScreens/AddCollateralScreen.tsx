@@ -25,7 +25,7 @@ import {
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
-import { BORROW_SCREEN_ID, CONFIRMATION_SCREEN_ID } from '../helpers/createNewVault.consts'
+import { BORROW_SCREEN_ID } from '../helpers/createNewVault.consts'
 import {
   CollateralInputWrapper,
   CollateralScreeenWrapper,
@@ -43,11 +43,7 @@ import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { BORROW_CAPACITY, COLLATERAL_VALUE } from 'texts/tooltips/vault.text'
 
-type AddCollateralScreenProps = {
-  avaliableLiquidity: number
-}
-
-export const AddCollateralScreen = ({ avaliableLiquidity }: AddCollateralScreenProps) => {
+export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const { userTokensBalances } = useUserContext()
   const {
@@ -62,6 +58,7 @@ export const AddCollateralScreen = ({ avaliableLiquidity }: AddCollateralScreenP
     isVaultCreating,
     hasXTZTokenSelected,
     newVault,
+    borrowCapacity,
   } = useCreateVaultContext()
   const { vaultsMapper } = useVaultsContext()
 
@@ -70,18 +67,6 @@ export const AddCollateralScreen = ({ avaliableLiquidity }: AddCollateralScreenP
   const vaultData = useFullVault(currentVault)
 
   const { collateralBalance = 0 } = vaultData ?? {}
-  const collateralsBalance =
-    selectedCollateralsAddresses.reduce((acc, collateralAddress) => {
-      const collateralToken = getTokenDataByAddress({ tokenAddress: collateralAddress, tokensPrices, tokensMetadata })
-
-      if (!collateralToken || !collateralToken.rate) return acc
-
-      const { amount } = selectedCollaterals[collateralAddress]
-      const { rate } = collateralToken
-
-      return (acc += Number(amount) * Number(rate))
-    }, 0) / 2
-  const borrowCapacity = Math.min(Math.max(collateralsBalance, avaliableLiquidity, 0))
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd add new collateral)
   const mappedAvaliableCollaterals = useMemo(() => {

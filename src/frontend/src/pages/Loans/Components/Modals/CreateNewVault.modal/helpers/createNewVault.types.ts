@@ -6,6 +6,7 @@ import {
   INITIAL_SCREEN_ID,
 } from './createNewVault.consts'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { CreateVaultPopupDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
 
 export type ScreenType =
   | typeof INITIAL_SCREEN_ID
@@ -40,11 +41,20 @@ export type CreateVaultModalState = {
   hasXTZTokenSelected: string | undefined
 }
 
-export type CreateVaultModalContext = CreateVaultModalState & {
-  resetCreateVaultModalState: () => void
-  updateScreenToShow: (screenId: ScreenType) => void
-  updateInputVaultState: (vaultData: Partial<VaultInputState>) => void
-  updateVaultCreating: (value: boolean) => void
-  updateNewVault: (newVault: NewVaultType) => void
-  updateSelectedCollaterals: (selectedCollaterals: SelectedCollateralsType) => void
+export type CreateVaultModalContext = CreateVaultModalState &
+  CreateNewModalProps & {
+    resetCreateVaultModalState: () => void
+    updateScreenToShow: (screenId: ScreenType) => void
+    updateInputVaultState: (vaultData: Partial<VaultInputState>) => void
+    updateVaultCreating: (value: boolean) => void
+    updateNewVault: (newVault: NewVaultType) => void
+    updateSelectedCollaterals: (selectedCollaterals: SelectedCollateralsType) => void
+    collateralsBalance: number
+    borrowCapacity: number
+  }
+
+export type CreateNewModalProps = {
+  closePopup: () => void
+  show: boolean
+  data: CreateVaultPopupDataType
 }

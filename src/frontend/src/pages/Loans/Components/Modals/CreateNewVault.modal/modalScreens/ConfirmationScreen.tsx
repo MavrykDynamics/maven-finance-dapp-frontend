@@ -31,9 +31,8 @@ import { convertNumberForClient, convertNumberForContractCall } from 'utils/calc
 import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
-import { BlockName } from 'pages/Dashboard/Dashboard.style'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import { reduceVaultsAssets } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultCollateralRatio, reduceVaultsAssets } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
 import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
 import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
@@ -42,17 +41,16 @@ import { ConfirmationScreenWrapper } from '../createNewVault.style'
 import colors from 'styles/colors'
 import { BorrowScreenBottomStats } from '../components/BorrowScreenBottomStats'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
+import { checkNan } from 'utils/checkNan'
+import { useBorrowInputData } from '../components/useBorrowInputData'
+import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 
-type ConfirmationScreenProps = {
-  avaliableLiquidity: number
-  closePopup: () => void
-}
-
-export const ConfirmationScreen = ({ avaliableLiquidity, closePopup }: ConfirmationScreenProps) => {
+export const ConfirmationScreen = () => {
   const {
     contractAddresses: { lendingControllerAddress },
     preferences: { themeSelected },
   } = useDappConfigContext()
+  const { allVaultsIds, vaultsMapper } = useVaultsContext()
   const { choosenBaker } = useXtzBakersForDD()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress } = useUserContext()
@@ -64,33 +62,35 @@ export const ConfirmationScreen = ({ avaliableLiquidity, closePopup }: Confirmat
     updateScreenToShow,
     isVaultCreating,
     newVault,
-    vaultInputState,
+    closePopup,
+    borrowCapacity,
   } = useCreateVaultContext()
-  const { changeLoansSubscriptionsList } = useLoansContext()
+  const {
+    config: { daoFee },
+  } = useLoansContext()
 
-  const { allVaultsIds, vaultsMapper, changeVaultsSubscriptionsList } = useVaultsContext()
-
-  // TODO move to context
-  const currentVault = vaultsMapper[newVault?.id.toString() ?? 'KT1UCFPPgutMkkt3xBpSyAxH6piRjzxyiyiz']
+  const currentVault = vaultsMapper['KT1UCFPPgutMkkt3xBpSyAxH6piRjzxyiyiz']
   const vaultData = useFullVault(currentVault)
 
-  const { borrowedTokenAddress: borrowedAssetAddress = '' } = vaultData ?? {}
+  const {
+    collateralBalance: currentCollateralBalance = 0,
+    borrowedAmount: currentBorrowedAmount = 0,
+    name,
+  } = vaultData ?? {}
 
-  const { symbol } = tokensMetadata[borrowedAssetAddress]
+  const { inputData, rate, symbol } = useBorrowInputData(vaultData)
+  const inputAmount = checkNan(parseFloat(inputData.amount))
 
-  useEffect(() => {
-    changeLoansSubscriptionsList({
-      [LOANS_MARKETS_DATA]: true,
-    })
-    changeVaultsSubscriptionsList({
-      [VAULTS_DATA]: VAULTS_ALL,
-    })
+  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
+    const futureCollateralRatio = getVaultCollateralRatio(
+      currentCollateralBalance,
+      (currentBorrowedAmount + inputAmount) * rate,
+    )
 
-    return () => {
-      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
-      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
-    }
-  }, [])
+    const futureBorrowCapacity = borrowCapacity - inputAmount * rate
+
+    return { futureCollateralRatio, futureBorrowCapacity }
+  }, [currentCollateralBalance, currentBorrowedAmount, inputAmount, rate, borrowCapacity])
 
   // TODO add sub
   const { assetsBalances } = useMemo(() => {
@@ -103,6 +103,8 @@ export const ConfirmationScreen = ({ avaliableLiquidity, closePopup }: Confirmat
 
     return { assetsBalances, globalVaultTVL, ...restVaultsStats }
   }, [allVaultsIds, tokensMetadata, tokensPrices, vaultsMapper])
+
+  console.log(allVaultsIds, vaultsMapper, tokensMetadata, tokensPrices)
 
   // deposit action ----------------------------------------------
   const depositAction = useCallback(async () => {
@@ -168,24 +170,6 @@ export const ConfirmationScreen = ({ avaliableLiquidity, closePopup }: Confirmat
 
   const { action: depositCollateralHandler } = useContractAction(contractActionProps)
 
-  const firstSelectedCollateralTokenData = getTokenDataByAddress({
-    tokenAddress: selectedCollateralsAddresses[0],
-    tokensPrices,
-    tokensMetadata,
-  })
-  const collateralsBalance =
-    selectedCollateralsAddresses.reduce((acc, collateralAddress) => {
-      const collateralToken = getTokenDataByAddress({ tokenAddress: collateralAddress, tokensPrices, tokensMetadata })
-
-      if (!collateralToken || !collateralToken.rate) return acc
-
-      const { amount } = selectedCollaterals[collateralAddress]
-      const { rate } = collateralToken
-
-      return (acc += Number(amount) * Number(rate))
-    }, 0) / 2
-  const borrowCapacity = Math.min(Math.max(collateralsBalance, avaliableLiquidity, 0))
-
   const isAddCollateralContinueDisabled = Boolean(
     isVaultCreating ||
       (hasXTZTokenSelected && choosenBaker) ||
@@ -202,11 +186,11 @@ export const ConfirmationScreen = ({ avaliableLiquidity, closePopup }: Confirmat
           <div className="confirmation-top-stats">
             <ThreeLevelListItem>
               <div className="name">Vault name</div>
-              <div className="value">Vault name</div>
+              <div className="value">{name}</div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Selected Baker</div>
-              <div className="value">baker name</div>
+              <div className="value">{choosenBaker?.bakerName ?? 'Not relevant'}</div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">
@@ -267,15 +251,14 @@ export const ConfirmationScreen = ({ avaliableLiquidity, closePopup }: Confirmat
       </div>
 
       <div className="bottom-stats-wrapper">
-        <div className="block-name">New Borrow XTZ Stats</div>
-        {/* <BorrowScreenBottomStats
+        <BorrowScreenBottomStats
           inputAmount={inputAmount}
           assetDecimalsToShow={assetDecimalsToShow}
           daoFee={daoFee}
           futureCollateralRatio={futureCollateralRatio}
           futureBorrowCapacity={futureBorrowCapacity}
           headerText={`New Borrow ${symbol} stats`}
-        /> */}
+        />
       </div>
 
       <div className="buttons-wrapper" style={{ marginTop: '30px' }}>

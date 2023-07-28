@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { createVaultModalContext } from './helpers/createVaultModalContext'
 import {
+  CreateNewModalProps,
   CreateVaultModalState,
   NewVaultType,
   ScreenType,
@@ -8,13 +9,15 @@ import {
   VaultInputState,
 } from './helpers/createNewVault.types'
 import { DEFAULT_CREATE_VAULT_STATE } from './helpers/createNewVault.consts'
-import { isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
-type Props = {
+type Props = CreateNewModalProps & {
   children: React.ReactNode
 }
 
-export const CreateVaultModalProvider = ({ children }: Props) => {
+export const CreateVaultModalProvider = ({ closePopup, show, data, children }: Props) => {
+  const { tokensPrices, tokensMetadata } = useTokensContext()
   const [modalState, setModalState] = useState<CreateVaultModalState>(DEFAULT_CREATE_VAULT_STATE)
 
   const resetCreateVaultModalState = () => {
@@ -29,8 +32,6 @@ export const CreateVaultModalProvider = ({ children }: Props) => {
   }
 
   const updateInputVaultState = (vaultData: Partial<VaultInputState>) => {
-    console.log(vaultData)
-
     setModalState((prev) => ({
       ...prev,
       vaultInputState: { ...prev.vaultInputState, ...vaultData },
@@ -66,6 +67,25 @@ export const CreateVaultModalProvider = ({ children }: Props) => {
     }))
   }
 
+  const collateralsBalance = useMemo(
+    () =>
+      modalState.selectedCollateralsAddresses.reduce((acc, collateralAddress) => {
+        const collateralToken = getTokenDataByAddress({ tokenAddress: collateralAddress, tokensPrices, tokensMetadata })
+
+        if (!collateralToken || !collateralToken.rate) return acc
+
+        const { amount } = modalState.selectedCollaterals[collateralAddress]
+        const { rate } = collateralToken
+
+        return (acc += Number(amount) * Number(rate))
+      }, 0) / 2,
+    [],
+  )
+  const borrowCapacity = useMemo(
+    () => Math.min(Math.max(collateralsBalance, data?.avaliableLiquidity ?? 0, 0)),
+    [collateralsBalance, data?.avaliableLiquidity],
+  )
+
   const ctx = useMemo(
     () => ({
       ...modalState,
@@ -75,8 +95,13 @@ export const CreateVaultModalProvider = ({ children }: Props) => {
       updateVaultCreating,
       updateNewVault,
       updateSelectedCollaterals,
+      closePopup,
+      data,
+      show,
+      collateralsBalance,
+      borrowCapacity,
     }),
-    [modalState],
+    [borrowCapacity, closePopup, collateralsBalance, data, modalState, show],
   )
 
   return <createVaultModalContext.Provider value={ctx}>{children}</createVaultModalContext.Provider>
