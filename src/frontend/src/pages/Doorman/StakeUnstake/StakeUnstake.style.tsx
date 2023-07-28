@@ -84,7 +84,7 @@ export const StakeUnstakeInputLabels = styled.div`
   color: ${({ theme }) => theme.textColor};
 
   .minAmount {
-    font-size: 16px;
+    font-size: 14px;
   }
 `
 export const StakeUnstakeInputWithCoin = styled.div`
@@ -108,6 +108,7 @@ export const StakeUnstakeAmount = styled.div`
   display: flex;
   color: ${({ theme }) => theme.dataColor};
   cursor: pointer;
+  margin-right: 15px;
 
   p {
     margin: 0;

@@ -2,13 +2,13 @@ import { State } from '../../reducers'
 import { showToaster } from '../../app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from '../../app/App.components/Toaster/Toaster.constants'
 import type { AppDispatch, GetState } from '../../app/App.controller'
-import farmFactoryAddress from '../../deployments/farmFactoryAddress.json'
 
 import { OpKind } from '@taquito/taquito'
-import { convertNumberForContractCall } from '../../utils/calcFunctions'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { GET_GOVERNANCE_CONFIG } from 'pages/Governance/actions/GovernanseData.actions'
 import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+import { VaultsContext } from 'providers/VaultsProvider/vaults.provider.types'
 
 export const adminChangeGovernancePeriod =
   (chosenPeriod: string, accountPkh?: string) => async (dispatch: AppDispatch, getState: GetState) => {
@@ -418,7 +418,8 @@ function createLoanTokenBatchMethodObject(
 }
 
 export const addAllCollateralTokensToMarkets =
-  (accountPkh?: string) => async (dispatch: AppDispatch, getState: GetState) => {
+  (avaliableCollaterals: Array<string>, tokensMapper: TokensContext['tokensMetadata']) =>
+  async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
@@ -440,14 +441,13 @@ export const addAllCollateralTokensToMarkets =
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
 
-      // TODO: is not used
-      // allowedCollaterals.forEach((collateralToken: string) => {
-      //   if (state.tokens.avaliableCollaterals.some((e) => e.gqlName === collateralToken)) {
-      //     const tokenOracleId = oracleIDMap.get(collateralToken) ?? ''
-      //     const tokenBatchObject = createCollateralTokenBatchMethodObject(contract, tokenOracleId, collateralToken)
-      //     if (tokenBatchObject !== null) batchArray.push(tokenBatchObject)
-      //   }
-      // })
+      allowedCollaterals.forEach((collateralToken: string) => {
+        if (avaliableCollaterals.find((e) => tokensMapper[e].symbol?.toLowerCase() === collateralToken)) {
+          const tokenOracleId = oracleIDMap.get(collateralToken) ?? ''
+          const tokenBatchObject = createCollateralTokenBatchMethodObject(contract, tokenOracleId, collateralToken)
+          if (tokenBatchObject !== null) batchArray.push(tokenBatchObject)
+        }
+      })
 
       allowedCollaterals.forEach((collateralToken: string) => {
         const tokenOracleId = oracleIDMap.get(collateralToken) ?? ''
@@ -692,4 +692,63 @@ export const createTreasuries = (accountPkh?: string) => async (dispatch: AppDis
       dispatch(toggleActionFullScreenLoader(false))
     }
   }
+}
+
+export const closeAllOfUsersEmptyVaults =
+  (vaultsMapper: VaultsContext['vaultsMapper']) => async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
+
+    if (!state.wallet.accountPkh) {
+      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
+    }
+
+    const vaultsArray = Object.keys(vaultsMapper).map(function (vaultId) {
+      let vault = vaultsMapper[vaultId]
+      // do something with person
+      return vault
+    })
+
+    const allUsersVaults = getAllEmptyVaultsOfOwner(vaultsArray, state.wallet.accountPkh)
+    const batchArray: any = []
+
+    try {
+      console.log(state.contractAddresses)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const lendingControllerContract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
+
+      allUsersVaults.forEach((vault: any) => {
+        let closeVaultBatchObject = {
+          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+          ...lendingControllerContract.methods.closeVault(vault.vaultId).toTransferParams(),
+        }
+        batchArray.push(closeVaultBatchObject)
+      })
+      console.log(batchArray)
+      if (batchArray.length == 0) {
+        dispatch(showToaster(SUCCESS, 'User has no empty vaults', 'All good :)'))
+        return
+      }
+
+      const batch = await tezos.wallet.batch(batchArray)
+      const transaction = await batch.send()
+
+      dispatch(showToaster(INFO, "Closing all of User's empty vaults...", 'Please wait 30s'))
+      const done = await transaction?.confirmation()
+      console.log('done', done)
+      dispatch(showToaster(SUCCESS, 'Empty Vaults Closed...', 'All good :)'))
+    } catch (error) {
+      if (error instanceof Error) {
+        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(toggleActionFullScreenLoader(false))
+      }
+    }
+  }
+
+const getAllEmptyVaultsOfOwner = (vaults: any, usersId: string) => {
+  return vaults.filter((vault: any) => {
+    const isEmptyVault = vault.borrowedAmount === 0 && vault.fee == 0
+    const isUsersVault = vault.ownerId === usersId
+    return isEmptyVault && isUsersVault
+  })
 }

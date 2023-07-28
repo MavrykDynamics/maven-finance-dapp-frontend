@@ -87,6 +87,7 @@ export const BecomeSatellite = () => {
     satelliteMvkIsDelegatedTo,
     userAvatars: { mainAvatar },
     userTokensBalances,
+    isLoading: isUserLoading,
   } = useUserContext()
 
   const {
@@ -318,15 +319,12 @@ export const BecomeSatellite = () => {
     />
   )
 
-  // TODO: show no found, redirect?
-  if (!usersSatelliteProfile) return null
-
   return (
     <>
       <Page>
         <PageHeader page={isSatellite ? 'my satellite profile' : 'satellites'} avatar={mainAvatar} />
 
-        {!balanceOverMinStakedMvk && (
+        {!balanceOverMinStakedMvk && !(isSatellitesLoading || isUserLoading) && (
           <NotStakingBanner
             className="become-satellite"
             text={`To become a satellite you need to stake ${minimumStakedMvkBalance} MVK`}
@@ -335,7 +333,7 @@ export const BecomeSatellite = () => {
 
         <PageContent>
           <div>
-            {isSatellitesLoading ? (
+            {isSatellitesLoading || isUserLoading ? (
               <DataLoaderWrapper>
                 <ClockLoader width={150} height={150} />
                 <div className="text">Loading satellite data</div>
@@ -467,7 +465,7 @@ export const BecomeSatellite = () => {
 
                 <BecomeSatelliteRegisterAsOracle>
                   <div className="checkbox">
-                    {pageText.registerAsOracle}
+                    <div className="label">{pageText.registerAsOracle}</div>
 
                     <Checkbox
                       id="become-satellite-is-oracle"
@@ -567,7 +565,7 @@ export const BecomeSatellite = () => {
       </Page>
 
       <UnregisterPopup
-        show={showUnregisterPopup}
+        show={Boolean(usersSatelliteProfile) && showUnregisterPopup}
         closePopup={() => setShowUnregisterPopup(false)}
         satellite={usersSatelliteProfile}
       />

@@ -187,7 +187,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               rel="noreferrer"
               className={sidebarOpened ? '' : 'small'}
             >
-              <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
+              <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin disabled>
                 {sidebarOpened ? ' Ghostnet Faucet' : 'GF'}
               </NewButton>
             </a>

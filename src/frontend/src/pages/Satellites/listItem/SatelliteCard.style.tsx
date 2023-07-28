@@ -171,8 +171,23 @@ export const SatelliteProfileDetails = styled.div<{ theme: MavrykTheme }>`
   margin-left: 7px;
   margin-top: 5px;
 
+  span {
+    position: relative;
+
+    &::before {
+      position: absolute;
+      content: '';
+      opacity: 0.5;
+      width: 100%;
+      height: 1px;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: ${({ theme }) => theme.valueColor};
+    }
+  }
+
   svg {
-    margin-right: -10px;
-    stroke: ${({ theme }) => theme.actionPrimaryBtnColor};
+    margin-right: -5px;
   }
 `

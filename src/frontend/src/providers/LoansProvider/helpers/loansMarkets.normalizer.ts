@@ -20,7 +20,7 @@ export const normalizeLoansMarkets = ({ indexerData }: { indexerData: GetLoansMa
       { interest_rate_decimals: interestRateDecimals, interest_treasury_share, decimals, loan_tokens },
     ],
   } = indexerData
-  const interestTreasuryShare = convertNumberForClient({ number: interest_treasury_share, grade: decimals })
+  const treasuryShare = convertNumberForClient({ number: interest_treasury_share, grade: decimals })
 
   return loan_tokens?.reduce<LoansContext['marketsMapper']>((acc, loanToken) => {
     const {
@@ -42,15 +42,12 @@ export const normalizeLoansMarkets = ({ indexerData }: { indexerData: GetLoansMa
       number: current_interest_rate,
       grade: interestRateDecimals,
     })
+    const utilizationRate = convertNumberForClient({ number: utilisation_rate, grade: interestRateDecimals })
 
     acc[loanTokenAddress] = {
       loanTokenAddress,
       loanMTokenAddress,
-      utilisationRate: getNumberInBounds(
-        0,
-        100,
-        convertNumberForClient({ number: utilisation_rate, grade: interestRateDecimals }) * 100,
-      ),
+      utilisationRate: getNumberInBounds(0, 100, utilizationRate * 100),
 
       availableLiquidity,
       totalLended: token_pool_total,
@@ -62,7 +59,7 @@ export const normalizeLoansMarkets = ({ indexerData }: { indexerData: GetLoansMa
       reserveFactor,
       reserveAmount,
       borrowAPR: tokenCurrentInterestRate * 100,
-      lendingAPY: calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare),
+      lendingAPY: calcLendingAPY(utilizationRate, tokenCurrentInterestRate, treasuryShare),
     }
 
     return acc

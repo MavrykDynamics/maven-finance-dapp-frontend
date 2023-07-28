@@ -49,6 +49,10 @@ const hasUserInLocalStorage =
 /**
  * ADJUSTMENTS:
  * 1. on changing user do not reopen socket, just update filter (invoke), currently hadn't found any example of it
+ *
+ * NOTES:
+ * on user change we make user null and then, set's userx fetched data, it's cuz on update we merge data, cuz for tokens we fetch them via 2 different sockets and we might not clear tokens from prev loggined user,
+ * so if you have blinking on user change, add check for loading for block that blinking, is userLoading is true data is not relevant
  */
 export const UserProvider = ({ children }: Props) => {
   const { tokensMetadata } = useTokensContext()
@@ -183,15 +187,13 @@ export const UserProvider = ({ children }: Props) => {
     } catch (e) {
       console.error(`Failed to connect wallet:`, e)
       bug('Failed to connect wallet', TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-    } finally {
-      isRunnedInitialConnect.current = true
     }
   }, [updateUserTzktTokenBalances, loadInitialTzktTokensForNewlyConnectedUser, handleDisconnect, handleOnReconnected])
 
   // effect to perform resotring user from localStorage
   useEffect(() => {
     if (canStartUserInitialLoading) connect()
-  }, [canStartUserInitialLoading, connect])
+  }, [canStartUserInitialLoading, , connect])
 
   // subscribe to user's indexer data
   const { loading: userDataLoading } = useSubscription(SUBSCRIBE_USER_DATA, {
@@ -315,17 +317,25 @@ export const UserProvider = ({ children }: Props) => {
     handleOnReconnected,
   ])
 
-  const providerValue = useMemo(
-    () => ({
+  const providerValue = useMemo(() => {
+    // set initial connect to true, when we have user address set (subs runned and loading statuses set to true) and loading statuses are off,
+    // or we don't have user wallet in LC and we are unable to restore it
+    if (
+      (!isRunnedInitialConnect.current && userCtxState.userAddress && !(userDataLoading || isTzktBalancesLoading)) ||
+      !hasUserInLocalStorage
+    ) {
+      isRunnedInitialConnect.current = true
+    }
+
+    return {
       ...userCtxState,
       isLoading: userDataLoading || isTzktBalancesLoading,
       isRunnedInitialConnect: Boolean(isRunnedInitialConnect.current),
       connect,
       signOut,
       changeUser,
-    }),
-    [connect, signOut, changeUser, userCtxState, isTzktBalancesLoading],
-  )
+    }
+  }, [connect, signOut, changeUser, userCtxState])
 
   return <userContext.Provider value={providerValue}>{children}</userContext.Provider>
 }
