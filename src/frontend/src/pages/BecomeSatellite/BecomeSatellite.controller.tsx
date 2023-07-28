@@ -368,7 +368,7 @@ export const BecomeSatellite = () => {
           />
         ) : null}
 
-        <PageContent>
+        <PageContent className="mt-30">
           <div>
             {isPageLoading ? (
               <DataLoaderWrapper>

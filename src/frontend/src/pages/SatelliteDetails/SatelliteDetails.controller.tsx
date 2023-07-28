@@ -157,7 +157,7 @@ export const SatelliteDetails = () => {
   return (
     <Page>
       <PageHeader page={'satellites'} />
-      <PageContent>
+      <PageContent className="mt-30">
         <div>
           <SatellitePagination />
 

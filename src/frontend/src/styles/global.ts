@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components/macro'
+import { css } from 'styled-components'
 
 import { royalPurpleColor, headerColor, cyanColor } from '../styles/colors'
 import { MavrykTheme } from './interfaces'
@@ -202,4 +203,18 @@ p {
       fill: ${({ theme }) => theme.textColor};
     }
   }
+
+  /* spaces */
+
+  ${[10, 20, 30].map(
+    (n) => css`
+      .mb-${n} {
+        margin-bottom: ${n}px;
+      }
+
+      .mt-${n} {
+        margin-top: ${n}px;
+      }
+    `,
+  )}
 `
