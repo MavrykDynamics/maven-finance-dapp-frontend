@@ -94,7 +94,7 @@ const DashboardPersonal = () => {
     isSatellite,
     isVestee,
   } = useUserContext()
-  const { changeSatellitesSubscriptionsList, isLoading: isSatellitesLoading } = useSatellitesContext()
+  const { changeSatellitesSubscriptionsList } = useSatellitesContext()
   const { bug } = useToasterContext()
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useDoormanContext()
 
@@ -276,7 +276,7 @@ const DashboardPersonal = () => {
           <DashboardPersonalEarningsHistory {...earnings} />
         </div>
 
-        {isLoading || isDoormanLoading || isSatellitesLoading ? (
+        {isLoading || isDoormanLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
             <div className="text">Loading your statistic</div>

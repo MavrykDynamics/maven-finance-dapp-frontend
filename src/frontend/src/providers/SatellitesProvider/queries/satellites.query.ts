@@ -98,12 +98,8 @@ export function getSatelliteDataSubscription(
         }
 
         # satellite total voting power
-        governance_satellite_snapshots(order_by: {cycle: desc}, limit: 1) {
-          cycle
+        governance_satellite_snapshots(order_by: {cycle: desc}, limit: 1, where: {ready: {_eq: true}}) {
           total_voting_power
-          governance {
-            cycle_id
-          }
         }
 
         # last voted proposal

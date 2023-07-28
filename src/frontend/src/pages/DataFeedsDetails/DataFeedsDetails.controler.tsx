@@ -332,9 +332,9 @@ const DataFeedDetails = () => {
 
               <FeedDetailsChartWrapper>
                 {isFeedsChartsLoading ? (
-                  <DataLoaderWrapper className="no-margin">
+                  <DataLoaderWrapper margin="0">
                     <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
-                    <div className="text">Loading feed history data...</div>
+                    <div className="text">Loading feed history data</div>
                   </DataLoaderWrapper>
                 ) : (
                   <Chart

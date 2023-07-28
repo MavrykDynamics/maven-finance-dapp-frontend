@@ -27,6 +27,8 @@ import { UserActionHistory } from './UserOperationsHistory'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards: () => void }) => {
   const { userAddress, availableProposalRewards } = useUserContext()
@@ -36,6 +38,7 @@ const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards
     satelliteGovActionsAmount,
     finRequestsAmount,
     setSatelliteAddressToSubsctibe,
+    isLoading: isSatellitesLoading,
   } = useSatellitesContext()
 
   useEffect(() => {
@@ -75,7 +78,12 @@ const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards
             Distribute Gov. Rewards
           </NewButton>
         </DashboardCardHeader>
-        {satelliteRecord ? (
+        {userAddress && isSatellitesLoading ? (
+          <DataLoaderWrapper margin="20px 0 0 0">
+            <ClockLoader width={75} height={75} />
+            <div className="text">Loading your satellite data</div>
+          </DataLoaderWrapper>
+        ) : satelliteRecord ? (
           <>
             <div className="container">
               <div className="grid-container">
