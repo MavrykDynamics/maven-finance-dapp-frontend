@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useCreateVaultContext } from '../helpers/createVaultModalContext'
+import { useCreateVaultContext } from '../context/createVaultModalContext'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,

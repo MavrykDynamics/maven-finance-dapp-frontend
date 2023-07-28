@@ -7,7 +7,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { checkNan } from 'utils/checkNan'
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
-import { useCreateVaultContext } from '../helpers/createVaultModalContext'
+import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -42,13 +42,18 @@ export const BorrowScreen = () => {
   const vaultData = useFullVault(currentVault)
 
   const {
+    borrowedTokenAddress = '',
+    borrowCapacity: originalBorrowCapacity = 0,
     borrowedAmount: currentBorrowedAmount = 0,
     collateralBalance: currentCollateralBalance = 0,
     collateralRatio = 0,
     apr = 0,
   } = vaultData ?? {}
 
-  const { inputData, settings, inputProps, rate, icon, symbol, clearData, decimals } = useBorrowInputData(vaultData)
+  const { inputData, settings, inputProps, rate, icon, symbol, clearData, decimals } = useBorrowInputData(
+    borrowedTokenAddress,
+    originalBorrowCapacity,
+  )
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const convertedBorrowedAmount = convertNumberForClient({ number: currentBorrowedAmount, grade: decimals })

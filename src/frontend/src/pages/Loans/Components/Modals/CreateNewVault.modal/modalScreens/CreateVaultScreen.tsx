@@ -5,7 +5,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import React, { useCallback, useMemo } from 'react'
 import { ADD_COLLATERAL_SCREEN_ID } from '../helpers/createNewVault.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { useCreateVaultContext } from '../helpers/createVaultModalContext'
+import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { validateVaultLength } from '../helpers/createNewVault.helpers'
 import { useUserVaultsNames } from 'providers/VaultsProvider/hooks/useVaultsNames'
 import { containSpaces } from 'app/App.utils/input'
@@ -15,10 +15,10 @@ import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/T
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { createVault } from 'providers/VaultsProvider/actions/vaults.actions'
-import { apolloClient } from 'apollo'
 import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { CREATE_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 type CreateVaultScreenProps = {
   marketTokenAddress: string | undefined
@@ -33,6 +33,7 @@ export const CreateVaultScreen = ({ marketTokenAddress, setCreatedVaultAddress }
   const {
     contractAddresses: { vaultFactoryAddress },
   } = useDappConfigContext()
+  const { apolloClient } = useApolloContext()
 
   const { vaultInputState, updateInputVaultState, updateScreenToShow, updateVaultCreating, updateNewVault } =
     useCreateVaultContext()

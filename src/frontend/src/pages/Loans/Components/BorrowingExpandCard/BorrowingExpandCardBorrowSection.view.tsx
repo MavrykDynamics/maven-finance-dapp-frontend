@@ -1,18 +1,9 @@
-import { useCallback, useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useMemo } from 'react'
 import classNames from 'classnames'
 import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
-import { State } from 'reducers'
-import {
-  INPUT_LARGE,
-  INPUT_STATUS_DEFAULT,
-  INPUT_STATUS_ERROR,
-  InputStatusType,
-  getOnBlurValue,
-  getOnFocusValue,
-} from 'app/App.components/Input/Input.constants'
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
+import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Input } from 'app/App.components/Input/NewInput'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -25,7 +16,6 @@ import { BUTTON_PRIMARY, BUTTON_PULSE, BUTTON_WIDE } from 'app/App.components/Bu
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
-import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 import {
   COLLATERAL_AWARE_BORROWING_ADJUST_YOUR_AMOUNT,
   SELECT_THE_AMOUNT_YOU_WOULD_LIKE_TO_BORROW,
@@ -33,10 +23,9 @@ import {
 import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault.text'
 import { checkNan } from 'utils/checkNan'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { useBorrowInputData } from '../Modals/CreateNewVault.modal/components/useBorrowInputData'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type Props = {
   borrowedAssetAddress: TokenAddressType
@@ -50,9 +39,9 @@ type Props = {
 }
 
 export const BorrowingExpandCardBorrowSection = (props: Props) => {
-  const { userTokensBalances } = useUserContext()
-
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const {
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
   const {
     borrowedAssetAddress,
@@ -63,21 +52,13 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
     openConfirmBorrowPopup,
   } = props
 
-  const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { symbol, decimals, icon } = tokensMetadata[borrowedAssetAddress]
-  const rate = tokensPrices[symbol]
+  const { inputData, settings, inputProps, rate, icon, symbol, clearData } = useBorrowInputData(
+    borrowedAssetAddress,
+    borrowCapacity,
+  )
 
-  const [inputData, setInputData] = useState<{
-    amount: string
-    validationStatus: InputStatusType
-  }>({
-    amount: '0',
-    validationStatus: INPUT_STATUS_DEFAULT,
-  })
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
-
-  const userAssetBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: borrowedAssetAddress })
 
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = getVaultCollateralRatio(
@@ -91,81 +72,6 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   }, [currentCollateralBalance, currentBorrowedAmount, inputAmount, rate, borrowCapacity])
 
   const showWarning = (inputAmount > borrowCapacity / rate || futureCollateralRatio < 200) && inputAmount !== 0
-
-  const clearData = () => {
-    setInputData({
-      amount: '0',
-      validationStatus: INPUT_STATUS_DEFAULT,
-    })
-  }
-
-  // stuff to handle inputs
-  const inputOnChangeHandle = useCallback(
-    (newInputAmount: string, maxAmount: number) => {
-      const validationStatus = loansInputValidation({
-        inputAmount: newInputAmount,
-        maxAmount,
-        options: {
-          byDecimalPlaces: decimals || assetDecimalsToShow,
-        },
-      })
-
-      setInputData({
-        ...inputData,
-        amount: newInputAmount,
-        validationStatus: validationStatus,
-      })
-    },
-    [decimals, inputData],
-  )
-
-  const inputOnBlurHandle = useCallback(() => {
-    setInputData({
-      ...inputData,
-      amount: getOnBlurValue(inputData.amount),
-    })
-  }, [inputData])
-
-  const onFocusHandler = useCallback(() => {
-    setInputData({
-      ...inputData,
-      amount: getOnFocusValue(inputData.amount),
-    })
-  }, [inputData])
-
-  const inputProps: InputProps = useMemo(
-    () => ({
-      value: inputData.amount,
-      type: 'number',
-      onBlur: inputOnBlurHandle,
-      onFocus: onFocusHandler,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => inputOnChangeHandle(e.target.value, borrowCapacity / rate),
-    }),
-    [borrowCapacity, rate, inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler],
-  )
-
-  const settings: Settings = useMemo(
-    () => ({
-      balance: userAssetBalance,
-      balanceAsset: symbol,
-      balanceName: 'Wallet Balance',
-      useMaxHandler: () =>
-        inputOnChangeHandle(getLoansInputMaxAmount(borrowCapacity / rate, decimals), borrowCapacity / rate),
-      inputStatus: inputData.validationStatus,
-      convertedValue: inputAmount * rate,
-      inputSize: INPUT_LARGE,
-    }),
-    [
-      userAssetBalance,
-      symbol,
-      inputData.validationStatus,
-      inputAmount,
-      rate,
-      inputOnChangeHandle,
-      borrowCapacity,
-      decimals,
-    ],
-  )
 
   return (
     <>

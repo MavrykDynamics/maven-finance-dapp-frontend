@@ -11,14 +11,11 @@ import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { FullLoansVaultType } from 'providers/VaultsProvider/vaults.provider.types'
 import React, { useCallback, useMemo, useState } from 'react'
 import { checkNan } from 'utils/checkNan'
 
-export const useBorrowInputData = (vaultData: FullLoansVaultType | null) => {
+export const useBorrowInputData = (borrowedAssetAddress = '', borrowCapacity = 0) => {
   const { userTokensBalances } = useUserContext()
-
-  const { borrowedTokenAddress: borrowedAssetAddress = '', borrowCapacity = 0 } = vaultData ?? {}
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { symbol, decimals, icon } = tokensMetadata[borrowedAssetAddress]

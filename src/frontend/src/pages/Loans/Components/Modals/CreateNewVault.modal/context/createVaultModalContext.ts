@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import { CreateVaultModalContext } from './createNewVault.types'
+import { CreateVaultModalContext } from '../helpers/createNewVault.types'
 
 export const createVaultModalContext = createContext<CreateVaultModalContext>(undefined!)
 

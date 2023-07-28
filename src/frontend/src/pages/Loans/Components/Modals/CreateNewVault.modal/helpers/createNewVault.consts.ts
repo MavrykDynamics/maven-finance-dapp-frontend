@@ -21,7 +21,7 @@ export const DEFAULT_CREATE_VAULT_STATE: CreateVaultModalState = {
 export const screenTitles = {
   [INITIAL_SCREEN_ID]: 'Create New Vault',
   [ADD_COLLATERAL_SCREEN_ID]: 'Select Collateral For Vault',
-  [BORROW_SCREEN_ID]: 'Borrow XTZ',
+  [BORROW_SCREEN_ID]: 'Borrow',
   [CONFIRMATION_SCREEN_ID]: 'Confirmation',
 }
 

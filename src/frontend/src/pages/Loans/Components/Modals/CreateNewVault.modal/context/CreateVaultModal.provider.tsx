@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { createVaultModalContext } from './helpers/createVaultModalContext'
+import { createVaultModalContext } from './createVaultModalContext'
 import {
   CreateNewModalProps,
   CreateVaultModalState,
@@ -7,8 +7,8 @@ import {
   ScreenType,
   SelectedCollateralsType,
   VaultInputState,
-} from './helpers/createNewVault.types'
-import { DEFAULT_CREATE_VAULT_STATE } from './helpers/createNewVault.consts'
+} from '../helpers/createNewVault.types'
+import { DEFAULT_CREATE_VAULT_STATE } from '../helpers/createNewVault.consts'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 

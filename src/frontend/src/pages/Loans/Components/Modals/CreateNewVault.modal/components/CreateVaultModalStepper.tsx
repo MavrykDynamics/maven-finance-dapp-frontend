@@ -1,5 +1,5 @@
 import React from 'react'
-import { VaultModalStepper } from './createNewVault.style'
+import { VaultModalStepper } from '../createNewVault.style'
 import classNames from 'classnames'
 
 type CreateVaultModalStepperProps = {

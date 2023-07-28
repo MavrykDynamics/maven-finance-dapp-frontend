@@ -19,7 +19,7 @@ import {
 import React, { useCallback, useEffect, useMemo } from 'react'
 import { ADD_COLLATERAL_SCREEN_ID } from '../helpers/createNewVault.consts'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { useCreateVaultContext } from '../helpers/createVaultModalContext'
+import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
@@ -76,9 +76,11 @@ export const ConfirmationScreen = () => {
     collateralBalance: currentCollateralBalance = 0,
     borrowedAmount: currentBorrowedAmount = 0,
     name,
+    borrowedTokenAddress = '',
+    borrowCapacity: originalBorrowCapacity = 0,
   } = vaultData ?? {}
 
-  const { inputData, rate, symbol } = useBorrowInputData(vaultData)
+  const { inputData, rate, symbol } = useBorrowInputData(borrowedTokenAddress, originalBorrowCapacity)
   const inputAmount = checkNan(parseFloat(inputData.amount))
 
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {

@@ -7,10 +7,8 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // types
-import { CreateVaultPopupDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
-
-import { CreateVaultModalProvider } from './CreateVaultModal.provider'
-import { useCreateVaultContext } from './helpers/createVaultModalContext'
+import { CreateVaultModalProvider } from './context/CreateVaultModal.provider'
+import { useCreateVaultContext } from './context/createVaultModalContext'
 import {
   ADD_COLLATERAL_SCREEN_ID,
   BORROW_SCREEN_ID,
@@ -24,7 +22,7 @@ import {
 import { CreateVaultScreen } from './modalScreens/CreateVaultScreen'
 import { AddCollateralScreen } from './modalScreens/AddCollateralScreen'
 import { ConfirmationScreen } from './modalScreens/ConfirmationScreen'
-import { CreateVaultModalStepper } from './CreateVaultModalStepper'
+import { CreateVaultModalStepper } from './components/CreateVaultModalStepper'
 import { VaultModalStepperWrapper } from './createNewVault.style'
 import { BorrowScreen } from './modalScreens/BorrowScreen'
 import classNames from 'classnames'
@@ -72,7 +70,8 @@ export const CreateNewVaultConsumer = () => {
 
   if (!data) return null
 
-  const titleText = screenTitles[screenToShow]
+  const titleText =
+    screenToShow !== BORROW_SCREEN_ID ? screenTitles[screenToShow] : `${screenTitles[screenToShow]} ${123}`
   const descrText = screenDescriptions[screenToShow]
 
   return (
