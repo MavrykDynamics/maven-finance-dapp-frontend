@@ -42,6 +42,7 @@ import Button from 'app/App.components/Button/NewButton'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { BORROW_CAPACITY, COLLATERAL_VALUE } from 'texts/tooltips/vault.text'
+import { NewVaultType } from '../helpers/createNewVault.types'
 
 export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
@@ -62,8 +63,7 @@ export const AddCollateralScreen = () => {
   } = useCreateVaultContext()
   const { vaultsMapper } = useVaultsContext()
 
-  const currentVault = vaultsMapper[newVault?.id.toString() ?? 'KT1UCFPPgutMkkt3xBpSyAxH6piRjzxyiyiz']
-  // TODO replace with NewVault data from modal screens context
+  const currentVault = vaultsMapper[(newVault as NewVaultType).address]
   const vaultData = useFullVault(currentVault)
 
   const { collateralBalance = 0 } = vaultData ?? {}
@@ -326,7 +326,7 @@ export const AddCollateralScreen = () => {
                       className="tooltip"
                     />
                   </div>
-                  <CommaNumber value={borrowCapacity} decimalsToShow={0} className="value" />
+                  <CommaNumber value={collateralBalance} decimalsToShow={0} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">
@@ -338,7 +338,7 @@ export const AddCollateralScreen = () => {
                       className="tooltip"
                     />
                   </div>
-                  <CommaNumber value={collateralBalance} decimalsToShow={0} className="value" />
+                  <CommaNumber value={borrowCapacity} decimalsToShow={0} className="value" />
                 </ThreeLevelListItem>
               </div>
             </VaultOverview>

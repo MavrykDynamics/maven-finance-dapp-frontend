@@ -34,8 +34,6 @@ import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaul
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { getVaultCollateralRatio, reduceVaultsAssets } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
-import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
-import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { ConfirmationScreenWrapper } from '../createNewVault.style'
 import colors from 'styles/colors'
@@ -44,13 +42,17 @@ import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { checkNan } from 'utils/checkNan'
 import { useBorrowInputData } from '../components/useBorrowInputData'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+import { NewVaultType } from '../helpers/createNewVault.types'
+import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
+import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
 
 export const ConfirmationScreen = () => {
   const {
     contractAddresses: { lendingControllerAddress },
     preferences: { themeSelected },
   } = useDappConfigContext()
-  const { allVaultsIds, vaultsMapper } = useVaultsContext()
+  const { allVaultsIds, vaultsMapper, myVaultsIds, changeVaultsSubscriptionsList } = useVaultsContext()
+  console.log(myVaultsIds, myVaultsIds)
   const { choosenBaker } = useXtzBakersForDD()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress } = useUserContext()
@@ -67,10 +69,25 @@ export const ConfirmationScreen = () => {
   } = useCreateVaultContext()
   const {
     config: { daoFee },
+    changeLoansSubscriptionsList,
   } = useLoansContext()
 
-  const currentVault = vaultsMapper['KT1UCFPPgutMkkt3xBpSyAxH6piRjzxyiyiz']
+  const currentVault = vaultsMapper[(newVault as NewVaultType).address]
   const vaultData = useFullVault(currentVault)
+
+  // useEffect(() => {
+  //   changeLoansSubscriptionsList({
+  //     [LOANS_MARKETS_DATA]: true,
+  //   })
+  //   changeVaultsSubscriptionsList({
+  //     [VAULTS_DATA]: VAULTS_ALL,
+  //   })
+
+  //   return () => {
+  //     changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+  //     changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+  //   }
+  // }, [])
 
   const {
     collateralBalance: currentCollateralBalance = 0,
@@ -105,8 +122,6 @@ export const ConfirmationScreen = () => {
 
     return { assetsBalances, globalVaultTVL, ...restVaultsStats }
   }, [allVaultsIds, tokensMetadata, tokensPrices, vaultsMapper])
-
-  console.log(allVaultsIds, vaultsMapper, tokensMetadata, tokensPrices)
 
   // deposit action ----------------------------------------------
   const depositAction = useCallback(async () => {

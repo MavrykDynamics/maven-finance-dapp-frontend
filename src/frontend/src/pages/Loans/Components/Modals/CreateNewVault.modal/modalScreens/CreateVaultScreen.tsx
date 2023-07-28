@@ -19,6 +19,7 @@ import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { CREATE_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { sleep } from 'utils/api/sleep'
 
 type CreateVaultScreenProps = {
   marketTokenAddress: string | undefined
@@ -115,7 +116,14 @@ export const CreateVaultScreen = ({ marketTokenAddress, setCreatedVaultAddress }
     }
   }
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
+    await sleep(3000)
+    updateNewVault({
+      address: 'KT1UCFPPgutMkkt3xBpSyAxH6piRjzxyiyiz',
+      id: 148,
+    })
+
+    await sleep(1000)
     updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)
     // createVaultHandler()
   }

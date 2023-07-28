@@ -23,7 +23,7 @@ export type VaultInputState = {
 export type NewVaultType = {
   id: number
   address: string
-} | null
+}
 
 export type SelectedCollateralsType = Record<
   TokenAddressType,
@@ -37,7 +37,7 @@ export type CreateVaultModalState = {
   selectedCollaterals: SelectedCollateralsType
   selectedCollateralsAddresses: string[]
   isVaultCreating: boolean
-  newVault: NewVaultType
+  newVault: NewVaultType | null
   hasXTZTokenSelected: string | undefined
 }
 

@@ -25,6 +25,7 @@ import { BorrowScreenBottomStats } from '../components/BorrowScreenBottomStats'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useBorrowInputData } from '../components/useBorrowInputData'
 import { DAO_FEE } from 'texts/tooltips/vault.text'
+import { NewVaultType } from '../helpers/createNewVault.types'
 
 export const BorrowScreen = () => {
   const {
@@ -38,7 +39,7 @@ export const BorrowScreen = () => {
     config: { daoFee },
   } = useLoansContext()
 
-  const currentVault = vaultsMapper[newVault?.id.toString() ?? 'KT1UCFPPgutMkkt3xBpSyAxH6piRjzxyiyiz']
+  const currentVault = vaultsMapper[(newVault as NewVaultType).address]
   const vaultData = useFullVault(currentVault)
 
   const {
