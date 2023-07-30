@@ -47,13 +47,6 @@ export const PopupContainerWrapper = styled.div<{ theme: MavrykTheme; widthSize?
     padding: 30px 40px 40px;
   }
 
-  &.loans-overflow {
-    max-height: 800px;
-    overflow-x: hidden;
-    overflow-y: visible;
-    overscroll-behavior: contain;
-  }
-
   &.vaults {
     max-width: 586px;
     padding: 30px 40px;

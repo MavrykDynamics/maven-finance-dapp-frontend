@@ -85,24 +85,30 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     gap: 7px;
   }
 
+  .collateral-list-wrapper-for-overflow {
+    height: 250px;
+    position: relative;
+  }
+
   .collateral-list {
-    /* overscroll-behavior: contain; */
+    overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
     row-gap: 50px;
+    min-height: 100px;
     margin-bottom: 20px;
-    min-height: 77px;
-    /* max-height: 250px; */
-    /* overflow-y: auto; */
-    /* overflow-x: hidden; */
-
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    scrollbar-width: none; /* Firefox */
-    /* padding-right: 18px; */
   }
 
-  .collateral-list::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
+  .collateral-list-overflow {
+    padding-right: 22px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% + 27px); /*icon + scrollbar*/
+    padding-top: 18px; /*to show use-max block on the first collateral input*/
+    max-height: 260px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .xtz-baker {

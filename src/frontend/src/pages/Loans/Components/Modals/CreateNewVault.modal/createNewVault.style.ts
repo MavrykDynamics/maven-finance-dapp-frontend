@@ -68,11 +68,6 @@ export const CollateralInputWrapper = styled.div`
   position: relative;
 `
 
-export const CollateralScreeenWrapper = styled.div`
-  & > div {
-  }
-`
-
 export const BorrowScreenWrapper = styled.div`
   .borrow-screen-top-stats {
     display: flex;
