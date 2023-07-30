@@ -354,7 +354,7 @@ const DataFeedDetails = () => {
             {isSatellitesLoading ? (
               <DataLoaderWrapper>
                 <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
-                <div className="text">Loading oracles data...</div>
+                <div className="text">Loading oracles data</div>
               </DataLoaderWrapper>
             ) : paginatedFeedsOracles.length ? (
               <div className={`oracles-list`}>

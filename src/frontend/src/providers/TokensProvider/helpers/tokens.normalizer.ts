@@ -132,6 +132,11 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
           throw new Error(`Token do not have valid symbol, name or icon ${symbol}, ${name}, ${tokenIcon}`)
         }
 
+        // we have 2 mvk tokens in indexer one is empty hardcoded and one is token with data, so we need to exclude empty one
+        if (symbol === 'MVK' && !mvk_tokens?.[0]?.address) {
+          throw new Error(`Omit hardcoded fake mvk token`)
+        }
+
         let tokenMetadata: TokenMetadataType = {
           id: token_id,
           address: token_address,
@@ -153,9 +158,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
           })
 
           if (mvk) {
-            if (checkWhetherTokenIsCollateralToken(mvk)) acc.collateralTokens.push(mvk.address)
-
-            acc.tokensMetadata[mvk.address] = { ...acc.tokensMetadata[mvk.address], ...smvk }
+            acc.tokensMetadata[mvk.address] = { ...acc.tokensMetadata[mvk.address], ...mvk }
           }
 
           if (smvk) {
@@ -163,6 +166,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
 
             if (checkWhetherTokenIsCollateralToken(smvk)) acc.collateralTokens.push(smvk.address)
           }
+
           return acc
         }
 

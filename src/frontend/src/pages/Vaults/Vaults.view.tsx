@@ -21,7 +21,11 @@ import { VaultsStyled } from './Vaults.style'
 import { VaultsList } from 'pages/Loans/Components/LoansComponents.style'
 
 // helpers
-import { LOANS_CONFIG, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
+import {
+  LOANS_CONFIG,
+  DEFAULT_LOANS_ACTIVE_SUBS,
+  LOANS_MARKETS_DATA,
+} from 'providers/LoansProvider/helpers/loans.const'
 import {
   VAULTS_LIST_NAME,
   getPageNumber,
@@ -71,6 +75,7 @@ export const VaultsView = () => {
   useEffect(() => {
     changeLoansSubscriptionsList({
       [LOANS_CONFIG]: true,
+      [LOANS_MARKETS_DATA]: true,
     })
 
     return () => {
