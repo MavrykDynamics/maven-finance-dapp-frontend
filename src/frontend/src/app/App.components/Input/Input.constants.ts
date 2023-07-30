@@ -19,6 +19,9 @@ export type InputStatusType =
 export type InputKind = typeof INPUT_PRIMARY | typeof INPUT_SEARCH
 
 // default max length
+export const defaultLargeInputMaxLength = 20
+export const defaultMediumInputMaxLength = 10
+
 export const defaultCouncilMemberImageMaxLength = 500
 export const defaultCouncilMemberNameMaxLength = 25
 export const defaultCouncilMemberWebsiteMaxLength = 500

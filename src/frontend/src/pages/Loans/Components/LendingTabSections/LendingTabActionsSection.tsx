@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import classNames from 'classnames'
 
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -24,13 +24,14 @@ import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_SUCCESS,
   InputStatusType,
+  defaultLargeInputMaxLength,
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from '../../Loans.style'
-import { LoansActionsSection } from './../LoansComponents.style'
+import { CardSectionWrapper, LoansActionsSection } from './../LoansComponents.style'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -46,6 +47,11 @@ type LendingTabPropsType = {
   lendAPY: number
 }
 
+type InputDataType = {
+  amount: string
+  validationStatus: InputStatusType
+}
+
 export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAPY }: LendingTabPropsType) => {
   const { openConfirmAddLendingAssetPopup, openConfirmRemoveLendingAssetPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
@@ -58,13 +64,17 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   const { lendValue = 0 } = lendingItem || {}
 
   const [activeTab, setActiveTab] = useState(LENDING_TAB_SLIDING_BUTTONS.find((item) => item.active))
-  const [inputData, setInputData] = useState<{
-    amount: string
-    validationStatus: InputStatusType
-  }>({
+  const [inputData, setInputData] = useState<InputDataType>({
     amount: '0',
     validationStatus: INPUT_STATUS_DEFAULT,
   })
+
+  const setInputDataHelper = useCallback(
+    (data: InputDataType) => {
+      setInputData({ ...data, amount: data.amount.slice(0, defaultLargeInputMaxLength - 4) })
+    },
+    [setInputData],
+  )
 
   const isSupplyActiveTab = activeTab?.id === loansTabNames.SUPPLY
 
@@ -82,14 +92,14 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   const isDisabledButton = inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionActive
 
   const clearData = () => {
-    setInputData({
+    setInputDataHelper({
       amount: '0',
       validationStatus: INPUT_STATUS_DEFAULT,
     })
   }
 
   const handleSwitchTab = (tabId: number) => {
-    setInputData({
+    setInputDataHelper({
       amount: '0',
       validationStatus: INPUT_STATUS_DEFAULT,
     })
@@ -128,7 +138,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
       },
     })
 
-    setInputData({
+    setInputDataHelper({
       ...inputData,
       amount: inputAmount,
       validationStatus: validationStatus,
@@ -136,13 +146,13 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   }
 
   const inputOnBlurHandle = () =>
-    setInputData({
+    setInputDataHelper({
       ...inputData,
       amount: getOnBlurValue(inputData.amount),
     })
 
   const onFocusHandler = () =>
-    setInputData({
+    setInputDataHelper({
       ...inputData,
       amount: getOnFocusValue(inputData.amount),
     })
@@ -202,23 +212,25 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
       <div className="mt-25">
         <div className="tab-text mb-10">Updated Lending {symbol} Stats</div>
 
-        <div className="stats">
-          <ThreeLevelListItem>
-            <div className="name">
-              Earn APY
-              <CustomTooltip iconId="info" text={EARN_APY} />
-            </div>
-            <CommaNumber value={lendAPY} className="value" endingText="%" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">{isSupplyActiveTab ? `m${symbol} Received` : 'Amount To Withdraw'}</div>
-            <CommaNumber value={Number(inputData.amount)} className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem className="right">
-            <div className="name">New m{symbol} Balance</div>
-            <CommaNumber value={futureMBalance} className="value" />
-          </ThreeLevelListItem>
-        </div>
+        <CardSectionWrapper>
+          <div className="stats">
+            <ThreeLevelListItem>
+              <div className="name">
+                Earn APY
+                <CustomTooltip iconId="info" text={EARN_APY} />
+              </div>
+              <CommaNumber value={lendAPY} className="value" endingText="%" />
+            </ThreeLevelListItem>
+            <ThreeLevelListItem>
+              <div className="name">{isSupplyActiveTab ? `m${symbol} Received` : 'Amount To Withdraw'}</div>
+              <CommaNumber value={Number(inputData.amount)} className="value" />
+            </ThreeLevelListItem>
+            <ThreeLevelListItem className="right">
+              <div className="name">New m{symbol} Balance</div>
+              <CommaNumber value={futureMBalance} className="value" />
+            </ThreeLevelListItem>
+          </div>
+        </CardSectionWrapper>
       </div>
 
       <div className="button-wrapper">

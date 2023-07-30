@@ -37,6 +37,7 @@ import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   InputStatusType,
+  defaultLargeInputMaxLength,
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
@@ -69,6 +70,11 @@ type Props = {
   openConfirmRepayFullPopup: (callback: () => void) => void
 }
 
+type InputDataType = {
+  amount: string
+  validationStatus: InputStatusType
+}
+
 export const BorrowingExpandCardRepaySection = (props: Props) => {
   const { userTokensBalances } = useUserContext()
 
@@ -94,13 +100,11 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   const { decimals, symbol, icon } = borrowedToken
 
-  const [inputData, setInputData] = useState<{
-    amount: string
-    validationStatus: InputStatusType
-  }>({
+  const [inputData, setInputData] = useState<InputDataType>({
     amount: '0',
     validationStatus: INPUT_STATUS_DEFAULT,
   })
+
   const inputAmount = checkNan(parseFloat(inputData.amount))
 
   const totalOutstanding = fee + borrowedAmount
@@ -127,8 +131,15 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [collateralBalance, borrowedAmount, inputAmount, borrowedTokenRate, borrowCapacity])
 
+  const setInputDataHelper = useCallback(
+    (data: InputDataType) => {
+      setInputData({ ...data, amount: data.amount.slice(0, defaultLargeInputMaxLength) })
+    },
+    [setInputData],
+  )
+
   const clearData = () => {
-    setInputData({
+    setInputDataHelper({
       amount: '0',
       validationStatus: INPUT_STATUS_DEFAULT,
     })
@@ -145,7 +156,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         },
       })
 
-      setInputData({
+      setInputDataHelper({
         ...inputData,
         amount: newInputAmount,
         validationStatus: validationStatus,
@@ -155,14 +166,14 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   )
 
   const inputOnBlurHandle = useCallback(() => {
-    setInputData({
+    setInputDataHelper({
       ...inputData,
       amount: getOnBlurValue(inputData.amount),
     })
   }, [inputData])
 
   const onFocusHandler = useCallback(() => {
-    setInputData({
+    setInputDataHelper({
       ...inputData,
       amount: getOnFocusValue(inputData.amount),
     })
@@ -190,17 +201,17 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
             })
           : ''
 
-      setInputData({
+      setInputDataHelper({
         amount: String(totalOutstanding),
         validationStatus,
       })
     } else {
-      setInputData({
+      setInputDataHelper({
         amount: '0',
         validationStatus: INPUT_STATUS_DEFAULT,
       })
     }
-  }, [activeRepayTab, decimals, isRepayInFull, minimumRepay, totalOutstanding, userAssetBalance])
+  }, [activeRepayTab, decimals, isRepayInFull, minimumRepay, totalOutstanding, userAssetBalance, setInputDataHelper])
 
   const inputProps: InputProps = useMemo(
     () => ({

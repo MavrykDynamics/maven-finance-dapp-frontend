@@ -33,7 +33,12 @@ import {
 } from '../../../app/App.components/Button/Button.constants'
 import { STAKE_ACTION } from 'providers/DoormanProvider/helpers/doorman.consts'
 import { REWARDS_COMPOUND_ACTION } from 'providers/UserProvider/helpers/user.consts'
-import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
+import {
+  INPUT_STATUS_SUCCESS,
+  INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
+  defaultLargeInputMaxLength,
+} from 'app/App.components/Input/Input.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 import colors from 'styles/colors'
@@ -84,9 +89,6 @@ export const StakeUnstakeView = ({
     isSatellite,
   } = useUserContext()
   const {
-    setAction,
-    toggleActionFullScreenLoader,
-    toggleActionCompletion,
     contractAddresses: { mvkTokenAddress, doormanAddress },
     preferences: { themeSelected },
     globalLoadingState: { isActionActive },
@@ -114,6 +116,13 @@ export const StakeUnstakeView = ({
     Object.values(availableFarmRewards).reduce((acc, farmReward) => (acc += farmReward), 0)
   const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
 
+  const setInputDataHelper = useCallback(
+    (data: typeof DEFAULT_STAKE_UNSTAKE_INPUT) => {
+      setInputData({ ...data, amount: data.amount.slice(0, defaultLargeInputMaxLength) })
+    },
+    [setInputData],
+  )
+
   const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {
     handleInputData(String(mathRoundTwoDigit(balance === 'mvk' ? myMvkTokenBalance : mySMvkTokenBalance)))
   }
@@ -124,22 +133,22 @@ export const StakeUnstakeView = ({
 
   const handleInputData = (value: string) => {
     const validationStatus = stakingInputValidation({
-      amount: Number(value),
+      amount: Number(value.slice(0, defaultLargeInputMaxLength)),
       myMvkTokenBalance,
       mySMvkTokenBalance,
       userAddress,
     })
 
-    setInputData({ ...inputData, amount: value, validation: validationStatus })
+    setInputDataHelper({ ...inputData, amount: value, validation: validationStatus })
   }
 
   // Stake actions
   const handleStakeAll = async () => {
     if (!myMvkTokenBalance) return
 
-    setInputData({
+    setInputDataHelper({
       ...inputData,
-      amount: String(mathRoundTwoDigit(myMvkTokenBalance)),
+      amount: String(mathRoundTwoDigit(myMvkTokenBalance)).slice(0, defaultLargeInputMaxLength),
       validation: INPUT_STATUS_SUCCESS,
     })
 
@@ -149,7 +158,7 @@ export const StakeUnstakeView = ({
   const handleUnstakeAll = () => {
     if (!mySMvkTokenBalance) return
 
-    setInputData({
+    setInputDataHelper({
       ...inputData,
       amount: String(mathRoundTwoDigit(mySMvkTokenBalance)),
       validation: INPUT_STATUS_SUCCESS,
@@ -164,7 +173,7 @@ export const StakeUnstakeView = ({
       const canStakeAmount = stakeAmount <= Number(myMvkTokenBalance)
 
       if (!canStakeAmount) {
-        setInputData({
+        setInputDataHelper({
           ...inputData,
           errorMessage: "You don't have enought MVK to stake",
         })
@@ -186,19 +195,19 @@ export const StakeUnstakeView = ({
         return null
       }
 
-      setInputData({
+      setInputDataHelper({
         ...inputData,
         errorMessage: '',
       })
 
       return await stakeMVK(stakeAmount, userAddress, doormanAddress, mvkTokenAddress)
     },
-    [bug, doormanAddress, inputData, mvkTokenAddress, myMvkTokenBalance, setInputData, userAddress],
+    [bug, doormanAddress, inputData, mvkTokenAddress, myMvkTokenBalance, setInputDataHelper, userAddress],
   )
 
   const dappCallback = useCallback(() => {
-    setInputData({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
-  }, [inputData, setInputData])
+    setInputDataHelper({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
+  }, [inputData, setInputDataHelper])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -238,13 +247,13 @@ export const StakeUnstakeView = ({
 
   const handleFocus = () => {
     if (inputData.amount === '0') {
-      setInputData({ ...inputData, amount: '' })
+      setInputDataHelper({ ...inputData, amount: '' })
     }
   }
 
   const handleBlur = () => {
     if (inputData.amount === '') {
-      setInputData({ ...inputData, amount: '0' })
+      setInputDataHelper({ ...inputData, amount: '0' })
     }
   }
 
