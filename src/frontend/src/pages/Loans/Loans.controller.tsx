@@ -274,11 +274,7 @@ export const Loans = () => {
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Total Earned</div>
-                        <CommaNumber
-                          value={convertNumberForClient({ number: interestEarned, grade: decimals })}
-                          className="value"
-                          beginningText="$"
-                        />
+                        <CommaNumber value={interestEarned} className="value" beginningText="$" />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Suppliers</div>

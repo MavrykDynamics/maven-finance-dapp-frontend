@@ -92,7 +92,10 @@ export const Market = () => {
 
   // check whether market exists, cuz address is stored in url and user can change it
   useLayoutEffect(() => {
-    if (currentMarketAddress && marketsMapper[currentMarketAddress]) return
+    if (currentMarketAddress && marketsMapper[currentMarketAddress]) {
+      setMarketAddressToSubscribe(currentMarketAddress)
+      return
+    }
 
     setIsMarketExistanseLoading(true)
 

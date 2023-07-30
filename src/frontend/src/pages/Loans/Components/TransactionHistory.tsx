@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -14,15 +15,15 @@ import {
   PAGINATION_SIDE_CENTER,
   calculateSlicePositions,
 } from 'app/App.components/Pagination/pagination.consts'
+import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
 import { PRIMARY_TRANSACTION_HISTORY_STYLE, SECONDARY_TRANSACTION_HISTORY_STYLE } from '../Loans.const'
 
 import { TransactionHistoryStyled } from '../Loans.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { EmptyContainer } from 'app/App.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { State } from 'reducers'
-import { useSelector } from 'react-redux'
 import useMarketTransactionHistory from 'providers/LoansProvider/hooks/useMarketTransactionHistory'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
@@ -76,7 +77,12 @@ export const TransactionHistory = ({
       <div className="main">
         <H2Title>Transaction History</H2Title>
 
-        {transactionHistory.length ? (
+        {isTransactionHistoryLoading ? (
+          <DataLoaderWrapper margin="20px 0 40px 0">
+            <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
+            <div className="text">Loading transaction history</div>
+          </DataLoaderWrapper>
+        ) : transactionHistory.length ? (
           <>
             <Table className="treasury-table">
               <TableHeader className="simple-header treasury">
@@ -111,6 +117,12 @@ export const TransactionHistory = ({
                 })}
               </TableBody>
             </Table>
+
+            <Pagination
+              itemsCount={transactionHistory.length}
+              listName={TRANSACTION_HISTORY_TABLE_NAME}
+              side={PAGINATION_SIDE_CENTER}
+            />
           </>
         ) : (
           <EmptyContainer
@@ -123,12 +135,6 @@ export const TransactionHistory = ({
           </EmptyContainer>
         )}
       </div>
-
-      <Pagination
-        itemsCount={transactionHistory.length}
-        listName={TRANSACTION_HISTORY_TABLE_NAME}
-        side={PAGINATION_SIDE_CENTER}
-      />
 
       <div className="lending-controller">
         Lending Controller Address: <TzAddress tzAddress={lendingControllerAddress} type={BLUE} isBold />

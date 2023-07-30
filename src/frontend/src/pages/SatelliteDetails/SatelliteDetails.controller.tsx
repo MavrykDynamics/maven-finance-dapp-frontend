@@ -121,7 +121,10 @@ export const SatelliteDetails = () => {
 
   // check whether satellite exists, cuz address is stored in url and user can change it
   useLayoutEffect(() => {
-    if (satelliteId && satelliteMapper[satelliteId]) return
+    if (satelliteId && satelliteMapper[satelliteId]) {
+      setSatelliteAddressToSubsctibe(satelliteId)
+      return
+    }
 
     setIsSatelliteExistanseLoading(true)
 

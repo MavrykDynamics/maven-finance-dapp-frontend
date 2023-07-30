@@ -77,7 +77,7 @@ export const LoansEarn = () => {
 
         if (!token || !token.rate || !market) return acc
 
-        const { rate: price, decimals, icon, symbol, address } = token
+        const { rate: price, icon, symbol, address } = token
         const { lendingAPY, loanMTokenAddress } = market
 
         const { lendValue = 0, interestEarned = 0 } = userMTokens[loanMTokenAddress] ?? {}
@@ -88,8 +88,8 @@ export const LoansEarn = () => {
           address,
           annualRate: lendingAPY,
           annualRateName: 'APY',
-          leftValue: convertNumberForClient({ number: lendValue, grade: decimals }) * price,
-          rightValue: convertNumberForClient({ number: interestEarned, grade: decimals }) * price,
+          leftValue: lendValue * price,
+          rightValue: interestEarned * price,
           totalAmount: chartData.total?.at(-1)?.value ?? 0,
           price,
           chartData,
