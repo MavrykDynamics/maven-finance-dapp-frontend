@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import { useCreateVaultContext } from '../context/createVaultModalContext'
+import { Link, LinkProps } from 'react-router-dom'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
@@ -43,6 +44,7 @@ import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { BORROW_CAPACITY, COLLATERAL_VALUE } from 'texts/tooltips/vault.text'
 import { NewVaultType } from '../helpers/createNewVault.types'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
@@ -58,17 +60,8 @@ export const AddCollateralScreen = () => {
     updateScreenToShow,
     isVaultCreating,
     hasXTZTokenSelected,
-    newVault,
     borrowCapacity,
   } = useCreateVaultContext()
-  const { vaultsMapper } = useVaultsContext()
-
-  console.log(selectedCollaterals)
-
-  const currentVault = vaultsMapper[(newVault as NewVaultType).address]
-  const vaultData = useFullVault(currentVault)
-
-  const { collateralBalance = 0 } = vaultData ?? {}
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd add new collateral)
   const mappedAvaliableCollaterals = useMemo(() => {
@@ -191,6 +184,20 @@ export const AddCollateralScreen = () => {
         amount: getOnFocusValue(selectedCollaterals[collateralAddress].amount),
       },
     })
+
+  const totalCollateralValue = useMemo(
+    () =>
+      selectedCollateralsAddresses.reduce<number>((acc, address) => {
+        const { tokenAddress, amount } = selectedCollaterals[address]
+        const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+        if (!token || !token.rate) return acc
+
+        const { rate } = token
+
+        return acc + rate * Number(amount)
+      }, 0),
+    [selectedCollaterals, selectedCollateralsAddresses, tokensMetadata, tokensPrices],
+  )
 
   return (
     <CollateralScreeenWrapper>
@@ -328,7 +335,7 @@ export const AddCollateralScreen = () => {
                       className="tooltip"
                     />
                   </div>
-                  <CommaNumber value={collateralBalance} decimalsToShow={0} className="value" />
+                  <CommaNumber value={totalCollateralValue} decimalsToShow={0} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">

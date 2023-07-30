@@ -1,22 +1,14 @@
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableHeaderCell,
-  TableRow,
-  TableScrollable,
-} from 'app/App.components/Table'
+import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
 } from 'providers/TokensProvider/helpers/tokens.utils'
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { ADD_COLLATERAL_SCREEN_ID } from '../helpers/createNewVault.consts'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { useCreateVaultContext } from '../context/createVaultModalContext'
@@ -27,12 +19,12 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { convertNumberForClient, convertNumberForContractCall } from 'utils/calcFunctions'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import { getVaultCollateralRatio, reduceVaultsAssets } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { ConfirmationScreenWrapper } from '../createNewVault.style'
@@ -43,16 +35,13 @@ import { checkNan } from 'utils/checkNan'
 import { useBorrowInputData } from '../components/useBorrowInputData'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { NewVaultType } from '../helpers/createNewVault.types'
-import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
-import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
 
 export const ConfirmationScreen = () => {
   const {
     contractAddresses: { lendingControllerAddress },
     preferences: { themeSelected },
   } = useDappConfigContext()
-  const { allVaultsIds, vaultsMapper, myVaultsIds, changeVaultsSubscriptionsList } = useVaultsContext()
-  console.log(myVaultsIds, myVaultsIds)
+  const { vaultsMapper } = useVaultsContext()
   const { choosenBaker } = useXtzBakersForDD()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress } = useUserContext()
@@ -69,25 +58,12 @@ export const ConfirmationScreen = () => {
   } = useCreateVaultContext()
   const {
     config: { daoFee },
-    changeLoansSubscriptionsList,
   } = useLoansContext()
 
   const currentVault = vaultsMapper[(newVault as NewVaultType).address]
   const vaultData = useFullVault(currentVault)
 
-  // useEffect(() => {
-  //   changeLoansSubscriptionsList({
-  //     [LOANS_MARKETS_DATA]: true,
-  //   })
-  //   changeVaultsSubscriptionsList({
-  //     [VAULTS_DATA]: VAULTS_ALL,
-  //   })
-
-  //   return () => {
-  //     changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
-  //     changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
-  //   }
-  // }, [])
+  console.log(vaultData)
 
   const {
     collateralBalance: currentCollateralBalance = 0,
@@ -98,6 +74,7 @@ export const ConfirmationScreen = () => {
   } = vaultData ?? {}
 
   const { inputData, rate, symbol } = useBorrowInputData(borrowedTokenAddress, originalBorrowCapacity)
+  console.log(inputData)
   const inputAmount = checkNan(parseFloat(inputData.amount))
 
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
@@ -110,18 +87,6 @@ export const ConfirmationScreen = () => {
 
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [currentCollateralBalance, currentBorrowedAmount, inputAmount, rate, borrowCapacity])
-
-  // TODO add sub
-  const { assetsBalances } = useMemo(() => {
-    const { assetsBalances, globalVaultTVL, ...restVaultsStats } = reduceVaultsAssets(
-      allVaultsIds,
-      vaultsMapper,
-      tokensMetadata,
-      tokensPrices,
-    )
-
-    return { assetsBalances, globalVaultTVL, ...restVaultsStats }
-  }, [allVaultsIds, tokensMetadata, tokensPrices, vaultsMapper])
 
   // deposit action ----------------------------------------------
   const depositAction = useCallback(async () => {
@@ -189,17 +154,18 @@ export const ConfirmationScreen = () => {
 
   const totalCollateralDepositedValue = useMemo(
     () =>
-      assetsBalances.reduce<number>((acc, { balance, tokenAddress }) => {
+      selectedCollateralsAddresses.reduce<number>((acc, address) => {
+        const { tokenAddress, amount } = selectedCollaterals[address]
         const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
         if (!token || !token.rate) return acc
 
-        const { rate, decimals } = token
+        const { rate } = token
 
-        const convertedBalance = convertNumberForClient({ number: balance, grade: decimals }) * rate
+        const convertedBalance = Number(amount) * rate
 
         return acc + convertedBalance
       }, 0),
-    [assetsBalances, tokensMetadata, tokensPrices],
+    [selectedCollaterals, selectedCollateralsAddresses, tokensMetadata, tokensPrices],
   )
 
   const isAddCollateralContinueDisabled = Boolean(
@@ -242,48 +208,43 @@ export const ConfirmationScreen = () => {
               />
             </ThreeLevelListItem>
           </div>
-          <TableScrollable bodyHeight={108} className="stats-table-wrapper scroll-block">
-            <Table>
-              <TableHeader className="treasury">
-                <TableRow>
-                  <TableHeaderCell>Asset</TableHeaderCell>
-                  <TableHeaderCell>Amount</TableHeaderCell>
-                  <TableHeaderCell contentPosition="right">USD Value</TableHeaderCell>
-                </TableRow>
-              </TableHeader>
+          <Table>
+            <TableHeader className="treasury">
+              <TableRow>
+                <TableHeaderCell>Asset</TableHeaderCell>
+                <TableHeaderCell>Amount</TableHeaderCell>
+                <TableHeaderCell contentPosition="right">USD Value</TableHeaderCell>
+              </TableRow>
+            </TableHeader>
 
-              <TableBody className="treasury">
-                {assetsBalances.map(({ balance, tokenAddress }) => {
-                  const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
-                  if (!token || !token.rate) return null
+            <TableBody className="treasury">
+              {selectedCollateralsAddresses.map((address) => {
+                const { tokenAddress, amount } = selectedCollaterals[address]
+                const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                if (!token || !token.rate) return null
 
-                  const { symbol, rate, decimals } = token
+                const { symbol, rate, decimals } = token
 
-                  const convertedBalance = convertNumberForClient({ number: balance, grade: decimals })
+                const balance = Number(amount)
 
-                  return (
-                    <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
-                      <TableCell width="33%">{symbol}</TableCell>
-                      <TableCell width="33%">
-                        <CommaNumber
-                          value={convertedBalance}
-                          decimalsToShow={Number(decimals)}
-                          useAccurateParsing={balance < 1}
-                        />
-                      </TableCell>
-                      <TableCell width="33%" contentPosition="right">
-                        <CommaNumber
-                          value={convertedBalance * rate}
-                          beginningText={rate ? '$' : symbol}
-                          useAccurateParsing={balance < 1}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-            </Table>
-          </TableScrollable>
+                return (
+                  <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
+                    <TableCell width="33%">{symbol}</TableCell>
+                    <TableCell width="33%">
+                      <CommaNumber value={balance} decimalsToShow={Number(decimals)} useAccurateParsing={balance < 1} />
+                    </TableCell>
+                    <TableCell width="33%" contentPosition="right">
+                      <CommaNumber
+                        value={balance * rate}
+                        beginningText={rate ? '$' : symbol}
+                        useAccurateParsing={balance < 1}
+                      />
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
         </VaultOverview>
       </div>
 

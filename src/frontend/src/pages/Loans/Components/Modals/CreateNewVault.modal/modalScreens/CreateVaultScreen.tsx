@@ -119,7 +119,7 @@ export const CreateVaultScreen = ({ marketTokenAddress, setCreatedVaultAddress }
   const handleButtonClick = async () => {
     await sleep(3000)
     updateNewVault({
-      address: 'KT1UCFPPgutMkkt3xBpSyAxH6piRjzxyiyiz',
+      address: 'KT1EHszxHZxywLNPK6tWN2PQMDnsa51VB4aN',
       id: 148,
     })
 

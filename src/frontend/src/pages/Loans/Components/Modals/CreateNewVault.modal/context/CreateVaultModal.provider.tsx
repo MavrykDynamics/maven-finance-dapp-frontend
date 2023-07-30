@@ -75,7 +75,7 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
 
         return (acc += Number(amount) * Number(rate))
       }, 0) / 2,
-    [],
+    [modalState.selectedCollaterals, modalState.selectedCollateralsAddresses, tokensMetadata, tokensPrices],
   )
   const borrowCapacity = useMemo(
     () => Math.min(Math.max(collateralsBalance, data?.avaliableLiquidity ?? 0, 0)),

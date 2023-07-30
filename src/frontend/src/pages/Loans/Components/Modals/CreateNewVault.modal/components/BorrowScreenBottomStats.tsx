@@ -22,7 +22,7 @@ export const BorrowScreenBottomStats = (props: BorrowScreenBottomStatsProps) => 
   const { headerText, inputAmount, assetDecimalsToShow, daoFee, futureCollateralRatio, futureBorrowCapacity } = props
 
   return (
-    <div className="borrow-screen-bottom-stats">
+    <div className="screen-bottom-stats">
       <div className="block-name">{headerText}</div>
       <VaultOverview>
         <div className="line">

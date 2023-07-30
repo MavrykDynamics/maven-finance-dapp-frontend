@@ -81,12 +81,6 @@ export const BorrowScreenWrapper = styled.div`
     margin-bottom: 30px;
   }
 
-  .borrow-screen-bottom-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-  }
-
   .borrow-screen-input-wrapper {
     margin-bottom: 40px;
   }
