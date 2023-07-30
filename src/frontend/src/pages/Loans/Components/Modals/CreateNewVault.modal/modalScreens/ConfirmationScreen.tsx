@@ -31,8 +31,6 @@ import { ConfirmationScreenWrapper } from '../createNewVault.style'
 import colors from 'styles/colors'
 import { BorrowScreenBottomStats } from '../components/BorrowScreenBottomStats'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
-import { checkNan } from 'utils/checkNan'
-import { useBorrowInputData } from '../components/useBorrowInputData'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { NewVaultType } from '../helpers/createNewVault.types'
 
@@ -55,6 +53,7 @@ export const ConfirmationScreen = () => {
     newVault,
     closePopup,
     borrowCapacity,
+    finalBorrowInputData,
   } = useCreateVaultContext()
   const {
     config: { daoFee },
@@ -63,19 +62,13 @@ export const ConfirmationScreen = () => {
   const currentVault = vaultsMapper[(newVault as NewVaultType).address]
   const vaultData = useFullVault(currentVault)
 
-  console.log(vaultData)
-
   const {
     collateralBalance: currentCollateralBalance = 0,
     borrowedAmount: currentBorrowedAmount = 0,
     name,
-    borrowedTokenAddress = '',
-    borrowCapacity: originalBorrowCapacity = 0,
   } = vaultData ?? {}
 
-  const { inputData, rate, symbol } = useBorrowInputData(borrowedTokenAddress, originalBorrowCapacity)
-  console.log(inputData)
-  const inputAmount = checkNan(parseFloat(inputData.amount))
+  const { amount: inputAmount, rate, symbol } = finalBorrowInputData
 
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = getVaultCollateralRatio(

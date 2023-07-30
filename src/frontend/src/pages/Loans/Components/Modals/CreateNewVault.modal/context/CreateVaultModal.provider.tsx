@@ -3,6 +3,7 @@ import { createVaultModalContext } from './createVaultModalContext'
 import {
   CreateNewModalProps,
   CreateVaultModalState,
+  FinalBorrowInputDataType,
   NewVaultType,
   ScreenType,
   SelectedCollateralsType,
@@ -63,6 +64,13 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
     }))
   }
 
+  const setFinalBorrowInputAmount = ({ amount, rate, symbol }: FinalBorrowInputDataType) => {
+    setModalState((prev) => ({
+      ...prev,
+      finalBorrowInputData: { amount: prev.finalBorrowInputData.amount + amount, rate, symbol },
+    }))
+  }
+
   const collateralsBalance = useMemo(
     () =>
       modalState.selectedCollateralsAddresses.reduce((acc, collateralAddress) => {
@@ -92,6 +100,7 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
       updateNewVault,
       updateSelectedCollaterals,
       closePopup,
+      setFinalBorrowInputAmount,
       data,
       show,
       collateralsBalance,

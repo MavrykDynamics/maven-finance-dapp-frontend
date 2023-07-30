@@ -30,6 +30,12 @@ export type SelectedCollateralsType = Record<
   { tokenAddress: TokenAddressType; amount: string; validation: InputStatusType }
 >
 
+export type FinalBorrowInputDataType = {
+  amount: number
+  symbol: string
+  rate: number
+}
+
 // create vault modal context
 export type CreateVaultModalState = {
   screenToShow: ScreenType
@@ -39,6 +45,7 @@ export type CreateVaultModalState = {
   isVaultCreating: boolean
   newVault: NewVaultType | null
   hasXTZTokenSelected: string | undefined
+  finalBorrowInputData: FinalBorrowInputDataType
 }
 
 export type CreateVaultModalContext = CreateVaultModalState &
@@ -49,6 +56,7 @@ export type CreateVaultModalContext = CreateVaultModalState &
     updateVaultCreating: (value: boolean) => void
     updateNewVault: (newVault: NewVaultType) => void
     updateSelectedCollaterals: (selectedCollaterals: SelectedCollateralsType) => void
+    setFinalBorrowInputAmount: (args: FinalBorrowInputDataType) => void
     collateralsBalance: number
     borrowCapacity: number
   }

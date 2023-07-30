@@ -33,7 +33,7 @@ export const BorrowScreen = () => {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
 
-  const { newVault, updateScreenToShow, borrowCapacity } = useCreateVaultContext()
+  const { newVault, updateScreenToShow, borrowCapacity, setFinalBorrowInputAmount } = useCreateVaultContext()
   const { vaultsMapper } = useVaultsContext()
   const {
     config: { daoFee },
@@ -132,6 +132,7 @@ export const BorrowScreen = () => {
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={() => {
+            setFinalBorrowInputAmount({ amount: inputAmount, symbol, rate })
             clearData()
             updateScreenToShow(CONFIRMATION_SCREEN_ID)
           }}

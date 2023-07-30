@@ -16,6 +16,11 @@ export const DEFAULT_CREATE_VAULT_STATE: CreateVaultModalState = {
   selectedCollateralsAddresses: [],
   newVault: null,
   hasXTZTokenSelected: undefined,
+  finalBorrowInputData: {
+    amount: 0,
+    symbol: '',
+    rate: 0,
+  },
 }
 
 export const screenTitles = {
