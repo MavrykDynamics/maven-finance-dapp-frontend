@@ -86,7 +86,7 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
   }
 
   .collateral-list-wrapper-for-overflow {
-    height: 250px;
+    height: 280px; /*add additional 20px cuz of mb space, cuz list is positioned as absolute*/
     position: relative;
   }
 
@@ -94,8 +94,8 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
+    min-height: 77px;
     row-gap: 50px;
-    min-height: 100px;
     margin-bottom: 20px;
   }
 

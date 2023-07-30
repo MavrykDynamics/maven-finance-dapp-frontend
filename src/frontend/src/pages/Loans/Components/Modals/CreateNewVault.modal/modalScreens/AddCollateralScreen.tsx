@@ -193,16 +193,17 @@ export const AddCollateralScreen = () => {
 
   // collateral-list-overflow
 
+  const isContainingTwoCollaterals = selectedCollateralsAddresses.length > 2
+
   return (
     <div>
       <div>
         <div className="block-name">Select Collateral Asset and Amount</div>
-        <div
-          className={classNames({ 'collateral-list-wrapper-for-overflow': selectedCollateralsAddresses.length > 2 })}
-        >
+        <div className={classNames({ 'collateral-list-wrapper-for-overflow': isContainingTwoCollaterals })}>
           <div
             className={classNames('collateral-list', 'scroll-block', {
-              'collateral-list-overflow': selectedCollateralsAddresses.length > 2,
+              'collateral-list-overflow': isContainingTwoCollaterals,
+              // 'mb-20': isContainingTwoCollaterals,
             })}
           >
             {selectedCollateralsAddresses.map((collateralAddress, idx) => {
