@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useHistory, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { apolloClient } from 'apollo'
 
 // const
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
@@ -11,6 +10,7 @@ import {
   DEFAULT_LOANS_ACTIVE_SUBS,
   LOANS_CONFIG,
 } from 'providers/LoansProvider/helpers/loans.const'
+import { FatalError } from 'errors/error'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -41,6 +41,7 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
@@ -59,8 +60,9 @@ export const Market = () => {
     tabId: string
   }>()
 
+  const { apolloClient } = useApolloContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { bug } = useToasterContext()
+  const { fatal } = useToasterContext()
   const { myVaultsIds, vaultsMapper, isLoading: isVaultsLoading, changeVaultsSubscriptionsList } = useVaultsContext()
   const {
     allMarketsAddresses,
@@ -72,7 +74,6 @@ export const Market = () => {
   } = useLoansContext()
 
   const [isMarketExistanseLoading, setIsMarketExistanseLoading] = useState(false)
-  const [marketAddressError, setMarketAddressError] = useState(false)
 
   useEffect(() => {
     changeLoansSubscriptionsList({
@@ -89,17 +90,13 @@ export const Market = () => {
     }
   }, [])
 
-  const handleCheckMarketExistanseError = (msg: string) => {
-    bug(msg)
-    setMarketAddressError(true)
-  }
-
   // check whether market exists, cuz address is stored in url and user can change it
   useLayoutEffect(() => {
-    if (currentMarketAddress && marketsMapper[currentMarketAddress]) return
+    if (currentMarketAddress && marketsMapper[currentMarketAddress]) {
+      setMarketAddressToSubscribe(currentMarketAddress)
+      return
+    }
 
-    // renew error flag
-    setMarketAddressError(false)
     setIsMarketExistanseLoading(true)
 
     const checkWhetherMarketExists = async () => {
@@ -116,9 +113,9 @@ export const Market = () => {
           return
         }
 
-        handleCheckMarketExistanseError(`Market with address "${currentMarketAddress}" does not exist`)
+        fatal(new FatalError(`Market with address "${currentMarketAddress}" does not exist`))
       } catch (e) {
-        handleCheckMarketExistanseError('Loading market error, please, try to reload page')
+        fatal(new FatalError('Loading market error, please, try to reload page'))
       } finally {
         setIsMarketExistanseLoading(false)
       }
@@ -234,12 +231,12 @@ export const Market = () => {
 
       {marketPagination}
 
-      {(isLoansLoading || isVaultsLoading || isMarketExistanseLoading) && !marketAddressError ? (
+      {isLoansLoading || isVaultsLoading || isMarketExistanseLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading {loanToken?.symbol ?? currentMarketAddress} market</div>
         </DataLoaderWrapper>
-      ) : selectedMarket && loanToken && loanToken.rate && !marketAddressError ? (
+      ) : selectedMarket && loanToken && loanToken.rate ? (
         <MarketStyled>
           <div className="gen-info">
             <div className="asset-info">

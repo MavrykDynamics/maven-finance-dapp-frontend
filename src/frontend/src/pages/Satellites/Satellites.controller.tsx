@@ -76,7 +76,7 @@ const Satellites = () => {
       {!isSatellite && getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 ? (
         <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
       ) : null}
-      <PageContent>
+      <PageContent className="mt-30">
         <SatellitesOverviewStyled>
           <InfoBlockWrapper>
             <SatelliteGovernanceStatsInfo>

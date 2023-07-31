@@ -11,6 +11,8 @@ export const tokenMetadataSchema = z.object({
   decimals: z.string(),
 })
 
+export type TokenIndexerMetadataType = z.infer<typeof tokenMetadataSchema>
+
 export const mTokenMetadataSchema = z.object({
   assets: z.array(
     z.object({

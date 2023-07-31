@@ -1,4 +1,4 @@
-import { UserContextStateType } from '../user.provider.types'
+import { UserContextStateType, userTzKtTokenBalances } from '../user.provider.types'
 
 export const DEFAULT_USER_AVATAR = '/images/default-avatar.png'
 
@@ -26,6 +26,12 @@ export const DEFAULT_USER: UserContextStateType = {
   userTokensBalances: {},
   userMTokens: {},
   farmAccounts: [],
+  availableProposalRewards: [],
+}
+
+export const DEFAULT_USER_TZKT_TOKENS: userTzKtTokenBalances = {
+  userAddress: null,
+  tokens: {},
 }
 
 // CONSTS FOR USER ACTIONS

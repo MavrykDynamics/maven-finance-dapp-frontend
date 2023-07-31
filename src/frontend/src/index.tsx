@@ -3,10 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { Provider as ReduxProvider } from 'react-redux'
 import { ThemeProvider } from 'styled-components'
-import { ApolloProvider } from '@apollo/client'
-
-// apollo
-import { apolloClient } from './apollo'
+import { ApolloProvider } from 'providers/ApolloProvider/apollo.provider'
 
 // utils
 import reportWebVitals from './reportWebVitals'
@@ -25,6 +22,7 @@ import DappConfigProvider, {
 import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider'
 import LoansProvider from 'providers/LoansProvider/loans.provider'
 import DoormanProvider from 'providers/DoormanProvider/doorman.provider'
+import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
 import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
 
@@ -48,11 +46,9 @@ const DappLibsProviders = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey} language="en">
-      <ApolloProvider client={apolloClient}>
-        <ReduxProvider store={store}>
-          <Router>{children}</Router>
-        </ReduxProvider>
-      </ApolloProvider>
+      <ReduxProvider store={store}>
+        <Router>{children}</Router>
+      </ReduxProvider>
     </GoogleReCaptchaProvider>
   )
 }
@@ -79,9 +75,12 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
   const { isLoading: isDappGeneralLoading } = useDappConfigContext()
   const { isLoading: isTokensLoading } = useTokensContext()
   const { isLoading: isFeedsLoading } = useDataFeedsContext()
-  const { isLoading: isUserLoading } = useUserContext()
+  const { isLoading: isUserLoading, isRunnedInitialConnect } = useUserContext()
 
-  const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isUserLoading
+  // use user loading status only on dapp init loading
+  const isInitialUserLoading = !isRunnedInitialConnect ? isUserLoading : false
+
+  const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isInitialUserLoading
 
   return (
     <>
@@ -109,9 +108,11 @@ const AppContainer = () => {
 
   return (
     <>
-      <GlobalStyle />
-      <ToasterMessages />
-      <App />
+      <LoansPopupsProvider>
+        <GlobalStyle />
+        <ToasterMessages />
+        <App />
+      </LoansPopupsProvider>
     </>
   )
 }
@@ -120,11 +121,13 @@ export const Root = () => {
   return (
     <DappLibsProviders>
       <ToasterProvider>
-        <InitialDataDappProviders>
-          <DappSectionsDataProviders>
-            <AppContainer />
-          </DappSectionsDataProviders>
-        </InitialDataDappProviders>
+        <ApolloProvider>
+          <InitialDataDappProviders>
+            <DappSectionsDataProviders>
+              <AppContainer />
+            </DappSectionsDataProviders>
+          </InitialDataDappProviders>
+        </ApolloProvider>
       </ToasterProvider>
     </DappLibsProviders>
   )

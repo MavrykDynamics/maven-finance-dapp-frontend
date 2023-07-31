@@ -126,7 +126,7 @@ export const WithdrawCollateral = ({
     collateralTokenAddress = '',
   } = data ?? {}
 
-  const { rate: originalCollateralRate, decimals, name, icon } = collateralToken ?? {}
+  const { rate: originalCollateralRate, decimals, name, icon, symbol } = collateralToken ?? {}
   const collateralRate = originalCollateralRate ?? 0
   const userCollateralBalance = getUserTokenBalanceByAddress({
     userTokensBalances,
@@ -280,7 +280,7 @@ export const WithdrawCollateral = ({
               }}
               settings={{
                 balance: userCollateralBalance,
-                balanceAsset: name,
+                balanceAsset: symbol,
                 useMaxHandler: () =>
                   inputOnChangeHandle(
                     getLoansInputMaxAmount(currentCollateralToWithdraw, decimals),
@@ -292,7 +292,7 @@ export const WithdrawCollateral = ({
               }}
             >
               <InputPinnedTokenInfo>
-                <ImageWithPlug imageLink={icon} alt={`${name} icon`} /> {name}
+                <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
               </InputPinnedTokenInfo>
             </Input>
           ) : null}

@@ -77,7 +77,7 @@ export const errorDescDefaultTextWhenError = (
   <>
     A significant error has been encountered, please take a look at our{' '}
     <a href="https://mavryk.finance/litepaper" target="_blank" rel="noreferrer">
-      Docs
+      Docs{' '}
     </a>
     or reach out to us through our{' '}
     <a href="https://discord.com/invite/7VXPR4gkT6" target="_blank" rel="noreferrer">

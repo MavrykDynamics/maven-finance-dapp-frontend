@@ -52,7 +52,7 @@ export const AccordionContent = styled.div<{ theme: MavrykTheme }>`
   &.expanded {
     opacity: 1;
     max-height: 185px;
-    margin-top: 10px;
+    margin-top: 20px;
   }
 
   &::-webkit-scrollbar-track {
@@ -77,7 +77,7 @@ export const AccordionContent = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const AccordionItem = styled.div<{ status: boolean; theme: MavrykTheme }>`
-  font-weight: 400;
+  font-weight: 500;
   font-size: 14px;
   margin: 5px 0;
   color: ${({ status, theme }) => (status ? theme.downColor : theme.upColor)};
