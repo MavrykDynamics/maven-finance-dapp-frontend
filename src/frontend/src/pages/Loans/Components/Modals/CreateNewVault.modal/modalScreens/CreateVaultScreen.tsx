@@ -95,7 +95,7 @@ export const CreateVaultScreen = ({ marketTokenAddress, setCreatedVaultAddress }
       },
       isSilentAction: true,
     }),
-    [createVaultAction, getNewVaultData],
+    [createVaultAction, getNewVaultData, updateVaultCreating],
   )
 
   const { action: createVaultHandler } = useContractAction(createVaultActionProps)
@@ -117,15 +117,16 @@ export const CreateVaultScreen = ({ marketTokenAddress, setCreatedVaultAddress }
   }
 
   const handleButtonClick = async () => {
-    await sleep(3000)
-    updateNewVault({
-      address: 'KT1EHszxHZxywLNPK6tWN2PQMDnsa51VB4aN',
-      id: 148,
-    })
+    // await sleep(3000)
+    // updateNewVault({
+    //   address: 'KT1RyJznnuhSYP7aLJS8YHmcgumap2D2jhqC',
+    //   id: 358,
+    // })
 
-    await sleep(1000)
+    // await sleep(1000)
+    // updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)
+    await createVaultHandler()
     updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)
-    // createVaultHandler()
   }
 
   return (

@@ -19,7 +19,7 @@ import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import NewButton from 'app/App.components/Button/NewButton'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { CONFIRMATION_SCREEN_ID } from '../helpers/createNewVault.consts'
+import { CONFIRMATION_SCREEN_ID, testVaults } from '../helpers/createNewVault.consts'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { BorrowScreenBottomStats } from '../components/BorrowScreenBottomStats'
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -39,7 +39,8 @@ export const BorrowScreen = () => {
     config: { daoFee },
   } = useLoansContext()
 
-  const currentVault = vaultsMapper[(newVault as NewVaultType).address]
+  const currentVault = testVaults[(newVault as NewVaultType).address]
+  // const currentVault = vaultsMapper[(newVault as NewVaultType).address]
   const vaultData = useFullVault(currentVault)
 
   const {

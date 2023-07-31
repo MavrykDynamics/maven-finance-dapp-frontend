@@ -9,7 +9,7 @@ import {
   getTokenDataByAddress,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import React, { useCallback, useMemo } from 'react'
-import { ADD_COLLATERAL_SCREEN_ID } from '../helpers/createNewVault.consts'
+import { ADD_COLLATERAL_SCREEN_ID, testVaults } from '../helpers/createNewVault.consts'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -59,7 +59,8 @@ export const ConfirmationScreen = () => {
     config: { daoFee },
   } = useLoansContext()
 
-  const currentVault = vaultsMapper[(newVault as NewVaultType).address]
+  const currentVault = testVaults[(newVault as NewVaultType).address]
+  // const currentVault = vaultsMapper[(newVault as NewVaultType).address]
   const vaultData = useFullVault(currentVault)
 
   const {
