@@ -35,18 +35,15 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
 
   const tokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: loanToken.address })
 
-  const convertedLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
-  const convertedInterestEarned = convertNumberForClient({ number: interestEarned, grade: decimals })
-
   return (
     <LoansValuesSection className="lending-tab">
       <H2Title>Your Earn Position</H2Title>
 
       <div className="stats">
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber value={convertedLendValue} className="value" showDecimal decimalsToShow={decimals} />
+          <CommaNumber value={lendValue} className="value" showDecimal decimalsToShow={decimals} />
 
-          <CommaNumber value={convertedLendValue * rate} beginningText="$" className="rate" showDecimal />
+          <CommaNumber value={lendValue * rate} beginningText="$" className="rate" showDecimal />
 
           <div className="name">
             Supplied Amount
@@ -55,9 +52,9 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber value={convertedInterestEarned} className="value" showDecimal decimalsToShow={decimals} />
+          <CommaNumber value={interestEarned} className="value" showDecimal decimalsToShow={decimals} />
 
-          <CommaNumber value={convertedInterestEarned * rate} beginningText="$" className="rate" showDecimal />
+          <CommaNumber value={interestEarned * rate} beginningText="$" className="rate" showDecimal />
 
           <div className="name">
             Interest Earned
@@ -75,12 +72,7 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo>
-          <CommaNumber
-            value={convertNumberForClient({ number: lendValue, grade: decimals })}
-            className="value"
-            showDecimal
-            decimalsToShow={decimals}
-          />
+          <CommaNumber value={lendValue} className="value" showDecimal decimalsToShow={decimals} />
 
           <div className="name margin-top">
             m{symbol} Balance

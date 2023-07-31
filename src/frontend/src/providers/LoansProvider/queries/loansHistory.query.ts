@@ -65,9 +65,7 @@ export function getLoansHistorySubscription({
   typeFilter?: Array<number>
 }): DocumentNode | TypedDocumentNode<GetLoansHistoryForMarketDataSubscription, OperationVariables> {
   const filterUserCondition = userAddress ? `sender: {address: {_eq: $userAddress}}` : `sender: {address: {_neq: ""}}`
-  const filterVaultCondition = vaultAddress
-    ? `vault: { vault: {address: {_eq: $vaultAddress}}}`
-    : `vault: { vault: {address: {_neq: ""}}}`
+  const filterVaultCondition = vaultAddress ? `vault: { vault: {address: {_eq: $vaultAddress}}}` : ''
   const filterTypeCondition = typeFilter
     ? `type: {_in: $typeFilter}`
     : `type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}`

@@ -274,11 +274,7 @@ export const Loans = () => {
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Total Earned</div>
-                        <CommaNumber
-                          value={convertNumberForClient({ number: interestEarned, grade: decimals })}
-                          className="value"
-                          beginningText="$"
-                        />
+                        <CommaNumber value={interestEarned} className="value" beginningText="$" />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Suppliers</div>
@@ -289,7 +285,7 @@ export const Loans = () => {
                         <CommaNumber value={utilisationRate} className="value" endingText="%" />
                       </ThreeLevelListItem>
                       <Link to={{ pathname: `/loans/${address}/${LEND_TAB_ID}`, state: { from: '/loans' } }}>
-                        <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
+                        <Button text="Earn" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                       </Link>
                     </div>
                     <div className="row">

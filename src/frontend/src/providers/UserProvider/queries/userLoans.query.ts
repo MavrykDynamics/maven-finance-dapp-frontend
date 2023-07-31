@@ -26,7 +26,7 @@ export const GET_USER_LOANS_DATA = gql(`
         }
       }
 
-      lending_controller_vaults(where: { lending_controller: { mock_time: { _eq: false } } }) {
+      lending_controller_vaults(where: { lending_controller: { mock_time: { _eq: false }}, open: {_eq: true}}) {
         collateral_balances {
           balance
           collateral_token {
