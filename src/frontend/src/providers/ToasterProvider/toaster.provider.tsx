@@ -72,6 +72,7 @@ export default class ToasterProvider extends React.Component<Props, State> {
    */
   componentDidCatch(error: Error): void {
     this.addToasterMessage('', error.message, TOASTER_ERROR)
+    this.fatal(new FatalError(error))
   }
 
   addToasterMessage = (title: string, message: string, type: ToasterTypes): string => {

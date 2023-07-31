@@ -27,15 +27,18 @@ import { UserActionHistory } from './UserOperationsHistory'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
-const SatelliteTab = () => {
-  const { userAddress, availableSatellitesRewards } = useUserContext()
+const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards: () => void }) => {
+  const { userAddress, availableProposalRewards } = useUserContext()
   const {
     satelliteMapper,
     proposalsAmount,
     satelliteGovActionsAmount,
     finRequestsAmount,
     setSatelliteAddressToSubsctibe,
+    isLoading: isSatellitesLoading,
   } = useSatellitesContext()
 
   useEffect(() => {
@@ -59,11 +62,6 @@ const SatelliteTab = () => {
     finRequestsAmount,
   })
 
-  // TODO: add valid data
-  const handleDistributeRewards = () => {
-    // TODO TAKE LOGIC FROM sATELLITEcARD COMPONENT FOR THIS CALLBACK FN
-  }
-
   return (
     <>
       <SatelliteStatusBlock>
@@ -73,15 +71,19 @@ const SatelliteTab = () => {
           <NewButton
             kind={BUTTON_PRIMARY}
             form={BUTTON_WIDE}
-            onClick={handleDistributeRewards}
-            // TODO:  we are waiting new Query for getting proposals
-            disabled={true || availableSatellitesRewards === 0}
+            onClick={distributeProposalRewards}
+            disabled={availableProposalRewards.length === 0}
           >
             <Icon id="loans" />
             Distribute Gov. Rewards
           </NewButton>
         </DashboardCardHeader>
-        {satelliteRecord ? (
+        {userAddress && isSatellitesLoading ? (
+          <DataLoaderWrapper margin="20px 0 0 0">
+            <ClockLoader width={75} height={75} />
+            <div className="text">Loading your satellite data</div>
+          </DataLoaderWrapper>
+        ) : satelliteRecord ? (
           <>
             <div className="container">
               <div className="grid-container">

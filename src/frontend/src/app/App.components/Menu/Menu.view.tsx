@@ -182,12 +182,19 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               {sidebarOpened ? 'MVK Faucet' : 'mvk'}
             </NewButton>
             <a
-              href="https://faucet.marigold.dev/ "
-              target="_blank"
-              rel="noreferrer"
+              // TODO: remove this cond when users will be able to use faucet
+              {...(true
+                ? {
+                    href: '#',
+                  }
+                : {
+                    href: 'https://faucet.marigold.dev/ ',
+                    target: '_blank',
+                    rel: 'noreferrer',
+                  })}
               className={sidebarOpened ? '' : 'small'}
             >
-              <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
+              <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin disabled>
                 {sidebarOpened ? ' Ghostnet Faucet' : 'GF'}
               </NewButton>
             </a>

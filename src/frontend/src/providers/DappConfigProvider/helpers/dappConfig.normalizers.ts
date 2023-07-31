@@ -55,7 +55,6 @@ export const normalizerMaxLenghts = (data: GetMaxlenghtsQueryQuery): DappMaxLeng
 
 export const normalizeContractAddresses = (data: GetContractAddressesQueryQuery) => {
   return {
-    farmsAddress: data.farm[0].address,
     farmsFactoryAddress: data.farm_factory[0].address,
     delegationAddress: data.delegation[0].address,
     doormanAddress: data.doorman[0].address,
@@ -65,7 +64,7 @@ export const normalizeContractAddresses = (data: GetContractAddressesQueryQuery)
     emergencyGovernanceAddress: data.emergency_governance[0].address,
     breakGlassAddress: data.break_glass[0].address,
     councilAddress: data.council[0].address,
-    treasuryAddress: data.mvk_token[0].address, // { address: storage?.delegation?.[0]?.address },
+    treasuryAddress: data.mvk_token[0].address,
     treasuryFactoryAddress: data.treasury_factory[0].address,
     vestingAddress: data.vesting[0].address,
     governanceSatelliteAddress: data.governance_satellite[0].address,

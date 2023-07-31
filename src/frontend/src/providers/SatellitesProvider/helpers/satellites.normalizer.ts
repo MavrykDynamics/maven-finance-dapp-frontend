@@ -108,14 +108,10 @@ export const normallizeSatellite = (satelliteRecord: SatelliteDataSubSubscriptio
     const satelliteUser = satelliteRecord.user
     const lastVotedProposal = satelliteUser.lastVotedProposal[0]
 
-    const totalVotingPower =
-      satelliteUser.governance_satellite_snapshots[0].cycle ===
-      satelliteUser.governance_satellite_snapshots[0].governance.cycle_id
-        ? convertNumberForClient({
-            number: satelliteUser.governance_satellite_snapshots?.[0]?.total_voting_power ?? 0,
-            grade: MVK_DECIMALS,
-          })
-        : 0
+    const totalVotingPower = convertNumberForClient({
+      number: satelliteUser.governance_satellite_snapshots?.[0]?.total_voting_power ?? 0,
+      grade: MVK_DECIMALS,
+    })
 
     const { sMVKRewards, XTZRewards, participatedFeeds } = getSatelliteOracleRewards(
       satelliteUser['aggregator_oracles'],
@@ -189,6 +185,7 @@ export const normalizeSatellitesLedger = (store: SatelliteDataSubSubscription) =
   return store.satellite.reduce<{
     satelliteMapper: Record<string, SatelliteRecordType>
     activeSatellitesIds: string[]
+    allSatellitesIds: string[]
     oraclesIds: string[]
   }>(
     (acc, satelliteRecord) => {
@@ -197,6 +194,8 @@ export const normalizeSatellitesLedger = (store: SatelliteDataSubSubscription) =
       if (!nomalizedSatellite) return acc
 
       acc.satelliteMapper[nomalizedSatellite.address] = nomalizedSatellite
+
+      acc.allSatellitesIds.push(nomalizedSatellite.address)
 
       if (nomalizedSatellite.currentlyRegistered && nomalizedSatellite.status === 0) {
         acc.activeSatellitesIds.push(nomalizedSatellite.address)
@@ -211,6 +210,7 @@ export const normalizeSatellitesLedger = (store: SatelliteDataSubSubscription) =
     {
       satelliteMapper: {},
       activeSatellitesIds: [],
+      allSatellitesIds: [],
       oraclesIds: [],
     },
   )

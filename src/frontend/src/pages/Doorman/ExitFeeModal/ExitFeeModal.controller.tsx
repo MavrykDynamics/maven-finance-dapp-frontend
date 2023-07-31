@@ -202,7 +202,7 @@ export const ExitFeeModal = ({
               disabled={inputData.validation !== INPUT_STATUS_SUCCESS || isActionActive}
               onClick={handleUnstake}
             >
-              <Icon id="success-fill" fill={containerColor} /> Proceed
+              <Icon id="doubleCheckmark" fill={containerColor} /> Proceed
             </NewButton>
 
             <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={closePopup}>

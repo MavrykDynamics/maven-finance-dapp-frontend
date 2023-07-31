@@ -39,7 +39,11 @@ import {
 import { EmptyContainer } from 'app/App.style'
 
 // consts
-import { SATELLITE_DATA_SUB, DEFAULT_SATELLITES_ACTIVE_SUBS } from 'providers/SatellitesProvider/satellites.const'
+import {
+  SATELLITE_DATA_SUB,
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITES_DATA_ORACLES_SUB,
+} from 'providers/SatellitesProvider/satellites.const'
 import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
 import {
   PAGINATION_SIDE_RIGHT,
@@ -56,7 +60,6 @@ import { parseDate } from 'utils/time'
 
 // actions
 import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
 
 const tabsList = [
@@ -86,7 +89,7 @@ const DataFeedDetails = () => {
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_ORACLES_SUB,
     })
 
     return () => {
@@ -329,9 +332,9 @@ const DataFeedDetails = () => {
 
               <FeedDetailsChartWrapper>
                 {isFeedsChartsLoading ? (
-                  <DataLoaderWrapper className="no-margin">
+                  <DataLoaderWrapper margin="0">
                     <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
-                    <div className="text">Loading feed history data...</div>
+                    <div className="text">Loading feed history data</div>
                   </DataLoaderWrapper>
                 ) : (
                   <Chart
@@ -351,7 +354,7 @@ const DataFeedDetails = () => {
             {isSatellitesLoading ? (
               <DataLoaderWrapper>
                 <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
-                <div className="text">Loading oracles data...</div>
+                <div className="text">Loading oracles data</div>
               </DataLoaderWrapper>
             ) : paginatedFeedsOracles.length ? (
               <div className={`oracles-list`}>

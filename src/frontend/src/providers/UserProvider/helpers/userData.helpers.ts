@@ -6,7 +6,11 @@ import { MVK_DECIMALS } from 'utils/constants'
 import { getUserDoomanRewards, getUserSatelliteRewards } from './userRewards.helpers'
 import { DEFAULT_USER_AVATAR } from './user.consts'
 
-export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataSubscription }): UserMetadataType => {
+export const normalizeUser = ({
+  indexerData,
+}: {
+  indexerData: GetUserDataSubscription
+}): Omit<UserMetadataType, 'availableProposalRewards'> => {
   const {
     delegations,
     stakes_history_data,

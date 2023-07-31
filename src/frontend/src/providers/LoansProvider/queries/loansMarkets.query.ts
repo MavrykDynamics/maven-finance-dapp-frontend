@@ -77,3 +77,15 @@ export const GET_LOANS_MARKET_ADDRESSES = gql(`
 		}
 	}
 `)
+
+export const CHECK_WHETHER_MARKET_EXISTS = gql(`
+query checkWitherMarketExists($marketAddress: String = "") {
+	lending_controller(where: {mock_time: {_eq: false}}) {
+		loan_tokens(where: {token: {token_address: {_eq: $marketAddress}}}) {
+			token {
+				token_address
+			}
+		}
+	}
+}
+`)

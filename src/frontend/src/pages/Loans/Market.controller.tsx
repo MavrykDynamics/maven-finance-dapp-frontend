@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useHistory, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 
@@ -10,6 +10,7 @@ import {
   DEFAULT_LOANS_ACTIVE_SUBS,
   LOANS_CONFIG,
 } from 'providers/LoansProvider/helpers/loans.const'
+import { FatalError } from 'errors/error'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -18,7 +19,6 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { BorrowingTab } from './Components/BorrowingTab'
 import { LendingTab } from './Components/LendingTab'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 
 // styles
 import { Page } from 'styles'
@@ -40,12 +40,15 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   VAULTS_DATA,
   VAULTS_USER_ALL,
 } from 'providers/VaultsProvider/vaults.provider.consts'
+import { CHECK_WHETHER_MARKET_EXISTS } from 'providers/LoansProvider/queries/loansMarkets.query'
 
 export const Market = () => {
   const history = useHistory<{ from?: string }>()
@@ -57,7 +60,9 @@ export const Market = () => {
     tabId: string
   }>()
 
+  const { apolloClient } = useApolloContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { fatal } = useToasterContext()
   const { myVaultsIds, vaultsMapper, isLoading: isVaultsLoading, changeVaultsSubscriptionsList } = useVaultsContext()
   const {
     allMarketsAddresses,
@@ -67,6 +72,8 @@ export const Market = () => {
     setMarketAddressToSubscribe,
     isLoading: isLoansLoading,
   } = useLoansContext()
+
+  const [isMarketExistanseLoading, setIsMarketExistanseLoading] = useState(false)
 
   useEffect(() => {
     changeLoansSubscriptionsList({
@@ -83,8 +90,38 @@ export const Market = () => {
     }
   }, [])
 
-  useEffect(() => {
-    setMarketAddressToSubscribe(currentMarketAddress)
+  // check whether market exists, cuz address is stored in url and user can change it
+  useLayoutEffect(() => {
+    if (currentMarketAddress && marketsMapper[currentMarketAddress]) {
+      setMarketAddressToSubscribe(currentMarketAddress)
+      return
+    }
+
+    setIsMarketExistanseLoading(true)
+
+    const checkWhetherMarketExists = async () => {
+      try {
+        const marketFromGql = await apolloClient.query({
+          query: CHECK_WHETHER_MARKET_EXISTS,
+          variables: {
+            marketAddress: currentMarketAddress ?? '',
+          },
+        })
+
+        if (marketFromGql.data.lending_controller[0]?.loan_tokens?.[0]?.token?.token_address === currentMarketAddress) {
+          setMarketAddressToSubscribe(currentMarketAddress)
+          return
+        }
+
+        fatal(new FatalError(`Market with address "${currentMarketAddress}" does not exist`))
+      } catch (e) {
+        fatal(new FatalError('Loading market error, please, try to reload page'))
+      } finally {
+        setIsMarketExistanseLoading(false)
+      }
+    }
+
+    checkWhetherMarketExists()
 
     return () => {
       setMarketAddressToSubscribe(null)
@@ -145,33 +182,7 @@ export const Market = () => {
     [myVaultsIds, currentMarketAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
   )
 
-  if (isLoansLoading || isVaultsLoading) {
-    return (
-      <Page>
-        <PageHeader page={'lending'} />
-        <DataLoaderWrapper>
-          <ClockLoader width={150} height={150} />
-          <div className="text">Loading {loanToken?.symbol ?? currentMarketAddress} market</div>
-        </DataLoaderWrapper>
-      </Page>
-    )
-  }
-
   const selectedMarket = currentMarketAddress ? marketsMapper[currentMarketAddress] : null
-
-  if (!selectedMarket || !loanToken || !loanToken.rate) {
-    return (
-      <Page>
-        <PageHeader page={'lending'} />
-        <EmptyContainer>
-          <img src="/images/not-found.svg" alt="No market to show" />
-          <figcaption>Market with address ({currentMarketAddress}) does not exist</figcaption>
-        </EmptyContainer>
-      </Page>
-    )
-  }
-
-  const { symbol, name, icon, decimals, rate } = loanToken
 
   const marketPagination = (
     <MarketPagination>
@@ -220,104 +231,131 @@ export const Market = () => {
 
       {marketPagination}
 
-      <MarketStyled>
-        <div className="gen-info">
-          <div className="asset-info">
-            <ImageWithPlug imageLink={icon} alt={`${icon} icon`} />
+      {isLoansLoading || isVaultsLoading || isMarketExistanseLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading {loanToken?.symbol ?? currentMarketAddress} market</div>
+        </DataLoaderWrapper>
+      ) : selectedMarket && loanToken && loanToken.rate ? (
+        <MarketStyled>
+          <div className="gen-info">
+            <div className="asset-info">
+              <ImageWithPlug imageLink={loanToken.icon} alt={`${loanToken.icon} icon`} />
 
-            <div className="text-wrapper">
-              <div className="symbol">{name}</div>
-              <div className="full-name">{symbol}</div>
+              <div className="text-wrapper">
+                <div className="symbol">{loanToken.name}</div>
+                <div className="full-name">{loanToken.symbol}</div>
+              </div>
             </div>
-          </div>
-          {tabId === LEND_TAB_ID ? (
-            <>
-              <ThreeLevelListItem>
-                <div className="name">Price</div>
-                <CommaNumber value={rate} beginningText="$" className="value" showDecimal decimalsToShow={4} />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Earn APY</div>
-                <CommaNumber value={selectedMarket.lendingAPY} endingText="%" className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Total Earning</div>
-                <CommaNumber
-                  value={convertNumberForClient({ number: selectedMarket.totalLended, grade: decimals })}
-                  beginningText="$"
-                  className="value"
-                />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Available Liquidity</div>
-                <CommaNumber
-                  value={
-                    Math.max(
-                      convertNumberForClient({ number: selectedMarket.availableLiquidity, grade: decimals }),
-                      0,
-                    ) * rate
-                  }
-                  beginningText="$"
-                  className="value"
-                />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Collateral Factor</div>
-                <CommaNumber value={collateralFactor} endingText="%" className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Suppliers</div>
-                <CommaNumber value={selectedMarket.suppliers} className="value" />
-              </ThreeLevelListItem>
-            </>
-          ) : (
-            <>
-              <ThreeLevelListItem>
-                <div className="name">Price</div>
-                <CommaNumber value={rate} beginningText="$" className="value" showDecimal decimalsToShow={4} />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Your Total Loan Balance</div>
-                <CommaNumber value={userTotalBorrowed} beginningText="$" className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Your Total Collateral</div>
-                <CommaNumber value={userTotalCollateral} beginningText="$" className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Your Total Accrued Interest</div>
-                <CommaNumber value={userAccruedInterest} beginningText="$" className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">
-                  Your Total Available Borrow
-                  <CustomTooltip
-                    iconId="info"
-                    text={USER_AVAILABLE_BORROW(currentMarketAddress)}
-                    defaultStrokeColor={colors[themeSelected].textColor}
-                    className="tooltip"
+            {tabId === LEND_TAB_ID ? (
+              <>
+                <ThreeLevelListItem>
+                  <div className="name">Price</div>
+                  <CommaNumber
+                    value={loanToken.rate}
+                    beginningText="$"
+                    className="value"
+                    showDecimal
+                    decimalsToShow={4}
                   />
-                </div>
-                <CommaNumber value={userAvailableBorrow} beginningText="$" className="value" />
-              </ThreeLevelListItem>
-            </>
-          )}
-        </div>
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Earn APY</div>
+                  <CommaNumber value={selectedMarket.lendingAPY} endingText="%" className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Total Earning</div>
+                  <CommaNumber
+                    value={convertNumberForClient({ number: selectedMarket.totalLended, grade: loanToken.decimals })}
+                    beginningText="$"
+                    className="value"
+                  />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Available Liquidity</div>
+                  <CommaNumber
+                    value={
+                      Math.max(
+                        convertNumberForClient({
+                          number: selectedMarket.availableLiquidity,
+                          grade: loanToken.decimals,
+                        }),
+                        0,
+                      ) * loanToken.rate
+                    }
+                    beginningText="$"
+                    className="value"
+                  />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Collateral Factor</div>
+                  <CommaNumber value={collateralFactor} endingText="%" className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Suppliers</div>
+                  <CommaNumber value={selectedMarket.suppliers} className="value" />
+                </ThreeLevelListItem>
+              </>
+            ) : (
+              <>
+                <ThreeLevelListItem>
+                  <div className="name">Price</div>
+                  <CommaNumber
+                    value={loanToken.rate}
+                    beginningText="$"
+                    className="value"
+                    showDecimal
+                    decimalsToShow={4}
+                  />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Your Total Loan Balance</div>
+                  <CommaNumber value={userTotalBorrowed} beginningText="$" className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Your Total Collateral</div>
+                  <CommaNumber value={userTotalCollateral} beginningText="$" className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Your Total Accrued Interest</div>
+                  <CommaNumber value={userAccruedInterest} beginningText="$" className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">
+                    Your Total Available Borrow
+                    <CustomTooltip
+                      iconId="info"
+                      text={USER_AVAILABLE_BORROW(currentMarketAddress)}
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                      className="tooltip"
+                    />
+                  </div>
+                  <CommaNumber value={userAvailableBorrow} beginningText="$" className="value" />
+                </ThreeLevelListItem>
+              </>
+            )}
+          </div>
 
-        {tabId === LEND_TAB_ID ? (
-          <LendingTab
-            loanMtokenAddress={selectedMarket.loanMTokenAddress}
-            loanTokenAddress={selectedMarket.loanTokenAddress}
-            lendAPY={selectedMarket.lendingAPY}
-          />
-        ) : null}
-        {tabId === BORROW_TAB_ID ? (
-          <BorrowingTab
-            loanTokenAddress={selectedMarket.loanTokenAddress}
-            marketAvaliableLiquidity={selectedMarket.availableLiquidity}
-          />
-        ) : null}
-      </MarketStyled>
+          {tabId === LEND_TAB_ID ? (
+            <LendingTab
+              loanMtokenAddress={selectedMarket.loanMTokenAddress}
+              loanTokenAddress={selectedMarket.loanTokenAddress}
+              lendAPY={selectedMarket.lendingAPY}
+            />
+          ) : null}
+          {tabId === BORROW_TAB_ID ? (
+            <BorrowingTab
+              loanTokenAddress={selectedMarket.loanTokenAddress}
+              marketAvaliableLiquidity={selectedMarket.availableLiquidity}
+            />
+          ) : null}
+        </MarketStyled>
+      ) : (
+        <EmptyContainer>
+          <img src="/images/not-found.svg" alt="No market to show" />
+          <figcaption>Market with address "{currentMarketAddress}" does not exist</figcaption>
+        </EmptyContainer>
+      )}
     </Page>
   )
 }

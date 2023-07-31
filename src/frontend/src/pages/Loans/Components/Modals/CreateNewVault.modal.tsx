@@ -69,8 +69,8 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 import { useUserVaultsNames } from 'providers/VaultsProvider/hooks/useVaultsNames'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { createVault } from 'providers/VaultsProvider/actions/vaults.actions'
-import { apolloClient } from 'apollo'
 import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 type CurrentActiveModalScreen =
   | typeof INITIAL_SCREEN_ID
@@ -91,6 +91,7 @@ export const CreateNewVault = ({
   show: boolean
   data: CreateVaultPopupDataType
 }) => {
+  const { apolloClient } = useApolloContext()
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const { bug } = useToasterContext()
   const { userTokensBalances, userAddress } = useUserContext()

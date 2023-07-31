@@ -27,6 +27,7 @@ import {
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITES_DATA_ACTIVE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
 import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
@@ -67,7 +68,7 @@ export const Dashboard = () => {
       [SMVK_HISTORY_SUB]: true,
     })
     changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_ACTIVE_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
     changeLoansSubscriptionsList({
