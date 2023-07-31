@@ -13,9 +13,8 @@ type LinkStyling = {
   navigationActiveLink?: boolean
 }
 
-type Props = Omit<LinkProps, 'to'> & {
+type Props = LinkProps & {
   children: React.ReactNode
-  href: string
   disabled?: boolean
   external?: boolean
   kind?: LinkKind
@@ -24,30 +23,27 @@ type Props = Omit<LinkProps, 'to'> & {
 
 export const CustomLink = ({
   children,
-  href,
+  to,
   styling = {},
   disabled = false,
-  external = false,
   kind = LinkWrapper,
   ...optionalLinkProps
 }: Props) => {
-  const requiredLinkProps = useMemo(() => {
-    if (disabled)
-      return {
-        to: '#',
-      }
+  const isExternalLink = to.toString().startsWith('http')
 
-    return {
-      to: href,
-      ...(external
+  const requiredLinkProps = useMemo(
+    () => ({
+      to,
+      ...(isExternalLink
         ? {
-            to: { pathname: href },
+            to: { pathname: to.toString() },
             target: '_blank',
             rel: 'noreferrer',
           }
         : {}),
-    }
-  }, [disabled, external, href])
+    }),
+    [isExternalLink, to],
+  )
 
   const linkClassNames = classNames(kind, { ...styling, disabled })
 

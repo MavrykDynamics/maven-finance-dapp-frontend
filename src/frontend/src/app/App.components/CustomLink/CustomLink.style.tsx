@@ -71,7 +71,11 @@ export const LinkStyled = styled.div<{ theme: MavrykTheme }>`
 
   &.disabled {
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.4;
+
+    a {
+      pointer-events: none;
+    }
   }
 
   &.navigationLink {

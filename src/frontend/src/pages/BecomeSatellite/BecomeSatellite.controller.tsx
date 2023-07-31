@@ -385,7 +385,7 @@ export const BecomeSatellite = () => {
                       text={
                         <>
                           You are currently delegated to satellite{' '}
-                          <CustomLink href={`/satellites/satellite-details/${satelliteMvkIsDelegatedTo}`}>
+                          <CustomLink to={`/satellites/satellite-details/${satelliteMvkIsDelegatedTo}`}>
                             <TzAddress
                               tzAddress={satelliteMvkIsDelegatedTo}
                               hasIcon={false}
@@ -407,8 +407,7 @@ export const BecomeSatellite = () => {
                   forgo all of the oracle rewards which are a major source of payments. For information on operating an
                   oracle node for your Satellite, please read more on Gitbook{' '}
                   <CustomLink
-                    href="https://mavryk.finance/litepaper#the-decentralized-oracle"
-                    external
+                    to="https://mavryk.finance/litepaper#the-decentralized-oracle"
                     styling={{ underline: true }}
                   >
                     here

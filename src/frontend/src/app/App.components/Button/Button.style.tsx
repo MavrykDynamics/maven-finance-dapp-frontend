@@ -21,7 +21,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   }
 
   &.disabled {
-    opacity: 0.6;
+    opacity: 0.4;
     cursor: not-allowed;
   }
 

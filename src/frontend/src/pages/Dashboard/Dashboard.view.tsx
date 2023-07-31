@@ -109,43 +109,43 @@ export const DashboardView = ({
 
       <div className="dashboard-navigation">
         <CustomLink
-          href={`/${LENDING_TAB_ID}`}
+          to={`/${LENDING_TAB_ID}`}
           styling={{ [activeTab === LENDING_TAB_ID ? 'navigationActiveLink' : 'navigationLink']: true }}
         >
           Earn/Borrow
         </CustomLink>
         <CustomLink
-          href={`/?tab=${VAULTS_TAB_ID}`}
+          to={`/?tab=${VAULTS_TAB_ID}`}
           styling={{ [activeTab === VAULTS_TAB_ID ? 'navigationActiveLink' : 'navigationLink']: true }}
         >
           Vaults
         </CustomLink>
         <CustomLink
-          href={`/?tab=${STAKING_TAB_ID}`}
+          to={`/?tab=${STAKING_TAB_ID}`}
           styling={{ [activeTab === STAKING_TAB_ID ? 'navigationActiveLink' : 'navigationLink']: true }}
         >
           Staking
         </CustomLink>
         <CustomLink
-          href={`/?tab=${SATELLITES_TAB_ID}`}
+          to={`/?tab=${SATELLITES_TAB_ID}`}
           styling={{ [activeTab === SATELLITES_TAB_ID ? 'navigationActiveLink' : 'navigationLink']: true }}
         >
           Satellites
         </CustomLink>
         <CustomLink
-          href={`/?tab=${TREASURY_TAB_ID}`}
+          to={`/?tab=${TREASURY_TAB_ID}`}
           styling={{ [activeTab === TREASURY_TAB_ID ? 'navigationActiveLink' : 'navigationLink']: true }}
         >
           Treasury
         </CustomLink>
         <CustomLink
-          href={`/?tab=${FARMS_TAB_ID}`}
+          to={`/?tab=${FARMS_TAB_ID}`}
           styling={{ [activeTab === FARMS_TAB_ID ? 'navigationActiveLink' : 'navigationLink']: true }}
         >
           Farms
         </CustomLink>
         <CustomLink
-          href={`/?tab=${ORACLES_TAB_ID}`}
+          to={`/?tab=${ORACLES_TAB_ID}`}
           styling={{ [activeTab === ORACLES_TAB_ID ? 'navigationActiveLink' : 'navigationLink']: true }}
         >
           Oracles

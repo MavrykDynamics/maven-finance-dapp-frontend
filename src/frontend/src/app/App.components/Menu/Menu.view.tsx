@@ -184,22 +184,13 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               {sidebarOpened ? 'MVK Faucet' : 'mvk'}
             </NewButton>
 
-            <CustomLink
-              href="https://faucet.marigold.dev/"
-              external
-              disabled
-              kind={sidebarOpened ? LinkWide : LinkWrapper}
-            >
+            <CustomLink to="https://faucet.marigold.dev/" disabled kind={sidebarOpened ? LinkWide : LinkWrapper}>
               <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin disabled>
                 {sidebarOpened ? ' Ghostnet Faucet' : 'GF'}
               </NewButton>
             </CustomLink>
 
-            <CustomLink
-              href="https://forms.gle/bwmTfpoLKBhaf7yD"
-              external
-              kind={sidebarOpened ? LinkWide : LinkWrapper}
-            >
+            <CustomLink to="https://forms.gle/bwmTfpoLKBhaf7yD" kind={sidebarOpened ? LinkWide : LinkWrapper}>
               <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
                 {sidebarOpened ? 'Submit Feedback' : 'SF'}
               </NewButton>
