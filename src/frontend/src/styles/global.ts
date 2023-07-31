@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components/macro'
 
-import { royalPurpleColor, headerColor, cyanColor } from '../styles/colors'
+import { royalPurpleColor } from '../styles/colors'
 import { MavrykTheme } from './interfaces'
 
 export const GlobalStyle = createGlobalStyle<{ theme: MavrykTheme }>`
@@ -131,26 +131,6 @@ input[type='number'] {
   outline: none;
 }
 
-a {
-  color: ${({ theme }) => theme.textColor};
-  text-decoration: none;
-  opacity: 1;
-  transition: opacity 0.15s ease-in-out-out;
-  will-change: opacity;
-
-  &.isCyan {
-    color: ${({ theme }) => theme.valueColor};
-  }
-
-  &.underline {
-    text-decoration: underline;
-  }
-}
-
-
-a:hover:not(.full-opacity) {
-  opacity: 0.9;
-}
 
 p {
     font-family: "Metropolis", sans-serif;
@@ -178,6 +158,29 @@ p {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: ${royalPurpleColor};
+  }
+
+  // TODO: remove later when all links will be CustomLink component
+  // LINK STYLES
+  a {
+    color: ${({ theme }) => theme.textColor};
+    text-decoration: none;
+    opacity: 1;
+    transition: opacity 0.15s ease-in-out-out;
+    will-change: opacity;
+
+    &.isCyan {
+      color: ${({ theme }) => theme.valueColor};
+    }
+
+    &.underline {
+      text-decoration: underline;
+    }
+  }
+
+
+  a:hover:not(.full-opacity) {
+    opacity: 0.9;
   }
 
   .info-link {

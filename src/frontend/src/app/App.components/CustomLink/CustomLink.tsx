@@ -1,32 +1,37 @@
 import { useMemo } from 'react'
-import { LinkStyled } from './CustomLink.style'
-import { Link } from 'react-router-dom'
-import { LinkAppearance, LinkKind, LinkRegular, LinkWrapper } from './CustomLink.const'
+import { Link, LinkProps } from 'react-router-dom'
 import classNames from 'classnames'
 
-type Props = {
+import { LinkStyled } from './CustomLink.style'
+import { LinkKind, LinkWrapper } from './CustomLink.const'
+
+type LinkStyling = {
+  isCyan?: boolean
+  underline?: boolean
+  hover?: boolean
+  navigationLink?: boolean
+  navigationActiveLink?: boolean
+}
+
+type Props = Omit<LinkProps, 'to'> & {
   children: React.ReactNode
   href: string
   disabled?: boolean
   external?: boolean
-  underline?: boolean
-  hover?: boolean
   kind?: LinkKind
-  appearance?: LinkAppearance
+  styling?: LinkStyling
 }
 
-// TODO: add all other props that used via classnames with link, update usage of a and Link with CustomLink
 export const CustomLink = ({
   children,
   href,
+  styling = {},
   disabled = false,
   external = false,
-  underline = false,
-  hover = false,
   kind = LinkWrapper,
-  appearance = LinkRegular,
+  ...optionalLinkProps
 }: Props) => {
-  const linkProps = useMemo(() => {
+  const requiredLinkProps = useMemo(() => {
     if (disabled)
       return {
         to: '#',
@@ -44,14 +49,13 @@ export const CustomLink = ({
     }
   }, [disabled, external, href])
 
-  const linkClassNames = classNames(kind, appearance, {
-    underline,
-    hover,
-  })
+  const linkClassNames = classNames(kind, { ...styling, disabled })
 
   return (
     <LinkStyled className={linkClassNames}>
-      <Link {...linkProps}>{children}</Link>
+      <Link {...requiredLinkProps} {...optionalLinkProps}>
+        {children}
+      </Link>
     </LinkStyled>
   )
 }

@@ -69,31 +69,6 @@ export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
     display: flex;
     margin: 30px 0 20px 0;
     column-gap: 20px;
-
-    > a {
-      font-weight: 600;
-      font-size: 16px;
-      line-height: 22px;
-      position: relative;
-      transition: 0.3s all;
-      color: ${({ theme }) => theme.navTitleColor};
-
-      &.selected,
-      &:hover {
-        &:before {
-          position: absolute;
-          bottom: -1px;
-          left: 50%;
-          transform: translateX(-50%);
-          transition: 0.3s all;
-          content: '';
-          width: 30px;
-          height: 1px;
-          background-color: ${({ theme }) => theme.navLinkSubTitleActive};
-        }
-        color: ${({ theme }) => theme.navLinkSubTitleActive};
-      }
-    }
   }
 `
 

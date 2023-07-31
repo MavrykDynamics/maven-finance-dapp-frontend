@@ -21,6 +21,7 @@ import { VaultsTab } from './TabScreens/VaultsTab.controller'
 import { StakingTab } from './TabScreens/StakingTab.controller'
 import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
 import { Impact } from 'app/App.components/Impact/Impact'
+import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
 
 const TabById = ({ activeTab, isDataLoading }: { activeTab: TabId; isDataLoading: boolean }) => {
   switch (activeTab) {
@@ -107,27 +108,48 @@ export const DashboardView = ({
       </div>
 
       <div className="dashboard-navigation">
-        <Link to={`/${LENDING_TAB_ID}`} className={activeTab === LENDING_TAB_ID ? 'selected' : ''}>
+        <CustomLink
+          href={`/${LENDING_TAB_ID}`}
+          styling={{ [activeTab === LENDING_TAB_ID ? 'navigationActiveLink' : 'navigationLink']: true }}
+        >
           Earn/Borrow
-        </Link>
-        <Link to={`/?tab=${VAULTS_TAB_ID}`} className={activeTab === VAULTS_TAB_ID ? 'selected' : ''}>
+        </CustomLink>
+        <CustomLink
+          href={`/?tab=${VAULTS_TAB_ID}`}
+          styling={{ [activeTab === VAULTS_TAB_ID ? 'navigationActiveLink' : 'navigationLink']: true }}
+        >
           Vaults
-        </Link>
-        <Link to={`/?tab=${STAKING_TAB_ID}`} className={activeTab === STAKING_TAB_ID ? 'selected' : ''}>
+        </CustomLink>
+        <CustomLink
+          href={`/?tab=${STAKING_TAB_ID}`}
+          styling={{ [activeTab === STAKING_TAB_ID ? 'navigationActiveLink' : 'navigationLink']: true }}
+        >
           Staking
-        </Link>
-        <Link to={`/?tab=${SATELLITES_TAB_ID}`} className={activeTab === SATELLITES_TAB_ID ? 'selected' : ''}>
+        </CustomLink>
+        <CustomLink
+          href={`/?tab=${SATELLITES_TAB_ID}`}
+          styling={{ [activeTab === SATELLITES_TAB_ID ? 'navigationActiveLink' : 'navigationLink']: true }}
+        >
           Satellites
-        </Link>
-        <Link to={`/?tab=${TREASURY_TAB_ID}`} className={activeTab === TREASURY_TAB_ID ? 'selected' : ''}>
+        </CustomLink>
+        <CustomLink
+          href={`/?tab=${TREASURY_TAB_ID}`}
+          styling={{ [activeTab === TREASURY_TAB_ID ? 'navigationActiveLink' : 'navigationLink']: true }}
+        >
           Treasury
-        </Link>
-        <Link to={`/?tab=${FARMS_TAB_ID}`} className={activeTab === FARMS_TAB_ID ? 'selected' : ''}>
+        </CustomLink>
+        <CustomLink
+          href={`/?tab=${FARMS_TAB_ID}`}
+          styling={{ [activeTab === FARMS_TAB_ID ? 'navigationActiveLink' : 'navigationLink']: true }}
+        >
           Farms
-        </Link>
-        <Link to={`/?tab=${ORACLES_TAB_ID}`} className={activeTab === ORACLES_TAB_ID ? 'selected' : ''}>
+        </CustomLink>
+        <CustomLink
+          href={`/?tab=${ORACLES_TAB_ID}`}
+          styling={{ [activeTab === ORACLES_TAB_ID ? 'navigationActiveLink' : 'navigationLink']: true }}
+        >
           Oracles
-        </Link>
+        </CustomLink>
       </div>
 
       <TabById activeTab={activeTab} isDataLoading={isLoading} />
