@@ -232,7 +232,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
   const handleNextStep = (tabId: number) => setActiveTab(tabId)
 
-  // actions helper for dapp data update callback --------------------------------
+  // actions helper for dapp data update callback read {README} in useContractHook folder --------------------------------
   const dappCallback = useCallback(() => {
     // TODO remove when proposal context will be done
     dispatch(getGovernanceStorage())
