@@ -11,7 +11,6 @@ import {
   INPUT_STATUS_ERROR,
   InputStatusType,
   defaultLargeInputMaxLength,
-  defaultMediumInputMaxLength,
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'

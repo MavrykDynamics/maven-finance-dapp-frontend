@@ -1,8 +1,8 @@
-import { InputStatusType, InputKind } from './Input.constants'
+import { InputStatusType, InputKind, ERR_MSG_INPUT } from './Input.constants'
 import { InputOneChange } from './Input.controller'
 
 // hooks
-import { useInputValidator } from 'app/App.hooks/useInputValidator'
+import { useInputValidator } from './hooks/useInputValidator'
 
 import {
   InputComponentContainer,
@@ -12,6 +12,8 @@ import {
   InputStatus,
   InputStyled,
 } from './Input.style'
+import { ValidatorFnType } from './newInput.type'
+import { validateInput } from 'app/App.utils/input'
 
 type InputViewProps = {
   icon?: string
@@ -20,6 +22,7 @@ type InputViewProps = {
   pinnedText?: string
   kind?: InputKind
   className?: string
+  validationFns?: ValidatorFnType[]
   inputProps: {
     disabled?: boolean
     value: string | number
@@ -43,11 +46,13 @@ export const InputView = ({
   kind,
   className,
   inputProps,
+  validationFns = [[validateInput, ERR_MSG_INPUT]],
 }: InputViewProps) => {
   const { status, errorMessage, handleChange } = useInputValidator({
     originalErrorMessage: errorMessageFromProps,
     status: inputStatus,
     onChange: inputProps.onChange,
+    validationFns,
   })
 
   return (

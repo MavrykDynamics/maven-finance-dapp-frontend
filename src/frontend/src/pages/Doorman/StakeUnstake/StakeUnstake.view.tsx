@@ -38,6 +38,7 @@ import {
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
   defaultLargeInputMaxLength,
+  ERR_MSG_TOAST,
 } from 'app/App.components/Input/Input.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
@@ -64,6 +65,7 @@ import {
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -116,13 +118,6 @@ export const StakeUnstakeView = ({
     Object.values(availableFarmRewards).reduce((acc, farmReward) => (acc += farmReward), 0)
   const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
 
-  const setInputDataHelper = useCallback(
-    (data: typeof DEFAULT_STAKE_UNSTAKE_INPUT) => {
-      setInputData({ ...data, amount: data.amount.slice(0, defaultLargeInputMaxLength) })
-    },
-    [setInputData],
-  )
-
   const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {
     handleInputData(String(mathRoundTwoDigit(balance === 'mvk' ? myMvkTokenBalance : mySMvkTokenBalance)))
   }
@@ -139,14 +134,14 @@ export const StakeUnstakeView = ({
       userAddress,
     })
 
-    setInputDataHelper({ ...inputData, amount: value, validation: validationStatus })
+    setInputData({ ...inputData, amount: value, validation: validationStatus })
   }
 
   // Stake actions
   const handleStakeAll = async () => {
     if (!myMvkTokenBalance) return
 
-    setInputDataHelper({
+    setInputData({
       ...inputData,
       amount: String(mathRoundTwoDigit(myMvkTokenBalance)).slice(0, defaultLargeInputMaxLength),
       validation: INPUT_STATUS_SUCCESS,
@@ -158,7 +153,7 @@ export const StakeUnstakeView = ({
   const handleUnstakeAll = () => {
     if (!mySMvkTokenBalance) return
 
-    setInputDataHelper({
+    setInputData({
       ...inputData,
       amount: String(mathRoundTwoDigit(mySMvkTokenBalance)),
       validation: INPUT_STATUS_SUCCESS,
@@ -173,7 +168,7 @@ export const StakeUnstakeView = ({
       const canStakeAmount = stakeAmount <= Number(myMvkTokenBalance)
 
       if (!canStakeAmount) {
-        setInputDataHelper({
+        setInputData({
           ...inputData,
           errorMessage: "You don't have enought MVK to stake",
         })
@@ -195,19 +190,19 @@ export const StakeUnstakeView = ({
         return null
       }
 
-      setInputDataHelper({
+      setInputData({
         ...inputData,
         errorMessage: '',
       })
 
       return await stakeMVK(stakeAmount, userAddress, doormanAddress, mvkTokenAddress)
     },
-    [bug, doormanAddress, inputData, mvkTokenAddress, myMvkTokenBalance, setInputDataHelper, userAddress],
+    [bug, doormanAddress, inputData, mvkTokenAddress, myMvkTokenBalance, setInputData, userAddress],
   )
 
   const dappCallback = useCallback(() => {
-    setInputDataHelper({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
-  }, [inputData, setInputDataHelper])
+    setInputData({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
+  }, [inputData, setInputData])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -247,13 +242,13 @@ export const StakeUnstakeView = ({
 
   const handleFocus = () => {
     if (inputData.amount === '0') {
-      setInputDataHelper({ ...inputData, amount: '' })
+      setInputData({ ...inputData, amount: '' })
     }
   }
 
   const handleBlur = () => {
     if (inputData.amount === '') {
-      setInputDataHelper({ ...inputData, amount: '0' })
+      setInputData({ ...inputData, amount: '0' })
     }
   }
 
@@ -403,6 +398,7 @@ export const StakeUnstakeView = ({
                 balanceName: 'Wallet Balance',
                 inputSize: INPUT_LARGE,
                 balanceHandler: onUseMaxBalance('mvk'),
+                validationFns: [[validateInputLength, ERR_MSG_TOAST]],
               }}
             />
           </StakeUnstakeInputWithCoin>
