@@ -21,52 +21,64 @@ import { CREATE_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.con
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { sleep } from 'utils/api/sleep'
 
-type CreateVaultScreenProps = {
-  marketTokenAddress: string | undefined
-  setCreatedVaultAddress?: (address: string) => void
-}
-
-export const CreateVaultScreen = ({ marketTokenAddress, setCreatedVaultAddress }: CreateVaultScreenProps) => {
+export const CreateVaultScreen = () => {
   const { vaultNames } = useUserVaultsNames()
   const { tokensMetadata } = useTokensContext()
-  const { bug } = useToasterContext()
+  const { bug, info } = useToasterContext()
   const { userAddress } = useUserContext()
   const {
     contractAddresses: { vaultFactoryAddress },
   } = useDappConfigContext()
   const { apolloClient } = useApolloContext()
 
-  const { vaultInputState, updateInputVaultState, updateScreenToShow, updateVaultCreating, updateNewVault } =
+  const { vaultInputState, updateInputVaultState, updateScreenToShow, updateVaultCreating, updateNewVault, data } =
     useCreateVaultContext()
 
+  const { marketTokenAddress, setCreatedVaultAddress } = data ?? {}
+
   // Actions --------------------------------------------------------------------
-  const getNewVaultData = useCallback(async () => {
-    try {
-      const newVaultData = await apolloClient.query({
-        query: GET_NEW_VAULT,
-        variables: {
-          userAddress,
-          vaultName: vaultInputState.name,
-        },
-      })
-
-      if (newVaultData.error) {
-        console.error('loading new vault error', newVaultData.error)
-        throw new Error(newVaultData.error.message)
-      }
-
-      if (newVaultData.data.vault.length) {
-        const { address, id } = newVaultData.data.vault[0]
-        setCreatedVaultAddress?.(address)
-        updateNewVault({
-          address,
-          id,
+  const getNewVaultData = useCallback(
+    async (retries = 1) => {
+      try {
+        const newVaultData = await apolloClient.query({
+          query: GET_NEW_VAULT,
+          variables: {
+            userAddress,
+            vaultName: vaultInputState.name,
+          },
         })
+
+        if (newVaultData.error) {
+          console.error('loading new vault error', newVaultData.error)
+          throw new Error(newVaultData.error.message)
+        }
+
+        if (newVaultData.data.vault.length) {
+          const { address, id } = newVaultData.data.vault[0]
+          setCreatedVaultAddress?.(address)
+          updateNewVault({
+            address,
+            id,
+          })
+          updateVaultCreating(false)
+          updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)
+          // TODO remove retry after indexer update
+        } else if (retries !== 0) {
+          info('Refetching new vault', 'Trying to refetch the new vault data. Plases wait 7 seconds...')
+          await sleep(7000)
+          await getNewVaultData(retries - 1)
+        } else {
+          bug(
+            'Update Vault Error',
+            "Can't fetch new vault data, try reload the page and find your newly created vault in the the list of vaults",
+          )
+        }
+      } catch (e) {
+        bug('Fetch Error', 'Error occured while loading latest created vault, please reload the page')
       }
-    } catch (e) {
-      bug('Fetch Error', 'Error occured while loading latest created vault, please reload the page')
-    }
-  }, [bug, setCreatedVaultAddress, userAddress, vaultInputState.name])
+    },
+    [bug, setCreatedVaultAddress, userAddress, vaultInputState.name],
+  )
 
   //   create vault action
   const createVaultAction = useCallback(async () => {
@@ -89,9 +101,8 @@ export const CreateVaultScreen = ({ marketTokenAddress, setCreatedVaultAddress }
     () => ({
       actionType: CREATE_VAULT_ACTION,
       actionFn: createVaultAction,
-      dappActionCallback: () => {
-        getNewVaultData()
-        updateVaultCreating(false)
+      dappActionCallback: async () => {
+        await getNewVaultData()
       },
       isSilentAction: true,
     }),
@@ -117,16 +128,8 @@ export const CreateVaultScreen = ({ marketTokenAddress, setCreatedVaultAddress }
   }
 
   const handleButtonClick = async () => {
-    // await sleep(3000)
-    // updateNewVault({
-    //   address: 'KT1RyJznnuhSYP7aLJS8YHmcgumap2D2jhqC',
-    //   id: 358,
-    // })
-
-    // await sleep(1000)
-    // updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)
     await createVaultHandler()
-    updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)
+    // updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)
   }
 
   return (

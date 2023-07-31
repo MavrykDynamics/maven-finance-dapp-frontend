@@ -2,7 +2,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Input } from 'app/App.components/Input/NewInput'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import classNames from 'classnames'
-import { useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { checkNan } from 'utils/checkNan'
@@ -26,11 +26,23 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { useBorrowInputData } from '../components/useBorrowInputData'
 import { DAO_FEE } from 'texts/tooltips/vault.text'
 import { NewVaultType } from '../helpers/createNewVault.types'
+import { BORROW_VAULT_ASSET_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { borrowVaultAssetAction } from 'providers/VaultsProvider/actions/vaults.actions'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
-export const BorrowScreen = () => {
+type BorrowScreenProps = {
+  setCurrentSymbol: React.Dispatch<React.SetStateAction<string>>
+}
+
+export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   const {
     preferences: { themeSelected },
     globalLoadingState: { isActionActive },
+    contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
 
   const { newVault, updateScreenToShow, borrowCapacity, setFinalBorrowInputAmount } = useCreateVaultContext()
@@ -38,9 +50,11 @@ export const BorrowScreen = () => {
   const {
     config: { daoFee },
   } = useLoansContext()
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
 
-  const currentVault = testVaults[(newVault as NewVaultType).address]
-  // const currentVault = vaultsMapper[(newVault as NewVaultType).address]
+  const currentVault = vaultsMapper[(newVault as NewVaultType).address]
   const vaultData = useFullVault(currentVault)
 
   const {
@@ -60,6 +74,48 @@ export const BorrowScreen = () => {
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const convertedBorrowedAmount = convertNumberForClient({ number: currentBorrowedAmount, grade: decimals })
   const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
+
+  const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
+
+  useEffect(() => {
+    setCurrentSymbol(symbol)
+  }, [setCurrentSymbol, symbol])
+
+  // borrow vault asset action ----------------------------------------------
+  const borrowAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+    if (!lendingControllerAddress) {
+      bug('Wrong lending address')
+      return null
+    }
+
+    // call action only when there is vault if and correct loan token
+    if (borrowedToken && vaultData?.vaultId && checkWhetherTokenIsLoanToken(borrowedToken)) {
+      return await borrowVaultAssetAction(lendingControllerAddress, vaultData.vaultId, inputAmount, borrowedToken)
+    }
+    return null
+  }, [borrowedToken, bug, inputAmount, lendingControllerAddress, userAddress, vaultData?.vaultId])
+
+  const dappCallback = useCallback(() => {
+    setFinalBorrowInputAmount({ amount: inputAmount, symbol, rate })
+
+    clearData()
+    updateScreenToShow(CONFIRMATION_SCREEN_ID)
+  }, [clearData, inputAmount, rate, setFinalBorrowInputAmount, symbol, updateScreenToShow])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: BORROW_VAULT_ASSET_ACTION,
+      actionFn: borrowAction,
+      dappCallback,
+    }),
+    [borrowAction, dappCallback],
+  )
+
+  const { action: borrowAsserHandler } = useContractAction(contractActionProps)
 
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = getVaultCollateralRatio(
@@ -129,16 +185,7 @@ export const BorrowScreen = () => {
       />
 
       <div className="manage-btn">
-        <NewButton
-          kind={BUTTON_PRIMARY}
-          form={BUTTON_WIDE}
-          onClick={() => {
-            setFinalBorrowInputAmount({ amount: inputAmount, symbol, rate })
-            clearData()
-            updateScreenToShow(CONFIRMATION_SCREEN_ID)
-          }}
-          disabled={isDisabledButton}
-        >
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={borrowAsserHandler} disabled={isDisabledButton}>
           Borrow
           <Icon id="arrowRight" />
         </NewButton>

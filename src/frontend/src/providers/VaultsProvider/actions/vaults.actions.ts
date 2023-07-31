@@ -54,7 +54,7 @@ export const borrowVaultAssetAction = async (
   vaultId: number,
   amountToBorrow: number,
   borrowedToken: LoansTokenMetadataType,
-  callback: () => void,
+  callback?: () => void,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     const { decimals } = borrowedToken

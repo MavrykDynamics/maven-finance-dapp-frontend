@@ -1,5 +1,5 @@
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 // styles
 import { LoansModalBase } from '../Modals.style'
@@ -32,6 +32,7 @@ import { CreateNewModalProps } from './helpers/createNewVault.types'
 export const CreateNewVaultConsumer = () => {
   //   internal create vault context
   const { screenToShow, resetCreateVaultModalState, closePopup, show, data } = useCreateVaultContext()
+  const [currentSymbol, setCurrentSymbol] = useState('')
 
   useLockBodyScroll(show)
 
@@ -41,7 +42,6 @@ export const CreateNewVaultConsumer = () => {
     }
   }, [show])
 
-  const { marketTokenAddress, setCreatedVaultAddress } = data ?? {}
   const activeStepperIndex = useMemo(
     () => stepperItems.findIndex((item) => item === stepperItemsObj[screenToShow]),
     [screenToShow],
@@ -50,7 +50,7 @@ export const CreateNewVaultConsumer = () => {
   if (!data) return null
 
   const titleText =
-    screenToShow !== BORROW_SCREEN_ID ? screenTitles[screenToShow] : `${screenTitles[screenToShow]} ${123}`
+    screenToShow !== BORROW_SCREEN_ID ? screenTitles[screenToShow] : `${screenTitles[screenToShow]} ${currentSymbol}`
   const descrText = screenDescriptions[screenToShow]
 
   return (
@@ -63,14 +63,9 @@ export const CreateNewVaultConsumer = () => {
           <H2Title>{titleText}</H2Title>
           <div className="modalDescr">{descrText}</div>
 
-          {screenToShow === INITIAL_SCREEN_ID ? (
-            <CreateVaultScreen
-              marketTokenAddress={marketTokenAddress}
-              setCreatedVaultAddress={setCreatedVaultAddress}
-            />
-          ) : null}
+          {screenToShow === INITIAL_SCREEN_ID ? <CreateVaultScreen /> : null}
           {screenToShow === ADD_COLLATERAL_SCREEN_ID ? <AddCollateralScreen /> : null}
-          {screenToShow === BORROW_SCREEN_ID && <BorrowScreen />}
+          {screenToShow === BORROW_SCREEN_ID && <BorrowScreen setCurrentSymbol={setCurrentSymbol} />}
           {screenToShow === CONFIRMATION_SCREEN_ID ? <ConfirmationScreen /> : null}
         </LoansModalBase>
       </PopupContainerWrapper>

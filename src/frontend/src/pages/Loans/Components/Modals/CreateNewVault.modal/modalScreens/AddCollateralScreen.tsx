@@ -53,6 +53,7 @@ export const AddCollateralScreen = () => {
     isVaultCreating,
     hasXTZTokenSelected,
     borrowCapacity,
+    newVault,
   } = useCreateVaultContext()
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd add new collateral)
@@ -104,6 +105,7 @@ export const AddCollateralScreen = () => {
 
   const isAddCollateralContinueDisabled = Boolean(
     isVaultCreating ||
+      newVault === null ||
       (hasXTZTokenSelected && choosenBaker) ||
       !selectedCollateralsAddresses.every((tokenAddress) => {
         return selectedCollaterals[tokenAddress].validation === INPUT_STATUS_SUCCESS
