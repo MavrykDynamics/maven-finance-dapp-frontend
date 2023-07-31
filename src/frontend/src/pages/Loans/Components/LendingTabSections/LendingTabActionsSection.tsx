@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { useCallback, useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 import classNames from 'classnames'
 
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -20,8 +20,10 @@ import { getLoansInputMaxAmount, loansInputValidation } from '../../Loans.helper
 import { LENDING_TAB_SUPPLY_TEXT, LENDING_TAB_WITHDRAW_TEXT } from 'texts/banners/loan.text'
 import { EARN_APY } from 'texts/tooltips/loan.text'
 import {
+  ERR_MSG_TOAST,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
   InputStatusType,
   defaultLargeInputMaxLength,
@@ -40,6 +42,7 @@ import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingT
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -69,13 +72,6 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
     validationStatus: INPUT_STATUS_DEFAULT,
   })
 
-  const setInputDataHelper = useCallback(
-    (data: InputDataType) => {
-      setInputData({ ...data, amount: data.amount.slice(0, defaultLargeInputMaxLength - 4) })
-    },
-    [setInputData],
-  )
-
   const isSupplyActiveTab = activeTab?.id === loansTabNames.SUPPLY
 
   if (!loanToken || !loanToken.rate) return null
@@ -88,14 +84,14 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   const isDisabledButton = inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionActive
 
   const clearData = () => {
-    setInputDataHelper({
+    setInputData({
       amount: '0',
       validationStatus: INPUT_STATUS_DEFAULT,
     })
   }
 
   const handleSwitchTab = (tabId: number) => {
-    setInputDataHelper({
+    setInputData({
       amount: '0',
       validationStatus: INPUT_STATUS_DEFAULT,
     })
@@ -134,7 +130,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
       },
     })
 
-    setInputDataHelper({
+    setInputData({
       ...inputData,
       amount: inputAmount,
       validationStatus: validationStatus,
@@ -142,13 +138,13 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   }
 
   const inputOnBlurHandle = () =>
-    setInputDataHelper({
+    setInputData({
       ...inputData,
       amount: getOnBlurValue(inputData.amount),
     })
 
   const onFocusHandler = () =>
-    setInputDataHelper({
+    setInputData({
       ...inputData,
       amount: getOnFocusValue(inputData.amount),
     })
@@ -180,6 +176,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
     useMaxHandler,
     inputStatus: inputData.validationStatus,
     inputSize: INPUT_LARGE,
+    validationFns: [[validateInputLength, ERR_MSG_TOAST]],
     ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
   }
 
@@ -209,23 +206,14 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
         <div className="tab-text mb-10">Updated Lending {symbol} Stats</div>
 
         <CardSectionWrapper>
-          <div className="stats">
-            <ThreeLevelListItem>
-              <div className="name">
-                Earn APY
-                <CustomTooltip iconId="info" text={EARN_APY} />
-              </div>
-              <CommaNumber value={lendAPY} className="value" endingText="%" />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">{isSupplyActiveTab ? `m${symbol} Received` : 'Amount To Withdraw'}</div>
-              <CommaNumber value={Number(inputData.amount)} className="value" />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem className="right">
-              <div className="name">New m{symbol} Balance</div>
-              <CommaNumber value={futureMBalance} className="value" />
-            </ThreeLevelListItem>
-          </div>
+          <LendingStatsTable
+            shouldNotRenderStats={inputData.validationStatus === INPUT_STATUS_ERROR}
+            lendAPY={lendAPY}
+            isSupplyActiveTab={isSupplyActiveTab}
+            symbol={symbol}
+            amount={inputData.amount}
+            futureMBalance={futureMBalance}
+          />
         </CardSectionWrapper>
       </div>
 
@@ -238,3 +226,46 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
     </LoansActionsSection>
   )
 }
+
+const LendingStatsTable = memo(
+  ({
+    shouldNotRenderStats,
+    lendAPY,
+    isSupplyActiveTab,
+    futureMBalance,
+    symbol,
+    amount,
+  }: {
+    shouldNotRenderStats: boolean
+    lendAPY: number
+    isSupplyActiveTab: boolean
+    symbol: string
+    amount: number | string
+    futureMBalance: number
+  }) => {
+    return (
+      <div className="stats">
+        <ThreeLevelListItem>
+          <div className="name">
+            Earn APY
+            <CustomTooltip iconId="info" text={EARN_APY} />
+          </div>
+          <CommaNumber value={lendAPY} className="value" endingText="%" />
+        </ThreeLevelListItem>
+        <ThreeLevelListItem>
+          <div className="name">{isSupplyActiveTab ? `m${symbol} Received` : 'Amount To Withdraw'}</div>
+          <CommaNumber value={Number(amount)} className="value" />
+        </ThreeLevelListItem>
+        <ThreeLevelListItem className="right">
+          <div className="name">New m{symbol} Balance</div>
+          <CommaNumber value={futureMBalance} className="value" />
+        </ThreeLevelListItem>
+      </div>
+    )
+  },
+  (oldProps, newProps) => {
+    if (newProps.shouldNotRenderStats) return true
+    if (oldProps.shouldNotRenderStats === newProps.shouldNotRenderStats) return false
+    return false
+  },
+)

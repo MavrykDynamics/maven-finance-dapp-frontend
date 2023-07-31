@@ -31,16 +31,21 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
     (e: React.ChangeEvent<G>) => {
       const { value } = e.target
 
+      // boolean arr, if validator function passes the condition - true, otherwise - false
+      // when arr has "false" - just not allow user to type
       const resultArr =
         validationFns?.map(([fn, type, args], idx) => {
           const errMsg = args ? fn.apply(null, [value, ...args]) : fn(value)
 
+          // show err message under the input
           if (errMsg && type === ERR_MSG_INPUT) {
             setErrorMsg(errMsg)
           }
 
+          // show err message with toast
           if (errMsg && type === ERR_MSG_TOAST) {
             setToastErrMsg(errMsg)
+            // if there is toast err message, prohibit to show toast
             if (!toastErrMsg) bug(errMsg, 'Input error')
             return false
           }
@@ -52,8 +57,6 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
 
           return true
         }) ?? []
-
-      console.log(resultArr)
 
       if (!resultArr?.includes(false)) onChange(e)
     },
