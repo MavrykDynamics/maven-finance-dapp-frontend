@@ -79,16 +79,17 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { apolloClient } from 'apollo'
 import { GOVERNANCE_LATEST_USER_PROPOSAL_QUERY } from 'gql/queries'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { bug } = useToasterContext()
+  const { apolloClient } = useApolloContext()
 
   const { tokensMetadata } = useTokensContext()
   const { userAddress, isNewlyRegisteredSatellite } = useUserContext()

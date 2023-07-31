@@ -96,8 +96,12 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     dispatch(getGovernanceStorage())
   }, [dispatch])
 
-  // action fn helper cuz params are identical -----------------------------------------------------------------
-  const executeActionFn = useCallback(
+  /**
+   * helper function for the current component actions
+   * most of the actions have same parameters (governanceAddress, proposalId) and "if" conditions
+   * to reduce the amount of code we call these actions with current function
+   */
+  const invokeActionWithIdenticalParameters = useCallback(
     async (
       actionFn: (
         governanceAddress: string,
@@ -122,10 +126,10 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
   const dropProposalContractProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: DROP_PROPOSAL_ACTION,
-      actionFn: executeActionFn.bind(null, dropProposal),
+      actionFn: invokeActionWithIdenticalParameters.bind(null, dropProposal),
       dappActionCallback: dappActionCallback,
     }),
-    [executeActionFn, dappActionCallback],
+    [invokeActionWithIdenticalParameters, dappActionCallback],
   )
 
   const { action: handleDeleteProposal } = useContractAction(dropProposalContractProps)
@@ -135,10 +139,10 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
   const executeProposalContractProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: EXECUTE_PROPOSAL_ACTION,
-      actionFn: executeActionFn.bind(null, executeProposal),
+      actionFn: invokeActionWithIdenticalParameters.bind(null, executeProposal),
       dappActionCallback,
     }),
-    [executeActionFn, dappActionCallback],
+    [invokeActionWithIdenticalParameters, dappActionCallback],
   )
 
   const { action: handleClickExecuteProposal } = useContractAction(executeProposalContractProps)
@@ -147,10 +151,10 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
   const processProposalPaymentContractProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: PROCESS_PROPOSAL_ACTION,
-      actionFn: executeActionFn.bind(null, processProposalPayment),
+      actionFn: invokeActionWithIdenticalParameters.bind(null, processProposalPayment),
       dappActionCallback,
     }),
-    [executeActionFn, dappActionCallback],
+    [invokeActionWithIdenticalParameters, dappActionCallback],
   )
 
   const { action: handleClickProcessPayment } = useContractAction(processProposalPaymentContractProps)
@@ -159,10 +163,10 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
   const proposaRoundVoteContractProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: PROPOSAL_ROUND_VOTE_ACTION,
-      actionFn: executeActionFn.bind(null, proposalRoundVote),
+      actionFn: invokeActionWithIdenticalParameters.bind(null, proposalRoundVote),
       dappActionCallback,
     }),
-    [executeActionFn, dappActionCallback],
+    [invokeActionWithIdenticalParameters, dappActionCallback],
   )
 
   const { action: handleProposalRoundVote } = useContractAction(proposaRoundVoteContractProps)
