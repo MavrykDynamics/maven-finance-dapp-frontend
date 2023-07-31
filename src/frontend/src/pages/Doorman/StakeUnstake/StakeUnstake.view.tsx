@@ -128,7 +128,7 @@ export const StakeUnstakeView = ({
 
   const handleInputData = (value: string) => {
     const validationStatus = stakingInputValidation({
-      amount: Number(value.slice(0, defaultLargeInputMaxLength)),
+      amount: Number(value),
       myMvkTokenBalance,
       mySMvkTokenBalance,
       userAddress,
@@ -143,7 +143,7 @@ export const StakeUnstakeView = ({
 
     setInputData({
       ...inputData,
-      amount: String(mathRoundTwoDigit(myMvkTokenBalance)).slice(0, defaultLargeInputMaxLength),
+      amount: String(mathRoundTwoDigit(myMvkTokenBalance)),
       validation: INPUT_STATUS_SUCCESS,
     })
 
