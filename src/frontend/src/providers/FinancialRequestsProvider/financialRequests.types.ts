@@ -1,17 +1,25 @@
 import {
   FINANCIAL_REQUEST_VOTE_ACTION,
-  FIN_REQUSTS_ONGOING,
-  FIN_REQUSTS_PAST,
   ONGOING_FIN_REQUESTS_SUB,
   PAST_FIN_REQUESTS_SUB,
+  FIN_REQUESTS_DATA,
+  ALL_FIN_REQUESTS_SUB,
 } from './helpers/financialRequests.consts'
 import { FinancialRequestRecord } from './helpers/financialRequests.types'
 
 // actions
 export type FinancialRequestsActionsTypes = typeof FINANCIAL_REQUEST_VOTE_ACTION
 
-// subs
-export type FinancialRequestsSubsType = typeof ONGOING_FIN_REQUESTS_SUB | typeof PAST_FIN_REQUESTS_SUB
+// subs consts type
+export type FinancialRequestsSubsType =
+  | typeof ONGOING_FIN_REQUESTS_SUB
+  | typeof PAST_FIN_REQUESTS_SUB
+  | typeof ALL_FIN_REQUESTS_SUB
+
+// active subs record type (allow only one sub at the time)
+export type FinRequestsSubsRecordType = {
+  [FIN_REQUESTS_DATA]: FinancialRequestsSubsType | null
+}
 
 export type FinancialRequestsStateType = {
   pastFinancialRequestsIds: string[] | null
@@ -26,5 +34,3 @@ export type FinancialRequestsContext = DeepNonNullable<FinancialRequestsStateTyp
 }
 
 export type FinancialRequestsSubsRecordType = Record<FinancialRequestsSubsType, boolean>
-
-export type FinancialRequestType = typeof FIN_REQUSTS_PAST | typeof FIN_REQUSTS_ONGOING

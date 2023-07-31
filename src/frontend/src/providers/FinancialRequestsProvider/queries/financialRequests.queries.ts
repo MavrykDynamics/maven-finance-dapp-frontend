@@ -1,19 +1,19 @@
 import { OperationVariables, TypedDocumentNode, gql } from '@apollo/client'
 import { DocumentNode } from 'graphql'
-import { FinancialRequestType } from '../financialRequests.types'
+import { FinRequestsSubsRecordType } from '../financialRequests.types'
 import { GetFinRequestsStorageSubscription } from 'utils/__generated__/graphql'
-import { FIN_REQUSTS_ONGOING } from '../helpers/financialRequests.consts'
+import { ALL_FIN_REQUESTS_SUB, ONGOING_FIN_REQUESTS_SUB, FIN_REQUESTS_DATA } from '../helpers/financialRequests.consts'
 
 export const SUBSCRIPTION_FINANCIAL_REQUESTS_STORAGE = ''
 
 export function getFinancialRequestsStorageSubscription({
   requestType,
 }: {
-  requestType: FinancialRequestType | null
+  requestType: FinRequestsSubsRecordType[typeof FIN_REQUESTS_DATA]
 }): DocumentNode | TypedDocumentNode<GetFinRequestsStorageSubscription, OperationVariables> {
-  const timeOperator = requestType === FIN_REQUSTS_ONGOING ? '_gte' : '_lte'
-  const filteredQuery = `_or: [{executed: {_eq: false}, expiration_datetime: {${timeOperator}: $currentTime}}, {executed: {_eq: true}, execution_datetime: {${timeOperator}: $currentTime}}]`
-
+  const timeOperator = requestType === ONGOING_FIN_REQUESTS_SUB ? '_gte' : '_lte'
+  let filteredQuery = `_or: [{executed: {_eq: false}, expiration_datetime: {${timeOperator}: $currentTime}}, {executed: {_eq: true}, execution_datetime: {${timeOperator}: $currentTime}}]`
+  filteredQuery = requestType === ALL_FIN_REQUESTS_SUB ? 'id: {_is_null: false}' : filteredQuery
   return gql(`
    subscription getFinRequestsStorage($currentTime: timestamptz = "1970-01-01T00:00:00.000Z") {
      governance_financial_request(order_by: {requested_datetime: desc}, where: {${filteredQuery}}) {

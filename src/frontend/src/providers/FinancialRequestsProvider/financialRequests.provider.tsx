@@ -1,17 +1,16 @@
 import { ApolloError, useSubscription } from '@apollo/client'
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  FinancialRequestType,
+  FinRequestsSubsRecordType,
   FinancialRequestsContext,
   FinancialRequestsStateType,
   FinancialRequestsSubsRecordType,
   FinancialRequestsSubsType,
 } from './financialRequests.types'
 import {
-  DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS,
   DEFAULT_FINANCIAL_REQUESTS_CTX,
-  FIN_REQUSTS_ONGOING,
-  FIN_REQUSTS_PAST,
+  DEFAULT_FIN_REQUESTS_ACTIVE_SUBS,
+  FIN_REQUESTS_DATA,
   ONGOING_FIN_REQUESTS_SUB,
   PAST_FIN_REQUESTS_SUB,
 } from './helpers/financialRequests.consts'
@@ -34,7 +33,7 @@ const FinancialRequestsProvider = ({ children }: Props) => {
 
   const [finRequestsCtxState, setFinRequestsCtxState] =
     useState<FinancialRequestsStateType>(DEFAULT_FINANCIAL_REQUESTS_CTX)
-  const [activeSubs, setActiveSubs] = useState<FinancialRequestsSubsRecordType>(DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS)
+  const [activeSubs, setActiveSubs] = useState<FinRequestsSubsRecordType>(DEFAULT_FIN_REQUESTS_ACTIVE_SUBS)
   const currentTimeRef = useRef(dayjs().toISOString())
 
   useEffect(() => {
@@ -46,25 +45,11 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
-  // subscribes
-  useSubscription(getFinancialRequestsStorageSubscription({ requestType: FIN_REQUSTS_ONGOING }), {
-    skip: !activeSubs[ONGOING_FIN_REQUESTS_SUB],
+  useSubscription(getFinancialRequestsStorageSubscription({ requestType: activeSubs[FIN_REQUESTS_DATA] }), {
+    // skip: !activeSubs[PAST_FIN_REQUESTS_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
-      updateFinRequestsData(data, FIN_REQUSTS_ONGOING)
-    },
-    variables: {
-      currentTime: currentTimeRef.current,
-    },
-    onError: (error) => handleSubError(error, ONGOING_FIN_REQUESTS_SUB),
-    shouldResubscribe: true,
-  })
-
-  useSubscription(getFinancialRequestsStorageSubscription({ requestType: FIN_REQUSTS_PAST }), {
-    skip: !activeSubs[PAST_FIN_REQUESTS_SUB],
-    onData: ({ data: { data } }) => {
-      if (!data) return
-      updateFinRequestsData(data, FIN_REQUSTS_PAST)
+      updateFinRequestsData(data, FIN_REQUESTS_PAST)
     },
     variables: {
       currentTime: currentTimeRef.current,
