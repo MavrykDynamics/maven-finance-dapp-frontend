@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -5,10 +6,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { LoansModalBase } from '../Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { VaultModalStepperWrapper } from './createNewVault.style'
 
 // types
 import { CreateVaultModalProvider } from './context/CreateVaultModal.provider'
 import { useCreateVaultContext } from './context/createVaultModalContext'
+import { CreateNewModalProps } from './helpers/createNewVault.types'
+
+// consts
 import {
   ADD_COLLATERAL_SCREEN_ID,
   BORROW_SCREEN_ID,
@@ -19,14 +24,15 @@ import {
   stepperItems,
   stepperItemsObj,
 } from './helpers/createNewVault.consts'
+
+// modal screens
 import { CreateVaultScreen } from './modalScreens/CreateVaultScreen'
 import { AddCollateralScreen } from './modalScreens/AddCollateralScreen'
 import { ConfirmationScreen } from './modalScreens/ConfirmationScreen'
-import { CreateVaultModalStepper } from './components/CreateVaultModalStepper'
-import { VaultModalStepperWrapper } from './createNewVault.style'
 import { BorrowScreen } from './modalScreens/BorrowScreen'
-import classNames from 'classnames'
-import { CreateNewModalProps } from './helpers/createNewVault.types'
+
+// components
+import { CreateVaultModalStepper } from './components/CreateVaultModalStepper'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17480%3A229353&t=Sx2aEpp3ifrGxBtQ-0
 export const CreateNewVaultConsumer = () => {

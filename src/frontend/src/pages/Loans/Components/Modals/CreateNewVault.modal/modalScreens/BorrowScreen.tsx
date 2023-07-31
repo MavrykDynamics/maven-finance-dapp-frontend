@@ -1,38 +1,54 @@
+import { useCallback, useEffect, useMemo } from 'react'
+import classNames from 'classnames'
+
+// components
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Input } from 'app/App.components/Input/NewInput'
-import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import classNames from 'classnames'
-import { useCallback, useEffect, useMemo } from 'react'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
-import { checkNan } from 'utils/checkNan'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
-import { useCreateVaultContext } from '../context/createVaultModalContext'
-import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import colors from 'styles/colors'
-import { BorrowScreenWrapper } from '../createNewVault.style'
-import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
-import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import NewButton from 'app/App.components/Button/NewButton'
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { CONFIRMATION_SCREEN_ID, testVaults } from '../helpers/createNewVault.consts'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { BorrowScreenBottomStats } from '../components/BorrowScreenBottomStats'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { useBorrowInputData } from '../components/useBorrowInputData'
-import { DAO_FEE } from 'texts/tooltips/vault.text'
-import { NewVaultType } from '../helpers/createNewVault.types'
-import { BORROW_VAULT_ASSET_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// styles
+import colors from 'styles/colors'
+import { BorrowScreenWrapper } from '../createNewVault.style'
+import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
+import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useCreateVaultContext } from '../context/createVaultModalContext'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { borrowVaultAssetAction } from 'providers/VaultsProvider/actions/vaults.actions'
-import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+
+// consts
+import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import { CONFIRMATION_SCREEN_ID } from '../helpers/createNewVault.consts'
+import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { DAO_FEE } from 'texts/tooltips/vault.text'
+import { BORROW_VAULT_ASSET_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+
+// utils
+import { checkNan } from 'utils/checkNan'
+import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// hooks
+import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
+import { useBorrowInputData } from '../components/useBorrowInputData'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// actions
+import { borrowVaultAssetAction } from 'providers/VaultsProvider/actions/vaults.actions'
+
+// types
+import { NewVaultType } from '../helpers/createNewVault.types'
 
 type BorrowScreenProps = {
   setCurrentSymbol: React.Dispatch<React.SetStateAction<string>>
@@ -45,7 +61,8 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
 
-  const { newVault, updateScreenToShow, borrowCapacity, setFinalBorrowInputAmount } = useCreateVaultContext()
+  const { newVault, updateScreenToShow, borrowCapacity, setFinalBorrowInputAmount, isVaultCreating } =
+    useCreateVaultContext()
   const { vaultsMapper } = useVaultsContext()
   const {
     config: { daoFee },
@@ -73,7 +90,8 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const convertedBorrowedAmount = convertNumberForClient({ number: currentBorrowedAmount, grade: decimals })
-  const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
+  const isDisabledButton =
+    inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive || isVaultCreating
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
 

@@ -1,20 +1,39 @@
+import classNames from 'classnames'
 import React, { useMemo } from 'react'
+
+// providers
+import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { useCreateVaultContext } from '../context/createVaultModalContext'
-import { Link, LinkProps } from 'react-router-dom'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+// utils
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
   isTezosAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+
+// components
+import Button from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
-import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { DDItemId, DropDown, DropDownItemType, DropdownInputCustomChild } from 'app/App.components/DropDown/NewDropdown'
-import NewButton from 'app/App.components/Button/NewButton'
-import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+
+// styles
+import colors from 'styles/colors'
+import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
+import { CollateralInputWrapper, DeleteCollateralInputIconWrapper, ModalStatsBlock } from '../createNewVault.style'
+import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
+import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+
+// consts
 import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import {
   INPUT_LARGE,
@@ -23,20 +42,11 @@ import {
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
-import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { BORROW_SCREEN_ID } from '../helpers/createNewVault.consts'
-import { CollateralInputWrapper, DeleteCollateralInputIconWrapper, ModalStatsBlock } from '../createNewVault.style'
-import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
-import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import colors from 'styles/colors'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import Button from 'app/App.components/Button/NewButton'
 import { BORROW_CAPACITY, COLLATERAL_VALUE } from 'texts/tooltips/vault.text'
-import classNames from 'classnames'
+
+// types
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
@@ -315,13 +325,13 @@ export const AddCollateralScreen = () => {
         </div>
 
         {/* button for depositting more than 1 collateral */}
-        <NewButton
+        <Button
           kind={BUTTON_SIMPLE}
           disabled={!Boolean(nextAvaliableCollateralToAdd)}
           onClick={addNewCollateralHandler}
         >
           + Add more assets as collateral
-        </NewButton>
+        </Button>
 
         <ModalStatsBlock>
           <div className="block-name">New Vault stats</div>
@@ -358,7 +368,7 @@ export const AddCollateralScreen = () => {
         </ModalStatsBlock>
 
         <div className="manage-btn">
-          <NewButton
+          <Button
             kind={BUTTON_PRIMARY}
             form={BUTTON_WIDE}
             onClick={() => updateScreenToShow(BORROW_SCREEN_ID)}
@@ -366,7 +376,7 @@ export const AddCollateralScreen = () => {
           >
             Continue
             <Icon id="arrowRight" />
-          </NewButton>
+          </Button>
         </div>
 
         {isVaultCreating ? (

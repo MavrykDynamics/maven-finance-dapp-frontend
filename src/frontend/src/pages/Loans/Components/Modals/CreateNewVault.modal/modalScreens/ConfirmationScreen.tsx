@@ -1,38 +1,54 @@
+import React, { useCallback, useMemo } from 'react'
+
+// consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { ADD_COLLATERAL_SCREEN_ID } from '../helpers/createNewVault.consts'
+import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+
+// components
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { BorrowScreenBottomStats } from '../components/BorrowScreenBottomStats'
+
+// styles
+import colors from 'styles/colors'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
+import { ConfirmationScreenWrapper } from '../createNewVault.style'
+
+// utils
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
 } from 'providers/TokensProvider/helpers/tokens.utils'
-import React, { useCallback, useMemo } from 'react'
-import { ADD_COLLATERAL_SCREEN_ID } from '../helpers/createNewVault.consts'
-import Icon from 'app/App.components/Icon/Icon.view'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+
+// providers
 import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
-import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
-import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
-import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import { ConfirmationScreenWrapper } from '../createNewVault.style'
-import colors from 'styles/colors'
-import { BorrowScreenBottomStats } from '../components/BorrowScreenBottomStats'
-import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
-import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+
+// types
+import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { NewVaultType } from '../helpers/createNewVault.types'
+
+// actions
+import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 
 export const ConfirmationScreen = () => {
   const {
