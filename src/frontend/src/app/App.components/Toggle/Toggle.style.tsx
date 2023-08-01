@@ -1,4 +1,5 @@
 import styled from 'styled-components/macro'
+import { PRIMARY_TOGGLE, SECONDARY_TOGGLE } from './Toggle.consts'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
@@ -59,7 +60,6 @@ export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
     width: 23px;
     height: 23px;
     border-radius: 50%;
-    background-color: ${({ theme }) => theme.strokeColor};
     transition: 0.3s;
   }
 
@@ -67,7 +67,7 @@ export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
     transform: translateX(21px);
   }
 
-  &.checked:not(.labels) {
+  &.checked:not(.${SECONDARY_TOGGLE}) {
     label {
       background-color: ${({ theme }) => theme.cards};
     }
@@ -87,22 +87,33 @@ export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  &.labels {
-    label {
-      background-color: ${({ theme }) => theme.cards};
-    }
-
-    .slider::before {
-      background-color: ${({ theme }) => theme.linksAndButtons};
-    }
-  }
-
   &.disabled {
     opacity: 0.6;
     cursor: not-allowed;
 
     .toggler {
       pointer-events: none;
+    }
+  }
+
+  &.${PRIMARY_TOGGLE} {
+    .sufix,
+    .prefix {
+      color: ${({ theme }) => theme.mainHeadingText};
+    }
+
+    .slider::before {
+      background-color: ${({ theme }) => theme.strokeColor};
+    }
+  }
+
+  &.${SECONDARY_TOGGLE} {
+    label {
+      background-color: ${({ theme }) => theme.cards};
+    }
+
+    .slider::before {
+      background-color: ${({ theme }) => theme.linksAndButtons};
     }
   }
 `

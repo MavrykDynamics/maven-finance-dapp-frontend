@@ -1,6 +1,6 @@
 import { MavrykTheme } from '../../../styles/interfaces'
 import styled from 'styled-components/macro'
-import { Card, headerColor, cyanColor } from 'styles'
+import { Card } from 'styles'
 
 export const FarmTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
   margin-bottom: 20px;
@@ -53,9 +53,5 @@ export const FarmTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
   .farm-toggle {
     flex-shrink: 0;
     margin-right: 15px;
-
-    .sufix {
-      color: ${({ theme }) => theme.mainHeadingText};
-    }
   }
 `
