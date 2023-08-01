@@ -44,6 +44,7 @@ type ChartSettings = {
   }
   textColor?: string
   borderColor?: string
+  isPeriod?: boolean
 }
 
 // Base chart props, that are general to all types

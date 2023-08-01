@@ -13,7 +13,10 @@ export const checkWhetherTokenIsLoanToken = (token: TokenMetadataType): token is
 export const checkWhetherTokenIsCollateralToken = (
   token: TokenMetadataType,
 ): token is LoansCollateralTokenMetadataType =>
-  Boolean(token.loanData) && typeof token.loanData?.isProtectedCollateral === 'boolean'
+  Boolean(token.loanData) &&
+  typeof token.loanData?.isPausedCollateral === 'boolean' &&
+  typeof token.loanData?.isScaled === 'boolean' &&
+  typeof token.loanData?.isStaked === 'boolean'
 
 export const isTezosAsset = (tokenAddress?: TokenAddressType) => tokenAddress === XTZ_TOKEN_ADDRESS
 

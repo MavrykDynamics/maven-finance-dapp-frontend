@@ -20,8 +20,8 @@ import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
 
 // providers
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 
 // styles
 import { EGovActiveCardStyled } from './EGovCard.style'
@@ -40,7 +40,7 @@ type EGovCardProps = {
 
 export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
   const dispatch = useDispatch()
-  const { totalStakedMvk } = useStakeContext()
+  const { totalStakedMvk } = useDoormanContext()
   const { userTokensBalances } = useUserContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)

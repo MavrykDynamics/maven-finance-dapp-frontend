@@ -3,7 +3,6 @@ import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 // remove collateral from the vault
@@ -31,17 +30,47 @@ export const withdrawCollateralAction = async (
   }
 }
 
+export const withdrawStakedCollateralAction = async (
+  withdrawAmount: number,
+  collateralToken: LoansCollateralTokenMetadataType,
+  vaultId: number,
+  lendingControllerAddress: string,
+  callback: () => void,
+) => {
+  try {
+    const {
+      decimals,
+      loanData: { indexerName },
+    } = collateralToken
+    // prepare and send transaction
+    const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grade: decimals })
+    const tezos = await DAPP_INSTANCE.tezos()
+
+    const contract = await tezos.wallet.at(lendingControllerAddress)
+    const withdrawCollateralMetaData = contract.methods.vaultWithdrawStakedToken(
+      indexerName,
+      vaultId,
+      convertedAssetAmount,
+    )
+
+    return await getEstimationResult(withdrawCollateralMetaData, { callback })
+  } catch (error) {
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
+  }
+}
+
 // deposit collaterals to the vault
 export const depositCollateralsAction = async (
   userAddress: string,
   vaultAddress: string,
-  collateralTokens: Array<{
-    collateralName: string
-    amount: number
-    id: number
-    address: string
-    type: TokenType
-  }>,
+  collateralTokens: Array<
+    LoansCollateralTokenMetadataType & {
+      amount: number
+    }
+  >,
+  vaultId: number,
+  lendingControllerAddress: string,
   callback: () => void,
   bakerAddress?: string | null,
 ) => {
@@ -53,8 +82,17 @@ export const depositCollateralsAction = async (
     const operationKind = OpKind.TRANSACTION as OpKind.TRANSACTION
 
     const batchArr = await collateralTokens.reduce<Promise<Array<TransferParams & { kind: OpKind.TRANSACTION }>>>(
-      async (promiseAcc, { collateralName, amount, id, address, type }) => {
+      async (promiseAcc, { loanData: { indexerName, isStaked }, amount, id, address, type }) => {
         const acc = await promiseAcc
+
+        if (isStaked) {
+          const controllerContract = await tezos.wallet.at(lendingControllerAddress)
+          acc.push({
+            kind: operationKind,
+            ...controllerContract.methods.vaultDepositStakedToken(indexerName, vaultId, amount).toTransferParams(),
+          })
+          return acc
+        }
 
         if (type === 'tez') {
           acc.push({
@@ -70,6 +108,7 @@ export const depositCollateralsAction = async (
               ...contract.methods.initVaultAction('setBaker', bakerAddress).toTransferParams(),
             })
           }
+          return acc
         }
 
         if (type === 'fa12') {
@@ -85,8 +124,9 @@ export const depositCollateralsAction = async (
           })
           acc.push({
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract.methods.initVaultAction('deposit', amount, collateralName).toTransferParams(),
+            ...contract.methods.initVaultAction('deposit', amount, indexerName).toTransferParams(),
           })
+          return acc
         }
 
         if (type === 'fa2') {
@@ -108,7 +148,7 @@ export const depositCollateralsAction = async (
           })
           acc.push({
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract.methods.initVaultAction('deposit', amount, collateralName).toTransferParams(),
+            ...contract.methods.initVaultAction('deposit', amount, indexerName).toTransferParams(),
           })
           acc.push({
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -124,6 +164,7 @@ export const depositCollateralsAction = async (
               ])
               .toTransferParams(),
           })
+          return acc
         }
 
         return acc

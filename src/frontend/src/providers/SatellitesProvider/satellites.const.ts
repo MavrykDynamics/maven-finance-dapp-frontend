@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { SatellitesContextState } from './satellites.provider.types'
 
 // actions
 export const DELEGATE_ACTION = 'delegate'
@@ -55,9 +56,35 @@ export const SATELLITE_VOTES_MAPPER = {
 
 // Subs
 export const SATELLITE_DATA_SUB = 'SATELLITE_DATA_SUB'
+export const SATELLITES_DATA_ALL_SUB = 'SATELLITES_DATA_ALL_SUB'
+export const SATELLITES_DATA_SINGLE_SUB = 'SATELLITES_DATA_SINGLE_SUB'
+export const SATELLITES_DATA_ACTIVE_SUB = 'SATELLITES_DATA_ACTIVE_SUB'
+export const SATELLITES_DATA_ORACLES_SUB = 'SATELLITES_DATA_ORACLES_SUB'
+export const SATELLITE_ALL_ADDRESSES_SUB = 'SATELLITE_ALL_ADDRESSES_SUB'
 export const SATELLITE_PARTICIPATION_DATA_SUB = 'SATELLITE_PARTICIPATION_DATA_SUB'
 
 export const DEFAULT_SATELLITES_ACTIVE_SUBS = {
-  [SATELLITE_DATA_SUB]: false,
+  [SATELLITE_DATA_SUB]: null,
+  [SATELLITE_ALL_ADDRESSES_SUB]: false,
   [SATELLITE_PARTICIPATION_DATA_SUB]: false,
+}
+
+export const DEFAULT_SATELLITES_CONTEXT: SatellitesContextState = {
+  satelliteMapper: null,
+  activeSatellitesIds: null,
+  allSatellitesIds: null,
+  oraclesIds: null,
+  proposalsAmount: null,
+  satelliteGovActionsAmount: null,
+  finRequestsAmount: null,
+}
+
+export const EMPTY_SATELLITES_CONTEXT: DeepNonNullable<SatellitesContextState> = {
+  satelliteMapper: {},
+  activeSatellitesIds: [],
+  allSatellitesIds: [],
+  oraclesIds: [],
+  proposalsAmount: 0,
+  satelliteGovActionsAmount: 0,
+  finRequestsAmount: 0,
 }

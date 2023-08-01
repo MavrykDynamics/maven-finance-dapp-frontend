@@ -10,12 +10,14 @@ export type LoansChartsType = {
   calcMarketLendingChart?: boolean
 }
 
+export type LoansMarketMiniChartType = { total: Array<SingleValueData>; volume: Array<SingleValueData> }
+
 export type UseLoansChartsStateType = {
   totalLendingChart: Array<SingleValueData>
   totalBorrowingChart: Array<SingleValueData>
   totalCollateralChart: Array<SingleValueData>
-  marketBorrowChart: Record<TokenAddressType, Array<SingleValueData>>
-  marketLendingChart: Record<TokenAddressType, Array<SingleValueData>>
+  marketBorrowChart: Record<TokenAddressType, LoansMarketMiniChartType>
+  marketLendingChart: Record<TokenAddressType, LoansMarketMiniChartType>
 }
 
 // Loans market transaction history custom hook type

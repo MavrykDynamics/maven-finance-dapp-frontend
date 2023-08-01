@@ -52,7 +52,6 @@ export const SatelliteSearchFilter = styled(Card)<{ theme: MavrykTheme; oracle?:
 export const NotStakinkBannerStyled = styled.div`
   margin-top: 30px;
   max-height: 90px;
-  margin-bottom: 30px;
 
   p {
     max-width: 596px;

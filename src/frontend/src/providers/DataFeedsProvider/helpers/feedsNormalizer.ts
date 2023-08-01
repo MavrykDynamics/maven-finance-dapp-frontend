@@ -16,7 +16,7 @@ export const normalizeFeed = (feedGql: SubsribeOracleDataFeedSubscription['aggre
   return {
     ...restOfTheItem,
     oraclesAmount: oracles_aggregate?.aggregate?.count ?? 0,
-    category,
+    category: category.charAt(0).toUpperCase() + category.slice(1),
     network,
     amount: convertNumberForClient({ number: feedGql.last_completed_data, grade: feedGql.decimals }),
     oraclesResponces: feedGql.last_completed_data_pct_oracle_resp / 100,
@@ -38,7 +38,7 @@ export function normalizeFeeds(
       const feed = normalizeFeed(item)
 
       if (feed.category) {
-        dataFeedUniqueCategories.add(feed.category)
+        dataFeedUniqueCategories.add(feed.category.charAt(0).toUpperCase() + feed.category.slice(1))
       }
 
       acc.feedsMapper[feed.address] = feed

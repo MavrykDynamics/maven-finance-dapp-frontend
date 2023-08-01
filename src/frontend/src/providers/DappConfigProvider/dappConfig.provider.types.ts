@@ -1,6 +1,6 @@
 import { TransactionWalletOperation } from '@taquito/taquito'
 import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
-import { StakeActionType } from 'providers/StakeProvider/stake.provider.types'
+import { StakeActionType } from 'providers/DoormanProvider/doorman.provider.types'
 import { XtzBakerType } from './bakers/getXtzBakers'
 import { normalizeContractAddresses } from './helpers/dappConfig.normalizers'
 import { UserActionsType } from 'providers/UserProvider/user.provider.types'
@@ -10,6 +10,7 @@ import { ThemeType } from 'consts/theme.const'
 import { LoansActionsType } from 'providers/LoansProvider/loans.provider.types'
 import { VaultsActionsType } from 'providers/VaultsProvider/vaults.provider.types'
 import { WalletOperationError } from 'errors/error'
+import { ProposalActionsTypes } from 'providers/ProposalsProvider/helpers/proposals.types'
 
 export type ActionTypes =
   | StakeActionType
@@ -17,6 +18,7 @@ export type ActionTypes =
   | SatelliteActionsType
   | LoansActionsType
   | VaultsActionsType
+  | ProposalActionsTypes
 
 export type DappConfigContext = {
   // data
@@ -60,7 +62,7 @@ export type DappConfigContextStateType = Pick<
 
 export type UserActionType = {
   actionName: ActionTypes
-  toasterId: string
+  toasterId: string | null
   operationLvl: number
   callback?: () => void
 }

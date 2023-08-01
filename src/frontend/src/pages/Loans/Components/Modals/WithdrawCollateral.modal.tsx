@@ -20,7 +20,10 @@ import { WithdrawCollateralPopupDataType } from '../../../../providers/LoansProv
 import { State } from 'reducers'
 
 // actions
-import { withdrawCollateralAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
+import {
+  withdrawCollateralAction,
+  withdrawStakedCollateralAction,
+} from 'providers/VaultsProvider/actions/vaultCollateral.actions'
 
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -72,6 +75,9 @@ export const WithdrawCollateral = ({
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userTokensBalances, userAddress } = useUserContext()
+  const {
+    contractAddresses: { lendingControllerAddress },
+  } = useDappConfigContext()
   const { bug } = useToasterContext()
 
   const {
@@ -113,13 +119,14 @@ export const WithdrawCollateral = ({
 
   const {
     vaultAddress = '',
+    vaultId = 0,
     collateralBalance = 0,
     collateralRatio = 0,
     borrowedAmount = 0,
     collateralTokenAddress = '',
   } = data ?? {}
 
-  const { rate: originalCollateralRate, decimals, name, icon } = collateralToken ?? {}
+  const { rate: originalCollateralRate, decimals, name, icon, symbol } = collateralToken ?? {}
   const collateralRate = originalCollateralRate ?? 0
   const userCollateralBalance = getUserTokenBalanceByAddress({
     userTokensBalances,
@@ -154,8 +161,23 @@ export const WithdrawCollateral = ({
       return null
     }
 
-    if (collateralToken && vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
-      return await withdrawCollateralAction(Number(inputData.amount), collateralToken, vaultAddress, closePopup)
+    if (
+      collateralToken &&
+      vaultAddress &&
+      lendingControllerAddress &&
+      checkWhetherTokenIsCollateralToken(collateralToken)
+    ) {
+      if (collateralToken.loanData.isStaked) {
+        return await withdrawStakedCollateralAction(
+          Number(inputData.amount),
+          collateralToken,
+          vaultId,
+          lendingControllerAddress,
+          closePopup,
+        )
+      } else {
+        return await withdrawCollateralAction(Number(inputData.amount), collateralToken, vaultAddress, closePopup)
+      }
     }
 
     return null
@@ -169,7 +191,7 @@ export const WithdrawCollateral = ({
     [withdrawAction],
   )
 
-  const withdrawHandler = useContractAction(contractActionProps)
+  const { action: withdrawHandler } = useContractAction(contractActionProps)
 
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
     const validationStatus = loansInputValidation({
@@ -258,7 +280,7 @@ export const WithdrawCollateral = ({
               }}
               settings={{
                 balance: userCollateralBalance,
-                balanceAsset: name,
+                balanceAsset: symbol,
                 useMaxHandler: () =>
                   inputOnChangeHandle(
                     getLoansInputMaxAmount(currentCollateralToWithdraw, decimals),
@@ -270,7 +292,7 @@ export const WithdrawCollateral = ({
               }}
             >
               <InputPinnedTokenInfo>
-                <ImageWithPlug imageLink={icon} alt={`${name} icon`} /> {name}
+                <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
               </InputPinnedTokenInfo>
             </Input>
           ) : null}

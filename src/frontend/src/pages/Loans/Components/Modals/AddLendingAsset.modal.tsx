@@ -123,7 +123,7 @@ export const AddLendingAsset = ({
     [depositAction],
   )
 
-  const depositHandler = useContractAction(contractActionProps)
+  const { action: depositHandler } = useContractAction(contractActionProps)
 
   if (!data || !loanToken || !loanToken.rate) return null
 

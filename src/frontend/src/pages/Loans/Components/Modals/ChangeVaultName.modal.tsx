@@ -92,7 +92,7 @@ export const ChangeVaultName = ({
     [changeNameAction],
   )
 
-  const changeVaultNameHandler = useContractAction(contractActionProps)
+  const { action: changeVaultNameHandler } = useContractAction(contractActionProps)
 
   if (!data) return null
 

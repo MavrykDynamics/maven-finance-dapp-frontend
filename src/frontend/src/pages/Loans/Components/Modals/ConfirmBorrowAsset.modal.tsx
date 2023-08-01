@@ -103,7 +103,7 @@ export const ConfirmBorrowAsset = ({
     [borrowAction],
   )
 
-  const borrowAsserHandler = useContractAction(contractActionProps)
+  const { action: borrowAsserHandler } = useContractAction(contractActionProps)
 
   if (!data || !borrowedToken || !borrowedToken.rate) return null
 

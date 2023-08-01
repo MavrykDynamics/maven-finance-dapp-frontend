@@ -132,3 +132,11 @@ subscription getUserData($userAddress: String = "") {
 	}
 }
 `)
+
+export const SUBSCRIBE_USER_PROPOSAL_REWARDS_DATA = gql(`
+subscription getUserProposalRewardsData($userAddress: String = "") {
+	governance_proposal(where: {reward_claim_ready: {_eq: true}, votes: {voter: {address: {_eq: $userAddress}}, _and: {voting_reward_claimed: {_eq: false}}}}) {
+    id
+  }
+}
+`)

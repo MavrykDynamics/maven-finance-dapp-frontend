@@ -1,8 +1,9 @@
 import { useRef, useEffect, useState } from 'react'
+import dayjs from 'dayjs'
 import { createChart, BusinessDay, UTCTimestamp, SingleValueData } from 'lightweight-charts'
 
 import styleColors from 'styles/colors'
-import { parseDate } from 'utils/time'
+import { getDateEnd, getDateStart, parseDate } from 'utils/time'
 import {
   DEFAULT_LAYOUT_SETTING,
   CHART_GRID_SETTING,
@@ -17,7 +18,6 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 import ChartTooltip, { AMOUNT_DATE_TOOLTIP } from '../Tooltips/ChartTooltip'
 import { ChartStyled } from '../Chart.style'
-
 import { AreaChartPropsType } from '../helpers/Chart.types'
 
 export const HistogramChart = ({
@@ -45,6 +45,7 @@ export const HistogramChart = ({
     textColor = styleColors[themeSelected]['regularText'],
     borderColor = styleColors[themeSelected]['strokeColor'],
     seriesMarkers,
+    isPeriod = false,
   } = settings ?? {}
 
   const { barColor = styleColors[themeSelected]['histogramChartColor'] } = colors ?? {}
@@ -55,6 +56,7 @@ export const HistogramChart = ({
   const [tooltipData, setTooltipData] = useState<{
     xAxis: number
     yAxis: number
+    isLastPlot: boolean
   } | null>(null)
 
   useEffect(() => {
@@ -101,7 +103,7 @@ export const HistogramChart = ({
         if (tickDateFormatter) {
           return tickDateFormatter(Number(time))
         }
-        return parseDate({ time: Number(time), timeFormat: 'HH:mm' })
+        return parseDate({ time: Number(time), timeFormat: 'MMM DD' })
       },
     })
 
@@ -133,10 +135,22 @@ export const HistogramChart = ({
         if (!checkPlotType<SingleValueData>(plot, ['value'])) return
         const { value, time } = plot
 
-        setTooltipData({
-          yAxis: Number(time),
-          xAxis: parseFloat(String(value)),
-        })
+        if (isPeriod) {
+          const currentDayStart = getDateStart(dayjs().valueOf()),
+            currentDayEnd = getDateEnd(dayjs().valueOf())
+
+          setTooltipData({
+            yAxis: Number(time),
+            xAxis: parseFloat(String(value)),
+            isLastPlot: Number(time) <= currentDayEnd && Number(time) >= currentDayStart,
+          })
+        } else {
+          setTooltipData({
+            yAxis: Number(time),
+            xAxis: parseFloat(String(value)),
+            isLastPlot: false,
+          })
+        }
 
         if (mainChartWrapperRef.current && param.point) {
           mainChartWrapperRef.current.style.setProperty('--translateX', `${param.point.x + 15}`)
@@ -166,6 +180,8 @@ export const HistogramChart = ({
     priceMargins,
     yAxisSide,
     crosshairOptions,
+    isPeriod,
+    seriesMarkers,
   ])
 
   return (
@@ -173,6 +189,8 @@ export const HistogramChart = ({
       <ChartTooltip
         xAxis={tooltipData?.xAxis}
         yAxis={tooltipData?.yAxis}
+        isLastPlot={tooltipData?.isLastPlot}
+        isPeriod={isPeriod}
         asset={tooltipAsset}
         tooltipName={tooltipName}
         dateTooltipFormatter={dateTooltipFormatter}

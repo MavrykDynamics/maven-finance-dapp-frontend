@@ -21,9 +21,9 @@ import {
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import colors from 'styles/colors'
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -33,10 +33,10 @@ export const emptyContainer = (
 )
 
 export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { totalSupply, totalStakedMvk, smvkHistoryData } = useStakeContext()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
+  const { totalSupply, totalStakedMvk, smvkHistoryData } = useDoormanContext()
 
   const mli = calcMLI(totalSupply, totalStakedMvk)
   const fee = calcExitFee(totalSupply, totalStakedMvk)

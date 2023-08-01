@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components/macro'
+import { css } from 'styled-components'
 import { MavrykTheme } from './interfaces'
 
 export const GlobalStyle = createGlobalStyle<{ theme: MavrykTheme }>`
@@ -122,6 +123,14 @@ a {
   opacity: 1;
   transition: opacity 0.15s ease-in-out-out;
   will-change: opacity;
+
+  &.isCyan {
+    color: ${({ theme }) => theme.linksAndButtons};
+  }
+
+  &.underline {
+    text-decoration: underline;
+  }
 }
 
 
@@ -180,4 +189,17 @@ p {
     fill: ${({ theme }) => theme.linksAndButtons};
   }
 }
+  /* spaces */
+
+  ${[10, 20, 30].map(
+    (n) => css`
+      .mb-${n} {
+        margin-bottom: ${n}px;
+      }
+
+      .mt-${n} {
+        margin-top: ${n}px;
+      }
+    `,
+  )}
 `

@@ -40,6 +40,7 @@ export type ConfirmRepayFullPopupDataType = {
 
 export type AddCollateralPopupDataType = {
   vaultAddress: string
+  vaultId: number
   availableLiquidity: number
   borrowedTokenAddress: TokenAddressType
   collateralBalance: number
@@ -52,6 +53,7 @@ export type AddCollateralPopupDataType = {
 export type AddNewCollateralDataProps = {
   vaultAddress: string
   collateralBalance: number
+  vaultId: number
   borrowCapacity: number
   borrowedAmount: number
   collateralRatio: number
@@ -62,6 +64,7 @@ export type AddNewCollateralDataProps = {
 
 export type WithdrawCollateralPopupDataType = {
   vaultAddress: string
+  vaultId: number
   amountToWitdraw: number
   borrowedAmount: number
   borrowedTokenAddress: TokenAddressType

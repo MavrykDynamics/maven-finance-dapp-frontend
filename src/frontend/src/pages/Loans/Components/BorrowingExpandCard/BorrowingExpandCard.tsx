@@ -81,7 +81,6 @@ export const BorrowingExpandCard = ({
     createVaultPopup,
   } = useLoansPopupsContext()
   const { marketsMapper } = useLoansContext()
-  console.log({ marketsMapper })
 
   const history = useHistory()
   const location = useLocation()
@@ -270,6 +269,7 @@ export const BorrowingExpandCard = ({
   const handleClickOpenAddNewCollateralPopup = () => {
     openAddNewCollateralPopup({
       vaultAddress,
+      vaultId,
       borrowedAmount,
       collateralBalance,
       collateralRatio,
@@ -283,6 +283,7 @@ export const BorrowingExpandCard = ({
   const handleClickOpenAddExistingCollateralPopup = (idx: number) => {
     openAddExistingCollateralPopup({
       vaultAddress,
+      vaultId,
       borrowedAmount,
       collateralBalance,
       collateralRatio,
@@ -296,6 +297,7 @@ export const BorrowingExpandCard = ({
   const handleClickOpenWithdrawCollateralPopup = ({ amount, idx }: { amount: number; idx: number }) => {
     openWithdrawCollateralPopup({
       vaultAddress,
+      vaultId,
       borrowedAmount,
       collateralBalance,
       collateralRatio,

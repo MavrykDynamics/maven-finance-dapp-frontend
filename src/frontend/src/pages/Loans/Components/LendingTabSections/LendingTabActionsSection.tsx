@@ -78,11 +78,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   const { symbol, decimals, icon, rate } = loanToken
   const tokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: loanToken.address })
 
-  const convertedLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
-
-  const futureMBalance = isSupplyActiveTab
-    ? convertedLendValue + Number(inputData.amount)
-    : convertedLendValue - Number(inputData.amount)
+  const futureMBalance = isSupplyActiveTab ? lendValue + Number(inputData.amount) : lendValue - Number(inputData.amount)
 
   const isDisabledButton = inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionActive
 
@@ -107,7 +103,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
         openConfirmAddLendingAssetPopup({
           callback: clearData,
           inputAmount: Number(inputData.amount),
-          mBalance: convertedLendValue,
+          mBalance: lendValue,
           lendingAPY: lendAPY,
           tokenAddress: loanTokenAddress,
         })
@@ -117,7 +113,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
         openConfirmRemoveLendingAssetPopup({
           callback: clearData,
           inputAmount: Number(inputData.amount),
-          currentLendedAmount: convertedLendValue,
+          currentLendedAmount: lendValue,
           tokenAddress: loanTokenAddress,
         })
         break

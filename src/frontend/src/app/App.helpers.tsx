@@ -75,7 +75,7 @@ export function convertBytesAddressToAddress(addressInBytes: string): string {
     const jsonString = JSON.parse(JSON.stringify(unpackedBytes))
     return jsonString['string']
   } catch (e) {
-    console.log('convertBytesAddressToAddress', e)
+    console.log('convertBytesAddressToAddress: ', e)
     return ''
   }
 }
@@ -91,7 +91,7 @@ export function convertBytesStringToText(textInBytes: string): string {
     const jsonString = JSON.parse(JSON.stringify(unpackedBytes))
     return jsonString['string']
   } catch (e) {
-    console.log('convertBytesStringToText', e)
+    console.log('convertBytesStringToText: ', e)
     return ''
   }
 }

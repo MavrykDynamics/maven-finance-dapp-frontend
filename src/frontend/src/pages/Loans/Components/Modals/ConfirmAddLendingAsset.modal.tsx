@@ -44,7 +44,7 @@ export const ConfirmAddLendingAsset = ({
   show: boolean
   data: ConfirmAddLendingAssetDataType
 }) => {
-  const { tokensMetadata } = useTokensContext()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
   const {
@@ -57,9 +57,8 @@ export const ConfirmAddLendingAsset = ({
     preferences: { themeSelected },
   } = useDappConfigContext()
 
-  const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata })
+  const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
   const { mBalance = 0, inputAmount = 0, lendingAPY = 0, callback = () => {} } = data ?? {}
-  const { symbol } = loanToken ?? {}
 
   const depositAction = useCallback(async () => {
     if ((loanToken && !checkWhetherTokenIsLoanToken(loanToken)) || !loanToken) {
@@ -90,9 +89,11 @@ export const ConfirmAddLendingAsset = ({
     [depositAction],
   )
 
-  const depositHandler = useContractAction(contractActionProps)
+  const { action: depositHandler } = useContractAction(contractActionProps)
 
-  if (!data || !loanToken || !loanToken.rate || !symbol) return null
+  if (!data || !loanToken || !loanToken.rate) return null
+
+  const { symbol } = loanToken
 
   return (
     <PopupContainer onClick={closePopup} show={show}>

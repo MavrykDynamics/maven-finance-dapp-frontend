@@ -12,8 +12,8 @@ import {
 } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // providers
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // consts & helpers
@@ -73,7 +73,7 @@ const findExitFeeClosestTimePlot = (exitFeePlots: Array<AreaChartPlotType>, exit
 }
 
 export function DoormanChart() {
-  const { smvkHistoryData, mvkHistoryData, totalStakedMvk, totalSupply } = useStakeContext()
+  const { smvkHistoryData, mvkHistoryData, totalStakedMvk, totalSupply } = useDoormanContext()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()

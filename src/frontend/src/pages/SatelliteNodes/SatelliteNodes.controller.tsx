@@ -32,6 +32,7 @@ import {
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITES_DATA_ALL_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 
 const itemsForDropDown = [
@@ -60,7 +61,7 @@ const SatelliteNodes = () => {
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_ALL_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
 
@@ -124,11 +125,11 @@ const SatelliteNodes = () => {
         <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
       ) : null}
 
-      <PageContent>
+      <PageContent className="mt-30">
         {isSatellitesLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
-            <div className="text">Loading satellites data...</div>
+            <div className="text">Loading satellites data</div>
           </DataLoaderWrapper>
         ) : (
           <SatelliteNodesStyled>

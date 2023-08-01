@@ -46,7 +46,6 @@ import {
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import colors from 'styles/colors'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
@@ -56,6 +55,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -72,6 +72,9 @@ export const AddCollateral = ({
     preferences: { themeSelected },
   } = useDappConfigContext()
   const { userTokensBalances, userAddress } = useUserContext()
+  const {
+    contractAddresses: { lendingControllerAddress },
+  } = useDappConfigContext()
   const { bug } = useToasterContext()
 
   useLockBodyScroll(show)
@@ -107,6 +110,7 @@ export const AddCollateral = ({
   const {
     collateralBalance = 0,
     vaultAddress = '',
+    vaultId = 0,
     collateralRatio = 0,
     borrowedAmount = 0,
     borrowCapacity = 0,
@@ -142,22 +146,26 @@ export const AddCollateral = ({
       return null
     }
 
-    if (collateralToken && vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
+    if (
+      collateralToken &&
+      vaultAddress &&
+      lendingControllerAddress &&
+      checkWhetherTokenIsCollateralToken(collateralToken)
+    ) {
       return await depositCollateralsAction(
         userAddress,
         vaultAddress,
         [
           {
-            collateralName: collateralToken.loanData.indexerName,
-            address: collateralToken.address,
-            id: collateralToken.id,
-            type: collateralToken.type,
+            ...collateralToken,
             amount: convertNumberForContractCall({
               number: Number(inputData.amount),
               grade: decimals,
             }),
           },
         ],
+        vaultId,
+        lendingControllerAddress,
         closePopup,
       )
     }
@@ -173,7 +181,7 @@ export const AddCollateral = ({
     [depositAction],
   )
 
-  const depositCollateralHandler = useContractAction(contractActionProps)
+  const { action: depositCollateralHandler } = useContractAction(contractActionProps)
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
@@ -271,7 +279,7 @@ export const AddCollateral = ({
             }}
           >
             <InputPinnedTokenInfo>
-              <ImageWithPlug imageLink={icon} alt={`${name} icon`} /> {name}
+              <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
             </InputPinnedTokenInfo>
           </Input>
 

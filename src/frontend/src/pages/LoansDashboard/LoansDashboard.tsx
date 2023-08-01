@@ -117,8 +117,6 @@ export const LoansDashboard = () => {
 
         const { decimals, rate } = token
 
-        const conveterLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
-
         const { borrowedAmount = 0, borrowedVaultsCollateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
 
         acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
@@ -130,9 +128,9 @@ export const LoansDashboard = () => {
         borrowedPerMarket += borrowedAmount
 
         // calculating net APY supplied & borrowed ratio's
-        acc.sumOfRatioSuppliedToAPY += conveterLendValue * rate * lendingAPY
+        acc.sumOfRatioSuppliedToAPY += lendValue * rate * lendingAPY
         acc.sumOfRatioBorrowedToAPR += borrowedPerMarket * borrowAPR
-        acc.totalSuppliedValue += conveterLendValue * rate
+        acc.totalSuppliedValue += lendValue * rate
         return acc
       },
       {

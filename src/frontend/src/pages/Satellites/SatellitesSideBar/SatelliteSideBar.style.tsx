@@ -36,8 +36,10 @@ export const SideBarSection = styled.aside<{ theme: MavrykTheme }>`
     bottom: -1px;
   }
 
-  button {
-    margin-bottom: 38px;
+  > a {
+    display: block;
+    margin: 0 auto 30px auto;
+    max-width: 250px;
   }
 `
 
@@ -86,7 +88,7 @@ export const SideBarItem = styled.div<{ theme: MavrykTheme }>`
   height: 14px;
 
   h3 {
-    font-weight: 600;
+    font-weight: 500;
     font-size: 14px;
 
     color: ${({ theme }) => theme.regularText};
@@ -99,7 +101,7 @@ export const SideBarItem = styled.div<{ theme: MavrykTheme }>`
     * {
       font-style: normal;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 16px;
       color: ${({ theme }) => theme.primaryText};
       white-space: nowrap;
       max-width: 100%;
