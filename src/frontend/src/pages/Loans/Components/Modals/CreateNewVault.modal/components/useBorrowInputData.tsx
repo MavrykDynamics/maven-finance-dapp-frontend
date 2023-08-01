@@ -1,4 +1,5 @@
 import {
+  ERR_MSG_TOAST,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
   InputStatusType,
@@ -6,6 +7,7 @@ import {
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -49,6 +51,8 @@ export const useBorrowInputData = (borrowedAssetAddress = '', borrowCapacity = 0
           byDecimalPlaces: decimals || assetDecimalsToShow,
         },
       })
+
+      console.log(validationStatus)
 
       setInputData({
         ...inputData,
@@ -94,6 +98,7 @@ export const useBorrowInputData = (borrowedAssetAddress = '', borrowCapacity = 0
       inputStatus: inputData.validationStatus,
       convertedValue: inputAmount * rate,
       inputSize: INPUT_LARGE,
+      validationFns: [[validateInputLength, ERR_MSG_TOAST]],
     }),
     [
       userAssetBalance,

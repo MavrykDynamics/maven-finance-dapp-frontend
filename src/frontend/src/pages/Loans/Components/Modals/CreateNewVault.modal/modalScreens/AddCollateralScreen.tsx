@@ -116,7 +116,7 @@ export const AddCollateralScreen = () => {
   const isAddCollateralContinueDisabled = Boolean(
     isVaultCreating ||
       newVault === null ||
-      (hasXTZTokenSelected && choosenBaker) ||
+      (hasXTZTokenSelected && !choosenBaker) ||
       !selectedCollateralsAddresses.every((tokenAddress) => {
         return selectedCollaterals[tokenAddress].validation === INPUT_STATUS_SUCCESS
       }),
