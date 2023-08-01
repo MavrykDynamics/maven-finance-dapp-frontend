@@ -36,9 +36,33 @@ const FinancialRequestsProvider = ({ children }: Props) => {
   const [activeSubs, setActiveSubs] = useState<FinRequestsSubsRecordType>(DEFAULT_FIN_REQUESTS_ACTIVE_SUBS)
   const currentTimeRef = useRef(dayjs().toISOString())
 
+  /**
+   * chnage currentTime for sub when active sub was changed to resubscribe
+   */
   useEffect(() => {
     currentTimeRef.current = dayjs().toISOString()
   }, [activeSubs])
+
+  /**
+   * updating currentTime to refetch data for fin requests if the oldest of ongoing actions expired
+   * than it watches for the next one, cuz id of request was changed in update method inside subscription
+   */
+  useEffect(() => {
+    const _finrequest = finRequestsCtxState.closestOngoingFinRequestToBeExpired
+    let timeout: NodeJS.Timeout | null = null
+    if (_finrequest) {
+      const expirationTime = dayjs(_finrequest.votingTillTime)
+      const diff = expirationTime.diff(dayjs())
+      timeout = setTimeout(() => {
+        currentTimeRef.current = dayjs().toISOString()
+      }, diff + 5000)
+    }
+
+    return () => {
+      if (timeout) clearTimeout(timeout)
+    }
+    // using id cuz it's object and reference can be changed
+  }, [finRequestsCtxState.closestOngoingFinRequestToBeExpired?.id])
 
   const handleSubError = (error: ApolloError, subName: FinancialRequestsSubsType) => {
     console.error(`${subName} query error: `, error)
@@ -90,7 +114,6 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     // if it's "ongoing" -> financialRequestsIds includes only ongoing fin requests
     // if it's "all" -> financialRequestsIds includes all fin requests
     const { financialRequestsIds, financialRequestMapper, ongoingFrIds, pastFrIds } = normalizeFinancialRequests(data)
-
     setFinRequestsCtxState((prev) => ({
       ...prev,
       allFinRequestsIds: isAllFinReuests ? financialRequestsIds : prev.allFinRequestsIds,
@@ -108,6 +131,7 @@ const FinancialRequestsProvider = ({ children }: Props) => {
         ? ongoingFrIds
         : prev.ongoingFinRequestsIds,
       financialRequestsMapper: { ...prev.financialRequestsMapper, ...financialRequestMapper },
+      closestOngoingFinRequestToBeExpired: financialRequestMapper[ongoingFrIds[ongoingFrIds.length - 1] as any],
     }))
   }
 
@@ -124,8 +148,6 @@ const FinancialRequestsProvider = ({ children }: Props) => {
       }),
     [activeSubs, finRequestsCtxState],
   )
-
-  console.log(contextProviderValue, 'contextProviderValue')
 
   return <financialRequestsContext.Provider value={contextProviderValue}>{children}</financialRequestsContext.Provider>
 }

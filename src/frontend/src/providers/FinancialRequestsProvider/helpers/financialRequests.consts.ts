@@ -21,8 +21,11 @@ export const DEFAULT_FINANCIAL_REQUESTS_CTX: FinancialRequestsStateType = {
   pastFinRequestsIds: null,
   ongoingFinRequestsIds: null,
   financialRequestsMapper: null,
+  closestOngoingFinRequestToBeExpired: null,
 }
-export const EMPTY_FINANCIAL_REQUESTS_CTX: DeepNonNullable<FinancialRequestsStateType> = {
+export const EMPTY_FINANCIAL_REQUESTS_CTX: DeepNonNullable<
+  Omit<FinancialRequestsStateType, 'closestOngoingFinRequestToBeExpired'>
+> = {
   allFinRequestsIds: [],
   pastFinRequestsIds: [],
   ongoingFinRequestsIds: [],

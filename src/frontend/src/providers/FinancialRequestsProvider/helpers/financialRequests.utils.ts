@@ -140,11 +140,12 @@ export const getFinRequestsProviderReturnValue = ({
     }
   }
 
+  const { closestOngoingFinRequestToBeExpired, ...rest } = finRequestsCtxState
+
   // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<FinancialRequestsStateType>(
-    finRequestsCtxState,
-    EMPTY_FINANCIAL_REQUESTS_CTX,
-  )
+  const nonNullableProviderValue = replaceNullValuesWithDefault<
+    Omit<FinancialRequestsStateType, 'closestOngoingFinRequestToBeExpired'>
+  >(rest, EMPTY_FINANCIAL_REQUESTS_CTX)
   return {
     ...commonToReturn,
     ...nonNullableProviderValue,
