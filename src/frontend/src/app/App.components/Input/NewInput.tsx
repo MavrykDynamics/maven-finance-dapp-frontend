@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { BUTTON_SIMPLE } from '../Button/Button.constants'
 import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 
 // hooks
-import { useInputValidator } from 'app/App.hooks/useInputValidator'
+import { useInputValidator } from './hooks/useInputValidator'
 
 // types
 import { InputViewProps } from './newInput.type'
@@ -18,6 +18,8 @@ import {
   StyledInput,
   InputErrorMessage,
 } from './Input.style'
+import { validateInput } from 'app/App.utils/input'
+import { ERR_MSG_INPUT } from './Input.constants'
 
 export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
   (
@@ -36,6 +38,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
         balanceName = 'Balance',
         inputStatus,
         inputSize,
+        validationFns = [[validateInput, ERR_MSG_INPUT]],
         errorMessage: errorMessageFromProps,
         showErrorMessage = true,
       },
@@ -47,6 +50,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
       originalErrorMessage: errorMessageFromProps,
       status: inputStatus,
       onChange,
+      validationFns:
+        validationFns && validationFns.length > 0 ? [[validateInput, ERR_MSG_INPUT], ...validationFns] : validationFns,
     })
 
     return (

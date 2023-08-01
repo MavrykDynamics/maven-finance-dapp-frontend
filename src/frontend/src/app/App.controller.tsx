@@ -7,9 +7,6 @@ import { useCookies } from 'react-cookie'
 
 import { configureStore } from './App.store'
 
-// providers
-import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
-
 // types
 import { State } from '../reducers'
 
@@ -88,9 +85,7 @@ export const App = () => {
       <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
       <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
-      <LoansPopupsProvider>
-        <AppRoutes />
-      </LoansPopupsProvider>
+      <AppRoutes />
 
       <Footer />
     </AppStyled>

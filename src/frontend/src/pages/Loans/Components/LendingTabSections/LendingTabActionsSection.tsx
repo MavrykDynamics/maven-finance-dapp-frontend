@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 import classNames from 'classnames'
 
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -20,17 +20,20 @@ import { getLoansInputMaxAmount, loansInputValidation } from '../../Loans.helper
 import { LENDING_TAB_SUPPLY_TEXT, LENDING_TAB_WITHDRAW_TEXT } from 'texts/banners/loan.text'
 import { EARN_APY } from 'texts/tooltips/loan.text'
 import {
+  ERR_MSG_TOAST,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
   InputStatusType,
+  defaultLargeInputMaxLength,
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from '../../Loans.style'
-import { LoansActionsSection } from './../LoansComponents.style'
+import { CardSectionWrapper, LoansActionsSection } from './../LoansComponents.style'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -39,11 +42,17 @@ import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingT
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
   loanTokenAddress: TokenAddressType
   lendAPY: number
+}
+
+type InputDataType = {
+  amount: string
+  validationStatus: InputStatusType
 }
 
 export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAPY }: LendingTabPropsType) => {
@@ -58,10 +67,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   const { lendValue = 0 } = lendingItem || {}
 
   const [activeTab, setActiveTab] = useState(LENDING_TAB_SLIDING_BUTTONS.find((item) => item.active))
-  const [inputData, setInputData] = useState<{
-    amount: string
-    validationStatus: InputStatusType
-  }>({
+  const [inputData, setInputData] = useState<InputDataType>({
     amount: '0',
     validationStatus: INPUT_STATUS_DEFAULT,
   })
@@ -73,11 +79,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   const { symbol, decimals, icon, rate } = loanToken
   const tokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: loanToken.address })
 
-  const convertedLendValue = convertNumberForClient({ number: lendValue, grade: decimals })
-
-  const futureMBalance = isSupplyActiveTab
-    ? convertedLendValue + Number(inputData.amount)
-    : convertedLendValue - Number(inputData.amount)
+  const futureMBalance = isSupplyActiveTab ? lendValue + Number(inputData.amount) : lendValue - Number(inputData.amount)
 
   const isDisabledButton = inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionActive
 
@@ -102,7 +104,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
         openConfirmAddLendingAssetPopup({
           callback: clearData,
           inputAmount: Number(inputData.amount),
-          mBalance: convertedLendValue,
+          mBalance: lendValue,
           lendingAPY: lendAPY,
           tokenAddress: loanTokenAddress,
         })
@@ -112,7 +114,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
         openConfirmRemoveLendingAssetPopup({
           callback: clearData,
           inputAmount: Number(inputData.amount),
-          currentLendedAmount: convertedLendValue,
+          currentLendedAmount: lendValue,
           tokenAddress: loanTokenAddress,
         })
         break
@@ -174,6 +176,7 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
     useMaxHandler,
     inputStatus: inputData.validationStatus,
     inputSize: INPUT_LARGE,
+    validationFns: [[validateInputLength, ERR_MSG_TOAST]],
     ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
   }
 
@@ -202,23 +205,16 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
       <div className="mt-25">
         <div className="tab-text mb-10">Updated Lending {symbol} Stats</div>
 
-        <div className="stats">
-          <ThreeLevelListItem>
-            <div className="name">
-              Earn APY
-              <CustomTooltip iconId="info" text={EARN_APY} />
-            </div>
-            <CommaNumber value={lendAPY} className="value" endingText="%" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">{isSupplyActiveTab ? `m${symbol} Received` : 'Amount To Withdraw'}</div>
-            <CommaNumber value={Number(inputData.amount)} className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem className="right">
-            <div className="name">New m{symbol} Balance</div>
-            <CommaNumber value={futureMBalance} className="value" />
-          </ThreeLevelListItem>
-        </div>
+        <CardSectionWrapper>
+          <LendingStatsTable
+            shouldNotRenderStats={inputData.validationStatus === INPUT_STATUS_ERROR}
+            lendAPY={lendAPY}
+            isSupplyActiveTab={isSupplyActiveTab}
+            symbol={symbol}
+            amount={inputData.amount}
+            futureMBalance={futureMBalance}
+          />
+        </CardSectionWrapper>
       </div>
 
       <div className="button-wrapper">
@@ -230,3 +226,46 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
     </LoansActionsSection>
   )
 }
+
+const LendingStatsTable = memo(
+  ({
+    shouldNotRenderStats,
+    lendAPY,
+    isSupplyActiveTab,
+    futureMBalance,
+    symbol,
+    amount,
+  }: {
+    shouldNotRenderStats: boolean
+    lendAPY: number
+    isSupplyActiveTab: boolean
+    symbol: string
+    amount: number | string
+    futureMBalance: number
+  }) => {
+    return (
+      <div className="stats">
+        <ThreeLevelListItem>
+          <div className="name">
+            Earn APY
+            <CustomTooltip iconId="info" text={EARN_APY} />
+          </div>
+          <CommaNumber value={lendAPY} className="value" endingText="%" />
+        </ThreeLevelListItem>
+        <ThreeLevelListItem>
+          <div className="name">{isSupplyActiveTab ? `m${symbol} Received` : 'Amount To Withdraw'}</div>
+          <CommaNumber value={Number(amount)} className="value" />
+        </ThreeLevelListItem>
+        <ThreeLevelListItem className="right">
+          <div className="name">New m{symbol} Balance</div>
+          <CommaNumber value={futureMBalance} className="value" />
+        </ThreeLevelListItem>
+      </div>
+    )
+  },
+  (oldProps, newProps) => {
+    if (newProps.shouldNotRenderStats) return true
+    if (oldProps.shouldNotRenderStats === newProps.shouldNotRenderStats) return false
+    return false
+  },
+)

@@ -22,6 +22,7 @@ import DappConfigProvider, {
 import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider'
 import LoansProvider from 'providers/LoansProvider/loans.provider'
 import DoormanProvider from 'providers/DoormanProvider/doorman.provider'
+import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
 
 // components
@@ -104,9 +105,11 @@ const AppContainer = () => {
 
   return (
     <>
-      <GlobalStyle />
-      <ToasterMessages />
-      <App />
+      <LoansPopupsProvider>
+        <GlobalStyle />
+        <ToasterMessages />
+        <App />
+      </LoansPopupsProvider>
     </>
   )
 }

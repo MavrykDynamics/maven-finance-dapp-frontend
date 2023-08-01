@@ -20,9 +20,9 @@ export const getDescrByType = (type: number) => {
     case 5:
       return 'Withdrawn'
     case 6:
-      return 'Deposited SMVK'
+      return 'Deposited'
     case 7:
-      return 'Withdrew SMVK'
+      return 'Withdrawn'
     case 8:
       return 'Vault Created'
     case 9:
