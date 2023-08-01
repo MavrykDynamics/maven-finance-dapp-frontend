@@ -1,14 +1,5 @@
 import { AppDispatch, GetState } from 'app/App.controller'
 
-import {
-  GOVERNANCE_CONFIG_QUERY,
-  GOVERNANCE_CONFIG_QUERY_NAME,
-  GOVERNANCE_CONFIG_QUERY_VARIABLE,
-  GOVERNANCE_PROPOSALS_QUERY,
-  GOVERNANCE_PROPOSALS_QUERY_NAME,
-  GOVERNANCE_PROPOSALS_QUERY_VARIABLE,
-} from 'gql/queries'
-
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import { normalizeGovernanceConfig, normalizeGovernanceProposals } from './governanceNormalizers'
 

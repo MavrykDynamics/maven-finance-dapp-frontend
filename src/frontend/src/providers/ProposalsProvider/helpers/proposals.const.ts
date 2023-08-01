@@ -1,3 +1,6 @@
+import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
+import { ProposalsSubsRecordType, ProposalsContextStateType } from '../proposals.provider.types'
+
 // proposal actions
 export const PROPOSAL_ROUND_VOTE_ACTION = 'proposalRoundVote'
 export const VOTING_ROUND_VOTE_ACTION = 'votingRoundVote'
@@ -14,3 +17,46 @@ export const UPDATE_PROPOSAL_DATA_ACTION = 'updateProposalData'
 export const START_PROPOSAL_ROUND_ACTION = 'startProposalRound'
 export const START_VOTING_ROUND_ACTION = 'startVotingRound'
 export const START_NEXT_ROUND_ACTION = 'startNextRound'
+
+// Context consts
+export const DEFAULT_PROPOSALS_CTX: ProposalsContextStateType = {
+  config: null,
+  proposalsMapper: null,
+  currentRoundProposalsIds: null,
+  pastProposalsIds: null,
+  allProposalsIds: null,
+  waitingProposalsIdsToBeExecuted: null,
+  waitingProposalsIdsToBePaid: null,
+}
+
+export const EMPTY_PROPOSALS_CTX: DeepNonNullable<ProposalsContextStateType> = {
+  config: {
+    // address: null,
+    fee: 0,
+    successReward: 0,
+    currentRoundEndLevel: 0,
+    cycle: 0,
+    timelockProposalId: null,
+    cycleHighestVotedProposalId: null,
+    governancePhase: GovPhases.PROPOSAL,
+  },
+
+  proposalsMapper: {},
+  currentRoundProposalsIds: [],
+  pastProposalsIds: [],
+  allProposalsIds: [],
+  waitingProposalsIdsToBeExecuted: [],
+  waitingProposalsIdsToBePaid: [],
+}
+
+// SUBS
+export const GOVERNANCE_CONFIG_SUB = 'GOVERNANCE_CONFIG_SUB'
+export const PROPOSALS_DATA_SUB = 'PROPOSALS_DATA_SUB'
+export const PROPOSALS_CURRENT_DATA = 'PROPOSALS_CURRENT_DATA_SUB'
+export const PROPOSALS_CURRENT_USER_DATA = 'PROPOSALS_CURRENT_USER_DATA_SUB'
+export const PROPOSALS_PAST_DATA = 'PROPOSALS_PAST_DATA_SUB'
+
+export const DEFAULT_PROPOSALS_ACTIVE_SUBS: ProposalsSubsRecordType = {
+  [PROPOSALS_DATA_SUB]: null,
+  [GOVERNANCE_CONFIG_SUB]: false,
+}

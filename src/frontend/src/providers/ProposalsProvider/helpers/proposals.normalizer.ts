@@ -1,16 +1,3 @@
-import { State } from 'reducers'
-import { calcWithoutPrecision, calcWithoutMu, convertNumberForClient } from 'utils/calcFunctions'
-import {
-  GovernanceProposalGraphQL,
-  GovernanceGraphQL,
-  GovPhases,
-  ProposalStatus,
-} from 'utils/TypesAndInterfaces/Governance'
-import { getProposalStatus } from '../Governance.helpers'
-import { MVK_DECIMALS } from 'utils/constants'
-import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
-import { satelliteVoteSchema } from 'providers/SatellitesProvider/satellites.const'
-
 export const normalizeProposal = (
   item: GovernanceProposalGraphQL,
   { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: State['governance']['config'],
@@ -103,7 +90,7 @@ export const normalizeProposal = (
 }
 
 export const normalizeGovernanceProposals = (
-  proposals: Array<GovernanceProposalGraphQL>,
+  indexerData: ProposalsDataSubscriptionSubscription,
   governanceConfig: State['governance']['config'],
 ): Omit<Omit<State['governance'], 'isLoaded'>, 'config'> => {
   const { governancePhase, timelockProposalId } = governanceConfig
