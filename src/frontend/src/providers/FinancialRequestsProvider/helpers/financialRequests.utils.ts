@@ -1,5 +1,5 @@
 import { calcWithoutPrecision } from 'utils/calcFunctions'
-import { FinancialRequestRecord } from './financialRequests.types'
+import { FinRequestVoteType, FinancialRequestRecord } from './financialRequests.types'
 import { GetFinRequestsStorageSubscription } from 'utils/__generated__/graphql'
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
@@ -15,6 +15,7 @@ import {
   PAST_FIN_REQUESTS_SUB,
 } from './financialRequests.consts'
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { finRequestVote } from './financialRequests.schema'
 
 /**
  *
@@ -74,8 +75,25 @@ export const normalizeFinancialRequests = (storage: {
         executed: item.executed,
         status: item.status,
 
+        votes: item.votes.reduce<Array<FinRequestVoteType>>((acc, vote) => {
+          try {
+            const _vote = finRequestVote.parse({
+              governanceFinRequestId: vote.governance_financial_request_id,
+              id: vote.id,
+              timestamp: vote.timestamp,
+              voter: vote.voter.address,
+              vote: vote.vote,
+            })
+
+            acc.push(_vote)
+          } catch (e) {
+            console.error('governance_votes vote parse error: ', { e })
+          } finally {
+            return acc
+          }
+        }, []),
+
         // Votes data
-        votes: item.votes,
         forVotesMVKTotal: calcWithoutPrecision(item.yay_vote_smvk_total),
         againstVotesMVKTotal: calcWithoutPrecision(item.nay_vote_smvk_total),
         sMVKTotakSupply: calcWithoutPrecision(item.snapshot_smvk_total_supply),

@@ -1,4 +1,5 @@
-import { GetFinRequestsStorageSubscription } from 'utils/__generated__/graphql'
+import { z } from 'zod'
+import { finRequestVote } from './financialRequests.schema'
 
 // Financical request types
 export type FinancialRequestRecord = {
@@ -17,9 +18,11 @@ export type FinancialRequestRecord = {
   executed: boolean
 
   // Votes data
-  votes: GetFinRequestsStorageSubscription['governance_financial_request'][0]['votes']
+  votes: FinRequestVoteType[]
   forVotesMVKTotal: number
   againstVotesMVKTotal: number
   sMVKTotakSupply: number
   quorum: number
 }
+
+export type FinRequestVoteType = z.infer<typeof finRequestVote>

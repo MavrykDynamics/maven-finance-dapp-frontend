@@ -1,9 +1,13 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useLocation } from 'react-router'
-import { useDispatch } from 'react-redux'
 
-// helpers, actions, consts
+// helpers
 import { getRequestStatus } from 'providers/FinancialRequestsProvider/helpers/financialRequests.utils'
+import { parseDate } from 'utils/time'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+
+// consts
 import {
   calculateSlicePositions,
   getPageNumber,
@@ -11,11 +15,14 @@ import {
   PAGINATION_SIDE_RIGHT,
   PAST_REQUESTS_FINANCIAL_REQUESTS_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
+import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
+import { FINANCIAL_REQUEST_VOTE_ACTION } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
+
+// actions
 import { votingFinancialRequestVote } from 'providers/FinancialRequestsProvider/actions/financialRequests.actions'
-import { parseDate } from 'utils/time'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // types
+import { FinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.types'
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 
 // view
@@ -35,13 +42,13 @@ import {
   InfoBlockName,
 } from './FinancialRequests.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { FinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.types'
+
+// hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { FINANCIAL_REQUEST_VOTE_ACTION } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
-import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
+
+// providers
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
@@ -79,7 +86,7 @@ export const FinancialRequestsView = ({
   const [rightSideContentId, setRightSideContentId] = useState<
     keyof FinancialRequestsContext['financialRequestsMapper']
   >(ongoing[0] ?? past[0] ?? '0')
-  const rightSideContent = financialRequestsMapper[rightSideContentId]
+  const rightSideContent = financialRequestsMapper[rightSideContentId] ?? null
 
   // Full view item data handling
   const rightItemStatus = rightSideContent && getRequestStatus(rightSideContent)
@@ -127,6 +134,7 @@ export const FinancialRequestsView = ({
     if (!rightSideContent) return null
 
     const requestedToken = getTokenDataByAddress({ tokenAddress: rightSideContent.tokenAddress, tokensMetadata })
+    // TODO add empty screen
     if (!requestedToken) return null
 
     const { decimals, symbol } = requestedToken
@@ -156,7 +164,7 @@ export const FinancialRequestsView = ({
               : { forBtn: undefined, againsBtn: undefined }
           }
           className={'fr-voting'}
-          disableVotingButtons={Boolean(rightSideContent?.votes?.find(({ voter }) => voter.address === userAddress))}
+          disableVotingButtons={Boolean(rightSideContent?.votes?.find(({ voter }) => voter === userAddress))}
         />
 
         <hr />
@@ -240,6 +248,7 @@ export const FinancialRequestsView = ({
 
   return (
     <FinancialRequestsStyled>
+      {/* TODO add empty screen when no requests at all */}
       <div className="list-container">
         {ongoing.length ? (
           <>
