@@ -1,6 +1,14 @@
+import { getProposalStatus } from 'pages/Governance/Governance.helpers'
+import { satelliteVoteSchema } from 'providers/SatellitesProvider/satellites.const'
+import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { ProposalsDataSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { MVK_DECIMALS } from 'utils/constants'
+import { ProposalsContext } from '../proposals.provider.types'
+
 export const normalizeProposal = (
-  item: GovernanceProposalGraphQL,
-  { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: State['governance']['config'],
+  item: ProposalsDataSubscriptionSubscription['governance_proposal'][number],
+  { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: ProposalsContext['config'],
 ) => {
   const proposalConvertedStatus = getProposalStatus(
     item,
@@ -49,6 +57,8 @@ export const normalizeProposal = (
     downvoteMvkTotal: convertNumberForClient({ number: item.nay_vote_smvk_total, grade: MVK_DECIMALS }),
     abstainMvkTotal: convertNumberForClient({ number: item.pass_vote_smvk_total, grade: MVK_DECIMALS }),
     quorumMvkTotal: convertNumberForClient({ number: item.quorum_smvk_total, grade: MVK_DECIMALS }),
+    minQuorumPercentage: convertNumberForClient({ number: item.min_quorum_percentage, grade: 4 }),
+
     votes: item.votes.reduce<
       Array<{ vote: SatelliteVoteType; address: string; name: string; avatar: string; round: number }>
     >((acc, vote) => {
@@ -67,7 +77,6 @@ export const normalizeProposal = (
         return acc
       }
     }, []),
-    minQuorumPercentage: convertNumberForClient({ number: item.min_quorum_percentage, grade: 4 }),
 
     proposalData: item.data.map((byte, idx) => ({
       ...byte,
@@ -89,58 +98,62 @@ export const normalizeProposal = (
   }
 }
 
-export const normalizeGovernanceProposals = (
-  indexerData: ProposalsDataSubscriptionSubscription,
-  governanceConfig: State['governance']['config'],
-): Omit<Omit<State['governance'], 'isLoaded'>, 'config'> => {
-  const { governancePhase, timelockProposalId } = governanceConfig
-  const isProposalRound = governancePhase === GovPhases.PROPOSAL
+export const normalizeProposals = () => {}
 
-  return proposals.reduce<Omit<Omit<State['governance'], 'isLoaded'>, 'config'>>(
-    (acc, proposalFromGQL) => {
-      const normalizedProposal = normalizeProposal(proposalFromGQL, governanceConfig)
+export const normalizeSubmissionProposals = () => {}
 
-      const { id, executed, status, currentRoundProposal, paymentProcessed } = normalizedProposal
+// export const normalizeGovernanceProposals = (
+//   indexerData: ProposalsDataSubscriptionSubscription,
+//   governanceConfig: State['governance']['config'],
+// ): Omit<Omit<State['governance'], 'isLoaded'>, 'config'> => {
+//   const { governancePhase, timelockProposalId } = governanceConfig
+//   const isProposalRound = governancePhase === GovPhases.PROPOSAL
 
-      acc.proposalsMapper[id] = normalizedProposal
-      acc.allProposalsIds.push(id)
+//   return proposals.reduce<Omit<Omit<State['governance'], 'isLoaded'>, 'config'>>(
+//     (acc, proposalFromGQL) => {
+//       const normalizedProposal = normalizeProposal(proposalFromGQL, governanceConfig)
 
-      const isPastProposal =
-        status === ProposalStatus.DROPPED || status === ProposalStatus.EXECUTED || status === ProposalStatus.DEFEATED
+//       const { id, executed, status, currentRoundProposal, paymentProcessed } = normalizedProposal
 
-      // Add id of proposal to be executed proposal
-      if (isProposalRound && !executed && timelockProposalId === id && !isPastProposal) {
-        acc.waitingProposalsIdsToBeExecuted.push(id)
-        return acc
-      }
+//       acc.proposalsMapper[id] = normalizedProposal
+//       acc.allProposalsIds.push(id)
 
-      // Add id of proposal to be paid proposal
-      if (isProposalRound && !executed && timelockProposalId === id && !paymentProcessed && !isPastProposal) {
-        acc.waitingProposalsIdsToBePaid.push(id)
-        return acc
-      }
+//       const isPastProposal =
+//         status === ProposalStatus.DROPPED || status === ProposalStatus.EXECUTED || status === ProposalStatus.DEFEATED
 
-      // Add id of past proposal
-      if (isPastProposal) {
-        acc.pastProposalsIds.push(id)
-        return acc
-      }
+//       // Add id of proposal to be executed proposal
+//       if (isProposalRound && !executed && timelockProposalId === id && !isPastProposal) {
+//         acc.waitingProposalsIdsToBeExecuted.push(id)
+//         return acc
+//       }
 
-      // Add id of current round proposal
-      if (currentRoundProposal) {
-        acc.currentRoundProposalsIds.push(id)
-        return acc
-      }
+//       // Add id of proposal to be paid proposal
+//       if (isProposalRound && !executed && timelockProposalId === id && !paymentProcessed && !isPastProposal) {
+//         acc.waitingProposalsIdsToBePaid.push(id)
+//         return acc
+//       }
 
-      return acc
-    },
-    {
-      currentRoundProposalsIds: [],
-      pastProposalsIds: [],
-      waitingProposalsIdsToBeExecuted: [],
-      waitingProposalsIdsToBePaid: [],
-      allProposalsIds: [],
-      proposalsMapper: {},
-    },
-  )
-}
+//       // Add id of past proposal
+//       if (isPastProposal) {
+//         acc.pastProposalsIds.push(id)
+//         return acc
+//       }
+
+//       // Add id of current round proposal
+//       if (currentRoundProposal) {
+//         acc.currentRoundProposalsIds.push(id)
+//         return acc
+//       }
+
+//       return acc
+//     },
+//     {
+//       currentRoundProposalsIds: [],
+//       pastProposalsIds: [],
+//       waitingProposalsIdsToBeExecuted: [],
+//       waitingProposalsIdsToBePaid: [],
+//       allProposalsIds: [],
+//       proposalsMapper: {},
+//     },
+//   )
+// }

@@ -1,3 +1,4 @@
+import { ProposalsDataSubscriptionSubscription } from 'utils/__generated__/graphql'
 import {
   ProposalStatusType,
   ProposalStatus,
@@ -7,10 +8,10 @@ import {
 } from '../../utils/TypesAndInterfaces/Governance'
 
 export const getProposalStatus = (
-  proposal: GovernanceProposalGraphQL,
+  proposal: ProposalsDataSubscriptionSubscription['governance_proposal'][number],
   governancePhase: GovernancePhaseType,
-  cycleHighestVotedProposalId: number,
-  timelockProposalId: number,
+  cycleHighestVotedProposalId: number | null,
+  timelockProposalId: number | null,
 ): ProposalStatusType => {
   // if proposal is executed give it's executed status
   if (proposal.executed) return ProposalStatus.EXECUTED

@@ -1,7 +1,7 @@
 import {
   GOVERNANCE_CONFIG_SUB,
   PROPOSALS_CURRENT_DATA,
-  PROPOSALS_CURRENT_USER_DATA,
+  PROPOSALS_SUBMISSION_DATA,
   PROPOSALS_DATA_SUB,
   PROPOSALS_PAST_DATA,
 } from './helpers/proposals.const'
@@ -41,6 +41,6 @@ export type ProposalsSubsRecordType = {
   [PROPOSALS_DATA_SUB]:
     | typeof PROPOSALS_CURRENT_DATA
     | typeof PROPOSALS_PAST_DATA
-    | typeof PROPOSALS_CURRENT_USER_DATA
+    | typeof PROPOSALS_SUBMISSION_DATA
     | null
 }

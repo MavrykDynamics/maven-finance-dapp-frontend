@@ -13,11 +13,13 @@ import {
   GOVERNANCE_CONFIG_SUB,
   PROPOSALS_DATA_SUB,
   DEFAULT_PROPOSALS_CTX,
+  PROPOSALS_SUBMISSION_DATA,
 } from './helpers/proposals.const'
 import { GOVERNANCE_CONFIG_QUERY } from './queries/governanceConfig.query'
 import { normalizeGovernanceConfig } from './helpers/governanceConfig.normalizer'
 import { getProposalsProviderReturnValue } from './helpers/proposals.utils'
-import { getGovernanceProposalsQuery } from './queries/proposalsData.query'
+import { getProposalsQuery, getProposalsForSubmissionQuery } from './queries/proposalsData.query'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const proposalsContext = React.createContext<ProposalsContext>(undefined!)
 
@@ -27,6 +29,7 @@ type Props = {
 
 const ProposalsProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
+  const { userAddress } = useUserContext()
 
   const [proposalsCtxState, setProposalsCtxState] = useState<ProposalsContextStateType>(DEFAULT_PROPOSALS_CTX)
   const [activeSubs, setActiveSubs] = useState<ProposalsSubsRecordType>(DEFAULT_PROPOSALS_ACTIVE_SUBS)
@@ -37,10 +40,26 @@ const ProposalsProvider = ({ children }: Props) => {
   }
 
   // subscribes
-  useSubscription(getGovernanceProposalsQuery(), {
-    skip: !activeSubs[PROPOSALS_DATA_SUB],
+  // proposals subscription
+  useSubscription(getProposalsQuery(activeSubs[PROPOSALS_DATA_SUB]), {
+    skip: !activeSubs[PROPOSALS_DATA_SUB] || activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_SUBMISSION_DATA,
     onData: ({ data: { data } }) => {
       if (!data) return
+      console.log('getProposalsQuery', { data })
+    },
+    shouldResubscribe: true,
+    onError: (error) => handleSubError(error, PROPOSALS_DATA_SUB),
+  })
+
+  // submission proposals subscriptions, it will have only 2 proposal in max case
+  useSubscription(getProposalsForSubmissionQuery(), {
+    skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_SUBMISSION_DATA && !userAddress,
+    variables: {
+      userAddress: userAddress ?? '',
+    },
+    onData: ({ data: { data } }) => {
+      if (!data) return
+      console.log('getProposalsForSubmissionQuery', { data })
     },
     shouldResubscribe: true,
     onError: (error) => handleSubError(error, PROPOSALS_DATA_SUB),
