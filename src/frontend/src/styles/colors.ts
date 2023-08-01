@@ -320,7 +320,7 @@ export const space = {
 
 type Themes = {
   // all themes have same color names
-  [key in ThemeType]: typeof light
+  [key in ThemeType]: ThemeColorsType
 }
 
 const themes: Themes = {
@@ -329,4 +329,5 @@ const themes: Themes = {
   [SPACE_THEME]: space,
 }
 
+export type ThemeColorsType = typeof dark
 export default themes

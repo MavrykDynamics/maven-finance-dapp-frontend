@@ -49,9 +49,9 @@ export const AreaChart = ({
   } = settings ?? {}
 
   const {
-    lineColor = styleColors[themeSelected]['primaryChartColor'],
-    areaTopColor = styleColors[themeSelected]['primaryChartColor'],
-    areaBottomColor = 'transparent',
+    lineColor = styleColors[themeSelected].primaryChartColor,
+    areaTopColor = styleColors[themeSelected].primaryChartColor,
+    areaBottomColor = styleColors[themeSelected].primaryChartBottomColor,
   } = colors ?? {}
 
   const chartContainerRef = useRef<HTMLDivElement | null>(null)

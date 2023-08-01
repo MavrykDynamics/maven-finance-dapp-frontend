@@ -172,6 +172,7 @@ export function DoormanChart() {
                     time: exitFeeMarkerTime,
                     position: 'inBar',
                     color: colors[themeSelected].primaryChartColor,
+                    
                     shape: 'circle',
                   },
                 ],

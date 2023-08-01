@@ -29,12 +29,6 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  &.stage-3-dropDown {
-    > div {
-      border: unset;
-    }
-  }
-
   &.change-bakery {
     margin: 50px 0 30px 0;
   }
@@ -88,6 +82,16 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
   }
 
   &.stage-3-dropDown {
+    background: ${({ theme }) => theme.cards};
+
+    > div {
+      border: unset;
+    }
+
+    svg {
+      stroke: ${({ theme }) => theme.linksAndButtons};
+    }
+
     #selected-option {
       div {
         color: ${({ theme }) => theme.primaryText};
@@ -98,10 +102,6 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
       div {
         color: ${({ theme }) => theme.primaryText};
       }
-    }
-
-    svg {
-      stroke: ${({ theme }) => theme.primaryText};
     }
   }
 `
