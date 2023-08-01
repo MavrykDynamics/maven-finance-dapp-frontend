@@ -56,8 +56,9 @@ export const CreateVaultScreen = () => {
       try {
         const newVaultData = await apolloClient.query({
           query: GET_NEW_VAULT,
+          fetchPolicy: 'no-cache',
           variables: {
-            userAddress,
+            userAddress: userAddress,
             vaultName: vaultInputState.name,
           },
         })
@@ -83,8 +84,8 @@ export const CreateVaultScreen = () => {
           await getNewVaultData(retries - 1)
         } else {
           bug(
-            'Update Vault Error',
             "Can't fetch new vault data, try reload the page and find your newly created vault in the the list of vaults",
+            'Update Vault Error',
           )
         }
       } catch (e) {
@@ -153,7 +154,6 @@ export const CreateVaultScreen = () => {
 
   const handleButtonClick = async () => {
     await createVaultHandler()
-    // updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)
   }
 
   return (
