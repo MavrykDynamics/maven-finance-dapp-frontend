@@ -35,6 +35,7 @@ import {
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITES_DATA_ACTIVE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 
 const Satellites = () => {
@@ -49,7 +50,7 @@ const Satellites = () => {
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_ACTIVE_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
 
@@ -75,7 +76,7 @@ const Satellites = () => {
       {!isSatellite && getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 ? (
         <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
       ) : null}
-      <PageContent>
+      <PageContent className="mt-30">
         <SatellitesOverviewStyled>
           <InfoBlockWrapper>
             <SatelliteGovernanceStatsInfo>

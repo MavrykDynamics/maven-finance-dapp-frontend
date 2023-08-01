@@ -37,8 +37,8 @@ export const ContractCardTopSection = styled.div<{ theme: MavrykTheme }>`
 
   .card-title {
     font-weight: 600;
-    font-size: 24px;
-    line-height: 24px;
+    font-size: 22px;
+    line-height: 100%;
     width: 180px;
     height: 60px;
     color: ${({ theme }) => theme.mainHeadingText};
@@ -52,11 +52,12 @@ export const ContractCardTopSection = styled.div<{ theme: MavrykTheme }>`
     display: flex;
     color: ${({ theme }) => theme.regularText};
     column-gap: 15px;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 14px;
 
     > div {
       font-size: 16px;
+      font-weight: 600;
       color: ${({ theme }) => theme.primaryText};
     }
 

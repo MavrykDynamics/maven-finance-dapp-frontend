@@ -76,7 +76,7 @@ export const StakeUnstakeInputLabels = styled.h3`
   line-height: 21px;
 
   .minAmount {
-    font-size: 16px;
+    font-size: 14px;
   }
 `
 export const StakeUnstakeInputWithCoin = styled.div`
@@ -102,6 +102,7 @@ export const StakeUnstakeAmount = styled.div`
 
   color: ${({ theme }) => theme.primaryText};
   cursor: pointer;
+  margin-right: 15px;
 
   p {
     margin: 0;

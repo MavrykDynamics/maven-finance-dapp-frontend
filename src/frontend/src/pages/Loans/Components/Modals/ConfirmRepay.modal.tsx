@@ -124,7 +124,7 @@ export const ConfirmRepay = ({
     [partlyRepayAction],
   )
 
-  const repayBtnHandler = useContractAction(contractActionProps)
+  const { action: repayBtnHandler } = useContractAction(contractActionProps)
 
   if (!data || !borrowedToken || !borrowedToken.rate) return null
 

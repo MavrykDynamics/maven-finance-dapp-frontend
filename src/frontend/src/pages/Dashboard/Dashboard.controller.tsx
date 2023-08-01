@@ -8,7 +8,7 @@ import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.contr
 import { Page } from 'styles'
 
 // providers
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
@@ -21,11 +21,13 @@ import {
   MVK_TOTAL_SUB,
   MVK_BALANCE_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
-} from 'providers/StakeProvider/helpers/stake.consts'
+  SMVK_HISTORY_SUB,
+} from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITES_DATA_ACTIVE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
 import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
@@ -53,7 +55,7 @@ export const Dashboard = () => {
     maximumTotalSupply,
     isLoading: isDoormanLoading,
     changeStakingSubscriptionsList,
-  } = useStakeContext()
+  } = useDoormanContext()
   const { isLoading: isSatellitesLoading, changeSatellitesSubscriptionsList } = useSatellitesContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
@@ -63,9 +65,10 @@ export const Dashboard = () => {
     changeStakingSubscriptionsList({
       [MVK_TOTAL_SUB]: true,
       [MVK_BALANCE_SUB]: true,
+      [SMVK_HISTORY_SUB]: true,
     })
     changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_ACTIVE_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
     changeLoansSubscriptionsList({

@@ -1,8 +1,10 @@
 import { useParams } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 
 // context
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 // view
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
@@ -32,10 +34,14 @@ import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers
 // consts
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITES_DATA_SINGLE_SUB,
+  SATELLITE_ALL_ADDRESSES_SUB,
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITE_VOTES_MAPPER,
 } from 'providers/SatellitesProvider/satellites.const'
+import { FatalError } from 'errors/error'
+import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
 
 // types
 import { SatelliteVotesType } from 'providers/SatellitesProvider/satellites.provider.types'
@@ -79,6 +85,8 @@ const SatellitesVotingHistory = ({
 
 export const SatelliteDetails = () => {
   const { satelliteId } = useParams<{ satelliteId: string }>()
+  const { apolloClient } = useApolloContext()
+  const { fatal } = useToasterContext()
   const {
     satelliteMapper,
     proposalsAmount,
@@ -97,10 +105,13 @@ export const SatelliteDetails = () => {
     finRequestsAmount,
   })
 
+  const [isSatelliteExistanseLoading, setIsSatelliteExistanseLoading] = useState(false)
+
   useEffect(() => {
     changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: true,
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+      [SATELLITE_ALL_ADDRESSES_SUB]: true,
     })
 
     return () => {
@@ -108,8 +119,39 @@ export const SatelliteDetails = () => {
     }
   }, [])
 
-  useEffect(() => {
-    setSatelliteAddressToSubsctibe(satelliteId)
+  // check whether satellite exists, cuz address is stored in url and user can change it
+  useLayoutEffect(() => {
+    if (satelliteId && satelliteMapper[satelliteId]) {
+      setSatelliteAddressToSubsctibe(satelliteId)
+      return
+    }
+
+    setIsSatelliteExistanseLoading(true)
+
+    const checkWhetherSatelliteExists = async () => {
+      try {
+        const satelliteFromGql = await apolloClient.query({
+          query: CHECK_WHETHER_SATELLITE_EXISTS,
+          variables: {
+            userAddress: satelliteId ?? '',
+          },
+        })
+
+        if (satelliteFromGql.data.satellite[0]?.user.address === satelliteId) {
+          setSatelliteAddressToSubsctibe(satelliteId)
+          return
+        }
+
+        fatal(new FatalError(`Satellite with address ${satelliteId} does not exist`))
+      } catch (e) {
+        fatal(new FatalError('Loading satellite error, please, try to reload page'))
+      } finally {
+        setIsSatelliteExistanseLoading(false)
+      }
+    }
+
+    checkWhetherSatelliteExists()
+
     return () => setSatelliteAddressToSubsctibe(null)
   }, [satelliteId])
 
@@ -118,11 +160,11 @@ export const SatelliteDetails = () => {
   return (
     <Page>
       <PageHeader page={'satellites'} />
-      <PageContent>
+      <PageContent className="mt-30">
         <div>
           <SatellitePagination />
 
-          {isSatellitesLoading && !currentSatellite ? (
+          {isSatellitesLoading || isSatelliteExistanseLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellite profile data</div>
@@ -190,7 +232,7 @@ export const SatelliteDetails = () => {
           ) : (
             <EmptyContainer>
               <img src="/images/not-found.svg" alt="No satellite to show" />
-              <figcaption>Satellite with address ({satelliteId}) does not exist</figcaption>
+              <figcaption>Satellite with address "{satelliteId}" does not exist</figcaption>
             </EmptyContainer>
           )}
         </div>

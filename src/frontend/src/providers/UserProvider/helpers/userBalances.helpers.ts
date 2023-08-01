@@ -58,8 +58,6 @@ export const normalizeUserTzktTokensBalances = ({
     ) => {
       const token = getTokenDataByAddress({ tokenAddress, tokensMetadata })
 
-      console.log({ token, tokenAddress })
-
       if (!token || userAddress !== address) return acc
       const { decimals } = token
 

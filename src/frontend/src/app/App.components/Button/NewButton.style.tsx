@@ -73,7 +73,6 @@ const BUTTONS_KIND_STYLES = css`
   &.${BUTTON_SIMPLE} {
     width: fit-content;
     height: fit-content;
-    font-size: 14px;
     padding: 0;
 
     color: ${({ theme }) => theme.linksAndButtons};
@@ -86,7 +85,6 @@ const BUTTONS_KIND_STYLES = css`
   &.${BUTTON_SIMPLE_SMALL} {
     width: fit-content;
     height: fit-content;
-    font-size: 14px;
     padding: 0;
 
     color: ${({ theme }) => theme.linksAndButtons};

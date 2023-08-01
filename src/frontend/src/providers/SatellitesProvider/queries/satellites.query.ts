@@ -2,14 +2,25 @@ import { OperationVariables, TypedDocumentNode } from '@apollo/client'
 import { DocumentNode } from 'graphql'
 import { gql as apolloGql } from '@apollo/client'
 import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
+import { gql } from 'utils/__generated__'
 
 export function getSatelliteDataSubscription(
   userAddress: string | null,
+  isOnlyActive?: boolean,
+  isOnlyOracles?: boolean,
 ): DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables> {
-  const filteredCondition = `user: {address: {${userAddress ? '_eq' : '_neq'}: $userAddress}}`
+  const filteredByUserTable = `user: {address: {${userAddress ? '_eq' : '_neq'}: $userAddress} ${
+    isOnlyOracles
+      ? ', _and: {aggregator_oracles_aggregate: {count: {predicate: {_gte: 1}, filter: {observations_aggregate: {count: {predicate: {_gte: 1}}}}}}}'
+      : ''
+  }}`
+
+  const activeSatellitesFilter = isOnlyActive ? `currently_registered: {_eq: true}, status: {_eq: "0"}` : null
+
+  const filters = [filteredByUserTable, activeSatellitesFilter].filter(Boolean).join(',')
 
   return apolloGql`subscription satelliteDataSub($userAddress: String!) {
-    satellite(where: {registration_timestamp: {_is_null: false}, ${filteredCondition}}, order_by: {currently_registered: desc}) {
+    satellite(where: {registration_timestamp: {_is_null: false}, ${filters}}, order_by: {currently_registered: desc}) {
       description
       fee
       image
@@ -87,12 +98,8 @@ export function getSatelliteDataSubscription(
         }
 
         # satellite total voting power
-        governance_satellite_snapshots(order_by: {cycle: desc}, limit: 1) {
-          cycle
+        governance_satellite_snapshots(order_by: {cycle: desc}, limit: 1, where: {ready: {_eq: true}}) {
           total_voting_power
-          governance {
-            cycle_id
-          }
         }
 
         # last voted proposal
@@ -150,6 +157,15 @@ export function getSatelliteDataSubscription(
       }
     }
   }
-  
   ` as DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables>
 }
+
+export const CHECK_WHETHER_SATELLITE_EXISTS = gql(`
+query checkWitherSatelliteExists($userAddress: String = "") {
+  satellite(where: {registration_timestamp: {_is_null: false}, user: {address: {_eq: $userAddress}}}) {
+    user {
+      address
+    }
+  }
+}
+`)

@@ -78,6 +78,9 @@ export const AddNewCollateral = ({
     preferences: { themeSelected },
   } = useDappConfigContext()
   const { userTokensBalances, userAddress } = useUserContext()
+  const {
+    contractAddresses: { lendingControllerAddress },
+  } = useDappConfigContext()
   const { bug } = useToasterContext()
 
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
@@ -120,7 +123,7 @@ export const AddNewCollateral = ({
         const { address, icon, symbol } = collateral
 
         const isCollateralDisabled = Boolean(
-          collateral.loanData.isProtectedCollateral ||
+          collateral.loanData.isPausedCollateral ||
             collateralData?.find(({ tokenAddress }) => address === tokenAddress) ||
             selectedCollateral === collateralTokenAddress,
         )
@@ -162,6 +165,7 @@ export const AddNewCollateral = ({
   const {
     collateralBalance = 0,
     vaultAddress = '',
+    vaultId = 0,
     collateralRatio = 0,
     borrowedAmount = 0,
     availableLiquidity = 0,
@@ -193,22 +197,26 @@ export const AddNewCollateral = ({
       return null
     }
 
-    if (collateralToken && vaultAddress && checkWhetherTokenIsCollateralToken(collateralToken)) {
+    if (
+      collateralToken &&
+      vaultAddress &&
+      lendingControllerAddress &&
+      checkWhetherTokenIsCollateralToken(collateralToken)
+    ) {
       return depositCollateralsAction(
         userAddress,
         vaultAddress,
         [
           {
-            collateralName: collateralToken.loanData.indexerName,
-            address: collateralToken.address,
-            id: collateralToken.id,
-            type: collateralToken.type,
+            ...collateralToken,
             amount: convertNumberForContractCall({
               number: Number(inputData.amount),
               grade: collateralToken.decimals,
             }),
           },
         ],
+        vaultId,
+        lendingControllerAddress,
         closePopup,
         choosenBaker?.bakerAddress,
       )
@@ -225,7 +233,7 @@ export const AddNewCollateral = ({
     [depositAction],
   )
 
-  const depositCollateralHandler = useContractAction(contractActionProps)
+  const { action: depositCollateralHandler } = useContractAction(contractActionProps)
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {

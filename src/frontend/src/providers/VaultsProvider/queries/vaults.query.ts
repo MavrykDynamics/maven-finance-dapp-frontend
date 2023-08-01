@@ -26,7 +26,8 @@ const getUserVaultsQueryFilters = (
     }
   }
 
-  return `${VAULT_OPEN_FILTER}`
+  // need to have userAddress variable used, othervise apolo query error can occur
+  return `${VAULT_OPEN_FILTER} , owner: {address: {_neq: $userAddress}}`
 }
 
 export function getUserVaultsSubscription({
@@ -55,6 +56,7 @@ export function getUserVaultsSubscription({
 					collateral_balances {
 						balance
 						collateral_token {
+							token_name
 							token {
 								token_address
 							}
@@ -121,6 +123,7 @@ export const SUBSCRIBE_TO_ALL_VAULTS = gql(`
 				collateral_balances {
 					balance
 					collateral_token {
+						token_name
 						token {
 							token_address
 						}

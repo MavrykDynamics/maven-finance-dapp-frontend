@@ -20,51 +20,60 @@ import {
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
-export type HookContractActionArgs = {
+type ActionReturnPayload = Promise<ActionErrorReturnType | ActionSuccessReturnType | null>
+
+export type HookContractActionArgs<G = unknown> = {
   actionType: ActionTypes
-  actionFn: () => Promise<ActionErrorReturnType | ActionSuccessReturnType | null>
+  actionFn: ((args: G) => ActionReturnPayload) | (() => ActionReturnPayload)
   dappActionCallback?: () => void
   afterActionCallback?: () => void
   willUseSharedError?: boolean
+  isSilentAction?: boolean
 }
 
-export const useContractAction = ({
+export const useContractAction = <G>({
   actionType,
   actionFn,
   dappActionCallback,
   afterActionCallback,
   willUseSharedError = false,
-}: HookContractActionArgs): (() => Promise<void>) => {
+  isSilentAction = false,
+}: HookContractActionArgs<G>): { action: () => Promise<void>; actionWithArgs: (args: G) => Promise<void> } => {
   const { bug, info, loading, setSharedError } = useToasterContext()
   const { setAction, toggleActionCompletion, toggleActionFullScreenLoader } = useDappConfigContext()
 
-  return async () => {
+  async function invokeAction(actionResult: ActionErrorReturnType | ActionSuccessReturnType | null) {
     try {
-      // call the actual action
-      const actionResult = await actionFn()
-
       // optional callback which us triggered right after action call
       // used f.e. to close some popup etc.
       afterActionCallback?.()
 
       if (!actionResult) return
 
+      let toasterId = null
+
       if (checkIfActionSuccess(actionResult)) {
         const { operation } = actionResult
-        toggleActionFullScreenLoader(true)
+
         toggleActionCompletion(true)
+        if (!isSilentAction) {
+          toggleActionFullScreenLoader(true)
 
-        info(TOASTER_ACTIONS_TEXTS[actionType]['start']['message'], TOASTER_ACTIONS_TEXTS[actionType]['start']['title'])
+          info(
+            TOASTER_ACTIONS_TEXTS[actionType]['start']['message'],
+            TOASTER_ACTIONS_TEXTS[actionType]['start']['title'],
+          )
 
-        await sleep(5000)
+          await sleep(5000)
 
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
+          // show toaster loader after 5000ms after operation started
+          toasterId = loading(
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          )
 
-        toggleActionFullScreenLoader(false)
+          toggleActionFullScreenLoader(false)
+        }
 
         const operationConfirm = await operation.confirmation()
         const operationLvl = operationConfirm.block.header.level
@@ -90,4 +99,18 @@ export const useContractAction = ({
       bug(parsedError.message)
     }
   }
+
+  const actionWithArgs: (args: G) => Promise<void> = async (...args) => {
+    // call the actual action
+    const actionResult = await actionFn(...args)
+    return await invokeAction(actionResult)
+  }
+
+  const action: () => Promise<void> = async () => {
+    // call the actual action
+    const actionResult = await (actionFn as () => ActionReturnPayload)()
+    return await invokeAction(actionResult)
+  }
+
+  return { action, actionWithArgs }
 }

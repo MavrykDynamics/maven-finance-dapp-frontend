@@ -19,6 +19,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { useLoansEarnBorrowContext } from '../context/loansEarnBorrowContext'
+import { LoansMarketMiniChartType } from 'providers/LoansProvider/helpers/loans.types'
 
 type ChartDataType = {
   type: typeof AREA_CHART_TYPE | typeof HISTOGRAM_CHART_TYPE
@@ -26,7 +27,7 @@ type ChartDataType = {
 }
 
 type Props = {
-  data: AreaChartPlotType[]
+  data: LoansMarketMiniChartType
   isBorrow: boolean
 }
 
@@ -48,7 +49,11 @@ export const EarnBorrowChart = ({ data, isBorrow }: Props) => {
     [themeSelected],
   )
 
-  const chartData: ChartDataType = { type: isGraph ? HISTOGRAM_CHART_TYPE : AREA_CHART_TYPE, plots: data }
+  const chartData: ChartDataType = {
+    type: isGraph ? HISTOGRAM_CHART_TYPE : AREA_CHART_TYPE,
+    plots: (isGraph ? data.volume : data.total) ?? [],
+  }
+
   const showChart = chartData.plots.length >= numberOfItemsToDisplay
 
   return (

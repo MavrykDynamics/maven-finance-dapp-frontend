@@ -58,7 +58,10 @@ export const VaultsProvider = ({ children }: Props) => {
   }, [userAddress])
 
   useSubscription(getUserVaultsSubscription({ userAddress, filters: activeSubs[VAULTS_DATA] }), {
-    skip: activeSubs[VAULTS_DATA] !== 'userIsOwner' && activeSubs[VAULTS_DATA] !== 'userIsDepositor',
+    skip:
+      activeSubs[VAULTS_DATA] !== 'userIsOwner' &&
+      activeSubs[VAULTS_DATA] !== 'userIsDepositor' &&
+      Boolean(userAddress),
     shouldResubscribe: true,
     variables: {
       userAddress: userAddress ?? '',
@@ -101,7 +104,7 @@ export const VaultsProvider = ({ children }: Props) => {
       allVaultsIds: isAllVaultsQuery ? allVaultsIds : prev.allVaultsIds,
       permissionedVaultsIds:
         isAllVaultsQuery || isPermissionedVaultsQuery ? permissionedVaultsIds : prev.permissionedVaultsIds,
-      myVaultsIds,
+      myVaultsIds: isPermissionedVaultsQuery ? prev.myVaultsIds : myVaultsIds,
     }))
   }
 
@@ -115,12 +118,11 @@ export const VaultsProvider = ({ children }: Props) => {
         vaultsCtxState,
         activeSubs,
         changeVaultsSubscriptionsList,
+        userAddress,
       }),
     [vaultsCtxState, activeSubs],
   )
 
-  // TODO: debug log, remove when no need
-  console.log('vaults', { vaultsCtxState, providerValue, activeSubs })
   return <vaultsContext.Provider value={providerValue}>{children}</vaultsContext.Provider>
 }
 

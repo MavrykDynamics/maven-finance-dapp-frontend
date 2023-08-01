@@ -11,6 +11,8 @@ export const tokenMetadataSchema = z.object({
   decimals: z.string(),
 })
 
+export type TokenIndexerMetadataType = z.infer<typeof tokenMetadataSchema>
+
 export const mTokenMetadataSchema = z.object({
   assets: z.array(
     z.object({
@@ -22,7 +24,8 @@ export const mTokenMetadataSchema = z.object({
 export type TokenAddressType = string
 
 // regular token
-export interface TokenMetadataType {
+
+export type TokenMetadataType = {
   id: number
   address: TokenAddressType
   name: string
@@ -30,11 +33,17 @@ export interface TokenMetadataType {
   decimals: number
   icon: string
   type: TokenType
-  loanData?: {
+} & PropertiesFromDifferentTokenTypes
+
+type PropertiesFromDifferentTokenTypes = DeepPartial<{
+  // loan & collateral tokens properties
+  loanData: {
     indexerName: string
-    isProtectedCollateral?: boolean
+    isPausedCollateral: boolean
+    isScaled: boolean
+    isStaked: boolean
   }
-}
+}>
 
 // loan token (market)
 export interface LoansTokenMetadataType extends TokenMetadataType {
@@ -47,7 +56,9 @@ export interface LoansTokenMetadataType extends TokenMetadataType {
 export interface LoansCollateralTokenMetadataType extends LoansTokenMetadataType {
   loanData: {
     indexerName: string
-    isProtectedCollateral: boolean
+    isPausedCollateral: boolean
+    isScaled: boolean
+    isStaked: boolean
   }
 }
 

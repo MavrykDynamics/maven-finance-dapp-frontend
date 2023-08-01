@@ -80,13 +80,13 @@ export const LoansBorrow = () => {
     calcMarketBorrowChart: true,
   })
 
-  const { userVaultsData } = useUserLoansData({ userAddress })
+  const { userVaultsData, isLoading: isUserLoansDataLoading } = useUserLoansData({ userAddress })
 
   const markets = useMemo(
     () =>
       marketsAddresses.reduce<MarketType[]>((acc, marketTokenAddress) => {
         const market = marketsMapper[marketTokenAddress]
-        const chartData = marketBorrowChart[marketTokenAddress] ?? []
+        const chartData = marketBorrowChart[marketTokenAddress] ?? {}
 
         const token = getTokenDataByAddress({
           tokenAddress: marketTokenAddress,
@@ -106,7 +106,7 @@ export const LoansBorrow = () => {
           annualRateName: 'APR',
           leftValue: userVaultsData[marketTokenAddress]?.borrowedAmount ?? 0,
           rightValue: userVaultsData[marketTokenAddress]?.allVaultsCollateralAmount ?? 0,
-          totalAmount: chartData.at(-1)?.value ?? 0,
+          totalAmount: chartData.total?.at(-1)?.value ?? 0,
           price,
           chartData,
         })
@@ -184,10 +184,10 @@ export const LoansBorrow = () => {
       <Page>
         <PageHeader page={'loansBorrow'} />
 
-        {isLoansLoading || isVaultsLoading ? (
+        {isLoansLoading || isVaultsLoading || isUserLoansDataLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
-            <div className="text">Loading borrows charts</div>
+            <div className="text">Loading your borrow data</div>
           </DataLoaderWrapper>
         ) : (
           <>

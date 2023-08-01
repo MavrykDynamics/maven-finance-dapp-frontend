@@ -82,7 +82,12 @@ export const EmergencyGovernanceView = ({
           main contracts and pass access to the break glass contract where further actions will be determined by the
           break glass council members using a multi-sig.
         </div>
-        <a href="https://mavryk.finance/litepaper#emergency-governance--break-glass " target="_blank" rel="noreferrer">
+        <a
+          href="https://mavryk.finance/litepaper#emergency-governance--break-glass "
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
           Read documentation here
         </a>
       </EmergencyGovernanceCard>

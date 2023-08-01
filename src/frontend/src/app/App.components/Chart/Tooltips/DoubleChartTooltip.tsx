@@ -1,6 +1,6 @@
 import { parseDate } from 'utils/time'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { DoubleAmountDateTooltipStyled, MliFeeTooltipStyled } from '../Chart.style'
+import { DoubleAmountDateTooltipStyled } from '../Chart.style'
 
 export const DOUBLE_AMOUNT_DATE_TOOLTIP = 'DoubleAmountDateTooltip'
 export type DoubleChartTooltipsTypes = typeof DOUBLE_AMOUNT_DATE_TOOLTIP
@@ -13,6 +13,8 @@ type DoubleChartTootipProps = {
   valueTooltipFormatter?: (date: number) => string
   assetFirst: string
   assetSecond: string
+  isPeriod: boolean
+  isLastPlot: boolean
 }
 
 const DoubleAmountDateTooltip = ({
@@ -21,6 +23,8 @@ const DoubleAmountDateTooltip = ({
   yAxisSecond,
   assetFirst,
   assetSecond,
+  isLastPlot,
+  isPeriod,
   dateTooltipFormatter,
   valueTooltipFormatter,
 }: DoubleChartTootipProps) => {
@@ -49,14 +53,16 @@ const DoubleAmountDateTooltip = ({
         ) : null}
       </div>
       <div className="date">
-        {dateTooltipFormatter?.(xAxis) ?? parseDate({ time: xAxis, timeFormat: 'MMM DD, HH:mm Z' })}
+        {dateTooltipFormatter?.(xAxis) ??
+          parseDate({ time: xAxis, timeFormat: isPeriod && !isLastPlot ? 'MMM DD' : 'MMM DD, HH:mm Z' })}
       </div>
     </DoubleAmountDateTooltipStyled>
   )
 }
 
-type DoubleChartTootipWrapperProps = DoubleChartTootipProps & {
+type DoubleChartTootipWrapperProps = Omit<DoubleChartTootipProps, 'isLastPlot'> & {
   xAxis?: number
+  isLastPlot?: boolean
   tooltipName: DoubleChartTooltipsTypes
 }
 
@@ -67,8 +73,10 @@ const DoubleChartTooltip = ({
   assetFirst,
   assetSecond,
   tooltipName,
+  isPeriod,
   dateTooltipFormatter,
   valueTooltipFormatter,
+  isLastPlot = false,
 }: DoubleChartTootipWrapperProps) => {
   if (xAxis === undefined) {
     return null
@@ -83,6 +91,8 @@ const DoubleChartTooltip = ({
           yAxisSecond={yAxisSecond}
           assetFirst={assetFirst}
           assetSecond={assetSecond}
+          isPeriod={isPeriod}
+          isLastPlot={isLastPlot}
           dateTooltipFormatter={dateTooltipFormatter}
           valueTooltipFormatter={valueTooltipFormatter}
         />

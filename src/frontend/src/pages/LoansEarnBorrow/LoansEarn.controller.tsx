@@ -67,7 +67,7 @@ export const LoansEarn = () => {
     () =>
       marketsAddresses.reduce<MarketType[]>((acc, marketAddress) => {
         const market = marketsMapper[marketAddress]
-        const chartData = marketLendingChart[marketAddress] ?? []
+        const chartData = marketLendingChart[marketAddress] ?? {}
 
         const token = getTokenDataByAddress({
           tokenAddress: marketAddress,
@@ -77,7 +77,7 @@ export const LoansEarn = () => {
 
         if (!token || !token.rate || !market) return acc
 
-        const { rate: price, decimals, icon, symbol, address } = token
+        const { rate: price, icon, symbol, address } = token
         const { lendingAPY, loanMTokenAddress } = market
 
         const { lendValue = 0, interestEarned = 0 } = userMTokens[loanMTokenAddress] ?? {}
@@ -88,9 +88,9 @@ export const LoansEarn = () => {
           address,
           annualRate: lendingAPY,
           annualRateName: 'APY',
-          leftValue: convertNumberForClient({ number: lendValue, grade: decimals }) * price,
-          rightValue: convertNumberForClient({ number: interestEarned, grade: decimals }) * price,
-          totalAmount: chartData.at(-1)?.value ?? 0,
+          leftValue: lendValue * price,
+          rightValue: interestEarned * price,
+          totalAmount: chartData.total?.at(-1)?.value ?? 0,
           price,
           chartData,
         })
@@ -134,7 +134,7 @@ export const LoansEarn = () => {
         {isLoansLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
-            <div className="text">Loading charts of earnings</div>
+            <div className="text">Loading your earn data</div>
           </DataLoaderWrapper>
         ) : (
           <>

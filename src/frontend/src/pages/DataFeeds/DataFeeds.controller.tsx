@@ -47,7 +47,7 @@ export const DataFeeds = () => {
   const { search } = useLocation()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  const ddItems = useMemo(() => ['all', ...feedsCategories], [feedsCategories])
+  const ddItems = useMemo(() => ['All', ...feedsCategories], [feedsCategories])
 
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [searchInputValue, setSearchInput] = useState('')
@@ -64,7 +64,7 @@ export const DataFeeds = () => {
     setFilteredFeeds(
       feedsAddresses.filter((feedAddress) => {
         const { category, name, address } = feedsMapper[feedAddress]
-        if (chosenDdItem === 'all') {
+        if (chosenDdItem.toLowerCase() === 'all') {
           return (
             name.toLowerCase().includes(searchInputValue.toLowerCase()) ||
             address.toLowerCase().includes(searchInputValue.toLowerCase())
@@ -129,7 +129,7 @@ export const DataFeeds = () => {
       {isOraclesDataLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading feeds data...</div>
+          <div className="text">Loading feeds data</div>
         </DataLoaderWrapper>
       ) : (
         <DataFeedsStyled>

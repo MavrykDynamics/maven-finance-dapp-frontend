@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { Page } from 'styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
@@ -108,7 +108,30 @@ export const SatelliteGovernance = () => {
   type DropDownItemType = (typeof dropDownItems)[0]
 
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
-  const [tabsList, setTabsList] = useState<SlidingTabButtonType[]>([])
+
+  // TODO: add same logic as in vaults, for nulling "my actions list", when user sign out
+  const tabsList = useMemo<SlidingTabButtonType[]>(() => {
+    return [
+      {
+        text: 'Ongoing Actions',
+        id: 1,
+        active: SATELLITE_GOVERNANCE_MENU_TABS.ONGOING === tabId,
+        path: SATELLITE_GOVERNANCE_MENU_TABS.ONGOING,
+      },
+      {
+        text: 'Past Actions',
+        id: 2,
+        active: SATELLITE_GOVERNANCE_MENU_TABS.PAST === tabId,
+        path: SATELLITE_GOVERNANCE_MENU_TABS.PAST,
+      },
+      {
+        text: 'My Actions',
+        id: 3,
+        active: SATELLITE_GOVERNANCE_MENU_TABS.MY === tabId,
+        path: SATELLITE_GOVERNANCE_MENU_TABS.MY,
+      },
+    ]
+  }, [tabId])
 
   const ongoingActionsLength = ongoingSatelliteGovIds.length
 
@@ -169,42 +192,6 @@ export const SatelliteGovernance = () => {
     [userAddress],
   )
 
-  // set tabs list
-  useEffect(() => {
-    const baseTabs: SlidingTabButtonType[] = [
-      {
-        text: 'Ongoing Actions',
-        id: 1,
-        active: SATELLITE_GOVERNANCE_MENU_TABS.ONGOING === tabId,
-        path: SATELLITE_GOVERNANCE_MENU_TABS.ONGOING,
-      },
-      {
-        text: 'Past Actions',
-        id: 2,
-        active: SATELLITE_GOVERNANCE_MENU_TABS.PAST === tabId,
-        path: SATELLITE_GOVERNANCE_MENU_TABS.PAST,
-      },
-    ]
-
-    if (isSatellite) {
-      const satelliteTab = {
-        text: 'My Actions',
-        id: 3,
-        active: SATELLITE_GOVERNANCE_MENU_TABS.MY === tabId,
-        path: SATELLITE_GOVERNANCE_MENU_TABS.MY,
-        isDisabled: !userAddress,
-      }
-
-      baseTabs.push(satelliteTab)
-    }
-
-    setTabsList(baseTabs)
-
-    if (userAddress) return
-    // return back to "ongoing actions" tab if user is not connected
-    history.replace(`${SATELLITE_GOVERNANCE_PATHNAME}/${SATELLITE_GOVERNANCE_MENU_TABS.ONGOING}`)
-  }, [userAddress, isSatellite, tabId])
-
   return (
     <Page>
       <PageHeader page={'satellite-governance'} />
@@ -259,7 +246,7 @@ export const SatelliteGovernance = () => {
         {isLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
-            <div className="text">Loading satellite governance actions...</div>
+            <div className="text">Loading satellite governance actions</div>
           </DataLoaderWrapper>
         ) : (
           <SatelliteGovernanceMenuCards>

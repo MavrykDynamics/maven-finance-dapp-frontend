@@ -12,11 +12,10 @@ import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
-  ACTION_PRIMARY,
-  ACTION_SECONDARY,
   BUTTON_WIDE,
   BUTTON_PRIMARY,
   BUTTON_SIMPLE,
+  BUTTON_SECONDARY,
 } from 'app/App.components/Button/Button.constants'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 
@@ -25,12 +24,11 @@ import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // view
-import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Icon from 'app/App.components/Icon/Icon.view'
-import NewButton from 'app/App.components/Button/NewButton'
+import Button from 'app/App.components/Button/NewButton'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // types
@@ -61,18 +59,13 @@ import {
   SATELLITE_VOTES_MAPPER,
   UNDELEGATE_ACTION,
 } from 'providers/SatellitesProvider/satellites.const'
-import { rewardsCompound } from 'providers/UserProvider/actions/user.actions'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { REWARDS_COMPOUND_ACTION } from 'providers/UserProvider/helpers/user.consts'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import {
-  delegate,
-  distributeProposalRewards,
-  undelegate,
-} from 'providers/SatellitesProvider/actions/satellites.actions'
+import { delegate, undelegate } from 'providers/SatellitesProvider/actions/satellites.actions'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { distributeProposalRewards } from 'providers/UserProvider/actions/user.actions'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -88,11 +81,16 @@ const renderVotingHistoryItem = (vote: SatelliteVoteType) => {
 }
 
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
-  const { userTokensBalances, isSatellite, satelliteMvkIsDelegatedTo, availableSatellitesRewards, userAddress } =
-    useUserContext()
+  const {
+    userTokensBalances,
+    isSatellite: isUserSatellite,
+    satelliteMvkIsDelegatedTo,
+    userAddress,
+    availableProposalRewards,
+  } = useUserContext()
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
   const {
-    contractAddresses: { delegationAddress, doormanAddress, mvkTokenAddress },
+    contractAddresses: { delegationAddress, mvkTokenAddress },
     globalLoadingState: { isActionActive },
     preferences: { themeSelected },
   } = useDappConfigContext()
@@ -118,6 +116,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const freesMVKSpace = Math.max(sMvkBalance * delegationRatio - totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satelliteAddress === satelliteMvkIsDelegatedTo
   const balanceOver1SMvk = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) >= 1
+  const isSatelliteActive = satelliteStatus === ACTIVE_SATELLITE_STATUS && currentlyRegistered
 
   // Actions ---------------------------------------------------------
 
@@ -156,7 +155,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     [delegeteAction],
   )
 
-  const delegateCallback = useContractAction(delegateContractActionProps)
+  const { action: delegateCallback } = useContractAction(delegateContractActionProps)
 
   // undelegate action --------------
   const undelegeteAction = useCallback(async () => {
@@ -181,35 +180,9 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     [undelegeteAction],
   )
 
-  const undelegateCallback = useContractAction(unDelegateContractActionProps)
-
-  // claim rewards action ------------
-  // TODO check if it's right action name and method
-  const claimRewardsAction = useCallback(async () => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return null
-    }
-    if (!doormanAddress) {
-      bug('Wrong doorman address')
-      return null
-    }
-
-    return await rewardsCompound(userAddress, doormanAddress)
-  }, [bug, doormanAddress, userAddress])
-
-  const claimRewardsContractActionProps: HookContractActionArgs = useMemo(
-    () => ({
-      actionType: REWARDS_COMPOUND_ACTION,
-      actionFn: claimRewardsAction,
-    }),
-    [claimRewardsAction],
-  )
-
-  const claimRewardsCallback = useContractAction(claimRewardsContractActionProps)
+  const { action: undelegateCallback } = useContractAction(unDelegateContractActionProps)
 
   // distributeRewards action
-
   const distributeRewardsAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -221,8 +194,15 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    return await distributeProposalRewards(delegationAddress, '', [])
-  }, [bug, delegationAddress, userAddress])
+    const satelliteAddressToDistribute = isUserSatellite ? userAddress : satelliteMvkIsDelegatedTo
+
+    if (!satelliteAddressToDistribute) {
+      bug('Wrong satellite address to distribute rewards')
+      return null
+    }
+
+    return await distributeProposalRewards(delegationAddress, satelliteAddressToDistribute, availableProposalRewards)
+  }, [userAddress, delegationAddress, isUserSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
 
   const distributeRewardsContractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -232,50 +212,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     [distributeRewardsAction],
   )
 
-  const distributeRewardsCallback = useContractAction(distributeRewardsContractActionProps)
-
-  const buttonToShow =
-    isUserDelegatedToThisSatellite && currentlyRegistered ? (
-      <>
-        <Button
-          text="Undelegate"
-          icon="man-close"
-          kind={ACTION_SECONDARY}
-          onClick={undelegateCallback}
-          disabled={!userAddress || isActionActive}
-        />
-        {isDetailsPage && availableSatellitesRewards > 0 ? (
-          <Button
-            text="Claim Rewards"
-            icon="rewards"
-            kind={ACTION_PRIMARY}
-            onClick={claimRewardsCallback}
-            disabled={!userAddress || isActionActive}
-            strokeWidth={0.3}
-          />
-        ) : null}
-        {isDetailsPage && (
-          <NewButton
-            kind={BUTTON_PRIMARY}
-            form={BUTTON_WIDE}
-            onClick={distributeRewardsCallback}
-            // TODO:  we are waiting new Query for getting proposals
-            disabled={true || availableSatellitesRewards === 0 || isActionActive}
-          >
-            <Icon id="commision" />
-            Distribute Rewards
-          </NewButton>
-        )}
-      </>
-    ) : (
-      <Button
-        text="Delegate"
-        icon="man-check"
-        kind={ACTION_PRIMARY}
-        onClick={delegateCallback}
-        disabled={!userAddress || !balanceOver1SMvk || isActionActive}
-      />
-    )
+  const { action: distributeRewardsCallback } = useContractAction(distributeRewardsContractActionProps)
 
   return (
     <SatelliteCard key={String(`satellite${satellite.address}`)}>
@@ -317,10 +254,10 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             {!isDetailsPage ? (
               <SatelliteProfileDetails>
                 <Link to={`/satellites/satellite-details/${satellite.address}`}>
-                  <NewButton kind={BUTTON_SIMPLE}>
+                  <Button kind={BUTTON_SIMPLE}>
                     <Icon id="man" className="icon" />
                     <span>Profile Details</span>
-                  </NewButton>
+                  </Button>
                 </Link>
               </SatelliteProfileDetails>
             ) : (
@@ -370,7 +307,50 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             </div>
           )}
 
-          {satelliteStatus !== ACTIVE_SATELLITE_STATUS && !isSatellite && buttonToShow}
+          {/* Satellite action for user */}
+          <>
+            {/**
+             * Delegate and Undelegate buttons (only 1 of them)
+             * show on of them is current user is not satellite, cuz satellite can't delegate only be delegated, also is current card is for inactive satellite
+             * such type of satellites can't be delegated
+             *
+             * Delegate button if user is not delegated to satellite on card, but it's disabled if user don't have smvk to delegate
+             *
+             * Undelegate button shown if user is delegated to satellite on card
+             */}
+            {isUserSatellite || !isSatelliteActive ? null : isUserDelegatedToThisSatellite ? (
+              <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={undelegateCallback} disabled={isActionActive}>
+                <Icon id="man-close" />
+                Undelegate
+              </Button>
+            ) : (
+              <Button
+                kind={BUTTON_PRIMARY}
+                form={BUTTON_WIDE}
+                onClick={delegateCallback}
+                disabled={isActionActive || !balanceOver1SMvk}
+              >
+                <Icon id="man-check" />
+                Delegate
+              </Button>
+            )}
+
+            {/**
+             * Distribute Proposal Rewards show to regular user on card of satellite to who he has delegated, and satellite is active, and opened details page
+             * button is active, when user have rewards from this satellite
+             */}
+            {!isUserSatellite && isUserDelegatedToThisSatellite && isSatelliteActive && isDetailsPage ? (
+              <Button
+                kind={BUTTON_PRIMARY}
+                form={BUTTON_WIDE}
+                onClick={distributeRewardsCallback}
+                disabled={availableProposalRewards.length === 0}
+              >
+                <Icon id="loans" />
+                Distribute Rewards
+              </Button>
+            ) : null}
+          </>
         </SatelliteCardButtons>
       </SatelliteCardInner>
 

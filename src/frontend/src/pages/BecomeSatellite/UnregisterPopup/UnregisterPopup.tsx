@@ -35,7 +35,7 @@ export const UnregisterPopup = ({
 }: {
   show: boolean
   closePopup: () => void
-  satellite: SatelliteRecordType
+  satellite: SatelliteRecordType | null
 }) => {
   const {
     contractAddresses: { delegationAddress },
@@ -66,7 +66,7 @@ export const UnregisterPopup = ({
     [unregisterAction],
   )
 
-  const handleUnregisterSatellite = useContractAction(contractActionProps)
+  const { action: handleUnregisterSatellite } = useContractAction(contractActionProps)
 
   const { delegatorCount = 0, totalDelegatedAmount = 0 } = satellite ?? {}
 

@@ -156,7 +156,7 @@ export const BorrowAsset = ({
     [borrowAction],
   )
 
-  const borrowAsserHandler = useContractAction(contractActionProps)
+  const { action: borrowAsserHandler } = useContractAction(contractActionProps)
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {

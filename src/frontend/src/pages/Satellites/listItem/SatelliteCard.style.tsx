@@ -28,8 +28,8 @@ export const SatelliteCard = styled(Card)<{ theme: MavrykTheme }>`
 export const SatelliteCardInner = styled.div<{ isExtendedListItem?: boolean }>`
   display: grid;
   grid-template-columns: ${({ isExtendedListItem }) => (isExtendedListItem ? 'auto 220px' : 'auto 180px')};
-  column-gap: 10px;
-  padding: 25px;
+  column-gap: 20px;
+  padding: 20px;
 
   .grid-container {
     display: grid;
@@ -55,6 +55,7 @@ export const SatelliteCardButtons = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  row-gap: 10px;
   flex-shrink: 0;
   justify-content: space-around;
 `
@@ -171,8 +172,23 @@ export const SatelliteProfileDetails = styled.div<{ theme: MavrykTheme }>`
   margin-left: 7px;
   margin-top: 5px;
 
+  span {
+    position: relative;
+
+    &::before {
+      position: absolute;
+      content: '';
+      opacity: 0.5;
+      width: 100%;
+      height: 1px;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: ${({ theme }) => theme.linksAndButtons};
+    }
+  }
+
   svg {
-    margin-right: -10px;
-    stroke: ${({ theme }) => theme.linksAndButtons};
+    margin-right: -5px;
   }
 `
