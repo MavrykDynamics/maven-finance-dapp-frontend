@@ -1,4 +1,4 @@
-import { ApolloError, useSubscription } from '@apollo/client'
+import { ApolloError, SubscriptionHookOptions, useSubscription } from '@apollo/client'
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   FinRequestsSubsRecordType,
@@ -45,17 +45,36 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
+  const subscriptionProps: SubscriptionHookOptions = useMemo(
+    () => ({
+      onData: ({ data: { data } }) => {
+        if (!data) return
+        updateFinRequestsData(data, activeSubs[FIN_REQUESTS_DATA])
+      },
+      variables: {
+        currentTime: currentTimeRef.current,
+      },
+      shouldResubscribe: true,
+    }),
+    [activeSubs],
+  )
+
   useSubscription(getFinancialRequestsStorageSubscription({ requestType: activeSubs[FIN_REQUESTS_DATA] }), {
-    // skip: !activeSubs[PAST_FIN_REQUESTS_SUB],
-    onData: ({ data: { data } }) => {
-      if (!data) return
-      updateFinRequestsData(data, activeSubs[FIN_REQUESTS_DATA])
-    },
-    variables: {
-      currentTime: currentTimeRef.current,
-    },
+    skip: activeSubs[FIN_REQUESTS_DATA] !== ALL_FIN_REQUESTS_SUB,
+    onError: (error) => handleSubError(error, ALL_FIN_REQUESTS_SUB),
+    ...subscriptionProps,
+  })
+
+  useSubscription(getFinancialRequestsStorageSubscription({ requestType: activeSubs[FIN_REQUESTS_DATA] }), {
+    skip: activeSubs[FIN_REQUESTS_DATA] !== PAST_FIN_REQUESTS_SUB,
     onError: (error) => handleSubError(error, PAST_FIN_REQUESTS_SUB),
-    shouldResubscribe: true,
+    ...subscriptionProps,
+  })
+
+  useSubscription(getFinancialRequestsStorageSubscription({ requestType: activeSubs[FIN_REQUESTS_DATA] }), {
+    skip: activeSubs[FIN_REQUESTS_DATA] !== ONGOING_FIN_REQUESTS_SUB,
+    onError: (error) => handleSubError(error, ONGOING_FIN_REQUESTS_SUB),
+    ...subscriptionProps,
   })
 
   const updateFinRequestsData = (
@@ -67,13 +86,27 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     const isPastFinRequests = type === PAST_FIN_REQUESTS_SUB
 
     // based on query type - it will return "all" | "past" | "ongoing" finrequests data
-    const { financialRequestsIds, financialRequestMapper } = normalizeFinancialRequests(data)
+    // if it's "past" -> financialRequestsIds includes only past fin requests
+    // if it's "ongoing" -> financialRequestsIds includes only ongoing fin requests
+    // if it's "all" -> financialRequestsIds includes all fin requests
+    const { financialRequestsIds, financialRequestMapper, ongoingFrIds, pastFrIds } = normalizeFinancialRequests(data)
 
     setFinRequestsCtxState((prev) => ({
       ...prev,
       allFinRequestsIds: isAllFinReuests ? financialRequestsIds : prev.allFinRequestsIds,
-      pastFinRequestsIds: isPastFinRequests ? financialRequestsIds : prev.pastFinRequestsIds,
-      ongoingFinRequestsIds: isOngoingFinRequests ? financialRequestsIds : prev.ongoingFinRequestsIds,
+      // if query type is "past" set financialRequestsIds(includes only past) - same for "ongoing"
+      // if its all(past & ongoing) set past and ongoing from mapper
+      // else set default ids
+      pastFinRequestsIds: isPastFinRequests
+        ? financialRequestsIds
+        : isAllFinReuests
+        ? pastFrIds
+        : prev.pastFinRequestsIds,
+      ongoingFinRequestsIds: isOngoingFinRequests
+        ? financialRequestsIds
+        : isAllFinReuests
+        ? ongoingFrIds
+        : prev.ongoingFinRequestsIds,
       financialRequestsMapper: { ...prev.financialRequestsMapper, ...financialRequestMapper },
     }))
   }
@@ -91,6 +124,8 @@ const FinancialRequestsProvider = ({ children }: Props) => {
       }),
     [activeSubs, finRequestsCtxState],
   )
+
+  console.log(contextProviderValue, 'contextProviderValue')
 
   return <financialRequestsContext.Provider value={contextProviderValue}>{children}</financialRequestsContext.Provider>
 }

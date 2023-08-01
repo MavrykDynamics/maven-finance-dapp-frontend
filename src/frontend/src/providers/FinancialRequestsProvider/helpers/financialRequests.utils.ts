@@ -7,8 +7,45 @@ import {
   FinancialRequestsContext,
   FinancialRequestsStateType,
 } from '../financialRequests.types'
-import { EMPTY_FINANCIAL_REQUESTS_CTX, FIN_REQUESTS_DATA } from './financialRequests.consts'
+import {
+  ALL_FIN_REQUESTS_SUB,
+  EMPTY_FINANCIAL_REQUESTS_CTX,
+  FIN_REQUESTS_DATA,
+  ONGOING_FIN_REQUESTS_SUB,
+  PAST_FIN_REQUESTS_SUB,
+} from './financialRequests.consts'
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+
+/**
+ *
+ * @param mixedUpRequestsIds all fin requests ids
+ * @param mixedUpRequestsMapper fin requests Record where key is from "mixedUpRequestsIds"
+ * @returns {pass, ongoing} requests based on current time (usually used when query sub type is "all")
+ */
+export const distinctRequestsByExecuting = (
+  mixedUpRequestsIds: string[],
+  mixedUpRequestsMapper: FinancialRequestsContext['financialRequestsMapper'],
+) => {
+  return mixedUpRequestsIds.reduce<{
+    ongoing: string[]
+    past: string[]
+  }>(
+    (acc, requestId) => {
+      const request = mixedUpRequestsMapper[requestId]
+      const isPastRequest =
+        request.executed ||
+        (request.votingTillTime && new Date(request.votingTillTime).getTime() < +Date.now()) ||
+        request.status === 1
+      acc[isPastRequest ? 'past' : 'ongoing'].push(requestId)
+
+      return acc
+    },
+    {
+      ongoing: [],
+      past: [],
+    },
+  )
+}
 
 export const normalizeFinancialRequests = (storage: {
   governance_financial_request: GetFinRequestsStorageSubscription['governance_financial_request']
@@ -52,7 +89,9 @@ export const normalizeFinancialRequests = (storage: {
     },
     { financialRequestMapper: {}, frIds: [] },
   )
-  return { financialRequestMapper, financialRequestsIds: frIds }
+
+  const { past, ongoing } = distinctRequestsByExecuting(frIds, financialRequestMapper)
+  return { financialRequestMapper, financialRequestsIds: frIds, ongoingFrIds: ongoing, pastFrIds: past }
 }
 
 export const getRequestStatus = (request: FinancialRequestRecord) => {
@@ -64,7 +103,7 @@ export const getRequestStatus = (request: FinancialRequestRecord) => {
 }
 
 // fin requests context return value helper
-type DoormanContextReturnValueArgs = {
+type FinRequestsContextReturnValueArgs = {
   finRequestsCtxState: FinancialRequestsStateType
   changeFinancialRequestsSubscriptionList: FinancialRequestsContext['changeFinancialRequestsSubscriptionList']
   activeSubs: FinRequestsSubsRecordType
@@ -74,26 +113,23 @@ export const getFinRequestsProviderReturnValue = ({
   finRequestsCtxState,
   changeFinancialRequestsSubscriptionList,
   activeSubs,
-}: DoormanContextReturnValueArgs) => {
+}: FinRequestsContextReturnValueArgs) => {
   const { pastFinRequestsIds, ongoingFinRequestsIds, allFinRequestsIds, financialRequestsMapper } = finRequestsCtxState
   const commonToReturn = {
     changeFinancialRequestsSubscriptionList,
   }
 
-  const areOngoingRequestsNullable = ongoingFinRequestsIds === null || financialRequestsMapper === null
-  const arePastRequestsNullable = pastFinRequestsIds === null || financialRequestsMapper === null
-  const areAllRequestsNullable = allFinRequestsIds === null || financialRequestsMapper === null
-
-  const isLoading =
-    (activeSubs[FIN_REQUESTS_DATA] && areOngoingRequestsNullable) ||
-    (activeSubs[FIN_REQUESTS_DATA] && arePastRequestsNullable) ||
-    (activeSubs[FIN_REQUESTS_DATA] && areAllRequestsNullable) ||
-    (!activeSubs[FIN_REQUESTS_DATA] &&
-      areOngoingRequestsNullable &&
-      !activeSubs[FIN_REQUESTS_DATA] &&
-      arePastRequestsNullable &&
-      !activeSubs[FIN_REQUESTS_DATA] &&
-      areAllRequestsNullable)
+  /**
+   * 1. If no subs and mapper is null
+   * 2. if query type === "all" and no data
+   * 2. if query type === "past" and no data
+   * 2. if query type === "ongoing" and no data
+   */
+  let isLoading =
+    (!activeSubs[FIN_REQUESTS_DATA] && financialRequestsMapper === null) ||
+    (activeSubs[FIN_REQUESTS_DATA] === ALL_FIN_REQUESTS_SUB && allFinRequestsIds === null) ||
+    (activeSubs[FIN_REQUESTS_DATA] === PAST_FIN_REQUESTS_SUB && pastFinRequestsIds === null) ||
+    (activeSubs[FIN_REQUESTS_DATA] === ONGOING_FIN_REQUESTS_SUB && ongoingFinRequestsIds === null)
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {
