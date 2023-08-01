@@ -4,7 +4,8 @@ import { useDispatch } from 'react-redux'
 // const
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import {
-  DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS,
+  DEFAULT_FIN_REQUESTS_ACTIVE_SUBS,
+  FIN_REQUESTS_DATA,
   ONGOING_FIN_REQUESTS_SUB,
 } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
 import { SPINNER_LOADER_MEDIUM } from 'app/App.components/Loader/loader.const'
@@ -29,29 +30,29 @@ export const CouncilFormDropFinancialRequest = () => {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
 
-  const { ongoingFinancialRequestsIds, financialRequestsMapper, isLoading, changeFinancialRequestsSubscriptionList } =
+  const { ongoingFinRequestsIds, financialRequestsMapper, isLoading, changeFinancialRequestsSubscriptionList } =
     useFinancialRequestsContext()
 
   useEffect(() => {
     changeFinancialRequestsSubscriptionList({
-      [ONGOING_FIN_REQUESTS_SUB]: true,
+      [FIN_REQUESTS_DATA]: ONGOING_FIN_REQUESTS_SUB,
     })
 
     return () => {
-      changeFinancialRequestsSubscriptionList(DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS)
+      changeFinancialRequestsSubscriptionList(DEFAULT_FIN_REQUESTS_ACTIVE_SUBS)
     }
   }, [])
 
   const dropDownItems = useMemo(
     () =>
-      ongoingFinancialRequestsIds.map((frId) => {
+      ongoingFinRequestsIds.map((frId) => {
         const fr = financialRequestsMapper[frId]
         return {
           content: <DropdownTruncateOption text={`${fr.type} ${fr.purpose}`} />,
           id: frId,
         }
       }),
-    [ongoingFinancialRequestsIds, financialRequestsMapper],
+    [ongoingFinRequestsIds, financialRequestsMapper],
   )
 
   type DropDownItemType = (typeof dropDownItems)[number]

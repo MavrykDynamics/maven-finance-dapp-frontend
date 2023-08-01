@@ -22,15 +22,14 @@ export type FinRequestsSubsRecordType = {
 }
 
 export type FinancialRequestsStateType = {
-  pastFinancialRequestsIds: string[] | null
-  ongoingFinancialRequestsIds: string[] | null
+  allFinRequestsIds: string[] | null
+  pastFinRequestsIds: string[] | null
+  ongoingFinRequestsIds: string[] | null
   financialRequestsMapper: Record<string, FinancialRequestRecord> | null
 }
 
 export type FinancialRequestsContext = DeepNonNullable<FinancialRequestsStateType> & {
   isLoading: boolean
 
-  changeFinancialRequestsSubscriptionList: (skips: Partial<FinancialRequestsSubsRecordType>) => void
+  changeFinancialRequestsSubscriptionList: (skips: Partial<FinRequestsSubsRecordType>) => void
 }
-
-export type FinancialRequestsSubsRecordType = Record<FinancialRequestsSubsType, boolean>

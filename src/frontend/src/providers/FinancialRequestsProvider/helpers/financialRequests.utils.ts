@@ -3,15 +3,11 @@ import { FinancialRequestRecord } from './financialRequests.types'
 import { GetFinRequestsStorageSubscription } from 'utils/__generated__/graphql'
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
+  FinRequestsSubsRecordType,
   FinancialRequestsContext,
   FinancialRequestsStateType,
-  FinancialRequestsSubsRecordType,
 } from '../financialRequests.types'
-import {
-  EMPTY_FINANCIAL_REQUESTS_CTX,
-  ONGOING_FIN_REQUESTS_SUB,
-  PAST_FIN_REQUESTS_SUB,
-} from './financialRequests.consts'
+import { EMPTY_FINANCIAL_REQUESTS_CTX, FIN_REQUESTS_DATA } from './financialRequests.consts'
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 
 export const normalizeFinancialRequests = (storage: {
@@ -19,7 +15,7 @@ export const normalizeFinancialRequests = (storage: {
 }) => {
   const { financialRequestMapper, frIds } = storage?.governance_financial_request.reduce<{
     financialRequestMapper: Record<number, FinancialRequestRecord>
-    frIds: number[]
+    frIds: string[]
   }>(
     (acc, item) => {
       const { token_address } = item.token
@@ -49,7 +45,7 @@ export const normalizeFinancialRequests = (storage: {
         quorum: item.smvk_percentage_for_approval / 100,
       }
 
-      acc.frIds.push(frItem.id)
+      acc.frIds.push(frItem.id.toString())
       acc.financialRequestMapper[frItem.id] = frItem
 
       return acc
@@ -71,7 +67,7 @@ export const getRequestStatus = (request: FinancialRequestRecord) => {
 type DoormanContextReturnValueArgs = {
   finRequestsCtxState: FinancialRequestsStateType
   changeFinancialRequestsSubscriptionList: FinancialRequestsContext['changeFinancialRequestsSubscriptionList']
-  activeSubs: FinancialRequestsSubsRecordType
+  activeSubs: FinRequestsSubsRecordType
 }
 
 export const getFinRequestsProviderReturnValue = ({
@@ -79,30 +75,25 @@ export const getFinRequestsProviderReturnValue = ({
   changeFinancialRequestsSubscriptionList,
   activeSubs,
 }: DoormanContextReturnValueArgs) => {
-  const { pastFinancialRequestsIds, ongoingFinancialRequestsIds, financialRequestsMapper } = finRequestsCtxState
+  const { pastFinRequestsIds, ongoingFinRequestsIds, allFinRequestsIds, financialRequestsMapper } = finRequestsCtxState
   const commonToReturn = {
     changeFinancialRequestsSubscriptionList,
   }
 
-  const areOngoingRequestsNullable = ongoingFinancialRequestsIds === null || financialRequestsMapper === null
-  const arePastRequestsNullable = pastFinancialRequestsIds === null || financialRequestsMapper === null
+  const areOngoingRequestsNullable = ongoingFinRequestsIds === null || financialRequestsMapper === null
+  const arePastRequestsNullable = pastFinRequestsIds === null || financialRequestsMapper === null
+  const areAllRequestsNullable = allFinRequestsIds === null || financialRequestsMapper === null
 
-  /**
-   * 1. If ongoing active sub & ongoing data is null
-   * 2. If past active sub & past data is null
-   * 3. If both subs for ongong and past requests are inactive and data is null
-   *
-   *
-   * If you will subscribe f.e. only to ongoing requests, it will show loading true while fetching them and than the actual data while
-   * past requests are null. Same logic applies in another way.
-   */
   const isLoading =
-    (activeSubs[ONGOING_FIN_REQUESTS_SUB] && areOngoingRequestsNullable) ||
-    (activeSubs[PAST_FIN_REQUESTS_SUB] && arePastRequestsNullable) ||
-    (!activeSubs[ONGOING_FIN_REQUESTS_SUB] &&
+    (activeSubs[FIN_REQUESTS_DATA] && areOngoingRequestsNullable) ||
+    (activeSubs[FIN_REQUESTS_DATA] && arePastRequestsNullable) ||
+    (activeSubs[FIN_REQUESTS_DATA] && areAllRequestsNullable) ||
+    (!activeSubs[FIN_REQUESTS_DATA] &&
       areOngoingRequestsNullable &&
-      !activeSubs[PAST_FIN_REQUESTS_SUB] &&
-      arePastRequestsNullable)
+      !activeSubs[FIN_REQUESTS_DATA] &&
+      arePastRequestsNullable &&
+      !activeSubs[FIN_REQUESTS_DATA] &&
+      areAllRequestsNullable)
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {

@@ -14,15 +14,15 @@ import { useFinancialRequestsContext } from 'providers/FinancialRequestsProvider
 
 // consts
 import {
-  DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS,
-  ONGOING_FIN_REQUESTS_SUB,
-  PAST_FIN_REQUESTS_SUB,
+  ALL_FIN_REQUESTS_SUB,
+  DEFAULT_FIN_REQUESTS_ACTIVE_SUBS,
+  FIN_REQUESTS_DATA,
 } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
 
 export const FinancialRequests = () => {
   const {
-    pastFinancialRequestsIds,
-    ongoingFinancialRequestsIds,
+    pastFinRequestsIds,
+    ongoingFinRequestsIds,
     financialRequestsMapper,
     isLoading,
     changeFinancialRequestsSubscriptionList,
@@ -30,12 +30,11 @@ export const FinancialRequests = () => {
 
   useEffect(() => {
     changeFinancialRequestsSubscriptionList({
-      [ONGOING_FIN_REQUESTS_SUB]: true,
-      [PAST_FIN_REQUESTS_SUB]: true,
+      [FIN_REQUESTS_DATA]: ALL_FIN_REQUESTS_SUB,
     })
 
     return () => {
-      changeFinancialRequestsSubscriptionList(DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS)
+      changeFinancialRequestsSubscriptionList(DEFAULT_FIN_REQUESTS_ACTIVE_SUBS)
     }
   }, [])
 
@@ -49,8 +48,8 @@ export const FinancialRequests = () => {
         </DataLoaderWrapper>
       ) : Object.keys(financialRequestsMapper)?.length ? (
         <FinancialRequestsView
-          ongoingFinancialRequestsIds={ongoingFinancialRequestsIds}
-          pastFinancialRequestsIds={pastFinancialRequestsIds}
+          ongoingFinancialRequestsIds={ongoingFinRequestsIds}
+          pastFinancialRequestsIds={pastFinRequestsIds}
           financialRequestsMapper={financialRequestsMapper}
         />
       ) : (

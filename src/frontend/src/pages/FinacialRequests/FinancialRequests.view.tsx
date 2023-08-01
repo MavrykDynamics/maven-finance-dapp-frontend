@@ -50,8 +50,8 @@ export const FinancialRequestsView = ({
   pastFinancialRequestsIds: past,
   financialRequestsMapper,
 }: {
-  ongoingFinancialRequestsIds: FinancialRequestsContext['ongoingFinancialRequestsIds']
-  pastFinancialRequestsIds: FinancialRequestsContext['pastFinancialRequestsIds']
+  ongoingFinancialRequestsIds: FinancialRequestsContext['ongoingFinRequestsIds']
+  pastFinancialRequestsIds: FinancialRequestsContext['pastFinRequestsIds']
   financialRequestsMapper: FinancialRequestsContext['financialRequestsMapper']
 }) => {
   const { search } = useLocation()

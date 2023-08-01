@@ -4,10 +4,10 @@ import {
   FinRequestsSubsRecordType,
   FinancialRequestsContext,
   FinancialRequestsStateType,
-  FinancialRequestsSubsRecordType,
   FinancialRequestsSubsType,
 } from './financialRequests.types'
 import {
+  ALL_FIN_REQUESTS_SUB,
   DEFAULT_FINANCIAL_REQUESTS_CTX,
   DEFAULT_FIN_REQUESTS_ACTIVE_SUBS,
   FIN_REQUESTS_DATA,
@@ -49,7 +49,7 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     // skip: !activeSubs[PAST_FIN_REQUESTS_SUB],
     onData: ({ data: { data } }) => {
       if (!data) return
-      updateFinRequestsData(data, FIN_REQUESTS_PAST)
+      updateFinRequestsData(data, activeSubs[FIN_REQUESTS_DATA])
     },
     variables: {
       currentTime: currentTimeRef.current,
@@ -58,19 +58,27 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     shouldResubscribe: true,
   })
 
-  const updateFinRequestsData = (data: GetFinRequestsStorageSubscription, type: FinancialRequestType) => {
+  const updateFinRequestsData = (
+    data: GetFinRequestsStorageSubscription,
+    type: FinRequestsSubsRecordType[typeof FIN_REQUESTS_DATA],
+  ) => {
+    const isAllFinReuests = type === ALL_FIN_REQUESTS_SUB
+    const isOngoingFinRequests = type === ONGOING_FIN_REQUESTS_SUB
+    const isPastFinRequests = type === PAST_FIN_REQUESTS_SUB
+
+    // based on query type - it will return "all" | "past" | "ongoing" finrequests data
     const { financialRequestsIds, financialRequestMapper } = normalizeFinancialRequests(data)
 
     setFinRequestsCtxState((prev) => ({
       ...prev,
-      [`${type}FinancialRequestsIds`]: [
-        ...new Set([...(prev[`${type}FinancialRequestsIds`] ?? []), ...financialRequestsIds]),
-      ],
+      allFinRequestsIds: isAllFinReuests ? financialRequestsIds : prev.allFinRequestsIds,
+      pastFinRequestsIds: isPastFinRequests ? financialRequestsIds : prev.pastFinRequestsIds,
+      ongoingFinRequestsIds: isOngoingFinRequests ? financialRequestsIds : prev.ongoingFinRequestsIds,
       financialRequestsMapper: { ...prev.financialRequestsMapper, ...financialRequestMapper },
     }))
   }
 
-  const changeFinancialRequestsSubscriptionList = (newSkips: Partial<FinancialRequestsSubsRecordType>) => {
+  const changeFinancialRequestsSubscriptionList = (newSkips: Partial<FinRequestsSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }
 

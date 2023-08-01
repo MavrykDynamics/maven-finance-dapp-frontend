@@ -14,20 +14,17 @@ export const FIN_REQUESTS_DATA = 'finRequestsData'
 
 export const DEFAULT_FIN_REQUESTS_ACTIVE_SUBS: FinRequestsSubsRecordType = {
   [FIN_REQUESTS_DATA]: null,
-}
-
-export const DEFAULT_FINANCIAL_REQUESTS_ACTIVE_SUBS = {
-  [ONGOING_FIN_REQUESTS_SUB]: false,
-  [PAST_FIN_REQUESTS_SUB]: false,
 } as const
 
 export const DEFAULT_FINANCIAL_REQUESTS_CTX: FinancialRequestsStateType = {
-  pastFinancialRequestsIds: null,
-  ongoingFinancialRequestsIds: null,
+  allFinRequestsIds: null,
+  pastFinRequestsIds: null,
+  ongoingFinRequestsIds: null,
   financialRequestsMapper: null,
 }
 export const EMPTY_FINANCIAL_REQUESTS_CTX: DeepNonNullable<FinancialRequestsStateType> = {
-  pastFinancialRequestsIds: [],
-  ongoingFinancialRequestsIds: [],
+  allFinRequestsIds: [],
+  pastFinRequestsIds: [],
+  ongoingFinRequestsIds: [],
   financialRequestsMapper: {},
 }
