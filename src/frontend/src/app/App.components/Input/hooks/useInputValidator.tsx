@@ -40,6 +40,7 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
           // show err message under the input
           if (errMsg && type === ERR_MSG_INPUT) {
             setErrorMsg(errMsg)
+            return false
           }
 
           // show err message with toast

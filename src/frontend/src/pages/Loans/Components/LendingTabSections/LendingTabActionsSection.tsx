@@ -43,6 +43,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -206,14 +207,15 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
         <div className="tab-text mb-10">Updated Lending {symbol} Stats</div>
 
         <CardSectionWrapper>
-          <LendingStatsTable
-            shouldNotRenderStats={inputData.validationStatus === INPUT_STATUS_ERROR}
-            lendAPY={lendAPY}
-            isSupplyActiveTab={isSupplyActiveTab}
-            symbol={symbol}
-            amount={inputData.amount}
-            futureMBalance={futureMBalance}
-          />
+          <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
+            <LendingStatsTable
+              lendAPY={lendAPY}
+              isSupplyActiveTab={isSupplyActiveTab}
+              symbol={symbol}
+              amount={inputData.amount}
+              futureMBalance={futureMBalance}
+            />
+          </MemoizedComponent>
         </CardSectionWrapper>
       </div>
 
@@ -227,45 +229,36 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
   )
 }
 
-const LendingStatsTable = memo(
-  ({
-    shouldNotRenderStats,
-    lendAPY,
-    isSupplyActiveTab,
-    futureMBalance,
-    symbol,
-    amount,
-  }: {
-    shouldNotRenderStats: boolean
-    lendAPY: number
-    isSupplyActiveTab: boolean
-    symbol: string
-    amount: number | string
-    futureMBalance: number
-  }) => {
-    return (
-      <div className="stats">
-        <ThreeLevelListItem>
-          <div className="name">
-            Earn APY
-            <CustomTooltip iconId="info" text={EARN_APY} />
-          </div>
-          <CommaNumber value={lendAPY} className="value" endingText="%" />
-        </ThreeLevelListItem>
-        <ThreeLevelListItem>
-          <div className="name">{isSupplyActiveTab ? `m${symbol} Received` : 'Amount To Withdraw'}</div>
-          <CommaNumber value={Number(amount)} className="value" />
-        </ThreeLevelListItem>
-        <ThreeLevelListItem className="right">
-          <div className="name">New m{symbol} Balance</div>
-          <CommaNumber value={futureMBalance} className="value" />
-        </ThreeLevelListItem>
-      </div>
-    )
-  },
-  (oldProps, newProps) => {
-    if (newProps.shouldNotRenderStats) return true
-    if (oldProps.shouldNotRenderStats === newProps.shouldNotRenderStats) return false
-    return false
-  },
-)
+const LendingStatsTable = ({
+  lendAPY,
+  isSupplyActiveTab,
+  futureMBalance,
+  symbol,
+  amount,
+}: {
+  lendAPY: number
+  isSupplyActiveTab: boolean
+  symbol: string
+  amount: number | string
+  futureMBalance: number
+}) => {
+  return (
+    <div className="stats">
+      <ThreeLevelListItem>
+        <div className="name">
+          Earn APY
+          <CustomTooltip iconId="info" text={EARN_APY} />
+        </div>
+        <CommaNumber value={lendAPY} className="value" endingText="%" />
+      </ThreeLevelListItem>
+      <ThreeLevelListItem>
+        <div className="name">{isSupplyActiveTab ? `m${symbol} Received` : 'Amount To Withdraw'}</div>
+        <CommaNumber value={Number(amount)} className="value" />
+      </ThreeLevelListItem>
+      <ThreeLevelListItem className="right">
+        <div className="name">New m{symbol} Balance</div>
+        <CommaNumber value={futureMBalance} className="value" />
+      </ThreeLevelListItem>
+    </div>
+  )
+}
