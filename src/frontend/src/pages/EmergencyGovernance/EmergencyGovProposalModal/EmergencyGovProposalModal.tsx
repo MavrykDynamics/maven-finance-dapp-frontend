@@ -23,6 +23,7 @@ import { NewInputLabel } from 'app/App.components/Input/Input.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 
 export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolean; closeHandler: () => void }) => {
   const dispatch = useDispatch()
@@ -32,7 +33,9 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
       emergencyGovernance: { proposalTitleMaxLength, proposalDescMaxLength },
     },
   } = useDappConfigContext()
-  const { fee } = useSelector((state: State) => state.governance.config)
+  const {
+    config: { fee },
+  } = useProposalsContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [proposalData, setProposalData] = useState<{

@@ -1,12 +1,8 @@
+import { ProposalStatus, GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
+import { GovernancePhaseType, ProposalStatusType } from 'providers/ProposalsProvider/helpers/proposals.types'
 import { ProposalsDataSubscriptionSubscription } from 'utils/__generated__/graphql'
-import {
-  ProposalStatusType,
-  ProposalStatus,
-  GovernancePhaseType,
-  GovPhases,
-  GovernanceProposalGraphQL,
-} from '../../utils/TypesAndInterfaces/Governance'
 
+// TODO: check whether we need this
 export const getProposalStatus = (
   proposal: ProposalsDataSubscriptionSubscription['governance_proposal'][number],
   governancePhase: GovernancePhaseType,

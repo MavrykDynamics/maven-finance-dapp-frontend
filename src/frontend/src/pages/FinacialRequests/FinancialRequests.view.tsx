@@ -16,8 +16,6 @@ import { parseDate } from 'utils/time'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // types
-import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
-import { State } from 'reducers'
 import { FinancialRequestStoreType } from 'reducers/financialRequests'
 
 // view
@@ -40,6 +38,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 export const FinancialRequestsView = ({
   financialRequestsIds,

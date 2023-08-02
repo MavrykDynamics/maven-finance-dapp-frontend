@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // Components
@@ -20,8 +20,10 @@ import { GovPhases, START_NEXT_ROUND_ACTION } from 'providers/ProposalsProvider/
 
 // providers
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // Actions, helpers
 import {
@@ -32,17 +34,11 @@ import {
 import { startNextRound } from 'providers/ProposalsProvider/actions/proposalsGovernanceInteraction.actions'
 import { api } from 'utils/api/api'
 import { isAbortError, unknownToError } from 'errors/error'
-import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-
-// hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 export default function TimeRemaining() {
-  const dispatch = useDispatch()
-
-  const { currentRoundEndLevel, timelockProposalId, governancePhase } = useSelector(
-    (state: State) => state.governance.config,
-  )
+  const {
+    config: { currentRoundEndLevel, timelockProposalId, governancePhase },
+  } = useProposalsContext()
   const { userAddress } = useUserContext()
   const {
     contractAddresses: { governanceAddress },
@@ -73,17 +69,12 @@ export default function TimeRemaining() {
     [bug, governanceAddress, userAddress],
   )
 
-  const dappActionCallback = useCallback(() => {
-    dispatch(getGovernanceStorage())
-  }, [dispatch])
-
   const nextRoundContractProps: HookContractActionArgs<boolean> = useMemo(
     () => ({
       actionType: START_NEXT_ROUND_ACTION,
       actionFn: handleNextRoundActionFn,
-      dappActionCallback,
     }),
-    [dappActionCallback, handleNextRoundActionFn],
+    [handleNextRoundActionFn],
   )
 
   // same action with 2 different boolean values, so need 2 seperate fns to handle it

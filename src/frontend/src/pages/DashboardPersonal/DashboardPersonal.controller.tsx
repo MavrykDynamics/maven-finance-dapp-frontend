@@ -37,7 +37,6 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 
 // actions
 import { claimAllRewardsAction, distributeProposalRewards } from 'providers/UserProvider/actions/user.actions'
-import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 
@@ -99,7 +98,6 @@ const DashboardPersonal = () => {
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useDoormanContext()
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
 
   useEffect(() => {
@@ -123,7 +121,6 @@ const DashboardPersonal = () => {
       try {
         await Promise.all(
           [
-            (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
             (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
             isVestee && (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
           ].filter(Boolean),

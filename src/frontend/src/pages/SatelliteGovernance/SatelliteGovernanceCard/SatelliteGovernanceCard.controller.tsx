@@ -7,7 +7,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { getSeparateSnakeCase } from '../../../utils/parse'
-import { ProposalStatus, SatelliteGovernance } from '../../../utils/TypesAndInterfaces/Governance'
+import { SatelliteGovernance } from '../../../utils/TypesAndInterfaces/Governance'
 import Expand from '../../../app/App.components/Expand/Expand.view'
 
 import { dropAction, voteForAction } from '../SatelliteGovernance.actions'
@@ -24,6 +24,7 @@ import { parseDate } from 'utils/time'
 import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import dayjs from 'dayjs'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 type Props = {
   satelliteId: string

@@ -1,8 +1,11 @@
 import Icon from 'app/App.components/Icon/Icon.view'
-import { GovernancePhaseType, GovPhases } from 'utils/TypesAndInterfaces/Governance'
 
 import TimeRemaining from '../TimeRemaining/TimeRemaining.controller'
 import { GovernanceTopBarStyled, GovTopBarPhaseText } from './GovernanceTopBar.style'
+
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
+
+import { GovernancePhaseType } from 'providers/ProposalsProvider/helpers/proposals.types'
 
 export type GovernanceTopBarProps = {
   governancePhase: GovernancePhaseType

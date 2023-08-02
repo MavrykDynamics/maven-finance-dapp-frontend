@@ -5,9 +5,7 @@ import type {
   Governance_Satellite_Action,
 } from '../__generated__/graphql'
 
-import { normalizeProposal } from 'pages/Governance/actions/governanceNormalizers'
 import { normalizerSatelliteGovernance } from 'pages/SatelliteGovernance/SatelliteGovernance.helpers'
-import { Governance_Proposal } from 'utils/__generated__/graphql'
 
 // Governance proposals types
 // export type GovernanceProposalGraphQL = Omit<Governance_Proposal, '__typename'>

@@ -37,7 +37,6 @@ import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
-import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
@@ -90,7 +89,6 @@ export const Dashboard = () => {
 
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
-  const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   // const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
 
   const { totalBorrowed, totalLended } = marketsAddresses.reduce<{
@@ -149,7 +147,6 @@ export const Dashboard = () => {
     try {
       await Promise.all(
         [
-          (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
           (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
           (!isTreasuryLoaded || isDepsChanged) && dispatch(getTreasuryStorage()),
           // (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage(tokensMetadata)),

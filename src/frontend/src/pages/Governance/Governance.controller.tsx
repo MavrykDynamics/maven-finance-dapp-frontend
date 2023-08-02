@@ -5,14 +5,13 @@ import QueryString from 'qs'
 
 // types
 import { State } from 'reducers'
+import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
 import { ProposalsListType } from './helpers/governanceTypes'
-import { GovPhases, ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 
 // providers
 
 // actions & cs hooks
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getGovernanceStorage } from './actions/GovernanseData.actions'
 import { getEmergencyGovernanceStorage } from '../EmergencyGovernance/EmergencyGovernance.actions'
 
 // view
@@ -25,7 +24,7 @@ import Pagination from 'app/App.components/Pagination/Pagination.view'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
-// actions, helpers, consts
+// helpers, consts
 import {
   calculateSlicePositions,
   getPageNumber,
@@ -36,6 +35,7 @@ import {
   WAITING_PAYMENT_PROPOSALS_LIST_NAME,
 } from 'app/App.components/Pagination/pagination.consts'
 import { generateCyclesDdOptions, NONE_CYCLE_SELECTED_OPTION } from './helpers/governanceView.helpers'
+import { GovPhases, ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 // styles
 import { Page } from 'styles'
@@ -53,6 +53,7 @@ import {
   SATELLITE_VOTE_YES,
   SATELLITE_VOTES_MAPPER,
 } from 'providers/SatellitesProvider/satellites.const'
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const dispatch = useDispatch()
@@ -60,24 +61,20 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const history = useHistory()
 
   const {
-    isLoaded: isGovernanceLoaded,
+    isLoading: isGovernanceLoading,
     config: { governancePhase, cycle },
     pastProposalsIds,
     currentRoundProposalsIds,
     waitingProposalsIdsToBeExecuted,
     waitingProposalsIdsToBePaid,
     proposalsMapper,
-  } = useSelector((state: State) => state.governance)
+  } = useProposalsContext()
+
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
-      await Promise.all(
-        [
-          (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
-          (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
-        ].filter(Boolean),
-      )
+      await Promise.all([(!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage())].filter(Boolean))
     } catch (e) {}
   }, [])
 
@@ -216,7 +213,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
         isWaitingToExecute={Boolean(waitingProposalsIdsToBeExecuted.length)}
       />
 
-      {isLoading ? (
+      {isLoading || isGovernanceLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading proposals</div>

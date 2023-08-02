@@ -1,24 +1,28 @@
 import BigNumber from 'bignumber.js'
 
+// consts
 import {
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
   defaultProposalMetadataTitleMaxLength,
 } from 'app/App.components/Input/Input.constants'
-import { Governance_Proposal } from 'utils/__generated__/graphql'
-import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
   PaymentsDataChangesType,
   ProposalDataChangesType,
   ProposalValidityObj,
   StageThreeValidityItem,
 } from './ProposalSubmission.types'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 // helpers
 import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
-import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// types
+import { Governance_Proposal } from 'utils/__generated__/graphql'
+import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
 
 // VALIDATION FN'S TODO: add some checking in future (no cond for it now)
 export const getBytesPairValidationStatus = (

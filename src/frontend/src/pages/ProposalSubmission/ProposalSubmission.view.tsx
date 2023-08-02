@@ -65,7 +65,6 @@ import {
 } from 'texts/tooltips/governance'
 
 // helpers & actions
-import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import {
   submitProposal,
   updateProposalData,
@@ -229,10 +228,6 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const handleNextStep = (tabId: number) => setActiveTab(tabId)
 
   // actions helper for dapp data update callback read {README} in useContractHook folder --------------------------------
-  const dappCallback = useCallback(() => {
-    // TODO remove when proposal context will be done
-    dispatch(getGovernanceStorage())
-  }, [dispatch])
 
   // drop proposal action --------------------------------------------------------
   const dropActionFn = useCallback(async () => {
@@ -255,9 +250,8 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     () => ({
       actionType: DROP_PROPOSAL_ACTION,
       actionFn: dropActionFn,
-      dappCallback,
     }),
-    [dappCallback, dropActionFn],
+    [dropActionFn],
   )
 
   const { action: handleDropProposal } = useContractAction(dropContractProps)
@@ -280,9 +274,8 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     () => ({
       actionType: LOCK_PROPOSAL_ACTION,
       actionFn: lockActionFn,
-      dappCallback,
     }),
-    [dappCallback, lockActionFn],
+    [lockActionFn],
   )
 
   const { action: handleLockProposal } = useContractAction(lockContractProps)
@@ -365,9 +358,8 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   ])
 
   const submissionDappCallback = useCallback(async () => {
-    dappCallback() // default cb for dapp actions when redux is still here
     await getNewProposalId() // update proposal id after successful action
-  }, [dappCallback, getNewProposalId])
+  }, [getNewProposalId])
 
   const submitContractProps: HookContractActionArgs = useMemo(
     () => ({
@@ -420,9 +412,8 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     () => ({
       actionType: UPDATE_PROPOSAL_DATA_ACTION,
       actionFn: updateActionFn,
-      dappCallback,
     }),
-    [dappCallback, updateActionFn],
+    [updateActionFn],
   )
 
   const { action: handleProposalUpdate } = useContractAction(updateContractProps)

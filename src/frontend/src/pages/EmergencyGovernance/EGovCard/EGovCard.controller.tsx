@@ -14,7 +14,6 @@ import type { EmergergencyGovernanceItem } from '../../../utils/TypesAndInterfac
 // view
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
-import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
 import { Button } from 'app/App.components/Button/Button.controller'
 import Expand from 'app/App.components/Expand/Expand.view'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
@@ -32,6 +31,7 @@ import {
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 type EGovCardProps = {
   emergencyGovernance: EmergergencyGovernanceItem
