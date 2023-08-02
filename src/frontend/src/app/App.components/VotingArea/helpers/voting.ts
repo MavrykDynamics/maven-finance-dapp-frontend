@@ -15,7 +15,7 @@ export type VotingProps = {
   isVotingActive: boolean
   showVotingButtons?: boolean
   disableVotingButtons?: boolean
-  handleVote?: (vote: `${VotingTypes}`) => void
+  handleVote?: (vote: VotingTypes) => void
   quorumText?: string
   buttonsToShow?: {
     forBtn?: {
@@ -33,9 +33,9 @@ export type VotingProps = {
 export type VotingProposalsProps = {
   voteStatistics: VoteStatistics
   selectedProposal: ProposalRecordType
-  votingPhaseHandler?: (vote: `${VotingTypes}`) => void
+  votingPhaseHandler?: (vote: VotingTypes) => void
   isAbleToMakeProposalRoundVote?: boolean
-  handleProposalVote: (vote: number) => void
+  handleProposalVote: () => void
   vote?: ProposalRecordType['votes'][number]
   govPhase: `${GovPhases}`
 }

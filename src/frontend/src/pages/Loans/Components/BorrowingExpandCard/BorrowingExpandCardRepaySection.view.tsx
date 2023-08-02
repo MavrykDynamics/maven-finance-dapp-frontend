@@ -252,7 +252,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         <div className="tab-text">Select Amount to Repay</div>
 
         <Input
-          className={classNames('pinned-dropdown', { 'input-with-borrowedTokenRate': borrowedTokenRate })}
+          className={classNames('pinned-dropdown', { 'input-with-rate': borrowedTokenRate })}
           inputProps={inputProps}
           settings={settings}
         >
