@@ -53,7 +53,7 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
   } = qs.parse(search, { ignoreQueryPrefix: true })
 
   const { preparedCollateralAssets, preparedLoanAssets } = useMemo(() => {
-    const { collateralAssets, loanAssets } = allVaultsIds.reduce<{
+    const { collateralAssets, loanAssets } = currentVaultsIds.reduce<{
       collateralAssets: Set<string>
       loanAssets: Set<string>
     }>(
@@ -81,7 +81,7 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
     )
 
     return { preparedCollateralAssets: Array.from(collateralAssets), preparedLoanAssets: Array.from(loanAssets) }
-  }, [allVaultsIds, tokensMetadata, vaultsMapper])
+  }, [currentVaultsIds, tokensMetadata, vaultsMapper])
 
   const preparedAssets = [ALL_VAULTS_FILTER].concat(preparedCollateralAssets).concat(preparedLoanAssets)
 

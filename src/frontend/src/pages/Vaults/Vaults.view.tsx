@@ -138,7 +138,7 @@ export const VaultsView = () => {
 
   const currentVaultsIds = useMemo(
     () => (tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissionedVaultsIds),
-    [tabId],
+    [allVaultsIds, myVaultsIds, permissionedVaultsIds, tabId],
   )
 
   const currentPage = getPageNumber(search, currentListName)
@@ -167,6 +167,8 @@ export const VaultsView = () => {
   const handleMarkForLiquidation = async (vaultId: number, vaultOwner: string) => {
     await dispatch(markForLiquidation(vaultId, vaultOwner))
   }
+
+  console.log(currentVaultsIds, 'currentVaultsIds')
 
   return (
     <VaultsStyled>
