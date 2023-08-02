@@ -8,6 +8,7 @@ import {
   ERR_MSG_TOAST,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
   InputStatusType,
   getOnBlurValue,
@@ -65,6 +66,8 @@ import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
+import { ThemeType } from 'consts/theme.const'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -80,12 +83,10 @@ export const WithdrawCollateral = ({
   const { userTokensBalances, userAddress } = useUserContext()
   const {
     contractAddresses: { lendingControllerAddress },
+    preferences: { themeSelected },
   } = useDappConfigContext()
   const { bug } = useToasterContext()
 
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   useLockBodyScroll(show)
@@ -144,7 +145,7 @@ export const WithdrawCollateral = ({
   )
 
   const currentCollateralToWithdraw = getMaxCollateralWithdraw(
-    collateralBalance - inputAmount * collateralRate,
+    collateralBalance,
     collateralBalance,
     borrowedAmount,
     borrowedTokenRate,
@@ -239,36 +240,14 @@ export const WithdrawCollateral = ({
           </GovRightContainerTitleArea>
           <div className="modalDescr">Select one or multiple assets to remove as collateral from the vault.</div>
 
-          <VaultModalOverview>
-            <ThreeLevelListItem
-              className="collateral-diagram"
-              customColor={getCollateralRationPersent(collateralRatio)}
-            >
-              <div className={`percentage`}>
-                Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
-              </div>
-              <GradientDiagram
-                className="diagram"
-                colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
-              />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">Collateral Value</div>
-              <CommaNumber value={collateralBalance} className="value" beginningText="$" />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">
-                Withdrawable Collateral{' '}
-                <CustomTooltip
-                  iconId="info"
-                  text="Dollar value of collateral you are able to withdraw without making your vault under-collateralized for this specific collateral asset"
-                  defaultStrokeColor={colors[themeSelected].textColor}
-                />
-              </div>
-              <CommaNumber value={currentCollateralToWithdraw * collateralRate} className="value" beginningText="$" />
-            </ThreeLevelListItem>
-          </VaultModalOverview>
+          <WithdrawCollateralTableStats
+            collateralRatio={collateralRatio}
+            collateralBalance={collateralBalance}
+            currentCollateralToWithdraw={currentCollateralToWithdraw}
+            collateralRate={collateralRate}
+            themeSelected={themeSelected}
+            validationStatus={inputData.validationStatus}
+          />
 
           <hr />
           {collateralToken ? (
@@ -284,6 +263,7 @@ export const WithdrawCollateral = ({
               settings={{
                 balance: userCollateralBalance,
                 balanceAsset: symbol,
+
                 useMaxHandler: () =>
                   inputOnChangeHandle(
                     getLoansInputMaxAmount(currentCollateralToWithdraw, decimals),
@@ -301,37 +281,15 @@ export const WithdrawCollateral = ({
             </Input>
           ) : null}
           <div className="block-name">New Vault Status</div>
-          <VaultModalOverview>
-            <ThreeLevelListItem
-              className="collateral-diagram"
-              customColor={getCollateralRationPersent(futureCollateralRatio)}
-            >
-              <div className={`percentage`}>
-                Collateral Ratio:{' '}
-                <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
-              </div>
-              <GradientDiagram
-                className="diagram"
-                colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
-              />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">Collateral Value</div>
-              <CommaNumber value={futureVaultCollateralBalance} className="value" beginningText="$" />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">
-                Withdrawable Collateral{' '}
-                <CustomTooltip
-                  iconId="info"
-                  text="Dollar value of collateral you are able to withdraw without making your vault under-collateralized for this specific collateral asset"
-                  defaultStrokeColor={colors[themeSelected].textColor}
-                />
-              </div>
-              <CommaNumber value={futureCollateralWithdraw * collateralRate} className="value" beginningText="$" />
-            </ThreeLevelListItem>
-          </VaultModalOverview>
+
+          <WithdrawCollateralTableStats
+            collateralRatio={futureCollateralRatio}
+            collateralBalance={futureVaultCollateralBalance}
+            currentCollateralToWithdraw={futureCollateralWithdraw}
+            collateralRate={collateralRate}
+            themeSelected={themeSelected}
+            validationStatus={inputData.validationStatus}
+          />
 
           <div className="manage-btn">
             <NewButton
@@ -347,5 +305,53 @@ export const WithdrawCollateral = ({
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>
+  )
+}
+
+const WithdrawCollateralTableStats = ({
+  collateralRatio,
+  collateralBalance,
+  currentCollateralToWithdraw,
+  collateralRate,
+  themeSelected,
+  validationStatus,
+}: {
+  collateralRatio: number
+  collateralBalance: number
+  currentCollateralToWithdraw: number
+  collateralRate: number
+  themeSelected: ThemeType
+  validationStatus: InputStatusType
+}) => {
+  return (
+    <MemoizedComponent returnMemoizedComponent={validationStatus === INPUT_STATUS_ERROR}>
+      <VaultModalOverview>
+        <ThreeLevelListItem className="collateral-diagram" customColor={getCollateralRationPersent(collateralRatio)}>
+          <div className={`percentage`}>
+            Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+          </div>
+          <GradientDiagram
+            className="diagram"
+            colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+            currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
+          />
+        </ThreeLevelListItem>
+        <ThreeLevelListItem>
+          <div className="name">Collateral Value</div>
+          <CommaNumber value={collateralBalance} className="value" beginningText="$" />
+        </ThreeLevelListItem>
+        <ThreeLevelListItem>
+          <div className="name">
+            Withdrawable Collateral{' '}
+            <CustomTooltip
+              iconId="info"
+              text="Dollar value of collateral you are able to withdraw without making your vault under-collateralized for this specific collateral asset"
+              defaultStrokeColor={colors[themeSelected].textColor}
+            />
+          </div>
+          <CommaNumber value={currentCollateralToWithdraw * collateralRate} className="value" beginningText="$" />
+        </ThreeLevelListItem>
+      </VaultModalOverview>
+    </MemoizedComponent>
   )
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BUTTON_SIMPLE } from '../Button/Button.constants'
 import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
@@ -45,11 +45,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
     }: InputViewProps,
     ref,
   ) => {
-    const { onChange } = inputProps
-    const { status, errorMessage, handleChange } = useInputValidator({
+    const { onChange, value } = inputProps
+    const { status, errorMessage, handleChange, handleMaxAmount } = useInputValidator({
       originalErrorMessage: errorMessageFromProps,
       status: inputStatus,
       onChange,
+      handleMax: useMaxHandler,
+      value,
       validationFns:
         validationFns && validationFns.length > 0 ? [[validateInput, ERR_MSG_INPUT], ...validationFns] : validationFns,
     })
@@ -86,7 +88,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
 
         {useMaxHandler ? (
           <div className="useMax-btn">
-            <NewButton onClick={useMaxHandler} kind={BUTTON_SIMPLE}>
+            <NewButton onClick={handleMaxAmount} kind={BUTTON_SIMPLE}>
               Use Max
             </NewButton>
           </div>
