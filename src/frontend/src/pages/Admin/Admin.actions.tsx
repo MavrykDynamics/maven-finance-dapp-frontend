@@ -702,10 +702,9 @@ export const closeAllOfUsersEmptyVaults =
       dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
-
+    console.log('printing out vaults mapper:', vaultsMapper)
     const vaultsArray = Object.keys(vaultsMapper).map(function (vaultId) {
       let vault = vaultsMapper[vaultId]
-      // do something with person
       return vault
     })
 
@@ -713,10 +712,8 @@ export const closeAllOfUsersEmptyVaults =
     const batchArray: any = []
 
     try {
-      console.log(state.contractAddresses)
       const tezos = await DAPP_INSTANCE.tezos()
       const lendingControllerContract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
-
       allUsersVaults.forEach((vault: any) => {
         let closeVaultBatchObject = {
           kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -724,7 +721,6 @@ export const closeAllOfUsersEmptyVaults =
         }
         batchArray.push(closeVaultBatchObject)
       })
-      console.log(batchArray)
       if (batchArray.length == 0) {
         dispatch(showToaster(SUCCESS, 'User has no empty vaults', 'All good :)'))
         return
@@ -748,7 +744,7 @@ export const closeAllOfUsersEmptyVaults =
 const getAllEmptyVaultsOfOwner = (vaults: any, usersId: string) => {
   return vaults.filter((vault: any) => {
     const isEmptyVault = vault.borrowedAmount === 0 && vault.fee == 0
-    const isUsersVault = vault.ownerId === usersId
+    const isUsersVault = vault.ownerAddress === usersId
     return isEmptyVault && isUsersVault
   })
 }
