@@ -168,8 +168,6 @@ export const VaultsView = () => {
     await dispatch(markForLiquidation(vaultId, vaultOwner))
   }
 
-  console.log(currentVaultsIds, 'currentVaultsIds')
-
   return (
     <VaultsStyled>
       <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="primary-switcher" />
