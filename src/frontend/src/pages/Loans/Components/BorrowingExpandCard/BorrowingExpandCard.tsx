@@ -297,7 +297,7 @@ export const BorrowingExpandCard = ({
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
-      amountToWitdraw: amount,
+      selectedCollateralAmountInVault: amount,
       collateralTokenAddress: collateralData[idx].tokenAddress,
     })
   }

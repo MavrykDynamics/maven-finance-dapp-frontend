@@ -106,34 +106,37 @@ export const WithdrawCollateral = ({
     }
   }, [show])
 
-  const borrowedToken = getTokenDataByAddress({
-    tokenAddress: data?.borrowedTokenAddress,
-    tokensMetadata,
-    tokensPrices,
-  })
-  const collateralToken = getTokenDataByAddress({
-    tokenAddress: data?.collateralTokenAddress,
-    tokensMetadata,
-    tokensPrices,
-  })
-
   const {
     vaultAddress = '',
     vaultId = 0,
     collateralBalance = 0,
     collateralRatio = 0,
+    selectedCollateralAmountInVault = 0,
     borrowedAmount = 0,
     collateralTokenAddress = '',
+    borrowedTokenAddress = '',
   } = data ?? {}
 
-  const { rate: originalCollateralRate, decimals, name, icon, symbol } = collateralToken ?? {}
+  const borrowedToken = getTokenDataByAddress({
+    tokenAddress: borrowedTokenAddress,
+    tokensMetadata,
+    tokensPrices,
+  })
+  const { rate: originalborrowedTokenRate = 0 } = borrowedToken ?? {}
+  const borrowedTokenRate = originalborrowedTokenRate ?? 0
+
+  const collateralToken = getTokenDataByAddress({
+    tokenAddress: collateralTokenAddress,
+    tokensMetadata,
+    tokensPrices,
+  })
+  const { rate: originalCollateralRate, decimals, icon, symbol } = collateralToken ?? {}
   const collateralRate = originalCollateralRate ?? 0
+
   const userCollateralBalance = getUserTokenBalanceByAddress({
     userTokensBalances,
     tokenAddress: collateralTokenAddress,
   })
-  const { rate: originalborrowedTokenRate } = borrowedToken ?? {}
-  const borrowedTokenRate = originalborrowedTokenRate ?? 0
 
   const futureCollateralRatio = getVaultCollateralRatio(
     collateralBalance - inputAmount * collateralRate,
@@ -141,10 +144,8 @@ export const WithdrawCollateral = ({
   )
 
   const currentCollateralToWithdraw = getMaxCollateralWithdraw(
-    collateralBalance - inputAmount * collateralRate,
     collateralBalance,
-    borrowedAmount,
-    borrowedTokenRate,
+    borrowedAmount * borrowedTokenRate,
     collateralRate,
   )
 
@@ -152,7 +153,7 @@ export const WithdrawCollateral = ({
   const futureVaultCollateralBalance = collateralBalance - inputAmount * collateralRate
 
   const isActionBtnDisabled =
-    isActionActive || inputData.validationStatus !== INPUT_STATUS_SUCCESS || futureCollateralRatio <= 200
+    isActionActive || inputData.validationStatus !== INPUT_STATUS_SUCCESS || futureCollateralRatio < 200
 
   // withdraw collateral action ----------------------------------------------
   const withdrawAction = useCallback(async () => {
@@ -181,7 +182,7 @@ export const WithdrawCollateral = ({
     }
 
     return null
-  }, [userAddress, collateralToken, vaultAddress, bug, inputData.amount, closePopup])
+  }, [userAddress, collateralToken, vaultAddress, lendingControllerAddress, inputData.amount, vaultId, closePopup])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -283,7 +284,10 @@ export const WithdrawCollateral = ({
                 balanceAsset: symbol,
                 useMaxHandler: () =>
                   inputOnChangeHandle(
-                    getLoansInputMaxAmount(currentCollateralToWithdraw, decimals),
+                    getLoansInputMaxAmount(
+                      Math.min(selectedCollateralAmountInVault, currentCollateralToWithdraw),
+                      decimals,
+                    ),
                     currentCollateralToWithdraw,
                   ),
                 inputStatus: inputData.validationStatus,
