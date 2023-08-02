@@ -1,10 +1,15 @@
-import { getProposalStatus } from 'pages/Governance/Governance.helpers'
-import { satelliteVoteSchema } from 'providers/SatellitesProvider/satellites.const'
-import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { SubmissionProposalsDataSubscriptionSubscription } from './../../../utils/__generated__/graphql'
 import { ProposalsDataSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { ProposalsContext, ProposalsSubsRecordType } from '../proposals.provider.types'
+import { ProposalRecordType } from './proposals.types'
+
+import { getProposalStatus } from 'pages/Governance/Governance.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
+
+import { satelliteVoteSchema } from 'providers/SatellitesProvider/satellites.const'
 import { MVK_DECIMALS } from 'utils/constants'
-import { ProposalsContext } from '../proposals.provider.types'
+import { GovPhases, PROPOSALS_DATA_SUB, ProposalStatus } from './proposals.const'
 
 export const normalizeProposal = (
   item: ProposalsDataSubscriptionSubscription['governance_proposal'][number],
@@ -98,9 +103,94 @@ export const normalizeProposal = (
   }
 }
 
-export const normalizeProposals = () => {}
+export const normalizeProposals = ({
+  indexerData,
+  governanceConfig,
+}: {
+  indexerData: SubmissionProposalsDataSubscriptionSubscription
+  governanceConfig: ProposalsContext['config']
+}) => {
+  return indexerData.governance_proposal.reduce<{
+    currentRoundProposalsIds: Array<number>
+    pastProposalsIds: Array<number>
+    allProposalsIds: Array<number>
+    waitingProposalsIdsToBeExecuted: Array<number>
+    waitingProposalsIdsToBePaid: Array<number>
+    proposalsMapper: Record<number, ProposalRecordType>
+  }>(
+    (acc, indexerProposal) => {
+      const { governancePhase, timelockProposalId } = governanceConfig
+      const isProposalRound = governancePhase === GovPhases.PROPOSAL
 
-export const normalizeSubmissionProposals = () => {}
+      const normalizedProposal = normalizeProposal(indexerProposal, governanceConfig)
+      const { id, executed, status, currentRoundProposal, paymentProcessed } = normalizedProposal
+
+      const isPastProposal =
+        status === ProposalStatus.DROPPED || status === ProposalStatus.EXECUTED || status === ProposalStatus.DEFEATED
+
+      // Add id of proposal to be executed proposal
+      if (isProposalRound && !executed && timelockProposalId === id && !isPastProposal) {
+        acc.waitingProposalsIdsToBeExecuted.push(id)
+        return acc
+      }
+
+      // Add id of proposal to be paid proposal
+      if (isProposalRound && !executed && timelockProposalId === id && !paymentProcessed && !isPastProposal) {
+        acc.waitingProposalsIdsToBePaid.push(id)
+        return acc
+      }
+
+      // Add id of past proposal
+      if (isPastProposal) {
+        acc.pastProposalsIds.push(id)
+        return acc
+      }
+
+      // Add id of current round proposal
+      if (currentRoundProposal) {
+        acc.currentRoundProposalsIds.push(id)
+        return acc
+      }
+
+      acc.allProposalsIds.push(normalizedProposal.id)
+      acc.proposalsMapper[normalizedProposal.id] = normalizedProposal
+      return acc
+    },
+    {
+      currentRoundProposalsIds: [],
+      pastProposalsIds: [],
+      allProposalsIds: [],
+      waitingProposalsIdsToBeExecuted: [],
+      waitingProposalsIdsToBePaid: [],
+      proposalsMapper: {},
+    },
+  )
+}
+
+export const normalizeSubmissionProposals = ({
+  indexerData,
+  governanceConfig,
+}: {
+  indexerData: SubmissionProposalsDataSubscriptionSubscription
+  governanceConfig: ProposalsContext['config']
+}) => {
+  return indexerData.governance_proposal.reduce<{
+    submissionProposalsIds: Array<number>
+    proposalsMapper: Record<number, ProposalRecordType>
+  }>(
+    (acc, indexerProposal) => {
+      const normalizedProposal = normalizeProposal(indexerProposal, governanceConfig)
+
+      acc.submissionProposalsIds.push(normalizedProposal.id)
+      acc.proposalsMapper[normalizedProposal.id] = normalizedProposal
+      return acc
+    },
+    {
+      submissionProposalsIds: [],
+      proposalsMapper: {},
+    },
+  )
+}
 
 // export const normalizeGovernanceProposals = (
 //   indexerData: ProposalsDataSubscriptionSubscription,

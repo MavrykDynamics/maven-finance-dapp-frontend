@@ -2,10 +2,19 @@ import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
+// context
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+
 // types
 import { StageThreeFormProps, StageThreeValidityItem, ValidationResult } from '../ProposalSubmission.types'
 
 // helpers
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { reduceTreasuryAssets } from 'pages/Treasury/helpers/treasury.utils'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getValidityStageThreeTable } from '../ProposalSubmission.helpers'
 
 // components
@@ -15,12 +24,15 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { DDItemId, DropDown, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
+import { Info } from 'app/App.components/Info/Info.view'
 import Button from 'app/App.components/Button/NewButton'
 
 // const
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
+import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { STAGE_3_DESCRIPTION } from 'texts/tooltips/governance'
 
 // styles
@@ -36,15 +48,6 @@ import {
   TableRow,
 } from 'app/App.components/Table'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { reduceTreasuryAssets } from 'pages/Treasury/helpers/treasury.utils'
-import { Info } from 'app/App.components/Info/Info.view'
-import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
-import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const StageThreeForm = ({
   proposalId,
@@ -63,7 +66,9 @@ export const StageThreeForm = ({
       governance: { proposalMetadataTitleMaxLength },
     },
   } = useDappConfigContext()
-  const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
+  const {
+    config: { governancePhase, fee, successReward },
+  } = useProposalsContext()
 
   const { treasuryStorage } = useSelector((state: State) => state.treasury)
   const treasuryTokens = useMemo(() => reduceTreasuryAssets(treasuryStorage), [treasuryStorage])

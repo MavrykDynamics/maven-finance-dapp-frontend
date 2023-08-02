@@ -1,28 +1,31 @@
-import { useSelector } from 'react-redux'
 import React from 'react'
+
+// context
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 
 // view
 import { TextArea } from 'app/App.components/TextArea/TextArea.controller'
 import { ProposalSubmittionStageOneBody } from '../ProposalSubmission.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
+import { Info } from 'app/App.components/Info/Info.view'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 
 // types
 import { StageOneFormProps } from '../ProposalSubmission.types'
-import { State } from 'reducers'
 
-// helpers, constants
+// helpers
 import { isValidLength, isValidHttpUrl } from '../../../utils/validatorFunctions'
-import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { containSpaces } from 'app/App.utils/input'
-import { Info } from 'app/App.components/Info/Info.view'
-import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
+
+// consts
+import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
-import { useUserContext } from 'providers/UserProvider/user.provider'
+import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
+import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 export const StageOneForm = ({
   proposalId,
@@ -38,8 +41,9 @@ export const StageOneForm = ({
     },
   } = useDappConfigContext()
   const { isNewlyRegisteredSatellite } = useUserContext()
-
-  const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
+  const {
+    config: { governancePhase, fee, successReward },
+  } = useProposalsContext()
 
   const isProposalSubmitted = proposalId >= 0
   const isProposalPeriod = governancePhase === 'PROPOSAL'

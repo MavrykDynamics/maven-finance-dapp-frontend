@@ -1,7 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+import dayjs from 'dayjs'
 import QueryString from 'qs'
 import { useHistory } from 'react-router'
+
+// context
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // view
 import { PropSubmissionTopBar } from './PropSubmissionTopBar/PropSubmissionTopBar.controller'
@@ -21,9 +31,8 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // types
-import { State } from 'reducers'
+import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
 import { MultyProposalItem, ProposalValidityObj, SubmittedProposalsMapper } from './ProposalSubmission.types'
-import { ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
 
 // consts
 import {
@@ -46,7 +55,7 @@ import {
   SUBMIT_PROPOSAL_ACTION,
   UPDATE_PROPOSAL_DATA_ACTION,
 } from 'providers/ProposalsProvider/helpers/proposals.const'
-
+import { GOVERNANCE_LATEST_USER_PROPOSAL_QUERY } from 'providers/ProposalsProvider/queries/getLatestUserProposal.query'
 import colors from 'styles/colors'
 import {
   DROP_PROPOSAL_BUTTON_TOOLTIP,
@@ -72,18 +81,6 @@ import {
   getTimestampByLevelHeaders,
   getTimestampByLevelSchema,
 } from 'utils/api/api-helpers/getTimestampByLevel'
-import dayjs from 'dayjs'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-
-// providers
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-
-// hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { GOVERNANCE_LATEST_USER_PROPOSAL_QUERY } from 'gql/queries'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const dispatch = useDispatch()
@@ -93,17 +90,16 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
   const { tokensMetadata } = useTokensContext()
   const { userAddress, isNewlyRegisteredSatellite } = useUserContext()
-
-  const {
-    currentRoundProposalsIds,
-    proposalsMapper,
-    config: { fee, governancePhase, currentRoundEndLevel },
-  } = useSelector((state: State) => state.governance)
   const {
     preferences: { themeSelected },
     contractAddresses: { governanceAddress },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
+  const {
+    config: { fee, governancePhase, currentRoundEndLevel },
+    proposalsMapper,
+    submissionProposalsIds,
+  } = useProposalsContext()
 
   const [activeTab, setActiveTab] = useState(1)
   const [isFormDisabled, setIsFormDisabled] = useState(true)
@@ -135,7 +131,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   // proposals that user has submitted, reduced to object mapper and arr of keys for this object
   // this object represents ds we can use with stages, to interact with in tables, inputs, etc
   const [proposalKeys, mappedProposals, mappedValidation] = useMemo(() => {
-    const { keys, mapper, validityObj } = currentRoundProposalsIds
+    const { keys, mapper, validityObj } = submissionProposalsIds
       .filter((proposalId) => proposalsMapper[proposalId].proposerId === userAddress)
       .reduce<SubmittedProposalsMapper>(
         (acc, proposalId) => {
@@ -170,7 +166,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       ]
     }
     return [keys, mapper, validityObj]
-  }, [userAddress, currentRoundProposalsIds, proposalsMapper])
+  }, [userAddress, submissionProposalsIds, proposalsMapper])
 
   // mapping user created proposals to tabs buttons data
   const usersProposalsToSwitch = useMemo(

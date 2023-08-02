@@ -10,31 +10,31 @@ import { normalizerSatelliteGovernance } from 'pages/SatelliteGovernance/Satelli
 import { Governance_Proposal } from 'utils/__generated__/graphql'
 
 // Governance proposals types
-export type GovernanceProposalGraphQL = Omit<Governance_Proposal, '__typename'>
-export type ProposalRecordType = ReturnType<typeof normalizeProposal>
+// export type GovernanceProposalGraphQL = Omit<Governance_Proposal, '__typename'>
+// export type ProposalRecordType = ReturnType<typeof normalizeProposal>
 
-export const ProposalStatus = {
-  EXECUTED: 'EXECUTED',
-  DEFEATED: 'DEFEATED',
-  ONGOING: 'ONGOING',
-  WAITING: 'WAITING',
-  DROPPED: 'DROPPED',
-  LOCKED: 'LOCKED',
-  UNLOCKED: 'UNLOCKED',
-  TIMELOCK: 'TIMELOCK',
-} as const
+// export const ProposalStatus = {
+//   EXECUTED: 'EXECUTED',
+//   DEFEATED: 'DEFEATED',
+//   ONGOING: 'ONGOING',
+//   WAITING: 'WAITING',
+//   DROPPED: 'DROPPED',
+//   LOCKED: 'LOCKED',
+//   UNLOCKED: 'UNLOCKED',
+//   TIMELOCK: 'TIMELOCK',
+// } as const
 
-export type ProposalStatusType = (typeof ProposalStatus)[keyof typeof ProposalStatus]
+// export type ProposalStatusType = (typeof ProposalStatus)[keyof typeof ProposalStatus]
 
-// Governance config types
-export type GovernanceGraphQL = Omit<Governance, '__typename'>
-export type GovernancePhaseType = typeof GovPhases.PROPOSAL | typeof GovPhases.VOTING | typeof GovPhases.TIMELOCK
+// // Governance config types
+// export type GovernanceGraphQL = Omit<Governance, '__typename'>
+// export type GovernancePhaseType = typeof GovPhases.PROPOSAL | typeof GovPhases.VOTING | typeof GovPhases.TIMELOCK
 
-export enum GovPhases {
-  PROPOSAL = 'PROPOSAL',
-  VOTING = 'VOTING',
-  TIMELOCK = 'TIMELOCK',
-}
+// export enum GovPhases {
+//   PROPOSAL = 'PROPOSAL',
+//   VOTING = 'VOTING',
+//   TIMELOCK = 'TIMELOCK',
+// }
 
 // Satellite governance types
 export type SatelliteGovernance = ReturnType<typeof normalizerSatelliteGovernance>

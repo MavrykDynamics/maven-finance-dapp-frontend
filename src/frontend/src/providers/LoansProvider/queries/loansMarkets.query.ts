@@ -67,7 +67,7 @@ export const GET_LOANS_CONFIG = gql(`
 
 // get markets addresses for pagination
 export const GET_LOANS_MARKET_ADDRESSES = gql(`
-	subscription getLoansConfig($currentTimestamp: timestamptz) {
+	subscription getLoansAddresses($currentTimestamp: timestamptz) {
 		lending_controller(where: {mock_time: {_eq: false}}) {
 			loan_tokens {
 				token {

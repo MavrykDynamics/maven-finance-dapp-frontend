@@ -4,27 +4,26 @@ import {
   PROPOSALS_SUBMISSION_DATA,
   PROPOSALS_DATA_SUB,
   PROPOSALS_PAST_DATA,
+  PROPOSALS_ALL_DATA,
 } from './helpers/proposals.const'
 
-import { GovernancePhaseType, ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
+import { GovernancePhaseType, ProposalRecordType } from './helpers/proposals.types'
 
 export type ProposalsContextStateType = {
   config: {
-    // address: string | null
     fee: number
     successReward: number
-
     currentRoundEndLevel: number
     cycle: number
-    timelockProposalId: number | null
-    cycleHighestVotedProposalId: number | null
-
+    timelockProposalId: number
+    cycleHighestVotedProposalId: number
     governancePhase: GovernancePhaseType
   } | null
 
   proposalsMapper: Record<number, ProposalRecordType> | null
   currentRoundProposalsIds: Array<number> | null
   pastProposalsIds: Array<number> | null
+  submissionProposalsIds: Array<number> | null
   allProposalsIds: Array<number> | null
   waitingProposalsIdsToBeExecuted: Array<number> | null
   waitingProposalsIdsToBePaid: Array<number> | null
@@ -41,6 +40,7 @@ export type ProposalsSubsRecordType = {
   [PROPOSALS_DATA_SUB]:
     | typeof PROPOSALS_CURRENT_DATA
     | typeof PROPOSALS_PAST_DATA
+    | typeof PROPOSALS_ALL_DATA
     | typeof PROPOSALS_SUBMISSION_DATA
     | null
 }

@@ -1,7 +1,8 @@
 import { calcWithoutPrecision } from 'utils/calcFunctions'
-import { FinancialRequestRecord, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
+import { FinancialRequestRecord } from 'utils/TypesAndInterfaces/Governance'
 import { GovernanceFinancialRequestGraphQL } from '../../utils/TypesAndInterfaces/Governance'
 import { FinancialRequestStoreType } from 'reducers/financialRequests'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 export const normalizeFinancialRequests = (storage: {
   governance_financial_request: Array<GovernanceFinancialRequestGraphQL>

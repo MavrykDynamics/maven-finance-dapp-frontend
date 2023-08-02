@@ -1,9 +1,6 @@
 import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
-import {
-  GovernanceSatelliteGraphQL,
-  GovernanceSatelliteActionGraphQL,
-  ProposalStatus,
-} from 'utils/TypesAndInterfaces/Governance'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
+import { GovernanceSatelliteGraphQL, GovernanceSatelliteActionGraphQL } from 'utils/TypesAndInterfaces/Governance'
 
 type SatelliteGovernanceActionType = {
   id: number

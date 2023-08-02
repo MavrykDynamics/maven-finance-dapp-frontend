@@ -3,7 +3,6 @@ import { combineReducers } from 'redux'
 import { loading, LoadingState } from './loading'
 import { toaster, ToasterState } from './toaster'
 import { wallet, WalletState } from './wallet'
-import { governance, GovernanceState } from './governance'
 import { emergencyGovernance, EmergencyGovernanceState } from './emergencyGovernance'
 import { treasury, TreasuryState } from './treasury'
 import { council, CouncilState } from './council'
@@ -19,7 +18,6 @@ export const reducers = combineReducers({
   wallet,
   contractAddresses,
 
-  governance,
   council,
   financialRequest,
   emergencyGovernance,
@@ -34,7 +32,6 @@ export interface State {
   loading: LoadingState
   toaster: ToasterState
   wallet: WalletState
-  governance: GovernanceState
   financialRequest: FinancialRequestStoreType
   emergencyGovernance: EmergencyGovernanceState
   treasury: TreasuryState

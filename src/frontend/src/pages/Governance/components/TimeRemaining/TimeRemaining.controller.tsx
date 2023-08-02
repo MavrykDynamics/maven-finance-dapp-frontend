@@ -16,8 +16,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 // Consts
 import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
-import { START_NEXT_ROUND_ACTION } from 'providers/ProposalsProvider/helpers/proposals.const'
+import { GovPhases, START_NEXT_ROUND_ACTION } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 // providers
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'

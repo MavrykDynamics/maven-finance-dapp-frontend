@@ -1,4 +1,4 @@
-import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { GovernanceConfigSubscriptionSubscription } from 'utils/__generated__/graphql'
 import { ProposalsContext } from '../proposals.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
