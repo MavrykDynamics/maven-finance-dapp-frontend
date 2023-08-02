@@ -161,7 +161,7 @@ export const getVaultStatus = ({
  * @returns how much user can borrow in USD in that vault
  */
 export const getVaultBorrowCapacity = (availableLiquidity: number, borrowedAmount: number, collateralBalance: number) =>
-  Math.min(collateralBalance / 2 - borrowedAmount, Math.max(availableLiquidity, 0))
+  Math.max(0, Math.min(collateralBalance / 2 - borrowedAmount, Math.max(availableLiquidity, 0)))
 
 /**
  *
