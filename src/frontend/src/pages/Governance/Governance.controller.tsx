@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Redirect, useHistory, useLocation } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import QueryString from 'qs'
@@ -35,7 +35,15 @@ import {
   WAITING_PAYMENT_PROPOSALS_LIST_NAME,
 } from 'app/App.components/Pagination/pagination.consts'
 import { generateCyclesDdOptions, NONE_CYCLE_SELECTED_OPTION } from './helpers/governanceView.helpers'
-import { GovPhases, ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
+import {
+  DEFAULT_PROPOSALS_ACTIVE_SUBS,
+  GOVERNANCE_CONFIG_SUB,
+  GovPhases,
+  PROPOSALS_CURRENT_DATA,
+  PROPOSALS_DATA_SUB,
+  PROPOSALS_PAST_DATA,
+  ProposalStatus,
+} from 'providers/ProposalsProvider/helpers/proposals.const'
 
 // styles
 import { Page } from 'styles'
@@ -68,7 +76,19 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
     waitingProposalsIdsToBeExecuted,
     waitingProposalsIdsToBePaid,
     proposalsMapper,
+    changeProposalsSubscriptionsList,
   } = useProposalsContext()
+
+  useEffect(() => {
+    changeProposalsSubscriptionsList({
+      [GOVERNANCE_CONFIG_SUB]: true,
+      [PROPOSALS_DATA_SUB]: isHistory ? PROPOSALS_PAST_DATA : PROPOSALS_CURRENT_DATA,
+    })
+
+    return () => {
+      changeProposalsSubscriptionsList(DEFAULT_PROPOSALS_ACTIVE_SUBS)
+    }
+  }, [])
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 

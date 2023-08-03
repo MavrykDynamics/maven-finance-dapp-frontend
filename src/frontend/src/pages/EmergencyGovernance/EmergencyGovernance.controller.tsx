@@ -17,11 +17,17 @@ import { SUB_SKIP } from 'utils/api/apollo.consts'
 import { useContractStatusConfig } from 'providers/ContractStatuses/hooks/useContractStatusesConfig'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { MVK_TOTAL_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
+import {
+  DEFAULT_PROPOSALS_ACTIVE_SUBS,
+  GOVERNANCE_CONFIG_SUB,
+} from 'providers/ProposalsProvider/helpers/proposals.const'
 
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
 
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useDoormanContext()
+  const { changeProposalsSubscriptionsList, isLoading: isProposalsConfigLoading } = useProposalsContext()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { eGovProposals, isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 
@@ -35,8 +41,14 @@ export const EmergencyGovernance = () => {
     changeStakingSubscriptionsList({
       [MVK_TOTAL_SUB]: true,
     })
+    changeProposalsSubscriptionsList({
+      [GOVERNANCE_CONFIG_SUB]: true,
+    })
 
-    return () => changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+    return () => {
+      changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+      changeProposalsSubscriptionsList(DEFAULT_PROPOSALS_ACTIVE_SUBS)
+    }
   }, [])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
@@ -58,7 +70,7 @@ export const EmergencyGovernance = () => {
   return (
     <Page>
       <PageHeader page={'emergency governance'} />
-      {isLoading || isDoormanLoading || isContractStatusConfigLoading ? (
+      {isLoading || isDoormanLoading || isContractStatusConfigLoading || isProposalsConfigLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading emergency governance proposals</div>
