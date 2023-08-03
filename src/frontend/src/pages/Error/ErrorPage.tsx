@@ -22,17 +22,22 @@ import {
 import themeColors from 'styles/colors'
 
 // providers
-import { store } from 'app/App.controller'
 import { ThemeProvider } from 'styled-components'
 import { SPACE_THEME } from 'app/App.components/DarkThemeProvider/DarkThemeProvider.actions'
-import { Provider } from 'react-redux'
+import { InternalErrorType } from 'errors/error.type'
+import { ERROR_TYPE_FATAL, ERROR_TYPE_ROUTER } from 'errors/error.const'
 
 type ErrorPageProps = {
   headerText?: string
   descText?: string | JSX.Element
+  type?: InternalErrorType
 }
 
-export const ErrorPage = ({ headerText = errorHeaderDefaultText, descText = errorDescDefaultText }: ErrorPageProps) => {
+export const ErrorPage = ({
+  headerText = errorHeaderDefaultText,
+  descText = errorDescDefaultText,
+  type = ERROR_TYPE_FATAL,
+}: ErrorPageProps) => {
   const handleRedirect = useCallback(() => {
     window.location.assign('/')
   }, [])
@@ -51,10 +56,12 @@ export const ErrorPage = ({ headerText = errorHeaderDefaultText, descText = erro
             <Vector2 src="/images/space-cow.svg" />
             <ErrorMidHeader>{headerText}</ErrorMidHeader>
             <ErrorParagraph>{descText}</ErrorParagraph>
-            {/* <NewButton kind={BUTTON_PRIMARY} onClick={handleRedirect}>
+            {type === ERROR_TYPE_ROUTER && (
+              <NewButton kind={BUTTON_PRIMARY} onClick={handleRedirect}>
                 <Icon id="menu-compass" />
                 Go To Dashboard
-              </NewButton> */}
+              </NewButton>
+            )}
           </ErrorPageInner>
           <ErrorFooter handleRedirect={handleRedirect} />
         </ErrorPageWrapper>

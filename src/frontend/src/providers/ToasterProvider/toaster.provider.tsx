@@ -181,7 +181,11 @@ export default class ToasterProvider extends React.Component<Props, State> {
     return (
       <toasterContext.Provider value={this.state.context}>
         {errorPageContent ? (
-          <ErrorPage headerText={errorPageContent.header} descText={errorPageContent.desc} />
+          <ErrorPage
+            headerText={errorPageContent.header}
+            descText={errorPageContent.desc}
+            type={(error as FatalError).type}
+          />
         ) : (
           this.props.children
         )}

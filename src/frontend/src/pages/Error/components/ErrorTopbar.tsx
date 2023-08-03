@@ -13,18 +13,17 @@ type ErrorTopbarProps = {
 }
 
 export const ErrorTopbar = ({ handleRedirect }: ErrorTopbarProps) => {
-  return null
-  // return (
-  //   <ErrorMenuTopStyled>
-  //     <div className="left-side">
-  //       <ErrorTopbarLogo alt="logo" className={'desktop-logo'} src="/logo-dark.svg" onClick={handleRedirect} />
-  //     </div>
-  //     <div className="grouped-links">
-  //       <TopBarLinks groupName={'Products'} groupLinks={PRODUCTS_LINKS} />
-  //       <TopBarLinks groupName={'About'} groupLinks={ABOUT_LINKS} />
-  //       <TopBarLinks groupName={'Blog 🔥'} groupLinks={BLOG_LINKS} groupNameLink="https://blogs.mavryk.finance/" />
-  //       <TopBarLinks groupName={'Docs'} groupLinks={DOCS_LINKS} />
-  //     </div>
-  //   </ErrorMenuTopStyled>
-  // )
+  return (
+    <ErrorMenuTopStyled>
+      <div className="left-side">
+        <ErrorTopbarLogo alt="logo" className={'desktop-logo'} src="/logo-dark.svg" onClick={handleRedirect} />
+      </div>
+      <div className="grouped-links">
+        <TopBarLinks groupName={'Products'} groupLinks={PRODUCTS_LINKS} />
+        <TopBarLinks groupName={'About'} groupLinks={ABOUT_LINKS} />
+        <TopBarLinks groupName={'Blog 🔥'} groupLinks={BLOG_LINKS} groupNameLink="https://blogs.mavryk.finance/" />
+        <TopBarLinks groupName={'Docs'} groupLinks={DOCS_LINKS} />
+      </div>
+    </ErrorMenuTopStyled>
+  )
 }
