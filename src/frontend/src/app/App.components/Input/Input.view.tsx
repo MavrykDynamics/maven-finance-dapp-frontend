@@ -48,11 +48,14 @@ export const InputView = ({
   inputProps,
   validationFns = [[validateInput, ERR_MSG_INPUT]],
 }: InputViewProps) => {
+  const { onChange, value } = inputProps
   const { status, errorMessage, handleChange } = useInputValidator({
     originalErrorMessage: errorMessageFromProps,
     status: inputStatus,
-    onChange: inputProps.onChange,
-    validationFns,
+    onChange,
+    value,
+    validationFns:
+      validationFns && validationFns.length > 0 ? [[validateInput, ERR_MSG_INPUT], ...validationFns] : validationFns,
   })
 
   return (

@@ -53,7 +53,7 @@ F.e.
 ```
 export function validateInputExample(value: string, a: number, b: number, c: boolean) {
     cosnt l = value.length;
-  if (; > limit) {
+  if (l > limit) {
     return INPUT_MAX_LIMIT_TOAST_TEXT // text for error message
   }
 
@@ -65,7 +65,7 @@ export function validateInputExample(value: string, a: number, b: number, c: boo
 ....
 <Input inputProps={inputProps} settings={
 // ...rest of settigs,
-validationFns = [[validateInputLength, ERR_MSG_INPUT, [15, 20, 33, true]]]
+validationFns = [[validateInputLength, ERR_MSG_INPUT, [15, 33, true]]]
 } />
 ...
 ```
