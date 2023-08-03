@@ -19,6 +19,7 @@ import { App, store } from './app/App.controller'
 import Mobile from './app/App.components/Mobile/Mobile.view'
 
 import { GlobalStyle } from './styles'
+import './styles/index.css'
 import './styles/fonts.css'
 import './styles/animations.css'
 import DappConfigProvider from 'providers/DappConfigProvider/dappConfig.provider'
