@@ -138,11 +138,6 @@ export const WithdrawCollateral = ({
     tokenAddress: collateralTokenAddress,
   })
 
-  const futureCollateralRatio = getVaultCollateralRatio(
-    collateralBalance - inputAmount * collateralRate,
-    borrowedAmount * borrowedTokenRate,
-  )
-
   const currentCollateralToWithdraw = getMaxCollateralWithdraw(
     collateralBalance,
     borrowedAmount * borrowedTokenRate,
@@ -151,6 +146,11 @@ export const WithdrawCollateral = ({
 
   const futureCollateralWithdraw = currentCollateralToWithdraw - inputAmount
   const futureVaultCollateralBalance = collateralBalance - inputAmount * collateralRate
+
+  const futureCollateralRatio = getVaultCollateralRatio(
+    futureVaultCollateralBalance,
+    borrowedAmount * borrowedTokenRate,
+  )
 
   const isActionBtnDisabled =
     isActionActive || inputData.validationStatus !== INPUT_STATUS_SUCCESS || futureCollateralRatio < 200

@@ -199,7 +199,7 @@ export const getVaultCollateralRatio = (collateralAmount: number, borrowedAmount
   // means we haven't borrowed, but we have deposited
   if (borrowedAmount === 0) return 250
 
-  const collateralRatio = (collateralAmount / Math.max(1, borrowedAmount)) * 100
+  const collateralRatio = (collateralAmount / borrowedAmount) * 100
   return getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1)))
 }
 
