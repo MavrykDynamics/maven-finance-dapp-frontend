@@ -2,7 +2,8 @@ import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import type { MTokenType, UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
 import type { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
 
-import { DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+// import { DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+
 import {
   MVK_TOKEN_SYMBOL,
   SMVK_TOKEN_SYMBOL,
@@ -13,6 +14,8 @@ import {
   XTZ_TOKEN_SYMBOL,
 } from 'utils/constants'
 import { UPDATE_USER_DATA } from './actions/user.actions'
+
+const DISCONNECT = 'DISCONNECT'
 
 export interface UserState {
   // user balances
