@@ -183,6 +183,8 @@ export const BorrowingExpandCardMenuSection = ({
                 const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
                 const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
+                if (convertedAmount === 0) return null
+
                 return (
                   <TableRow rowHeight={65} key={symbol}>
                     <TableCell width={'22%'} className="vert-middle">
