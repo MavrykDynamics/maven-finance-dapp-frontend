@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 import classNames from 'classnames'
 
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -20,17 +20,20 @@ import { getLoansInputMaxAmount, loansInputValidation } from '../../Loans.helper
 import { LENDING_TAB_SUPPLY_TEXT, LENDING_TAB_WITHDRAW_TEXT } from 'texts/banners/loan.text'
 import { EARN_APY } from 'texts/tooltips/loan.text'
 import {
+  ERR_MSG_TOAST,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
   InputStatusType,
+  defaultLargeInputMaxLength,
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from '../../Loans.style'
-import { LoansActionsSection } from './../LoansComponents.style'
+import { CardSectionWrapper, LoansActionsSection } from './../LoansComponents.style'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -39,12 +42,19 @@ import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingT
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
   loanTokenAddress: TokenAddressType
   lendAPY: number
   marketAvailableLiquidity: number
+}
+
+type InputDataType = {
+  amount: string
+  validationStatus: InputStatusType
 }
 
 export const LendingTabActionsSection = ({
@@ -64,10 +74,7 @@ export const LendingTabActionsSection = ({
   const { lendValue = 0 } = lendingItem || {}
 
   const [activeTab, setActiveTab] = useState(LENDING_TAB_SLIDING_BUTTONS.find((item) => item.active))
-  const [inputData, setInputData] = useState<{
-    amount: string
-    validationStatus: InputStatusType
-  }>({
+  const [inputData, setInputData] = useState<InputDataType>({
     amount: '0',
     validationStatus: INPUT_STATUS_DEFAULT,
   })
@@ -176,6 +183,7 @@ export const LendingTabActionsSection = ({
     useMaxHandler,
     inputStatus: inputData.validationStatus,
     inputSize: INPUT_LARGE,
+    validationFns: [[validateInputLength, ERR_MSG_TOAST]],
     ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
   }
 
@@ -204,23 +212,17 @@ export const LendingTabActionsSection = ({
       <div className="mt-25">
         <div className="tab-text mb-10">Updated Lending {symbol} Stats</div>
 
-        <div className="stats">
-          <ThreeLevelListItem>
-            <div className="name">
-              Earn APY
-              <CustomTooltip iconId="info" text={EARN_APY} />
-            </div>
-            <CommaNumber value={lendAPY} className="value" endingText="%" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">{isSupplyActiveTab ? `m${symbol} Received` : 'Amount To Withdraw'}</div>
-            <CommaNumber value={Number(inputData.amount)} className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem className="right">
-            <div className="name">New m{symbol} Balance</div>
-            <CommaNumber value={futureMBalance} className="value" />
-          </ThreeLevelListItem>
-        </div>
+        <CardSectionWrapper>
+          <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
+            <LendingStatsTable
+              lendAPY={lendAPY}
+              isSupplyActiveTab={isSupplyActiveTab}
+              symbol={symbol}
+              amount={inputData.amount}
+              futureMBalance={futureMBalance}
+            />
+          </MemoizedComponent>
+        </CardSectionWrapper>
       </div>
 
       <div className="button-wrapper">
@@ -230,5 +232,39 @@ export const LendingTabActionsSection = ({
         </NewButton>
       </div>
     </LoansActionsSection>
+  )
+}
+
+const LendingStatsTable = ({
+  lendAPY,
+  isSupplyActiveTab,
+  futureMBalance,
+  symbol,
+  amount,
+}: {
+  lendAPY: number
+  isSupplyActiveTab: boolean
+  symbol: string
+  amount: number | string
+  futureMBalance: number
+}) => {
+  return (
+    <div className="stats">
+      <ThreeLevelListItem>
+        <div className="name">
+          Earn APY
+          <CustomTooltip iconId="info" text={EARN_APY} />
+        </div>
+        <CommaNumber value={lendAPY} className="value" endingText="%" />
+      </ThreeLevelListItem>
+      <ThreeLevelListItem>
+        <div className="name">{isSupplyActiveTab ? `m${symbol} Received` : 'Amount To Withdraw'}</div>
+        <CommaNumber value={Number(amount)} className="value" />
+      </ThreeLevelListItem>
+      <ThreeLevelListItem className="right">
+        <div className="name">New m{symbol} Balance</div>
+        <CommaNumber value={futureMBalance} className="value" />
+      </ThreeLevelListItem>
+    </div>
   )
 }
