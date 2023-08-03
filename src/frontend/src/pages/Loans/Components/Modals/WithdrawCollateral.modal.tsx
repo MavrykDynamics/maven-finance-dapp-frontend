@@ -277,7 +277,11 @@ export const WithdrawCollateral = ({
                 type: 'number',
                 onBlur: inputOnBlurHandle,
                 onFocus: onFocusHandler,
-                onChange: (e) => inputOnChangeHandle(e.target.value, currentCollateralToWithdraw),
+                onChange: (e) =>
+                  inputOnChangeHandle(
+                    e.target.value,
+                    Math.min(currentCollateralToWithdraw, selectedCollateralAmountInVault),
+                  ),
               }}
               settings={{
                 balance: userCollateralBalance,
@@ -288,7 +292,7 @@ export const WithdrawCollateral = ({
                       Math.min(selectedCollateralAmountInVault, currentCollateralToWithdraw),
                       decimals,
                     ),
-                    currentCollateralToWithdraw,
+                    Math.min(currentCollateralToWithdraw, selectedCollateralAmountInVault),
                   ),
                 inputStatus: inputData.validationStatus,
                 convertedValue: inputAmount * collateralRate,
