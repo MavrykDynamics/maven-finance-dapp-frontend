@@ -235,7 +235,6 @@ export const BorrowingExpandCard = ({
       vaultId,
       vaultAddress,
       tokenAddress: borrowedTokenAddress,
-      borrowedAmount,
       collateralBalance,
       borrowCapacity,
       totalOutstanding,
