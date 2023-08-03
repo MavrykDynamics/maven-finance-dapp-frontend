@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Redirect, Route, Switch, useLocation } from 'react-router-dom'
+import { Route, Switch, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -37,6 +37,7 @@ import { Market } from 'pages/Loans/Market.controller'
 import { LoansDashboard } from 'pages/LoansDashboard/LoansDashboard'
 import { ProposalSubmission } from 'pages/ProposalSubmission/ProposalSubmission.controller'
 import StakeProvider from 'providers/StakeProvider/stake.provider'
+import { RenderErrorPage } from 'pages/Error/RenderErrorPage'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
@@ -59,7 +60,6 @@ export const AppRoutes = () => {
           <Doorman />
         </StakeProvider>
       </Route>
-
       {/* DASHBOARD */}
       <Route exact path="/">
         <StakeProvider>
@@ -71,7 +71,6 @@ export const AppRoutes = () => {
           <DashboardPersonal />
         </StakeProvider>
       </Route>
-
       {/* SATELLITES */}
       <Route exact path="/satellites">
         <StakeProvider>
@@ -95,7 +94,6 @@ export const AppRoutes = () => {
       <Route exact path="/satellites/feed-details/:feedId">
         <DataFeedDetails />
       </Route>
-
       {/* GOVERNANCE PAGES */}
       <Route exact path="/governance">
         <Governance />
@@ -131,15 +129,12 @@ export const AppRoutes = () => {
         hasAccess={Boolean(isSatellite)}
         redirectPath={'/governance'}
       />
-
       <Route exact path="/treasury">
         <Treasury />
       </Route>
-
       <Route exact path="/yield-farms">
         <Farms />
       </Route>
-
       {/* LEND & BORROW */}
       <Route exact path="/loans/:assetId/:tabId">
         <Market />
@@ -159,7 +154,6 @@ export const AppRoutes = () => {
       <Route exact path="/loans/borrow">
         <LoansBorrow />
       </Route>
-
       {/* NOT READY PAGES */}
       <Route exact path="/your-vesting">
         <Dashboard />
@@ -170,18 +164,14 @@ export const AppRoutes = () => {
       <Route exact path="/satellites/user-details/:userId">
         <UserDetails />
       </Route>
-
       {/* NOT PROD PAGES */}
       <Route exact path="/admin">
         <Admin />
       </Route>
-
-      <Route exact path="/404">
-        {/*TODO: Replace later on with actual 404 page*/}
-        <Dashboard />
+      <Route path="*">
+        <RenderErrorPage />
       </Route>
-
-      <Redirect to="/404" />
+      ;
     </Switch>
   )
 }
