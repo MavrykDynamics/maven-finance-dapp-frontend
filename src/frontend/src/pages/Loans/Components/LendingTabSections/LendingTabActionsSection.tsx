@@ -44,9 +44,15 @@ type LendingTabPropsType = {
   lendingItem: LendingItemType
   loanTokenAddress: TokenAddressType
   lendAPY: number
+  marketAvailableLiquidity: number
 }
 
-export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAPY }: LendingTabPropsType) => {
+export const LendingTabActionsSection = ({
+  lendingItem,
+  loanTokenAddress,
+  lendAPY,
+  marketAvailableLiquidity,
+}: LendingTabPropsType) => {
   const { openConfirmAddLendingAssetPopup, openConfirmRemoveLendingAssetPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userTokensBalances } = useUserContext()
@@ -143,16 +149,16 @@ export const LendingTabActionsSection = ({ lendingItem, loanTokenAddress, lendAP
       amount: getOnFocusValue(inputData.amount),
     })
 
-  const useMaxHandler = () =>
+  const useMaxHandler = () => {
+    const inputMaxAmount = isSupplyActiveTab ? tokenBalance : Math.min(lendValue, marketAvailableLiquidity)
+
     isSupplyActiveTab
       ? onChangeHandler(getLoansInputMaxAmount(tokenBalance, decimals), tokenBalance)
-      : onChangeHandler(
-          getLoansInputMaxAmount(Math.min(lendValue, tokenBalance), decimals),
-          Math.min(lendValue, tokenBalance),
-        )
+      : onChangeHandler(getLoansInputMaxAmount(inputMaxAmount, decimals), inputMaxAmount)
+  }
 
   const inputOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChangeHandler(e.target.value, isSupplyActiveTab ? tokenBalance : Math.min(lendValue, tokenBalance))
+    onChangeHandler(e.target.value, isSupplyActiveTab ? tokenBalance : Math.min(lendValue, marketAvailableLiquidity))
   }
 
   const inputProps: InputProps = {

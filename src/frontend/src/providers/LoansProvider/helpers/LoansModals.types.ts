@@ -65,10 +65,10 @@ export type AddNewCollateralDataProps = {
 export type WithdrawCollateralPopupDataType = {
   vaultAddress: string
   vaultId: number
-  amountToWitdraw: number
   borrowedAmount: number
   borrowedTokenAddress: TokenAddressType
   collateralBalance: number
+  selectedCollateralAmountInVault: number
   collateralRatio: number
   collateralTokenAddress: TokenAddressType
 } | null
