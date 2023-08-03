@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 // consts
 import {
+  ERR_MSG_INPUT,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
@@ -66,6 +67,7 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -279,6 +281,7 @@ export const WithdrawCollateral = ({
                 inputStatus: inputData.validationStatus,
                 convertedValue: inputAmount * collateralRate,
                 inputSize: INPUT_LARGE,
+                validationFns: [[validateInputLength, ERR_MSG_INPUT]],
               }}
             >
               <InputPinnedTokenInfo>

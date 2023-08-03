@@ -20,15 +20,12 @@ export interface InputValidatorProps<T> {
   value?: string | number
 }
 
-// eslint-disable-next-line jsdoc/require-param
-/**
- * @param originalErrorMessage - error message passed from props to the Input component
- * @param status - input validation status
- * @param onChange - simple input onChange handler
- * @param handleMax - handleMax custom fn passed from props to the Input component (used to set input value woth max possible amount based on some conditions defined outside)
- * @param validationFns - array of validators used to validate and set input errors (read README.md)
- * @param value - the actual input value
- */
+// * @param originalErrorMessage - error message passed from props to the Input component
+// * @param status - input validation status
+// * @param onChange - simple input onChange handler
+// * @param handleMax - handleMax custom fn passed from props to the Input component (used to set input value woth max possible amount based on some conditions defined outside)
+// * @param validationFns - array of validators used to validate and set input errors (read README.md)
+// * @param value - the actual input value
 export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaElement>({
   originalErrorMessage,
   status,
