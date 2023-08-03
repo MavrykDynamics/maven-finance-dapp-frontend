@@ -124,7 +124,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = getVaultCollateralRatio(
       collateralBalance,
-      (borrowedAmount - inputAmount) * borrowedTokenRate,
+      (totalOutstanding - inputAmount) * borrowedTokenRate,
     )
 
     const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
