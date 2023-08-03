@@ -20,10 +20,9 @@ export type ConfirmRepayPartPopupDataType = {
   vaultId: number
   vaultAddress: string
   tokenAddress: TokenAddressType
-  borrowedAmount: number
+  totalOutstanding: number
   collateralBalance: number
   borrowCapacity: number
-  totalOutstanding: number
   callback: () => void
 } | null
 
