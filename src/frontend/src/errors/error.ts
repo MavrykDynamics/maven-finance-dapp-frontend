@@ -1,4 +1,5 @@
-import type { InputPayload, Payload } from './error.type'
+import type { InputPayload, Payload, InternalErrorType } from './error.type'
+import { ERROR_TYPE_FATAL } from './error.const'
 
 /**
  * ExtendedErrorClass as base class. Contains all essential information
@@ -40,9 +41,18 @@ export class ValidationError extends ExtendedErrorClass {}
 /** when getting server error (f.e. 500 ) */
 export class ApiError extends ExtendedErrorClass {}
 /** critiacal error, show 404 page */
-export class FatalError extends ExtendedErrorClass {}
+export class FatalError extends ExtendedErrorClass {
+  type: InternalErrorType
 
+  constructor(messageOrError: string | Error, payload: Payload = {}, type: InternalErrorType = ERROR_TYPE_FATAL) {
+    super(messageOrError, payload)
+    this.type = type
+  }
+}
+
+// this one for all errors
 export type CustomErrors = Error | ApiError | ValidationError | FatalError | null
+// this one only for extended error, so you know it is NOT null and NOT simple Error
 export type ExtendedError = FatalError | ApiError | ValidationError
 
 /**
