@@ -27,22 +27,24 @@ export const calculateAccruedInterest = (
 
 // HELPER FOR MAX COLLATERAL WITHDRAW
 export const getMaxCollateralWithdraw = (
-  currentCollateralAmount: number,
   totalCollateralAmount: number,
   borrowedAmount: number,
-  borrowedAssetRate: number,
   collarealAssetRate: number,
 ): number => {
   // If vault is not borrowed we can withdraw all amount
-  if (borrowedAmount === 0) return currentCollateralAmount
+  if (borrowedAmount === 0) return totalCollateralAmount
+
+  if (collarealAssetRate === 0) throw new Error('token rate is 0')
+
   /**
    * @collateralNeedsToBe is now much collateralAmount i need to left for current borrowed amount
    * 200 ratio in persent the smallest we can get, <200 vault is under collateralization
    * 100 is to transform % => number
    * (borrowedAmount * borrowedAssetRate) how much has been borrowed from the vault
    */
-  const collateralNeedsToBe = (200 / 100) * (borrowedAmount * borrowedAssetRate)
-  return Math.min((totalCollateralAmount - collateralNeedsToBe) / collarealAssetRate, currentCollateralAmount)
+  const collateralNeedsToBe = (200 / 100) * borrowedAmount
+
+  return (totalCollateralAmount - collateralNeedsToBe) / collarealAssetRate
 }
 
 // VALIDATE LEND/BORROW POPUPS HELPERS
