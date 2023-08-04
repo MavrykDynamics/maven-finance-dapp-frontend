@@ -56,6 +56,7 @@ import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 type Props = {
   vaultId: number
@@ -123,7 +124,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = getVaultCollateralRatio(
       collateralBalance,
-      (borrowedAmount - inputAmount) * borrowedTokenRate,
+      (totalOutstanding - inputAmount) * borrowedTokenRate,
     )
 
     const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
@@ -181,11 +182,12 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   useEffect(() => {
     if (isRepayInFull) {
+      const userMaxRepaymentAmount = Math.min(userAssetBalance, totalOutstanding)
       const validationStatus =
         totalOutstanding !== 0
           ? loansInputValidation({
-              inputAmount: String(totalOutstanding),
-              maxAmount: Math.min(userAssetBalance, totalOutstanding),
+              inputAmount: String(userMaxRepaymentAmount),
+              maxAmount: userMaxRepaymentAmount,
               minAmount: minimumRepay,
               options: {
                 byDecimalPlaces: decimals || assetDecimalsToShow,
@@ -194,7 +196,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           : ''
 
       setInputData({
-        amount: String(totalOutstanding),
+        amount: String(userMaxRepaymentAmount),
         validationStatus,
       })
     } else {
@@ -252,7 +254,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         <div className="tab-text">Select Amount to Repay</div>
 
         <Input
-          className={classNames('pinned-dropdown', { 'input-with-borrowedTokenRate': borrowedTokenRate })}
+          className={classNames('pinned-dropdown', { 'input-with-rate': borrowedTokenRate })}
           inputProps={inputProps}
           settings={settings}
         >
@@ -279,15 +281,16 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       <div className={!isMinimumRepayWarning ? 'mt-25' : ''}>
         <div className="tab-text mb-10">Updated Repay {symbol} Stats</div>
 
-        <RepayTableStats
-          shouldNotRenderStats={inputData.validationStatus === INPUT_STATUS_ERROR}
-          futureBorrowedAmount={futureBorrowedAmount}
-          collateralBalance={collateralBalance}
-          futureTotalOutstanding={futureTotalOutstanding}
-          futureCollateralRatio={futureCollateralRatio}
-          futureBorrowCapacity={futureBorrowCapacity}
-          fee={fee}
-        />
+        <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
+          <RepayTableStats
+            futureBorrowedAmount={futureBorrowedAmount}
+            collateralBalance={collateralBalance}
+            futureTotalOutstanding={futureTotalOutstanding}
+            futureCollateralRatio={futureCollateralRatio}
+            futureBorrowCapacity={futureBorrowCapacity}
+            fee={fee}
+          />
+        </MemoizedComponent>
       </div>
 
       <div className="button-wrapper">
@@ -307,93 +310,84 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   )
 }
 
-const RepayTableStats = memo(
-  ({
-    shouldNotRenderStats,
-    futureBorrowedAmount,
-    collateralBalance,
-    futureTotalOutstanding,
-    futureCollateralRatio,
-    futureBorrowCapacity,
-    fee,
-  }: {
-    shouldNotRenderStats: boolean
-    futureBorrowedAmount: number
-    collateralBalance: number
-    futureTotalOutstanding: number
-    futureCollateralRatio: number
-    futureBorrowCapacity: number
-    fee: number
-  }) => {
-    const {
-      preferences: { themeSelected },
-    } = useDappConfigContext()
+const RepayTableStats = ({
+  futureBorrowedAmount,
+  collateralBalance,
+  futureTotalOutstanding,
+  futureCollateralRatio,
+  futureBorrowCapacity,
+  fee,
+}: {
+  futureBorrowedAmount: number
+  collateralBalance: number
+  futureTotalOutstanding: number
+  futureCollateralRatio: number
+  futureBorrowCapacity: number
+  fee: number
+}) => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
-    return (
-      <VaultOverview>
-        <div className="line">
-          <ThreeLevelListItem>
-            <div className="name">Borrowed</div>
-            <CommaNumber value={futureBorrowedAmount} className="value" />
-          </ThreeLevelListItem>
+  return (
+    <VaultOverview>
+      <div className="line">
+        <ThreeLevelListItem>
+          <div className="name">Borrowed</div>
+          <CommaNumber value={futureBorrowedAmount} className="value" />
+        </ThreeLevelListItem>
 
-          <ThreeLevelListItem>
-            <div className="name">
-              Fees Due
-              <CustomTooltip
-                iconId="info"
-                defaultStrokeColor={colors[themeSelected].textColor}
-                text={FEES_DUE(fee)}
-                className="tooltip"
-              />
-            </div>
-            <CommaNumber value={Math.ceil(fee)} decimalsToShow={0} className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Total Outstanding</div>
-            <CommaNumber value={futureTotalOutstanding} className="value" showDecimal decimalsToShow={2} />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem className="right">
-            <div className="name">Collateral Value</div>
-            <CommaNumber value={collateralBalance} className="value" beginningText="$" />
-          </ThreeLevelListItem>
-        </div>
-
-        <div className="line">
-          <ThreeLevelListItem
-            className="collateral-diagram"
-            customColor={getCollateralRationPersent(futureCollateralRatio)}
-          >
-            <div className={`percentage`}>
-              Collateral Ratio:
-              <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
-            </div>
-            <GradientDiagram
-              className="diagram"
-              colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-              currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
+        <ThreeLevelListItem>
+          <div className="name">
+            Fees Due
+            <CustomTooltip
+              iconId="info"
+              defaultStrokeColor={colors[themeSelected].textColor}
+              text={FEES_DUE(fee)}
+              className="tooltip"
             />
-          </ThreeLevelListItem>
+          </div>
+          <CommaNumber value={Math.ceil(fee)} decimalsToShow={0} className="value" />
+        </ThreeLevelListItem>
+        <ThreeLevelListItem>
+          <div className="name">Total Outstanding</div>
+          <CommaNumber value={futureTotalOutstanding} className="value" showDecimal decimalsToShow={2} />
+        </ThreeLevelListItem>
+        <ThreeLevelListItem className="right">
+          <div className="name">Collateral Value</div>
+          <CommaNumber value={collateralBalance} className="value" beginningText="$" />
+        </ThreeLevelListItem>
+      </div>
 
-          <ThreeLevelListItem className="right">
-            <div className="name">
-              Available To Borrow
-              <CustomTooltip
-                iconId="info"
-                defaultStrokeColor={silverColor}
-                text={AVALIABLE_TO_BORROW}
-                className="tooltip"
-              />
-            </div>
-            <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
-          </ThreeLevelListItem>
-        </div>
-      </VaultOverview>
-    )
-  },
-  (oldProps, newProps) => {
-    if (newProps.shouldNotRenderStats) return true
-    if (oldProps.shouldNotRenderStats === newProps.shouldNotRenderStats) return false
-    return false
-  },
-)
+      <div className="line">
+        <ThreeLevelListItem
+          className="collateral-diagram"
+          customColor={getCollateralRationPersent(futureCollateralRatio)}
+        >
+          <div className={`percentage`}>
+            Collateral Ratio:
+            <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+          </div>
+          <GradientDiagram
+            className="diagram"
+            colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+            currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
+          />
+        </ThreeLevelListItem>
+
+        <ThreeLevelListItem className="right">
+          <div className="name">
+            Available To Borrow
+            <CustomTooltip
+              iconId="info"
+              defaultStrokeColor={silverColor}
+              text={AVALIABLE_TO_BORROW}
+              className="tooltip"
+            />
+          </div>
+          <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
+        </ThreeLevelListItem>
+      </div>
+    </VaultOverview>
+  )
+}

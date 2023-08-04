@@ -138,7 +138,7 @@ export const VaultsView = () => {
 
   const currentVaultsIds = useMemo(
     () => (tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissionedVaultsIds),
-    [tabId],
+    [allVaultsIds, myVaultsIds, permissionedVaultsIds, tabId],
   )
 
   const currentPage = getPageNumber(search, currentListName)

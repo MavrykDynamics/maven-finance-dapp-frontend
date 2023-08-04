@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // types
-import { StageThreeFormProps, StageThreeValidityItem } from '../ProposalSubmission.types'
+import { StageThreeFormProps, StageThreeValidityItem, ValidationResult } from '../ProposalSubmission.types'
 
 // helpers
 import { getValidityStageThreeTable } from '../ProposalSubmission.helpers'
@@ -43,7 +43,7 @@ import { Info } from 'app/App.components/Info/Info.view'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient, convertNumberForContractCall } from 'utils/calcFunctions'
+import { convertNumberForClient } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const StageThreeForm = ({
@@ -92,8 +92,6 @@ export const StageThreeForm = ({
   ) => {
     let { name, value } = e.target
 
-    console.log({ value, tokenBalance: options?.tokenBalance })
-
     // update input value
     updateLocalProposalData(
       {
@@ -109,10 +107,24 @@ export const StageThreeForm = ({
       proposalId,
     )
 
-    // we don't need validation for token address, cuz it's not used on backend, and it's dd value
-    if (name !== 'token_address') {
-      // update validation
-      const validationResult = getValidityStageThreeTable(name as StageThreeValidityItem, value, options)
+    // update validation
+    let validationResult: ValidationResult = INPUT_STATUS_ERROR
+    // if we changed token, we need to revalidate token amount
+    if (name === 'token_address') {
+      validationResult = getValidityStageThreeTable('token_amount', proposalPayments[row]?.token_amount ?? 0, options)
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR
+
+      updateLocalProposalValidation(
+        {
+          paymentsValidation: currentProposalValidation.paymentsValidation.map((paymentValidation, idx) =>
+            idx === row ? { ...paymentValidation, token_amount: validationResult } : paymentValidation,
+          ),
+        },
+        proposalId,
+      )
+    } else {
+      validationResult = getValidityStageThreeTable(name as StageThreeValidityItem, value, options)
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
 
@@ -339,11 +351,27 @@ export const StageThreeForm = ({
                           items={allowedTokensForDD}
                           activeItem={allowedTokensForDD.find(({ id }) => tokenAddress === id)}
                           clickItem={(newSelectedAddress: DDItemId) => {
+                            if (!newSelectedAddress || typeof newSelectedAddress !== 'string') return
+
+                            const newSelectedToken = getTokenDataByAddress({
+                              tokenAddress: newSelectedAddress,
+                              tokensMetadata,
+                            })
+                            const newSelectedTokenBalance = treasuryTokens[newSelectedAddress].balance
+
+                            if (!newSelectedToken || !newSelectedTokenBalance) return
+
                             handleChange(
                               {
                                 target: { name: 'token_address', value: newSelectedAddress },
                               },
                               rowIdx,
+                              {
+                                tokenBalance: convertNumberForClient({
+                                  number: newSelectedTokenBalance,
+                                  grade: newSelectedToken.decimals,
+                                }),
+                              },
                             )
                           }}
                         />

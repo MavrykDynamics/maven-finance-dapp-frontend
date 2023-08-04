@@ -19,11 +19,24 @@ export function calcExitFee(totalMvkSupply: number | undefined, totalStakedMVK: 
 }
 
 /**
+ * @param amount: nubmer we want to remove over decimals
+ * @param decimals: decimals amount need to left
+ * @returns number with specified amount of decimals
+ */
+export const removeUnnessesaryDecimals = (amount: number = 0, decimals: number) => {
+  if (!amount) return 0
+
+  const blockchainNumberWithoutDecimals = Math.trunc(convertNumberForContractCall({ number: amount, grade: decimals }))
+
+  return convertNumberForClient({ number: blockchainNumberWithoutDecimals, grade: decimals })
+}
+
+/**
  * @param number -> number in regular form that we wan't to convert for usage in contract call
  * @param grade -> grade for 10, that we'll need to multiply number to convert it for usage in contract call
  *
  * By default fn will use MVK decimals amount
- * Math.floor is used to remove decimals that are more that allowed amount for token
+ * Math.trunc is used to remove decimals that are more that allowed amount for token
  */
 export const convertNumberForContractCall = ({
   number,
@@ -32,7 +45,7 @@ export const convertNumberForContractCall = ({
   number: number
   grade?: number
 }): number => {
-  return Math.floor(number * Math.pow(10, grade))
+  return Math.trunc(number * Math.pow(10, grade))
 }
 
 /**
@@ -50,7 +63,7 @@ export const convertNumberForClient = ({
   number: number
   grade?: number
 }): number => {
-  return number / Math.pow(10, grade)
+  return Math.trunc(number) / Math.pow(10, grade)
 }
 
 /**

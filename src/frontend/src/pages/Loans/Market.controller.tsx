@@ -184,6 +184,17 @@ export const Market = () => {
 
   const selectedMarket = currentMarketAddress ? marketsMapper[currentMarketAddress] : null
 
+  const marketAvailableLiquidity =
+    selectedMarket && loanToken
+      ? Math.max(
+          convertNumberForClient({
+            number: selectedMarket.availableLiquidity,
+            grade: loanToken.decimals,
+          }),
+          0,
+        )
+      : 0
+
   const marketPagination = (
     <MarketPagination>
       <Button
@@ -273,19 +284,7 @@ export const Market = () => {
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Available Liquidity</div>
-                  <CommaNumber
-                    value={
-                      Math.max(
-                        convertNumberForClient({
-                          number: selectedMarket.availableLiquidity,
-                          grade: loanToken.decimals,
-                        }),
-                        0,
-                      ) * loanToken.rate
-                    }
-                    beginningText="$"
-                    className="value"
-                  />
+                  <CommaNumber value={marketAvailableLiquidity * loanToken.rate} beginningText="$" className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Collateral Factor</div>
@@ -341,6 +340,7 @@ export const Market = () => {
               loanMtokenAddress={selectedMarket.loanMTokenAddress}
               loanTokenAddress={selectedMarket.loanTokenAddress}
               lendAPY={selectedMarket.lendingAPY}
+              marketAvailableLiquidity={marketAvailableLiquidity}
             />
           ) : null}
           {tabId === BORROW_TAB_ID ? (
