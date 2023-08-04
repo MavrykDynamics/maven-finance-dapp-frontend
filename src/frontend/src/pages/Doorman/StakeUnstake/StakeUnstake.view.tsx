@@ -15,7 +15,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { InputErrorMessage, InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
+import { InputErrorMessage } from 'app/App.components/Input/Input.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // helpers
@@ -384,7 +384,7 @@ export const StakeUnstakeView = ({
             <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
             <Input
               className={`input-with-rate transparent-child-wrap`}
-              children={<InputPinnedTokenInfo>MVK</InputPinnedTokenInfo>}
+              children={'MVK'}
               inputProps={inputProps}
               settings={{
                 inputStatus: inputData.validation,

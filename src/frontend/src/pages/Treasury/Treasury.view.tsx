@@ -7,6 +7,7 @@ import PieChartView from '../../app/App.components/PieСhart/PieСhart.view'
 
 // helpers
 import { scrollToFullView } from 'utils/scrollToFullView'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // style
 import { TreasuryViewStyle } from './Treasury.style'
@@ -24,13 +25,13 @@ import {
   TableScrollable,
 } from 'app/App.components/Table'
 import { Plug } from 'app/App.components/Chart/Chart.style'
-import { silverColor } from 'styles'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTreasuryTVL } from './helpers/treasury.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'
+import colors from 'styles/colors'
 
 type Props = {
   treasury: TreasuryType[number]
@@ -39,6 +40,10 @@ type Props = {
 }
 
 export default function TreasuryView({ treasury, isGlobal = false, factoryAddress }: Props) {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
   const [showZeroTreasuries, setShowZeroTreasuries] = useState<boolean>(false)
   const ref = useRef<HTMLDivElement | null>(null)
@@ -69,13 +74,8 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
 
   return (
     <TreasuryViewStyle ref={ref}>
-      <a
-        href="https://mavryk.finance/litepaper#treasury "
-        target="_blank"
-        rel="noreferrer"
-        className="treasuryTooltip-link"
-      >
-        <CustomTooltip iconId="question" className="treasuryTooltip" />
+      <a href="https://mavryk.finance/litepaper#treasury " target="_blank" rel="noreferrer" className="info-link">
+        <CustomTooltip iconId="question" />
       </a>
 
       <div className="content-wrapper">
@@ -89,7 +89,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
               TVL
               <CustomTooltip
                 iconId="info"
-                defaultStrokeColor={silverColor}
+                defaultStrokeColor={colors[themeSelected].mainHeadingText}
                 text="Only tokens whitelisted by the DAO are shown in the treasuries. This is because the DAO can only interact with whitelisted tokens."
               />
             </p>

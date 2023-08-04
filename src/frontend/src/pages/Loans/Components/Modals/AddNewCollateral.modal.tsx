@@ -48,7 +48,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { silverColor } from 'styles'
+import colors from 'styles/colors'
 
 // types
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
@@ -57,7 +57,6 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import colors from 'styles/colors'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // hooks
@@ -74,12 +73,10 @@ export const AddNewCollateral = ({
   data: AddNewCollateralDataProps
 }) => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
   const { userTokensBalances, userAddress } = useUserContext()
   const {
     contractAddresses: { lendingControllerAddress },
+    preferences: { themeSelected },
   } = useDappConfigContext()
   const { bug } = useToasterContext()
 
@@ -308,7 +305,7 @@ export const AddNewCollateral = ({
                 <CustomTooltip
                   text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
                   iconId="info"
-                  defaultStrokeColor={silverColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                 />
               </div>
               <CommaNumber value={borrowCapacity} className="value" beginningText="$" />
@@ -423,7 +420,7 @@ export const AddNewCollateral = ({
                 <CustomTooltip
                   text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
                   iconId="info"
-                  defaultStrokeColor={silverColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                 />
               </div>
               <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />

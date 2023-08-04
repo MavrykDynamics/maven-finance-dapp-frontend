@@ -94,6 +94,21 @@ export const StakeUnstakeInputWithCoin = styled.div`
       margin-right: 6px;
     }
   }
+
+  .pinned-child {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+
+    min-width: max-content;
+    height: 100%;
+
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 20px;
+
+    color: ${({ theme }) => theme.placeholders};
+  }
 `
 
 export const StakeUnstakeAmount = styled.div`

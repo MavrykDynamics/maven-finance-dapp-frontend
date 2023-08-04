@@ -388,7 +388,7 @@ export const BorrowingExpandCard = ({
       >
         {children || (
           <BorrowingExpandedCard>
-            {status && <StatusMessage status={status} timestamp={timerTimestamp} />}
+            {status && <StatusMessage status={status} timestamp={timerTimestamp} theme={colors[themeSelected]} />}
 
             <div className="stats-and-actions">
               <BorrowingExpandCardValuesSection

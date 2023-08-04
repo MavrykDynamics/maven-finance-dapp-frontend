@@ -135,6 +135,10 @@ export const BorrowingExpandedCard = styled.div<{ theme: MavrykTheme }>`
       width: 17%;
     }
 
+    .name {
+      color: ${({ theme }) => theme.mainHeadingText};
+    }
+
     .buttons-wrapper {
       display: grid;
       grid-template-columns: 180px 180px;

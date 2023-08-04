@@ -69,7 +69,7 @@ export const GaugeChart = ({ children, maxValue, minValue, currentValue, isProgr
       <Backdrop
         className="backdrop"
         color={colors[themeSelected].backgroundColor}
-        opacity={themeSelected === 'light' ? 1 : 0.3}
+        opacity={themeSelected === 'space' ? 0.3 : 1}
       />
       <ValueWrapper>{children}</ValueWrapper>
       <ArrowStyled angle={arrowAngle}>

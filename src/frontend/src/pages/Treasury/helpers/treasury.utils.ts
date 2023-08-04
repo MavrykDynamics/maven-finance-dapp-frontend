@@ -1,7 +1,7 @@
 import { TREASURYS_COLORS } from 'app/App.components/PieСhart/pieChart.const'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
-import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 import { TreasuryType, TreasuryBalanceType } from 'utils/TypesAndInterfaces/Treasury'
 

@@ -189,7 +189,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               vaultHasXtzCollateral || vaultHasSmvkCollateral ? '' : 'more-padding'
             }`}
           >
-            {status && <StatusMessage status={status} timestamp={timerTimestamp} />}
+            {status && <StatusMessage status={status} timestamp={timerTimestamp} theme={colors[themeSelected]} />}
 
             <div className="block-name">Borrowed</div>
             <div className="borrowed-data">
@@ -211,7 +211,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                   <CustomTooltip
                     iconId="info"
                     text="Interest, compounded over time every time you borrow"
-                    defaultStrokeColor={colors[themeSelected].subHeadingText}
+                    defaultStrokeColor={colors[themeSelected].mainHeadingText}
                   />
                 </div>
                 <CommaNumber value={fee} decimalsToShow={decimals} className="value" />

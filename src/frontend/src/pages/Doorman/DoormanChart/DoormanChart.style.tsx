@@ -100,7 +100,8 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
 
       &.smvk {
         .circle {
-          background: ${({ theme }) => theme.secondaryChartColor};
+          // constant color for all theme
+          background: #86d4c9;
         }
       }
     }
