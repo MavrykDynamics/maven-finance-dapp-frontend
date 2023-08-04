@@ -231,7 +231,7 @@ export const BorrowingExpandCardMenuSection = ({
                             onClick={() => openWithdrawCollateralPopup({ amount: convertedAmount, idx })}
                             form={BUTTON_WIDE}
                             kind={BUTTON_SECONDARY}
-                            disabled={collateralRatio <= 200 || isActionActive}
+                            disabled={collateralRatio <= 200 || isActionActive || convertedAmount === 0}
                           >
                             <Icon id="minus" /> Remove
                           </Button>

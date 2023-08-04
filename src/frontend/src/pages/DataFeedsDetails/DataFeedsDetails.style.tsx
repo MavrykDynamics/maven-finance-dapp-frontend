@@ -1,6 +1,6 @@
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import styled from 'styled-components'
-import { boxShadowColor, Card, cyanColor } from 'styles'
+import { Card } from 'styles'
 import { MavrykTheme } from '../../styles/interfaces'
 
 export const DataFeedsStyled = styled.div<{ theme: MavrykTheme }>`

@@ -3,7 +3,6 @@ import dayjs from 'dayjs'
 import { createChart, BusinessDay, UTCTimestamp, SingleValueData, CandlestickData } from 'lightweight-charts'
 
 import styleColors from 'styles/colors'
-import { lightTextColor, headerColor } from 'styles'
 import { getDateEnd, getDateStart, parseDate } from 'utils/time'
 import {
   DEFAULT_LAYOUT_SETTING,

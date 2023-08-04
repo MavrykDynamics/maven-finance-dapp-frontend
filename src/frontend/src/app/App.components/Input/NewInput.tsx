@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import { BUTTON_SIMPLE } from '../Button/Button.constants'
 import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 
 // hooks
-import { useInputValidator } from 'app/App.hooks/useInputValidator'
+import { useInputValidator } from './hooks/useInputValidator'
 
 // types
 import { InputViewProps } from './newInput.type'
@@ -18,6 +18,8 @@ import {
   StyledInput,
   InputErrorMessage,
 } from './Input.style'
+import { validateInput } from 'app/App.utils/input'
+import { ERR_MSG_INPUT } from './Input.constants'
 
 export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
   (
@@ -36,17 +38,22 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
         balanceName = 'Balance',
         inputStatus,
         inputSize,
+        validationFns = [[validateInput, ERR_MSG_INPUT]],
         errorMessage: errorMessageFromProps,
         showErrorMessage = true,
       },
     }: InputViewProps,
     ref,
   ) => {
-    const { onChange } = inputProps
-    const { status, errorMessage, handleChange } = useInputValidator({
+    const { onChange, value } = inputProps
+    const { status, errorMessage, handleChange, handleMaxAmount } = useInputValidator({
       originalErrorMessage: errorMessageFromProps,
       status: inputStatus,
       onChange,
+      handleMax: useMaxHandler,
+      value,
+      validationFns:
+        validationFns && validationFns.length > 0 ? [[validateInput, ERR_MSG_INPUT], ...validationFns] : validationFns,
     })
 
     return (
@@ -81,7 +88,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
 
         {useMaxHandler ? (
           <div className="useMax-btn">
-            <NewButton onClick={useMaxHandler} kind={BUTTON_SIMPLE}>
+            <NewButton onClick={handleMaxAmount} kind={BUTTON_SIMPLE}>
               Use Max
             </NewButton>
           </div>

@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // consts
@@ -7,8 +8,6 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.component
 import { repayPartOfVaultAction } from 'providers/VaultsProvider/actions/vaults.actions'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 import { REPAY_PART_OF_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 
 // components
 import NewButton from 'app/App.components/Button/NewButton'
@@ -37,7 +36,6 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { useCallback, useMemo } from 'react'
 
 export const ConfirmRepay = ({
   closePopup,
@@ -51,13 +49,10 @@ export const ConfirmRepay = ({
   useLockBodyScroll(show)
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress } = useUserContext()
-  const { bug, loading, info } = useToasterContext()
+  const { bug } = useToasterContext()
   const {
     preferences: { themeSelected },
     contractAddresses: { lendingControllerAddress },
-    setAction,
-    toggleActionCompletion,
-    toggleActionFullScreenLoader,
   } = useDappConfigContext()
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
@@ -67,7 +62,7 @@ export const ConfirmRepay = ({
     vaultAddress = '',
     collateralBalance = 0,
     borrowCapacity = 0,
-    borrowedAmount = 0,
+    totalOutstanding = 0,
     inputAmount = 0,
     callback = () => {},
   } = data ?? {}
@@ -75,7 +70,7 @@ export const ConfirmRepay = ({
   const { symbol = '', rate: originalRate } = borrowedToken ?? {}
   const rate = originalRate ?? 0
 
-  const futureCollateralRatio = getVaultCollateralRatio(collateralBalance, (borrowedAmount - inputAmount) * rate)
+  const futureCollateralRatio = getVaultCollateralRatio(collateralBalance, (totalOutstanding - inputAmount) * rate)
   const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
 
   // partly repay action ---------------------

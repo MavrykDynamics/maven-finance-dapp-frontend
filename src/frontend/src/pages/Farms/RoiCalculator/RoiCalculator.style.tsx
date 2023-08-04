@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { skyColor, cyanColor, headerColor, royalPurpleColor } from 'styles'
 
 export const RoiCalculatorStyled = styled.section<{ theme: MavrykTheme }>`
   padding: 40px 40px;

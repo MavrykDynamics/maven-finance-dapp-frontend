@@ -43,7 +43,6 @@ type TransactionHistoryPropsType = {
  * @param userAddress - if you want to get a transaction history for one user, you can specify this option.
  * @param styleType - you can set one of several background options. Use the constant from Loans.const.tsx.
  *
- * TODO: add loader when loading
  */
 export const TransactionHistory = ({
   loanTokenAddress,

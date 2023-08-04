@@ -524,3 +524,9 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 `
+
+export const CardSectionWrapper = styled.div`
+  .value {
+    word-break: break-all;
+  }
+`

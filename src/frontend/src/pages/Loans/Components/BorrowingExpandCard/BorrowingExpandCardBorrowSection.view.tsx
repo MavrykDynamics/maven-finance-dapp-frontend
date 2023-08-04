@@ -1,15 +1,17 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState, memo } from 'react'
 import { useSelector } from 'react-redux'
 import classNames from 'classnames'
-import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
+import { VaultOverview, StatusMessageStyled, CardSectionWrapper } from '../LoansComponents.style'
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 import {
+  ERR_MSG_TOAST,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   InputStatusType,
+  defaultLargeInputMaxLength,
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
@@ -38,6 +40,8 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import colors from 'styles/colors'
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 type Props = {
   borrowedAssetAddress: TokenAddressType
@@ -50,12 +54,13 @@ type Props = {
   openConfirmBorrowPopup: (inputAmount: number, callback: () => void) => void
 }
 
+type InputDataType = {
+  amount: string
+  validationStatus: InputStatusType
+}
+
 export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const { userTokensBalances } = useUserContext()
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
-
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {
@@ -71,10 +76,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const { symbol, decimals, icon } = tokensMetadata[borrowedAssetAddress]
   const rate = tokensPrices[symbol]
 
-  const [inputData, setInputData] = useState<{
-    amount: string
-    validationStatus: InputStatusType
-  }>({
+  const [inputData, setInputData] = useState<InputDataType>({
     amount: '0',
     validationStatus: INPUT_STATUS_DEFAULT,
   })
@@ -158,6 +160,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
       inputStatus: inputData.validationStatus,
       convertedValue: inputAmount * rate,
       inputSize: INPUT_LARGE,
+      validationFns: [[validateInputLength, ERR_MSG_TOAST]],
     }),
     [
       userAssetBalance,
@@ -202,81 +205,17 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
 
       <div className={!showWarning ? 'mt-25' : ''}>
         <div className="tab-text mb-10">Updated Borrow {symbol} Stats</div>
-        <VaultOverview>
-          <div className="line">
-            <ThreeLevelListItem>
-              <div className="name">
-                Total Amount
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                  text={TOTAL_AMOUNT}
-                  className="tooltip"
-                />
-              </div>
-              <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">
-                DAO Fee
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                  text={DAO_FEE}
-                  className="tooltip"
-                />
-              </div>
-              <CommaNumber
-                value={inputAmount * (DAOFee / 100)}
-                decimalsToShow={assetDecimalsToShow}
-                className="value"
-              />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">Amount Received</div>
-              <CommaNumber
-                value={inputAmount - inputAmount * (DAOFee / 100)}
-                decimalsToShow={assetDecimalsToShow}
-                className="value"
-              />
-            </ThreeLevelListItem>
-
-            <ThreeLevelListItem className="right">
-              <div className="name">Collateral Value</div>
-              <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
-            </ThreeLevelListItem>
-          </div>
-
-          <div className="line">
-            <ThreeLevelListItem
-              className="collateral-diagram right"
-              customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
-            >
-              <div className={`percentage`}>
-                Collateral Ratio:
-                <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
-              </div>
-              <GradientDiagram
-                className="diagram"
-                colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
-              />
-            </ThreeLevelListItem>
-
-            <ThreeLevelListItem className="right">
-              <div className="name">
-                Available To Borrow
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                  text={AVALIABLE_TO_BORROW}
-                  className="tooltip"
-                />
-              </div>
-              <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
-            </ThreeLevelListItem>
-          </div>
-        </VaultOverview>
+        <CardSectionWrapper>
+          <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
+            <TableStats
+              futureCollateralRatio={futureCollateralRatio}
+              inputAmount={inputAmount}
+              currentCollateralBalance={currentCollateralBalance}
+              futureBorrowCapacity={futureBorrowCapacity}
+              DAOFee={DAOFee}
+            />
+          </MemoizedComponent>
+        </CardSectionWrapper>
       </div>
 
       <div className="button-wrapper">
@@ -292,5 +231,96 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
         </NewButton>
       </div>
     </>
+  )
+}
+
+const TableStats = ({
+  futureCollateralRatio,
+  inputAmount,
+  currentCollateralBalance,
+  futureBorrowCapacity,
+  DAOFee,
+}: {
+  futureCollateralRatio: number
+  inputAmount: number
+  currentCollateralBalance: number
+  futureBorrowCapacity: number
+  DAOFee: number
+}) => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
+  return (
+    <VaultOverview>
+      <div className="line">
+        <ThreeLevelListItem>
+          <div className="name">
+            Total Amount
+            <CustomTooltip
+              iconId="info"
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
+              text={TOTAL_AMOUNT}
+              className="tooltip"
+            />
+          </div>
+          <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
+        </ThreeLevelListItem>
+        <ThreeLevelListItem>
+          <div className="name">
+            DAO Fee
+            <CustomTooltip
+              iconId="info"
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
+              text={DAO_FEE}
+              className="tooltip"
+            />
+          </div>
+          <CommaNumber value={inputAmount * (DAOFee / 100)} decimalsToShow={assetDecimalsToShow} className="value" />
+        </ThreeLevelListItem>
+        <ThreeLevelListItem>
+          <div className="name">Amount Received</div>
+          <CommaNumber
+            value={inputAmount - inputAmount * (DAOFee / 100)}
+            decimalsToShow={assetDecimalsToShow}
+            className="value"
+          />
+        </ThreeLevelListItem>
+
+        <ThreeLevelListItem className="right">
+          <div className="name">Collateral Value</div>
+          <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
+        </ThreeLevelListItem>
+      </div>
+      <div className="line">
+        <ThreeLevelListItem
+          className="collateral-diagram right"
+          customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
+        >
+          <div className={`percentage`}>
+            Collateral Ratio:
+            <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+          </div>
+          <GradientDiagram
+            className="diagram"
+            colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+            currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
+          />
+        </ThreeLevelListItem>
+
+        <ThreeLevelListItem className="right">
+          <div className="name">
+            Available To Borrow
+            <CustomTooltip
+              iconId="info"
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
+              text={AVALIABLE_TO_BORROW}
+              className="tooltip"
+            />
+          </div>
+          <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
+        </ThreeLevelListItem>
+      </div>
+    </VaultOverview>
   )
 }

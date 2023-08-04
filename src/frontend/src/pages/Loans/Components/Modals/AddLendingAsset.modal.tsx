@@ -178,7 +178,7 @@ export const AddLendingAsset = ({
           </div>
 
           <Input
-            className={`input-with-tokenRate pinned-dropdown`}
+            className="pinned-dropdown input-with-rate"
             inputProps={{
               value: inputData.amount,
               type: 'number',

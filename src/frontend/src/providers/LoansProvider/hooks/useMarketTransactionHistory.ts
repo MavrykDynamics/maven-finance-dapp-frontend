@@ -14,6 +14,7 @@ import { parseDate } from 'utils/time'
 import { getDescrByType } from '../helpers/loans.utils'
 import { COLLATERAL_HISTORY_DATA_TYPES } from '../helpers/loans.const'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
 /**
  *
@@ -68,10 +69,13 @@ const useMarketTransactionHistory = ({
         if (!loan_token) return acc
         const loanTokenAddress = loan_token.token.token_address
         const collateralTokenAddress = collateral_token?.token.token_address
+        const isSmvkCollateral = collateral_token?.token.mvk_tokens.length
 
         const tokenAddress =
           COLLATERAL_HISTORY_DATA_TYPES.includes(type) && collateralTokenAddress
-            ? collateralTokenAddress
+            ? isSmvkCollateral
+              ? SMVK_TOKEN_ADDRESS
+              : collateralTokenAddress
             : loanTokenAddress
 
         const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })

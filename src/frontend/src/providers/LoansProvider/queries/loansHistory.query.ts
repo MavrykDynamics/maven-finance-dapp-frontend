@@ -86,6 +86,9 @@ export function getLoansHistorySubscription({
           collateral_token {
             token {
               token_address
+              mvk_tokens {
+                address
+              }
             }
           }
           operation_hash
