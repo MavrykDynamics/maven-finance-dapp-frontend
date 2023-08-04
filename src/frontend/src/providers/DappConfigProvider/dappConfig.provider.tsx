@@ -83,7 +83,7 @@ const DappConfigProvider = ({ children }: Props) => {
       toggleActionCompletion(false)
 
       // some callback f.e. to reset input, clear form data etc.
-      callback?.()
+      await callback?.()
       setAction(null)
     }
 

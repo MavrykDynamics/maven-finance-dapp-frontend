@@ -4,7 +4,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
 import { sleep } from 'utils/api/sleep'
@@ -18,36 +18,46 @@ import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.styl
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { ADD_COLLATERAL_SCREEN_ID } from '../helpers/createNewVault.consts'
+import { ADD_COLLATERAL_SCREEN_ID, BORROW_SCREEN_ID } from '../helpers/createNewVault.consts'
+import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { ConfirmStatsVaultOverview } from '../createNewVault.style'
 
 export const ConfirmStats = () => {
   const { apolloClient } = useApolloContext()
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
 
-  console.log({ tokensMetadata, tokensPrices, collateralTokens })
   const { bug, info } = useToasterContext()
-  const { userAddress, userTokensBalances } = useUserContext()
+  const { userAddress } = useUserContext()
   const {
-    preferences: { themeSelected },
     contractAddresses: { vaultFactoryAddress },
   } = useDappConfigContext()
-  const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
+  const { choosenBaker } = useXtzBakersForDD()
   const {
     selectedCollateralsAddresses,
     selectedCollaterals,
-    updateSelectedCollaterals,
     updateScreenToShow,
     isVaultCreating,
-    hasXTZTokenSelected,
-    borrowCapacity,
-    newVault,
     updateVaultCreating,
     vaultInputState,
     updateNewVault,
+    newVault,
     data,
   } = useCreateVaultContext()
 
   const { marketTokenAddress, setCreatedVaultAddress } = data ?? {}
+
+  useEffect(() => {
+    async function ex() {
+      // TODO at rhis time vaults provider don't have new vault data - so it will lead to 404 page
+      // fix this issue
+      updateScreenToShow(BORROW_SCREEN_ID)
+    }
+    if (newVault) {
+      ex()
+    }
+  }, [newVault])
 
   // Actions --------------------------------------------------------------------
   const getNewVaultData = useCallback(
@@ -75,7 +85,6 @@ export const ConfirmStats = () => {
             id,
           })
           updateVaultCreating(false)
-          // updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)
           // TODO remove retry after indexer update
         } else if (retries !== 0) {
           info('Refetching new vault', 'Trying to refetch the new vault data. Plases wait 7 seconds...')
@@ -100,8 +109,6 @@ export const ConfirmStats = () => {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return null
     }
-
-    console.log(selectedCollaterals, 'selectedCollaterals')
 
     const loanToken = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata })
 
@@ -176,8 +183,94 @@ export const ConfirmStats = () => {
 
   const { action: createVaultHandler } = useContractAction(createVaultActionProps)
 
+  const totalCollateralDepositedValue = useMemo(
+    () =>
+      selectedCollateralsAddresses.reduce<number>((acc, address) => {
+        const { tokenAddress, amount } = selectedCollaterals[address]
+        const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+        if (!token || !token.rate) return acc
+
+        const { rate } = token
+
+        const convertedBalance = Number(amount) * rate
+
+        return acc + convertedBalance
+      }, 0),
+    [selectedCollaterals, selectedCollateralsAddresses, tokensMetadata, tokensPrices],
+  )
+
   return (
     <div>
+      <div>
+        <ConfirmStatsVaultOverview>
+          <div className="">
+            <ThreeLevelListItem>
+              <div className="name">Vault name</div>
+              <div className="value">{vaultInputState.name}</div>
+            </ThreeLevelListItem>
+          </div>
+          <Table>
+            <TableHeader className="treasury">
+              <TableRow>
+                <TableHeaderCell>Asset</TableHeaderCell>
+                <TableHeaderCell>Amount</TableHeaderCell>
+                <TableHeaderCell contentPosition="right">USD Value</TableHeaderCell>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody className="treasury">
+              {selectedCollateralsAddresses.map((address) => {
+                const { tokenAddress, amount } = selectedCollaterals[address]
+                const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                if (!token || !token.rate) return null
+
+                const { symbol, rate, decimals } = token
+
+                const balance = Number(amount)
+
+                return (
+                  <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
+                    <TableCell width="33%">{symbol}</TableCell>
+                    <TableCell width="33%">
+                      <CommaNumber value={balance} decimalsToShow={Number(decimals)} useAccurateParsing={balance < 1} />
+                    </TableCell>
+                    <TableCell width="33%" contentPosition="right">
+                      <CommaNumber
+                        value={balance * rate}
+                        beginningText={rate ? '$' : symbol}
+                        useAccurateParsing={balance < 1}
+                      />
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        </ConfirmStatsVaultOverview>
+
+        <div className="confirmation-stats">
+          <ThreeLevelListItem>
+            <div className="name">Selected Baker</div>
+            <div className="value">{choosenBaker?.bakerName ?? 'Not relevant'}</div>
+          </ThreeLevelListItem>
+          <ThreeLevelListItem>
+            <div className="name">Total Collateral Deposited</div>
+            <CommaNumber value={totalCollateralDepositedValue} decimalsToShow={2} className="value" beginningText="$" />
+          </ThreeLevelListItem>
+          {/* <ThreeLevelListItem className="right">
+            <div className="name">
+              Available To Borrow
+              <CustomTooltip
+                iconId="info"
+                defaultStrokeColor={silverColor}
+                text={AVALIABLE_TO_BORROW}
+                className="tooltip"
+              />
+            </div>
+            <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
+          </ThreeLevelListItem> */}
+        </div>
+      </div>
       <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
         <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={() => updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)}>
           <Icon id="arrowLeft" />

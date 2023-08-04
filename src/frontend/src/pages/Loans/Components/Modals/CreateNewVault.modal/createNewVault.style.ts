@@ -101,15 +101,13 @@ export const ConfirmationScreenWrapper = styled.div`
   .block-name {
     padding: 0;
   }
+`
 
-  .confirmation-top-stats {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    & > div:last-of-type {
-      display: grid;
-      justify-items: flex-end;
-    }
-  }
+export const ConfirmStatsVaultOverview = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  margin-top: 30px;
+  margin-bottom: 30px;
 `

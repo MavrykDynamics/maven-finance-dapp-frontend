@@ -11,9 +11,10 @@ export async function getEstimationResult(
   metadata: ContractMethod<Wallet>,
   args?: EstimationResultParams,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> {
-  const op = await estimateExecution(metadata)
+  const op = await estimateExecution(metadata, args?.params)
 
   if (op?.error) {
+    console.log(op.error)
     return { actionSuccess: false, error: op.error }
   }
 

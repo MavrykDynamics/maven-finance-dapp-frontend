@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import classNames from 'classnames'
 
 // components
@@ -12,6 +12,7 @@ import { BorrowScreenBottomStats } from '../components/BorrowScreenBottomStats'
 
 // styles
 import colors from 'styles/colors'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { BorrowScreenWrapper } from '../createNewVault.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
@@ -21,9 +22,6 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // consts
 import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
@@ -31,21 +29,15 @@ import { CONFIRMATION_SCREEN_ID } from '../helpers/createNewVault.consts'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { DAO_FEE } from 'texts/tooltips/vault.text'
-import { BORROW_VAULT_ASSET_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // utils
 import { checkNan } from 'utils/checkNan'
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // hooks
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useBorrowInputData } from '../components/useBorrowInputData'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-
-// actions
-import { borrowVaultAssetAction } from 'providers/VaultsProvider/actions/vaults.actions'
 
 // types
 import { NewVaultType } from '../helpers/createNewVault.types'
@@ -58,19 +50,15 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   const {
     preferences: { themeSelected },
     globalLoadingState: { isActionActive },
-    contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
 
-  const { newVault, updateScreenToShow, borrowCapacity, setFinalBorrowInputAmount, isVaultCreating } =
-    useCreateVaultContext()
+  const { newVault, updateScreenToShow, borrowCapacity, isVaultCreating } = useCreateVaultContext()
   const { vaultsMapper } = useVaultsContext()
   const {
     config: { daoFee },
   } = useLoansContext()
-  const { userAddress } = useUserContext()
-  const { bug } = useToasterContext()
-  const { tokensMetadata, tokensPrices } = useTokensContext()
 
+  console.log(newVault, 'newVault------------------')
   const currentVault = vaultsMapper[(newVault as NewVaultType).address]
   const vaultData = useFullVault(currentVault)
 
@@ -83,7 +71,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     apr = 0,
   } = vaultData ?? {}
 
-  const { inputData, settings, inputProps, rate, icon, symbol, clearData, decimals } = useBorrowInputData(
+  const { inputData, settings, inputProps, rate, icon, symbol, decimals } = useBorrowInputData(
     borrowedTokenAddress,
     originalBorrowCapacity,
   )
@@ -93,47 +81,9 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   const isDisabledButton =
     inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive || isVaultCreating
 
-  const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
-
   useEffect(() => {
     setCurrentSymbol(symbol)
   }, [setCurrentSymbol, symbol])
-
-  // borrow vault asset action ----------------------------------------------
-  const borrowAction = useCallback(async () => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return null
-    }
-    if (!lendingControllerAddress) {
-      bug('Wrong lending address')
-      return null
-    }
-
-    // call action only when there is vault if and correct loan token
-    if (borrowedToken && vaultData?.vaultId && checkWhetherTokenIsLoanToken(borrowedToken)) {
-      return await borrowVaultAssetAction(lendingControllerAddress, vaultData.vaultId, inputAmount, borrowedToken)
-    }
-    return null
-  }, [borrowedToken, bug, inputAmount, lendingControllerAddress, userAddress, vaultData?.vaultId])
-
-  const dappCallback = useCallback(() => {
-    setFinalBorrowInputAmount({ amount: inputAmount, symbol, rate })
-
-    clearData()
-    updateScreenToShow(CONFIRMATION_SCREEN_ID)
-  }, [clearData, inputAmount, rate, setFinalBorrowInputAmount, symbol, updateScreenToShow])
-
-  const contractActionProps: HookContractActionArgs = useMemo(
-    () => ({
-      actionType: BORROW_VAULT_ASSET_ACTION,
-      actionFn: borrowAction,
-      dappCallback,
-    }),
-    [borrowAction, dappCallback],
-  )
-
-  const { action: borrowAsserHandler } = useContractAction(contractActionProps)
 
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = getVaultCollateralRatio(
@@ -203,11 +153,23 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
       />
 
       <div className="manage-btn">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={borrowAsserHandler} disabled={isDisabledButton}>
-          Borrow
+        <NewButton
+          kind={BUTTON_PRIMARY}
+          form={BUTTON_WIDE}
+          onClick={() => updateScreenToShow(CONFIRMATION_SCREEN_ID)}
+          disabled={isDisabledButton}
+        >
+          Continue
           <Icon id="arrowRight" />
         </NewButton>
       </div>
+
+      {isVaultCreating ? (
+        <div className="creating-vault-loader-wrapper">
+          Creating Vault
+          <SpinnerCircleLoaderStyled />
+        </div>
+      ) : null}
     </BorrowScreenWrapper>
   )
 }

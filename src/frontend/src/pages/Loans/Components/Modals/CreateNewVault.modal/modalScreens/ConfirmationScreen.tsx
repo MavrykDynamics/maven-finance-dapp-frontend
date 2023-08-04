@@ -2,31 +2,25 @@ import React, { useCallback, useMemo } from 'react'
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { ADD_COLLATERAL_SCREEN_ID } from '../helpers/createNewVault.consts'
+import { BORROW_SCREEN_ID } from '../helpers/createNewVault.consts'
 import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import { BORROW_VAULT_ASSET_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 
 // components
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { BorrowScreenBottomStats } from '../components/BorrowScreenBottomStats'
 
 // styles
-import colors from 'styles/colors'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
 import { ConfirmationScreenWrapper } from '../createNewVault.style'
 
 // utils
-import {
-  checkWhetherTokenIsCollateralToken,
-  getTokenDataByAddress,
-} from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
@@ -40,20 +34,18 @@ import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // types
-import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { NewVaultType } from '../helpers/createNewVault.types'
 
 // actions
-import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
+import { borrowVaultAssetAction } from 'providers/VaultsProvider/actions/vaults.actions'
 
 export const ConfirmationScreen = () => {
   const {
     contractAddresses: { lendingControllerAddress },
-    preferences: { themeSelected },
   } = useDappConfigContext()
   const { vaultsMapper } = useVaultsContext()
   const { choosenBaker } = useXtzBakersForDD()
@@ -67,7 +59,7 @@ export const ConfirmationScreen = () => {
     updateScreenToShow,
     isVaultCreating,
     newVault,
-    closePopup,
+    setFinalBorrowInputAmount,
     borrowCapacity,
     finalBorrowInputData,
   } = useCreateVaultContext()
@@ -79,6 +71,7 @@ export const ConfirmationScreen = () => {
   const vaultData = useFullVault(currentVault)
 
   const {
+    borrowedTokenAddress = '',
     collateralBalance: currentCollateralBalance = 0,
     borrowedAmount: currentBorrowedAmount = 0,
     name,
@@ -97,69 +90,41 @@ export const ConfirmationScreen = () => {
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [currentCollateralBalance, currentBorrowedAmount, inputAmount, rate, borrowCapacity])
 
-  // deposit action ----------------------------------------------
-  const depositAction = useCallback(async () => {
+  const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
+
+  // borrow vault asset action ----------------------------------------------
+  const borrowAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return null
     }
-
-    if (newVault && lendingControllerAddress) {
-      const collaretalsToDeposit = selectedCollateralsAddresses.reduce<
-        Array<
-          LoansCollateralTokenMetadataType & {
-            amount: number
-          }
-        >
-      >((acc, tokenAddress) => {
-        const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata })
-
-        if (collateralToken && checkWhetherTokenIsCollateralToken(collateralToken)) {
-          acc.push({
-            ...collateralToken,
-            amount: convertNumberForContractCall({
-              number: Number(selectedCollaterals[tokenAddress].amount),
-              grade: collateralToken.decimals,
-            }),
-          })
-        }
-
-        return acc
-      }, [])
-
-      return await depositCollateralsAction(
-        userAddress,
-        newVault.address,
-        collaretalsToDeposit,
-        newVault.id,
-        lendingControllerAddress,
-        closePopup,
-        choosenBaker?.bakerAddress,
-      )
+    if (!lendingControllerAddress) {
+      bug('Wrong lending address')
+      return null
     }
 
+    // call action only when there is vault if and correct loan token
+    if (borrowedToken && vaultData?.vaultId && checkWhetherTokenIsLoanToken(borrowedToken)) {
+      return await borrowVaultAssetAction(lendingControllerAddress, vaultData.vaultId, inputAmount, borrowedToken)
+    }
     return null
-  }, [
-    bug,
-    choosenBaker?.bakerAddress,
-    closePopup,
-    lendingControllerAddress,
-    newVault,
-    selectedCollaterals,
-    selectedCollateralsAddresses,
-    tokensMetadata,
-    userAddress,
-  ])
+  }, [borrowedToken, bug, inputAmount, lendingControllerAddress, userAddress, vaultData?.vaultId])
+
+  const dappCallback = useCallback(() => {
+    setFinalBorrowInputAmount({ amount: inputAmount, symbol, rate })
+    // TODO clear borrow input
+  }, [inputAmount, rate, setFinalBorrowInputAmount, symbol])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
-      actionType: DEPOSIT_COLLATERAL_ACTION,
-      actionFn: depositAction,
+      actionType: BORROW_VAULT_ASSET_ACTION,
+      actionFn: borrowAction,
+      dappCallback,
     }),
-    [depositAction],
+    [borrowAction, dappCallback],
   )
 
-  const { action: depositCollateralHandler } = useContractAction(contractActionProps)
+  const { action: borrowAsserHandler } = useContractAction(contractActionProps)
 
   const totalCollateralDepositedValue = useMemo(
     () =>
@@ -179,7 +144,7 @@ export const ConfirmationScreen = () => {
 
   const isAddCollateralContinueDisabled = Boolean(
     isVaultCreating ||
-      (hasXTZTokenSelected && choosenBaker) ||
+      (hasXTZTokenSelected && !choosenBaker) ||
       !selectedCollateralsAddresses.every((tokenAddress) => {
         return selectedCollaterals[tokenAddress].validation === INPUT_STATUS_SUCCESS
       }),
@@ -190,7 +155,7 @@ export const ConfirmationScreen = () => {
       <div className="table-wrapper">
         <div className="block-name">New Vault stats</div>
         <VaultOverview>
-          <div className="confirmation-top-stats">
+          <div className="confirmation-stats">
             <ThreeLevelListItem>
               <div className="name">Vault name</div>
               <div className="value">{name}</div>
@@ -200,15 +165,7 @@ export const ConfirmationScreen = () => {
               <div className="value">{choosenBaker?.bakerName ?? 'Not relevant'}</div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">
-                Total Collateral Deposited
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={colors[themeSelected].textColor}
-                  text={'tooltip text'}
-                  className="tooltip"
-                />
-              </div>
+              <div className="name">Total Collateral Deposited</div>
               <CommaNumber
                 value={totalCollateralDepositedValue}
                 decimalsToShow={2}
@@ -269,11 +226,7 @@ export const ConfirmationScreen = () => {
       </div>
 
       <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
-        <NewButton
-          kind={BUTTON_SECONDARY}
-          form={BUTTON_WIDE}
-          onClick={() => updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)}
-        >
+        <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={() => updateScreenToShow(BORROW_SCREEN_ID)}>
           <Icon id="arrowLeft" />
           Back
         </NewButton>
@@ -281,10 +234,10 @@ export const ConfirmationScreen = () => {
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           disabled={isAddCollateralContinueDisabled}
-          onClick={depositCollateralHandler}
+          onClick={borrowAsserHandler}
         >
-          <Icon id="plus" />
-          Deposit
+          <Icon id="loans" />
+          Borrow
         </NewButton>
       </div>
     </ConfirmationScreenWrapper>

@@ -79,6 +79,17 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  .confirmation-stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    & > div:last-of-type {
+      display: grid;
+      justify-items: flex-end;
+    }
+  }
+
   .screen-bottom-stats {
     display: flex;
     flex-direction: column;
