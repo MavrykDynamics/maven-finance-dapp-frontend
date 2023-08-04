@@ -410,10 +410,10 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     return await updateProposalData(governanceAddress, selectedUserProposalId, bytesDiff, paymentsDiff)
   }, [
     bug,
-    currentProposal.proposalData,
-    currentProposal.proposalPayments,
-    currentProposalOnRemote.proposalData,
-    currentProposalOnRemote.proposalPayments,
+    currentProposal?.proposalData,
+    currentProposal?.proposalPayments,
+    currentProposalOnRemote?.proposalData,
+    currentProposalOnRemote?.proposalPayments,
     governanceAddress,
     tokensMetadata,
     userAddress,
