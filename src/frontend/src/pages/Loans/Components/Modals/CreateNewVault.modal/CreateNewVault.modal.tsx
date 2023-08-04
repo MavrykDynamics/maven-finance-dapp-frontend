@@ -18,6 +18,7 @@ import {
   ADD_COLLATERAL_SCREEN_ID,
   BORROW_SCREEN_ID,
   CONFIRMATION_SCREEN_ID,
+  CONFIRM_STATS_SCREEN_ID,
   INITIAL_SCREEN_ID,
   screenDescriptions,
   screenTitles,
@@ -30,6 +31,7 @@ import { CreateVaultScreen } from './modalScreens/CreateVaultScreen'
 import { AddCollateralScreen } from './modalScreens/AddCollateralScreen'
 import { ConfirmationScreen } from './modalScreens/ConfirmationScreen'
 import { BorrowScreen } from './modalScreens/BorrowScreen'
+import { ConfirmStats } from './modalScreens/ConfirmStats'
 
 // components
 import { CreateVaultModalStepper } from './components/CreateVaultModalStepper'
@@ -71,6 +73,7 @@ export const CreateNewVaultConsumer = () => {
 
           {screenToShow === INITIAL_SCREEN_ID ? <CreateVaultScreen /> : null}
           {screenToShow === ADD_COLLATERAL_SCREEN_ID ? <AddCollateralScreen /> : null}
+          {screenToShow === CONFIRM_STATS_SCREEN_ID ? <ConfirmStats /> : null}
           {screenToShow === BORROW_SCREEN_ID && <BorrowScreen setCurrentSymbol={setCurrentSymbol} />}
           {screenToShow === CONFIRMATION_SCREEN_ID ? <ConfirmationScreen /> : null}
         </LoansModalBase>

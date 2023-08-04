@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useCallback, useMemo } from 'react'
+import React, { useMemo } from 'react'
 
 // providers
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
@@ -11,7 +11,6 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 // utils
 import {
   checkWhetherTokenIsCollateralToken,
-  checkWhetherTokenIsLoanToken,
   getTokenDataByAddress,
   isTezosAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
@@ -29,13 +28,17 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 // styles
 import colors from 'styles/colors'
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
-import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { CollateralInputWrapper, DeleteCollateralInputIconWrapper, ModalStatsBlock } from '../createNewVault.style'
 import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 
 // consts
-import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import {
+  BUTTON_PRIMARY,
+  BUTTON_SECONDARY,
+  BUTTON_SIMPLE,
+  BUTTON_WIDE,
+} from 'app/App.components/Button/Button.constants'
 import {
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
@@ -43,27 +46,19 @@ import {
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
-import { BORROW_SCREEN_ID } from '../helpers/createNewVault.consts'
+import { CONFIRM_STATS_SCREEN_ID, INITIAL_SCREEN_ID } from '../helpers/createNewVault.consts'
 import { BORROW_CAPACITY, COLLATERAL_VALUE } from 'texts/tooltips/vault.text'
 
 // types
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { CREATE_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
-import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { sleep } from 'utils/api/sleep'
-import { createVault } from 'providers/VaultsProvider/actions/vaults.actions'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 export const AddCollateralScreen = () => {
-  const { apolloClient } = useApolloContext()
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
-  const { bug, info } = useToasterContext()
-  const { userAddress, userTokensBalances } = useUserContext()
+  const { userTokensBalances } = useUserContext()
+
+  console.log({ tokensMetadata, tokensPrices, collateralTokens })
   const {
     preferences: { themeSelected },
-    contractAddresses: { vaultFactoryAddress },
   } = useDappConfigContext()
   const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
   const {
@@ -71,113 +66,9 @@ export const AddCollateralScreen = () => {
     selectedCollaterals,
     updateSelectedCollaterals,
     updateScreenToShow,
-    isVaultCreating,
     hasXTZTokenSelected,
     borrowCapacity,
-    newVault,
-    updateVaultCreating,
-    vaultInputState,
-    updateNewVault,
-    data,
   } = useCreateVaultContext()
-
-  const { marketTokenAddress, setCreatedVaultAddress } = data ?? {}
-
-  // Actions --------------------------------------------------------------------
-  const getNewVaultData = useCallback(
-    async (retries = 1) => {
-      try {
-        const newVaultData = await apolloClient.query({
-          query: GET_NEW_VAULT,
-          fetchPolicy: 'no-cache',
-          variables: {
-            userAddress: userAddress,
-            vaultName: vaultInputState.name,
-          },
-        })
-
-        if (newVaultData.error) {
-          console.error('loading new vault error', newVaultData.error)
-          throw new Error(newVaultData.error.message)
-        }
-
-        if (newVaultData.data.vault.length) {
-          const { address, id } = newVaultData.data.vault[0]
-          setCreatedVaultAddress?.(address)
-          updateNewVault({
-            address,
-            id,
-          })
-          updateVaultCreating(false)
-          // updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)
-          // TODO remove retry after indexer update
-        } else if (retries !== 0) {
-          info('Refetching new vault', 'Trying to refetch the new vault data. Plases wait 7 seconds...')
-          await sleep(7000)
-          await getNewVaultData(retries - 1)
-        } else {
-          bug(
-            "Can't fetch new vault data, try reload the page and find your newly created vault in the the list of vaults",
-            'Update Vault Error',
-          )
-        }
-      } catch (e) {
-        bug('Fetch Error', 'Error occured while loading latest created vault, please reload the page')
-      }
-    },
-    [apolloClient, bug, info, setCreatedVaultAddress, userAddress, vaultInputState.name],
-  )
-
-  //   create vault action -----------------------------------------------------------------------
-  const createVaultAction = useCallback(async () => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return null
-    }
-
-    const loanToken = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata })
-
-    if (loanToken && checkWhetherTokenIsLoanToken(loanToken) && vaultFactoryAddress) {
-      updateVaultCreating(true)
-
-      const tokensArr = selectedCollateralsAddresses.reduce<any>((acc, address) => {
-        const { amount } = selectedCollaterals[address]
-        const collateralToken = getTokenDataByAddress({
-          tokenAddress: address,
-          tokensMetadata,
-          tokensPrices,
-        })
-
-        acc.push({ ...collateralToken, amount })
-        return acc
-      }, [])
-
-      return await createVault(
-        userAddress,
-        loanToken.loanData.indexerName,
-        vaultInputState.name,
-        vaultFactoryAddress,
-        tokensArr,
-        choosenBaker?.bakerAddress ?? null,
-      )
-    }
-
-    return null
-  }, [bug, marketTokenAddress, tokensMetadata, userAddress, vaultFactoryAddress, vaultInputState.name])
-
-  const createVaultActionProps: HookContractActionArgs = useMemo(
-    () => ({
-      actionType: CREATE_VAULT_ACTION,
-      actionFn: createVaultAction,
-      dappActionCallback: async () => {
-        await getNewVaultData()
-      },
-      isSilentAction: true,
-    }),
-    [createVaultAction, getNewVaultData, updateVaultCreating],
-  )
-
-  const { action: createVaultHandler } = useContractAction(createVaultActionProps)
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd add new collateral)
   const mappedAvaliableCollaterals = useMemo(() => {
@@ -220,16 +111,14 @@ export const AddCollateralScreen = () => {
     }
 
     return reducedCollaterals
-  }, [collateralTokens, selectedCollaterals, selectedCollateralsAddresses, tokensMetadata, tokensPrices])
+  }, [collateralTokens, selectedCollaterals, selectedCollateralsAddresses.length, tokensMetadata, tokensPrices])
 
   const nextAvaliableCollateralToAdd = Object.values(mappedAvaliableCollaterals).find(
     ({ disabled, tokenAddress }) => !disabled && !selectedCollateralsAddresses.includes(tokenAddress),
   )
 
   const isAddCollateralContinueDisabled = Boolean(
-    isVaultCreating ||
-      newVault === null ||
-      (hasXTZTokenSelected && !choosenBaker) ||
+    (hasXTZTokenSelected && !choosenBaker) ||
       !selectedCollateralsAddresses.every((tokenAddress) => {
         return selectedCollaterals[tokenAddress].validation === INPUT_STATUS_SUCCESS
       }),
@@ -480,25 +369,21 @@ export const AddCollateralScreen = () => {
           </div>
         </ModalStatsBlock>
 
-        <div className="manage-btn">
+        <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
+          <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={() => updateScreenToShow(INITIAL_SCREEN_ID)}>
+            <Icon id="arrowLeft" />
+            Back
+          </Button>
           <Button
             kind={BUTTON_PRIMARY}
             form={BUTTON_WIDE}
-            onClick={createVaultHandler}
-            // onClick={() => updateScreenToShow(BORROW_SCREEN_ID)}
+            onClick={() => updateScreenToShow(CONFIRM_STATS_SCREEN_ID)}
             disabled={isAddCollateralContinueDisabled}
           >
             Continue
             <Icon id="arrowRight" />
           </Button>
         </div>
-
-        {isVaultCreating ? (
-          <div className="creating-vault-loader-wrapper">
-            Creating Vault
-            <SpinnerCircleLoaderStyled />
-          </div>
-        ) : null}
       </div>
     </div>
   )

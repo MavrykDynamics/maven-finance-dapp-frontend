@@ -3,6 +3,7 @@ import {
   ADD_COLLATERAL_SCREEN_ID,
   BORROW_SCREEN_ID,
   CONFIRMATION_SCREEN_ID,
+  CONFIRM_STATS_SCREEN_ID,
   INITIAL_SCREEN_ID,
 } from './createNewVault.consts'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
@@ -11,6 +12,7 @@ import { CreateVaultPopupDataType } from 'providers/LoansProvider/helpers/LoansM
 export type ScreenType =
   | typeof INITIAL_SCREEN_ID
   | typeof ADD_COLLATERAL_SCREEN_ID
+  | typeof CONFIRM_STATS_SCREEN_ID
   | typeof BORROW_SCREEN_ID
   | typeof CONFIRMATION_SCREEN_ID
 
