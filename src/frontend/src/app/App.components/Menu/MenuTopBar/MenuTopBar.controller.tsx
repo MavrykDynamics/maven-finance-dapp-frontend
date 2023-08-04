@@ -28,7 +28,15 @@ type MenuTopBarProps = {
 }
 
 export const PRODUCTS_LINKS = [
-  { name: 'Dapp', href: 'https://front-dev.mavryk-dapp.pages.dev', disabled: false, path: '/' },
+  {
+    name: 'Dapp',
+    href:
+      process.env.REACT_APP_IS_DEMO === 'true'
+        ? 'https://ghostnet.mavryk.finance/'
+        : 'https://front-dev.mavryk-dapp.pages.dev',
+    disabled: false,
+    path: '/',
+  },
   {
     name: 'Liquidity Baking',
     href: 'https://mavryk.finance/liquidity-baking',
