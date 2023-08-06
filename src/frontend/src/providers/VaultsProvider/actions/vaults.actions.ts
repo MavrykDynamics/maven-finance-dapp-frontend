@@ -301,8 +301,17 @@ export const createVault = async (
         })[]
       >
     >(
-      async (promiseAcc, { id, type, address, amount, loanData: { isStaked } }) => {
+      async (promiseAcc, { id, type, address, amount, loanData: { isStaked, indexerName } }) => {
         const acc = await promiseAcc
+
+        // if (isStaked) {
+        //   const controllerContract = await tezos.wallet.at(lendingControllerAddress)
+        //   acc.push({
+        //     kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+        //     ...controllerContract.methods.vaultDepositStakedToken(indexerName, vaultId, amount).toTransferParams(),
+        //   })
+        //   return acc
+        // }
 
         if (type === 'fa12') {
           const contract = await tezos.wallet.at(address)
@@ -314,8 +323,7 @@ export const createVault = async (
         }
 
         if (type === 'fa2') {
-          const _address = isStaked ? lendingControllerAddress : address
-          const contract = await tezos.wallet.at(_address)
+          const contract = await tezos.wallet.at(address)
 
           const fa2AddOperatorsBatchObject = getBatchObject_fa2(
             userAddress,
