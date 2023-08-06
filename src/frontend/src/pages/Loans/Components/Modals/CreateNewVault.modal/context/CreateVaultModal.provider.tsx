@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { createVaultModalContext } from './createVaultModalContext'
 import {
   CreateNewModalProps,
@@ -21,39 +21,39 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
   const { tokensPrices, tokensMetadata } = useTokensContext()
   const [modalState, setModalState] = useState<CreateVaultModalState>(DEFAULT_CREATE_VAULT_STATE)
 
-  const resetCreateVaultModalState = () => {
+  const resetCreateVaultModalState = useCallback(() => {
     setModalState(DEFAULT_CREATE_VAULT_STATE)
-  }
+  }, [])
 
-  const updateScreenToShow = (screenId: ScreenType) => {
+  const updateScreenToShow = useCallback((screenId: ScreenType) => {
     setModalState((prev) => ({
       ...prev,
       screenToShow: screenId,
     }))
-  }
+  }, [])
 
-  const updateInputVaultState = (vaultData: Partial<VaultInputState>) => {
+  const updateInputVaultState = useCallback((vaultData: Partial<VaultInputState>) => {
     setModalState((prev) => ({
       ...prev,
       vaultInputState: { ...prev.vaultInputState, ...vaultData },
     }))
-  }
+  }, [])
 
-  const updateVaultCreating = (value: boolean) => {
+  const updateVaultCreating = useCallback((value: boolean) => {
     setModalState((prev) => ({
       ...prev,
       isVaultCreating: value,
     }))
-  }
+  }, [])
 
-  const updateNewVault = (newVault: NewVaultType) => {
+  const updateNewVault = useCallback((newVault: NewVaultType) => {
     setModalState((prev) => ({
       ...prev,
       newVault,
     }))
-  }
+  }, [])
 
-  const updateSelectedCollaterals = (selectedCollaterals: SelectedCollateralsType) => {
+  const updateSelectedCollaterals = useCallback((selectedCollaterals: SelectedCollateralsType) => {
     const addresses = Object.keys(selectedCollaterals)
 
     setModalState((prev) => ({
@@ -62,14 +62,14 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
       selectedCollateralsAddresses: addresses,
       hasXTZTokenSelected: addresses.find((tokenAddress) => isTezosAsset(tokenAddress)),
     }))
-  }
+  }, [])
 
-  const setFinalBorrowInputAmount = ({ amount, rate, symbol }: FinalBorrowInputDataType) => {
+  const setFinalBorrowInputAmount = useCallback(({ amount, rate, symbol }: FinalBorrowInputDataType) => {
     setModalState((prev) => ({
       ...prev,
       finalBorrowInputData: { amount: prev.finalBorrowInputData.amount + amount, rate, symbol },
     }))
-  }
+  }, [])
 
   const collateralsBalance = useMemo(
     () =>

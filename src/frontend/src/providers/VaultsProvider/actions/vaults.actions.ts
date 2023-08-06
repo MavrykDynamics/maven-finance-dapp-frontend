@@ -5,7 +5,7 @@ import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/es
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 // consts
-import { OpKind, TransferParams } from '@taquito/taquito'
+import { ContractAbstraction, OpKind, TezosToolkit, TransferParams, Wallet } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // types
@@ -36,21 +36,6 @@ export const changeVaultNameAction = async (
     return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
-
-// create vault
-// export const createVault = async (loanTokenName: string, vaultName: string, vaultFactoryAddress: string) => {
-//   try {
-//     // prepare and send transaction
-//     const tezos = await DAPP_INSTANCE.tezos()
-//     const contract = await tezos.wallet.at(vaultFactoryAddress)
-//     const vaultCreateMetaData = contract?.methods.createVault(null, loanTokenName, vaultName, [], 'any')
-
-//     return await getEstimationResult(vaultCreateMetaData)
-//   } catch (error) {
-//     const e = unknownToError(error)
-//     return { actionSuccess: false, error: new WalletOperationError(e) }
-//   }
-// }
 
 // borrow asset from the vault
 export const borrowVaultAssetAction = async (
@@ -267,14 +252,13 @@ export const repayFullAndCloseVaultAction = async (
   }
 }
 
-// ---------------------------------------------
-
 // create vault
 export const createVault = async (
   userAddress: string,
   loanTokenName: string,
   vaultName: string,
   vaultFactoryAddress: string,
+  lendingControllerAddress: string,
   collateralTokens: Array<
     LoansCollateralTokenMetadataType & {
       amount: number
@@ -285,156 +269,132 @@ export const createVault = async (
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(vaultFactoryAddress)
 
-    const operationKind = OpKind.TRANSACTION as OpKind.TRANSACTION
+    const vaultFactoryContract = await tezos.wallet.at(vaultFactoryAddress)
 
-    const userCreatesNewVaultOperation = contract.methods.createVault(
-      delegateToAddress, // bakery address to delegate tez to. Can also be null. Same as before update
-      loanTokenName, // loan token name. Same as before update
-      vaultName, // vault name. Same as before update
-      [
-        {
-          amount: collateralTokens[0].amount, //Amount of tez to deposit as collateral. Note it also needs to be sent in the
-          // .send() at the end of this method call. This is not new, its how its done for the normal collateral deposit
-          tokenName: 'tez',
-        },
-      ],
-      'any', // depositors config type - any / whitelist. Same as before update
+    const _collaterals = collateralTokens.reduce<{ amount: number; tokenName: TokenType }[]>(
+      (acc, { amount, loanData: { indexerName } }) => {
+        acc.push({
+          amount,
+          tokenName: indexerName,
+        })
+
+        return acc
+      },
+      [],
     )
 
-    // return { actionSuccess: true, operation: userCreatesNewVaultOperation }
+    const tezTokenData = _collaterals.reduce<{ amount?: number; mutez?: boolean }>((acc, { amount, tokenName }) => {
+      if (tokenName === 'tez') {
+        acc = {
+          amount,
+          mutez: true,
+        }
+      }
+      return acc
+    }, {})
 
-    return await getEstimationResult(userCreatesNewVaultOperation, {
-      params: { mutez: true, amount: collateralTokens[0].amount },
-    })
-    // const { arr, lastOperator, tezData } = await collateralTokens.reduce<
-    //   Promise<{
-    //     arr: Array<TransferParams & { kind: OpKind.TRANSACTION }>
-    //     lastOperator: (TransferParams & { kind: OpKind.TRANSACTION }) | null
-    //     tezData: { amount: number; mutez: boolean } | null
-    //   }>
-    // >(async (promiseAcc, { amount, id, address, type }) => {
-    //   const acc = await promiseAcc
+    const batchArr = await collateralTokens.reduce<
+      Promise<
+        (TransferParams & {
+          kind: OpKind.TRANSACTION
+        })[]
+      >
+    >(
+      async (promiseAcc, { id, type, address, amount, loanData: { isStaked } }) => {
+        const acc = await promiseAcc
 
-    //   // TODO ask smvk for createVault
-    //   // if (isStaked) {
-    //   //   const controllerContract = await tezos.wallet.at(lendingControllerAddress)
-    //   //   acc.push({
-    //   //     kind: operationKind,
-    //   //     ...controllerContract.methods.vaultDepositStakedToken(indexerName, vaultId, amount).toTransferParams(),
-    //   //   })
-    //   //   return acc
-    //   // }
+        if (type === 'fa12') {
+          const contract = await tezos.wallet.at(address)
 
-    //   if (type === 'fa2') {
-    //     const assetContract = await tezos.wallet.at(address)
+          const fa12ResetApprovalBatchObject = getBacthObject_fa12(vaultFactoryAddress, contract, 0)
+          const fa12AddApprovalBatchObject = getBacthObject_fa12(vaultFactoryAddress, contract, amount)
 
-    //     const fa2AddOperatorsBatchObject = {
-    //         kind: operationKind,
-    //         ...assetContract.methods
-    //           .update_operators([
-    //             {
-    //               add_operator: {
-    //                 owner: userAddress,
-    //                 operator: vaultFactoryAddress,
-    //                 token_id: id, // Should be a number, usually 0
-    //               },
-    //             },
-    //           ])
-    //           .toTransferParams(),
-    //       },
-    //       fa2RemoveOperatorsBatchObject = {
-    //         kind: operationKind,
-    //         ...assetContract.methods
-    //           .update_operators([
-    //             {
-    //               remove_operator: {
-    //                 owner: userAddress,
-    //                 operator: vaultFactoryAddress,
-    //                 token_id: id, // Should be a number, usually 0
-    //               },
-    //             },
-    //           ])
-    //           .toTransferParams(),
-    //       }
+          acc.unshift(fa12ResetApprovalBatchObject, fa12AddApprovalBatchObject)
+        }
 
-    //     // TODO add remevo at the end of the batrch arr
-    //     acc.lastOperator = fa2RemoveOperatorsBatchObject
-    //     acc.arr.push(fa2AddOperatorsBatchObject)
+        if (type === 'fa2') {
+          const _address = isStaked ? lendingControllerAddress : address
+          const contract = await tezos.wallet.at(_address)
 
-    //     return acc
-    //   }
+          const fa2AddOperatorsBatchObject = getBatchObject_fa2(
+            userAddress,
+            vaultFactoryAddress,
+            contract,
+            'add_operator',
+            id,
+          )
+          const fa2RemoveOperatorsBatchObject = getBatchObject_fa2(
+            userAddress,
+            vaultFactoryAddress,
+            contract,
+            'remove_operator',
+            id,
+          )
 
-    //   if (type === 'fa12') {
-    //     const assetContract = await tezos.wallet.at(address)
+          acc.unshift(fa2AddOperatorsBatchObject)
+          acc.push(fa2RemoveOperatorsBatchObject)
+        }
 
-    //     const fa12ResetApprovalBatchObject = {
-    //         kind: operationKind,
-    //         ...assetContract.methods
-    //           .approve(
-    //             vaultFactoryAddress, // Address to reset the spending allowance of
-    //             0, // Set to 0 to the address can't spend any tokens
-    //           )
-    //           .toTransferParams(),
-    //       },
-    //       fa12AddApprovalBatchObject = {
-    //         kind: operationKind,
-    //         ...assetContract.methods
-    //           .approve(
-    //             vaultFactoryAddress, // Address to approve to spend X tokens of the user
-    //             amount, // X amount of tokens an address will be approved to spend
-    //           )
-    //           .toTransferParams(),
-    //       }
+        return acc
+      },
+      Promise.resolve([
+        {
+          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+          ...vaultFactoryContract.methods
+            .createVault(delegateToAddress, loanTokenName, vaultName, _collaterals, 'any')
+            .toTransferParams(),
+          ...tezTokenData,
+        },
+      ]),
+    )
 
-    //     acc.arr.push(fa12ResetApprovalBatchObject, fa12AddApprovalBatchObject)
-    //     return acc
-    //   }
-
-    //   if (type === 'tez') {
-    //     acc.tezData = {
-    //       amount, // Need to add the amount of tez being sent
-    //       mutez: true,
-    //     }
-    //   }
-
-    //   return acc
-    // }, Promise.resolve({ arr: [], lastOperator: null, tezData: null }))
-
-    // const selectedCollateralsDataArr = collateralTokens.reduce<
-    //   {
-    //     amount: number
-    //     tokenName: TokenType
-    //   }[]
-    // >((acc, { amount, type }) => {
-    //   acc.push({
-    //     amount,
-    //     tokenName: type,
-    //   })
-    //   return acc
-    // }, [])
-
-    // const batchedCreateVaultData = {
-    //   kind: operationKind,
-    //   ...contract.methods
-    //     .createVault(
-    //       delegateToAddress, // null OR the bakery address to delegate the collateralized tez to
-    //       loanTokenName, // loan token name
-    //       vaultName, // vault name
-    //       selectedCollateralsDataArr, // arr of deposited collateral tokens with amount
-    //       'any', // depositors config type - any / whitelist
-    //     )
-    //     .toTransferParams(),
-    //   ...tezData, // only for tez token, if it's null - it will provide no data
-    // }
-
-    // const batchArr = [...arr, batchedCreateVaultData]
-    // if (lastOperator) batchArr.push(lastOperator)
-
-    // return await getEstimationBatchResult(tezos, batchArr)
+    return await getEstimationBatchResult(tezos, batchArr)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
+
+// create vault helpers -------------------
+
+function getBatchObject_fa2(
+  userAddress: string,
+  vaultFactoryAddress: string,
+  factoryContract: PromiseResolvedType<ReturnType<TezosToolkit['wallet']['at']>>,
+  operation: 'add_operator' | 'remove_operator',
+  token_id: number,
+) {
+  return {
+    kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+    ...factoryContract.methods
+      .update_operators([
+        {
+          [operation]: {
+            owner: userAddress,
+            operator: vaultFactoryAddress,
+            token_id,
+          },
+        },
+      ])
+      .toTransferParams(),
+  }
+}
+
+function getBacthObject_fa12(
+  vaultFactoryAddress: string,
+  factoryContract: PromiseResolvedType<ReturnType<TezosToolkit['wallet']['at']>>,
+  amount = 0,
+) {
+  return {
+    kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+    ...factoryContract.methods
+      .approve(
+        vaultFactoryAddress, // Address to reset the spending allowance of
+        amount, // Set to 0 to the address can't spend any tokens
+      )
+      .toTransferParams(),
+  }
+}
+
+// ----------------------------------------

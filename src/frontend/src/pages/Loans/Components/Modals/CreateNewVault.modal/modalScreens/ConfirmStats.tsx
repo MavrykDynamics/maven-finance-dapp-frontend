@@ -23,15 +23,17 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ConfirmStatsVaultOverview } from '../createNewVault.style'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 
 export const ConfirmStats = () => {
   const { apolloClient } = useApolloContext()
-  const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { vaultsMapper } = useVaultsContext()
 
   const { bug, info } = useToasterContext()
   const { userAddress } = useUserContext()
   const {
-    contractAddresses: { vaultFactoryAddress },
+    contractAddresses: { vaultFactoryAddress, lendingControllerAddress },
   } = useDappConfigContext()
   const { choosenBaker } = useXtzBakersForDD()
   const {
@@ -49,15 +51,10 @@ export const ConfirmStats = () => {
   const { marketTokenAddress, setCreatedVaultAddress } = data ?? {}
 
   useEffect(() => {
-    async function ex() {
-      // TODO at rhis time vaults provider don't have new vault data - so it will lead to 404 page
-      // fix this issue
+    if (newVault && vaultsMapper[newVault.address]) {
       updateScreenToShow(BORROW_SCREEN_ID)
     }
-    if (newVault) {
-      ex()
-    }
-  }, [newVault])
+  }, [newVault, updateScreenToShow, vaultsMapper])
 
   // Actions --------------------------------------------------------------------
   const getNewVaultData = useCallback(
@@ -100,7 +97,16 @@ export const ConfirmStats = () => {
         bug('Fetch Error', 'Error occured while loading latest created vault, please reload the page')
       }
     },
-    [apolloClient, bug, info, setCreatedVaultAddress, userAddress, vaultInputState.name],
+    [
+      apolloClient,
+      bug,
+      info,
+      setCreatedVaultAddress,
+      updateNewVault,
+      updateVaultCreating,
+      userAddress,
+      vaultInputState.name,
+    ],
   )
 
   //   create vault action -----------------------------------------------------------------------
@@ -112,7 +118,7 @@ export const ConfirmStats = () => {
 
     const loanToken = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata })
 
-    if (loanToken && checkWhetherTokenIsLoanToken(loanToken) && vaultFactoryAddress) {
+    if (loanToken && checkWhetherTokenIsLoanToken(loanToken) && vaultFactoryAddress && lendingControllerAddress) {
       updateVaultCreating(true)
 
       const tokensArr = selectedCollateralsAddresses.reduce<
@@ -150,6 +156,7 @@ export const ConfirmStats = () => {
         loanToken.loanData.indexerName,
         vaultInputState.name,
         vaultFactoryAddress,
+        lendingControllerAddress,
         tokensArr,
         choosenBaker?.bakerAddress ?? null,
       )
@@ -157,16 +164,18 @@ export const ConfirmStats = () => {
 
     return null
   }, [
-    bug,
-    choosenBaker?.bakerAddress,
-    marketTokenAddress,
-    selectedCollaterals,
-    selectedCollateralsAddresses,
-    tokensMetadata,
-    tokensPrices,
     userAddress,
+    marketTokenAddress,
+    tokensMetadata,
     vaultFactoryAddress,
+    lendingControllerAddress,
+    bug,
+    updateVaultCreating,
+    selectedCollateralsAddresses,
     vaultInputState.name,
+    choosenBaker?.bakerAddress,
+    selectedCollaterals,
+    tokensPrices,
   ])
 
   const createVaultActionProps: HookContractActionArgs = useMemo(
