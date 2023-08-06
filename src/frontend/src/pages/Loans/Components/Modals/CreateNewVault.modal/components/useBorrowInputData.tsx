@@ -1,5 +1,4 @@
 import {
-  ERR_MSG_TOAST,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
   InputStatusType,
@@ -7,7 +6,6 @@ import {
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
-import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -16,6 +14,12 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import React, { useCallback, useMemo, useState } from 'react'
 import { checkNan } from 'utils/checkNan'
 
+/**
+ * used only for borrow input
+ * @param borrowedAssetAddress borrowed asset address taken fromn vault object
+ * @param borrowCapacity borrow capacity take from vault object
+ * @returns default data that is used for stats and other calculations
+ */
 export const useBorrowInputData = (borrowedAssetAddress = '', borrowCapacity = 0) => {
   const { userTokensBalances } = useUserContext()
 
@@ -51,8 +55,6 @@ export const useBorrowInputData = (borrowedAssetAddress = '', borrowCapacity = 0
           byDecimalPlaces: decimals || assetDecimalsToShow,
         },
       })
-
-      console.log(validationStatus)
 
       setInputData({
         ...inputData,
@@ -98,7 +100,6 @@ export const useBorrowInputData = (borrowedAssetAddress = '', borrowCapacity = 0
       inputStatus: inputData.validationStatus,
       convertedValue: inputAmount * rate,
       inputSize: INPUT_LARGE,
-      validationFns: [[validateInputLength, ERR_MSG_TOAST]],
     }),
     [
       userAssetBalance,

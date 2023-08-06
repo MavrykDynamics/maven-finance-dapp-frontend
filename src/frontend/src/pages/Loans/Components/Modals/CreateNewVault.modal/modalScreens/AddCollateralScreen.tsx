@@ -40,6 +40,7 @@ import {
   BUTTON_WIDE,
 } from 'app/App.components/Button/Button.constants'
 import {
+  ERR_MSG_INPUT,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_SUCCESS,
@@ -51,6 +52,8 @@ import { BORROW_CAPACITY, COLLATERAL_VALUE } from 'texts/tooltips/vault.text'
 
 // types
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
@@ -265,6 +268,7 @@ export const AddCollateralScreen = () => {
                           convertedValue: rate * Number(amount),
                           balance: userAssetBalance,
                           inputSize: INPUT_LARGE,
+                          validationFns: [[validateInputLength, ERR_MSG_INPUT]],
                         }}
                       >
                         <InputPinnedDropDown>
@@ -336,39 +340,41 @@ export const AddCollateralScreen = () => {
           + Add more assets as collateral
         </Button>
 
-        <ModalStatsBlock>
-          <div className="block-name">New Vault stats</div>
-          <div className="collateral-screen">
-            <VaultOverview>
-              <div className="line">
-                <ThreeLevelListItem>
-                  <div className="name">
-                    Total Collateral Value
-                    <CustomTooltip
-                      iconId="info"
-                      defaultStrokeColor={colors[themeSelected].textColor}
-                      text={COLLATERAL_VALUE}
-                      className="tooltip"
-                    />
-                  </div>
-                  <CommaNumber value={totalCollateralValue} decimalsToShow={0} className="value" />
-                </ThreeLevelListItem>
-                <ThreeLevelListItem>
-                  <div className="name">
-                    Borrow Capacity
-                    <CustomTooltip
-                      iconId="info"
-                      defaultStrokeColor={colors[themeSelected].textColor}
-                      text={BORROW_CAPACITY}
-                      className="tooltip"
-                    />
-                  </div>
-                  <CommaNumber value={borrowCapacity} decimalsToShow={0} className="value" />
-                </ThreeLevelListItem>
-              </div>
-            </VaultOverview>
-          </div>
-        </ModalStatsBlock>
+        <MemoizedComponent returnMemoizedComponent={isAddCollateralContinueDisabled}>
+          <ModalStatsBlock>
+            <div className="block-name">New Vault stats</div>
+            <div className="collateral-screen">
+              <VaultOverview>
+                <div className="line">
+                  <ThreeLevelListItem>
+                    <div className="name">
+                      Total Collateral Value
+                      <CustomTooltip
+                        iconId="info"
+                        defaultStrokeColor={colors[themeSelected].textColor}
+                        text={COLLATERAL_VALUE}
+                        className="tooltip"
+                      />
+                    </div>
+                    <CommaNumber value={totalCollateralValue} decimalsToShow={0} className="value" />
+                  </ThreeLevelListItem>
+                  <ThreeLevelListItem>
+                    <div className="name">
+                      Borrow Capacity
+                      <CustomTooltip
+                        iconId="info"
+                        defaultStrokeColor={colors[themeSelected].textColor}
+                        text={BORROW_CAPACITY}
+                        className="tooltip"
+                      />
+                    </div>
+                    <CommaNumber value={borrowCapacity} decimalsToShow={0} className="value" />
+                  </ThreeLevelListItem>
+                </div>
+              </VaultOverview>
+            </div>
+          </ModalStatsBlock>
+        </MemoizedComponent>
 
         <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
           <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={backHandler}>

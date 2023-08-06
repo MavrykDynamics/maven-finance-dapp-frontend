@@ -24,7 +24,7 @@ import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // consts
-import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import { ERR_MSG_INPUT, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { CONFIRMATION_SCREEN_ID } from '../helpers/createNewVault.consts'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -41,6 +41,9 @@ import { useBorrowInputData } from '../components/useBorrowInputData'
 
 // types
 import { NewVaultType } from '../helpers/createNewVault.types'
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { Settings } from 'app/App.components/Input/newInput.type'
 
 type BorrowScreenProps = {
   setCurrentSymbol: React.Dispatch<React.SetStateAction<string>>
@@ -101,6 +104,14 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [currentCollateralBalance, currentBorrowedAmount, inputAmount, rate, borrowCapacity])
 
+  const newSettings: Settings = useMemo(
+    () => ({
+      ...settings,
+      validationFns: [[validateInputLength, ERR_MSG_INPUT]],
+    }),
+    [settings],
+  )
+
   // TODO sxtract to custom hook (same code <BorrowingExpandCardBorrowSection />)
   return (
     <BorrowScreenWrapper>
@@ -141,21 +152,23 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
         <Input
           className={classNames('pinned-dropdown', { 'input-with-rate': rate })}
           inputProps={inputProps}
-          settings={settings}
+          settings={newSettings}
         >
           <InputPinnedTokenInfo>
             <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
           </InputPinnedTokenInfo>
         </Input>
       </div>
-      <BorrowScreenBottomStats
-        inputAmount={inputAmount}
-        assetDecimalsToShow={assetDecimalsToShow}
-        daoFee={daoFee}
-        futureCollateralRatio={futureCollateralRatio}
-        futureBorrowCapacity={futureBorrowCapacity}
-        headerText="New Vault stats"
-      />
+      <MemoizedComponent returnMemoizedComponent={isDisabledButton}>
+        <BorrowScreenBottomStats
+          inputAmount={inputAmount}
+          assetDecimalsToShow={assetDecimalsToShow}
+          daoFee={daoFee}
+          futureCollateralRatio={futureCollateralRatio}
+          futureBorrowCapacity={futureBorrowCapacity}
+          headerText="New Vault stats"
+        />
+      </MemoizedComponent>
 
       <div className="manage-btn">
         <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={continueHandler} disabled={isDisabledButton}>

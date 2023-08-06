@@ -46,6 +46,7 @@ import { borrowVaultAssetAction } from 'providers/VaultsProvider/actions/vaults.
 export const ConfirmationScreen = () => {
   const {
     contractAddresses: { lendingControllerAddress },
+    globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { vaultsMapper } = useVaultsContext()
   const { choosenBaker } = useXtzBakersForDD()
@@ -53,11 +54,9 @@ export const ConfirmationScreen = () => {
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
   const {
-    hasXTZTokenSelected,
     selectedCollateralsAddresses,
     selectedCollaterals,
     updateScreenToShow,
-    isVaultCreating,
     newVault,
     borrowCapacity,
     closePopup,
@@ -143,13 +142,13 @@ export const ConfirmationScreen = () => {
     [selectedCollaterals, selectedCollateralsAddresses, tokensMetadata, tokensPrices],
   )
 
-  const isAddCollateralContinueDisabled = Boolean(
-    isVaultCreating ||
-      (hasXTZTokenSelected && !choosenBaker) ||
+  const isBorrowBtnDisabled =
+    isActionActive ||
+    Boolean(
       !selectedCollateralsAddresses.every((tokenAddress) => {
         return selectedCollaterals[tokenAddress].validation === INPUT_STATUS_SUCCESS
       }),
-  )
+    )
 
   return (
     <ConfirmationScreenWrapper>
@@ -227,16 +226,11 @@ export const ConfirmationScreen = () => {
       </div>
 
       <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
-        <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={backHandler}>
+        <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={backHandler} disabled={isActionActive}>
           <Icon id="arrowLeft" />
           Back
         </NewButton>
-        <NewButton
-          kind={BUTTON_PRIMARY}
-          form={BUTTON_WIDE}
-          disabled={isAddCollateralContinueDisabled}
-          onClick={borrowAsserHandler}
-        >
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isBorrowBtnDisabled} onClick={borrowAsserHandler}>
           <Icon id="loans" />
           Borrow
         </NewButton>
