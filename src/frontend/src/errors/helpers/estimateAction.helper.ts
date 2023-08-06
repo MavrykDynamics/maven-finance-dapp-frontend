@@ -14,7 +14,6 @@ export async function getEstimationResult(
   const op = await estimateExecution(metadata, args?.params)
 
   if (op?.error) {
-    console.log(op.error)
     return { actionSuccess: false, error: op.error }
   }
 

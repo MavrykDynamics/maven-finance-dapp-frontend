@@ -56,7 +56,6 @@ export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const { userTokensBalances } = useUserContext()
 
-  console.log({ tokensMetadata, tokensPrices, collateralTokens })
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
