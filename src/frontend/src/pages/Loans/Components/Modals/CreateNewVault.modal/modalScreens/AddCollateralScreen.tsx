@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 
 // providers
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
@@ -190,6 +190,9 @@ export const AddCollateralScreen = () => {
       },
     })
 
+  const continueHandler = useCallback(() => updateScreenToShow(CONFIRM_STATS_SCREEN_ID), [updateScreenToShow])
+  const backHandler = useCallback(() => updateScreenToShow(INITIAL_SCREEN_ID), [updateScreenToShow])
+
   const totalCollateralValue = useMemo(
     () =>
       selectedCollateralsAddresses.reduce<number>((acc, address) => {
@@ -205,7 +208,6 @@ export const AddCollateralScreen = () => {
   )
 
   // collateral-list-overflow
-
   const isContainingTwoCollaterals = selectedCollateralsAddresses.length > 2
 
   return (
@@ -369,14 +371,14 @@ export const AddCollateralScreen = () => {
         </ModalStatsBlock>
 
         <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
-          <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={() => updateScreenToShow(INITIAL_SCREEN_ID)}>
+          <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={backHandler}>
             <Icon id="arrowLeft" />
             Back
           </Button>
           <Button
             kind={BUTTON_PRIMARY}
             form={BUTTON_WIDE}
-            onClick={() => updateScreenToShow(CONFIRM_STATS_SCREEN_ID)}
+            onClick={continueHandler}
             disabled={isAddCollateralContinueDisabled}
           >
             Continue

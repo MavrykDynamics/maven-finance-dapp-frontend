@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import classNames from 'classnames'
 
 // components
@@ -52,13 +52,13 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
 
-  const { newVault, updateScreenToShow, borrowCapacity, isVaultCreating } = useCreateVaultContext()
+  const { newVault, updateScreenToShow, borrowCapacity, isVaultCreating, setFinalBorrowInputAmount } =
+    useCreateVaultContext()
   const { vaultsMapper } = useVaultsContext()
   const {
     config: { daoFee },
   } = useLoansContext()
 
-  console.log(newVault, 'newVault------------------')
   const currentVault = vaultsMapper[(newVault as NewVaultType).address]
   const vaultData = useFullVault(currentVault)
 
@@ -84,6 +84,11 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   useEffect(() => {
     setCurrentSymbol(symbol)
   }, [setCurrentSymbol, symbol])
+
+  const continueHandler = useCallback(() => {
+    setFinalBorrowInputAmount({ amount: Number(inputData.amount), rate, symbol })
+    updateScreenToShow(CONFIRMATION_SCREEN_ID)
+  }, [inputData.amount, rate, setFinalBorrowInputAmount, symbol, updateScreenToShow])
 
   const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
     const futureCollateralRatio = getVaultCollateralRatio(
@@ -153,23 +158,11 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
       />
 
       <div className="manage-btn">
-        <NewButton
-          kind={BUTTON_PRIMARY}
-          form={BUTTON_WIDE}
-          onClick={() => updateScreenToShow(CONFIRMATION_SCREEN_ID)}
-          disabled={isDisabledButton}
-        >
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={continueHandler} disabled={isDisabledButton}>
           Continue
           <Icon id="arrowRight" />
         </NewButton>
       </div>
-
-      {isVaultCreating ? (
-        <div className="creating-vault-loader-wrapper">
-          Creating Vault
-          <SpinnerCircleLoaderStyled />
-        </div>
-      ) : null}
     </BorrowScreenWrapper>
   )
 }

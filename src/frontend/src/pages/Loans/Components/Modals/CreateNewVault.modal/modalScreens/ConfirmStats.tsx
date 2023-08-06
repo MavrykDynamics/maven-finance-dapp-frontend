@@ -35,6 +35,7 @@ export const ConfirmStats = () => {
   const {
     contractAddresses: { vaultFactoryAddress, lendingControllerAddress },
   } = useDappConfigContext()
+  console.log(lendingControllerAddress, 'lendingControllerAddress')
   const { choosenBaker } = useXtzBakersForDD()
   const {
     selectedCollateralsAddresses,
@@ -192,6 +193,8 @@ export const ConfirmStats = () => {
 
   const { action: createVaultHandler } = useContractAction(createVaultActionProps)
 
+  const backHandler = useCallback(() => updateScreenToShow(ADD_COLLATERAL_SCREEN_ID), [updateScreenToShow])
+
   const totalCollateralDepositedValue = useMemo(
     () =>
       selectedCollateralsAddresses.reduce<number>((acc, address) => {
@@ -281,7 +284,7 @@ export const ConfirmStats = () => {
         </div>
       </div>
       <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
-        <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={() => updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)}>
+        <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={backHandler}>
           <Icon id="arrowLeft" />
           Back
         </Button>

@@ -59,8 +59,8 @@ export const ConfirmationScreen = () => {
     updateScreenToShow,
     isVaultCreating,
     newVault,
-    setFinalBorrowInputAmount,
     borrowCapacity,
+    closePopup,
     finalBorrowInputData,
   } = useCreateVaultContext()
   const {
@@ -111,9 +111,8 @@ export const ConfirmationScreen = () => {
   }, [borrowedToken, bug, inputAmount, lendingControllerAddress, userAddress, vaultData?.vaultId])
 
   const dappCallback = useCallback(() => {
-    setFinalBorrowInputAmount({ amount: inputAmount, symbol, rate })
-    // TODO clear borrow input
-  }, [inputAmount, rate, setFinalBorrowInputAmount, symbol])
+    closePopup()
+  }, [closePopup])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -125,6 +124,8 @@ export const ConfirmationScreen = () => {
   )
 
   const { action: borrowAsserHandler } = useContractAction(contractActionProps)
+
+  const backHandler = useCallback(() => updateScreenToShow(BORROW_SCREEN_ID), [updateScreenToShow])
 
   const totalCollateralDepositedValue = useMemo(
     () =>
@@ -226,7 +227,7 @@ export const ConfirmationScreen = () => {
       </div>
 
       <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
-        <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={() => updateScreenToShow(BORROW_SCREEN_ID)}>
+        <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={backHandler}>
           <Icon id="arrowLeft" />
           Back
         </NewButton>

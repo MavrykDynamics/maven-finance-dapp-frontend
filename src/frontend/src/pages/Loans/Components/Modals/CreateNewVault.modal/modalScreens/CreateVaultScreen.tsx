@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 
 // components
 import NewButton from 'app/App.components/Button/NewButton'
@@ -40,9 +40,9 @@ export const CreateVaultScreen = () => {
     }
   }
 
-  const handleButtonClick = async () => {
+  const handleButtonClick = useCallback(async () => {
     updateScreenToShow(ADD_COLLATERAL_SCREEN_ID)
-  }
+  }, [updateScreenToShow])
 
   return (
     <>

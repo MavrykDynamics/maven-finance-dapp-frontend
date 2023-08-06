@@ -67,7 +67,7 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
   const setFinalBorrowInputAmount = useCallback(({ amount, rate, symbol }: FinalBorrowInputDataType) => {
     setModalState((prev) => ({
       ...prev,
-      finalBorrowInputData: { amount: prev.finalBorrowInputData.amount + amount, rate, symbol },
+      finalBorrowInputData: { amount, rate, symbol },
     }))
   }, [])
 
