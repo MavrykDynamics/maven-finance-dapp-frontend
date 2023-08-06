@@ -24,9 +24,14 @@ import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } f
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ConfirmStatsVaultOverview } from '../createNewVault.style'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
+import { silverColor } from 'styles'
 
 export const ConfirmStats = () => {
   const { apolloClient } = useApolloContext()
+  const { marketsMapper } = useLoansContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { vaultsMapper } = useVaultsContext()
 
@@ -49,7 +54,10 @@ export const ConfirmStats = () => {
     data,
   } = useCreateVaultContext()
 
-  const { marketTokenAddress, setCreatedVaultAddress } = data ?? {}
+  const { marketTokenAddress = '', setCreatedVaultAddress } = data ?? {}
+  const { availableLiquidity = 0 } = marketsMapper[marketTokenAddress] ?? {}
+  const { symbol = '' } = tokensMetadata[marketTokenAddress]
+  const rate = tokensPrices[symbol] ?? 0
 
   useEffect(() => {
     if (newVault && vaultsMapper[newVault.address]) {
@@ -211,6 +219,12 @@ export const ConfirmStats = () => {
     [selectedCollaterals, selectedCollateralsAddresses, tokensMetadata, tokensPrices],
   )
 
+  const borrowedAmount = 0
+  const futureBorrowCapacity = useMemo(
+    () => Math.min(Math.max(availableLiquidity, 0), totalCollateralDepositedValue / 2 - borrowedAmount * rate),
+    [availableLiquidity, rate, totalCollateralDepositedValue],
+  )
+
   return (
     <div>
       <div>
@@ -269,7 +283,7 @@ export const ConfirmStats = () => {
             <div className="name">Total Collateral Deposited</div>
             <CommaNumber value={totalCollateralDepositedValue} decimalsToShow={2} className="value" beginningText="$" />
           </ThreeLevelListItem>
-          {/* <ThreeLevelListItem className="right">
+          <ThreeLevelListItem className="right">
             <div className="name">
               Available To Borrow
               <CustomTooltip
@@ -280,7 +294,7 @@ export const ConfirmStats = () => {
               />
             </div>
             <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
-          </ThreeLevelListItem> */}
+          </ThreeLevelListItem>
         </div>
       </div>
       <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
