@@ -27,6 +27,7 @@ export type HookContractActionArgs<G = unknown> = {
   actionFn: ((args: G) => ActionReturnPayload) | (() => ActionReturnPayload)
   dappActionCallback?: () => void
   afterActionCallback?: () => void
+  errActionCallback?: () => void
   willUseSharedError?: boolean
   isSilentAction?: boolean
 }
@@ -36,6 +37,7 @@ export const useContractAction = <G>({
   actionFn,
   dappActionCallback,
   afterActionCallback,
+  errActionCallback,
   willUseSharedError = false,
   isSilentAction = false,
 }: HookContractActionArgs<G>): { action: () => Promise<void>; actionWithArgs: (args: G) => Promise<void> } => {
@@ -95,6 +97,7 @@ export const useContractAction = <G>({
       }
     } catch (e) {
       setAction(null)
+      errActionCallback?.()
       const parsedError = unknownToError(e)
       bug(parsedError.message)
     }

@@ -111,7 +111,6 @@ export const ConfirmationScreen = () => {
   }, [borrowedToken, bug, inputAmount, lendingControllerAddress, userAddress, vaultData?.vaultId])
 
   const dappCallback = useCallback(() => {
-    debugger
     closePopup()
   }, [closePopup])
 

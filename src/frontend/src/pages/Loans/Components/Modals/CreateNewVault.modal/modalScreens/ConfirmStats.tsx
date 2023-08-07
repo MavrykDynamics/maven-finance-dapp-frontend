@@ -140,9 +140,10 @@ export const ConfirmStats = () => {
       dappActionCallback: () => {
         updateScreenToShow(BORROW_SCREEN_ID)
       },
+      errActionCallback: () => updateVaultCreating(false),
       isSilentAction: true,
     }),
-    [createVaultAction, updateScreenToShow],
+    [createVaultAction, updateScreenToShow, updateVaultCreating],
   )
 
   const { action: createVaultHandler } = useContractAction(createVaultActionProps)
