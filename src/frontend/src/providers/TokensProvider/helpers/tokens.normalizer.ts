@@ -8,21 +8,22 @@ import {
   TokensContext,
   tokenMetadataSchema,
 } from '../tokens.provider.types'
-import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from 'utils/__generated__/graphql'
+import { TokensMetadataQuery } from 'utils/__generated__/graphql'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { checkWhetherTokenIsCollateralToken } from './tokens.utils'
+import { TokenPricesFeedsType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
 
 /**
  * normalizing token prices
  * @param feedsLedger feeds
  * @returns dictionary <tokenSymbol, rate>
  */
-export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscription['aggregator']) => {
-  return feedsLedger.reduce<Record<string, number>>((acc, feed) => {
-    const { symbol } = getTokenSymbolAndName(feed.name) ?? {}
+export const normalizeTokenPrices = (feedsLedger: TokenPricesFeedsType) => {
+  return feedsLedger.reduce<Record<string, number>>((acc, feedGql) => {
+    const { symbol } = getTokenSymbolAndName(feedGql.name) ?? {}
 
     if (symbol) {
-      acc[symbol] = convertNumberForClient({ number: feed.last_completed_data, grade: feed.decimals })
+      acc[symbol] = convertNumberForClient({ number: feedGql.last_completed_data, grade: feedGql.decimals })
     }
     return acc
   }, {})
@@ -40,7 +41,7 @@ const handleMvkToken = ({
   token_id: number
   tokenType: TokenType
   parsedMetadata: TokenIndexerMetadataType
-  lending_controller_collateral_tokens: TokensMetadataSubscription['token'][number]['lending_controller_collateral_tokens']
+  lending_controller_collateral_tokens: TokensMetadataQuery['token'][number]['lending_controller_collateral_tokens']
 }): {
   smvk: TokenMetadataType | null
   mvk: TokenMetadataType | null
@@ -96,7 +97,7 @@ const handleMvkToken = ({
  *
  * TODO: add farm tokens here, lack of info now
  */
-export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscription['token']) => {
+export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataQuery['token']) => {
   return tokensFromGql.reduce<Pick<TokensContext, 'tokensMetadata' | 'collateralTokens' | 'mTokens'>>(
     (
       acc,

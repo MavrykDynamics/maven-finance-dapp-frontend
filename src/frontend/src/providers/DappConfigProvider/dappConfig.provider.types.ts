@@ -25,6 +25,7 @@ export type DappConfigContext = {
   maxLengths: DappMaxLengths
   mvkFaucetAddress: string | null
   minimumStakedMvkBalance: number
+  currentIndexedLevel: number
   contractAddresses: Record<DappContractAddressesKeysType, string | null>
   xtzBakers: {
     dao: XtzBakerType

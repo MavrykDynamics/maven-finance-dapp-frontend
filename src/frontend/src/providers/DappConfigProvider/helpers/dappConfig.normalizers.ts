@@ -1,7 +1,9 @@
-import { GetContractAddressesQueryQuery, GetMaxlenghtsQueryQuery } from 'utils/__generated__/graphql'
+import { GetContractAddressesQueryQuery, InitialDappQueryQuery } from 'utils/__generated__/graphql'
 import { DappMaxLengths } from '../dappConfig.provider.types'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { MVK_DECIMALS } from 'utils/constants'
 
-export const normalizerMaxLenghts = (data: GetMaxlenghtsQueryQuery): DappMaxLengths => {
+export const normalizerMaxLenghts = (data: InitialDappQueryQuery): DappMaxLengths => {
   const {
     council_member_image_max_length,
     council_member_name_max_length,
@@ -50,6 +52,17 @@ export const normalizerMaxLenghts = (data: GetMaxlenghtsQueryQuery): DappMaxLeng
       satelliteDescriptionMaxLength: satellite_description_max_length,
       satelliteWebsiteMaxLength: satellite_website_max_length,
     },
+  }
+}
+
+export const normalizeInitialConfigData = (indexerData: InitialDappQueryQuery) => {
+  return {
+    maxLenghts: normalizerMaxLenghts(indexerData),
+    mvkFaucetAddress: indexerData.mvk_faucet[0]?.address ?? null,
+    minimumStakedMvkBalance: convertNumberForClient({
+      number: indexerData.delegation[0].minimum_smvk_balance,
+      grade: MVK_DECIMALS,
+    }),
   }
 }
 

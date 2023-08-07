@@ -54,19 +54,19 @@ const DappLibsProviders = ({ children }: { children: React.ReactNode }) => {
 
 const InitialDataDappProviders = ({ children }: { children: React.ReactNode }) => {
   return (
-    <TokensProvider>
-      <UserProvider>
-        <DataFeedsProvider>
-          <DappConfigProvider>
+    <DappConfigProvider>
+      <TokensProvider>
+        <UserProvider>
+          <DataFeedsProvider>
             <dappConfigContext.Consumer>
               {({ preferences: { themeSelected } }) => (
                 <ThemeProvider theme={themeColors[themeSelected]}>{children}</ThemeProvider>
               )}
             </dappConfigContext.Consumer>
-          </DappConfigProvider>
-        </DataFeedsProvider>
-      </UserProvider>
-    </TokensProvider>
+          </DataFeedsProvider>
+        </UserProvider>
+      </TokensProvider>
+    </DappConfigProvider>
   )
 }
 
@@ -80,6 +80,13 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
   const isInitialUserLoading = !isRunnedInitialConnect ? isUserLoading : false
 
   const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isInitialUserLoading
+
+  console.log({
+    isDappGeneralLoading,
+    isTokensLoading,
+    isFeedsLoading,
+    isInitialUserLoading,
+  })
 
   return (
     <>

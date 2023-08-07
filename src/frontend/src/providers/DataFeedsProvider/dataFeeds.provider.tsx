@@ -1,14 +1,20 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useMemo, useRef, useState } from 'react'
+import { useQuery } from '@apollo/client'
 
 // types
 import { DataFeedsContext, DataFeedsContextState } from './dataFeeds.provider.types'
-import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
 
 // helpers
-import { normalizeFeeds } from './helpers/feedsNormalizer'
-import { useSubscription } from '@apollo/client'
-import { SUBSCRIBE_FEEDS } from './queries/feeds.query'
+import { normalizeFeeds, normalizeFeedsPrices } from './helpers/feedsNormalizer'
+import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import {
+  fullFeedsQuerySchema,
+  FullFeedsQueryType,
+  smallFeedsQuerySchema,
+  SmallFeedsQueryType,
+} from './helpers/feeds.schemas'
+import { useQueryRefetch } from 'providers/common/hooks/useQueryRefetch'
 
 export const dataFeedsContext = React.createContext<DataFeedsContext>(undefined!)
 const propomotedAddresses = [
@@ -21,8 +27,11 @@ type Props = {
   children: React.ReactNode
 }
 
+// TODO: add nullable values and handle initial loading by null values
 export const DataFeedsProvider = ({ children }: Props) => {
   const { updateTokensPrices } = useTokensContext()
+
+  const initialLoadingStatus = useRef(true)
 
   const [feedsCtxState, setFeedsCtxState] = useState<DataFeedsContextState>({
     feedsAddresses: [],
@@ -30,18 +39,62 @@ export const DataFeedsProvider = ({ children }: Props) => {
     feedsCategories: [],
   })
 
-  const { loading: aggregatorLoading } = useSubscription(SUBSCRIBE_FEEDS, {
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
+  // load initial feeds data
+  const { refetch: refetchDataFeeds } = useQuery(FEEDS_QUERY, {
+    onCompleted: (data) => {
+      try {
+        initialLoadingStatus.current = false
 
-      updateDataFeeds(data.aggregator)
-      updateTokensPrices(data.aggregator)
+        const parsedFeeds = fullFeedsQuerySchema.parse(data.aggregator)
+
+        updateFullDataFeeds(parsedFeeds)
+        updateTokensPrices(parsedFeeds)
+      } catch (e) {
+        console.log('full feeds query parsing error:', { e })
+      }
     },
     onError: (error) => console.log({ error }),
   })
 
-  const updateDataFeeds = (data: SubsribeOracleDataFeedSubscription['aggregator']) => {
+  // update feeds price and track whether need to load new feed
+  const { refetch: refetchSmallFeeds } = useQuery(FEEDS_UPDATE_QUERY, {
+    skip: initialLoadingStatus.current,
+    onCompleted: (data) => {
+      try {
+        initialLoadingStatus.current = false
+
+        const parsedSmallFeeds = smallFeedsQuerySchema.parse(data.aggregator)
+
+        // if we received more feeds than we have in ctx refetch full feeds query (rare case)
+        if (data.aggregator.length !== feedsCtxState.feedsAddresses.length) {
+          refetchDataFeeds()
+          return
+        }
+
+        updateSmallDataFeeds(parsedSmallFeeds)
+        updateTokensPrices(parsedSmallFeeds)
+      } catch (e) {
+        console.log('small feeds query parsing error:', { e })
+      }
+    },
+    onError: (error) => console.log({ error }),
+  })
+
+  const refetchQueryHookOptions = useMemo(
+    () => ({
+      refetchers: [
+        {
+          refetch: refetchSmallFeeds,
+        },
+      ],
+    }),
+    [refetchSmallFeeds],
+  )
+
+  useQueryRefetch(refetchQueryHookOptions)
+
+  // normalize and update for full feeds query
+  const updateFullDataFeeds = (data: FullFeedsQueryType) => {
     const { feedsCategories, feedsAddresses, feedsMapper } = normalizeFeeds(data, propomotedAddresses)
 
     setFeedsCtxState({
@@ -52,8 +105,18 @@ export const DataFeedsProvider = ({ children }: Props) => {
     })
   }
 
+  // normalize and update for small feeds query
+  const updateSmallDataFeeds = (data: SmallFeedsQueryType) => {
+    const updatedFeeds = normalizeFeedsPrices(feedsCtxState.feedsMapper, data)
+
+    setFeedsCtxState({
+      ...feedsCtxState,
+      feedsMapper: updatedFeeds,
+    })
+  }
+
   const providerValue = useMemo(() => {
-    return { ...feedsCtxState, isLoading: aggregatorLoading }
+    return { ...feedsCtxState, isLoading: initialLoadingStatus.current }
   }, [feedsCtxState])
 
   return <dataFeedsContext.Provider value={providerValue}>{children}</dataFeedsContext.Provider>

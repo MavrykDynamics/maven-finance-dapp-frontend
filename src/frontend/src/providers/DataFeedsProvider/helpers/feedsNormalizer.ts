@@ -1,33 +1,38 @@
 import { UTCTimestamp } from 'lightweight-charts'
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
-import { Feed } from '../dataFeeds.provider.types'
-import { SubsribeFeedHistoryDataSubscription, SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
+import { DataFeedsContext, Feed } from '../dataFeeds.provider.types'
+import { SubsribeFeedHistoryDataSubscription } from 'utils/__generated__/graphql'
 
 import { convertNumberForClient, percentageDifference } from 'utils/calcFunctions'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
+import { FullFeedsQueryType, SmallFeedsQueryType, feedMetadataSchema } from './feeds.schemas'
 
-export const normalizeFeed = (feedGql: SubsribeOracleDataFeedSubscription['aggregator'][number]) => {
-  const category = feedGql?.metadata?.category ?? null
-  const icon = feedGql?.metadata?.icon ?? null
-  const network = feedGql?.network ?? null
+export const normalizeFeed = (feedGql: FullFeedsQueryType[number]) => {
+  try {
+    const feedMetadata = feedMetadataSchema.parse(feedGql.metadata)
 
-  const { oracles_aggregate, ...restOfTheItem } = feedGql
+    const { category, icon } = feedMetadata
+    const network = feedGql.network
 
-  return {
-    ...restOfTheItem,
-    oraclesAmount: oracles_aggregate?.aggregate?.count ?? 0,
-    category: category.charAt(0).toUpperCase() + category.slice(1),
-    network,
-    amount: convertNumberForClient({ number: feedGql.last_completed_data, grade: feedGql.decimals }),
-    oraclesResponces: feedGql.last_completed_data_pct_oracle_resp / 100,
-    icon,
+    const { oracles_aggregate, metadata, ...restOfTheItem } = feedGql
+
+    return {
+      ...restOfTheItem,
+      oraclesAmount: oracles_aggregate?.aggregate?.count ?? 0,
+      category: category.charAt(0).toUpperCase() + category.slice(1),
+      network,
+      amount: convertNumberForClient({ number: feedGql.last_completed_data, grade: feedGql.decimals }),
+      oraclesResponces: feedGql.last_completed_data_pct_oracle_resp / 100,
+      icon,
+    }
+  } catch (e) {
+    console.error('paring feed metadata error: ', { e })
+    return null
   }
 }
 
-export function normalizeFeeds(
-  feeds: SubsribeOracleDataFeedSubscription['aggregator'],
-  promotionAddresses?: Array<string>,
-) {
+// Normalizer for full feeds query, that loads only on init, and when feed added/removed
+export function normalizeFeeds(feeds: FullFeedsQueryType, promotionAddresses?: Array<string>) {
   const dataFeedUniqueCategories = new Set<string>()
 
   const { feedsMapper, feedsAddresses } = feeds.reduce<{
@@ -36,10 +41,9 @@ export function normalizeFeeds(
   }>(
     (acc, item) => {
       const feed = normalizeFeed(item)
+      if (!feed) return acc
 
-      if (feed.category) {
-        dataFeedUniqueCategories.add(feed.category.charAt(0).toUpperCase() + feed.category.slice(1))
-      }
+      dataFeedUniqueCategories.add(feed.category.charAt(0).toUpperCase() + feed.category.slice(1))
 
       acc.feedsMapper[feed.address] = feed
       acc.feedsAddresses.push(feed.address)
@@ -49,17 +53,44 @@ export function normalizeFeeds(
     { feedsMapper: {}, feedsAddresses: [] },
   )
 
+  const sortedFeedsAddressesByPromotedFirst = promotionAddresses
+    ? [...feedsAddresses].sort((aAddress, bAddress) => {
+        if (promotionAddresses.includes(aAddress)) return -1
+        if (promotionAddresses.includes(bAddress)) return 1
+        return 0
+      })
+    : feedsAddresses
+
   return {
     feedsMapper,
-    feedsAddresses: promotionAddresses
-      ? [...feedsAddresses].sort((aAddress, bAddress) => {
-          if (promotionAddresses.includes(aAddress)) return -1
-          if (promotionAddresses.includes(bAddress)) return 1
-          return 0
-        })
-      : feedsAddresses,
-    feedsCategories: [...dataFeedUniqueCategories],
+    feedsAddresses: sortedFeedsAddressesByPromotedFirst,
+    feedsCategories: Array.from(dataFeedUniqueCategories),
   }
+}
+
+// Normalizer for small feeds query, that updates
+export function normalizeFeedsPrices(feedsFromCtx: DataFeedsContext['feedsMapper'], smallFeeds: SmallFeedsQueryType) {
+  return smallFeeds.reduce<DataFeedsContext['feedsMapper']>((acc, smallFeedGql) => {
+    const {
+      last_completed_data_pct_oracle_resp,
+      address,
+      last_completed_data,
+      last_completed_data_last_updated_at,
+      decimals,
+    } = smallFeedGql
+    const prevFeed = feedsFromCtx[address]
+
+    if (prevFeed) {
+      acc[address] = {
+        ...prevFeed,
+        amount: convertNumberForClient({ number: Number(last_completed_data), grade: Number(decimals) }),
+        oraclesResponces: last_completed_data_pct_oracle_resp / 100,
+        last_completed_data_last_updated_at,
+      }
+    }
+
+    return acc
+  }, {})
 }
 
 export function normalizeDataFeedsHistory(

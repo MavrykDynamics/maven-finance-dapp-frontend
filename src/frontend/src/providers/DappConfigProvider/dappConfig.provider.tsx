@@ -12,23 +12,20 @@ import { ThemeType } from 'consts/theme.const'
 import { SUBSCRIPTION_INDEXER_LVL } from './queries/indexerLvl.query'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
-import { MVK_DECIMALS } from 'utils/constants'
 import { DEFAULT_DAPP_CONFIG_CONTEXT, RPC_NODE } from './helpers/dappConfig.const'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 
 // helpers
 import { sleep } from 'utils/api/sleep'
-import { normalizeContractAddresses, normalizerMaxLenghts } from './helpers/dappConfig.normalizers'
-import { convertNumberForClient } from 'utils/calcFunctions'
+import { normalizeContractAddresses, normalizeInitialConfigData } from './helpers/dappConfig.normalizers'
 
 // queries
-import { GET_MAX_LENGTHS_QUERY } from './queries/maxLenghts.query'
 import { getXTZBakers } from './bakers/getXtzBakers'
-import { GET_MVK_FAUCET_QUERY, GET_SATELLITE_MIN_STAKED_AMOUNT_QUERY } from './queries/config.query'
 import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
 
 // utils
 import { setItemInStorage } from 'utils/storage'
+import { DAPP_INITIAL_CONFIG_QUERY } from './queries/config.query'
 
 export const dappConfigContext = React.createContext<DappConfigContext>(undefined!)
 
@@ -36,6 +33,8 @@ type Props = {
   children: React.ReactNode
 }
 
+// TODO: add zod schemes and parse data with zod first
+// TODO: test data update on lvl change and action turn off on lvl change, data should update before action turn off, or at least simultaniously
 const DappConfigProvider = ({ children }: Props) => {
   const handleSubError = (error: ApolloError) => {
     console.error(`DappConfigProvider query error: `, error)
@@ -45,11 +44,16 @@ const DappConfigProvider = ({ children }: Props) => {
   // HANDLING DATA UPDATE LOADER STATE AFTER USER FIRED ACTION
   const { bug, hideToasterMessage, success } = useToasterContext()
 
-  const [currentIndexedLevel, setCurrentIndexedLevel] = useState<number | null>(null)
+  const [currentIndexedLevel, setCurrentIndexedLevel] = useState<number>(0)
   const [action, setAction] = useState<UserActionType | null>(null)
 
+  /**
+   * Subscribe to lvl that currently performed by indexer, to:
+   *
+   * 1. refetch queries, that requires update on lvl change
+   * 2. handle action toasters, to show that action is performing, already performed
+   */
   useSubscription(SUBSCRIPTION_INDEXER_LVL, {
-    skip: !action,
     shouldResubscribe: true,
     onData: ({ data: { data } }) => {
       if (!data) return
@@ -58,8 +62,7 @@ const DappConfigProvider = ({ children }: Props) => {
       if (indexerLvl) setCurrentIndexedLevel(indexerLvl)
     },
     onError: (error) => {
-      console.error(`SUBSCRIPTION_INDEXER_LVL query error: `, error)
-      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+      handleSubError(error)
 
       if (action && action.toasterId) {
         hideToasterMessage(action.toasterId)
@@ -90,31 +93,24 @@ const DappConfigProvider = ({ children }: Props) => {
     if (currentIndexedLevel >= operationLvl) turnOffAction()
   }, [action, currentIndexedLevel, hideToasterMessage, success])
 
-  // HANDLING INITIAL DATA, THAT SHOULD BE LOADED
+  // HANDLING INITIAL DATA, THAT SHOULD BE LOADED ON DAPP INIT
   const [dappConfigCtxState, setDappConfigCtxState] = useState<DappConfigContextStateType>(DEFAULT_DAPP_CONFIG_CONTEXT)
 
-  // Load max lenghts for inputs
-  const { loading: maxLengthsLoading } = useQuery(GET_MAX_LENGTHS_QUERY, {
+  // Load initial data for dapp (max lenghts, mvkFaucet, minSmvkAmount)
+  const { loading: initialConfigLoading } = useQuery(DAPP_INITIAL_CONFIG_QUERY, {
     onCompleted: (data) => {
+      const { maxLenghts, minimumStakedMvkBalance, mvkFaucetAddress } = normalizeInitialConfigData(data)
       setDappConfigCtxState((prev) => ({
         ...prev,
-        maxLengths: normalizerMaxLenghts(data),
+        maxLenghts,
+        minimumStakedMvkBalance,
+        mvkFaucetAddress,
       }))
     },
     onError: handleSubError,
   })
 
-  // Load MVK faucet
-  const { loading: mvkFaucetLoading } = useQuery(GET_MVK_FAUCET_QUERY, {
-    onCompleted: (data) => {
-      setDappConfigCtxState((prev) => ({
-        ...prev,
-        mvkFaucetAddress: data.mvk_faucet[0]?.address ?? null,
-      }))
-    },
-    onError: handleSubError,
-  })
-
+  // TODO: addresses that are general, not page specific load in DAPP_INITIAL_CONFIG_QUERY other addresses load only on pages that requires them
   const { loading: contractAddressesLoading } = useQuery(GET_DAPP_CONTRACT_ADDRESSES, {
     onCompleted: (data) => {
       setDappConfigCtxState((prev) => ({
@@ -125,20 +121,7 @@ const DappConfigProvider = ({ children }: Props) => {
     onError: handleSubError,
   })
 
-  const { loading: configLoading } = useQuery(GET_SATELLITE_MIN_STAKED_AMOUNT_QUERY, {
-    onCompleted: (data) => {
-      setDappConfigCtxState((prev) => ({
-        ...prev,
-        minimumStakedMvkBalance: convertNumberForClient({
-          number: data.delegation[0].minimum_smvk_balance,
-          grade: MVK_DECIMALS,
-        }),
-      }))
-    },
-    onError: handleSubError,
-  })
-
-  // TODO: move it to the custom hook
+  // TODO: move it to the custom hook for bakers
   useEffect(() => {
     if (!dappConfigCtxState.xtzBakers) {
       updateXtzBakers()
@@ -153,6 +136,8 @@ const DappConfigProvider = ({ children }: Props) => {
       xtzBakers,
     }))
   }
+
+  // -------- METHODS --------
 
   // preferences actions
   const toggleTheme = (theme: ThemeType) => {
@@ -209,7 +194,7 @@ const DappConfigProvider = ({ children }: Props) => {
 
   const contextProviderValue = useMemo(() => {
     return {
-      isLoading: maxLengthsLoading || mvkFaucetLoading || configLoading || contractAddressesLoading,
+      isLoading: initialConfigLoading || contractAddressesLoading,
       setAction,
       // preferences
       toggleTheme,
@@ -222,8 +207,9 @@ const DappConfigProvider = ({ children }: Props) => {
       toggleActionCompletion,
       toggleWertLoader,
       ...dappConfigCtxState,
+      currentIndexedLevel,
     }
-  }, [dappConfigCtxState])
+  }, [dappConfigCtxState, currentIndexedLevel])
 
   return <dappConfigContext.Provider value={contextProviderValue}>{children}</dappConfigContext.Provider>
 }
