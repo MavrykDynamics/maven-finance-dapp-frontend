@@ -239,7 +239,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
           <Icon id="arrowRight" />
         </NewButton>
       </div>
-      {isVaultCreating ? (
+      {isDisabledButton ? (
         <div className="creating-vault-loader-wrapper">
           Creating Vault
           <SpinnerCircleLoaderStyled />

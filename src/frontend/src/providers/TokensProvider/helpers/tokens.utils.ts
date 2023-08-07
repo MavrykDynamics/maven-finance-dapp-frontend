@@ -41,3 +41,26 @@ export const getTokenDataByAddress = ({
 
   return { ...tokenMetadata, rate: tokenRate }
 }
+
+export const isLoansCollateralTokenMetadata = (token: unknown): token is LoansCollateralTokenMetadataType => {
+  if (typeof token !== 'object' || token === null) {
+    return false // The token is not an object, so it can't be of type LoansCollateralTokenMetadataType
+  }
+
+  const requiredProperties = ['id', 'address', 'name', 'symbol', 'decimals', 'icon', 'type', 'loanData']
+  const requiredLoanDataProperties = ['indexerName', 'isPausedCollateral', 'isScaled', 'isStaked']
+
+  for (const prop of requiredProperties) {
+    if (!(prop in token)) {
+      return false // The token doesn't have one of the required properties
+    }
+  }
+
+  // checl loan data keys
+  for (const prop of requiredLoanDataProperties) {
+    if (!(prop in token)) {
+      return false // The token doesn't have one of the required properties
+    }
+  }
+  return true
+}

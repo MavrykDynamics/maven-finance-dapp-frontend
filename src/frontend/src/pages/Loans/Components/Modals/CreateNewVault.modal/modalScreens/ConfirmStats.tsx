@@ -1,14 +1,15 @@
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useCreateVaultContext } from '../context/createVaultModalContext'
-import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
-import { sleep } from 'utils/api/sleep'
-import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import {
+  checkWhetherTokenIsLoanToken,
+  getTokenDataByAddress,
+  isLoansCollateralTokenMetadata,
+} from 'providers/TokensProvider/helpers/tokens.utils'
 import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { createVault } from 'providers/VaultsProvider/actions/vaults.actions'
@@ -23,17 +24,14 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ConfirmStatsVaultOverview } from '../createNewVault.style'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 import { silverColor } from 'styles'
 
 export const ConfirmStats = () => {
-  const { apolloClient } = useApolloContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { vaultsMapper } = useVaultsContext()
 
-  const { bug, info } = useToasterContext()
+  const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
   const {
     contractAddresses: { vaultFactoryAddress, lendingControllerAddress },
@@ -47,14 +45,12 @@ export const ConfirmStats = () => {
     isVaultCreating,
     updateVaultCreating,
     vaultInputState,
-    updateNewVault,
-    newVault,
     data,
     borrowCapacity,
     collateralsBalance,
   } = useCreateVaultContext()
 
-  const { marketTokenAddress = '', setCreatedVaultAddress } = data ?? {}
+  const { marketTokenAddress = '' } = data ?? {}
 
   //   create vault action -----------------------------------------------------------------------
   const createVaultAction = useCallback(async () => {
@@ -82,9 +78,7 @@ export const ConfirmStats = () => {
           tokensPrices,
         })
 
-        if (!collateralToken) return acc
-
-        // TODO fix type
+        if (!isLoansCollateralTokenMetadata(collateralToken)) return acc
 
         acc.push({
           ...collateralToken,
@@ -92,8 +86,6 @@ export const ConfirmStats = () => {
             number: Number(amount),
             grade: collateralToken?.decimals,
           }),
-        } as LoansCollateralTokenMetadataType & {
-          amount: number
         })
         return acc
       }, [])
