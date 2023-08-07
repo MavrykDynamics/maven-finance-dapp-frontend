@@ -57,6 +57,7 @@ import { BORROW_CAPACITY, COLLATERAL_VALUE } from 'texts/tooltips/vault.text'
 
 // types
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { useXTZMaxAmountValidator } from '../components/useXTZMaxValidator'
 
 export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
@@ -76,19 +77,9 @@ export const AddCollateralScreen = () => {
     collateralsBalance,
   } = useCreateVaultContext()
 
-  const [maxedXTZData, setMaxedXTZData] = useState({
-    amount: 0,
-  })
-
-  // if user selected XTZ, need this address so later we can compare maxedInput amount and the actual input amount
-  const tezCollateralAddress = useMemo(
-    () =>
-      selectedCollateralsAddresses.find((address) => {
-        const { tokenAddress } = selectedCollaterals[address]
-        const { type } = tokensMetadata[tokenAddress]
-        return type === 'tez'
-      }),
-    [selectedCollaterals, selectedCollateralsAddresses, tokensMetadata],
+  const { isTezosToken, updateMaxedXTZData, willExceedXTZTheLimit } = useXTZMaxAmountValidator(
+    selectedCollateralsAddresses,
+    selectedCollaterals,
   )
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd add new collateral)
@@ -132,7 +123,14 @@ export const AddCollateralScreen = () => {
     }
 
     return reducedCollaterals
-  }, [collateralTokens, selectedCollaterals, selectedCollateralsAddresses.length, tokensMetadata, tokensPrices])
+  }, [
+    collateralTokens,
+    selectedCollaterals,
+    selectedCollateralsAddresses.length,
+    tokensMetadata,
+    tokensPrices,
+    updateSelectedCollaterals,
+  ])
 
   const nextAvaliableCollateralToAdd = Object.values(mappedAvaliableCollaterals).find(
     ({ disabled, tokenAddress }) => !disabled && !selectedCollateralsAddresses.includes(tokenAddress),
@@ -176,8 +174,7 @@ export const AddCollateralScreen = () => {
     collateralAddress: TokenAddressType,
     collateralDecimals: number,
   ) => {
-    const { amount } = maxedXTZData
-    const _amount = amount !== 0 ? String(Number(newInputAmount) - 1) : newInputAmount
+    const _amount = willExceedXTZTheLimit ? String(Number(newInputAmount) - 1) : newInputAmount
     let validationStatus: InputStatusType = loansInputValidation({
       inputAmount: _amount,
       maxAmount: userCollateralBalance,
@@ -186,7 +183,7 @@ export const AddCollateralScreen = () => {
       },
     })
 
-    validationStatus = amount !== 0 && amount <= Number(_amount) ? INPUT_STATUS_ERROR : validationStatus
+    validationStatus = willExceedXTZTheLimit ? INPUT_STATUS_ERROR : validationStatus
 
     updateSelectedCollaterals({
       ...selectedCollaterals,
@@ -221,14 +218,6 @@ export const AddCollateralScreen = () => {
 
   // collateral-list-overflow (for styles)
   const isContainingTwoCollaterals = selectedCollateralsAddresses.length > 2
-
-  // for XTZ input to whoe info banner
-  // if user pressed useMAc handler or enter the same value manually
-  const showInfoBanner =
-    tezCollateralAddress &&
-    maxedXTZData.amount !== 0 &&
-    Number(selectedCollaterals[tezCollateralAddress].amount) >= maxedXTZData.amount &&
-    selectedCollaterals[tezCollateralAddress].validation !== INPUT_STATUS_ERROR
 
   return (
     <div>
@@ -275,10 +264,7 @@ export const AddCollateralScreen = () => {
                           balanceAsset: symbol,
                           useMaxHandler: () => {
                             const _amount = getLoansInputMaxAmount(userAssetBalance, decimals)
-                            if (type === 'tez')
-                              setMaxedXTZData({
-                                amount: Number(_amount),
-                              })
+                            if (isTezosToken) updateMaxedXTZData(Number(_amount))
                             inputOnChangeHandle(_amount, userAssetBalance, collateralAddress, decimals)
                           },
                           inputStatus: validation,
@@ -357,7 +343,7 @@ export const AddCollateralScreen = () => {
           + Add more assets as collateral
         </Button>
 
-        {showInfoBanner && (
+        {willExceedXTZTheLimit && (
           <div className="mt-20">
             <Info
               text="We have reduced the amount of XTZ to be deposited in order to cover the gas and transaction fees."

@@ -27,10 +27,13 @@ export type NewVaultType = {
   address: string
 }
 
-export type SelectedCollateralsType = Record<
-  TokenAddressType,
-  { tokenAddress: TokenAddressType; amount: string; validation: InputStatusType }
->
+export type SelectedCollateralTokenData = {
+  tokenAddress: TokenAddressType
+  amount: string
+  validation: InputStatusType
+}
+
+export type SelectedCollateralsType = Record<TokenAddressType, SelectedCollateralTokenData>
 
 export type FinalBorrowInputDataType = {
   amount: number

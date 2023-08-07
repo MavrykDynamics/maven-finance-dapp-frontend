@@ -92,11 +92,6 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
     [modalState.selectedCollaterals, modalState.selectedCollateralsAddresses, tokensMetadata, tokensPrices],
   )
 
-  // const borrowCapacity = useMemo(
-  //   () => Math.min(Math.max(collateralsBalance, data?.avaliableLiquidity ?? 0, 0)),
-  //   [collateralsBalance, data?.avaliableLiquidity],
-  // )
-
   const borrowedAmount = 0
   const borrowCapacity = useMemo(
     () => Math.min(Math.max(availableLiquidity, 0), collateralsBalance / 2 - borrowedAmount * rate),
@@ -120,7 +115,22 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
       borrowCapacity,
       borrowAPR,
     }),
-    [borrowCapacity, closePopup, collateralsBalance, data, modalState, show, borrowAPR],
+    [
+      modalState,
+      resetCreateVaultModalState,
+      updateScreenToShow,
+      updateInputVaultState,
+      updateVaultCreating,
+      updateNewVault,
+      updateSelectedCollaterals,
+      closePopup,
+      setFinalBorrowInputAmount,
+      data,
+      show,
+      collateralsBalance,
+      borrowCapacity,
+      borrowAPR,
+    ],
   )
 
   return <createVaultModalContext.Provider value={ctx}>{children}</createVaultModalContext.Provider>

@@ -61,6 +61,8 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useXTZMaxAmountValidator } from './CreateNewVault.modal/components/useXTZMaxValidator'
+import { Info } from 'app/App.components/Info/Info.view'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({
@@ -91,6 +93,24 @@ export const AddNewCollateral = ({
     amount: '0',
     validationStatus: '',
   })
+
+  const selectedCollateralObj = useMemo(
+    () =>
+      selectedCollateral
+        ? {
+            [selectedCollateral]: {
+              amount: inputData.amount,
+              validation: inputData.validationStatus,
+            },
+          }
+        : null,
+    [inputData.amount, inputData.validationStatus, selectedCollateral],
+  )
+
+  const { isTezosToken, updateMaxedXTZData, willExceedXTZTheLimit } = useXTZMaxAmountValidator(
+    [selectedCollateral ?? ''],
+    selectedCollateralObj,
+  )
 
   // resetting popup state, when toggling it off
   useEffect(() => {
@@ -233,13 +253,16 @@ export const AddNewCollateral = ({
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
-    const validationStatus = loansInputValidation({
-      inputAmount: newInputAmount,
+    const _amount = willExceedXTZTheLimit ? String(Number(newInputAmount) - 1) : newInputAmount
+    let validationStatus: InputStatusType = loansInputValidation({
+      inputAmount: _amount,
       maxAmount: userAssetBalance,
       options: {
         byDecimalPlaces: decimals,
       },
     })
+
+    validationStatus = willExceedXTZTheLimit ? INPUT_STATUS_ERROR : validationStatus
 
     if (inputData) {
       setInputData({
@@ -325,12 +348,16 @@ export const AddNewCollateral = ({
                 settings={{
                   balance: userCollateralBalance,
                   balanceAsset: symbol,
-                  useMaxHandler: () =>
+                  useMaxHandler: () => {
+                    const _amount = getLoansInputMaxAmount(userCollateralBalance, decimals)
+                    if (isTezosToken) updateMaxedXTZData(Number(_amount))
                     setInputData({
                       ...inputData,
-                      amount: getLoansInputMaxAmount(userCollateralBalance, decimals),
+                      amount: _amount,
                       validationStatus: INPUT_STATUS_SUCCESS,
-                    }),
+                    })
+                  },
+
                   inputSize: INPUT_LARGE,
                   inputStatus: inputData.validationStatus,
                   convertedValue: Number(inputData.amount) * rate,
@@ -388,6 +415,15 @@ export const AddNewCollateral = ({
               ) : null}
             </>
           ) : null}
+
+          {willExceedXTZTheLimit && (
+            <div className="mt-20 mb-20">
+              <Info
+                text="We have reduced the amount of XTZ to be deposited in order to cover the gas and transaction fees."
+                type="info"
+              />
+            </div>
+          )}
 
           <div className="block-name">New Vault Status</div>
           <VaultModalOverview>
