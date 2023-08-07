@@ -1,5 +1,6 @@
 import { gql } from 'utils/__generated__/gql'
 
+// same as on staking, break it down to smaller queries depends on a page, paginate stakes_history_data
 export const SUBSCRIBE_USER_DATA = gql(`
 subscription getUserData($userAddress: String = "") {
 	mavryk_user(where: {address: {_eq: $userAddress}}) {

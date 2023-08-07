@@ -70,7 +70,6 @@ export const normalizeContractAddresses = (data: GetContractAddressesQueryQuery)
     governanceSatelliteAddress: data.governance_satellite[0].address,
     feedsFactoryAddress: data.aggregator_factory[0].address,
     feedsAddress: data.aggregator[0].address,
-    governanceProxyAddress: data.governance_proxy[0].address,
     lendingControllerAddress: data.lending_controller[0].address,
     vaultFactoryAddress: data.vault_factory[0].address,
   }

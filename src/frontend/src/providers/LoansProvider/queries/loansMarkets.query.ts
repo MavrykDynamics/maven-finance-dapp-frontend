@@ -5,6 +5,7 @@ import { gql } from 'utils/__generated__'
 
 import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
 
+// make as on satellites (addresses + data)
 export function getLoansMarketsSubscription({
   marketTokenAddress,
 }: {
@@ -56,6 +57,7 @@ export function getLoansMarketsSubscription({
 `)
 }
 
+// turn on basic query
 export const GET_LOANS_CONFIG = gql(`
 	subscription getLLoansConfig($currentTimestamp: timestamptz) {
 		lending_controller(where: {mock_time: {_eq: false}}) {

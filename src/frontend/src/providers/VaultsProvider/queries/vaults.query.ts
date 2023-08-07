@@ -6,6 +6,8 @@ import { GetVaultsSubscriptionSubscription } from 'utils/__generated__/graphql'
 import { VaultsSubsRecordType } from '../vaults.provider.types'
 import { gql } from 'utils/__generated__'
 
+// convert subs to refetching
+
 const VAULT_OPEN_FILTER = `open: {_eq: true}`
 
 // filter for user market specific vaults

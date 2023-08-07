@@ -1,6 +1,6 @@
 import { gql } from 'utils/__generated__/gql'
 
-// feeds rewards subsciption
+// feeds rewards subsciption just query
 export const SUBSCRIBE_FEEDS_REWARDS_COUNT = gql(`
   subscription FeedsRewardsAmountSubscription {
     aggregator_aggregate {
@@ -13,9 +13,9 @@ export const SUBSCRIBE_FEEDS_REWARDS_COUNT = gql(`
   }
 `)
 
-// feeds rewards subsciption
+// feeds rewards subsciption query with interval or refetch when feed change or heart_beat_seconds
 export const SUBSCRIBE_FEED_HISTORY = gql(`
-  subscription subsribeFeedHistoryData($feedAddress: String) {
+  queryWithPool subsribeFeedHistoryData($feedAddress: String) {
     aggregator(where: { address: { _eq: $feedAddress } }) {
       history_data(distinct_on: timestamp, order_by: { timestamp: desc }) {
         data
@@ -28,7 +28,7 @@ export const SUBSCRIBE_FEED_HISTORY = gql(`
   }
 `)
 
-// feeds subsciption
+// feeds subsciption convert to query
 export const SUBSCRIBE_FEEDS = gql(`
   subscription subsribeOracleDataFeed {
     aggregator(where: { admin: { _neq: "" } }, order_by: { creation_timestamp: desc }) {
@@ -60,3 +60,9 @@ export const SUBSCRIBE_FEEDS = gql(`
     }
   }
 `)
+
+// make this sub, on update refetch history and if more items received run SUBSCRIBE_FEEDS to get data for newly added feed
+// address
+// last_completed_data
+// last_completed_data_pct_oracle_resp
+// last_completed_data_last_updated_at

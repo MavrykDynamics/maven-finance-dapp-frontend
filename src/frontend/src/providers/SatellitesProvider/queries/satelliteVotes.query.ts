@@ -1,5 +1,6 @@
 import { gql } from 'utils/__generated__'
 
+// make query ask sam about updates
 export const SATELLITE_VOTES_SUBSCRIPTION = gql(`
 	subscription satelliteVotesSub($userAddress: String!) {
 		satellite(where: {registration_timestamp: {_is_null: false}, user: {address: {_eq: $userAddress}}}, order_by: {currently_registered: desc}) {
