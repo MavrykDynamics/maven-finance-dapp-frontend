@@ -11,7 +11,8 @@ import {
 import { TokensMetadataQuery } from 'utils/__generated__/graphql'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { checkWhetherTokenIsCollateralToken } from './tokens.utils'
-import { TokenPricesFeedsType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
+import { TokenPricesFeedsType } from 'providers/DataFeedsProvider/helpers/feeds.schemes'
+import { TokensGqlSchemaType } from './tokens.schemes'
 
 /**
  * normalizing token prices
@@ -97,7 +98,7 @@ const handleMvkToken = ({
  *
  * TODO: add farm tokens here, lack of info now
  */
-export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataQuery['token']) => {
+export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
   return tokensFromGql.reduce<Pick<TokensContext, 'tokensMetadata' | 'collateralTokens' | 'mTokens'>>(
     (
       acc,

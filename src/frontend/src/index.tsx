@@ -81,13 +81,6 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
 
   const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isInitialUserLoading
 
-  console.log({
-    isDappGeneralLoading,
-    isTokensLoading,
-    isFeedsLoading,
-    isInitialUserLoading,
-  })
-
   return (
     <>
       <LottieLoader isActive={isInitialLoading} backdropAlpha={1} />

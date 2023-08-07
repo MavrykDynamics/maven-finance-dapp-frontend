@@ -6,14 +6,14 @@ import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { QUERY_TOKENS_METADATA } from './queries/tokens.query'
 
 // helpers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useQueryRefetch } from 'providers/common/hooks/useQueryRefetch'
 import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.normalizer'
 
 // types
 import { TokensContext, TokensContextState } from './tokens.provider.types'
-import { TokensMetadataQuery } from 'utils/__generated__/graphql'
-import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useQueryRefetch } from 'providers/common/hooks/useQueryRefetch'
+import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemes'
+import { TokensGqlSchemaType, tokensGqlSchema } from './helpers/tokens.schemes'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
@@ -22,11 +22,12 @@ type Props = {
 }
 
 // TODO: add nullable values and handle initial loading by null values
-// TODO: add zod schemes and parse data with zod first
 export const TokensProvider = ({ children }: Props) => {
   const { currentIndexedLevel } = useDappConfigContext()
 
-  const [lastUpdatedAtLevel, setLastUpdatedAtLevel] = useState(currentIndexedLevel)
+  const initialLoadingStatus = useRef(true)
+
+  const [lastUpdatedBlock, setLastUpdatedBlock] = useState(currentIndexedLevel)
 
   const [tokensCtxState, setTokensCtxState] = useState<TokensContextState>({
     collateralTokens: [],
@@ -36,31 +37,38 @@ export const TokensProvider = ({ children }: Props) => {
   })
 
   // Load tokens metadata
-  const { loading: tokensLoading, refetch: refetchTokens } = useQuery(QUERY_TOKENS_METADATA, {
+  const { refetch: refetchTokens } = useQuery(QUERY_TOKENS_METADATA, {
     onCompleted: (data) => {
-      if (!data) return
-      updateTokensMetadata(data.token)
+      try {
+        const parsedTokens = tokensGqlSchema.parse(data.token)
+
+        initialLoadingStatus.current = false
+
+        updateTokensMetadata(parsedTokens)
+      } catch (e) {
+        console.error('zod parsing tokens error:', { e })
+      }
     },
     onError: (error) => console.log({ error }),
   })
 
-  const refetchQueryHookOptions = useMemo(
+  const refetchQueryHookArgs = useMemo(
     () => ({
       refetchers: [
         {
           refetch: refetchTokens,
           options: {
             blocksDiff: 20,
-            lastIndexerBlock: lastUpdatedAtLevel,
-            updateLastUpdatedLvl: (updateLevel: number) => setLastUpdatedAtLevel(updateLevel),
+            lastUpdatedBlock,
+            updateLastUpdatedLvl: (updateLevel: number) => setLastUpdatedBlock(updateLevel),
           },
         },
       ],
     }),
-    [refetchTokens, lastUpdatedAtLevel],
+    [refetchTokens, lastUpdatedBlock],
   )
 
-  useQueryRefetch(refetchQueryHookOptions)
+  useQueryRefetch(refetchQueryHookArgs)
 
   // update token prices in ctx
   const updateTokensPrices = (feedsLedger: FullFeedsQueryType | SmallFeedsQueryType) => {
@@ -73,7 +81,7 @@ export const TokensProvider = ({ children }: Props) => {
   }
 
   // update tokens metadata in ctx
-  const updateTokensMetadata = (tokensGql: TokensMetadataQuery['token']) => {
+  const updateTokensMetadata = (tokensGql: TokensGqlSchemaType) => {
     const tokensMetadata = normalizeTokensMetadata(tokensGql)
 
     setTokensCtxState({
@@ -87,7 +95,7 @@ export const TokensProvider = ({ children }: Props) => {
   const providerValue = useMemo(() => {
     return {
       updateTokensPrices,
-      isLoading: tokensLoading,
+      isLoading: initialLoadingStatus.current,
       ...tokensCtxState,
     }
   }, [tokensCtxState])

@@ -1,5 +1,6 @@
 import { gql } from 'utils/__generated__'
 
+// TODO: refactor
 // feeds rewards subsciption just query
 export const SUBSCRIBE_FEEDS_REWARDS_COUNT = gql(`
   subscription FeedsRewardsAmountSubscription {
@@ -13,6 +14,7 @@ export const SUBSCRIBE_FEEDS_REWARDS_COUNT = gql(`
   }
 `)
 
+// TODO: refactor
 // feeds rewards subsciption query with interval or refetch when feed change or heart_beat_seconds
 export const SUBSCRIBE_FEED_HISTORY = gql(`
 subscription subsribeFeedHistoryData($feedAddress: String) {
@@ -73,9 +75,3 @@ export const FEEDS_UPDATE_QUERY = gql(`
     }
   }
 `)
-
-// make this sub, on update refetch history and if more items received run SUBSCRIBE_FEEDS to get data for newly added feed
-// address
-// last_completed_data
-// last_completed_data_pct_oracle_resp
-// last_completed_data_last_updated_at

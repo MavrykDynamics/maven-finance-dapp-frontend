@@ -3,17 +3,17 @@ import { useQuery } from '@apollo/client'
 
 // types
 import { DataFeedsContext, DataFeedsContextState } from './dataFeeds.provider.types'
-
-// helpers
-import { normalizeFeeds, normalizeFeedsPrices } from './helpers/feedsNormalizer'
-import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import {
   fullFeedsQuerySchema,
   FullFeedsQueryType,
   smallFeedsQuerySchema,
   SmallFeedsQueryType,
-} from './helpers/feeds.schemas'
+} from './helpers/feeds.schemes'
+
+// helpers
+import { normalizeFeeds, normalizeFeedsPrices } from './helpers/feedsNormalizer'
+import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useQueryRefetch } from 'providers/common/hooks/useQueryRefetch'
 
 export const dataFeedsContext = React.createContext<DataFeedsContext>(undefined!)
@@ -50,7 +50,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
         updateFullDataFeeds(parsedFeeds)
         updateTokensPrices(parsedFeeds)
       } catch (e) {
-        console.log('full feeds query parsing error:', { e })
+        console.log('zod full feeds query parsing error:', { e })
       }
     },
     onError: (error) => console.log({ error }),
@@ -61,8 +61,6 @@ export const DataFeedsProvider = ({ children }: Props) => {
     skip: initialLoadingStatus.current,
     onCompleted: (data) => {
       try {
-        initialLoadingStatus.current = false
-
         const parsedSmallFeeds = smallFeedsQuerySchema.parse(data.aggregator)
 
         // if we received more feeds than we have in ctx refetch full feeds query (rare case)
@@ -74,13 +72,13 @@ export const DataFeedsProvider = ({ children }: Props) => {
         updateSmallDataFeeds(parsedSmallFeeds)
         updateTokensPrices(parsedSmallFeeds)
       } catch (e) {
-        console.log('small feeds query parsing error:', { e })
+        console.log('zod small feeds query parsing error:', { e })
       }
     },
     onError: (error) => console.log({ error }),
   })
 
-  const refetchQueryHookOptions = useMemo(
+  const refetchQueryHookArgs = useMemo(
     () => ({
       refetchers: [
         {
@@ -91,7 +89,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
     [refetchSmallFeeds],
   )
 
-  useQueryRefetch(refetchQueryHookOptions)
+  useQueryRefetch(refetchQueryHookArgs)
 
   // normalize and update for full feeds query
   const updateFullDataFeeds = (data: FullFeedsQueryType) => {
@@ -126,7 +124,7 @@ export const useDataFeedsContext = () => {
   const context = useContext(dataFeedsContext)
 
   if (!context) {
-    throw new Error('dataFeedsContext should be used within Data Feeds provider')
+    throw new Error('dataFeedsContext should be used within DataFeedsProvider')
   }
 
   return context

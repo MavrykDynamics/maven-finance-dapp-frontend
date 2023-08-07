@@ -5,7 +5,7 @@ import { SubsribeFeedHistoryDataSubscription } from 'utils/__generated__/graphql
 
 import { convertNumberForClient, percentageDifference } from 'utils/calcFunctions'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
-import { FullFeedsQueryType, SmallFeedsQueryType, feedMetadataSchema } from './feeds.schemas'
+import { FullFeedsQueryType, SmallFeedsQueryType, feedMetadataSchema } from './feeds.schemes'
 
 export const normalizeFeed = (feedGql: FullFeedsQueryType[number]) => {
   try {
