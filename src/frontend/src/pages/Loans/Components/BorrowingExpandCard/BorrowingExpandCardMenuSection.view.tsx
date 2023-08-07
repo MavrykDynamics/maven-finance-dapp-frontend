@@ -172,67 +172,69 @@ export const BorrowingExpandCardMenuSection = ({
             )}
 
             <TableBody>
-              {collateralData.map(({ amount, tokenAddress }, idx) => {
-                const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+              {collateralData
+                .sort((a, b) => b.amount - a.amount)
+                .map(({ amount, tokenAddress }, idx) => {
+                  const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
 
-                if (!collateralToken || !collateralToken.rate || !checkWhetherTokenIsCollateralToken(collateralToken))
-                  return null
+                  if (!collateralToken || !collateralToken.rate || !checkWhetherTokenIsCollateralToken(collateralToken))
+                    return null
 
-                const { symbol, icon, rate, decimals } = collateralToken
+                  const { symbol, icon, rate, decimals } = collateralToken
 
-                const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
-                const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
+                  const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
+                  const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
-                return (
-                  <TableRow rowHeight={65} key={symbol}>
-                    <TableCell width={'22%'} className="vert-middle">
-                      <div className="cell-content row with-icon">
-                        <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
-                        {symbol}
-                      </div>
-                    </TableCell>
+                  return (
+                    <TableRow rowHeight={65} key={symbol}>
+                      <TableCell width={'22%'} className="vert-middle">
+                        <div className="cell-content row with-icon">
+                          <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+                          {symbol}
+                        </div>
+                      </TableCell>
 
-                    <TableCell width={'22%'}>
-                      <div className="cell-content">
-                        <CommaNumber
-                          value={convertedAmount}
-                          className="value"
-                          showDecimal
-                          decimalsToShow={assetDecimalsToShow}
-                        />
-                        <CommaNumber value={convertedAmount * rate} className="rate" beginningText="$" showDecimal />
-                      </div>
-                    </TableCell>
-                    <TableCell width={'22%'}>
-                      <div className="cell-content">
-                        <CommaNumber value={collateralShare} className="value" endingText="%" />
-                      </div>
-                    </TableCell>
-                    <TableCell className={`buttons borrowing ${!isOwner ? 'single-btn' : ''}`}>
-                      <div className="cell-content row">
-                        <Button
-                          onClick={() => openAddExistingCollateralPopup(idx)}
-                          form={BUTTON_WIDE}
-                          kind={BUTTON_SECONDARY}
-                          disabled={isActionActive || collateralToken.loanData.isPausedCollateral}
-                        >
-                          <Icon id="plus" /> Add
-                        </Button>
-                        {isOwner ? (
+                      <TableCell width={'22%'}>
+                        <div className="cell-content">
+                          <CommaNumber
+                            value={convertedAmount}
+                            className="value"
+                            showDecimal
+                            decimalsToShow={assetDecimalsToShow}
+                          />
+                          <CommaNumber value={convertedAmount * rate} className="rate" beginningText="$" showDecimal />
+                        </div>
+                      </TableCell>
+                      <TableCell width={'22%'}>
+                        <div className="cell-content">
+                          <CommaNumber value={collateralShare} className="value" endingText="%" />
+                        </div>
+                      </TableCell>
+                      <TableCell className={`buttons borrowing ${!isOwner ? 'single-btn' : ''}`}>
+                        <div className="cell-content row">
                           <Button
-                            onClick={() => openWithdrawCollateralPopup({ amount: convertedAmount, idx })}
+                            onClick={() => openAddExistingCollateralPopup(idx)}
                             form={BUTTON_WIDE}
                             kind={BUTTON_SECONDARY}
-                            disabled={collateralRatio <= 200 || isActionActive || convertedAmount === 0}
+                            disabled={isActionActive || collateralToken.loanData.isPausedCollateral}
                           >
-                            <Icon id="minus" /> Remove
+                            <Icon id="plus" /> Add
                           </Button>
-                        ) : null}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
+                          {isOwner ? (
+                            <Button
+                              onClick={() => openWithdrawCollateralPopup({ amount: convertedAmount, idx })}
+                              form={BUTTON_WIDE}
+                              kind={BUTTON_SECONDARY}
+                              disabled={collateralRatio <= 200 || isActionActive || convertedAmount === 0}
+                            >
+                              <Icon id="minus" /> Remove
+                            </Button>
+                          ) : null}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
 
               {/* Total row */}
               {collateralData.length >= 2 ? (
