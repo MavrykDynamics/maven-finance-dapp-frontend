@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 // providers
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
@@ -9,6 +9,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // utils
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
@@ -24,6 +25,8 @@ import { DDItemId, DropDown, DropDownItemType, DropdownInputCustomChild } from '
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
+import { Info } from 'app/App.components/Info/Info.view'
 
 // styles
 import colors from 'styles/colors'
@@ -43,7 +46,9 @@ import {
   ERR_MSG_INPUT,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
+  InputStatusType,
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
@@ -52,8 +57,6 @@ import { BORROW_CAPACITY, COLLATERAL_VALUE } from 'texts/tooltips/vault.text'
 
 // types
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
-import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
@@ -72,6 +75,21 @@ export const AddCollateralScreen = () => {
     borrowCapacity,
     collateralsBalance,
   } = useCreateVaultContext()
+
+  const [maxedXTZData, setMaxedXTZData] = useState({
+    amount: 0,
+  })
+
+  // if user selected XTZ, need this address so later we can compare maxedInput amount and the actual input amount
+  const tezCollateralAddress = useMemo(
+    () =>
+      selectedCollateralsAddresses.find((address) => {
+        const { tokenAddress } = selectedCollaterals[address]
+        const { type } = tokensMetadata[tokenAddress]
+        return type === 'tez'
+      }),
+    [selectedCollaterals, selectedCollateralsAddresses, tokensMetadata],
+  )
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd add new collateral)
   const mappedAvaliableCollaterals = useMemo(() => {
@@ -158,13 +176,17 @@ export const AddCollateralScreen = () => {
     collateralAddress: TokenAddressType,
     collateralDecimals: number,
   ) => {
-    const validationStatus = loansInputValidation({
-      inputAmount: newInputAmount,
+    const { amount } = maxedXTZData
+    const _amount = amount !== 0 ? String(Number(newInputAmount) - 1) : newInputAmount
+    let validationStatus: InputStatusType = loansInputValidation({
+      inputAmount: _amount,
       maxAmount: userCollateralBalance,
       options: {
         byDecimalPlaces: collateralDecimals,
       },
     })
+
+    validationStatus = amount !== 0 && amount <= Number(_amount) ? INPUT_STATUS_ERROR : validationStatus
 
     updateSelectedCollaterals({
       ...selectedCollaterals,
@@ -197,8 +219,16 @@ export const AddCollateralScreen = () => {
   const continueHandler = useCallback(() => updateScreenToShow(CONFIRM_STATS_SCREEN_ID), [updateScreenToShow])
   const backHandler = useCallback(() => updateScreenToShow(INITIAL_SCREEN_ID), [updateScreenToShow])
 
-  // collateral-list-overflow
+  // collateral-list-overflow (for styles)
   const isContainingTwoCollaterals = selectedCollateralsAddresses.length > 2
+
+  // for XTZ input to whoe info banner
+  // if user pressed useMAc handler or enter the same value manually
+  const showInfoBanner =
+    tezCollateralAddress &&
+    maxedXTZData.amount !== 0 &&
+    Number(selectedCollaterals[tezCollateralAddress].amount) >= maxedXTZData.amount &&
+    selectedCollaterals[tezCollateralAddress].validation !== INPUT_STATUS_ERROR
 
   return (
     <div>
@@ -208,7 +238,6 @@ export const AddCollateralScreen = () => {
           <div
             className={classNames('collateral-list', 'scroll-block', {
               'collateral-list-overflow': isContainingTwoCollaterals,
-              // 'mb-20': isContainingTwoCollaterals,
             })}
           >
             {selectedCollateralsAddresses.map((collateralAddress, idx) => {
@@ -221,7 +250,7 @@ export const AddCollateralScreen = () => {
               if (!collateralToken || !collateralToken.rate) return null
 
               const { amount, validation } = selectedCollaterals[collateralAddress]
-              const { symbol, rate, decimals, icon } = collateralToken
+              const { symbol, rate, decimals, icon, type } = collateralToken
 
               const userAssetBalance = getUserTokenBalanceByAddress({
                 userTokensBalances,
@@ -244,13 +273,14 @@ export const AddCollateralScreen = () => {
                         }}
                         settings={{
                           balanceAsset: symbol,
-                          useMaxHandler: () =>
-                            inputOnChangeHandle(
-                              getLoansInputMaxAmount(userAssetBalance, decimals),
-                              userAssetBalance,
-                              collateralAddress,
-                              decimals,
-                            ),
+                          useMaxHandler: () => {
+                            const _amount = getLoansInputMaxAmount(userAssetBalance, decimals)
+                            if (type === 'tez')
+                              setMaxedXTZData({
+                                amount: Number(_amount),
+                              })
+                            inputOnChangeHandle(_amount, userAssetBalance, collateralAddress, decimals)
+                          },
                           inputStatus: validation,
                           convertedValue: rate * Number(amount),
                           balance: userAssetBalance,
@@ -326,6 +356,15 @@ export const AddCollateralScreen = () => {
         >
           + Add more assets as collateral
         </Button>
+
+        {showInfoBanner && (
+          <div className="mt-20">
+            <Info
+              text="We have reduced the amount of XTZ to be deposited in order to cover the gas and transaction fees."
+              type="info"
+            />
+          </div>
+        )}
 
         <MemoizedComponent returnMemoizedComponent={isAddCollateralContinueDisabled}>
           <ModalStatsBlock>

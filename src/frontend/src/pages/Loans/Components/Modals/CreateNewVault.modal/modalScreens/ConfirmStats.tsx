@@ -1,32 +1,48 @@
+import React, { useCallback, useMemo } from 'react'
+
+// providers
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import React, { useCallback, useMemo } from 'react'
 import { useCreateVaultContext } from '../context/createVaultModalContext'
+
+// utils
 import {
   checkWhetherTokenIsLoanToken,
   getTokenDataByAddress,
   isLoansCollateralTokenMetadata,
 } from 'providers/TokensProvider/helpers/tokens.utils'
-import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
+
+// types
+import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+
+// actions
 import { createVault } from 'providers/VaultsProvider/actions/vaults.actions'
+
+// hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// consts
 import { CREATE_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
-import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { ADD_COLLATERAL_SCREEN_ID, BORROW_SCREEN_ID } from '../helpers/createNewVault.consts'
+import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
+
+// styles
+import { silverColor } from 'styles'
+import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+import { ConfirmStatsVaultOverview } from '../createNewVault.style'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
+
+// components
+import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { ADD_COLLATERAL_SCREEN_ID, BORROW_SCREEN_ID } from '../helpers/createNewVault.consts'
-import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { ConfirmStatsVaultOverview } from '../createNewVault.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
-import { silverColor } from 'styles'
 
 export const ConfirmStats = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()

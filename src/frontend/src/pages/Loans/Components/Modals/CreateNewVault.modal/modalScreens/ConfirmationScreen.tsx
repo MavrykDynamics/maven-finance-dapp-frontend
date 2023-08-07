@@ -36,11 +36,11 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 // types
 import { NewVaultType } from '../helpers/createNewVault.types'
 
-// actions
-
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
+
+// actions
 import { borrowVaultAssetAction } from 'providers/VaultsProvider/actions/vaults.actions'
 
 export const ConfirmationScreen = () => {

@@ -16,11 +16,16 @@ import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.styl
 import { BorrowScreenWrapper } from '../createNewVault.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 
 // consts
 import { ERR_MSG_INPUT, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
@@ -33,19 +38,17 @@ import { DAO_FEE } from 'texts/tooltips/vault.text'
 import { checkNan } from 'utils/checkNan'
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { sleep } from 'utils/api/sleep'
+
+// queries
+import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
 
 // hooks
 import { useBorrowInputData } from '../components/useBorrowInputData'
 
 // types
-import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
-import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { Settings } from 'app/App.components/Input/newInput.type'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { sleep } from 'utils/api/sleep'
 
 type BorrowScreenProps = {
   setCurrentSymbol: React.Dispatch<React.SetStateAction<string>>
@@ -55,6 +58,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   const { apolloClient } = useApolloContext()
   const { userAddress } = useUserContext()
   const { info, bug } = useToasterContext()
+  const { vaultsMapper } = useVaultsContext()
   const {
     preferences: { themeSelected },
     globalLoadingState: { isActionActive },
@@ -71,6 +75,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     vaultInputState,
     updateVaultCreating,
     updateNewVault,
+    newVault,
   } = useCreateVaultContext()
   const {
     config: { daoFee },
@@ -88,7 +93,11 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const convertedBorrowedAmount = convertNumberForClient({ number: currentBorrowedAmount, grade: decimals })
   const isDisabledButton =
-    inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive || isVaultCreating
+    inputData.validationStatus === INPUT_STATUS_ERROR ||
+    inputAmount === 0 ||
+    isActionActive ||
+    isVaultCreating ||
+    !vaultsMapper[newVault?.address ?? '']
 
   // Actions --------------------------------------------------------------------
   const getNewVaultData = useCallback(
