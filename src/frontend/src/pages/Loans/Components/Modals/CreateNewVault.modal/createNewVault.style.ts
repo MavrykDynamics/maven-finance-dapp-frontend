@@ -16,10 +16,10 @@ export const VaultModalStepper = styled.div<{ theme: MavrykTheme }>`
   }
 
   span {
-    color: ${({ theme }) => theme.headerColor};
+    color: ${({ theme }) => theme.valueColor};
   }
   span.active {
-    color: #86d4c9;
+    color: ${({ theme }) => theme.headerColor};
     /* color: ${({ theme }) => theme.containerColor}; */
   }
 `

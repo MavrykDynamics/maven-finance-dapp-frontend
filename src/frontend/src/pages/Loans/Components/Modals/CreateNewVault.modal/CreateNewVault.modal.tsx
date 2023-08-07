@@ -64,6 +64,7 @@ export const CreateNewVaultConsumer = () => {
   return (
     <PopupContainer onClick={closePopup} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className={classNames('loans')}>
+        <button onClick={closePopup} className="close-modal" />
         <LoansModalBase>
           <VaultModalStepperWrapper>
             <CreateVaultModalStepper items={stepperItems} activeIndex={activeStepperIndex} />

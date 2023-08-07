@@ -70,6 +70,7 @@ export const AddCollateralScreen = () => {
     updateScreenToShow,
     hasXTZTokenSelected,
     borrowCapacity,
+    collateralsBalance,
   } = useCreateVaultContext()
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd add new collateral)
@@ -195,20 +196,6 @@ export const AddCollateralScreen = () => {
 
   const continueHandler = useCallback(() => updateScreenToShow(CONFIRM_STATS_SCREEN_ID), [updateScreenToShow])
   const backHandler = useCallback(() => updateScreenToShow(INITIAL_SCREEN_ID), [updateScreenToShow])
-
-  const totalCollateralValue = useMemo(
-    () =>
-      selectedCollateralsAddresses.reduce<number>((acc, address) => {
-        const { tokenAddress, amount } = selectedCollaterals[address]
-        const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
-        if (!token || !token.rate) return acc
-
-        const { rate } = token
-
-        return acc + rate * Number(amount)
-      }, 0),
-    [selectedCollaterals, selectedCollateralsAddresses, tokensMetadata, tokensPrices],
-  )
 
   // collateral-list-overflow
   const isContainingTwoCollaterals = selectedCollateralsAddresses.length > 2
@@ -356,7 +343,7 @@ export const AddCollateralScreen = () => {
                         className="tooltip"
                       />
                     </div>
-                    <CommaNumber value={totalCollateralValue} decimalsToShow={0} className="value" />
+                    <CommaNumber value={collateralsBalance} decimalsToShow={0} className="value" />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">

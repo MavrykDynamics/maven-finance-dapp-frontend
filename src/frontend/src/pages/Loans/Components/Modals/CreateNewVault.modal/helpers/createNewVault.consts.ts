@@ -52,29 +52,3 @@ export const stepperItemsObj = {
 }
 
 export const stepperItems = Object.values(stepperItemsObj)
-
-export const testVaults: Record<string, VaultType> = {
-  KT1RyJznnuhSYP7aLJS8YHmcgumap2D2jhqC: {
-    borrowedTokenAddress: 'KT1UhjCszVyY5dkNUXFGAwdNcVgVe2ZeuPv5',
-    name: 'test12-dev',
-    address: 'KT1RyJznnuhSYP7aLJS8YHmcgumap2D2jhqC',
-    ownerAddress: 'tz1byTGaUKjJqkwSXPnM3dpf9N39pYwRfnTm',
-    vaultId: 358,
-    apr: 25.590961144749258,
-    creationTimestamp: 1690782579000,
-    borrowedAmount: 0,
-    availableLiquidity: 42313314,
-    minimumRepay: 10000,
-    fee: 0,
-    collateralData: [],
-    liquidationMax: 0,
-    liquidationReward: 0.06,
-    adminLiquidateFee: 600,
-    liquidationRatio: 1500,
-    liquidationLvl: null,
-    sMVKDelegatedTo: '',
-    xtzDelegatedTo: null,
-    depositors: [],
-    deporsitorsFlag: 'any',
-  },
-}

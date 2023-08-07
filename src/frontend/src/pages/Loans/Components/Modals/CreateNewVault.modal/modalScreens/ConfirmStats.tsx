@@ -24,14 +24,12 @@ import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } f
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ConfirmStatsVaultOverview } from '../createNewVault.style'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 import { silverColor } from 'styles'
 
 export const ConfirmStats = () => {
   const { apolloClient } = useApolloContext()
-  const { marketsMapper } = useLoansContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { vaultsMapper } = useVaultsContext()
 
@@ -52,71 +50,11 @@ export const ConfirmStats = () => {
     updateNewVault,
     newVault,
     data,
+    borrowCapacity,
+    collateralsBalance,
   } = useCreateVaultContext()
 
   const { marketTokenAddress = '', setCreatedVaultAddress } = data ?? {}
-  const { availableLiquidity = 0 } = marketsMapper[marketTokenAddress] ?? {}
-  const { symbol = '' } = tokensMetadata[marketTokenAddress]
-  const rate = tokensPrices[symbol] ?? 0
-
-  useEffect(() => {
-    if (newVault && vaultsMapper[newVault.address]) {
-      updateScreenToShow(BORROW_SCREEN_ID)
-    }
-  }, [newVault, updateScreenToShow, vaultsMapper])
-
-  // Actions --------------------------------------------------------------------
-  const getNewVaultData = useCallback(
-    async (retries = 1) => {
-      try {
-        const newVaultData = await apolloClient.query({
-          query: GET_NEW_VAULT,
-          fetchPolicy: 'no-cache',
-          variables: {
-            userAddress: userAddress,
-            vaultName: vaultInputState.name,
-          },
-        })
-
-        if (newVaultData.error) {
-          console.error('loading new vault error', newVaultData.error)
-          throw new Error(newVaultData.error.message)
-        }
-
-        if (newVaultData.data.vault.length) {
-          const { address, id } = newVaultData.data.vault[0]
-          setCreatedVaultAddress?.(address)
-          updateNewVault({
-            address,
-            id,
-          })
-          updateVaultCreating(false)
-          // TODO remove retry after indexer update
-        } else if (retries !== 0) {
-          info('Refetching new vault', 'Trying to refetch the new vault data. Plases wait 7 seconds...')
-          await sleep(7000)
-          await getNewVaultData(retries - 1)
-        } else {
-          bug(
-            "Can't fetch new vault data, try reload the page and find your newly created vault in the the list of vaults",
-            'Update Vault Error',
-          )
-        }
-      } catch (e) {
-        bug('Fetch Error', 'Error occured while loading latest created vault, please reload the page')
-      }
-    },
-    [
-      apolloClient,
-      bug,
-      info,
-      setCreatedVaultAddress,
-      updateNewVault,
-      updateVaultCreating,
-      userAddress,
-      vaultInputState.name,
-    ],
-  )
 
   //   create vault action -----------------------------------------------------------------------
   const createVaultAction = useCallback(async () => {
@@ -191,39 +129,17 @@ export const ConfirmStats = () => {
     () => ({
       actionType: CREATE_VAULT_ACTION,
       actionFn: createVaultAction,
-      dappActionCallback: async () => {
-        await getNewVaultData()
+      dappActionCallback: () => {
+        updateScreenToShow(BORROW_SCREEN_ID)
       },
       isSilentAction: true,
     }),
-    [createVaultAction, getNewVaultData],
+    [createVaultAction, updateScreenToShow],
   )
 
   const { action: createVaultHandler } = useContractAction(createVaultActionProps)
 
   const backHandler = useCallback(() => updateScreenToShow(ADD_COLLATERAL_SCREEN_ID), [updateScreenToShow])
-
-  const totalCollateralDepositedValue = useMemo(
-    () =>
-      selectedCollateralsAddresses.reduce<number>((acc, address) => {
-        const { tokenAddress, amount } = selectedCollaterals[address]
-        const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
-        if (!token || !token.rate) return acc
-
-        const { rate } = token
-
-        const convertedBalance = Number(amount) * rate
-
-        return acc + convertedBalance
-      }, 0),
-    [selectedCollaterals, selectedCollateralsAddresses, tokensMetadata, tokensPrices],
-  )
-
-  const borrowedAmount = 0
-  const futureBorrowCapacity = useMemo(
-    () => Math.min(Math.max(availableLiquidity, 0), totalCollateralDepositedValue / 2 - borrowedAmount * rate),
-    [availableLiquidity, rate, totalCollateralDepositedValue],
-  )
 
   return (
     <div>
@@ -281,7 +197,7 @@ export const ConfirmStats = () => {
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Total Collateral Deposited</div>
-            <CommaNumber value={totalCollateralDepositedValue} decimalsToShow={2} className="value" beginningText="$" />
+            <CommaNumber value={collateralsBalance} decimalsToShow={2} className="value" beginningText="$" />
           </ThreeLevelListItem>
           <ThreeLevelListItem className="right">
             <div className="name">
@@ -293,7 +209,7 @@ export const ConfirmStats = () => {
                 className="tooltip"
               />
             </div>
-            <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
+            <CommaNumber value={borrowCapacity} className="value" beginningText="$" />
           </ThreeLevelListItem>
         </div>
       </div>

@@ -61,6 +61,7 @@ export const ConfirmationScreen = () => {
     borrowCapacity,
     closePopup,
     finalBorrowInputData,
+    collateralsBalance,
   } = useCreateVaultContext()
   const {
     config: { daoFee },
@@ -110,6 +111,7 @@ export const ConfirmationScreen = () => {
   }, [borrowedToken, bug, inputAmount, lendingControllerAddress, userAddress, vaultData?.vaultId])
 
   const dappCallback = useCallback(() => {
+    debugger
     closePopup()
   }, [closePopup])
 
@@ -125,22 +127,6 @@ export const ConfirmationScreen = () => {
   const { action: borrowAsserHandler } = useContractAction(contractActionProps)
 
   const backHandler = useCallback(() => updateScreenToShow(BORROW_SCREEN_ID), [updateScreenToShow])
-
-  const totalCollateralDepositedValue = useMemo(
-    () =>
-      selectedCollateralsAddresses.reduce<number>((acc, address) => {
-        const { tokenAddress, amount } = selectedCollaterals[address]
-        const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
-        if (!token || !token.rate) return acc
-
-        const { rate } = token
-
-        const convertedBalance = Number(amount) * rate
-
-        return acc + convertedBalance
-      }, 0),
-    [selectedCollaterals, selectedCollateralsAddresses, tokensMetadata, tokensPrices],
-  )
 
   const isBorrowBtnDisabled =
     isActionActive ||
@@ -166,12 +152,7 @@ export const ConfirmationScreen = () => {
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Total Collateral Deposited</div>
-              <CommaNumber
-                value={totalCollateralDepositedValue}
-                decimalsToShow={2}
-                className="value"
-                beginningText="$"
-              />
+              <CommaNumber value={collateralsBalance} decimalsToShow={2} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </div>
           <Table>

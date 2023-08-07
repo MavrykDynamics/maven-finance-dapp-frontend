@@ -20,7 +20,6 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useCreateVaultContext } from '../context/createVaultModalContext'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // consts
@@ -36,47 +35,54 @@ import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 // hooks
-import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useBorrowInputData } from '../components/useBorrowInputData'
 
 // types
-import { NewVaultType } from '../helpers/createNewVault.types'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { Settings } from 'app/App.components/Input/newInput.type'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { sleep } from 'utils/api/sleep'
 
 type BorrowScreenProps = {
   setCurrentSymbol: React.Dispatch<React.SetStateAction<string>>
 }
 
 export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
+  const { apolloClient } = useApolloContext()
+  const { userAddress } = useUserContext()
+  const { info, bug } = useToasterContext()
   const {
     preferences: { themeSelected },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
 
-  const { newVault, updateScreenToShow, borrowCapacity, isVaultCreating, setFinalBorrowInputAmount } =
-    useCreateVaultContext()
-  const { vaultsMapper } = useVaultsContext()
+  const {
+    updateScreenToShow,
+    borrowCapacity,
+    isVaultCreating,
+    setFinalBorrowInputAmount,
+    data,
+    collateralsBalance: currentCollateralBalance,
+    borrowAPR,
+    vaultInputState,
+    updateVaultCreating,
+    updateNewVault,
+  } = useCreateVaultContext()
   const {
     config: { daoFee },
   } = useLoansContext()
 
-  const currentVault = vaultsMapper[(newVault as NewVaultType).address]
-  const vaultData = useFullVault(currentVault)
-
-  const {
-    borrowedTokenAddress = '',
-    borrowCapacity: originalBorrowCapacity = 0,
-    borrowedAmount: currentBorrowedAmount = 0,
-    collateralBalance: currentCollateralBalance = 0,
-    collateralRatio = 0,
-    apr = 0,
-  } = vaultData ?? {}
+  const { marketTokenAddress: borrowedTokenAddress = '', setCreatedVaultAddress } = data ?? {}
+  const currentBorrowedAmount = 0
+  const collateralRatio = 0
 
   const { inputData, settings, inputProps, rate, icon, symbol, decimals } = useBorrowInputData(
     borrowedTokenAddress,
-    originalBorrowCapacity,
+    borrowCapacity,
   )
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
@@ -84,9 +90,67 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   const isDisabledButton =
     inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive || isVaultCreating
 
+  // Actions --------------------------------------------------------------------
+  const getNewVaultData = useCallback(
+    async (retries = 1) => {
+      try {
+        const newVaultData = await apolloClient.query({
+          query: GET_NEW_VAULT,
+          fetchPolicy: 'no-cache',
+          variables: {
+            userAddress: userAddress,
+            vaultName: vaultInputState.name,
+          },
+        })
+
+        if (newVaultData.error) {
+          console.error('loading new vault error', newVaultData.error)
+          throw new Error(newVaultData.error.message)
+        }
+
+        if (newVaultData.data.vault.length) {
+          const { address, id } = newVaultData.data.vault[0]
+          setCreatedVaultAddress?.(address)
+          updateNewVault({
+            address,
+            id,
+          })
+          updateVaultCreating(false)
+
+          // TODO remove retry after indexer update
+        } else if (retries !== 0) {
+          info('Refetching new vault', 'Trying to refetch the new vault data. Plases wait 7 seconds...')
+          await sleep(7000)
+          await getNewVaultData(retries - 1)
+        } else {
+          bug(
+            "Can't fetch new vault data, try reload the page and find your newly created vault in the the list of vaults",
+            'Update Vault Error',
+          )
+        }
+      } catch (e) {
+        bug('Fetch Error', 'Error occured while loading latest created vault, please reload the page')
+      }
+    },
+    [
+      apolloClient,
+      bug,
+      info,
+      setCreatedVaultAddress,
+      updateNewVault,
+      updateVaultCreating,
+      userAddress,
+      vaultInputState.name,
+    ],
+  )
+
   useEffect(() => {
     setCurrentSymbol(symbol)
   }, [setCurrentSymbol, symbol])
+
+  useEffect(() => {
+    getNewVaultData()
+  }, [])
 
   const continueHandler = useCallback(() => {
     setFinalBorrowInputAmount({ amount: Number(inputData.amount), rate, symbol })
@@ -112,7 +176,6 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     [settings],
   )
 
-  // TODO sxtract to custom hook (same code <BorrowingExpandCardBorrowSection />)
   return (
     <BorrowScreenWrapper>
       <div className="borrow-screen-top-stats">
@@ -130,7 +193,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">Borrow APR</div>
-          <CommaNumber value={apr} decimalsToShow={2} className="value" endingText="%" />
+          <CommaNumber value={borrowAPR} decimalsToShow={2} className="value" endingText="%" />
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">
@@ -176,6 +239,12 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
           <Icon id="arrowRight" />
         </NewButton>
       </div>
+      {isVaultCreating ? (
+        <div className="creating-vault-loader-wrapper">
+          Creating Vault
+          <SpinnerCircleLoaderStyled />
+        </div>
+      ) : null}
     </BorrowScreenWrapper>
   )
 }
