@@ -22,7 +22,7 @@ export const NotStakingBanner = ({ text, className }: Props) => {
     <NotStakingBannerStyled className={className}>
       {accountPkh ? (
         <Info text={text} type={INFO_ERROR}>
-          <Link to="/">
+          <Link to="/staking">
             <NewButton kind={BUTTON_PRIMARY}>
               <Icon id="staking" />
               Staking
