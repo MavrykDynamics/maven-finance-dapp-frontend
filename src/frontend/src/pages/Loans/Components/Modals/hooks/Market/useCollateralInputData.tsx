@@ -23,6 +23,10 @@ import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { DDItemId } from 'app/App.components/DropDown/NewDropdown'
 
+/**
+ *
+ * @returns collateral data to handle input stuff && XTZ max amount validation data
+ */
 export const useCollateralInputData = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 

@@ -2,6 +2,12 @@ import { isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useCallback, useMemo, useState } from 'react'
 import { SelectedCollateralTokenData } from '../../CreateNewVault.modal/helpers/createNewVault.types'
 
+/**
+ * takes collateral address and Record of them with input data
+ * checks for XTZ token max value including fee and gas for the operation
+ * for now its (amount - 1)
+ */
+
 export const useXTZMaxAmountValidator = (
   selectedCollateralsAddresses: string[],
   selectedCollaterals: Record<string, Omit<SelectedCollateralTokenData, 'tokenAddress'>> | null,
@@ -25,9 +31,6 @@ export const useXTZMaxAmountValidator = (
       maxedXTZData.amount !== 0 &&
       Number(selectedCollaterals[tezCollateralAddress]?.amount) >= maxedXTZData.amount + 1,
   )
-
-  console.log(selectedCollateralsAddresses, 'selectedCollateralsAddresses')
-  console.log(Boolean(tezCollateralAddress), 'isTezosToken')
 
   return { maxedXTZData, updateMaxedXTZData, willExceedXTZTheLimit, isTezosToken: Boolean(tezCollateralAddress) }
 }
