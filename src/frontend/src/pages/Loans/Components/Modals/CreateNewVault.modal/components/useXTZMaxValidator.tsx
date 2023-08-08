@@ -24,7 +24,7 @@ export const useXTZMaxAmountValidator = (
     tezCollateralAddress &&
     selectedCollaterals &&
     maxedXTZData.amount !== 0 &&
-    Number(selectedCollaterals[tezCollateralAddress]?.amount) >= maxedXTZData.amount
+    Number(selectedCollaterals[tezCollateralAddress]?.amount) >= maxedXTZData.amount + 1
 
   return { maxedXTZData, updateMaxedXTZData, willExceedXTZTheLimit, isTezosToken: Boolean(tezCollateralAddress) }
 }

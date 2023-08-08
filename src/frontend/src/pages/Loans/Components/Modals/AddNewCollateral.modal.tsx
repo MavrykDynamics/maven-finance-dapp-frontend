@@ -18,7 +18,7 @@ import {
   isTezosAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { checkNan } from 'utils/checkNan'
-import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
@@ -62,8 +62,8 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useXTZMaxAmountValidator } from './CreateNewVault.modal/components/useXTZMaxValidator'
 import { Info } from 'app/App.components/Info/Info.view'
+import { useCollateralsInputData } from './CreateNewVault.modal/components/useCollateralsInputData'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({
@@ -86,32 +86,18 @@ export const AddNewCollateral = ({
 
   useLockBodyScroll(show)
 
-  const [selectedCollateral, setSelectedCollateral] = useState<TokenAddressType | undefined>()
-  const [inputData, setInputData] = useState<{
-    amount: string
-    validationStatus: InputStatusType
-  }>({
-    amount: '0',
-    validationStatus: '',
-  })
-
-  const selectedCollateralObj = useMemo(
-    () =>
-      selectedCollateral
-        ? {
-            [selectedCollateral]: {
-              amount: inputData.amount,
-              validation: inputData.validationStatus,
-            },
-          }
-        : null,
-    [inputData.amount, inputData.validationStatus, selectedCollateral],
-  )
-
-  const { isTezosToken, updateMaxedXTZData, willExceedXTZTheLimit, maxedXTZData } = useXTZMaxAmountValidator(
-    [selectedCollateral ?? ''],
-    selectedCollateralObj,
-  )
+  const {
+    inputData,
+    setInputData,
+    selectedCollateral,
+    setSelectedCollateral,
+    inputOnBlurHandle,
+    inputOnChangeHandle,
+    willExceedXTZTheLimit,
+    onFocusHandler,
+    useMaxHandler,
+    clickOnInputDDItem,
+  } = useCollateralsInputData()
 
   // resetting popup state, when toggling it off
   useEffect(() => {
@@ -252,44 +238,6 @@ export const AddNewCollateral = ({
 
   const { action: depositCollateralHandler } = useContractAction(contractActionProps)
 
-  // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
-    const validationStatus = loansInputValidation({
-      inputAmount: newInputAmount,
-      maxAmount: isTezosToken ? userAssetBalance - 1 : userAssetBalance,
-      options: {
-        byDecimalPlaces: decimals,
-      },
-    })
-
-    if (inputData) {
-      setInputData({
-        ...inputData,
-        amount: newInputAmount,
-        validationStatus: validationStatus,
-      })
-    }
-  }
-
-  const inputOnBlurHandle = () =>
-    setInputData({
-      ...inputData,
-      amount: getOnBlurValue(inputData.amount),
-    })
-
-  const onFocusHandler = () =>
-    setInputData({
-      ...inputData,
-      amount: getOnFocusValue(inputData.amount),
-    })
-
-  const clickOnInputDDItem = (id: DDItemId) => {
-    if (typeof id === 'string') {
-      setSelectedCollateral(id)
-    }
-    setInputData({ amount: '0', validationStatus: INPUT_STATUS_DEFAULT })
-  }
-
   const isDepositBtnDisabled =
     (isTezosAsset(selectedCollateral) && !choosenBaker) || inputData.validationStatus === INPUT_STATUS_ERROR
 
@@ -351,13 +299,7 @@ export const AddNewCollateral = ({
                 settings={{
                   balance: userCollateralBalance,
                   balanceAsset: symbol,
-                  useMaxHandler: () => {
-                    const maxAmount = getLoansInputMaxAmount(userCollateralBalance, decimals)
-                    const _amount = isTezosToken ? String(+maxAmount - 1) : maxAmount
-
-                    if (isTezosToken) updateMaxedXTZData(Number(_amount))
-                    inputOnChangeHandle(_amount, userCollateralBalance)
-                  },
+                  useMaxHandler: () => useMaxHandler(userCollateralBalance),
 
                   inputSize: INPUT_LARGE,
                   inputStatus: inputData.validationStatus,

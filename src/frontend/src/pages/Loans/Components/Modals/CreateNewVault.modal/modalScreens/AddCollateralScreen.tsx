@@ -174,16 +174,13 @@ export const AddCollateralScreen = () => {
     collateralAddress: TokenAddressType,
     collateralDecimals: number,
   ) => {
-    const _amount = willExceedXTZTheLimit ? String(Number(newInputAmount) - 1) : newInputAmount
-    let validationStatus: InputStatusType = loansInputValidation({
-      inputAmount: _amount,
-      maxAmount: userCollateralBalance,
+    const validationStatus: InputStatusType = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount: isTezosToken ? userCollateralBalance - 1 : userCollateralBalance,
       options: {
         byDecimalPlaces: collateralDecimals,
       },
     })
-
-    validationStatus = willExceedXTZTheLimit ? INPUT_STATUS_ERROR : validationStatus
 
     updateSelectedCollaterals({
       ...selectedCollaterals,
@@ -263,7 +260,9 @@ export const AddCollateralScreen = () => {
                         settings={{
                           balanceAsset: symbol,
                           useMaxHandler: () => {
-                            const _amount = getLoansInputMaxAmount(userAssetBalance, decimals)
+                            const maxAmount = getLoansInputMaxAmount(userAssetBalance, decimals)
+                            const _amount = isTezosToken ? String(+maxAmount - 1) : maxAmount
+
                             if (isTezosToken) updateMaxedXTZData(Number(_amount))
                             inputOnChangeHandle(_amount, userAssetBalance, collateralAddress, decimals)
                           },
