@@ -12,7 +12,7 @@ export const useXTZMaxAmountValidator = (
   })
 
   const updateMaxedXTZData = useCallback((amount: string | number) => {
-    setMaxedXTZData({ amount: Number(amount) })
+    setMaxedXTZData({ amount: Number(amount) - 1 })
   }, [])
 
   const tezCollateralAddress = useMemo(
@@ -24,8 +24,7 @@ export const useXTZMaxAmountValidator = (
     tezCollateralAddress &&
     selectedCollaterals &&
     maxedXTZData.amount !== 0 &&
-    Number(selectedCollaterals[tezCollateralAddress]?.amount) > maxedXTZData.amount &&
-    selectedCollaterals[tezCollateralAddress]?.validation !== INPUT_STATUS_ERROR
+    Number(selectedCollaterals[tezCollateralAddress]?.amount) >= maxedXTZData.amount
 
   return { maxedXTZData, updateMaxedXTZData, willExceedXTZTheLimit, isTezosToken: Boolean(tezCollateralAddress) }
 }
