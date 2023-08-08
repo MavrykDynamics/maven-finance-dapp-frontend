@@ -34,7 +34,6 @@ type Props = {
   children: React.ReactNode
 }
 
-// TODO: add zod schemes and parse data with zod first
 // TODO: test data update on lvl change and action turn off on lvl change, data should update before action turn off, or at least simultaniously
 const DappConfigProvider = ({ children }: Props) => {
   const handleSubError = (error: ApolloError) => {
@@ -97,7 +96,6 @@ const DappConfigProvider = ({ children }: Props) => {
     if (currentIndexedLevel >= operationLvl) turnOffAction()
   }, [action, currentIndexedLevel, hideToasterMessage, success])
 
-  // HANDLING INITIAL DATA, THAT SHOULD BE LOADED ON DAPP INIT
   const [dappConfigCtxState, setDappConfigCtxState] = useState<DappConfigContextStateType>(DEFAULT_DAPP_CONFIG_CONTEXT)
 
   // Load initial data for dapp (max lenghts, mvkFaucet, minSmvkAmount)

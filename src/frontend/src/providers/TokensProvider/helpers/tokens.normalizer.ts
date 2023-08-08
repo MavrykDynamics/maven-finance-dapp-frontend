@@ -173,8 +173,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         }
 
         // if token is collateral
-        if (lending_controller_collateral_tokens?.[0]) {
-          // handling all another collateral tokens
+        if (lending_controller_collateral_tokens[0]) {
           acc.collateralTokens.push(token_address)
           tokenMetadata = {
             ...tokenMetadata,
@@ -189,12 +188,12 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         }
 
         // if token is loan token (market token)
-        if (lending_controller_loan_tokens?.[0]) {
+        if (lending_controller_loan_tokens[0]) {
           tokenMetadata = {
             ...tokenMetadata,
             loanData: {
               ...tokenMetadata.loanData,
-              indexerName: lending_controller_collateral_tokens[0].token_name,
+              indexerName: lending_controller_loan_tokens[0].loan_token_name,
             },
           }
         }

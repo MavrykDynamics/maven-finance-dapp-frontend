@@ -7,38 +7,38 @@ export const tokenGqlSchema = z.object({
   token_standard: z.string(),
 
   lending_controller_collateral_tokens: z
-    .array(
+    .tuple([
       z.object({
         token_name: z.string(),
         paused: z.boolean(),
         is_scaled_token: z.boolean(),
         is_staked_token: z.boolean(),
       }),
-    )
+    ])
     .or(z.tuple([])),
 
   lending_controller_loan_tokens: z
-    .array(
+    .tuple([
       z.object({
         loan_token_name: z.string(),
       }),
-    )
+    ])
     .or(z.tuple([])),
 
   m_tokens: z
-    .array(
+    .tuple([
       z.object({
         address: z.string(),
       }),
-    )
+    ])
     .or(z.tuple([])),
 
   mvk_tokens: z
-    .array(
+    .tuple([
       z.object({
         address: z.string(),
       }),
-    )
+    ])
     .or(z.tuple([])),
 })
 
