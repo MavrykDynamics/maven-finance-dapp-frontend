@@ -14,18 +14,18 @@ export const DEFAULT_USER: UserContextStateType = {
   isNewlyRegisteredSatellite: false,
   isSatellite: false,
   isVestee: false,
-  actionsHistory: [],
+  actionsHistory: [], // separate query dashboard personal
   govActionsCount: 0,
-  gatheredDoormanRewards: 0,
-  gatheredFarmRewards: 0,
-  gatheredSatellitesRewards: 0,
+  gatheredDoormanRewards: 0, // separate query dashboard personal
+  gatheredFarmRewards: 0, // separate query dashboard personal
+  gatheredSatellitesRewards: 0, // separate query dashboard personal
   availableLoansRewards: 0,
   availableSatellitesRewards: 0,
   availableDoormanRewards: 0,
   availableFarmRewards: {},
   userTokensBalances: {},
   userMTokens: {},
-  farmAccounts: [],
+  farmAccounts: [], // separate query farms
   availableProposalRewards: [],
 }
 

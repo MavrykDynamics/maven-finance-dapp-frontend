@@ -1,17 +1,18 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import * as signalR from '@microsoft/signalr'
-import { useSubscription } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
-import { SUBSCRIPTION_INDEXER_LVL } from 'providers/DappConfigProvider/queries/indexerLvl.query'
 import { DEFAULT_USER, DEFAULT_USER_TZKT_TOKENS } from './helpers/user.consts'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { dappClient } from 'providers/UserProvider/wallet/WalletCore'
 
 // context
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useQueryRefetch } from 'providers/common/hooks/useQueryRefetch'
 
 // helpers
 import {
@@ -26,7 +27,7 @@ import { sleep } from 'utils/api/sleep'
 import { getUsersFarmRewards } from './helpers/userRewards.helpers'
 
 // queries
-import { SUBSCRIBE_USER_DATA, SUBSCRIBE_USER_PROPOSAL_REWARDS_DATA } from './queries/userData.query'
+import { USER_DATA_QUERY } from './queries/userData.query'
 
 // types
 import {
@@ -39,7 +40,6 @@ import {
 // TODO: remove after user addres won't be needed in redux actions
 import { useDispatch } from 'react-redux'
 import { DISCONNECT, SET_REDUX_USER } from 'reducers/wallet'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const userContext = React.createContext<UserContext>(undefined!)
 
@@ -199,13 +199,12 @@ export const UserProvider = ({ children }: Props) => {
   }, [canStartUserInitialLoading, , connect])
 
   // subscribe to user's indexer data
-  const { loading: userDataLoading } = useSubscription(SUBSCRIBE_USER_DATA, {
+  const { loading: userDataLoading, refetch: refetchIndexerUser } = useQuery(USER_DATA_QUERY, {
     skip: !userCtxState.userAddress,
     variables: {
       userAddress: userCtxState.userAddress,
     },
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
+    onCompleted: (data) => {
       // if user does not exists, TODO: should not be an option
       if (!data || data.mavryk_user.length === 0) {
         bug('User does not exists in DB')
@@ -236,6 +235,21 @@ export const UserProvider = ({ children }: Props) => {
     },
   })
 
+  const refetchQueryHookArgs = useMemo(
+    () => ({
+      refetchers: [
+        {
+          refetch: refetchIndexerUser,
+        },
+      ],
+    }),
+    [refetchIndexerUser],
+  )
+
+  console.log({ refetchQueryHookArgs, refetchIndexerUser, userCtxState })
+
+  useQueryRefetch(refetchQueryHookArgs)
+
   /**
    * User farm rewards depends on current indexed level, and every time level updates we need to recalc farm rewards
    * to reduce amount of needed rerenders, we recalc farm rewards every 3rd level change
@@ -253,32 +267,6 @@ export const UserProvider = ({ children }: Props) => {
       }))
     }
   }, [currentIndexedLevel, userCtxState.farmAccounts])
-
-  /**
-   * user proposal rewards, user can have them if he votes on proposals (means he is satellite), or it's just a regular user and he delegated
-   * to satellite who is making all work
-   *
-   * skip is user is not a satellite and haven't delegated to any
-   */
-  useSubscription(SUBSCRIBE_USER_PROPOSAL_REWARDS_DATA, {
-    skip: !userCtxState.isSatellite && !userCtxState.satelliteMvkIsDelegatedTo,
-    variables: {
-      userAddress: userCtxState.isSatellite ? userCtxState.userAddress : userCtxState.satelliteMvkIsDelegatedTo ?? '',
-    },
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
-
-      setUserCtxState((prev) => ({
-        ...prev,
-        availableProposalRewards: data.governance_proposal.map(({ id }) => id),
-      }))
-    },
-    onError: (e) => {
-      console.error(`UserProvider query error: `, e)
-      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-    },
-  })
 
   // disconnect user's wallet to DAPP & set default context
   const signOut = useCallback(async () => {

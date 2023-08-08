@@ -1,4 +1,4 @@
-import { GetUserDataSubscription } from 'utils/__generated__/graphql'
+import { GetUserDataQuery } from 'utils/__generated__/graphql'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { FIXED_POINT_ACCURACY, MVK_DECIMALS } from 'utils/constants'
 
@@ -8,7 +8,7 @@ export function getUserDoomanRewards({
   userDoormanRewardsDataFromIndexer,
 }: {
   userSmvkBalance: number
-  userDoormanRewardsDataFromIndexer: GetUserDataSubscription['mavryk_user'][number]['doorman_stake_accounts'][number]
+  userDoormanRewardsDataFromIndexer: GetUserDataQuery['mavryk_user'][number]['doorman_stake_accounts'][number]
 }): number {
   const {
     participation_fees_per_share,
@@ -27,7 +27,7 @@ export function getUserSatelliteRewards({
   userSatelliteRewardsDataFromIndexer,
 }: {
   userSmvkBalance: number
-  userSatelliteRewardsDataFromIndexer: GetUserDataSubscription['mavryk_user'][number]['satellite_rewardss'][number]
+  userSatelliteRewardsDataFromIndexer: GetUserDataQuery['mavryk_user'][number]['satellite_rewardss'][number]
 }): number {
   const { unpaid, participation_rewards_per_share, reference } = userSatelliteRewardsDataFromIndexer
   const { satellite_accumulated_reward_per_share } = reference ?? { satellite_accumulated_reward_per_share: 0 }
@@ -43,7 +43,7 @@ export function getUsersFarmRewards({
   userFarmsRewardsDataFromIndexer,
 }: {
   currentLvl: number
-  userFarmsRewardsDataFromIndexer: GetUserDataSubscription['mavryk_user'][number]['farm_accounts']
+  userFarmsRewardsDataFromIndexer: GetUserDataQuery['mavryk_user'][number]['farm_accounts']
 }) {
   return userFarmsRewardsDataFromIndexer.reduce<Record<string, number>>((acc, farmAccount) => {
     const {

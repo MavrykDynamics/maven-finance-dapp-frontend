@@ -1,4 +1,4 @@
-import { GetUserDataSubscription } from 'utils/__generated__/graphql'
+import { GetUserDataQuery } from 'utils/__generated__/graphql'
 import { UserContext, UserMetadataType } from '../user.provider.types'
 import dayjs from 'dayjs'
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -6,11 +6,7 @@ import { MVK_DECIMALS } from 'utils/constants'
 import { getUserDoomanRewards, getUserSatelliteRewards } from './userRewards.helpers'
 import { DEFAULT_USER_AVATAR } from './user.consts'
 
-export const normalizeUser = ({
-  indexerData,
-}: {
-  indexerData: GetUserDataSubscription
-}): Omit<UserMetadataType, 'availableProposalRewards'> => {
+export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }): UserMetadataType => {
   const {
     delegations,
     stakes_history_data,
@@ -27,6 +23,8 @@ export const normalizeUser = ({
     satellite_rewardss,
     doorman_stake_accounts,
   } = indexerData.mavryk_user[0]
+
+  const availableProposalRewards = indexerData.governance_proposal.map(({ id }) => id)
 
   const satelliteAvatar = satellite?.image ?? null
   const counsilAvatar = counsilMember?.image ?? null
@@ -67,6 +65,7 @@ export const normalizeUser = ({
     gatheredSatellitesRewards,
     availableSatellitesRewards,
     availableDoormanRewards,
+    availableProposalRewards,
     farmAccounts: farm_accounts,
 
     isNewlyRegisteredSatellite: checkWhetherUserNewlyRegisteredSatellite(governance_satellite_snapshots),
@@ -82,9 +81,7 @@ const USER_ACTIONS_TYPES = {
   SATELLITE_REWARD: 4,
 }
 
-const calcUsersRewardsToDate = (
-  usetStakesData: GetUserDataSubscription['mavryk_user'][number]['stakes_history_data'],
-) => {
+const calcUsersRewardsToDate = (usetStakesData: GetUserDataQuery['mavryk_user'][number]['stakes_history_data']) => {
   return usetStakesData.reduce<{
     gatheredFarmRewards: number
     gatheredSatellitesRewards: number
@@ -133,7 +130,7 @@ const calcUsersRewardsToDate = (
  * TODO: @AlexBelz123 add more detailed docs here
  */
 const checkWhetherUserNewlyRegisteredSatellite = (
-  userSatelliteSnapshots: GetUserDataSubscription['mavryk_user'][number]['governance_satellite_snapshots'],
+  userSatelliteSnapshots: GetUserDataQuery['mavryk_user'][number]['governance_satellite_snapshots'],
 ) => {
   // If highest cycle one is false then not registered/ineligable as a satellite
   if (userSatelliteSnapshots.length < 2 && userSatelliteSnapshots.length > 0) {
