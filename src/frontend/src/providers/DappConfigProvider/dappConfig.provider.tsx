@@ -26,6 +26,7 @@ import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
 // utils
 import { setItemInStorage } from 'utils/storage'
 import { DAPP_INITIAL_CONFIG_QUERY } from './queries/config.query'
+import { dappConfigSchema, indexerLevelSchema } from './helpers/dappConfig.schemes'
 
 export const dappConfigContext = React.createContext<DappConfigContext>(undefined!)
 
@@ -57,9 +58,12 @@ const DappConfigProvider = ({ children }: Props) => {
     shouldResubscribe: true,
     onData: ({ data: { data } }) => {
       if (!data) return
-
-      const indexerLvl = data.dipdup_head.find(({ name }) => name === process.env.REACT_APP_RPC_TZKT_API)?.level
-      if (indexerLvl) setCurrentIndexedLevel(indexerLvl)
+      try {
+        const parsedLevelData = indexerLevelSchema.parse(data.dipdup_index)
+        setCurrentIndexedLevel(parsedLevelData[0].level)
+      } catch (e) {
+        console.error('zod parsing SUBSCRIPTION_INDEXER_LVL error:', { e })
+      }
     },
     onError: (error) => {
       handleSubError(error)
@@ -99,13 +103,19 @@ const DappConfigProvider = ({ children }: Props) => {
   // Load initial data for dapp (max lenghts, mvkFaucet, minSmvkAmount)
   const { loading: initialConfigLoading } = useQuery(DAPP_INITIAL_CONFIG_QUERY, {
     onCompleted: (data) => {
-      const { maxLenghts, minimumStakedMvkBalance, mvkFaucetAddress } = normalizeInitialConfigData(data)
-      setDappConfigCtxState((prev) => ({
-        ...prev,
-        maxLenghts,
-        minimumStakedMvkBalance,
-        mvkFaucetAddress,
-      }))
+      try {
+        const parsedConfig = dappConfigSchema.parse(data)
+
+        const { maxLenghts, minimumStakedMvkBalance, mvkFaucetAddress } = normalizeInitialConfigData(parsedConfig)
+        setDappConfigCtxState((prev) => ({
+          ...prev,
+          maxLenghts,
+          minimumStakedMvkBalance,
+          mvkFaucetAddress,
+        }))
+      } catch (e) {
+        console.error('zod parsing DAPP_INITIAL_CONFIG_QUERY error:', { e })
+      }
     },
     onError: handleSubError,
   })

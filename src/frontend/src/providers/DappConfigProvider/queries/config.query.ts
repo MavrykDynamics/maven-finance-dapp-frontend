@@ -28,12 +28,10 @@ export const DAPP_INITIAL_CONFIG_QUERY = gql(`
       satellite_description_max_length
       satellite_name_max_length
       satellite_website_max_length
-    }
 
-		# min amount of smvk to become a satellite
-		delegation {
+			# min amount of smvk to become a satellite
 			minimum_smvk_balance
-		}
+    }
 
 		# mvk faucet address
 		mvk_faucet{

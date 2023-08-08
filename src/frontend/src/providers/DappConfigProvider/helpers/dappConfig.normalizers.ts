@@ -1,9 +1,10 @@
-import { GetContractAddressesQueryQuery, InitialDappQueryQuery } from 'utils/__generated__/graphql'
+import { GetContractAddressesQueryQuery } from 'utils/__generated__/graphql'
 import { DappMaxLengths } from '../dappConfig.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
+import { DappConfigGqlType } from './dappConfig.schemes'
 
-export const normalizerMaxLenghts = (data: InitialDappQueryQuery): DappMaxLengths => {
+export const normalizerMaxLenghts = (data: DappConfigGqlType): DappMaxLengths => {
   const {
     council_member_image_max_length,
     council_member_name_max_length,
@@ -55,7 +56,7 @@ export const normalizerMaxLenghts = (data: InitialDappQueryQuery): DappMaxLength
   }
 }
 
-export const normalizeInitialConfigData = (indexerData: InitialDappQueryQuery) => {
+export const normalizeInitialConfigData = (indexerData: DappConfigGqlType) => {
   return {
     maxLenghts: normalizerMaxLenghts(indexerData),
     mvkFaucetAddress: indexerData.mvk_faucet[0]?.address ?? null,

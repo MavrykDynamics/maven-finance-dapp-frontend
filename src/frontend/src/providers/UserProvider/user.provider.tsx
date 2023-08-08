@@ -39,6 +39,7 @@ import {
 // TODO: remove after user addres won't be needed in redux actions
 import { useDispatch } from 'react-redux'
 import { DISCONNECT, SET_REDUX_USER } from 'reducers/wallet'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const userContext = React.createContext<UserContext>(undefined!)
 
@@ -57,12 +58,12 @@ const hasUserInLocalStorage =
  */
 export const UserProvider = ({ children }: Props) => {
   const { tokensMetadata } = useTokensContext()
+  const { currentIndexedLevel } = useDappConfigContext()
   const { bug, info, success, loading, hideToasterMessage } = useToasterContext()
 
   const dispatch = useDispatch()
 
   const ws = useRef<null | signalR.HubConnection>(null)
-  const lastSavedLevel = useRef<number>(0)
 
   // store all data for user, that comes from hasura
   const [userCtxState, setUserCtxState] = useState<UserContextStateType>(DEFAULT_USER)
@@ -240,33 +241,18 @@ export const UserProvider = ({ children }: Props) => {
    * to reduce amount of needed rerenders, we recalc farm rewards every 3rd level change
    *
    * skip when user don't participated any farms
-   *
-   * Subscribe to level change only when user's wallet is connected and he has farms where he has deposited
    */
-  useSubscription(SUBSCRIPTION_INDEXER_LVL, {
-    skip: Object.keys(userCtxState.farmAccounts).length === 0,
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
-      const indexerLvl = data.dipdup_head.find(({ name }) => name === process.env.REACT_APP_RPC_TZKT_API)?.level
-      if (indexerLvl) {
-        if (indexerLvl - lastSavedLevel.current >= 3) {
-          setUserCtxState((prev) => ({
-            ...prev,
-            availableFarmRewards: getUsersFarmRewards({
-              userFarmsRewardsDataFromIndexer: userCtxState.farmAccounts,
-              currentLvl: indexerLvl,
-            }),
-          }))
-        }
-        lastSavedLevel.current = indexerLvl
-      }
-    },
-    onError: (e) => {
-      console.error(`UserProvider query error: `, e)
-      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-    },
-  })
+  useEffect(() => {
+    if (Object.keys(userCtxState.farmAccounts).length !== 0) {
+      setUserCtxState((prev) => ({
+        ...prev,
+        availableFarmRewards: getUsersFarmRewards({
+          userFarmsRewardsDataFromIndexer: userCtxState.farmAccounts,
+          currentLvl: currentIndexedLevel,
+        }),
+      }))
+    }
+  }, [currentIndexedLevel, userCtxState.farmAccounts])
 
   /**
    * user proposal rewards, user can have them if he votes on proposals (means he is satellite), or it's just a regular user and he delegated
