@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // components
@@ -29,15 +29,7 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { AddNewCollateralDataProps } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
-import {
-  InputStatusType,
-  INPUT_LARGE,
-  INPUT_STATUS_ERROR,
-  INPUT_STATUS_SUCCESS,
-  getOnBlurValue,
-  getOnFocusValue,
-  INPUT_STATUS_DEFAULT,
-} from 'app/App.components/Input/Input.constants'
+import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // actions
@@ -63,7 +55,8 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { Info } from 'app/App.components/Info/Info.view'
-import { useCollateralsInputData } from './CreateNewVault.modal/components/useCollateralsInputData'
+import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
+import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({
@@ -97,7 +90,7 @@ export const AddNewCollateral = ({
     onFocusHandler,
     useMaxHandler,
     clickOnInputDDItem,
-  } = useCollateralsInputData()
+  } = useCollateralInputData()
 
   // resetting popup state, when toggling it off
   useEffect(() => {
@@ -106,8 +99,9 @@ export const AddNewCollateral = ({
         amount: '0',
         validationStatus: '',
       })
+      setSelectedCollateral('')
     }
-  }, [show])
+  }, [setInputData, show])
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd create vault)
   const mappedAvaliableCollaterals = useMemo(() => {
@@ -175,7 +169,7 @@ export const AddNewCollateral = ({
     borrowCapacity = 0,
   } = data ?? {}
 
-  const { symbol = '', decimals = 0, rate: originalRate } = collateralToken ?? {}
+  const { symbol = '', rate: originalRate } = collateralToken ?? {}
   const rate = originalRate ?? 0
   const userCollateralBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: selectedCollateral })
   const { rate: originalBorrowedTokenRate } = borrowedToken ?? {}
@@ -226,7 +220,17 @@ export const AddNewCollateral = ({
     }
 
     return null
-  }, [bug, choosenBaker?.bakerAddress, closePopup, collateralToken, inputData.amount, userAddress, vaultAddress])
+  }, [
+    bug,
+    choosenBaker?.bakerAddress,
+    closePopup,
+    collateralToken,
+    inputData.amount,
+    lendingControllerAddress,
+    userAddress,
+    vaultAddress,
+    vaultId,
+  ])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -359,14 +363,7 @@ export const AddNewCollateral = ({
             </>
           ) : null}
 
-          {willExceedXTZTheLimit && (
-            <div className="mt-20 mb-20">
-              <Info
-                text="We have reduced the amount of XTZ to be deposited in order to cover the gas and transaction fees."
-                type="info"
-              />
-            </div>
-          )}
+          <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20 mb-20" />
 
           <div className="block-name">New Vault Status</div>
           <VaultModalOverview>

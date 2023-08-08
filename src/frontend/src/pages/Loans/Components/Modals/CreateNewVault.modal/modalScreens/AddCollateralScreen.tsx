@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 
 // providers
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
@@ -46,7 +46,6 @@ import {
   ERR_MSG_INPUT,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
-  INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
   InputStatusType,
   getOnBlurValue,
@@ -57,7 +56,8 @@ import { BORROW_CAPACITY, COLLATERAL_VALUE } from 'texts/tooltips/vault.text'
 
 // types
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { useXTZMaxAmountValidator } from '../components/useXTZMaxValidator'
+import { useXTZMaxAmountValidator } from '../../hooks/Market/useXTZMaxValidator'
+import { XTZLimitInfoBanner } from '../../components/XTZLimitInfoBanner'
 
 export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
@@ -236,7 +236,7 @@ export const AddCollateralScreen = () => {
               if (!collateralToken || !collateralToken.rate) return null
 
               const { amount, validation } = selectedCollaterals[collateralAddress]
-              const { symbol, rate, decimals, icon, type } = collateralToken
+              const { symbol, rate, decimals, icon } = collateralToken
 
               const userAssetBalance = getUserTokenBalanceByAddress({
                 userTokensBalances,
@@ -293,6 +293,8 @@ export const AddCollateralScreen = () => {
                                   [newCollateralAddress]: {
                                     ...currentCollateralObj,
                                     tokenAddress: newCollateralAddress,
+                                    amount: '0',
+                                    validation: INPUT_STATUS_DEFAULT,
                                   },
                                 })
                               }
@@ -342,14 +344,7 @@ export const AddCollateralScreen = () => {
           + Add more assets as collateral
         </Button>
 
-        {willExceedXTZTheLimit && (
-          <div className="mt-20">
-            <Info
-              text="We have reduced the amount of XTZ to be deposited in order to cover the gas and transaction fees."
-              type="info"
-            />
-          </div>
-        )}
+        <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20" />
 
         <MemoizedComponent returnMemoizedComponent={isAddCollateralContinueDisabled}>
           <ModalStatsBlock>

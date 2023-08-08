@@ -1,19 +1,29 @@
-import { DDItemId } from 'app/App.components/DropDown/NewDropdown'
+import { useCallback, useMemo, useState } from 'react'
+
+// utils
+import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+
+// hooks
+import { useXTZMaxAmountValidator } from './useXTZMaxValidator'
+
+// consts
 import {
   INPUT_STATUS_DEFAULT,
   InputStatusType,
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
-import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { useCallback, useMemo, useState } from 'react'
-import { useXTZMaxAmountValidator } from './useXTZMaxValidator'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 
-export const useCollateralsInputData = () => {
+// types
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { DDItemId } from 'app/App.components/DropDown/NewDropdown'
+
+export const useCollateralInputData = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const [selectedCollateral, setSelectedCollateral] = useState<TokenAddressType | undefined>()

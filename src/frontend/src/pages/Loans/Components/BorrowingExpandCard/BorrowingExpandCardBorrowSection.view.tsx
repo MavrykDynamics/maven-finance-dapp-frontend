@@ -29,7 +29,7 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
-import { useBorrowInputData } from '../Modals/CreateNewVault.modal/components/useBorrowInputData'
+import { useBorrowInputData } from '../Modals/hooks/Market/useBorrowInputData'
 
 type Props = {
   borrowedAssetAddress: TokenAddressType

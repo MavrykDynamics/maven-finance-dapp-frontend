@@ -1,7 +1,6 @@
 import { isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useCallback, useMemo, useState } from 'react'
-import { SelectedCollateralTokenData } from '../helpers/createNewVault.types'
-import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import { SelectedCollateralTokenData } from '../../CreateNewVault.modal/helpers/createNewVault.types'
 
 export const useXTZMaxAmountValidator = (
   selectedCollateralsAddresses: string[],
@@ -20,11 +19,15 @@ export const useXTZMaxAmountValidator = (
     [selectedCollateralsAddresses],
   )
 
-  const willExceedXTZTheLimit =
+  const willExceedXTZTheLimit = Boolean(
     tezCollateralAddress &&
-    selectedCollaterals &&
-    maxedXTZData.amount !== 0 &&
-    Number(selectedCollaterals[tezCollateralAddress]?.amount) >= maxedXTZData.amount + 1
+      selectedCollaterals &&
+      maxedXTZData.amount !== 0 &&
+      Number(selectedCollaterals[tezCollateralAddress]?.amount) >= maxedXTZData.amount + 1,
+  )
+
+  console.log(selectedCollateralsAddresses, 'selectedCollateralsAddresses')
+  console.log(Boolean(tezCollateralAddress), 'isTezosToken')
 
   return { maxedXTZData, updateMaxedXTZData, willExceedXTZTheLimit, isTezosToken: Boolean(tezCollateralAddress) }
 }

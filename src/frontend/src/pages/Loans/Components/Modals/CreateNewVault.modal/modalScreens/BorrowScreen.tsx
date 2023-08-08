@@ -45,7 +45,7 @@ import { sleep } from 'utils/api/sleep'
 import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
 
 // hooks
-import { useBorrowInputData } from '../components/useBorrowInputData'
+import { useBorrowInputData } from '../../hooks/Market/useBorrowInputData'
 
 // types
 import { Settings } from 'app/App.components/Input/newInput.type'
