@@ -69,6 +69,7 @@ export const AddLendingAsset = ({
     inputOnChangeHandle,
     willExceedXTZTheLimit,
     onFocusHandler,
+    setSelectedCollateral,
     useMaxHandler,
   } = useCollateralInputData()
 
@@ -80,6 +81,10 @@ export const AddLendingAsset = ({
       })
     }
   }, [show])
+
+  useEffect(() => {
+    setSelectedCollateral(data?.tokenAddress)
+  }, [data?.tokenAddress, setSelectedCollateral])
 
   const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
