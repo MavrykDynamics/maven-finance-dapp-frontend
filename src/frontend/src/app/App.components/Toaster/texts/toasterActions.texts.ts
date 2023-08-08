@@ -75,8 +75,19 @@ import {
   UPDATE_AGGREGATOR_STATUS_ACTION,
   VOTE_FOR_ACTION,
 } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
+import { ActionTypes } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
-export const TOASTER_ACTIONS_TEXTS = {
+type ToastMessageContent = {
+  title: string
+  message: string
+}
+
+type ToastMessageFullContent = {
+  start: ToastMessageContent
+  end: ToastMessageContent
+}
+
+export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent> = {
   // doorman actions -------------------------------------
   [STAKE_ACTION]: {
     start: {
@@ -540,14 +551,13 @@ export const TOASTER_ACTIONS_TEXTS = {
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  // TODO fix vote type
   [VOTE_FOR_ACTION]: {
     start: {
-      title: 'Voting voteType...',
-      message: ACTION_START_MESSAGE_TEXT,
+      title: 'Voting...',
+      message: ACTION_START_MESSAGE_TEXT, // ___________________________________HERE
     },
     end: {
-      title: 'voteType vote registered',
+      title: 'Vote registered',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
@@ -591,4 +601,23 @@ export const TOASTER_ACTIONS_TEXTS = {
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
+}
+
+export const addDynamicMessagesToActionText = (
+  actiontype: ActionTypes,
+  newStart: Partial<ToastMessageContent> = {},
+  newEnd: Partial<ToastMessageContent> = {},
+) => {
+  const { start, end } = TOASTER_ACTIONS_TEXTS[actiontype]
+
+  TOASTER_ACTIONS_TEXTS[actiontype] = {
+    start: {
+      ...start,
+      ...newStart,
+    },
+    end: {
+      ...end,
+      ...newEnd,
+    },
+  }
 }
