@@ -16,7 +16,7 @@ export const DEFAULT_STAKING_ACTIVE_SUBS = {
   [SMVK_HISTORY_SUB]: false,
 } as const
 
-export const DEFAULT_STAKING_CTX: DoormanContextStateType = {
+export const DEFAULT_STAKING_CTX: DeepNullable<DoormanContextStateType> = {
   totalStakedMvk: null,
   totalSupply: null,
   maximumTotalSupply: null,

@@ -80,7 +80,12 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
   const isInitialUserLoading = !isRunnedInitialConnect ? isUserLoading : false
 
   const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isInitialUserLoading
-
+  console.log('rerender page on level change', {
+    isDappGeneralLoading,
+    isTokensLoading,
+    isFeedsLoading,
+    isInitialUserLoading,
+  })
   return (
     <>
       <LottieLoader isActive={isInitialLoading} backdropAlpha={1} />

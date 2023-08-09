@@ -20,7 +20,7 @@ export const EMPTY_VAULTS_CONTEXT: DeepNonNullable<VaultsCtxState> = {
   permissionedVaultsIds: [],
 }
 
-export const DEFAULT_VAULTS_CONTEXT: VaultsCtxState = {
+export const DEFAULT_VAULTS_CONTEXT: DeepNullable<VaultsCtxState> = {
   vaultsMapper: null,
   myVaultsIds: null,
   allVaultsIds: null,

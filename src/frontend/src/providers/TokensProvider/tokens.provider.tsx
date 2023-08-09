@@ -1,13 +1,11 @@
 import React, { useContext, useMemo, useRef, useState } from 'react'
-import { useQuery } from '@apollo/client'
 
 // consts
 import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { QUERY_TOKENS_METADATA } from './queries/tokens.query'
 
 // helpers
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useQueryRefetch } from 'providers/common/hooks/useQueryRefetch'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.normalizer'
 
 // types
@@ -23,11 +21,8 @@ type Props = {
 
 // TODO: add nullable values and handle initial loading by null values
 export const TokensProvider = ({ children }: Props) => {
-  const { currentIndexedLevel } = useDappConfigContext()
-
+  // TODO: replace with null init values
   const initialLoadingStatus = useRef(true)
-
-  const [lastUpdatedBlock, setLastUpdatedBlock] = useState(currentIndexedLevel)
 
   const [tokensCtxState, setTokensCtxState] = useState<TokensContextState>({
     collateralTokens: [],
@@ -37,38 +32,24 @@ export const TokensProvider = ({ children }: Props) => {
   })
 
   // Load tokens metadata
-  const { refetch: refetchTokens } = useQuery(QUERY_TOKENS_METADATA, {
-    onCompleted: (data) => {
-      try {
-        const parsedTokens = tokensGqlSchema.parse(data.token)
+  useQueryWithRefetch(
+    QUERY_TOKENS_METADATA,
+    {
+      onCompleted: (data) => {
+        try {
+          const parsedTokens = tokensGqlSchema.parse(data.token)
 
-        initialLoadingStatus.current = false
+          initialLoadingStatus.current = false
 
-        updateTokensMetadata(parsedTokens)
-      } catch (e) {
-        console.error('zod parsing tokens error:', { e })
-      }
+          updateTokensMetadata(parsedTokens)
+        } catch (e) {
+          console.error('zod parsing tokens error:', { e })
+        }
+      },
+      onError: (error) => console.log({ error }),
     },
-    onError: (error) => console.log({ error }),
-  })
-
-  const refetchQueryHookArgs = useMemo(
-    () => ({
-      refetchers: [
-        {
-          refetch: refetchTokens,
-          options: {
-            blocksDiff: 20,
-            lastUpdatedBlock,
-            updateLastUpdatedLvl: (updateLevel: number) => setLastUpdatedBlock(updateLevel),
-          },
-        },
-      ],
-    }),
-    [refetchTokens, lastUpdatedBlock],
+    { blocksDiff: 20 },
   )
-
-  useQueryRefetch(refetchQueryHookArgs)
 
   // update token prices in ctx
   const updateTokensPrices = (feedsLedger: FullFeedsQueryType | SmallFeedsQueryType) => {

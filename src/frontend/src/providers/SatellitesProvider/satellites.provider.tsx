@@ -56,7 +56,8 @@ export type Props = {
 export const SatellitesProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
 
-  const [satellitesCtxState, setSatellitesCtxState] = useState<SatellitesContextState>(DEFAULT_SATELLITES_CONTEXT)
+  const [satellitesCtxState, setSatellitesCtxState] =
+    useState<DeepNullable<SatellitesContextState>>(DEFAULT_SATELLITES_CONTEXT)
 
   const [satelliteAddressToSubsctibe, setSatelliteAddressToSubsctibe] = useState<string | null>(null)
   const [activeSubs, setActiveSubs] = useState<SatellitesSubsRecordType>(DEFAULT_SATELLITES_ACTIVE_SUBS)

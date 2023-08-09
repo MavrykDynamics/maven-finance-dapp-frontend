@@ -45,7 +45,7 @@ export const VaultsProvider = ({ children }: Props) => {
   }
 
   const [activeSubs, setActiveSubs] = useState<VaultsSubsRecordType>(DEFAULT_VAULTS_ACTIVE_SUBS)
-  const [vaultsCtxState, setVaultsCtxState] = useState<VaultsCtxState>(DEFAULT_VAULTS_CONTEXT)
+  const [vaultsCtxState, setVaultsCtxState] = useState<DeepNullable<VaultsCtxState>>(DEFAULT_VAULTS_CONTEXT)
 
   useEffect(() => {
     if (prevUserAddress !== userAddress) {

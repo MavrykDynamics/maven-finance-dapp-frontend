@@ -9,10 +9,9 @@ import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { dappClient } from 'providers/UserProvider/wallet/WalletCore'
 
 // context
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useQueryRefetch } from 'providers/common/hooks/useQueryRefetch'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // helpers
 import {
@@ -40,6 +39,7 @@ import {
 // TODO: remove after user addres won't be needed in redux actions
 import { useDispatch } from 'react-redux'
 import { DISCONNECT, SET_REDUX_USER } from 'reducers/wallet'
+import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
 export const userContext = React.createContext<UserContext>(undefined!)
 
@@ -58,7 +58,6 @@ const hasUserInLocalStorage =
  */
 export const UserProvider = ({ children }: Props) => {
   const { tokensMetadata } = useTokensContext()
-  const { currentIndexedLevel } = useDappConfigContext()
   const { bug, info, success, loading, hideToasterMessage } = useToasterContext()
 
   const dispatch = useDispatch()
@@ -199,10 +198,10 @@ export const UserProvider = ({ children }: Props) => {
   }, [canStartUserInitialLoading, , connect])
 
   // subscribe to user's indexer data
-  const { loading: userDataLoading, refetch: refetchIndexerUser } = useQuery(USER_DATA_QUERY, {
+  const { loading: userDataLoading } = useQueryWithRefetch(USER_DATA_QUERY, {
     skip: !userCtxState.userAddress,
     variables: {
-      userAddress: userCtxState.userAddress,
+      userAddress: userCtxState.userAddress ?? '',
     },
     onCompleted: (data) => {
       // if user does not exists, TODO: should not be an option
@@ -235,20 +234,19 @@ export const UserProvider = ({ children }: Props) => {
     },
   })
 
-  const refetchQueryHookArgs = useMemo(
-    () => ({
-      refetchers: [
-        {
-          refetch: refetchIndexerUser,
-        },
-      ],
-    }),
-    [refetchIndexerUser],
-  )
+  // HANDLE USER FARM REWARDS
+  const [currentIndexedLevel, setCurrentIndexedLevel] = useState(0)
 
-  console.log({ refetchQueryHookArgs, refetchIndexerUser, userCtxState })
+  // subscribe to indexer lvl change
+  useEffect(() => {
+    if (Object.keys(userCtxState.farmAccounts).length !== 0) {
+      currentIndexerLevelProxy.registerListener(setCurrentIndexedLevel)
+    }
 
-  useQueryRefetch(refetchQueryHookArgs)
+    return () => {
+      currentIndexerLevelProxy.removeListener(setCurrentIndexedLevel)
+    }
+  }, [userCtxState.farmAccounts])
 
   /**
    * User farm rewards depends on current indexed level, and every time level updates we need to recalc farm rewards

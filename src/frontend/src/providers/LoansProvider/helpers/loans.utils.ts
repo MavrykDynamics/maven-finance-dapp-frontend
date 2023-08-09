@@ -87,7 +87,7 @@ export const getLoansProviderReturnValue = ({
   changeLoansSubscriptionsList,
   setMarketAddressToSubscribe,
 }: {
-  loansCtxState: LoansContextState
+  loansCtxState: DeepNullable<LoansContextState>
   marketAddressToSubscribe: string | null
   activeSubs: LoansSubsRecordType
   changeLoansSubscriptionsList: LoansContext['changeLoansSubscriptionsList']

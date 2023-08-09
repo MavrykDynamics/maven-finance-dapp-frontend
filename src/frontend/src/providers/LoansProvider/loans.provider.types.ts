@@ -46,11 +46,11 @@ export type LoansContext = DeepNonNullable<LoansContextState> & {
 }
 
 export type LoansContextState = {
-  allMarketsAddresses: Array<TokenAddressType> | null
-  marketsAddresses: Array<TokenAddressType> | null
-  marketsMapper: Record<TokenAddressType, LoanMarketType> | null
+  allMarketsAddresses: Array<TokenAddressType>
+  marketsAddresses: Array<TokenAddressType>
+  marketsMapper: Record<TokenAddressType, LoanMarketType>
   config: {
     daoFee: number
     collateralFactor: number
-  } | null
+  }
 }

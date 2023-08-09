@@ -29,15 +29,15 @@ export type SatelliteMapper = Record<string, SatelliteRecordType>
 
 export type SatellitesContextState = {
   // data
-  satelliteMapper: SatelliteMapper | null
-  activeSatellitesIds: string[] | null
-  allSatellitesIds: string[] | null
-  oraclesIds: string[] | null
+  satelliteMapper: SatelliteMapper
+  activeSatellitesIds: string[]
+  allSatellitesIds: string[]
+  oraclesIds: string[]
 
   // values to calc satellite metrix
-  proposalsAmount: number | null
-  satelliteGovActionsAmount: number | null
-  finRequestsAmount: number | null
+  proposalsAmount: number
+  satelliteGovActionsAmount: number
+  finRequestsAmount: number
 }
 
 export type SatellitesContext = DeepNonNullable<SatellitesContextState> & {

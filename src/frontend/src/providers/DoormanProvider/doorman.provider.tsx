@@ -52,7 +52,7 @@ const DoormanProvider = ({ children }: Props) => {
     contractAddresses: { doormanAddress },
   } = useDappConfigContext()
 
-  const [stakingCtxState, setStakingCtxState] = useState<DoormanContextStateType>(DEFAULT_STAKING_CTX)
+  const [stakingCtxState, setStakingCtxState] = useState<DeepNullable<DoormanContextStateType>>(DEFAULT_STAKING_CTX)
   const [activeSubs, setActiveSubs] = useState<DoormanSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
 
   const handleSubError = (error: ApolloError, subName: StakingSubsType) => {

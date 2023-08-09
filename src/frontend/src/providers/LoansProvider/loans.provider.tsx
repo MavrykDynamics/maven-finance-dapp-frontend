@@ -43,7 +43,7 @@ export const LoansProvider = ({ children }: Props) => {
 
   const [activeSubs, setActiveSubs] = useState<LoansSubsRecordType>(DEFAULT_LOANS_ACTIVE_SUBS)
   const [marketAddressToSubscribe, setMarketAddressToSubscribe] = useState<null | TokenAddressType>(null)
-  const [loansCtxState, setLoansCtxState] = useState<LoansContextState>(DEFAULT_LOANS_CONTEXT)
+  const [loansCtxState, setLoansCtxState] = useState<DeepNullable<LoansContextState>>(DEFAULT_LOANS_CONTEXT)
 
   const handleSubError = (error: ApolloError, subName: string) => {
     console.error(`${subName} query error: `, error)

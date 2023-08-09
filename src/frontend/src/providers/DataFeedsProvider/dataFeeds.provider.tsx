@@ -14,7 +14,7 @@ import {
 import { normalizeFeeds, normalizeFeedsPrices } from './helpers/feedsNormalizer'
 import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useQueryRefetch } from 'providers/common/hooks/useQueryRefetch'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 export const dataFeedsContext = React.createContext<DataFeedsContext>(undefined!)
 const propomotedAddresses = [
@@ -27,10 +27,10 @@ type Props = {
   children: React.ReactNode
 }
 
-// TODO: add nullable values and handle initial loading by null values
 export const DataFeedsProvider = ({ children }: Props) => {
   const { updateTokensPrices } = useTokensContext()
 
+  // TODO: calc it based on nullable values
   const initialLoadingStatus = useRef(true)
 
   const [feedsCtxState, setFeedsCtxState] = useState<DataFeedsContextState>({
@@ -57,7 +57,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
   })
 
   // update feeds price and track whether need to load new feed
-  const { refetch: refetchSmallFeeds } = useQuery(FEEDS_UPDATE_QUERY, {
+  useQueryWithRefetch(FEEDS_UPDATE_QUERY, {
     skip: initialLoadingStatus.current,
     onCompleted: (data) => {
       try {
@@ -77,19 +77,6 @@ export const DataFeedsProvider = ({ children }: Props) => {
     },
     onError: (error) => console.log({ error }),
   })
-
-  const refetchQueryHookArgs = useMemo(
-    () => ({
-      refetchers: [
-        {
-          refetch: refetchSmallFeeds,
-        },
-      ],
-    }),
-    [refetchSmallFeeds],
-  )
-
-  useQueryRefetch(refetchQueryHookArgs)
 
   // normalize and update for full feeds query
   const updateFullDataFeeds = (data: FullFeedsQueryType) => {

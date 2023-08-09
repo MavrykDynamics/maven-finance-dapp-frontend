@@ -3,7 +3,7 @@ import { DoormanContext, DoormanContextStateType, DoormanSubsRecordType } from '
 import { EMPTY_DOORMAN_CTX, MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from './doorman.consts'
 
 type DoormanContextReturnValueArgs = {
-  stakingCtxState: DoormanContextStateType
+  stakingCtxState: DeepNullable<DoormanContextStateType>
   changeStakingSubscriptionsList: DoormanContext['changeStakingSubscriptionsList']
   activeSubs: DoormanSubsRecordType
 }

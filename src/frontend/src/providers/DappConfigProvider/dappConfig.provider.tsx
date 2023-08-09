@@ -27,6 +27,7 @@ import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
 import { setItemInStorage } from 'utils/storage'
 import { DAPP_INITIAL_CONFIG_QUERY } from './queries/config.query'
 import { dappConfigSchema, indexerLevelSchema } from './helpers/dappConfig.schemes'
+import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
 export const dappConfigContext = React.createContext<DappConfigContext>(undefined!)
 
@@ -34,7 +35,6 @@ type Props = {
   children: React.ReactNode
 }
 
-// TODO: test data update on lvl change and action turn off on lvl change, data should update before action turn off, or at least simultaniously
 const DappConfigProvider = ({ children }: Props) => {
   const handleSubError = (error: ApolloError) => {
     console.error(`DappConfigProvider query error: `, error)
@@ -44,7 +44,6 @@ const DappConfigProvider = ({ children }: Props) => {
   // HANDLING DATA UPDATE LOADER STATE AFTER USER FIRED ACTION
   const { bug, hideToasterMessage, success } = useToasterContext()
 
-  const [currentIndexedLevel, setCurrentIndexedLevel] = useState<number>(0)
   const [action, setAction] = useState<UserActionType | null>(null)
 
   /**
@@ -53,13 +52,14 @@ const DappConfigProvider = ({ children }: Props) => {
    * 1. refetch queries, that requires update on lvl change
    * 2. handle action toasters, to show that action is performing, already performed
    */
-  useSubscription(SUBSCRIPTION_INDEXER_LVL, {
+  const { data: indexerLevel } = useSubscription(SUBSCRIPTION_INDEXER_LVL, {
     shouldResubscribe: true,
     onData: ({ data: { data } }) => {
       if (!data) return
       try {
         const parsedLevelData = indexerLevelSchema.parse(data.dipdup_index)
-        setCurrentIndexedLevel(parsedLevelData[0].level)
+        console.info('new indexer level: ', parsedLevelData[0].level)
+        currentIndexerLevelProxy.currentIndexedLevel = parsedLevelData[0].level
       } catch (e) {
         console.error('zod parsing SUBSCRIPTION_INDEXER_LVL error:', { e })
       }
@@ -74,16 +74,28 @@ const DappConfigProvider = ({ children }: Props) => {
     },
   })
 
+  // TODO: test fps
+  // setInterval(() => {
+  //   currentIndexerLevelProxy.currentIndexedLevel = currentIndexerLevelProxy.currentIndexedLevel + 1
+  // }, 10000)
+
+  /**
+   * effect to handle action toasters and turn them off when level of operation is already performed by indexer
+   */
   useEffect(() => {
-    if (!action || !currentIndexedLevel) return
+    if (!action || !indexerLevel) return
+    const parsedLevelData = indexerLevelSchema.safeParse(indexerLevel.dipdup_index)
+
+    const currentIndexedLevel = parsedLevelData.success ? parsedLevelData.data[0].level : null
+    if (!currentIndexedLevel) return
 
     const { actionName, toasterId, operationLvl, callback } = action
     const turnOffAction = async () => {
       // if we don't have toasterId it means that action is silent, and we don't show anything to user
       if (toasterId) {
-        await sleep(500)
+        await sleep(750)
         hideToasterMessage(toasterId)
-        await sleep(500)
+        await sleep(750)
         success(TOASTER_ACTIONS_TEXTS[actionName]['end']['message'], TOASTER_ACTIONS_TEXTS[actionName]['end']['title'])
       }
       toggleActionCompletion(false)
@@ -94,7 +106,7 @@ const DappConfigProvider = ({ children }: Props) => {
     }
 
     if (currentIndexedLevel >= operationLvl) turnOffAction()
-  }, [action, currentIndexedLevel, hideToasterMessage, success])
+  }, [action, indexerLevel])
 
   const [dappConfigCtxState, setDappConfigCtxState] = useState<DappConfigContextStateType>(DEFAULT_DAPP_CONFIG_CONTEXT)
 
@@ -215,9 +227,8 @@ const DappConfigProvider = ({ children }: Props) => {
       toggleActionCompletion,
       toggleWertLoader,
       ...dappConfigCtxState,
-      currentIndexedLevel,
     }
-  }, [dappConfigCtxState, currentIndexedLevel])
+  }, [dappConfigCtxState])
 
   return <dappConfigContext.Provider value={contextProviderValue}>{children}</dappConfigContext.Provider>
 }

@@ -29,16 +29,16 @@ export type VaultsActionsType =
   | typeof CREATE_VAULT_ACTION
 
 // context types
-export type VaultsContext = DeepNonNullable<VaultsCtxState> & {
+export type VaultsContext = VaultsCtxState & {
   changeVaultsSubscriptionsList: (skips: Partial<VaultsSubsRecordType>) => void
   isLoading: boolean
 }
 
 export type VaultsCtxState = {
-  vaultsMapper: Record<string, VaultType> | null
-  permissionedVaultsIds: string[] | null
-  myVaultsIds: string[] | null
-  allVaultsIds: string[] | null
+  vaultsMapper: Record<string, VaultType>
+  permissionedVaultsIds: string[]
+  myVaultsIds: string[]
+  allVaultsIds: string[]
 }
 
 export type VaultsSubsType = typeof VAULTS_DATA
