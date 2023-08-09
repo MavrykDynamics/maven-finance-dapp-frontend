@@ -53,8 +53,6 @@ export const useQueryWithRefetch = <TData = any, TVariables extends OperationVar
   useEffect(() => {
     if (!isInitialQueryDone.current) return
 
-    console.log('refetch effect on lvl change', { currentIndexedLevel: currentIndexedLevel })
-
     // blocks diff case, call refetch only when block difference is more equal than specified in blocksDiff
     if (typeof blocksDiff === 'number') {
       if (currentIndexedLevel - lastUpdatedBlock >= blocksDiff) {

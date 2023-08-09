@@ -137,6 +137,7 @@ export const USER_DATA_QUERY = gql(`
   }
 `)
 
+// TODO: use this query on certain pages to reduce size of the USER_DATA_QUERY query
 export const USER_ACTIONS_HISTORY_DATA_QUERY = gql(`
   query getUserActionsHistoryData($userAddress: String = "") {
     mavryk_user(where: {address: {_eq: $userAddress}}) {
@@ -157,6 +158,7 @@ export const USER_ACTIONS_HISTORY_DATA_QUERY = gql(`
   }
 `)
 
+// TODO: use this query on certain pages to reduce size of the USER_DATA_QUERY query
 export const USER_AVAILABLE_REWARDS_DATA_QUERY = gql(`
   query getUserAvailableRewardsData($userAddress: String = "") {
     mavryk_user(where: {address: {_eq: $userAddress}}) {

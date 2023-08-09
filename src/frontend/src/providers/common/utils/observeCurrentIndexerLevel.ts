@@ -18,8 +18,6 @@ const currentIndexerLevel: {
 
 export const currentIndexerLevelProxy = new Proxy(currentIndexerLevel, {
   set: function (target, key, value) {
-    // console.log(`currentIndexerLevelProxy, set method: ${key.toString()} set to ${value}`, { target })
-
     if (key === 'currentIndexedLevel') {
       target['currentIndexedLevel'] = value
       target['listeners'].forEach((fn) => fn(value))

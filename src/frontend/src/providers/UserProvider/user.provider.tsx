@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import * as signalR from '@microsoft/signalr'
-import { useQuery } from '@apollo/client'
 
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
@@ -24,6 +23,7 @@ import {
 import { normalizeUser } from './helpers/userData.helpers'
 import { sleep } from 'utils/api/sleep'
 import { getUsersFarmRewards } from './helpers/userRewards.helpers'
+import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
 // queries
 import { USER_DATA_QUERY } from './queries/userData.query'
@@ -39,7 +39,6 @@ import {
 // TODO: remove after user addres won't be needed in redux actions
 import { useDispatch } from 'react-redux'
 import { DISCONNECT, SET_REDUX_USER } from 'reducers/wallet'
-import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
 export const userContext = React.createContext<UserContext>(undefined!)
 
@@ -55,6 +54,8 @@ const hasUserInLocalStorage =
 /**
  * ADJUSTMENTS:
  * 1. on changing user do not reopen socket, just update filter (invoke), currently hadn't found any example of it
+ * 2. nullable values on init
+ * 3. 1 large query -> 3 small and load only when need, check userData.query.ts for details
  */
 export const UserProvider = ({ children }: Props) => {
   const { tokensMetadata } = useTokensContext()
