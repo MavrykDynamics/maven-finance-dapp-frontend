@@ -56,9 +56,11 @@ export const isLoansCollateralTokenMetadata = (token: unknown): token is LoansCo
     }
   }
 
+  const { loanData } = token as LoansCollateralTokenMetadataType
+
   // checl loan data keys
   for (const prop of requiredLoanDataProperties) {
-    if (!(prop in token)) {
+    if (!(prop in loanData)) {
       return false // The token doesn't have one of the required properties
     }
   }

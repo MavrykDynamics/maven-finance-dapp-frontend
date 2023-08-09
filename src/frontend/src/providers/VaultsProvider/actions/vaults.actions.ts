@@ -5,7 +5,7 @@ import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/es
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 // consts
-import { ContractAbstraction, OpKind, TezosToolkit, TransferParams, Wallet } from '@taquito/taquito'
+import { OpKind, TezosToolkit, TransferParams } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // types
@@ -304,15 +304,6 @@ export const createVault = async (
       async (promiseAcc, { id, type, address, amount, loanData: { isStaked, indexerName } }) => {
         const acc = await promiseAcc
 
-        // if (isStaked) {
-        //   const controllerContract = await tezos.wallet.at(lendingControllerAddress)
-        //   acc.push({
-        //     kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-        //     ...controllerContract.methods.vaultDepositStakedToken(indexerName, vaultId, amount).toTransferParams(),
-        //   })
-        //   return acc
-        // }
-
         if (type === 'fa12') {
           const contract = await tezos.wallet.at(address)
 
@@ -356,6 +347,8 @@ export const createVault = async (
         },
       ]),
     )
+
+    debugger
 
     return await getEstimationBatchResult(tezos, batchArr)
   } catch (error) {

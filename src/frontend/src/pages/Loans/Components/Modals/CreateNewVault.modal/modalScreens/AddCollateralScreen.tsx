@@ -58,6 +58,7 @@ import { BORROW_CAPACITY, COLLATERAL_VALUE } from 'texts/tooltips/vault.text'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { useXTZMaxAmountValidator } from '../../hooks/Market/useXTZMaxValidator'
 import { XTZLimitInfoBanner } from '../../components/XTZLimitInfoBanner'
+import { SMVK_TOKEN_ADDRESS_NAME } from 'providers/LoansProvider/helpers/loans.const'
 
 export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
@@ -90,12 +91,14 @@ export const AddCollateralScreen = () => {
       Record<DDItemId, DropDownItemType & { tokenAddress: TokenAddressType }>
     >((acc, collateralTokenAddress) => {
       const collateral = getTokenDataByAddress({ tokenAddress: collateralTokenAddress, tokensMetadata, tokensPrices })
-
+      console.log(collateralTokenAddress, 'collateralTokenAddress')
       if (collateral && checkWhetherTokenIsCollateralToken(collateral)) {
         const { address, icon, symbol } = collateral
 
         const isCollateralDisabled = Boolean(
-          collateral.loanData.isPausedCollateral || selectedCollaterals[collateralTokenAddress],
+          collateral.loanData.isPausedCollateral ||
+            selectedCollaterals[collateralTokenAddress] ||
+            collateralTokenAddress === SMVK_TOKEN_ADDRESS_NAME,
         )
 
         if (!isCollateralDisabled && !firstNotDisabledCollateralAddress)

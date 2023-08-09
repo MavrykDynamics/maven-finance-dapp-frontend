@@ -57,3 +57,6 @@ export const EMPTY_LOANS_CONTEXT: DeepNonNullable<LoansContextState> = {
     collateralFactor: 0,
   },
 }
+
+// loan token address consts
+export const SMVK_TOKEN_ADDRESS_NAME = 'sMVK'
