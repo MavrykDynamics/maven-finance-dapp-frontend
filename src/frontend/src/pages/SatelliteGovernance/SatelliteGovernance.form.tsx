@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useDispatch } from 'react-redux'
 
 // view
 import Icon from '../../app/App.components/Icon/Icon.view'
@@ -23,22 +22,6 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from '../../app/App.components/Input/Input.constants'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 
-// actions
-import {
-  addOracleToAggregator,
-  banSatellite,
-  removeOracleInAggregator,
-  removeOracles,
-  restoreSatellite,
-  setAggregatorMaintainer,
-  suspendSatellite,
-  unbanSatellite,
-  unsuspendSatellite,
-  updateAggregatorStatus,
-  registerAggregator,
-  fixMistakenTransfer,
-} from './SatelliteGovernance.actions'
-
 // style
 import { SatelliteGovernanceAvailableAction } from './SatelliteGovernance.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
@@ -53,6 +36,7 @@ import {
   SATELLITE_GOVERNANCE_INITIAL_DATA,
   SATELLITE_GOVERNANCE_INITIAL_VALIDATION_DATA,
 } from './SatelliteGovernance.consts'
+import { useSatelliteGovActions } from './useSatelliteGovActions'
 
 type MaxLength = {
   purposeMaxLength: number
@@ -66,14 +50,12 @@ type Props = {
 }
 
 export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: Props) => {
-  const dispatch = useDispatch()
-
   const dropDownItems = useMemo(() => SATELLITE_GOVERNANCE_TOKEN_TYPES.map((item) => getDdItem(item.toUpperCase())), [])
 
   const [data, setData] = useState(SATELLITE_GOVERNANCE_INITIAL_DATA)
   const [validation, setValidation] = useState(SATELLITE_GOVERNANCE_INITIAL_VALIDATION_DATA)
 
-  const { firstInput, secondInput, purpose, table } = data
+  const { firstInput: satelliteAddress, secondInput: oracleAddress, purpose, table } = data
   const {
     title = '',
     btnText = '',
@@ -103,47 +85,62 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
     // show if available action === Fix Mistaken Transfer
     isFixMistakenTransfer
 
+  const {
+    suspendSatelliteAction,
+    unsuspendSatelliteAction,
+    banSatelliteAction,
+    unbanSatelliteAction,
+    removeOraclesAction,
+    restoreSatelliteAction,
+    removeOracleInAggregatorAction,
+    addOracleToAggregatorAction,
+    setAggregatorMaintainerAction,
+    updateAggregatorStatusAction,
+    registerAggregatorAction,
+    fixMistakenTransferAction,
+  } = useSatelliteGovActions(satelliteAddress, oracleAddress, purpose)
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     switch (variant) {
       case SATELLITE_GOVERNANCE_ACTION_NAMES.SUSPEND_SATELLITE:
-        await dispatch(suspendSatellite(firstInput, purpose))
+        await suspendSatelliteAction()
         break
       case SATELLITE_GOVERNANCE_ACTION_NAMES.UNSUSPEND_SATELLITE:
-        await dispatch(unsuspendSatellite(firstInput, purpose))
+        await unsuspendSatelliteAction()
         break
       case SATELLITE_GOVERNANCE_ACTION_NAMES.BAN_SATELLITE:
-        await dispatch(banSatellite(firstInput, purpose))
+        await banSatelliteAction()
         break
       case SATELLITE_GOVERNANCE_ACTION_NAMES.UNBAN_SATELLITE:
-        await dispatch(unbanSatellite(firstInput, purpose))
+        await unbanSatelliteAction()
         break
       case SATELLITE_GOVERNANCE_ACTION_NAMES.REMOVE_ORACLES:
-        await dispatch(removeOracles(firstInput, purpose))
+        await removeOraclesAction()
         break
       case SATELLITE_GOVERNANCE_ACTION_NAMES.RESTORE_SATELLITE:
-        await dispatch(restoreSatellite(firstInput, purpose))
+        await restoreSatelliteAction()
         break
       case SATELLITE_GOVERNANCE_ACTION_NAMES.REMOVE_FROM_AGREGATOR:
-        await dispatch(removeOracleInAggregator(secondInput, firstInput, purpose))
+        await removeOracleInAggregatorAction()
         break
       case SATELLITE_GOVERNANCE_ACTION_NAMES.ADD_TO_AGGREGATOR:
-        await dispatch(addOracleToAggregator(secondInput, firstInput, purpose))
+        await addOracleToAggregatorAction()
         break
       case SATELLITE_GOVERNANCE_ACTION_NAMES.SET_AGREGATOR_MANTAINER:
-        await dispatch(setAggregatorMaintainer(secondInput, firstInput, purpose))
+        await setAggregatorMaintainerAction()
         break
       case SATELLITE_GOVERNANCE_ACTION_NAMES.UPDATE_AGREGATOR_STATUS:
-        await dispatch(updateAggregatorStatus(secondInput, firstInput, purpose))
+        await updateAggregatorStatusAction()
         break
       case SATELLITE_GOVERNANCE_ACTION_NAMES.REGISTER_AGGREGATOR:
-        await dispatch(registerAggregator(secondInput, firstInput))
+        await registerAggregatorAction()
         break
       case SATELLITE_GOVERNANCE_ACTION_NAMES.FIX_MISTAKEN_TRANSFER:
         // get only filled table data
         const validatedTableData = table.filter((item) => Boolean(item.amount) && Boolean(item.to_))
-        await dispatch(fixMistakenTransfer(firstInput, secondInput, validatedTableData))
+        await fixMistakenTransferAction(validatedTableData)
         break
     }
 
@@ -178,7 +175,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
 
     // validation
     switch (name) {
-      case 'firstInput':
+      case 'satelliteAddress':
         isFieldRegisterAggregator ? validationText(e, maxLength.aggregatorNameMaxLength) : validationAddress(e)
         break
       case 'secondInput':
@@ -217,7 +214,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
 
     // set data
     switch (name) {
-      case 'firstInput':
+      case 'satelliteAddress':
       case 'secondInput':
       case 'purpose':
         setData((prev) => {
@@ -309,8 +306,8 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
 
           <Input
             inputProps={{
-              name: 'firstInput',
-              value: firstInput,
+              name: 'satelliteAddress',
+              value: satelliteAddress,
               required: true,
 
               onChange: handleChange,
@@ -326,7 +323,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
             <Input
               inputProps={{
                 name: 'secondInput',
-                value: secondInput,
+                value: oracleAddress,
                 required: true,
 
                 onChange: handleChange,

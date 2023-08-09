@@ -1,7 +1,10 @@
+// utils & consts
 import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationResult } from 'errors/helpers/estimateAction.helper'
-import { SatelliteGovernanceTransfer } from 'providers/SatellitesProvider/satellites.provider.types'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
+
+// types
+import { SatelliteGovernanceTransfer } from 'providers/SatellitesProvider/satellites.provider.types'
 
 // Suspend Satellite
 export const suspendSatellite = async (
@@ -14,7 +17,6 @@ export const suspendSatellite = async (
     const contract = await tezos.wallet.at(governanceSatelliteAddress)
     const suspendSatelliteMetaData = contract?.methods.suspendSatellite(satelliteAddress, purpose)
 
-    // await dispatch(getSatelliteGovernanceStorage())
     return await getEstimationResult(suspendSatelliteMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -33,7 +35,6 @@ export const unsuspendSatellite = async (
     const contract = await tezos.wallet.at(governanceSatelliteAddress)
     const unsuspendSatelliteMetaData = contract?.methods.restoreSatellite(satelliteAddress, purpose)
 
-    //   await dispatch(getSatelliteGovernanceStorage())
     return await getEstimationResult(unsuspendSatelliteMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -48,7 +49,6 @@ export const banSatellite = async (governanceSatelliteAddress: string, satellite
     const contract = await tezos.wallet.at(governanceSatelliteAddress)
     const banSatelliteMetaData = contract?.methods.banSatellite(satelliteAddress, purpose)
 
-    //   await dispatch(getSatelliteGovernanceStorage())
     return await getEstimationResult(banSatelliteMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -63,7 +63,6 @@ export const unbanSatellite = async (governanceSatelliteAddress: string, satelli
     const contract = await tezos.wallet.at(governanceSatelliteAddress)
     const unbanSatelliteMetaData = contract?.methods.restoreSatellite(satelliteAddress, purpose)
 
-    //   await dispatch(getSatelliteGovernanceStorage())
     return await getEstimationResult(unbanSatelliteMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -78,7 +77,6 @@ export const removeOracles = async (governanceSatelliteAddress: string, satellit
     const contract = await tezos.wallet.at(governanceSatelliteAddress)
     const removeOraclesMetaData = contract?.methods.removeAllSatelliteOracles(satelliteAddress, purpose)
 
-    //   await dispatch(getSatelliteGovernanceStorage())
     return await getEstimationResult(removeOraclesMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -102,7 +100,6 @@ export const removeOracleInAggregator = async (
       purpose,
     )
 
-    //   await dispatch(getSatelliteGovernanceStorage())
     return await getEstimationResult(removeOracleInAggregatorMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -126,7 +123,6 @@ export const addOracleToAggregator = async (
       purpose,
     )
 
-    //   await dispatch(getSatelliteGovernanceStorage())
     return await getEstimationResult(addOracleToAggregatorMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -150,7 +146,6 @@ export const setAggregatorMaintainer = async (
       purpose,
     )
 
-    //   await dispatch(getSatelliteGovernanceStorage())
     return await getEstimationResult(setAggregatorMaintainerMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -165,7 +160,6 @@ export const dropAction = async (governanceSatelliteAddress: string, actionId: n
     const contract = await tezos.wallet.at(governanceSatelliteAddress)
     const dropActionMetaData = contract?.methods.dropAction(actionId)
 
-    //   await dispatch(getSatelliteGovernanceStorage())
     return await getEstimationResult(dropActionMetaData, {
       callback,
     })
@@ -188,7 +182,6 @@ export const voteForAction = async (
     const contract = await tezos.wallet.at(governanceSatelliteAddress)
     const voteForActionMetaData = contract?.methods.voteForAction(actionId, voteType)
 
-    //   await dispatch(getSatelliteGovernanceStorage())
     return await getEstimationResult(voteForActionMetaData, {
       callback,
     })
@@ -210,7 +203,6 @@ export const restoreSatellite = async (
     const contract = await tezos.wallet.at(governanceSatelliteAddress)
     const restoreSatelliteMetaData = contract?.methods.restoreSatellite(satelliteAddress, purpose)
 
-    //   await dispatch(getSatelliteGovernanceStorage())
     return await getEstimationResult(restoreSatelliteMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -230,7 +222,6 @@ export const updateAggregatorStatus = async (
     const contract = await tezos.wallet.at(governanceSatelliteAddress)
     const updateAggregatorStatusMetaData = contract?.methods.updateAggregatorStatus(aggregatorAddress, status, purpose)
 
-    //   await dispatch(getSatelliteGovernanceStorage())
     return await getEstimationResult(updateAggregatorStatusMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -249,7 +240,6 @@ export const registerAggregator = async (
     const contract = await tezos.wallet.at(governanceSatelliteAddress)
     const registerAggregatorMetaData = contract?.methods.registerAggregator(aggregatorPair, aggregatorAddress)
 
-    //   await dispatch(getSatelliteGovernanceStorage())
     return await getEstimationResult(registerAggregatorMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -273,7 +263,6 @@ export const fixMistakenTransfer = async (
       transferList,
     )
 
-    // await dispatch(getSatelliteGovernanceStorage())
     return await getEstimationResult(fixMistakenTransferMetaData)
   } catch (error) {
     const e = unknownToError(error)
