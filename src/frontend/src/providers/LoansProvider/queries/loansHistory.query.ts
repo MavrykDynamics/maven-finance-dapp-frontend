@@ -4,7 +4,6 @@ import { OperationVariables, TypedDocumentNode } from '@apollo/client'
 import { DocumentNode } from 'graphql'
 import { GetLoansHistoryForMarketDataSubscription } from 'utils/__generated__/graphql'
 
-// update every block lvl + convert it to query
 // Cals 24h diffs
 export const LEND_BORROW_24H_DIFF = gql(`
 subscription getLendingDiff($currentTimestamp: timestamptz) {
@@ -31,7 +30,6 @@ subscription getLendingDiff($currentTimestamp: timestamptz) {
 }
 `)
 
-// add pagination for last period that is shown on chart, update every block lvl
 // Loans history data
 export const GET_LOANS_HISTORY_DATA = gql(`
 subscription getLoansHistoryData {
@@ -56,7 +54,6 @@ subscription getLoansHistoryData {
 }
 `)
 
-// pagination + update every block lvl + convert it to query
 // Loans market transaction history
 export function getLoansHistorySubscription({
   userAddress,

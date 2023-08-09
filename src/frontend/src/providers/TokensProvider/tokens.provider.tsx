@@ -19,7 +19,6 @@ type Props = {
   children: React.ReactNode
 }
 
-// TODO: add nullable values and handle initial loading by null values
 export const TokensProvider = ({ children }: Props) => {
   // TODO: replace with null init values
   const initialLoadingStatus = useRef(true)
@@ -48,7 +47,7 @@ export const TokensProvider = ({ children }: Props) => {
       },
       onError: (error) => console.log({ error }),
     },
-    { blocksDiff: 20 },
+    { blocksDiff: 100 },
   )
 
   // update token prices in ctx

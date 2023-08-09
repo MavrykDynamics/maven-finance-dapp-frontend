@@ -20,12 +20,12 @@ import { sleep } from 'utils/api/sleep'
 import { normalizeContractAddresses, normalizeInitialConfigData } from './helpers/dappConfig.normalizers'
 
 // queries
+import { DAPP_INITIAL_CONFIG_QUERY } from './queries/config.query'
 import { getXTZBakers } from './bakers/getXtzBakers'
 import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
 
 // utils
 import { setItemInStorage } from 'utils/storage'
-import { DAPP_INITIAL_CONFIG_QUERY } from './queries/config.query'
 import { dappConfigSchema, indexerLevelSchema } from './helpers/dappConfig.schemes'
 import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
@@ -58,7 +58,10 @@ const DappConfigProvider = ({ children }: Props) => {
       if (!data) return
       try {
         const parsedLevelData = indexerLevelSchema.parse(data.dipdup_index)
-        console.info('new indexer level: ', parsedLevelData[0].level)
+
+        // TODO: remove log
+        console.log('new indexer level: ', parsedLevelData[0].level)
+
         currentIndexerLevelProxy.currentIndexedLevel = parsedLevelData[0].level
       } catch (e) {
         console.error('zod parsing SUBSCRIPTION_INDEXER_LVL error:', { e })
@@ -77,7 +80,7 @@ const DappConfigProvider = ({ children }: Props) => {
   // TODO: test fps
   // setInterval(() => {
   //   currentIndexerLevelProxy.currentIndexedLevel = currentIndexerLevelProxy.currentIndexedLevel + 1
-  // }, 10000)
+  // }, 7000)
 
   /**
    * effect to handle action toasters and turn them off when level of operation is already performed by indexer

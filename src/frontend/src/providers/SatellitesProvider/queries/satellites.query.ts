@@ -4,7 +4,6 @@ import { gql as apolloGql } from '@apollo/client'
 import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
 import { gql } from 'utils/__generated__'
 
-// stuff that is user controll update on become satellite page actions, data that is not in user controll update on indexer change
 export function getSatelliteDataSubscription(
   userAddress: string | null,
   isOnlyActive?: boolean,

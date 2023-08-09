@@ -1,6 +1,5 @@
 import { gql } from 'utils/__generated__/gql'
 
-// all 3 queries with poll interval block lvl in indexer change
 export const SUBSCRIPTION_STAKE_HISTORY = gql(`
   subscription subscribeSmvkHistoryData {
     smvk_history_data(distinct_on: timestamp) {
