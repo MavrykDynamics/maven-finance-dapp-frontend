@@ -1,6 +1,6 @@
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import type { SatelliteGovernance } from '../utils/TypesAndInterfaces/Governance'
-import { GET_SATELLITE_GOVERNANCE_STORAGE } from 'pages/SatelliteGovernance/SatelliteGovernance.actions'
+import { GET_SATELLITE_GOVERNANCE_STORAGE } from 'pages/SatelliteGovernance/satelliteGovernance.storage'
 
 export type SatelliteGovernanceState = {
   config: SatelliteGovernance['config']

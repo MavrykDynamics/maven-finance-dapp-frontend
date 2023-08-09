@@ -28,6 +28,8 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // helpers
 import { validateText, validateTzAddress } from 'utils/validatorFunctions'
+
+// consts
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import {
   SATELLITE_GOVERNANCE_CONTENT_FORM,
@@ -36,6 +38,8 @@ import {
   SATELLITE_GOVERNANCE_INITIAL_DATA,
   SATELLITE_GOVERNANCE_INITIAL_VALIDATION_DATA,
 } from './SatelliteGovernance.consts'
+
+// hooks
 import { useSatelliteGovActions } from './useSatelliteGovActions'
 
 type MaxLength = {
