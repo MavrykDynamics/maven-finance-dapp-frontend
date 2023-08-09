@@ -90,11 +90,11 @@ export const SatelliteGovernance = () => {
       governanceSatellite: { purposeMaxLength },
       dataFeeds: { feedNameMaxLength },
     },
+    globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { userAddress, isSatellite, govActionsCount } = useUserContext()
 
   const { maxActionsCount } = useSelector((state: State) => state.satelliteGovernance.config)
-  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const { isLoaded, ongoingSatelliteGovIds, pastSatelliteGovIds, mySatelliteGovIds, satelliteGovIdsMapper } =
     useSelector((state: State) => state.satelliteGovernance)

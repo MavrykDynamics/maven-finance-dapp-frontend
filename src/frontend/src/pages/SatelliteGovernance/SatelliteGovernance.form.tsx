@@ -75,6 +75,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
       isActionActive,
     [validation, isActionActive],
   )
+
   const isFixMistakenTransfer = variant === SATELLITE_GOVERNANCE_ACTION_NAMES.FIX_MISTAKEN_TRANSFER
   const isFieldRegisterAggregator = variant === SATELLITE_GOVERNANCE_ACTION_NAMES.REGISTER_AGGREGATOR
 
@@ -179,7 +180,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
 
     // validation
     switch (name) {
-      case 'satelliteAddress':
+      case 'firstInput':
         isFieldRegisterAggregator ? validationText(e, maxLength.aggregatorNameMaxLength) : validationAddress(e)
         break
       case 'secondInput':
@@ -218,7 +219,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
 
     // set data
     switch (name) {
-      case 'satelliteAddress':
+      case 'firstInput':
       case 'secondInput':
       case 'purpose':
         setData((prev) => {
@@ -310,7 +311,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
 
           <Input
             inputProps={{
-              name: 'satelliteAddress',
+              name: 'firstInput',
               value: satelliteAddress,
               required: true,
 
