@@ -118,7 +118,7 @@ export const ConfirmationScreen = () => {
     () => ({
       actionType: BORROW_VAULT_ASSET_ACTION,
       actionFn: borrowAction,
-      dappCallback,
+      dappActionCallback: dappCallback,
     }),
     [borrowAction, dappCallback],
   )
