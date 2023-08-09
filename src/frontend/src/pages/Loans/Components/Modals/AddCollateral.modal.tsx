@@ -172,7 +172,17 @@ export const AddCollateral = ({
     }
 
     return null
-  }, [userAddress, collateralToken, vaultAddress, bug, inputData.amount, decimals, closePopup])
+  }, [
+    userAddress,
+    collateralToken,
+    vaultAddress,
+    lendingControllerAddress,
+    bug,
+    inputData.amount,
+    decimals,
+    vaultId,
+    closePopup,
+  ])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({

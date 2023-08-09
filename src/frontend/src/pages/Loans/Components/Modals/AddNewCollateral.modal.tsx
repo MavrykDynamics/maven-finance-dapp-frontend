@@ -199,7 +199,7 @@ export const AddNewCollateral = ({
       lendingControllerAddress &&
       checkWhetherTokenIsCollateralToken(collateralToken)
     ) {
-      return depositCollateralsAction(
+      return await depositCollateralsAction(
         userAddress,
         vaultAddress,
         [
@@ -219,7 +219,17 @@ export const AddNewCollateral = ({
     }
 
     return null
-  }, [bug, choosenBaker?.bakerAddress, closePopup, collateralToken, inputData.amount, userAddress, vaultAddress])
+  }, [
+    bug,
+    choosenBaker?.bakerAddress,
+    closePopup,
+    collateralToken,
+    inputData.amount,
+    lendingControllerAddress,
+    userAddress,
+    vaultAddress,
+    vaultId,
+  ])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
