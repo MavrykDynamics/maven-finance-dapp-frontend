@@ -375,7 +375,9 @@ export const CreateNewVault = ({
 
     return null
   }, [
+    bug,
     choosenBaker?.bakerAddress,
+    closePopup,
     lendingControllerAddress,
     newVault,
     selectedCollaterals,
