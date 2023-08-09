@@ -23,6 +23,7 @@ import {
   VaultsContext,
   VaultsCtxState,
   VaultsSubsRecordType,
+  NullableVaultsCtxState,
 } from '../vaults.provider.types'
 
 // consts
@@ -330,7 +331,7 @@ export const getVaultsProviderReturnValue = ({
   changeVaultsSubscriptionsList,
   userAddress,
 }: {
-  vaultsCtxState: DeepNullable<VaultsCtxState>
+  vaultsCtxState: NullableVaultsCtxState
   activeSubs: VaultsSubsRecordType
   changeVaultsSubscriptionsList: VaultsContext['changeVaultsSubscriptionsList']
   userAddress: string | null

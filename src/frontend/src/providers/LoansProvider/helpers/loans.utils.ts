@@ -1,5 +1,10 @@
 import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
-import { LoansContext, LoansContextState, LoansSubsRecordType } from '../loans.provider.types'
+import {
+  LoansContext,
+  LoansContextState,
+  LoansSubsRecordType,
+  NullableLoansContextState,
+} from '../loans.provider.types'
 
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 import { EMPTY_LOANS_CONTEXT, LOANS_CONFIG, LOANS_MARKETS_DATA } from './loans.const'
@@ -87,7 +92,7 @@ export const getLoansProviderReturnValue = ({
   changeLoansSubscriptionsList,
   setMarketAddressToSubscribe,
 }: {
-  loansCtxState: DeepNullable<LoansContextState>
+  loansCtxState: NullableLoansContextState
   marketAddressToSubscribe: string | null
   activeSubs: LoansSubsRecordType
   changeLoansSubscriptionsList: LoansContext['changeLoansSubscriptionsList']

@@ -20,7 +20,9 @@ export type DoormanContextStateType = {
   maximumTotalSupply: number
 }
 
-export type DoormanContext = DeepNonNullable<DoormanContextStateType> & {
+export type NullableDoormanContextStateType = DeepNullable<DoormanContextStateType>
+
+export type DoormanContext = DoormanContextStateType & {
   isLoading: boolean
 
   changeStakingSubscriptionsList: (skips: Partial<DoormanSubsRecordType>) => void

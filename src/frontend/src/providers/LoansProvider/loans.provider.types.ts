@@ -38,7 +38,7 @@ export type LoanMarketType = {
   reserveAmount: number
 }
 
-export type LoansContext = DeepNonNullable<LoansContextState> & {
+export type LoansContext = LoansContextState & {
   isLoading: boolean
 
   changeLoansSubscriptionsList: (skips: Partial<LoansSubsRecordType>) => void
@@ -54,3 +54,5 @@ export type LoansContextState = {
     collateralFactor: number
   }
 }
+
+export type NullableLoansContextState = DeepNullable<LoansContextState>

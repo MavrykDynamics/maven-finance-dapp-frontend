@@ -41,6 +41,8 @@ export type VaultsCtxState = {
   allVaultsIds: string[]
 }
 
+export type NullableVaultsCtxState = DeepNullable<VaultsCtxState>
+
 export type VaultsSubsType = typeof VAULTS_DATA
 export type VaultsSubsRecordType = {
   [VAULTS_DATA]: typeof VAULTS_ALL | typeof VAULTS_USER_ALL | typeof VAULTS_USER_DEPOSITOR | null

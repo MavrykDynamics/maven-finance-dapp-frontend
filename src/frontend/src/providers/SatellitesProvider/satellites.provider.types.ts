@@ -40,7 +40,7 @@ export type SatellitesContextState = {
   finRequestsAmount: number
 }
 
-export type SatellitesContext = DeepNonNullable<SatellitesContextState> & {
+export type SatellitesContext = SatellitesContextState & {
   isLoading: boolean
 
   // api

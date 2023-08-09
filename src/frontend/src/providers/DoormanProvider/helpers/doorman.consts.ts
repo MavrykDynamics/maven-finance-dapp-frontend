@@ -1,4 +1,4 @@
-import { DoormanContextStateType } from '../doorman.provider.types'
+import { DoormanContextStateType, NullableDoormanContextStateType } from '../doorman.provider.types'
 
 // CONSTS FOR STAKE ACTIONS
 export const STAKE_ACTION = 'stake'
@@ -16,14 +16,14 @@ export const DEFAULT_STAKING_ACTIVE_SUBS = {
   [SMVK_HISTORY_SUB]: false,
 } as const
 
-export const DEFAULT_STAKING_CTX: DeepNullable<DoormanContextStateType> = {
+export const DEFAULT_STAKING_CTX: NullableDoormanContextStateType = {
   totalStakedMvk: null,
   totalSupply: null,
   maximumTotalSupply: null,
   mvkHistoryData: null,
   smvkHistoryData: null,
 }
-export const EMPTY_DOORMAN_CTX: DeepNonNullable<DoormanContextStateType> = {
+export const EMPTY_DOORMAN_CTX: DoormanContextStateType = {
   totalStakedMvk: 0,
   totalSupply: 0,
   maximumTotalSupply: 0,

@@ -8,7 +8,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
 import { GetVaultsSubscriptionSubscription } from 'utils/__generated__/graphql'
-import { VaultsContext, VaultsCtxState, VaultsSubsRecordType } from './vaults.provider.types'
+import { VaultsContext, NullableVaultsCtxState, VaultsSubsRecordType } from './vaults.provider.types'
 
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
@@ -45,7 +45,7 @@ export const VaultsProvider = ({ children }: Props) => {
   }
 
   const [activeSubs, setActiveSubs] = useState<VaultsSubsRecordType>(DEFAULT_VAULTS_ACTIVE_SUBS)
-  const [vaultsCtxState, setVaultsCtxState] = useState<DeepNullable<VaultsCtxState>>(DEFAULT_VAULTS_CONTEXT)
+  const [vaultsCtxState, setVaultsCtxState] = useState<NullableVaultsCtxState>(DEFAULT_VAULTS_CONTEXT)
 
   useEffect(() => {
     if (prevUserAddress !== userAddress) {
