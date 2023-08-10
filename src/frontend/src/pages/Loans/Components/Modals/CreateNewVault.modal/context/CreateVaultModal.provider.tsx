@@ -13,7 +13,6 @@ import { DEFAULT_CREATE_VAULT_STATE } from '../helpers/createNewVault.consts'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 type Props = CreateNewModalProps & {
   children: React.ReactNode
@@ -21,7 +20,6 @@ type Props = CreateNewModalProps & {
 
 export const CreateVaultModalProvider = ({ closePopup, show, data, children }: Props) => {
   const { tokensPrices, tokensMetadata } = useTokensContext()
-  const { bug } = useToasterContext()
   const { marketsMapper } = useLoansContext()
   const [modalState, setModalState] = useState<CreateVaultModalState>(DEFAULT_CREATE_VAULT_STATE)
   const { marketTokenAddress = '' } = data ?? {}
@@ -34,12 +32,6 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
   const { availableLiquidity = 0, borrowAPR } = marketsMapper[marketTokenAddress] ?? {}
   const { rate: originalRate } = token ?? {}
   const rate = originalRate ?? 0
-
-  useEffect(() => {
-    if (!token) {
-      bug('Something wronf with token data', 'Token error')
-    }
-  }, [token, bug])
 
   const resetCreateVaultModalState = useCallback(() => {
     setModalState(DEFAULT_CREATE_VAULT_STATE)

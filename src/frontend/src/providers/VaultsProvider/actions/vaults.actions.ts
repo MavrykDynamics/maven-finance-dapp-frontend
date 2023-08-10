@@ -348,8 +348,6 @@ export const createVault = async (
       ]),
     )
 
-    debugger
-
     return await getEstimationBatchResult(tezos, batchArr)
   } catch (error) {
     const e = unknownToError(error)

@@ -91,7 +91,6 @@ export const AddCollateralScreen = () => {
       Record<DDItemId, DropDownItemType & { tokenAddress: TokenAddressType }>
     >((acc, collateralTokenAddress) => {
       const collateral = getTokenDataByAddress({ tokenAddress: collateralTokenAddress, tokensMetadata, tokensPrices })
-      console.log(collateralTokenAddress, 'collateralTokenAddress')
       if (collateral && checkWhetherTokenIsCollateralToken(collateral)) {
         const { address, icon, symbol } = collateral
 
