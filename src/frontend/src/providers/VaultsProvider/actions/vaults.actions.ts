@@ -5,11 +5,14 @@ import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/es
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 // consts
-import { OpKind } from '@taquito/taquito'
+import { OpKind, TezosToolkit, TransferParams } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // types
-import { LoansTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import {
+  LoansCollateralTokenMetadataType,
+  LoansTokenMetadataType,
+} from 'providers/TokensProvider/tokens.provider.types'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // change vault name
@@ -33,28 +36,13 @@ export const changeVaultNameAction = async (
   }
 }
 
-// create vault
-export const createVault = async (loanTokenName: string, vaultName: string, vaultFactoryAddress: string) => {
-  try {
-    // prepare and send transaction
-    const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(vaultFactoryAddress)
-    const vaultCreateMetaData = contract?.methods.createVault(null, loanTokenName, vaultName, [], 'any')
-
-    return await getEstimationResult(vaultCreateMetaData)
-  } catch (error) {
-    const e = unknownToError(error)
-    return { actionSuccess: false, error: new WalletOperationError(e) }
-  }
-}
-
 // borrow asset from the vault
 export const borrowVaultAssetAction = async (
   lendingControllerAddress: string,
   vaultId: number,
   amountToBorrow: number,
   borrowedToken: LoansTokenMetadataType,
-  callback: () => void,
+  callback?: () => void,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     const { decimals } = borrowedToken
@@ -262,3 +250,147 @@ export const repayFullAndCloseVaultAction = async (
     return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
+
+// create vault
+export const createVault = async (
+  userAddress: string,
+  loanTokenName: string,
+  vaultName: string,
+  vaultFactoryAddress: string,
+  lendingControllerAddress: string,
+  collateralTokens: Array<
+    LoansCollateralTokenMetadataType & {
+      amount: number
+    }
+  >,
+  delegateToAddress: string | null = null, // baker address
+) => {
+  try {
+    // prepare and send transaction
+    const tezos = await DAPP_INSTANCE.tezos()
+
+    const vaultFactoryContract = await tezos.wallet.at(vaultFactoryAddress)
+
+    const _collaterals = collateralTokens.reduce<{ amount: number; tokenName: string }[]>(
+      (acc, { amount, loanData: { indexerName } }) => {
+        acc.push({
+          amount,
+          tokenName: indexerName,
+        })
+
+        return acc
+      },
+      [],
+    )
+
+    const tezCollateral = collateralTokens.find((c) => c.type === 'tez')
+    const tezTokenData = tezCollateral
+      ? {
+          amount: tezCollateral.amount,
+          mutez: true,
+        }
+      : {}
+
+    const batchArr = await collateralTokens.reduce<
+      Promise<
+        (TransferParams & {
+          kind: OpKind.TRANSACTION
+        })[]
+      >
+    >(
+      async (promiseAcc, { id, type, address, amount }) => {
+        const acc = await promiseAcc
+
+        if (type === 'fa12') {
+          const contract = await tezos.wallet.at(address)
+
+          const fa12ResetApprovalBatchObject = getBacthObject_fa12(vaultFactoryAddress, contract, 0)
+          const fa12AddApprovalBatchObject = getBacthObject_fa12(vaultFactoryAddress, contract, amount)
+
+          acc.unshift(fa12ResetApprovalBatchObject, fa12AddApprovalBatchObject)
+        }
+
+        if (type === 'fa2') {
+          const contract = await tezos.wallet.at(address)
+
+          const fa2AddOperatorsBatchObject = getBatchObject_fa2(
+            userAddress,
+            vaultFactoryAddress,
+            contract,
+            'add_operator',
+            id,
+          )
+          const fa2RemoveOperatorsBatchObject = getBatchObject_fa2(
+            userAddress,
+            vaultFactoryAddress,
+            contract,
+            'remove_operator',
+            id,
+          )
+
+          acc.unshift(fa2AddOperatorsBatchObject)
+          acc.push(fa2RemoveOperatorsBatchObject)
+        }
+
+        return acc
+      },
+      Promise.resolve([
+        {
+          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+          ...vaultFactoryContract.methods
+            .createVault(delegateToAddress, loanTokenName, vaultName, _collaterals, 'any')
+            .toTransferParams(),
+          ...tezTokenData,
+        },
+      ]),
+    )
+
+    return await getEstimationBatchResult(tezos, batchArr)
+  } catch (error) {
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
+  }
+}
+
+// create vault helpers -------------------
+
+function getBatchObject_fa2(
+  userAddress: string,
+  vaultFactoryAddress: string,
+  factoryContract: Awaited<ReturnType<TezosToolkit['wallet']['at']>>,
+  operation: 'add_operator' | 'remove_operator',
+  token_id: number,
+) {
+  return {
+    kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+    ...factoryContract.methods
+      .update_operators([
+        {
+          [operation]: {
+            owner: userAddress,
+            operator: vaultFactoryAddress,
+            token_id,
+          },
+        },
+      ])
+      .toTransferParams(),
+  }
+}
+
+function getBacthObject_fa12(
+  vaultFactoryAddress: string,
+  factoryContract: Awaited<ReturnType<TezosToolkit['wallet']['at']>>,
+  amount = 0,
+) {
+  return {
+    kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+    ...factoryContract.methods
+      .approve(
+        vaultFactoryAddress, // Address to reset the spending allowance of
+        amount, // Set to 0 to the address can't spend any tokens
+      )
+      .toTransferParams(),
+  }
+}
+
+// ----------------------------------------

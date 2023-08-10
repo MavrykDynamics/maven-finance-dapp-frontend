@@ -58,8 +58,9 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
-import { ThemeType } from 'consts/theme.const'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
+import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -79,14 +80,6 @@ export const AddCollateral = ({
   const { bug } = useToasterContext()
 
   useLockBodyScroll(show)
-
-  const [inputData, setInputData] = useState<{
-    amount: string
-    validationStatus: InputStatusType
-  }>({
-    amount: '0',
-    validationStatus: INPUT_STATUS_DEFAULT,
-  })
 
   useEffect(() => {
     if (!show) {
@@ -118,6 +111,21 @@ export const AddCollateral = ({
     availableLiquidity = 0,
     collateralTokenAddress = '',
   } = data ?? {}
+
+  const {
+    inputData,
+    setInputData,
+    setSelectedCollateral,
+    inputOnBlurHandle,
+    inputOnChangeHandle,
+    willExceedXTZTheLimit,
+    onFocusHandler,
+    useMaxHandler,
+  } = useCollateralInputData()
+
+  useEffect(() => {
+    setSelectedCollateral(collateralTokenAddress)
+  }, [collateralTokenAddress, setSelectedCollateral])
 
   const { rate: originalCollateralRate = 0, decimals = 0, symbol = '', name = '', icon = '' } = collateralToken ?? {}
   const collateralRate = originalCollateralRate ?? 0
@@ -194,37 +202,6 @@ export const AddCollateral = ({
 
   const { action: depositCollateralHandler } = useContractAction(contractActionProps)
 
-  // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
-    const validationStatus = loansInputValidation({
-      inputAmount: newInputAmount,
-      maxAmount,
-      options: {
-        byDecimalPlaces: decimals,
-      },
-    })
-
-    setInputData({
-      ...inputData,
-      amount: newInputAmount,
-      validationStatus: validationStatus,
-    })
-  }
-
-  const inputOnBlurHandle = () => {
-    setInputData({
-      ...inputData,
-      amount: getOnBlurValue(inputData.amount),
-    })
-  }
-
-  const onFocusHandler = () => {
-    setInputData({
-      ...inputData,
-      amount: getOnFocusValue(inputData.amount),
-    })
-  }
-
   if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
 
   return (
@@ -258,8 +235,7 @@ export const AddCollateral = ({
             settings={{
               balance: userCollateralBalance,
               balanceAsset: symbol,
-              useMaxHandler: () =>
-                inputOnChangeHandle(getLoansInputMaxAmount(userCollateralBalance, decimals), userCollateralBalance),
+              useMaxHandler: () => useMaxHandler(userCollateralBalance),
               inputStatus: inputData.validationStatus,
               convertedValue: inputAmount * (collateralRate ?? 1),
               inputSize: INPUT_LARGE,
@@ -270,6 +246,8 @@ export const AddCollateral = ({
               <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
             </InputPinnedTokenInfo>
           </Input>
+
+          <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20 mb-20" />
 
           <div className="block-name">New Vault Status</div>
 
