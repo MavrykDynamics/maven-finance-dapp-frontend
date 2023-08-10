@@ -123,10 +123,12 @@ export const Market = () => {
 
     checkWhetherMarketExists()
 
-    return () => {
-      setMarketAddressToSubscribe(null)
-    }
+    return () => setMarketAddressToSubscribe(null)
   }, [currentMarketAddress])
+
+  useEffect(() => {
+    return () => setMarketAddressToSubscribe(null)
+  }, [])
 
   const {
     preferences: { themeSelected },
