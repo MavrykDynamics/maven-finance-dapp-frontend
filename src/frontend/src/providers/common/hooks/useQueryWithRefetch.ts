@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { DocumentNode, OperationVariables, QueryHookOptions, TypedDocumentNode, useQuery } from '@apollo/client'
 
 import { currentIndexerLevelProxy } from '../utils/observeCurrentIndexerLevel'
@@ -23,8 +23,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
     blocksDiff?: number
   },
 ) => {
-  const [currentIndexedLevel, setCurrentIndexedLevel] = useState(0)
-  const [lastUpdatedBlock, setLastUpdatedBlock] = useState(0)
+  const lastUpdatedBlock = useRef(0)
 
   const isInitialQueryDone = useRef(false)
 
@@ -38,33 +37,35 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   })
 
   const { blocksDiff } = refetchOptions ?? {}
-  const refetchQuery = queryResult.refetch
+
+  // fn to refetch query on block lvl change
+  const refetchQuery = useCallback(
+    (newIndexerLevel: number) => {
+      if (!isInitialQueryDone.current) return
+
+      // blocks diff case, call refetch only when block difference is more equal than specified in blocksDiff
+      if (typeof blocksDiff === 'number') {
+        if (newIndexerLevel - lastUpdatedBlock.current >= blocksDiff) {
+          queryResult.refetch()
+          lastUpdatedBlock.current = newIndexerLevel
+        }
+
+        return
+      }
+
+      queryResult.refetch()
+    },
+    [blocksDiff],
+  )
 
   // subscribe to indexer lvl change
   useEffect(() => {
-    currentIndexerLevelProxy.registerListener(setCurrentIndexedLevel)
+    currentIndexerLevelProxy.registerListener(refetchQuery)
 
     return () => {
-      currentIndexerLevelProxy.removeListener(setCurrentIndexedLevel)
+      currentIndexerLevelProxy.removeListener(refetchQuery)
     }
-  }, [])
-
-  // refetch query on refetch options change, or on level change
-  useEffect(() => {
-    if (!isInitialQueryDone.current) return
-
-    // blocks diff case, call refetch only when block difference is more equal than specified in blocksDiff
-    if (typeof blocksDiff === 'number') {
-      if (currentIndexedLevel - lastUpdatedBlock >= blocksDiff) {
-        refetchQuery()
-        setLastUpdatedBlock(currentIndexedLevel)
-      }
-
-      return
-    }
-
-    refetchQuery()
-  }, [blocksDiff, currentIndexedLevel])
+  }, [refetchQuery])
 
   return queryResult
 }
