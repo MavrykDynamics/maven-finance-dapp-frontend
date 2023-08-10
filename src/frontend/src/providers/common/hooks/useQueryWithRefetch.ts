@@ -14,7 +14,7 @@ import { currentIndexerLevelProxy } from '../utils/observeCurrentIndexerLevel'
  * @returns returned default params from apollo's useQuery
  *
  * NOTES:
- *    --- if variable will change it will provoke useQuery to work, so we don't need to pass new variables to refetch function, cuz refetch won't work
+ *    --- if variable change it will provoke useQuery to work, so we don't need to pass new variables to refetch function, cuz refetch won't work
  */
 export const useQueryWithRefetch = <TData = unknown, TVariables extends OperationVariables = OperationVariables>(
   query: DocumentNode | TypedDocumentNode<TData, TVariables>,
