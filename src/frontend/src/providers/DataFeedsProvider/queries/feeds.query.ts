@@ -67,6 +67,8 @@ export const FEEDS_UPDATE_QUERY = gql(`
   query dataFeedsPrices {
     aggregator(where: { admin: { _neq: "" } }, order_by: { creation_timestamp: desc }) {
       address
+      name
+      decimals
       last_completed_data
       last_completed_data_pct_oracle_resp
       last_completed_data_last_updated_at
