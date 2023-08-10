@@ -283,7 +283,7 @@ export const createVault = async (
       [],
     )
 
-    const tezCollateral = _collaterals.find((c) => c.tokenName === 'tez')
+    const tezCollateral = collateralTokens.find((c) => c.type === 'tez')
     const tezTokenData = tezCollateral
       ? {
           amount: tezCollateral.amount,
