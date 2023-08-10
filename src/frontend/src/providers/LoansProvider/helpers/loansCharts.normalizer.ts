@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 
 // types
-import { GetLoansHistoryDataSubscription } from 'utils/__generated__/graphql'
+import { GetLoansHistoryDataQuery } from 'utils/__generated__/graphql'
 import { LoansChartsType, UseLoansChartsStateType } from './loans.types'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 
@@ -121,7 +121,7 @@ export const normalizeLoansCharts = ({
   tokensMetadata,
   tokensPrices,
 }: {
-  indexerData: GetLoansHistoryDataSubscription
+  indexerData: GetLoansHistoryDataQuery
   chartsToCalc: LoansChartsType
   tokensPrices: TokensContext['tokensPrices']
   tokensMetadata: TokensContext['tokensMetadata']

@@ -6,6 +6,7 @@ import {
   DEPOSIT_LENDING_ASSET_ACTION,
   WITHDRAW_LENDING_ASSET_ACTION,
 } from './helpers/loans.const'
+import { LoansChartsType, UseLoansChartsStateType } from './helpers/loans.types'
 
 export type LoanVaultAllowanceType = typeof VAULT_ALLOWANCE_ANY | typeof VAULT_ALLOWANCE_ACCOUNTS
 
@@ -40,9 +41,10 @@ export type LoanMarketType = {
 
 export type LoansContext = LoansContextState & {
   isLoading: boolean
-
+  areChartsLoading: boolean
   changeLoansSubscriptionsList: (skips: Partial<LoansSubsRecordType>) => void
   setMarketAddressToSubscribe: (marketTokenAddress: TokenAddressType | null) => void
+  modifyChartsToCalc: (newChartsToCalc: Partial<LoansChartsType>) => void
 }
 
 export type LoansContextState = {
@@ -53,6 +55,7 @@ export type LoansContextState = {
     daoFee: number
     collateralFactor: number
   }
+  chartsData: UseLoansChartsStateType
 }
 
 export type NullableLoansContextState = DeepNullable<LoansContextState>

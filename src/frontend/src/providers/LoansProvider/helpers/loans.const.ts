@@ -41,11 +41,31 @@ export const DEFAULT_LOANS_ACTIVE_SUBS = {
   [LOANS_CONFIG]: false,
 } as const
 
+// CHARTS DATA
+export const DEFAULT_CHARTS_DATA = {
+  totalLendingChart: [],
+  totalBorrowingChart: [],
+  totalCollateralChart: [],
+  marketBorrowChart: {},
+  marketLendingChart: {},
+}
+
+export const DEFAULT_CHARTS_TO_CALC = {
+  calcTotalLendingChart: false,
+  calcTotalBorrowingChart: false,
+  calcTotalCollateralChart: false,
+  calcMarketBorrowChart: false,
+  calcMarketLendingChart: false,
+}
+
+// ---------------------------------------------------------------
+
 export const DEFAULT_LOANS_CONTEXT: NullableLoansContextState = {
   allMarketsAddresses: null,
   marketsAddresses: null,
   marketsMapper: null,
   config: null,
+  chartsData: null,
 }
 
 export const EMPTY_LOANS_CONTEXT: LoansContextState = {
@@ -56,4 +76,5 @@ export const EMPTY_LOANS_CONTEXT: LoansContextState = {
     daoFee: 0,
     collateralFactor: 0,
   },
+  chartsData: DEFAULT_CHARTS_DATA,
 }

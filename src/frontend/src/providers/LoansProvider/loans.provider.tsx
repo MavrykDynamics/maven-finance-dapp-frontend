@@ -15,6 +15,7 @@ import { GET_LOANS_CONFIG, getLoansMarketsQuery } from './queries/loansMarkets.q
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import {
+  DEFAULT_CHARTS_TO_CALC,
   DEFAULT_LOANS_ACTIVE_SUBS,
   DEFAULT_LOANS_CONTEXT,
   LOANS_CONFIG,
@@ -24,6 +25,10 @@ import {
 // helpers
 import { normalizeLoansConfig, normalizeLoansMarkets } from './helpers/loansMarkets.normalizer'
 import { getLoansProviderReturnValue } from './helpers/loans.utils'
+import { GET_LOANS_HISTORY_DATA } from './queries/loansHistory.query'
+import { normalizeLoansCharts } from './helpers/loansCharts.normalizer'
+import { LoansChartsType } from './helpers/loans.types'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const loansContext = React.createContext<LoansContext>(undefined!)
 
@@ -40,9 +45,11 @@ type Props = {
  */
 export const LoansProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const [activeSubs, setActiveSubs] = useState<LoansSubsRecordType>(DEFAULT_LOANS_ACTIVE_SUBS)
   const [marketAddressToSubscribe, setMarketAddressToSubscribe] = useState<null | TokenAddressType>(null)
+  const [chartsToCalc, setChartsToCalc] = useState<LoansChartsType>(DEFAULT_CHARTS_TO_CALC)
   const [loansCtxState, setLoansCtxState] = useState<NullableLoansContextState>(DEFAULT_LOANS_CONTEXT)
 
   const handleSubError = (error: ApolloError, subName: string) => {
@@ -74,6 +81,26 @@ export const LoansProvider = ({ children }: Props) => {
     onError: (error) => handleSubError(error, 'GET_LOANS_CONFIG'),
   })
 
+  // subscribe to markets charts data
+  const { loading: areChartsLoading } = useQueryWithRefetch(
+    GET_LOANS_HISTORY_DATA,
+    {
+      onCompleted: (data) => {
+        if (!data) return
+
+        const newChartsData = normalizeLoansCharts({ indexerData: data, chartsToCalc, tokensPrices, tokensMetadata })
+        setLoansCtxState((prev) => ({
+          ...prev,
+          chartsData: newChartsData,
+        }))
+      },
+      onError: (error) => {
+        console.error('GET_LOANS_HISTORY_DATA error: ', { error })
+      },
+    },
+    { blocksDiff: 25 },
+  )
+
   // set markets to context and turn off loaders
   const updateMarketsContext = (indexerData: GetLoansMarketsQueryQuery) => {
     const newMarkets = normalizeLoansMarkets({ indexerData })
@@ -91,6 +118,12 @@ export const LoansProvider = ({ children }: Props) => {
     }))
   }
 
+  // update charts to calc
+  // if call without parametrs - it will reset chartsToCalc state
+  const modifyChartsToCalc = (newChartsToCalc: Partial<LoansChartsType>) => {
+    setChartsToCalc((prev) => ({ ...prev, ...newChartsToCalc }))
+  }
+
   const changeLoansSubscriptionsList = (newSkips: Partial<LoansSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }
@@ -101,10 +134,13 @@ export const LoansProvider = ({ children }: Props) => {
         loansCtxState,
         marketAddressToSubscribe,
         activeSubs,
+        areChartsLoading,
+        chartsToCalc,
         changeLoansSubscriptionsList,
         setMarketAddressToSubscribe,
+        modifyChartsToCalc,
       }),
-    [loansCtxState, activeSubs, marketAddressToSubscribe],
+    [loansCtxState, marketAddressToSubscribe, activeSubs, areChartsLoading, chartsToCalc],
   )
 
   return <loansContext.Provider value={providerValue}>{children}</loansContext.Provider>

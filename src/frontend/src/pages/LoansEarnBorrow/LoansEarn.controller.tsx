@@ -17,12 +17,15 @@ import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
-import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // consts
-import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
+import {
+  LOANS_MARKETS_DATA,
+  DEFAULT_LOANS_ACTIVE_SUBS,
+  DEFAULT_CHARTS_TO_CALC,
+} from 'providers/LoansProvider/helpers/loans.const'
 
 // helpers
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
@@ -41,26 +44,34 @@ const marketSettings: MarketSettingsType = {
 export const LoansEarn = () => {
   const history = useHistory()
 
-  const {
-    isLoading: isChartsLoading,
-    chartsData: { totalBorrowingChart, totalLendingChart, marketLendingChart },
-  } = useLoansCharts({
-    calcTotalBorrowingChart: true,
-    calcTotalLendingChart: true,
-    calcMarketLendingChart: true,
-  })
-
   const { openAddLendingAssetPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress, userMTokens } = useUserContext()
-  const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
+  const {
+    marketsAddresses,
+    marketsMapper,
+    changeLoansSubscriptionsList,
+    isLoading: isLoansLoading,
+    chartsData: { totalBorrowingChart, totalLendingChart, marketLendingChart },
+    areChartsLoading,
+    modifyChartsToCalc,
+  } = useLoansContext()
 
   useEffect(() => {
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
     })
 
-    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+    modifyChartsToCalc({
+      calcTotalBorrowingChart: true,
+      calcTotalLendingChart: true,
+      calcMarketLendingChart: true,
+    })
+
+    return () => {
+      changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+      modifyChartsToCalc(DEFAULT_CHARTS_TO_CALC)
+    }
   }, [])
 
   const markets = useMemo(
@@ -121,9 +132,9 @@ export const LoansEarn = () => {
 
   const contextValue = useMemo(
     () => ({
-      isChartsLoading,
+      isChartsLoading: areChartsLoading,
     }),
-    [isChartsLoading],
+    [areChartsLoading],
   )
 
   return (

@@ -12,7 +12,11 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
+import {
+  DEFAULT_CHARTS_TO_CALC,
+  DEFAULT_LOANS_ACTIVE_SUBS,
+  LOANS_MARKETS_DATA,
+} from 'providers/LoansProvider/helpers/loans.const'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 import colors from 'styles/colors'
 import { Page, skyColor } from 'styles'
@@ -30,7 +34,6 @@ import {
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
@@ -58,17 +61,17 @@ const CHART_COLORS = {
 }
 
 export const Loans = () => {
-  const {
-    isLoading: isChartsLoading,
-    chartsData: { totalLendingChart, totalBorrowingChart },
-  } = useLoansCharts({
-    calcTotalBorrowingChart: true,
-    calcTotalLendingChart: true,
-  })
-
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userMTokens } = useUserContext()
-  const { changeLoansSubscriptionsList, marketsAddresses, marketsMapper, isLoading: isLoansLoading } = useLoansContext()
+  const {
+    changeLoansSubscriptionsList,
+    marketsAddresses,
+    marketsMapper,
+    isLoading: isLoansLoading,
+    areChartsLoading,
+    chartsData: { totalLendingChart, totalBorrowingChart },
+    modifyChartsToCalc,
+  } = useLoansContext()
   const { changeVaultsSubscriptionsList, vaultsMapper, allVaultsIds, isLoading: isVaultsLoading } = useVaultsContext()
 
   useEffect(() => {
@@ -79,9 +82,15 @@ export const Loans = () => {
       [VAULTS_DATA]: VAULTS_ALL,
     })
 
+    modifyChartsToCalc({
+      calcTotalBorrowingChart: true,
+      calcTotalLendingChart: true,
+    })
+
     return () => {
       changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
       changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+      modifyChartsToCalc(DEFAULT_CHARTS_TO_CALC)
     }
   }, [])
 
@@ -122,9 +131,9 @@ export const Loans = () => {
         <span>Total Earning</span>
         <CommaNumber value={totalLended} beginningText={'$'} />
       </div>
-      <div className={classNames('chart', { emptyChart: !isChartsLoading && totalLendingChart.length === 0 })}>
+      <div className={classNames('chart', { emptyChart: !areChartsLoading && totalLendingChart.length === 0 })}>
         <Chart
-          isLoading={isChartsLoading}
+          isLoading={areChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(totalLendingChart, 7) }}
           colors={CHART_COLORS}
           settings={getChartSettingsBasedOnChartLength(totalLendingChart, CHART_SETTINGS)}
@@ -143,9 +152,9 @@ export const Loans = () => {
         <span>Total Borrowing</span>
         <CommaNumber value={totalBorrowed} beginningText={'$'} />
       </div>
-      <div className={classNames('chart', { emptyChart: !isChartsLoading && totalBorrowingChart.length === 0 })}>
+      <div className={classNames('chart', { emptyChart: !areChartsLoading && totalBorrowingChart.length === 0 })}>
         <Chart
-          isLoading={isChartsLoading}
+          isLoading={areChartsLoading}
           data={{ type: AREA_CHART_TYPE, plots: getChartDataBasedOnLength(totalBorrowingChart, 7) }}
           colors={CHART_COLORS}
           settings={getChartSettingsBasedOnChartLength(totalBorrowingChart, CHART_SETTINGS)}

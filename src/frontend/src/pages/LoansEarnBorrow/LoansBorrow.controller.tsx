@@ -4,7 +4,6 @@ import { useHistory } from 'react-router'
 // hooks
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
-import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
@@ -29,7 +28,11 @@ import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
+import {
+  LOANS_MARKETS_DATA,
+  DEFAULT_LOANS_ACTIVE_SUBS,
+  DEFAULT_CHARTS_TO_CALC,
+} from 'providers/LoansProvider/helpers/loans.const'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   VAULTS_DATA,
@@ -55,7 +58,15 @@ export const LoansBorrow = () => {
   const { userAddress } = useUserContext()
   const { vaultsMapper, myVaultsIds, changeVaultsSubscriptionsList, isLoading: isVaultsLoading } = useVaultsContext()
 
-  const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
+  const {
+    marketsAddresses,
+    marketsMapper,
+    changeLoansSubscriptionsList,
+    isLoading: isLoansLoading,
+    chartsData: { totalBorrowingChart, totalCollateralChart, marketBorrowChart },
+    areChartsLoading,
+    modifyChartsToCalc,
+  } = useLoansContext()
 
   useEffect(() => {
     changeLoansSubscriptionsList({
@@ -65,20 +76,18 @@ export const LoansBorrow = () => {
       [VAULTS_DATA]: VAULTS_USER_ALL,
     })
 
+    modifyChartsToCalc({
+      calcTotalBorrowingChart: true,
+      calcTotalCollateralChart: true,
+      calcMarketBorrowChart: true,
+    })
+
     return () => {
       changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
       changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+      modifyChartsToCalc(DEFAULT_CHARTS_TO_CALC)
     }
   }, [])
-
-  const {
-    isLoading: isChartsLoading,
-    chartsData: { totalBorrowingChart, totalCollateralChart, marketBorrowChart },
-  } = useLoansCharts({
-    calcTotalBorrowingChart: true,
-    calcTotalCollateralChart: true,
-    calcMarketBorrowChart: true,
-  })
 
   const { userVaultsData, isLoading: isUserLoansDataLoading } = useUserLoansData({ userAddress })
 
@@ -174,9 +183,9 @@ export const LoansBorrow = () => {
 
   const contextValue = useMemo(
     () => ({
-      isChartsLoading,
+      isChartsLoading: areChartsLoading,
     }),
-    [isChartsLoading],
+    [areChartsLoading],
   )
 
   return (

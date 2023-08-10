@@ -8,6 +8,8 @@ import {
 
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 import { EMPTY_LOANS_CONTEXT, LOANS_CONFIG, LOANS_MARKETS_DATA } from './loans.const'
+import { LoansChartsType } from './loans.types'
+import { isEmptyObject } from 'utils/isEmptyObject'
 
 // HELPER TO GET OPERATION NAME BY ITS TYPE
 export const getDescrByType = (type: number) => {
@@ -89,19 +91,26 @@ export const getLoansProviderReturnValue = ({
   loansCtxState,
   marketAddressToSubscribe,
   activeSubs,
+  areChartsLoading,
+  chartsToCalc,
   changeLoansSubscriptionsList,
   setMarketAddressToSubscribe,
+  modifyChartsToCalc,
 }: {
   loansCtxState: NullableLoansContextState
   marketAddressToSubscribe: string | null
   activeSubs: LoansSubsRecordType
+  areChartsLoading: boolean
+  chartsToCalc: LoansChartsType
   changeLoansSubscriptionsList: LoansContext['changeLoansSubscriptionsList']
   setMarketAddressToSubscribe: LoansContext['setMarketAddressToSubscribe']
+  modifyChartsToCalc: LoansContext['modifyChartsToCalc']
 }) => {
   const { marketsMapper, marketsAddresses, config, allMarketsAddresses } = loansCtxState
   const commonToReturn = {
     changeLoansSubscriptionsList,
     setMarketAddressToSubscribe,
+    modifyChartsToCalc,
   }
 
   const isLoadingSingleMarket = marketAddressToSubscribe && !marketsMapper?.[marketAddressToSubscribe]
@@ -131,8 +140,32 @@ export const getLoansProviderReturnValue = ({
       ...EMPTY_LOANS_CONTEXT,
       allMarketsAddresses: allMarketsAddresses ?? EMPTY_LOANS_CONTEXT['allMarketsAddresses'],
       isLoading: true,
+      areChartsLoading: true,
     }
   }
+
+  const {
+    calcTotalLendingChart = false,
+    calcTotalBorrowingChart = false,
+    calcTotalCollateralChart = false,
+    calcMarketBorrowChart = false,
+    calcMarketLendingChart = false,
+  } = chartsToCalc
+
+  const {
+    totalLendingChart = [],
+    totalBorrowingChart = [],
+    totalCollateralChart = [],
+    marketBorrowChart = {},
+    marketLendingChart = {},
+  } = loansCtxState.chartsData ?? {}
+
+  const _areChartsLoading =
+    (calcTotalLendingChart && !totalLendingChart.length) ||
+    (calcTotalBorrowingChart && !totalBorrowingChart.length) ||
+    (calcTotalCollateralChart && !totalCollateralChart.length) ||
+    (calcMarketBorrowChart && isEmptyObject(marketBorrowChart)) ||
+    (calcMarketLendingChart && isEmptyObject(marketLendingChart))
 
   // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
   const nonNullableProviderValue = replaceNullValuesWithDefault<LoansContextState>(loansCtxState, EMPTY_LOANS_CONTEXT)
@@ -140,5 +173,6 @@ export const getLoansProviderReturnValue = ({
     ...commonToReturn,
     ...nonNullableProviderValue,
     isLoading: false,
+    areChartsLoading: _areChartsLoading,
   }
 }
