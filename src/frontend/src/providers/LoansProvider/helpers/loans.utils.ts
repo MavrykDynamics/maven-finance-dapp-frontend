@@ -97,6 +97,7 @@ export const getLoansProviderReturnValue = ({
   marketAddressToSubscribe,
   activeSubs,
   chartsToCalc,
+  prevMarketHistoryData,
   changeLoansSubscriptionsList,
   setMarketAddressToSubscribe,
   setVaultAddressToSubscribe,
@@ -109,6 +110,7 @@ export const getLoansProviderReturnValue = ({
   marketAddressToSubscribe: string | null
   activeSubs: LoansSubsRecordType
   chartsToCalc: LoansChartsType
+  prevMarketHistoryData: LoansMarketTransactionHistoryType[] | null
   changeLoansSubscriptionsList: LoansContext['changeLoansSubscriptionsList']
   setMarketAddressToSubscribe: LoansContext['setMarketAddressToSubscribe']
   setVaultAddressToSubscribe: LoansContext['setVaultAddressToSubscribe']
@@ -183,12 +185,21 @@ export const getLoansProviderReturnValue = ({
 
   // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
   const nonNullableProviderValue = replaceNullValuesWithDefault<LoansContextState>(loansCtxState, EMPTY_LOANS_CONTEXT)
+
+  const turnOffLoansTransactionHistotyDataLoader = isLoansTransactionHistoryLoading && prevMarketHistoryData
+
   return {
     ...commonToReturn,
     ...nonNullableProviderValue,
+    // prevMarketHistoryData
+    loansTransactionHistoryData: turnOffLoansTransactionHistotyDataLoader
+      ? prevMarketHistoryData
+      : nonNullableProviderValue.loansTransactionHistoryData,
     isLoading: false,
     areChartsLoading,
-    isLoansTransactionHistoryLoading,
+    isLoansTransactionHistoryLoading: isLoansTransactionHistoryLoading
+      ? !turnOffLoansTransactionHistotyDataLoader
+      : isLoansTransactionHistoryLoading,
   }
 }
 

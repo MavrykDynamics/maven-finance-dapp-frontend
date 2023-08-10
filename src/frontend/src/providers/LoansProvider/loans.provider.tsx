@@ -1,5 +1,5 @@
 import { ApolloError, useQuery } from '@apollo/client'
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useMemo, useRef, useState } from 'react'
 
 // context & hooks
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -27,7 +27,7 @@ import { normalizeLoansConfig, normalizeLoansMarkets } from './helpers/loansMark
 import { getLoansProviderReturnValue, normalizeTransactionHistory } from './helpers/loans.utils'
 import { GET_LOANS_HISTORY_DATA, getLoansHistoryQuery } from './queries/loansHistory.query'
 import { normalizeLoansCharts } from './helpers/loansCharts.normalizer'
-import { LoansChartsType } from './helpers/loans.types'
+import { LoansChartsType, LoansMarketTransactionHistoryType } from './helpers/loans.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
@@ -55,6 +55,8 @@ export const LoansProvider = ({ children }: Props) => {
   const [vaultAddressToSubscribe, setVaultAddressToSubscribe] = useState<null | string>(null)
   const [chartsToCalc, setChartsToCalc] = useState<LoansChartsType>(DEFAULT_CHARTS_TO_CALC)
   const [loanHistoryDataFilterType, setLoanHistoryDataFilterType] = useState<number[] | null>(null) // array of descr types 1-11, mapper of type -> descr is: getDescrByType
+
+  const prevMarketsDataRef = useRef<Record<TokenAddressType, LoansMarketTransactionHistoryType[]>>({})
 
   // shared loan state
   const [loansCtxState, setLoansCtxState] = useState<NullableLoansContextState>(DEFAULT_LOANS_CONTEXT)
@@ -124,11 +126,14 @@ export const LoansProvider = ({ children }: Props) => {
         if (!data) return
 
         const loansTransactionHistoryData = normalizeTransactionHistory(data, tokensMetadata, tokensPrices)
+
         // set state
         setLoansCtxState((prev) => ({
           ...prev,
           loansTransactionHistoryData,
         }))
+
+        if (marketAddressToSubscribe) prevMarketsDataRef.current[marketAddressToSubscribe] = loansTransactionHistoryData
       },
       onError: (error) => {
         console.error('GET_LOANS_HISTORY_DATA error: ', { error })
@@ -170,6 +175,7 @@ export const LoansProvider = ({ children }: Props) => {
         marketAddressToSubscribe,
         activeSubs,
         chartsToCalc,
+        prevMarketHistoryData: marketAddressToSubscribe ? prevMarketsDataRef.current[marketAddressToSubscribe] : null,
         changeLoansSubscriptionsList,
         setMarketAddressToSubscribe,
         setVaultAddressToSubscribe,
