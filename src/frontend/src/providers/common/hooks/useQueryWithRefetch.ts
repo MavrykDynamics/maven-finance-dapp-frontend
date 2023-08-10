@@ -16,7 +16,7 @@ import { currentIndexerLevelProxy } from '../utils/observeCurrentIndexerLevel'
  * NOTES:
  *    --- if variable will change it will provoke useQuery to work, so we don't need to pass new variables to refetch function, cuz refetch won't work
  */
-export const useQueryWithRefetch = <TData = any, TVariables extends OperationVariables = OperationVariables>(
+export const useQueryWithRefetch = <TData = unknown, TVariables extends OperationVariables = OperationVariables>(
   query: DocumentNode | TypedDocumentNode<TData, TVariables>,
   queryOptions: QueryHookOptions<TData, TVariables> | null,
   refetchOptions?: {

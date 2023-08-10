@@ -71,19 +71,14 @@ export function normalizeFeeds(feeds: FullFeedsQueryType, promotionAddresses?: A
 // Normalizer for small feeds query, that updates
 export function normalizeFeedsPrices(feedsFromCtx: DataFeedsContext['feedsMapper'], smallFeeds: SmallFeedsQueryType) {
   return smallFeeds.reduce<DataFeedsContext['feedsMapper']>((acc, smallFeedGql) => {
-    const {
-      last_completed_data_pct_oracle_resp,
-      address,
-      last_completed_data,
-      last_completed_data_last_updated_at,
-      decimals,
-    } = smallFeedGql
-    const prevFeed = feedsFromCtx[address]
+    const { address, last_completed_data_pct_oracle_resp, last_completed_data, last_completed_data_last_updated_at } =
+      smallFeedGql
+    const feedFromCtx = feedsFromCtx[address]
 
-    if (prevFeed) {
+    if (feedFromCtx) {
       acc[address] = {
-        ...prevFeed,
-        amount: convertNumberForClient({ number: Number(last_completed_data), grade: Number(decimals) }),
+        ...feedFromCtx,
+        amount: convertNumberForClient({ number: Number(last_completed_data), grade: Number(feedFromCtx.decimals) }),
         oraclesResponces: last_completed_data_pct_oracle_resp / 100,
         last_completed_data_last_updated_at,
       }

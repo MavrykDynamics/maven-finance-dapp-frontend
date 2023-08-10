@@ -2,9 +2,7 @@ import { z } from 'zod'
 
 export const smallFeedSchema = z.object({
   address: z.string(),
-  name: z.string(),
   last_completed_data_last_updated_at: z.string(),
-  decimals: z.number(),
   last_completed_data: z.number(),
   last_completed_data_pct_oracle_resp: z.number(),
 })
