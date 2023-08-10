@@ -185,7 +185,6 @@ export const normalizeSatellitesLedger = (store: SatelliteDataQueryQuery) => {
   return store.satellite.reduce<{
     satelliteMapper: Record<string, SatelliteRecordType>
     activeSatellitesIds: string[]
-    // allSatellitesIds: string[]
     oraclesIds: string[]
   }>(
     (acc, satelliteRecord) => {
@@ -194,8 +193,6 @@ export const normalizeSatellitesLedger = (store: SatelliteDataQueryQuery) => {
       if (!nomalizedSatellite) return acc
 
       acc.satelliteMapper[nomalizedSatellite.address] = nomalizedSatellite
-
-      // acc.allSatellitesIds.push(nomalizedSatellite.address)
 
       if (nomalizedSatellite.currentlyRegistered && nomalizedSatellite.status === 0) {
         acc.activeSatellitesIds.push(nomalizedSatellite.address)
@@ -210,7 +207,6 @@ export const normalizeSatellitesLedger = (store: SatelliteDataQueryQuery) => {
     {
       satelliteMapper: {},
       activeSatellitesIds: [],
-      // allSatellitesIds: [],
       oraclesIds: [],
     },
   )

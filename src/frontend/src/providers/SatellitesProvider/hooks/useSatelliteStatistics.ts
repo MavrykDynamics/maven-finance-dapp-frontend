@@ -32,34 +32,40 @@ export const useSatelliteStatistics = (): SatelliteStatsStateType & { isLoading:
     oracleRewardsTotal: null,
   })
 
-  useQueryWithRefetch(SATELLITES_STATS, {
-    onCompleted: (data) => {
-      const totalDelegatedMVK = data.satellite_aggregate.nodes.reduce((acc, node) => {
-        const satelliteTotalDelegatedAmount =
-          node.delegations.length > 0
-            ? node.delegations.reduce((sum, current) => sum + Number(current.user.smvk_balance), 0)
-            : 0
-        acc += Number(node.user.smvk_balance + satelliteTotalDelegatedAmount)
-        return acc
-      }, 0)
+  useQueryWithRefetch(
+    SATELLITES_STATS,
+    {
+      onCompleted: (data) => {
+        const totalDelegatedMVK = data.satellite_aggregate.nodes.reduce((acc, node) => {
+          const satelliteTotalDelegatedAmount =
+            node.delegations.length > 0
+              ? node.delegations.reduce((sum, current) => sum + Number(current.user.smvk_balance), 0)
+              : 0
+          acc += Number(node.user.smvk_balance + satelliteTotalDelegatedAmount)
+          return acc
+        }, 0)
 
-      setStorage({
-        ...storage,
-        oracleRewardsTotal: convertNumberForClient({
-          number: data.oraclesRewards.aggregate?.sum?.reward ?? 0,
-          grade: MVK_DECIMALS,
-        }),
-        averageFeedReward:
-          convertNumberForClient({
-            number: data.rewardsFromFeeds.aggregate?.sum?.reward_amount_smvk ?? 0,
+        setStorage({
+          ...storage,
+          oracleRewardsTotal: convertNumberForClient({
+            number: data.oraclesRewards.aggregate?.sum?.reward ?? 0,
             grade: MVK_DECIMALS,
-          }) / Math.max(data.rewardsFromFeeds.aggregate?.count ?? 1),
-        totalOracleNetworks: data.oraclesAmount.aggregate?.count ?? 0,
-        totalActiveSatellites: data.activeSatellitesAmount.aggregate?.count ?? 0,
-        totalDelegatedMVK: convertNumberForClient({ number: totalDelegatedMVK, grade: MVK_DECIMALS }),
-      })
+          }),
+          averageFeedReward:
+            convertNumberForClient({
+              number: data.rewardsFromFeeds.aggregate?.sum?.reward_amount_smvk ?? 0,
+              grade: MVK_DECIMALS,
+            }) / Math.max(data.rewardsFromFeeds.aggregate?.count ?? 1),
+          totalOracleNetworks: data.oraclesAmount.aggregate?.count ?? 0,
+          totalActiveSatellites: data.activeSatellitesAmount.aggregate?.count ?? 0,
+          totalDelegatedMVK: convertNumberForClient({ number: totalDelegatedMVK, grade: MVK_DECIMALS }),
+        })
+      },
     },
-  })
+    {
+      blocksDiff: 25,
+    },
+  )
 
   const isLoading =
     storage.oracleRewardsTotal === null ||

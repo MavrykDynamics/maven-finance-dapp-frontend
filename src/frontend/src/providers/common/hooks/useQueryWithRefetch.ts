@@ -23,10 +23,14 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
     blocksDiff?: number
   },
 ) => {
+  const { blocksDiff } = refetchOptions ?? {}
+
   const lastUpdatedBlock = useRef(0)
 
+  // trach whether we can refetch query, cuz if we will refetch without this check we will have 2 simultamiously queries on init
   const isInitialQueryDone = useRef(false)
 
+  // completing 1st query fetch and getting callback to refetch this query later
   const queryResult = useQuery(query, {
     ...queryOptions,
     onCompleted: (data) => {
@@ -36,11 +40,10 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
     notifyOnNetworkStatusChange: true,
   })
 
-  const { blocksDiff } = refetchOptions ?? {}
-
   // fn to refetch query on block lvl change
   const refetchQuery = useCallback(
     (newIndexerLevel: number) => {
+      // If we have't completed initial query, we can't refetch
       if (!isInitialQueryDone.current) return
 
       // blocks diff case, call refetch only when block difference is more equal than specified in blocksDiff
