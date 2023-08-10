@@ -200,7 +200,7 @@ export const AddNewCollateral = ({
       lendingControllerAddress &&
       checkWhetherTokenIsCollateralToken(collateralToken)
     ) {
-      return depositCollateralsAction(
+      return await depositCollateralsAction(
         userAddress,
         vaultAddress,
         [

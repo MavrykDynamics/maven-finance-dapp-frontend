@@ -1,10 +1,10 @@
-import { ApolloError, useSubscription } from '@apollo/client'
+import { ApolloError } from '@apollo/client'
 import React, { useContext, useMemo, useState } from 'react'
 
 // helpers
 import { getSatelliteDataSubscription } from './queries/satellites.query'
 import { normalizeSatellitesLedger } from './helpers/satellites.normalizer'
-import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
+import { SatelliteDataQueryQuery } from 'utils/__generated__/graphql'
 import { getSatellitesProviderReturnValue } from './helpers/satellites.utils'
 
 // consts
@@ -15,16 +15,10 @@ import {
   SATELLITES_DATA_ALL_SUB,
   SATELLITES_DATA_ORACLES_SUB,
   SATELLITES_DATA_SINGLE_SUB,
-  SATELLITE_ALL_ADDRESSES_SUB,
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
 } from './satellites.const'
-import {
-  FINANCIAL_REQUESTS_AMOUNT_SUBSCRIPTION,
-  PROPOSALS_AMOUNT_SUBSCRIPTION,
-  SATELLITES_ADDRESSES_SUBSCRIPTION,
-  SATELLITE_GOV_ACTIONS_AMOUNT_SUBSCRIPTION,
-} from './queries/satellitesMetricsData.query'
+import { SATELLITES_METRICS_DATA } from './queries/satellitesMetricsData.query'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
@@ -38,6 +32,7 @@ import {
 
 // context
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 export const satellitesContext = React.createContext<SatellitesContext>(undefined!)
 
@@ -56,7 +51,8 @@ export type Props = {
 export const SatellitesProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
 
-  const [satellitesCtxState, setSatellitesCtxState] = useState<SatellitesContextState>(DEFAULT_SATELLITES_CONTEXT)
+  const [satellitesCtxState, setSatellitesCtxState] =
+    useState<DeepNullable<SatellitesContextState>>(DEFAULT_SATELLITES_CONTEXT)
 
   const [satelliteAddressToSubsctibe, setSatelliteAddressToSubsctibe] = useState<string | null>(null)
   const [activeSubs, setActiveSubs] = useState<SatellitesSubsRecordType>(DEFAULT_SATELLITES_ACTIVE_SUBS)
@@ -66,7 +62,7 @@ export const SatellitesProvider = ({ children }: Props) => {
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
-  useSubscription(
+  useQueryWithRefetch(
     getSatelliteDataSubscription(
       satelliteAddressToSubsctibe,
       activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ACTIVE_SUB,
@@ -81,75 +77,38 @@ export const SatellitesProvider = ({ children }: Props) => {
       variables: {
         userAddress: satelliteAddressToSubsctibe ?? '',
       },
-      onData: ({ data: { data } }) => {
+      onCompleted: (data) => {
         if (!data) return
         updateSatellitesContext(data, satelliteAddressToSubsctibe, activeSubs[SATELLITE_DATA_SUB])
       },
       onError: (e) => handleSubError(e, 'getSatelliteDataSubscription'),
-      shouldResubscribe: true,
     },
   )
 
-  useSubscription(SATELLITES_ADDRESSES_SUBSCRIPTION, {
-    skip: !activeSubs[SATELLITE_ALL_ADDRESSES_SUB],
-    onData: ({ data: { data } }) => {
-      if (!data) return
-      setSatellitesCtxState((prev) => ({
-        ...prev,
-        allSatellitesIds: data.satellite_aggregate.nodes.map(({ user: { address } }) => address),
-      }))
-    },
-    onError: (e) => handleSubError(e, 'PROPOSALS_AMOUNT_SUBSCRIPTION'),
-    shouldResubscribe: true,
-  })
-
-  useSubscription(PROPOSALS_AMOUNT_SUBSCRIPTION, {
+  // Refetch proposals, finReqs, satelliteGov actions amount to calcs satellites metrics
+  useQueryWithRefetch(SATELLITES_METRICS_DATA, {
     skip: !activeSubs[SATELLITE_PARTICIPATION_DATA_SUB],
-    onData: ({ data: { data } }) => {
-      if (!data) return
+    onCompleted: (data) => {
       setSatellitesCtxState((prev) => ({
         ...prev,
         proposalsAmount: data.governance_proposal_aggregate.aggregate?.count ?? 0,
-      }))
-    },
-    onError: (e) => handleSubError(e, 'PROPOSALS_AMOUNT_SUBSCRIPTION'),
-    shouldResubscribe: true,
-  })
-
-  useSubscription(SATELLITE_GOV_ACTIONS_AMOUNT_SUBSCRIPTION, {
-    skip: !activeSubs[SATELLITE_PARTICIPATION_DATA_SUB],
-    onData: ({ data: { data } }) => {
-      if (!data) return
-      setSatellitesCtxState((prev) => ({
-        ...prev,
         satelliteGovActionsAmount: data.governance_satellite_action_aggregate.aggregate?.count ?? 0,
-      }))
-    },
-    onError: (e) => handleSubError(e, 'SATELLITE_GOV_ACTIONS_AMOUNT_SUBSCRIPTION'),
-    shouldResubscribe: true,
-  })
-
-  useSubscription(FINANCIAL_REQUESTS_AMOUNT_SUBSCRIPTION, {
-    skip: !activeSubs[SATELLITE_PARTICIPATION_DATA_SUB],
-    onData: ({ data: { data } }) => {
-      if (!data) return
-      setSatellitesCtxState((prev) => ({
-        ...prev,
         finRequestsAmount: data.governance_financial_request_aggregate.aggregate?.count ?? 0,
       }))
     },
-    onError: (e) => handleSubError(e, 'FINANCIAL_REQUESTS_AMOUNT_SUBSCRIPTION'),
-    shouldResubscribe: true,
+    onError: (e) => handleSubError(e, 'SATELLITES_METRICS_DATA'),
   })
 
   // actions
   const updateSatellitesContext = (
-    storage: SatelliteDataSubSubscription,
+    storage: SatelliteDataQueryQuery,
     satelliteAddressToSub: null | string,
     subType: SatellitesDataDubsType,
   ) => {
     if (!subType) return
-    const { oraclesIds, activeSatellitesIds, satelliteMapper, allSatellitesIds } = normalizeSatellitesLedger(storage)
+    const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(storage)
+
+    const allSatellitesIds = storage.satelliteAddresses.nodes.map(({ user: { address } }) => address)
 
     const isAllSatellitesSub = subType === SATELLITES_DATA_ALL_SUB && !satelliteAddressToSub
     const isLoadingSingleSatellite = subType === SATELLITES_DATA_SINGLE_SUB
@@ -157,7 +116,7 @@ export const SatellitesProvider = ({ children }: Props) => {
     setSatellitesCtxState((prev) => ({
       ...prev,
       satelliteMapper: satelliteAddressToSubsctibe ? { ...prev.satelliteMapper, ...satelliteMapper } : satelliteMapper,
-      allSatellitesIds: !isLoadingSingleSatellite && isAllSatellitesSub ? allSatellitesIds : prev.allSatellitesIds,
+      allSatellitesIds,
       activeSatellitesIds:
         !isLoadingSingleSatellite && (isAllSatellitesSub || subType === SATELLITES_DATA_ACTIVE_SUB)
           ? activeSatellitesIds

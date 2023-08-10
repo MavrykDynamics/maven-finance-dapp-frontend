@@ -82,9 +82,7 @@ export const SatelliteGovernance = () => {
 
   const { tabId = SATELLITE_GOVERNANCE_MENU_TABS.ONGOING } = useParams<{ tabId: string }>()
 
-  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics({
-    skipOracleRewardsTotal: true,
-  })
+  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
   const {
     maxLengths: {
       governanceSatellite: { purposeMaxLength },

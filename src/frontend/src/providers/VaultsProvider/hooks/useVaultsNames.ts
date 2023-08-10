@@ -1,8 +1,10 @@
-import { useSubscription } from '@apollo/client'
+import { useState } from 'react'
+import { useQuery } from '@apollo/client'
+
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useState } from 'react'
-import { SUBSCRIBE_USER_VAULTS_NAMES } from '../queries/userVaultsNames.query'
+
+import { CURRENT_USER_VAULTS_NAMES_QUERY } from '../queries/userVaultsNames.query'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
@@ -12,14 +14,11 @@ export const useUserVaultsNames = () => {
 
   const [vaultNames, setVaultNames] = useState<string[]>([])
 
-  const { loading } = useSubscription(SUBSCRIBE_USER_VAULTS_NAMES, {
-    shouldResubscribe: true,
+  const { loading } = useQuery(CURRENT_USER_VAULTS_NAMES_QUERY, {
     variables: {
       userAddress: userAddress ?? '',
     },
-    onData: ({ data: { data } }) => {
-      if (!data) return
-
+    onCompleted: (data) => {
       setVaultNames(
         data.lending_controller?.[0]?.vaults?.reduce<string[]>((acc, { vault }) => {
           const name = vault?.name
@@ -29,7 +28,7 @@ export const useUserVaultsNames = () => {
       )
     },
     onError: (error) => {
-      console.error(`SUBSCRIBE_USER_VAULTS_NAMES query error: `, error)
+      console.error(`CURRENT_USER_VAULTS_NAMES_QUERY query error: `, error)
       bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
     },
   })

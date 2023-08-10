@@ -1,9 +1,14 @@
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-import { DoormanContext, DoormanContextStateType, DoormanSubsRecordType } from '../doorman.provider.types'
+import {
+  DoormanContext,
+  DoormanContextStateType,
+  NullableDoormanContextStateType,
+  DoormanSubsRecordType,
+} from '../doorman.provider.types'
 import { EMPTY_DOORMAN_CTX, MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from './doorman.consts'
 
 type DoormanContextReturnValueArgs = {
-  stakingCtxState: DoormanContextStateType
+  stakingCtxState: NullableDoormanContextStateType
   changeStakingSubscriptionsList: DoormanContext['changeStakingSubscriptionsList']
   activeSubs: DoormanSubsRecordType
 }

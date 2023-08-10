@@ -1,4 +1,4 @@
-import { VaultsSubsRecordType, VaultsCtxState } from './vaults.provider.types'
+import { VaultsSubsRecordType, VaultsCtxState, NullableVaultsCtxState } from './vaults.provider.types'
 
 // CONSTS FOR VAULTS PROVIDER STATES
 export const VAULTS_DATA = 'vaultsData'
@@ -13,14 +13,14 @@ export const DEFAULT_VAULTS_ACTIVE_SUBS: VaultsSubsRecordType = {
   [VAULTS_DATA]: null,
 }
 
-export const EMPTY_VAULTS_CONTEXT: DeepNonNullable<VaultsCtxState> = {
+export const EMPTY_VAULTS_CONTEXT: VaultsCtxState = {
   vaultsMapper: {},
   myVaultsIds: [],
   allVaultsIds: [],
   permissionedVaultsIds: [],
 }
 
-export const DEFAULT_VAULTS_CONTEXT: VaultsCtxState = {
+export const DEFAULT_VAULTS_CONTEXT: NullableVaultsCtxState = {
   vaultsMapper: null,
   myVaultsIds: null,
   allVaultsIds: null,

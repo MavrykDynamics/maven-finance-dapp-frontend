@@ -1,8 +1,7 @@
 import { gql } from 'utils/__generated__'
 
-// feeds subsciption
-export const SUBSCRIBE_TOKENS_METADATA = gql(`
-  subscription tokensMetadata {
+export const QUERY_TOKENS_METADATA = gql(`
+  query tokensMetadata {
     token {
       token_id
       metadata

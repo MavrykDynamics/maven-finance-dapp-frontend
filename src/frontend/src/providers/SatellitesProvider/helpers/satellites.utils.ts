@@ -108,7 +108,7 @@ export const getSatellitesProviderReturnValue = ({
   changeSatellitesSubscriptionsList,
   setSatelliteAddressToSubsctibe,
 }: {
-  satellitesCtxState: SatellitesContextState
+  satellitesCtxState: DeepNullable<SatellitesContextState>
   satelliteAddressToSubsctibe: string | null
   activeSubs: SatellitesSubsRecordType
   changeSatellitesSubscriptionsList: SatellitesContext['changeSatellitesSubscriptionsList']

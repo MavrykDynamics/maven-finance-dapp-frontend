@@ -1,7 +1,7 @@
 import { normalizeFeeds, normalizeFeed } from './helpers/feedsNormalizer'
 
 export type DataFeedsStorageType = ReturnType<typeof normalizeFeeds>
-export type Feed = ReturnType<typeof normalizeFeed>
+export type Feed = NonNullable<ReturnType<typeof normalizeFeed>>
 
 export type DataFeedsContext = {
   feedsMapper: DataFeedsStorageType['feedsMapper']

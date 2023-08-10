@@ -1,5 +1,5 @@
 import { TokenAddressType, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
-import { GetUserDataSubscription } from 'utils/__generated__/graphql'
+import { GetUserDataQuery } from 'utils/__generated__/graphql'
 import { z } from 'zod'
 import {
   CLAIM_ALL_REWARDS_ACTION,
@@ -65,11 +65,11 @@ export type UserContext = UserContextStateType & {
   changeUser: () => void
 }
 
-export type UserIndexerFarmRewardsType = GetUserDataSubscription['mavryk_user'][number]['farm_accounts']
+export type UserIndexerFarmRewardsType = GetUserDataQuery['mavryk_user'][number]['farm_accounts']
 
 export type UserContextStateType = UserMetadataType & {
   userAddress: string | null
-  availableProposalRewards: Array<number>
+
   availableLoansRewards: number
   availableFarmRewards: Record<string, number>
 
@@ -109,6 +109,7 @@ export type UserMetadataType = {
   gatheredDoormanRewards: number
   availableDoormanRewards: number
   availableSatellitesRewards: number
+  availableProposalRewards: Array<number>
 
   farmAccounts: UserIndexerFarmRewardsType
 }

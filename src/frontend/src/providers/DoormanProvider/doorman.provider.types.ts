@@ -13,14 +13,16 @@ export type StakeActionType = typeof STAKE_ACTION | typeof UNSTAKE_ACTION
 export type StakingSubsType = typeof SMVK_HISTORY_SUB | typeof MVK_TOTAL_SUB | typeof MVK_BALANCE_SUB
 
 export type DoormanContextStateType = {
-  mvkHistoryData: SmvkHistoryData['mvkHistoryData'] | null
-  smvkHistoryData: SmvkHistoryData['smvkHistoryData'] | null
-  totalStakedMvk: number | null
-  totalSupply: number | null
-  maximumTotalSupply: number | null
+  mvkHistoryData: SmvkHistoryData['mvkHistoryData']
+  smvkHistoryData: SmvkHistoryData['smvkHistoryData']
+  totalStakedMvk: number
+  totalSupply: number
+  maximumTotalSupply: number
 }
 
-export type DoormanContext = DeepNonNullable<DoormanContextStateType> & {
+export type NullableDoormanContextStateType = DeepNullable<DoormanContextStateType>
+
+export type DoormanContext = DoormanContextStateType & {
   isLoading: boolean
 
   changeStakingSubscriptionsList: (skips: Partial<DoormanSubsRecordType>) => void

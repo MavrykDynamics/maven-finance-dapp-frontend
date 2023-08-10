@@ -2,6 +2,8 @@ import { UserContextStateType, userTzKtTokenBalances } from '../user.provider.ty
 
 export const DEFAULT_USER_AVATAR = '/images/default-avatar.png'
 
+// TODO: extract fields with comments into separate useQuery hooks
+// store in whole user context, but load in separate queries, cuz rare use cases
 export const DEFAULT_USER: UserContextStateType = {
   userAddress: null,
   satelliteMvkIsDelegatedTo: null,
@@ -14,18 +16,18 @@ export const DEFAULT_USER: UserContextStateType = {
   isNewlyRegisteredSatellite: false,
   isSatellite: false,
   isVestee: false,
-  actionsHistory: [],
+  actionsHistory: [], // user only on dashboard personal
   govActionsCount: 0,
-  gatheredDoormanRewards: 0,
-  gatheredFarmRewards: 0,
-  gatheredSatellitesRewards: 0,
+  gatheredDoormanRewards: 0, // user only on  dashboard personal
+  gatheredFarmRewards: 0, // user only on  dashboard personal
+  gatheredSatellitesRewards: 0, // user only on  dashboard personal
   availableLoansRewards: 0,
   availableSatellitesRewards: 0,
   availableDoormanRewards: 0,
   availableFarmRewards: {},
   userTokensBalances: {},
   userMTokens: {},
-  farmAccounts: [],
+  farmAccounts: [], // user only on farms & dashboard personal
   availableProposalRewards: [],
 }
 
