@@ -63,8 +63,8 @@ export const DataFeedsProvider = ({ children }: Props) => {
       try {
         const parsedSmallFeeds = smallFeedsQuerySchema.parse(data.aggregator)
 
-        // if we received more feeds than we have in ctx refetch full feeds query (rare case)
-        if (data.aggregator.length !== feedsCtxState.feedsAddresses.length) {
+        // if we received not same amount of feeds than we have in ctx refetch full feeds query (rare case)
+        if (parsedSmallFeeds.length !== feedsCtxState.feedsAddresses.length) {
           refetchDataFeeds()
           return
         }

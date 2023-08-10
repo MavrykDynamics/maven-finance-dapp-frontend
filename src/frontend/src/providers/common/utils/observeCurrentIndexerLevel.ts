@@ -1,18 +1,27 @@
+import { generateUniqueId } from 'utils/calcFunctions'
+
 type indexedLvlListener = (currentLvl: number) => void
 
 const currentIndexerLevel: {
   currentIndexedLevel: number
-  listeners: indexedLvlListener[]
-  registerListener: (listener: indexedLvlListener) => void
-  removeListener: (listener: indexedLvlListener) => void
+  listeners: Map<string, indexedLvlListener>
+  registerListener: (listener: indexedLvlListener) => string
+  removeListener: (listenerId: string) => void
 } = {
   currentIndexedLevel: 0,
-  listeners: [],
+  listeners: new Map(),
   registerListener: function (listener) {
-    this.listeners.push(listener)
+    const listenerId = generateUniqueId()
+    this.listeners.set(listenerId, listener)
+    return listenerId
   },
-  removeListener: function (listener) {
-    this.listeners.filter((activeListener) => activeListener !== listener)
+  removeListener: function (listenerId) {
+    if (this.listeners.has(listenerId)) {
+      this.listeners.delete(listenerId)
+      // console.info(`listener with Id: ${listenerId} removed`)
+    } else {
+      // console.info(`listener with Id: ${listenerId} do not present in: ${this.listeners}`)
+    }
   },
 }
 

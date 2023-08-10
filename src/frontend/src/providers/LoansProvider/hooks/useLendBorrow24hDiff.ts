@@ -24,19 +24,33 @@ const useLendBorrow24hDiff = (): {
 } => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
+  const hookInitIsoTime = useRef(dayjs().subtract(1, 'day').toISOString())
+
   const [currentTotalLended, setCurrentTotalLended] = useState(0)
   const [currentTotalBorrowed, setCurrentTotalBorrowed] = useState(0)
   const [last24hLending, setLast24hLending] = useState(0)
   const [last24hBorrowing, setLast24hBorrowing] = useState(0)
   const [indexerData, setIndexerData] = useState<GetLending24hDiffQuery | null>(null)
 
-  const [ISOTimestamp, setISOTimestamp] = useState(dayjs().subtract(1, 'day').toISOString())
-
-  // need this interval cuz we need to get all operations for last 24h, and we need to pass timestamp of this time but previous day
-  useEffect(() => {
-    const intervalId = setInterval(() => setISOTimestamp(dayjs().subtract(1, 'day').toISOString()), 10000)
-    return clearInterval(intervalId)
-  }, [])
+  useQueryWithRefetch(
+    LEND_BORROW_24H_DIFF,
+    {
+      variables: {
+        currentTimestamp: hookInitIsoTime.current,
+      },
+      onCompleted: (data) => {
+        setIndexerData(data)
+      },
+      onError: (error) => {
+        console.error('LENDING_24H_OPERATIONS_QUERY error: ', { error })
+      },
+    },
+    {
+      refetchQueryVariables: () => ({
+        currentTimestamp: dayjs().subtract(1, 'day').toISOString(),
+      }),
+    },
+  )
 
   useEffect(() => {
     if (!indexerData) return
@@ -92,18 +106,6 @@ const useLendBorrow24hDiff = (): {
     setCurrentTotalBorrowed(currentTotalBorrowed)
     setCurrentTotalLended(currentTotalLended)
   }, [indexerData, tokensMetadata, tokensPrices])
-
-  useQueryWithRefetch(LEND_BORROW_24H_DIFF, {
-    variables: {
-      currentTimestamp: ISOTimestamp,
-    },
-    onCompleted: (data) => {
-      setIndexerData(data)
-    },
-    onError: (error) => {
-      console.error('LENDING_24H_OPERATIONS_QUERY error: ', { error })
-    },
-  })
 
   const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(
     currentTotalBorrowed,

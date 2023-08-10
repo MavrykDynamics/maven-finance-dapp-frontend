@@ -64,6 +64,7 @@ export const UserProvider = ({ children }: Props) => {
   const dispatch = useDispatch()
 
   const ws = useRef<null | signalR.HubConnection>(null)
+  const currentIndexedLvlListenerId = useRef<null | string>(null)
 
   // store all data for user, that comes from hasura
   const [userCtxState, setUserCtxState] = useState<UserContextStateType>(DEFAULT_USER)
@@ -241,11 +242,12 @@ export const UserProvider = ({ children }: Props) => {
   // subscribe to indexer lvl change
   useEffect(() => {
     if (Object.keys(userCtxState.farmAccounts).length !== 0) {
-      currentIndexerLevelProxy.registerListener(setCurrentIndexedLevel)
+      currentIndexedLvlListenerId.current = currentIndexerLevelProxy.registerListener(setCurrentIndexedLevel)
     }
 
     return () => {
-      currentIndexerLevelProxy.removeListener(setCurrentIndexedLevel)
+      if (currentIndexedLvlListenerId.current)
+        currentIndexerLevelProxy.removeListener(currentIndexedLvlListenerId.current)
     }
   }, [userCtxState.farmAccounts])
 
