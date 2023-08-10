@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react'
-import { useSubscription } from '@apollo/client'
+import { useEffect, useRef, useState } from 'react'
 import dayjs from 'dayjs'
 
 import { LEND_BORROW_24H_DIFF } from 'providers/LoansProvider/queries/loansHistory.query'
 
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+
 import { calcDiffBetweenTwoNumbersInPersentage, convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { GetLendingDiffSubscription } from 'utils/__generated__/graphql'
+
+import { GetLending24hDiffQuery } from 'utils/__generated__/graphql'
 
 /**
  *
@@ -22,12 +24,15 @@ const useLendBorrow24hDiff = (): {
 } => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
+  const hookInitISOTimestampMinus1Day = useRef(dayjs().subtract(1, 'day').toISOString())
+
   const [currentTotalLended, setCurrentTotalLended] = useState(0)
   const [currentTotalBorrowed, setCurrentTotalBorrowed] = useState(0)
   const [last24hLending, setLast24hLending] = useState(0)
   const [last24hBorrowing, setLast24hBorrowing] = useState(0)
+  const [indexerData, setIndexerData] = useState<GetLending24hDiffQuery | null>(null)
+
   const [ISOTimestamp, setISOTimestamp] = useState(dayjs().subtract(1, 'day').toISOString())
-  const [indexerData, setIndexerData] = useState<GetLendingDiffSubscription | null>(null)
 
   // need this interval cuz we need to get all operations for last 24h, and we need to pass timestamp of this time but previous day
   useEffect(() => {
@@ -90,14 +95,11 @@ const useLendBorrow24hDiff = (): {
     setCurrentTotalLended(currentTotalLended)
   }, [indexerData, tokensMetadata, tokensPrices])
 
-  const { loading: isLoading } = useSubscription(LEND_BORROW_24H_DIFF, {
+  useQueryWithRefetch(LEND_BORROW_24H_DIFF, {
     variables: {
       currentTimestamp: ISOTimestamp,
     },
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
-
+    onCompleted: (data) => {
       setIndexerData(data)
     },
     onError: (error) => {
@@ -119,7 +121,7 @@ const useLendBorrow24hDiff = (): {
     borrowing24hPersentChange,
     last24hBorrowingVol: last24hBorrowing,
     last24hLendingVol: last24hLending,
-    isLoading,
+    isLoading: indexerData === null ? true : false,
   }
 }
 

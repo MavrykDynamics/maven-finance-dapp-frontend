@@ -6,7 +6,7 @@ import { GetLoansHistoryForMarketDataSubscription } from 'utils/__generated__/gr
 
 // Cals 24h diffs
 export const LEND_BORROW_24H_DIFF = gql(`
-subscription getLendingDiff($currentTimestamp: timestamptz) {
+query getLending24hDiff($currentTimestamp: timestamptz) {
   lending_controller(where: {mock_time: {_eq: false}}) {
     history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}, timestamp: {_gte: $currentTimestamp}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
       type
