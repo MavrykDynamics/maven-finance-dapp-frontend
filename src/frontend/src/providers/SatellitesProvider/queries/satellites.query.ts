@@ -1,14 +1,14 @@
 import { OperationVariables, TypedDocumentNode } from '@apollo/client'
 import { DocumentNode } from 'graphql'
 import { gql as apolloGql } from '@apollo/client'
-import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
+import { SatelliteDataQueryQuery } from 'utils/__generated__/graphql'
 import { gql } from 'utils/__generated__'
 
 export function getSatelliteDataSubscription(
   userAddress: string | null,
   isOnlyActive?: boolean,
   isOnlyOracles?: boolean,
-): DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables> {
+): DocumentNode | TypedDocumentNode<SatelliteDataQueryQuery, OperationVariables> {
   const filteredByUserTable = `user: {address: {${userAddress ? '_eq' : '_neq'}: $userAddress} ${
     isOnlyOracles
       ? ', _and: {aggregator_oracles_aggregate: {count: {predicate: {_gte: 1}, filter: {observations_aggregate: {count: {predicate: {_gte: 1}}}}}}}'
@@ -19,7 +19,16 @@ export function getSatelliteDataSubscription(
 
   const filters = [filteredByUserTable, activeSatellitesFilter].filter(Boolean).join(',')
 
-  return apolloGql`subscription satelliteDataSub($userAddress: String!) {
+  return apolloGql`query satelliteDataQuery($userAddress: String!) {
+
+    satelliteAddresses: satellite_aggregate(order_by: {currently_registered: desc}) {
+			nodes {
+				user {
+					address
+				}
+			}
+		}
+
     satellite(where: {registration_timestamp: {_is_null: false}, ${filters}}, order_by: {currently_registered: desc}) {
       description
       fee
@@ -157,15 +166,15 @@ export function getSatelliteDataSubscription(
       }
     }
   }
-  ` as DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables>
+  ` as DocumentNode | TypedDocumentNode<SatelliteDataQueryQuery, OperationVariables>
 }
 
 export const CHECK_WHETHER_SATELLITE_EXISTS = gql(`
-query checkWitherSatelliteExists($userAddress: String = "") {
-  satellite(where: {registration_timestamp: {_is_null: false}, user: {address: {_eq: $userAddress}}}) {
-    user {
-      address
+  query checkWitherSatelliteExists($userAddress: String = "") {
+    satellite(where: {registration_timestamp: {_is_null: false}, user: {address: {_eq: $userAddress}}}) {
+      user {
+        address
+      }
     }
   }
-}
 `)

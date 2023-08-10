@@ -74,13 +74,6 @@ export type SatelliteGovernanceTransfer = {
   token: TokenType
 }
 
-export type SatellitesStatisticsSubsSkipsType = {
-  skipOracleCount?: boolean
-  skipActiveSatellitesCount?: boolean
-  skipTotalDelegatedMVK?: boolean
-  skipOracleRewardsTotal?: boolean
-}
-
 export type SatellitesDataDubsType =
   | typeof SATELLITES_DATA_ACTIVE_SUB
   | typeof SATELLITES_DATA_ALL_SUB
