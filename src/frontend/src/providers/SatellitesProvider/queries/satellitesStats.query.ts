@@ -1,7 +1,7 @@
 import { gql } from 'utils/__generated__'
 
 // statistic subs
-export const SATELLITE_STATS = gql(`
+export const SATELLITES_STATS = gql(`
 query SatellitesStatsQuery{
   # oracles amount
   oraclesAmount: satellite_aggregate(where: {user: {aggregator_oracles_aggregate: {count: {predicate: {_gt: 0}}}}}) {
@@ -17,12 +17,23 @@ query SatellitesStatsQuery{
     }
   }
 
+  # feeds rewards 
+  rewardsFromFeeds: aggregator_aggregate {
+    aggregate {
+      sum {
+        reward_amount_smvk
+      }
+      count
+    }
+  }
+
   # oracles rewards 
-  aggregator_oracle_reward_aggregate(where: {type: {_eq: "1"}, oracle: {user: {satellites: {registration_timestamp: {_is_null: false}}}}}) {
+  oraclesRewards: aggregator_oracle_reward_aggregate(where: {type: {_eq: "1"}, oracle: {user: {satellites: {registration_timestamp: {_is_null: false}}}}}) {
     aggregate {
       sum {
         reward
       }
+      count
     }
   }
 

@@ -1,4 +1,4 @@
-import { ApolloError, useSubscription } from '@apollo/client'
+import { ApolloError } from '@apollo/client'
 import React, { useContext, useMemo, useState } from 'react'
 
 // helpers
@@ -84,43 +84,6 @@ export const SatellitesProvider = ({ children }: Props) => {
       onError: (e) => handleSubError(e, 'getSatelliteDataSubscription'),
     },
   )
-
-  // useSubscription(
-  //   getSatelliteDataSubscription(
-  //     satelliteAddressToSubsctibe,
-  //     activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ACTIVE_SUB,
-  //     activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ORACLES_SUB,
-  //   ),
-  //   {
-  //     skip:
-  //       // skip if page is not subscribed to the satellites
-  //       !activeSubs[SATELLITE_DATA_SUB] ||
-  //       // skip if page subscribed to the single satellite, but haven't provided address of satellite to subscribe
-  //       (!satelliteAddressToSubsctibe && activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_SINGLE_SUB),
-  //     variables: {
-  //       userAddress: satelliteAddressToSubsctibe ?? '',
-  //     },
-  //     onData: ({ data: { data } }) => {
-  //       if (!data) return
-  //       updateSatellitesContext(data, satelliteAddressToSubsctibe, activeSubs[SATELLITE_DATA_SUB])
-  //     },
-  //     onError: (e) => handleSubError(e, 'getSatelliteDataSubscription'),
-  //     shouldResubscribe: true,
-  //   },
-  // )
-
-  // useSubscription(SATELLITES_ADDRESSES_SUBSCRIPTION, {
-  //   skip: !activeSubs[SATELLITE_ALL_ADDRESSES_SUB],
-  //   onData: ({ data: { data } }) => {
-  //     if (!data) return
-  //     setSatellitesCtxState((prev) => ({
-  //       ...prev,
-  //       allSatellitesIds: data.satellite_aggregate.nodes.map(({ user: { address } }) => address),
-  //     }))
-  //   },
-  //   onError: (e) => handleSubError(e, 'PROPOSALS_AMOUNT_SUBSCRIPTION'),
-  //   shouldResubscribe: true,
-  // })
 
   // Refetch proposals, finReqs, satelliteGov actions amount to calcs satellites metrics
   useQueryWithRefetch(SATELLITES_METRICS_DATA, {

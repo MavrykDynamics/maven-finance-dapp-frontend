@@ -1,20 +1,6 @@
 import { gql } from 'utils/__generated__'
 
 // TODO: refactor
-// feeds rewards subsciption just query
-export const SUBSCRIBE_FEEDS_REWARDS_COUNT = gql(`
-  subscription FeedsRewardsAmountSubscription {
-    aggregator_aggregate {
-      aggregate {
-        sum {
-          reward_amount_smvk
-        }
-      }
-    }
-  }
-`)
-
-// TODO: refactor
 // feeds rewards subsciption query with interval or refetch when feed change or heart_beat_seconds
 export const SUBSCRIBE_FEED_HISTORY = gql(`
 subscription subsribeFeedHistoryData($feedAddress: String) {

@@ -3,7 +3,7 @@ import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 import { convertNumberForClient } from 'utils/calcFunctions'
 
-import { SATELLITE_STATS } from '../queries/satellitesStats.query'
+import { SATELLITES_STATS } from '../queries/satellitesStats.query'
 import { MVK_DECIMALS } from 'utils/constants'
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 
@@ -11,6 +11,7 @@ type SatelliteStatsStateType = {
   totalActiveSatellites: number
   totalOracleNetworks: number
   totalDelegatedMVK: number
+  averageFeedReward: number
   oracleRewardsTotal: number
 }
 
@@ -18,6 +19,7 @@ const DEFAULT_SATELLITES_STATS = {
   totalActiveSatellites: 0,
   totalOracleNetworks: 0,
   totalDelegatedMVK: 0,
+  averageFeedReward: 0,
   oracleRewardsTotal: 0,
 }
 
@@ -26,10 +28,11 @@ export const useSatelliteStatistics = (): SatelliteStatsStateType & { isLoading:
     totalActiveSatellites: null,
     totalOracleNetworks: null,
     totalDelegatedMVK: null,
+    averageFeedReward: null,
     oracleRewardsTotal: null,
   })
 
-  useQueryWithRefetch(SATELLITE_STATS, {
+  useQueryWithRefetch(SATELLITES_STATS, {
     onCompleted: (data) => {
       const totalDelegatedMVK = data.satellite_aggregate.nodes.reduce((acc, node) => {
         const satelliteTotalDelegatedAmount =
@@ -43,9 +46,14 @@ export const useSatelliteStatistics = (): SatelliteStatsStateType & { isLoading:
       setStorage({
         ...storage,
         oracleRewardsTotal: convertNumberForClient({
-          number: data.aggregator_oracle_reward_aggregate.aggregate?.sum?.reward ?? 0,
+          number: data.oraclesRewards.aggregate?.sum?.reward ?? 0,
           grade: MVK_DECIMALS,
         }),
+        averageFeedReward:
+          convertNumberForClient({
+            number: data.rewardsFromFeeds.aggregate?.sum?.reward_amount_smvk ?? 0,
+            grade: MVK_DECIMALS,
+          }) / Math.max(data.rewardsFromFeeds.aggregate?.count ?? 1),
         totalOracleNetworks: data.oraclesAmount.aggregate?.count ?? 0,
         totalActiveSatellites: data.activeSatellitesAmount.aggregate?.count ?? 0,
         totalDelegatedMVK: convertNumberForClient({ number: totalDelegatedMVK, grade: MVK_DECIMALS }),
@@ -57,6 +65,7 @@ export const useSatelliteStatistics = (): SatelliteStatsStateType & { isLoading:
     storage.oracleRewardsTotal === null ||
     storage.totalActiveSatellites === null ||
     storage.totalDelegatedMVK === null ||
+    storage.averageFeedReward === null ||
     storage.totalOracleNetworks === null
 
   return {
