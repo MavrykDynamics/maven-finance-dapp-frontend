@@ -364,7 +364,7 @@ export const AddCollateralScreen = () => {
                         className="tooltip"
                       />
                     </div>
-                    <CommaNumber value={collateralsBalance} decimalsToShow={0} className="value" />
+                    <CommaNumber value={collateralsBalance} decimalsToShow={2} className="value" />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">
@@ -376,7 +376,7 @@ export const AddCollateralScreen = () => {
                         className="tooltip"
                       />
                     </div>
-                    <CommaNumber value={borrowCapacity} decimalsToShow={0} className="value" />
+                    <CommaNumber value={borrowCapacity} decimalsToShow={2} className="value" />
                   </ThreeLevelListItem>
                 </div>
               </VaultOverview>

@@ -14,7 +14,6 @@ import {
   LoansTokenMetadataType,
 } from 'providers/TokensProvider/tokens.provider.types'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // change vault name
 export const changeVaultNameAction = async (
@@ -272,11 +271,11 @@ export const createVault = async (
 
     const vaultFactoryContract = await tezos.wallet.at(vaultFactoryAddress)
 
-    const _collaterals = collateralTokens.reduce<{ amount: number; tokenName: TokenType }[]>(
+    const _collaterals = collateralTokens.reduce<{ amount: number; tokenName: string }[]>(
       (acc, { amount, loanData: { indexerName } }) => {
         acc.push({
           amount,
-          tokenName: indexerName as TokenType,
+          tokenName: indexerName,
         })
 
         return acc
@@ -284,15 +283,13 @@ export const createVault = async (
       [],
     )
 
-    const tezTokenData = _collaterals.reduce<{ amount?: number; mutez?: boolean }>((acc, { amount, tokenName }) => {
-      if (tokenName === 'tez') {
-        acc = {
-          amount,
+    const tezCollateral = _collaterals.find((c) => c.tokenName === 'tez')
+    const tezTokenData = tezCollateral
+      ? {
+          amount: tezCollateral.amount,
           mutez: true,
         }
-      }
-      return acc
-    }, {})
+      : {}
 
     const batchArr = await collateralTokens.reduce<
       Promise<
@@ -301,7 +298,7 @@ export const createVault = async (
         })[]
       >
     >(
-      async (promiseAcc, { id, type, address, amount, loanData: { isStaked, indexerName } }) => {
+      async (promiseAcc, { id, type, address, amount }) => {
         const acc = await promiseAcc
 
         if (type === 'fa12') {
