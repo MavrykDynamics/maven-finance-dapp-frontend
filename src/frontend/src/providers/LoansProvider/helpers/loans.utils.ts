@@ -1,4 +1,4 @@
-import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { GetLoansMarketsQueryQuery } from 'utils/__generated__/graphql'
 import {
   LoansContext,
   LoansContextState,
@@ -73,7 +73,7 @@ export const calcMarketAvaliableLiquidity = ({
   token_pool_total,
   reserve_ratio,
 }: Pick<
-  GetLoansMarketsSubscriptionSubscription['lending_controller'][number]['loan_tokens'][number],
+  GetLoansMarketsQueryQuery['lending_controller'][number]['loan_tokens'][number],
   'total_remaining' | 'token_pool_total' | 'reserve_ratio'
 >) => {
   const reserveAmount = token_pool_total * (reserve_ratio / 10000)
