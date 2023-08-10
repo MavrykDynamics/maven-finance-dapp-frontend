@@ -1,2 +1,2 @@
 export { CreateNewVault } from './CreateNewVault.modal'
-export { validateVaultNameAndLength } from './helpers/createNewVault.helpers'
+export { validateVaultName } from './helpers/createNewVault.helpers'

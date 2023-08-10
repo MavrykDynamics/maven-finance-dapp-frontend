@@ -24,8 +24,6 @@ const useLendBorrow24hDiff = (): {
 } => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
-  const hookInitISOTimestampMinus1Day = useRef(dayjs().subtract(1, 'day').toISOString())
-
   const [currentTotalLended, setCurrentTotalLended] = useState(0)
   const [currentTotalBorrowed, setCurrentTotalBorrowed] = useState(0)
   const [last24hLending, setLast24hLending] = useState(0)

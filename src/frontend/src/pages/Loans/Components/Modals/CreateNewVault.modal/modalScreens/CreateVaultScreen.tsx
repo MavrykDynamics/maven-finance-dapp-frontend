@@ -14,7 +14,7 @@ import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.co
 import { useCreateVaultContext } from '../context/createVaultModalContext'
 
 // utils
-import { validateVaultNameAndLength } from '../helpers/createNewVault.helpers'
+import { validateVaultName } from '../helpers/createNewVault.helpers'
 import { containSpaces } from 'app/App.utils/input'
 
 // hooks
@@ -27,7 +27,7 @@ export const CreateVaultScreen = () => {
   // handlers
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus = validateVaultNameAndLength(value, vaultNames)
+    const validationStatus = validateVaultName(value, vaultNames)
 
     updateInputVaultState({ name: value, validationStatus })
   }
@@ -35,7 +35,7 @@ export const CreateVaultScreen = () => {
   const handleVaultNameOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (containSpaces(e.target.value)) {
       const trimmedValue = e.target.value.trim()
-      const validationStatus = validateVaultNameAndLength(trimmedValue, vaultNames)
+      const validationStatus = validateVaultName(trimmedValue, vaultNames)
       updateInputVaultState({ validationStatus, name: trimmedValue })
     }
   }
