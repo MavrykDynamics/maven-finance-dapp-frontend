@@ -6,7 +6,7 @@ import {
   DEPOSIT_LENDING_ASSET_ACTION,
   WITHDRAW_LENDING_ASSET_ACTION,
 } from './helpers/loans.const'
-import { LoansChartsType, UseLoansChartsStateType } from './helpers/loans.types'
+import { LoansChartsType, LoansMarketTransactionHistoryType, UseLoansChartsStateType } from './helpers/loans.types'
 
 export type LoanVaultAllowanceType = typeof VAULT_ALLOWANCE_ANY | typeof VAULT_ALLOWANCE_ACCOUNTS
 
@@ -42,8 +42,11 @@ export type LoanMarketType = {
 export type LoansContext = LoansContextState & {
   isLoading: boolean
   areChartsLoading: boolean
+  isLoansTransactionHistoryLoading: boolean
   changeLoansSubscriptionsList: (skips: Partial<LoansSubsRecordType>) => void
   setMarketAddressToSubscribe: (marketTokenAddress: TokenAddressType | null) => void
+  setVaultAddressToSubscribe: (vaultAddress: string | null) => void
+  setLoanHistoryDataFilterType: (loanHistoryDataFilter: number[] | null) => void
   modifyChartsToCalc: (newChartsToCalc: Partial<LoansChartsType>) => void
 }
 
@@ -56,6 +59,7 @@ export type LoansContextState = {
     collateralFactor: number
   }
   chartsData: UseLoansChartsStateType
+  loansTransactionHistoryData: LoansMarketTransactionHistoryType[]
 }
 
 export type NullableLoansContextState = DeepNullable<LoansContextState>

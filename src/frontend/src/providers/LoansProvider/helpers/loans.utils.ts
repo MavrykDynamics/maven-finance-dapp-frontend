@@ -1,4 +1,4 @@
-import { GetLoansMarketsQueryQuery } from 'utils/__generated__/graphql'
+import { GetLoansHistoryForMarketDataQuery, GetLoansMarketsQueryQuery } from 'utils/__generated__/graphql'
 import {
   LoansContext,
   LoansContextState,
@@ -7,9 +7,14 @@ import {
 } from '../loans.provider.types'
 
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-import { EMPTY_LOANS_CONTEXT, LOANS_CONFIG, LOANS_MARKETS_DATA } from './loans.const'
-import { LoansChartsType } from './loans.types'
+import { COLLATERAL_HISTORY_DATA_TYPES, EMPTY_LOANS_CONTEXT, LOANS_CONFIG, LOANS_MARKETS_DATA } from './loans.const'
+import { LoansChartsType, LoansMarketTransactionHistoryType } from './loans.types'
 import { isEmptyObject } from 'utils/isEmptyObject'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { parseDate } from 'utils/time'
+import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 
 // HELPER TO GET OPERATION NAME BY ITS TYPE
 export const getDescrByType = (type: number) => {
@@ -91,25 +96,33 @@ export const getLoansProviderReturnValue = ({
   loansCtxState,
   marketAddressToSubscribe,
   activeSubs,
-  areChartsLoading,
   chartsToCalc,
   changeLoansSubscriptionsList,
   setMarketAddressToSubscribe,
+  setVaultAddressToSubscribe,
+  setLoanHistoryDataFilterType,
   modifyChartsToCalc,
+  areChartsLoading,
+  isLoansTransactionHistoryLoading,
 }: {
   loansCtxState: NullableLoansContextState
   marketAddressToSubscribe: string | null
   activeSubs: LoansSubsRecordType
-  areChartsLoading: boolean
   chartsToCalc: LoansChartsType
   changeLoansSubscriptionsList: LoansContext['changeLoansSubscriptionsList']
   setMarketAddressToSubscribe: LoansContext['setMarketAddressToSubscribe']
+  setVaultAddressToSubscribe: LoansContext['setVaultAddressToSubscribe']
+  setLoanHistoryDataFilterType: LoansContext['setLoanHistoryDataFilterType']
   modifyChartsToCalc: LoansContext['modifyChartsToCalc']
+  areChartsLoading: boolean
+  isLoansTransactionHistoryLoading: boolean
 }) => {
   const { marketsMapper, marketsAddresses, config, allMarketsAddresses } = loansCtxState
   const commonToReturn = {
     changeLoansSubscriptionsList,
     setMarketAddressToSubscribe,
+    setVaultAddressToSubscribe,
+    setLoanHistoryDataFilterType,
     modifyChartsToCalc,
   }
 
@@ -141,6 +154,7 @@ export const getLoansProviderReturnValue = ({
       allMarketsAddresses: allMarketsAddresses ?? EMPTY_LOANS_CONTEXT['allMarketsAddresses'],
       isLoading: true,
       areChartsLoading: true,
+      isLoansTransactionHistoryLoading: true,
     }
   }
 
@@ -161,9 +175,9 @@ export const getLoansProviderReturnValue = ({
   } = loansCtxState.chartsData ?? {}
 
   const _areChartsLoading =
-    (calcTotalLendingChart && !totalLendingChart.length) ||
-    (calcTotalBorrowingChart && !totalBorrowingChart.length) ||
-    (calcTotalCollateralChart && !totalCollateralChart.length) ||
+    (calcTotalLendingChart && totalLendingChart.length === 0) ||
+    (calcTotalBorrowingChart && totalBorrowingChart.length === 0) ||
+    (calcTotalCollateralChart && totalCollateralChart.length === 0) ||
     (calcMarketBorrowChart && isEmptyObject(marketBorrowChart)) ||
     (calcMarketLendingChart && isEmptyObject(marketLendingChart))
 
@@ -173,6 +187,67 @@ export const getLoansProviderReturnValue = ({
     ...commonToReturn,
     ...nonNullableProviderValue,
     isLoading: false,
-    areChartsLoading: _areChartsLoading,
+    areChartsLoading,
+    isLoansTransactionHistoryLoading,
   }
+}
+
+export const normalizeTransactionHistory = (
+  data: GetLoansHistoryForMarketDataQuery,
+  tokensMetadata: Record<string, TokenMetadataType>,
+  tokensPrices: Record<string, number>,
+) => {
+  return data.lending_controller[0].history_data.reduce<Array<LoansMarketTransactionHistoryType>>(
+    (
+      acc,
+      {
+        type,
+        amount,
+        timestamp,
+        vault,
+        sender: { address: senderAddress },
+        operation_hash,
+        loan_token,
+        collateral_token,
+      },
+    ) => {
+      if (!loan_token) return acc
+      const loanTokenAddress = loan_token.token.token_address
+      const collateralTokenAddress = collateral_token?.token.token_address
+      const isSmvkCollateral = collateral_token?.token.mvk_tokens.length
+
+      const tokenAddress =
+        COLLATERAL_HISTORY_DATA_TYPES.includes(type) && collateralTokenAddress
+          ? isSmvkCollateral
+            ? SMVK_TOKEN_ADDRESS
+            : collateralTokenAddress
+          : loanTokenAddress
+
+      const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+
+      if (!token || !token.rate) return acc
+
+      const { symbol, decimals, rate } = token
+
+      const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
+      const amountInUsd = convertedAmount * rate
+
+      const transactionHistoryItem: LoansMarketTransactionHistoryType = {
+        amount: convertedAmount,
+        usdValue: amountInUsd,
+        tokenAddress,
+        symbol,
+        date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
+        vaultAddress: vault?.vault?.address,
+        userAddress: senderAddress,
+        operationHash: operation_hash,
+        descr: getDescrByType(type),
+      }
+
+      acc.push(transactionHistoryItem)
+
+      return acc
+    },
+    [],
+  )
 }

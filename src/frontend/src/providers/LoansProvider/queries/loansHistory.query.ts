@@ -2,7 +2,7 @@ import { gql } from 'utils/__generated__'
 import { gql as apolloGql } from '@apollo/client'
 import { OperationVariables, TypedDocumentNode } from '@apollo/client'
 import { DocumentNode } from 'graphql'
-import { GetLoansHistoryForMarketDataSubscription } from 'utils/__generated__/graphql'
+import { GetLoansHistoryForMarketDataQuery } from 'utils/__generated__/graphql'
 
 // Cals 24h diffs
 export const LEND_BORROW_24H_DIFF = gql(`
@@ -55,15 +55,15 @@ query getLoansHistoryData {
 `)
 
 // Loans market transaction history
-export function getLoansHistorySubscription({
+export function getLoansHistoryQuery({
   userAddress,
   vaultAddress,
   typeFilter,
 }: {
-  userAddress?: string
-  vaultAddress?: string
-  typeFilter?: Array<number>
-}): DocumentNode | TypedDocumentNode<GetLoansHistoryForMarketDataSubscription, OperationVariables> {
+  userAddress: string | null
+  vaultAddress: string | null
+  typeFilter: Array<number> | null
+}): DocumentNode | TypedDocumentNode<GetLoansHistoryForMarketDataQuery, OperationVariables> {
   const filterUserCondition = userAddress ? `sender: {address: {_eq: $userAddress}}` : `sender: {address: {_neq: ""}}`
   const filterVaultCondition = vaultAddress ? `vault: { vault: {address: {_eq: $vaultAddress}}}` : ''
   const filterTypeCondition = typeFilter
@@ -71,7 +71,7 @@ export function getLoansHistorySubscription({
     : `type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}`
 
   return apolloGql(`
-    subscription getLoansHistoryForMarketData($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = []) {
+    query getLoansHistoryForMarketData($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = []) {
       lending_controller(where: {mock_time: {_eq: false}}) {
         history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, distinct_on: timestamp, order_by: {timestamp: desc}) {
           type

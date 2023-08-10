@@ -66,6 +66,7 @@ export const DEFAULT_LOANS_CONTEXT: NullableLoansContextState = {
   marketsMapper: null,
   config: null,
   chartsData: null,
+  loansTransactionHistoryData: null,
 }
 
 export const EMPTY_LOANS_CONTEXT: LoansContextState = {
@@ -77,4 +78,5 @@ export const EMPTY_LOANS_CONTEXT: LoansContextState = {
     collateralFactor: 0,
   },
   chartsData: DEFAULT_CHARTS_DATA,
+  loansTransactionHistoryData: [],
 }

@@ -259,9 +259,7 @@ export const BorrowingExpandCardMenuSection = ({
         </BorrowingTabListItemTabInfo>
       )}
 
-      {activeMenuTab?.id === loansTabNames.TX_HISTORY && (
-        <TransactionHistory vaultAddress={vaultAddress} loanTokenAddress={currentToken.loanTokenAddress} />
-      )}
+      {activeMenuTab?.id === loansTabNames.TX_HISTORY && <TransactionHistory vaultAddress={vaultAddress} />}
 
       {activeMenuTab?.id === loansTabNames.USEFUL_INFO && (
         <BorrowingTabListItemTabInfo>

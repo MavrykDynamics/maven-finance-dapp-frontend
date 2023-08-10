@@ -73,12 +73,7 @@ export const LendingTab = ({
       )}
 
       {userAddress && (
-        <TransactionHistory
-          loanTokenAddress={loanTokenAddress}
-          filterByDescriptions={[0, 1]}
-          userAddress={userAddress}
-          styleType={SECONDARY_TRANSACTION_HISTORY_STYLE}
-        />
+        <TransactionHistory filterByDescriptions={[0, 1]} styleType={SECONDARY_TRANSACTION_HISTORY_STYLE} />
       )}
     </LendingTabStyled>
   )

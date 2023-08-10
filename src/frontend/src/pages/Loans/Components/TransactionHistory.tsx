@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -23,15 +23,12 @@ import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } f
 import { EmptyContainer } from 'app/App.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import useMarketTransactionHistory from 'providers/LoansProvider/hooks/useMarketTransactionHistory'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 type TransactionHistoryPropsType = {
-  loanTokenAddress: TokenAddressType
-  filterByDescriptions?: number[]
-  vaultAddress?: string
-  userAddress?: string
+  filterByDescriptions?: number[] | null
+  vaultAddress?: string | null
   styleType?: typeof PRIMARY_TRANSACTION_HISTORY_STYLE | typeof SECONDARY_TRANSACTION_HISTORY_STYLE
 }
 
@@ -45,10 +42,8 @@ type TransactionHistoryPropsType = {
  *
  */
 export const TransactionHistory = ({
-  loanTokenAddress,
-  filterByDescriptions,
-  vaultAddress,
-  userAddress,
+  filterByDescriptions = null,
+  vaultAddress = null,
   styleType = PRIMARY_TRANSACTION_HISTORY_STYLE,
 }: TransactionHistoryPropsType) => {
   const { search } = useLocation()
@@ -57,31 +52,41 @@ export const TransactionHistory = ({
     contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
 
-  const { isLoading: isTransactionHistoryLoading, transactionHistory } = useMarketTransactionHistory({
-    marketTokenAddress: loanTokenAddress,
-    userAddress,
-    vaultAddress,
-    typeFilter: filterByDescriptions,
-  })
+  const {
+    isLoansTransactionHistoryLoading,
+    loansTransactionHistoryData,
+    setVaultAddressToSubscribe,
+    setLoanHistoryDataFilterType,
+  } = useLoansContext()
+
+  useEffect(() => {
+    setVaultAddressToSubscribe(vaultAddress)
+    setLoanHistoryDataFilterType(filterByDescriptions)
+
+    return () => {
+      setVaultAddressToSubscribe(null)
+      setLoanHistoryDataFilterType(null)
+    }
+  }, [filterByDescriptions, setLoanHistoryDataFilterType, setVaultAddressToSubscribe, vaultAddress])
 
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
 
   const paginatedTableRows = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, TRANSACTION_HISTORY_TABLE_NAME)
-    return transactionHistory.slice(from, to)
-  }, [currentPage, transactionHistory])
+    return loansTransactionHistoryData.slice(from, to)
+  }, [currentPage, loansTransactionHistoryData])
 
   return (
     <TransactionHistoryStyled className={styleType}>
       <div className="main">
         <H2Title>Transaction History</H2Title>
 
-        {isTransactionHistoryLoading ? (
+        {isLoansTransactionHistoryLoading ? (
           <DataLoaderWrapper margin="20px 0 40px 0">
             <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
             <div className="text">Loading transaction history</div>
           </DataLoaderWrapper>
-        ) : transactionHistory.length ? (
+        ) : loansTransactionHistoryData.length ? (
           <>
             <Table className="treasury-table">
               <TableHeader className="simple-header treasury">
@@ -118,7 +123,7 @@ export const TransactionHistory = ({
             </Table>
 
             <Pagination
-              itemsCount={transactionHistory.length}
+              itemsCount={loansTransactionHistoryData.length}
               listName={TRANSACTION_HISTORY_TABLE_NAME}
               side={PAGINATION_SIDE_CENTER}
             />
