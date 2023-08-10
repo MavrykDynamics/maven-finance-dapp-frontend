@@ -38,7 +38,7 @@ export type LoanMarketType = {
   reserveAmount: number
 }
 
-export type LoansContext = DeepNonNullable<LoansContextState> & {
+export type LoansContext = LoansContextState & {
   isLoading: boolean
 
   changeLoansSubscriptionsList: (skips: Partial<LoansSubsRecordType>) => void
@@ -46,11 +46,13 @@ export type LoansContext = DeepNonNullable<LoansContextState> & {
 }
 
 export type LoansContextState = {
-  allMarketsAddresses: Array<TokenAddressType> | null
-  marketsAddresses: Array<TokenAddressType> | null
-  marketsMapper: Record<TokenAddressType, LoanMarketType> | null
+  allMarketsAddresses: Array<TokenAddressType>
+  marketsAddresses: Array<TokenAddressType>
+  marketsMapper: Record<TokenAddressType, LoanMarketType>
   config: {
     daoFee: number
     collateralFactor: number
-  } | null
+  }
 }
+
+export type NullableLoansContextState = DeepNullable<LoansContextState>

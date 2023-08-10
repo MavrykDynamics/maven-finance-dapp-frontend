@@ -1,7 +1,10 @@
-import { GetContractAddressesQueryQuery, GetMaxlenghtsQueryQuery } from 'utils/__generated__/graphql'
+import { GetContractAddressesQueryQuery } from 'utils/__generated__/graphql'
 import { DappMaxLengths } from '../dappConfig.provider.types'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { MVK_DECIMALS } from 'utils/constants'
+import { DappConfigGqlType } from './dappConfig.schemes'
 
-export const normalizerMaxLenghts = (data: GetMaxlenghtsQueryQuery): DappMaxLengths => {
+export const normalizerMaxLenghts = (data: DappConfigGqlType): DappMaxLengths => {
   const {
     council_member_image_max_length,
     council_member_name_max_length,
@@ -53,6 +56,17 @@ export const normalizerMaxLenghts = (data: GetMaxlenghtsQueryQuery): DappMaxLeng
   }
 }
 
+export const normalizeInitialConfigData = (indexerData: DappConfigGqlType) => {
+  return {
+    maxLenghts: normalizerMaxLenghts(indexerData),
+    mvkFaucetAddress: indexerData.mvk_faucet[0]?.address ?? null,
+    minimumStakedMvkBalance: convertNumberForClient({
+      number: indexerData.delegation[0].minimum_smvk_balance,
+      grade: MVK_DECIMALS,
+    }),
+  }
+}
+
 export const normalizeContractAddresses = (data: GetContractAddressesQueryQuery) => {
   return {
     farmsFactoryAddress: data.farm_factory[0].address,
@@ -70,7 +84,6 @@ export const normalizeContractAddresses = (data: GetContractAddressesQueryQuery)
     governanceSatelliteAddress: data.governance_satellite[0].address,
     feedsFactoryAddress: data.aggregator_factory[0].address,
     feedsAddress: data.aggregator[0].address,
-    governanceProxyAddress: data.governance_proxy[0].address,
     lendingControllerAddress: data.lending_controller[0].address,
     vaultFactoryAddress: data.vault_factory[0].address,
   }

@@ -1,6 +1,7 @@
-import { gql } from 'utils/__generated__/gql'
+import { gql } from 'utils/__generated__'
 
-// feeds rewards subsciption
+// TODO: refactor
+// feeds rewards subsciption just query
 export const SUBSCRIBE_FEEDS_REWARDS_COUNT = gql(`
   subscription FeedsRewardsAmountSubscription {
     aggregator_aggregate {
@@ -13,9 +14,10 @@ export const SUBSCRIBE_FEEDS_REWARDS_COUNT = gql(`
   }
 `)
 
-// feeds rewards subsciption
+// TODO: refactor
+// feeds rewards subsciption query with interval or refetch when feed change or heart_beat_seconds
 export const SUBSCRIBE_FEED_HISTORY = gql(`
-  subscription subsribeFeedHistoryData($feedAddress: String) {
+subscription subsribeFeedHistoryData($feedAddress: String) {
     aggregator(where: { address: { _eq: $feedAddress } }) {
       history_data(distinct_on: timestamp, order_by: { timestamp: desc }) {
         data
@@ -28,35 +30,48 @@ export const SUBSCRIBE_FEED_HISTORY = gql(`
   }
 `)
 
-// feeds subsciption
-export const SUBSCRIBE_FEEDS = gql(`
-  subscription subsribeOracleDataFeed {
+// initial query to load all feeds
+export const FEEDS_QUERY = gql(`
+  query dataFeeds {
     aggregator(where: { admin: { _neq: "" } }, order_by: { creation_timestamp: desc }) {
       address
+      name
       admin
       decimals
-      factory {
-        address
-      }
-      metadata
       network
+      metadata
+      
       creation_timestamp
       last_completed_data
       last_completed_data_last_updated_at
       last_completed_data_pct_oracle_resp
-      last_updated_at
+      
       heart_beat_seconds
-      name
       reward_amount_xtz
       reward_amount_smvk
       pct_oracle_threshold
       alpha_pct_per_thousand
-      heart_beat_seconds
+
+      # feed oracles amount
       oracles_aggregate {
         aggregate {
           count
         }
       }
+    }
+  }
+`)
+
+// load data that updates, and track whether new feed was added
+export const FEEDS_UPDATE_QUERY = gql(`
+  query dataFeedsPrices {
+    aggregator(where: { admin: { _neq: "" } }, order_by: { creation_timestamp: desc }) {
+      address
+      name
+      decimals
+      last_completed_data
+      last_completed_data_pct_oracle_resp
+      last_completed_data_last_updated_at
     }
   }
 `)

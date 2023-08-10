@@ -1,14 +1,20 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useMemo, useRef, useState } from 'react'
+import { useQuery } from '@apollo/client'
 
 // types
 import { DataFeedsContext, DataFeedsContextState } from './dataFeeds.provider.types'
-import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
+import {
+  fullFeedsQuerySchema,
+  FullFeedsQueryType,
+  smallFeedsQuerySchema,
+  SmallFeedsQueryType,
+} from './helpers/feeds.schemes'
 
 // helpers
-import { normalizeFeeds } from './helpers/feedsNormalizer'
-import { useSubscription } from '@apollo/client'
-import { SUBSCRIBE_FEEDS } from './queries/feeds.query'
+import { normalizeFeeds, normalizeFeedsPrices } from './helpers/feedsNormalizer'
+import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 export const dataFeedsContext = React.createContext<DataFeedsContext>(undefined!)
 const propomotedAddresses = [
@@ -24,24 +30,56 @@ type Props = {
 export const DataFeedsProvider = ({ children }: Props) => {
   const { updateTokensPrices } = useTokensContext()
 
+  // TODO: calc it based on nullable values
+  const initialLoadingStatus = useRef(true)
+
   const [feedsCtxState, setFeedsCtxState] = useState<DataFeedsContextState>({
     feedsAddresses: [],
     feedsMapper: {},
     feedsCategories: [],
   })
 
-  const { loading: aggregatorLoading } = useSubscription(SUBSCRIBE_FEEDS, {
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
+  // load initial feeds data
+  const { refetch: refetchDataFeeds } = useQuery(FEEDS_QUERY, {
+    onCompleted: (data) => {
+      try {
+        initialLoadingStatus.current = false
 
-      updateDataFeeds(data.aggregator)
-      updateTokensPrices(data.aggregator)
+        const parsedFeeds = fullFeedsQuerySchema.parse(data.aggregator)
+
+        updateFullDataFeeds(parsedFeeds)
+        updateTokensPrices(parsedFeeds)
+      } catch (e) {
+        console.log('zod full feeds query parsing error:', { e })
+      }
     },
     onError: (error) => console.log({ error }),
   })
 
-  const updateDataFeeds = (data: SubsribeOracleDataFeedSubscription['aggregator']) => {
+  // update feeds price and track whether need to load new feed
+  useQueryWithRefetch(FEEDS_UPDATE_QUERY, {
+    skip: initialLoadingStatus.current,
+    onCompleted: (data) => {
+      try {
+        const parsedSmallFeeds = smallFeedsQuerySchema.parse(data.aggregator)
+
+        // if we received more feeds than we have in ctx refetch full feeds query (rare case)
+        if (data.aggregator.length !== feedsCtxState.feedsAddresses.length) {
+          refetchDataFeeds()
+          return
+        }
+
+        updateSmallDataFeeds(parsedSmallFeeds)
+        updateTokensPrices(parsedSmallFeeds)
+      } catch (e) {
+        console.log('zod small feeds query parsing error:', { e })
+      }
+    },
+    onError: (error) => console.log({ error }),
+  })
+
+  // normalize and update for full feeds query
+  const updateFullDataFeeds = (data: FullFeedsQueryType) => {
     const { feedsCategories, feedsAddresses, feedsMapper } = normalizeFeeds(data, propomotedAddresses)
 
     setFeedsCtxState({
@@ -52,8 +90,18 @@ export const DataFeedsProvider = ({ children }: Props) => {
     })
   }
 
+  // normalize and update for small feeds query
+  const updateSmallDataFeeds = (data: SmallFeedsQueryType) => {
+    const updatedFeeds = normalizeFeedsPrices(feedsCtxState.feedsMapper, data)
+
+    setFeedsCtxState({
+      ...feedsCtxState,
+      feedsMapper: updatedFeeds,
+    })
+  }
+
   const providerValue = useMemo(() => {
-    return { ...feedsCtxState, isLoading: aggregatorLoading }
+    return { ...feedsCtxState, isLoading: initialLoadingStatus.current }
   }, [feedsCtxState])
 
   return <dataFeedsContext.Provider value={providerValue}>{children}</dataFeedsContext.Provider>
@@ -63,7 +111,7 @@ export const useDataFeedsContext = () => {
   const context = useContext(dataFeedsContext)
 
   if (!context) {
-    throw new Error('dataFeedsContext should be used within Data Feeds provider')
+    throw new Error('dataFeedsContext should be used within DataFeedsProvider')
   }
 
   return context

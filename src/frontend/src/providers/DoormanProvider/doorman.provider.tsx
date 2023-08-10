@@ -12,7 +12,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 // types
 import {
   DoormanContext,
-  DoormanContextStateType,
+  NullableDoormanContextStateType,
   DoormanSubsRecordType,
   StakingSubsType,
 } from './doorman.provider.types'
@@ -52,7 +52,7 @@ const DoormanProvider = ({ children }: Props) => {
     contractAddresses: { doormanAddress },
   } = useDappConfigContext()
 
-  const [stakingCtxState, setStakingCtxState] = useState<DoormanContextStateType>(DEFAULT_STAKING_CTX)
+  const [stakingCtxState, setStakingCtxState] = useState<NullableDoormanContextStateType>(DEFAULT_STAKING_CTX)
   const [activeSubs, setActiveSubs] = useState<DoormanSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
 
   const handleSubError = (error: ApolloError, subName: StakingSubsType) => {

@@ -5,7 +5,7 @@ import React, { useContext, useMemo, useState } from 'react'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
-import { LoansContext, LoansContextState, LoansSubsRecordType } from './loans.provider.types'
+import { LoansContext, NullableLoansContextState, LoansSubsRecordType } from './loans.provider.types'
 import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
@@ -43,7 +43,7 @@ export const LoansProvider = ({ children }: Props) => {
 
   const [activeSubs, setActiveSubs] = useState<LoansSubsRecordType>(DEFAULT_LOANS_ACTIVE_SUBS)
   const [marketAddressToSubscribe, setMarketAddressToSubscribe] = useState<null | TokenAddressType>(null)
-  const [loansCtxState, setLoansCtxState] = useState<LoansContextState>(DEFAULT_LOANS_CONTEXT)
+  const [loansCtxState, setLoansCtxState] = useState<NullableLoansContextState>(DEFAULT_LOANS_CONTEXT)
 
   const handleSubError = (error: ApolloError, subName: string) => {
     console.error(`${subName} query error: `, error)
