@@ -1,8 +1,6 @@
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { parseDate } from 'utils/time'
-import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import colors from 'styles/colors'
 
@@ -37,11 +35,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const oracleFeeds = feedsAddresses.length
   const popularFeeds = feedsAddresses.slice(0, 3)
 
-  const { oracleRewardsTotal } = useSatelliteStatistics({
-    skipActiveSatellitesCount: true,
-    skipOracleCount: true,
-    skipTotalDelegatedMVK: true,
-  })
+  const { oracleRewardsTotal } = useSatelliteStatistics()
 
   return (
     <TabWrapperStyled className="oracles" backgroundImage="dashboard_oraclesTab_bg.png">

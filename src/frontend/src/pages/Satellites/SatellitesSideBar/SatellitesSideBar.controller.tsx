@@ -63,9 +63,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     contractAddresses: { delegationAddress, feedsFactoryAddress },
   } = useDappConfigContext()
 
-  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics({
-    skipOracleRewardsTotal: true,
-  })
+  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
   const { rewardsAmount } = useFeedsStats()
   const { feedsAddresses } = useDataFeedsContext()
 

@@ -1,14 +1,14 @@
 import { OperationVariables, TypedDocumentNode } from '@apollo/client'
 import { DocumentNode } from 'graphql'
 import { gql as apolloGql } from '@apollo/client'
-import { SatelliteDataSubSubscription } from 'utils/__generated__/graphql'
+import { SatelliteDataQueryQuery } from 'utils/__generated__/graphql'
 import { gql } from 'utils/__generated__'
 
 export function getSatelliteDataSubscription(
   userAddress: string | null,
   isOnlyActive?: boolean,
   isOnlyOracles?: boolean,
-): DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables> {
+): DocumentNode | TypedDocumentNode<SatelliteDataQueryQuery, OperationVariables> {
   const filteredByUserTable = `user: {address: {${userAddress ? '_eq' : '_neq'}: $userAddress} ${
     isOnlyOracles
       ? ', _and: {aggregator_oracles_aggregate: {count: {predicate: {_gte: 1}, filter: {observations_aggregate: {count: {predicate: {_gte: 1}}}}}}}'
@@ -166,7 +166,7 @@ export function getSatelliteDataSubscription(
       }
     }
   }
-  ` as DocumentNode | TypedDocumentNode<SatelliteDataSubSubscription, OperationVariables>
+  ` as DocumentNode | TypedDocumentNode<SatelliteDataQueryQuery, OperationVariables>
 }
 
 export const CHECK_WHETHER_SATELLITE_EXISTS = gql(`

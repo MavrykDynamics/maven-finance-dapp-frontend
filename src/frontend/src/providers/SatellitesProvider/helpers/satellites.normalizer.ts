@@ -6,7 +6,7 @@ import {
   SatelliteRecordType,
   SatelliteIndexerStatusType,
 } from 'providers/SatellitesProvider/satellites.provider.types'
-import { SatelliteDataSubSubscription, SatelliteVotesSubSubscription } from 'utils/__generated__/graphql'
+import { SatelliteDataQueryQuery, SatelliteVotesQueryQuery } from 'utils/__generated__/graphql'
 
 // helpers
 import { calcPersent, convertNumberForClient } from '../../../utils/calcFunctions'
@@ -21,7 +21,7 @@ import { satelliteVoteSchema, satelliteStatusSchema, INACTIVE_SATELLITE_STATUS }
  * @returns @sMVKRewards – sMVK rewards from feeds, @XTZRewards – XTZ rewards from feeds, @participatedFeeds – object where satellite participated and his latest prediction price
  */
 const getSatelliteOracleRewards = (
-  satelliteOracleData: SatelliteDataSubSubscription['satellite'][number]['user']['aggregator_oracles'],
+  satelliteOracleData: SatelliteDataQueryQuery['satellite'][number]['user']['aggregator_oracles'],
 ) => {
   return satelliteOracleData.reduce<{
     sMVKRewards: number
@@ -64,7 +64,7 @@ const getSatelliteOracleRewards = (
  * @returns oracle efficiency – how often satellite predict feed price
  * TODO: @Sam-M-Israel should be reviewed by you
  */
-const getSatelliteOracleEfficiency = (satelliteUser: SatelliteDataSubSubscription['satellite'][number]['user']) => {
+const getSatelliteOracleEfficiency = (satelliteUser: SatelliteDataQueryQuery['satellite'][number]['user']) => {
   const { aggregator_oracles, feedsObservationsAmount } = satelliteUser
 
   const latestObservation = aggregator_oracles.reduce(
@@ -102,7 +102,7 @@ const getSatelliteOracleEfficiency = (satelliteUser: SatelliteDataSubSubscriptio
   return calcPersent(predictionSuccessRatio, totalFeedsObservation)
 }
 
-export const normallizeSatellite = (satelliteRecord: SatelliteDataSubSubscription['satellite'][0]) => {
+export const normallizeSatellite = (satelliteRecord: SatelliteDataQueryQuery['satellite'][0]) => {
   try {
     const satelliteAddress = satelliteRecord.user.address
     const satelliteUser = satelliteRecord.user
@@ -181,11 +181,11 @@ export const normallizeSatellite = (satelliteRecord: SatelliteDataSubSubscriptio
   }
 }
 
-export const normalizeSatellitesLedger = (store: SatelliteDataSubSubscription) => {
+export const normalizeSatellitesLedger = (store: SatelliteDataQueryQuery) => {
   return store.satellite.reduce<{
     satelliteMapper: Record<string, SatelliteRecordType>
     activeSatellitesIds: string[]
-    allSatellitesIds: string[]
+    // allSatellitesIds: string[]
     oraclesIds: string[]
   }>(
     (acc, satelliteRecord) => {
@@ -195,7 +195,7 @@ export const normalizeSatellitesLedger = (store: SatelliteDataSubSubscription) =
 
       acc.satelliteMapper[nomalizedSatellite.address] = nomalizedSatellite
 
-      acc.allSatellitesIds.push(nomalizedSatellite.address)
+      // acc.allSatellitesIds.push(nomalizedSatellite.address)
 
       if (nomalizedSatellite.currentlyRegistered && nomalizedSatellite.status === 0) {
         acc.activeSatellitesIds.push(nomalizedSatellite.address)
@@ -210,7 +210,7 @@ export const normalizeSatellitesLedger = (store: SatelliteDataSubSubscription) =
     {
       satelliteMapper: {},
       activeSatellitesIds: [],
-      allSatellitesIds: [],
+      // allSatellitesIds: [],
       oraclesIds: [],
     },
   )
@@ -220,7 +220,7 @@ export const normalizeSatelliteVotings = ({
   governance_proposals_votes,
   governance_financial_requests_votes,
   governance_satellite_actions_votes,
-}: SatelliteVotesSubSubscription['satellite'][0]['user']) => {
+}: SatelliteVotesQueryQuery['satellite'][0]['user']) => {
   const proposalsVotes = governance_proposals_votes.reduce<Array<SatelliteVoteItemType>>((acc, vote) => {
     try {
       const voteValue = satelliteVoteSchema.parse(vote.vote)
