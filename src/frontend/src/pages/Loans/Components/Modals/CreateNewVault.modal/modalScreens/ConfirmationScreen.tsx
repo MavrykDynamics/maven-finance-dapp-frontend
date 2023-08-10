@@ -67,7 +67,7 @@ export const ConfirmationScreen = () => {
     config: { daoFee },
   } = useLoansContext()
 
-  const currentVault = vaultsMapper[(newVault as NewVaultType).address]
+  const currentVault = vaultsMapper[newVault.address]
   const vaultData = useFullVault(currentVault)
 
   const {
@@ -180,11 +180,7 @@ export const ConfirmationScreen = () => {
                       <CommaNumber value={balance} decimalsToShow={Number(decimals)} useAccurateParsing={balance < 1} />
                     </TableCell>
                     <TableCell width="33%" contentPosition="right">
-                      <CommaNumber
-                        value={balance * rate}
-                        beginningText={rate ? '$' : symbol}
-                        useAccurateParsing={balance < 1}
-                      />
+                      <CommaNumber value={balance * rate} beginningText={'$'} useAccurateParsing={balance < 1} />
                     </TableCell>
                   </TableRow>
                 )

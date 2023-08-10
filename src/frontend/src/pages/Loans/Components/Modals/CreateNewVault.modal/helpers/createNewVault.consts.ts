@@ -1,4 +1,3 @@
-import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
 import { CreateVaultModalState, VaultInputState } from './createNewVault.types'
 
 export const INITIAL_SCREEN_ID = 'createVault'
@@ -16,7 +15,10 @@ export const DEFAULT_CREATE_VAULT_STATE: CreateVaultModalState = {
   isVaultCreating: false,
   selectedCollaterals: {},
   selectedCollateralsAddresses: [],
-  newVault: null,
+  newVault: {
+    id: 0,
+    address: '',
+  },
   hasXTZTokenSelected: undefined,
   finalBorrowInputData: {
     amount: 0,

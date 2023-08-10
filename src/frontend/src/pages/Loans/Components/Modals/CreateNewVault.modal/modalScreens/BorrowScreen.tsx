@@ -127,6 +127,10 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
           updateVaultCreating(false)
 
           // TODO remove retry after indexer update
+
+          // there is a case when it will return an empty array without data even when new vault
+          // was created bacause of indexer problems. It will try to refetch the newly create vault
+          // only once and if it fails - show bug, successes - move to the next modal screen
         } else if (retries !== 0) {
           info('Refetching new vault', 'Trying to refetch the new vault data. Plases wait 7 seconds...')
           await sleep(7000)

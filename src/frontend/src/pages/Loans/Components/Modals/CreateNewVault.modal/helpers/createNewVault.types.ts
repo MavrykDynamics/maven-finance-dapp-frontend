@@ -48,7 +48,7 @@ export type CreateVaultModalState = {
   selectedCollaterals: SelectedCollateralsType
   selectedCollateralsAddresses: string[]
   isVaultCreating: boolean
-  newVault: NewVaultType | null
+  newVault: NewVaultType
   hasXTZTokenSelected: string | undefined
   finalBorrowInputData: FinalBorrowInputDataType
 }

@@ -276,7 +276,7 @@ export const createVault = async (
       (acc, { amount, loanData: { indexerName } }) => {
         acc.push({
           amount,
-          tokenName: indexerName,
+          tokenName: indexerName as TokenType,
         })
 
         return acc
@@ -362,7 +362,7 @@ export const createVault = async (
 function getBatchObject_fa2(
   userAddress: string,
   vaultFactoryAddress: string,
-  factoryContract: PromiseResolvedType<ReturnType<TezosToolkit['wallet']['at']>>,
+  factoryContract: Awaited<ReturnType<TezosToolkit['wallet']['at']>>,
   operation: 'add_operator' | 'remove_operator',
   token_id: number,
 ) {
@@ -384,7 +384,7 @@ function getBatchObject_fa2(
 
 function getBacthObject_fa12(
   vaultFactoryAddress: string,
-  factoryContract: PromiseResolvedType<ReturnType<TezosToolkit['wallet']['at']>>,
+  factoryContract: Awaited<ReturnType<TezosToolkit['wallet']['at']>>,
   amount = 0,
 ) {
   return {

@@ -1,13 +1,19 @@
+// compoennts
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
-import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import React from 'react'
+
+// styles
 import { silverColor } from 'styles'
+import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
+import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+
+// consts
+import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault.text'
+
+// utils
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 
 type BorrowScreenBottomStatsProps = {
   inputAmount: number

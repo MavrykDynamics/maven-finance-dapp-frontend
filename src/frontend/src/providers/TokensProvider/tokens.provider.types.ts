@@ -55,7 +55,7 @@ export interface LoansTokenMetadataType extends TokenMetadataType {
 // collareral token
 export interface LoansCollateralTokenMetadataType extends LoansTokenMetadataType {
   loanData: {
-    indexerName: TokenType
+    indexerName: string
     isPausedCollateral: boolean
     isScaled: boolean
     isStaked: boolean

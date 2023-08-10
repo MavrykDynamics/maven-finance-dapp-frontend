@@ -10,9 +10,9 @@ import { useCreateVaultContext } from '../context/createVaultModalContext'
 
 // utils
 import {
+  checkWhetherTokenIsCollateralToken,
   checkWhetherTokenIsLoanToken,
   getTokenDataByAddress,
-  isLoansCollateralTokenMetadata,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
@@ -52,7 +52,6 @@ export const ConfirmStats = () => {
   const {
     contractAddresses: { vaultFactoryAddress, lendingControllerAddress },
   } = useDappConfigContext()
-  console.log(lendingControllerAddress, 'lendingControllerAddress')
   const { choosenBaker } = useXtzBakersForDD()
   const {
     selectedCollateralsAddresses,
@@ -94,7 +93,7 @@ export const ConfirmStats = () => {
           tokensPrices,
         })
 
-        if (!isLoansCollateralTokenMetadata(collateralToken)) return acc
+        if (!collateralToken || !checkWhetherTokenIsCollateralToken(collateralToken)) return acc
 
         acc.push({
           ...collateralToken,
