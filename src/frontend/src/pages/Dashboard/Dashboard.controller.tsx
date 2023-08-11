@@ -18,10 +18,9 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
 import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 import {
-  MVK_TOTAL_SUB,
-  MVK_BALANCE_SUB,
+  MVK_SMVK_HISTORY_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
-  SMVK_HISTORY_SUB,
+  DAPP_MVK_SMVK_STATS_SUB,
 } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   SATELLITE_DATA_SUB,
@@ -63,9 +62,8 @@ export const Dashboard = () => {
 
   useEffect(() => {
     changeStakingSubscriptionsList({
-      [MVK_TOTAL_SUB]: true,
-      [MVK_BALANCE_SUB]: true,
-      [SMVK_HISTORY_SUB]: true,
+      [DAPP_MVK_SMVK_STATS_SUB]: true,
+      [MVK_SMVK_HISTORY_SUB]: true,
     })
     changeSatellitesSubscriptionsList({
       [SATELLITE_DATA_SUB]: SATELLITES_DATA_ACTIVE_SUB,
