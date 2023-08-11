@@ -1,5 +1,5 @@
 import { ApolloError, useQuery } from '@apollo/client'
-import React, { useContext, useMemo, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 // context & hooks
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -15,6 +15,7 @@ import { GET_LOANS_CONFIG, getLoansMarketsQuery } from './queries/loansMarkets.q
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import {
+  DEFAULT_CHARTS_DATA,
   DEFAULT_CHARTS_TO_CALC,
   DEFAULT_LOANS_ACTIVE_SUBS,
   DEFAULT_LOANS_CONTEXT,
@@ -24,10 +25,15 @@ import {
 
 // helpers
 import { normalizeLoansConfig, normalizeLoansMarkets } from './helpers/loansMarkets.normalizer'
-import { getLoansProviderReturnValue, normalizeTransactionHistory } from './helpers/loans.utils'
+import {
+  getLoansProviderReturnValue,
+  isChartsDataHasEmptyValues,
+  normalizeTransactionHistory,
+  replaceNonEmptyChartsData,
+} from './helpers/loans.utils'
 import { GET_LOANS_HISTORY_DATA, getLoansHistoryQuery } from './queries/loansHistory.query'
 import { normalizeLoansCharts } from './helpers/loansCharts.normalizer'
-import { LoansChartsType, LoansMarketTransactionHistoryType } from './helpers/loans.types'
+import { LoansChartsType, LoansMarketTransactionHistoryType, UseLoansChartsStateType } from './helpers/loans.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
@@ -56,10 +62,12 @@ export const LoansProvider = ({ children }: Props) => {
   const [chartsToCalc, setChartsToCalc] = useState<LoansChartsType>(DEFAULT_CHARTS_TO_CALC)
   const [loanHistoryDataFilterType, setLoanHistoryDataFilterType] = useState<number[] | null>(null) // array of descr types 1-11, mapper of type -> descr is: getDescrByType
 
-  const prevMarketsDataRef = useRef<Record<TokenAddressType, LoansMarketTransactionHistoryType[]>>({})
-
   // shared loan state
   const [loansCtxState, setLoansCtxState] = useState<NullableLoansContextState>(DEFAULT_LOANS_CONTEXT)
+
+  // internal refs
+  const prevMarketsDataRef = useRef<Record<TokenAddressType, LoansMarketTransactionHistoryType[]>>({})
+  const prevChartsData = useRef<UseLoansChartsStateType>(DEFAULT_CHARTS_DATA)
 
   const handleSubError = (error: ApolloError, subName: string) => {
     console.error(`${subName} query error: `, error)
@@ -91,16 +99,20 @@ export const LoansProvider = ({ children }: Props) => {
   })
 
   // subscribe to markets charts data
-  const { loading: areChartsLoading } = useQueryWithRefetch(
+  const { refetch: refetchChartsData } = useQueryWithRefetch(
     GET_LOANS_HISTORY_DATA,
     {
+      skip: Object.values(chartsToCalc).every((v) => v === false),
       onCompleted: (data) => {
         if (!data) return
 
         const newChartsData = normalizeLoansCharts({ indexerData: data, chartsToCalc, tokensPrices, tokensMetadata })
+        const replacedChartsData = replaceNonEmptyChartsData(prevChartsData.current, newChartsData)
+        prevChartsData.current = replacedChartsData
+
         setLoansCtxState((prev) => ({
           ...prev,
-          chartsData: newChartsData,
+          chartsData: replacedChartsData,
         }))
       },
       onError: (error) => {
@@ -158,6 +170,12 @@ export const LoansProvider = ({ children }: Props) => {
     }))
   }
 
+  useEffect(() => {
+    if (isChartsDataHasEmptyValues(prevChartsData.current)) {
+      refetchChartsData()
+    }
+  }, [chartsToCalc])
+
   // update charts to calc
   // if call without parametrs - it will reset chartsToCalc state
   const modifyChartsToCalc = (newChartsToCalc: Partial<LoansChartsType>) => {
@@ -181,17 +199,10 @@ export const LoansProvider = ({ children }: Props) => {
         setVaultAddressToSubscribe,
         setLoanHistoryDataFilterType,
         modifyChartsToCalc,
-        areChartsLoading,
+        prevChartsData: prevChartsData.current,
         isLoansTransactionHistoryLoading,
       }),
-    [
-      loansCtxState,
-      marketAddressToSubscribe,
-      activeSubs,
-      chartsToCalc,
-      areChartsLoading,
-      isLoansTransactionHistoryLoading,
-    ],
+    [loansCtxState, marketAddressToSubscribe, activeSubs, chartsToCalc, isLoansTransactionHistoryLoading],
   )
 
   return <loansContext.Provider value={providerValue}>{children}</loansContext.Provider>

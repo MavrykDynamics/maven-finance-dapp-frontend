@@ -8,13 +8,19 @@ import {
 
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 import { COLLATERAL_HISTORY_DATA_TYPES, EMPTY_LOANS_CONTEXT, LOANS_CONFIG, LOANS_MARKETS_DATA } from './loans.const'
-import { LoansChartsType, LoansMarketTransactionHistoryType } from './loans.types'
-import { isEmptyObject } from 'utils/isEmptyObject'
+import {
+  LoansChartsType,
+  LoansMarketMiniChartType,
+  LoansMarketTransactionHistoryType,
+  UseLoansChartsStateType,
+} from './loans.types'
+import { isEmptyArray, isEmptyObject } from 'utils/isEmptyValue'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { parseDate } from 'utils/time'
-import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import { TokenAddressType, TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import { SingleValueData } from 'lightweight-charts'
 
 // HELPER TO GET OPERATION NAME BY ITS TYPE
 export const getDescrByType = (type: number) => {
@@ -103,7 +109,7 @@ export const getLoansProviderReturnValue = ({
   setVaultAddressToSubscribe,
   setLoanHistoryDataFilterType,
   modifyChartsToCalc,
-  areChartsLoading,
+  prevChartsData,
   isLoansTransactionHistoryLoading,
 }: {
   loansCtxState: NullableLoansContextState
@@ -111,12 +117,12 @@ export const getLoansProviderReturnValue = ({
   activeSubs: LoansSubsRecordType
   chartsToCalc: LoansChartsType
   prevMarketHistoryData: LoansMarketTransactionHistoryType[] | null
+  prevChartsData: UseLoansChartsStateType
   changeLoansSubscriptionsList: LoansContext['changeLoansSubscriptionsList']
   setMarketAddressToSubscribe: LoansContext['setMarketAddressToSubscribe']
   setVaultAddressToSubscribe: LoansContext['setVaultAddressToSubscribe']
   setLoanHistoryDataFilterType: LoansContext['setLoanHistoryDataFilterType']
   modifyChartsToCalc: LoansContext['modifyChartsToCalc']
-  areChartsLoading: boolean
   isLoansTransactionHistoryLoading: boolean
 }) => {
   const { marketsMapper, marketsAddresses, config, allMarketsAddresses } = loansCtxState
@@ -168,13 +174,8 @@ export const getLoansProviderReturnValue = ({
     calcMarketLendingChart = false,
   } = chartsToCalc
 
-  const {
-    totalLendingChart = [],
-    totalBorrowingChart = [],
-    totalCollateralChart = [],
-    marketBorrowChart = {},
-    marketLendingChart = {},
-  } = loansCtxState.chartsData ?? {}
+  const { totalLendingChart, totalBorrowingChart, totalCollateralChart, marketBorrowChart, marketLendingChart } =
+    prevChartsData
 
   const _areChartsLoading =
     (calcTotalLendingChart && totalLendingChart.length === 0) ||
@@ -196,7 +197,7 @@ export const getLoansProviderReturnValue = ({
       ? prevMarketHistoryData
       : nonNullableProviderValue.loansTransactionHistoryData,
     isLoading: false,
-    areChartsLoading,
+    areChartsLoading: _areChartsLoading,
     isLoansTransactionHistoryLoading: isLoansTransactionHistoryLoading
       ? !turnOffLoansTransactionHistotyDataLoader
       : isLoansTransactionHistoryLoading,
@@ -261,4 +262,32 @@ export const normalizeTransactionHistory = (
     },
     [],
   )
+}
+
+export function isChartsDataHasEmptyValues(data: UseLoansChartsStateType) {
+  return Object.values(data).some((v) => isEmptyObject(v) || isEmptyArray(v))
+}
+
+type UseLoansChartsStateTypeShape = {
+  [key: string]: SingleValueData[] | Record<TokenAddressType, LoansMarketMiniChartType>
+}
+
+export const replaceNonEmptyChartsData = (
+  prevData: UseLoansChartsStateTypeShape,
+  data: UseLoansChartsStateTypeShape,
+) => {
+  const result: UseLoansChartsStateTypeShape = { ...prevData }
+
+  Object.entries(data).forEach(([key, value]) => {
+    if (
+      !(Array.isArray(value) && value.every((el) => el.value === 0)) &&
+      !isEmptyArray(value) &&
+      !isEmptyObject(value)
+    ) {
+      result[key] = value
+    }
+  })
+
+  // need to use "as" to tell ts that's the correct object
+  return result as UseLoansChartsStateType
 }

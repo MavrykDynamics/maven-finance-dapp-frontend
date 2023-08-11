@@ -29,3 +29,12 @@ export function isEmptyObject(value: unknown) {
 
   return isEmpty(value)
 }
+
+export function isEmptyArray(value: unknown) {
+  if (!Array.isArray(value)) {
+    // null or undefined
+    return false
+  }
+
+  return value.length === 0
+}
