@@ -59,6 +59,7 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import { useXTZMaxAmountValidator } from '../../hooks/Market/useXTZMaxValidator'
 import { XTZLimitInfoBanner } from '../../components/XTZLimitInfoBanner'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SELECT_BAKER_TEXT } from 'texts/banners/vault.text'
 
 export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
@@ -319,7 +320,15 @@ export const AddCollateralScreen = () => {
                   </div>
                   {isTezosAsset(collateralAddress) && (
                     <div className="xtz-baker">
-                      <div className="block-name">Select Baker</div>
+                      <div className="block-name">
+                        Select Baker
+                        <CustomTooltip
+                          iconId="info"
+                          defaultStrokeColor={colors[themeSelected].textColor}
+                          text={SELECT_BAKER_TEXT}
+                          className="tooltip"
+                        />
+                      </div>
                       <DropDown
                         placeholder="Select Bakery"
                         activeItem={choosenBaker}

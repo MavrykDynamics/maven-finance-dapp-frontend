@@ -36,8 +36,14 @@ export const screenTitles = {
 }
 
 export const screenDescriptions = {
-  [INITIAL_SCREEN_ID]: `Create a personal vault to begin borrowing. 
-  You may only choose one asset (USDT, EURL, or XTZ) to be borrowed per vault. In your vault, you may deposit a basket of assets such as XTZ, tzBTC, USDT, and EURL together as collateral.`,
+  [INITIAL_SCREEN_ID]: (
+    <>
+      Create a personal vault to begin borrowing.
+      <br /> You may only choose one asset (USDT, EURL, or XTZ) to be borrowed per vault. In your vault, you may deposit
+      a basket of assets such as XTZ, tzBTC, USDT, and EURL together as collateral.
+    </>
+  ),
+
   [ADD_COLLATERAL_SCREEN_ID]:
     'Select an one or multiple assets to add as collateral.  If you are providing XTZ as collateral, make sure you select a baker. ',
   [CONFIRM_STATS_SCREEN_ID]: 'Please confirm the following details.',

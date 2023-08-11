@@ -90,6 +90,11 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  .align-tree-item-right {
+    display: grid;
+    justify-items: flex-end;
+  }
+
   .screen-bottom-stats {
     display: flex;
     flex-direction: column;
