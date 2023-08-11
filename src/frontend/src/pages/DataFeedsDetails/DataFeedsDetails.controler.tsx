@@ -88,7 +88,7 @@ const DataFeedDetails = () => {
     isLoading: isSatellitesLoading,
     changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
-  const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts({}, feedId)
+  const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts(feedId)
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
