@@ -1,14 +1,4 @@
-import {
-  BreakGlassAggregatorFactorySubscription,
-  BreakGlassAggregatorSubscription,
-  BreakGlassDelegationSubscription,
-  BreakGlassDoormanSubscription,
-  BreakGlassTreasuryFactorySubscription,
-  BreakGlassTreasurySubscription,
-  BreakGlassfarmFactorySubscription,
-  BreakGlassfarmSubscription,
-  Maybe,
-} from 'utils/__generated__/graphql'
+import { GetAllContractStatusesDataQuery, Maybe } from 'utils/__generated__/graphql'
 
 import { SubscriptionSkipType } from 'utils/api/apollo.consts'
 import { CONTRACT_STATUSES_ALL_SUB, CONTRACT_STATUSES_CONFIG_SUB } from './helpers/contractStatuses.consts'
@@ -27,14 +17,7 @@ export type ContractStatusesConfigSkips = {
   skipWhitelistDevelopers?: SubscriptionSkipType
 }
 
-export type ContractStatusesType = BreakGlassfarmSubscription &
-  BreakGlassAggregatorFactorySubscription &
-  BreakGlassAggregatorSubscription &
-  BreakGlassDelegationSubscription &
-  BreakGlassDoormanSubscription &
-  BreakGlassfarmFactorySubscription &
-  BreakGlassTreasuryFactorySubscription &
-  BreakGlassTreasurySubscription
+export type ContractStatusesType = GetAllContractStatusesDataQuery
 
 export type ContractStatusesConfigType = {
   isGlassBroken: boolean
@@ -43,6 +26,7 @@ export type ContractStatusesConfigType = {
 
 export type ContractStatusesContextStateType = {
   config: ContractStatusesConfigType
+  contractStatuses: ContractStatusesStorage
 }
 
 export type NullableContractStatusesContextStateType = DeepNullable<ContractStatusesContextStateType>

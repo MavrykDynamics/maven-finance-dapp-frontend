@@ -1,5 +1,5 @@
-import { ApolloError } from '@apollo/client'
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import { ApolloError, useQuery } from '@apollo/client'
+import React, { useContext, useMemo, useState } from 'react'
 
 // consts
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
@@ -12,11 +12,18 @@ import {
   NullableContractStatusesContextStateType,
 } from './contractStatuses.types'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS, DEFAULT_CONTRACT_STATUSES_CTX } from './helpers/contractStatuses.consts'
+import {
+  CONTRACT_STATUSES_ALL_SUB,
+  CONTRACT_STATUSES_CONFIG_SUB,
+  DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS,
+  DEFAULT_CONTRACT_STATUSES_CTX,
+} from './helpers/contractStatuses.consts'
 import {
   getContractStatusesProviderReturnValue,
   normalizeContractStatusesConfig,
 } from './helpers/contractStatuses.utils'
+import { CONTRACT_STATUSES_ALL_DATA_QUERY } from './queries/contractStatuses.query'
+import { normalizeContractStatuses } from './helpers/normalizeContractStatuses'
 
 export const contractStatusesContext = React.createContext<ContractStatusesContext>(undefined!)
 
@@ -29,7 +36,6 @@ const ContractStatusesProvider = ({ children }: Props) => {
 
   const [contractStatusesCtxState, setContractStatusesCtxState] =
     useState<NullableContractStatusesContextStateType>(DEFAULT_CONTRACT_STATUSES_CTX)
-  const [isConfigSubActive, setIsConfigSubActive] = useState(false)
   const [activeSubs, setActiveSubs] = useState<ContractStatusesSubsRecordType>(DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS)
 
   const handleSubError = (error: ApolloError, subName: string) => {
@@ -41,7 +47,7 @@ const ContractStatusesProvider = ({ children }: Props) => {
   useQueryWithRefetch(
     CONTRACT_STATUSES_CONFIG_QUERY,
     {
-      skip: !isConfigSubActive,
+      skip: !activeSubs[CONTRACT_STATUSES_CONFIG_SUB],
       onCompleted: (data) => {
         if (!data) return
         const config = normalizeContractStatusesConfig(data)
@@ -53,6 +59,21 @@ const ContractStatusesProvider = ({ children }: Props) => {
       blocksDiff: 2000,
     },
   )
+
+  // sub to all data only once
+  useQuery(CONTRACT_STATUSES_ALL_DATA_QUERY, {
+    skip: !activeSubs[CONTRACT_STATUSES_ALL_SUB],
+    onCompleted: (data) => {
+      if (!data) return
+
+      const normalizedContractStatuses = normalizeContractStatuses(data)
+      setContractStatusesCtxState((prev) => ({
+        ...prev,
+        contractStatuses: normalizedContractStatuses,
+      }))
+    },
+    onError: (error) => handleSubError(error, 'CONTRACT_STATUSES_ALL_DATA_QUERY'),
+  })
 
   const setContractStatusesConfig = (config: NullableContractStatusesContextStateType['config']) => {
     setContractStatusesCtxState((prev) => ({
@@ -70,8 +91,9 @@ const ContractStatusesProvider = ({ children }: Props) => {
       getContractStatusesProviderReturnValue({
         contractStatusesCtxState,
         changeLoansSubscriptionsList,
+        activeSubs,
       }),
-    [contractStatusesCtxState],
+    [activeSubs, contractStatusesCtxState],
   )
 
   return <contractStatusesContext.Provider value={contextProviderValue}>{children}</contractStatusesContext.Provider>
