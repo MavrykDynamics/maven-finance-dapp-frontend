@@ -153,7 +153,8 @@ export const fetchTzktUserBalances = async ({
     return normalizedTzktTokensBalances
   } catch (e) {
     console.error(`fetchTzktUserBalances query error: `, e)
-    throw new ApiError('Error occured while loading your balances, try to reload the page')
+    return {}
+    // throw new ApiError('Error occured while loading your balances, try to reload the page')
   }
 }
 

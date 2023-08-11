@@ -210,8 +210,8 @@ export const UserProvider = ({ children }: Props) => {
     },
     onCompleted: (data) => {
       // if user does not exists
-      // TODO: should not be an option set default user profile
       if (data.mavryk_user.length === 0) {
+        setUserLoading(false)
         return
       }
 
