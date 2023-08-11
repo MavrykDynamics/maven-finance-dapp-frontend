@@ -24,10 +24,9 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import { DDItemId } from 'app/App.components/DropDown/NewDropdown'
 
 /**
- *
  * @returns collateral data to handle input stuff && XTZ max amount validation data
  */
-export const useCollateralInputData = () => {
+export const useCollateralInputData = (ignoreXTZMax = false) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const [selectedCollateral, setSelectedCollateral] = useState<TokenAddressType | undefined>()
@@ -65,15 +64,24 @@ export const useCollateralInputData = () => {
     selectedCollateralObj,
   )
 
+  const clearData = useCallback(() => {
+    setInputData({
+      amount: '0',
+      validationStatus: INPUT_STATUS_DEFAULT,
+    })
+  }, [])
+
   const inputOnChangeHandle = useCallback(
     (newInputAmount: string, userAssetBalance: number) => {
       const validationStatus = loansInputValidation({
         inputAmount: newInputAmount,
-        maxAmount: isTezosToken ? userAssetBalance - 1 : userAssetBalance,
+        maxAmount: isTezosToken && !ignoreXTZMax ? userAssetBalance - 1 : userAssetBalance,
         options: {
           byDecimalPlaces: decimals ?? assetDecimalsToShow,
         },
       })
+
+      console.log(validationStatus)
 
       if (inputData) {
         setInputData({
@@ -83,7 +91,7 @@ export const useCollateralInputData = () => {
         })
       }
     },
-    [decimals, inputData, isTezosToken],
+    [decimals, ignoreXTZMax, inputData, isTezosToken],
   )
 
   const inputOnBlurHandle = useCallback(
@@ -113,13 +121,14 @@ export const useCollateralInputData = () => {
 
   const useMaxHandler = useCallback(
     (userCollateralBalance: number) => {
+      const condition = isTezosToken && !ignoreXTZMax
       const maxAmount = getLoansInputMaxAmount(userCollateralBalance, decimals)
-      const _amount = isTezosToken ? String(+maxAmount - 1) : maxAmount
+      const _amount = condition ? String(+maxAmount - 1) : maxAmount
 
-      if (isTezosToken) updateMaxedXTZData(Number(_amount))
+      if (condition) updateMaxedXTZData(Number(_amount))
       inputOnChangeHandle(_amount, userCollateralBalance)
     },
-    [decimals, inputOnChangeHandle, isTezosToken, updateMaxedXTZData],
+    [decimals, ignoreXTZMax, inputOnChangeHandle, isTezosToken, updateMaxedXTZData],
   )
 
   return {
@@ -134,6 +143,7 @@ export const useCollateralInputData = () => {
     onFocusHandler,
     clickOnInputDDItem,
     useMaxHandler,
+    clearData,
     ...rest,
   }
 }
