@@ -121,11 +121,11 @@ export const useCollateralInputData = (ignoreXTZMax = false) => {
 
   const useMaxHandler = useCallback(
     (userCollateralBalance: number) => {
-      const condition = isTezosToken && !ignoreXTZMax
+      const addXTZValidation = isTezosToken && !ignoreXTZMax
       const maxAmount = getLoansInputMaxAmount(userCollateralBalance, decimals)
-      const _amount = condition ? String(+maxAmount - 1) : maxAmount
+      const _amount = addXTZValidation ? String(+maxAmount - 1) : maxAmount
 
-      if (condition) updateMaxedXTZData(Number(_amount))
+      if (addXTZValidation) updateMaxedXTZData(Number(_amount))
       inputOnChangeHandle(_amount, userCollateralBalance)
     },
     [decimals, ignoreXTZMax, inputOnChangeHandle, isTezosToken, updateMaxedXTZData],
