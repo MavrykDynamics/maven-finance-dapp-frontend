@@ -139,8 +139,14 @@ const DashboardPersonal = () => {
       return null
     }
 
-    return await claimAllRewardsAction(userAddress, doormanAddress)
-  }, [bug, doormanAddress, userAddress])
+    return await claimAllRewardsAction(
+      userAddress,
+      doormanAddress,
+      availableDoormanRewards,
+      availableSatellitesRewards,
+      availableFarmRewards,
+    )
+  }, [availableDoormanRewards, availableFarmRewards, availableSatellitesRewards, bug, doormanAddress, userAddress])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
