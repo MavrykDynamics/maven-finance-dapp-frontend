@@ -7,9 +7,7 @@ import {
   BreakGlassTreasurySubscription,
   BreakGlassfarmFactorySubscription,
   BreakGlassfarmSubscription,
-  GlasssBrokenStatusSubscription,
   Maybe,
-  WhiteListDevelopersSubscription,
 } from 'utils/__generated__/graphql'
 
 import { SubscriptionSkipType } from 'utils/api/apollo.consts'
@@ -27,7 +25,6 @@ export type ContractStatusesConfigSkips = {
   skipGlassBroken?: SubscriptionSkipType
   skipWhitelistDevelopers?: SubscriptionSkipType
 }
-export type ContractStatusesConfigType = GlasssBrokenStatusSubscription & WhiteListDevelopersSubscription
 
 export type ContractStatusesType = BreakGlassfarmSubscription &
   BreakGlassAggregatorFactorySubscription &
@@ -37,3 +34,18 @@ export type ContractStatusesType = BreakGlassfarmSubscription &
   BreakGlassfarmFactorySubscription &
   BreakGlassTreasuryFactorySubscription &
   BreakGlassTreasurySubscription
+
+export type ContractStatusesConfigType = {
+  isGlassBroken: boolean | null
+  whitelistDevelopers: string[] | null
+}
+
+export type ContractStatusesContextStateType = {
+  config: ContractStatusesConfigType
+}
+
+export type NullableContractStatusesContextStateType = DeepNullable<ContractStatusesContextStateType>
+
+export type ContractStatusesContext = ContractStatusesContextStateType & {
+  isLoading: boolean
+}

@@ -1,7 +1,7 @@
 import { gql } from 'utils/__generated__'
 
 export const CONTRACT_STATUSES_FARM_SUB = gql(`
-  subscription breakGlassfarm($_eq: String) {
+  subscription breakGlassfarm {
     farm(where: {admin: {_neq: ""}}) {
       name
       address
@@ -15,7 +15,7 @@ export const CONTRACT_STATUSES_FARM_SUB = gql(`
 `)
 
 export const CONTRACT_STATUSES_FARM_FACTORY_SUB = gql(`
-  subscription breakGlassfarmFactory($_eq: String) {
+  subscription breakGlassfarmFactory {
     farm_factory(where: {admin: {_neq: ""}}) {
       create_farm_paused
       track_farm_paused
@@ -28,7 +28,7 @@ export const CONTRACT_STATUSES_FARM_FACTORY_SUB = gql(`
 `)
 
 export const CONTRACT_STATUSES_DELEGATION_SUB = gql(`
-  subscription breakGlassDelegation($_eq: String) {
+  subscription breakGlassDelegation {
     delegation(where: {admin: {_neq: ""}}) {
       delegate_to_satellite_paused
       distribute_reward_paused
@@ -44,7 +44,7 @@ export const CONTRACT_STATUSES_DELEGATION_SUB = gql(`
 `)
 
 export const CONTRACT_STATUSES_DOORMAN_SUB = gql(`
-  subscription breakGlassDoorman($_eq: String) {
+  subscription breakGlassDoorman {
     doorman(where: {admin: {_neq: ""}}) {
       address
       compound_paused
@@ -57,7 +57,7 @@ export const CONTRACT_STATUSES_DOORMAN_SUB = gql(`
 `)
 
 export const CONTRACT_STATUSES_TREASURY_SUB = gql(`
-  subscription breakGlassTreasury($_eq: String) {
+  subscription breakGlassTreasury {
     treasury(where: {admin: {_neq: ""}}) {
       name
       mint_mvk_and_transfer_paused
@@ -71,7 +71,7 @@ export const CONTRACT_STATUSES_TREASURY_SUB = gql(`
   }
 `)
 export const CONTRACT_STATUSES_TREASURY_FACTORY_SUB = gql(`
-  subscription breakGlassTreasuryFactory($_eq: String) {
+  subscription breakGlassTreasuryFactory {
     treasury_factory(where: {admin: {_neq: ""}}) {
       create_treasury_paused
       address
@@ -84,7 +84,7 @@ export const CONTRACT_STATUSES_TREASURY_FACTORY_SUB = gql(`
 `)
 
 export const CONTRACT_STATUSES_AGGREGATOR_SUB = gql(`
-  subscription breakGlassAggregator($_eq: String) {
+  subscription breakGlassAggregator {
     aggregator(where: {admin: {_neq: ""}}) {
       address
       name
@@ -97,7 +97,7 @@ export const CONTRACT_STATUSES_AGGREGATOR_SUB = gql(`
 `)
 
 export const CONTRACT_STATUSES_AGGREGATOR_FACTORY_SUB = gql(`
-  subscription breakGlassAggregatorFactory($_eq: String) {
+  subscription breakGlassAggregatorFactory {
     aggregator_factory(where: {admin: {_neq: ""}}) {
       address
       untrack_aggregator_paused
