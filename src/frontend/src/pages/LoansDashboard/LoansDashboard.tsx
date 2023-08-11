@@ -72,12 +72,7 @@ export const LoansDashboard = () => {
 
   const { lending24hPersentChange, borrowing24hPersentChange } = useLendBorrow24hDiff()
 
-  const {
-    isLoading: userLoansDataLoading,
-    userVaultsData,
-    totalUserBorrowed,
-    totalUserLended,
-  } = useUserLoansData({ userAddress })
+  const { isLoading: userLoansDataLoading, userVaultsData, totalUserBorrowed, totalUserLended } = useUserLoansData()
 
   useEffect(() => {
     changeLoansSubscriptionsList({

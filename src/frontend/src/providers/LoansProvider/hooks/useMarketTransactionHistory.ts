@@ -1,14 +1,15 @@
-import { useMemo } from 'react'
-import { useSubscription } from '@apollo/client'
+import { useEffect, useMemo, useState } from 'react'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
+import { GetLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
 import { LoansMarketTransactionHistoryArgs, LoansMarketTransactionHistoryType } from '../helpers/loans.types'
 
 // consts & helpers
-import { getLoansHistorySubscription } from 'providers/LoansProvider/queries/loansHistory.query'
+import { getLoansTransactionsHistory } from 'providers/LoansProvider/queries/loansHistory.query'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { parseDate } from 'utils/time'
 import { getDescrByType } from '../helpers/loans.utils'
@@ -18,11 +19,12 @@ import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
 /**
  *
- * @param param0.marketTokenAddress – market token address to get transactions for
- * @param param0.userAddress – user address for which get transaction history
- * @param param0.typeFilter – array of descr types 1-11, mapper of type -> descr is: getDescrByType
+ * @param marketTokenAddress – market token address to get transactions for
+ * @param userAddress – user address for which get transaction history
+ * @param vaultAddress – vault address for which get transaction history
+ * @param typeFilter – array of descr types 1-11, mapper of type -> descr is: getDescrByType
  */
-const useMarketTransactionHistory = ({
+export const useLoansTransactionHistory = ({
   marketTokenAddress,
   userAddress,
   vaultAddress,
@@ -30,22 +32,30 @@ const useMarketTransactionHistory = ({
 }: LoansMarketTransactionHistoryArgs) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
-  const { loading, data: transactionHistoryIndexer } = useSubscription(
-    getLoansHistorySubscription({ userAddress, vaultAddress, typeFilter }),
-    {
-      skip: (!userAddress && !vaultAddress) || !marketTokenAddress,
-      variables: {
-        marketTokenAddress,
-        userAddress,
-        vaultAddress,
-        typeFilter,
-      },
-      shouldResubscribe: true,
-      onError: (error) => {
-        console.error('GET_LOANS_HISTORY_DATA error: ', { error })
-      },
-    },
+  const [transactionHistoryIndexer, setTransactionHistoryIndexer] = useState<null | GetLoansTransactionsHistoryQuery>(
+    null,
   )
+
+  useEffect(() => {
+    return () => setTransactionHistoryIndexer(null)
+  }, [marketTokenAddress, vaultAddress])
+
+  // always load new txHistory on market | vault address change
+  useQueryWithRefetch(getLoansTransactionsHistory({ userAddress, vaultAddress, typeFilter }), {
+    skip: (!userAddress && !vaultAddress) || !marketTokenAddress || transactionHistoryIndexer !== null,
+    variables: {
+      marketTokenAddress,
+      userAddress,
+      vaultAddress,
+      typeFilter,
+    },
+    onCompleted: (data) => {
+      setTransactionHistoryIndexer(data)
+    },
+    onError: (error) => {
+      console.error('GET_LOANS_HISTORY_DATA error: ', { error })
+    },
+  })
 
   const transactionHistory = useMemo(() => {
     if (!transactionHistoryIndexer) return []
@@ -107,7 +117,5 @@ const useMarketTransactionHistory = ({
     )
   }, [tokensMetadata, tokensPrices, transactionHistoryIndexer])
 
-  return { isLoading: loading, transactionHistory }
+  return { isLoading: transactionHistoryIndexer === null, transactionHistory }
 }
-
-export default useMarketTransactionHistory
