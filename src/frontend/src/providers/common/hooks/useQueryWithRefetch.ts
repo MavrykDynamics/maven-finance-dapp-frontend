@@ -16,6 +16,7 @@ import { currentIndexerLevelProxy } from '../utils/observeCurrentIndexerLevel'
  *
  * NOTES:
  *    --- if variable change it will provoke useQuery to work, so we don't need to pass new variables to refetch function, cuz refetch won't work
+ *    --- @refetchQueryVariables should be in UseCallback if it depends on data from cmp/hook, or be outside cmp/hook to not provoke useCallback to recreate refetch fn on parent's rerender
  *
  * TODO: add log to effect and 50% of hook rerenders from outer listener is recreating and resubscribes to lvl in effect
  */
@@ -29,6 +30,8 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
 ) => {
   const lastUpdatedBlock = useRef<null | number>(null)
   const refetchId = useRef<null | string>(null)
+
+  const { blocksDiff, refetchQueryVariables } = refetchOptions ?? {}
 
   // trach whether we can refetch query, cuz if we will refetch without this check we will have 2 simultamiously queries on init
   const isInitialQueryDone = useRef(false)
@@ -48,8 +51,6 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
     (newIndexerLevel: number) => {
       // If we have't completed initial query, we can't refetch
       if (!isInitialQueryDone.current) return
-
-      const { blocksDiff, refetchQueryVariables } = refetchOptions ?? {}
 
       const newRefetchVariables =
         typeof refetchQueryVariables === 'function' ? refetchQueryVariables() : refetchQueryVariables
@@ -72,7 +73,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
 
       queryResult.refetch(newRefetchVariables)
     },
-    [refetchOptions],
+    [blocksDiff, refetchQueryVariables],
   )
 
   // subscribe to indexer lvl change
