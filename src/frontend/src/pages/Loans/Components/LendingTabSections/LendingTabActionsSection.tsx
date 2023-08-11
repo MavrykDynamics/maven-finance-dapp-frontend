@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { memo, useCallback, useState } from 'react'
+import { useEffect, useState } from 'react'
 import classNames from 'classnames'
 
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -12,11 +12,9 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { LENDING_TAB_SLIDING_BUTTONS, assetDecimalsToShow, loansTabNames } from '../../Loans.const'
-import { convertNumberForClient } from 'utils/calcFunctions'
+import { LENDING_TAB_SLIDING_BUTTONS, loansTabNames } from '../../Loans.const'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { getLoansInputMaxAmount, loansInputValidation } from '../../Loans.helpers'
 import { LENDING_TAB_SUPPLY_TEXT, LENDING_TAB_WITHDRAW_TEXT } from 'texts/banners/loan.text'
 import { EARN_APY } from 'texts/tooltips/loan.text'
 import {
@@ -25,10 +23,6 @@ import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
-  InputStatusType,
-  defaultLargeInputMaxLength,
-  getOnBlurValue,
-  getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -44,17 +38,14 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
+import { useCollateralInputData } from '../Modals/hooks/Market/useCollateralInputData'
+import { XTZLimitInfoBanner } from '../Modals/components/XTZLimitInfoBanner'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
   loanTokenAddress: TokenAddressType
   lendAPY: number
   marketAvailableLiquidity: number
-}
-
-type InputDataType = {
-  amount: string
-  validationStatus: InputStatusType
 }
 
 export const LendingTabActionsSection = ({
@@ -74,28 +65,32 @@ export const LendingTabActionsSection = ({
   const { lendValue = 0 } = lendingItem || {}
 
   const [activeTab, setActiveTab] = useState(LENDING_TAB_SLIDING_BUTTONS.find((item) => item.active))
-  const [inputData, setInputData] = useState<InputDataType>({
-    amount: '0',
-    validationStatus: INPUT_STATUS_DEFAULT,
-  })
-
   const isSupplyActiveTab = activeTab?.id === loansTabNames.SUPPLY
+
+  const {
+    inputData,
+    setInputData,
+    setSelectedCollateral,
+    inputOnBlurHandle,
+    inputOnChangeHandle: onChangeHandler,
+    willExceedXTZTheLimit,
+    onFocusHandler,
+    useMaxHandler: maxHandlerFromHook,
+    clearData,
+  } = useCollateralInputData(!isSupplyActiveTab)
+
+  useEffect(() => {
+    setSelectedCollateral(loanTokenAddress)
+  }, [setSelectedCollateral, loanTokenAddress])
 
   if (!loanToken || !loanToken.rate) return null
 
-  const { symbol, decimals, icon, rate } = loanToken
+  const { symbol, icon, rate } = loanToken
   const tokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: loanToken.address })
 
   const futureMBalance = isSupplyActiveTab ? lendValue + Number(inputData.amount) : lendValue - Number(inputData.amount)
 
   const isDisabledButton = inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionActive
-
-  const clearData = () => {
-    setInputData({
-      amount: '0',
-      validationStatus: INPUT_STATUS_DEFAULT,
-    })
-  }
 
   const handleSwitchTab = (tabId: number) => {
     setInputData({
@@ -128,40 +123,10 @@ export const LendingTabActionsSection = ({
     }
   }
 
-  const onChangeHandler = (inputAmount: string, maxAmount: number) => {
-    const validationStatus = loansInputValidation({
-      inputAmount,
-      maxAmount,
-      options: {
-        byDecimalPlaces: decimals || assetDecimalsToShow,
-      },
-    })
-
-    setInputData({
-      ...inputData,
-      amount: inputAmount,
-      validationStatus: validationStatus,
-    })
-  }
-
-  const inputOnBlurHandle = () =>
-    setInputData({
-      ...inputData,
-      amount: getOnBlurValue(inputData.amount),
-    })
-
-  const onFocusHandler = () =>
-    setInputData({
-      ...inputData,
-      amount: getOnFocusValue(inputData.amount),
-    })
-
   const useMaxHandler = () => {
-    const inputMaxAmount = isSupplyActiveTab ? tokenBalance : Math.min(lendValue, marketAvailableLiquidity)
+    const inputMaxAmount = Math.min(lendValue, marketAvailableLiquidity)
 
-    isSupplyActiveTab
-      ? onChangeHandler(getLoansInputMaxAmount(tokenBalance, decimals), tokenBalance)
-      : onChangeHandler(getLoansInputMaxAmount(inputMaxAmount, decimals), inputMaxAmount)
+    isSupplyActiveTab ? maxHandlerFromHook(tokenBalance) : maxHandlerFromHook(inputMaxAmount)
   }
 
   const inputOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -208,6 +173,8 @@ export const LendingTabActionsSection = ({
           </InputPinnedTokenInfo>
         </Input>
       </div>
+
+      <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20" />
 
       <div className="mt-25">
         <div className="tab-text mb-10">Updated Lending {symbol} Stats</div>

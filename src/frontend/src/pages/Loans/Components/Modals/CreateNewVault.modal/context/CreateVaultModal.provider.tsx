@@ -13,6 +13,8 @@ import { DEFAULT_CREATE_VAULT_STATE } from '../helpers/createNewVault.consts'
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { getVaultBorrowCapacity } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 type Props = CreateNewModalProps & {
   children: React.ReactNode
@@ -24,14 +26,13 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
   const [modalState, setModalState] = useState<CreateVaultModalState>(DEFAULT_CREATE_VAULT_STATE)
   const { marketTokenAddress = '' } = data ?? {}
 
-  const token = getTokenDataByAddress({
-    tokenAddress: marketTokenAddress,
-    tokensMetadata,
-    tokensPrices,
-  })
   const { availableLiquidity = 0, borrowAPR } = marketsMapper[marketTokenAddress] ?? {}
-  const { rate: originalRate } = token ?? {}
-  const rate = originalRate ?? 0
+
+  const marketToken = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
+  const convertedAvailableLiquidity = marketToken?.rate
+    ? Math.max(convertNumberForClient({ number: availableLiquidity, grade: marketToken.decimals }), 0) *
+      marketToken.rate
+    : 0
 
   const resetCreateVaultModalState = useCallback(() => {
     setModalState(DEFAULT_CREATE_VAULT_STATE)
@@ -100,8 +101,8 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
 
   const borrowedAmount = 0
   const borrowCapacity = useMemo(
-    () => Math.min(Math.max(availableLiquidity, 0), collateralsBalance / 2 - borrowedAmount * rate),
-    [availableLiquidity, rate, collateralsBalance],
+    () => getVaultBorrowCapacity(convertedAvailableLiquidity, borrowedAmount, collateralsBalance),
+    [convertedAvailableLiquidity, collateralsBalance],
   )
 
   const ctx = useMemo(

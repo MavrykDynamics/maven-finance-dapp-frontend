@@ -72,7 +72,7 @@ export const ChangeVaultName = ({
   // change name action -------------------
   const changeNameAction = useCallback(async () => {
     // is there is a vault address - do nothing
-    if (vaultAddress) {
+    if (!vaultAddress) {
       return null
     }
 
