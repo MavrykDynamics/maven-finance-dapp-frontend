@@ -20,7 +20,7 @@ const findStatusMessage = ({
       <Timer timestamp={timestamp} options={{ defaultColor: theme.primaryText, negativeColor: theme.downColor }} />
     </div>
   ) : (
-    <span className="timer" style={{ color: theme.primaryText }}>
+    <span className="timer no-data">
       no data
     </span>
   )

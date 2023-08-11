@@ -42,13 +42,13 @@ export const HistogramChart = ({
     yAxisSide = 'left',
     priceMargins,
     crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
-    textColor = styleColors[themeSelected]['regularText'],
-    borderColor = styleColors[themeSelected]['strokeColor'],
+    textColor = styleColors[themeSelected].regularText,
+    borderColor = styleColors[themeSelected].strokeColor,
     seriesMarkers,
     isPeriod = false,
   } = settings ?? {}
 
-  const { barColor = styleColors[themeSelected]['histogramChartColor'] } = colors ?? {}
+  const { barColor = styleColors[themeSelected].histogramChartColor } = colors ?? {}
 
   const chartContainerRef = useRef<HTMLDivElement | null>(null)
   const mainChartWrapperRef = useRef<HTMLDivElement | null>(null)

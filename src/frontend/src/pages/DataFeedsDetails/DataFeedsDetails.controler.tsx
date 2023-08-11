@@ -182,7 +182,7 @@ const DataFeedDetails = () => {
                 </div>
                 <div className="bottom">
                   <DataFeedInfoBlock>
-                    <h3 style={{ color: colors[themeSelected].mainHeadingText }}>
+                    <h3>
                       Trigger parameters
                       <CustomTooltip
                         text={`If the price of the asset is volatile and changes more than the set deviation trigger, a new trusted price will be pushed on chain from the oracle. Aside from the deviation trigger, price updates occur on average every 15 minutes.`}
@@ -230,7 +230,7 @@ const DataFeedDetails = () => {
                   </DataFeedInfoBlock>
 
                   <DataFeedInfoBlock>
-                    <h3 style={{ color: colors[themeSelected].mainHeadingText }}>
+                    <h3>
                       Oracle responses
                       <CustomTooltip
                         className="info-icon"
@@ -246,7 +246,7 @@ const DataFeedDetails = () => {
                   </DataFeedInfoBlock>
 
                   <DataFeedInfoBlock>
-                    <h3 style={{ color: colors[themeSelected].mainHeadingText }}>
+                    <h3>
                       Last update
                       <CustomTooltip
                         text={`Last time the aggregator was updated with a trusted answer and written on-chain`}

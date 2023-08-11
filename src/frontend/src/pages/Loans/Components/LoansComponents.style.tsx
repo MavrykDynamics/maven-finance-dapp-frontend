@@ -459,6 +459,10 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
     display: inline-block;
   }
 
+  .no-data {
+    color: ${({ theme }) => theme.primaryText};
+  }
+
   &.borrow-message {
     margin: 40px 0 40px 0;
   }

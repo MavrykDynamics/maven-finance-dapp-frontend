@@ -42,8 +42,8 @@ export const AreaChart = ({
     priceMargins,
     yAxisSide = 'right',
     crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
-    textColor = styleColors[themeSelected]['regularText'],
-    borderColor = styleColors[themeSelected]['strokeColor'],
+    textColor = styleColors[themeSelected].regularText,
+    borderColor = styleColors[themeSelected].strokeColor,
     seriesMarkers,
     isPeriod = false,
   } = settings ?? {}

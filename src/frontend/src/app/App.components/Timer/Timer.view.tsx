@@ -28,9 +28,9 @@ export const TimerView = ({ seconds, minutes, hours, days, options }: TimerViewP
 
   const {
     showZeros = true,
-    negativeColor = colors[themeSelected]['downColor'],
+    negativeColor = colors[themeSelected].downColor,
     endText,
-    defaultColor = colors[themeSelected]['primaryText'],
+    defaultColor = colors[themeSelected].primaryText,
     timerView = LETTER_VIEW,
     shownParts = ['d', 'h', 'm', 's'],
     showFullDay = false,

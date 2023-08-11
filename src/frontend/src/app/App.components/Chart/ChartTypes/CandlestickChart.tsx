@@ -43,15 +43,15 @@ export const CandlestickChart = ({
     priceMargins,
     yAxisSide = 'left',
     crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
-    textColor = styleColors[themeSelected]['regularText'],
-    borderColor = styleColors[themeSelected]['strokeColor'],
+    textColor = styleColors[themeSelected].regularText,
+    borderColor = styleColors[themeSelected].strokeColor,
     seriesMarkers,
     isPeriod = false,
   } = settings ?? {}
 
   const {
-    chandleUpColor = styleColors[themeSelected]['upColor'],
-    chandleDownColor = styleColors[themeSelected]['downColor'],
+    chandleUpColor = styleColors[themeSelected].upColor,
+    chandleDownColor = styleColors[themeSelected].downColor,
   } = colors ?? {}
 
   const chartContainerRef = useRef<HTMLDivElement | null>(null)

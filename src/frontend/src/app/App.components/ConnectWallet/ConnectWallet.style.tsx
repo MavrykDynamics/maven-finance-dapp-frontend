@@ -297,3 +297,8 @@ export const MobileWalletDetailsHiddenPart = styled(WalletDetailsHiddenPart)<{ t
     }
   }
 `
+
+export const ConnectWalletBannerText = styled.div`
+  display: inline;
+  font-weight: 500;
+`

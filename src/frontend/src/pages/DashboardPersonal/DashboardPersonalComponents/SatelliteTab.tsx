@@ -136,7 +136,7 @@ const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards
                     <CustomTooltip
                       text={TOTAL_VOTING_POWER_TOOLTIP_TEXT}
                       iconId="info"
-                      defaultStrokeColor={colors[themeSelected]['subHeadingText']}
+                      defaultStrokeColor={colors[themeSelected].subHeadingText}
                     />
                   </div>
                   <div className="value">
