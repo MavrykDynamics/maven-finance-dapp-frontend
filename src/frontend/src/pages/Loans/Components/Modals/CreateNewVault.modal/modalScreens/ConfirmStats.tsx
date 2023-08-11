@@ -203,7 +203,7 @@ export const ConfirmStats = () => {
             <div className="name">Selected Baker</div>
             <div className="value">{choosenBaker?.bakerName ?? 'Not relevant'}</div>
           </ThreeLevelListItem>
-          <ThreeLevelListItem>
+          <ThreeLevelListItem className="align-tree-item-right">
             <div className="name">Total Collateral Deposited</div>
             <CommaNumber value={collateralsBalance} decimalsToShow={2} className="value" beginningText="$" />
           </ThreeLevelListItem>
