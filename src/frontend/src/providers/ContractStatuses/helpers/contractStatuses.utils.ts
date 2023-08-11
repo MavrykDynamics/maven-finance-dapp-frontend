@@ -1,20 +1,27 @@
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-import { ContractStatusesContextStateType, NullableContractStatusesContextStateType } from '../contractStatuses.types'
+import {
+  ContractStatusesContext,
+  ContractStatusesContextStateType,
+  NullableContractStatusesContextStateType,
+} from '../contractStatuses.types'
 import { EMPTY_CONTRACT_STATUSES_CTX } from './contractStatuses.consts'
 import { GlasssBrokenStatusAndWhiteListDevsQuery } from 'utils/__generated__/graphql'
 
-type DoormanContextReturnValueArgs = {
+type ContractStatusesContextReturnValueArgs = {
   contractStatusesCtxState: NullableContractStatusesContextStateType
-  isLoading: boolean
+  changeLoansSubscriptionsList: ContractStatusesContext['changeLoansSubscriptionsList']
 }
 
 export const getContractStatusesProviderReturnValue = ({
   contractStatusesCtxState,
-  isLoading,
-}: DoormanContextReturnValueArgs) => {
+  changeLoansSubscriptionsList,
+}: ContractStatusesContextReturnValueArgs) => {
   const commonToReturn = {
-    isLoading,
+    changeLoansSubscriptionsList,
   }
+
+  // TODO add logic
+  const isLoading = false
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {
@@ -33,6 +40,7 @@ export const getContractStatusesProviderReturnValue = ({
   return {
     ...commonToReturn,
     ...nonNullableProviderValue,
+    isLoading,
   }
 }
 
@@ -47,10 +55,3 @@ export const normalizeContractStatusesConfig = (
     whitelistDevelopers,
   }
 }
-
-// CONFIG
-// return {
-//     isLoading: whiteListDevsLoading || glassBrokenLoading,
-//     isGlassBroken: glassBroken?.break_glass[0].glass_broken ?? null,
-//     whitelistDevelopers: whitelistDevelopers?.whitelist_developer.map(({ developer: { address } }) => address) ?? [],
-//   }

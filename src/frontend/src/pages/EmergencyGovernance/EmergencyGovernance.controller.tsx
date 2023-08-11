@@ -13,10 +13,9 @@ import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // providers
-import { SUB_SKIP } from 'utils/api/apollo.consts'
-import { useContractStatusConfig } from 'providers/ContractStatuses/hooks/useContractStatusesConfig'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
+import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
 
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
@@ -25,9 +24,10 @@ export const EmergencyGovernance = () => {
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { eGovProposals, isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 
-  const { isLoading: isContractStatusConfigLoading, isGlassBroken } = useContractStatusConfig({
-    skipWhitelistDevelopers: SUB_SKIP,
-  })
+  const {
+    isLoading: isContractStatusConfigLoading,
+    config: { isGlassBroken },
+  } = useContractStatusesContext()
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 

@@ -4,7 +4,6 @@ import qs from 'qs'
 
 // providers
 import { useContactStatuses } from 'providers/ContractStatuses/hooks/useContactStatuses'
-import { useContractStatusConfig } from 'providers/ContractStatuses/hooks/useContractStatusesConfig'
 
 // components
 import { ContractCard } from './ContractCard/ContractCard.controller'
@@ -37,13 +36,17 @@ import {
   BGWhitelist,
 } from './BreakGlass.style'
 import { Page } from 'styles'
+import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
 
 const ALL = 'All Contracts'
 const GENERAL = 'General Contracts'
 
 export const BreakGlass = () => {
   const { isLoading: isContractStatusesLoading, contractStatuses } = useContactStatuses()
-  const { isLoading: isContractStatusConfigLoading, isGlassBroken, whitelistDevelopers } = useContractStatusConfig()
+  const {
+    isLoading: isContractStatusConfigLoading,
+    config: { isGlassBroken, whitelistDevelopers },
+  } = useContractStatusesContext()
 
   const { search, pathname } = useLocation()
   const history = useHistory()

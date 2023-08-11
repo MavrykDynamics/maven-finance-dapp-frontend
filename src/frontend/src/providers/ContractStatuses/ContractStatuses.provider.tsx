@@ -1,14 +1,18 @@
 import { ApolloError } from '@apollo/client'
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // consts
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { CONTRACT_STATUSES_CONFIG_QUERY } from './queries/contractStatusConfig.query'
-import { ContractStatusesContext, NullableContractStatusesContextStateType } from './contractStatuses.types'
+import {
+  ContractStatusesContext,
+  ContractStatusesSubsRecordType,
+  NullableContractStatusesContextStateType,
+} from './contractStatuses.types'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { DEFAULT_CONTRACT_STATUSES_CTX } from './helpers/contractStatuses.consts'
+import { DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS, DEFAULT_CONTRACT_STATUSES_CTX } from './helpers/contractStatuses.consts'
 import {
   getContractStatusesProviderReturnValue,
   normalizeContractStatusesConfig,
@@ -25,22 +29,30 @@ const ContractStatusesProvider = ({ children }: Props) => {
 
   const [contractStatusesCtxState, setContractStatusesCtxState] =
     useState<NullableContractStatusesContextStateType>(DEFAULT_CONTRACT_STATUSES_CTX)
-  //   const [activeSubs, setActiveSubs] = useState<DoormanSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
+  const [isConfigSubActive, setIsConfigSubActive] = useState(false)
+  const [activeSubs, setActiveSubs] = useState<ContractStatusesSubsRecordType>(DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS)
 
   const handleSubError = (error: ApolloError, subName: string) => {
     console.error(`${subName} query error: `, error)
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
-  // get config
-  const { loading: isLoading } = useQueryWithRefetch(CONTRACT_STATUSES_CONFIG_QUERY, {
-    onCompleted: (data) => {
-      if (!data) return
-      const config = normalizeContractStatusesConfig(data)
-      setContractStatusesConfig(config)
+  // sub to config
+  useQueryWithRefetch(
+    CONTRACT_STATUSES_CONFIG_QUERY,
+    {
+      skip: !isConfigSubActive,
+      onCompleted: (data) => {
+        if (!data) return
+        const config = normalizeContractStatusesConfig(data)
+        setContractStatusesConfig(config)
+      },
+      onError: (error) => handleSubError(error, 'CONTRACT_STATUSES_CONFIG_QUERY'),
     },
-    onError: (error) => handleSubError(error, 'CONTRACT_STATUSES_CONFIG_QUERY'),
-  })
+    {
+      blocksDiff: 2000,
+    },
+  )
 
   const setContractStatusesConfig = (config: NullableContractStatusesContextStateType['config']) => {
     setContractStatusesCtxState((prev) => ({
@@ -49,13 +61,17 @@ const ContractStatusesProvider = ({ children }: Props) => {
     }))
   }
 
+  const changeLoansSubscriptionsList = (newSkips: Partial<ContractStatusesSubsRecordType>) => {
+    setActiveSubs((prev) => ({ ...prev, ...newSkips }))
+  }
+
   const contextProviderValue = useMemo(
     () =>
       getContractStatusesProviderReturnValue({
         contractStatusesCtxState,
-        isLoading,
+        changeLoansSubscriptionsList,
       }),
-    [isLoading, contractStatusesCtxState],
+    [contractStatusesCtxState],
   )
 
   return <contractStatusesContext.Provider value={contextProviderValue}>{children}</contractStatusesContext.Provider>

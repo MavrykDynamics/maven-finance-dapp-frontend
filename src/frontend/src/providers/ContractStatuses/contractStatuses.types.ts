@@ -11,6 +11,7 @@ import {
 } from 'utils/__generated__/graphql'
 
 import { SubscriptionSkipType } from 'utils/api/apollo.consts'
+import { CONTRACT_STATUSES_ALL_SUB, CONTRACT_STATUSES_CONFIG_SUB } from './helpers/contractStatuses.consts'
 
 export type ContractStatusesStorage = Array<{
   title: string
@@ -36,8 +37,8 @@ export type ContractStatusesType = BreakGlassfarmSubscription &
   BreakGlassTreasurySubscription
 
 export type ContractStatusesConfigType = {
-  isGlassBroken: boolean | null
-  whitelistDevelopers: string[] | null
+  isGlassBroken: boolean
+  whitelistDevelopers: string[]
 }
 
 export type ContractStatusesContextStateType = {
@@ -48,4 +49,9 @@ export type NullableContractStatusesContextStateType = DeepNullable<ContractStat
 
 export type ContractStatusesContext = ContractStatusesContextStateType & {
   isLoading: boolean
+
+  changeLoansSubscriptionsList: (newSkips: Partial<ContractStatusesSubsRecordType>) => void
 }
+
+export type ContractStatusesSubsType = typeof CONTRACT_STATUSES_CONFIG_SUB | typeof CONTRACT_STATUSES_ALL_SUB
+export type ContractStatusesSubsRecordType = Record<ContractStatusesSubsType, boolean>

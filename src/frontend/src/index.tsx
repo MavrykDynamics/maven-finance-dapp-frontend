@@ -24,6 +24,7 @@ import LoansProvider from 'providers/LoansProvider/loans.provider'
 import DoormanProvider from 'providers/DoormanProvider/doorman.provider'
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
+import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuses.provider'
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
@@ -56,15 +57,17 @@ const InitialDataDappProviders = ({ children }: { children: React.ReactNode }) =
   return (
     <DappConfigProvider>
       <TokensProvider>
-        <UserProvider>
-          <DataFeedsProvider>
-            <dappConfigContext.Consumer>
-              {({ preferences: { themeSelected } }) => (
-                <ThemeProvider theme={themeColors[themeSelected]}>{children}</ThemeProvider>
-              )}
-            </dappConfigContext.Consumer>
-          </DataFeedsProvider>
-        </UserProvider>
+        <ContractStatusesProvider>
+          <UserProvider>
+            <DataFeedsProvider>
+              <dappConfigContext.Consumer>
+                {({ preferences: { themeSelected } }) => (
+                  <ThemeProvider theme={themeColors[themeSelected]}>{children}</ThemeProvider>
+                )}
+              </dappConfigContext.Consumer>
+            </DataFeedsProvider>
+          </UserProvider>
+        </ContractStatusesProvider>
       </TokensProvider>
     </DappConfigProvider>
   )
