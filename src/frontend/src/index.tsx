@@ -24,6 +24,7 @@ import LoansProvider from 'providers/LoansProvider/loans.provider'
 import DoormanProvider from 'providers/DoormanProvider/doorman.provider'
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
+import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuses.provider'
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
@@ -88,13 +89,15 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
       {isInitialLoading ? (
         <FullScreenLoadingApp />
       ) : (
-        <DoormanProvider>
-          <SatellitesProvider>
-            <LoansProvider>
-              <VaultsProvider>{children}</VaultsProvider>
-            </LoansProvider>
-          </SatellitesProvider>
-        </DoormanProvider>
+        <ContractStatusesProvider>
+          <DoormanProvider>
+            <SatellitesProvider>
+              <LoansProvider>
+                <VaultsProvider>{children}</VaultsProvider>
+              </LoansProvider>
+            </SatellitesProvider>
+          </DoormanProvider>
+        </ContractStatusesProvider>
       )}
     </>
   )

@@ -1,10 +1,6 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 import qs from 'qs'
-
-// providers
-import { useContactStatuses } from 'providers/ContractStatuses/hooks/useContactStatuses'
-import { useContractStatusConfig } from 'providers/ContractStatuses/hooks/useContractStatusesConfig'
 
 // components
 import { ContractCard } from './ContractCard/ContractCard.controller'
@@ -37,13 +33,23 @@ import {
   BGWhitelist,
 } from './BreakGlass.style'
 import { Page } from 'styles'
+import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
+import {
+  CONTRACT_STATUSES_ALL_SUB,
+  CONTRACT_STATUSES_CONFIG_SUB,
+  DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS,
+} from 'providers/ContractStatuses/helpers/contractStatuses.consts'
 
 const ALL = 'All Contracts'
 const GENERAL = 'General Contracts'
 
 export const BreakGlass = () => {
-  const { isLoading: isContractStatusesLoading, contractStatuses } = useContactStatuses()
-  const { isLoading: isContractStatusConfigLoading, isGlassBroken, whitelistDevelopers } = useContractStatusConfig()
+  const {
+    isLoading: isContractStatusesLoading,
+    config: { isGlassBroken, whitelistDevelopers },
+    contractStatuses,
+    changeContractStatusesSubscriptionsList,
+  } = useContractStatusesContext()
 
   const { search, pathname } = useLocation()
   const history = useHistory()
@@ -52,6 +58,17 @@ export const BreakGlass = () => {
   const [selectedContract, setSelectedContract] = useState<string>(ALL)
   const [activeCard, setActiveCard] = React.useState<null | string>(null)
   const [openedAccordeon, setOpenedAcordeon] = React.useState<null | string>(null)
+
+  useEffect(() => {
+    changeContractStatusesSubscriptionsList({
+      [CONTRACT_STATUSES_ALL_SUB]: true,
+      [CONTRACT_STATUSES_CONFIG_SUB]: true,
+    })
+
+    return () => {
+      changeContractStatusesSubscriptionsList(DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS)
+    }
+  }, [])
 
   const uniqueContracts = useMemo(() => {
     const uniqueAllContracts = contractStatuses
@@ -88,7 +105,7 @@ export const BreakGlass = () => {
   return (
     <Page>
       <PageHeader page={'break glass'} />
-      {isContractStatusesLoading && isContractStatusConfigLoading ? (
+      {isContractStatusesLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading contracts statuses</div>
