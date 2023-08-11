@@ -204,6 +204,13 @@ export const getLoansProviderReturnValue = ({
   }
 }
 
+/**
+ *
+ * @param data new data from gq query
+ * @param tokensMetadata current token metadata (f.e. XTZ | USDT | EURL)
+ * @param tokensPrices current token prices
+ * @returns array of history data for marketn transactions
+ */
 export const normalizeTransactionHistory = (
   data: GetLoansHistoryForMarketDataQuery,
   tokensMetadata: Record<string, TokenMetadataType>,
@@ -264,14 +271,22 @@ export const normalizeTransactionHistory = (
   )
 }
 
+// check if some of the chartsData values are empty {} | []
 export function isChartsDataHasEmptyValues(data: UseLoansChartsStateType) {
   return Object.values(data).some((v) => isEmptyObject(v) || isEmptyArray(v))
 }
 
+// helper type to map cgarts data and check for non empty properties
 type UseLoansChartsStateTypeShape = {
   [key: string]: SingleValueData[] | Record<TokenAddressType, LoansMarketMiniChartType>
 }
 
+/**
+ *
+ * @param prevData charts data from ref.cuurent
+ * @param data new charts data from gq query parsed with normalizer
+ * @returns chartds data with non empty values (cuz normalizer erases old data for charts)
+ */
 export const replaceNonEmptyChartsData = (
   prevData: UseLoansChartsStateTypeShape,
   data: UseLoansChartsStateTypeShape,

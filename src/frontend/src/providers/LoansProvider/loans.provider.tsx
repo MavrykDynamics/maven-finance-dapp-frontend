@@ -170,6 +170,8 @@ export const LoansProvider = ({ children }: Props) => {
     }))
   }
 
+  // refetch only when chartsToCalc were changed and there are empty objects in chartsData (like {} | [])
+  // if all data are valid - it will update the actual data every 25 blocks diff (line 122)
   useEffect(() => {
     if (isChartsDataHasEmptyValues(prevChartsData.current)) {
       refetchChartsData()
