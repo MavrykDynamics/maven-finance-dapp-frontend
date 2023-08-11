@@ -81,8 +81,6 @@ export const useCollateralInputData = (ignoreXTZMax = false) => {
         },
       })
 
-      console.log(validationStatus)
-
       if (inputData) {
         setInputData({
           ...inputData,

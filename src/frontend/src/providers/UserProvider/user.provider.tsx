@@ -71,11 +71,11 @@ export const UserProvider = ({ children }: Props) => {
   const [userCtxState, setUserCtxState] = useState<UserContextStateType>(DEFAULT_USER)
   // store user tokens from tzkt
   const [userTzktTokens, setUserTzktTokens] = useState<userTzKtTokenBalances>(DEFAULT_USER_TZKT_TOKENS)
-  const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
-  const [isUserLoading, setUserLoading] = useState(false)
 
   // track whether we've loaded user on init, if we have his wallet data in local storage
   const isRunnedInitialConnect = useRef<null | boolean>(false)
+  const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
+  const [isUserLoading, setUserLoading] = useState(hasUserInLocalStorage && !isRunnedInitialConnect.current)
 
   /**
    * we can startInitialUserLoading if:
@@ -361,7 +361,7 @@ export const UserProvider = ({ children }: Props) => {
       changeUser,
       setUserLoansData,
     }
-  }, [connect, signOut, changeUser, userCtxState, userTzktTokens])
+  }, [userCtxState, isUserLoading, isTzktBalancesLoading, connect, signOut, changeUser, setUserLoansData])
 
   return <userContext.Provider value={providerValue}>{children}</userContext.Provider>
 }
