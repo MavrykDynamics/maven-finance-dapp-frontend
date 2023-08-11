@@ -37,7 +37,7 @@ export const DEFAULT_USER: UserContextStateType = {
   userMTokens: {},
   farmAccounts: [], // user only on farms & dashboard personal
   availableProposalRewards: [],
-  userLoansData: DEFAULT_USER_LOANS_DATA,
+  userLoansData: null,
 }
 
 export const DEFAULT_USER_TZKT_TOKENS: userTzKtTokenBalances = {

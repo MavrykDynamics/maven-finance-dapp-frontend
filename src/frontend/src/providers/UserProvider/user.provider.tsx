@@ -293,6 +293,12 @@ export const UserProvider = ({ children }: Props) => {
       const newUserAddress = await DAPP_INSTANCE.swapAccount()
 
       if (newUserAddress && newUserAddress !== userCtxState.userAddress) {
+        // on user change set his loans data to null to make loader in useUserLoansData hook correct
+        setUserCtxState((prev) => ({
+          ...prev,
+          userLoansData: null,
+        }))
+
         loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress, useLoader: false })
 
         dispatch({ type: SET_REDUX_USER, accountPkh: newUserAddress })

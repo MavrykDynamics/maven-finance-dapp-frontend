@@ -9,7 +9,6 @@ import { GET_USER_LOANS_DATA } from '../queries/userLoans.query'
 import { GetUserLoansDataQuery } from 'utils/__generated__/graphql'
 import { DEFAULT_USER_LOANS_DATA } from '../helpers/user.consts'
 import { useUserContext } from '../user.provider'
-import { usePrevious } from 'react-use'
 
 /**
  *
@@ -21,14 +20,6 @@ const useUserLoansData = () => {
   const { userLoansData, setUserLoansData, userAddress } = useUserContext()
 
   const [indexerData, setIndexerData] = useState<GetUserLoansDataQuery | null>(null)
-
-  const prevUserAddress = usePrevious(userAddress)
-
-  useEffect(() => {
-    if (prevUserAddress !== userAddress) {
-      setUserLoansData(null)
-    }
-  }, [userAddress])
 
   useEffect(() => {
     if (!indexerData) return
