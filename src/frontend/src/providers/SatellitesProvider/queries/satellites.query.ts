@@ -4,7 +4,7 @@ import { gql as apolloGql } from '@apollo/client'
 import { SatelliteDataQueryQuery } from 'utils/__generated__/graphql'
 import { gql } from 'utils/__generated__'
 
-export function getSatelliteDataSubscription(
+export function getSatelliteDataQuery(
   userAddress: string | null,
   isOnlyActive?: boolean,
   isOnlyOracles?: boolean,

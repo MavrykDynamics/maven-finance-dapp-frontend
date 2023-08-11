@@ -2,8 +2,7 @@ import dayjs from 'dayjs'
 import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 
 // types
-import { GetLoansHistoryDataSubscription } from 'utils/__generated__/graphql'
-import { LoansChartsType, UseLoansChartsStateType } from './loans.types'
+import { GetLoansHistoryDataQuery } from 'utils/__generated__/graphql'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 
 // utils
@@ -18,6 +17,8 @@ import {
   LIQUIDITY_HISTORY_DATA_TYPES,
   LOANS_HISTORY_DATA_TYPES,
 } from './loans.const'
+import { LoansChartsToCalcType } from '../hooks/useLoansCharts'
+import { LoansChartsType } from '../loans.provider.types'
 
 const getLiquidityAmount = (
   type: (typeof LOANS_HISTORY_DATA_TYPES)[keyof typeof LOANS_HISTORY_DATA_TYPES],
@@ -121,8 +122,8 @@ export const normalizeLoansCharts = ({
   tokensMetadata,
   tokensPrices,
 }: {
-  indexerData: GetLoansHistoryDataSubscription
-  chartsToCalc: LoansChartsType
+  indexerData: GetLoansHistoryDataQuery
+  chartsToCalc: LoansChartsToCalcType
   tokensPrices: TokensContext['tokensPrices']
   tokensMetadata: TokensContext['tokensMetadata']
 }) => {
@@ -134,7 +135,7 @@ export const normalizeLoansCharts = ({
     calcMarketLendingChart = false,
   } = chartsToCalc
 
-  return indexerData.lending_controller[0].history_data.reduce<UseLoansChartsStateType>(
+  return indexerData.lending_controller[0].history_data.reduce<LoansChartsType>(
     (acc, { type, amount, timestamp, loan_token, collateral_token }) => {
       if (!loan_token) return acc
       const loanTokenAddress = loan_token.token.token_address

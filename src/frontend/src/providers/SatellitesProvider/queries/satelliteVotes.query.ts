@@ -1,6 +1,6 @@
 import { gql } from 'utils/__generated__'
 
-export const SATELLITE_VOTES_SUBSCRIPTION = gql(`
+export const SATELLITE_VOTES_QUERY = gql(`
 	query satelliteVotesQuery($userAddress: String!) {
 		satellite(where: {registration_timestamp: {_is_null: false}, user: {address: {_eq: $userAddress}}}, order_by: {currently_registered: desc}) {
 			user {

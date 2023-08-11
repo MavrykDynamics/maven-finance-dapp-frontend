@@ -1,4 +1,4 @@
-import { LoansContextState, NullableLoansContextState } from '../loans.provider.types'
+import { LoansChartsType, LoansContextState, NullableLoansContextState } from '../loans.provider.types'
 
 export const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 
@@ -41,11 +41,20 @@ export const DEFAULT_LOANS_ACTIVE_SUBS = {
   [LOANS_CONFIG]: false,
 } as const
 
+export const EMPTY_LOANS_CHARTS: LoansChartsType = {
+  totalLendingChart: [],
+  totalBorrowingChart: [],
+  totalCollateralChart: [],
+  marketBorrowChart: {},
+  marketLendingChart: {},
+}
+
 export const DEFAULT_LOANS_CONTEXT: NullableLoansContextState = {
   allMarketsAddresses: null,
   marketsAddresses: null,
   marketsMapper: null,
   config: null,
+  chartsData: null,
 }
 
 export const EMPTY_LOANS_CONTEXT: LoansContextState = {
@@ -56,4 +65,5 @@ export const EMPTY_LOANS_CONTEXT: LoansContextState = {
     daoFee: 0,
     collateralFactor: 0,
   },
+  chartsData: null,
 }

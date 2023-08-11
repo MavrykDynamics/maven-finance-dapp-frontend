@@ -72,6 +72,7 @@ export const UserProvider = ({ children }: Props) => {
   // store user tokens from tzkt
   const [userTzktTokens, setUserTzktTokens] = useState<userTzKtTokenBalances>(DEFAULT_USER_TZKT_TOKENS)
   const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
+  const [isUserLoading, setUserLoading] = useState(false)
 
   // track whether we've loaded user on init, if we have his wallet data in local storage
   const isRunnedInitialConnect = useRef<null | boolean>(false)
@@ -173,6 +174,7 @@ export const UserProvider = ({ children }: Props) => {
 
       // if choosen wallet in popup set it to context and loan initial balances from tzkt via fetch
       if (userAddress) {
+        setUserLoading(true)
         loadInitialTzktTokensForNewlyConnectedUser({ userAddress })
 
         dispatch({ type: SET_REDUX_USER, accountPkh: userAddress })
@@ -201,16 +203,15 @@ export const UserProvider = ({ children }: Props) => {
   }, [canStartUserInitialLoading, , connect])
 
   // subscribe to user's indexer data
-  const { loading: userDataLoading } = useQueryWithRefetch(USER_DATA_QUERY, {
+  useQueryWithRefetch(USER_DATA_QUERY, {
     skip: !userCtxState.userAddress,
     variables: {
       userAddress: userCtxState.userAddress ?? '',
     },
     onCompleted: (data) => {
-      // if user does not exists, TODO: should not be an option
-      if (!data || data.mavryk_user.length === 0) {
-        bug('User does not exists in DB')
-        signOut()
+      // if user does not exists
+      // TODO: should not be an option set default user profile
+      if (data.mavryk_user.length === 0) {
         return
       }
 
@@ -230,6 +231,7 @@ export const UserProvider = ({ children }: Props) => {
         availableLoansRewards,
         userMTokens,
       }))
+      setUserLoading(false)
     },
     onError: (e) => {
       console.error(`UserProvider query error: `, e)
@@ -293,6 +295,7 @@ export const UserProvider = ({ children }: Props) => {
       const newUserAddress = await DAPP_INSTANCE.swapAccount()
 
       if (newUserAddress && newUserAddress !== userCtxState.userAddress) {
+        setUserLoading(true)
         // on user change set his loans data to null to make loader in useUserLoansData hook correct
         setUserCtxState((prev) => ({
           ...prev,
@@ -339,7 +342,7 @@ export const UserProvider = ({ children }: Props) => {
     // set initial connect to true, when we have user address set (subs runned and loading statuses set to true) and loading statuses are off,
     // or we don't have user wallet in LC and we are unable to restore it
     if (
-      (!isRunnedInitialConnect.current && userCtxState.userAddress && !(userDataLoading || isTzktBalancesLoading)) ||
+      (!isRunnedInitialConnect.current && userCtxState.userAddress && !(isUserLoading || isTzktBalancesLoading)) ||
       !hasUserInLocalStorage
     ) {
       isRunnedInitialConnect.current = true
@@ -351,7 +354,7 @@ export const UserProvider = ({ children }: Props) => {
         ...userCtxState.userTokensBalances,
         ...(userCtxState.userAddress === userTzktTokens.userAddress ? userTzktTokens.tokens : {}),
       },
-      isLoading: userDataLoading || isTzktBalancesLoading,
+      isLoading: isUserLoading || isTzktBalancesLoading,
       isRunnedInitialConnect: Boolean(isRunnedInitialConnect.current),
       connect,
       signOut,
