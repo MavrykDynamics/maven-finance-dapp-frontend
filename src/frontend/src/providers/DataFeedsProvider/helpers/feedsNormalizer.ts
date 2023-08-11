@@ -1,7 +1,7 @@
 import { UTCTimestamp } from 'lightweight-charts'
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { DataFeedsContext, Feed } from '../dataFeeds.provider.types'
-import { SubsribeFeedHistoryDataSubscription } from 'utils/__generated__/graphql'
+import { FeedHistoryQeuryQuery } from 'utils/__generated__/graphql'
 
 import { convertNumberForClient, percentageDifference } from 'utils/calcFunctions'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
@@ -88,9 +88,7 @@ export function normalizeFeedsPrices(feedsFromCtx: DataFeedsContext['feedsMapper
   }, {})
 }
 
-export function normalizeDataFeedsHistory(
-  historyData: SubsribeFeedHistoryDataSubscription['aggregator'][number]['history_data'],
-) {
+export function normalizeDataFeedsHistory(historyData: FeedHistoryQeuryQuery['aggregator'][number]['history_data']) {
   return historyData?.length
     ? historyData
         .map((item) => {
@@ -99,15 +97,13 @@ export function normalizeDataFeedsHistory(
             value: symbolsAfterDecimalPoint(
               convertNumberForClient({ number: item.data, grade: item.aggregator.decimals }),
             ),
-          }
+          } as AreaChartPlotType
         })
         .reverse()
     : []
 }
 
-export function normalizeDataFeedsVolatility(
-  historyData: SubsribeFeedHistoryDataSubscription['aggregator'][number]['history_data'],
-) {
+export function normalizeDataFeedsVolatility(historyData: FeedHistoryQeuryQuery['aggregator'][number]['history_data']) {
   return historyData?.length >= 2
     ? historyData
         .reduce<Array<AreaChartPlotType>>((acc, { data, aggregator: { decimals }, timestamp }, idx, arr) => {
@@ -118,7 +114,7 @@ export function normalizeDataFeedsVolatility(
               symbolsAfterDecimalPoint(convertNumberForClient({ number: data, grade: decimals })),
               symbolsAfterDecimalPoint(convertNumberForClient({ number: arr[idx - 1]?.data ?? 0, grade: decimals })),
             ),
-          })
+          } as AreaChartPlotType)
           return acc
         }, [])
         .reverse()

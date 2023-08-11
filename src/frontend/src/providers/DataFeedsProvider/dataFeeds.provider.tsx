@@ -9,10 +9,13 @@ import {
   smallFeedsQuerySchema,
   SmallFeedsQueryType,
 } from './helpers/feeds.schemes'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 
 // helpers
 import { normalizeFeeds, normalizeFeedsPrices } from './helpers/feedsNormalizer'
 import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
+
+// constext
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
@@ -37,6 +40,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
     feedsAddresses: [],
     feedsMapper: {},
     feedsCategories: [],
+    feedsCharts: {},
   })
 
   // load initial feeds data
@@ -100,8 +104,18 @@ export const DataFeedsProvider = ({ children }: Props) => {
     })
   }
 
+  const setFeedChart = (newChartData: Array<AreaChartPlotType>, feedAddress: string, period: string) => {
+    setFeedsCtxState((prev) => ({
+      ...prev,
+      feedsCharts: {
+        ...prev.feedsCharts,
+        [feedAddress]: { data: newChartData, period },
+      },
+    }))
+  }
+
   const providerValue = useMemo(() => {
-    return { ...feedsCtxState, isLoading: initialLoadingStatus.current }
+    return { ...feedsCtxState, isLoading: initialLoadingStatus.current, setFeedChart }
   }, [feedsCtxState])
 
   return <dataFeedsContext.Provider value={providerValue}>{children}</dataFeedsContext.Provider>

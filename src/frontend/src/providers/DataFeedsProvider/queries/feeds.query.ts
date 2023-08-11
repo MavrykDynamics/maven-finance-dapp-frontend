@@ -1,9 +1,8 @@
 import { gql } from 'utils/__generated__'
 
-// TODO: refactor
-// feeds rewards subsciption query with interval or refetch when feed change or heart_beat_seconds
-export const SUBSCRIBE_FEED_HISTORY = gql(`
-subscription subsribeFeedHistoryData($feedAddress: String) {
+// TODO: add pagination by period
+export const FEED_HISTORY_QUERY = gql(`
+query feedHistoryQeury($feedAddress: String) {
     aggregator(where: { address: { _eq: $feedAddress } }) {
       history_data(distinct_on: timestamp, order_by: { timestamp: desc }) {
         data

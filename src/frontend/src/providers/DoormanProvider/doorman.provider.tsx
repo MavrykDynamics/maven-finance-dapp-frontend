@@ -1,4 +1,4 @@
-import { ApolloError, useSubscription } from '@apollo/client'
+import { ApolloError } from '@apollo/client'
 import React, { useContext, useMemo, useState } from 'react'
 
 // helpers
@@ -16,29 +16,21 @@ import {
   DoormanSubsRecordType,
   StakingSubsType,
 } from './doorman.provider.types'
-import {
-  SubscribeSmvkHistoryDataSubscription,
-  SubscribeMvkTokenTotalSubscription,
-  SubscribeAdressBalanceSubscription,
-} from 'utils/__generated__/graphql'
+import { SmvkMvkHistoryDataQuery, GetDappSmvkMvkStatsQuery } from 'utils/__generated__/graphql'
 
 // consts
 import { MVK_DECIMALS } from 'utils/constants'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import {
   DEFAULT_STAKING_CTX,
-  MVK_BALANCE_SUB,
-  MVK_TOTAL_SUB,
+  MVK_SMVK_HISTORY_SUB,
+  DAPP_MVK_SMVK_STATS_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
-  SMVK_HISTORY_SUB,
 } from './helpers/doorman.consts'
-import {
-  SUBSCRIPTION_STAKE_HISTORY,
-  SUBSCRIPTION_ADDRESS_BALANCE_DATA,
-  SUBSCRIPTION_MVK_TOKEN_TOTAL,
-} from './queries/doorman.query'
+import { SMVK_MVK_HISTORY_DATA, DAPP_MVK_SMVK_STATS } from './queries/doorman.query'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { getDoormanProviderReturnValue } from './helpers/doorman.utils'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 export const doormanContext = React.createContext<DoormanContext>(undefined!)
 
@@ -61,41 +53,27 @@ const DoormanProvider = ({ children }: Props) => {
   }
 
   // subscribes
-  useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
-    skip: !activeSubs[SMVK_HISTORY_SUB],
-    onData: ({ data: { data } }) => {
-      if (!data) return
+  useQueryWithRefetch(SMVK_MVK_HISTORY_DATA, {
+    skip: !activeSubs[MVK_SMVK_HISTORY_SUB],
+    onCompleted: (data) => {
       updateStakeHistoryData(data)
     },
-    shouldResubscribe: true,
-    onError: (error) => handleSubError(error, SMVK_HISTORY_SUB),
+    onError: (error) => handleSubError(error, MVK_SMVK_HISTORY_SUB),
   })
 
-  useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
-    skip: !activeSubs[MVK_BALANCE_SUB] || !doormanAddress,
+  useQueryWithRefetch(DAPP_MVK_SMVK_STATS, {
+    skip: !activeSubs[DAPP_MVK_SMVK_STATS_SUB] || !doormanAddress,
     variables: {
-      _eq: doormanAddress,
+      doormanContractAddress: doormanAddress,
     },
-    onData: ({ data: { data } }) => {
-      if (!data) return
-      updateTotalStakedMvk(data)
+    onCompleted: (data) => {
+      updateMvkSmvkStats(data)
     },
-    onError: (error) => handleSubError(error, MVK_BALANCE_SUB),
-    shouldResubscribe: true,
-  })
-
-  useSubscription(SUBSCRIPTION_MVK_TOKEN_TOTAL, {
-    skip: !activeSubs[MVK_TOTAL_SUB],
-    onData: ({ data: { data } }) => {
-      if (!data) return
-      updateTotalMvkToken(data)
-    },
-    onError: (error) => handleSubError(error, MVK_TOTAL_SUB),
-    shouldResubscribe: true,
+    onError: (error) => handleSubError(error, DAPP_MVK_SMVK_STATS_SUB),
   })
 
   // methods to update context data
-  const updateStakeHistoryData = ({ smvk_history_data }: SubscribeSmvkHistoryDataSubscription) => {
+  const updateStakeHistoryData = ({ smvk_history_data }: SmvkMvkHistoryDataQuery) => {
     const { smvkHistoryData, mvkHistoryData } = normalizeDoormanChartsData({ smvk_history_data })
 
     setStakingCtxState((prevState) => ({
@@ -105,21 +83,19 @@ const DoormanProvider = ({ children }: Props) => {
     }))
   }
 
-  const updateTotalStakedMvk = (storage: SubscribeAdressBalanceSubscription) => {
+  const updateMvkSmvkStats = (storage: GetDappSmvkMvkStatsQuery) => {
+    const {
+      mavryk_user: [doormanContractBalances],
+      mvk_token: [mvkTokenData],
+    } = storage
     setStakingCtxState((prevState) => ({
       ...prevState,
       totalStakedMvk: convertNumberForClient({
-        number: storage.mavryk_user[0].mvk_balance ?? 0,
+        number: doormanContractBalances?.mvk_balance ?? 0,
         grade: MVK_DECIMALS,
       }),
-    }))
-  }
-
-  const updateTotalMvkToken = ({ mvk_token: [mvkTokenItem] }: SubscribeMvkTokenTotalSubscription) => {
-    setStakingCtxState((prevState) => ({
-      ...prevState,
-      totalSupply: convertNumberForClient({ number: mvkTokenItem.total_supply ?? 0, grade: MVK_DECIMALS }),
-      maximumTotalSupply: convertNumberForClient({ number: mvkTokenItem.maximum_supply ?? 0, grade: MVK_DECIMALS }),
+      totalSupply: convertNumberForClient({ number: mvkTokenData?.total_supply ?? 0, grade: MVK_DECIMALS }),
+      maximumTotalSupply: convertNumberForClient({ number: mvkTokenData?.maximum_supply ?? 0, grade: MVK_DECIMALS }),
     }))
   }
 
