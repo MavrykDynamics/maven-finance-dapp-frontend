@@ -20,16 +20,16 @@ import {
 type ContractStatusesContextReturnValueArgs = {
   contractStatusesCtxState: NullableContractStatusesContextStateType
   activeSubs: ContractStatusesSubsRecordType
-  changeLoansSubscriptionsList: ContractStatusesContext['changeLoansSubscriptionsList']
+  changeContractStatusesSubscriptionsList: ContractStatusesContext['changeContractStatusesSubscriptionsList']
 }
 
 export const getContractStatusesProviderReturnValue = ({
   contractStatusesCtxState,
-  changeLoansSubscriptionsList,
+  changeContractStatusesSubscriptionsList,
   activeSubs,
 }: ContractStatusesContextReturnValueArgs) => {
   const commonToReturn = {
-    changeLoansSubscriptionsList,
+    changeContractStatusesSubscriptionsList,
   }
 
   const { contractStatuses, config } = contractStatusesCtxState

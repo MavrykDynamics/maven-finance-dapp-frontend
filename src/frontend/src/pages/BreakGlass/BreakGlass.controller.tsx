@@ -37,6 +37,7 @@ import { useContractStatusesContext } from 'providers/ContractStatuses/ContractS
 import {
   CONTRACT_STATUSES_ALL_SUB,
   CONTRACT_STATUSES_CONFIG_SUB,
+  DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS,
 } from 'providers/ContractStatuses/helpers/contractStatuses.consts'
 
 const ALL = 'All Contracts'
@@ -47,7 +48,7 @@ export const BreakGlass = () => {
     isLoading: isContractStatusesLoading,
     config: { isGlassBroken, whitelistDevelopers },
     contractStatuses,
-    changeLoansSubscriptionsList,
+    changeContractStatusesSubscriptionsList,
   } = useContractStatusesContext()
 
   const { search, pathname } = useLocation()
@@ -59,16 +60,13 @@ export const BreakGlass = () => {
   const [openedAccordeon, setOpenedAcordeon] = React.useState<null | string>(null)
 
   useEffect(() => {
-    changeLoansSubscriptionsList({
+    changeContractStatusesSubscriptionsList({
       [CONTRACT_STATUSES_ALL_SUB]: true,
       [CONTRACT_STATUSES_CONFIG_SUB]: true,
     })
 
     return () => {
-      changeLoansSubscriptionsList({
-        [CONTRACT_STATUSES_ALL_SUB]: false,
-        [CONTRACT_STATUSES_CONFIG_SUB]: false,
-      })
+      changeContractStatusesSubscriptionsList(DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS)
     }
   }, [])
 
@@ -107,7 +105,7 @@ export const BreakGlass = () => {
   return (
     <Page>
       <PageHeader page={'break glass'} />
-      {isContractStatusesLoading && isContractStatusesLoading ? (
+      {isContractStatusesLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading contracts statuses</div>

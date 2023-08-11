@@ -14,8 +14,15 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // providers
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
-import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
 import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
+
+// consts
+import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
+import {
+  CONTRACT_STATUSES_ALL_SUB,
+  CONTRACT_STATUSES_CONFIG_SUB,
+  DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS,
+} from 'providers/ContractStatuses/helpers/contractStatuses.consts'
 
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
@@ -27,6 +34,7 @@ export const EmergencyGovernance = () => {
   const {
     isLoading: isContractStatusConfigLoading,
     config: { isGlassBroken },
+    changeContractStatusesSubscriptionsList,
   } = useContractStatusesContext()
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
@@ -36,7 +44,15 @@ export const EmergencyGovernance = () => {
       [DAPP_MVK_SMVK_STATS_SUB]: true,
     })
 
-    return () => changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+    changeContractStatusesSubscriptionsList({
+      [CONTRACT_STATUSES_ALL_SUB]: true,
+      [CONTRACT_STATUSES_CONFIG_SUB]: true,
+    })
+
+    return () => {
+      changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+      changeContractStatusesSubscriptionsList(DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS)
+    }
   }, [])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {

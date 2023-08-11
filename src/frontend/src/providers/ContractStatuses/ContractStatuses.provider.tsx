@@ -82,7 +82,7 @@ const ContractStatusesProvider = ({ children }: Props) => {
     }))
   }
 
-  const changeLoansSubscriptionsList = (newSkips: Partial<ContractStatusesSubsRecordType>) => {
+  const changeContractStatusesSubscriptionsList = (newSkips: Partial<ContractStatusesSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }
 
@@ -90,7 +90,7 @@ const ContractStatusesProvider = ({ children }: Props) => {
     () =>
       getContractStatusesProviderReturnValue({
         contractStatusesCtxState,
-        changeLoansSubscriptionsList,
+        changeContractStatusesSubscriptionsList,
         activeSubs,
       }),
     [activeSubs, contractStatusesCtxState],

@@ -57,17 +57,15 @@ const InitialDataDappProviders = ({ children }: { children: React.ReactNode }) =
   return (
     <DappConfigProvider>
       <TokensProvider>
-        <ContractStatusesProvider>
-          <UserProvider>
-            <DataFeedsProvider>
-              <dappConfigContext.Consumer>
-                {({ preferences: { themeSelected } }) => (
-                  <ThemeProvider theme={themeColors[themeSelected]}>{children}</ThemeProvider>
-                )}
-              </dappConfigContext.Consumer>
-            </DataFeedsProvider>
-          </UserProvider>
-        </ContractStatusesProvider>
+        <UserProvider>
+          <DataFeedsProvider>
+            <dappConfigContext.Consumer>
+              {({ preferences: { themeSelected } }) => (
+                <ThemeProvider theme={themeColors[themeSelected]}>{children}</ThemeProvider>
+              )}
+            </dappConfigContext.Consumer>
+          </DataFeedsProvider>
+        </UserProvider>
       </TokensProvider>
     </DappConfigProvider>
   )
@@ -91,13 +89,15 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
       {isInitialLoading ? (
         <FullScreenLoadingApp />
       ) : (
-        <DoormanProvider>
-          <SatellitesProvider>
-            <LoansProvider>
-              <VaultsProvider>{children}</VaultsProvider>
-            </LoansProvider>
-          </SatellitesProvider>
-        </DoormanProvider>
+        <ContractStatusesProvider>
+          <DoormanProvider>
+            <SatellitesProvider>
+              <LoansProvider>
+                <VaultsProvider>{children}</VaultsProvider>
+              </LoansProvider>
+            </SatellitesProvider>
+          </DoormanProvider>
+        </ContractStatusesProvider>
       )}
     </>
   )

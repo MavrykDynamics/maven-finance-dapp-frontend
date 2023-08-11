@@ -33,8 +33,7 @@ export type NullableContractStatusesContextStateType = DeepNullable<ContractStat
 
 export type ContractStatusesContext = ContractStatusesContextStateType & {
   isLoading: boolean
-
-  changeLoansSubscriptionsList: (newSkips: Partial<ContractStatusesSubsRecordType>) => void
+  changeContractStatusesSubscriptionsList: (newSubs: Partial<ContractStatusesSubsRecordType>) => void
 }
 
 export type ContractStatusesSubsType = typeof CONTRACT_STATUSES_CONFIG_SUB | typeof CONTRACT_STATUSES_ALL_SUB
