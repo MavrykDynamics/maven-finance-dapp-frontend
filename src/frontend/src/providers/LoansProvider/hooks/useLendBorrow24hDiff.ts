@@ -11,6 +11,10 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 
 import { GetLending24hDiffQuery } from 'utils/__generated__/graphql'
 
+const refetchQueryVariables = () => ({
+  currentTimestamp: dayjs().subtract(1, 'day').toISOString(),
+})
+
 /**
  *
  * @returns last 24h volume change in $ and in %
@@ -46,9 +50,7 @@ const useLendBorrow24hDiff = (): {
       },
     },
     {
-      refetchQueryVariables: () => ({
-        currentTimestamp: dayjs().subtract(1, 'day').toISOString(),
-      }),
+      refetchQueryVariables,
     },
   )
 

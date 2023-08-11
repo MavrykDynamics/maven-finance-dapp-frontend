@@ -10,14 +10,11 @@ import {
 import { calculateAccruedInterest } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount } from 'providers/VaultsProvider/helpers/vaults.utils'
-import { GetVaultsSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { GetUserVaultsQueryQuery } from 'utils/__generated__/graphql'
 import { calcMarketAvaliableLiquidity } from 'providers/LoansProvider/helpers/loans.utils'
 
 const getVaultsDepositorsData = (
-  vault: Exclude<
-    GetVaultsSubscriptionSubscription['lending_controller'][number]['vaults'][number]['vault'],
-    null | undefined
-  >,
+  vault: Exclude<GetUserVaultsQueryQuery['lending_controller'][number]['vaults'][number]['vault'], null | undefined>,
 ) => {
   // Convert deep structure of depositors to array of depositrors addresses (strings)
   const depositors = (vault.depositors.map(({ depositor }) => depositor?.address).filter(Boolean) ??
@@ -34,7 +31,7 @@ const getVaultsDepositorsData = (
 }
 
 const normalizeCollaterals = (
-  collateral_balances: GetVaultsSubscriptionSubscription['lending_controller'][number]['vaults'][number]['collateral_balances'],
+  collateral_balances: GetUserVaultsQueryQuery['lending_controller'][number]['vaults'][number]['collateral_balances'],
 ) => {
   return collateral_balances.reduce<Array<CollateralType>>((acc, collateral) => {
     if (!collateral.collateral_token.token) return acc
@@ -60,7 +57,7 @@ export const normalizeVaults = ({
   indexerData,
   userAddress,
 }: {
-  indexerData: GetVaultsSubscriptionSubscription
+  indexerData: GetUserVaultsQueryQuery
   userAddress: string | null
 }) => {
   const {
