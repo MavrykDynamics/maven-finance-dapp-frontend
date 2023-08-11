@@ -2,7 +2,7 @@ import { ApolloError } from '@apollo/client'
 import React, { useContext, useMemo, useState } from 'react'
 
 // helpers
-import { getSatelliteDataSubscription } from './queries/satellites.query'
+import { getSatelliteDataQuery } from './queries/satellites.query'
 import { normalizeSatellitesLedger } from './helpers/satellites.normalizer'
 import { SatelliteDataQueryQuery } from 'utils/__generated__/graphql'
 import { getSatellitesProviderReturnValue } from './helpers/satellites.utils'
@@ -63,7 +63,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   }
 
   useQueryWithRefetch(
-    getSatelliteDataSubscription(
+    getSatelliteDataQuery(
       satelliteAddressToSubsctibe,
       activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ACTIVE_SUB,
       activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ORACLES_SUB,
@@ -81,7 +81,7 @@ export const SatellitesProvider = ({ children }: Props) => {
         if (!data) return
         updateSatellitesContext(data, satelliteAddressToSubsctibe, activeSubs[SATELLITE_DATA_SUB])
       },
-      onError: (e) => handleSubError(e, 'getSatelliteDataSubscription'),
+      onError: (e) => handleSubError(e, 'getSatelliteDataQuery'),
     },
   )
 

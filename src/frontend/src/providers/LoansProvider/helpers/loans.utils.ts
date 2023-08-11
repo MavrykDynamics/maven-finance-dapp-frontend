@@ -91,17 +91,20 @@ export const getLoansProviderReturnValue = ({
   activeSubs,
   changeLoansSubscriptionsList,
   setMarketAddressToSubscribe,
+  setLoansChartsData,
 }: {
   loansCtxState: NullableLoansContextState
   marketAddressToSubscribe: string | null
   activeSubs: LoansSubsRecordType
   changeLoansSubscriptionsList: LoansContext['changeLoansSubscriptionsList']
   setMarketAddressToSubscribe: LoansContext['setMarketAddressToSubscribe']
+  setLoansChartsData: LoansContext['setLoansChartsData']
 }) => {
   const { marketsMapper, marketsAddresses, config, allMarketsAddresses } = loansCtxState
   const commonToReturn = {
     changeLoansSubscriptionsList,
     setMarketAddressToSubscribe,
+    setLoansChartsData,
   }
 
   const isLoadingSingleMarket = marketAddressToSubscribe && !marketsMapper?.[marketAddressToSubscribe]

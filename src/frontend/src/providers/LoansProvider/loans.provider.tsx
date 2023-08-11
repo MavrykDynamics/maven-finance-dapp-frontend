@@ -6,7 +6,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
-import { LoansContext, NullableLoansContextState, LoansSubsRecordType } from './loans.provider.types'
+import { LoansContext, NullableLoansContextState, LoansSubsRecordType, LoansChartsType } from './loans.provider.types'
 import { GetLoansMarketsQueryQuery } from 'utils/__generated__/graphql'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
@@ -95,6 +95,13 @@ export const LoansProvider = ({ children }: Props) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }
 
+  const setLoansChartsData = (newchartsData: LoansChartsType) => {
+    setLoansCtxState((prev) => ({
+      ...prev,
+      chartsData: newchartsData,
+    }))
+  }
+
   const providerValue = useMemo(
     () =>
       getLoansProviderReturnValue({
@@ -103,6 +110,7 @@ export const LoansProvider = ({ children }: Props) => {
         activeSubs,
         changeLoansSubscriptionsList,
         setMarketAddressToSubscribe,
+        setLoansChartsData,
       }),
     [loansCtxState, activeSubs, marketAddressToSubscribe],
   )
