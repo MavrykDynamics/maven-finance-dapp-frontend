@@ -1,6 +1,14 @@
-import { UserContextStateType, userTzKtTokenBalances } from '../user.provider.types'
+import { UserContextStateType, UserLoansData, userTzKtTokenBalances } from '../user.provider.types'
 
 export const DEFAULT_USER_AVATAR = '/images/default-avatar.png'
+
+export const DEFAULT_USER_LOANS_DATA: UserLoansData = {
+  userBorrowings: [],
+  totalUserBorrowed: 0,
+  userLendings: [],
+  totalUserLended: 0,
+  userVaultsData: {},
+}
 
 // TODO: extract fields with comments into separate useQuery hooks
 // store in whole user context, but load in separate queries, cuz rare use cases
@@ -29,6 +37,7 @@ export const DEFAULT_USER: UserContextStateType = {
   userMTokens: {},
   farmAccounts: [], // user only on farms & dashboard personal
   availableProposalRewards: [],
+  userLoansData: DEFAULT_USER_LOANS_DATA,
 }
 
 export const DEFAULT_USER_TZKT_TOKENS: userTzKtTokenBalances = {

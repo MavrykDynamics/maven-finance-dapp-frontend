@@ -26,7 +26,7 @@ import { PositionTableStyled } from '../LoansDashboard.styles'
 import { getVaultSimpleStatus } from '../helpers/position.helpers'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
+import { UserLoansData } from 'providers/UserProvider/user.provider.types'
 
 // providers
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
@@ -36,11 +36,7 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
-export const LoansPositionTable = ({
-  userVaultsData,
-}: {
-  userVaultsData: UserLoansDataStateType['userVaultsData']
-}) => {
+export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoansData['userVaultsData'] }) => {
   const { openCreateVaultPopup, openAddLendingAssetPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress, userMTokens } = useUserContext()

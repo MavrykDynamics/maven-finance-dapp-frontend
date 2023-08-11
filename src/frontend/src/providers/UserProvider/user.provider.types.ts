@@ -18,7 +18,7 @@ export type UserLendBorrowItem = {
   tokenAddress: TokenAddressType
 }
 
-export type UserLoansDataStateType = {
+export type UserLoansData = {
   userBorrowings: Array<UserLendBorrowItem>
   totalUserBorrowed: number
   totalUserLended: number
@@ -63,6 +63,8 @@ export type UserContext = UserContextStateType & {
   connect: () => void
   signOut: () => void
   changeUser: () => void
+
+  setUserLoansData: (userLoansData: UserLoansData | null) => void
 }
 
 export type UserIndexerFarmRewardsType = GetUserDataQuery['mavryk_user'][number]['farm_accounts']
@@ -72,6 +74,7 @@ export type UserContextStateType = UserMetadataType & {
 
   availableLoansRewards: number
   availableFarmRewards: Record<string, number>
+  userLoansData: UserLoansData | null
 
   // user tokens
   userTokensBalances: Record<TokenAddressType, number>

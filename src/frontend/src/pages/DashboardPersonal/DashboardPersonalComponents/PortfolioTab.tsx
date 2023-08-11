@@ -69,7 +69,7 @@ const PortfolioTab = ({
   )
 
   const { userBorrowings, totalUserBorrowed, totalUserLended, userVaultsData, userLendings, isLoading } =
-    useUserLoansData({ userAddress })
+    useUserLoansData()
 
   const [toggleItems, setToggleItems] = useState<TabItem[]>(TOGGLE_VALUES)
   const lastSeria = CHART_TEST_DATA.at(-1)?.value ?? 0

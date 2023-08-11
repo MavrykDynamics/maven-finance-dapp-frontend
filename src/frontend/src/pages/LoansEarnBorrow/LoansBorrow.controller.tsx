@@ -80,7 +80,7 @@ export const LoansBorrow = () => {
     calcMarketBorrowChart: true,
   })
 
-  const { userVaultsData, isLoading: isUserLoansDataLoading } = useUserLoansData({ userAddress })
+  const { userVaultsData, isLoading: isUserLoansDataLoading } = useUserLoansData()
 
   const markets = useMemo(
     () =>

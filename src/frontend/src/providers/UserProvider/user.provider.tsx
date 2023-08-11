@@ -32,6 +32,7 @@ import { USER_DATA_QUERY } from './queries/userData.query'
 import {
   UserContext,
   UserContextStateType,
+  UserLoansData,
   UserTzktTokensBalancesType,
   userTzKtTokenBalances,
 } from './user.provider.types'
@@ -321,6 +322,13 @@ export const UserProvider = ({ children }: Props) => {
     handleOnReconnected,
   ])
 
+  const setUserLoansData = useCallback((userLoansData: UserLoansData | null) => {
+    setUserCtxState((prev) => ({
+      ...prev,
+      userLoansData,
+    }))
+  }, [])
+
   const providerValue = useMemo(() => {
     // set initial connect to true, when we have user address set (subs runned and loading statuses set to true) and loading statuses are off,
     // or we don't have user wallet in LC and we are unable to restore it
@@ -342,6 +350,7 @@ export const UserProvider = ({ children }: Props) => {
       connect,
       signOut,
       changeUser,
+      setUserLoansData,
     }
   }, [connect, signOut, changeUser, userCtxState, userTzktTokens])
 
