@@ -24,7 +24,7 @@ import { EmptyContainer } from 'app/App.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import useMarketTransactionHistory from 'providers/LoansProvider/hooks/useMarketTransactionHistory'
+import { useLoansTransactionHistory } from 'providers/LoansProvider/hooks/useMarketTransactionHistory'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type TransactionHistoryPropsType = {
@@ -57,7 +57,7 @@ export const TransactionHistory = ({
     contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
 
-  const { isLoading: isTransactionHistoryLoading, transactionHistory } = useMarketTransactionHistory({
+  const { isLoading: isTransactionHistoryLoading, transactionHistory } = useLoansTransactionHistory({
     marketTokenAddress: loanTokenAddress,
     userAddress,
     vaultAddress,
