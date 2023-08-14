@@ -46,13 +46,16 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     currentTimeRef.current = dayjs().toISOString()
   }, [activeSubs])
 
-  const handleSubError = (error: ApolloError, subName: FinancialRequestsSubsType) => {
+  const handleSubError = (error: ApolloError, subName: string) => {
     console.error(`${subName} query error: `, error)
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
-  const defaultQueryProps: QueryHookOptions<GetFinRequestsStorageQuery> = useMemo(
-    () => ({
+  useQueryWithRefetch(
+    getFinancialRequestsStorageSubscription({ requestType: activeSubs[FIN_REQUESTS_DATA] }),
+    {
+      skip: activeSubs[FIN_REQUESTS_DATA] === null,
+      onError: (error) => handleSubError(error, 'getFinancialRequestsStorageSubscription ERROR'),
       onCompleted: (data) => {
         if (!data) return
         console.log('Refetch logic FIN REQUESTS ', activeSubs[FIN_REQUESTS_DATA])
@@ -61,40 +64,6 @@ const FinancialRequestsProvider = ({ children }: Props) => {
       variables: {
         currentTimestamp: currentTimeRef.current,
       },
-    }),
-    [activeSubs],
-  )
-
-  useQueryWithRefetch(
-    getFinancialRequestsStorageSubscription({ requestType: activeSubs[FIN_REQUESTS_DATA] }),
-    {
-      skip: activeSubs[FIN_REQUESTS_DATA] !== ALL_FIN_REQUESTS_SUB,
-      onError: (error) => handleSubError(error, ALL_FIN_REQUESTS_SUB),
-      ...defaultQueryProps,
-    },
-    {
-      refetchQueryVariables,
-    },
-  )
-
-  useQueryWithRefetch(
-    getFinancialRequestsStorageSubscription({ requestType: activeSubs[FIN_REQUESTS_DATA] }),
-    {
-      skip: activeSubs[FIN_REQUESTS_DATA] !== PAST_FIN_REQUESTS_SUB,
-      onError: (error) => handleSubError(error, PAST_FIN_REQUESTS_SUB),
-      ...defaultQueryProps,
-    },
-    {
-      refetchQueryVariables,
-    },
-  )
-
-  useQueryWithRefetch(
-    getFinancialRequestsStorageSubscription({ requestType: activeSubs[FIN_REQUESTS_DATA] }),
-    {
-      skip: activeSubs[FIN_REQUESTS_DATA] !== ONGOING_FIN_REQUESTS_SUB,
-      onError: (error) => handleSubError(error, ONGOING_FIN_REQUESTS_SUB),
-      ...defaultQueryProps,
     },
     {
       refetchQueryVariables,
