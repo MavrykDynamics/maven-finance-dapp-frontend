@@ -317,7 +317,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     } catch (e) {
       bug('Fetch Error', 'Error occured while loading latest proposal id, please reload the page')
     }
-  }, [bug, changeActiveProposal, userAddress])
+  }, [apolloClient, bug, changeActiveProposal, userAddress])
 
   const submitActionFn = useCallback(async () => {
     if (!userAddress) {
@@ -338,35 +338,27 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
     const payments = getPaymentsDiff(
       [],
-      currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
+      currentProposal.proposalPayments
+        .filter(({ token_amount, to__id }) => token_amount || to__id)
+        .map(({ token_amount, ...rest }) => ({ ...rest, token_amount: Number(token_amount) })),
       tokensMetadata,
     )
+
+    const { title, description, sourceCode, invoice } = currentProposal
 
     return await submitProposal(
       governanceAddress,
       {
-        title: currentProposal.title,
-        description: currentProposal.description,
-        sourceCode: currentProposal.sourceCode,
-        invoice: currentProposal.invoice,
+        title,
+        description,
+        sourceCode,
+        invoice,
       },
       fee,
       bytes,
       payments,
     )
-  }, [
-    bug,
-    currentProposal.description,
-    currentProposal.invoice,
-    currentProposal.proposalData,
-    currentProposal.proposalPayments,
-    currentProposal.sourceCode,
-    currentProposal.title,
-    fee,
-    governanceAddress,
-    tokensMetadata,
-    userAddress,
-  ])
+  }, [bug, currentProposal, fee, governanceAddress, tokensMetadata, userAddress])
 
   const submissionDappCallback = useCallback(async () => {
     dappCallback() // default cb for dapp actions when redux is still here
