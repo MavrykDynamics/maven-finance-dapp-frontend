@@ -1,5 +1,5 @@
 import { ApolloError, QueryHookOptions } from '@apollo/client'
-import React, { useContext, useMemo, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   FinRequestsSubsRecordType,
   FinancialRequestsContext,
@@ -41,6 +41,10 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     useState<NullableFinancialRequestsContextStateType>(DEFAULT_FINANCIAL_REQUESTS_CTX)
   const [activeSubs, setActiveSubs] = useState<FinRequestsSubsRecordType>(DEFAULT_FIN_REQUESTS_ACTIVE_SUBS)
   const currentTimeRef = useRef(dayjs().toISOString())
+
+  useEffect(() => {
+    currentTimeRef.current = dayjs().toISOString()
+  }, [activeSubs])
 
   const handleSubError = (error: ApolloError, subName: FinancialRequestsSubsType) => {
     console.error(`${subName} query error: `, error)
