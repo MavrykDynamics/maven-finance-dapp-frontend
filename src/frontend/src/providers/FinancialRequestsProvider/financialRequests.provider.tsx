@@ -1,5 +1,5 @@
 import { ApolloError, QueryHookOptions } from '@apollo/client'
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useContext, useMemo, useRef, useState } from 'react'
 import {
   FinRequestsSubsRecordType,
   FinancialRequestsContext,
@@ -29,6 +29,11 @@ type Props = {
   children: React.ReactNode
 }
 
+// helper
+const refetchQueryVariables = () => ({
+  currentTimestamp: dayjs().toISOString(),
+})
+
 const FinancialRequestsProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
 
@@ -36,42 +41,6 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     useState<NullableFinancialRequestsContextStateType>(DEFAULT_FINANCIAL_REQUESTS_CTX)
   const [activeSubs, setActiveSubs] = useState<FinRequestsSubsRecordType>(DEFAULT_FIN_REQUESTS_ACTIVE_SUBS)
   const currentTimeRef = useRef(dayjs().toISOString())
-
-  const refetchQueryVariables = useCallback(
-    () => ({
-      currentTimestamp: currentTimeRef.current,
-    }),
-    [currentTimeRef.current],
-  )
-
-  /**
-   * chnage currentTime for sub when active sub was changed to resubscribe
-   */
-  useEffect(() => {
-    currentTimeRef.current = dayjs().toISOString()
-  }, [activeSubs])
-
-  /**
-   * updating currentTime to refetch data for fin requests if the oldest of ongoing actions expired
-   * than it watches for the next one, cuz id of request was changed in the update method inside subscription
-   */
-  useEffect(() => {
-    const _finrequest = finRequestsCtxState.closestOngoingFinRequestToBeExpired
-    let timeout: NodeJS.Timeout | null = null
-    if (_finrequest) {
-      const expirationTime = dayjs(_finrequest.votingTillTime)
-
-      const diff = expirationTime.diff(dayjs(), 'seconds')
-      timeout = setTimeout(() => {
-        currentTimeRef.current = dayjs().toISOString()
-      }, diff + 5000)
-    }
-
-    return () => {
-      if (timeout) clearTimeout(timeout)
-    }
-    // using id cuz it's object and reference can be different
-  }, [finRequestsCtxState.closestOngoingFinRequestToBeExpired?.id])
 
   const handleSubError = (error: ApolloError, subName: FinancialRequestsSubsType) => {
     console.error(`${subName} query error: `, error)
@@ -101,7 +70,6 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     },
     {
       refetchQueryVariables,
-      blocksDiff: 200,
     },
   )
 
@@ -114,7 +82,6 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     },
     {
       refetchQueryVariables,
-      blocksDiff: 200,
     },
   )
 
@@ -127,7 +94,6 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     },
     {
       refetchQueryVariables,
-      blocksDiff: 200,
     },
   )
 
