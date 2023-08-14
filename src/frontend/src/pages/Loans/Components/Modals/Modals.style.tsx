@@ -79,19 +79,68 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  .confirmation-stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    & > div:last-of-type {
+      display: grid;
+      justify-items: flex-end;
+    }
+  }
+
+  .align-tree-item-right {
+    display: grid;
+    justify-items: flex-end;
+  }
+
+  .screen-bottom-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .collateral-list-wrapper-for-overflow {
+    height: 280px; /*add additional 20px cuz of mb space, cuz list is positioned as absolute*/
+    position: relative;
+  }
+
   .collateral-list {
-    overflow-y: auto;
     overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
-    row-gap: 40px;
-    max-height: 250px;
+    min-height: 77px;
+    row-gap: 50px;
     margin-bottom: 20px;
-    min-height: 100px;
+  }
+
+  .collateral-list-overflow {
+    padding-right: 22px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% + 27px); /*icon + scrollbar*/
+    padding-top: 18px; /*to show use-max block on the first collateral input*/
+    max-height: 260px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .xtz-baker {
-    margin: 20px 0;
+    margin: 30px 0 -20px 0;
+  }
+
+  .collateral-block-wrapper:last-of-type {
+    & > div:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
+  .collateral-block-wrapper:last-of-type {
+    & > div:first-of-type {
+      margin-bottom: 20px;
+    }
   }
 
   .creating-vault-loader-wrapper {

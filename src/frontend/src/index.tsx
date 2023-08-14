@@ -24,6 +24,7 @@ import LoansProvider from 'providers/LoansProvider/loans.provider'
 import DoormanProvider from 'providers/DoormanProvider/doorman.provider'
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
+import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuses.provider'
 import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
 
 // components
@@ -55,19 +56,19 @@ const DappLibsProviders = ({ children }: { children: React.ReactNode }) => {
 
 const InitialDataDappProviders = ({ children }: { children: React.ReactNode }) => {
   return (
-    <TokensProvider>
-      <UserProvider>
-        <DataFeedsProvider>
-          <DappConfigProvider>
+    <DappConfigProvider>
+      <TokensProvider>
+        <UserProvider>
+          <DataFeedsProvider>
             <dappConfigContext.Consumer>
               {({ preferences: { themeSelected } }) => (
                 <ThemeProvider theme={themeColors[themeSelected]}>{children}</ThemeProvider>
               )}
             </dappConfigContext.Consumer>
-          </DappConfigProvider>
-        </DataFeedsProvider>
-      </UserProvider>
-    </TokensProvider>
+          </DataFeedsProvider>
+        </UserProvider>
+      </TokensProvider>
+    </DappConfigProvider>
   )
 }
 
@@ -89,15 +90,17 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
       {isInitialLoading ? (
         <FullScreenLoadingApp />
       ) : (
-        <DoormanProvider>
-          <SatellitesProvider>
-            <LoansProvider>
-              <VaultsProvider>
-                <FinancialRequestsProvider>{children}</FinancialRequestsProvider>
-              </VaultsProvider>
-            </LoansProvider>
-          </SatellitesProvider>
-        </DoormanProvider>
+        <ContractStatusesProvider>
+          <DoormanProvider>
+            <SatellitesProvider>
+              <LoansProvider>
+                <VaultsProvider>
+                  <FinancialRequestsProvider>{children}</FinancialRequestsProvider>
+                </VaultsProvider>
+              </LoansProvider>
+            </SatellitesProvider>
+          </DoormanProvider>
+        </ContractStatusesProvider>
       )}
     </>
   )

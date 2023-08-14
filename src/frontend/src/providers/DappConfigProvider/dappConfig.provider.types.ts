@@ -11,6 +11,7 @@ import { LoansActionsType } from 'providers/LoansProvider/loans.provider.types'
 import { VaultsActionsType } from 'providers/VaultsProvider/vaults.provider.types'
 import { FinancialRequestsActionsTypes } from 'providers/FinancialRequestsProvider/financialRequests.types'
 import { WalletOperationError } from 'errors/error'
+import { ProposalActionsTypes } from 'providers/ProposalsProvider/helpers/proposals.types'
 
 export type ActionTypes =
   | StakeActionType
@@ -18,6 +19,7 @@ export type ActionTypes =
   | SatelliteActionsType
   | LoansActionsType
   | VaultsActionsType
+  | ProposalActionsTypes
   | FinancialRequestsActionsTypes
 
 export type DappConfigContext = {

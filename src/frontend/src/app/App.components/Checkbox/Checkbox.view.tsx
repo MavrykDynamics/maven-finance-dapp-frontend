@@ -16,7 +16,7 @@ type Props = {
 export default function Checkbox({ id, className = '', checked, onChangeHandler, children, disabled }: Props) {
   return (
     <CheckboxStyled className={`${className} ${disabled ? 'disabled' : ''}`}>
-      <input type="checkbox" id={id} onClick={onChangeHandler} checked={Boolean(checked)} disabled={disabled} />
+      <input type="checkbox" id={id} onChange={onChangeHandler} checked={Boolean(checked)} disabled={disabled} />
       <label htmlFor={id}>
         <Icon id="check-fill" />
       </label>

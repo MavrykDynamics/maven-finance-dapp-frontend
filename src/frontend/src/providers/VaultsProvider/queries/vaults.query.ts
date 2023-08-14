@@ -2,7 +2,7 @@ import { VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR } from './../vaults
 import { DocumentNode } from 'graphql'
 import { gql as apolloGql, OperationVariables, TypedDocumentNode } from '@apollo/client'
 
-import { GetVaultsSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { GetUserVaultsQueryQuery } from 'utils/__generated__/graphql'
 import { VaultsSubsRecordType } from '../vaults.provider.types'
 import { gql } from 'utils/__generated__'
 
@@ -30,17 +30,17 @@ const getUserVaultsQueryFilters = (
   return `${VAULT_OPEN_FILTER} , owner: {address: {_neq: $userAddress}}`
 }
 
-export function getUserVaultsSubscription({
+export function getUserVaultsQuery({
   userAddress,
   filters,
 }: {
   userAddress: string | null
   filters: VaultsSubsRecordType[typeof VAULTS_DATA]
-}): DocumentNode | TypedDocumentNode<GetVaultsSubscriptionSubscription, OperationVariables> {
+}): DocumentNode | TypedDocumentNode<GetUserVaultsQueryQuery, OperationVariables> {
   const vaultsFilters = getUserVaultsQueryFilters(filters, userAddress)
 
   return apolloGql(`
-		subscription getVaultsSubscription($userAddress: String) {
+		query getUserVaultsQuery($userAddress: String) {
 			lending_controller(where: {mock_time: {_eq: false}}) {
 				max_vault_liquidation_pct
 				decimals
@@ -106,8 +106,8 @@ export function getUserVaultsSubscription({
 }
 
 // get all vaults
-export const SUBSCRIBE_TO_ALL_VAULTS = gql(`
-	subscription getAllVaultsSubscription {
+export const GET_ALL_VAULTS_QUERY = gql(`
+	query getAllVaultsQuery {
 		lending_controller(where: {mock_time: {_eq: false}}) {
 			max_vault_liquidation_pct
 			decimals

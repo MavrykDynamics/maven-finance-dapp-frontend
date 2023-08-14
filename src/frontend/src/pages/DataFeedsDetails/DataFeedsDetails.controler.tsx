@@ -78,6 +78,9 @@ const DataFeedDetails = () => {
   const { feedId } = useParams<{ feedId: string }>()
 
   const { feedsMapper } = useDataFeedsContext()
+  const {
+    contractAddresses: { feedsFactoryAddress },
+  } = useDappConfigContext()
 
   const {
     oraclesIds,
@@ -85,7 +88,7 @@ const DataFeedDetails = () => {
     isLoading: isSatellitesLoading,
     changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
-  const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts({}, feedId)
+  const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts(feedId)
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -297,8 +300,8 @@ const DataFeedDetails = () => {
                     />
                   </h3>
                   <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
-                    {feed.factory?.address ? (
-                      <TzAddress tzAddress={feed.factory?.address} type={BLUE} hasIcon={true} />
+                    {feedsFactoryAddress ? (
+                      <TzAddress tzAddress={feedsFactoryAddress} type={BLUE} hasIcon={true} />
                     ) : (
                       '-'
                     )}

@@ -1,5 +1,10 @@
-import { GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
-import { LoansContext, LoansContextState, LoansSubsRecordType } from '../loans.provider.types'
+import { GetLoansMarketsQueryQuery } from 'utils/__generated__/graphql'
+import {
+  LoansContext,
+  LoansContextState,
+  LoansSubsRecordType,
+  NullableLoansContextState,
+} from '../loans.provider.types'
 
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 import { EMPTY_LOANS_CONTEXT, LOANS_CONFIG, LOANS_MARKETS_DATA } from './loans.const'
@@ -68,7 +73,7 @@ export const calcMarketAvaliableLiquidity = ({
   token_pool_total,
   reserve_ratio,
 }: Pick<
-  GetLoansMarketsSubscriptionSubscription['lending_controller'][number]['loan_tokens'][number],
+  GetLoansMarketsQueryQuery['lending_controller'][number]['loan_tokens'][number],
   'total_remaining' | 'token_pool_total' | 'reserve_ratio'
 >) => {
   const reserveAmount = token_pool_total * (reserve_ratio / 10000)
@@ -86,17 +91,20 @@ export const getLoansProviderReturnValue = ({
   activeSubs,
   changeLoansSubscriptionsList,
   setMarketAddressToSubscribe,
+  setLoansChartsData,
 }: {
-  loansCtxState: LoansContextState
+  loansCtxState: NullableLoansContextState
   marketAddressToSubscribe: string | null
   activeSubs: LoansSubsRecordType
   changeLoansSubscriptionsList: LoansContext['changeLoansSubscriptionsList']
   setMarketAddressToSubscribe: LoansContext['setMarketAddressToSubscribe']
+  setLoansChartsData: LoansContext['setLoansChartsData']
 }) => {
   const { marketsMapper, marketsAddresses, config, allMarketsAddresses } = loansCtxState
   const commonToReturn = {
     changeLoansSubscriptionsList,
     setMarketAddressToSubscribe,
+    setLoansChartsData,
   }
 
   const isLoadingSingleMarket = marketAddressToSubscribe && !marketsMapper?.[marketAddressToSubscribe]

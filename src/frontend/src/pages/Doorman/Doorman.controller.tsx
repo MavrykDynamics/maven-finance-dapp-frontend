@@ -24,9 +24,8 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import {
-  MVK_BALANCE_SUB,
-  MVK_TOTAL_SUB,
-  SMVK_HISTORY_SUB,
+  DAPP_MVK_SMVK_STATS_SUB,
+  MVK_SMVK_HISTORY_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
 } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
@@ -59,9 +58,8 @@ export const Doorman = () => {
 
   useEffect(() => {
     changeStakingSubscriptionsList({
-      [MVK_BALANCE_SUB]: true,
-      [MVK_TOTAL_SUB]: true,
-      [SMVK_HISTORY_SUB]: true,
+      [MVK_SMVK_HISTORY_SUB]: true,
+      [DAPP_MVK_SMVK_STATS_SUB]: true,
     })
 
     changeSatellitesSubscriptionsList({ [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB })

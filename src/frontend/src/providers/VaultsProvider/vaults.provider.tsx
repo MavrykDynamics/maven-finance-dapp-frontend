@@ -1,19 +1,20 @@
-import { ApolloError, useSubscription } from '@apollo/client'
+import { ApolloError } from '@apollo/client'
 import { usePrevious } from 'react-use'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
-import { GetVaultsSubscriptionSubscription } from 'utils/__generated__/graphql'
-import { VaultsContext, VaultsCtxState, VaultsSubsRecordType } from './vaults.provider.types'
+import { GetUserVaultsQueryQuery } from 'utils/__generated__/graphql'
+import { VaultsContext, NullableVaultsCtxState, VaultsSubsRecordType } from './vaults.provider.types'
 
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { SUBSCRIBE_TO_ALL_VAULTS, getUserVaultsSubscription } from './queries/vaults.query'
+import { GET_ALL_VAULTS_QUERY, getUserVaultsQuery } from './queries/vaults.query'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   DEFAULT_VAULTS_CONTEXT,
@@ -45,7 +46,7 @@ export const VaultsProvider = ({ children }: Props) => {
   }
 
   const [activeSubs, setActiveSubs] = useState<VaultsSubsRecordType>(DEFAULT_VAULTS_ACTIVE_SUBS)
-  const [vaultsCtxState, setVaultsCtxState] = useState<VaultsCtxState>(DEFAULT_VAULTS_CONTEXT)
+  const [vaultsCtxState, setVaultsCtxState] = useState<NullableVaultsCtxState>(DEFAULT_VAULTS_CONTEXT)
 
   useEffect(() => {
     if (prevUserAddress !== userAddress) {
@@ -57,36 +58,30 @@ export const VaultsProvider = ({ children }: Props) => {
     }
   }, [userAddress])
 
-  useSubscription(getUserVaultsSubscription({ userAddress, filters: activeSubs[VAULTS_DATA] }), {
+  useQueryWithRefetch(getUserVaultsQuery({ userAddress, filters: activeSubs[VAULTS_DATA] }), {
     skip:
       activeSubs[VAULTS_DATA] !== 'userIsOwner' &&
       activeSubs[VAULTS_DATA] !== 'userIsDepositor' &&
       Boolean(userAddress),
-    shouldResubscribe: true,
     variables: {
       userAddress: userAddress ?? '',
     },
-    onData: ({ data: { data } }) => {
-      if (!data) return
-
+    onCompleted: (data) => {
       updateVaultsData(data, userAddress, activeSubs[VAULTS_DATA])
     },
     onError: (error) => handleSubError(error, 'getVaultsSubscription'),
   })
 
-  useSubscription(SUBSCRIBE_TO_ALL_VAULTS, {
+  useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: activeSubs[VAULTS_DATA] !== 'allVaults',
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
-
+    onCompleted: (data) => {
       updateVaultsData(data, userAddress, activeSubs[VAULTS_DATA])
     },
     onError: (error) => handleSubError(error, 'SUBSCRIBE_TO_ALL_VAULTS'),
   })
 
   const updateVaultsData = (
-    indexerData: GetVaultsSubscriptionSubscription,
+    indexerData: GetUserVaultsQueryQuery,
     userAddress: string | null,
     filterType: VaultsSubsRecordType[typeof VAULTS_DATA],
   ) => {

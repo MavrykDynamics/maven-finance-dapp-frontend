@@ -19,6 +19,8 @@ export type InputStatusType =
 export type InputKind = typeof INPUT_PRIMARY | typeof INPUT_SEARCH
 
 // default max length
+export const defaultLargeInputMaxLength = 16
+
 export const defaultCouncilMemberImageMaxLength = 500
 export const defaultCouncilMemberNameMaxLength = 25
 export const defaultCouncilMemberWebsiteMaxLength = 500
@@ -37,6 +39,13 @@ export const defaultProposalSourceCodeMaxLength = 100_000
 export const defaultAggregatorNameMaxLength = 35
 export const defaultTreasuryNameMaxLength = 25
 export const defaultOraclePeerIdMaxLength = 52
+
+// err msg position
+export const ERR_MSG_TOAST = 'toast'
+export const ERR_MSG_INPUT = 'input'
+
+// toast messages
+export const INPUT_MAX_LIMIT_TOAST_TEXT = 'Too many characters were provided.'
 
 export const getOnBlurValue = (inputValue: string) => (inputValue === '' ? '0' : inputValue)
 export const getOnFocusValue = (inputValue: string) => (inputValue === '0' ? '' : inputValue)

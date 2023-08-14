@@ -1,12 +1,12 @@
-import { gql } from 'utils/__generated__'
-import { gql as apolloGql } from '@apollo/client'
-import { OperationVariables, TypedDocumentNode } from '@apollo/client'
 import { DocumentNode } from 'graphql'
-import { GetLoansHistoryForMarketDataSubscription } from 'utils/__generated__/graphql'
+import { gql as apolloGql, OperationVariables, TypedDocumentNode } from '@apollo/client'
+
+import { gql } from 'utils/__generated__'
+import { GetLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
 
 // Cals 24h diffs
 export const LEND_BORROW_24H_DIFF = gql(`
-subscription getLendingDiff($currentTimestamp: timestamptz) {
+query getLending24hDiff($currentTimestamp: timestamptz) {
   lending_controller(where: {mock_time: {_eq: false}}) {
     history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}, timestamp: {_gte: $currentTimestamp}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
       type
@@ -32,7 +32,7 @@ subscription getLendingDiff($currentTimestamp: timestamptz) {
 
 // Loans history data
 export const GET_LOANS_HISTORY_DATA = gql(`
-subscription getLoansHistoryData {
+query getLoansHistoryData {
   lending_controller(where: {mock_time: {_eq: false}}) {
     history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
       type
@@ -54,8 +54,13 @@ subscription getLoansHistoryData {
 }
 `)
 
-// Loans market transaction history
-export function getLoansHistorySubscription({
+/**
+ *
+ * @param userAddress - get transctions of specific user
+ * @param vaultAddress - get transactions on specific vault only
+ * @param typeFilter - get specific operation types only
+ */
+export function getLoansTransactionsHistory({
   userAddress,
   vaultAddress,
   typeFilter,
@@ -63,7 +68,7 @@ export function getLoansHistorySubscription({
   userAddress?: string
   vaultAddress?: string
   typeFilter?: Array<number>
-}): DocumentNode | TypedDocumentNode<GetLoansHistoryForMarketDataSubscription, OperationVariables> {
+}): DocumentNode | TypedDocumentNode<GetLoansTransactionsHistoryQuery, OperationVariables> {
   const filterUserCondition = userAddress ? `sender: {address: {_eq: $userAddress}}` : `sender: {address: {_neq: ""}}`
   const filterVaultCondition = vaultAddress ? `vault: { vault: {address: {_eq: $vaultAddress}}}` : ''
   const filterTypeCondition = typeFilter
@@ -71,7 +76,7 @@ export function getLoansHistorySubscription({
     : `type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}`
 
   return apolloGql(`
-    subscription getLoansHistoryForMarketData($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = []) {
+    query getLoansTransactionsHistory($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = []) {
       lending_controller(where: {mock_time: {_eq: false}}) {
         history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, distinct_on: timestamp, order_by: {timestamp: desc}) {
           type
@@ -86,6 +91,9 @@ export function getLoansHistorySubscription({
           collateral_token {
             token {
               token_address
+              mvk_tokens {
+                address
+              }
             }
           }
           operation_hash

@@ -1,16 +1,17 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import React, { useContext, useMemo, useRef, useState } from 'react'
 
 // consts
 import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { QUERY_TOKENS_METADATA } from './queries/tokens.query'
 
 // helpers
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.normalizer'
 
 // types
 import { TokensContext, TokensContextState } from './tokens.provider.types'
-import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from 'utils/__generated__/graphql'
-import { useSubscription } from '@apollo/client'
-import { SUBSCRIBE_TOKENS_METADATA } from './queries/tokens.query'
+import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemes'
+import { TokensGqlSchemaType, tokensGqlSchema } from './helpers/tokens.schemes'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
@@ -19,6 +20,9 @@ type Props = {
 }
 
 export const TokensProvider = ({ children }: Props) => {
+  // TODO: replace with null init values
+  const initialLoadingStatus = useRef(true)
+
   const [tokensCtxState, setTokensCtxState] = useState<TokensContextState>({
     collateralTokens: [],
     mTokens: [],
@@ -26,25 +30,38 @@ export const TokensProvider = ({ children }: Props) => {
     tokensPrices: { [MVK_TOKEN_SYMBOL]: 1, [SMVK_TOKEN_ADDRESS]: 1 },
   })
 
-  const { loading: tokensLoading } = useSubscription(SUBSCRIBE_TOKENS_METADATA, {
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
-      updateTokensMetadata(data.token)
-    },
-    onError: (error) => console.log({ error }),
-  })
+  // Load tokens metadata
+  useQueryWithRefetch(
+    QUERY_TOKENS_METADATA,
+    {
+      onCompleted: (data) => {
+        try {
+          const parsedTokens = tokensGqlSchema.parse(data.token)
 
-  const updateTokensPrices = useCallback((feedsLedger: SubsribeOracleDataFeedSubscription['aggregator']) => {
+          initialLoadingStatus.current = false
+
+          updateTokensMetadata(parsedTokens)
+        } catch (e) {
+          console.error('zod parsing tokens error:', { e })
+        }
+      },
+      onError: (error) => console.log({ error }),
+    },
+    { blocksDiff: 100 },
+  )
+
+  // update token prices in ctx
+  const updateTokensPrices = (feedsLedger: FullFeedsQueryType | SmallFeedsQueryType) => {
     const normalizedTokenPrices = normalizeTokenPrices(feedsLedger)
 
     setTokensCtxState((prev) => ({
       ...prev,
       tokensPrices: { ...prev.tokensPrices, ...normalizedTokenPrices },
     }))
-  }, [])
+  }
 
-  const updateTokensMetadata = (tokensGql: TokensMetadataSubscription['token']) => {
+  // update tokens metadata in ctx
+  const updateTokensMetadata = (tokensGql: TokensGqlSchemaType) => {
     const tokensMetadata = normalizeTokensMetadata(tokensGql)
 
     setTokensCtxState({
@@ -57,11 +74,11 @@ export const TokensProvider = ({ children }: Props) => {
 
   const providerValue = useMemo(() => {
     return {
-      ...tokensCtxState,
       updateTokensPrices,
-      isLoading: tokensLoading,
+      isLoading: initialLoadingStatus.current,
+      ...tokensCtxState,
     }
-  }, [tokensCtxState, updateTokensPrices])
+  }, [tokensCtxState])
 
   return <tokensContext.Provider value={providerValue}>{children}</tokensContext.Provider>
 }

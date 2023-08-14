@@ -1,7 +1,7 @@
 import React, { useRef, useLayoutEffect } from 'react'
 
 // hooks
-import { useInputValidator } from 'app/App.hooks/useInputValidator'
+import { useInputValidator } from 'app/App.components/Input/hooks/useInputValidator'
 
 import {
   TextAreaStyled,
@@ -12,6 +12,9 @@ import {
   TextareaStyled,
 } from './TextArea.style'
 import { NewInputLabel } from '../Input/Input.style'
+import { ValidatorFnType } from '../Input/newInput.type'
+import { validateInput } from 'app/App.utils/input'
+import { ERR_MSG_INPUT } from '../Input/Input.constants'
 
 export type TextAreaStatusType = 'success' | 'error' | '' | undefined
 type TextAreaProps = {
@@ -28,6 +31,7 @@ type TextAreaProps = {
   label?: string
   disabled?: boolean
   required?: boolean
+  validationFns?: ValidatorFnType[]
 }
 
 export const TextArea = ({
@@ -44,6 +48,7 @@ export const TextArea = ({
   required,
   label,
   textAreaMaxLimit,
+  validationFns = [[validateInput, ERR_MSG_INPUT]],
 }: TextAreaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -58,6 +63,9 @@ export const TextArea = ({
     originalErrorMessage: errorMessageFromProps,
     status: inputStatus,
     onChange,
+    value,
+    validationFns:
+      validationFns && validationFns.length > 0 ? [[validateInput, ERR_MSG_INPUT], ...validationFns] : validationFns,
   })
 
   return (

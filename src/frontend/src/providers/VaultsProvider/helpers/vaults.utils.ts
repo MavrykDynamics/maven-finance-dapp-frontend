@@ -23,6 +23,7 @@ import {
   VaultsContext,
   VaultsCtxState,
   VaultsSubsRecordType,
+  NullableVaultsCtxState,
 } from '../vaults.provider.types'
 
 // consts
@@ -161,7 +162,7 @@ export const getVaultStatus = ({
  * @returns how much user can borrow in USD in that vault
  */
 export const getVaultBorrowCapacity = (availableLiquidity: number, borrowedAmount: number, collateralBalance: number) =>
-  Math.min(collateralBalance / 2 - borrowedAmount, Math.max(availableLiquidity, 0))
+  Math.max(0, Math.min(collateralBalance / 2 - borrowedAmount, Math.max(availableLiquidity, 0)))
 
 /**
  *
@@ -199,7 +200,7 @@ export const getVaultCollateralRatio = (collateralAmount: number, borrowedAmount
   // means we haven't borrowed, but we have deposited
   if (borrowedAmount === 0) return 250
 
-  const collateralRatio = (collateralAmount / Math.max(1, borrowedAmount)) * 100
+  const collateralRatio = (collateralAmount / borrowedAmount) * 100
   return getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1)))
 }
 
@@ -330,7 +331,7 @@ export const getVaultsProviderReturnValue = ({
   changeVaultsSubscriptionsList,
   userAddress,
 }: {
-  vaultsCtxState: VaultsCtxState
+  vaultsCtxState: NullableVaultsCtxState
   activeSubs: VaultsSubsRecordType
   changeVaultsSubscriptionsList: VaultsContext['changeVaultsSubscriptionsList']
   userAddress: string | null

@@ -53,11 +53,7 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
 import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 import { CLAIM_ALL_REWARDS_ACTION } from 'providers/UserProvider/helpers/user.consts'
-import {
-  MVK_BALANCE_SUB,
-  MVK_TOTAL_SUB,
-  DEFAULT_STAKING_ACTIVE_SUBS,
-} from 'providers/DoormanProvider/helpers/doorman.consts'
+import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
@@ -104,8 +100,7 @@ const DashboardPersonal = () => {
 
   useEffect(() => {
     changeStakingSubscriptionsList({
-      [MVK_TOTAL_SUB]: true,
-      [MVK_BALANCE_SUB]: true,
+      [DAPP_MVK_SMVK_STATS_SUB]: true,
     })
     changeSatellitesSubscriptionsList({
       [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
@@ -144,8 +139,14 @@ const DashboardPersonal = () => {
       return null
     }
 
-    return await claimAllRewardsAction(userAddress, doormanAddress)
-  }, [bug, doormanAddress, userAddress])
+    return await claimAllRewardsAction(
+      userAddress,
+      doormanAddress,
+      availableDoormanRewards,
+      availableSatellitesRewards,
+      availableFarmRewards,
+    )
+  }, [availableDoormanRewards, availableFarmRewards, availableSatellitesRewards, bug, doormanAddress, userAddress])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({

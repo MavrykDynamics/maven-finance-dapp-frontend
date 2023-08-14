@@ -167,6 +167,7 @@ export const BorrowingExpandCard = ({
 
   const repayBorrowSlidingButtons = VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS.map((item) => ({
     ...item,
+    active: activeRepayBorrowTabId === item.id,
     text: `${item.text} ${borrowedTokenSymbol}`,
   }))
 
@@ -234,7 +235,6 @@ export const BorrowingExpandCard = ({
       vaultId,
       vaultAddress,
       tokenAddress: borrowedTokenAddress,
-      borrowedAmount,
       collateralBalance,
       borrowCapacity,
       totalOutstanding,
@@ -297,7 +297,7 @@ export const BorrowingExpandCard = ({
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
-      amountToWitdraw: amount,
+      selectedCollateralAmountInVault: amount,
       collateralTokenAddress: collateralData[idx].tokenAddress,
     })
   }
