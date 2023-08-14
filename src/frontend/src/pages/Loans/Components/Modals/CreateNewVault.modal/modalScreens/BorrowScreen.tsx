@@ -124,7 +124,6 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
             address,
             id,
           })
-          updateVaultCreating(false)
 
           // TODO remove retry after indexer update
 
@@ -145,16 +144,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
         bug('Fetch Error', 'Error occured while loading latest created vault, please reload the page')
       }
     },
-    [
-      apolloClient,
-      bug,
-      info,
-      setCreatedVaultAddress,
-      updateNewVault,
-      updateVaultCreating,
-      userAddress,
-      vaultInputState.name,
-    ],
+    [apolloClient, bug, info, setCreatedVaultAddress, updateNewVault, userAddress, vaultInputState.name],
   )
 
   useEffect(() => {
@@ -162,8 +152,10 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   }, [setCurrentSymbol, symbol])
 
   useEffect(() => {
-    getNewVaultData()
-  }, [])
+    if (!isVaultCreating) {
+      getNewVaultData()
+    }
+  }, [getNewVaultData, isVaultCreating])
 
   const continueHandler = useCallback(() => {
     setFinalBorrowInputAmount({ amount: Number(inputData.amount), rate, symbol })
