@@ -123,3 +123,40 @@ export const SideBarFaq = styled.div<{ theme: MavrykTheme }>`
   padding-top: 26px;
   padding-bottom: 21px;
 `
+
+export const SidebarUserButton = styled.div`
+  position: relative;
+  left: -20px;
+
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+  padding: 4px 0;
+
+  > .img-wrapper,
+  svg {
+    height: 35px;
+    width: 35px;
+    fill: ${({ theme }) => theme.textColor};
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+
+  .name,
+  .link {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 16px;
+
+    text-align: start;
+  }
+
+  .name {
+    color: ${({ theme }) => theme.textColor};
+  }
+`
