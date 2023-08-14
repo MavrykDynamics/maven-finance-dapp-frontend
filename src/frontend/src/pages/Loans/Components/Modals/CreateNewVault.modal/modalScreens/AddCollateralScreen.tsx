@@ -26,7 +26,6 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
-import { Info } from 'app/App.components/Info/Info.view'
 
 // styles
 import colors from 'styles/colors'
@@ -59,7 +58,6 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import { useXTZMaxAmountValidator } from '../../hooks/Market/useXTZMaxValidator'
 import { XTZLimitInfoBanner } from '../../components/XTZLimitInfoBanner'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
-import { SELECT_BAKER_TEXT } from 'texts/banners/vault.text'
 
 export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
@@ -320,15 +318,7 @@ export const AddCollateralScreen = () => {
                   </div>
                   {isTezosAsset(collateralAddress) && (
                     <div className="xtz-baker">
-                      <div className="block-name">
-                        Select Baker
-                        <CustomTooltip
-                          iconId="info"
-                          defaultStrokeColor={colors[themeSelected].textColor}
-                          text={SELECT_BAKER_TEXT}
-                          className="tooltip"
-                        />
-                      </div>
+                      <div className="block-name">Select Baker</div>
                       <DropDown
                         placeholder="Select Bakery"
                         activeItem={choosenBaker}
