@@ -399,8 +399,6 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       tokensMetadata,
     )
 
-    debugger
-
     return await updateProposalData(governanceAddress, selectedUserProposalId, bytesDiff, paymentsDiff)
   }, [
     bug,
