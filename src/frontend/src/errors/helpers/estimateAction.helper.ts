@@ -11,11 +11,11 @@ export async function getEstimationResult(
   metadata: ContractMethod<Wallet>,
   args?: EstimationResultParams,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> {
-  const op = await estimateExecution(metadata, args?.params)
+  // const op = await estimateExecution(metadata, args?.params)
 
-  if (op?.error) {
-    return { actionSuccess: false, error: op.error }
-  }
+  // if (op?.error) {
+  //   return { actionSuccess: false, error: op.error }
+  // }
 
   const operation = await metadata.send(args?.params)
 
@@ -29,11 +29,11 @@ export async function getEstimationBatchResult(
   batchArr: (TransferParams & { kind: OpKind.TRANSACTION })[],
   cb?: () => void,
 ) {
-  const estimateBatchOp = await estimateBatchOperation(batchArr)
+  // const estimateBatchOp = await estimateBatchOperation(batchArr)
 
-  if (estimateBatchOp.error) {
-    return { actionSuccess: false, error: estimateBatchOp.error }
-  }
+  // if (estimateBatchOp.error) {
+  //   return { actionSuccess: false, error: estimateBatchOp.error }
+  // }
 
   const operation = await tezos.wallet.batch(batchArr).send()
 

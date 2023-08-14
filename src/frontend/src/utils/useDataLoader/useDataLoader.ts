@@ -17,7 +17,7 @@ export const useDataLoader = (callback: (isDepsChanged: boolean) => Promise<void
 
   useEffect(() => {
     setLoading(true)
-    callback(false).finally(() => {
+    callback(true).finally(() => {
       setLoading(false)
     })
 
