@@ -1,6 +1,6 @@
 import { calcWithoutPrecision } from 'utils/calcFunctions'
 import { FinRequestVoteType, FinancialRequestRecord } from './financialRequests.types'
-import { GetFinRequestsStorageSubscription } from 'utils/__generated__/graphql'
+import { GetFinRequestsStorageQuery } from 'utils/__generated__/graphql'
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
   FinRequestsSubsRecordType,
@@ -50,7 +50,7 @@ export const distinctRequestsByExecuting = (
 }
 
 export const normalizeFinancialRequests = (storage: {
-  governance_financial_request: GetFinRequestsStorageSubscription['governance_financial_request']
+  governance_financial_request: GetFinRequestsStorageQuery['governance_financial_request']
 }) => {
   const { financialRequestMapper, frIds } = storage?.governance_financial_request.reduce<{
     financialRequestMapper: Record<number, FinancialRequestRecord>
