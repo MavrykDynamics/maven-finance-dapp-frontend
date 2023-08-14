@@ -5,6 +5,7 @@ import {
   FinancialRequestsContext,
   FinancialRequestsStateType,
   FinancialRequestsSubsType,
+  NullableFinancialRequestsContextStateType,
 } from './financialRequests.types'
 import {
   ALL_FIN_REQUESTS_SUB,
@@ -32,7 +33,7 @@ const FinancialRequestsProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
 
   const [finRequestsCtxState, setFinRequestsCtxState] =
-    useState<FinancialRequestsStateType>(DEFAULT_FINANCIAL_REQUESTS_CTX)
+    useState<NullableFinancialRequestsContextStateType>(DEFAULT_FINANCIAL_REQUESTS_CTX)
   const [activeSubs, setActiveSubs] = useState<FinRequestsSubsRecordType>(DEFAULT_FIN_REQUESTS_ACTIVE_SUBS)
   const currentTimeRef = useRef(dayjs().toISOString())
 
@@ -69,7 +70,7 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
-  const subscriptionProps: SubscriptionHookOptions = useMemo(
+  const subscriptionProps: SubscriptionHookOptions<GetFinRequestsStorageSubscription> = useMemo(
     () => ({
       onData: ({ data: { data } }) => {
         if (!data) return

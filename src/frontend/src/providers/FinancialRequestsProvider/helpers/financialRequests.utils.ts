@@ -6,6 +6,7 @@ import {
   FinRequestsSubsRecordType,
   FinancialRequestsContext,
   FinancialRequestsStateType,
+  NullableFinancialRequestsContextStateType,
 } from '../financialRequests.types'
 import {
   ALL_FIN_REQUESTS_SUB,
@@ -122,7 +123,7 @@ export const getRequestStatus = (request: FinancialRequestRecord) => {
 
 // fin requests context return value helper
 type FinRequestsContextReturnValueArgs = {
-  finRequestsCtxState: FinancialRequestsStateType
+  finRequestsCtxState: NullableFinancialRequestsContextStateType
   changeFinancialRequestsSubscriptionList: FinancialRequestsContext['changeFinancialRequestsSubscriptionList']
   activeSubs: FinRequestsSubsRecordType
 }
