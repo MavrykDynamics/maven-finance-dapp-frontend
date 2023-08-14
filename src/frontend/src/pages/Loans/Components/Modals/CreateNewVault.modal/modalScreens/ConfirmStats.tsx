@@ -136,9 +136,8 @@ export const ConfirmStats = () => {
     () => ({
       actionType: CREATE_VAULT_ACTION,
       actionFn: createVaultAction,
-      dappActionCallback: () => {
-        updateScreenToShow(BORROW_SCREEN_ID)
-      },
+      afterActionCallback: () => updateScreenToShow(BORROW_SCREEN_ID),
+      dappActionCallback: () => updateVaultCreating(false),
       errActionCallback: () => updateVaultCreating(false),
       isSilentAction: true,
     }),
