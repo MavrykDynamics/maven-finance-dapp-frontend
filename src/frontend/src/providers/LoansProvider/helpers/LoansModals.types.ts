@@ -59,6 +59,7 @@ export type AddNewCollateralDataProps = {
   borrowedTokenAddress: TokenAddressType
   availableLiquidity: number
   collateralData: VaultType['collateralData']
+  xtzDelegatedTo: VaultType['xtzDelegatedTo']
 } | null
 
 export type WithdrawCollateralPopupDataType = {
