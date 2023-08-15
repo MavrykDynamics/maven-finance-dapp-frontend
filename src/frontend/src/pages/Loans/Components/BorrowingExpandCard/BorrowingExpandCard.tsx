@@ -280,7 +280,7 @@ export const BorrowingExpandCard = ({
     openAddExistingCollateralPopup({
       vaultAddress,
       vaultId,
-      borrowedAmount,
+      totalOutstanding,
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
@@ -422,6 +422,7 @@ export const BorrowingExpandCard = ({
                     hasUserBorrowed={Boolean(borrowedAmount)}
                     borrowCapacity={borrowCapacity}
                     currentBorrowedAmount={borrowedAmount}
+                    currentTotalOutstanding={totalOutstanding}
                     DAOFee={DAOFee}
                     openConfirmBorrowPopup={handleClickOpenConfirmBorrowPopup}
                   />

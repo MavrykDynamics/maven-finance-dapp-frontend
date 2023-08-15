@@ -26,7 +26,11 @@ import colors from 'styles/colors'
 // utils
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import {
+  getVaultCollateralRatio,
+  getVaultFutureStats,
+  operationRepay,
+} from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -61,7 +65,7 @@ export const ConfirmRepay = ({
     vaultId = 0,
     vaultAddress = '',
     collateralBalance = 0,
-    borrowCapacity = 0,
+    availableLiquidity = 0,
     totalOutstanding = 0,
     inputAmount = 0,
     callback = () => {},
@@ -70,8 +74,14 @@ export const ConfirmRepay = ({
   const { symbol = '', rate: originalRate } = borrowedToken ?? {}
   const rate = originalRate ?? 0
 
-  const futureCollateralRatio = getVaultCollateralRatio(collateralBalance, (totalOutstanding - inputAmount) * rate)
-  const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
+  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStats({
+    currentCollateralBalance: collateralBalance,
+    currentTotalOutstanding: totalOutstanding,
+    operation: operationRepay,
+    inputAmount,
+    availableLiquidity,
+    tokenRate: rate,
+  })
 
   // partly repay action ---------------------
   const partlyRepayAction = useCallback(async () => {

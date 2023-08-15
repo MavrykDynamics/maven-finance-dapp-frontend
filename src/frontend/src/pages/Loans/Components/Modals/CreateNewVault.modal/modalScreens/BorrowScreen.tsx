@@ -36,7 +36,11 @@ import { DAO_FEE } from 'texts/tooltips/vault.text'
 
 // utils
 import { checkNan } from 'utils/checkNan'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import {
+  getVaultCollateralRatio,
+  getVaultFutureStats,
+  operationBorrow,
+} from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { sleep } from 'utils/api/sleep'
@@ -71,6 +75,8 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     setFinalBorrowInputAmount,
     data,
     collateralsBalance: currentCollateralBalance,
+    totalOutstanding: currentTotalOutstanding,
+    availableLiquidity,
     borrowAPR,
     vaultInputState,
     updateVaultCreating,
@@ -162,16 +168,14 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     updateScreenToShow(CONFIRMATION_SCREEN_ID)
   }, [inputData.amount, rate, setFinalBorrowInputAmount, symbol, updateScreenToShow])
 
-  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = getVaultCollateralRatio(
-      currentCollateralBalance,
-      (currentBorrowedAmount + inputAmount) * rate,
-    )
-
-    const futureBorrowCapacity = borrowCapacity - inputAmount * rate
-
-    return { futureCollateralRatio, futureBorrowCapacity }
-  }, [currentCollateralBalance, currentBorrowedAmount, inputAmount, rate, borrowCapacity])
+  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStats({
+    currentCollateralBalance,
+    currentTotalOutstanding,
+    operation: operationBorrow,
+    inputAmount,
+    availableLiquidity,
+    tokenRate: rate,
+  })
 
   const newSettings: Settings = useMemo(
     () => ({

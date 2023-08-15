@@ -32,7 +32,12 @@ import { borrowVaultAssetAction } from 'providers/VaultsProvider/actions/vaults.
 import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import {
+  getVaultBorrowCapacity,
+  getVaultCollateralRatio,
+  getVaultFutureStats,
+  operationBorrow,
+} from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { checkNan } from 'utils/checkNan'
 
@@ -97,7 +102,8 @@ export const BorrowAsset = ({
 
   const {
     vaultId = 0,
-    borrowedAmount = 0,
+    totalOutstanding = 0,
+    availableLiquidity = 0,
     borrowCapacity = 0,
     collateralRatio = 0,
     collateralBalance = 0,
@@ -110,14 +116,17 @@ export const BorrowAsset = ({
   const rate = originalRate ?? 0
   const userAssetBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: borrowedToken?.address })
 
-  const convertedBorrowedAmount = convertNumberForClient({ number: borrowedAmount, grade: decimals }),
-    inputAmount = checkNan(parseFloat(inputData.amount))
+  const convertedTotalOutstanding = convertNumberForClient({ number: totalOutstanding, grade: decimals })
+  const inputAmount = checkNan(parseFloat(inputData.amount))
 
-  const futureCollateralRatio = getVaultCollateralRatio(
-    collateralBalance,
-    (convertedBorrowedAmount + inputAmount) * rate,
-  )
-  const futureBorrowCapacity = borrowCapacity - inputAmount * rate
+  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStats({
+    currentCollateralBalance: collateralBalance,
+    currentTotalOutstanding: totalOutstanding,
+    operation: operationBorrow,
+    inputAmount,
+    availableLiquidity,
+    tokenRate: rate,
+  })
 
   // borrow vault asset action
   const borrowAction = useCallback(async () => {
@@ -203,7 +212,7 @@ export const BorrowAsset = ({
           {screenShown === 'initial' ? (
             <>
               <GovRightContainerTitleArea>
-                {convertedBorrowedAmount > 0 ? <h2>Borrow Additional {symbol}</h2> : <h2>Borrow {symbol}</h2>}
+                {convertedTotalOutstanding > 0 ? <h2>Borrow Additional {symbol}</h2> : <h2>Borrow {symbol}</h2>}
               </GovRightContainerTitleArea>
               <div className="modalDescr">
                 Select the asset you would like to borrow. You cannot borrow more than your borrow capacity.
@@ -216,7 +225,7 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Collateral Utilization</div>
-                  {convertedBorrowedAmount > 0 ? (
+                  {convertedTotalOutstanding > 0 ? (
                     <CommaNumber value={collateralRatio} className="value" endingText="%" />
                   ) : (
                     <div className="value">Not Relevant</div>

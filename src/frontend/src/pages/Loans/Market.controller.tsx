@@ -162,14 +162,15 @@ export const Market = () => {
           const vaultCollateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices)
           const convertedBorrowedAmount =
             convertNumberForClient({ number: vault.borrowedAmount, grade: loanTokenDecimals }) * loanTokenRate
+          const convertedBorrowFee =
+            convertNumberForClient({ number: vault.fee, grade: loanTokenDecimals }) * loanTokenRate
 
           acc.userTotalBorrowed += convertedBorrowedAmount
           acc.userTotalCollateral += vaultCollateralBalance
-          acc.userAccruedInterest +=
-            convertNumberForClient({ number: vault.fee, grade: loanTokenDecimals }) * loanTokenRate
+          acc.userAccruedInterest += convertedBorrowFee
           acc.userAvailableBorrow += getVaultBorrowCapacity(
             convertNumberForClient({ number: vault.availableLiquidity, grade: loanTokenDecimals }) * loanTokenRate,
-            convertedBorrowedAmount,
+            convertedBorrowedAmount + convertedBorrowFee,
             vaultCollateralBalance,
           )
           return acc

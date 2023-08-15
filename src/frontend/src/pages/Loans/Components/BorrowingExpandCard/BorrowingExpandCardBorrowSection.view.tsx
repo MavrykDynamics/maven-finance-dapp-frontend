@@ -26,7 +26,7 @@ import {
 import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault.text'
 import { checkNan } from 'utils/checkNan'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultFutureStats, operationBorrow } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import { useBorrowInputData } from '../Modals/hooks/Market/useBorrowInputData'
@@ -38,7 +38,8 @@ type Props = {
   hasUserBorrowed: boolean
   currentCollateralBalance: number
   DAOFee: number
-  currentBorrowedAmount: number
+  availableLiquidity: number
+  currentTotalOutstanding: number
   openConfirmBorrowPopup: (inputAmount: number, callback: () => void) => void
 }
 
@@ -48,8 +49,9 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const {
     borrowedAssetAddress = '',
     borrowCapacity = 0,
-    currentBorrowedAmount = 0,
     currentCollateralBalance = 0,
+    currentTotalOutstanding = 0,
+    availableLiquidity = 0,
     DAOFee = 0,
     openConfirmBorrowPopup,
   } = props
@@ -62,16 +64,14 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
 
-  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = getVaultCollateralRatio(
-      currentCollateralBalance,
-      (currentBorrowedAmount + inputAmount) * rate,
-    )
-
-    const futureBorrowCapacity = borrowCapacity - inputAmount * rate
-
-    return { futureCollateralRatio, futureBorrowCapacity }
-  }, [currentCollateralBalance, currentBorrowedAmount, inputAmount, rate, borrowCapacity])
+  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStats({
+    currentCollateralBalance,
+    currentTotalOutstanding,
+    operation: operationBorrow,
+    inputAmount,
+    availableLiquidity,
+    tokenRate: rate,
+  })
 
   const showWarning = (inputAmount > borrowCapacity / rate || futureCollateralRatio < 200) && inputAmount !== 0
 

@@ -157,12 +157,126 @@ export const getVaultStatus = ({
 /**
  *
  * @param availableLiquidity – pool tokens amount in USD
- * @param borrowedAmount – how much borrowed in the vault in USD
+ * @param totalOutstanding – how much borrowed + fee from the vault in USD
  * @param collateralBalance – collateral amount of the vault in USD
  * @returns how much user can borrow in USD in that vault
  */
-export const getVaultBorrowCapacity = (availableLiquidity: number, borrowedAmount: number, collateralBalance: number) =>
-  Math.max(0, Math.min(collateralBalance / 2 - borrowedAmount, Math.max(availableLiquidity, 0)))
+export const getVaultBorrowCapacity = (
+  availableLiquidity: number,
+  totalOutstanding: number,
+  collateralBalance: number,
+) => {
+  console.log({
+    collateralBalance,
+    totalOutstanding,
+    availableLiquidity,
+    returnValue: Math.max(0, Math.min(collateralBalance / 2 - totalOutstanding, Math.max(availableLiquidity, 0))),
+  })
+  return Math.max(0, Math.min(collateralBalance / 2 - totalOutstanding, Math.max(availableLiquidity, 0)))
+}
+
+/**
+ *
+ * @param collateralAmount – USD amount of collaterals in the vault
+ * @param totalOutstanding – USD amount of borrowed + fee number for the vault
+ * @returns collateral ratio for the vault
+ *
+ * collateral ratio – is the relation of the borrowed amount to collaterals amount:
+ * if vault has borrowAmount 0, collateral ratio 0 if we don't have collaterals, or 250, if we have some
+ */
+export const getVaultCollateralRatio = (collateralAmount: number, totalOutstanding: number) => {
+  // means we haven't borrowed anything
+  if (collateralAmount === 0) return 0
+
+  // means we haven't borrowed, but we have deposited
+  if (totalOutstanding === 0) return 250
+
+  const collateralRatio = (collateralAmount / totalOutstanding) * 100
+  return getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1)))
+}
+
+export const operationBorrow = 'borrow'
+export const operationRepay = 'repay'
+export const operationAddCollateral = 'addCollateral'
+export const operationRemoveCollateral = 'removeCollateral'
+export const getVaultFutureStats = ({
+  currentTotalOutstanding,
+  currentCollateralBalance,
+  inputAmount,
+  availableLiquidity,
+  tokenRate,
+  DAOFee,
+  operation,
+}: {
+  currentTotalOutstanding: number
+  currentCollateralBalance: number
+  inputAmount: number
+  availableLiquidity: number
+  tokenRate: number
+  DAOFee?: number
+  operation:
+    | typeof operationBorrow
+    | typeof operationRepay
+    | typeof operationAddCollateral
+    | typeof operationRemoveCollateral
+}) => {
+  if (operation === operationBorrow && typeof DAOFee === 'number') {
+    const futureTotalOustanding = (currentTotalOutstanding + inputAmount + inputAmount * (DAOFee / 100)) * tokenRate // USD value
+    const futureCollateralRatio = getVaultCollateralRatio(currentCollateralBalance, futureTotalOustanding * tokenRate)
+    const futureBorrowCapacity = getVaultBorrowCapacity(
+      availableLiquidity * tokenRate,
+      futureTotalOustanding * tokenRate,
+      currentCollateralBalance,
+    )
+    return { futureTotalOustanding, futureBorrowCapacity, futureCollateralRatio }
+  }
+
+  if (operation === operationRepay) {
+    const futureTotalOustanding = (currentTotalOutstanding - inputAmount) * tokenRate // USD value
+    const futureCollateralRatio = getVaultCollateralRatio(currentCollateralBalance, futureTotalOustanding * tokenRate)
+    const futureBorrowCapacity = getVaultBorrowCapacity(
+      availableLiquidity * tokenRate,
+      futureTotalOustanding * tokenRate,
+      currentCollateralBalance,
+    )
+    return { futureTotalOustanding, futureBorrowCapacity, futureCollateralRatio }
+  }
+
+  if (operation === operationAddCollateral) {
+    const futureCollateralBalance = (currentCollateralBalance + inputAmount) * tokenRate // USD value
+    const futureCollateralRatio = getVaultCollateralRatio(futureCollateralBalance, currentTotalOutstanding * tokenRate)
+    const futureBorrowCapacity = getVaultBorrowCapacity(
+      availableLiquidity * tokenRate,
+      currentTotalOutstanding * tokenRate,
+      futureCollateralBalance,
+    )
+    return { futureCollateralBalance, futureBorrowCapacity, futureCollateralRatio }
+  }
+
+  if (operation === operationRemoveCollateral) {
+    const futureCollateralBalance = (currentCollateralBalance - inputAmount) * tokenRate // USD value
+    const futureCollateralRatio = getVaultCollateralRatio(futureCollateralBalance, currentTotalOutstanding * tokenRate)
+    const futureBorrowCapacity = getVaultBorrowCapacity(
+      availableLiquidity * tokenRate,
+      currentTotalOutstanding * tokenRate,
+      futureCollateralBalance,
+    )
+
+    return { futureCollateralBalance, futureBorrowCapacity, futureCollateralRatio }
+  }
+
+  throw new Error(
+    `getVaultFutureStats wrong data provided: ${JSON.stringify({
+      currentTotalOutstanding,
+      currentCollateralBalance,
+      inputAmount,
+      availableLiquidity,
+      tokenRate,
+      DAOFee,
+      operation,
+    })}`,
+  )
+}
 
 /**
  *
@@ -183,26 +297,6 @@ export const getVaultCollateralBalance = (
 
     return (acc += convertNumberForClient({ number: amount, grade: collateralDecimals }) * collateralRate)
   }, 0)
-
-/**
- *
- * @param collateralAmount – USD amount of collaterals in the vault
- * @param borrowedAmount – USD amount of borrowed number for the vault
- * @returns collateral ratio for the vault
- *
- * collateral ratio – is the relation of the borrowed amount to collaterals amount:
- * if vault has borrowAmount 0, collateral ratio 0 if we don't have collaterals, or 250, if we have some
- */
-export const getVaultCollateralRatio = (collateralAmount: number, borrowedAmount: number) => {
-  // means we haven't borrowed anything
-  if (collateralAmount === 0) return 0
-
-  // means we haven't borrowed, but we have deposited
-  if (borrowedAmount === 0) return 250
-
-  const collateralRatio = (collateralAmount / borrowedAmount) * 100
-  return getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1)))
-}
 
 // TODO: add descr to liquidation utils while testing liquidation functionality and popup
 /**

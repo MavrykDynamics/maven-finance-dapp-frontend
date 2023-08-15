@@ -77,6 +77,7 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
 
   const convertedBorrowedAmount = convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals })
   const convertedFee = convertNumberForClient({ number: fee, grade: borrowedTokenDecimals })
+  const totalOutstanding = convertedBorrowedAmount + convertedFee
   const convertedAvailableLiquidity = convertNumberForClient({
     number: availableLiquidity,
     grade: borrowedTokenDecimals,
@@ -84,17 +85,16 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
   const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
   const borrowCapacity = getVaultBorrowCapacity(
     convertedAvailableLiquidity * borrowedTokenRate,
-    convertedBorrowedAmount * borrowedTokenRate,
+    totalOutstanding * borrowedTokenRate,
     collateralBalance,
   )
-  const collateralRatio = getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * borrowedTokenRate)
+  const collateralRatio = getVaultCollateralRatio(collateralBalance, totalOutstanding * borrowedTokenRate)
   const convertedMinRepay = convertNumberForClient({ number: minimumRepay, grade: borrowedTokenDecimals })
   const status = getVaultStatus({
     collateralRatio,
     borrowedAmount: convertedBorrowedAmount,
     liquidationTimestamp,
   })
-  const totalOutstanding = convertedBorrowedAmount + convertedFee
 
   return {
     address,

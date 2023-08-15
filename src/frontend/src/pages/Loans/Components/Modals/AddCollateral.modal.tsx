@@ -47,7 +47,7 @@ import {
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultBorrowCapacity, getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -106,7 +106,7 @@ export const AddCollateral = ({
     vaultAddress = '',
     vaultId = 0,
     collateralRatio = 0,
-    borrowedAmount = 0,
+    totalOutstanding = 0,
     borrowCapacity = 0,
     availableLiquidity = 0,
     collateralTokenAddress = '',
@@ -127,7 +127,7 @@ export const AddCollateral = ({
     setSelectedCollateral(collateralTokenAddress)
   }, [collateralTokenAddress, setSelectedCollateral])
 
-  const { rate: originalCollateralRate = 0, decimals = 0, symbol = '', name = '', icon = '' } = collateralToken ?? {}
+  const { rate: originalCollateralRate = 0, decimals = 0, symbol = '', icon = '' } = collateralToken ?? {}
   const collateralRate = originalCollateralRate ?? 0
   const userCollateralBalance = getUserTokenBalanceByAddress({
     userTokensBalances,
@@ -139,13 +139,14 @@ export const AddCollateral = ({
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const futureCollateralRatio = getVaultCollateralRatio(
     collateralBalance + inputAmount * collateralRate,
-    borrowedAmount * borrowedTokenRate,
+    totalOutstanding * borrowedTokenRate,
   )
 
   const futureCollateralBalance = collateralBalance + inputAmount * collateralRate
-  const futureBorrowCapacity = Math.min(
-    Math.max(availableLiquidity, 0),
-    futureCollateralBalance / 2 - borrowedAmount * borrowedTokenRate,
+  const futureBorrowCapacity = getVaultBorrowCapacity(
+    availableLiquidity * borrowedTokenRate,
+    totalOutstanding * borrowedTokenRate,
+    futureCollateralBalance,
   )
 
   // deposit action

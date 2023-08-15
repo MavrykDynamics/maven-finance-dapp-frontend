@@ -21,7 +21,11 @@ import { ConfirmationScreenWrapper } from '../createNewVault.style'
 
 // utils
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import {
+  getVaultCollateralRatio,
+  getVaultFutureStats,
+  operationBorrow,
+} from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useCreateVaultContext } from '../context/createVaultModalContext'
@@ -58,7 +62,8 @@ export const ConfirmationScreen = () => {
     selectedCollaterals,
     updateScreenToShow,
     newVault,
-    borrowCapacity,
+    totalOutstanding: currentTotalOutstanding,
+    availableLiquidity,
     closePopup,
     finalBorrowInputData,
     collateralsBalance,
@@ -79,16 +84,14 @@ export const ConfirmationScreen = () => {
 
   const { amount: inputAmount, rate, symbol } = finalBorrowInputData
 
-  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = getVaultCollateralRatio(
-      currentCollateralBalance,
-      (currentBorrowedAmount + inputAmount) * rate,
-    )
-
-    const futureBorrowCapacity = borrowCapacity - inputAmount * rate
-
-    return { futureCollateralRatio, futureBorrowCapacity }
-  }, [currentCollateralBalance, currentBorrowedAmount, inputAmount, rate, borrowCapacity])
+  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStats({
+    currentCollateralBalance,
+    currentTotalOutstanding,
+    operation: operationBorrow,
+    inputAmount,
+    availableLiquidity,
+    tokenRate: rate,
+  })
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
 

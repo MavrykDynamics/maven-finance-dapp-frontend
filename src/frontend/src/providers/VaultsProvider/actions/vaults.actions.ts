@@ -45,6 +45,7 @@ export const borrowVaultAssetAction = async (
   callback?: () => void,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
+    console.log({ amountToBorrow })
     const { decimals } = borrowedToken
     // prepare and send transaction
     const convertedAssetAmount = convertNumberForContractCall({ number: amountToBorrow, grade: decimals })

@@ -7,9 +7,9 @@ import { VaultType, DepositorsFlagType } from '../../VaultsProvider/vaults.provi
 export type ConfirmBorrowPopupDataType = {
   vaultId: number
   tokenAddress: TokenAddressType
-  borrowedAmount: number
+  totalOutstanding: number
   collateralBalance: number
-  borrowCapacity: number
+  availableLiquidity: number
   inputAmount: number
   DAOFee: number
   callback: () => void
@@ -22,7 +22,7 @@ export type ConfirmRepayPartPopupDataType = {
   tokenAddress: TokenAddressType
   totalOutstanding: number
   collateralBalance: number
-  borrowCapacity: number
+  availableLiquidity: number
   callback: () => void
 } | null
 
@@ -30,9 +30,8 @@ export type ConfirmRepayFullPopupDataType = {
   vaultId: number
   vaultAddress: string
   tokenAddress: TokenAddressType
-  borrowedAmount: number
   collateralBalance: number
-  borrowCapacity: number
+  availableLiquidity: number
   totalOutstanding: number
   callback: () => void
 } | null
@@ -44,7 +43,7 @@ export type AddCollateralPopupDataType = {
   borrowedTokenAddress: TokenAddressType
   collateralBalance: number
   borrowCapacity: number
-  borrowedAmount: number
+  totalOutstanding: number
   collateralRatio: number
   collateralTokenAddress: TokenAddressType
 } | null
@@ -54,7 +53,7 @@ export type AddNewCollateralDataProps = {
   collateralBalance: number
   vaultId: number
   borrowCapacity: number
-  borrowedAmount: number
+  totalOutstanding: number
   collateralRatio: number
   borrowedTokenAddress: TokenAddressType
   availableLiquidity: number
@@ -76,7 +75,8 @@ export type WithdrawCollateralPopupDataType = {
 export type BorrowPopupDataType = {
   vaultId: number
   tokenAddress: TokenAddressType
-  borrowedAmount: number
+  totalOutstanding: number
+  availableLiquidity: number
   collateralBalance: number
   borrowCapacity: number
   collateralRatio: number

@@ -50,7 +50,12 @@ import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT 
 import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { checkNan } from 'utils/checkNan'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import {
+  getVaultBorrowCapacity,
+  getVaultCollateralRatio,
+  getVaultFutureStats,
+  operationRepay,
+} from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -67,7 +72,7 @@ type Props = {
   borrowedAmount: number
   minimumRepay: number
   collateralBalance: number
-  borrowCapacity: number
+  availableLiquidity: number
   activeRepayTab?: TabItem
   openConfirmRepayPopup: (inputAmount: number, callback: () => void) => void
   openConfirmRepayFullPopup: (callback: () => void) => void
@@ -90,7 +95,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     borrowedToken,
     collateralBalance,
     borrowedTokenRate,
-    borrowCapacity,
+    availableLiquidity,
     minimumRepay,
     borrowedAmount,
     activeRepayTab,
@@ -119,17 +124,20 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     inputData.amount !== ''
   const isNotRepayInFullWarning = isRepayInFull && totalOutstanding !== inputAmount
 
-  const futureBorrowedAmount = borrowedAmount - inputAmount < 0 ? 0 : borrowedAmount - inputAmount
-  const futureTotalOutstanding = totalOutstanding - inputAmount < 0 ? 0 : totalOutstanding - inputAmount
-  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = getVaultCollateralRatio(
-      collateralBalance,
-      (totalOutstanding - inputAmount) * borrowedTokenRate,
-    )
+  const {
+    futureBorrowCapacity,
+    futureCollateralRatio,
+    futureTotalOustanding = 0,
+  } = getVaultFutureStats({
+    currentCollateralBalance: collateralBalance,
+    currentTotalOutstanding: totalOutstanding,
+    operation: operationRepay,
+    inputAmount,
+    availableLiquidity,
+    tokenRate: borrowedTokenRate,
+  })
 
-    const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
-    return { futureCollateralRatio, futureBorrowCapacity }
-  }, [collateralBalance, borrowedAmount, inputAmount, borrowedTokenRate, borrowCapacity])
+  const futureBorrowedAmount = borrowedAmount - inputAmount < 0 ? 0 : borrowedAmount - inputAmount
 
   const clearData = () => {
     setInputData({
@@ -285,7 +293,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           <RepayTableStats
             futureBorrowedAmount={futureBorrowedAmount}
             collateralBalance={collateralBalance}
-            futureTotalOutstanding={futureTotalOutstanding}
+            futureTotalOutstanding={futureTotalOustanding}
             futureCollateralRatio={futureCollateralRatio}
             futureBorrowCapacity={futureBorrowCapacity}
             fee={fee}
@@ -351,11 +359,17 @@ const RepayTableStats = ({
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">Total Outstanding</div>
-          <CommaNumber value={futureTotalOutstanding} className="value" showDecimal decimalsToShow={2} />
+          <CommaNumber
+            value={futureTotalOutstanding}
+            className="value"
+            showDecimal
+            beginningText="$"
+            decimalsToShow={2}
+          />
         </ThreeLevelListItem>
         <ThreeLevelListItem className="right">
           <div className="name">Collateral Value</div>
-          <CommaNumber value={collateralBalance} className="value" beginningText="$" />
+          <CommaNumber value={collateralBalance} className="value" beginningText="$" decimalsToShow={2} />
         </ThreeLevelListItem>
       </div>
 

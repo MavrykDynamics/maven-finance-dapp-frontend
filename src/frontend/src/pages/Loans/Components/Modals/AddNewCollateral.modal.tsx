@@ -22,7 +22,7 @@ import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultBorrowCapacity, getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // consts
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -164,7 +164,7 @@ export const AddNewCollateral = ({
     vaultAddress = '',
     vaultId = 0,
     collateralRatio = 0,
-    borrowedAmount = 0,
+    totalOutstanding = 0,
     availableLiquidity = 0,
     borrowCapacity = 0,
     xtzDelegatedTo = null,
@@ -178,14 +178,12 @@ export const AddNewCollateral = ({
   const borrowedTokenRate = originalBorrowedTokenRate ?? 0
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
-  const futureCollateralRatio = getVaultCollateralRatio(
-    collateralBalance + inputAmount,
-    borrowedAmount * borrowedTokenRate,
-  )
   const futureCollateralBalance = collateralBalance + inputAmount * rate
-  const futureBorrowCapacity = Math.min(
-    Math.max(availableLiquidity, 0),
-    futureCollateralBalance / 2 - borrowedAmount * borrowedTokenRate,
+  const futureCollateralRatio = getVaultCollateralRatio(futureCollateralBalance, totalOutstanding * borrowedTokenRate)
+  const futureBorrowCapacity = getVaultBorrowCapacity(
+    availableLiquidity * borrowedTokenRate,
+    totalOutstanding * borrowedTokenRate,
+    futureCollateralBalance,
   )
 
   // deposit collateral action --------------------------
