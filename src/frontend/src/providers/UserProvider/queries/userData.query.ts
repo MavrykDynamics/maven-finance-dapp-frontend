@@ -31,18 +31,6 @@ export const USER_DATA_QUERY = gql(`
         }
       }
   
-      # actions history
-      stakes_history_data(where: {type: {_in: ["0", "1", "2", "3", "4"]}}) {
-        type
-        id
-        desired_amount
-        final_amount
-        from_ {
-          mvk_balance
-          smvk_balance
-        }
-      }
-  
       # user's avatars
       # is user active satellite
       satellites {
@@ -125,21 +113,27 @@ export const USER_DATA_QUERY = gql(`
   }
 `)
 
-// TODO: use this query on certain pages to reduce size of the USER_DATA_QUERY query
+// period filter
+// stakes_history_data(where: {type: {_in: ["0", "1", "2", "3", "4"]}, timestamp: {_gte: $historyPeriod}}, order_by: {timestamp: desc}) {
 export const USER_ACTIONS_HISTORY_DATA_QUERY = gql(`
-  query getUserActionsHistoryData($userAddress: String = "") {
+  query getUserActionsHistoryData($userAddress: String, $offset: Int = 0, $limit: Int = 8) {
     mavryk_user(where: {address: {_eq: $userAddress}}) {
-      address
-
       # actions history
-      stakes_history_data(where: {type: {_in: ["0", "1", "2", "3", "4"]}}) {
+      stakes_history_data(where: {type: {_in: ["0", "1", "2", "3", "4"]}}, order_by: {timestamp: desc}, offset: $offset, limit: $limit) {
         type
         id
+        timestamp
         desired_amount
         final_amount
         from_ {
           mvk_balance
           smvk_balance
+        }
+      }
+
+      historyItemsAmount: stakes_history_data_aggregate {
+        aggregate {
+          count
         }
       }
     }

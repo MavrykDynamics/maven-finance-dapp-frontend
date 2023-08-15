@@ -10,6 +10,7 @@ import {
   REWARDS_COMPOUND_ACTION,
 } from './helpers/user.consts'
 import { userTzktTokenBalancesSchema, userTzktWSAccountSchema } from './helpers/user.schemes'
+import { normalizeUserHistoryData } from './helpers/userData.helpers'
 
 // User loans data types
 export type UserLendBorrowItem = {
@@ -54,6 +55,7 @@ export type UserContext = UserContextStateType & {
   changeUser: () => void
 
   setUserLoansData: (userLoansData: UserLoansData | null) => void
+  setUserHistoryData: (page: number, userLoansData: UserHistoryData, itemsAmount: number) => void
 }
 
 export type UserContextStateType = UserMetadataType & {
@@ -62,6 +64,7 @@ export type UserContextStateType = UserMetadataType & {
   availableLoansRewards: number
   availableFarmRewards: Record<string, number>
   userLoansData: UserLoansData | null
+  actionsHistory: { paginatedList: Record<number, UserHistoryData>; itemsAmount: number }
 
   // user tokens
   userTokensBalances: Record<TokenAddressType, number>
@@ -82,13 +85,6 @@ export type UserMetadataType = {
     counsilAvatar: string | null
     breakGlassAvatar: string | null
   }
-  actionsHistory: Array<{
-    action: string
-    amount: number
-    totalAmount: number
-    fee: number
-    id: number
-  }>
 
   // user rewards
   gatheredFarmRewards: number
@@ -100,6 +96,8 @@ export type UserMetadataType = {
 
   farmAccounts: UserIndexerFarmRewardsType
 }
+
+export type UserHistoryData = ReturnType<typeof normalizeUserHistoryData>
 
 export type UserActionsType =
   | typeof CLAIM_VESTING_REWARD_ACTION

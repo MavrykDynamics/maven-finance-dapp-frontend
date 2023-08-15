@@ -22,7 +22,13 @@ import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentI
 import { USER_DATA_QUERY } from './queries/userData.query'
 
 // types
-import { UserContext, UserContextStateType, UserLoansData, UserTzKtTokenBalances } from './user.provider.types'
+import {
+  UserContext,
+  UserContextStateType,
+  UserHistoryData,
+  UserLoansData,
+  UserTzKtTokenBalances,
+} from './user.provider.types'
 
 import { useUserApi } from './hooks/useUserApi'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -159,6 +165,13 @@ export const UserProvider = ({ children }: Props) => {
     }))
   }, [])
 
+  const setUserHistoryData = useCallback((page: number, userHistoryData: UserHistoryData, itemsAmount: number) => {
+    setUserCtxState((prev) => ({
+      ...prev,
+      actionsHistory: { paginatedList: { ...prev.actionsHistory.paginatedList, [page]: userHistoryData }, itemsAmount },
+    }))
+  }, [])
+
   const setUserIndexerData = (indexerData: GetUserDataQuery) => {
     // if user does not exists
     if (indexerData.mavryk_user.length === 0) {
@@ -212,6 +225,7 @@ export const UserProvider = ({ children }: Props) => {
       signOut,
       changeUser,
       setUserLoansData,
+      setUserHistoryData,
     }
   }, [
     userCtxState,
@@ -222,6 +236,7 @@ export const UserProvider = ({ children }: Props) => {
     signOut,
     changeUser,
     setUserLoansData,
+    setUserHistoryData,
   ])
 
   return <userContext.Provider value={providerValue}>{children}</userContext.Provider>

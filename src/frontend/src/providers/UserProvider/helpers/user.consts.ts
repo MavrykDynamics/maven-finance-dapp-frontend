@@ -24,7 +24,10 @@ export const DEFAULT_USER: UserContextStateType = {
   isNewlyRegisteredSatellite: false,
   isSatellite: false,
   isVestee: false,
-  actionsHistory: [], // user only on dashboard personal
+  actionsHistory: {
+    paginatedList: {},
+    itemsAmount: 0,
+  }, // user only on dashboard personal
   govActionsCount: 0,
   gatheredDoormanRewards: 0, // user only on  dashboard personal
   gatheredFarmRewards: 0, // user only on  dashboard personal
