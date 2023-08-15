@@ -26,6 +26,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { useLoansTransactionHistory } from 'providers/LoansProvider/hooks/useMarketTransactionHistory'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 type TransactionHistoryPropsType = {
   loanTokenAddress: TokenAddressType
@@ -56,6 +57,9 @@ export const TransactionHistory = ({
   const {
     contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
+
+  const { tokensMetadata } = useTokensContext()
+  const { decimals } = tokensMetadata[loanTokenAddress]
 
   const { isLoading: isTransactionHistoryLoading, transactionHistory } = useLoansTransactionHistory({
     marketTokenAddress: loanTokenAddress,
@@ -103,7 +107,13 @@ export const TransactionHistory = ({
                         <span className="descr">{descr}</span>
                       </TableCell>
                       <TableCell width={`30%`}>
-                        <CommaNumber value={amount} className="value" endingText={symbol} />
+                        <CommaNumber
+                          value={amount}
+                          className="value"
+                          endingText={symbol}
+                          showDecimal
+                          decimalsToShow={decimals}
+                        />
                       </TableCell>
                       <TableCell width={`30%`}>{date}</TableCell>
                       <TableCell contentPosition="right">
