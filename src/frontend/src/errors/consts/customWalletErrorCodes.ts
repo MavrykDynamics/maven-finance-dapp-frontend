@@ -7,4 +7,11 @@ export const SPECIFIC_CONTRACT_ERROR_CODES: Map<string, { message: string; descr
     'FA12_INSUFFICIENT_BALANCE',
     { message: 'FA12_INSUFFICIENT_BALANCE', description: 'Error: FA12 insufficient balance' },
   ],
+  [
+    '(temporary) proto.017-PtNairob.delegate.unchanged',
+    {
+      message: 'proto.017-PtNairob.delegate.unchanged',
+      description: "The selected baker can'nt validate current operation. Select another one from the dropdown menu",
+    },
+  ],
 ])

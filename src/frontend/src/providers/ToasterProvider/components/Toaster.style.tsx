@@ -13,7 +13,7 @@ export const ToasterContainer = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 10px;
-  z-index: 13;
+  z-index: 200; /* to show toasts on the front side when modal is opened*/
   width: 500px;
   background: transparent;
 `
