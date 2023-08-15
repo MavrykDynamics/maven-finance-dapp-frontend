@@ -11,7 +11,7 @@ export const SPECIFIC_CONTRACT_ERROR_CODES: Map<string, { message: string; descr
     '(temporary) proto.017-PtNairob.delegate.unchanged',
     {
       message: 'proto.017-PtNairob.delegate.unchanged',
-      description: "The selected baker can'nt validate current operation. Select another one from the dropdown menu",
+      description: "The selected baker can't validate the current operation. Select another one from the dropdown menu",
     },
   ],
 ])
