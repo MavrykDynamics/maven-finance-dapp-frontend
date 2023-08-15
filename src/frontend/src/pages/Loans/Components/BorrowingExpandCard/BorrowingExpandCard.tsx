@@ -272,6 +272,7 @@ export const BorrowingExpandCard = ({
       availableLiquidity,
       borrowCapacity,
       collateralData: vault.collateralData,
+      xtzDelegatedTo: vault.xtzDelegatedTo,
     })
   }
 

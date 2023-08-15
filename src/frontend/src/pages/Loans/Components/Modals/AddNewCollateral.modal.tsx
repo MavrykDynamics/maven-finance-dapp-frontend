@@ -167,6 +167,7 @@ export const AddNewCollateral = ({
     borrowedAmount = 0,
     availableLiquidity = 0,
     borrowCapacity = 0,
+    xtzDelegatedTo = null,
   } = data ?? {}
 
   const { symbol = '', rate: originalRate } = collateralToken ?? {}
@@ -200,6 +201,8 @@ export const AddNewCollateral = ({
       lendingControllerAddress &&
       checkWhetherTokenIsCollateralToken(collateralToken)
     ) {
+      const _baker = xtzDelegatedTo === choosenBaker?.bakerAddress ? null : choosenBaker?.bakerAddress
+
       return await depositCollateralsAction(
         userAddress,
         vaultAddress,
@@ -215,7 +218,7 @@ export const AddNewCollateral = ({
         vaultId,
         lendingControllerAddress,
         closePopup,
-        choosenBaker?.bakerAddress,
+        _baker,
       )
     }
 
@@ -230,6 +233,7 @@ export const AddNewCollateral = ({
     userAddress,
     vaultAddress,
     vaultId,
+    xtzDelegatedTo,
   ])
 
   const contractActionProps: HookContractActionArgs = useMemo(

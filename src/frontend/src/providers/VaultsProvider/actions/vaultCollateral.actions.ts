@@ -1,7 +1,6 @@
 import { OpKind, TransferParams } from '@taquito/taquito'
 import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
-import { estimateBatchOperation } from 'errors/helpers/walletError.helper'
 import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
@@ -173,24 +172,7 @@ export const depositCollateralsAction = async (
       Promise.resolve([]),
     )
 
-    // TODO remove it when rstimation will be back
-    // temporary solution to show error toast for deposit action
-    // cases (when selected baker can't handle the token you typed)
-    // ----------------------------------------------------------------------------
-    const estimateBatchOp = await estimateBatchOperation(batchArr)
-
-    if (estimateBatchOp.error) {
-      return { actionSuccess: false, error: estimateBatchOp.error }
-    }
-
-    const operation = await tezos.wallet.batch(batchArr).send()
-
-    callback?.()
-
-    return { actionSuccess: true, operation }
-    // ----------------------------------------------------------------------------
-    // uncomment the line below and remove all code between 179 and 191 lines when restoring estimation logic!
-    // return await getEstimationBatchResult(tezos, batchArr, callback)
+    return await getEstimationBatchResult(tezos, batchArr, callback)
   } catch (error) {
     callback()
     const e = unknownToError(error)
