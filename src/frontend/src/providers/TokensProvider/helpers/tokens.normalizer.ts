@@ -8,21 +8,23 @@ import {
   TokensContext,
   tokenMetadataSchema,
 } from '../tokens.provider.types'
-import { SubsribeOracleDataFeedSubscription, TokensMetadataSubscription } from 'utils/__generated__/graphql'
+import { TokensMetadataQuery } from 'utils/__generated__/graphql'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { checkWhetherTokenIsCollateralToken } from './tokens.utils'
+import { TokenPricesFeedsType } from 'providers/DataFeedsProvider/helpers/feeds.schemes'
+import { TokensGqlSchemaType } from './tokens.schemes'
 
 /**
  * normalizing token prices
  * @param feedsLedger feeds
  * @returns dictionary <tokenSymbol, rate>
  */
-export const normalizeTokenPrices = (feedsLedger: SubsribeOracleDataFeedSubscription['aggregator']) => {
-  return feedsLedger.reduce<Record<string, number>>((acc, feed) => {
-    const { symbol } = getTokenSymbolAndName(feed.name) ?? {}
+export const normalizeTokenPrices = (feedsLedger: TokenPricesFeedsType) => {
+  return feedsLedger.reduce<Record<string, number>>((acc, feedGql) => {
+    const { symbol } = getTokenSymbolAndName(feedGql.name) ?? {}
 
     if (symbol) {
-      acc[symbol] = convertNumberForClient({ number: feed.last_completed_data, grade: feed.decimals })
+      acc[symbol] = convertNumberForClient({ number: feedGql.last_completed_data, grade: feedGql.decimals })
     }
     return acc
   }, {})
@@ -40,7 +42,7 @@ const handleMvkToken = ({
   token_id: number
   tokenType: TokenType
   parsedMetadata: TokenIndexerMetadataType
-  lending_controller_collateral_tokens: TokensMetadataSubscription['token'][number]['lending_controller_collateral_tokens']
+  lending_controller_collateral_tokens: TokensMetadataQuery['token'][number]['lending_controller_collateral_tokens']
 }): {
   smvk: TokenMetadataType | null
   mvk: TokenMetadataType | null
@@ -96,7 +98,7 @@ const handleMvkToken = ({
  *
  * TODO: add farm tokens here, lack of info now
  */
-export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscription['token']) => {
+export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
   return tokensFromGql.reduce<Pick<TokensContext, 'tokensMetadata' | 'collateralTokens' | 'mTokens'>>(
     (
       acc,
@@ -132,6 +134,11 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
           throw new Error(`Token do not have valid symbol, name or icon ${symbol}, ${name}, ${tokenIcon}`)
         }
 
+        // we have 2 mvk tokens in indexer one is empty hardcoded and one is token with data, so we need to exclude empty one
+        if (symbol === 'MVK' && !mvk_tokens?.[0]?.address) {
+          throw new Error(`Omit hardcoded fake mvk token`)
+        }
+
         let tokenMetadata: TokenMetadataType = {
           id: token_id,
           address: token_address,
@@ -153,9 +160,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
           })
 
           if (mvk) {
-            if (checkWhetherTokenIsCollateralToken(mvk)) acc.collateralTokens.push(mvk.address)
-
-            acc.tokensMetadata[mvk.address] = { ...acc.tokensMetadata[mvk.address], ...smvk }
+            acc.tokensMetadata[mvk.address] = { ...acc.tokensMetadata[mvk.address], ...mvk }
           }
 
           if (smvk) {
@@ -163,12 +168,12 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
 
             if (checkWhetherTokenIsCollateralToken(smvk)) acc.collateralTokens.push(smvk.address)
           }
+
           return acc
         }
 
         // if token is collateral
-        if (lending_controller_collateral_tokens?.[0]) {
-          // handling all another collateral tokens
+        if (lending_controller_collateral_tokens[0]) {
           acc.collateralTokens.push(token_address)
           tokenMetadata = {
             ...tokenMetadata,
@@ -183,12 +188,12 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensMetadataSubscriptio
         }
 
         // if token is loan token (market token)
-        if (lending_controller_loan_tokens?.[0]) {
+        if (lending_controller_loan_tokens[0]) {
           tokenMetadata = {
             ...tokenMetadata,
             loanData: {
               ...tokenMetadata.loanData,
-              indexerName: lending_controller_collateral_tokens[0].token_name,
+              indexerName: lending_controller_loan_tokens[0].loan_token_name,
             },
           }
         }

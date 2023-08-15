@@ -36,11 +36,7 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const DataFeeds = () => {
   const { feedsAddresses, feedsMapper, feedsCategories } = useDataFeedsContext()
-  const { totalOracleNetworks, isLoading: isOraclesDataLoading } = useSatelliteStatistics({
-    skipActiveSatellitesCount: true,
-    skipTotalDelegatedMVK: true,
-    skipOracleRewardsTotal: true,
-  })
+  const { totalOracleNetworks, isLoading: isOraclesDataLoading } = useSatelliteStatistics()
 
   const dispatch = useDispatch()
   const { search } = useLocation()
@@ -126,7 +122,7 @@ export const DataFeeds = () => {
       {isOraclesDataLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading feeds data...</div>
+          <div className="text">Loading feeds data</div>
         </DataLoaderWrapper>
       ) : (
         <DataFeedsStyled>

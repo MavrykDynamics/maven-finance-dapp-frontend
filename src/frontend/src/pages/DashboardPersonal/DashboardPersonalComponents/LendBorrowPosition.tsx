@@ -7,11 +7,11 @@ import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.c
 import colors from 'styles/colors'
 
 // types
-import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
+import { UserLoansData } from 'providers/UserProvider/user.provider.types'
 
 // helpers
 import { getGaugeVaultRiskSimpleStatus } from 'pages/LoansDashboard/helpers/position.helpers'
-import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
+import { getNumberInBounds } from 'utils/calcFunctions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // context
@@ -37,7 +37,7 @@ export const LendBorrowPosition = ({
 }: {
   totalUserBorrowed: number
   totalUserLended: number
-  userVaultsData: UserLoansDataStateType['userVaultsData']
+  userVaultsData: UserLoansData['userVaultsData']
   userLoansRewards: number
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()

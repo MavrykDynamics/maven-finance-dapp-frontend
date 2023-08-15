@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // components
@@ -18,7 +18,7 @@ import {
   isTezosAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { checkNan } from 'utils/checkNan'
-import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
@@ -29,14 +29,7 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { AddNewCollateralDataProps } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
-import {
-  InputStatusType,
-  INPUT_LARGE,
-  INPUT_STATUS_ERROR,
-  INPUT_STATUS_SUCCESS,
-  getOnBlurValue,
-  getOnFocusValue,
-} from 'app/App.components/Input/Input.constants'
+import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // actions
@@ -61,6 +54,9 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { Info } from 'app/App.components/Info/Info.view'
+import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
+import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({
@@ -83,14 +79,18 @@ export const AddNewCollateral = ({
 
   useLockBodyScroll(show)
 
-  const [selectedCollateral, setSelectedCollateral] = useState<TokenAddressType | undefined>()
-  const [inputData, setInputData] = useState<{
-    amount: string
-    validationStatus: InputStatusType
-  }>({
-    amount: '0',
-    validationStatus: '',
-  })
+  const {
+    inputData,
+    setInputData,
+    selectedCollateral,
+    setSelectedCollateral,
+    inputOnBlurHandle,
+    inputOnChangeHandle,
+    willExceedXTZTheLimit,
+    onFocusHandler,
+    useMaxHandler,
+    clickOnInputDDItem,
+  } = useCollateralInputData()
 
   // resetting popup state, when toggling it off
   useEffect(() => {
@@ -99,8 +99,9 @@ export const AddNewCollateral = ({
         amount: '0',
         validationStatus: '',
       })
+      setSelectedCollateral('')
     }
-  }, [show])
+  }, [setInputData, show])
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd create vault)
   const mappedAvaliableCollaterals = useMemo(() => {
@@ -166,9 +167,10 @@ export const AddNewCollateral = ({
     borrowedAmount = 0,
     availableLiquidity = 0,
     borrowCapacity = 0,
+    xtzDelegatedTo = null,
   } = data ?? {}
 
-  const { symbol = '', decimals = 0, rate: originalRate } = collateralToken ?? {}
+  const { symbol = '', rate: originalRate } = collateralToken ?? {}
   const rate = originalRate ?? 0
   const userCollateralBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: selectedCollateral })
   const { rate: originalBorrowedTokenRate } = borrowedToken ?? {}
@@ -199,7 +201,9 @@ export const AddNewCollateral = ({
       lendingControllerAddress &&
       checkWhetherTokenIsCollateralToken(collateralToken)
     ) {
-      return depositCollateralsAction(
+      const _baker = xtzDelegatedTo === choosenBaker?.bakerAddress ? null : choosenBaker?.bakerAddress
+
+      return await depositCollateralsAction(
         userAddress,
         vaultAddress,
         [
@@ -214,12 +218,23 @@ export const AddNewCollateral = ({
         vaultId,
         lendingControllerAddress,
         closePopup,
-        choosenBaker?.bakerAddress,
+        _baker,
       )
     }
 
     return null
-  }, [bug, choosenBaker?.bakerAddress, closePopup, collateralToken, inputData.amount, userAddress, vaultAddress])
+  }, [
+    bug,
+    choosenBaker?.bakerAddress,
+    closePopup,
+    collateralToken,
+    inputData.amount,
+    lendingControllerAddress,
+    userAddress,
+    vaultAddress,
+    vaultId,
+    xtzDelegatedTo,
+  ])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -230,39 +245,6 @@ export const AddNewCollateral = ({
   )
 
   const { action: depositCollateralHandler } = useContractAction(contractActionProps)
-
-  // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
-    const validationStatus = loansInputValidation({
-      inputAmount: newInputAmount,
-      maxAmount: userAssetBalance,
-      options: {
-        byDecimalPlaces: decimals,
-      },
-    })
-
-    if (inputData) {
-      setInputData({
-        ...inputData,
-        amount: newInputAmount,
-        validationStatus: validationStatus,
-      })
-    }
-  }
-
-  const inputOnBlurHandle = () =>
-    setInputData({
-      ...inputData,
-      amount: getOnBlurValue(inputData.amount),
-    })
-
-  const onFocusHandler = () =>
-    setInputData({
-      ...inputData,
-      amount: getOnFocusValue(inputData.amount),
-    })
-
-  const clickOnInputDDItem = (id: DDItemId) => (typeof id === 'string' ? setSelectedCollateral(id) : null)
 
   const isDepositBtnDisabled =
     (isTezosAsset(selectedCollateral) && !choosenBaker) || inputData.validationStatus === INPUT_STATUS_ERROR
@@ -325,12 +307,8 @@ export const AddNewCollateral = ({
                 settings={{
                   balance: userCollateralBalance,
                   balanceAsset: symbol,
-                  useMaxHandler: () =>
-                    setInputData({
-                      ...inputData,
-                      amount: getLoansInputMaxAmount(userCollateralBalance, decimals),
-                      validationStatus: INPUT_STATUS_SUCCESS,
-                    }),
+                  useMaxHandler: () => useMaxHandler(userCollateralBalance),
+
                   inputSize: INPUT_LARGE,
                   inputStatus: inputData.validationStatus,
                   convertedValue: Number(inputData.amount) * rate,
@@ -388,6 +366,8 @@ export const AddNewCollateral = ({
               ) : null}
             </>
           ) : null}
+
+          <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20 mb-20" />
 
           <div className="block-name">New Vault Status</div>
           <VaultModalOverview>

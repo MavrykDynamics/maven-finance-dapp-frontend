@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -14,17 +15,18 @@ import {
   PAGINATION_SIDE_CENTER,
   calculateSlicePositions,
 } from 'app/App.components/Pagination/pagination.consts'
+import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
 import { PRIMARY_TRANSACTION_HISTORY_STYLE, SECONDARY_TRANSACTION_HISTORY_STYLE } from '../Loans.const'
 
 import { TransactionHistoryStyled } from '../Loans.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { EmptyContainer } from 'app/App.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { State } from 'reducers'
-import { useSelector } from 'react-redux'
-import useMarketTransactionHistory from 'providers/LoansProvider/hooks/useMarketTransactionHistory'
+import { useLoansTransactionHistory } from 'providers/LoansProvider/hooks/useMarketTransactionHistory'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 type TransactionHistoryPropsType = {
   loanTokenAddress: TokenAddressType
@@ -42,7 +44,6 @@ type TransactionHistoryPropsType = {
  * @param userAddress - if you want to get a transaction history for one user, you can specify this option.
  * @param styleType - you can set one of several background options. Use the constant from Loans.const.tsx.
  *
- * TODO: add loader when loading
  */
 export const TransactionHistory = ({
   loanTokenAddress,
@@ -57,7 +58,10 @@ export const TransactionHistory = ({
     contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
 
-  const { isLoading: isTransactionHistoryLoading, transactionHistory } = useMarketTransactionHistory({
+  const { tokensMetadata } = useTokensContext()
+  const { decimals } = tokensMetadata[loanTokenAddress]
+
+  const { isLoading: isTransactionHistoryLoading, transactionHistory } = useLoansTransactionHistory({
     marketTokenAddress: loanTokenAddress,
     userAddress,
     vaultAddress,
@@ -76,7 +80,12 @@ export const TransactionHistory = ({
       <div className="main">
         <H2Title>Transaction History</H2Title>
 
-        {transactionHistory.length ? (
+        {isTransactionHistoryLoading ? (
+          <DataLoaderWrapper margin="20px 0 40px 0">
+            <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
+            <div className="text">Loading transaction history</div>
+          </DataLoaderWrapper>
+        ) : transactionHistory.length ? (
           <>
             <Table className="treasury-table">
               <TableHeader className="simple-header treasury">
@@ -98,7 +107,13 @@ export const TransactionHistory = ({
                         <span className="descr">{descr}</span>
                       </TableCell>
                       <TableCell width={`30%`}>
-                        <CommaNumber value={amount} className="value" endingText={symbol} />
+                        <CommaNumber
+                          value={amount}
+                          className="value"
+                          endingText={symbol}
+                          showDecimal
+                          decimalsToShow={decimals}
+                        />
                       </TableCell>
                       <TableCell width={`30%`}>{date}</TableCell>
                       <TableCell contentPosition="right">
@@ -111,6 +126,12 @@ export const TransactionHistory = ({
                 })}
               </TableBody>
             </Table>
+
+            <Pagination
+              itemsCount={transactionHistory.length}
+              listName={TRANSACTION_HISTORY_TABLE_NAME}
+              side={PAGINATION_SIDE_CENTER}
+            />
           </>
         ) : (
           <EmptyContainer
@@ -123,12 +144,6 @@ export const TransactionHistory = ({
           </EmptyContainer>
         )}
       </div>
-
-      <Pagination
-        itemsCount={transactionHistory.length}
-        listName={TRANSACTION_HISTORY_TABLE_NAME}
-        side={PAGINATION_SIDE_CENTER}
-      />
 
       <div className="lending-controller">
         Lending Controller Address: <TzAddress tzAddress={lendingControllerAddress} type={BLUE} isBold />

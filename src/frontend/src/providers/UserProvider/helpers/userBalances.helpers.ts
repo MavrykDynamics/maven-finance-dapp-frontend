@@ -8,7 +8,7 @@ import {
   userTzktTokenBalancesSchema,
   userTzktWSAccountSchema,
 } from './../user.provider.types'
-import { GetUserDataSubscription } from 'utils/__generated__/graphql'
+import { GetUserDataQuery } from 'utils/__generated__/graphql'
 import {
   TokenAddressType,
   TokensContext,
@@ -72,7 +72,7 @@ export const normalizeUserIndexerTokensBalances = ({
   indexerData,
   tokensMetadata,
 }: {
-  indexerData: GetUserDataSubscription
+  indexerData: GetUserDataQuery
   tokensMetadata: TokensContext['tokensMetadata']
 }) => {
   const { smvk_balance, mvk_balance, mvk_transfer_receiver, mvk_transfer_sender, m_token_accounts } =
@@ -153,7 +153,8 @@ export const fetchTzktUserBalances = async ({
     return normalizedTzktTokensBalances
   } catch (e) {
     console.error(`fetchTzktUserBalances query error: `, e)
-    throw new ApiError('Error occured while loading your balances, try to reload the page')
+    return {}
+    // throw new ApiError('Error occured while loading your balances, try to reload the page')
   }
 }
 

@@ -1,5 +1,9 @@
-import { InputSizeType, InputStatusType } from './Input.constants'
+import { ERR_MSG_INPUT, ERR_MSG_TOAST, InputSizeType, InputStatusType } from './Input.constants'
 import { InputOneChange } from './Input.controller'
+
+export type ErrorMessagePosition = typeof ERR_MSG_TOAST | typeof ERR_MSG_INPUT
+
+export type ValidatorFnType<T = any> = [(v: string, ...args: T[]) => string, ErrorMessagePosition, T[]?]
 
 export type Settings = {
   balance?: number
@@ -14,6 +18,7 @@ export type Settings = {
   inputSize?: InputSizeType
   errorMessage?: string
   showErrorMessage?: boolean
+  validationFns?: ValidatorFnType[]
 }
 
 export type InputProps = {

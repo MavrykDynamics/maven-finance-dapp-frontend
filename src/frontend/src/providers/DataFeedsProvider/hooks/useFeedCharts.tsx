@@ -1,50 +1,51 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useSubscription } from '@apollo/client'
+import { useEffect, useState } from 'react'
 
-import { FeedChartsSubsSkipsType } from '../helpers/feeds.types'
-import { SUB_QUERY, SUB_SKIP, SUB_SUBSCRIBE } from 'utils/api/apollo.consts'
-import { SUBSCRIBE_FEED_HISTORY } from '../queries/feeds.query'
+import { FEED_HISTORY_QUERY } from '../queries/feeds.query'
 import { normalizeDataFeedsHistory, normalizeDataFeedsVolatility } from '../helpers/feedsNormalizer'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useDataFeedsContext } from '../dataFeeds.provider'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 
-export const useFeedCharts = (
-  { skipFeedChartsSubsciption }: FeedChartsSubsSkipsType = {
-    skipFeedChartsSubsciption: SUB_SUBSCRIBE,
-  },
-  feedAddress?: string,
-) => {
-  const [shouldSkip, setShouldSkip] = useState<FeedChartsSubsSkipsType>({
-    skipFeedChartsSubsciption,
+// TODO: after dev-demo store all data in ctx to show feed chart user was on immidiately
+export const useFeedCharts = (feedAddress: string) => {
+  // const { feedsCharts, setFeedChart } = useDataFeedsContext()
+
+  const [feedChartData, setFeedChartData] = useState<{
+    dataFeedsHistory: null | Array<AreaChartPlotType>
+    dataFeedsVolatility: null | Array<AreaChartPlotType>
+  }>({
+    dataFeedsHistory: null,
+    dataFeedsVolatility: null,
   })
 
-  const { loading: feedsHistoryLoading, data: feedsHistory } = useSubscription(SUBSCRIBE_FEED_HISTORY, {
+  useEffect(() => {
+    return () => {
+      setFeedChartData({
+        dataFeedsHistory: null,
+        dataFeedsVolatility: null,
+      })
+    }
+  }, [feedAddress])
+
+  useQueryWithRefetch(FEED_HISTORY_QUERY, {
     variables: {
       feedAddress,
     },
-    skip: shouldSkip.skipFeedChartsSubsciption === SUB_SKIP || !feedAddress,
+    fetchPolicy: 'no-cache',
+    onCompleted: (data) => {
+      const feedsHistory = data.aggregator[0].history_data
+
+      setFeedChartData({
+        dataFeedsHistory: normalizeDataFeedsHistory(feedsHistory),
+        dataFeedsVolatility: normalizeDataFeedsVolatility(feedsHistory),
+      })
+    },
+    onError: (e) => console.error('loading feed chart error:', { feedAddress, e }),
   })
 
-  // Effect to load data 1 time and then skip loading, cuz loading returned from useSubscription is only for initial loading
-  useEffect(() => {
-    if (!feedsHistoryLoading && skipFeedChartsSubsciption === SUB_QUERY) {
-      setShouldSkip((prevSkip) => ({
-        ...prevSkip,
-        skipFeedChartsSubsciption: SUB_SKIP,
-      }))
-    }
-  }, [skipFeedChartsSubsciption, feedsHistoryLoading])
-
-  const { dataFeedsHistory, dataFeedsVolatility } = useMemo(() => {
-    if (!feedsHistory || !feedsHistory.aggregator[0]) return { dataFeedsHistory: [], dataFeedsVolatility: [] }
-
-    return {
-      dataFeedsHistory: normalizeDataFeedsHistory(feedsHistory.aggregator[0].history_data),
-      dataFeedsVolatility: normalizeDataFeedsVolatility(feedsHistory.aggregator[0].history_data),
-    }
-  }, [feedsHistory])
-
   return {
-    isLoading: feedsHistoryLoading,
-    dataFeedsHistory,
-    dataFeedsVolatility,
+    isLoading: feedChartData.dataFeedsVolatility === null || feedChartData.dataFeedsHistory === null,
+    dataFeedsHistory: feedChartData.dataFeedsHistory,
+    dataFeedsVolatility: feedChartData.dataFeedsVolatility,
   }
 }

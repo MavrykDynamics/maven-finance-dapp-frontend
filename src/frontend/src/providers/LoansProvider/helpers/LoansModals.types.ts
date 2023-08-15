@@ -20,10 +20,9 @@ export type ConfirmRepayPartPopupDataType = {
   vaultId: number
   vaultAddress: string
   tokenAddress: TokenAddressType
-  borrowedAmount: number
+  totalOutstanding: number
   collateralBalance: number
   borrowCapacity: number
-  totalOutstanding: number
   callback: () => void
 } | null
 
@@ -60,15 +59,16 @@ export type AddNewCollateralDataProps = {
   borrowedTokenAddress: TokenAddressType
   availableLiquidity: number
   collateralData: VaultType['collateralData']
+  xtzDelegatedTo: VaultType['xtzDelegatedTo']
 } | null
 
 export type WithdrawCollateralPopupDataType = {
   vaultAddress: string
   vaultId: number
-  amountToWitdraw: number
   borrowedAmount: number
   borrowedTokenAddress: TokenAddressType
   collateralBalance: number
+  selectedCollateralAmountInVault: number
   collateralRatio: number
   collateralTokenAddress: TokenAddressType
 } | null

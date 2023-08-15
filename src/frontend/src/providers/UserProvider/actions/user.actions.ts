@@ -23,19 +23,18 @@ export const claimVestingReward = async (
 export const claimAllRewardsAction = async (
   userAddress: string,
   doormanAddress: string,
+  availableDoormanRewards: number,
+  availableSatellitesRewards: number,
+  availableFarmRewards: Record<string, number>,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
-    // update it to be from args after moving to context
-    const availableDoormanRewards = 0,
-      availableFarmRewards = {} as any,
-      availableSatellitesRewards = 0
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     // if user has farm rewards to claim it will transfrom this rewards to batch call getting rewards array
     const farmsRewardsBatchPart = await Promise.all(
       Object.keys(availableFarmRewards)
         .reduce<Array<() => Promise<WalletParamsWithKind>>>((callbacks, farmAddress) => {
-          if (availableFarmRewards[farmAddress].myAvailableFarmRewards > 0) {
+          if (availableFarmRewards[farmAddress] > 0) {
             callbacks.push(async () => {
               const farmContractInstance = await tezos?.wallet.at(farmAddress)
 

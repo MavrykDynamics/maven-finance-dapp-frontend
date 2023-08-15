@@ -1,10 +1,8 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import * as signalR from '@microsoft/signalr'
-import { useSubscription } from '@apollo/client'
 
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
-import { SUBSCRIPTION_INDEXER_LVL } from 'providers/DappConfigProvider/queries/indexerLvl.query'
 import { DEFAULT_USER, DEFAULT_USER_TZKT_TOKENS } from './helpers/user.consts'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { dappClient } from 'providers/UserProvider/wallet/WalletCore'
@@ -12,6 +10,7 @@ import { dappClient } from 'providers/UserProvider/wallet/WalletCore'
 // context
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // helpers
 import {
@@ -24,14 +23,16 @@ import {
 import { normalizeUser } from './helpers/userData.helpers'
 import { sleep } from 'utils/api/sleep'
 import { getUsersFarmRewards } from './helpers/userRewards.helpers'
+import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
 // queries
-import { SUBSCRIBE_USER_DATA, SUBSCRIBE_USER_PROPOSAL_REWARDS_DATA } from './queries/userData.query'
+import { USER_DATA_QUERY } from './queries/userData.query'
 
 // types
 import {
   UserContext,
   UserContextStateType,
+  UserLoansData,
   UserTzktTokensBalancesType,
   userTzKtTokenBalances,
 } from './user.provider.types'
@@ -54,6 +55,8 @@ const hasUserInLocalStorage =
 /**
  * ADJUSTMENTS:
  * 1. on changing user do not reopen socket, just update filter (invoke), currently hadn't found any example of it
+ * 2. nullable values on init
+ * 3. 1 large query -> 3 small and load only when need, check userData.query.ts for details
  */
 export const UserProvider = ({ children }: Props) => {
   const { tokensMetadata } = useTokensContext()
@@ -62,16 +65,17 @@ export const UserProvider = ({ children }: Props) => {
   const dispatch = useDispatch()
 
   const ws = useRef<null | signalR.HubConnection>(null)
-  const lastSavedLevel = useRef<number>(0)
+  const currentIndexedLvlListenerId = useRef<null | string>(null)
 
   // store all data for user, that comes from hasura
   const [userCtxState, setUserCtxState] = useState<UserContextStateType>(DEFAULT_USER)
   // store user tokens from tzkt
   const [userTzktTokens, setUserTzktTokens] = useState<userTzKtTokenBalances>(DEFAULT_USER_TZKT_TOKENS)
-  const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
 
   // track whether we've loaded user on init, if we have his wallet data in local storage
   const isRunnedInitialConnect = useRef<null | boolean>(false)
+  const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
+  const [isUserLoading, setUserLoading] = useState(hasUserInLocalStorage && !isRunnedInitialConnect.current)
 
   /**
    * we can startInitialUserLoading if:
@@ -170,6 +174,7 @@ export const UserProvider = ({ children }: Props) => {
 
       // if choosen wallet in popup set it to context and loan initial balances from tzkt via fetch
       if (userAddress) {
+        setUserLoading(true)
         loadInitialTzktTokensForNewlyConnectedUser({ userAddress })
 
         dispatch({ type: SET_REDUX_USER, accountPkh: userAddress })
@@ -198,17 +203,15 @@ export const UserProvider = ({ children }: Props) => {
   }, [canStartUserInitialLoading, , connect])
 
   // subscribe to user's indexer data
-  const { loading: userDataLoading } = useSubscription(SUBSCRIBE_USER_DATA, {
+  useQueryWithRefetch(USER_DATA_QUERY, {
     skip: !userCtxState.userAddress,
     variables: {
-      userAddress: userCtxState.userAddress,
+      userAddress: userCtxState.userAddress ?? '',
     },
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      // if user does not exists, TODO: should not be an option
-      if (!data || data.mavryk_user.length === 0) {
-        bug('User does not exists in DB')
-        signOut()
+    onCompleted: (data) => {
+      // if user does not exists
+      if (data.mavryk_user.length === 0) {
+        setUserLoading(false)
         return
       }
 
@@ -228,71 +231,46 @@ export const UserProvider = ({ children }: Props) => {
         availableLoansRewards,
         userMTokens,
       }))
+      setUserLoading(false)
     },
     onError: (e) => {
       console.error(`UserProvider query error: `, e)
       bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
     },
   })
+
+  // HANDLE USER FARM REWARDS
+  const [currentIndexedLevel, setCurrentIndexedLevel] = useState(0)
+
+  // subscribe to indexer lvl change
+  useEffect(() => {
+    if (Object.keys(userCtxState.farmAccounts).length !== 0) {
+      currentIndexedLvlListenerId.current = currentIndexerLevelProxy.registerListener(setCurrentIndexedLevel)
+    }
+
+    return () => {
+      if (currentIndexedLvlListenerId.current)
+        currentIndexerLevelProxy.removeListener(currentIndexedLvlListenerId.current)
+    }
+  }, [userCtxState.farmAccounts])
 
   /**
    * User farm rewards depends on current indexed level, and every time level updates we need to recalc farm rewards
    * to reduce amount of needed rerenders, we recalc farm rewards every 3rd level change
    *
    * skip when user don't participated any farms
-   *
-   * Subscribe to level change only when user's wallet is connected and he has farms where he has deposited
    */
-  useSubscription(SUBSCRIPTION_INDEXER_LVL, {
-    skip: Object.keys(userCtxState.farmAccounts).length === 0,
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
-      const indexerLvl = data.dipdup_head.find(({ name }) => name === process.env.REACT_APP_RPC_TZKT_API)?.level
-      if (indexerLvl) {
-        if (indexerLvl - lastSavedLevel.current >= 3) {
-          setUserCtxState((prev) => ({
-            ...prev,
-            availableFarmRewards: getUsersFarmRewards({
-              userFarmsRewardsDataFromIndexer: userCtxState.farmAccounts,
-              currentLvl: indexerLvl,
-            }),
-          }))
-        }
-        lastSavedLevel.current = indexerLvl
-      }
-    },
-    onError: (e) => {
-      console.error(`UserProvider query error: `, e)
-      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-    },
-  })
-
-  /**
-   * user proposal rewards, user can have them if he votes on proposals (means he is satellite), or it's just a regular user and he delegated
-   * to satellite who is making all work
-   *
-   * skip is user is not a satellite and haven't delegated to any
-   */
-  useSubscription(SUBSCRIBE_USER_PROPOSAL_REWARDS_DATA, {
-    skip: !userCtxState.isSatellite && !userCtxState.satelliteMvkIsDelegatedTo,
-    variables: {
-      userAddress: userCtxState.isSatellite ? userCtxState.userAddress : userCtxState.satelliteMvkIsDelegatedTo ?? '',
-    },
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
-
+  useEffect(() => {
+    if (Object.keys(userCtxState.farmAccounts).length !== 0) {
       setUserCtxState((prev) => ({
         ...prev,
-        availableProposalRewards: data.governance_proposal.map(({ id }) => id),
+        availableFarmRewards: getUsersFarmRewards({
+          userFarmsRewardsDataFromIndexer: userCtxState.farmAccounts,
+          currentLvl: currentIndexedLevel,
+        }),
       }))
-    },
-    onError: (e) => {
-      console.error(`UserProvider query error: `, e)
-      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-    },
-  })
+    }
+  }, [currentIndexedLevel, userCtxState.farmAccounts])
 
   // disconnect user's wallet to DAPP & set default context
   const signOut = useCallback(async () => {
@@ -317,6 +295,13 @@ export const UserProvider = ({ children }: Props) => {
       const newUserAddress = await DAPP_INSTANCE.swapAccount()
 
       if (newUserAddress && newUserAddress !== userCtxState.userAddress) {
+        setUserLoading(true)
+        // on user change set his loans data to null to make loader in useUserLoansData hook correct
+        setUserCtxState((prev) => ({
+          ...prev,
+          userLoansData: null,
+        }))
+
         loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress, useLoader: false })
 
         dispatch({ type: SET_REDUX_USER, accountPkh: newUserAddress })
@@ -346,11 +331,18 @@ export const UserProvider = ({ children }: Props) => {
     handleOnReconnected,
   ])
 
+  const setUserLoansData = useCallback((userLoansData: UserLoansData | null) => {
+    setUserCtxState((prev) => ({
+      ...prev,
+      userLoansData,
+    }))
+  }, [])
+
   const providerValue = useMemo(() => {
     // set initial connect to true, when we have user address set (subs runned and loading statuses set to true) and loading statuses are off,
     // or we don't have user wallet in LC and we are unable to restore it
     if (
-      (!isRunnedInitialConnect.current && userCtxState.userAddress && !(userDataLoading || isTzktBalancesLoading)) ||
+      (!isRunnedInitialConnect.current && userCtxState.userAddress && !(isUserLoading || isTzktBalancesLoading)) ||
       !hasUserInLocalStorage
     ) {
       isRunnedInitialConnect.current = true
@@ -362,13 +354,14 @@ export const UserProvider = ({ children }: Props) => {
         ...userCtxState.userTokensBalances,
         ...(userCtxState.userAddress === userTzktTokens.userAddress ? userTzktTokens.tokens : {}),
       },
-      isLoading: userDataLoading || isTzktBalancesLoading,
+      isLoading: isUserLoading || isTzktBalancesLoading,
       isRunnedInitialConnect: Boolean(isRunnedInitialConnect.current),
       connect,
       signOut,
       changeUser,
+      setUserLoansData,
     }
-  }, [connect, signOut, changeUser, userCtxState, userTzktTokens])
+  }, [userCtxState, isUserLoading, isTzktBalancesLoading, connect, signOut, changeUser, setUserLoansData])
 
   return <userContext.Provider value={providerValue}>{children}</userContext.Provider>
 }
