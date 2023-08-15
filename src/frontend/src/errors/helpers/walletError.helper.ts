@@ -103,7 +103,6 @@ export const estimateBatchOperation = async (
 
     return estimatedBatchCalls
   } catch (e) {
-    console.log(e, '---------------')
     return { ...defaultEstimatedBatchCalls, error: getContractErrorMessage(e) }
   }
 }
