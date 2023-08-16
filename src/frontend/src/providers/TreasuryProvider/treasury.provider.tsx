@@ -1,29 +1,28 @@
+import React, { useContext, useMemo, useRef, useState } from 'react'
 import { ApolloError, useQuery } from '@apollo/client'
+
+// providers
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import React, { useContext, useMemo, useState } from 'react'
+
+// types
 import { NullableTreasuryContextStateType, TreasuryContext, TreasurySubsRecordType } from './treasury.provider.types'
+import { GetTreasuryStorageDataQuery, GetTreasuryUserBalancesQuery } from 'utils/__generated__/graphql'
+
+// consts
 import { DEFAULT_TREASURY_CTX, DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_QUERY } from './helpers/treasury.consts'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+
+// hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+
+// queries
 import { GET_TREASURY_STORAGE_QUERY, GET_TREASURY_USER_BALANCES } from './queries/treasury.queries'
+
+// utils
+import { curry } from 'utils/curry'
 import { getTreasuryProviderReturnValue } from './helpers/treasury.utils'
 import { normalizeTreasuryStorage } from './helpers/treasury.normalizer'
-import { GetTreasuryStorageDataQuery, GetTreasuryUserBalancesQuery } from 'utils/__generated__/graphql'
-
-function curry<T extends (...args: any[]) => any>(func: T): (...args: any[]) => any {
-  return function curried(...args: any[]): any {
-    if (args.length >= func.length) {
-      // @ts-ignore
-      return func.apply(this, args)
-    } else {
-      return function (...args2: any[]): any {
-        // @ts-ignore
-        return curried.apply(this, args.concat(args2))
-      }
-    }
-  }
-}
 
 export const treasuryContext = React.createContext<TreasuryContext>(undefined!)
 
@@ -43,6 +42,19 @@ const TreasuryProvider = ({ children }: Props) => {
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
+  const updateTreasuryStorage = (treasury: GetTreasuryStorageDataQuery, userBalances: GetTreasuryUserBalancesQuery) => {
+    const data = { ...treasury, ...userBalances }
+    const treasuryMapper = normalizeTreasuryStorage(data)
+
+    setTreasuryCtxState((prev) => ({
+      ...prev,
+      treasuryMapper,
+    }))
+  }
+
+  //   helper to collect treasury data for normalizer using curry  -----------------------------
+  const treasuryNormalizerDataUpdaterRef = useRef(curry(updateTreasuryStorage))
+
   // subscribes
   useQueryWithRefetch(GET_TREASURY_STORAGE_QUERY, {
     skip: !activeSubs[TREASURY_STORAGE_QUERY],
@@ -51,7 +63,7 @@ const TreasuryProvider = ({ children }: Props) => {
       updateTreasuryAddresses(data)
 
       //   pass the first part of data -> treasury data
-      curriedUpdateStorageFn(data)
+      treasuryNormalizerDataUpdaterRef.current = treasuryNormalizerDataUpdaterRef.current(data)
       setAllowUserBalances(true)
     },
     onError: (error) => handleSubError(error, 'GET_TREASURY_STORAGE_QUERY'),
@@ -69,8 +81,11 @@ const TreasuryProvider = ({ children }: Props) => {
         return
       }
 
-      //   pass the second part of data -> user balances data
-      curriedUpdateStorageFn(data)
+      //  pass the second part of data -> user balances data
+      treasuryNormalizerDataUpdaterRef.current(data)
+      // reset for future calls
+      treasuryNormalizerDataUpdaterRef.current = curry(updateTreasuryStorage)
+      // disallow this query until new data for treasury is received
       setAllowUserBalances(false)
     },
     onError: (error) => handleSubError(error, 'GET_TREASURY_USER_BALANCES'),
@@ -83,19 +98,6 @@ const TreasuryProvider = ({ children }: Props) => {
       treasuryAddresses: treasury.map(({ address }) => address).filter((address) => address !== ''),
     }))
   }
-
-  const updateTreasuryStorage = (treasury: GetTreasuryStorageDataQuery, userBalances: GetTreasuryUserBalancesQuery) => {
-    const data = { ...treasury, ...userBalances }
-    const treasuryMapper = normalizeTreasuryStorage(data)
-
-    setTreasuryCtxState((prev) => ({
-      ...prev,
-      treasuryMapper,
-    }))
-  }
-
-  //   helper to colleact treasury data for normalizer
-  const curriedUpdateStorageFn = useMemo(() => curry(updateTreasuryStorage), [])
 
   //   set what data to subscribe
   const changeTreasurySubscriptionsList = (newSkips: Partial<TreasurySubsRecordType>) => {
