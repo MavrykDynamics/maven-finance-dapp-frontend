@@ -338,9 +338,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
     const payments = getPaymentsDiff(
       [],
-      currentProposal.proposalPayments
-        .filter(({ token_amount, to__id }) => token_amount || to__id)
-        .map(({ token_amount, ...rest }) => ({ ...rest, token_amount: Number(token_amount) })),
+      currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
       tokensMetadata,
     )
 
@@ -402,10 +400,8 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     return await updateProposalData(governanceAddress, selectedUserProposalId, bytesDiff, paymentsDiff)
   }, [
     bug,
-    currentProposal?.proposalData,
-    currentProposal?.proposalPayments,
-    currentProposalOnRemote?.proposalData,
-    currentProposalOnRemote?.proposalPayments,
+    currentProposal,
+    currentProposalOnRemote,
     governanceAddress,
     tokensMetadata,
     userAddress,
