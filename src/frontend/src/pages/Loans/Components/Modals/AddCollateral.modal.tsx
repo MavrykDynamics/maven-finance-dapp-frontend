@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // consts
@@ -10,8 +10,6 @@ import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   InputStatusType,
-  getOnBlurValue,
-  getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
@@ -40,14 +38,14 @@ import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vault
 
 // helpers
 import { checkNan } from 'utils/checkNan'
-import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultBorrowCapacity, getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultFutureStatsAfterCollateralOperation } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -134,20 +132,18 @@ export const AddCollateral = ({
     tokenAddress: collateralTokenAddress,
   })
   const { rate: originalBorrowedTokenRate } = borrowedToken ?? {}
-  const borrowedTokenRate = originalBorrowedTokenRate ?? 0
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
-  const futureCollateralRatio = getVaultCollateralRatio(
-    collateralBalance + inputAmount * collateralRate,
-    totalOutstanding * borrowedTokenRate,
-  )
 
-  const futureCollateralBalance = collateralBalance + inputAmount * collateralRate
-  const futureBorrowCapacity = getVaultBorrowCapacity(
-    availableLiquidity * borrowedTokenRate,
-    totalOutstanding * borrowedTokenRate,
-    futureCollateralBalance,
-  )
+  const { futureBorrowCapacity, futureCollateralRatio, futureCollateralBalance } =
+    getVaultFutureStatsAfterCollateralOperation({
+      currentCollateralBalance: collateralBalance,
+      currentTotalOutstanding: totalOutstanding,
+      inputAmount,
+      availableLiquidity,
+      collateralTokenRate: collateralRate,
+      marketTokenRate: originalBorrowedTokenRate ?? 0,
+    })
 
   // deposit action
   const depositAction = useCallback(async () => {

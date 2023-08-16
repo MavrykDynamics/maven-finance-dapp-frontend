@@ -3,9 +3,9 @@ import React, { useCallback, useMemo } from 'react'
 
 // providers
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
-import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useCreateVaultContext } from '../context/CreateVaultModal.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // utils

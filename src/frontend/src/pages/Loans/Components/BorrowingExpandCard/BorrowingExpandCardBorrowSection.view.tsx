@@ -26,7 +26,7 @@ import {
 import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault.text'
 import { checkNan } from 'utils/checkNan'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { getVaultFutureStats, operationBorrow } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultFutureStatsAfterBorrow } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import { useBorrowInputData } from '../Modals/hooks/Market/useBorrowInputData'
@@ -37,9 +37,12 @@ type Props = {
   borrowAPR: number
   hasUserBorrowed: boolean
   currentCollateralBalance: number
+  vaultBorrowIndex: number
+  marketBorrowIndex: number
   DAOFee: number
   availableLiquidity: number
   currentTotalOutstanding: number
+  fee: number
   openConfirmBorrowPopup: (inputAmount: number, callback: () => void) => void
 }
 
@@ -47,30 +50,37 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {
-    borrowedAssetAddress = '',
-    borrowCapacity = 0,
-    currentCollateralBalance = 0,
-    currentTotalOutstanding = 0,
-    availableLiquidity = 0,
-    DAOFee = 0,
+    borrowedAssetAddress,
+    borrowCapacity,
+    currentCollateralBalance,
+    currentTotalOutstanding,
+    availableLiquidity,
+    DAOFee,
+    fee,
+    vaultBorrowIndex,
+    marketBorrowIndex,
     openConfirmBorrowPopup,
   } = props
 
-  const { inputData, settings, inputProps, rate, icon, symbol, clearData } = useBorrowInputData(
+  const { inputData, settings, inputProps, rate, icon, symbol, clearData } = useBorrowInputData({
     borrowedAssetAddress,
     borrowCapacity,
-  )
+    vaultBorrowIndex,
+    marketBorrowIndex,
+  })
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
 
-  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStats({
+  const { futureBorrowCapacity, futureCollateralRatio, futureTotalOustanding } = getVaultFutureStatsAfterBorrow({
     currentCollateralBalance,
     currentTotalOutstanding,
-    operation: operationBorrow,
     inputAmount,
     availableLiquidity,
     tokenRate: rate,
+    vaultBorrowIndex,
+    marketBorrowIndex,
+    interest: fee,
   })
 
   const showWarning = (inputAmount > borrowCapacity / rate || futureCollateralRatio < 200) && inputAmount !== 0

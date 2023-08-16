@@ -37,6 +37,7 @@ export type LoanMarketType = {
   totalLended: number // now much supplied to market pool
 
   reserveFactor: number
+  marketBorrowIndex: number
   reserveAmount: number
 }
 
@@ -63,6 +64,7 @@ export type LoansContextState = {
   config: {
     daoFee: number
     collateralFactor: number
+    // marketBorrowIndexes: Record<string, number>
   }
   chartsData: LoansChartsType | null
 }

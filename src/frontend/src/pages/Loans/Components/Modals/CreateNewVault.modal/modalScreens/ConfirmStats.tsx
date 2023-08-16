@@ -6,7 +6,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useCreateVaultContext } from '../context/createVaultModalContext'
+import { useCreateVaultContext } from '../context/CreateVaultModal.provider'
 
 // utils
 import {

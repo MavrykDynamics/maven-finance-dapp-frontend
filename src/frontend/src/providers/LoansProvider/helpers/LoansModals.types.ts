@@ -11,6 +11,9 @@ export type ConfirmBorrowPopupDataType = {
   collateralBalance: number
   availableLiquidity: number
   inputAmount: number
+  vaultBorrowIndex: number
+  marketBorrowIndex: number
+  fee: number
   DAOFee: number
   callback: () => void
 } | null
@@ -82,6 +85,9 @@ export type BorrowPopupDataType = {
   collateralRatio: number
   borrowAPR: number
   DAOFee: number
+  fee: number
+  vaultBorrowIndex: number
+  marketBorrowIndex: number
   scrollToCurrentVault: () => void
 } | null
 

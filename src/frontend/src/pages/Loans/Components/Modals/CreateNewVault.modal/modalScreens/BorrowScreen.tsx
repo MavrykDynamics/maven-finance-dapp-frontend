@@ -20,10 +20,10 @@ import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useCreateVaultContext } from '../context/CreateVaultModal.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 
@@ -36,11 +36,7 @@ import { DAO_FEE } from 'texts/tooltips/vault.text'
 
 // utils
 import { checkNan } from 'utils/checkNan'
-import {
-  getVaultCollateralRatio,
-  getVaultFutureStats,
-  operationBorrow,
-} from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultFutureStatsAfterBorrow } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { sleep } from 'utils/api/sleep'
@@ -79,7 +75,6 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     availableLiquidity,
     borrowAPR,
     vaultInputState,
-    updateVaultCreating,
     updateNewVault,
     newVault,
   } = useCreateVaultContext()
@@ -91,10 +86,13 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   const currentBorrowedAmount = 0
   const collateralRatio = 0
 
-  const { inputData, settings, inputProps, rate, icon, symbol, decimals } = useBorrowInputData(
-    borrowedTokenAddress,
+  const { inputData, settings, inputProps, rate, icon, symbol, decimals } = useBorrowInputData({
+    borrowedAssetAddress: borrowedTokenAddress,
     borrowCapacity,
-  )
+    isCreateVaultBorrow: true,
+    vaultBorrowIndex: 0,
+    marketBorrowIndex: 0,
+  })
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const convertedBorrowedAmount = convertNumberForClient({ number: currentBorrowedAmount, grade: decimals })
@@ -168,13 +166,16 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     updateScreenToShow(CONFIRMATION_SCREEN_ID)
   }, [inputData.amount, rate, setFinalBorrowInputAmount, symbol, updateScreenToShow])
 
-  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStats({
+  // TODO: check marketBorrowIndex & vaultBorrowIndex here
+  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStatsAfterBorrow({
     currentCollateralBalance,
     currentTotalOutstanding,
-    operation: operationBorrow,
     inputAmount,
     availableLiquidity,
     tokenRate: rate,
+    marketBorrowIndex: 0,
+    vaultBorrowIndex: 0,
+    interest: 0,
   })
 
   const newSettings: Settings = useMemo(

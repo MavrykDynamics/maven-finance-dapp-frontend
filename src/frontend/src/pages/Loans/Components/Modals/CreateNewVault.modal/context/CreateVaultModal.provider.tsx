@@ -1,7 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { createVaultModalContext } from './createVaultModalContext'
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
+
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+
 import {
   CreateNewModalProps,
+  CreateVaultModalContext,
   CreateVaultModalState,
   FinalBorrowInputDataType,
   NewVaultType,
@@ -9,29 +13,31 @@ import {
   SelectedCollateralsType,
   VaultInputState,
 } from '../helpers/createNewVault.types'
+
 import { DEFAULT_CREATE_VAULT_STATE } from '../helpers/createNewVault.consts'
+
 import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import { getVaultBorrowCapacity } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { getVaultBorrowCapacity } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 type Props = CreateNewModalProps & {
   children: React.ReactNode
 }
 
+export const createVaultModalContext = createContext<CreateVaultModalContext>(undefined!)
+
 export const CreateVaultModalProvider = ({ closePopup, show, data, children }: Props) => {
   const { tokensPrices, tokensMetadata } = useTokensContext()
   const { marketsMapper } = useLoansContext()
-  const [modalState, setModalState] = useState<CreateVaultModalState>(DEFAULT_CREATE_VAULT_STATE)
-  const { marketTokenAddress = '' } = data ?? {}
 
-  const { availableLiquidity = 0, borrowAPR } = marketsMapper[marketTokenAddress] ?? {}
+  const [modalState, setModalState] = useState<CreateVaultModalState>(DEFAULT_CREATE_VAULT_STATE)
+
+  const { marketTokenAddress = '' } = data ?? {}
+  const { availableLiquidity = 0, borrowAPR, marketBorrowIndex } = marketsMapper[marketTokenAddress] ?? {}
 
   const marketToken = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
-  const convertedAvailableLiquidity = marketToken?.rate
-    ? Math.max(convertNumberForClient({ number: availableLiquidity, grade: marketToken.decimals }), 0) *
-      marketToken.rate
+  const convertedAvailableLiquidity = marketToken
+    ? Math.max(convertNumberForClient({ number: availableLiquidity, grade: marketToken.decimals }), 0)
     : 0
 
   const resetCreateVaultModalState = useCallback(() => {
@@ -99,10 +105,16 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
     [modalState.selectedCollaterals, modalState.selectedCollateralsAddresses, tokensMetadata, tokensPrices],
   )
 
-  const borrowCapacity = useMemo(
-    () => getVaultBorrowCapacity(convertedAvailableLiquidity, 0, collateralsBalance),
-    [convertedAvailableLiquidity, collateralsBalance],
-  )
+  const totalOutstanding = 0
+  const borrowCapacity = marketToken?.rate
+    ? getVaultBorrowCapacity({
+        availableLiquidity: convertedAvailableLiquidity * marketToken.rate,
+        totalOutstandingInVault: 0,
+        totalOutstandingInInput: Number(modalState.finalBorrowInputData.amount),
+        collateralBalance: collateralsBalance,
+        interest: 0,
+      })
+    : 0
 
   const ctx = useMemo(
     () => ({
@@ -118,6 +130,8 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
       data,
       show,
       collateralsBalance,
+      totalOutstanding,
+      availableLiquidity,
       borrowCapacity,
       borrowAPR,
     }),
@@ -134,10 +148,21 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
       data,
       show,
       collateralsBalance,
+      availableLiquidity,
       borrowCapacity,
       borrowAPR,
     ],
   )
 
   return <createVaultModalContext.Provider value={ctx}>{children}</createVaultModalContext.Provider>
+}
+
+export const useCreateVaultContext = () => {
+  const context = useContext(createVaultModalContext)
+
+  if (!context) {
+    throw new Error('useCreateVaultContext should be used within CreateVaultProvider')
+  }
+
+  return context
 }

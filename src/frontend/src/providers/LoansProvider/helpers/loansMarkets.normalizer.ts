@@ -7,6 +7,10 @@ export const normalizeLoansConfig = ({ indexerData }: { indexerData: GetLoansCon
   return {
     daoFee: indexerData.lending_controller[0].minimum_loan_fee_pct / 100,
     collateralFactor: indexerData.lending_controller[0].collateral_ratio / 10,
+    // marketBorrowIndexes: indexerData.lending_controller[0].loan_tokens.reduce<Record<string, number>>((acc, market) => {
+    //   acc[market.token.token_address] = market.borrow_index
+    //   return acc
+    // }, {}),
   }
 }
 
@@ -24,6 +28,7 @@ export const normalizeLoansMarkets = ({ indexerData }: { indexerData: GetLoansMa
       token_pool_total,
       total_borrowed,
       current_interest_rate,
+      borrow_index,
       token: { token_address: loanTokenAddress },
       m_token: {
         address: loanMTokenAddress,
@@ -54,6 +59,7 @@ export const normalizeLoansMarkets = ({ indexerData }: { indexerData: GetLoansMa
 
       reserveFactor,
       reserveAmount,
+      marketBorrowIndex: borrow_index,
       borrowAPR: tokenCurrentInterestRate * 100,
       lendingAPY: calcLendingAPY(utilizationRate, tokenCurrentInterestRate, treasuryShare),
     }

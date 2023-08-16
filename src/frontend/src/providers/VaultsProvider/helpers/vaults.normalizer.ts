@@ -96,9 +96,12 @@ export const normalizeVaults = ({
       // Check whether vault exists
       if (!vault) return acc
 
-      const fee = Math.abs(
-        calculateAccruedInterest(loan_outstanding_total, vaultBorrowIndex, marketBorrowIndex) - borrowedAmount,
-      )
+      const fee = calculateAccruedInterest({
+        currentLoanOutstandingTotal: loan_outstanding_total,
+        vaultBorrowIndex,
+        marketBorrowIndex,
+        borrowedAmount,
+      })
 
       const apr =
         convertNumberForClient({
@@ -126,6 +129,7 @@ export const normalizeVaults = ({
         minimumRepay: min_repayment_amount,
         fee,
         collateralData,
+        vaultBorrowIndex,
 
         // Liquidation
         liquidationMax: calculateVaultMaxLiquidationAmount(item.loan_outstanding_total, max_vault_liquidation_pct),

@@ -27,11 +27,7 @@ import { LoansModalBase, VaultModalOverview } from './Modals.style'
 // helpers
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import {
-  getVaultCollateralRatio,
-  getVaultFutureStats,
-  operationRepay,
-} from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultFutureStatsAfterRepay } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -78,10 +74,9 @@ export const ConfirmRepayFull = ({
   const { symbol = '', rate: originalRate } = borrowedToken ?? {}
   const rate = originalRate ?? 0
 
-  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStats({
+  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStatsAfterRepay({
     currentCollateralBalance: collateralBalance,
     currentTotalOutstanding: totalOutstanding,
-    operation: operationRepay,
     inputAmount: totalOutstanding,
     availableLiquidity,
     tokenRate: rate,

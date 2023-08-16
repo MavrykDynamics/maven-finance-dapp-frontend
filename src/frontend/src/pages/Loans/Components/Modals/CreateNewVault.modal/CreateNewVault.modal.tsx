@@ -9,8 +9,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { VaultModalStepperWrapper } from './createNewVault.style'
 
 // types
-import { CreateVaultModalProvider } from './context/CreateVaultModal.provider'
-import { useCreateVaultContext } from './context/createVaultModalContext'
+import { CreateVaultModalProvider, useCreateVaultContext } from './context/CreateVaultModal.provider'
 import { CreateNewModalProps } from './helpers/createNewVault.types'
 
 // consts

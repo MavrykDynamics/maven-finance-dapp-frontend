@@ -7,7 +7,12 @@ import {
 } from 'app/App.components/Input/Input.constants'
 import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
-import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import {
+  calculateAccruedInterest,
+  getLoansInputMaxAmount,
+  getMaxBorrowAmountFromBorrowCapacity,
+  loansInputValidation,
+} from 'pages/Loans/Loans.helpers'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -20,7 +25,19 @@ import { checkNan } from 'utils/checkNan'
  * @param borrowCapacity borrow capacity take from vault object
  * @returns default data that is used for stats and other calculations
  */
-export const useBorrowInputData = (borrowedAssetAddress = '', borrowCapacity = 0) => {
+export const useBorrowInputData = ({
+  borrowedAssetAddress,
+  borrowCapacity,
+  vaultBorrowIndex,
+  marketBorrowIndex,
+  isCreateVaultBorrow,
+}: {
+  borrowedAssetAddress: string
+  borrowCapacity: number
+  vaultBorrowIndex: number
+  marketBorrowIndex: number
+  isCreateVaultBorrow?: boolean
+}) => {
   const { userTokensBalances } = useUserContext()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
@@ -37,6 +54,31 @@ export const useBorrowInputData = (borrowedAssetAddress = '', borrowCapacity = 0
   const inputAmount = checkNan(parseFloat(inputData.amount))
 
   const userAssetBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: borrowedAssetAddress })
+
+  /**
+   * maxBorrowValue pure amount in tokens how much user will be able to borrow, value in input,
+   * but we also need to note, that user will borrow value from input + interest from this value,
+   * so value in input should be borrowCapacity - interest,
+   * but when we creating vault we don't have interest yet, so we can borrow whole borrowCapacity amount
+   */
+  const maxBorrowValue = isCreateVaultBorrow
+    ? borrowCapacity / rate
+    : getMaxBorrowAmountFromBorrowCapacity({
+        borrowCapacity: borrowCapacity / rate,
+        vaultBorrowIndex,
+        marketBorrowIndex,
+      })
+
+  console.log({
+    newCorrectInputAmount: (borrowCapacity / marketBorrowIndex) * vaultBorrowIndex,
+    newCorrectTotalOutstanding: calculateAccruedInterest({
+      currentLoanOutstandingTotal: maxBorrowValue,
+      borrowedAmount: 0,
+      vaultBorrowIndex,
+      marketBorrowIndex,
+    }),
+    maxBorrowValue,
+  })
 
   // stuff to handle inputs
   const clearData = useCallback(() => {
@@ -85,9 +127,9 @@ export const useBorrowInputData = (borrowedAssetAddress = '', borrowCapacity = 0
       type: 'number',
       onBlur: inputOnBlurHandle,
       onFocus: onFocusHandler,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => inputOnChangeHandle(e.target.value, borrowCapacity / rate),
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => inputOnChangeHandle(e.target.value, maxBorrowValue),
     }),
-    [borrowCapacity, rate, inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler],
+    [inputData.amount, inputOnBlurHandle, onFocusHandler, inputOnChangeHandle, maxBorrowValue],
   )
 
   const settings: Settings = useMemo(
@@ -95,8 +137,7 @@ export const useBorrowInputData = (borrowedAssetAddress = '', borrowCapacity = 0
       balance: userAssetBalance,
       balanceAsset: symbol,
       balanceName: 'Wallet Balance',
-      useMaxHandler: () =>
-        inputOnChangeHandle(getLoansInputMaxAmount(borrowCapacity / rate, decimals), borrowCapacity / rate),
+      useMaxHandler: () => inputOnChangeHandle(getLoansInputMaxAmount(maxBorrowValue, decimals), maxBorrowValue),
       inputStatus: inputData.validationStatus,
       convertedValue: inputAmount * rate,
       inputSize: INPUT_LARGE,
@@ -108,7 +149,7 @@ export const useBorrowInputData = (borrowedAssetAddress = '', borrowCapacity = 0
       inputAmount,
       rate,
       inputOnChangeHandle,
-      borrowCapacity,
+      maxBorrowValue,
       decimals,
     ],
   )

@@ -156,6 +156,7 @@ export const BorrowingExpandCard = ({
     apr,
     minimumRepay,
     vaultId,
+    vaultBorrowIndex,
   } = vaultData
 
   const {
@@ -218,9 +219,12 @@ export const BorrowingExpandCard = ({
       inputAmount,
       vaultId,
       tokenAddress: borrowedTokenAddress,
-      borrowedAmount,
       collateralBalance,
-      borrowCapacity,
+      totalOutstanding,
+      availableLiquidity,
+      marketBorrowIndex: currentToken.marketBorrowIndex,
+      vaultBorrowIndex,
+      fee,
       DAOFee,
       callback: () => {
         scrollToCurrentVault()
@@ -236,7 +240,7 @@ export const BorrowingExpandCard = ({
       vaultAddress,
       tokenAddress: borrowedTokenAddress,
       collateralBalance,
-      borrowCapacity,
+      availableLiquidity,
       totalOutstanding,
       callback: () => {
         scrollToCurrentVault()
@@ -250,10 +254,9 @@ export const BorrowingExpandCard = ({
       vaultId,
       vaultAddress,
       tokenAddress: borrowedTokenAddress,
-      borrowedAmount,
       collateralBalance,
-      borrowCapacity,
       totalOutstanding,
+      availableLiquidity,
       callback: () => {
         scrollToCurrentVault()
         clearInputData()
@@ -265,11 +268,11 @@ export const BorrowingExpandCard = ({
     openAddNewCollateralPopup({
       vaultAddress,
       vaultId,
-      borrowedAmount,
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
       availableLiquidity,
+      totalOutstanding,
       borrowCapacity,
       collateralData: vault.collateralData,
       xtzDelegatedTo: vault.xtzDelegatedTo,
@@ -421,9 +424,12 @@ export const BorrowingExpandCard = ({
                     currentCollateralBalance={collateralBalance}
                     hasUserBorrowed={Boolean(borrowedAmount)}
                     borrowCapacity={borrowCapacity}
-                    currentBorrowedAmount={borrowedAmount}
                     currentTotalOutstanding={totalOutstanding}
+                    availableLiquidity={availableLiquidity}
+                    vaultBorrowIndex={vaultBorrowIndex}
+                    marketBorrowIndex={currentToken.marketBorrowIndex}
                     DAOFee={DAOFee}
+                    fee={fee}
                     openConfirmBorrowPopup={handleClickOpenConfirmBorrowPopup}
                   />
                 )}
@@ -441,7 +447,7 @@ export const BorrowingExpandCard = ({
                     borrowedAmount={borrowedAmount}
                     minimumRepay={minimumRepay}
                     collateralBalance={collateralBalance}
-                    borrowCapacity={borrowCapacity}
+                    availableLiquidity={availableLiquidity}
                   />
                 )}
               </LoansActionsSection>

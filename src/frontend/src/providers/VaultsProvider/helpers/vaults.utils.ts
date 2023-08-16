@@ -28,6 +28,7 @@ import {
 
 // consts
 import { EMPTY_VAULTS_CONTEXT, VAULTS_DATA } from '../vaults.provider.consts'
+import { calculateTotalOutstanding } from 'pages/Loans/Loans.helpers'
 
 // sort vaults by status
 export const sortVaultsByStatus = async ({
@@ -161,18 +162,31 @@ export const getVaultStatus = ({
  * @param collateralBalance – collateral amount of the vault in USD
  * @returns how much user can borrow in USD in that vault
  */
-export const getVaultBorrowCapacity = (
-  availableLiquidity: number,
-  totalOutstanding: number,
-  collateralBalance: number,
-) => {
+export const getVaultBorrowCapacity = ({
+  availableLiquidity,
+  totalOutstandingInVault,
+  totalOutstandingInInput = 0,
+  interest,
+  collateralBalance,
+}: {
+  availableLiquidity: number
+  totalOutstandingInVault: number
+  totalOutstandingInInput?: number
+  interest: number
+  collateralBalance: number
+}) => {
   console.log({
-    collateralBalance,
-    totalOutstanding,
-    availableLiquidity,
-    returnValue: Math.max(0, Math.min(collateralBalance / 2 - totalOutstanding, Math.max(availableLiquidity, 0))),
+    interest,
+    pureAmount: Math.min(collateralBalance / 2 - totalOutstandingInVault, Math.max(availableLiquidity, 0)),
+    removedInterestAmount:
+      Math.min(collateralBalance / 2 - totalOutstandingInVault, Math.max(availableLiquidity, 0)) - interest,
   })
-  return Math.max(0, Math.min(collateralBalance / 2 - totalOutstanding, Math.max(availableLiquidity, 0)))
+  return Math.max(
+    0,
+    Math.min(collateralBalance / 2 - totalOutstandingInVault, Math.max(availableLiquidity, 0)) -
+      totalOutstandingInInput,
+    // - interest,
+  )
 }
 
 /**
@@ -195,87 +209,103 @@ export const getVaultCollateralRatio = (collateralAmount: number, totalOutstandi
   return getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1)))
 }
 
-export const operationBorrow = 'borrow'
-export const operationRepay = 'repay'
-export const operationAddCollateral = 'addCollateral'
-export const operationRemoveCollateral = 'removeCollateral'
-export const getVaultFutureStats = ({
+export const getVaultFutureStatsAfterBorrow = ({
   currentTotalOutstanding,
   currentCollateralBalance,
   inputAmount,
   availableLiquidity,
   tokenRate,
-  DAOFee,
-  operation,
+  vaultBorrowIndex,
+  marketBorrowIndex,
+  interest,
 }: {
   currentTotalOutstanding: number
   currentCollateralBalance: number
   inputAmount: number
   availableLiquidity: number
   tokenRate: number
-  DAOFee?: number
-  operation:
-    | typeof operationBorrow
-    | typeof operationRepay
-    | typeof operationAddCollateral
-    | typeof operationRemoveCollateral
+  vaultBorrowIndex: number
+  marketBorrowIndex: number
+  interest: number
 }) => {
-  if (operation === operationBorrow && typeof DAOFee === 'number') {
-    const futureTotalOustanding = (currentTotalOutstanding + inputAmount + inputAmount * (DAOFee / 100)) * tokenRate // USD value
-    const futureCollateralRatio = getVaultCollateralRatio(currentCollateralBalance, futureTotalOustanding * tokenRate)
-    const futureBorrowCapacity = getVaultBorrowCapacity(
-      availableLiquidity * tokenRate,
-      futureTotalOustanding * tokenRate,
-      currentCollateralBalance,
-    )
-    return { futureTotalOustanding, futureBorrowCapacity, futureCollateralRatio }
-  }
-
-  if (operation === operationRepay) {
-    const futureTotalOustanding = (currentTotalOutstanding - inputAmount) * tokenRate // USD value
-    const futureCollateralRatio = getVaultCollateralRatio(currentCollateralBalance, futureTotalOustanding * tokenRate)
-    const futureBorrowCapacity = getVaultBorrowCapacity(
-      availableLiquidity * tokenRate,
-      futureTotalOustanding * tokenRate,
-      currentCollateralBalance,
-    )
-    return { futureTotalOustanding, futureBorrowCapacity, futureCollateralRatio }
-  }
-
-  if (operation === operationAddCollateral) {
-    const futureCollateralBalance = (currentCollateralBalance + inputAmount) * tokenRate // USD value
-    const futureCollateralRatio = getVaultCollateralRatio(futureCollateralBalance, currentTotalOutstanding * tokenRate)
-    const futureBorrowCapacity = getVaultBorrowCapacity(
-      availableLiquidity * tokenRate,
-      currentTotalOutstanding * tokenRate,
-      futureCollateralBalance,
-    )
-    return { futureCollateralBalance, futureBorrowCapacity, futureCollateralRatio }
-  }
-
-  if (operation === operationRemoveCollateral) {
-    const futureCollateralBalance = (currentCollateralBalance - inputAmount) * tokenRate // USD value
-    const futureCollateralRatio = getVaultCollateralRatio(futureCollateralBalance, currentTotalOutstanding * tokenRate)
-    const futureBorrowCapacity = getVaultBorrowCapacity(
-      availableLiquidity * tokenRate,
-      currentTotalOutstanding * tokenRate,
-      futureCollateralBalance,
-    )
-
-    return { futureCollateralBalance, futureBorrowCapacity, futureCollateralRatio }
-  }
-
-  throw new Error(
-    `getVaultFutureStats wrong data provided: ${JSON.stringify({
-      currentTotalOutstanding,
-      currentCollateralBalance,
-      inputAmount,
-      availableLiquidity,
-      tokenRate,
-      DAOFee,
-      operation,
-    })}`,
+  const inputTotalOustanding = calculateTotalOutstanding({
+    currentLoanOutstandingTotal: inputAmount,
+    vaultBorrowIndex,
+    marketBorrowIndex,
+  })
+  const futureCollateralRatio = getVaultCollateralRatio(
+    currentCollateralBalance,
+    (currentTotalOutstanding + inputTotalOustanding) * tokenRate,
   )
+  const futureBorrowCapacity = getVaultBorrowCapacity({
+    availableLiquidity: availableLiquidity * tokenRate,
+    totalOutstandingInVault: currentTotalOutstanding * tokenRate,
+    totalOutstandingInInput: inputTotalOustanding * tokenRate,
+    collateralBalance: currentCollateralBalance,
+    interest: interest * tokenRate,
+  })
+
+  console.log({
+    futureBorrowCapacity,
+    availableLiquidity: availableLiquidity * tokenRate,
+    futureTotalOustanding: (currentTotalOutstanding + inputTotalOustanding) * tokenRate,
+    currentCollateralBalance,
+  })
+  return {
+    futureTotalOustanding: currentTotalOutstanding + inputTotalOustanding,
+    futureBorrowCapacity,
+    futureCollateralRatio,
+  }
+}
+export const getVaultFutureStatsAfterRepay = ({
+  currentTotalOutstanding,
+  currentCollateralBalance,
+  inputAmount,
+  availableLiquidity,
+  tokenRate,
+}: {
+  currentTotalOutstanding: number
+  currentCollateralBalance: number
+  inputAmount: number
+  availableLiquidity: number
+  tokenRate: number
+}) => {
+  const futureTotalOustanding = (currentTotalOutstanding - inputAmount) * tokenRate // USD value
+  const futureCollateralRatio = getVaultCollateralRatio(currentCollateralBalance, futureTotalOustanding)
+  // const futureBorrowCapacity = getVaultBorrowCapacity(
+  //   availableLiquidity * tokenRate,
+  //   futureTotalOustanding,
+  //   currentCollateralBalance,
+  // )
+  return { futureTotalOustanding, futureBorrowCapacity: 0, futureCollateralRatio }
+}
+
+export const getVaultFutureStatsAfterCollateralOperation = ({
+  currentTotalOutstanding,
+  currentCollateralBalance,
+  inputAmount,
+  availableLiquidity,
+  collateralTokenRate,
+  marketTokenRate,
+}: {
+  currentTotalOutstanding: number
+  currentCollateralBalance: number
+  inputAmount: number
+  availableLiquidity: number
+  collateralTokenRate: number
+  marketTokenRate: number
+}) => {
+  const futureCollateralBalance = currentCollateralBalance + inputAmount * collateralTokenRate // USD value
+  const futureCollateralRatio = getVaultCollateralRatio(
+    futureCollateralBalance,
+    currentTotalOutstanding * marketTokenRate,
+  )
+  // const futureBorrowCapacity = getVaultBorrowCapacity(
+  //   availableLiquidity * marketTokenRate,
+  //   currentTotalOutstanding * marketTokenRate,
+  //   futureCollateralBalance,
+  // )
+  return { futureCollateralBalance, futureBorrowCapacity: 0, futureCollateralRatio }
 }
 
 /**

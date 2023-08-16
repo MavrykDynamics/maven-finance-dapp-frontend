@@ -59,6 +59,7 @@ export type VaultType = {
   borrowedAmount: number // amount of token that user/s have borrowed from the vault *after normalizer it's not converted to client format*
   fee: number // amount of token that user will have to pay after he has borrowed from the vault *after normalizer it's not converted to client format*
   collateralData: Array<CollateralType> // collaterals of the vault in format {amount, tokenAddress} *after normalizer amount is not converted to the client format*
+  vaultBorrowIndex: number // TODO: add descr
 
   // vault metadata
   name: string // name of the vault

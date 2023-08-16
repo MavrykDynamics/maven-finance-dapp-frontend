@@ -32,12 +32,7 @@ import { borrowVaultAssetAction } from 'providers/VaultsProvider/actions/vaults.
 import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import {
-  getVaultBorrowCapacity,
-  getVaultCollateralRatio,
-  getVaultFutureStats,
-  operationBorrow,
-} from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultFutureStatsAfterBorrow } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { checkNan } from 'utils/checkNan'
 
@@ -107,9 +102,12 @@ export const BorrowAsset = ({
     borrowCapacity = 0,
     collateralRatio = 0,
     collateralBalance = 0,
+    marketBorrowIndex = 0,
+    vaultBorrowIndex = 0,
     scrollToCurrentVault = () => {},
     borrowAPR = 0,
     DAOFee = 0,
+    fee = 0,
   } = data ?? {}
 
   const { symbol = '', decimals = 0, icon = '', rate: originalRate } = borrowedToken ?? {}
@@ -119,13 +117,15 @@ export const BorrowAsset = ({
   const convertedTotalOutstanding = convertNumberForClient({ number: totalOutstanding, grade: decimals })
   const inputAmount = checkNan(parseFloat(inputData.amount))
 
-  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStats({
+  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStatsAfterBorrow({
     currentCollateralBalance: collateralBalance,
     currentTotalOutstanding: totalOutstanding,
-    operation: operationBorrow,
     inputAmount,
     availableLiquidity,
     tokenRate: rate,
+    marketBorrowIndex,
+    vaultBorrowIndex,
+    interest: fee,
   })
 
   // borrow vault asset action

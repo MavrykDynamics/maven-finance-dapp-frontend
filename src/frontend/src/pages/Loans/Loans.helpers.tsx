@@ -6,23 +6,85 @@ import { convertNumberForClient, convertNumberForContractCall } from '../../util
 import { assetDecimalsToShow } from './Loans.const'
 import { SingleValueData } from 'lightweight-charts'
 
-// HELPER FOR BORROW FEE
-export const calculateAccruedInterest = (
-  currentLoanOutstandingTotal: number,
-  vaultBorrowIndex: number,
-  tokenBorrowIndex: number,
-) => {
-  let newLoanOutstandingTotal = currentLoanOutstandingTotal
-  const vBorrowIndex = vaultBorrowIndex
-  const loanTokenBorrowIndex = tokenBorrowIndex
-
-  if (currentLoanOutstandingTotal > 0) {
-    if (vBorrowIndex > 0) {
-      newLoanOutstandingTotal = (currentLoanOutstandingTotal * loanTokenBorrowIndex) / vBorrowIndex
-    }
+/**
+ * calculate accurred interest for vault
+ * @param currentLoanOutstandingTotal – TODO: add descr
+ * @param borrowedAmount – pure amount how much is borrowed in the vault
+ * @param vaultBorrowIndex - TODO: add descr
+ * @param marketBorrowIndex - TODO: add descr
+ * @returns interest for borrowed amount
+ */
+export const calculateTotalOutstanding = ({
+  currentLoanOutstandingTotal,
+  vaultBorrowIndex,
+  marketBorrowIndex,
+}: {
+  currentLoanOutstandingTotal: number
+  vaultBorrowIndex: number
+  marketBorrowIndex: number
+}) => {
+  if (currentLoanOutstandingTotal > 0 && vaultBorrowIndex > 0) {
+    return (currentLoanOutstandingTotal * marketBorrowIndex) / vaultBorrowIndex
   }
 
-  return newLoanOutstandingTotal
+  return currentLoanOutstandingTotal
+}
+
+/**
+ * calculate accurred interest for vault
+ * @param currentLoanOutstandingTotal – TODO: add descr
+ * @param borrowedAmount – pure amount how much is borrowed in the vault
+ * @param vaultBorrowIndex - TODO: add descr
+ * @param marketBorrowIndex - TODO: add descr
+ * @returns interest for borrowed amount
+ */
+export const calculateAccruedInterest = ({
+  currentLoanOutstandingTotal,
+  borrowedAmount,
+  vaultBorrowIndex,
+  marketBorrowIndex,
+}: {
+  currentLoanOutstandingTotal: number
+  borrowedAmount: number
+  vaultBorrowIndex: number
+  marketBorrowIndex: number
+}) => {
+  if (currentLoanOutstandingTotal > 0 && vaultBorrowIndex > 0) {
+    return Math.abs(
+      calculateTotalOutstanding({ currentLoanOutstandingTotal, marketBorrowIndex, vaultBorrowIndex }) - borrowedAmount,
+    )
+  }
+
+  return Math.abs(currentLoanOutstandingTotal - borrowedAmount)
+}
+
+/**
+ * calculate accurred interest for vault
+ * @param borrowCapacity – how much user can borrow (borrowed amount + interest)
+ * @param vaultBorrowIndex - TODO: add descr
+ * @param marketBorrowIndex - TODO: add descr
+ * @returns pure amount how much user can borrow
+ */
+export const getMaxBorrowAmountFromBorrowCapacity = ({
+  borrowCapacity,
+  vaultBorrowIndex,
+  marketBorrowIndex,
+}: {
+  borrowCapacity: number
+  vaultBorrowIndex: number
+  marketBorrowIndex: number
+}) => {
+  if (borrowCapacity > 0 && vaultBorrowIndex > 0) {
+    console.log({
+      borrowCapacity,
+      returnborrowCapacity: (borrowCapacity / marketBorrowIndex) * vaultBorrowIndex,
+      marketBorrowIndex,
+      vaultBorrowIndex,
+    })
+    return (borrowCapacity / marketBorrowIndex) * vaultBorrowIndex
+  }
+
+  return borrowCapacity
 }
 
 // HELPER FOR MAX COLLATERAL WITHDRAW

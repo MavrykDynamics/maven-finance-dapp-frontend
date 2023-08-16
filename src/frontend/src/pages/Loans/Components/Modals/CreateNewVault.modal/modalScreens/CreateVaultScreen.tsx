@@ -11,7 +11,7 @@ import { ADD_COLLATERAL_SCREEN_ID } from '../helpers/createNewVault.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // providers
-import { useCreateVaultContext } from '../context/createVaultModalContext'
+import { useCreateVaultContext } from '../context/CreateVaultModal.provider'
 
 // utils
 import { validateVaultName } from '../helpers/createNewVault.helpers'

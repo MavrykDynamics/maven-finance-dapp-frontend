@@ -22,7 +22,7 @@ import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultBorrowCapacity, getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultFutureStatsAfterCollateralOperation } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // consts
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -54,7 +54,6 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { Info } from 'app/App.components/Info/Info.view'
 import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
 import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
 
@@ -175,16 +174,17 @@ export const AddNewCollateral = ({
   const userCollateralBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: selectedCollateral })
   const { rate: originalBorrowedTokenRate } = borrowedToken ?? {}
 
-  const borrowedTokenRate = originalBorrowedTokenRate ?? 0
-
   const inputAmount = checkNan(parseFloat(inputData.amount))
-  const futureCollateralBalance = collateralBalance + inputAmount * rate
-  const futureCollateralRatio = getVaultCollateralRatio(futureCollateralBalance, totalOutstanding * borrowedTokenRate)
-  const futureBorrowCapacity = getVaultBorrowCapacity(
-    availableLiquidity * borrowedTokenRate,
-    totalOutstanding * borrowedTokenRate,
-    futureCollateralBalance,
-  )
+
+  const { futureBorrowCapacity, futureCollateralRatio, futureCollateralBalance } =
+    getVaultFutureStatsAfterCollateralOperation({
+      currentCollateralBalance: collateralBalance,
+      currentTotalOutstanding: totalOutstanding,
+      inputAmount,
+      availableLiquidity,
+      collateralTokenRate: rate,
+      marketTokenRate: originalBorrowedTokenRate ?? 0,
+    })
 
   // deposit collateral action --------------------------
   const depositAction = useCallback(async () => {

@@ -40,6 +40,7 @@ export function getLoansMarketsQuery({
 					token_pool_total
 					total_remaining
 					reserve_ratio
+					borrow_index
 					current_interest_rate
 
 					# market lending item address, and amount of suppliers
@@ -69,6 +70,14 @@ export const GET_LOANS_CONFIG = gql(`
 		lending_controller(where: {mock_time: {_eq: false}}) {
 			minimum_loan_fee_pct
 			collateral_ratio
+
+			loan_tokens {
+				token {
+					token_address
+				}
+
+				borrow_index
+			}
 		}
 	}
 `)

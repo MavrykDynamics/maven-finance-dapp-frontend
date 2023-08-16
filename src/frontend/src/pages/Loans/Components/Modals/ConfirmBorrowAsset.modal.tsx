@@ -26,11 +26,7 @@ import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { borrowVaultAssetAction } from 'providers/VaultsProvider/actions/vaults.actions'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import {
-  getVaultCollateralRatio,
-  getVaultFutureStats,
-  operationBorrow,
-} from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultFutureStatsAfterBorrow } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -68,19 +64,24 @@ export const ConfirmBorrowAsset = ({
     inputAmount = 0,
     availableLiquidity = 0,
     collateralBalance = 0,
+    vaultBorrowIndex = 0,
+    marketBorrowIndex = 0,
     DAOFee = 0,
+    fee = 0,
     callback = () => {},
   } = data ?? {}
   const { symbol = '', rate: originalRate } = borrowedToken ?? {}
   const rate = originalRate ?? 0
 
-  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStats({
+  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStatsAfterBorrow({
     currentCollateralBalance: collateralBalance,
     currentTotalOutstanding: totalOutstanding,
-    operation: operationBorrow,
     inputAmount,
     availableLiquidity,
     tokenRate: rate,
+    vaultBorrowIndex,
+    marketBorrowIndex,
+    interest: fee,
   })
 
   // borrow action

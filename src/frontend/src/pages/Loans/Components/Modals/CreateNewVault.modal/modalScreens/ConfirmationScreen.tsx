@@ -21,24 +21,19 @@ import { ConfirmationScreenWrapper } from '../createNewVault.style'
 
 // utils
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import {
-  getVaultCollateralRatio,
-  getVaultFutureStats,
-  operationBorrow,
-} from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultFutureStatsAfterBorrow } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
-import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useCreateVaultContext } from '../context/CreateVaultModal.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // types
-import { NewVaultType } from '../helpers/createNewVault.types'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
@@ -75,22 +70,20 @@ export const ConfirmationScreen = () => {
   const currentVault = vaultsMapper[newVault.address]
   const vaultData = useFullVault(currentVault)
 
-  const {
-    borrowedTokenAddress = '',
-    collateralBalance: currentCollateralBalance = 0,
-    borrowedAmount: currentBorrowedAmount = 0,
-    name,
-  } = vaultData ?? {}
+  const { borrowedTokenAddress = '', collateralBalance: currentCollateralBalance = 0, name } = vaultData ?? {}
 
   const { amount: inputAmount, rate, symbol } = finalBorrowInputData
 
-  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStats({
+  // TODO: check vaultBorrowIndex & marketBorrowIndex here
+  const { futureBorrowCapacity, futureCollateralRatio } = getVaultFutureStatsAfterBorrow({
     currentCollateralBalance,
     currentTotalOutstanding,
-    operation: operationBorrow,
     inputAmount,
     availableLiquidity,
     tokenRate: rate,
+    vaultBorrowIndex: 0,
+    marketBorrowIndex: 0,
+    interest: 0,
   })
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
