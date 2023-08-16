@@ -1,7 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { State } from 'reducers'
 
 // view
 import Icon from '../Icon/Icon.view'
@@ -16,12 +14,19 @@ import { MainNavigationRoute } from '../../../utils/TypesAndInterfaces/Navigatio
 import { MenuFooter, MenuGrid, MenuSidebarContent, MenuSidebarStyled } from './Menu.style'
 
 // helpers, costants
-import { toggleSidebarCollapsing } from './Menu.actions'
 import { mainNavigationLinks } from './NavigationLink/MainNavigationLinks'
 import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
 import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { getMVKTokensFromFaucet } from '../../../pages/Doorman/Doorman.actions'
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { getMVKTokensFromFaucet } from 'providers/UserProvider/actions/user.actions'
+import { GET_MVK_FROM_FAUCET_ACTION } from 'providers/UserProvider/helpers/user.consts'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 type MenuViewProps = {
   openChangeNodePopupHandler: () => void
@@ -55,11 +60,18 @@ export const SocialIcons = () => (
 )
 
 export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
-  const dispatch = useDispatch()
+  const { bug } = useToasterContext()
+  const {
+    mvkFaucetAddress,
+    toggleSidebarCollapsing,
+    contractAddresses: { mvkTokenAddress },
+    preferences: { sidebarOpened },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
+  const { userTokensBalances } = useUserContext()
+  const { userAddress, isSatellite } = useUserContext()
+
   const { pathname } = useLocation()
-  const { sidebarOpened } = useSelector((state: State) => state.preferences)
-  const { isActionActive } = useSelector((state: State) => state.loading)
-  const { user, accountPkh } = useSelector((state: State) => state.wallet)
   const [canGetInitThouthand, setCanGetInitThouthand] = useState(false)
 
   useEffect(() => {
@@ -72,25 +84,59 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     })
 
     setSelectedMainLink(selectedMainRoute?.id || 0)
-  }, [accountPkh, pathname, user.isSatellite])
+  }, [userAddress, pathname, isSatellite])
 
   useEffect(() => {
     setCanGetInitThouthand(
       Boolean(
-        accountPkh &&
-          (user.userTokens[MVK_TOKEN_SYMBOL].balance === 0 || user.userTokens[SMVK_TOKEN_SYMBOL].balance === 0),
+        userAddress &&
+          (getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }) === 0 ||
+            getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0),
       ),
     )
-  }, [accountPkh, user.userTokens])
+  }, [userAddress, mvkTokenAddress, userTokensBalances])
 
   const [selectedMainLink, setSelectedMainLink] = useState<number>(0)
 
+  // requestMVK action  ----------------------
+  const requestMVKAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!mvkFaucetAddress) {
+      bug('Wrong MVK Faucet address')
+      return null
+    }
+
+    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
+    const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+
+    if (mvkTokenBalance > 0 || sMvkTokenBalance > 0) {
+      bug('You have already claimed MVK', 'You are unable to claim MVK, you have already claimed')
+      return null
+    }
+
+    return await getMVKTokensFromFaucet(mvkFaucetAddress)
+  }, [bug, mvkFaucetAddress, mvkTokenAddress, userAddress, userTokensBalances])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: GET_MVK_FROM_FAUCET_ACTION,
+      actionFn: requestMVKAction,
+    }),
+    [requestMVKAction],
+  )
+
+  const { action: handleRequestMVK } = useContractAction(contractActionProps)
+
   const burgerClickHandler = useCallback(() => {
-    dispatch(toggleSidebarCollapsing())
+    toggleSidebarCollapsing()
   }, [])
 
   const sidebarBackdropClickHandler = useCallback(() => {
-    dispatch(toggleSidebarCollapsing(false))
+    toggleSidebarCollapsing(false)
   }, [])
 
   const navLinkClickHandler = useCallback(() => {
@@ -98,8 +144,6 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       burgerClickHandler()
     }
   }, [burgerClickHandler, sidebarOpened])
-
-  const handleGetMVKTokensFromFaucet = async () => await dispatch(getMVKTokensFromFaucet())
 
   return (
     <>
@@ -132,18 +176,25 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               kind={BUTTON_PRIMARY}
               form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND}
               isThin
-              onClick={handleGetMVKTokensFromFaucet}
+              onClick={handleRequestMVK}
               disabled={!canGetInitThouthand || isActionActive}
             >
               {sidebarOpened ? 'MVK Faucet' : 'mvk'}
             </NewButton>
             <a
-              href="https://faucet.marigold.dev/ "
-              target="_blank"
-              rel="noreferrer"
+              // TODO: remove this cond when users will be able to use faucet
+              {...(true
+                ? {
+                    href: '#',
+                  }
+                : {
+                    href: 'https://faucet.marigold.dev/ ',
+                    target: '_blank',
+                    rel: 'noreferrer',
+                  })}
               className={sidebarOpened ? '' : 'small'}
             >
-              <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
+              <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin disabled>
                 {sidebarOpened ? ' Ghostnet Faucet' : 'GF'}
               </NewButton>
             </a>

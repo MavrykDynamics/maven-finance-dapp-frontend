@@ -1,7 +1,65 @@
-import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
-import { ACTION_START_MESSAGE_TEXT, ACTION_COMPLETION_MESSAGE_TEXT } from '../Toaster.constants'
+import {
+  ACTION_COMPLETION_MESSAGE_TEXT,
+  ACTION_START_MESSAGE_TEXT,
+  DEFAULT_REQUEST_COMPLETION_MESSAGE_TEXT,
+} from '../Toaster.constants'
+
+// doorman
+import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/DoormanProvider/helpers/doorman.consts'
+
+// user
+import {
+  CLAIM_ALL_REWARDS_ACTION,
+  CLAIM_VESTING_REWARD_ACTION,
+  GET_MVK_FROM_FAUCET_ACTION,
+  REWARDS_COMPOUND_ACTION,
+} from 'providers/UserProvider/helpers/user.consts'
+
+// satellites
+import {
+  DELEGATE_ACTION,
+  DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
+  REGISTER_SATELLITE_ACTION,
+  UNDELEGATE_ACTION,
+  UNREGISTER_SATELLITE_ACTION,
+  UPDATE_SATELLITE_ACTION,
+} from 'providers/SatellitesProvider/satellites.const'
+
+// loans
+import {
+  DEPOSIT_LENDING_ASSET_ACTION,
+  WITHDRAW_LENDING_ASSET_ACTION,
+} from 'providers/LoansProvider/helpers/loans.const'
+
+// vaults
+import {
+  BORROW_VAULT_ASSET_ACTION,
+  CHANGE_BAKER_ACTION,
+  CHANGE_VAULT_NAME_ACTION,
+  CREATE_VAULT_ACTION,
+  DEPOSIT_COLLATERAL_ACTION,
+  MANAGE_PERMISSIONS_ACTION,
+  REPAY_FULL_VAULT_ACTION,
+  REPAY_PART_OF_VAULT_ACTION,
+  UPDATE_OPERATORS_ACTION,
+  WITHDRAW_COLLATERAL_ACTION,
+} from 'providers/VaultsProvider/helpers/vaults.const'
+import {
+  DROP_PROPOSAL_ACTION,
+  EXECUTE_PROPOSAL_ACTION,
+  LOCK_PROPOSAL_ACTION,
+  PROCESS_PROPOSAL_ACTION,
+  PROPOSAL_ROUND_VOTE_ACTION,
+  START_NEXT_ROUND_ACTION,
+  START_PROPOSAL_ROUND_ACTION,
+  START_VOTING_ROUND_ACTION,
+  SUBMIT_PROPOSAL_ACTION,
+  UPDATE_PROPOSAL_DATA_ACTION,
+  VOTING_ROUND_VOTE_ACTION,
+} from 'providers/ProposalsProvider/helpers/proposals.const'
 
 export const TOASTER_ACTIONS_TEXTS = {
+  // doorman actions -------------------------------------
   [STAKE_ACTION]: {
     start: {
       title: 'Staking...',
@@ -19,6 +77,356 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: 'Unstaking done',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [GET_MVK_FROM_FAUCET_ACTION]: {
+    start: {
+      title: 'Requesting MVK...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Received 1,000 MVK...',
+      message: 'Enjoy using Mavryk Finance :)',
+    },
+  },
+
+  // user actions -------------------------------------
+  [REWARDS_COMPOUND_ACTION]: {
+    start: {
+      title: 'Compounding rewards...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Compounding done',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [CLAIM_VESTING_REWARD_ACTION]: {
+    start: {
+      title: 'Claiming vesting reward...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Compounding done',
+      message: 'Vesting reward claimed',
+    },
+  },
+  [CLAIM_ALL_REWARDS_ACTION]: {
+    start: {
+      title: 'Claiming rewards...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Compounding done',
+      message: 'Rewards claimed.',
+    },
+  },
+
+  // satellites actions -------------------------------------
+  [DELEGATE_ACTION]: {
+    start: {
+      title: 'Delegating...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Delegation done',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UNDELEGATE_ACTION]: {
+    start: {
+      title: 'Undelegating...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Undelegating done',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DISTRIBUTE_PROPOSALS_REWARDS_ACTION]: {
+    start: {
+      title: 'Distributing proposal rewards...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Distributing proposal rewards done',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REGISTER_SATELLITE_ACTION]: {
+    start: {
+      title: 'Registering...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Satellite Registered.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UNREGISTER_SATELLITE_ACTION]: {
+    start: {
+      title: 'Unregistering...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Satellite is no longer registered.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UPDATE_SATELLITE_ACTION]: {
+    start: {
+      title: 'Updating satellite record...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Satellite record updated.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // loans actions -------------------------------------
+  [CREATE_VAULT_ACTION]: {
+    start: {
+      title: 'Creating new vault...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'New vault created.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DEPOSIT_LENDING_ASSET_ACTION]: {
+    start: {
+      title: 'Adding liquidity...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Liquidity added.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [WITHDRAW_LENDING_ASSET_ACTION]: {
+    start: {
+      title: 'Removing liquidity...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Liquidity removed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // vaults actions -------------------------------------
+  [CHANGE_VAULT_NAME_ACTION]: {
+    start: {
+      title: 'Changing vault name...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Vault name is changed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [BORROW_VAULT_ASSET_ACTION]: {
+    start: {
+      title: 'Borrowing from the vault...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Asset borrowed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REPAY_PART_OF_VAULT_ACTION]: {
+    start: {
+      title: 'Repaying asset...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Asset repayed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REPAY_FULL_VAULT_ACTION]: {
+    start: {
+      title: 'Repaying asset...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Asset repayed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // vaults collateral actions -------------------------------------
+  [WITHDRAW_COLLATERAL_ACTION]: {
+    start: {
+      title: 'Withdrawing collateral from the vault...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Collateral withdrawn.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DEPOSIT_COLLATERAL_ACTION]: {
+    start: {
+      title: 'Depositing collateral in the vault...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Collateral added.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // vault permission actions
+  [CHANGE_BAKER_ACTION]: {
+    start: {
+      title: 'Changing XTZ Baker...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Baker changed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [MANAGE_PERMISSIONS_ACTION]: {
+    start: {
+      title: 'Updating depositors...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Depositors updated.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UPDATE_OPERATORS_ACTION]: {
+    start: {
+      title: 'Updating operators...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Operators updated.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // proposals actions -------------------------------------
+  [PROPOSAL_ROUND_VOTE_ACTION]: {
+    start: {
+      title: 'Proposal Vote executing...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Voting done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [VOTING_ROUND_VOTE_ACTION]: {
+    start: {
+      title: 'Voting...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Voting done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [EXECUTE_PROPOSAL_ACTION]: {
+    start: {
+      title: 'Request Execute Proposal round start...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: DEFAULT_REQUEST_COMPLETION_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [PROCESS_PROPOSAL_ACTION]: {
+    start: {
+      title: 'Process Proposal Payment round start...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Process Proposal Payment confirmed.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // proposal submission actions -------------------------------------
+  [SUBMIT_PROPOSAL_ACTION]: {
+    // text is different cuz the the button text is related to the current message text __ATTENTION__
+    start: {
+      title: 'Saving proposal...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Proposal saved.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DROP_PROPOSAL_ACTION]: {
+    start: {
+      title: 'Drop proposal...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Proposal dropped.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [LOCK_PROPOSAL_ACTION]: {
+    // text is different cuz the the button text is related to the current message text  __ATTENTION__
+    start: {
+      title: 'Submitting proposal...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Proposal submitted.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UPDATE_PROPOSAL_DATA_ACTION]: {
+    start: {
+      title: 'Updating proposal...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Proposal updated.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // proposal governance interaction actions -------------------------------------
+  [START_PROPOSAL_ROUND_ACTION]: {
+    start: {
+      title: 'Request Proposal round start...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: DEFAULT_REQUEST_COMPLETION_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [START_VOTING_ROUND_ACTION]: {
+    start: {
+      title: 'Request Voting round start...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: DEFAULT_REQUEST_COMPLETION_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [START_NEXT_ROUND_ACTION]: {
+    start: {
+      title: 'Request Next round start...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: DEFAULT_REQUEST_COMPLETION_MESSAGE_TEXT,
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },

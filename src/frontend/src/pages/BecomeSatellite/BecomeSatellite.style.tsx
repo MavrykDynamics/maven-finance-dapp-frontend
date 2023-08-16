@@ -80,12 +80,13 @@ export const BecomeSatelliteFormBalanceCheck = styled.div<{ balanceOk: boolean; 
 
   p {
     margin: 0;
+    font-size: 16px;
   }
 
   svg {
     stroke: ${({ balanceOk, theme }) => (balanceOk ? theme.upColor : theme.downColor)};
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     margin-right: 8px;
   }
 `

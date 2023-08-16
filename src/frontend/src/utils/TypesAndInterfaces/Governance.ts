@@ -3,7 +3,7 @@ import type {
   Governance_Satellite,
   Governance_Financial_Request,
   Governance_Satellite_Action,
-} from '../generated/graphqlTypes'
+} from '../__generated__/graphql'
 
 import { normalizeProposal } from 'pages/Governance/actions/governanceNormalizers'
 import { normalizerSatelliteGovernance } from 'pages/SatelliteGovernance/SatelliteGovernance.helpers'
@@ -56,7 +56,6 @@ export type FinancialRequestRecord = {
   votingTillTime?: string | null
   tokensAmount: number
   status: number
-  tokenName: string
   executed: boolean
 
   // Votes data

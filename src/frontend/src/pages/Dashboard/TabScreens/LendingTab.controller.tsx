@@ -1,22 +1,25 @@
 import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { State } from 'reducers'
-import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
-import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
 import { BUTTON_WIDE, PRIMARY } from 'app/App.components/Button/Button.constants'
 
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { Impact } from 'app/App.components/Impact/Impact'
 
 import { StatBlock } from '../Dashboard.style'
 import { EmptyContainer, LendingContentStyled, TabWrapperStyled } from './DashboardTabs.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { Impact } from 'app/App.components/Impact/Impact'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+
+// context
+import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24hDiff'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -26,56 +29,51 @@ export const emptyContainer = (
 )
 
 export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
-  const {
-    loanTokens,
-    chartsData: {
-      lendBorrow24hDiff: { last24hLending, last24hBorrowing },
-    },
-  } = useSelector((state: State) => state.loans)
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { marketsAddresses, marketsMapper } = useLoansContext()
 
-  const { totalBorrowed, totalLended } = loanTokens.reduce<{
-    totalLended: number
-    totalBorrowed: number
-  }>(
-    (acc, { totalBorrowed, totalLended }) => {
-      acc.totalBorrowed += totalBorrowed
-      acc.totalLended += totalLended
-      return acc
-    },
-    {
-      totalLended: 0,
-      totalBorrowed: 0,
-    },
-  )
+  const { lending24hPersentChange, borrowing24hPersentChange, last24hBorrowingVol, last24hLendingVol } =
+    useLendBorrow24hDiff()
 
-  const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset, totalCurrentBorrowed, totalCurrentLended } =
+  const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset, totalBorrowed, totalLended } =
     useMemo(() => {
-      return loanTokens.reduce<{
+      return marketsAddresses.reduce<{
         lendingSuppliers: number
         borrowers: number
-        mostBorrowedAsset: LoanMarketType['loanTokenData'] | null
-        mostLendedAsset: LoanMarketType['loanTokenData'] | null
+        mostBorrowedAsset: { icon: string; symbol: string } | null
+        mostLendedAsset: { icon: string; symbol: string } | null
         prevMostBorrowed: number
-        totalCurrentLended: number
         prevMostLended: number
-        totalCurrentBorrowed: number
+        totalBorrowed: number
+        totalLended: number
       }>(
-        (acc, { suppliers, borrowers, totalBorrowed, totalLended, loanTokenData }) => {
+        (acc, marketTokenAddress) => {
+          const market = marketsMapper[marketTokenAddress]
+          const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
+
+          if (!token || !token.rate || !market) return acc
+
+          const { symbol, decimals, icon, rate } = token
+          const { suppliers, borrowers, totalBorrowed, totalLended } = market
+
+          const convetedTotalBorrowed = convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
+          const convetedTotalLended = convertNumberForClient({ number: totalLended, grade: decimals }) * rate
+
           acc.lendingSuppliers += suppliers
           acc.borrowers += borrowers
 
-          if (acc.prevMostBorrowed < totalBorrowed * loanTokenData.rate) {
-            acc.prevMostBorrowed = totalBorrowed * loanTokenData.rate
-            acc.mostBorrowedAsset = loanTokenData as LoanMarketType['loanTokenData']
+          acc.totalBorrowed += convetedTotalBorrowed
+          acc.totalLended += convetedTotalLended
+
+          if (acc.prevMostBorrowed < convetedTotalBorrowed) {
+            acc.prevMostBorrowed = convetedTotalBorrowed
+            acc.mostBorrowedAsset = { symbol, icon }
           }
 
-          if (acc.prevMostLended < totalLended * loanTokenData.rate) {
-            acc.prevMostLended = totalLended * loanTokenData.rate
-            acc.mostLendedAsset = loanTokenData as LoanMarketType['loanTokenData']
+          if (acc.prevMostLended < convetedTotalLended) {
+            acc.prevMostLended = convetedTotalLended
+            acc.mostLendedAsset = { symbol, icon }
           }
-
-          acc.totalCurrentBorrowed += totalBorrowed * loanTokenData.rate
-          acc.totalCurrentLended += totalLended * loanTokenData.rate
           return acc
         },
         {
@@ -83,22 +81,13 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
           borrowers: 0,
           prevMostBorrowed: 0,
           prevMostLended: 0,
-          totalCurrentLended: 0,
-          totalCurrentBorrowed: 0,
+          totalBorrowed: 0,
+          totalLended: 0,
           mostBorrowedAsset: null,
           mostLendedAsset: null,
         },
       )
-    }, [loanTokens])
-
-  const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(
-    totalCurrentBorrowed,
-    totalCurrentBorrowed - last24hLending,
-  )
-  const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(
-    totalCurrentLended,
-    totalCurrentLended - last24hBorrowing,
-  )
+    }, [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices])
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
@@ -140,7 +129,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <StatBlock>
                 <div className="name">24H Supply Vol</div>
                 <div className="value">
-                  <CommaNumber beginningText="$" value={last24hLending} />
+                  <CommaNumber beginningText="$" value={last24hLendingVol} />
                 </div>
               </StatBlock>
               <StatBlock>
@@ -181,7 +170,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <StatBlock>
                 <div className="name">24H Borrow Vol</div>
                 <div className="value">
-                  <CommaNumber beginningText="$" value={last24hBorrowing} />
+                  <CommaNumber beginningText="$" value={last24hBorrowingVol} />
                 </div>
               </StatBlock>
               <StatBlock>

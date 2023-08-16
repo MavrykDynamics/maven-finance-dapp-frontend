@@ -5,11 +5,10 @@ import {
   Council_Council_Member,
   Break_Glass_Action,
   Break_Glass_Action_Signer,
-} from '../generated/graphqlTypes'
-import { normalizeCouncilMembers, normalizeMaxLength } from '../../pages/Council/Council.helpers'
+} from '../__generated__/graphql'
+import { normalizeCouncilMembers } from '../../pages/Council/Council.helpers'
 
 export type CouncilGraphQL = Omit<Council, '__typename'>
-export type CouncilMaxLength = ReturnType<typeof normalizeMaxLength>
 
 export type CouncilMemberGraphQL = Omit<Council_Council_Member, 'council' | 'council_id'>
 export type CouncilMembers = ReturnType<typeof normalizeCouncilMembers>

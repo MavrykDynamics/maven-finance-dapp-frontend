@@ -1,33 +1,75 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useCallback, useMemo } from 'react'
+import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import dayjs from 'dayjs'
 
+// components
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-
-import { VestingTabStyled } from './DashboardPersonalComponents.style'
-
-import { State } from 'reducers'
 import Button from 'app/App.components/Button/NewButton'
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { parseDate } from 'utils/time'
-import { PORTFOLIO_TAB_ID } from '../DashboardPersonal.utils'
-import { claimVestingReward } from '../DashboardPersonal.actions'
-import { UserActionHistory } from './UserOperationsHistory'
+
+// styles
+import { VestingTabStyled } from './DashboardPersonalComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
-const VestingTab = () => {
-  const dispatch = useDispatch()
-  const { vesteesMapper } = useSelector((state: State) => state.vesting)
-  const { isActionActive } = useSelector((state: State) => state.loading)
-  const { accountPkh = '' } = useSelector((state: State) => state.wallet)
+// types
+import { State } from 'reducers'
 
-  const vesteeRecord = vesteesMapper[accountPkh]
+// consts
+import { CLAIM_VESTING_REWARD_ACTION } from 'providers/UserProvider/helpers/user.consts'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { UserActionHistory } from './UserOperationsHistory'
+
+// utils
+import { parseDate } from 'utils/time'
+import { PORTFOLIO_TAB_ID } from '../DashboardPersonal.utils'
+
+// providers
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+
+// actions
+import { claimVestingReward } from 'providers/UserProvider/actions/user.actions'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+const VestingTab = () => {
+  const { vesteesMapper } = useSelector((state: State) => state.vesting)
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+  const {
+    contractAddresses: { vestingAddress },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
+
+  const vesteeRecord = vesteesMapper[userAddress ?? '']
+
+  // vesting action
+  const vestingAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+    if (!vestingAddress) {
+      bug('Wrong vesting address')
+      return null
+    }
+
+    return await claimVestingReward(vestingAddress)
+  }, [userAddress, bug, vestingAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: CLAIM_VESTING_REWARD_ACTION,
+      actionFn: vestingAction,
+    }),
+    [vestingAction],
+  )
+
+  const { action: handleClaimVestingReward } = useContractAction(contractActionProps)
 
   if (!vesteeRecord) return <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`} />
-
-  // TODO: test claim vestee reward action
-  const handleClaimVestingReward = async () => await dispatch(claimVestingReward())
-
   const { vestingMonth, totalAllocated, totalRemainded, rewardPerMonth, nextRewardDate, lastClaimDate } = vesteeRecord
 
   const lastClaimTime = dayjs(lastClaimDate),

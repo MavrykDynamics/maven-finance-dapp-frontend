@@ -1,16 +1,12 @@
 import { gql } from 'utils/__generated__'
 
-export const GLASS_BROKEN_SUB = gql(`
-subscription glasssBrokenStatus {
+export const CONTRACT_STATUSES_CONFIG_QUERY = gql(`
+query glasssBrokenStatusAndWhiteListDevs {
   break_glass {
     glass_broken
   }
-}
-`)
-
-export const WHITE_LIST_DEVELOPERS_SUB = gql(`
-subscription whiteListDevelopers {
-  whitelist_developer {
+  
+    whitelist_developer {
     developer {
       address
     }

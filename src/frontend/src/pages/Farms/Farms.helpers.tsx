@@ -1,11 +1,11 @@
 // types
-import { FarmAccountsType, FarmContractType, FarmGraphQL, Normalizedfarm } from '../../utils/TypesAndInterfaces/Farm'
+import { FarmContractType, FarmGraphQL, Normalizedfarm } from '../../utils/TypesAndInterfaces/Farm'
 
 // helpers
 import { getContractBigmapKeys, network } from 'utils/blockchainApi'
 import { STAKED } from './Farms.const'
-import { State } from 'reducers'
-import { Farm_Account } from 'utils/generated/graphqlTypes'
+import { Farm_Account } from 'utils/__generated__/graphql'
+import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 
 type EndsInType = {
   endsIn: any
@@ -33,7 +33,7 @@ type TokensInfoType = {
 
 export const normalizeFarmStorage = (
   farmList: FarmGraphQL[],
-  dipDupTokens: State['tokens']['dipDupTokens'],
+  tokens: TokensContext['tokensMetadata'],
   farmCardEndsIn: EndsInType,
   farmLPTokensInfo: TokensInfoType,
   farmContracts: FarmContractType[],
@@ -48,9 +48,7 @@ export const normalizeFarmStorage = (
         lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] &&
         address === lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0],
     )
-    const dipDupToken = dipDupTokens.find(
-      ({ token_address }) => farmItem.lp_token.token_address === token_address,
-    )?.metadata
+    const dipDupToken = tokens[farmItem.lp_token.token_address]
 
     return {
       address: farmItem.address,
@@ -139,7 +137,7 @@ export const getLPTokensInfo = async (farmList: FarmGraphQL[]) => {
 
         const lpTokenUserBalance =
           typeof parsedLpTokenInfo === 'object'
-            ? Number(await getUserBalanceByAddress(parsedLpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]))
+            ? Number(await getUserBalanceByAddressOld(parsedLpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]))
             : 0
         return {
           lpTokenInfo: parsedLpTokenInfo,
@@ -181,7 +179,7 @@ export async function getFarmMetadata(farmAddress: string) {
 }
 
 // get user tokens balance
-export const getUserBalanceByAddress = async (tokenAddress?: string) => {
+export const getUserBalanceByAddressOld = async (tokenAddress?: string) => {
   if (!tokenAddress) return 0
 
   return await (await fetch(`https://api.${network}.tzkt.io/v1/accounts/${tokenAddress}/balance`)).json()

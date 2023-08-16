@@ -9,7 +9,7 @@ export const Wrapper = styled.div`
   .switcher {
     margin-top: 30px;
     width: fit-content;
-    column-gap: 15px;
+    column-gap: 20px;
   }
 `
 

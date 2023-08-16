@@ -1,9 +1,13 @@
 import { useHistory } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useCallback, useEffect, useMemo } from 'react'
 
 // context
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { stakeMVK } from 'providers/DoormanProvider/actions/doorman.actions'
+import { rewardsCompound } from 'providers/UserProvider/actions/user.actions'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -16,11 +20,8 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // helpers
 import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
-import { rewardsCompound } from '../Doorman.actions'
 import { stakingInputValidation } from '../Doorman.converter'
-import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
-import { unknownToError } from 'errors/error'
-import { sleep } from 'utils/api/sleep'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // consts
 import {
@@ -30,11 +31,16 @@ import {
   BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from '../../../app/App.components/Button/Button.constants'
-import { STAKE_ACTION } from 'providers/StakeProvider/helpers/stake.consts'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
-import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
-import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { STAKE_ACTION } from 'providers/DoormanProvider/helpers/doorman.consts'
+import { REWARDS_COMPOUND_ACTION } from 'providers/UserProvider/helpers/user.consts'
+import {
+  INPUT_STATUS_SUCCESS,
+  INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
+  defaultLargeInputMaxLength,
+  ERR_MSG_TOAST,
+} from 'app/App.components/Input/Input.constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 import colors from 'styles/colors'
 
@@ -57,10 +63,9 @@ import {
 } from './StakeUnstake.style'
 
 // types
-import { State } from 'reducers'
 import { InputProps } from 'app/App.components/Input/newInput.type'
-import { stakeMVK } from 'providers/StakeProvider/actions/doorman.actions'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -75,42 +80,42 @@ export const StakeUnstakeView = ({
   inputData,
   setInputData,
 }: StakeUnstakeViewProps) => {
-  const dispatch = useDispatch()
   const history = useHistory()
-  const { setAction } = useDappConfigContext()
+  const {
+    userTokensBalances,
+    userAddress,
+    availableDoormanRewards,
+    availableSatellitesRewards,
+    availableFarmRewards,
+    satelliteMvkIsDelegatedTo,
+    isSatellite,
+  } = useUserContext()
+  const {
+    contractAddresses: { mvkTokenAddress, doormanAddress },
+    preferences: { themeSelected },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
   const { info, loading, bug } = useToasterContext()
 
-  const {
-    accountPkh,
-    user: {
-      userTokens,
-      availableDoormanRewards,
-      availableSatellitesRewards,
-      availableFarmRewards,
-      satelliteMvkIsDelegatedTo,
-      isSatellite,
-    },
-  } = useSelector((state: State) => state.wallet)
+  const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
 
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { isActionActive } = useSelector((state: State) => state.loading)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  useEffect(() => {
+    if (satelliteMvkIsDelegatedTo) {
+      setSatelliteAddressToSubsctibe(satelliteMvkIsDelegatedTo)
+    }
+    return () => setSatelliteAddressToSubsctibe(null)
+  }, [satelliteMvkIsDelegatedTo])
 
-  const {
-    doormanAddress: { address: doormanAddress },
-    mvkTokenAddress: { address: mvkTokenAddress },
-  } = useSelector((state: State) => state.contractAddresses)
-
-  const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
-  const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
-    myMvkTokenBalance = userTokens[MVK_TOKEN_SYMBOL].balance
+  const delegatedUser = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
+  const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+    myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
 
   const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
   const exchangeValue = mvkExchangeRate && inputData.amount ? Number(inputData.amount) * mvkExchangeRate : 0
   const rewardsToClaim =
     availableDoormanRewards +
     availableSatellitesRewards +
-    Object.values(availableFarmRewards).reduce((acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards), 0)
+    Object.values(availableFarmRewards).reduce((acc, farmReward) => (acc += farmReward), 0)
   const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
 
   const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {
@@ -126,7 +131,7 @@ export const StakeUnstakeView = ({
       amount: Number(value),
       myMvkTokenBalance,
       mySMvkTokenBalance,
-      accountPkh,
+      userAddress,
     })
 
     setInputData({ ...inputData, amount: value, validation: validationStatus })
@@ -142,68 +147,7 @@ export const StakeUnstakeView = ({
       validation: INPUT_STATUS_SUCCESS,
     })
 
-    await handleStake(myMvkTokenBalance)
-  }
-
-  const handleStake = async (stakeAmount: number) => {
-    const canStakeAmount = stakeAmount <= Number(myMvkTokenBalance)
-
-    if (!canStakeAmount) {
-      setInputData({
-        ...inputData,
-        errorMessage: "You don't have enought MVK to stake",
-      })
-    }
-
-    if (!accountPkh) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return
-    }
-
-    if (stakeAmount <= 0) {
-      bug('Please enter an amount superior to zero', 'Incorrect amount')
-      return
-    }
-
-    setInputData({
-      ...inputData,
-      errorMessage: '',
-    })
-
-    const actionResult = await stakeMVK(stakeAmount, accountPkh, doormanAddress, mvkTokenAddress)
-
-    if (checkIfActionSuccess(actionResult)) {
-      try {
-        const { operation } = actionResult
-        dispatch(toggleActionFullScreenLoader(true))
-        dispatch(toggleActionCompletion(true))
-
-        info(
-          TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['message'],
-          TOASTER_ACTIONS_TEXTS[STAKE_ACTION]['start']['title'],
-        )
-
-        await sleep(5000)
-
-        // show toaster loader after 5000ms after operation started
-        const toasterId = loading(
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-        )
-
-        dispatch(toggleActionFullScreenLoader(false))
-        dispatch(toggleActionCompletion(false))
-
-        const operationConfirm = await operation.confirmation()
-        const operationLvl = operationConfirm.block.header.level
-        setInputData({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
-        setAction({ actionName: STAKE_ACTION, toasterId, operationLvl })
-      } catch (e) {}
-    } else {
-      setAction(null)
-      const parsedError = unknownToError(actionResult.error)
-      bug(parsedError.message)
-    }
+    await handleStake()
   }
 
   const handleUnstakeAll = () => {
@@ -217,11 +161,84 @@ export const StakeUnstakeView = ({
     openExitFeePopup()
   }
 
-  const handleCompound = async () => {
-    if (accountPkh) {
-      await dispatch(rewardsCompound(accountPkh))
+  // stake action -------------------------
+
+  const stakeAction = useCallback(
+    async (stakeAmount: number) => {
+      const canStakeAmount = stakeAmount <= Number(myMvkTokenBalance)
+
+      if (!canStakeAmount) {
+        setInputData({
+          ...inputData,
+          errorMessage: "You don't have enought MVK to stake",
+        })
+
+        return null
+      }
+
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!doormanAddress || !mvkTokenAddress) {
+        bug('Wrong doorman or mvkToken address was provided')
+        return null
+      }
+
+      if (stakeAmount <= 0) {
+        bug('Please enter an amount superior to zero', 'Incorrect amount')
+        return null
+      }
+
+      setInputData({
+        ...inputData,
+        errorMessage: '',
+      })
+
+      return await stakeMVK(stakeAmount, userAddress, doormanAddress, mvkTokenAddress)
+    },
+    [bug, doormanAddress, inputData, mvkTokenAddress, myMvkTokenBalance, setInputData, userAddress],
+  )
+
+  const dappCallback = useCallback(() => {
+    setInputData({ ...inputData, amount: '0', validation: INPUT_STATUS_DEFAULT })
+  }, [inputData, setInputData])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: STAKE_ACTION,
+      actionFn: stakeAction.bind(null, Number(inputData.amount)),
+      dappActionCallback: dappCallback,
+    }),
+    [dappCallback, inputData.amount, stakeAction],
+  )
+
+  const { action: handleStake } = useContractAction(contractActionProps)
+
+  // compound action ---------------------------
+
+  const rewardsCompoundAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
     }
-  }
+    if (!doormanAddress) {
+      bug('Wrong doorman address')
+      return null
+    }
+
+    return await rewardsCompound(userAddress, doormanAddress)
+  }, [bug, doormanAddress, userAddress])
+
+  const compoundContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: REWARDS_COMPOUND_ACTION,
+      actionFn: rewardsCompoundAction,
+    }),
+    [rewardsCompoundAction],
+  )
+
+  const { action: handleCompound } = useContractAction(compoundContractActionProps)
 
   const handleFocus = () => {
     if (inputData.amount === '0') {
@@ -293,9 +310,9 @@ export const StakeUnstakeView = ({
                 onClick={handleDelegate}
                 kind={BUTTON_PRIMARY}
                 form={BUTTON_WIDE}
-                disabled={!accountPkh || isActionActive}
+                disabled={!userAddress || isActionActive}
                 isThin
-                animation={accountPkh ? BUTTON_PULSE : null}
+                animation={userAddress ? BUTTON_PULSE : null}
               >
                 <Icon id="satellites" />
                 Delegate
@@ -381,6 +398,7 @@ export const StakeUnstakeView = ({
                 balanceName: 'Wallet Balance',
                 inputSize: INPUT_LARGE,
                 balanceHandler: onUseMaxBalance('mvk'),
+                validationFns: [[validateInputLength, ERR_MSG_TOAST]],
               }}
             />
           </StakeUnstakeInputWithCoin>
@@ -396,12 +414,7 @@ export const StakeUnstakeView = ({
         </StakeUnstakeRate>
 
         <StakeUnstakeButtonGrid>
-          <NewButton
-            kind={BUTTON_PRIMARY}
-            onClick={() => handleStake(Number(inputData.amount))}
-            form={BUTTON_WIDE}
-            disabled={isActionActive}
-          >
+          <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE} disabled={isActionActive}>
             <Icon id="in" /> Stake
           </NewButton>
 

@@ -1,4 +1,4 @@
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+import { LoansMarketMiniChartType } from 'providers/LoansProvider/helpers/loans.types'
 import { skyColor } from 'styles'
 
 export const numberOfItemsToDisplay = 0
@@ -8,6 +8,7 @@ export const MINI_CHART_SETTINGS = {
   height: 103,
   hideXAxis: true,
   hideYAxis: true,
+  isPeriod: true,
 }
 
 export const CHART_SETTINGS = {
@@ -15,6 +16,7 @@ export const CHART_SETTINGS = {
   height: 270,
   hideXAxis: true,
   hideYAxis: true,
+  isPeriod: true,
 }
 
 // TODO: use colors[theme]
@@ -37,6 +39,7 @@ export type MarketSettingsType = {
 
 export type MarketType = {
   icon: string
+  address: string
   symbol: string
   annualRate: number
   annualRateName: 'APR' | 'APY'
@@ -44,5 +47,5 @@ export type MarketType = {
   price: number
   leftValue: number
   rightValue: number
-  chartData: AreaChartPlotType[]
+  chartData: LoansMarketMiniChartType
 }

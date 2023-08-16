@@ -1,23 +1,33 @@
 import { useSelector } from 'react-redux'
-import { useCallback, useContext, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import classNames from 'classnames'
 
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+
 import { State } from 'reducers'
-import { LendingItemType, LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
+import { LendingItemType } from 'providers/LoansProvider/loans.provider.types'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { LENDING_TAB_SLIDING_BUTTONS, assetDecimalsToShow, loansTabNames } from '../../Loans.const'
-import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from '../../Loans.helpers'
+import { LENDING_TAB_SLIDING_BUTTONS, loansTabNames } from '../../Loans.const'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { LENDING_TAB_SUPPLY_TEXT, LENDING_TAB_WITHDRAW_TEXT } from 'texts/banners/loan.text'
 import { EARN_APY } from 'texts/tooltips/loan.text'
-import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './../Modals/Modals.helpers'
-import { INPUT_LARGE, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { loansPopupsContext } from './../Modals/LoansModals.provider'
+import {
+  ERR_MSG_TOAST,
+  INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+} from 'app/App.components/Input/Input.constants'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from '../../Loans.style'
-import { LoansActionsSection } from './../LoansComponents.style'
+import { CardSectionWrapper, LoansActionsSection } from './../LoansComponents.style'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -26,57 +36,67 @@ import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingT
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
+import { useCollateralInputData } from '../Modals/hooks/Market/useCollateralInputData'
+import { XTZLimitInfoBanner } from '../Modals/components/XTZLimitInfoBanner'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
-  assetData: LoanMarketType['loanTokenData']
+  loanTokenAddress: TokenAddressType
   lendAPY: number
   marketAvailableLiquidity: number
-  marketReserveAmount: number
 }
 
 export const LendingTabActionsSection = ({
   lendingItem,
-  assetData,
+  loanTokenAddress,
   lendAPY,
   marketAvailableLiquidity,
-  marketReserveAmount,
 }: LendingTabPropsType) => {
-  const { openConfirmAddLendingAssetPopup, openConfirmRemoveLendingAssetPopup } = useContext(loansPopupsContext)
+  const { openConfirmAddLendingAssetPopup, openConfirmRemoveLendingAssetPopup } = useLoansPopupsContext()
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userTokensBalances } = useUserContext()
 
-  const {
-    user: { userTokens },
-  } = useSelector((state: State) => state.wallet)
+  const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
+
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  const { lendValue = 0, interestEarned = 0, mBalance = 0 } = lendingItem || {}
+  const { lendValue = 0 } = lendingItem || {}
 
   const [activeTab, setActiveTab] = useState(LENDING_TAB_SLIDING_BUTTONS.find((item) => item.active))
-  const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
-
-  const balanceSymbol = isTezosAsset(assetData.symbol.toLowerCase() ?? '')
-    ? 'tezos'
-    : assetData.symbol.toLowerCase().toLowerCase() ?? ''
-
-  const tokenBalance = userTokens[balanceSymbol]?.balance ?? 0
-
   const isSupplyActiveTab = activeTab?.id === loansTabNames.SUPPLY
 
-  const futureMBalance = useMemo(
-    () => (isSupplyActiveTab ? mBalance + Number(inputData.amount) : mBalance - Number(inputData.amount)),
-    [inputData.amount, isSupplyActiveTab, mBalance],
-  )
+  const {
+    inputData,
+    setInputData,
+    setSelectedCollateral,
+    inputOnBlurHandle,
+    inputOnChangeHandle: onChangeHandler,
+    willExceedXTZTheLimit,
+    onFocusHandler,
+    useMaxHandler: maxHandlerFromHook,
+    clearData,
+  } = useCollateralInputData(!isSupplyActiveTab)
 
-  const isDisabledButton = useMemo(() => {
-    return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionActive
-  }, [inputData.validationStatus, isActionActive])
+  useEffect(() => {
+    setSelectedCollateral(loanTokenAddress)
+  }, [setSelectedCollateral, loanTokenAddress])
 
-  const clearData = () => {
-    setInputData(DEFAULT_LOANS_INPUT_VALUE)
-  }
+  if (!loanToken || !loanToken.rate) return null
+
+  const { symbol, icon, rate } = loanToken
+  const tokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: loanToken.address })
+
+  const futureMBalance = isSupplyActiveTab ? lendValue + Number(inputData.amount) : lendValue - Number(inputData.amount)
+
+  const isDisabledButton = inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionActive
 
   const handleSwitchTab = (tabId: number) => {
-    setInputData(DEFAULT_LOANS_INPUT_VALUE)
+    setInputData({
+      amount: '0',
+      validationStatus: INPUT_STATUS_DEFAULT,
+    })
     setActiveTab(LENDING_TAB_SLIDING_BUTTONS.find((item) => item.id === tabId))
   }
 
@@ -86,9 +106,9 @@ export const LendingTabActionsSection = ({
         openConfirmAddLendingAssetPopup({
           callback: clearData,
           inputAmount: Number(inputData.amount),
-          mBalance,
+          mBalance: lendValue,
           lendingAPY: lendAPY,
-          ...assetData,
+          tokenAddress: loanTokenAddress,
         })
 
         break
@@ -96,89 +116,41 @@ export const LendingTabActionsSection = ({
         openConfirmRemoveLendingAssetPopup({
           callback: clearData,
           inputAmount: Number(inputData.amount),
-          mBalance,
-          lendingAPY: lendAPY,
           currentLendedAmount: lendValue,
-          availableLiquidity: marketAvailableLiquidity,
-          reserveAmount: marketReserveAmount,
-          ...assetData,
+          tokenAddress: loanTokenAddress,
         })
         break
     }
   }
 
-  const onChangeHandler = useCallback(
-    (inputAmount: string, maxAmount: number) => {
-      const validationStatus = loansInputValidation({
-        inputAmount,
-        maxAmount,
-        options: {
-          byDecimalPlaces: assetData.decimals || assetDecimalsToShow,
-        },
-      })
+  const useMaxHandler = () => {
+    const inputMaxAmount = Math.min(lendValue, marketAvailableLiquidity)
 
-      setInputData({
-        ...inputData,
-        amount: inputAmount,
-        validationStatus: validationStatus,
-      })
-    },
-    [assetData, inputData],
-  )
+    isSupplyActiveTab ? maxHandlerFromHook(tokenBalance) : maxHandlerFromHook(inputMaxAmount)
+  }
 
-  const inputOnBlurHandle = useCallback(() => {
-    setInputData({
-      ...inputData,
-      amount: getOnBlurValue(inputData.amount),
-    })
-  }, [inputData])
+  const inputOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChangeHandler(e.target.value, isSupplyActiveTab ? tokenBalance : Math.min(lendValue, marketAvailableLiquidity))
+  }
 
-  const onFocusHandler = useCallback(() => {
-    setInputData({
-      ...inputData,
-      amount: getOnFocusValue(inputData.amount),
-    })
-  }, [inputData])
+  const inputProps: InputProps = {
+    value: inputData.amount,
+    type: 'number',
+    onChange: inputOnChangeHandler,
+    onBlur: inputOnBlurHandle,
+    onFocus: onFocusHandler,
+  }
 
-  const useMaxHandler = useCallback(() => {
-    isSupplyActiveTab
-      ? onChangeHandler(getLoansInputMaxAmount(tokenBalance, assetData.decimals), tokenBalance)
-      : onChangeHandler(
-          getLoansInputMaxAmount(Math.min(mBalance, tokenBalance), assetData.decimals),
-          Math.min(mBalance, tokenBalance),
-        )
-  }, [assetData.decimals, isSupplyActiveTab, tokenBalance, mBalance, onChangeHandler])
-
-  const inputOnChangeHandler = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChangeHandler(e.target.value, isSupplyActiveTab ? tokenBalance : Math.min(mBalance, tokenBalance))
-    },
-    [isSupplyActiveTab, mBalance, onChangeHandler, tokenBalance],
-  )
-
-  const inputProps: InputProps = useMemo(
-    () => ({
-      value: inputData.amount,
-      type: 'number',
-      onChange: inputOnChangeHandler,
-      onBlur: inputOnBlurHandle,
-      onFocus: onFocusHandler,
-    }),
-    [inputData.amount, inputOnChangeHandler, inputOnBlurHandle, onFocusHandler],
-  )
-
-  const settings: Settings = useMemo(
-    () => ({
-      balance: tokenBalance,
-      balanceAsset: assetData.symbol,
-      balanceName: 'Wallet Balance',
-      useMaxHandler,
-      inputStatus: inputData.validationStatus,
-      inputSize: INPUT_LARGE,
-      ...(assetData.rate ? { convertedValue: assetData.rate * Number(inputData.amount) } : {}),
-    }),
-    [assetData, inputData.amount, inputData.validationStatus, tokenBalance, useMaxHandler],
-  )
+  const settings: Settings = {
+    balance: tokenBalance,
+    balanceAsset: symbol,
+    balanceName: 'Wallet Balance',
+    useMaxHandler,
+    inputStatus: inputData.validationStatus,
+    inputSize: INPUT_LARGE,
+    validationFns: [[validateInputLength, ERR_MSG_TOAST]],
+    ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
+  }
 
   return (
     <LoansActionsSection className="lending-tab">
@@ -186,44 +158,38 @@ export const LendingTabActionsSection = ({
         <SlidingTabButtons onClick={handleSwitchTab} tabItems={LENDING_TAB_SLIDING_BUTTONS} className="vault" />
       </div>
 
-      <div className="tab-text">
-        {isSupplyActiveTab ? LENDING_TAB_SUPPLY_TEXT(assetData?.symbol) : LENDING_TAB_WITHDRAW_TEXT}
-      </div>
+      <div className="tab-text">{isSupplyActiveTab ? LENDING_TAB_SUPPLY_TEXT(symbol) : LENDING_TAB_WITHDRAW_TEXT}</div>
 
       <div>
         <div className="tab-text">Select Amount to {isSupplyActiveTab ? 'Supply' : 'Withdraw'}</div>
 
         <Input
-          className={classNames('pinned-dropdown', { 'input-with-rate': assetData.rate })}
+          className={classNames('pinned-dropdown', { 'input-with-rate': rate })}
           inputProps={inputProps}
           settings={settings}
         >
           <InputPinnedTokenInfo>
-            <ImageWithPlug imageLink={assetData.icon} alt={`${assetData.symbol} icon`} /> {assetData?.symbol}
+            <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
           </InputPinnedTokenInfo>
         </Input>
       </div>
 
-      <div className="mt-25">
-        <div className="tab-text mb-10">Updated Lending {assetData?.symbol} Stats</div>
+      <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20" />
 
-        <div className="stats">
-          <ThreeLevelListItem>
-            <div className="name">
-              Earn APY
-              <CustomTooltip iconId="info" text={EARN_APY} />
-            </div>
-            <CommaNumber value={lendAPY} className="value" endingText="%" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">{isSupplyActiveTab ? `m${assetData.symbol} Received` : 'Amount To Withdraw'}</div>
-            <CommaNumber value={Number(inputData.amount)} className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem className="right">
-            <div className="name">New m{assetData.symbol} Balance</div>
-            <CommaNumber value={futureMBalance} className="value" />
-          </ThreeLevelListItem>
-        </div>
+      <div className="mt-25">
+        <div className="tab-text mb-10">Updated Lending {symbol} Stats</div>
+
+        <CardSectionWrapper>
+          <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
+            <LendingStatsTable
+              lendAPY={lendAPY}
+              isSupplyActiveTab={isSupplyActiveTab}
+              symbol={symbol}
+              amount={inputData.amount}
+              futureMBalance={futureMBalance}
+            />
+          </MemoizedComponent>
+        </CardSectionWrapper>
       </div>
 
       <div className="button-wrapper">
@@ -233,5 +199,39 @@ export const LendingTabActionsSection = ({
         </NewButton>
       </div>
     </LoansActionsSection>
+  )
+}
+
+const LendingStatsTable = ({
+  lendAPY,
+  isSupplyActiveTab,
+  futureMBalance,
+  symbol,
+  amount,
+}: {
+  lendAPY: number
+  isSupplyActiveTab: boolean
+  symbol: string
+  amount: number | string
+  futureMBalance: number
+}) => {
+  return (
+    <div className="stats">
+      <ThreeLevelListItem>
+        <div className="name">
+          Earn APY
+          <CustomTooltip iconId="info" text={EARN_APY} />
+        </div>
+        <CommaNumber value={lendAPY} className="value" endingText="%" />
+      </ThreeLevelListItem>
+      <ThreeLevelListItem>
+        <div className="name">{isSupplyActiveTab ? `m${symbol} Received` : 'Amount To Withdraw'}</div>
+        <CommaNumber value={Number(amount)} className="value" />
+      </ThreeLevelListItem>
+      <ThreeLevelListItem className="right">
+        <div className="name">New m{symbol} Balance</div>
+        <CommaNumber value={futureMBalance} className="value" />
+      </ThreeLevelListItem>
+    </div>
   )
 }

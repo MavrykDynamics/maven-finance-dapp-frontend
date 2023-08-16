@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -17,6 +17,12 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
+import { START_NEXT_ROUND_ACTION } from 'providers/ProposalsProvider/helpers/proposals.const'
+
+// providers
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // Actions, helpers
 import {
@@ -24,10 +30,13 @@ import {
   getTimestampByLevelSchema,
   getTimestampByLevelUrl,
 } from 'utils/api/api-helpers/getTimestampByLevel'
-import { startNextRound } from 'pages/Governance/actions/GovernanceInteraction.actions'
+import { startNextRound } from 'providers/ProposalsProvider/actions/proposalsGovernanceInteraction.actions'
 import { api } from 'utils/api/api'
-import { isAbortError } from 'errors/error'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { isAbortError, unknownToError } from 'errors/error'
+import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 export default function TimeRemaining() {
   const dispatch = useDispatch()
@@ -35,7 +44,10 @@ export default function TimeRemaining() {
   const { currentRoundEndLevel, timelockProposalId, governancePhase } = useSelector(
     (state: State) => state.governance.config,
   )
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { userAddress } = useUserContext()
+  const {
+    contractAddresses: { governanceAddress },
+  } = useDappConfigContext()
 
   const { bug } = useToasterContext()
   const [timerDeadline, setTimerDeadline] = useState(0)
@@ -45,14 +57,57 @@ export default function TimeRemaining() {
 
   const handleCloseModal = () => setShowModal(false)
 
-  const modalMoveNext = () => {
-    dispatch(startNextRound(false))
-    handleCloseModal()
+  // start | execute next round actions ------------------------------------------
+  const handleNextRoundActionFn = useCallback(
+    async (executePastProposal: boolean) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!governanceAddress) {
+        bug('Wrong governance address')
+        return null
+      }
+
+      return await startNextRound(governanceAddress, executePastProposal)
+    },
+    [bug, governanceAddress, userAddress],
+  )
+
+  const dappActionCallback = useCallback(() => {
+    dispatch(getGovernanceStorage())
+  }, [dispatch])
+
+  const nextRoundContractProps: HookContractActionArgs<boolean> = useMemo(
+    () => ({
+      actionType: START_NEXT_ROUND_ACTION,
+      actionFn: handleNextRoundActionFn,
+      dappActionCallback,
+    }),
+    [dappActionCallback, handleNextRoundActionFn],
+  )
+
+  // same action with 2 different boolean values, so need 2 seperate fns to handle it
+  const { actionWithArgs: handleNextRound } = useContractAction<boolean>(nextRoundContractProps)
+
+  const modalMoveNext = async () => {
+    try {
+      await handleNextRound(false)
+      handleCloseModal()
+    } catch (e) {
+      const err = unknownToError(e)
+      bug(err.message)
+    }
   }
 
-  const modalExecute = () => {
-    dispatch(startNextRound(true))
-    handleCloseModal()
+  const modalExecute = async () => {
+    try {
+      await handleNextRound(true)
+      handleCloseModal()
+    } catch (e) {
+      const err = unknownToError(e)
+      bug(err.message)
+    }
   }
 
   const handleMoveNextRound = () => {
@@ -107,7 +162,7 @@ export default function TimeRemaining() {
           />
         </>
       ) : (
-        <Button kind={BUTTON_SECONDARY} disabled={!accountPkh} onClick={handleMoveNextRound}>
+        <Button kind={BUTTON_SECONDARY} disabled={!userAddress} onClick={handleMoveNextRound}>
           <Icon id="upload" />
           Move to next round
         </Button>

@@ -6,24 +6,12 @@ import type {
 } from '../utils/TypesAndInterfaces/Governance'
 
 import { GET_GOVERNANCE_CONFIG, GET_PROPOSALS } from 'pages/Governance/actions/GovernanseData.actions'
-import {
-  defaultProposalDescriptionMaxLength,
-  defaultProposalInvoiceMaxLength,
-  defaultProposalMetadataTitleMaxLength,
-  defaultProposalSourceCodeMaxLength,
-  defaultProposalTitleMaxLength,
-} from 'app/App.components/Input/Input.constants'
 
 export type GovernanceState = {
   config: {
     address: string
     fee: number
     successReward: number
-    proposalDescriptionMaxLength: number
-    proposalInvoiceMaxLength: number
-    proposalMetadataTitleMaxLength: number
-    proposalSourceCodeMaxLength: number
-    proposalTitleMaxLength: number
 
     currentRoundEndLevel: number
     cycle: number
@@ -47,11 +35,6 @@ export const DEFAULT_GOVERNANCE_STORAGE: GovernanceState = {
     address: '',
     fee: 0,
     successReward: 0,
-    proposalDescriptionMaxLength: defaultProposalDescriptionMaxLength,
-    proposalInvoiceMaxLength: defaultProposalInvoiceMaxLength,
-    proposalMetadataTitleMaxLength: defaultProposalMetadataTitleMaxLength,
-    proposalSourceCodeMaxLength: defaultProposalSourceCodeMaxLength,
-    proposalTitleMaxLength: defaultProposalTitleMaxLength,
 
     currentRoundEndLevel: 0,
     cycle: 0,

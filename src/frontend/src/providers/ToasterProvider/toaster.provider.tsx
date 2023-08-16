@@ -14,7 +14,10 @@ import {
   TOASTER_WARNING,
 } from './toaster.provider.const'
 import { generateUniqueId } from 'utils/calcFunctions'
+import { InternalErrorType, SharedErrorFileds, SharedErrors } from 'errors/error.type'
+import { WalletActionType } from 'types/actions.type'
 import { getErrorPageData } from './helpers/getErrorPageData'
+import { ERROR_TYPE_FATAL, ERROR_TYPE_ROUTER } from 'errors/error.const'
 
 export const toasterContext = React.createContext<ToasterContextType>(undefined!)
 
@@ -46,11 +49,14 @@ export default class ToasterProvider extends React.Component<Props, State> {
         // fatal error to show 404 page
         error: props.error || null, //fatal error
         // custom errors, like error from Wallet, api, validation etc.
-
+        sharedErrors: {
+          walletError: null,
+        },
         hideToasterMessage: this.hideToasterMessage,
         deleteToasterFromArray: this.deleteToasterFromArray,
         messages: [],
         setError: this.setError,
+        setSharedError: this.setSharedError,
       },
     }
   }
@@ -131,6 +137,18 @@ export default class ToasterProvider extends React.Component<Props, State> {
     }))
   }
 
+  setSharedError = (fieldName: SharedErrorFileds, error: (SharedErrors & { actionId: WalletActionType }) | null) => {
+    this.setState({
+      context: {
+        ...this.state.context,
+        sharedErrors: {
+          ...this.state.context.sharedErrors,
+          [fieldName]: error,
+        },
+      },
+    })
+  }
+
   /**
    * sets hide property for toast to 'true' to play hide animation
    * @param unique toaster id
@@ -174,18 +192,23 @@ export default class ToasterProvider extends React.Component<Props, State> {
     }))
   }
 
+  /**
+   *
+   */
   render(): JSX.Element {
     const { error } = this.state.context
-    const errorPageContent = error instanceof FatalError ? getErrorPageData(error.type) : null
+    let errorPageContent = null
+    let type: InternalErrorType = ERROR_TYPE_ROUTER
+
+    if (error instanceof FatalError) {
+      type = error.type
+      errorPageContent = getErrorPageData(type)
+    }
 
     return (
       <toasterContext.Provider value={this.state.context}>
         {errorPageContent ? (
-          <ErrorPage
-            headerText={errorPageContent.header}
-            descText={errorPageContent.desc}
-            type={(error as FatalError).type}
-          />
+          <ErrorPage headerText={errorPageContent.header} descText={errorPageContent.desc} type={type} />
         ) : (
           this.props.children
         )}

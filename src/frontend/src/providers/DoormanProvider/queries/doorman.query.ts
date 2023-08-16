@@ -1,0 +1,27 @@
+import { gql } from 'utils/__generated__/gql'
+
+// TODO: add pagination by period
+export const SMVK_MVK_HISTORY_DATA = gql(`
+  query smvkMvkHistoryData {
+    smvk_history_data(distinct_on: timestamp) {
+      mvk_total_supply
+      smvk_total_supply
+      timestamp
+    }
+  }
+`)
+
+export const DAPP_MVK_SMVK_STATS = gql(`
+  query getDappSmvkMvkStats($doormanContractAddress: String) {
+    mavryk_user(where: { address: { _eq: $doormanContractAddress } }) {
+      address
+      mvk_balance
+      smvk_balance
+    }
+
+    mvk_token {
+      total_supply
+      maximum_supply
+    }
+  }
+`)

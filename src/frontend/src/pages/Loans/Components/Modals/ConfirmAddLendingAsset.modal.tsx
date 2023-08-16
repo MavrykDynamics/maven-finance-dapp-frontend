@@ -1,21 +1,38 @@
-import { useDispatch } from 'react-redux'
+import { useCallback, useMemo } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
+// components
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
-import { ConfirmAddLendingAssetDataType } from './Modals.helpers'
+// consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { depositLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
+import { LENDING_APY } from 'texts/tooltips/loan.text'
+import { DEPOSIT_LENDING_ASSET_ACTION } from 'providers/LoansProvider/helpers/loans.const'
 
+// types
+import { ConfirmAddLendingAssetDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+
+// actions
+import { depositLendingAssetAction } from 'providers/LoansProvider/actions/loans.actions'
+
+// styles
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { LENDING_APY } from 'texts/tooltips/loan.text'
+
+// helpers
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 export const ConfirmAddLendingAsset = ({
   closePopup,
@@ -26,35 +43,52 @@ export const ConfirmAddLendingAsset = ({
   show: boolean
   data: ConfirmAddLendingAssetDataType
 }) => {
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { bug } = useToasterContext()
+  const { userAddress } = useUserContext()
   const {
-    inputAmount = 0,
-    mBalance = 0,
-    rate = 0,
-    decimals = 0,
-    symbol = '',
-    address = '',
-    lendingAPY = 0,
-    icon = '',
-    gqlName = '',
-    tokenType = '',
-    id = 0,
-    callback,
-  } = data ?? {}
+    contractAddresses: { lendingControllerAddress },
+  } = useDappConfigContext()
+
   useLockBodyScroll(show)
 
-  const dispatch = useDispatch()
+  const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
+  const { mBalance = 0, inputAmount = 0, lendingAPY = 0, callback = () => {} } = data ?? {}
 
-
-  const callActionsAfterTransaction = () => {
-    closePopup()
-    callback?.()
-  }
-
-  const depositHandler = () => {
-    if (tokenType && address) {
-      dispatch(depositLendingAssetAction(gqlName, inputAmount, address, id, tokenType, decimals, callActionsAfterTransaction))
+  const depositAction = useCallback(async () => {
+    if ((loanToken && !checkWhetherTokenIsLoanToken(loanToken)) || !loanToken) {
+      return null
     }
-  }
+
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!lendingControllerAddress) {
+      bug('Wrong lending address')
+      return null
+    }
+
+    return await depositLendingAssetAction(userAddress, loanToken, inputAmount, lendingControllerAddress, () => {
+      closePopup()
+      callback()
+    })
+  }, [bug, callback, closePopup, inputAmount, lendingControllerAddress, loanToken, userAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DEPOSIT_LENDING_ASSET_ACTION,
+      actionFn: depositAction,
+    }),
+    [depositAction],
+  )
+
+  const { action: depositHandler } = useContractAction(contractActionProps)
+
+  if (!data || !loanToken || !loanToken.rate) return null
+
+  const { symbol } = loanToken
 
   return (
     <PopupContainer onClick={closePopup} show={show}>

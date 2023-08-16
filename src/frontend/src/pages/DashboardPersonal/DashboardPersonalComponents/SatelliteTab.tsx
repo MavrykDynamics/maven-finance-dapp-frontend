@@ -1,42 +1,66 @@
-import { useSelector, useDispatch } from 'react-redux'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-import { ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+// const
+import { SATELLITE_ORACLE_STATUSES } from 'providers/SatellitesProvider/satellites.const'
+import colors from 'styles/colors'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { distributeProposalRewards } from 'pages/Satellites/Satellites.actions'
+import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 
+// context
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+
+// helpers
+import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
+import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+
+// view
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-
 import { DashboardPersonalSatellitesBottomLinks, SatelliteStatusBlock } from './DashboardPersonalComponents.style'
 import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/SatelliteCard.style'
 import { DashboardCardHeader } from '../DashboardPersonal.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-
-import { State } from 'reducers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { UserActionHistory } from './UserOperationsHistory'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import colors from 'styles/colors'
-import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
-const SatelliteTab = () => {
-  const dispatch = useDispatch()
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards: () => void }) => {
+  const { userAddress, availableProposalRewards } = useUserContext()
+  const {
+    satelliteMapper,
+    proposalsAmount,
+    satelliteGovActionsAmount,
+    finRequestsAmount,
+    setSatelliteAddressToSubsctibe,
+    isLoading: isSatellitesLoading,
+  } = useSatellitesContext()
+
+  useEffect(() => {
+    if (userAddress) {
+      setSatelliteAddressToSubsctibe(userAddress)
+    }
+    return () => setSatelliteAddressToSubsctibe(null)
+  }, [userAddress])
 
   const {
-    accountPkh = '',
-    user: { availableSatellitesRewards },
-  } = useSelector((state: State) => state.wallet)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
-  const satelliteRecord = satelliteMapper[accountPkh]
+  const satelliteRecord = userAddress ? satelliteMapper[userAddress] : null
 
-  const handleDistributeRewards = () => {
-    // TODO: add valid data
-    dispatch(distributeProposalRewards('', []))
-  }
+  const { oracleStatus } = useSatelliteStatuses(satelliteRecord)
+  const { proposalParticipation } = getSatelliteParticipations({
+    satellite: satelliteRecord,
+    proposalsAmount,
+    satelliteGovActionsAmount,
+    finRequestsAmount,
+  })
 
   return (
     <>
@@ -47,15 +71,19 @@ const SatelliteTab = () => {
           <NewButton
             kind={BUTTON_PRIMARY}
             form={BUTTON_WIDE}
-            onClick={handleDistributeRewards}
-            // TODO:  we are waiting new Query for getting proposals
-            disabled={true || availableSatellitesRewards === 0}
+            onClick={distributeProposalRewards}
+            disabled={availableProposalRewards.length === 0}
           >
             <Icon id="loans" />
             Distribute Gov. Rewards
           </NewButton>
         </DashboardCardHeader>
-        {satelliteRecord ? (
+        {userAddress && isSatellitesLoading ? (
+          <DataLoaderWrapper margin="20px 0 0 0">
+            <ClockLoader width={75} height={75} />
+            <div className="text">Loading your satellite data</div>
+          </DataLoaderWrapper>
+        ) : satelliteRecord ? (
           <>
             <div className="container">
               <div className="grid-container">
@@ -85,7 +113,7 @@ const SatelliteTab = () => {
                 <div className="grid-item ">
                   <div className="name">Gov. Participation</div>
                   <div className="value">
-                    <CommaNumber value={satelliteRecord.satelliteMetrics.votingPartisipation} endingText="%" />
+                    <CommaNumber value={proposalParticipation} endingText="%" />
                   </div>
                 </div>
                 <div className="grid-item ">
@@ -97,7 +125,7 @@ const SatelliteTab = () => {
                 <div className="grid-item ">
                   <div className="name">Oracle Participation</div>
                   <div className="value">
-                    <CommaNumber value={satelliteRecord.satelliteMetrics.oracleEfficiency} endingText="%" />
+                    <CommaNumber value={satelliteRecord.oracleEfficiency} endingText="%" />
                   </div>
                 </div>
 
@@ -123,8 +151,8 @@ const SatelliteTab = () => {
                 <div className="grid-item ">
                   <div className="name">Oracle Status</div>
                   <div className="value">
-                    <SatelliteOracleStatusComponent statusType={satelliteRecord.oracleStatus}>
-                      {ORACLE_STATUSES_MAPPER[satelliteRecord.oracleStatus]}
+                    <SatelliteOracleStatusComponent statusType={oracleStatus}>
+                      {SATELLITE_ORACLE_STATUSES[oracleStatus]}
                     </SatelliteOracleStatusComponent>
                   </div>
                 </div>

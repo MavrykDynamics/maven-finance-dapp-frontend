@@ -18,6 +18,7 @@ import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
 import { Info } from '../Info/Info.view'
 import { INFO_DEFAULT } from '../Info/info.constants'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type VotingType = VotingProps & {
   className?: string
@@ -36,13 +37,11 @@ export const VotingArea = ({
   disableButtonByVote,
 }: VotingType) => {
   const { forBtn, againsBtn, passBtn } = buttonsToShow ?? { forBtn: {}, againsBtn: {}, passBtn: {} }
-  const {
-    accountPkh,
-    user: { isSatellite, isNewlyRegisteredSatellite },
-  } = useSelector((state: State) => state.wallet)
+
+  const { userAddress, isSatellite, isNewlyRegisteredSatellite } = useUserContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  const votingButtons = accountPkh ? (
+  const votingButtons = userAddress ? (
     isSatellite && handleVote ? (
       <VotingButtonsContainer className="voting-buttons-wrapper">
         {forBtn && (
@@ -117,10 +116,7 @@ export const VotingProposalsArea = ({
   handleProposalVote,
   votingPhaseHandler,
 }: VotingProposalsType) => {
-  const {
-    accountPkh,
-    user: { isSatellite, isNewlyRegisteredSatellite },
-  } = useSelector((state: State) => state.wallet)
+  const { userAddress, isSatellite, isNewlyRegisteredSatellite } = useUserContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   // Proposal isn't locked, can't vote
@@ -169,9 +165,9 @@ export const VotingProposalsArea = ({
               <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />
             </div>
           )}
-          {accountPkh ? (
+          {userAddress ? (
             <Button
-              onClick={() => handleProposalVote(Number(selectedProposal.id))}
+              onClick={handleProposalVote}
               kind={BUTTON_PRIMARY}
               disabled={vote?.round === 0 || !isSatellite || isActionActive || isNewlyRegisteredSatellite}
             >

@@ -6,6 +6,7 @@ import { TextArea } from 'app/App.components/TextArea/TextArea.controller'
 import { ProposalSubmittionStageOneBody } from '../ProposalSubmission.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
+import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 
 // types
 import { StageOneFormProps } from '../ProposalSubmission.types'
@@ -14,13 +15,14 @@ import { State } from 'reducers'
 // helpers, constants
 import { isValidLength, isValidHttpUrl } from '../../../utils/validatorFunctions'
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { containSpaces } from 'app/App.utils/input'
 import { Info } from 'app/App.components/Info/Info.view'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const StageOneForm = ({
   proposalId,
@@ -31,17 +33,13 @@ export const StageOneForm = ({
   updateLocalProposalData,
 }: StageOneFormProps) => {
   const {
-    fee,
-    successReward,
-    proposalTitleMaxLength,
-    proposalDescriptionMaxLength,
-    proposalSourceCodeMaxLength,
-    governancePhase,
-  } = useSelector((state: State) => state.governance.config)
+    maxLengths: {
+      governance: { proposalTitleMaxLength, proposalDescriptionMaxLength, proposalSourceCodeMaxLength },
+    },
+  } = useDappConfigContext()
+  const { isNewlyRegisteredSatellite } = useUserContext()
 
-  const {
-    user: { isNewlyRegisteredSatellite },
-  } = useSelector((state: State) => state.wallet)
+  const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
 
   const isProposalSubmitted = proposalId >= 0
   const isProposalPeriod = governancePhase === 'PROPOSAL'

@@ -9,8 +9,6 @@ export const EMERGENCY_GOVERNANCE_STORAGE_QUERY = `
       min_smvk_required_to_trigger
       vote_expiry_days
       required_fee_mutez
-      proposal_title_max_length
-      proposal_desc_max_length
       governance_id
       decimals
       admin

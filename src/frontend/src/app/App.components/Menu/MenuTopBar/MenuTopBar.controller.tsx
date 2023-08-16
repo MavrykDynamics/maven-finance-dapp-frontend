@@ -7,7 +7,7 @@ import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { toggleWertLoader } from 'app/App.components/Loader/Loader.action'
 import { State } from 'reducers'
 
-import { LIGHT_THEME } from 'app/App.components/DarkThemeProvider/DarkThemeProvider.actions'
+import { LIGHT_THEME } from 'consts/theme.const'
 import { getWertOptions } from 'app/App.components/ConnectWallet/Wert/WertIO.const'
 import { TOASTER_ERROR } from 'app/App.components/Toaster/Toaster.constants'
 
@@ -20,6 +20,7 @@ import { MobileTopBar } from './TopBarLinks/MobileTopBar.controller'
 
 import { MenuLogo } from '../Menu.style'
 import { MenuMobileBurger, MenuTopStyled } from './MenuTopBar.style'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type MenuTopBarProps = {
   burgerClickHandler: () => void
@@ -70,7 +71,9 @@ export const DOCS_LINKS = [
 
 export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodePopupHandler }: MenuTopBarProps) => {
   const dispatch = useDispatch()
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const [showMobileTopBar, setShowMobileTopBar] = useState(false)

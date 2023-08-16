@@ -1,40 +1,52 @@
+import { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
+// consts
+import { GaugeChartStateType, GAUGE_STATE_RISK_PART, GAUGE_STATE_APY_PART } from 'pages/LoansDashboard/LoansDashboard'
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import colors from 'styles/colors'
 
+// types
+import { UserLoansData } from 'providers/UserProvider/user.provider.types'
+
+// helpers
+import { getGaugeVaultRiskSimpleStatus } from 'pages/LoansDashboard/helpers/position.helpers'
+import { getNumberInBounds } from 'utils/calcFunctions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// context
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+
+// view
+import { LBHInfoBlock } from './DashboardPersonalComponents.style'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { LoansPositionTable } from 'pages/LoansDashboard/components/PositionTable'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
 import Button from 'app/App.components/Button/NewButton'
 
-import { LBHInfoBlock } from './DashboardPersonalComponents.style'
-import { LoansPositionTable } from 'pages/LoansDashboard/components/PositionTable'
-import { State } from 'reducers'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
-import { getGaugeVaultRiskSimpleStatus } from 'pages/LoansDashboard/helpers/position.helpers'
-import { GAUGE_STATE_APY_PART, GAUGE_STATE_RISK_PART, GaugeChartStateType } from 'pages/LoansDashboard/LoansDashboard'
-import { useEffect, useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
-import colors from 'styles/colors'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { getNumberInBounds } from 'utils/calcFunctions'
-
 export const LendBorrowPosition = ({
-  markets,
-  userLoansData,
   userLoansRewards,
+  totalUserBorrowed,
+  totalUserLended,
+  userVaultsData,
 }: {
-  markets: State['loans']['loanTokens']
-  userLoansData: State['wallet']['user']['userLoansData']
-  userLoansRewards: State['wallet']['user']['availableLoansRewards']
+  totalUserBorrowed: number
+  totalUserLended: number
+  userVaultsData: UserLoansData['userVaultsData']
+  userLoansRewards: number
 }) => {
-  const { themeSelected } = useSelector((state: State) => state.preferences)
-  // Calcuating total lended and borrowed by user
-  const { totalUserLended, totalUserBorrowed } = useMemo(() => {
-    const totalUserLended = userLoansData.userLendings.reduce((acc, { usdAmount }) => (acc += usdAmount), 0)
-    const totalUserBorrowed = userLoansData.userBorrowing.reduce((acc, { usdAmount }) => (acc += usdAmount), 0)
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userAddress, userMTokens } = useUserContext()
+  const { marketsAddresses, marketsMapper } = useLoansContext()
 
-    return { totalUserLended, totalUserBorrowed }
-  }, [userLoansData])
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   // calc data for gauge chart
   const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {
@@ -42,27 +54,30 @@ export const LendBorrowPosition = ({
     apyGaugeData: GaugeChartStateType
   } => {
     const { borrowedAmount, collateralAmount, totalSuppliedValue, sumOfRatioSuppliedToAPY, sumOfRatioBorrowedToAPR } =
-      markets.reduce<{
-        borrowedAmount: number
-        collateralAmount: number
-        totalSuppliedValue: number
-        sumOfRatioSuppliedToAPY: number
-        sumOfRatioBorrowedToAPR: number
-      }>(
-        (acc, { borrowAPR, lendingAPY, lendingItem, loanTokenData: { rate, gqlName } }) => {
+      marketsAddresses.reduce(
+        (acc, marketTokenAddress) => {
+          const market = marketsMapper[marketTokenAddress]
+          const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
           let borrowedPerMarket = 0
 
-          const { borrowedAmount = 0, collateralAmount = 0 } = userLoansData.userVaultsData[gqlName] ?? {}
+          if (!token || !token.rate || !market) return acc
+          const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress } = market
 
-          // calculating value risk data & how much borrowed per vault
-          acc.collateralAmount += collateralAmount
+          const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
+
+          const { rate } = token
+
+          const { borrowedAmount = 0, borrowedVaultsCollateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
+
+          //  calculating value risk data & how much borrowed per vault
+          acc.collateralAmount += borrowedVaultsCollateralAmount
           acc.borrowedAmount += borrowedAmount
           borrowedPerMarket += borrowedAmount
 
           // calculating net APY supplied & borrowed ratio's
-          acc.sumOfRatioSuppliedToAPY += (lendingItem?.lendValue ?? 0 * rate) * lendingAPY
+          acc.sumOfRatioSuppliedToAPY += lendValue * rate * lendingAPY
           acc.sumOfRatioBorrowedToAPR += borrowedPerMarket * borrowAPR
-          acc.totalSuppliedValue += lendingItem?.lendValue ?? 0 * rate
+          acc.totalSuppliedValue += lendValue * rate
           return acc
         },
         {
@@ -73,8 +88,10 @@ export const LendBorrowPosition = ({
           sumOfRatioBorrowedToAPR: 0,
         },
       )
-    const vaultRiskValue = collateralAmount ? (borrowedAmount / collateralAmount) * 100 : 0
-    const apyNet = totalSuppliedValue ? (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue : 0
+
+    const vaultRiskValue = !userAddress || !collateralAmount ? 0 : (borrowedAmount / collateralAmount) * 100
+    const apyNet =
+      !userAddress || !totalSuppliedValue ? 0 : (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue
 
     return {
       vaultRiskGaugeData: {
@@ -87,7 +104,7 @@ export const LendBorrowPosition = ({
         currentValue: getNumberInBounds(0, 100, apyNet),
       },
     }
-  }, [markets, userLoansData.userVaultsData])
+  }, [marketsAddresses, userAddress, marketsMapper, tokensMetadata, tokensPrices, userMTokens, userVaultsData])
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
@@ -165,7 +182,7 @@ export const LendBorrowPosition = ({
         </div>
       </div>
 
-      <LoansPositionTable markets={markets} userVaultsData={userLoansData.userVaultsData} />
+      <LoansPositionTable userVaultsData={userVaultsData} />
     </LBHInfoBlock>
   )
 }

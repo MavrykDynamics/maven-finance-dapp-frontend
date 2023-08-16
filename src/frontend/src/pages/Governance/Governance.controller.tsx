@@ -5,8 +5,10 @@ import QueryString from 'qs'
 
 // types
 import { State } from 'reducers'
-import { ProposalVotersType, ProposalsListType } from './helpers/governanceTypes'
+import { ProposalsListType } from './helpers/governanceTypes'
 import { GovPhases, ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
+
+// providers
 
 // actions & cs hooks
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -33,7 +35,6 @@ import {
   WAITING_EXECUTED_PROPOSALS_LIST_NAME,
   WAITING_PAYMENT_PROPOSALS_LIST_NAME,
 } from 'app/App.components/Pagination/pagination.consts'
-import { getVoteText } from 'pages/Satellites/helpers/Satellites.consts'
 import { generateCyclesDdOptions, NONE_CYCLE_SELECTED_OPTION } from './helpers/governanceView.helpers'
 
 // styles
@@ -47,6 +48,11 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_INFO, STATUS_FLAG_UP } from 'app/App.components/StatusFlag/StatusFlag.constants'
+import {
+  SATELLITE_VOTE_NO,
+  SATELLITE_VOTE_YES,
+  SATELLITE_VOTES_MAPPER,
+} from 'providers/SatellitesProvider/satellites.const'
 
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const dispatch = useDispatch()
@@ -63,7 +69,6 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
     proposalsMapper,
   } = useSelector((state: State) => state.governance)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
@@ -190,34 +195,18 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
     selectedCycle,
   ])
 
-  // Generate proposal voters and paginate them
-  const votersList = useMemo(() => {
-    const selectedProposalVotes = rightSideContentId ? proposalsMapper[rightSideContentId]?.votes ?? [] : []
-    return (
-      selectedProposalVotes?.reduce<ProposalVotersType>((acc, { voter, round, vote }) => {
-        const satelliteData = satelliteMapper[voter.address]
-
-        if (satelliteData && round === 1) {
-          acc.push({
-            vote,
-            name: satelliteData.name,
-            avatar: satelliteData.image,
-            address: voter.address,
-          })
-        }
-
-        return acc
-      }, []) ?? []
-    )
-  }, [satelliteMapper, proposalsMapper, rightSideContentId])
+  const selectedProposalVoters = useMemo(
+    () => (rightSideContentId ? proposalsMapper[rightSideContentId]?.votes ?? [] : []),
+    [proposalsMapper, rightSideContentId],
+  )
 
   const paginatedVotersList = useMemo(() => {
     const [from, to] = calculateSlicePositions(
       getPageNumber(search, GOVERNANCE_VOTERS_LIST_NAME),
       GOVERNANCE_VOTERS_LIST_NAME,
     )
-    return votersList.slice(from, to)
-  }, [search, votersList])
+    return selectedProposalVoters.slice(from, to)
+  }, [search, selectedProposalVoters])
 
   return (
     <Page>
@@ -289,10 +278,18 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
               )}
 
               {/* Satellites who has voted for selected proposal */}
-              {!isHistory && governancePhase !== GovPhases.PROPOSAL && votersList?.length ? (
+              {!isHistory && governancePhase !== GovPhases.PROPOSAL && selectedProposalVoters.length ? (
                 <div className="voters-list">
                   <H2Title>Satellite Voting History</H2Title>
-                  {paginatedVotersList.map(({ vote, address, name, avatar }) => {
+                  {paginatedVotersList.map(({ vote, address, name, avatar, round }) => {
+                    // if vote for proposal round, don't show it
+                    if (round === 0) return null
+                    const voteColor =
+                      vote === SATELLITE_VOTE_YES
+                        ? STATUS_FLAG_UP
+                        : vote === SATELLITE_VOTE_NO
+                        ? STATUS_FLAG_DOWN
+                        : STATUS_FLAG_INFO
                     return (
                       <VoterListItem key={address}>
                         <div className="left">
@@ -302,14 +299,11 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                             <TzAddress tzAddress={address} />
                           </div>
                         </div>
-                        <StatusFlag
-                          status={vote === 1 ? STATUS_FLAG_UP : vote === 2 ? STATUS_FLAG_DOWN : STATUS_FLAG_INFO}
-                          text={getVoteText(vote)}
-                        />
+                        <StatusFlag status={voteColor} text={SATELLITE_VOTES_MAPPER[vote]} />
                       </VoterListItem>
                     )
                   })}
-                  <Pagination itemsCount={votersList.length} listName={GOVERNANCE_VOTERS_LIST_NAME} />
+                  <Pagination itemsCount={selectedProposalVoters.length} listName={GOVERNANCE_VOTERS_LIST_NAME} />
                 </div>
               ) : null}
             </GovernanceLeftContainer>

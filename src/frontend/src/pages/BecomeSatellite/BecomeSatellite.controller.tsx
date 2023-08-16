@@ -1,12 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // Consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { INFO_DEFAULT, INFO_ERROR } from 'app/App.components/Info/info.constants'
-import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
 import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
@@ -15,18 +14,29 @@ import {
   getFormTextBasedOnUserRole,
   getInputValidationStatus,
 } from './BecomeSatellite.conts'
+import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
+  REGISTER_SATELLITE_ACTION,
+  UPDATE_SATELLITE_ACTION,
+  SATELLITES_DATA_SINGLE_SUB,
+} from 'providers/SatellitesProvider/satellites.const'
+import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
 
 // providers
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // Actions
-import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
-import { getSatelliteConfig } from 'pages/Satellites/Satellites.actions'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { registerSatellite, updateSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // Types
-import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
-import { State } from 'reducers'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 
 // Views
@@ -56,7 +66,6 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { MVK_BALANCE_SUB, MVK_TOTAL_SUB, SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -68,51 +77,91 @@ const connectWalletMessage = (
 )
 
 export const BecomeSatellite = () => {
-  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
-  const dispatch = useDispatch()
-  const {
-    accountPkh = '',
-    user: {
-      userTokens,
-      isSatellite,
-      satelliteMvkIsDelegatedTo,
-      userAvatars: { mainAvatar = '/images/default-avatar.png' },
-    },
-  } = useSelector((state: State) => state.wallet)
   const {
     satelliteMapper,
-    config: { minimumStakedMvkBalance, isConfigLoaded, ...restSatelliteConfig },
-  } = useSelector((state: State) => state.satellites)
-  const { isActionActive } = useSelector((state: State) => state.loading)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
-  const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
+    setSatelliteAddressToSubsctibe,
+    changeSatellitesSubscriptionsList,
+    isLoading: isSatellitesLoading,
+  } = useSatellitesContext()
+  const {
+    userAddress,
+    isSatellite,
+    satelliteMvkIsDelegatedTo,
+    userAvatars: { mainAvatar },
+    userTokensBalances,
+    isLoading: isUserLoading,
+  } = useUserContext()
+
+  const {
+    maxLengths: { satelliteDelegation },
+    contractAddresses: { delegationAddress },
+    preferences: { themeSelected },
+    globalLoadingState: { isActionActive },
+    minimumStakedMvkBalance,
+  } = useDappConfigContext()
+
+  const { bug } = useToasterContext()
+  const { apolloClient } = useApolloContext()
+
+  const [isSatelliteExistanseLoading, setIsSatelliteExistanseLoading] = useState(false)
+  const [isSatelliteExistanseError, setIsSatelliteExistanseError] = useState(false)
 
   useEffect(() => {
-    changeStakingSubscriptionsList({
-      [MVK_BALANCE_SUB]: false,
-      [MVK_TOTAL_SUB]: false,
-      [SMVK_HISTORY_SUB]: false,
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
     })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
   }, [])
 
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isConfigLoaded || isDepsChanged) {
-          await dispatch(getSatelliteConfig())
-        }
-      } catch (error) {}
-    },
-    [accountPkh],
-  )
+  // check whether satellite exists, cuz address is stored in url and user can change it
+  useLayoutEffect(() => {
+    setIsSatelliteExistanseError(false)
 
-  const balanceOverMinStakedMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= minimumStakedMvkBalance
-  const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null
+    if ((userAddress && satelliteMapper[userAddress]) || !userAddress) return
+
+    setIsSatelliteExistanseLoading(true)
+
+    const checkWhetherSatelliteExists = async () => {
+      try {
+        const satelliteFromGql = await apolloClient.query({
+          query: CHECK_WHETHER_SATELLITE_EXISTS,
+          variables: {
+            userAddress: userAddress ?? '',
+          },
+        })
+
+        if (satelliteFromGql.data.satellite[0]?.user.address === userAddress) {
+          setSatelliteAddressToSubsctibe(userAddress)
+          return
+        }
+
+        setIsSatelliteExistanseError(true)
+      } catch (e) {
+        setIsSatelliteExistanseError(true)
+      } finally {
+        setIsSatelliteExistanseLoading(false)
+      }
+    }
+
+    checkWhetherSatelliteExists()
+
+    return () => setSatelliteAddressToSubsctibe(null)
+  }, [userAddress])
+
+  const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
+
+  const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+
+  const balanceOverMinStakedMvk = userSmvkBalance >= minimumStakedMvkBalance
+  const usersSatelliteProfile = userAddress ? satelliteMapper[userAddress] : null
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
-  const [isChecked, setIsChecked] = useState(false)
   const pageText = getFormTextBasedOnUserRole(isSatellite)
   const isUserOracle = Boolean(usersSatelliteProfile?.peerId || usersSatelliteProfile?.publicKey)
+  const [isChecked, setIsChecked] = useState(isUserOracle)
   const showOracleWarning = isUserOracle && !isChecked
 
   const [showUnregisterPopup, setShowUnregisterPopup] = useState(false)
@@ -146,8 +195,28 @@ export const BecomeSatellite = () => {
       return text !== DEFAULT_BECOME_SATELLITE_FORM[key as keyof BecomeSatelliteFormStateType].text
     })
 
-    return !balanceOverMinStakedMvk || !accountPkh || !formIsValid || !hasChangedValues
-  }, [accountPkh, balanceOverMinStakedMvk, form, isChecked, usersSatelliteProfile])
+    return !balanceOverMinStakedMvk || !userAddress || !formIsValid || !hasChangedValues
+  }, [userAddress, balanceOverMinStakedMvk, form, isChecked, usersSatelliteProfile])
+
+  const mainRequestForm: RegisterAsSatelliteForm = useMemo(
+    () => ({
+      name: form.name.text,
+      description: form.description.text,
+      website: form.website.text,
+      fee: Number(form.satelliteFee.text.replace('%', '')),
+      image: form.image.text,
+    }),
+    [form],
+  )
+
+  // Remove peerId and publicKey fields from request if checkbox 'Register as Oracle" not chosen
+  const requestData = useMemo(
+    () =>
+      isChecked
+        ? { ...mainRequestForm, peerId: form.oraclePeerId.text, publicKey: form.oraclePublicKey.text }
+        : mainRequestForm,
+    [form.oraclePeerId.text, form.oraclePublicKey.text, isChecked, mainRequestForm],
+  )
 
   // Set satellite data if user is satellite
   useEffect(() => {
@@ -170,13 +239,7 @@ export const BecomeSatellite = () => {
     } else {
       setForm(DEFAULT_BECOME_SATELLITE_FORM)
     }
-  }, [usersSatelliteProfile, accountPkh])
-
-  // Set checkbox === true if satellite is oracle
-  useEffect(() => {
-    if (isChecked === isUserOracle) return
-    setIsChecked(isUserOracle)
-  }, [isUserOracle])
+  }, [usersSatelliteProfile, userAddress])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string; value: string } },
@@ -194,7 +257,7 @@ export const BecomeSatellite = () => {
           ...form,
           [name]: {
             text: `${value.substring(0, value.length - 1)}%`,
-            status: getInputValidationStatus(name, value.substring(0, value.length - 1), restSatelliteConfig),
+            status: getInputValidationStatus(name, value.substring(0, value.length - 1), satelliteDelegation),
           },
         })
       } else {
@@ -202,33 +265,74 @@ export const BecomeSatellite = () => {
           ...form,
           [name]: {
             text: `${value.replace('%', '')}%`,
-            status: getInputValidationStatus(name, value.replace('%', ''), restSatelliteConfig),
+            status: getInputValidationStatus(name, value.replace('%', ''), satelliteDelegation),
           },
         })
       }
     } else {
-      setForm({ ...form, [name]: { text: value, status: getInputValidationStatus(name, value, restSatelliteConfig) } })
+      setForm({ ...form, [name]: { text: value, status: getInputValidationStatus(name, value, satelliteDelegation) } })
     }
   }
 
+  // Actions ------------------------------------------------
+
+  // register action -------------
+  const registerAction = useCallback(
+    async (requestData: RegisterAsSatelliteForm) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!delegationAddress) {
+        bug('Wrong delegation address.')
+        return null
+      }
+
+      return await registerSatellite(userAddress, requestData, delegationAddress, satelliteMvkIsDelegatedTo)
+    },
+    [bug, delegationAddress, satelliteMvkIsDelegatedTo, userAddress],
+  )
+
+  const registerContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: REGISTER_SATELLITE_ACTION,
+      actionFn: registerAction.bind(null, requestData),
+    }),
+    [registerAction, requestData],
+  )
+
+  const { action: handleRegister } = useContractAction(registerContractActionProps)
+
+  // update action -------------
+  const updateAction = useCallback(
+    async (requestData: RegisterAsSatelliteForm) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!delegationAddress) {
+        bug('Wrong delegation address')
+        return null
+      }
+
+      return await updateSatellite(requestData, delegationAddress)
+    },
+    [bug, delegationAddress, userAddress],
+  )
+
+  const updateContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: UPDATE_SATELLITE_ACTION,
+      actionFn: updateAction.bind(null, requestData),
+    }),
+    [updateAction, requestData],
+  )
+
+  const { action: handleUpdate } = useContractAction(updateContractActionProps)
+
   // Handlers for register/unregister and update data
   const handleRegisterOrUpdateSatellite = async () => {
-    const mainRequestForm: RegisterAsSatelliteForm = {
-      name: form.name.text,
-      description: form.description.text,
-      website: form.website.text,
-      fee: Number(form.satelliteFee.text.replace('%', '')),
-      image: form.image.text,
-    }
-
-    // Remove peerId and publicKey fields from request if checkbox 'Register as Oracle" not chosen
-    const requestData = isChecked
-      ? { ...mainRequestForm, peerId: form.oraclePeerId.text, publicKey: form.oraclePublicKey.text }
-      : mainRequestForm
-
-    usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered
-      ? await dispatch(updateSatelliteRecord(requestData))
-      : await dispatch(registerAsSatellite(requestData))
+    usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered ? await handleUpdate() : await handleRegister()
   }
 
   const tooltipPublicKey = (
@@ -249,21 +353,24 @@ export const BecomeSatellite = () => {
     />
   )
 
+  const isPageLoading =
+    (!isSatelliteExistanseError && isSatellitesLoading && userAddress) || isUserLoading || isSatelliteExistanseLoading
+
   return (
     <>
       <Page>
         <PageHeader page={isSatellite ? 'my satellite profile' : 'satellites'} avatar={mainAvatar} />
 
-        {!balanceOverMinStakedMvk && (
+        {!balanceOverMinStakedMvk && !isPageLoading ? (
           <NotStakingBanner
             className="become-satellite"
             text={`To become a satellite you need to stake ${minimumStakedMvkBalance} MVK`}
           />
-        )}
+        ) : null}
 
-        <PageContent>
+        <PageContent className="mt-30">
           <div>
-            {isLoading || isDoormanLoading ? (
+            {isPageLoading ? (
               <DataLoaderWrapper>
                 <ClockLoader width={150} height={150} />
                 <div className="text">Loading satellite data</div>
@@ -312,14 +419,10 @@ export const BecomeSatellite = () => {
                   endingText={'MVK'}
                 />
 
-                {accountPkh ? (
+                {userAddress ? (
                   <BecomeSatelliteFormBalanceCheck balanceOk={balanceOverMinStakedMvk}>
                     <Icon id={balanceOverMinStakedMvk ? 'check-stroke' : 'close-stroke'} />
-                    <CommaNumber
-                      value={userTokens[SMVK_TOKEN_SYMBOL].balance}
-                      beginningText={'Currently staking'}
-                      endingText={'MVK'}
-                    />
+                    <CommaNumber value={userSmvkBalance} beginningText={'Currently staking'} endingText={'MVK'} />
                   </BecomeSatelliteFormBalanceCheck>
                 ) : (
                   connectWalletMessage
@@ -361,7 +464,7 @@ export const BecomeSatellite = () => {
                   onChange={handleChange}
                   inputStatus={form.description.status}
                   name={'description'}
-                  textAreaMaxLimit={restSatelliteConfig.satelliteDescriptionMaxLength}
+                  textAreaMaxLimit={satelliteDelegation.satelliteDescriptionMaxLength}
                   label={pageText.descrInputLabel}
                 />
 
@@ -399,7 +502,7 @@ export const BecomeSatellite = () => {
 
                 <BecomeSatelliteRegisterAsOracle>
                   <div className="checkbox">
-                    {pageText.registerAsOracle}
+                    <div className="label">{pageText.registerAsOracle}</div>
 
                     <Checkbox
                       id="become-satellite-is-oracle"
@@ -499,7 +602,7 @@ export const BecomeSatellite = () => {
       </Page>
 
       <UnregisterPopup
-        show={usersSatelliteProfile && showUnregisterPopup}
+        show={Boolean(usersSatelliteProfile) && showUnregisterPopup}
         closePopup={() => setShowUnregisterPopup(false)}
         satellite={usersSatelliteProfile}
       />

@@ -10,7 +10,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Chart } from 'app/App.components/Chart/Chart'
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 
 import { StatBlock } from '../Dashboard.style'
 import {
@@ -22,7 +22,7 @@ import {
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -32,7 +32,7 @@ export const emptyContainer = (
 )
 
 export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { totalSupply, totalStakedMvk, smvkHistoryData } = useStakeContext()
+  const { totalSupply, totalStakedMvk, smvkHistoryData } = useDoormanContext()
 
   const mli = calcMLI(totalSupply, totalStakedMvk)
   const fee = calcExitFee(totalSupply, totalStakedMvk)

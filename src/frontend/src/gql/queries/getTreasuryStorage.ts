@@ -18,9 +18,6 @@ query GetTreasuryStorageQuery {
       contract_address
     }
   }
-  treasury_factory {
-    address
-  }
 }
 `
 

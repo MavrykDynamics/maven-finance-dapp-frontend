@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import colors from 'styles/colors'
 
 // helpers & actions
 import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
@@ -14,13 +15,7 @@ import {
   getTimestampByLevelSchema,
   getTimestampByLevelUrl,
 } from 'utils/api/api-helpers/getTimestampByLevel'
-import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
-import {
-  executeProposal,
-  processProposalPayment,
-  proposalRoundVote,
-  votingRoundVote,
-} from 'pages/Governance/actions/Proposals.actions'
+import { dropProposal } from 'providers/ProposalsProvider/actions/proposalsSubmission.actions'
 
 // types
 import { State } from 'reducers'
@@ -40,23 +35,49 @@ import { ProposalDetailsStyled } from './ProposalDetails.style'
 import { TzAddress, handleCopyToClipboard } from 'app/App.components/TzAddress/TzAddress.view'
 import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.helpers'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import colors from 'styles/colors'
+import { convertNumberForClient } from 'utils/calcFunctions'
 import { api } from 'utils/api/api'
 import { isAbortError } from 'errors/error'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useContractAction, HookContractActionArgs } from 'app/App.hooks/useContractAction'
+import {
+  DROP_PROPOSAL_ACTION,
+  EXECUTE_PROPOSAL_ACTION,
+  PROCESS_PROPOSAL_ACTION,
+  PROPOSAL_ROUND_VOTE_ACTION,
+  VOTING_ROUND_VOTE_ACTION,
+} from 'providers/ProposalsProvider/helpers/proposals.const'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import {
+  executeProposal,
+  processProposalPayment,
+  proposalRoundVote,
+  votingRoundVote,
+} from 'providers/ProposalsProvider/actions/proposals.actions'
+import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRecordType; isHistory: boolean }) => {
   const dispatch = useDispatch()
 
   const { bug } = useToasterContext()
+  const { userAddress } = useUserContext()
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { isActionActive } = useSelector((state: State) => state.loading)
-  const { whitelistTokens } = useSelector((state: State) => state.tokens)
   const { governancePhase } = useSelector((state: State) => state.governance.config)
-  const { themeSelected } = useSelector((state: State) => state.preferences)
+  const {
+    preferences: { themeSelected },
+    contractAddresses: { governanceAddress },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
-  const isUserOwnerIfTheProposal = proposal.proposerId === accountPkh
+  const { tokensMetadata } = useTokensContext()
+
+  const isUserOwnerIfTheProposal = proposal.proposerId === userAddress
 
   // User can drop proposal only if he is owner and proposal in newly created, or on voting stage
   const userCanDropProposal =
@@ -65,15 +86,119 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
       proposal.status === ProposalStatus.ONGOING ||
       proposal.status === ProposalStatus.UNLOCKED)
 
-  const isExecuteProposal = proposal.anyCanExecute && accountPkh
-  const isPaymentProposal = proposal.anyCanPay && accountPkh
+  const isExecuteProposal = proposal.anyCanExecute && userAddress
+  const isPaymentProposal = proposal.anyCanPay && userAddress
 
-  // Proposal actions
-  const handleDeleteProposal = async () => await dispatch(dropProposal(proposal.id))
-  const handleClickExecuteProposal = async () => await dispatch(executeProposal(proposal.id))
-  const handleClickProcessPayment = async () => await dispatch(processProposalPayment(proposal.id))
-  const handleProposalRoundVote = async (proposalId: number) => await dispatch(proposalRoundVote(proposalId))
-  const handleVotingRoundVote = async (vote: `${VotingTypes}`) => await dispatch(votingRoundVote(vote))
+  // Actions
+
+  // this callback is similar to all action down here
+  const dappActionCallback = useCallback(() => {
+    dispatch(getGovernanceStorage())
+  }, [dispatch])
+
+  /**
+   * helper function for the current component actions
+   * most of the actions have same parameters (governanceAddress, proposalId) and "if" conditions
+   * to reduce the amount of code we call these actions with current function
+   */
+  const invokeActionWithIdenticalParameters = useCallback(
+    async (
+      actionFn: (
+        governanceAddress: string,
+        proposalId: number,
+      ) => Promise<ActionErrorReturnType | ActionSuccessReturnType>,
+    ) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!governanceAddress) {
+        bug('Wrong governance address')
+        return null
+      }
+
+      return await actionFn(governanceAddress, Number(proposal.id))
+    },
+    [bug, governanceAddress, proposal.id, userAddress],
+  )
+
+  // drop proposal ------------------------------------------------------------------------
+  const dropProposalContractProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DROP_PROPOSAL_ACTION,
+      actionFn: invokeActionWithIdenticalParameters.bind(null, dropProposal),
+      dappActionCallback: dappActionCallback,
+    }),
+    [invokeActionWithIdenticalParameters, dappActionCallback],
+  )
+
+  const { action: handleDeleteProposal } = useContractAction(dropProposalContractProps)
+
+  // execute proposal ------------------------------------------------------------------------
+
+  const executeProposalContractProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: EXECUTE_PROPOSAL_ACTION,
+      actionFn: invokeActionWithIdenticalParameters.bind(null, executeProposal),
+      dappActionCallback,
+    }),
+    [invokeActionWithIdenticalParameters, dappActionCallback],
+  )
+
+  const { action: handleClickExecuteProposal } = useContractAction(executeProposalContractProps)
+
+  //  process proposal payment ---------------------------------------------------------------------------
+  const processProposalPaymentContractProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: PROCESS_PROPOSAL_ACTION,
+      actionFn: invokeActionWithIdenticalParameters.bind(null, processProposalPayment),
+      dappActionCallback,
+    }),
+    [invokeActionWithIdenticalParameters, dappActionCallback],
+  )
+
+  const { action: handleClickProcessPayment } = useContractAction(processProposalPaymentContractProps)
+
+  // proposal round vote action  ---------------------------------------------------------------------------
+  const proposaRoundVoteContractProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: PROPOSAL_ROUND_VOTE_ACTION,
+      actionFn: invokeActionWithIdenticalParameters.bind(null, proposalRoundVote),
+      dappActionCallback,
+    }),
+    [invokeActionWithIdenticalParameters, dappActionCallback],
+  )
+
+  const { action: handleProposalRoundVote } = useContractAction(proposaRoundVoteContractProps)
+
+  // handleVotingRoundVote action ---------------------------------------------------------------------------
+  const votingRoundVoteActionFn = useCallback(
+    async (vote: VotingTypes) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!governanceAddress) {
+        bug('Wrong governance address')
+        return null
+      }
+
+      return await votingRoundVote(governanceAddress, vote)
+    },
+    [bug, governanceAddress, userAddress],
+  )
+
+  // @ts-ignore
+  const handleVotingRoundContractProps: HookContractActionArgs<VotingTypes> = useMemo(
+    () => ({
+      actionType: VOTING_ROUND_VOTE_ACTION,
+      actionFn: votingRoundVoteActionFn,
+      dappActionCallback,
+    }),
+    [votingRoundVoteActionFn, dappActionCallback],
+  )
+
+  const { actionWithArgs: handleVotingRoundVote } = useContractAction<VotingTypes>(handleVotingRoundContractProps)
 
   // Voting stuff
   const voteStatistics = useMemo<VoteStatistics>(
@@ -132,7 +257,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
   const statusTooltipText = getTooltipForStatus(proposal.status)
 
   return (
-    <ProposalDetailsStyled isAuthorized={Boolean(accountPkh)}>
+    <ProposalDetailsStyled isAuthorized={Boolean(userAddress)}>
       <div className="title-status">
         <H2Title>{proposal.title}</H2Title>
         <StatusFlag text={proposal.status} status={proposal.status} />
@@ -193,8 +318,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
         handleProposalVote={handleProposalRoundVote}
         selectedProposal={proposal}
         vote={proposal.votes.find(
-          ({ voter: { address }, round }) =>
-            address === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
+          ({ address, round }) => address === userAddress && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
         )}
         isVoteActive={(votingTill ?? 0) >= Date.now()}
         govPhase={governancePhase}
@@ -322,12 +446,20 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
             </TableHeader>
             <TableBody>
               {proposal.proposalPayments.map((payment) => {
-                if (payment.to__id === null || payment.title === null) return null
+                if (
+                  payment.to__id === null ||
+                  payment.title === null ||
+                  payment.token_address === null ||
+                  payment.token_address === undefined
+                )
+                  return null
 
-                const selectedSymbol =
-                  whitelistTokens.find(({ address }) => address === payment.token_address)?.symbol?.toUpperCase() ??
-                  whitelistTokens?.[0]?.symbol?.toUpperCase() ??
-                  'MVK'
+                const token = getTokenDataByAddress({ tokenAddress: payment.token_address, tokensMetadata })
+
+                if (!token) return null
+
+                const { symbol, decimals } = token
+                const tokenAmount = convertNumberForClient({ number: Number(payment.token_amount), grade: decimals })
 
                 return (
                   <TableRow className="editable-row proposal-details-payments" key={payment.id}>
@@ -336,15 +468,10 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
                     </TableCell>
                     <TableCell width="25%">{String(payment.title)}</TableCell>
                     <TableCell width="25%">
-                      <CommaNumber
-                        value={Number(payment.token_amount)}
-                        // TODO: add decimals of max asset decimals, and check design with large decimals amount
-                        decimalsToShow={4}
-                        endingText={selectedSymbol}
-                      />
+                      <CommaNumber value={tokenAmount} decimalsToShow={decimals} endingText={symbol} />
                     </TableCell>
                     <TableCell className="no-right-border" width="25%">
-                      {selectedSymbol}
+                      {symbol}
                     </TableCell>
                   </TableRow>
                 )

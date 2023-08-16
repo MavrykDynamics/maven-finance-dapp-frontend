@@ -1,3 +1,5 @@
+import { gql } from '@apollo/client'
+
 export const GOVERNANCE_CONFIG_QUERY = `
   query GetGovernanceConfigQuery {
     governance {
@@ -5,12 +7,6 @@ export const GOVERNANCE_CONFIG_QUERY = `
       current_round
       success_reward
       cycle_id
-
-      proposal_invoice_max_length
-      proposal_metadata_title_max_length
-      proposal_description_max_length
-      proposal_source_code_max_length
-      proposal_title_max_length
 
       proposal_submission_fee_mutez
       timelock_proposal_id
@@ -23,16 +19,14 @@ export const GOVERNANCE_CONFIG_QUERY = `
 export const GOVERNANCE_CONFIG_QUERY_NAME = 'GetGovernanceConfigQuery'
 export const GOVERNANCE_CONFIG_QUERY_VARIABLE = {}
 
-export const GOVERNANCE_LATEST_USER_PROPOSAL_QUERY = `
+// TODO for new proposal action with hook. remove this comment when moving proposals to context
+export const GOVERNANCE_LATEST_USER_PROPOSAL_QUERY = gql(`
 query GetGovernanceLatestUserProposalsQuery($userAddress: String = "") {
-  governance_proposal(order_by: {start_datetime: desc}, where: {proposer_id: {_eq: $userAddress}}) {
+  governance_proposal(order_by: {start_datetime: desc}, where: { proposer: {address: {_eq: $userAddress}}}) {
     id
   }
 }
-`
-
-export const GOVERNANCE_LATEST_USER_PROPOSAL_NAME = 'GetGovernanceLatestUserProposalsQuery'
-export const GOVERNANCE_LATEST_USER_PROPOSAL_VARIABLE = (userAddress: string) => ({ userAddress })
+`)
 
 export const GOVERNANCE_PROPOSALS_QUERY = `
 query GetGovernanceProposalsQuery {
@@ -76,6 +70,11 @@ query GetGovernanceProposalsQuery {
       vote
       voter {
         address
+
+        satellites {
+          image
+          name
+        }
       }
     }
 

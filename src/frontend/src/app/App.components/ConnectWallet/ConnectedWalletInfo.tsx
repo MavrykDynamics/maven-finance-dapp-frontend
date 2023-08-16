@@ -1,12 +1,9 @@
-import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 
-import { State } from '../../../reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_WIDE } from '../Button/Button.constants'
 import { BLUE } from '../TzAddress/TzAddress.constants'
-import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { changeWallet, disconnect } from './ConnectWallet.actions'
+import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 
 import Icon from '../Icon/Icon.view'
 import { TzAddress } from '../TzAddress/TzAddress.view'
@@ -19,19 +16,28 @@ import {
   WalletDetailsStyled,
   WalletDetailsVisiblePart,
 } from './ConnectWallet.style'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
+import { ImageWithPlug } from '../Icon/ImageWithPlug'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type ConnectWalletProps = {
   mountWertWiget: (commodity: string) => void
 }
 
 export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
-  const dispatch = useDispatch()
   const history = useHistory()
+
+  const { tokensPrices, tokensMetadata } = useTokensContext()
+  const { userAddress, userTokensBalances, signOut, changeUser } = useUserContext()
   const {
-    accountPkh,
-    user: { userTokens },
-  } = useSelector((state: State) => state.wallet)
-  const { tokensPrices } = useSelector((state: State) => state.tokens)
+    contractAddresses: { mvkTokenAddress },
+  } = useDappConfigContext()
+
+  const mvkTokenRate = tokensPrices[MVK_TOKEN_SYMBOL]
+  const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
 
   const { pathname } = useLocation()
 
@@ -44,12 +50,12 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
     setDetailsShown(false)
   }
 
-  const handleChangeWallet = async () => await dispatch(changeWallet())
-  const disconnectWallet = async () => await dispatch(disconnect())
   const closeDetailsHandler = () => setDetailsShown(false)
   const mouseOverHanlder = () => setDetailsShown(true)
 
-  if (!accountPkh) return null
+  if (!userAddress || !userTokensBalances) return null
+
+  const userTokens = Object.keys(userTokensBalances)
 
   return (
     <WalletDetailsStyled onMouseOver={mouseOverHanlder} onMouseLeave={closeDetailsHandler}>
@@ -59,15 +65,15 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
         onMouseLeave={closeDetailsHandler}
       >
         <Icon id="wallet" className="wallet" />
-        <TzAddress tzAddress={accountPkh} hasIcon={false} shouldCopy={false} />
+        <TzAddress tzAddress={userAddress} hasIcon={false} shouldCopy={false} />
         <Icon id="paginationArrowLeft" className="end-icon" />
       </WalletDetailsVisiblePart>
 
       <WalletDetailsHiddenPart isShown={detailsShown}>
         <div className="top">
           <Icon id="wallet" />
-          <TzAddress tzAddress={accountPkh} type={BLUE} />
-          <a href={`https://ghost.tzstats.com/${accountPkh}`} target="_blank" rel="noreferrer">
+          <TzAddress tzAddress={userAddress} type={BLUE} />
+          <a href={`https://ghost.tzstats.com/${userAddress}`} target="_blank" rel="noreferrer">
             <Icon id="send" className="icon-send" />
           </a>
         </div>
@@ -81,13 +87,15 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             </div>
             <div className="values">
               <CommaNumber
-                value={userTokens[MVK_TOKEN_SYMBOL].balance}
+                value={getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })}
                 endingText={'MVK'}
                 showDecimal
                 className="asset-amount"
               />
               <CommaNumber
-                value={userTokens[MVK_TOKEN_SYMBOL].balance * tokensPrices[MVK_TOKEN_SYMBOL]}
+                value={
+                  getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }) * mvkTokenRate
+                }
                 endingText={'USD'}
                 showDecimal
                 className="converted-amount"
@@ -107,7 +115,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             </div>
             <div className="values">
               <CommaNumber
-                value={userTokens[SMVK_TOKEN_SYMBOL].balance}
+                value={getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })}
                 endingText={'SMVK'}
                 showDecimal
                 className="asset-amount"
@@ -128,13 +136,15 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             </div>
             <div className="values">
               <CommaNumber
-                value={userTokens[XTZ_TOKEN_SYMBOL].balance}
+                value={getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS })}
                 endingText={'XTZ'}
                 showDecimal
                 className="asset-amount"
               />
               <CommaNumber
-                value={userTokens[XTZ_TOKEN_SYMBOL].balance * tokensPrices[XTZ_TOKEN_SYMBOL]}
+                value={
+                  getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }) * xtzTokenRate
+                }
                 endingText={'USD'}
                 showDecimal
                 className="converted-amount"
@@ -148,52 +158,44 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             </div>
           </div>
 
-          {/* TODO: uncomment when tokens metadata & other stuff can be stored in 1 place */}
-          {/* {tokensSymbols.map((tokenSymbol) => {
-            if (
-              tokenSymbol === MVK_TOKEN_SYMBOL ||
-              tokenSymbol === SMVK_TOKEN_SYMBOL ||
-              tokenSymbol === XTZ_TOKEN_SYMBOL
-            )
+          {userTokens.map((tokenAddress) => {
+            if (tokenAddress === mvkTokenAddress || tokenAddress === SMVK_TOKEN_ADDRESS || isTezosAsset(tokenAddress))
               return null
-            const tokenData = userTokens[tokenSymbol]
-            const tokenRate = tokensPrices[tokenSymbol]
+
+            const tokenBalance = userTokensBalances[tokenAddress]
+            const tokenMetadata = getTokenDataByAddress({ tokenAddress, tokensPrices, tokensMetadata })
+
+            if (!tokenMetadata) return null
+
+            const { symbol, rate, icon } = tokenMetadata
 
             return (
-              <div className="row">
-                <div className="icon">{tokenData.icon ? <Icon id={tokenData.icon} /> : <Icon id={'noImage'} />}</div>
+              <div className="row" key={tokenAddress}>
+                <div className="icon">
+                  {icon ? <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> : <Icon id={'noImage'} />}
+                </div>
                 <div className="values">
-                  <CommaNumber
-                    value={tokenData.balance}
-                    endingText={tokenData.name}
-                    showDecimal
-                    className="asset-amount"
-                  />
-                  {tokenRate ? (
+                  <CommaNumber value={tokenBalance} endingText={symbol} showDecimal className="asset-amount" />
+                  {rate ? (
                     <CommaNumber
-                      value={tokenData.balance * tokenRate}
+                      value={tokenBalance * rate}
                       endingText={'USD'}
                       showDecimal
                       className="converted-amount"
                     />
                   ) : null}
                 </div>
-                <div className="action">
-                <Button onClick={disconnectWallet} kind={BUTTON_SIMPLE} disabled>
-                  Buy MVK <Icon id="paginationArrowRight" />
-                </Button>
-              </div> 
               </div>
             )
-          })} */}
+          })}
         </div>
 
         <div className="action-btn-wrapper">
-          <Button onClick={handleChangeWallet} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
+          <Button onClick={changeUser} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
             <Icon id="exchange" /> Change Wallet
           </Button>
 
-          <Button onClick={disconnectWallet} form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
+          <Button onClick={signOut} form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
             <Icon id="exit" /> Sign out
           </Button>
         </div>
@@ -207,13 +209,16 @@ type MobileConnectWalletProps = ConnectWalletProps & {
 }
 
 export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileConnectWalletProps) => {
-  const dispatch = useDispatch()
   const history = useHistory()
+
+  const { tokensPrices, tokensMetadata } = useTokensContext()
+  const { userAddress, userTokensBalances, signOut, changeUser } = useUserContext()
   const {
-    accountPkh,
-    user: { userTokens },
-  } = useSelector((state: State) => state.wallet)
-  const { tokensPrices } = useSelector((state: State) => state.tokens)
+    contractAddresses: { mvkTokenAddress },
+  } = useDappConfigContext()
+
+  const mvkTokenRate = tokensPrices[MVK_TOKEN_SYMBOL]
+  const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
 
   const { pathname } = useLocation()
 
@@ -230,17 +235,17 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
     closeMobileMenu()
   }
 
-  const handleChangeWallet = async () => await dispatch(changeWallet())
-  const disconnectWallet = async () => await dispatch(disconnect())
   const clickHander = () => setDetailsShown(!detailsShown)
 
-  if (!accountPkh) return null
+  if (!userAddress || !userTokensBalances) return null
+
+  const userTokens = Object.keys(userTokensBalances)
 
   return (
     <MobileWalletDetailsStyled>
       <WalletDetailsVisiblePart isShown={detailsShown} onClick={clickHander}>
         <Icon id="wallet" className="wallet" />
-        <TzAddress tzAddress={accountPkh} hasIcon={false} shouldCopy={false} />
+        <TzAddress tzAddress={userAddress} hasIcon={false} shouldCopy={false} />
         <Icon id="paginationArrowLeft" className="end-icon" />
       </WalletDetailsVisiblePart>
 
@@ -255,8 +260,8 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
         <div className="top">
           <Icon id="wallet" />
-          <TzAddress tzAddress={accountPkh} type={BLUE} />
-          <a href={`https://ghost.tzstats.com/${accountPkh}`} target="_blank" rel="noreferrer">
+          <TzAddress tzAddress={userAddress} type={BLUE} />
+          <a href={`https://ghost.tzstats.com/${userAddress}`} target="_blank" rel="noreferrer">
             <Icon id="send" className="icon-send" />
           </a>
         </div>
@@ -270,13 +275,15 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             </div>
             <div className="values">
               <CommaNumber
-                value={userTokens[MVK_TOKEN_SYMBOL].balance}
+                value={getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })}
                 endingText={'MVK'}
                 showDecimal
                 className="asset-amount"
               />
               <CommaNumber
-                value={userTokens[MVK_TOKEN_SYMBOL].balance * tokensPrices[MVK_TOKEN_SYMBOL]}
+                value={
+                  getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }) * mvkTokenRate
+                }
                 endingText={'USD'}
                 showDecimal
                 className="converted-amount"
@@ -296,7 +303,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             </div>
             <div className="values">
               <CommaNumber
-                value={userTokens[SMVK_TOKEN_SYMBOL].balance}
+                value={getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })}
                 endingText={'SMVK'}
                 showDecimal
                 className="asset-amount"
@@ -317,13 +324,15 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             </div>
             <div className="values">
               <CommaNumber
-                value={userTokens[XTZ_TOKEN_SYMBOL].balance}
+                value={getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS })}
                 endingText={'XTZ'}
                 showDecimal
                 className="asset-amount"
               />
               <CommaNumber
-                value={userTokens[XTZ_TOKEN_SYMBOL].balance * tokensPrices[XTZ_TOKEN_SYMBOL]}
+                value={
+                  getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }) * xtzTokenRate
+                }
                 endingText={'USD'}
                 showDecimal
                 className="converted-amount"
@@ -337,52 +346,44 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             </div>
           </div>
 
-          {/* TODO: uncomment when tokens metadata & other stuff can be stored in 1 place */}
-          {/* {tokensSymbols.map((tokenSymbol) => {
-            if (
-              tokenSymbol === MVK_TOKEN_SYMBOL ||
-              tokenSymbol === SMVK_TOKEN_SYMBOL ||
-              tokenSymbol === XTZ_TOKEN_SYMBOL
-            )
+          {userTokens.map((tokenAddress) => {
+            if (tokenAddress === mvkTokenAddress || tokenAddress === SMVK_TOKEN_ADDRESS || isTezosAsset(tokenAddress))
               return null
-            const tokenData = userTokens[tokenSymbol]
-            const tokenRate = tokensPrices[tokenSymbol]
+
+            const tokenBalance = userTokensBalances[tokenAddress]
+            const tokenMetadata = getTokenDataByAddress({ tokenAddress, tokensPrices, tokensMetadata })
+
+            if (!tokenMetadata) return null
+
+            const { symbol, rate, icon } = tokenMetadata
 
             return (
-              <div className="row">
-                <div className="icon">{tokenData.icon ? <Icon id={tokenData.icon} /> : <Icon id={'noImage'} />}</div>
+              <div className="row" key={tokenAddress}>
+                <div className="icon">
+                  {icon ? <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> : <Icon id={'noImage'} />}
+                </div>
                 <div className="values">
-                  <CommaNumber
-                    value={tokenData.balance}
-                    endingText={tokenData.name}
-                    showDecimal
-                    className="asset-amount"
-                  />
-                  {tokenRate ? (
+                  <CommaNumber value={tokenBalance} endingText={symbol} showDecimal className="asset-amount" />
+                  {rate ? (
                     <CommaNumber
-                      value={tokenData.balance * tokenRate}
+                      value={tokenBalance * rate}
                       endingText={'USD'}
                       showDecimal
                       className="converted-amount"
                     />
                   ) : null}
                 </div>
-                <div className="action">
-                <Button onClick={disconnectWallet} kind={BUTTON_SIMPLE} disabled>
-                  Buy MVK <Icon id="paginationArrowRight" />
-                </Button>
-              </div> 
               </div>
             )
-          })} */}
+          })}
         </div>
 
         <div className="action-btn-wrapper">
-          <Button onClick={handleChangeWallet} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
+          <Button onClick={changeUser} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
             <Icon id="exchange" /> Change Wallet
           </Button>
 
-          <Button onClick={disconnectWallet} form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
+          <Button onClick={signOut} form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
             <Icon id="exit" /> Sign out
           </Button>
         </div>

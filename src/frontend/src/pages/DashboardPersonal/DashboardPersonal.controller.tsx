@@ -1,13 +1,29 @@
+import { useCallback, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router'
-import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
 
+// types
 import { State } from 'reducers'
 
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { claimAllRewardsAction } from './DashboardPersonal.actions'
-import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
+// components
+import Button from 'app/App.components/Button/NewButton'
+import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
+import DashboardPersonalEarningsHistory from './DashboardPersonalComponents/DashboardPersonalEarningsHistory'
+import DashboardPersonalMyRewards from './DashboardPersonalComponents/DashboardPersonalMyRewards'
+import DelegationTab from './DashboardPersonalComponents/DelegationTab'
+import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
+import VestingTab from './DashboardPersonalComponents/VestingTab'
+
+// styles
+import { Page } from 'styles/components'
+import { DashboardPersonalTabStyled } from './DashboardPersonalComponents/DashboardPersonalComponents.style'
+import { DashboardPersonalStyled } from './DashboardPersonal.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+
+// helpers
 import {
   isValidPersonalDashboardTabId,
   PORTFOLIO_TAB_ID,
@@ -16,65 +32,85 @@ import {
   VESTING_TAB_ID,
   PORTFOLIO_POSITION_TAB_ID,
 } from './DashboardPersonal.utils'
-import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
-import Button from 'app/App.components/Button/NewButton'
-import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-import { Page } from 'styles/components'
-import DashboardPersonalEarningsHistory from './DashboardPersonalComponents/DashboardPersonalEarningsHistory'
-import DashboardPersonalMyRewards from './DashboardPersonalComponents/DashboardPersonalMyRewards'
-import DelegationTab from './DashboardPersonalComponents/DelegationTab'
-import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
-
-import { DashboardPersonalTabStyled } from './DashboardPersonalComponents/DashboardPersonalComponents.style'
-import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
-import VestingTab from './DashboardPersonalComponents/VestingTab'
-import { DashboardPersonalStyled } from './DashboardPersonal.style'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+// actions
+import { claimAllRewardsAction, distributeProposalRewards } from 'providers/UserProvider/actions/user.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { updateUserData } from 'reducers/actions/user.actions'
-import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
+import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
+
+// providers
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+
+// consts
+import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
+import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
+import { CLAIM_ALL_REWARDS_ACTION } from 'providers/UserProvider/helpers/user.consts'
+import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
+import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
+  SATELLITES_DATA_SINGLE_SUB,
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+} from 'providers/SatellitesProvider/satellites.const'
+
+// hooks
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
-  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
+  const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
+  const {
+    contractAddresses: { mvkTokenAddress, doormanAddress, delegationAddress },
+  } = useDappConfigContext()
+  const {
+    userTokensBalances,
+    userAddress,
+    userAvatars: { mainAvatar },
+    availableDoormanRewards,
+    availableSatellitesRewards,
+    availableFarmRewards,
+    availableLoansRewards,
+    gatheredDoormanRewards,
+    gatheredFarmRewards,
+    gatheredSatellitesRewards,
+    satelliteMvkIsDelegatedTo,
+    availableProposalRewards,
+    isSatellite,
+    isVestee,
+  } = useUserContext()
+  const { changeSatellitesSubscriptionsList } = useSatellitesContext()
+  const { bug } = useToasterContext()
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useDoormanContext()
 
-  const { tokensPrices } = useSelector((state: State) => state.tokens)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
-  const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
-  const {
-    accountPkh,
-    user: {
-      userTokens,
-      availableDoormanRewards,
-      availableSatellitesRewards,
-      availableFarmRewards,
-      availableLoansRewards,
-      gatheredDoormanRewards,
-      gatheredFarmRewards,
-      gatheredSatellitesRewards,
-      isSatellite,
-      isVestee,
-      isLoaded: isUserDataLoaded,
-      userAvatars: { mainAvatar },
-    },
-  } = useSelector((state: State) => state.wallet)
-
-  const claimRewards = async () => await dispatch(claimAllRewardsAction())
 
   useEffect(() => {
     changeStakingSubscriptionsList({
-      [SMVK_HISTORY_SUB]: false,
+      [DAPP_MVK_SMVK_STATS_SUB]: true,
     })
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
   }, [])
 
   const { isLoading } = useDataLoader(
@@ -85,53 +121,145 @@ const DashboardPersonal = () => {
             (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
             (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
             isVestee && (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
-            (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
-            (!isUserDataLoaded || isDepsChanged) && dispatch(updateUserData()),
           ].filter(Boolean),
         )
       } catch (e) {}
     },
-    [accountPkh],
+    [userAddress],
   )
+
+  // claim rewards action
+  const claimRewardsAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+    if (!doormanAddress) {
+      bug('Wrong doorman address')
+      return null
+    }
+
+    return await claimAllRewardsAction(
+      userAddress,
+      doormanAddress,
+      availableDoormanRewards,
+      availableSatellitesRewards,
+      availableFarmRewards,
+    )
+  }, [availableDoormanRewards, availableFarmRewards, availableSatellitesRewards, bug, doormanAddress, userAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: CLAIM_ALL_REWARDS_ACTION,
+      actionFn: claimRewardsAction,
+    }),
+    [claimRewardsAction],
+  )
+
+  const { action: claimRewards } = useContractAction(contractActionProps)
+
+  // distributeRewards action
+  const distributeRewardsAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!delegationAddress) {
+      bug('Wrong delegation address')
+      return null
+    }
+
+    const satelliteAddressToDistribute = isSatellite ? userAddress : satelliteMvkIsDelegatedTo
+
+    if (!satelliteAddressToDistribute) {
+      bug('Wrong satellite address to distribute rewards')
+      return null
+    }
+
+    return await distributeProposalRewards(delegationAddress, satelliteAddressToDistribute, availableProposalRewards)
+  }, [userAddress, delegationAddress, isSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
+
+  const distributeRewardsContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
+      actionFn: distributeRewardsAction,
+    }),
+    [distributeRewardsAction],
+  )
+
+  const { action: distributeRewardsCallback } = useContractAction(distributeRewardsContractActionProps)
 
   const rewards = {
     rewardsToClaim:
       availableDoormanRewards +
       availableSatellitesRewards +
-      Object.values(availableFarmRewards).reduce(
-        (acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards),
-        0,
-      ),
+      Object.values(availableFarmRewards).reduce((acc, farmReward) => (acc += farmReward), 0),
     earnedRewards: gatheredSatellitesRewards + gatheredFarmRewards + gatheredDoormanRewards,
   }
 
   const earnings = {
-    mvkRate: tokensPrices[MVK_TOKEN_SYMBOL],
-    xtzRate: tokensPrices[XTZ_TOKEN_SYMBOL],
     satelliteRewards: gatheredSatellitesRewards,
     farmsRewards: gatheredFarmRewards,
     exitRewards: gatheredDoormanRewards,
     lendingIncome: availableLoansRewards,
   }
 
-  const userTokensList = Object.values(userTokens)
-  const mostSuppliedUserTokenSymbol = userTokensList.reduce((acc, { symbol, balance, type }) => {
-    if (symbol === MVK_TOKEN_SYMBOL || symbol === SMVK_TOKEN_SYMBOL || symbol === XTZ_TOKEN_SYMBOL || type === 'mToken')
+  const mostSuppliedUserToken = (userTokensBalances ? Object.keys(userTokensBalances) : []).reduce<null | {
+    address: string
+    symbol: string
+    balance: number
+  }>((acc, tokenAddress) => {
+    // If token is mToken or shown by default return acc, we skip such tokens
+    if (
+      tokenAddress === mvkTokenAddress ||
+      tokenAddress === SMVK_TOKEN_ADDRESS ||
+      tokenAddress === XTZ_TOKEN_ADDRESS ||
+      mTokens.includes(tokenAddress)
+    )
       return acc
-    const accAssetBalanceInUSD = Number(userTokens[acc]?.balance ?? 0) * (tokensPrices[acc] ?? 1)
-    const assetToCompareBalanceInUSD = Number(balance) * (tokensPrices[symbol] ?? 1)
-    return accAssetBalanceInUSD > assetToCompareBalanceInUSD ? acc : symbol
-  }, '')
+
+    const tokenToCheck = getTokenDataByAddress({ tokensMetadata, tokenAddress, tokensPrices })
+    const tokenToCheckBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress })
+
+    // If token to compare is not valid skip check
+    if (!tokenToCheck || !tokenToCheck.rate) return acc
+
+    // if we don't have acc, make acc current token, cuz it's valid
+    if (!acc)
+      return {
+        address: tokenAddress,
+        balance: tokenToCheckBalance,
+        symbol: tokenToCheck.symbol,
+      }
+
+    const accToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: acc.address, tokensPrices })
+
+    // check for acc token exist to make ts satisfied, cuz it's 100% valid token inside acc
+    if (!accToken || !accToken.rate) return acc
+
+    const { rate: checkTokenRate } = tokenToCheck
+    const { rate: accTokenRate } = accToken
+    const accTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: acc.address })
+
+    return accTokenBalance * accTokenRate > tokenToCheckBalance * checkTokenRate
+      ? acc
+      : {
+          address: tokenToCheck.address,
+          balance: tokenToCheckBalance,
+          symbol: tokenToCheck.symbol,
+        }
+  }, null)
 
   const walletData = {
-    xtzAmount: userTokens[XTZ_TOKEN_SYMBOL].balance,
-    sMVKAmount: userTokens[SMVK_TOKEN_SYMBOL].balance,
-    MVKAmount: userTokens[MVK_TOKEN_SYMBOL].balance,
-    ...(mostSuppliedUserTokenSymbol
+    xtzAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }),
+    sMVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+    MVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
+    ...(mostSuppliedUserToken
       ? {
           mostSuppliedUserToken: {
-            name: userTokens[mostSuppliedUserTokenSymbol].name,
-            amount: userTokens[mostSuppliedUserTokenSymbol].balance,
+            name: mostSuppliedUserToken.symbol,
+            amount: mostSuppliedUserToken.balance,
           },
         }
       : {}),
@@ -186,10 +314,10 @@ const DashboardPersonal = () => {
                     <PortfolioTab {...walletData} isUserLoansLoading={isLoading} />
                   </Route>
                   <Route exact path={`/dashboard-personal/${DELEGATION_TAB_ID}`}>
-                    <DelegationTab />
+                    <DelegationTab distributeProposalRewards={distributeRewardsCallback} />
                   </Route>
                   <Route exact path={`/dashboard-personal/${SATELLITE_TAB_ID}`}>
-                    <SatelliteTab />
+                    <SatelliteTab distributeProposalRewards={distributeRewardsCallback} />
                   </Route>
                   <Route exact path={`/dashboard-personal/${VESTING_TAB_ID}`}>
                     <VestingTab />

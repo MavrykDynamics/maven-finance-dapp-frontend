@@ -25,7 +25,10 @@ type Props = {
 
 export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: Props) => {
   const { priceName, totalName, buttonName, leftValueName, rightValueName, isButtonSymbol, marketTabName } = settings
-  const { icon, symbol, annualRate, annualRateName, leftValue, rightValue, totalAmount, price, chartData } = market
+  const { icon, symbol, address, annualRate, annualRateName, leftValue, rightValue, totalAmount, price, chartData } =
+    market
+
+  const isBorrowCard = marketTabName === 'borrowTab'
 
   return (
     <EarnBorrowCardStyled>
@@ -51,7 +54,7 @@ export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: 
           <CommaNumber beginningText="$" value={totalAmount} />
         </div>
 
-        <EarnBorrowChart data={chartData} isBorrow={marketTabName === 'borrowTab'} />
+        <EarnBorrowChart data={chartData} isBorrow={isBorrowCard} />
 
         <div>
           <div className="info">
@@ -65,12 +68,17 @@ export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: 
         </div>
 
         <div className="buttons">
-          <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isDisabledButton} onClick={() => onClick(symbol)}>
+          <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isDisabledButton} onClick={() => onClick(address)}>
             <Icon id="loans" />
             {`${buttonName} ${isButtonSymbol ? symbol : ''}`}
           </Button>
 
-          <Link to={`/loans/${symbol}/${marketTabName}`}>
+          <Link
+            to={{
+              pathname: `/loans/${address}/${marketTabName}`,
+              state: { from: `/loans/${isBorrowCard ? 'borrow' : 'earn'}` },
+            }}
+          >
             <Button kind={BUTTON_SIMPLE}>
               View Stats
               <Icon id="arrow" className="arrowIcon" />

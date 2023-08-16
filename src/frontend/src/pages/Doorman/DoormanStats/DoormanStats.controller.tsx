@@ -12,8 +12,8 @@ type DoormanStatsPropsType = {
   maximumTotalSupply: number
   totalStakedMvk: number
   totalSupply: number
-  doormanAddress: string
-  mvkTokenAddress: string
+  doormanAddress: string | null
+  mvkTokenAddress: string | null
 }
 
 export const DoormanStats = ({

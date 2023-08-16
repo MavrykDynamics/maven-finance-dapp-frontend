@@ -13,30 +13,44 @@ import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // providers
-import { SUB_SKIP } from 'utils/api/apollo.consts'
-import { useContractStatusConfig } from 'providers/ContractStatuses/hooks/useContractStatusesConfig'
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { MVK_BALANCE_SUB, SMVK_HISTORY_SUB } from 'providers/StakeProvider/helpers/stake.consts'
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
+import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
+
+// consts
+import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
+import {
+  CONTRACT_STATUSES_CONFIG_SUB,
+  DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS,
+} from 'providers/ContractStatuses/helpers/contractStatuses.consts'
 
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
 
-  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useStakeContext()
+  const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useDoormanContext()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { eGovProposals, isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 
-  const { isLoading: isContractStatusConfigLoading, isGlassBroken } = useContractStatusConfig({
-    skipWhitelistDevelopers: SUB_SKIP,
-  })
+  const {
+    isLoading: isContractStatusConfigLoading,
+    config: { isGlassBroken },
+    changeContractStatusesSubscriptionsList,
+  } = useContractStatusesContext()
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 
   useEffect(() => {
     changeStakingSubscriptionsList({
-      [MVK_BALANCE_SUB]: false,
-      userBalance: false,
-      [SMVK_HISTORY_SUB]: false,
+      [DAPP_MVK_SMVK_STATS_SUB]: true,
     })
+
+    changeContractStatusesSubscriptionsList({
+      [CONTRACT_STATUSES_CONFIG_SUB]: true,
+    })
+
+    return () => {
+      changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+      changeContractStatusesSubscriptionsList(DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS)
+    }
   }, [])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {

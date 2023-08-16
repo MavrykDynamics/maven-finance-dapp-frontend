@@ -1,28 +1,47 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useMemo, useState } from 'react'
 
+// components
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
 
-import { INPUT_LARGE, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { State } from 'reducers'
-import { AddLendingAssetDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
+// consts
+import { INPUT_LARGE, INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { DEPOSIT_LENDING_ASSET_ACTION } from 'providers/LoansProvider/helpers/loans.const'
 
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+// types
+import { AddLendingAssetDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+
+// helpers
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// styles
 import { silverColor } from 'styles'
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { depositLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+
+// actions
+import { depositLendingAssetAction } from 'providers/LoansProvider/actions/loans.actions'
+
+// providers
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
@@ -34,74 +53,82 @@ export const AddLendingAsset = ({
   show: boolean
   data: AddLendingAssetDataType
 }) => {
+  const { tokensMetadata, tokensPrices } = useTokensContext()
   const {
-    mBalance = 0,
-    rate = 0,
-    decimals = 0,
-    symbol = '',
-    address = '',
-    lendingAPY = 0,
-    icon = '',
-    gqlName = '',
-    tokenType = '',
-    id = 0,
-  } = data ?? {}
+    contractAddresses: { lendingControllerAddress },
+  } = useDappConfigContext()
+  const { userTokensBalances, userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+
   useLockBodyScroll(show)
 
-  const { userTokens } = useSelector((state: State) => state.wallet.user)
-
-  const balanceSymbol = isTezosAsset(symbol.toLowerCase() ?? '') ? 'tezos' : symbol.toLowerCase().toLowerCase() ?? ''
-  const tokenBalance = userTokens[balanceSymbol]?.balance ?? 0
-
-  const dispatch = useDispatch()
-  const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
-
-  const onChangeHandler = (inputAmount: string, userBalance: number) => {
-    const validationStatus = loansInputValidation({
-      inputAmount,
-      maxAmount: userBalance,
-      options: {
-        byDecimalPlaces: decimals || assetDecimalsToShow,
-      },
-    })
-
-    setInputData({
-      ...inputData,
-      amount: inputAmount,
-      validationStatus: validationStatus,
-    })
-  }
-
-  const inputOnBlurHandle = () => {
-    setInputData({
-      ...inputData,
-      amount: getOnBlurValue(inputData.amount),
-    })
-  }
-
-  const onFocusHandler = () => {
-    setInputData({
-      ...inputData,
-      amount: getOnFocusValue(inputData.amount),
-    })
-  }
+  const {
+    inputData,
+    setInputData,
+    inputOnBlurHandle,
+    inputOnChangeHandle,
+    willExceedXTZTheLimit,
+    onFocusHandler,
+    setSelectedCollateral,
+    useMaxHandler,
+  } = useCollateralInputData()
 
   useEffect(() => {
     if (!show) {
-      setInputData(DEFAULT_LOANS_INPUT_VALUE)
+      setInputData({
+        amount: '0',
+        validationStatus: INPUT_STATUS_DEFAULT,
+      })
     }
   }, [show])
-  const isDepositDisabled = useMemo(() => {
-    return inputData.validationStatus !== INPUT_STATUS_SUCCESS
-  }, [inputData.validationStatus])
 
-  const depositHandler = () => {
-    if (tokenType && address) {
-      dispatch(
-        depositLendingAssetAction(gqlName, Number(inputData.amount), address, id, tokenType, decimals, closePopup),
-      )
+  useEffect(() => {
+    setSelectedCollateral(data?.tokenAddress)
+  }, [data?.tokenAddress, setSelectedCollateral])
+
+  const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
+
+  const depositAction = useCallback(async () => {
+    if ((loanToken && !checkWhetherTokenIsLoanToken(loanToken)) || !loanToken) {
+      return null
     }
-  }
+
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!lendingControllerAddress) {
+      bug('Wrong lending address')
+      return null
+    }
+
+    return await depositLendingAssetAction(
+      userAddress,
+      loanToken,
+      Number(inputData.amount),
+      lendingControllerAddress,
+      closePopup,
+    )
+  }, [bug, closePopup, inputData.amount, lendingControllerAddress, loanToken, userAddress])
+
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DEPOSIT_LENDING_ASSET_ACTION,
+      actionFn: depositAction,
+    }),
+    [depositAction],
+  )
+
+  const { action: depositHandler } = useContractAction(contractActionProps)
+
+  if (!data || !loanToken || !loanToken.rate) return null
+
+  const { mBalance, lendingAPY, tokenAddress } = data
+  const { symbol, icon, decimals, rate } = loanToken
+  const tokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: tokenAddress })
+
+  const isDepositDisabled = inputData.validationStatus !== INPUT_STATUS_SUCCESS
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -118,25 +145,25 @@ export const AddLendingAsset = ({
           </div>
 
           <Input
-            className={`${rate ? 'input-with-rate' : ''} pinned-dropdown`}
+            className="pinned-dropdown input-with-rate"
             inputProps={{
               value: inputData.amount,
               type: 'number',
-              onChange: (e) => onChangeHandler(e.target.value, tokenBalance),
+              onChange: (e) => inputOnChangeHandle(e.target.value, tokenBalance),
               onBlur: inputOnBlurHandle,
               onFocus: onFocusHandler,
             }}
             settings={{
               balance: tokenBalance,
               balanceAsset: symbol,
-              useMaxHandler: () => onChangeHandler(getLoansInputMaxAmount(tokenBalance, decimals), tokenBalance),
+              useMaxHandler: () => useMaxHandler(tokenBalance),
               inputStatus: inputData.validationStatus,
               inputSize: INPUT_LARGE,
-              ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
+              convertedValue: rate * Number(inputData.amount),
             }}
           >
             <InputPinnedTokenInfo>
-              <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+              <ImageWithPlug imageLink={icon} alt={`${loanToken.symbol} icon`} />
               {symbol}
             </InputPinnedTokenInfo>
           </Input>
@@ -163,6 +190,8 @@ export const AddLendingAsset = ({
               <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
             </ThreeLevelListItem>
           </div>
+
+          <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20 mb-20" />
 
           <div className="manage-btn">
             <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={depositHandler} disabled={isDepositDisabled}>
