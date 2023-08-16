@@ -1,9 +1,8 @@
-import { ApolloError, QueryHookOptions } from '@apollo/client'
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { ApolloError } from '@apollo/client'
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   FinRequestsSubsRecordType,
   FinancialRequestsContext,
-  FinancialRequestsSubsType,
   NullableFinancialRequestsContextStateType,
 } from './financialRequests.types'
 import {
@@ -29,11 +28,6 @@ type Props = {
   children: React.ReactNode
 }
 
-// helper
-const refetchQueryVariables = () => ({
-  currentTimestamp: dayjs().toISOString(),
-})
-
 const FinancialRequestsProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
 
@@ -41,6 +35,13 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     useState<NullableFinancialRequestsContextStateType>(DEFAULT_FINANCIAL_REQUESTS_CTX)
   const [activeSubs, setActiveSubs] = useState<FinRequestsSubsRecordType>(DEFAULT_FIN_REQUESTS_ACTIVE_SUBS)
   const currentTimeRef = useRef(dayjs().toISOString())
+
+  const refetchQueryVariables = useCallback(
+    () => ({
+      currentTimestamp: dayjs().toISOString(),
+    }),
+    [currentTimeRef.current], // to have up-to-date query data after some indexer block update, DO NOT REMOVE from deps
+  )
 
   useEffect(() => {
     currentTimeRef.current = dayjs().toISOString()
@@ -58,7 +59,6 @@ const FinancialRequestsProvider = ({ children }: Props) => {
       onError: (error) => handleSubError(error, 'getFinancialRequestsStorageSubscription ERROR'),
       onCompleted: (data) => {
         if (!data) return
-        console.log('Refetch logic FIN REQUESTS ', activeSubs[FIN_REQUESTS_DATA])
         updateFinRequestsData(data, activeSubs[FIN_REQUESTS_DATA])
       },
       variables: {
