@@ -1,12 +1,8 @@
-import { useState, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
-import { TreasuryType } from 'utils/TypesAndInterfaces/Treasury'
+import { useState, useMemo, useEffect } from 'react'
+import { TreasuryType } from 'providers/TreasuryProvider/helpers/treasury.types'
 
 // actions, helpers
-import { getTreasuryStorage } from './Treasury.actions'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getTreasuryTVL, reduceTreasuryAssets } from './helpers/treasury.utils'
+import { getTreasuryTVL, reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasury.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // view
@@ -20,32 +16,41 @@ import { Page } from 'styles'
 import { TreasuryActiveStyle, TreasurySelectStyle } from './Treasury.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
+import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_QUERY } from 'providers/TreasuryProvider/helpers/treasury.consts'
 
 type TreasuryDDType = DropDownItemType & { treasury: TreasuryType[number] }
 
 export const Treasury = () => {
-  const dispatch = useDispatch()
-
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const {
     contractAddresses: { treasuryFactoryAddress },
   } = useDappConfigContext()
+  const { isLoading, changeTreasurySubscriptionsList, treasuryAddresses, treasuryMapper } = useTreasuryContext()
 
-  const { treasuryStorage, isLoaded } = useSelector((state: State) => state.treasury)
+  useEffect(() => {
+    changeTreasurySubscriptionsList({
+      [TREASURY_STORAGE_QUERY]: true,
+    })
 
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    try {
-      if (!isLoaded || isDepsChanged) {
-        await dispatch(getTreasuryStorage())
-      }
-    } catch (error) {}
+    return () => {
+      changeTreasurySubscriptionsList(DEFAULT_TREASURY_SUBS)
+    }
   }, [])
 
-  const ddItems = treasuryStorage.map<TreasuryDDType>((treasury) => ({
-    content: treasury.name,
-    treasury,
-    id: treasury.address,
-  }))
+  const ddItems = useMemo(
+    () =>
+      treasuryAddresses.map<TreasuryDDType>((address) => {
+        const treasury = treasuryMapper[address]
+
+        return {
+          content: treasury.name,
+          treasury,
+          id: treasury.address,
+        }
+      }),
+    [treasuryAddresses, treasuryMapper],
+  )
 
   const [chosenDdItem, setChosenDdItem] = useState<TreasuryDDType | undefined>()
   const handleOnClickDropdownItem = (e: DDItemId) => {
@@ -53,11 +58,18 @@ export const Treasury = () => {
     setChosenDdItem(chosenItem)
   }
 
-  const assetsBalances = useMemo(() => Object.values(reduceTreasuryAssets(treasuryStorage)), [treasuryStorage])
+  const assetsBalances = useMemo(
+    () => Object.values(reduceTreasuryAssets(treasuryAddresses, treasuryMapper)),
+    [treasuryAddresses, treasuryMapper],
+  )
 
   const globalTreasuryTVL = useMemo(
-    () => treasuryStorage.reduce((acc, treasury) => (acc += getTreasuryTVL(treasury, tokensMetadata, tokensPrices)), 0),
-    [treasuryStorage, tokensMetadata, tokensPrices],
+    () =>
+      treasuryAddresses.reduce(
+        (acc, address) => (acc += getTreasuryTVL(treasuryMapper[address], tokensMetadata, tokensPrices)),
+        0,
+      ),
+    [treasuryAddresses, treasuryMapper, tokensMetadata, tokensPrices],
   )
 
   const globalTreasury = {

@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 
 // view
-import { TreasuryType } from 'utils/TypesAndInterfaces/Treasury'
+import { TreasuryType } from 'providers/TreasuryProvider/helpers/treasury.types'
 import Icon from 'app/App.components/Icon/Icon.view'
 import PieChartView from '../../app/App.components/PieСhart/PieСhart.view'
 
@@ -27,7 +27,7 @@ import { Plug } from 'app/App.components/Chart/Chart.style'
 import { silverColor } from 'styles'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getTreasuryTVL } from './helpers/treasury.utils'
+import { getTreasuryTVL } from 'providers/TreasuryProvider/helpers/treasury.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'

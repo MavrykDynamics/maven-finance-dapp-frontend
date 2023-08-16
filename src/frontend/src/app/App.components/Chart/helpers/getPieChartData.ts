@@ -1,4 +1,4 @@
-import { TreasuryBalanceType } from 'utils/TypesAndInterfaces/Treasury'
+import { TreasuryBalanceType } from 'providers/TreasuryProvider/helpers/treasury.types'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { PieChartDataType } from 'app/App.components/Chart/helpers/Chart.types'
 import { VaultAssetData } from 'providers/VaultsProvider/vaults.provider.types'

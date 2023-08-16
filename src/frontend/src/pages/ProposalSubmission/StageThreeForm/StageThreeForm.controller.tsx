@@ -38,14 +38,16 @@ import {
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { reduceTreasuryAssets } from 'pages/Treasury/helpers/treasury.utils'
+import { reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasury.utils'
 import { Info } from 'app/App.components/Info/Info.view'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 
+// NOTE: isLoading is handled in <ProposalSubmission.controller>
 export const StageThreeForm = ({
   proposalId,
   currentProposal,
@@ -65,8 +67,11 @@ export const StageThreeForm = ({
   } = useDappConfigContext()
   const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
 
-  const { treasuryStorage } = useSelector((state: State) => state.treasury)
-  const treasuryTokens = useMemo(() => reduceTreasuryAssets(treasuryStorage), [treasuryStorage])
+  const { treasuryAddresses, treasuryMapper } = useTreasuryContext()
+  const treasuryTokens = useMemo(
+    () => reduceTreasuryAssets(treasuryAddresses, treasuryMapper),
+    [treasuryAddresses, treasuryMapper],
+  )
 
   const isProposalRound = governancePhase === 'PROPOSAL'
 
