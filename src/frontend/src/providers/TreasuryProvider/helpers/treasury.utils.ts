@@ -1,4 +1,4 @@
-import { TREASURYS_COLORS } from 'app/App.components/PieСhart/pieChart.const'
+import { TREASURYS_COLORS } from 'app/App.components/PieChart/pieChart.const'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'

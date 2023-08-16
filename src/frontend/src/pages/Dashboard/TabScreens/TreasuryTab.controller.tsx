@@ -1,14 +1,22 @@
 import { useMemo } from 'react'
+import { State } from 'reducers'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+// styles
 import { silverColor } from 'styles'
-import { State } from 'reducers'
+
+// consts
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+
+// providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+
+// utils
 import { getTreasuryTVL, reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasury.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
+// components
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { emptyContainer } from './LendingTab.controller'

@@ -3,7 +3,11 @@ import { TreasuryType } from 'providers/TreasuryProvider/helpers/treasury.types'
 
 // actions, helpers
 import { getTreasuryTVL, reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasury.utils'
+
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -15,8 +19,8 @@ import { DDItemId, DropDown, DropDownItemType } from '../../app/App.components/D
 import { Page } from 'styles'
 import { TreasuryActiveStyle, TreasurySelectStyle } from './Treasury.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
+
+// consts
 import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_QUERY } from 'providers/TreasuryProvider/helpers/treasury.consts'
 
 type TreasuryDDType = DropDownItemType & { treasury: TreasuryType[number] }

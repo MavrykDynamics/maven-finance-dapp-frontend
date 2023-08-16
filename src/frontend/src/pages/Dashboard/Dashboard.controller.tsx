@@ -13,8 +13,10 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 
 // const & types
+import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_QUERY } from 'providers/TreasuryProvider/helpers/treasury.consts'
 import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
 import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 import {
@@ -32,15 +34,17 @@ import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansPr
 import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
 import { State } from '../../reducers'
 
-// actions
+// hooks
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+
+// actions
 import { getVestingStorage } from '../Treasury/Treasury.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+
+// utils
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
-import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_QUERY } from 'providers/TreasuryProvider/helpers/treasury.consts'
 
 // TODO: add farms when their data loading will be fixed and up
 export const Dashboard = () => {

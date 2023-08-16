@@ -1,21 +1,31 @@
-import QueryString from 'qs'
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
 import { useLocation, Redirect } from 'react-router'
-
+import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
+import QueryString from 'qs'
 
+// hooks
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+
+// actions
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 
+// components
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { ProposalSubmissionView } from './ProposalSubmission.view'
 
+// styles
 import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+
+// utils
 import { DEFAULT_PROPOSAL } from './ProposalSubmission.helpers'
+
+// providers
 import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
-import { useEffect } from 'react'
+
+// consts
 import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_QUERY } from 'providers/TreasuryProvider/helpers/treasury.consts'
 
 export const ProposalSubmission = () => {
