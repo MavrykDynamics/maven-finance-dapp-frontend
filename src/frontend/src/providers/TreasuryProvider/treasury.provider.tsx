@@ -63,7 +63,8 @@ const TreasuryProvider = ({ children }: Props) => {
       updateTreasuryAddresses(data)
 
       //   pass the first part of data -> treasury data
-      treasuryNormalizerDataUpdaterRef.current = treasuryNormalizerDataUpdaterRef.current(data)
+      treasuryNormalizerDataUpdaterRef.current =
+        treasuryNormalizerDataUpdaterRef.current<GetTreasuryStorageDataQuery>(data)
       setAllowUserBalances(true)
     },
     onError: (error) => handleSubError(error, 'GET_TREASURY_STORAGE_QUERY'),
@@ -82,7 +83,7 @@ const TreasuryProvider = ({ children }: Props) => {
       }
 
       //  pass the second part of data -> user balances data
-      treasuryNormalizerDataUpdaterRef.current(data)
+      treasuryNormalizerDataUpdaterRef.current<GetTreasuryUserBalancesQuery>(data)
       // reset for future calls
       treasuryNormalizerDataUpdaterRef.current = curry(updateTreasuryStorage)
       // disallow this query until new data for treasury is received
