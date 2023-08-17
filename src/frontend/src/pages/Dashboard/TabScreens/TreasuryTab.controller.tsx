@@ -1,6 +1,4 @@
 import { useMemo } from 'react'
-import { State } from 'reducers'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 // styles
@@ -10,11 +8,14 @@ import { silverColor } from 'styles'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
 // providers
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
+import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // utils
 import { getTreasuryTVL, reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasury.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // components
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -22,7 +23,6 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { emptyContainer } from './LendingTab.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-
 import {
   Table,
   TableHeader,
@@ -32,17 +32,17 @@ import {
   TableCell,
   TableScrollable,
 } from 'app/App.components/Table'
+
+// styles
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { BlockName, StatBlock } from '../Dashboard.style'
 import { TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 
 // NOTE: isLoading os passed from <Dashboard.controller> where we get all important data
 // so no need to useEffect(() => changeSubscriptionList) f.e. for treasury
 export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { totalVestedAmount, totalClaimedAmount } = useSelector((state: State) => state.vesting)
+  const { totalVestedAmount, totalClaimedAmount } = useVestingContext()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { treasuryAddresses, treasuryMapper } = useTreasuryContext()

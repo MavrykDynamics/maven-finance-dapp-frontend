@@ -27,6 +27,7 @@ import { PORTFOLIO_TAB_ID } from '../DashboardPersonal.utils'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
 
 // actions
 import { claimVestingReward } from 'providers/UserProvider/actions/user.actions'
@@ -35,7 +36,7 @@ import { claimVestingReward } from 'providers/UserProvider/actions/user.actions'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 const VestingTab = () => {
-  const { vesteesMapper } = useSelector((state: State) => state.vesting)
+  const { vesteesMapper } = useVestingContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
   const {
