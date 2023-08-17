@@ -129,48 +129,6 @@ export const normalizeUserHistoryData = (
   }, [])
 }
 
-// const calcUsersRewardsToDate = (usetStakesData: GetUserDataQuery['mavryk_user'][number]['stakes_history_data']) => {
-//   return usetStakesData.reduce<{
-//     gatheredFarmRewards: number
-//     gatheredSatellitesRewards: number
-//     gatheredDoormanRewards: number
-//     actionsHistory: UserContext['actionsHistory']
-//   }>(
-//     (acc, { type, final_amount, desired_amount, id }) => {
-//       const convertedFinalAmount = convertNumberForClient({ number: final_amount, grade: MVK_DECIMALS })
-//       const convertedDesiredAmount = convertNumberForClient({ number: desired_amount, grade: MVK_DECIMALS })
-
-//       if (type === USER_ACTIONS_TYPES.FARM_CLAIM) acc.gatheredFarmRewards += convertedFinalAmount
-
-//       if (type === USER_ACTIONS_TYPES.COMPOUND) acc.gatheredDoormanRewards += convertedFinalAmount
-
-//       if (type === USER_ACTIONS_TYPES.SATELLITE_REWARD) acc.gatheredSatellitesRewards += convertedFinalAmount
-
-//       const isUnstake = type === USER_ACTIONS_TYPES.UNSTAKE
-//       const actionName =
-//         type === USER_ACTIONS_TYPES.STAKE
-//           ? 'Stake'
-//           : type === USER_ACTIONS_TYPES.UNSTAKE
-//           ? 'Unstake'
-//           : type === USER_ACTIONS_TYPES.FARM_CLAIM
-//           ? 'Farm Claim'
-//           : type === USER_ACTIONS_TYPES.COMPOUND
-//           ? 'Compound'
-//           : 'Satellite Reward'
-
-//       acc.actionsHistory.push({
-//         action: actionName,
-//         amount: convertedDesiredAmount,
-//         totalAmount: convertedFinalAmount,
-//         fee: isUnstake ? ((convertedDesiredAmount - convertedFinalAmount) / convertedDesiredAmount) * 100 : 0,
-//         id,
-//       })
-//       return acc
-//     },
-//     { gatheredFarmRewards: 0, gatheredSatellitesRewards: 0, gatheredDoormanRewards: 0, actionsHistory: [] },
-//   )
-// }
-
 /**
  * @param snapshots satellite snapshots for cycle data
  * @param currentCycle current active cycle

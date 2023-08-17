@@ -197,8 +197,8 @@ export const useUserApi = ({
 
       if (newUserAddress && newUserAddress !== userCtxState.userAddress) {
         setUserLoading(true)
-        // TODO: test it
-        // on user change set his loans data to null to make loader in useUserLoansData hook correct
+
+        // on user change set all fields to default except address, cuz empty data will appear for a moment, cuz new address will be set in loadInitialTzktTokensForNewlyConnectedUser
         setUserCtxState((prev) => ({ ...DEFAULT_USER, userAddress: prev.userAddress }))
 
         loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress, useLoader: false })

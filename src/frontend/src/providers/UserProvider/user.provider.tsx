@@ -26,7 +26,6 @@ import {
   UserContext,
   UserContextStateType,
   UserHistoryData,
-  UserIndexerFarmRewardsType,
   UserLoansData,
   UserRewardsType,
   UserTzKtTokenBalances,
@@ -50,7 +49,6 @@ const hasUserInLocalStorage =
 /**
  * ADJUSTMENTS:
  * 1. on changing user do not reopen socket, just update filter (invoke), currently hadn't found any example of it
- * 2. 1 large query -> 3 small and load only when need, check userData.query.ts for details
  */
 export const UserProvider = ({ children }: Props) => {
   const { tokensMetadata } = useTokensContext()

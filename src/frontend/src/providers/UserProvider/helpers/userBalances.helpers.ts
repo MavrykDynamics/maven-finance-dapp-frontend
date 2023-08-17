@@ -153,9 +153,9 @@ export const fetchTzktUserBalances = async ({
       api(`https://api.ghostnet.tzkt.io/v1/accounts/${userAddress}`),
     ])
 
-    const isUserExistOnTzkt = emptyUserTzktAccountSchema.safeParse(accountData)
+    const isUserEmptyOnTzkt = emptyUserTzktAccountSchema.safeParse(accountData)
 
-    if (isUserExistOnTzkt.success) return {}
+    if (isUserEmptyOnTzkt.success) return {}
 
     const parsedUserTzktTokensData = userTzktTokenBalancesSchema.safeParse(tokensData)
     const parsedUserXtzTokenBalance = userTzktAccountSchema.safeParse(accountData)

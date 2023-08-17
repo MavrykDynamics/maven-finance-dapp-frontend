@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { TokenAddressType, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
-import { GetUserDataQuery, GetUserRewardsDataQuery } from 'utils/__generated__/graphql'
+import { GetUserRewardsDataQuery } from 'utils/__generated__/graphql'
 
 import {
   CLAIM_ALL_REWARDS_ACTION,
