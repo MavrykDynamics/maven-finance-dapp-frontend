@@ -16,7 +16,7 @@ export const replaceNullValuesWithDefault = <T extends Record<string, unknown>>(
   defaultValues: T,
 ): T => {
   // TODO: find more reliable method to copy
-  const providerStateCopy: DeepNullable<T> = JSON.parse(JSON.stringify(currentValues))
+  const providerStateCopy: DeepNullable<T> = Object.assign({}, currentValues) //JSON.parse(JSON.stringify(currentValues))
 
   // if passed objects to merge are not objects return default values
   if (!isObject(providerStateCopy) || !isObject(defaultValues)) {

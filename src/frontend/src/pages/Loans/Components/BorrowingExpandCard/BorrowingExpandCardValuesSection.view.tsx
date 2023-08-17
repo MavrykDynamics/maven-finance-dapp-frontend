@@ -40,6 +40,8 @@ export const BorrowingExpandCardValuesSection = ({
     preferences: { themeSelected },
   } = useDappConfigContext()
 
+  console.log({ borrowCapacity })
+
   return (
     <LoansValuesSection className="borrowing-tab">
       <div className="stats">

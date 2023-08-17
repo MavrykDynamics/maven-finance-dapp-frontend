@@ -64,6 +64,8 @@ export const Market = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { fatal } = useToasterContext()
   const { myVaultsIds, vaultsMapper, isLoading: isVaultsLoading, changeVaultsSubscriptionsList } = useVaultsContext()
+
+  console.log({ vaultsMapper })
   const {
     allMarketsAddresses,
     marketsMapper,
@@ -161,9 +163,10 @@ export const Market = () => {
 
           const vaultCollateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices)
           const convertedBorrowedAmount =
-            convertNumberForClient({ number: vault.borrowedAmount, grade: loanTokenDecimals }) * loanTokenRate
+            convertNumberForClient({ number: vault.borrowedAmount.toNumber(), grade: loanTokenDecimals }) *
+            loanTokenRate
           const convertedBorrowFee =
-            convertNumberForClient({ number: vault.fee, grade: loanTokenDecimals }) * loanTokenRate
+            convertNumberForClient({ number: vault.fee.toNumber(), grade: loanTokenDecimals }) * loanTokenRate
 
           acc.userTotalBorrowed += convertedBorrowedAmount
           acc.userTotalCollateral += vaultCollateralBalance

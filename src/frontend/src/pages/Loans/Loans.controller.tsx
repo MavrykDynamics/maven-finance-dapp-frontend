@@ -219,13 +219,13 @@ export const Loans = () => {
 
                       if (!collateralToken || !collateralToken.rate) return acc
                       const { decimals, rate } = collateralToken
-                      return (acc += convertNumberForClient({ number: amount, grade: decimals }) * rate)
+                      return (acc += convertNumberForClient({ number: amount.toNumber(), grade: decimals }) * rate)
                     },
                     0,
                   )
 
                   acc.loanTokenVaultsTotalBorrowed +=
-                    convertNumberForClient({ number: vault.borrowedAmount, grade: decimals }) * rate
+                    convertNumberForClient({ number: vault.borrowedAmount.toNumber(), grade: decimals }) * rate
                   return acc
                 },
                 {

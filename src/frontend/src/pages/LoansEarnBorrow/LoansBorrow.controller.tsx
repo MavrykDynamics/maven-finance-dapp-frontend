@@ -136,7 +136,7 @@ export const LoansBorrow = () => {
       if (!borrowToken || !borrowToken.rate) return false
 
       const convertedBorrowedAmount = convertNumberForClient({
-          number: vault.borrowedAmount,
+          number: vault.borrowedAmount.toNumber(),
           grade: borrowToken.decimals,
         }),
         collateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices)

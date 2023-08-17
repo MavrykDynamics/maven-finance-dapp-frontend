@@ -50,7 +50,9 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
 
         if (vault.borrowedTokenAddress !== loanTokenAddress) return false
 
-        return showZeroVaults ? vault.collateralData.find(({ amount }) => amount > 0) || vault.borrowedAmount : true
+        return showZeroVaults
+          ? vault.collateralData.find(({ amount }) => amount.toNumber() > 0) || vault.borrowedAmount
+          : true
       }),
     [loanTokenAddress, myVaultsIds, showZeroVaults, vaultsMapper],
   )

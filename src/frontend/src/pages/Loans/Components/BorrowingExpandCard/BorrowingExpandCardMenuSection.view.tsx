@@ -173,7 +173,7 @@ export const BorrowingExpandCardMenuSection = ({
 
             <TableBody>
               {collateralData
-                .sort((a, b) => b.amount - a.amount)
+                .sort((a, b) => b.amount.toNumber() - a.amount.toNumber())
                 .map(({ amount, tokenAddress }, idx) => {
                   const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
 
@@ -182,7 +182,7 @@ export const BorrowingExpandCardMenuSection = ({
 
                   const { symbol, icon, rate, decimals } = collateralToken
 
-                  const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
+                  const convertedAmount = convertNumberForClient({ number: amount.toNumber(), grade: decimals })
                   const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                   return (

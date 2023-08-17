@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import { PRECISION_NUMBER, SECONDS_PER_BLOCK, MVK_DECIMALS, DECIMALS_TO_SHOW } from './constants'
 
 /**
@@ -48,6 +49,16 @@ export const convertNumberForContractCall = ({
   return Math.trunc(number * Math.pow(10, grade))
 }
 
+export const convertNumberForContractCallBN = ({
+  number,
+  grade = MVK_DECIMALS,
+}: {
+  number: BigNumber
+  grade?: number
+}): BigNumber => {
+  return number.multipliedBy(Math.pow(10, grade)).decimalPlaces(0)
+}
+
 /**
  * @param number -> number in contract form that we wan't to convert for usage on client output
  * @param grade -> grade for 10, that we'll need to divide number to convert it for usage on client
@@ -64,6 +75,16 @@ export const convertNumberForClient = ({
   grade?: number
 }): number => {
   return Math.trunc(number) / Math.pow(10, grade)
+}
+
+export const convertNumberForClientBN = ({
+  number,
+  grade = MVK_DECIMALS,
+}: {
+  number: BigNumber
+  grade?: number
+}): BigNumber => {
+  return number.decimalPlaces(0).dividedBy(Math.pow(10, grade))
 }
 
 /**

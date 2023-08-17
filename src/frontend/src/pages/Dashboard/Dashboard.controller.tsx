@@ -60,6 +60,8 @@ export const Dashboard = () => {
   const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
   const { vaultsMapper, allVaultsIds, isLoading: isVaultsLoading, changeVaultsSubscriptionsList } = useVaultsContext()
 
+  console.log({ vaultsMapper })
+
   useEffect(() => {
     changeStakingSubscriptionsList({
       [DAPP_MVK_SMVK_STATS_SUB]: true,
@@ -128,7 +130,7 @@ export const Dashboard = () => {
 
     return (acc += collateralData.reduce((collateralAcc, { amount, tokenAddress }) => {
       const { rate, decimals } = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices }) ?? {}
-      return rate ? collateralAcc + convertNumberForClient({ number: amount, grade: decimals }) * rate : 0
+      return rate ? collateralAcc + convertNumberForClient({ number: amount.toNumber(), grade: decimals }) * rate : 0
     }, 0))
   }, 0)
 

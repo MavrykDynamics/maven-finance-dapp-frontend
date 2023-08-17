@@ -14,6 +14,7 @@ import {
 import { VAULTS_ALL, VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR } from './vaults.provider.consts'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
+import BigNumber from 'bignumber.js'
 
 // actions type
 export type VaultsActionsType =
@@ -56,8 +57,8 @@ export type VaultsSubsLoadingsRecordType = {
 export type VaultType = {
   // vault tokens data
   borrowedTokenAddress: TokenAddressType // address of borrowed token
-  borrowedAmount: number // amount of token that user/s have borrowed from the vault *after normalizer it's not converted to client format*
-  fee: number // amount of token that user will have to pay after he has borrowed from the vault *after normalizer it's not converted to client format*
+  borrowedAmount: BigNumber // amount of token that user/s have borrowed from the vault *after normalizer it's not converted to client format*
+  fee: BigNumber // amount of token that user will have to pay after he has borrowed from the vault *after normalizer it's not converted to client format*
   collateralData: Array<CollateralType> // collaterals of the vault in format {amount, tokenAddress} *after normalizer amount is not converted to the client format*
   vaultBorrowIndex: number // TODO: add descr
 
@@ -90,9 +91,9 @@ export type VaultType = {
 // those additional fields can be only calculated after normalization stage, cuz those calcs requiring tokensDecimals & tokensRates
 export type FullLoansVaultType = VaultType & {
   liquidationTimestamp: number | null // same as liquidationLvl but converted to timestamp
-  totalOutstanding: number // fee + borrowed amount in USD
+  totalOutstanding: BigNumber // fee + borrowed amount
   collateralBalance: number // sum of collaterals in USD
-  borrowCapacity: number // how mush user can borrow from vault (avaliable liq | amount of token while collateral ration >= 200%)
+  borrowCapacity: BigNumber // how mush user can borrow from vault (avaliable liq | amount of token while collateral ration >= 200%)
   liquidationPrice: number
   collateralRatio: number // relation of collaterals in vault to borrowed amount
   status: (typeof vaultsStatuses)[keyof typeof vaultsStatuses] // status of the vault, depends on collateralRatio
@@ -102,7 +103,7 @@ export type FullLoansVaultType = VaultType & {
 export type DepositorsFlagType = typeof ANY_USER | typeof NONE_USER | typeof WHITELIST_USERS
 
 export type CollateralType = {
-  amount: number
+  amount: BigNumber
   tokenAddress: TokenAddressType
 }
 

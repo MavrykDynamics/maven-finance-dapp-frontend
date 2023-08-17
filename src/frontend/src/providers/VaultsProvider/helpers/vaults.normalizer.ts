@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js'
 import { ANY_USER, WHITELIST_USERS, NONE_USER } from 'pages/Loans/Loans.const'
 import { BLOCKS_PER_MINUTE, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
@@ -8,7 +9,7 @@ import {
   VaultsCtxState,
 } from 'providers/VaultsProvider/vaults.provider.types'
 import { calculateAccruedInterest } from 'pages/Loans/Loans.helpers'
-import { convertNumberForClient } from 'utils/calcFunctions'
+import { convertNumberForClient, convertNumberForClientBN } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { GetUserVaultsQueryQuery } from 'utils/__generated__/graphql'
 import { calcMarketAvaliableLiquidity } from 'providers/LoansProvider/helpers/loans.utils'
@@ -40,12 +41,12 @@ const normalizeCollaterals = (
     if (collateral.collateral_token.token_name === 'smvk') {
       acc.push({
         tokenAddress: SMVK_TOKEN_ADDRESS,
-        amount: collateral.balance,
+        amount: new BigNumber(collateral.balance),
       })
     } else {
       acc.push({
         tokenAddress: collateral.collateral_token.token.token_address,
-        amount: collateral.balance,
+        amount: new BigNumber(collateral.balance),
       })
     }
 
@@ -81,6 +82,8 @@ export const normalizeVaults = ({
         vault,
         collateral_balances,
         loan_outstanding_total,
+        loan_interest_total: accuredInterest,
+        loan_decimals,
         loan_principal_total: borrowedAmount,
         borrow_index: vaultBorrowIndex,
         loan_token,
@@ -96,12 +99,15 @@ export const normalizeVaults = ({
       // Check whether vault exists
       if (!vault) return acc
 
-      const fee = calculateAccruedInterest({
-        currentLoanOutstandingTotal: loan_outstanding_total,
-        vaultBorrowIndex,
-        marketBorrowIndex,
-        borrowedAmount,
-      })
+      // const fee = convertNumberForClientBN({ number: accuredInterest, grade: loan_decimals })
+
+      // console.log({ accuredInterest: fee, accuredInterestIndexer: accuredInterest, loan_decimals })
+      // calculateAccruedInterest({
+      //   currentLoanOutstandingTotal: loan_outstanding_total,
+      //   vaultBorrowIndex,
+      //   marketBorrowIndex,
+      //   borrowedAmount,
+      // })
 
       const apr =
         convertNumberForClient({
@@ -124,10 +130,10 @@ export const normalizeVaults = ({
         apr,
         creationTimestamp: new Date(vault.creation_timestamp).getTime(),
 
-        borrowedAmount,
+        borrowedAmount: new BigNumber(borrowedAmount),
         availableLiquidity,
         minimumRepay: min_repayment_amount,
-        fee,
+        fee: new BigNumber(accuredInterest),
         collateralData,
         vaultBorrowIndex,
 

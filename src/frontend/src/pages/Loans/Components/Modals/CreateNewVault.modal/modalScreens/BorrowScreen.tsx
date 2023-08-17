@@ -49,6 +49,7 @@ import { useBorrowInputData } from '../../hooks/Market/useBorrowInputData'
 
 // types
 import { Settings } from 'app/App.components/Input/newInput.type'
+import BigNumber from 'bignumber.js'
 
 type BorrowScreenProps = {
   setCurrentSymbol: React.Dispatch<React.SetStateAction<string>>
@@ -88,7 +89,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
 
   const { inputData, settings, inputProps, rate, icon, symbol, decimals } = useBorrowInputData({
     borrowedAssetAddress: borrowedTokenAddress,
-    borrowCapacity,
+    borrowCapacity: new BigNumber(borrowCapacity),
     isCreateVaultBorrow: true,
     vaultBorrowIndex: 0,
     marketBorrowIndex: 0,

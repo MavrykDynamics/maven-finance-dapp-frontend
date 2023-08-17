@@ -183,16 +183,16 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
           }
           // by borrowed amount high > low
           if (sortIsBorrowedAmountHighToLow) {
-            const vaultA = vaultsMapper[a].borrowedAmount
-            const vaultB = vaultsMapper[b].borrowedAmount
+            const vaultA = vaultsMapper[a].borrowedAmount.toNumber()
+            const vaultB = vaultsMapper[b].borrowedAmount.toNumber()
 
             return vaultB - vaultA
           }
 
           // by borrowed amount low > high
           if (sortIsBorrowedAmountLowToHigh) {
-            const vaultA = vaultsMapper[a].borrowedAmount
-            const vaultB = vaultsMapper[b].borrowedAmount
+            const vaultA = vaultsMapper[a].borrowedAmount.toNumber()
+            const vaultB = vaultsMapper[b].borrowedAmount.toNumber()
 
             return vaultA - vaultB
           }

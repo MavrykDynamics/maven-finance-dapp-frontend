@@ -161,9 +161,14 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
-              <CommaNumber value={totalOutstanding} className="value" showDecimal decimalsToShow={decimals} />
               <CommaNumber
-                value={totalOutstanding * rate}
+                value={totalOutstanding.toNumber()}
+                className="value"
+                showDecimal
+                decimalsToShow={decimals}
+              />
+              <CommaNumber
+                value={totalOutstanding.toNumber() * rate}
                 beginningText="$"
                 className="rate"
                 showDecimal
@@ -202,8 +207,13 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Principal</div>
-                <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
-                <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
+                <CommaNumber value={borrowedAmount.toNumber()} decimalsToShow={decimals} className="value" />
+                <CommaNumber
+                  value={borrowedAmount.toNumber() * rate}
+                  decimalsToShow={2}
+                  beginningText="$"
+                  className="rate"
+                />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">
@@ -214,8 +224,8 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                     defaultStrokeColor={colors[themeSelected].textColor}
                   />
                 </div>
-                <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
-                <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
+                <CommaNumber value={fee.toNumber()} decimalsToShow={decimals} className="value" />
+                <CommaNumber value={fee.toNumber() * rate} decimalsToShow={2} beginningText="$" className="rate" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">APR</div>
@@ -250,7 +260,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
 
                       const { symbol, icon, rate, decimals } = collateralToken
 
-                      const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
+                      const convertedAmount = convertNumberForClient({ number: amount.toNumber(), grade: decimals })
                       const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                       return (
@@ -290,12 +300,12 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                                   openAddExistingCollateralPopup?.({
                                     vaultAddress: vault.address,
                                     vaultId,
-                                    totalOutstanding,
+                                    totalOutstanding: totalOutstanding.toNumber(),
                                     collateralBalance,
                                     collateralRatio,
                                     borrowedTokenAddress,
                                     availableLiquidity: vault.availableLiquidity,
-                                    borrowCapacity,
+                                    borrowCapacity: borrowCapacity.toNumber(),
                                     collateralTokenAddress: collateralData[idx].tokenAddress,
                                   })
                                 }

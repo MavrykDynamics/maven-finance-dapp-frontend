@@ -85,6 +85,8 @@ export function getUserVaultsQuery({
 					marked_for_liquidation_level
 					loan_outstanding_total
 					loan_principal_total
+					loan_interest_total
+					loan_decimals
 					internal_id
 					borrow_index
 
@@ -152,6 +154,8 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 				marked_for_liquidation_level
 				loan_outstanding_total
 				loan_principal_total
+				loan_interest_total
+				loan_decimals
 				internal_id
 				borrow_index
 			

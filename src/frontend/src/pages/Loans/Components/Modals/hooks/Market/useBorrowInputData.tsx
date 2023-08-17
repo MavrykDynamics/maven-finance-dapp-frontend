@@ -6,6 +6,7 @@ import {
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
+import BigNumber from 'bignumber.js'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import {
   calculateAccruedInterest,
@@ -31,12 +32,14 @@ export const useBorrowInputData = ({
   vaultBorrowIndex,
   marketBorrowIndex,
   isCreateVaultBorrow,
+  interest,
 }: {
   borrowedAssetAddress: string
-  borrowCapacity: number
+  borrowCapacity: BigNumber
   vaultBorrowIndex: number
   marketBorrowIndex: number
   isCreateVaultBorrow?: boolean
+  interest?: number
 }) => {
   const { userTokensBalances } = useUserContext()
 
@@ -61,23 +64,12 @@ export const useBorrowInputData = ({
    * so value in input should be borrowCapacity - interest,
    * but when we creating vault we don't have interest yet, so we can borrow whole borrowCapacity amount
    */
-  const maxBorrowValue = isCreateVaultBorrow
-    ? borrowCapacity / rate
-    : getMaxBorrowAmountFromBorrowCapacity({
-        borrowCapacity: borrowCapacity / rate,
-        vaultBorrowIndex,
-        marketBorrowIndex,
-      })
+  const maxBorrowValue = borrowCapacity.dividedBy(rate).decimalPlaces(decimals) //Math.max(isCreateVaultBorrow ? borrowCapacity / rate : borrowCapacity / rate, 0)
 
-  console.log({
-    newCorrectInputAmount: (borrowCapacity / marketBorrowIndex) * vaultBorrowIndex,
-    newCorrectTotalOutstanding: calculateAccruedInterest({
-      currentLoanOutstandingTotal: maxBorrowValue,
-      borrowedAmount: 0,
-      vaultBorrowIndex,
-      marketBorrowIndex,
-    }),
-    maxBorrowValue,
+  console.log('use input max:', {
+    borrowCapacityUSD: borrowCapacity,
+    rate,
+    borrowCapacityToken: maxBorrowValue,
   })
 
   // stuff to handle inputs
@@ -127,7 +119,8 @@ export const useBorrowInputData = ({
       type: 'number',
       onBlur: inputOnBlurHandle,
       onFocus: onFocusHandler,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => inputOnChangeHandle(e.target.value, maxBorrowValue),
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+        inputOnChangeHandle(e.target.value, maxBorrowValue.toNumber()),
     }),
     [inputData.amount, inputOnBlurHandle, onFocusHandler, inputOnChangeHandle, maxBorrowValue],
   )
@@ -137,7 +130,7 @@ export const useBorrowInputData = ({
       balance: userAssetBalance,
       balanceAsset: symbol,
       balanceName: 'Wallet Balance',
-      useMaxHandler: () => inputOnChangeHandle(getLoansInputMaxAmount(maxBorrowValue, decimals), maxBorrowValue),
+      useMaxHandler: () => inputOnChangeHandle(maxBorrowValue.toString(), maxBorrowValue.toNumber()),
       inputStatus: inputData.validationStatus,
       convertedValue: inputAmount * rate,
       inputSize: INPUT_LARGE,

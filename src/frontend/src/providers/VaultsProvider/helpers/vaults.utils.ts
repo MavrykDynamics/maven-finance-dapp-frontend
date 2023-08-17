@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js'
 import dayjs from 'dayjs'
 
 // helpers
@@ -12,7 +13,7 @@ import {
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getAssetColor } from 'pages/Treasury/helpers/treasury.utils'
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
+import { convertNumberForClient, convertNumberForClientBN, getNumberInBounds } from 'utils/calcFunctions'
 
 // types
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
@@ -80,32 +81,34 @@ export const sortVaultsByStatus = async ({
 
       if (!vaultAToken || !vaultAToken.rate || !vaultBToken || !vaultBToken.rate) return 0
 
-      const vaultABorrowedAmount =
-        convertNumberForClient({ number: vaultsMapper[a].borrowedAmount, grade: vaultAToken.decimals }) *
-        vaultAToken.rate
-      const vaultBBorrowedAmount =
-        convertNumberForClient({ number: vaultsMapper[b].borrowedAmount, grade: vaultBToken.decimals }) *
-        vaultBToken.rate
+      // const vaultABorrowedAmount =
+      //   convertNumberForClient({ number: vaultsMapper[a].borrowedAmount, grade: vaultAToken.decimals }) *
+      //   vaultAToken.rate
+      // const vaultBBorrowedAmount =
+      //   convertNumberForClient({ number: vaultsMapper[b].borrowedAmount, grade: vaultBToken.decimals }) *
+      //   vaultBToken.rate
 
-      const vaultAStatus = getVaultStatus({
-        collateralRatio: getVaultCollateralRatio(
-          getVaultCollateralBalance(vaultsMapper[a].collateralData, tokensMetadata, tokensPrices),
-          vaultABorrowedAmount,
-        ),
-        borrowedAmount: vaultABorrowedAmount,
-        liquidationTimestamp: vaultsLiquidationTimestamps[a],
-      })
+      // const vaultAStatus = getVaultStatus({
+      //   collateralRatio: getVaultCollateralRatio(
+      //     getVaultCollateralBalance(vaultsMapper[a].collateralData, tokensMetadata, tokensPrices),
+      //     vaultABorrowedAmount,
+      //   ),
+      //   borrowedAmount: vaultABorrowedAmount,
+      //   liquidationTimestamp: vaultsLiquidationTimestamps[a],
+      // })
 
-      const vaultBStatus = getVaultStatus({
-        collateralRatio: getVaultCollateralRatio(
-          getVaultCollateralBalance(vaultsMapper[b].collateralData, tokensMetadata, tokensPrices),
-          vaultBBorrowedAmount,
-        ),
-        borrowedAmount: vaultBBorrowedAmount,
-        liquidationTimestamp: vaultsLiquidationTimestamps[b],
-      })
+      // const vaultBStatus = getVaultStatus({
+      //   collateralRatio: getVaultCollateralRatio(
+      //     getVaultCollateralBalance(vaultsMapper[b].collateralData, tokensMetadata, tokensPrices),
+      //     vaultBBorrowedAmount,
+      //   ),
+      //   borrowedAmount: vaultBBorrowedAmount,
+      //   liquidationTimestamp: vaultsLiquidationTimestamps[b],
+      // })
 
-      return statusSortPriority[vaultAStatus] - statusSortPriority[vaultBStatus]
+      // return statusSortPriority[vaultAStatus] - statusSortPriority[vaultBStatus]
+
+      return 0
     })
   } catch (e) {
     console.error('vaults sorting by status error')
@@ -175,18 +178,44 @@ export const getVaultBorrowCapacity = ({
   interest: number
   collateralBalance: number
 }) => {
-  console.log({
-    interest,
-    pureAmount: Math.min(collateralBalance / 2 - totalOutstandingInVault, Math.max(availableLiquidity, 0)),
-    removedInterestAmount:
-      Math.min(collateralBalance / 2 - totalOutstandingInVault, Math.max(availableLiquidity, 0)) - interest,
-  })
+  // console.log({
+  //   interest,
+  //   pureAmount: Math.min(collateralBalance / 2 - totalOutstandingInVault, Math.max(availableLiquidity, 0)),
+  //   removedInterestAmount:
+  //     Math.min(collateralBalance / 2 - totalOutstandingInVault, Math.max(availableLiquidity, 0)) - interest,
+  // })
   return Math.max(
     0,
     Math.min(collateralBalance / 2 - totalOutstandingInVault, Math.max(availableLiquidity, 0)) -
       totalOutstandingInInput,
     // - interest,
   )
+}
+
+export const getVaultBorrowCapacityBN = ({
+  availableLiquidity,
+  totalOutstandingInVault,
+  collateralBalance,
+  borrowedTokenRate,
+}: {
+  availableLiquidity: number
+  borrowedTokenRate: number
+  totalOutstandingInVault: BigNumber
+  collateralBalance: BigNumber
+}) => {
+  const borrowCapacityByCollaretal = collateralBalance.dividedBy(2.0001).minus(totalOutstandingInVault)
+  const borrowCapacityByMarketLiquidity = new BigNumber(Math.max(availableLiquidity, 0))
+
+  console.log({
+    borrowCapacityByCollaretalUSD: borrowCapacityByCollaretal.toNumber(),
+    borrowCapacityByCollaretal: borrowCapacityByCollaretal.dividedBy(borrowedTokenRate).toNumber(),
+    borrowCapacityByMarketLiquidityUSD: borrowCapacityByMarketLiquidity.toNumber(),
+    borrowCapacityByMarketLiquidity: borrowCapacityByMarketLiquidity.dividedBy(borrowedTokenRate).toNumber(),
+  })
+
+  return borrowCapacityByCollaretal.isLessThan(borrowCapacityByMarketLiquidity)
+    ? borrowCapacityByCollaretal
+    : borrowCapacityByMarketLiquidity
 }
 
 /**
@@ -245,12 +274,12 @@ export const getVaultFutureStatsAfterBorrow = ({
     interest: interest * tokenRate,
   })
 
-  console.log({
-    futureBorrowCapacity,
-    availableLiquidity: availableLiquidity * tokenRate,
-    futureTotalOustanding: (currentTotalOutstanding + inputTotalOustanding) * tokenRate,
-    currentCollateralBalance,
-  })
+  // console.log({
+  //   futureBorrowCapacity,
+  //   availableLiquidity: availableLiquidity * tokenRate,
+  //   futureTotalOustanding: (currentTotalOutstanding + inputTotalOustanding) * tokenRate,
+  //   currentCollateralBalance,
+  // })
   return {
     futureTotalOustanding: currentTotalOutstanding + inputTotalOustanding,
     futureBorrowCapacity,
@@ -325,8 +354,25 @@ export const getVaultCollateralBalance = (
     if (!token || !token.rate) return acc
     const { decimals: collateralDecimals, rate: collateralRate } = token
 
-    return (acc += convertNumberForClient({ number: amount, grade: collateralDecimals }) * collateralRate)
+    return acc //+= convertNumberForClient({ number: amount, grade: collateralDecimals }) * collateralRate)
   }, 0)
+
+export const getVaultCollateralBalanceBN = (
+  collateralData: VaultType['collateralData'],
+  tokensMetadata: TokensContext['tokensMetadata'],
+  tokensPrices: TokensContext['tokensPrices'],
+) =>
+  collateralData.reduce((acc, { amount, tokenAddress }) => {
+    const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+    if (!token || !token.rate) return acc
+    const { decimals: collateralDecimals, rate: collateralRate } = token
+
+    const collateralUSDAmount = convertNumberForClientBN({
+      number: new BigNumber(amount),
+      grade: collateralDecimals,
+    }).multipliedBy(collateralRate)
+    return acc.plus(collateralUSDAmount)
+  }, new BigNumber(0))
 
 // TODO: add descr to liquidation utils while testing liquidation functionality and popup
 /**
@@ -391,43 +437,43 @@ export const reduceVaultsAssets = (
     assets: Record<string, VaultAssetData>
   }>(
     (acc, vaultId) => {
-      const { assets } = acc
-      const { collateralData, borrowedAmount, borrowedTokenAddress } = vaultsMapper[vaultId]
+      // const { assets } = acc
+      // const { collateralData, borrowedAmount, borrowedTokenAddress } = vaultsMapper[vaultId]
 
-      const token = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
-      if (!token || !token.rate) return acc
-      const { decimals: borrowedTokenDecimals, rate: borrowedTokenRate } = token
+      // const token = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
+      // if (!token || !token.rate) return acc
+      // const { decimals: borrowedTokenDecimals, rate: borrowedTokenRate } = token
 
-      const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
+      // const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
 
-      totalBorrowedAmounts +=
-        convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals }) * borrowedTokenRate
-      totalCollateralBalances += collateralBalance
+      // totalBorrowedAmounts +=
+      //   convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals }) * borrowedTokenRate
+      // totalCollateralBalances += collateralBalance
 
-      if (borrowedAmount && collateralBalance) {
-        vaultWithBalances++
-      }
+      // if (borrowedAmount && collateralBalance) {
+      //   vaultWithBalances++
+      // }
 
-      collateralData.forEach(({ amount, tokenAddress }) => {
-        const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
-        if (!token || !token.rate) return
-        const { decimals: collateralDecimals, rate: collateralRate } = token
+      // collateralData.forEach(({ amount, tokenAddress }) => {
+      //   const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+      //   if (!token || !token.rate) return
+      //   const { decimals: collateralDecimals, rate: collateralRate } = token
 
-        const convertedAmount = convertNumberForClient({ number: amount, grade: collateralDecimals })
+      //   const convertedAmount = convertNumberForClient({ number: amount, grade: collateralDecimals })
 
-        acc.globalVaultTVL += convertedAmount * collateralRate
+      //   acc.globalVaultTVL += convertedAmount * collateralRate
 
-        if (assets[tokenAddress]) {
-          assets[tokenAddress].balance += amount
-        } else {
-          assets[tokenAddress] = {
-            balance: amount,
-            chartColor: getAssetColor(colorIdx),
-            tokenAddress,
-          }
-          colorIdx++
-        }
-      })
+      //   if (assets[tokenAddress]) {
+      //     assets[tokenAddress].balance += amount
+      //   } else {
+      //     assets[tokenAddress] = {
+      //       balance: amount,
+      //       chartColor: getAssetColor(colorIdx),
+      //       tokenAddress,
+      //     }
+      //     colorIdx++
+      //   }
+      // })
 
       return acc
     },
@@ -489,6 +535,7 @@ export const getVaultsProviderReturnValue = ({
 
   // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
   const nonNullableProviderValue = replaceNullValuesWithDefault<VaultsCtxState>(vaultsCtxState, EMPTY_VAULTS_CONTEXT)
+  console.log({ vaultsCtxState, nonNullableProviderValue })
   return {
     ...commonToReturn,
     ...nonNullableProviderValue,

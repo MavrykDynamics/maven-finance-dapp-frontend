@@ -289,7 +289,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
                     const { symbol, icon, rate, decimals } = collateralToken
 
-                    const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
+                    const convertedAmount = convertNumberForClient({ number: amount.toNumber(), grade: decimals })
                     const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                     return (

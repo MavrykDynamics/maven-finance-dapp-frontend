@@ -30,10 +30,11 @@ import { getVaultFutureStatsAfterBorrow } from 'providers/VaultsProvider/helpers
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import { useBorrowInputData } from '../Modals/hooks/Market/useBorrowInputData'
+import BigNumber from 'bignumber.js'
 
 type Props = {
   borrowedAssetAddress: TokenAddressType
-  borrowCapacity: number
+  borrowCapacity: BigNumber
   borrowAPR: number
   hasUserBorrowed: boolean
   currentCollateralBalance: number
@@ -67,9 +68,20 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
     borrowCapacity,
     vaultBorrowIndex,
     marketBorrowIndex,
+    interest: fee,
   })
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
+
+  console.log('BorrowingExpandCardBorrowSection component: ', {
+    currentCollateralBalance,
+    currentTotalOutstanding,
+    availableLiquidity,
+    fee,
+    borrowCapacity: borrowCapacity.dividedBy(rate).toNumber(),
+    inputAmount,
+  })
+
   const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
 
   const { futureBorrowCapacity, futureCollateralRatio, futureTotalOustanding } = getVaultFutureStatsAfterBorrow({
@@ -83,7 +95,8 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
     interest: fee,
   })
 
-  const showWarning = (inputAmount > borrowCapacity / rate || futureCollateralRatio < 200) && inputAmount !== 0
+  const showWarning =
+    (inputAmount > borrowCapacity.dividedBy(rate).toNumber() || futureCollateralRatio < 200) && inputAmount !== 0
 
   const newSettings: Settings = useMemo(
     () => ({
