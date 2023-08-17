@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useLocation } from 'react-router'
+import dayjs from 'dayjs'
 
 // helpers
 import { getRequestStatus } from 'providers/FinancialRequestsProvider/helpers/financialRequests.utils'
@@ -51,6 +52,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { FinancialRequestRecord } from 'providers/FinancialRequestsProvider/helpers/financialRequests.types'
 
 export const FinancialRequestsView = ({
   ongoingFinancialRequestsIds: ongoing,
@@ -139,6 +141,27 @@ export const FinancialRequestsView = ({
 
     const { decimals, symbol } = requestedToken
 
+    // -1 in cases there are NOT any votes or it's pasr fin request, so all buttons will be active if user satisfies all conditions for voting
+    let votingAreaVoteBtnValue = -1
+
+    // if there are ongoing requests detect satte for vote btns
+    if (ongoing.includes(String(rightSideContent.id)) && rightSideContent?.votes.length) {
+      const finRequestRecord = rightSideContent.votes
+        .filter(({ voter }) => voter === userAddress)
+        .reduce<FinancialRequestRecord['votes'][0] | null>((prevFinRecord, currentVoteRecord) => {
+          if (!prevFinRecord) {
+            prevFinRecord = { ...currentVoteRecord }
+            return prevFinRecord
+          }
+
+          const prevTimestamp = dayjs(prevFinRecord.timestamp)
+          const currentTimestamp = dayjs(currentVoteRecord.timestamp)
+          return prevTimestamp.isAfter(currentTimestamp) ? prevFinRecord : currentVoteRecord
+        }, null)
+
+      votingAreaVoteBtnValue = finRequestRecord?.vote ? Number(finRequestRecord.vote) : votingAreaVoteBtnValue
+    }
+
     return (
       <FinancialRequestsRightContainer>
         <div className="title-status">
@@ -164,7 +187,7 @@ export const FinancialRequestsView = ({
               : { forBtn: undefined, againsBtn: undefined }
           }
           className={'fr-voting'}
-          disableVotingButtons={Boolean(rightSideContent?.votes?.find(({ voter }) => voter === userAddress))}
+          disableButtonByVote={votingAreaVoteBtnValue}
         />
 
         <hr />
