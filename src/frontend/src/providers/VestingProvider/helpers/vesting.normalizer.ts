@@ -1,15 +1,16 @@
-import { VestingRecord } from 'reducers/vesting'
-import { Vesting_Vestee } from 'utils/__generated__/graphql'
-import { VestingGraphQL } from 'utils/TypesAndInterfaces/Vesting'
+import { VestingRecord } from './vesting.types'
+import { GetVestingStorageQuery, Vesting_Vestee } from 'utils/__generated__/graphql'
 
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
 
 export const MIN_TREASURY_PERSENT_TO_DISPLAY = 0.1
 
-export function normalizeVestingStorage(storage?: VestingGraphQL | null) {
+export function normalizeVestingStorage(storage: GetVestingStorageQuery) {
+  const vesteeRecord = storage?.vesting[0] ?? {}
+
   const { vesteesMapper = {}, vesteeIds = [] } =
-    storage?.vestees.reduce<{
+    vesteeRecord?.vestees.reduce<{
       vesteesMapper: Record<Vesting_Vestee['vestee']['address'], VestingRecord>
       vesteeIds: Array<string>
     }>(
@@ -34,9 +35,9 @@ export function normalizeVestingStorage(storage?: VestingGraphQL | null) {
     ) ?? {}
 
   return {
-    address: storage?.address ?? '',
-    totalVestedAmount: storage?.total_vested_amount ?? 0,
-    totalClaimedAmount: storage?.vestees_aggregate?.aggregate?.sum?.total_claimed ?? 0,
+    address: vesteeRecord?.address ?? '',
+    totalVestedAmount: vesteeRecord?.total_vested_amount ?? 0,
+    totalClaimedAmount: vesteeRecord?.vestees_aggregate?.aggregate?.sum?.total_claimed ?? 0,
     vesteesMapper,
     vesteeIds,
   }

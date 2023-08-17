@@ -1,7 +1,7 @@
-export const TREASURY_STORAGE_QUERY = 'treasuryStorage'
+export const TREASURY_STORAGE_DATA_SUB = 'treasuryStorage'
 
 export const DEFAULT_TREASURY_SUBS = {
-  [TREASURY_STORAGE_QUERY]: false,
+  [TREASURY_STORAGE_DATA_SUB]: false,
 }
 
 export const DEFAULT_TREASURY_CTX = {

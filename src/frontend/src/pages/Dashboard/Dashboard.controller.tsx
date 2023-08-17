@@ -16,7 +16,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 
 // const & types
-import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_QUERY } from 'providers/TreasuryProvider/helpers/treasury.consts'
+import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_DATA_SUB } from 'providers/TreasuryProvider/helpers/treasury.consts'
 import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
 import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 import {
@@ -104,7 +104,7 @@ export const Dashboard = () => {
 
   useEffect(() => {
     changeTreasurySubscriptionsList({
-      [TREASURY_STORAGE_QUERY]: true,
+      [TREASURY_STORAGE_DATA_SUB]: true,
     })
 
     return () => {

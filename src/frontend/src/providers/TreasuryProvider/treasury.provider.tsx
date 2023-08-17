@@ -9,7 +9,7 @@ import { NullableTreasuryContextStateType, TreasuryContext, TreasurySubsRecordTy
 import { GetTreasuryStorageDataQuery, GetTreasuryUserBalancesQuery } from 'utils/__generated__/graphql'
 
 // consts
-import { DEFAULT_TREASURY_CTX, DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_QUERY } from './helpers/treasury.consts'
+import { DEFAULT_TREASURY_CTX, DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_DATA_SUB } from './helpers/treasury.consts'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
@@ -57,7 +57,7 @@ const TreasuryProvider = ({ children }: Props) => {
 
   // subscribes
   useQueryWithRefetch(GET_TREASURY_STORAGE_QUERY, {
-    skip: !activeSubs[TREASURY_STORAGE_QUERY],
+    skip: !activeSubs[TREASURY_STORAGE_DATA_SUB],
     onCompleted: (data) => {
       if (!data) return
       updateTreasuryAddresses(data)
