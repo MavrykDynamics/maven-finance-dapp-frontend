@@ -44,7 +44,9 @@ const FinancialRequestsProvider = ({ children }: Props) => {
   )
 
   useEffect(() => {
-    currentTimeRef.current = dayjs().toISOString()
+    if (activeSubs[FIN_REQUESTS_DATA] !== null) {
+      currentTimeRef.current = dayjs().toISOString()
+    }
   }, [activeSubs])
 
   const handleSubError = (error: ApolloError, subName: string) => {
