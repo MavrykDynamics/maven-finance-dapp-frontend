@@ -37,7 +37,6 @@ import {
   INPUT_STATUS_SUCCESS,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
-  defaultLargeInputMaxLength,
   ERR_MSG_TOAST,
 } from 'app/App.components/Input/Input.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
@@ -66,6 +65,7 @@ import {
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -81,21 +81,14 @@ export const StakeUnstakeView = ({
   setInputData,
 }: StakeUnstakeViewProps) => {
   const history = useHistory()
-  const {
-    userTokensBalances,
-    userAddress,
-    availableDoormanRewards,
-    availableSatellitesRewards,
-    availableFarmRewards,
-    satelliteMvkIsDelegatedTo,
-    isSatellite,
-  } = useUserContext()
+  const { userTokensBalances, userAddress, satelliteMvkIsDelegatedTo, isSatellite } = useUserContext()
+  const { availableDoormanRewards, availableSatellitesRewards, availableFarmRewards } = useUserRewards()
   const {
     contractAddresses: { mvkTokenAddress, doormanAddress },
     preferences: { themeSelected },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
-  const { info, loading, bug } = useToasterContext()
+  const { bug } = useToasterContext()
 
   const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
 

@@ -199,10 +199,7 @@ export const useUserApi = ({
         setUserLoading(true)
         // TODO: test it
         // on user change set his loans data to null to make loader in useUserLoansData hook correct
-        // setUserCtxState((prev) => ({
-        //   ...prev,
-        //   userLoansData: null,
-        // }))
+        setUserCtxState((prev) => ({ ...DEFAULT_USER, userAddress: prev.userAddress }))
 
         loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress, useLoader: false })
 

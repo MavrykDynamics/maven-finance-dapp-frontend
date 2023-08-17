@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { TokenAddressType, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
-import { GetUserDataQuery } from 'utils/__generated__/graphql'
+import { GetUserDataQuery, GetUserRewardsDataQuery } from 'utils/__generated__/graphql'
 
 import {
   CLAIM_ALL_REWARDS_ACTION,
@@ -56,22 +56,33 @@ export type UserContext = UserContextStateType & {
 
   setUserLoansData: (userLoansData: UserLoansData | null) => void
   setUserHistoryData: (page: number, userLoansData: UserHistoryData, itemsAmount: number) => void
+  setUserRewards: (userRewards: UserRewardsType) => void
 }
 
 export type UserContextStateType = UserMetadataType & {
   userAddress: string | null
 
+  rewards: UserRewardsType | null
   availableLoansRewards: number
-  availableFarmRewards: Record<string, number>
   userLoansData: UserLoansData | null
   actionsHistory: { paginatedList: Record<number, UserHistoryData>; itemsAmount: number }
 
-  // user tokens
   userTokensBalances: Record<TokenAddressType, number>
   userMTokens: Record<TokenAddressType, UserMTokenType>
 }
 
-export type UserIndexerFarmRewardsType = GetUserDataQuery['mavryk_user'][number]['farm_accounts']
+export type UserIndexerFarmRewardsType = GetUserRewardsDataQuery['mavryk_user'][number]['farm_accounts']
+
+export type UserRewardsType = {
+  gatheredFarmRewards: number
+  gatheredSatellitesRewards: number
+  gatheredDoormanRewards: number
+  availableDoormanRewards: number
+  availableSatellitesRewards: number
+  availableProposalRewards: Array<number>
+  availableFarmRewards: Record<string, number>
+  farmAccounts: UserIndexerFarmRewardsType
+}
 
 export type UserMetadataType = {
   satelliteMvkIsDelegatedTo: string | null
@@ -85,16 +96,6 @@ export type UserMetadataType = {
     counsilAvatar: string | null
     breakGlassAvatar: string | null
   }
-
-  // user rewards
-  gatheredFarmRewards: number
-  gatheredSatellitesRewards: number
-  gatheredDoormanRewards: number
-  availableDoormanRewards: number
-  availableSatellitesRewards: number
-  availableProposalRewards: Array<number>
-
-  farmAccounts: UserIndexerFarmRewardsType
 }
 
 export type UserHistoryData = ReturnType<typeof normalizeUserHistoryData>

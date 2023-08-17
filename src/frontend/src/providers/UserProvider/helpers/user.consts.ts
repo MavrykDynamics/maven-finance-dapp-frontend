@@ -1,4 +1,4 @@
-import { UserContextStateType, UserLoansData, UserTzKtTokenBalances } from '../user.provider.types'
+import { UserContextStateType, UserLoansData, UserRewardsType, UserTzKtTokenBalances } from '../user.provider.types'
 
 export const DEFAULT_USER_AVATAR = '/images/default-avatar.png'
 
@@ -27,25 +27,29 @@ export const DEFAULT_USER: UserContextStateType = {
   actionsHistory: {
     paginatedList: {},
     itemsAmount: 0,
-  }, // user only on dashboard personal
+  },
   govActionsCount: 0,
-  gatheredDoormanRewards: 0, // user only on  dashboard personal
-  gatheredFarmRewards: 0, // user only on  dashboard personal
-  gatheredSatellitesRewards: 0, // user only on  dashboard personal
   availableLoansRewards: 0,
-  availableSatellitesRewards: 0,
-  availableDoormanRewards: 0,
-  availableFarmRewards: {},
   userTokensBalances: {},
   userMTokens: {},
-  farmAccounts: [], // user only on farms & dashboard personal
-  availableProposalRewards: [],
   userLoansData: null,
+  rewards: null,
 }
 
 export const DEFAULT_USER_TZKT_TOKENS: UserTzKtTokenBalances = {
   userAddress: null,
   tokens: {},
+}
+
+export const DEFAULT_USER_REWARDS: UserRewardsType = {
+  gatheredDoormanRewards: 0,
+  gatheredFarmRewards: 0,
+  gatheredSatellitesRewards: 0,
+  availableSatellitesRewards: 0,
+  availableDoormanRewards: 0,
+  farmAccounts: [],
+  availableProposalRewards: [],
+  availableFarmRewards: {},
 }
 
 // CONSTS FOR USER ACTIONS

@@ -26,7 +26,9 @@ import {
   UserContext,
   UserContextStateType,
   UserHistoryData,
+  UserIndexerFarmRewardsType,
   UserLoansData,
+  UserRewardsType,
   UserTzKtTokenBalances,
 } from './user.provider.types'
 
@@ -140,12 +142,13 @@ export const UserProvider = ({ children }: Props) => {
    * skip when user don't participated any farms
    */
   useEffect(() => {
-    if (Object.keys(userCtxState.farmAccounts).length !== 0) {
+    const userFarms = userCtxState.rewards?.farmAccounts ?? []
+    if (Object.keys(userFarms).length !== 0) {
       currentIndexedLvlListenerId.current = currentIndexerLevelProxy.registerListener((newIndexerLvl: number) => {
         setUserCtxState((prev) => ({
           ...prev,
           availableFarmRewards: getUsersFarmRewards({
-            userFarmsRewardsDataFromIndexer: userCtxState.farmAccounts,
+            userFarmsRewardsDataFromIndexer: userFarms,
             currentLvl: newIndexerLvl,
           }),
         }))
@@ -156,7 +159,7 @@ export const UserProvider = ({ children }: Props) => {
       if (currentIndexedLvlListenerId.current)
         currentIndexerLevelProxy.removeListener(currentIndexedLvlListenerId.current)
     }
-  }, [userCtxState.farmAccounts])
+  }, [userCtxState.rewards?.farmAccounts])
 
   const setUserLoansData = useCallback((userLoansData: UserLoansData | null) => {
     setUserCtxState((prev) => ({
@@ -169,6 +172,13 @@ export const UserProvider = ({ children }: Props) => {
     setUserCtxState((prev) => ({
       ...prev,
       actionsHistory: { paginatedList: { ...prev.actionsHistory.paginatedList, [page]: userHistoryData }, itemsAmount },
+    }))
+  }, [])
+
+  const setUserRewards = useCallback((userRewards: UserRewardsType | null) => {
+    setUserCtxState((prev) => ({
+      ...prev,
+      rewards: userRewards,
     }))
   }, [])
 
@@ -226,6 +236,7 @@ export const UserProvider = ({ children }: Props) => {
       changeUser,
       setUserLoansData,
       setUserHistoryData,
+      setUserRewards,
     }
   }, [
     userCtxState,
@@ -237,6 +248,7 @@ export const UserProvider = ({ children }: Props) => {
     changeUser,
     setUserLoansData,
     setUserHistoryData,
+    setUserRewards,
   ])
 
   return <userContext.Provider value={providerValue}>{children}</userContext.Provider>

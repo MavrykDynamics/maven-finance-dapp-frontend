@@ -2,10 +2,6 @@ import { gql } from 'utils/__generated__/gql'
 
 export const USER_DATA_QUERY = gql(`
   query getUserData($userAddress: String = "") {
-    governance_proposal(where: {reward_claim_ready: {_eq: true}, votes: {voter: {address: {_eq: $userAddress}}, _and: {voting_reward_claimed: {_eq: false}}}}) {
-      id
-    }
-
     mavryk_user(where: {address: {_eq: $userAddress}}) {
       address
       smvk_balance
@@ -72,43 +68,6 @@ export const USER_DATA_QUERY = gql(`
           count
         }
       }
-  
-      # user doorman rewards
-      doorman_stake_accounts {
-        participation_fees_per_share
-        smvk_balance
-        doorman {
-          unclaimed_rewards
-          accumulated_fees_per_share
-        }
-      }
-  
-      # user satellite rewards
-      satellite_rewardss {
-        unpaid
-        paid
-        participation_rewards_per_share
-        reference {
-          satellite_accumulated_reward_per_share
-        }
-      }
-  
-      # user farms rewards
-      farm_accounts {
-        deposited_amount
-        participation_rewards_per_share
-        farm {
-          address
-          accumulated_rewards_per_share
-          current_reward_per_block
-          last_block_update
-          total_rewards
-          paid_rewards
-          unpaid_rewards
-          infinite
-          lp_token_balance
-        }
-      }
     }
   }
 `)
@@ -141,13 +100,19 @@ export const USER_ACTIONS_HISTORY_DATA_QUERY = gql(`
 `)
 
 // TODO: use this query on certain pages to reduce size of the USER_DATA_QUERY query
-export const USER_AVAILABLE_REWARDS_DATA_QUERY = gql(`
-  query getUserAvailableRewardsData($userAddress: String = "") {
-    mavryk_user(where: {address: {_eq: $userAddress}}) {
-      address
+export const USER_REWARDS_DATA_QUERY = gql(`
+  query getUserRewardsData($userAddress: String = "") {
+    governance_proposal(where: {reward_claim_ready: {_eq: true}, votes: {voter: {address: {_eq: $userAddress}}, _and: {voting_reward_claimed: {_eq: false}}}}) {
+      id
+    }
 
-      # user doorman rewards
+    mavryk_user(where: {address: {_eq: $userAddress}}) {
+      smvk_balance
+
+      # user doorman rewards, satellite claimed rewards, doorman claimed rewards
       doorman_stake_accounts {
+        total_satellite_rewards_claimed
+        total_exit_fee_rewards_claimed
         participation_fees_per_share
         smvk_balance
         doorman {
@@ -155,17 +120,16 @@ export const USER_AVAILABLE_REWARDS_DATA_QUERY = gql(`
           accumulated_fees_per_share
         }
       }
-
+  
       # user satellite rewards
       satellite_rewardss {
         unpaid
-        paid
         participation_rewards_per_share
         reference {
           satellite_accumulated_reward_per_share
         }
       }
-
+  
       # user farms rewards
       farm_accounts {
         deposited_amount

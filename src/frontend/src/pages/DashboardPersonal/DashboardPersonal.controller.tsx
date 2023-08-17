@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react'
-import { useParams } from 'react-router'
+import { useHistory, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
 
@@ -65,10 +65,12 @@ import {
 // hooks
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
+  const history = useHistory()
 
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
   const {
@@ -78,15 +80,8 @@ const DashboardPersonal = () => {
     userTokensBalances,
     userAddress,
     userAvatars: { mainAvatar },
-    availableDoormanRewards,
-    availableSatellitesRewards,
-    availableFarmRewards,
-    availableLoansRewards,
-    gatheredDoormanRewards,
-    gatheredFarmRewards,
-    gatheredSatellitesRewards,
     satelliteMvkIsDelegatedTo,
-    availableProposalRewards,
+    availableLoansRewards,
     isSatellite,
     isVestee,
   } = useUserContext()
@@ -112,6 +107,21 @@ const DashboardPersonal = () => {
       changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
     }
   }, [])
+
+  useEffect(() => {
+    history.replace(`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`)
+  }, [userAddress])
+
+  const {
+    isLoading: isRewardsLoading,
+    availableDoormanRewards,
+    availableSatellitesRewards,
+    availableFarmRewards,
+    availableProposalRewards,
+    gatheredDoormanRewards,
+    gatheredFarmRewards,
+    gatheredSatellitesRewards,
+  } = useUserRewards()
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -290,10 +300,13 @@ const DashboardPersonal = () => {
                   Portfolio
                 </Button>
               </Link>
-              <Link to={`/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}`}>
+              <Link
+                to={userAddress ? `/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}` : '#'}
+              >
                 <Button
                   selected={activeTab === (isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID)}
                   kind={BUTTON_NAVIGATION}
+                  disabled={!userAddress}
                 >
                   {isSatellite ? 'Satellite' : 'Delegation'}
                 </Button>
