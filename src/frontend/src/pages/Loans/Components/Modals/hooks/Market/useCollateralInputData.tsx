@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 
 // utils
-import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { geTokenMinAmountForDeposit, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // providers
@@ -76,6 +76,7 @@ export const useCollateralInputData = (ignoreXTZMax = false) => {
       const validationStatus = loansInputValidation({
         inputAmount: newInputAmount,
         maxAmount: isTezosToken && !ignoreXTZMax ? userAssetBalance - 1 : userAssetBalance,
+        minAmount: geTokenMinAmountForDeposit(collateralToken),
         options: {
           byDecimalPlaces: decimals ?? assetDecimalsToShow,
         },
