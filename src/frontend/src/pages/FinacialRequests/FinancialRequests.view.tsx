@@ -87,7 +87,7 @@ export const FinancialRequestsView = ({
 
   const [rightSideContentId, setRightSideContentId] = useState<
     keyof FinancialRequestsContext['financialRequestsMapper']
-  >(ongoing[0] ?? past[0] ?? '0')
+  >(ongoing[0] ?? past[0] ?? '-1')
   const rightSideContent = financialRequestsMapper[rightSideContentId] ?? null
 
   // Full view item data handling
@@ -141,23 +141,12 @@ export const FinancialRequestsView = ({
 
     const { decimals, symbol } = requestedToken
 
-    // -1 in cases there are NOT any votes or it's pasr fin request, so all buttons will be active if user satisfies all conditions for voting
+    // -1 in cases there are NOT any votes or it's past fin request, so all buttons will be active if user satisfies all conditions for voting
     let votingAreaVoteBtnValue = -1
 
-    // if there are ongoing requests detect satte for vote btns
+    // if there are ongoing requests detect state for vote btns
     if (ongoing.includes(String(rightSideContent.id)) && rightSideContent?.votes.length) {
-      const finRequestRecord = rightSideContent.votes
-        .filter(({ voter }) => voter === userAddress)
-        .reduce<FinancialRequestRecord['votes'][0] | null>((prevFinRecord, currentVoteRecord) => {
-          if (!prevFinRecord) {
-            prevFinRecord = { ...currentVoteRecord }
-            return prevFinRecord
-          }
-
-          const prevTimestamp = dayjs(prevFinRecord.timestamp)
-          const currentTimestamp = dayjs(currentVoteRecord.timestamp)
-          return prevTimestamp.isAfter(currentTimestamp) ? prevFinRecord : currentVoteRecord
-        }, null)
+      const finRequestRecord = rightSideContent.votes.find(({ voter }) => voter === userAddress)
 
       votingAreaVoteBtnValue = finRequestRecord?.vote ? Number(finRequestRecord.vote) : votingAreaVoteBtnValue
     }
@@ -277,7 +266,7 @@ export const FinancialRequestsView = ({
           <>
             <H2Title>Ongoing Requests</H2Title>
             <div className="list">
-              {paginatedOngoingItemsList.map((frId: keyof FinancialRequestsContext['financialRequestsMapper'], idx) => (
+              {paginatedOngoingItemsList.map((frId, idx) => (
                 <FRSListItem
                   key={frId}
                   id={idx + 1}

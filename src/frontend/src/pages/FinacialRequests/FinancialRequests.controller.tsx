@@ -24,6 +24,7 @@ export const FinancialRequests = () => {
     pastFinRequestsIds,
     ongoingFinRequestsIds,
     financialRequestsMapper,
+    allFinRequestsIds,
     isLoading,
     changeFinancialRequestsSubscriptionList,
   } = useFinancialRequestsContext()
@@ -46,7 +47,7 @@ export const FinancialRequests = () => {
           <ClockLoader width={150} height={150} />
           <div className="text">Loading financial requests</div>
         </DataLoaderWrapper>
-      ) : Object.keys(financialRequestsMapper)?.length ? (
+      ) : allFinRequestsIds.length ? (
         <FinancialRequestsView
           ongoingFinancialRequestsIds={ongoingFinRequestsIds}
           pastFinancialRequestsIds={pastFinRequestsIds}

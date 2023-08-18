@@ -1,4 +1,3 @@
-import { calcWithoutPrecision } from 'utils/calcFunctions'
 import { FinRequestVoteType, FinancialRequestRecord } from './financialRequests.types'
 import { GetFinRequestsStorageQuery } from 'utils/__generated__/graphql'
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
@@ -17,6 +16,7 @@ import {
 } from './financialRequests.consts'
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 import { finRequestVote } from './financialRequests.schema'
+import { calcWithoutPrecision } from 'utils/calcFunctions'
 
 /**
  *
@@ -49,6 +49,15 @@ export const distinctRequestsByExecuting = (
   )
 }
 
+/**
+ *
+ * @param storage GQL response which contains fin requests data
+ * NOTE: If you subscribed to ongoing fin requests, you will get only ongoing fin requsts
+ * cuz query gas filter for it, so normalizer will return ongpoing: [ids], allIds[fromOngoingIds], past[empty], mapper[ongoing]
+ * this works in the same way for past fin requests
+ * for all fin requests it will return both: past and ongoing
+ * @returns normalized data for finrequsts provider {past, ongoing, all, mapper}
+ */
 export const normalizeFinancialRequests = (storage: {
   governance_financial_request: GetFinRequestsStorageQuery['governance_financial_request']
 }) => {
@@ -88,7 +97,7 @@ export const normalizeFinancialRequests = (storage: {
 
             acc.push(_vote)
           } catch (e) {
-            console.error('governance_votes vote parse error: ', { e })
+            console.error('financial request votes parse error: ', { e })
           } finally {
             return acc
           }
@@ -159,12 +168,11 @@ export const getFinRequestsProviderReturnValue = ({
     }
   }
 
-  const { closestOngoingFinRequestToBeExpired, ...rest } = finRequestsCtxState
-
   // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<
-    Omit<FinancialRequestsStateType, 'closestOngoingFinRequestToBeExpired'>
-  >(rest, EMPTY_FINANCIAL_REQUESTS_CTX)
+  const nonNullableProviderValue = replaceNullValuesWithDefault<FinancialRequestsStateType>(
+    finRequestsCtxState,
+    EMPTY_FINANCIAL_REQUESTS_CTX,
+  )
   return {
     ...commonToReturn,
     ...nonNullableProviderValue,

@@ -26,12 +26,11 @@ export type FinancialRequestsStateType = {
   pastFinRequestsIds: string[]
   ongoingFinRequestsIds: string[]
   financialRequestsMapper: Record<string, FinancialRequestRecord>
-  closestOngoingFinRequestToBeExpired: FinancialRequestRecord
 }
 
 export type NullableFinancialRequestsContextStateType = DeepNullable<FinancialRequestsStateType>
 
-export type FinancialRequestsContext = Omit<FinancialRequestsStateType, 'closestOngoingFinRequestToBeExpired'> & {
+export type FinancialRequestsContext = FinancialRequestsStateType & {
   isLoading: boolean
 
   changeFinancialRequestsSubscriptionList: (skips: Partial<FinRequestsSubsRecordType>) => void

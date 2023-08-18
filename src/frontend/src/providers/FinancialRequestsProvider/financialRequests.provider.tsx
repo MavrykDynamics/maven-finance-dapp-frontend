@@ -1,10 +1,16 @@
-import { ApolloError } from '@apollo/client'
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { ApolloError } from '@apollo/client'
+import dayjs from 'dayjs'
+
+// types
+import { GetFinRequestsStorageQuery } from 'utils/__generated__/graphql'
 import {
   FinRequestsSubsRecordType,
   FinancialRequestsContext,
   NullableFinancialRequestsContextStateType,
 } from './financialRequests.types'
+
+// consts
 import {
   ALL_FIN_REQUESTS_SUB,
   DEFAULT_FINANCIAL_REQUESTS_CTX,
@@ -15,12 +21,16 @@ import {
 } from './helpers/financialRequests.consts'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+
+// providers
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { getFinancialRequestsStorageSubscription } from './queries/financialRequests.queries'
-import { getFinRequestsProviderReturnValue, normalizeFinancialRequests } from './helpers/financialRequests.utils'
-import { GetFinRequestsStorageQuery } from 'utils/__generated__/graphql'
-import dayjs from 'dayjs'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+
+// queries
+import { getFinancialRequestsStorageSubscription } from './queries/financialRequests.queries'
+
+// utils
+import { getFinRequestsProviderReturnValue, normalizeFinancialRequests } from './helpers/financialRequests.utils'
 
 export const financialRequestsContext = React.createContext<FinancialRequestsContext>(undefined!)
 
@@ -76,7 +86,7 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     data: GetFinRequestsStorageQuery,
     type: FinRequestsSubsRecordType[typeof FIN_REQUESTS_DATA],
   ) => {
-    const isAllFinReuests = type === ALL_FIN_REQUESTS_SUB
+    const isAllFinRequests = type === ALL_FIN_REQUESTS_SUB
     const isOngoingFinRequests = type === ONGOING_FIN_REQUESTS_SUB
     const isPastFinRequests = type === PAST_FIN_REQUESTS_SUB
 
@@ -87,22 +97,13 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     const { financialRequestsIds, financialRequestMapper, ongoingFrIds, pastFrIds } = normalizeFinancialRequests(data)
     setFinRequestsCtxState((prev) => ({
       ...prev,
-      allFinRequestsIds: isAllFinReuests ? financialRequestsIds : prev.allFinRequestsIds,
+      allFinRequestsIds: isAllFinRequests ? financialRequestsIds : prev.allFinRequestsIds,
       // if query type is "past" set financialRequestsIds(includes only past) - same for "ongoing"
       // if its all(past & ongoing) set past and ongoing from mapper
       // else set default ids
-      pastFinRequestsIds: isPastFinRequests
-        ? financialRequestsIds
-        : isAllFinReuests
-        ? pastFrIds
-        : prev.pastFinRequestsIds,
-      ongoingFinRequestsIds: isOngoingFinRequests
-        ? financialRequestsIds
-        : isAllFinReuests
-        ? ongoingFrIds
-        : prev.ongoingFinRequestsIds,
+      pastFinRequestsIds: isPastFinRequests || isAllFinRequests ? pastFrIds : prev.pastFinRequestsIds,
+      ongoingFinRequestsIds: isOngoingFinRequests || isAllFinRequests ? ongoingFrIds : prev.ongoingFinRequestsIds,
       financialRequestsMapper: { ...prev.financialRequestsMapper, ...financialRequestMapper },
-      closestOngoingFinRequestToBeExpired: financialRequestMapper[ongoingFrIds[ongoingFrIds.length - 1] as any],
     }))
   }
 
