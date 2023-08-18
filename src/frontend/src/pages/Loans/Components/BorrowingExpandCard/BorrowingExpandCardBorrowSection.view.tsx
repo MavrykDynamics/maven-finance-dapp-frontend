@@ -1,44 +1,55 @@
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import classNames from 'classnames'
-import { VaultOverview, StatusMessageStyled, CardSectionWrapper } from '../LoansComponents.style'
+
+// consts
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
-import { State } from 'reducers'
-import { ERR_MSG_INPUT, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { Input } from 'app/App.components/Input/NewInput'
-import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { silverColor } from 'styles'
 import { BUTTON_PRIMARY, BUTTON_PULSE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import NewButton from 'app/App.components/Button/NewButton'
-import Icon from 'app/App.components/Icon/Icon.view'
+import { silverColor } from 'styles'
+import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault.text'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
-import { Settings } from 'app/App.components/Input/newInput.type'
+import { ERR_MSG_INPUT, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import {
   COLLATERAL_AWARE_BORROWING_ADJUST_YOUR_AMOUNT,
   SELECT_THE_AMOUNT_YOU_WOULD_LIKE_TO_BORROW,
 } from 'texts/banners/vault.text'
-import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault.text'
+
+// hooks
+import { operationBorrow, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
+import { useBorrowInputData } from '../Modals/hooks/Market/useBorrowInputData'
+
+// utils
 import { checkNan } from 'utils/checkNan'
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
-import { useBorrowInputData } from '../Modals/hooks/Market/useBorrowInputData'
+
+// types
+import { State } from 'reducers'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { Settings } from 'app/App.components/Input/newInput.type'
+
+// styles & components
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { Input } from 'app/App.components/Input/NewInput'
+import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import NewButton from 'app/App.components/Button/NewButton'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { VaultOverview, StatusMessageStyled, CardSectionWrapper } from '../LoansComponents.style'
 
 type Props = {
   borrowedAssetAddress: TokenAddressType
   borrowCapacity: number
   borrowAPR: number
+  availableLiquidity: number
+  totalOutstanding: number
   hasUserBorrowed: boolean
   currentCollateralBalance: number
   DAOFee: number
-  currentBorrowedAmount: number
   openConfirmBorrowPopup: (inputAmount: number, callback: () => void) => void
 }
 
@@ -46,11 +57,12 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const {
-    borrowedAssetAddress = '',
-    borrowCapacity = 0,
-    currentBorrowedAmount = 0,
-    currentCollateralBalance = 0,
-    DAOFee = 0,
+    borrowedAssetAddress,
+    borrowCapacity,
+    availableLiquidity,
+    totalOutstanding,
+    currentCollateralBalance,
+    DAOFee,
     openConfirmBorrowPopup,
   } = props
 
@@ -60,18 +72,17 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
   )
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
+
+  const { futureBorrowCapacity, futureCollateralRatio } = useVaultFutureStats({
+    operationType: operationBorrow,
+    inputValue: inputAmount,
+    marketAvailableLiquidity: availableLiquidity,
+    vaultCurrentTotalOutstanding: totalOutstanding,
+    vaultCurrentCollateralBalance: currentCollateralBalance,
+    vaultTokenAddress: borrowedAssetAddress,
+  })
+
   const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
-
-  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = getVaultCollateralRatio(
-      currentCollateralBalance,
-      (currentBorrowedAmount + inputAmount) * rate,
-    )
-
-    const futureBorrowCapacity = borrowCapacity - inputAmount * rate
-
-    return { futureCollateralRatio, futureBorrowCapacity }
-  }, [currentCollateralBalance, currentBorrowedAmount, inputAmount, rate, borrowCapacity])
 
   const showWarning = (inputAmount > borrowCapacity / rate || futureCollateralRatio < 200) && inputAmount !== 0
 

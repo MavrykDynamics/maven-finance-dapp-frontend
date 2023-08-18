@@ -421,7 +421,8 @@ export const BorrowingExpandCard = ({
                     currentCollateralBalance={collateralBalance}
                     hasUserBorrowed={Boolean(borrowedAmount)}
                     borrowCapacity={borrowCapacity}
-                    currentBorrowedAmount={borrowedAmount}
+                    availableLiquidity={availableLiquidity}
+                    totalOutstanding={totalOutstanding}
                     DAOFee={DAOFee}
                     openConfirmBorrowPopup={handleClickOpenConfirmBorrowPopup}
                   />

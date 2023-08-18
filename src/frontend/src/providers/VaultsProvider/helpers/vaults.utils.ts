@@ -156,13 +156,16 @@ export const getVaultStatus = ({
 
 /**
  *
- * @param availableLiquidity – pool tokens amount in USD
- * @param borrowedAmount – how much borrowed in the vault in USD
- * @param collateralBalance – collateral amount of the vault in USD
- * @returns how much user can borrow in USD in that vault
+ * @param availableLiquidity – USD amount of market pool tokens
+ * @param totalOustanding – USD amount of principal + interest in the vault
+ * @param collateralBalance – USD amount of collaterals in the vault
+ * @returns how much user can borrow in USD for that vault
  */
-export const getVaultBorrowCapacity = (availableLiquidity: number, borrowedAmount: number, collateralBalance: number) =>
-  Math.max(0, Math.min(collateralBalance / 2 - borrowedAmount, Math.max(availableLiquidity, 0)))
+export const getVaultBorrowCapacity = (
+  availableLiquidity: number,
+  totalOustanding: number,
+  collateralBalance: number,
+) => Math.max(0, Math.min(collateralBalance / 2 - totalOustanding, Math.max(availableLiquidity, 0)))
 
 /**
  *
@@ -187,20 +190,20 @@ export const getVaultCollateralBalance = (
 /**
  *
  * @param collateralAmount – USD amount of collaterals in the vault
- * @param borrowedAmount – USD amount of borrowed number for the vault
+ * @param totalOustanding – USD amount of principal + interest in the vault
  * @returns collateral ratio for the vault
  *
  * collateral ratio – is the relation of the borrowed amount to collaterals amount:
  * if vault has borrowAmount 0, collateral ratio 0 if we don't have collaterals, or 250, if we have some
  */
-export const getVaultCollateralRatio = (collateralAmount: number, borrowedAmount: number) => {
+export const getVaultCollateralRatio = (collateralAmount: number, totalOutstanding: number) => {
   // means we haven't borrowed anything
   if (collateralAmount === 0) return 0
 
   // means we haven't borrowed, but we have deposited
-  if (borrowedAmount === 0) return 250
+  if (totalOutstanding === 0) return 250
 
-  const collateralRatio = (collateralAmount / borrowedAmount) * 100
+  const collateralRatio = (collateralAmount / totalOutstanding) * 100
   return getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1)))
 }
 
