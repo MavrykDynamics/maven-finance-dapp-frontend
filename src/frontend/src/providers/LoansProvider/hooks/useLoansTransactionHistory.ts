@@ -60,7 +60,7 @@ export const useLoansTransactionHistory = ({
   const history = useHistory()
   const { search, pathname } = useLocation()
   const { page = '', ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
-  const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
+  const currentPage = useMemo(() => getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME), [search])
 
   const [transactionHistoryIndexer, setTransactionHistoryIndexer] = useState<TransactionHistoryStateType>({
     list: {},
@@ -110,6 +110,7 @@ export const useLoansTransactionHistory = ({
     },
     onError: (error) => {
       console.error('GET_LOANS_HISTORY_DATA error: ', { error })
+      bug('Loading transactions history error, please reload the page')
     },
   })
 
