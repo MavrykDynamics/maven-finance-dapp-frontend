@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react'
-import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import dayjs from 'dayjs'
 
@@ -10,9 +9,6 @@ import Button from 'app/App.components/Button/NewButton'
 // styles
 import { VestingTabStyled } from './DashboardPersonalComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-
-// types
-import { State } from 'reducers'
 
 // consts
 import { CLAIM_VESTING_REWARD_ACTION } from 'providers/UserProvider/helpers/user.consts'

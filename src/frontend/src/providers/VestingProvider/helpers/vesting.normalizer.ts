@@ -4,10 +4,8 @@ import { GetVestingStorageQuery, Vesting_Vestee } from 'utils/__generated__/grap
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
 
-export const MIN_TREASURY_PERSENT_TO_DISPLAY = 0.1
-
 export function normalizeVestingStorage(storage: GetVestingStorageQuery) {
-  const vesteeRecord = storage?.vesting[0] ?? {}
+  const vesteeRecord = storage.vesting[0]
 
   const { vesteesMapper = {}, vesteeIds = [] } =
     vesteeRecord?.vestees.reduce<{

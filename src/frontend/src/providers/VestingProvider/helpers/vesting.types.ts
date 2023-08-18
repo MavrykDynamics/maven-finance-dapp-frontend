@@ -1,7 +1,3 @@
-// type
-
-// helpers
-import { Vesting } from 'utils/__generated__/graphql'
 import { normalizeVestingStorage } from './vesting.normalizer'
 
 export type VestingRecord = {
@@ -16,5 +12,3 @@ export type VestingRecord = {
 }
 
 export type VestingStorage = ReturnType<typeof normalizeVestingStorage>
-
-export type VestingGraphQL = Omit<Vesting, '__typename'>

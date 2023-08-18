@@ -20,7 +20,7 @@ export type NullableVestingContextStateType = DeepNullable<VestingContextStateTy
 export type VestingContext = VestingContextStateType & {
   isLoading: boolean
 
-  changeVestingSubscriptionsList: (skips: Partial<VestingSubsRecordType>) => void
+  changeVestingSubscriptionsList: (subs: Partial<VestingSubsRecordType>) => void
 }
 
 export type VestingSubsRecordType = Record<VestingSubsType, boolean>

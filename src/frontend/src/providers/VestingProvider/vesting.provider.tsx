@@ -45,7 +45,7 @@ const VestingProvider = ({ children }: Props) => {
   useQueryWithRefetch(GET_VESTING_STORAGE_QUERY, {
     skip: !activeSubs[VESTING_STORAGE_DATA_SUB],
     onCompleted: (data) => {
-      if (!data) return
+      if (!data || !data?.vesting[0]) return
       updateVestingStorage(data)
     },
     onError: (error) => handleSubError(error, 'GET_VESTING_STORAGE_QUERY'),
