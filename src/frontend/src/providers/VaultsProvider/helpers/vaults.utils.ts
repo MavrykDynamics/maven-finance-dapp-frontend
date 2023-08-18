@@ -165,7 +165,8 @@ export const getVaultBorrowCapacity = (
   availableLiquidity: number,
   totalOustanding: number,
   collateralBalance: number,
-) => Math.max(0, Math.min(collateralBalance / 2 - totalOustanding, Math.max(availableLiquidity, 0)))
+  // TODO: pay attention to this 2.0001, and discuss it with Sam
+) => Math.max(0, Math.min(collateralBalance / 2.0001 - totalOustanding, Math.max(availableLiquidity, 0)))
 
 /**
  *
