@@ -59,7 +59,7 @@ export const useLoansTransactionHistory = ({
   // stuff for handling page out of limims
   const history = useHistory()
   const { search, pathname } = useLocation()
-  const { page, ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
+  const { page = '', ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
 
   const [transactionHistoryIndexer, setTransactionHistoryIndexer] = useState<TransactionHistoryStateType>({
@@ -91,7 +91,7 @@ export const useLoansTransactionHistory = ({
       if (maxPage < currentPage || currentPage < 1) {
         bug(`Page is out of limits, your page: ${currentPage}, max page: ${maxPage}, min page: 1`)
         const redirectToFirstPageOfTheList = updatePageInUrl({
-          page: currentPage.toString(),
+          page,
           newPage: 1,
           listName: TRANSACTION_HISTORY_TABLE_NAME,
           pathname,
