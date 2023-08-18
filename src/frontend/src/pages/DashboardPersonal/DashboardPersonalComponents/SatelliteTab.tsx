@@ -29,9 +29,11 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards: () => void }) => {
-  const { userAddress, availableProposalRewards } = useUserContext()
+  const { userAddress } = useUserContext()
+  const { availableProposalRewards } = useUserRewards()
   const {
     satelliteMapper,
     proposalsAmount,

@@ -1,37 +1,29 @@
-import { useLocation } from 'react-router'
-import { useMemo } from 'react'
-
-import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useUserHistoryData } from 'providers/UserProvider/hooks/useUserHistoryData'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 
-import {
-  getPageNumber,
-  USER_ACTIONS_HISTORY,
-  calculateSlicePositions,
-  PAGINATION_SIDE_CENTER,
-} from 'app/App.components/Pagination/pagination.consts'
+import { USER_ACTIONS_HISTORY, PAGINATION_SIDE_CENTER } from 'app/App.components/Pagination/pagination.consts'
 
 import { HistoryBlock } from './DashboardPersonalComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
+import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
 
 export const UserActionHistory = () => {
-  const { actionsHistory } = useUserContext()
-
-  const { search, pathname } = useLocation()
-  const currentPage = getPageNumber(search, USER_ACTIONS_HISTORY)
-  const paginatedTableRows = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, USER_ACTIONS_HISTORY)
-    return actionsHistory?.slice(from, to)
-  }, [currentPage, actionsHistory])
+  const { isLoading, totalItemsAmount, userActionsHistory } = useUserHistoryData()
 
   return (
     <HistoryBlock>
       <H2Title>History</H2Title>
-      {actionsHistory.length ? (
+      {isLoading ? (
+        <DataLoaderWrapper className="mt-30 mb-30">
+          <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
+          <div className="text">Loading your history data</div>
+        </DataLoaderWrapper>
+      ) : totalItemsAmount ? (
         <Table className="treasury-table">
           <TableHeader className="treasury">
             <TableRow>
@@ -50,7 +42,7 @@ export const UserActionHistory = () => {
           </TableHeader>
 
           <TableBody className="treasury">
-            {paginatedTableRows.map(({ action, amount, fee, totalAmount, id }) => {
+            {userActionsHistory.map(({ action, amount, fee, totalAmount, id }) => {
               return (
                 <TableRow rowHeight={40} borderColor="dataColor" className="add-hover" key={id}>
                   <TableCell width="25%">{action}</TableCell>
@@ -74,11 +66,7 @@ export const UserActionHistory = () => {
         </div>
       )}
 
-      <Pagination
-        itemsCount={actionsHistory?.length ?? 0}
-        listName={USER_ACTIONS_HISTORY}
-        side={PAGINATION_SIDE_CENTER}
-      />
+      <Pagination itemsCount={totalItemsAmount} listName={USER_ACTIONS_HISTORY} side={PAGINATION_SIDE_CENTER} />
     </HistoryBlock>
   )
 }
