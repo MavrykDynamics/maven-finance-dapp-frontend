@@ -76,9 +76,9 @@ export function getLoansTransactionsHistory({
     : `type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}`
 
   return apolloGql(`
-    query getLoansTransactionsHistory($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = []) {
+    query getLoansTransactionsHistory($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = [], $offset: Int = 0, $limit: Int = 8) {
       lending_controller(where: {mock_time: {_eq: false}}) {
-        history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, distinct_on: timestamp, order_by: {timestamp: desc}) {
+        history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, distinct_on: timestamp, order_by: {timestamp: desc}, offset: $offset, limit: $limit) {
           type
           amount
           timestamp
@@ -104,6 +104,12 @@ export function getLoansTransactionsHistory({
             vault {
               address
             }
+          }
+        }
+
+        historyItemsAmount: history_data_aggregate(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}) {
+          aggregate {
+            count
           }
         }
       }

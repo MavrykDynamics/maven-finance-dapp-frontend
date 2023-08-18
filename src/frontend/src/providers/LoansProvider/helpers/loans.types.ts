@@ -15,10 +15,3 @@ export type LoansMarketTransactionHistoryType = {
   operationHash: string
   tokenAddress: TokenAddressType
 }
-
-export type LoansMarketTransactionHistoryArgs = {
-  marketTokenAddress: TokenAddressType
-  userAddress?: string
-  vaultAddress?: string
-  typeFilter?: Array<number>
-}

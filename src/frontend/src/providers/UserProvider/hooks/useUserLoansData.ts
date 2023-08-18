@@ -46,7 +46,10 @@ const useUserLoansData = () => {
     },
   })
 
-  return { isLoading: userLoansData === null, ...(userLoansData ? userLoansData : DEFAULT_USER_LOANS_DATA) }
+  return {
+    isLoading: userAddress ? userLoansData === null : false,
+    ...(userLoansData ? userLoansData : DEFAULT_USER_LOANS_DATA),
+  }
 }
 
 export default useUserLoansData

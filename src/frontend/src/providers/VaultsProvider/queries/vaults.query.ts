@@ -8,7 +8,7 @@ import { gql } from 'utils/__generated__'
 
 const VAULT_OPEN_FILTER = `open: {_eq: true}`
 
-// filter for user market specific vaults
+// filter for user market specific vaults TODO: add if need
 // vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}, owner: {address: {_eq: $userAddress}}, loan_token: {token: {token_address: {_eq: $marketAddress}}}})
 const getUserVaultsQueryFilters = (
   filter: VaultsSubsRecordType[typeof VAULTS_DATA],

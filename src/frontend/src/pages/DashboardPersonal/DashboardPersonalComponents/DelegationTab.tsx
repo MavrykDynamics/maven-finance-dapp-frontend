@@ -23,6 +23,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 // helpers
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
@@ -39,8 +40,8 @@ const DelegationTab = ({ distributeProposalRewards }: { distributeProposalReward
     setSatelliteAddressToSubsctibe,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
-
-  const { userTokensBalances, satelliteMvkIsDelegatedTo, userAddress, availableProposalRewards } = useUserContext()
+  const { userTokensBalances, satelliteMvkIsDelegatedTo, userAddress } = useUserContext()
+  const { availableProposalRewards } = useUserRewards()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
