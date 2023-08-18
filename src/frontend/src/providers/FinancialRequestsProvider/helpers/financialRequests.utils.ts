@@ -16,7 +16,7 @@ import {
 } from './financialRequests.consts'
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 import { finRequestVote } from './financialRequests.schema'
-import { calcWithoutPrecision } from 'utils/calcFunctions'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 /**
  *
@@ -104,9 +104,9 @@ export const normalizeFinancialRequests = (storage: {
         }, []),
 
         // Votes data
-        forVotesMVKTotal: calcWithoutPrecision(item.yay_vote_smvk_total),
-        againstVotesMVKTotal: calcWithoutPrecision(item.nay_vote_smvk_total),
-        sMVKTotakSupply: calcWithoutPrecision(item.snapshot_smvk_total_supply),
+        forVotesMVKTotal: convertNumberForClient({ number: item.yay_vote_smvk_total }),
+        againstVotesMVKTotal: convertNumberForClient({ number: item.nay_vote_smvk_total }),
+        sMVKTotakSupply: convertNumberForClient({ number: item.snapshot_smvk_total_supply }),
         quorum: item.smvk_percentage_for_approval / 100,
       }
 
