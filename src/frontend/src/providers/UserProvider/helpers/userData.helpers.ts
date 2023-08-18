@@ -91,6 +91,23 @@ const USER_ACTIONS_TYPES = {
   SATELLITE_REWARD: 4,
 }
 
+const getOperationName = (operation: number) => {
+  switch (operation) {
+    case USER_ACTIONS_TYPES.STAKE:
+      return 'Stake'
+    case USER_ACTIONS_TYPES.UNSTAKE:
+      return 'Unstake'
+    case USER_ACTIONS_TYPES.FARM_CLAIM:
+      return 'Farm Claim'
+    case USER_ACTIONS_TYPES.COMPOUND:
+      return 'Compound'
+    case USER_ACTIONS_TYPES.SATELLITE_REWARD:
+      return 'Satellite Reward'
+    default:
+      return null
+  }
+}
+
 export const normalizeUserHistoryData = (
   userHistoryFromIndexer: GetUserActionsHistoryDataQuery['mavryk_user'][number]['stakes_history_data'],
 ) => {
@@ -107,16 +124,9 @@ export const normalizeUserHistoryData = (
     const convertedDesiredAmount = convertNumberForClient({ number: desired_amount, grade: MVK_DECIMALS })
 
     const isUnstake = type === USER_ACTIONS_TYPES.UNSTAKE
-    const actionName =
-      type === USER_ACTIONS_TYPES.STAKE
-        ? 'Stake'
-        : type === USER_ACTIONS_TYPES.UNSTAKE
-        ? 'Unstake'
-        : type === USER_ACTIONS_TYPES.FARM_CLAIM
-        ? 'Farm Claim'
-        : type === USER_ACTIONS_TYPES.COMPOUND
-        ? 'Compound'
-        : 'Satellite Reward'
+    const actionName = getOperationName(type)
+
+    if (!actionName) return acc
 
     acc.push({
       action: actionName,

@@ -67,8 +67,8 @@ export const useUserApi = ({
    * when user connects wallet or changing wallet we need to load all his tokens from tzkt, cuz ws does not return full tokens, only updated
    */
   const loadInitialTzktTokensForNewlyConnectedUser = useCallback(
-    async ({ userAddress, useLoader = true }: { userAddress: string; useLoader?: boolean }) => {
-      if (useLoader) setIsTzktBalancesLoading(true)
+    async ({ userAddress, isUsingLoader = true }: { userAddress: string; isUsingLoader?: boolean }) => {
+      if (isUsingLoader) setIsTzktBalancesLoading(true)
 
       setUserCtxState((prev) => ({
         ...prev,
@@ -85,7 +85,7 @@ export const useUserApi = ({
         tokens: fetchedTokens,
       })
 
-      if (useLoader) setIsTzktBalancesLoading(false)
+      if (isUsingLoader) setIsTzktBalancesLoading(false)
     },
     [tokensMetadata],
   )
@@ -201,7 +201,7 @@ export const useUserApi = ({
         // on user change set all fields to default except address, cuz empty data will appear for a moment, cuz new address will be set in loadInitialTzktTokensForNewlyConnectedUser
         setUserCtxState((prev) => ({ ...DEFAULT_USER, userAddress: prev.userAddress }))
 
-        loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress, useLoader: false })
+        loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress, isUsingLoader: false })
 
         dispatch({ type: SET_REDUX_USER, accountPkh: newUserAddress })
 

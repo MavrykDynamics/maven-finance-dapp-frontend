@@ -14,7 +14,7 @@ import {
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { api } from 'utils/api/api'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { ApiError } from 'errors/error'
+import { ApiError, unknownToError } from 'errors/error'
 import {
   emptyUserTzktAccountSchema,
   userTzktAccountSchema,
@@ -174,9 +174,10 @@ export const fetchTzktUserBalances = async ({
       })
     }
 
-    throw new Error(`not succes fetch for tzkt tokens balances`)
+    throw new Error('Error occured while loading your balances, try to reload the page, or change user')
   } catch (e) {
-    throw new ApiError('Error occured while loading your balances, try to reload the page, or change user')
+    const convertedError = unknownToError(e)
+    throw new ApiError(convertedError)
   }
 }
 
