@@ -1,28 +1,30 @@
-import type { TreasuryBalanceType, TreasuryData, TreaurtGQLData } from './treasury.types'
+import type { TreasuryBalanceType, TreasuryData, TreauryGQLData } from './treasury.types'
 import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 import { getAssetColor } from './treasury.utils'
 
 export const MIN_TREASURY_PERSENT_TO_DISPLAY = 0.1
 
-// export const normalizeTreasuryStorage = (sMVKAmounts: Array<Mavryk_User>, treasury: TreasuryGraphQL[]) => {
-export const normalizeTreasuryStorage = (data: TreaurtGQLData) => {
+export const normalizeTreasuryStorage = (data: TreauryGQLData) => {
   const { mavryk_user: sMVKAmounts, treasury } = data
   const treasuryAssetsColors: Record<string, string> = sMVKAmounts?.length ? { smvk: getAssetColor(0) } : {}
 
   // Parse sMVK amount for each treasury, to make this structure usable
-  const parsedsMVKAmount: TreasuryBalanceType[] = sMVKAmounts?.map(
-    ({ smvk_balance, address }: { smvk_balance: number; address: string }): TreasuryBalanceType => ({
-      balance: smvk_balance,
-      contract: address,
-      chartColor: treasuryAssetsColors[SMVK_TOKEN_ADDRESS],
-      tokenAddress: SMVK_TOKEN_ADDRESS,
-    }),
-  )
+  const sMVKBalancesMapper = sMVKAmounts?.reduce<Record<string, TreasuryBalanceType>>(
+    (acc, { address, smvk_balance }) => {
+      acc[address] = {
+        balance: smvk_balance,
+        contract: address,
+        chartColor: treasuryAssetsColors[SMVK_TOKEN_ADDRESS],
+        tokenAddress: SMVK_TOKEN_ADDRESS,
+      }
 
+      return acc
+    },
+    {},
+  )
   // Map every treasury to combine treasury name, and divide balance by constant
   return treasury.reduce<Record<string, TreasuryData>>((acc, treasuryData) => {
-    const sMVKAmount = parsedsMVKAmount.find(({ contract }: TreasuryBalanceType) => contract === treasuryData.address)
-
+    const sMVKAmount = sMVKBalancesMapper[treasuryData.address] ?? null
     // XTZ is present by default for each treasury, and it can't be defined on back-end
     const treasuryWhitelistTokens = [XTZ_TOKEN_ADDRESS].concat(
       treasuryData.whitelist_token_contracts.map(({ contract_address }) => contract_address),

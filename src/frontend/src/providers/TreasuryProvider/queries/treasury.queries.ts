@@ -23,8 +23,8 @@ query GetTreasuryStorageData {
   }
 `)
 
-export const GET_TREASURY_USER_BALANCES = gql(`
-query GetTreasuryUserBalances($addresses: [String!] = []) {
+export const GET_TREASURY_SMVK_BALANCES = gql(`
+query GetTreasurySmvkBalances($addresses: [String!] = []) {
   mavryk_user(where: {address: {_in: $addresses}}) {
     smvk_balance
     address

@@ -1,15 +1,21 @@
+import {
+  NullableTreasuryContextStateType,
+  TreasuryContextStateType,
+  TreasurySubsRecordType,
+} from '../treasury.provider.types'
+
 export const TREASURY_STORAGE_QUERY = 'treasuryStorage'
 
-export const DEFAULT_TREASURY_SUBS = {
+export const DEFAULT_TREASURY_SUBS: TreasurySubsRecordType = {
   [TREASURY_STORAGE_QUERY]: false,
-}
+} as const
 
-export const DEFAULT_TREASURY_CTX = {
+export const DEFAULT_TREASURY_CTX: NullableTreasuryContextStateType = {
   treasuryAddresses: null,
   treasuryMapper: null,
-}
+} as const
 
-export const EMPTY_TREASURY_CTX = {
+export const EMPTY_TREASURY_CTX: TreasuryContextStateType = {
   treasuryAddresses: [],
   treasuryMapper: {},
 }

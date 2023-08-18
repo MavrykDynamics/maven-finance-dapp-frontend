@@ -6,7 +6,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
 import { NullableTreasuryContextStateType, TreasuryContext, TreasurySubsRecordType } from './treasury.provider.types'
-import { GetTreasuryStorageDataQuery, GetTreasuryUserBalancesQuery } from 'utils/__generated__/graphql'
+import { GetTreasuryStorageDataQuery, GetTreasurySmvkBalancesQuery } from 'utils/__generated__/graphql'
 
 // consts
 import { DEFAULT_TREASURY_CTX, DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_QUERY } from './helpers/treasury.consts'
@@ -17,7 +17,7 @@ import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.pr
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // queries
-import { GET_TREASURY_STORAGE_QUERY, GET_TREASURY_USER_BALANCES } from './queries/treasury.queries'
+import { GET_TREASURY_STORAGE_QUERY, GET_TREASURY_SMVK_BALANCES } from './queries/treasury.queries'
 
 // utils
 import { curry } from 'utils/curry'
@@ -35,15 +35,15 @@ const TreasuryProvider = ({ children }: Props) => {
 
   const [treasuryCtxState, setTreasuryCtxState] = useState<NullableTreasuryContextStateType>(DEFAULT_TREASURY_CTX)
   const [activeSubs, setActiveSubs] = useState<TreasurySubsRecordType>(DEFAULT_TREASURY_SUBS)
-  const [allowUserBalances, setAllowUserBalances] = useState(false)
+  const [allowTreasurtSMVKBalances, setAllowTreasurySMVKBalances] = useState(false)
 
   const handleSubError = (error: ApolloError, subName: string) => {
     console.error(`${subName} query error: `, error)
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
-  const updateTreasuryStorage = (treasury: GetTreasuryStorageDataQuery, userBalances: GetTreasuryUserBalancesQuery) => {
-    const data = { ...treasury, ...userBalances }
+  const updateTreasuryStorage = (treasury: GetTreasuryStorageDataQuery, smvkBalances: GetTreasurySmvkBalancesQuery) => {
+    const data = { ...treasury, ...smvkBalances }
     const treasuryMapper = normalizeTreasuryStorage(data)
 
     setTreasuryCtxState((prev) => ({
@@ -65,31 +65,31 @@ const TreasuryProvider = ({ children }: Props) => {
       //   pass the first part of data -> treasury data
       treasuryNormalizerDataUpdaterRef.current =
         treasuryNormalizerDataUpdaterRef.current<GetTreasuryStorageDataQuery>(data)
-      setAllowUserBalances(true)
+      setAllowTreasurySMVKBalances(true)
     },
     onError: (error) => handleSubError(error, 'GET_TREASURY_STORAGE_QUERY'),
   })
 
-  useQuery(GET_TREASURY_USER_BALANCES, {
-    skip: !allowUserBalances || treasuryCtxState.treasuryAddresses === null,
+  useQuery(GET_TREASURY_SMVK_BALANCES, {
+    skip: !allowTreasurtSMVKBalances || treasuryCtxState.treasuryAddresses === null,
     variables: {
       addresses: treasuryCtxState.treasuryAddresses,
     },
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
       if (!data) {
-        setAllowUserBalances(false)
+        setAllowTreasurySMVKBalances(false)
         return
       }
 
       //  pass the second part of data -> user balances data
-      treasuryNormalizerDataUpdaterRef.current<GetTreasuryUserBalancesQuery>(data)
+      treasuryNormalizerDataUpdaterRef.current<GetTreasurySmvkBalancesQuery>(data)
       // reset for future calls
       treasuryNormalizerDataUpdaterRef.current = curry(updateTreasuryStorage)
       // disallow this query until new data for treasury is received
-      setAllowUserBalances(false)
+      setAllowTreasurySMVKBalances(false)
     },
-    onError: (error) => handleSubError(error, 'GET_TREASURY_USER_BALANCES'),
+    onError: (error) => handleSubError(error, 'GET_TREASURY_SMVK_BALANCES'),
   })
 
   // methods to update context data
