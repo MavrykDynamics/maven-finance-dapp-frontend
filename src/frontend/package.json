@@ -28,39 +28,38 @@
     "@taquito/taquito": "^15.0.1",
     "@taquito/utils": "^15.0.1",
     "@temple-wallet/dapp": "^6.0.1",
-    "@types/react-avatar-editor": "^13.0.0",
     "@wert-io/widget-initializer": "^2.0.0",
     "axios": "^1.2.1",
     "bignumber.js": "^9.1.0",
     "classnames": "^2.3.2",
     "coingecko-api": "^1.0.10",
     "dayjs": "^1.11.5",
-    "embla-carousel-react": "^6.2.0",
+    "embla-carousel-react": "^7.1.0",
     "graphql": "16.5.0",
     "graphql-ws": "^5.12.1",
     "ipfs-http-client": "^54.0.1",
     "is-ipfs": "^6.0.2",
     "lightweight-charts": "^4.0.0",
     "qs": "^6.11.0",
-    "react": "^17.0.2",
+    "react": "^18.2.0",
     "react-avatar-editor": "^13.0.0",
-    "react-collapsed": "^3.3.0",
+    "react-collapsed": "^4.0.4",
     "react-cookie": "^4.1.1",
-    "react-dom": "^17.0.2",
+    "react-dom": "^18.2.0",
     "react-ga": "^3.3.0",
     "react-google-recaptcha-v3": "^1.9.5",
     "react-minimal-pie-chart": "^8.3.0",
-    "react-redux": "^7.2.5",
-    "react-router": "^5.2.1",
-    "react-router-dom": "^5.3.0",
-    "react-scripts": "^4.0.3",
+    "react-redux": "^7.2.9",
+    "react-router": "^6.15.0",
+    "react-router-dom": "^6.15.0",
+    "react-scripts": "^5.0.1",
     "react-use": "^17.4.0",
-    "redux": "^4.1.1",
+    "redux": "^4.2.1",
     "redux-persist": "^6.0.0",
-    "redux-thunk": "^2.3.0",
+    "redux-thunk": "^2.4.2",
     "styled-components": "^5.3.1",
-    "web-vitals": "^2.1.0",
-    "zod": "^3.21.4"
+    "web-vitals": "^3.4.0",
+    "zod": "^3.22.1"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.9.11",
@@ -72,6 +71,7 @@
     "@types/node": "^16.10.1",
     "@types/qs": "^6.9.7",
     "@types/react": "^17.0.24",
+    "@types/react-avatar-editor": "^13.0.0",
     "@types/react-collapse": "^5.0.1",
     "@types/react-dom": "^17.0.9",
     "@types/react-redux": "^7.1.18",
@@ -88,57 +88,7 @@
     "typescript": "^5.0.4"
   },
   "eslintConfig": {
-    "extends": "react-app",
-    "plugins": [
-      "jsdoc"
-    ],
-    "settings": {
-      "jsdoc": {
-        "mode": "typescript"
-      }
-    },
-    "rules": {
-      "jsdoc/check-alignment": 1,
-      "jsdoc/check-indentation": 1,
-      "jsdoc/check-param-names": 1,
-      "jsdoc/check-tag-names": 1,
-      "jsdoc/check-types": 1,
-      "jsdoc/empty-tags": 1,
-      "jsdoc/multiline-blocks": 1,
-      "jsdoc/no-multi-asterisks": 1,
-      "jsdoc/no-undefined-types": 1,
-      "jsdoc/require-asterisk-prefix": [
-        "error",
-        "always"
-      ],
-      "jsdoc/require-jsdoc": [
-        "error",
-        {
-          "require": {
-            "ClassDeclaration": true,
-            "ClassExpression": true,
-            "MethodDefinition": true,
-            "ArrowFunctionExpression": false,
-            "FunctionDeclaration": false,
-            "FunctionExpression": false
-          },
-          "checkConstructors": false
-        }
-      ],
-      "jsdoc/require-param-description": 1,
-      "jsdoc/require-param-name": 1,
-      "jsdoc/require-param-type": 0,
-      "jsdoc/require-param": 1,
-      "jsdoc/require-property": 1,
-      "jsdoc/require-property-description": 1,
-      "jsdoc/require-property-name": 1,
-      "jsdoc/require-property-type": 1,
-      "jsdoc/require-returns-check": 1,
-      "jsdoc/require-returns-description": 1,
-      "jsdoc/require-returns-type": 0,
-      "jsdoc/require-returns": 1,
-      "jsdoc/require-throws": 1
-    }
+    "extends": "react-app"
   },
   "browserslist": {
     "production": [
