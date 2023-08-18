@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo } from 'react'
+import { usePrevious } from 'react-use'
 import { useHistory, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
+import qs from 'qs'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
 
 // types
@@ -53,6 +55,7 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
 import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 import { CLAIM_ALL_REWARDS_ACTION } from 'providers/UserProvider/helpers/user.consts'
+import { USER_ACTIONS_HISTORY } from 'app/App.components/Pagination/pagination.consts'
 import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
@@ -89,6 +92,8 @@ const DashboardPersonal = () => {
   const { bug } = useToasterContext()
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useDoormanContext()
 
+  const prevUserAddress = usePrevious(userAddress)
+
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
@@ -108,8 +113,11 @@ const DashboardPersonal = () => {
     }
   }, [])
 
+  // if we change user, redirect him to main screen on dashboard, as he might not have permission to some screens
   useEffect(() => {
-    history.replace(`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`)
+    if (prevUserAddress && prevUserAddress !== userAddress) {
+      history.replace(`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`)
+    }
   }, [userAddress])
 
   const {
@@ -301,7 +309,14 @@ const DashboardPersonal = () => {
                 </Button>
               </Link>
               <Link
-                to={userAddress ? `/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}` : '#'}
+                to={
+                  userAddress
+                    ? `/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}${qs.stringify(
+                        { page: { [USER_ACTIONS_HISTORY]: 1 } },
+                        { addQueryPrefix: true },
+                      )}`
+                    : '#'
+                }
               >
                 <Button
                   selected={activeTab === (isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID)}
