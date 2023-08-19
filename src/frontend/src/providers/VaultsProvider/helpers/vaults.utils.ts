@@ -10,7 +10,7 @@ import {
   TimestampByLevelResponceType,
 } from 'utils/api/api-helpers/getTimestampByLevel'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { getAssetColor } from 'pages/Treasury/helpers/treasury.utils'
+import { getAssetColor } from 'providers/TreasuryProvider/helpers/treasury.utils'
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
 
