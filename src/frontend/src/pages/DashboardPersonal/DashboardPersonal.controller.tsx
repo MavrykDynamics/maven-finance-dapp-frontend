@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { usePrevious } from 'react-use'
-import { useHistory, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import qs from 'qs'
-import { Link, Redirect, Route, Switch } from 'react-router-dom'
+import { Link, Navigate, Route, Routes } from 'react-router-dom'
 
 // types
 import { State } from 'reducers'
@@ -74,7 +74,7 @@ import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/Vestin
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
   const {
@@ -122,7 +122,7 @@ const DashboardPersonal = () => {
   // if we change user, redirect him to main screen on dashboard, as he might not have permission to some screens
   useEffect(() => {
     if (prevUserAddress && prevUserAddress !== userAddress) {
-      history.replace(`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`)
+      navigate(`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`, { replace: true })
     }
   }, [userAddress])
 
@@ -345,22 +345,22 @@ const DashboardPersonal = () => {
 
             <div className={`bottom-grid ${activeTab}`}>
               <DashboardPersonalTabStyled>
-                <Switch>
-                  <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/:secondaryTabId?`}>
+                <Routes>
+                  <Route path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/:secondaryTabId?`}>
                     <PortfolioTab {...walletData} isUserLoansLoading={isLoading} />
                   </Route>
-                  <Route exact path={`/dashboard-personal/${DELEGATION_TAB_ID}`}>
+                  <Route path={`/dashboard-personal/${DELEGATION_TAB_ID}`}>
                     <DelegationTab distributeProposalRewards={distributeRewardsCallback} />
                   </Route>
-                  <Route exact path={`/dashboard-personal/${SATELLITE_TAB_ID}`}>
+                  <Route path={`/dashboard-personal/${SATELLITE_TAB_ID}`}>
                     <SatelliteTab distributeProposalRewards={distributeRewardsCallback} />
                   </Route>
-                  <Route exact path={`/dashboard-personal/${VESTING_TAB_ID}`}>
+                  <Route path={`/dashboard-personal/${VESTING_TAB_ID}`}>
                     <VestingTab />
                   </Route>
 
-                  <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
-                </Switch>
+                  <Navigate to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
+                </Routes>
               </DashboardPersonalTabStyled>
             </div>
           </>

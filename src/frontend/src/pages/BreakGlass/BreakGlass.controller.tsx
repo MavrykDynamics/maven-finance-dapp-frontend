@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useLocation, useHistory } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import qs from 'qs'
 
 // components
@@ -52,7 +52,7 @@ export const BreakGlass = () => {
   } = useContractStatusesContext()
 
   const { search, pathname } = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { page = {}, ...rest } = qs.parse(search, { ignoreQueryPrefix: true })
 
   const [selectedContract, setSelectedContract] = useState<string>(ALL)
@@ -99,7 +99,7 @@ export const BreakGlass = () => {
       pathname,
       restQP: rest,
     })
-    history.push(generateNewUrl)
+    navigate(generateNewUrl)
   }
 
   return (

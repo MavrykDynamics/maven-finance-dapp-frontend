@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import useCollapse from 'react-collapsed'
+import { useCollapse } from 'react-collapsed'
 import { useSelector } from 'react-redux'
 import { Link, matchPath } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
@@ -64,7 +64,7 @@ export const NavigationLink = ({
 
   const isMainLinkDisabled = useMemo(() => {
     const paths = subPages.reduce((acc, { routeSubPath }) => acc.concat(routeSubPath), [`/${path}`])
-    return paths.find((path) => matchPath(pathname, { path, exact: true, strict: true }))
+    return paths.find((path) => matchPath({ path }, pathname))
   }, [pathname])
 
   useEffect(() => {

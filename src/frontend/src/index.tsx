@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { Provider as ReduxProvider } from 'react-redux'
@@ -36,13 +36,13 @@ import { FullScreenLoadingApp } from 'app/App.style'
 import { LottieLoader } from 'app/App.components/Loader/Loader.view'
 import Mobile from './app/App.components/Mobile/Mobile.view'
 
-import { GlobalStyle } from './styles'
 import themeColors from 'styles/colors'
 import './styles/fonts.css'
 import './styles/animations.css'
 import './styles/index.css'
 import './styles/fonts.css'
 import './styles/animations.css'
+import GlobalStyleProxy from 'proxy/GlobalStyleProxy'
 
 const DappLibsProviders = ({ children }: { children: React.ReactNode }) => {
   const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
@@ -118,7 +118,7 @@ const AppContainer = () => {
   return (
     <>
       <LoansPopupsProvider>
-        <GlobalStyle />
+        <GlobalStyleProxy />
         <ToasterMessages />
         <App />
       </LoansPopupsProvider>
@@ -126,7 +126,7 @@ const AppContainer = () => {
   )
 }
 
-export const Root = () => {
+export const RootContainer = () => {
   return (
     <DappLibsProviders>
       <ToasterProvider>
@@ -142,8 +142,9 @@ export const Root = () => {
   )
 }
 
-const rootElement = document.getElementById('root')
-ReactDOM.render(<Root />, rootElement)
+const rootElement = document.getElementById('root') as HTMLElement
+const root = createRoot(rootElement)
+root.render(<RootContainer />)
 
 unregister()
 reportWebVitals()

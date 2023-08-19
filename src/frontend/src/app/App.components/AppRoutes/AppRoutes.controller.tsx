@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Route, Switch, useLocation } from 'react-router-dom'
+import { Route, Routes, useLocation } from 'react-router-dom'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -51,108 +51,108 @@ export const AppRoutes = () => {
   }, [path])
 
   return (
-    <Switch>
-      <Route exact path="/staking">
+    <Routes>
+      <Route path="/staking">
         <Doorman />
       </Route>
 
       {/* DASHBOARD */}
-      <Route exact path="/">
+      <Route path="/">
         <Dashboard />
       </Route>
-      <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
+      <Route path="/dashboard-personal/:tabId/:secondaryTabId?">
         <DashboardPersonal />
       </Route>
 
       {/* SATELLITES */}
-      <Route exact path="/satellites">
+      <Route path="/satellites">
         <Satellites />
       </Route>
-      <Route exact path="/become-satellite">
+      <Route path="/become-satellite">
         <BecomeSatellite />
       </Route>
-      <Route exact path="/satellite-nodes">
+      <Route path="/satellite-nodes">
         <SatelliteNodes />
       </Route>
-      <Route exact path="/satellites/satellite-details/:satelliteId">
+      <Route path="/satellites/satellite-details/:satelliteId">
         <SatelliteDetails />
       </Route>
-      <Route exact path="/data-feeds">
+      <Route path="/data-feeds">
         <DataFeeds />
       </Route>
-      <Route exact path="/satellites/feed-details/:feedId">
+      <Route path="/satellites/feed-details/:feedId">
         <DataFeedDetails />
       </Route>
 
       {/* GOVERNANCE PAGES */}
-      <Route exact path="/governance">
+      <Route path="/governance">
         <Governance />
       </Route>
-      <Route exact path="/satellite-governance/:tabId?">
+      <Route path="/satellite-governance/:tabId?">
         <SatelliteGovernance />
       </Route>
-      <Route exact path="/proposal-history">
+      <Route path="/proposal-history">
         <Governance isHistory />
       </Route>
-      <Route exact path="/contract-status">
+      <Route path="/contract-status">
         <BreakGlass />
       </Route>
-      <Route exact path="/financial-requests">
+      <Route path="/financial-requests">
         <FinancialRequests />
       </Route>
-      <Route exact path="/emergency-governance">
+      <Route path="/emergency-governance">
         <EmergencyGovernance />
       </Route>
-      <Route exact path="/mavryk-council/:tabId?">
+      <Route path="/mavryk-council/:tabId?">
         <Council />
       </Route>
-      <Route exact path="/break-glass-council/:tabId?">
+      <Route path="/break-glass-council/:tabId?">
         <BreakGlassCouncil />
       </Route>
       <ProtectedRoute
         path="/submit-proposal"
-        component={ProposalSubmission}
+        element={<ProposalSubmission />}
         isAuthorized={Boolean(userAddress)}
         hasAccess={Boolean(isSatellite)}
         redirectPath={'/governance'}
       />
 
-      <Route exact path="/treasury">
+      <Route path="/treasury">
         <Treasury />
       </Route>
 
-      <Route exact path="/yield-farms">
+      <Route path="/yield-farms">
         <Farms />
       </Route>
 
       {/* LEND & BORROW */}
-      <Route exact path="/loans/:assetAddress/:tabId">
+      <Route path="/loans/:assetAddress/:tabId">
         <Market />
       </Route>
-      <Route exact path="/loans">
+      <Route path="/loans">
         <Loans />
       </Route>
-      <Route exact path="/vaults/:tabId">
+      <Route path="/vaults/:tabId">
         <Vaults />
       </Route>
-      <Route exact path="/loans/dashboard">
+      <Route path="/loans/dashboard">
         <LoansDashboard />
       </Route>
-      <Route exact path="/loans/earn">
+      <Route path="/loans/earn">
         <LoansEarn />
       </Route>
-      <Route exact path="/loans/borrow">
+      <Route path="/loans/borrow">
         <LoansBorrow />
       </Route>
 
       {/* NOT PROD PAGES */}
-      <Route exact path="/admin">
+      <Route path="/admin">
         <Admin />
       </Route>
 
       <Route path="*">
         <RenderErrorPage />
       </Route>
-    </Switch>
+    </Routes>
   )
 }

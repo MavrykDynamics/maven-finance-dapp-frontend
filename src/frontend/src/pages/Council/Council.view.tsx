@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
-import { Link, useHistory, useLocation } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useParams } from 'react-router'
 import qs from 'qs'
 
@@ -123,7 +123,7 @@ export function CouncilView({
   handleDropAction,
 }: Props) {
   const dispatch = useDispatch()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { search, pathname } = useLocation()
 
   const queryParameters = {
@@ -177,7 +177,7 @@ export function CouncilView({
 
     const newPageLink = pathname + qs.stringify(newQueryParams, { addQueryPrefix: true })
 
-    history.push(newPageLink)
+    navigate(newPageLink)
     setChosenDdItem(foundItem)
   }
 
@@ -230,14 +230,14 @@ export function CouncilView({
   useEffect(() => {
     // redirect to review page when member changes
     if (!accountPkh) {
-      history.replace(`${queryParameters.pathname}${queryParameters.pastActions}`)
+      navigate(`${queryParameters.pathname}${queryParameters.pastActions}`, { replace: true })
     }
   }, [history, queryParameters.pathname, queryParameters.pastActions, accountPkh, isCouncilMember])
 
   useEffect(() => {
     // check authorization when clicking on a review or a header in the menu
     if (!isCouncilMember) {
-      history.replace(`${queryParameters.pathname}${queryParameters.pastActions}`)
+      navigate(`${queryParameters.pathname}${queryParameters.pastActions}`, { replace: true })
     }
   }, [history, isCouncilMember, pathname, queryParameters.pathname, queryParameters.pastActions])
 

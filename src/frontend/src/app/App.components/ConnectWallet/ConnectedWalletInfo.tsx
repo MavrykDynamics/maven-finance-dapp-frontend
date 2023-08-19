@@ -1,4 +1,4 @@
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_WIDE } from '../Button/Button.constants'
@@ -28,7 +28,7 @@ type ConnectWalletProps = {
 }
 
 export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const { tokensPrices, tokensMetadata } = useTokensContext()
   const { userAddress, userTokensBalances, signOut, changeUser } = useUserContext()
@@ -46,7 +46,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   const isOnStakingPage = pathname === '/staking'
 
   const handleStakeBtn = () => {
-    if (!isOnStakingPage) history.push('/staking')
+    if (!isOnStakingPage) navigate('/staking')
     setDetailsShown(false)
   }
 
@@ -209,7 +209,7 @@ type MobileConnectWalletProps = ConnectWalletProps & {
 }
 
 export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileConnectWalletProps) => {
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const { tokensPrices, tokensMetadata } = useTokensContext()
   const { userAddress, userTokensBalances, signOut, changeUser } = useUserContext()
@@ -228,7 +228,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
   const handleStakeBtn = () => {
     if (!isOnStakingPage) {
-      history.push('/staking')
+      navigate('/staking')
     }
 
     setDetailsShown(false)

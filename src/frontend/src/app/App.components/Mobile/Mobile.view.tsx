@@ -1,17 +1,12 @@
-import {
-  GlobalStyle,
-  MobilePlugBackground,
-  MobilePlugWrapper,
-  MobilePlugLogoWrapper,
-  MobilePlugFooter,
-} from './Mobile.style'
+import { MobilePlugBackground, MobilePlugWrapper, MobilePlugLogoWrapper, MobilePlugFooter } from './Mobile.style'
 
 import Icon from '../Icon/Icon.view'
+import GlobalStyleProxy from 'proxy/GlobalStyleProxy'
 
 export default function Mobile() {
   return (
     <MobilePlugBackground>
-      <GlobalStyle />
+      <GlobalStyleProxy />
       <MobilePlugWrapper>
         <MobilePlugLogoWrapper>
           <img src="./mobile-plug-logo.png" alt="mavryk logo" />

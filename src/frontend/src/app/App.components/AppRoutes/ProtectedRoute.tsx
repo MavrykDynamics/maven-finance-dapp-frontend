@@ -1,4 +1,4 @@
-import { Redirect, Route, RouteProps } from 'react-router'
+import { Navigate, Route, RouteProps } from 'react-router'
 
 export type ProtectedRouteProps = {
   redirectPath: string
@@ -9,5 +9,5 @@ export type ProtectedRouteProps = {
 export default function ProtectedRoute({ redirectPath, hasAccess, isAuthorized, ...routeProps }: ProtectedRouteProps) {
   if (hasAccess) return <Route {...routeProps} />
 
-  return <Redirect to={{ pathname: redirectPath }} />
+  return <Navigate to={{ pathname: redirectPath }} />
 }
