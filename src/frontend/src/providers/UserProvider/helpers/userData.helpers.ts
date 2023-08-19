@@ -1,5 +1,5 @@
-import { GetUserDataQuery } from 'utils/__generated__/graphql'
-import { UserContext, UserMetadataType } from '../user.provider.types'
+import { GetUserActionsHistoryDataQuery, GetUserDataQuery, GetUserRewardsDataQuery } from 'utils/__generated__/graphql'
+import { UserMetadataType, UserRewardsType } from '../user.provider.types'
 import dayjs from 'dayjs'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
@@ -9,22 +9,13 @@ import { DEFAULT_USER_AVATAR } from './user.consts'
 export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }): UserMetadataType => {
   const {
     delegations,
-    stakes_history_data,
     satellites: [satellite],
     council_council_members: [counsilMember],
     break_glass_council_members: [bgCounsilMember],
     vesting_vestees: [vestee],
     governance_satellite_snapshots,
     governance_satellite_action_initiators_aggregate,
-
-    // rewards data
-    smvk_balance,
-    farm_accounts,
-    satellite_rewardss,
-    doorman_stake_accounts,
   } = indexerData.mavryk_user[0]
-
-  const availableProposalRewards = indexerData.governance_proposal.map(({ id }) => id)
 
   const satelliteAvatar = satellite?.image ?? null
   const counsilAvatar = counsilMember?.image ?? null
@@ -33,8 +24,31 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }
   const satelliteMvkIsDelegatedTo = delegations[0]?.satellite.user.address ?? null
   const isSatellite = satellite?.status === 0 && satellite?.currently_registered
   const isVestee = vestee?.end_vesting_timestamp && dayjs().diff(vestee.end_vesting_timestamp) <= 0
-  const { actionsHistory, gatheredDoormanRewards, gatheredFarmRewards, gatheredSatellitesRewards } =
-    calcUsersRewardsToDate(stakes_history_data)
+
+  return {
+    userAvatars: {
+      mainAvatar: satelliteAvatar ?? counsilAvatar ?? breakGlassAvatar ?? DEFAULT_USER_AVATAR,
+      satelliteAvatar,
+      counsilAvatar,
+      breakGlassAvatar,
+    },
+    isVestee,
+    isSatellite,
+    satelliteMvkIsDelegatedTo,
+
+    isNewlyRegisteredSatellite: checkWhetherUserNewlyRegisteredSatellite(governance_satellite_snapshots),
+    govActionsCount: governance_satellite_action_initiators_aggregate.aggregate?.count ?? 0,
+  }
+}
+
+export const normalizeUserRewards = ({
+  rewardsIndexerData,
+  userProposalRewards,
+}: {
+  rewardsIndexerData: GetUserRewardsDataQuery['mavryk_user'][number]
+  userProposalRewards: GetUserRewardsDataQuery['governance_proposal']
+}): UserRewardsType => {
+  const { doorman_stake_accounts, satellite_rewardss, smvk_balance, farm_accounts } = rewardsIndexerData
 
   const availableDoormanRewards = doorman_stake_accounts[0]
     ? getUserDoomanRewards({
@@ -48,28 +62,24 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }
         userSatelliteRewardsDataFromIndexer: satellite_rewardss[0],
       })
     : 0
+  const availableProposalRewards = userProposalRewards.map(({ id }) => id)
 
   return {
-    userAvatars: {
-      mainAvatar: satelliteAvatar ?? counsilAvatar ?? breakGlassAvatar ?? DEFAULT_USER_AVATAR,
-      satelliteAvatar,
-      counsilAvatar,
-      breakGlassAvatar,
-    },
-    isVestee,
-    isSatellite,
-    satelliteMvkIsDelegatedTo,
-    actionsHistory,
-    gatheredDoormanRewards,
-    gatheredFarmRewards,
-    gatheredSatellitesRewards,
+    gatheredDoormanRewards: convertNumberForClient({
+      number: doorman_stake_accounts[0]?.total_exit_fee_rewards_claimed ?? 0,
+      grade: MVK_DECIMALS,
+    }),
+    gatheredSatellitesRewards: convertNumberForClient({
+      number: doorman_stake_accounts[0]?.total_satellite_rewards_claimed ?? 0,
+      grade: MVK_DECIMALS,
+    }),
+    // TODO: add farm rewards, when farms will be available to test
+    gatheredFarmRewards: 0,
+    availableFarmRewards: {},
     availableSatellitesRewards,
     availableDoormanRewards,
     availableProposalRewards,
     farmAccounts: farm_accounts,
-
-    isNewlyRegisteredSatellite: checkWhetherUserNewlyRegisteredSatellite(governance_satellite_snapshots),
-    govActionsCount: governance_satellite_action_initiators_aggregate.aggregate?.count ?? 0,
   }
 }
 
@@ -81,46 +91,52 @@ const USER_ACTIONS_TYPES = {
   SATELLITE_REWARD: 4,
 }
 
-const calcUsersRewardsToDate = (usetStakesData: GetUserDataQuery['mavryk_user'][number]['stakes_history_data']) => {
-  return usetStakesData.reduce<{
-    gatheredFarmRewards: number
-    gatheredSatellitesRewards: number
-    gatheredDoormanRewards: number
-    actionsHistory: UserContext['actionsHistory']
-  }>(
-    (acc, { type, final_amount, desired_amount, id }) => {
-      const convertedFinalAmount = convertNumberForClient({ number: final_amount, grade: MVK_DECIMALS })
-      const convertedDesiredAmount = convertNumberForClient({ number: desired_amount, grade: MVK_DECIMALS })
+const getOperationName = (operation: number) => {
+  switch (operation) {
+    case USER_ACTIONS_TYPES.STAKE:
+      return 'Stake'
+    case USER_ACTIONS_TYPES.UNSTAKE:
+      return 'Unstake'
+    case USER_ACTIONS_TYPES.FARM_CLAIM:
+      return 'Farm Claim'
+    case USER_ACTIONS_TYPES.COMPOUND:
+      return 'Compound'
+    case USER_ACTIONS_TYPES.SATELLITE_REWARD:
+      return 'Satellite Reward'
+    default:
+      return null
+  }
+}
 
-      if (type === USER_ACTIONS_TYPES.FARM_CLAIM) acc.gatheredFarmRewards += convertedFinalAmount
+export const normalizeUserHistoryData = (
+  userHistoryFromIndexer: GetUserActionsHistoryDataQuery['mavryk_user'][number]['stakes_history_data'],
+) => {
+  return userHistoryFromIndexer.reduce<
+    Array<{
+      action: string
+      amount: number
+      totalAmount: number
+      fee: number
+      id: number
+    }>
+  >((acc, { type, final_amount, desired_amount, id }) => {
+    const convertedFinalAmount = convertNumberForClient({ number: final_amount, grade: MVK_DECIMALS })
+    const convertedDesiredAmount = convertNumberForClient({ number: desired_amount, grade: MVK_DECIMALS })
 
-      if (type === USER_ACTIONS_TYPES.COMPOUND) acc.gatheredDoormanRewards += convertedFinalAmount
+    const isUnstake = type === USER_ACTIONS_TYPES.UNSTAKE
+    const actionName = getOperationName(type)
 
-      if (type === USER_ACTIONS_TYPES.SATELLITE_REWARD) acc.gatheredSatellitesRewards += convertedFinalAmount
+    if (!actionName) return acc
 
-      const isUnstake = type === USER_ACTIONS_TYPES.UNSTAKE
-      const actionName =
-        type === USER_ACTIONS_TYPES.STAKE
-          ? 'Stake'
-          : type === USER_ACTIONS_TYPES.UNSTAKE
-          ? 'Unstake'
-          : type === USER_ACTIONS_TYPES.FARM_CLAIM
-          ? 'Farm Claim'
-          : type === USER_ACTIONS_TYPES.COMPOUND
-          ? 'Compound'
-          : 'Satellite Reward'
-
-      acc.actionsHistory.push({
-        action: actionName,
-        amount: convertedDesiredAmount,
-        totalAmount: convertedFinalAmount,
-        fee: isUnstake ? ((convertedDesiredAmount - convertedFinalAmount) / convertedDesiredAmount) * 100 : 0,
-        id,
-      })
-      return acc
-    },
-    { gatheredFarmRewards: 0, gatheredSatellitesRewards: 0, gatheredDoormanRewards: 0, actionsHistory: [] },
-  )
+    acc.push({
+      action: actionName,
+      amount: convertedDesiredAmount,
+      totalAmount: convertedFinalAmount,
+      fee: isUnstake ? ((convertedDesiredAmount - convertedFinalAmount) / convertedDesiredAmount) * 100 : 0,
+      id,
+    })
+    return acc
+  }, [])
 }
 
 /**

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo } from 'react'
-import { useParams } from 'react-router'
+import { usePrevious } from 'react-use'
+import { useHistory, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
+import qs from 'qs'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
 
 // types
@@ -52,6 +54,7 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
 import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 import { CLAIM_ALL_REWARDS_ACTION } from 'providers/UserProvider/helpers/user.consts'
+import { USER_ACTIONS_HISTORY } from 'app/App.components/Pagination/pagination.consts'
 import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
@@ -64,12 +67,14 @@ import {
 // hooks
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
 import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/VestingProvider/helpers/vesting.consts'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
+  const history = useHistory()
 
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
   const {
@@ -79,21 +84,16 @@ const DashboardPersonal = () => {
     userTokensBalances,
     userAddress,
     userAvatars: { mainAvatar },
-    availableDoormanRewards,
-    availableSatellitesRewards,
-    availableFarmRewards,
-    availableLoansRewards,
-    gatheredDoormanRewards,
-    gatheredFarmRewards,
-    gatheredSatellitesRewards,
     satelliteMvkIsDelegatedTo,
-    availableProposalRewards,
+    availableLoansRewards,
     isSatellite,
     isVestee,
   } = useUserContext()
   const { changeSatellitesSubscriptionsList } = useSatellitesContext()
   const { bug } = useToasterContext()
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useDoormanContext()
+
+  const prevUserAddress = usePrevious(userAddress)
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
@@ -107,6 +107,7 @@ const DashboardPersonal = () => {
       [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
+
     changeVestingSubscriptionsList({
       [VESTING_STORAGE_DATA_SUB]: true,
     })
@@ -117,6 +118,24 @@ const DashboardPersonal = () => {
       changeVestingSubscriptionsList(DEFAULT_VESTING_SUBS)
     }
   }, [])
+
+  // if we change user, redirect him to main screen on dashboard, as he might not have permission to some screens
+  useEffect(() => {
+    if (prevUserAddress && prevUserAddress !== userAddress) {
+      history.replace(`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`)
+    }
+  }, [userAddress])
+
+  const {
+    isLoading: isRewardsLoading,
+    availableDoormanRewards,
+    availableSatellitesRewards,
+    availableFarmRewards,
+    availableProposalRewards,
+    gatheredDoormanRewards,
+    gatheredFarmRewards,
+    gatheredSatellitesRewards,
+  } = useUserRewards()
 
   const { isLoading: isDataLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -133,7 +152,7 @@ const DashboardPersonal = () => {
   )
 
   // global loading
-  const isLoading = isVestingLoading || isDataLoading || isDoormanLoading
+  const isLoading = isVestingLoading || isDataLoading || isDoormanLoading || isRewardsLoading
 
   // claim rewards action
   const claimRewardsAction = useCallback(async () => {
@@ -212,72 +231,65 @@ const DashboardPersonal = () => {
     lendingIncome: availableLoansRewards,
   }
 
-  const mostSuppliedUserToken = useMemo(
-    () =>
-      (userTokensBalances ? Object.keys(userTokensBalances) : []).reduce<null | {
-        address: string
-        symbol: string
-        balance: number
-      }>((acc, tokenAddress) => {
-        // If token is mToken or shown by default return acc, we skip such tokens
-        if (
-          tokenAddress === mvkTokenAddress ||
-          tokenAddress === SMVK_TOKEN_ADDRESS ||
-          tokenAddress === XTZ_TOKEN_ADDRESS ||
-          mTokens.includes(tokenAddress)
-        )
-          return acc
+  const mostSuppliedUserToken = (userTokensBalances ? Object.keys(userTokensBalances) : []).reduce<null | {
+    address: string
+    symbol: string
+    balance: number
+  }>((acc, tokenAddress) => {
+    // If token is mToken or shown by default return acc, we skip such tokens
+    if (
+      tokenAddress === mvkTokenAddress ||
+      tokenAddress === SMVK_TOKEN_ADDRESS ||
+      tokenAddress === XTZ_TOKEN_ADDRESS ||
+      mTokens.includes(tokenAddress)
+    )
+      return acc
 
-        const tokenToCheck = getTokenDataByAddress({ tokensMetadata, tokenAddress, tokensPrices })
-        const tokenToCheckBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress })
+    const tokenToCheck = getTokenDataByAddress({ tokensMetadata, tokenAddress, tokensPrices })
+    const tokenToCheckBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress })
 
-        // If token to compare is not valid skip check
-        if (!tokenToCheck || !tokenToCheck.rate) return acc
+    // If token to compare is not valid skip check
+    if (!tokenToCheck || !tokenToCheck.rate) return acc
 
-        // if we don't have acc, make acc current token, cuz it's valid
-        if (!acc)
-          return {
-            address: tokenAddress,
-            balance: tokenToCheckBalance,
-            symbol: tokenToCheck.symbol,
-          }
+    // if we don't have acc, make acc current token, cuz it's valid
+    if (!acc)
+      return {
+        address: tokenAddress,
+        balance: tokenToCheckBalance,
+        symbol: tokenToCheck.symbol,
+      }
 
-        const accToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: acc.address, tokensPrices })
+    const accToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: acc.address, tokensPrices })
 
-        // check for acc token exist to make ts satisfied, cuz it's 100% valid token inside acc
-        if (!accToken || !accToken.rate) return acc
+    // check for acc token exist to make ts satisfied, cuz it's 100% valid token inside acc
+    if (!accToken || !accToken.rate) return acc
 
-        const { rate: checkTokenRate } = tokenToCheck
-        const { rate: accTokenRate } = accToken
-        const accTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: acc.address })
+    const { rate: checkTokenRate } = tokenToCheck
+    const { rate: accTokenRate } = accToken
+    const accTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: acc.address })
 
-        return accTokenBalance * accTokenRate > tokenToCheckBalance * checkTokenRate
-          ? acc
-          : {
-              address: tokenToCheck.address,
-              balance: tokenToCheckBalance,
-              symbol: tokenToCheck.symbol,
-            }
-      }, null),
-    [mTokens, mvkTokenAddress, tokensMetadata, tokensPrices, userTokensBalances],
-  )
+    return accTokenBalance * accTokenRate > tokenToCheckBalance * checkTokenRate
+      ? acc
+      : {
+          address: tokenToCheck.address,
+          balance: tokenToCheckBalance,
+          symbol: tokenToCheck.symbol,
+        }
+  }, null)
 
-  const walletData = useMemo(
-    () => ({
-      xtzAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }),
-      sMVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
-      MVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
-      ...(mostSuppliedUserToken
-        ? {
-            mostSuppliedUserToken: {
-              name: mostSuppliedUserToken.symbol,
-              amount: mostSuppliedUserToken.balance,
-            },
-          }
-        : {}),
-    }),
-    [mostSuppliedUserToken, mvkTokenAddress, userTokensBalances],
-  )
+  const walletData = {
+    xtzAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }),
+    sMVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+    MVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
+    ...(mostSuppliedUserToken
+      ? {
+          mostSuppliedUserToken: {
+            name: mostSuppliedUserToken.symbol,
+            amount: mostSuppliedUserToken.balance,
+          },
+        }
+      : {}),
+  }
 
   const activeTab = useMemo(() => (isValidPersonalDashboardTabId(tabId) ? tabId : PORTFOLIO_TAB_ID), [tabId])
 
@@ -291,7 +303,7 @@ const DashboardPersonal = () => {
           <DashboardPersonalEarningsHistory {...earnings} />
         </div>
 
-        {isLoading ? (
+        {isLoading || isDoormanLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
             <div className="text">Loading your statistic</div>
@@ -304,10 +316,20 @@ const DashboardPersonal = () => {
                   Portfolio
                 </Button>
               </Link>
-              <Link to={`/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}`}>
+              <Link
+                to={
+                  userAddress
+                    ? `/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}${qs.stringify(
+                        { page: { [USER_ACTIONS_HISTORY]: 1 } },
+                        { addQueryPrefix: true },
+                      )}`
+                    : '#'
+                }
+              >
                 <Button
                   selected={activeTab === (isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID)}
                   kind={BUTTON_NAVIGATION}
+                  disabled={!userAddress}
                 >
                   {isSatellite ? 'Satellite' : 'Delegation'}
                 </Button>

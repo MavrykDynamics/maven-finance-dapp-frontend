@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { TabItem, TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+import { Link, useHistory, useLocation } from 'react-router-dom'
+import qs from 'qs'
 
 // styles
 import { EmptyContainer } from 'app/App.style'
 import { BorrowingTabListItemTabInfo } from '../LoansComponents.style'
+import { TabItem, TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // consts
@@ -105,6 +106,10 @@ export const BorrowingExpandCardMenuSection = ({
     preferences: { themeSelected },
   } = useDappConfigContext()
 
+  const { pathname, search } = useLocation()
+  const history = useHistory()
+  const { page, ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
+
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const menuTabs = useMemo(
@@ -125,8 +130,13 @@ export const BorrowingExpandCardMenuSection = ({
   // TODO: test it when sMVK will be avaliable as collateral
   const vaultHasSmvkCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVK_TOKEN_ADDRESS)
 
-  const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (tabId: number) => {
-    setActiveTab(menuTabs.find((item) => item.id === tabId))
+  const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (newTabId: number) => {
+    // condition to set list page to 1, when change tab
+    if (activeMenuTab?.id === loansTabNames.TX_HISTORY && activeMenuTab?.id !== newTabId) {
+      history.replace(`${pathname}${qs.stringify(restQP, { addQueryPrefix: true })}`)
+    }
+
+    setActiveTab(menuTabs.find((item) => item.id === newTabId))
   }
 
   return (

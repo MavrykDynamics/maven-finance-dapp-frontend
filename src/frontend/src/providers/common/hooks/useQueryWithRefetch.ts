@@ -25,7 +25,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   queryOptions: QueryHookOptions<TData, TVariables> | null,
   refetchOptions?: {
     blocksDiff?: number
-    refetchQueryVariables?: () => TVariables | TVariables
+    refetchQueryVariables?: (() => TVariables) | TVariables
   },
 ) => {
   const lastUpdatedBlock = useRef<null | number>(null)

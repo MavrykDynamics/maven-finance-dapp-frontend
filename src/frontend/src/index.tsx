@@ -25,6 +25,7 @@ import DoormanProvider from 'providers/DoormanProvider/doorman.provider'
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
 import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuses.provider'
+import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
 import TreasuryProvider from 'providers/TreasuryProvider/treasury.provider'
 import VestingProvider from 'providers/VestingProvider/vesting.provider'
 
@@ -96,9 +97,11 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
             <SatellitesProvider>
               <LoansProvider>
                 <VaultsProvider>
-                  <TreasuryProvider>
-                    <VestingProvider>{children}</VestingProvider>
-                  </TreasuryProvider>
+                  <FinancialRequestsProvider>
+                    <TreasuryProvider>
+                      <VestingProvider>{children}</VestingProvider>
+                    </TreasuryProvider>
+                  </FinancialRequestsProvider>
                 </VaultsProvider>
               </LoansProvider>
             </SatellitesProvider>
