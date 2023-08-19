@@ -44,6 +44,8 @@ import {
   UPDATE_OPERATORS_ACTION,
   WITHDRAW_COLLATERAL_ACTION,
 } from 'providers/VaultsProvider/helpers/vaults.const'
+
+// proposals
 import {
   DROP_PROPOSAL_ACTION,
   EXECUTE_PROPOSAL_ACTION,
@@ -57,6 +59,9 @@ import {
   UPDATE_PROPOSAL_DATA_ACTION,
   VOTING_ROUND_VOTE_ACTION,
 } from 'providers/ProposalsProvider/helpers/proposals.const'
+
+// fin requests
+import { FINANCIAL_REQUEST_VOTE_ACTION } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
 
 export const TOASTER_ACTIONS_TEXTS = {
   // doorman actions -------------------------------------
@@ -427,6 +432,17 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: DEFAULT_REQUEST_COMPLETION_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  // financial requests actions ------------------------
+  [FINANCIAL_REQUEST_VOTE_ACTION]: {
+    start: {
+      title: 'Voting...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Voting done.',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
