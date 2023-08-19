@@ -88,7 +88,8 @@ const DataFeedDetails = () => {
     isLoading: isSatellitesLoading,
     changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
-  const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts(feedId)
+  // TODO add redirect to all feeds when wrong feedAddress
+  const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts(feedId ?? '')
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -105,7 +106,7 @@ const DataFeedDetails = () => {
     preferences: { themeSelected },
   } = useDappConfigContext()
 
-  const feed = feedsMapper[feedId]
+  const feed = feedsMapper[feedId ?? ''] ?? null
 
   // Before trusted wias checked like this feed && feed.oraclesResponces >= feed.pct_oracle_threshold
   const [isTrustedAnswer, setTrustedAnswer] = useState(true)

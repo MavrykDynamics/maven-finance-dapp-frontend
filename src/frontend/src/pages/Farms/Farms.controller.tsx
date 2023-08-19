@@ -1,4 +1,4 @@
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import qs from 'qs'
 import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
@@ -65,7 +65,7 @@ export type HandleClickArgsType = { filterType: 'search' | 'sort' | 'isStaked' |
 
 export const Farms = () => {
   const dispatch = useDispatch()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { search, pathname } = useLocation()
   const { tokensMetadata } = useTokensContext()
   const { farms, isLoaded } = useSelector((state: State) => state.farm)
@@ -179,7 +179,7 @@ export const Farms = () => {
       }
 
       const stringifiedQP = qs.stringify(newFiltersForQP)
-      history.replace(`${pathname}?${stringifiedQP}`)
+      navigate(`${pathname}?${stringifiedQP}`, { replace: true })
     },
     [
       farmsFilers.isLive,
