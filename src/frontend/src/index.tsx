@@ -26,8 +26,8 @@ import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
 import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuses.provider'
 import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
-import TreasuryProvider from 'providers/TreasuryProvider/treasury.provider'
 import VestingProvider from 'providers/VestingProvider/vesting.provider'
+import TreasuryProvider from 'providers/TreasuryProvider/treasury.provider'
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
@@ -78,10 +78,10 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
   const { isLoading: isDappGeneralLoading } = useDappConfigContext()
   const { isLoading: isTokensLoading } = useTokensContext()
   const { isLoading: isFeedsLoading } = useDataFeedsContext()
-  const { isLoading: isUserLoading, isRunnedInitialConnect } = useUserContext()
+  const { isLoading: isUserLoading, isUserRestored } = useUserContext()
 
   // use user loading status only on dapp init loading
-  const isInitialUserLoading = !isRunnedInitialConnect ? isUserLoading : false
+  const isInitialUserLoading = !isUserRestored ? isUserLoading : false
 
   const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isInitialUserLoading
 
