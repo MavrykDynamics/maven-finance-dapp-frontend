@@ -9,7 +9,7 @@ import {
   TreasuryContextStateType,
   TreasurySubsRecordType,
 } from '../treasury.provider.types'
-import { EMPTY_TREASURY_CTX, TREASURY_STORAGE_QUERY } from './treasury.consts'
+import { EMPTY_TREASURY_CTX, TREASURY_STORAGE_DATA_SUB } from './treasury.consts'
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 
 export const getAssetColor = (assetIdx: number) =>
@@ -79,8 +79,8 @@ export const getTreasuryProviderReturnValue = ({
   const isTreasuryDataEmpty = treasuryAddresses === null || treasuryMapper === null
 
   const isLoading =
-    (activeSubs[TREASURY_STORAGE_QUERY] && isTreasuryDataEmpty) ||
-    (!activeSubs[TREASURY_STORAGE_QUERY] && isTreasuryDataEmpty)
+    (activeSubs[TREASURY_STORAGE_DATA_SUB] && isTreasuryDataEmpty) ||
+    (!activeSubs[TREASURY_STORAGE_DATA_SUB] && isTreasuryDataEmpty)
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {

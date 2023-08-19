@@ -16,7 +16,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 
 // const & types
-import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_QUERY } from 'providers/TreasuryProvider/helpers/treasury.consts'
+import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_DATA_SUB } from 'providers/TreasuryProvider/helpers/treasury.consts'
 import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
 import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 import {
@@ -38,13 +38,14 @@ import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // actions
-import { getVestingStorage } from '../Treasury/Treasury.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 
 // utils
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
+import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/VestingProvider/helpers/vesting.consts'
 
 // TODO: add farms when their data loading will be fixed and up
 export const Dashboard = () => {
@@ -71,15 +72,26 @@ export const Dashboard = () => {
       [DAPP_MVK_SMVK_STATS_SUB]: true,
       [MVK_SMVK_HISTORY_SUB]: true,
     })
+
     changeSatellitesSubscriptionsList({
       [SATELLITE_DATA_SUB]: SATELLITES_DATA_ACTIVE_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
+
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
     })
+
     changeVaultsSubscriptionsList({
       [VAULTS_DATA]: VAULTS_ALL,
+    })
+
+    changeTreasurySubscriptionsList({
+      [TREASURY_STORAGE_DATA_SUB]: true,
+    })
+
+    changeVestingSubscriptionsList({
+      [VESTING_STORAGE_DATA_SUB]: true,
     })
 
     return () => {
@@ -87,6 +99,8 @@ export const Dashboard = () => {
       changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
       changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
       changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+      changeTreasurySubscriptionsList(DEFAULT_TREASURY_SUBS)
+      changeVestingSubscriptionsList(DEFAULT_VESTING_SUBS)
     }
   }, [])
 
@@ -98,19 +112,10 @@ export const Dashboard = () => {
     isLoading: isTreasuryLoading,
     changeTreasurySubscriptionsList,
   } = useTreasuryContext()
-  const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
+
+  const { isLoading: isVestingLoading, changeVestingSubscriptionsList } = useVestingContext()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   // const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
-
-  useEffect(() => {
-    changeTreasurySubscriptionsList({
-      [TREASURY_STORAGE_QUERY]: true,
-    })
-
-    return () => {
-      changeTreasurySubscriptionsList(DEFAULT_TREASURY_SUBS)
-    }
-  }, [])
 
   const { totalBorrowed, totalLended } = useMemo(
     () =>
@@ -182,7 +187,6 @@ export const Dashboard = () => {
       await Promise.all(
         [
           (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
-          (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
           // (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage(tokensMetadata)),
         ].filter(Boolean),
       )
@@ -212,7 +216,8 @@ export const Dashboard = () => {
           isSatellitesLoading ||
           isLoansLoading ||
           isVaultsLoading ||
-          isTreasuryLoading
+          isTreasuryLoading ||
+          isVestingLoading
         }
       />
     </Page>

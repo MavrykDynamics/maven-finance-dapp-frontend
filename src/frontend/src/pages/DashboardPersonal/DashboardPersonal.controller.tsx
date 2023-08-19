@@ -38,7 +38,6 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 // actions
 import { claimAllRewardsAction, distributeProposalRewards } from 'providers/UserProvider/actions/user.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 
 // providers
@@ -65,6 +64,8 @@ import {
 // hooks
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
+import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/VestingProvider/helpers/vesting.consts'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -96,7 +97,7 @@ const DashboardPersonal = () => {
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
-  const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
+  const { isLoading: isVestingLoading, changeVestingSubscriptionsList } = useVestingContext()
 
   useEffect(() => {
     changeStakingSubscriptionsList({
@@ -106,27 +107,33 @@ const DashboardPersonal = () => {
       [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
+    changeVestingSubscriptionsList({
+      [VESTING_STORAGE_DATA_SUB]: true,
+    })
 
     return () => {
       changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
       changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+      changeVestingSubscriptionsList(DEFAULT_VESTING_SUBS)
     }
   }, [])
 
-  const { isLoading } = useDataLoader(
+  const { isLoading: isDataLoading } = useDataLoader(
     async (isDepsChanged) => {
       try {
         await Promise.all(
           [
             (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
             (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
-            isVestee && (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
           ].filter(Boolean),
         )
       } catch (e) {}
     },
     [userAddress],
   )
+
+  // global loading
+  const isLoading = isVestingLoading || isDataLoading || isDoormanLoading
 
   // claim rewards action
   const claimRewardsAction = useCallback(async () => {
@@ -205,65 +212,72 @@ const DashboardPersonal = () => {
     lendingIncome: availableLoansRewards,
   }
 
-  const mostSuppliedUserToken = (userTokensBalances ? Object.keys(userTokensBalances) : []).reduce<null | {
-    address: string
-    symbol: string
-    balance: number
-  }>((acc, tokenAddress) => {
-    // If token is mToken or shown by default return acc, we skip such tokens
-    if (
-      tokenAddress === mvkTokenAddress ||
-      tokenAddress === SMVK_TOKEN_ADDRESS ||
-      tokenAddress === XTZ_TOKEN_ADDRESS ||
-      mTokens.includes(tokenAddress)
-    )
-      return acc
+  const mostSuppliedUserToken = useMemo(
+    () =>
+      (userTokensBalances ? Object.keys(userTokensBalances) : []).reduce<null | {
+        address: string
+        symbol: string
+        balance: number
+      }>((acc, tokenAddress) => {
+        // If token is mToken or shown by default return acc, we skip such tokens
+        if (
+          tokenAddress === mvkTokenAddress ||
+          tokenAddress === SMVK_TOKEN_ADDRESS ||
+          tokenAddress === XTZ_TOKEN_ADDRESS ||
+          mTokens.includes(tokenAddress)
+        )
+          return acc
 
-    const tokenToCheck = getTokenDataByAddress({ tokensMetadata, tokenAddress, tokensPrices })
-    const tokenToCheckBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress })
+        const tokenToCheck = getTokenDataByAddress({ tokensMetadata, tokenAddress, tokensPrices })
+        const tokenToCheckBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress })
 
-    // If token to compare is not valid skip check
-    if (!tokenToCheck || !tokenToCheck.rate) return acc
+        // If token to compare is not valid skip check
+        if (!tokenToCheck || !tokenToCheck.rate) return acc
 
-    // if we don't have acc, make acc current token, cuz it's valid
-    if (!acc)
-      return {
-        address: tokenAddress,
-        balance: tokenToCheckBalance,
-        symbol: tokenToCheck.symbol,
-      }
+        // if we don't have acc, make acc current token, cuz it's valid
+        if (!acc)
+          return {
+            address: tokenAddress,
+            balance: tokenToCheckBalance,
+            symbol: tokenToCheck.symbol,
+          }
 
-    const accToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: acc.address, tokensPrices })
+        const accToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: acc.address, tokensPrices })
 
-    // check for acc token exist to make ts satisfied, cuz it's 100% valid token inside acc
-    if (!accToken || !accToken.rate) return acc
+        // check for acc token exist to make ts satisfied, cuz it's 100% valid token inside acc
+        if (!accToken || !accToken.rate) return acc
 
-    const { rate: checkTokenRate } = tokenToCheck
-    const { rate: accTokenRate } = accToken
-    const accTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: acc.address })
+        const { rate: checkTokenRate } = tokenToCheck
+        const { rate: accTokenRate } = accToken
+        const accTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: acc.address })
 
-    return accTokenBalance * accTokenRate > tokenToCheckBalance * checkTokenRate
-      ? acc
-      : {
-          address: tokenToCheck.address,
-          balance: tokenToCheckBalance,
-          symbol: tokenToCheck.symbol,
-        }
-  }, null)
+        return accTokenBalance * accTokenRate > tokenToCheckBalance * checkTokenRate
+          ? acc
+          : {
+              address: tokenToCheck.address,
+              balance: tokenToCheckBalance,
+              symbol: tokenToCheck.symbol,
+            }
+      }, null),
+    [mTokens, mvkTokenAddress, tokensMetadata, tokensPrices, userTokensBalances],
+  )
 
-  const walletData = {
-    xtzAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }),
-    sMVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
-    MVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
-    ...(mostSuppliedUserToken
-      ? {
-          mostSuppliedUserToken: {
-            name: mostSuppliedUserToken.symbol,
-            amount: mostSuppliedUserToken.balance,
-          },
-        }
-      : {}),
-  }
+  const walletData = useMemo(
+    () => ({
+      xtzAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }),
+      sMVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+      MVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
+      ...(mostSuppliedUserToken
+        ? {
+            mostSuppliedUserToken: {
+              name: mostSuppliedUserToken.symbol,
+              amount: mostSuppliedUserToken.balance,
+            },
+          }
+        : {}),
+    }),
+    [mostSuppliedUserToken, mvkTokenAddress, userTokensBalances],
+  )
 
   const activeTab = useMemo(() => (isValidPersonalDashboardTabId(tabId) ? tabId : PORTFOLIO_TAB_ID), [tabId])
 
@@ -277,7 +291,7 @@ const DashboardPersonal = () => {
           <DashboardPersonalEarningsHistory {...earnings} />
         </div>
 
-        {isLoading || isDoormanLoading ? (
+        {isLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
             <div className="text">Loading your statistic</div>

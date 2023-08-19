@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react'
-import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import dayjs from 'dayjs'
 
@@ -10,9 +9,6 @@ import Button from 'app/App.components/Button/NewButton'
 // styles
 import { VestingTabStyled } from './DashboardPersonalComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-
-// types
-import { State } from 'reducers'
 
 // consts
 import { CLAIM_VESTING_REWARD_ACTION } from 'providers/UserProvider/helpers/user.consts'
@@ -27,6 +23,7 @@ import { PORTFOLIO_TAB_ID } from '../DashboardPersonal.utils'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
 
 // actions
 import { claimVestingReward } from 'providers/UserProvider/actions/user.actions'
@@ -35,7 +32,7 @@ import { claimVestingReward } from 'providers/UserProvider/actions/user.actions'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 const VestingTab = () => {
-  const { vesteesMapper } = useSelector((state: State) => state.vesting)
+  const { vesteesMapper } = useVestingContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
   const {

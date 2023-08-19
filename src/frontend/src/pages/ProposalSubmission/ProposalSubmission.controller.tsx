@@ -26,7 +26,7 @@ import { DEFAULT_PROPOSAL } from './ProposalSubmission.helpers'
 import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 
 // consts
-import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_QUERY } from 'providers/TreasuryProvider/helpers/treasury.consts'
+import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_DATA_SUB } from 'providers/TreasuryProvider/helpers/treasury.consts'
 
 export const ProposalSubmission = () => {
   const dispatch = useDispatch()
@@ -42,7 +42,7 @@ export const ProposalSubmission = () => {
 
   useEffect(() => {
     changeTreasurySubscriptionsList({
-      [TREASURY_STORAGE_QUERY]: true,
+      [TREASURY_STORAGE_DATA_SUB]: true,
     })
 
     return () => {

@@ -4,10 +4,10 @@ import {
   TreasurySubsRecordType,
 } from '../treasury.provider.types'
 
-export const TREASURY_STORAGE_QUERY = 'treasuryStorage'
+export const TREASURY_STORAGE_DATA_SUB = 'treasuryStorage'
 
 export const DEFAULT_TREASURY_SUBS: TreasurySubsRecordType = {
-  [TREASURY_STORAGE_QUERY]: false,
+  [TREASURY_STORAGE_DATA_SUB]: false,
 } as const
 
 export const DEFAULT_TREASURY_CTX: NullableTreasuryContextStateType = {

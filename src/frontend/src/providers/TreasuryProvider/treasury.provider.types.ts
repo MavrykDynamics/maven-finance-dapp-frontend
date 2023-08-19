@@ -1,8 +1,8 @@
-import { TREASURY_STORAGE_QUERY } from './helpers/treasury.consts'
+import { TREASURY_STORAGE_DATA_SUB } from './helpers/treasury.consts'
 import { normalizeTreasuryStorage } from './helpers/treasury.normalizer'
 
 // queries
-export type TreasurySubsType = typeof TREASURY_STORAGE_QUERY
+export type TreasurySubsType = typeof TREASURY_STORAGE_DATA_SUB
 
 export type TreasuryNormalizedData = ReturnType<typeof normalizeTreasuryStorage>
 

@@ -21,7 +21,7 @@ import { TreasuryActiveStyle, TreasurySelectStyle } from './Treasury.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // consts
-import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_QUERY } from 'providers/TreasuryProvider/helpers/treasury.consts'
+import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_DATA_SUB } from 'providers/TreasuryProvider/helpers/treasury.consts'
 
 type TreasuryDDType = DropDownItemType & { treasury: TreasuryType[number] }
 
@@ -34,7 +34,7 @@ export const Treasury = () => {
 
   useEffect(() => {
     changeTreasurySubscriptionsList({
-      [TREASURY_STORAGE_QUERY]: true,
+      [TREASURY_STORAGE_DATA_SUB]: true,
     })
 
     return () => {
