@@ -142,14 +142,9 @@ export const FinancialRequestsView = ({
     const { decimals, symbol } = requestedToken
 
     // -1 in cases there are NOT any votes or it's past fin request, so all buttons will be active if user satisfies all conditions for voting
-    let votingAreaVoteBtnValue = -1
-
-    // if there are ongoing requests detect state for vote btns
-    if (ongoing.includes(String(rightSideContent.id)) && rightSideContent?.votes.length) {
-      const finRequestRecord = rightSideContent.votes.find(({ voter }) => voter === userAddress)
-
-      votingAreaVoteBtnValue = finRequestRecord?.vote ? Number(finRequestRecord.vote) : votingAreaVoteBtnValue
-    }
+    const userVote = ongoing.includes(String(rightSideContent.id))
+      ? rightSideContent.votes.find(({ voter }) => voter === userAddress)?.vote ?? -1
+      : -1
 
     return (
       <FinancialRequestsRightContainer>
@@ -176,7 +171,7 @@ export const FinancialRequestsView = ({
               : { forBtn: undefined, againsBtn: undefined }
           }
           className={'fr-voting'}
-          disableButtonByVote={votingAreaVoteBtnValue}
+          disableButtonByVote={userVote}
         />
 
         <hr />
