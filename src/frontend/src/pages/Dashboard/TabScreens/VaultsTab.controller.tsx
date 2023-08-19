@@ -7,7 +7,7 @@ import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { emptyContainer } from './LendingTab.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import PieChartView from 'app/App.components/PieСhart/PieСhart.view'
+import PieChartView from 'app/App.components/PieChart/PieСhart.view'
 
 import {
   Table,

@@ -1,5 +1,7 @@
-export const VESTING_STORAGE_QUERY = `
-  query GetVestingStorageQuery {
+import { gql } from 'utils/__generated__'
+
+export const GET_VESTING_STORAGE_QUERY = gql(`
+  query GetVestingStorage {
     vesting {
       address
       admin
@@ -29,7 +31,4 @@ export const VESTING_STORAGE_QUERY = `
       }
     }
   }
-`
-
-export const VESTING_STORAGE_QUERY_NAME = 'GetVestingStorageQuery'
-export const VESTING_STORAGE_QUERY_VARIABLE = {}
+`)

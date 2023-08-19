@@ -40,7 +40,6 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 // actions
 import { claimAllRewardsAction, distributeProposalRewards } from 'providers/UserProvider/actions/user.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 
 // providers
@@ -69,6 +68,8 @@ import {
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
+import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
+import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/VestingProvider/helpers/vesting.consts'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -96,7 +97,7 @@ const DashboardPersonal = () => {
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
-  const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
+  const { isLoading: isVestingLoading, changeVestingSubscriptionsList } = useVestingContext()
 
   useEffect(() => {
     changeStakingSubscriptionsList({
@@ -107,9 +108,14 @@ const DashboardPersonal = () => {
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
 
+    changeVestingSubscriptionsList({
+      [VESTING_STORAGE_DATA_SUB]: true,
+    })
+
     return () => {
       changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
       changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+      changeVestingSubscriptionsList(DEFAULT_VESTING_SUBS)
     }
   }, [])
 
@@ -131,20 +137,22 @@ const DashboardPersonal = () => {
     gatheredSatellitesRewards,
   } = useUserRewards()
 
-  const { isLoading } = useDataLoader(
+  const { isLoading: isDataLoading } = useDataLoader(
     async (isDepsChanged) => {
       try {
         await Promise.all(
           [
             (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
             (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
-            isVestee && (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
           ].filter(Boolean),
         )
       } catch (e) {}
     },
     [userAddress],
   )
+
+  // global loading
+  const isLoading = isVestingLoading || isDataLoading || isDoormanLoading || isRewardsLoading
 
   // claim rewards action
   const claimRewardsAction = useCallback(async () => {

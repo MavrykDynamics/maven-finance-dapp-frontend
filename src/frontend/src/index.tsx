@@ -26,6 +26,8 @@ import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
 import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuses.provider'
 import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
+import VestingProvider from 'providers/VestingProvider/vesting.provider'
+import TreasuryProvider from 'providers/TreasuryProvider/treasury.provider'
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
@@ -95,7 +97,11 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
             <SatellitesProvider>
               <LoansProvider>
                 <VaultsProvider>
-                  <FinancialRequestsProvider>{children}</FinancialRequestsProvider>
+                  <FinancialRequestsProvider>
+                    <TreasuryProvider>
+                      <VestingProvider>{children}</VestingProvider>
+                    </TreasuryProvider>
+                  </FinancialRequestsProvider>
                 </VaultsProvider>
               </LoansProvider>
             </SatellitesProvider>
