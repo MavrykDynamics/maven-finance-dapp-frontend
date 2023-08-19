@@ -91,7 +91,8 @@
     "extends": "react-app"
   },
   "resolutions": {
-    "@types/react": "^18"
+    "@types/react": "^18",
+    "@types/react-dom": "^18"
   },
   "browserslist": {
     "production": [

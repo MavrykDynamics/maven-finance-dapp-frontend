@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { useLocation, useHistory, useParams } from 'react-router'
+import { useLocation, useNavigate, useParams } from 'react-router'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -57,9 +57,10 @@ export const vaultTabs = {
 
 export const VaultsView = () => {
   const dispatch = useDispatch()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { search } = useLocation()
-  const { tabId } = useParams<{ tabId: string }>()
+  // TODO handle wrong id
+  const { tabId = '' } = useParams<{ tabId: string }>()
 
   const { userAddress } = useUserContext()
   const { changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
@@ -149,7 +150,7 @@ export const VaultsView = () => {
 
     if (!foundTab?.path || currentTabId === id) return
 
-    history.replace(`${pathname}/${foundTab.path}`)
+    navigate(`${pathname}/${foundTab.path}`, { replace: true })
     setVaultsIds(
       foundTab.path === vaultTabs.ALL
         ? allVaultsIds

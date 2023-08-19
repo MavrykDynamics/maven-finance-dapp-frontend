@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 
 // hooks
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
@@ -48,7 +48,7 @@ const marketSettings: MarketSettingsType = {
 }
 
 export const LoansBorrow = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { openCreateVaultPopup } = useLoansPopupsContext()
@@ -117,7 +117,7 @@ export const LoansBorrow = () => {
   )
 
   const handleSetNewlyCreatedVaultAddress = (marketAddress: string) => (address: string) => {
-    history.push(`/loans/${marketAddress}/borrowTab?vaultAddress=${address}`, { from: '/loans/borrow' })
+    navigate(`/loans/${marketAddress}/borrowTab?vaultAddress=${address}`, { state: { from: '/loans/borrow' } })
   }
 
   const handleBorrow = (marketTokenAddress: string) => {
@@ -168,7 +168,7 @@ export const LoansBorrow = () => {
 
       if (!validVault) return
 
-      history.push(`/loans/${validVault.borrowedTokenAddress}/borrowTab`, { from: '/loans/borrow' })
+      navigate(`/loans/${validVault.borrowedTokenAddress}/borrowTab`, { state: { from: '/loans/borrow' } })
     }
   }
 

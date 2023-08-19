@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import qs from 'qs'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useNavigate, useLocation, useParams } from 'react-router-dom'
 
 // components
 import { Input } from 'app/App.components/Input/Input.controller'
@@ -38,7 +38,7 @@ type Props = {
 }
 
 export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsIds, setVaultsIds }: Props) => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { search } = useLocation()
   const { tabId } = useParams<{ tabId: string }>()
 
@@ -257,7 +257,7 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
       const withoutEmptyFilters = Object.fromEntries(Object.entries(filtersList).filter((item) => item[1]))
       const stringifiedQP = qs.stringify({ ...withoutEmptyFilters, ...restQP })
 
-      history.replace(`${vaultsPathname}/${tabId}?${stringifiedQP}`)
+      navigate(`${vaultsPathname}/${tabId}?${stringifiedQP}`, { replace: true })
 
       setChosenDdItem(withoutEmptyFilters)
       setFilteredData(filteredVaultsIds)

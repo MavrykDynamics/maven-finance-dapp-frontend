@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Redirect, useHistory, useLocation } from 'react-router'
+import { Navigate, useNavigate, useLocation } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import QueryString from 'qs'
 
@@ -57,7 +57,7 @@ import {
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const dispatch = useDispatch()
   const { search } = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const {
     isLoaded: isGovernanceLoaded,
@@ -96,7 +96,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const redirect =
     (!rightSideContentId && listOfProposalsToUseForRedirect.length) ||
     (rightSideContentId && !listOfProposalsToUseForRedirect.includes(rightSideContentId)) ? (
-      <Redirect
+      <Navigate
         to={`/${proposalPage}${
           listOfProposalsToUseForRedirect.length
             ? `?${QueryString.stringify({
@@ -110,7 +110,9 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   // Show details of the proposal
   // const [rightSideContentId, setRightSideContentId] = useState<number | undefined>(undefined)
   const handleItemSelect = (chosenProposal: ProposalRecordType) =>
-    history.replace(`/${proposalPage}?${QueryString.stringify({ ...parsedQp, proposalId: chosenProposal.id })}`)
+    navigate(`/${proposalPage}?${QueryString.stringify({ ...parsedQp, proposalId: chosenProposal.id })}`, {
+      replace: true,
+    })
 
   // filters handlers TODO: add all cycles option
   const dropDownOptions = useMemo<Array<DropDownItemType>>(() => generateCyclesDdOptions(cycle), [cycle])

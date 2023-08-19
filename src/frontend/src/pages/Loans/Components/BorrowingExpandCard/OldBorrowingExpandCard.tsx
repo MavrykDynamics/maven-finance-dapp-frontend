@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import classNames from 'classnames'
 
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from '../../Loans.const'
@@ -66,7 +66,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
   const ref = useRef<HTMLDivElement | null>(null)
   useClickAway(ref, () => (notHandleClickAway ? null : handleCloseVault()))
 
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
 
   const params = useMemo(() => new URLSearchParams(location.search), [location.search])
@@ -113,14 +113,14 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
     if (isExpanded) return
 
     params.append('vaultAddress', address)
-    history.replace({ ...location, search: params.toString() })
+    navigate({ ...location, search: params.toString() }, { replace: true })
   }
 
   const handleCloseVault = () => {
     if (!isExpanded) return
 
     params.delete('vaultAddress')
-    history.replace({ ...location, search: params.toString() })
+    navigate({ ...location, search: params.toString() }, { replace: true })
   }
 
   const handleClickExpand = () => {

@@ -1,4 +1,4 @@
-import { useHistory, useLocation } from 'react-router'
+import { useNavigate, useLocation } from 'react-router'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useState } from 'react'
@@ -27,7 +27,7 @@ type BorrowingTabPropsType = {
 }
 
 export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: BorrowingTabPropsType) => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
 
   const { openCreateVaultPopup } = useLoansPopupsContext()
@@ -64,7 +64,7 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
 
     const params = new URLSearchParams(location.search)
     params.append('vaultAddress', address)
-    history.replace({ ...location, search: params.toString() })
+    navigate({ ...location, search: params.toString() }, { replace: true })
   }
 
   return (

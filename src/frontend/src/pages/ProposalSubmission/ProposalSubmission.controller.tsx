@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useLocation, Redirect } from 'react-router'
+import { useLocation, Navigate } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 import QueryString from 'qs'
@@ -70,9 +70,9 @@ export const ProposalSubmission = () => {
 
   const redirect =
     userProposals.length >= 2 && convertedProposalId === DEFAULT_PROPOSAL.id ? (
-      <Redirect to={`/submit-proposal?${QueryString.stringify({ proposalId: userProposals[0] })}`} />
+      <Navigate to={`/submit-proposal?${QueryString.stringify({ proposalId: userProposals[0] })}`} />
     ) : convertedProposalId && isValidProposalId ? null : (
-      <Redirect to={`/submit-proposal?${QueryString.stringify({ proposalId: userProposals[0] ?? -1 })}`} />
+      <Navigate to={`/submit-proposal?${QueryString.stringify({ proposalId: userProposals[0] ?? -1 })}`} />
     )
 
   return (

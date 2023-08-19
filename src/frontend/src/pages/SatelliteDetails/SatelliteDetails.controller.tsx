@@ -84,7 +84,8 @@ const SatellitesVotingHistory = ({
 }
 
 export const SatelliteDetails = () => {
-  const { satelliteId } = useParams<{ satelliteId: string }>()
+  // TODO fix wrong id
+  const { satelliteId = '' } = useParams<{ satelliteId: string }>()
   const { apolloClient } = useApolloContext()
   const { fatal } = useToasterContext()
   const {

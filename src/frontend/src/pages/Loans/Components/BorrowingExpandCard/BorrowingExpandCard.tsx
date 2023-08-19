@@ -29,7 +29,7 @@ import {
   loansTabNames,
 } from 'pages/Loans/Loans.const'
 import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
-import { useHistory, useLocation } from 'react-router'
+import { useNavigate, useLocation } from 'react-router'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
@@ -80,7 +80,7 @@ export const BorrowingExpandCard = ({
   } = useLoansPopupsContext()
   const { marketsMapper } = useLoansContext()
 
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -181,14 +181,14 @@ export const BorrowingExpandCard = ({
     if (isExpanded) return
 
     params.append('vaultAddress', vaultAddress)
-    history.replace({ ...location, search: params.toString() })
+    navigate({ ...location, search: params.toString() }, { replace: true })
   }
 
   const handleCloseVault = () => {
     if (!isExpanded) return
 
     params.delete('vaultAddress')
-    history.replace({ ...location, search: params.toString() })
+    navigate({ ...location, search: params.toString() }, { replace: true })
   }
 
   const handleClickExpand = () => {

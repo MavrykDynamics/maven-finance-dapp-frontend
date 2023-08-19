@@ -21,7 +21,10 @@ export const farmsPopupsContext = createContext<FarmsPopupsContextStateType>(und
  * @class
  * @augments {React.Component}
  */
-export default class FarmsPopupsProvider extends React.Component<{}, FarmsPopupsContextStateType, { children: any }> {
+export default class FarmsPopupsProvider extends React.Component<
+  { children?: React.ReactNode },
+  FarmsPopupsContextStateType
+> {
   constructor(props: {}) {
     super(props)
 

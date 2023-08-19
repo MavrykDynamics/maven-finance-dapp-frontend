@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import QueryString from 'qs'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 
 // view
 import { PropSubmissionTopBar } from './PropSubmissionTopBar/PropSubmissionTopBar.controller'
@@ -87,7 +87,7 @@ import { GOVERNANCE_LATEST_USER_PROPOSAL_QUERY } from 'gql/queries'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const dispatch = useDispatch()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { bug } = useToasterContext()
   const { apolloClient } = useApolloContext()
 
@@ -205,7 +205,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const changeActiveProposal = useCallback(
     (proposalId: number) => {
       if (proposalId !== selectedUserProposalId)
-        history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
+        navigate(`/submit-proposal?${QueryString.stringify({ proposalId })}`, { replace: true })
     },
     [history, selectedUserProposalId],
   )

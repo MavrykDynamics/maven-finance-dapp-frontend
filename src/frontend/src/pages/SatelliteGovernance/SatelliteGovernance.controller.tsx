@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Page } from 'styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
-import { useLocation, useParams, useHistory } from 'react-router'
+import { useLocation, useParams, useNavigate } from 'react-router'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -77,7 +77,7 @@ const emptyContainer = (
 
 export const SatelliteGovernance = () => {
   const { search } = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const { tabId = SATELLITE_GOVERNANCE_MENU_TABS.ONGOING } = useParams<{ tabId: string }>()
@@ -164,7 +164,7 @@ export const SatelliteGovernance = () => {
     const currentTabId = tabsList.find((item) => item.path === tabId)?.id
 
     if (!foundTab?.path || currentTabId === id) return
-    history.replace(`${SATELLITE_GOVERNANCE_PATHNAME}/${foundTab.path}`)
+    navigate(`${SATELLITE_GOVERNANCE_PATHNAME}/${foundTab.path}`, { replace: true })
   }
 
   const handleClickDropdownItem = (itemId: DDItemId) => {
