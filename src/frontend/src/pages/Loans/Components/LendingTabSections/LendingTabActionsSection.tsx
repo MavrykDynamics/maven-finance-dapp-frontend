@@ -18,7 +18,7 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { LENDING_TAB_SUPPLY_TEXT, LENDING_TAB_WITHDRAW_TEXT } from 'texts/banners/loan.text'
 import { EARN_APY } from 'texts/tooltips/loan.text'
 import {
-  ERR_MSG_TOAST,
+  ERR_MSG_INPUT,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
@@ -148,7 +148,7 @@ export const LendingTabActionsSection = ({
     useMaxHandler,
     inputStatus: inputData.validationStatus,
     inputSize: INPUT_LARGE,
-    validationFns: [[validateInputLength, ERR_MSG_TOAST]],
+    validationFns: [[validateInputLength, ERR_MSG_INPUT]],
     ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
   }
 

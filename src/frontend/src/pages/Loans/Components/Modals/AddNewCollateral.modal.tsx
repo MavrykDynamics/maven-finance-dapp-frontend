@@ -29,7 +29,7 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { AddNewCollateralDataProps } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
-import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import { ERR_MSG_INPUT, INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // actions
@@ -57,6 +57,8 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { Info } from 'app/App.components/Info/Info.view'
 import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
 import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({
@@ -312,6 +314,7 @@ export const AddNewCollateral = ({
                   inputSize: INPUT_LARGE,
                   inputStatus: inputData.validationStatus,
                   convertedValue: Number(inputData.amount) * rate,
+                  validationFns: [[validateInputLength, ERR_MSG_INPUT]],
                 }}
               >
                 <InputPinnedDropDown>
@@ -370,37 +373,39 @@ export const AddNewCollateral = ({
           <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20 mb-20" />
 
           <div className="block-name">New Vault Status</div>
-          <VaultModalOverview>
-            <ThreeLevelListItem
-              className="collateral-diagram"
-              customColor={getCollateralRationPersent(futureCollateralRatio)}
-            >
-              <div className={`percentage`}>
-                Collateral Ratio:{' '}
-                <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
-              </div>
-              <GradientDiagram
-                className="diagram"
-                colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
-              />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">Collateral Value</div>
-              <CommaNumber value={futureCollateralBalance} className="value" beginningText="$" />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">
-                Available to Borrow{' '}
-                <CustomTooltip
-                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
-                  iconId="info"
-                  defaultStrokeColor={silverColor}
+          <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
+            <VaultModalOverview>
+              <ThreeLevelListItem
+                className="collateral-diagram"
+                customColor={getCollateralRationPersent(futureCollateralRatio)}
+              >
+                <div className={`percentage`}>
+                  Collateral Ratio:{' '}
+                  <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+                </div>
+                <GradientDiagram
+                  className="diagram"
+                  colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+                  currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
                 />
-              </div>
-              <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
-            </ThreeLevelListItem>
-          </VaultModalOverview>
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Collateral Value</div>
+                <CommaNumber value={futureCollateralBalance} className="value" beginningText="$" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">
+                  Available to Borrow{' '}
+                  <CustomTooltip
+                    text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
+                    iconId="info"
+                    defaultStrokeColor={silverColor}
+                  />
+                </div>
+                <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
+              </ThreeLevelListItem>
+            </VaultModalOverview>
+          </MemoizedComponent>
 
           <div className="manage-btn">
             <NewButton
