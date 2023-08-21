@@ -1,30 +1,33 @@
-import { normalizeDoormanChartsData } from './helpers/normalizer'
+import { normalizerSatelliteGovernance } from './helpers/satelliteGov.normalizer'
+import { SATELLITES_GOVERNANCE_STORAGE_SUB } from './helpers/satellitesGov.consts'
 
-import { MVK_SMVK_HISTORY_SUB, DAPP_MVK_SMVK_STATS_SUB, STAKE_ACTION, UNSTAKE_ACTION } from './helpers/doorman.consts'
+export type SatelliteGovNormalizerReturnType = ReturnType<typeof normalizerSatelliteGovernance>
 
-export type SmvkHistoryData = ReturnType<typeof normalizeDoormanChartsData>
-export type StakeActionType = typeof STAKE_ACTION | typeof UNSTAKE_ACTION
-export type StakingSubsType = typeof DAPP_MVK_SMVK_STATS_SUB | typeof MVK_SMVK_HISTORY_SUB
+// export type SatelliteGovernanceConfigType = {
+//   address: string
+//   admin: string
+//   approvalPercentage: number
+//   durationInDays: number
+//   counter: number
+//   governanceId: string
+//   maxActionsCount: number
+// }
 
-export type DoormanContextStateType = {
-  mvkHistoryData: SmvkHistoryData['mvkHistoryData']
-  smvkHistoryData: SmvkHistoryData['smvkHistoryData']
-  totalStakedMvk: number
-  totalSupply: number
-  maximumTotalSupply: number
+export type SatelliteGovernanceContextStateType = {
+  config: SatelliteGovNormalizerReturnType['config']
+  ongoingSatelliteGovIds: SatelliteGovNormalizerReturnType['ongoingSatelliteGovIds']
+  pastSatelliteGovIds: SatelliteGovNormalizerReturnType['pastSatelliteGovIds']
+  mySatelliteGovIds: SatelliteGovNormalizerReturnType['mySatelliteGovIds']
+  satelliteGovIdsMapper: SatelliteGovNormalizerReturnType['satelliteGovIdsMapper']
 }
 
-export type NullableDoormanContextStateType = DeepNullable<DoormanContextStateType>
+export type NullableSatelliteGovernanceContextStateType = DeepNullable<SatelliteGovernanceContextStateType>
 
-export type DoormanContext = DoormanContextStateType & {
+export type SatelliteGovernanceContext = SatelliteGovernanceContextStateType & {
   isLoading: boolean
 
-  changeStakingSubscriptionsList: (skips: Partial<DoormanSubsRecordType>) => void
+  changeSatelliteGovSubscriptionsList: (subs: Partial<SatelliteGovernanceSubsRecordType>) => void
 }
 
-export type DoormanActionData = {
-  loadingToasterId: string
-  action: StakeActionType
-} | null
-
-export type DoormanSubsRecordType = Record<StakingSubsType, boolean>
+export type SatelliteGovSubsType = typeof SATELLITES_GOVERNANCE_STORAGE_SUB
+export type SatelliteGovernanceSubsRecordType = Record<SatelliteGovSubsType, boolean>

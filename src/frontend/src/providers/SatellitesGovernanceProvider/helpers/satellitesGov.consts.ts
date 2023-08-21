@@ -1,3 +1,9 @@
+import {
+  NullableSatelliteGovernanceContextStateType,
+  SatelliteGovernanceContextStateType,
+  SatelliteGovernanceSubsRecordType,
+} from '../satelliteGovernance.provider.types'
+
 export const SUSPEND_SATELLITE_ACTION = 'suspendSatellite'
 export const UNSUSPEND_SATELLITE_ACTION = 'unsuspendSatellite'
 export const BAN_SATELLITE_ACTION = 'banSatellite'
@@ -13,17 +19,23 @@ export const UPDATE_AGGREGATOR_STATUS_ACTION = 'updateAggregatorStatus'
 export const REGISTER_AGGREGATOR_ACTION = 'registerAggregator'
 export const FIX_MISTAKEN_TRANSFER_ACTION = 'fixMistakenTransfer'
 
-// CONTEXT VARS
+// subs
+export const SATELLITES_GOVERNANCE_STORAGE_SUB = 'getSatellitesStorageData'
 
-export const DEFAULT_SATELLITE_GOV_CTX = {
+export const DEFAULT_SATELLITE_GOVERNANCE_SUBS: SatelliteGovernanceSubsRecordType = {
+  [SATELLITES_GOVERNANCE_STORAGE_SUB]: false,
+} as const
+
+// CONTEXT VARS
+export const DEFAULT_SATELLITE_GOV_CTX: NullableSatelliteGovernanceContextStateType = {
   config: null,
   ongoingSatelliteGovIds: null,
   pastSatelliteGovIds: null,
   mySatelliteGovIds: null,
   satelliteGovIdsMapper: null,
-}
+} as const
 
-export const EMPTY_SATELLITE_GOV_CTX = {
+export const EMPTY_SATELLITE_GOV_CTX: SatelliteGovernanceContextStateType = {
   config: {
     address: '',
     admin: '',
