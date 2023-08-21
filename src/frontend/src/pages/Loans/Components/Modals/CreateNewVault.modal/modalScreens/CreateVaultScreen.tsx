@@ -6,7 +6,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 
 // consts
-import { INPUT_LARGE, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { ERR_MSG_INPUT, INPUT_LARGE, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { ADD_COLLATERAL_SCREEN_ID } from '../helpers/createNewVault.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
@@ -19,6 +19,7 @@ import { containSpaces } from 'app/App.utils/input'
 
 // hooks
 import { useUserVaultsNames } from 'providers/VaultsProvider/hooks/useVaultsNames'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 export const CreateVaultScreen = () => {
   const { vaultNames } = useUserVaultsNames()
@@ -58,6 +59,8 @@ export const CreateVaultScreen = () => {
           inputStatus: vaultInputState.validationStatus,
           inputSize: INPUT_LARGE,
           errorMessage: vaultInputState.errorMessage,
+          validationFns: [[validateInputLength, ERR_MSG_INPUT, [15]]],
+          allowInputAfterError: true,
         }}
       />
       <div className="manage-btn">

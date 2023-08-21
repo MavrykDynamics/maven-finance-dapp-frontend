@@ -1,9 +1,8 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import {
   ERR_MSG_INPUT,
   ERR_MSG_TOAST,
   INPUT_STATUS_ERROR,
-  INPUT_STATUS_SUCCESS,
   InputStatusType,
 } from 'app/App.components/Input/Input.constants'
 
@@ -15,9 +14,11 @@ export interface InputValidatorProps<T> {
   originalErrorMessage?: string
   status: InputStatusType
   onChange: (e: React.ChangeEvent<T>) => void
+  onBlur?: (e: React.ChangeEvent<T>) => void
   validationFns?: ValidatorFnType[]
   handleMax?: () => void
   value?: string | number
+  allowInputAfterError: boolean
 }
 
 // * @param originalErrorMessage - error message passed from props to the Input component
@@ -30,9 +31,11 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
   originalErrorMessage,
   status,
   onChange,
+  onBlur,
   handleMax,
   validationFns,
   value,
+  allowInputAfterError,
 }: InputValidatorProps<G>) {
   const { bug } = useToasterContext()
   const [errorMsg, setErrorMsg] = useState('')
@@ -40,6 +43,8 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
 
   const internalValidationFn = useCallback(
     (value: string) => {
+      if (errorMsg) setErrorMsg('')
+      if (toastErrMsg) setToastErrMsg('')
       const hasError = validationFns?.some(([fn, type, args], idx) => {
         const errMsg = args ? fn.apply(null, [value, ...args]) : fn(value)
 
@@ -67,7 +72,7 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
 
       return hasError
     },
-    [bug, toastErrMsg, validationFns],
+    [bug, errorMsg, toastErrMsg, validationFns],
   )
 
   const handleChange = useCallback(
@@ -76,9 +81,28 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
 
       const hasError = internalValidationFn(value)
 
-      if (!hasError) onChange(e)
+      const _allowInput = allowInputAfterError ? allowInputAfterError : !hasError
+      if (_allowInput) {
+        onChange(e)
+      }
     },
-    [internalValidationFn, onChange],
+    [allowInputAfterError, internalValidationFn, onChange],
+  )
+
+  const handleBlur = useCallback(
+    (e: React.ChangeEvent<G>) => {
+      const { value } = e.target
+
+      const hasError = internalValidationFn(value)
+
+      if (!hasError) {
+        setToastErrMsg('')
+        setErrorMsg('')
+      }
+
+      onBlur?.(e)
+    },
+    [internalValidationFn, onBlur],
   )
 
   const handleMaxAmount = useCallback(() => {
@@ -88,16 +112,8 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
     }
   }, [handleMax, internalValidationFn, value])
 
-  // if status is success - remove errors
-  useEffect(() => {
-    if (status !== INPUT_STATUS_ERROR) {
-      if (errorMsg) setErrorMsg('')
-      if (toastErrMsg) setToastErrMsg('')
-    }
-  }, [errorMsg, status, toastErrMsg])
-
   const internalErrorMsg = Boolean(errorMsg) ? errorMsg : Boolean(originalErrorMessage) ? originalErrorMessage : ''
   const internalInputStatus = internalErrorMsg ? INPUT_STATUS_ERROR : status
 
-  return { status: internalInputStatus, errorMessage: internalErrorMsg, handleChange, handleMaxAmount }
+  return { status: internalInputStatus, errorMessage: internalErrorMsg, handleChange, handleBlur, handleMaxAmount }
 }

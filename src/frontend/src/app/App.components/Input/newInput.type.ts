@@ -18,6 +18,7 @@ export type Settings = {
   inputSize?: InputSizeType
   errorMessage?: string
   showErrorMessage?: boolean
+  allowInputAfterError?: boolean
   validationFns?: ValidatorFnType[]
 }
 

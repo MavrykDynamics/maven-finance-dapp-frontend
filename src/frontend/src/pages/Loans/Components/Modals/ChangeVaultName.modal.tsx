@@ -10,7 +10,12 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { changeVaultNameAction } from 'providers/VaultsProvider/actions/vaults.actions'
 
 // consts
-import { INPUT_LARGE, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
+import {
+  ERR_MSG_INPUT,
+  INPUT_LARGE,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
+} from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { CHANGE_VAULT_NAME_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
@@ -34,6 +39,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 export const ChangeVaultName = ({
   closePopup,
@@ -140,6 +146,7 @@ export const ChangeVaultName = ({
             settings={{
               inputStatus: newVaultName.validationStatus,
               inputSize: INPUT_LARGE,
+              validationFns: [[validateInputLength, ERR_MSG_INPUT, [15]]],
             }}
           />
 
