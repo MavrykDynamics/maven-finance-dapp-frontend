@@ -17,7 +17,10 @@ import {
 } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { WITHDRAW_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import {
+  MINIMUN_COLLATERAL_RATIO_PERSENT,
+  WITHDRAW_COLLATERAL_ACTION,
+} from 'providers/VaultsProvider/helpers/vaults.const'
 import { ThemeType } from 'consts/theme.const'
 
 // types
@@ -164,7 +167,9 @@ export const WithdrawCollateral = ({
   })
 
   const isActionBtnDisabled =
-    isActionActive || inputData.validationStatus !== INPUT_STATUS_SUCCESS || futureCollateralRatio < 200
+    isActionActive ||
+    inputData.validationStatus !== INPUT_STATUS_SUCCESS ||
+    futureCollateralRatio <= MINIMUN_COLLATERAL_RATIO_PERSENT
 
   // withdraw collateral action ----------------------------------------------
   const withdrawAction = useCallback(async () => {

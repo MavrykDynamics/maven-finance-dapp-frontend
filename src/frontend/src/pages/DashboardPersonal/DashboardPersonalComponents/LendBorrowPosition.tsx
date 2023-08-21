@@ -69,7 +69,7 @@ export const LendBorrowPosition = ({
           const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
 
           const { rate } = token
-          const { principle, collateralBalance, interest } = userMarketVaultsData
+          const { principle, collateralBalance } = userMarketVaultsData
 
           //  calculating value risk data & how much borrowed per vault
           acc.collateralAmount += principle > 0 ? collateralBalance : 0

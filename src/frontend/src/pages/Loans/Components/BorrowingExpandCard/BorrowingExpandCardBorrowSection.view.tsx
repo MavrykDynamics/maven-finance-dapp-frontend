@@ -40,6 +40,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { VaultOverview, StatusMessageStyled, CardSectionWrapper } from '../LoansComponents.style'
+import { MINIMUN_COLLATERAL_RATIO_PERSENT } from 'providers/VaultsProvider/helpers/vaults.const'
 
 type Props = {
   borrowedAssetAddress: TokenAddressType
@@ -84,7 +85,9 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
 
   const isDisabledButton = inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive
 
-  const showWarning = (inputAmount > borrowCapacity / rate || futureCollateralRatio < 200) && inputAmount !== 0
+  const showWarning =
+    (inputAmount > borrowCapacity / rate || futureCollateralRatio < MINIMUN_COLLATERAL_RATIO_PERSENT) &&
+    inputAmount !== 0
 
   const newSettings: Settings = useMemo(
     () => ({
@@ -117,7 +120,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
       {showWarning ? (
         <StatusMessageStyled className={`${vaultsStatuses.LIQUIDATABLE}`}>
           <Icon id="error-triangle" />
-          {futureCollateralRatio < 200
+          {futureCollateralRatio < MINIMUN_COLLATERAL_RATIO_PERSENT
             ? COLLATERAL_AWARE_BORROWING_ADJUST_YOUR_AMOUNT
             : SELECT_THE_AMOUNT_YOU_WOULD_LIKE_TO_BORROW}
         </StatusMessageStyled>

@@ -1,6 +1,9 @@
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getVaultBorrowCapacity, getVaultCollateralRatio } from '../helpers/vaults.utils'
 
 export const operationBorrow = 'borrow'
@@ -46,6 +49,7 @@ export const useVaultFutureStats = ({
   collateralTokenAddress,
 }: UseVaultFutureStatsProps) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { bug } = useToasterContext()
 
   // if we pass default values, means we don't need to calcs anything
   if (collateralTokenAddress === '' || vaultTokenAddress === '')
@@ -132,5 +136,11 @@ export const useVaultFutureStats = ({
     }
   }
 
-  throw new Error('useVaultFutureStats error: wrong operationType passed')
+  bug('useVaultFutureStats error: wrong operationType passed')
+  return {
+    futureTotalOustanding: 0,
+    futureCollateralRatio: 0,
+    futureBorrowCapacity: 0,
+    futureCollateralBalance: 0,
+  }
 }

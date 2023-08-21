@@ -28,6 +28,7 @@ import {
 
 // consts
 import { EMPTY_VAULTS_CONTEXT, VAULTS_DATA } from '../vaults.provider.consts'
+import { MINIMUN_COLLATERAL_RATIO_PERSENT } from './vaults.const'
 
 // sort vaults by status
 export const sortVaultsByStatus = async ({
@@ -134,7 +135,8 @@ export const getVaultStatus = ({
   liquidationTimestamp: number | null
 }): FullLoansVaultType['status'] => {
   try {
-    if (collateralRatio < 200 && collateralRatio > 150 && totalOustanding > 0) return vaultsStatuses.AT_RISK
+    if (collateralRatio < MINIMUN_COLLATERAL_RATIO_PERSENT && collateralRatio > 150 && totalOustanding > 0)
+      return vaultsStatuses.AT_RISK
     if (collateralRatio <= 150 && totalOustanding > 0 && !liquidationTimestamp) return vaultsStatuses.MARK
 
     if (
