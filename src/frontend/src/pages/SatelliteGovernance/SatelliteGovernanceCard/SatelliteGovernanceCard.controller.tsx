@@ -1,29 +1,46 @@
-import { useMemo } from 'react'
+import dayjs from 'dayjs'
+import { useCallback, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+// components
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
-import { getSeparateSnakeCase } from '../../../utils/parse'
 import { ProposalStatus, SatelliteGovernance } from '../../../utils/TypesAndInterfaces/Governance'
 import Expand from '../../../app/App.components/Expand/Expand.view'
+import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
 
-import { dropAction, voteForAction } from '../SatelliteGovernance.actions'
+// actions
+import { dropAction, voteForAction } from 'providers/SatellitesGovernanceProvider/actions/satellitesGov.actions'
+import { getSatelliteGovernanceStorage } from '../satelliteGovernance.storage'
 
+// utils
+import { getSeparateSnakeCase } from '../../../utils/parse'
+import { parseDate } from 'utils/time'
+
+// styles
 import {
   SatelliteGovernanceCardDropDown,
   SatelliteGovernanceCardPurposeBlock,
   SatelliteGovernanceCardTitleTextGroup,
   SatelliteGovernanceCardVotingBlock,
 } from './SatelliteGovernanceCard.style'
-import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
+
+// consts
+import { DROP_ACTION, VOTE_FOR_ACTION } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
 import { PRECISION_NUMBER } from 'utils/constants'
-import { parseDate } from 'utils/time'
 import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import dayjs from 'dayjs'
+
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 type Props = {
   satelliteId: string
@@ -62,6 +79,11 @@ export const SatelliteGovernanceCard = ({
   isActionActive,
   votes,
 }: Props) => {
+  const {
+    contractAddresses: { governanceSatelliteAddress },
+  } = useDappConfigContext()
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
   const dispatch = useDispatch()
 
   const myVote = useMemo(() => votes.find((item) => item.voterId === accountPkh)?.vote, [accountPkh, votes])
@@ -83,12 +105,70 @@ export const SatelliteGovernanceCard = ({
     [yayVotesSmvkTotal, nayVotesSmvkTotal, passVoteSmvkTotal, snapshotSmvkTotalSupply, smvkPercentageForApproval],
   )
 
-  const handleVotingRoundVote = (type: string) => {
-    dispatch(voteForAction(id, type))
+  //   TODO remove after gov satellites context
+  const sharedDappCallback = useCallback(async () => {
+    await dispatch(getSatelliteGovernanceStorage())
+  }, [dispatch])
+
+  //   voteFor action ---------------------------------------------------------------------------
+  const voteForActionFn = useCallback(
+    async (type: string) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!governanceSatelliteAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+
+      return await voteForAction(governanceSatelliteAddress, id, type)
+    },
+    [bug, governanceSatelliteAddress, id, userAddress],
+  )
+
+  const voteForContratActionProps: HookContractActionArgs<string> = useMemo(
+    () => ({
+      actionType: VOTE_FOR_ACTION,
+      actionFn: voteForActionFn,
+      dappActionCallback: sharedDappCallback,
+    }),
+    [sharedDappCallback, voteForActionFn],
+  )
+
+  const { actionWithArgs: voteForActionHandler } = useContractAction(voteForContratActionProps)
+
+  //   drop action ---------------------------------------------------------------------------
+  const dropActionFn = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+    if (!governanceSatelliteAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    return await dropAction(governanceSatelliteAddress, id)
+  }, [bug, governanceSatelliteAddress, id, userAddress])
+
+  const dropContratActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DROP_ACTION,
+      actionFn: dropActionFn,
+      dappActionCallback: sharedDappCallback,
+    }),
+    [sharedDappCallback, dropActionFn],
+  )
+
+  const { action: dropActionHandler } = useContractAction(dropContratActionProps)
+
+  const handleVotingRoundVote = async (type: string) => {
+    await voteForActionHandler(type)
   }
 
   const handleDropAction = async () => {
-    await dispatch(dropAction(id))
+    await dropActionHandler()
   }
 
   return (

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { Page } from 'styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
@@ -11,7 +11,6 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
 
 // actions
-import { getSatelliteGovernanceStorage } from './SatelliteGovernance.actions'
 
 // style
 import {
@@ -53,6 +52,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { getSatelliteGovernanceStorage } from './satelliteGovernance.storage'
 
 const getCurrentListNameById = (tabId: string) => {
   switch (tabId) {
@@ -88,11 +88,11 @@ export const SatelliteGovernance = () => {
       governanceSatellite: { purposeMaxLength },
       dataFeeds: { feedNameMaxLength },
     },
+    globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { userAddress, isSatellite, govActionsCount } = useUserContext()
 
   const { maxActionsCount } = useSelector((state: State) => state.satelliteGovernance.config)
-  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const { isLoaded, ongoingSatelliteGovIds, pastSatelliteGovIds, mySatelliteGovIds, satelliteGovIdsMapper } =
     useSelector((state: State) => state.satelliteGovernance)
