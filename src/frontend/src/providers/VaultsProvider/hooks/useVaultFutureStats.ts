@@ -47,6 +47,15 @@ export const useVaultFutureStats = ({
 }: UseVaultFutureStatsProps) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
+  // if we pass default values, means we don't need to calcs anything
+  if (collateralTokenAddress === '' || vaultTokenAddress === '')
+    return {
+      futureTotalOustanding: 0,
+      futureCollateralRatio: 0,
+      futureBorrowCapacity: 0,
+      futureCollateralBalance: 0,
+    }
+
   const borrowedToken = getTokenDataByAddress({ tokenAddress: vaultTokenAddress, tokensMetadata, tokensPrices })
   const collateralToken = getTokenDataByAddress({ tokenAddress: collateralTokenAddress, tokensMetadata, tokensPrices })
 
@@ -63,7 +72,7 @@ export const useVaultFutureStats = ({
       futureTotalOustanding * borrowedTokenRate,
     )
     const futureBorrowCapacity = getVaultBorrowCapacity(
-      marketAvailableLiquidityInUSD,
+      marketAvailableLiquidityInUSD - inputValue * borrowedTokenRate,
       futureTotalOustanding * borrowedTokenRate,
       vaultCurrentCollateralBalance,
     )
@@ -83,7 +92,7 @@ export const useVaultFutureStats = ({
       futureTotalOustanding * borrowedTokenRate,
     )
     const futureBorrowCapacity = getVaultBorrowCapacity(
-      marketAvailableLiquidityInUSD,
+      marketAvailableLiquidityInUSD + inputValue * borrowedTokenRate,
       futureTotalOustanding * borrowedTokenRate,
       vaultCurrentCollateralBalance,
     )

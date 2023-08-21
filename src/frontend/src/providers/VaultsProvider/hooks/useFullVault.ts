@@ -88,22 +88,6 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
     totalOutstanding * borrowedTokenRate,
     collateralBalance,
   )
-
-  // TODO: debug log
-  // console.log({
-  //   vaultAddress: address,
-  //   borrowedTokenRate,
-  //   convertedBorrowedAmount,
-  //   convertedBorrowedAmountUSD: convertedBorrowedAmount * borrowedTokenRate,
-  //   convertedFee,
-  //   convertedFeeUSD: convertedFee * borrowedTokenRate,
-  //   totalOutstanding,
-  //   totalOutstandingUSD: totalOutstanding * borrowedTokenRate,
-  //   borrowCapacity: borrowCapacity / borrowedTokenRate,
-  //   borrowCapacityUSD: borrowCapacity,
-  //   collateralBalance,
-  // })
-
   const collateralRatio = getVaultCollateralRatio(collateralBalance, totalOutstanding * borrowedTokenRate)
   const convertedMinRepay = convertNumberForClient({ number: minimumRepay, grade: borrowedTokenDecimals })
   const status = getVaultStatus({
