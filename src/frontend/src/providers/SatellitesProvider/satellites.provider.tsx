@@ -111,7 +111,7 @@ export const SatellitesProvider = ({ children }: Props) => {
     const allSatellitesIds = storage.satelliteAddresses.nodes.map(({ user: { address } }) => address)
 
     const isAllSatellitesSub = subType === SATELLITES_DATA_ALL_SUB && !satelliteAddressToSub
-    const isLoadingSingleSatellite = subType === SATELLITES_DATA_SINGLE_SUB
+    const isLoadingSingleSatellite = subType === SATELLITES_DATA_SINGLE_SUB && satelliteAddressToSub
 
     setSatellitesCtxState((prev) => ({
       ...prev,

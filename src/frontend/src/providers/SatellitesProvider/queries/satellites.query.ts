@@ -51,7 +51,6 @@ export function getSatelliteDataQuery(
         }
       }
 
-
       delegation {
         delegation_ratio
       }
