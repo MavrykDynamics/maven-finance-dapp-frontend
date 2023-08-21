@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // components
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -11,7 +12,13 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
 
 // consts
-import { INPUT_LARGE, INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  ERR_MSG_INPUT,
+  INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+} from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { DEPOSIT_LENDING_ASSET_ACTION } from 'providers/LoansProvider/helpers/loans.const'
 
@@ -19,6 +26,7 @@ import { DEPOSIT_LENDING_ASSET_ACTION } from 'providers/LoansProvider/helpers/lo
 import { AddLendingAssetDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 
 // helpers
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
@@ -125,7 +133,7 @@ export const AddLendingAsset = ({
   if (!data || !loanToken || !loanToken.rate) return null
 
   const { mBalance, lendingAPY, tokenAddress } = data
-  const { symbol, icon, decimals, rate } = loanToken
+  const { symbol, icon, rate } = loanToken
   const tokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: tokenAddress })
 
   const isDepositDisabled = inputData.validationStatus !== INPUT_STATUS_SUCCESS
@@ -160,6 +168,7 @@ export const AddLendingAsset = ({
               inputStatus: inputData.validationStatus,
               inputSize: INPUT_LARGE,
               convertedValue: rate * Number(inputData.amount),
+              validationFns: [[validateInputLength, ERR_MSG_INPUT]],
             }}
           >
             <InputPinnedTokenInfo>
@@ -168,28 +177,30 @@ export const AddLendingAsset = ({
             </InputPinnedTokenInfo>
           </Input>
 
-          <div className="lending-stats" style={{ marginTop: '45px' }}>
-            <ThreeLevelListItem>
-              <div className="name">
-                Earn APY{' '}
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={silverColor}
-                  text={`You will receive m${symbol} instead of your ${symbol}`}
-                  className="tooltip"
-                />
-              </div>
-              <CommaNumber value={lendingAPY} className="value" endingText="%" />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">m{symbol} Received</div>
-              <CommaNumber value={Number(inputData.amount)} className="value" />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">New m{symbol} Balance</div>
-              <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
-            </ThreeLevelListItem>
-          </div>
+          <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
+            <div className="lending-stats" style={{ marginTop: '45px' }}>
+              <ThreeLevelListItem>
+                <div className="name">
+                  Earn APY{' '}
+                  <CustomTooltip
+                    iconId="info"
+                    defaultStrokeColor={silverColor}
+                    text={`You will receive m${symbol} instead of your ${symbol}`}
+                    className="tooltip"
+                  />
+                </div>
+                <CommaNumber value={lendingAPY} className="value" endingText="%" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">m{symbol} Received</div>
+                <CommaNumber value={Number(inputData.amount)} className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">New m{symbol} Balance</div>
+                <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
+              </ThreeLevelListItem>
+            </div>
+          </MemoizedComponent>
 
           <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20 mb-20" />
 
