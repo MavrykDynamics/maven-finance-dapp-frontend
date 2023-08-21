@@ -29,7 +29,7 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { AddNewCollateralDataProps } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
-import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import { ERR_MSG_INPUT, INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // actions
@@ -57,6 +57,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { Info } from 'app/App.components/Info/Info.view'
 import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
 import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({
@@ -312,6 +313,7 @@ export const AddNewCollateral = ({
                   inputSize: INPUT_LARGE,
                   inputStatus: inputData.validationStatus,
                   convertedValue: Number(inputData.amount) * rate,
+                  validationFns: [[validateInputLength, ERR_MSG_INPUT]],
                 }}
               >
                 <InputPinnedDropDown>
