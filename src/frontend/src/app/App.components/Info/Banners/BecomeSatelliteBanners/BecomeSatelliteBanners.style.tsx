@@ -9,21 +9,7 @@ export const NotStakingBannerStyled = styled.div`
     margin: 0;
   }
 
-  blockquote {
-    margin: 0;
-    padding: 19px 40px;
-  }
-
-  button {
+  .link-btn {
     width: 250px;
-  }
-
-  &.become-satellite {
-    p {
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 24px;
-      margin: 0;
-    }
   }
 `

@@ -368,6 +368,7 @@ export const BecomeSatellite = () => {
             requiredSmvkAmount={minimumStakedMvkBalance}
             userAddress={userAddress}
             mvkBalance={userMvkBalance}
+            isSatellite={isSatellite}
           />
         ) : null}
 

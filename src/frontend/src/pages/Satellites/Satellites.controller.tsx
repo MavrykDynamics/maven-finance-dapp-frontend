@@ -16,7 +16,7 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
-import { BUTTON_PRIMARY, BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/helpers/satellites.utils'
@@ -38,6 +38,7 @@ import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITES_DATA_ACTIVE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
+import { NotStakingBannerStyled } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners.style'
 
 const Satellites = () => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
@@ -75,17 +76,21 @@ const Satellites = () => {
     <Page>
       <PageHeader page={'satellites'} />
       {!isSatellite && getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 ? (
-        <Info
-          text={`You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance`}
-          type={INFO_ERROR}
-        >
-          <Link to="/">
-            <NewButton kind={BUTTON_PRIMARY}>
-              <Icon id="staking" />
-              Staking
-            </NewButton>
-          </Link>
-        </Info>
+        <NotStakingBannerStyled>
+          <Info
+            text={`You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance`}
+            type={INFO_ERROR}
+          >
+            <div className="link-btn">
+              <Link to="/staking">
+                <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+                  <Icon id="staking" />
+                  Staking
+                </NewButton>
+              </Link>
+            </div>
+          </Info>
+        </NotStakingBannerStyled>
       ) : null}
       <PageContent className="mt-30">
         <SatellitesOverviewStyled>
