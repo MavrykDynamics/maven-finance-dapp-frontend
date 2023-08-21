@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
 
 // consts
@@ -8,6 +9,8 @@ import {
   SATELITES_NODES_LIST_NAME,
   getPageNumber,
 } from 'app/App.components/Pagination/pagination.consts'
+import { INFO_ERROR } from 'app/App.components/Info/info.constants'
+import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { handleFilterSatellites, handleSortSatellites } from './SatelliteNodes.helpers'
 
 import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
@@ -21,7 +24,6 @@ import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
 import { SatelliteSearchFilter } from 'pages/Satellites/Satellites.style'
 import { SatelliteNodesStyled } from './SatelliteNodes.style'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
-import { NotStakingBanner } from 'pages/Satellites/components/NotStakingBanner.view'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -34,6 +36,9 @@ import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITES_DATA_ALL_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
+import { Info } from 'app/App.components/Info/Info.view'
+import NewButton from 'app/App.components/Button/NewButton'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 const itemsForDropDown = [
   { text: 'Lowest Fee', value: 'satelliteFee' },
@@ -122,7 +127,17 @@ const SatelliteNodes = () => {
       <PageHeader page={'satellites'} />
 
       {!isSatellite && getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 ? (
-        <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
+        <Info
+          text={`You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance`}
+          type={INFO_ERROR}
+        >
+          <Link to="/staking">
+            <NewButton kind={BUTTON_PRIMARY}>
+              <Icon id="staking" />
+              Staking
+            </NewButton>
+          </Link>
+        </Info>
       ) : null}
 
       <PageContent className="mt-30">

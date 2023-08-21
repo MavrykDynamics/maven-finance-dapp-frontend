@@ -42,7 +42,6 @@ import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 // Views
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-import { NotStakingBanner } from 'pages/Satellites/components/NotStakingBanner.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -66,6 +65,7 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { BecomeSatelliteBanners } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -94,7 +94,7 @@ export const BecomeSatellite = () => {
 
   const {
     maxLengths: { satelliteDelegation },
-    contractAddresses: { delegationAddress },
+    contractAddresses: { delegationAddress, mvkTokenAddress },
     preferences: { themeSelected },
     globalLoadingState: { isActionActive },
     minimumStakedMvkBalance,
@@ -154,6 +154,7 @@ export const BecomeSatellite = () => {
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+  const userMvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
 
   const balanceOverMinStakedMvk = userSmvkBalance >= minimumStakedMvkBalance
   const usersSatelliteProfile = userAddress ? satelliteMapper[userAddress] : null
@@ -361,10 +362,12 @@ export const BecomeSatellite = () => {
       <Page>
         <PageHeader page={isSatellite ? 'my satellite profile' : 'satellites'} avatar={mainAvatar} />
 
-        {!balanceOverMinStakedMvk && !isPageLoading ? (
-          <NotStakingBanner
-            className="become-satellite"
-            text={`To become a satellite you need to stake ${minimumStakedMvkBalance} MVK`}
+        {!isPageLoading ? (
+          <BecomeSatelliteBanners
+            smvkBalance={userSmvkBalance}
+            requiredSmvkAmount={minimumStakedMvkBalance}
+            userAddress={userAddress}
+            mvkBalance={userMvkBalance}
           />
         ) : null}
 

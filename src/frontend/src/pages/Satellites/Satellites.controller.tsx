@@ -11,12 +11,14 @@ import { SatelliteListItem } from './listItem/SateliteCard.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { DataFeedCard } from '../DataFeedsDetails/listItem/DataFeedCard.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
+import { Info } from 'app/App.components/Info/Info.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
-import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 // styles
@@ -27,7 +29,6 @@ import { EmptyContainer } from 'app/App.style'
 import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
@@ -74,7 +75,17 @@ const Satellites = () => {
     <Page>
       <PageHeader page={'satellites'} />
       {!isSatellite && getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 ? (
-        <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
+        <Info
+          text={`You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance`}
+          type={INFO_ERROR}
+        >
+          <Link to="/">
+            <NewButton kind={BUTTON_PRIMARY}>
+              <Icon id="staking" />
+              Staking
+            </NewButton>
+          </Link>
+        </Info>
       ) : null}
       <PageContent className="mt-30">
         <SatellitesOverviewStyled>
