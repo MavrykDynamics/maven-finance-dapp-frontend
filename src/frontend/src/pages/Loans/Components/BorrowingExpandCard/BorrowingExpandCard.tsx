@@ -69,7 +69,6 @@ export const BorrowingExpandCard = ({
     confirmRepayPartPopup,
     changeVaultNamePopup,
     changeBakerPopup,
-    borrowAssetPopup,
     addExistingCollateralPopup,
     addNewCollateralPopup,
     withdrawCollateralPopup,
@@ -102,7 +101,6 @@ export const BorrowingExpandCard = ({
     confirmRepayFullPopup.showModal ||
     confirmRepayPartPopup.showModal ||
     changeBakerPopup.showModal ||
-    borrowAssetPopup.showModal ||
     addExistingCollateralPopup.showModal ||
     addNewCollateralPopup.showModal ||
     withdrawCollateralPopup.showModal ||
@@ -265,7 +263,7 @@ export const BorrowingExpandCard = ({
     openAddNewCollateralPopup({
       vaultAddress,
       vaultId,
-      borrowedAmount,
+      currentTotalOutstanding: totalOutstanding,
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
@@ -280,7 +278,7 @@ export const BorrowingExpandCard = ({
     openAddExistingCollateralPopup({
       vaultAddress,
       vaultId,
-      borrowedAmount,
+      currentTotalOutstanding: totalOutstanding,
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
@@ -294,7 +292,8 @@ export const BorrowingExpandCard = ({
     openWithdrawCollateralPopup({
       vaultAddress,
       vaultId,
-      borrowedAmount,
+      currentTotalOutstanding: totalOutstanding,
+      availableLiquidity,
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
@@ -441,7 +440,7 @@ export const BorrowingExpandCard = ({
                     borrowedAmount={borrowedAmount}
                     minimumRepay={minimumRepay}
                     collateralBalance={collateralBalance}
-                    borrowCapacity={borrowCapacity}
+                    availableLiquidity={availableLiquidity}
                   />
                 )}
               </LoansActionsSection>

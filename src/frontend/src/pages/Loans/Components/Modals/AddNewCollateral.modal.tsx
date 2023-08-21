@@ -22,7 +22,6 @@ import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // consts
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -54,9 +53,9 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { Info } from 'app/App.components/Info/Info.view'
 import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
 import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
+import { operationAddCollateral, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({
@@ -148,11 +147,6 @@ export const AddNewCollateral = ({
     return reducedCollaterals
   }, [collateralTokens, data, selectedCollateral, tokensMetadata, tokensPrices])
 
-  const borrowedToken = getTokenDataByAddress({
-    tokenAddress: data?.borrowedTokenAddress,
-    tokensMetadata,
-    tokensPrices,
-  })
   const collateralToken = getTokenDataByAddress({
     tokenAddress: selectedCollateral,
     tokensMetadata,
@@ -160,33 +154,32 @@ export const AddNewCollateral = ({
   })
 
   const {
-    collateralBalance = 0,
-    vaultAddress = '',
-    vaultId = 0,
-    collateralRatio = 0,
-    borrowedAmount = 0,
-    availableLiquidity = 0,
-    borrowCapacity = 0,
-    xtzDelegatedTo = null,
-  } = data ?? {}
+    collateralBalance,
+    vaultAddress,
+    vaultId,
+    collateralRatio,
+    currentTotalOutstanding,
+    availableLiquidity,
+    borrowCapacity,
+    xtzDelegatedTo,
+    borrowedTokenAddress,
+  } = data
 
   const { symbol = '', rate: originalRate } = collateralToken ?? {}
   const rate = originalRate ?? 0
   const userCollateralBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: selectedCollateral })
-  const { rate: originalBorrowedTokenRate } = borrowedToken ?? {}
-
-  const borrowedTokenRate = originalBorrowedTokenRate ?? 0
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
-  const futureCollateralRatio = getVaultCollateralRatio(
-    collateralBalance + inputAmount,
-    borrowedAmount * borrowedTokenRate,
-  )
-  const futureCollateralBalance = collateralBalance + inputAmount * rate
-  const futureBorrowCapacity = Math.min(
-    Math.max(availableLiquidity, 0),
-    futureCollateralBalance / 2 - borrowedAmount * borrowedTokenRate,
-  )
+
+  const { futureCollateralRatio, futureCollateralBalance, futureBorrowCapacity } = useVaultFutureStats({
+    collateralTokenAddress: selectedCollateral,
+    vaultTokenAddress: borrowedTokenAddress,
+    vaultCurrentCollateralBalance: collateralBalance,
+    inputValue: inputAmount,
+    operationType: operationAddCollateral,
+    vaultCurrentTotalOutstanding: currentTotalOutstanding,
+    marketAvailableLiquidity: availableLiquidity,
+  })
 
   // deposit collateral action --------------------------
   const depositAction = useCallback(async () => {
@@ -249,7 +242,7 @@ export const AddNewCollateral = ({
   const isDepositBtnDisabled =
     (isTezosAsset(selectedCollateral) && !choosenBaker) || inputData.validationStatus === INPUT_STATUS_ERROR
 
-  if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
+  if (!collateralToken || !collateralToken.rate) return null
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
