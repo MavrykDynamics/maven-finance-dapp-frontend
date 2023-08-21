@@ -12,3 +12,29 @@ export const RESTORE_SATELLITE_ACTION = 'restoreSatellite'
 export const UPDATE_AGGREGATOR_STATUS_ACTION = 'updateAggregatorStatus'
 export const REGISTER_AGGREGATOR_ACTION = 'registerAggregator'
 export const FIX_MISTAKEN_TRANSFER_ACTION = 'fixMistakenTransfer'
+
+// CONTEXT VARS
+
+export const DEFAULT_SATELLITE_GOV_CTX = {
+  config: null,
+  ongoingSatelliteGovIds: null,
+  pastSatelliteGovIds: null,
+  mySatelliteGovIds: null,
+  satelliteGovIdsMapper: null,
+}
+
+export const EMPTY_SATELLITE_GOV_CTX = {
+  config: {
+    address: '',
+    admin: '',
+    approvalPercentage: 0,
+    durationInDays: 0,
+    counter: 0,
+    governanceId: '',
+    maxActionsCount: 0,
+  },
+  ongoingSatelliteGovIds: [],
+  pastSatelliteGovIds: [],
+  mySatelliteGovIds: [],
+  satelliteGovIdsMapper: {},
+}

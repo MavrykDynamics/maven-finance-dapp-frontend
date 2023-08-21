@@ -1,5 +1,7 @@
-export const SATELLITE_GOVERNANCE_STORAGE_QUERY = `
-  query GetGovernanceSatelliteStorageQuery {
+import { gql } from 'utils/__generated__'
+
+export const SATELLITE_GOVERNANCE_STORAGE_QUERY = gql(`
+  query GetGovernanceSatelliteStorage {
     governance_satellite {
       address
       admin
@@ -70,7 +72,4 @@ export const SATELLITE_GOVERNANCE_STORAGE_QUERY = `
       }
     }
   }
-`
-
-export const SATELLITE_GOVERNANCE_STORAGE_QUERY_NAME = 'GetGovernanceSatelliteStorageQuery'
-export const SATELLITE_GOVERNANCE_STORAGE_QUERY_VARIABLE = {}
+`)
