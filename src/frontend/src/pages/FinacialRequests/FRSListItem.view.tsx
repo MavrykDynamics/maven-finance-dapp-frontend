@@ -1,5 +1,5 @@
-import { FinancialRequestRecord } from 'utils/TypesAndInterfaces/Governance'
-import { getRequestStatus } from './FinancialRequests.helpers'
+import { getRequestStatus } from 'providers/FinancialRequestsProvider/helpers/financialRequests.utils'
+import { FinancialRequestRecord } from 'providers/FinancialRequestsProvider/helpers/financialRequests.types'
 
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'

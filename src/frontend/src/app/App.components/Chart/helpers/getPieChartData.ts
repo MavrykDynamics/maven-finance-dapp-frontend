@@ -1,9 +1,13 @@
-import { TreasuryBalanceType } from 'utils/TypesAndInterfaces/Treasury'
+// types
+import { TreasuryBalanceType } from 'providers/TreasuryProvider/helpers/treasury.types'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { PieChartDataType } from 'app/App.components/Chart/helpers/Chart.types'
 import { VaultAssetData } from 'providers/VaultsProvider/vaults.provider.types'
 
-import { HIGHLIGHTED_STROKE_WIDTH, DEFAULT_STROKE_WIDTH } from 'app/App.components/PieСhart/pieChart.const'
+// consts
+import { HIGHLIGHTED_STROKE_WIDTH, DEFAULT_STROKE_WIDTH } from 'app/App.components/PieChart/pieChart.const'
+
+// utils
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { calcPersent, convertNumberForClient } from 'utils/calcFunctions'
 

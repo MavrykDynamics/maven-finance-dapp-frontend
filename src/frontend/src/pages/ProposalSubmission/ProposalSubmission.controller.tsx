@@ -1,20 +1,32 @@
-import QueryString from 'qs'
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
 import { useLocation, Redirect } from 'react-router'
-
+import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
+import QueryString from 'qs'
 
+// hooks
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+
+// actions
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 
+// components
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { ProposalSubmissionView } from './ProposalSubmission.view'
 
+// styles
 import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+
+// utils
 import { DEFAULT_PROPOSAL } from './ProposalSubmission.helpers'
-import { getTreasuryStorage } from 'pages/Treasury/Treasury.actions'
+
+// providers
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
+
+// consts
+import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_DATA_SUB } from 'providers/TreasuryProvider/helpers/treasury.consts'
 
 export const ProposalSubmission = () => {
   const dispatch = useDispatch()
@@ -26,16 +38,21 @@ export const ProposalSubmission = () => {
     proposalsMapper,
     isLoaded: isGovernanceLoaded,
   } = useSelector((state: State) => state.governance)
-  const { isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
+  const { isLoading: isTreasuryLoading, changeTreasurySubscriptionsList } = useTreasuryContext()
+
+  useEffect(() => {
+    changeTreasurySubscriptionsList({
+      [TREASURY_STORAGE_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeTreasurySubscriptionsList(DEFAULT_TREASURY_SUBS)
+    }
+  }, [])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
-      await Promise.all(
-        [
-          (!isTreasuryLoaded || isDepsChanged) && dispatch(getTreasuryStorage()),
-          (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
-        ].filter(Boolean),
-      )
+      await Promise.all([(!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage())].filter(Boolean))
     } catch (e) {}
   }, [])
 
@@ -61,7 +78,7 @@ export const ProposalSubmission = () => {
   return (
     <Page>
       <PageHeader page={'proposal submission'} />
-      {isLoading ? (
+      {isLoading || isTreasuryLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading your proposals</div>

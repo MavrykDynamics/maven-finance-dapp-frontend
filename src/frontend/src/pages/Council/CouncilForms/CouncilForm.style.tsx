@@ -107,3 +107,11 @@ export const CouncilFormStyled = styled.form`
     }
   }
 `
+
+export const CouncilFormDropFinancialRequestLoaderWrapper = styled.div`
+  height: 224px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
