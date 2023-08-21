@@ -63,7 +63,9 @@ export const TextArea = ({
     originalErrorMessage: errorMessageFromProps,
     status: inputStatus,
     onChange,
+    onBlur,
     value,
+    allowInputAfterError: true,
     validationFns:
       validationFns && validationFns.length > 0 ? [[validateInput, ERR_MSG_INPUT], ...validationFns] : validationFns,
   })

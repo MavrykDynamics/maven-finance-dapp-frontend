@@ -14,7 +14,7 @@ export interface InputValidatorProps<T> {
   originalErrorMessage?: string
   status: InputStatusType
   onChange: (e: React.ChangeEvent<T>) => void
-  onBlur?: (e: React.ChangeEvent<T>) => void
+  onBlur?: (e: React.FocusEvent<T>) => void
   validationFns?: ValidatorFnType[]
   handleMax?: () => void
   value?: string | number
@@ -90,7 +90,7 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
   )
 
   const handleBlur = useCallback(
-    (e: React.ChangeEvent<G>) => {
+    (e: React.FocusEvent<G>) => {
       const { value } = e.target
 
       const hasError = internalValidationFn(value)
