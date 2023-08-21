@@ -11,6 +11,7 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { NOT_STAKING_MVK_TEXT } from 'app/App.components/Info/Banners/banners.texts'
 import { handleFilterSatellites, handleSortSatellites } from './SatelliteNodes.helpers'
 
 import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
@@ -129,10 +130,7 @@ const SatelliteNodes = () => {
 
       {!isSatellite && getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 ? (
         <NotStakingBannerStyled>
-          <Info
-            text={`You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance`}
-            type={INFO_ERROR}
-          >
+          <Info text={NOT_STAKING_MVK_TEXT} type={INFO_ERROR}>
             <div className="link-btn">
               <Link to="/staking">
                 <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
