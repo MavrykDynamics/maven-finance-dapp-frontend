@@ -7,10 +7,10 @@ import { VaultType, DepositorsFlagType } from '../../VaultsProvider/vaults.provi
 export type ConfirmBorrowPopupDataType = {
   vaultId: number
   tokenAddress: TokenAddressType
-  borrowedAmount: number
   collateralBalance: number
-  borrowCapacity: number
+  availableLiquidity: number
   inputAmount: number
+  totalOutstanding: number
   DAOFee: number
   callback: () => void
 }
@@ -18,9 +18,9 @@ export type ConfirmBorrowPopupDataType = {
 export const DEFAULT_CONFIRM_BORROW_POPUP_DATA: ConfirmBorrowPopupDataType = {
   tokenAddress: '',
   vaultId: 0,
-  borrowedAmount: 0,
+  availableLiquidity: 0,
   collateralBalance: 0,
-  borrowCapacity: 0,
+  totalOutstanding: 0,
   inputAmount: 0,
   DAOFee: 0,
   callback: () => {},
@@ -34,7 +34,7 @@ export type ConfirmRepayPartPopupDataType = {
   tokenAddress: TokenAddressType
   totalOutstanding: number
   collateralBalance: number
-  borrowCapacity: number
+  availableLiquidity: number
   callback: () => void
 }
 
@@ -43,7 +43,7 @@ export const DEFAULT_CONFIRM_REPAY_POPUP_DATA: ConfirmRepayPartPopupDataType = {
   tokenAddress: '',
   vaultId: 0,
   collateralBalance: 0,
-  borrowCapacity: 0,
+  availableLiquidity: 0,
   inputAmount: 0,
   totalOutstanding: 0,
   callback: () => {},
@@ -56,7 +56,7 @@ export type ConfirmRepayFullPopupDataType = {
   tokenAddress: TokenAddressType
   borrowedAmount: number
   collateralBalance: number
-  borrowCapacity: number
+  availableLiquidity: number
   totalOutstanding: number
   callback: () => void
 }
@@ -66,7 +66,7 @@ export const DEFAULT_CONFIRM_REPAY_FULL_POPUP_DATA: ConfirmRepayFullPopupDataTyp
   tokenAddress: '',
   vaultId: 0,
   collateralBalance: 0,
-  borrowCapacity: 0,
+  availableLiquidity: 0,
   totalOutstanding: 0,
   borrowedAmount: 0,
   callback: () => {},

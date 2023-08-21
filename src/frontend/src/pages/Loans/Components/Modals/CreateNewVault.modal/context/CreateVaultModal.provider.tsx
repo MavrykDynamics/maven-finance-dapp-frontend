@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { createVaultModalContext } from './createVaultModalContext'
 import {
   CreateNewModalProps,
@@ -29,9 +29,8 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
   const { availableLiquidity = 0, borrowAPR } = marketsMapper[marketTokenAddress] ?? {}
 
   const marketToken = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
-  const convertedAvailableLiquidity = marketToken?.rate
-    ? Math.max(convertNumberForClient({ number: availableLiquidity, grade: marketToken.decimals }), 0) *
-      marketToken.rate
+  const convertedAvailableLiquidity = marketToken
+    ? Math.max(convertNumberForClient({ number: availableLiquidity, grade: marketToken.decimals }), 0)
     : 0
 
   const resetCreateVaultModalState = useCallback(() => {
@@ -100,8 +99,13 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
   )
 
   const borrowCapacity = useMemo(
-    () => getVaultBorrowCapacity(convertedAvailableLiquidity, 0, collateralsBalance),
-    [convertedAvailableLiquidity, collateralsBalance],
+    () =>
+      getVaultBorrowCapacity(
+        marketToken?.rate ? convertedAvailableLiquidity * marketToken.rate : 0,
+        0,
+        collateralsBalance,
+      ),
+    [marketToken?.rate, convertedAvailableLiquidity, collateralsBalance],
   )
 
   const ctx = useMemo(
@@ -120,6 +124,7 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
       collateralsBalance,
       borrowCapacity,
       borrowAPR,
+      marketAvailableLiquidity: convertedAvailableLiquidity,
     }),
     [
       modalState,
@@ -135,6 +140,7 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
       show,
       collateralsBalance,
       borrowCapacity,
+      convertedAvailableLiquidity,
       borrowAPR,
     ],
   )

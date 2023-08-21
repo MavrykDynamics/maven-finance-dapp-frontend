@@ -79,28 +79,32 @@ export const sortVaultsByStatus = async ({
 
       if (!vaultAToken || !vaultAToken.rate || !vaultBToken || !vaultBToken.rate) return 0
 
-      const vaultABorrowedAmount =
-        convertNumberForClient({ number: vaultsMapper[a].borrowedAmount, grade: vaultAToken.decimals }) *
-        vaultAToken.rate
-      const vaultBBorrowedAmount =
-        convertNumberForClient({ number: vaultsMapper[b].borrowedAmount, grade: vaultBToken.decimals }) *
-        vaultBToken.rate
+      const vaultATotalOutstanding =
+        convertNumberForClient({
+          number: vaultsMapper[a].borrowedAmount + vaultsMapper[a].fee,
+          grade: vaultAToken.decimals,
+        }) * vaultAToken.rate
+      const vaultBTotalOutstanding =
+        convertNumberForClient({
+          number: vaultsMapper[b].borrowedAmount + vaultsMapper[b].fee,
+          grade: vaultBToken.decimals,
+        }) * vaultBToken.rate
 
       const vaultAStatus = getVaultStatus({
         collateralRatio: getVaultCollateralRatio(
           getVaultCollateralBalance(vaultsMapper[a].collateralData, tokensMetadata, tokensPrices),
-          vaultABorrowedAmount,
+          vaultATotalOutstanding,
         ),
-        borrowedAmount: vaultABorrowedAmount,
+        totalOustanding: vaultATotalOutstanding,
         liquidationTimestamp: vaultsLiquidationTimestamps[a],
       })
 
       const vaultBStatus = getVaultStatus({
         collateralRatio: getVaultCollateralRatio(
           getVaultCollateralBalance(vaultsMapper[b].collateralData, tokensMetadata, tokensPrices),
-          vaultBBorrowedAmount,
+          vaultBTotalOutstanding,
         ),
-        borrowedAmount: vaultBBorrowedAmount,
+        totalOustanding: vaultBTotalOutstanding,
         liquidationTimestamp: vaultsLiquidationTimestamps[b],
       })
 
@@ -116,33 +120,33 @@ export const sortVaultsByStatus = async ({
 /**
  *
  * @param collateralRatio collateral ratio of the vault
- * @param borrowedAmount how much borrowed from the vault
+ * @param totalOustanding USD amount of principal + interest in the vault
  * @param liquidationTimestamp when vault can be liquidated
  * @returns status of the vault one of vaultsStatuses
  */
 export const getVaultStatus = ({
   collateralRatio,
-  borrowedAmount,
+  totalOustanding,
   liquidationTimestamp,
 }: {
   collateralRatio: number
-  borrowedAmount: number
+  totalOustanding: number
   liquidationTimestamp: number | null
 }): FullLoansVaultType['status'] => {
   try {
-    if (collateralRatio < 200 && collateralRatio > 150 && borrowedAmount > 0) return vaultsStatuses.AT_RISK
-    if (collateralRatio <= 150 && borrowedAmount > 0 && !liquidationTimestamp) return vaultsStatuses.MARK
+    if (collateralRatio < 200 && collateralRatio > 150 && totalOustanding > 0) return vaultsStatuses.AT_RISK
+    if (collateralRatio <= 150 && totalOustanding > 0 && !liquidationTimestamp) return vaultsStatuses.MARK
 
     if (
       collateralRatio <= 150 &&
-      borrowedAmount > 0 &&
+      totalOustanding > 0 &&
       liquidationTimestamp &&
       dayjs().unix() < dayjs(liquidationTimestamp).unix()
     )
       return vaultsStatuses.GRACE_PERIOD
     if (
       collateralRatio <= 150 &&
-      borrowedAmount > 0 &&
+      totalOustanding > 0 &&
       liquidationTimestamp &&
       dayjs().unix() >= dayjs(liquidationTimestamp).unix()
     )

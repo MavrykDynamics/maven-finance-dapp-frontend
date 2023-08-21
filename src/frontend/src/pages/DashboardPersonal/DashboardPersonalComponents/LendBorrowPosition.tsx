@@ -57,26 +57,28 @@ export const LendBorrowPosition = ({
       marketsAddresses.reduce(
         (acc, marketTokenAddress) => {
           const market = marketsMapper[marketTokenAddress]
+
           const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
-          let borrowedPerMarket = 0
 
           if (!token || !token.rate || !market) return acc
           const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress } = market
 
+          const userMarketVaultsData = userVaultsData[loanTokenAddress]
+          if (!userMarketVaultsData) return acc
+
           const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
 
           const { rate } = token
-
-          const { borrowedAmount = 0, borrowedVaultsCollateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
+          const { principle, collateralBalance, interest } = userMarketVaultsData
 
           //  calculating value risk data & how much borrowed per vault
-          acc.collateralAmount += borrowedVaultsCollateralAmount
-          acc.borrowedAmount += borrowedAmount
-          borrowedPerMarket += borrowedAmount
+          acc.collateralAmount += principle > 0 ? collateralBalance : 0
+          acc.borrowedAmount += principle
 
           // calculating net APY supplied & borrowed ratio's
           acc.sumOfRatioSuppliedToAPY += lendValue * rate * lendingAPY
-          acc.sumOfRatioBorrowedToAPR += borrowedPerMarket * borrowAPR
+          // TODO: check this calc
+          acc.sumOfRatioBorrowedToAPR += principle * borrowAPR
           acc.totalSuppliedValue += lendValue * rate
           return acc
         },

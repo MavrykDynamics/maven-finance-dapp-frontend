@@ -216,9 +216,9 @@ export const BorrowingExpandCard = ({
       inputAmount,
       vaultId,
       tokenAddress: borrowedTokenAddress,
-      borrowedAmount,
+      totalOutstanding,
+      availableLiquidity,
       collateralBalance,
-      borrowCapacity,
       DAOFee,
       callback: () => {
         scrollToCurrentVault()
@@ -234,7 +234,7 @@ export const BorrowingExpandCard = ({
       vaultAddress,
       tokenAddress: borrowedTokenAddress,
       collateralBalance,
-      borrowCapacity,
+      availableLiquidity,
       totalOutstanding,
       callback: () => {
         scrollToCurrentVault()
@@ -250,7 +250,7 @@ export const BorrowingExpandCard = ({
       tokenAddress: borrowedTokenAddress,
       borrowedAmount,
       collateralBalance,
-      borrowCapacity,
+      availableLiquidity,
       totalOutstanding,
       callback: () => {
         scrollToCurrentVault()

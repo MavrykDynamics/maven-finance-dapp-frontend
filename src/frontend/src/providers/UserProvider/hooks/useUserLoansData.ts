@@ -13,7 +13,7 @@ import { useUserContext } from '../user.provider'
 /**
  *
  * @param param0.userAddress – address of the current user to get his lend/borrow data
- * @returns returns user's loans data, all values are converted, this data is used to show his loans stats
+ * @returns returns user's loans data, all values are converted to USD, this data is used to show his loans stats
  */
 const useUserLoansData = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
