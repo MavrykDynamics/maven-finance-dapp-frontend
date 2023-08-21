@@ -33,7 +33,7 @@ import {
   loansTabNames,
 } from 'pages/Loans/Loans.const'
 import {
-  ERR_MSG_TOAST,
+  ERR_MSG_INPUT,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
@@ -230,7 +230,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       inputStatus: inputData.validationStatus,
       convertedValue: inputAmount * borrowedTokenRate,
       inputSize: INPUT_LARGE,
-      validationFns: [[validateInputLength, ERR_MSG_TOAST]],
+      validationFns: [[validateInputLength, ERR_MSG_INPUT]],
     }),
     [
       symbol,
