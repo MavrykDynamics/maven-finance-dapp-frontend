@@ -64,6 +64,7 @@ export type CreateVaultModalContext = CreateVaultModalState &
     setFinalBorrowInputAmount: (args: FinalBorrowInputDataType) => void
     collateralsBalance: number
     borrowCapacity: number
+    marketAvailableLiquidity: number
     borrowAPR: number
   }
 

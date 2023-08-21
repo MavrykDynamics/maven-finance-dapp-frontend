@@ -55,6 +55,7 @@ import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vault
 import { LoanMarketType } from 'providers/LoansProvider/loans.provider.types'
 import { CollateralType, DepositorsFlagType } from 'providers/VaultsProvider/vaults.provider.types'
 import { State } from 'reducers'
+import { MINIMUN_COLLATERAL_RATIO_PERSENT } from 'providers/VaultsProvider/helpers/vaults.const'
 
 type Props = {
   openAddNewCollateralPopup: () => void
@@ -235,7 +236,11 @@ export const BorrowingExpandCardMenuSection = ({
                               onClick={() => openWithdrawCollateralPopup({ amount: convertedAmount, idx })}
                               form={BUTTON_WIDE}
                               kind={BUTTON_SECONDARY}
-                              disabled={collateralRatio <= 200 || isActionActive || convertedAmount === 0}
+                              disabled={
+                                collateralRatio <= MINIMUN_COLLATERAL_RATIO_PERSENT ||
+                                isActionActive ||
+                                convertedAmount === 0
+                              }
                             >
                               <Icon id="minus" /> Remove
                             </Button>

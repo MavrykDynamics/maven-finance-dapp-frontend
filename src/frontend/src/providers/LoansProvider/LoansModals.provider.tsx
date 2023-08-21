@@ -3,7 +3,6 @@ import React, { createContext, useContext } from 'react'
 import { AddCollateral } from 'pages/Loans/Components/Modals/AddCollateral.modal'
 import { AddLendingAsset } from 'pages/Loans/Components/Modals/AddLendingAsset.modal'
 import { AddNewCollateral } from 'pages/Loans/Components/Modals/AddNewCollateral.modal'
-import { BorrowAsset } from 'pages/Loans/Components/Modals/BorrowAsset.modal'
 import { ChangeBaker } from 'pages/Loans/Components/Modals/ChangeBaker.modal'
 import { ChangeVaultName } from 'pages/Loans/Components/Modals/ChangeVaultName.modal'
 import { ConfirmAddLendingAsset } from 'pages/Loans/Components/Modals/ConfirmAddLendingAsset.modal'
@@ -13,6 +12,10 @@ import { ConfirmRepay } from 'pages/Loans/Components/Modals/ConfirmRepay.modal'
 import { ConfirmRepayFull } from 'pages/Loans/Components/Modals/ConfirmRepayFull.modal'
 import { CreateNewVault } from 'pages/Loans/Components/Modals/CreateNewVault.modal'
 import { ManagePermissions } from 'pages/Loans/Components/Modals/ManagePermissions.modal'
+import { UpdateMVKOperator } from 'pages/Loans/Components/Modals/UpdateMVKOperator.modal'
+import { WithdrawCollateral } from 'pages/Loans/Components/Modals/WithdrawCollateral.modal'
+import { LiquidateVaultModal } from 'pages/Vaults/components/LiquidateVaultModal/LiquidateVaultModal.modal'
+
 import {
   LoansPopupsContextStateType,
   DEFAULT_LOANS_POPUPS_STATE,
@@ -22,7 +25,6 @@ import {
   ConfirmRepayPartPopupDataType,
   ConfirmRepayFullPopupDataType,
   ChangeBakerPopupDataType,
-  BorrowPopupDataType,
   WithdrawCollateralPopupDataType,
   AddCollateralPopupDataType,
   AddNewCollateralDataProps,
@@ -33,9 +35,6 @@ import {
   AddLendingAssetDataType,
   LiquidateVaultDataType,
 } from 'providers/LoansProvider/helpers/LoansModals.types'
-import { UpdateMVKOperator } from 'pages/Loans/Components/Modals/UpdateMVKOperator.modal'
-import { WithdrawCollateral } from 'pages/Loans/Components/Modals/WithdrawCollateral.modal'
-import { LiquidateVaultModal } from 'pages/Vaults/components/LiquidateVaultModal/LiquidateVaultModal.modal'
 
 export const loansPopupsContext = createContext<LoansPopupsContextStateType>(undefined!)
 
@@ -73,9 +72,6 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
 
       openAddNewCollateralPopup: this.openAddNewCollateralPopup,
       closeAddNewCollateralPopup: this.closeAddNewCollateralPopup,
-
-      openBorrowPopup: this.openBorrowPopup,
-      closeBorrowPopup: this.closeBorrowPopup,
 
       openManagePermissionsPopup: this.openManagePermissionsPopup,
       closeManagePermissionsPopup: this.closeManagePermissionsPopup,
@@ -215,26 +211,6 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
       ...this.state,
       changeBakerPopup: {
         ...this.state.changeBakerPopup,
-        showModal: false,
-      },
-    })
-  }
-
-  openBorrowPopup = (popupData: BorrowPopupDataType) => {
-    this.setState({
-      ...this.state,
-      borrowAssetPopup: {
-        showModal: true,
-        data: popupData,
-      },
-    })
-  }
-
-  closeBorrowPopup = () => {
-    this.setState({
-      ...this.state,
-      borrowAssetPopup: {
-        ...this.state.borrowAssetPopup,
         showModal: false,
       },
     })
@@ -433,7 +409,6 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
       confirmRepayFullPopup,
       confirmBorrowAssetPopup,
       changeBakerPopup,
-      borrowAssetPopup,
       addExistingCollateralPopup,
       addNewCollateralPopup,
       managePermissionsPopup,
@@ -454,7 +429,6 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
       closeChangeBakerPopup,
       closeAddExistingCollateralPopup,
       closeAddNewCollateralPopup,
-      closeBorrowPopup,
       closeWithdrawCollateralPopup,
       closeManagePermissionsPopup,
       closeUpdateMvkOperatorsPopup,
@@ -500,8 +474,6 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
           show={changeBakerPopup.showModal}
           data={changeBakerPopup.data}
         />
-
-        <BorrowAsset closePopup={closeBorrowPopup} show={borrowAssetPopup.showModal} data={borrowAssetPopup.data} />
 
         <AddCollateral
           closePopup={closeAddExistingCollateralPopup}

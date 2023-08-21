@@ -17,7 +17,10 @@ import {
 } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { WITHDRAW_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import {
+  MINIMUN_COLLATERAL_RATIO_PERSENT,
+  WITHDRAW_COLLATERAL_ACTION,
+} from 'providers/VaultsProvider/helpers/vaults.const'
 import { ThemeType } from 'consts/theme.const'
 
 // types
@@ -64,10 +67,10 @@ import {
   getTokenDataByAddress,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { operationRemoveCollateral, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -113,23 +116,24 @@ export const WithdrawCollateral = ({
   }, [show])
 
   const {
-    vaultAddress = '',
-    vaultId = 0,
-    collateralBalance = 0,
-    collateralRatio = 0,
-    selectedCollateralAmountInVault = 0,
-    borrowedAmount = 0,
-    collateralTokenAddress = '',
-    borrowedTokenAddress = '',
-  } = data ?? {}
+    vaultAddress,
+    vaultId,
+    collateralBalance,
+    collateralRatio,
+    selectedCollateralAmountInVault,
+    collateralTokenAddress,
+    borrowedTokenAddress,
+    currentTotalOutstanding,
+    availableLiquidity,
+  } = data
 
   const borrowedToken = getTokenDataByAddress({
     tokenAddress: borrowedTokenAddress,
     tokensMetadata,
     tokensPrices,
   })
-  const { rate: originalborrowedTokenRate = 0 } = borrowedToken ?? {}
-  const borrowedTokenRate = originalborrowedTokenRate ?? 0
+  const { rate: originalBorrowedTokenRate = 0 } = borrowedToken ?? {}
+  const borrowedTokenRate = originalBorrowedTokenRate ?? 0
 
   const collateralToken = getTokenDataByAddress({
     tokenAddress: collateralTokenAddress,
@@ -146,20 +150,26 @@ export const WithdrawCollateral = ({
 
   const currentCollateralToWithdraw = getMaxCollateralWithdraw(
     collateralBalance,
-    borrowedAmount * borrowedTokenRate,
+    currentTotalOutstanding * borrowedTokenRate,
     collateralRate,
   )
 
   const futureCollateralWithdraw = currentCollateralToWithdraw - inputAmount
-  const futureVaultCollateralBalance = collateralBalance - inputAmount * collateralRate
 
-  const futureCollateralRatio = getVaultCollateralRatio(
-    futureVaultCollateralBalance,
-    borrowedAmount * borrowedTokenRate,
-  )
+  const { futureCollateralRatio, futureCollateralBalance } = useVaultFutureStats({
+    vaultCurrentTotalOutstanding: currentTotalOutstanding,
+    vaultCurrentCollateralBalance: collateralBalance,
+    vaultTokenAddress: borrowedTokenAddress,
+    collateralTokenAddress,
+    inputValue: inputAmount,
+    marketAvailableLiquidity: availableLiquidity,
+    operationType: operationRemoveCollateral,
+  })
 
   const isActionBtnDisabled =
-    isActionActive || inputData.validationStatus !== INPUT_STATUS_SUCCESS || futureCollateralRatio < 200
+    isActionActive ||
+    inputData.validationStatus !== INPUT_STATUS_SUCCESS ||
+    futureCollateralRatio <= MINIMUN_COLLATERAL_RATIO_PERSENT
 
   // withdraw collateral action ----------------------------------------------
   const withdrawAction = useCallback(async () => {
@@ -293,7 +303,7 @@ export const WithdrawCollateral = ({
 
           <WithdrawCollateralTableStats
             collateralRatio={futureCollateralRatio}
-            collateralBalance={futureVaultCollateralBalance}
+            collateralBalance={futureCollateralBalance}
             currentCollateralToWithdraw={futureCollateralWithdraw}
             collateralRate={collateralRate}
             themeSelected={themeSelected}

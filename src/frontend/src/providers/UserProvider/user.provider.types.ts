@@ -29,7 +29,7 @@ export type UserLoansData = {
   userLendings: Array<UserLendBorrowItem>
   userVaultsData: Record<
     string,
-    { borrowedAmount: number; borrowedVaultsCollateralAmount: number; allVaultsCollateralAmount: number }
+    { principle: number; collateralBalance: number; borrowedVaultsCollateralBalance: number; interest: number }
   >
 }
 
