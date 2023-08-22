@@ -26,7 +26,7 @@ import { PositionTableStyled } from '../LoansDashboard.styles'
 import { getVaultSimpleStatus } from '../helpers/position.helpers'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
+import { UserLoansData } from 'providers/UserProvider/user.provider.types'
 
 // providers
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
@@ -36,11 +36,7 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
-export const LoansPositionTable = ({
-  userVaultsData,
-}: {
-  userVaultsData: UserLoansDataStateType['userVaultsData']
-}) => {
+export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoansData['userVaultsData'] }) => {
   const { openCreateVaultPopup, openAddLendingAssetPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress, userMTokens } = useUserContext()
@@ -119,12 +115,14 @@ export const LoansPositionTable = ({
                   const { symbol, icon, rate, decimals, address } = loanToken
 
                   const { lendValue = 0, interestEarned = 0 } = lendingItem ?? {}
+                  const {
+                    principle = 0,
+                    interest = 0,
+                    borrowedVaultsCollateralBalance = 0,
+                  } = marketVaultsUserData ?? {}
 
                   const collateralRatio = marketVaultsUserData
-                    ? getVaultCollateralRatio(
-                        marketVaultsUserData?.borrowedVaultsCollateralAmount ?? 0,
-                        marketVaultsUserData.borrowedAmount,
-                      )
+                    ? getVaultCollateralRatio(borrowedVaultsCollateralBalance, principle + interest)
                     : 0
                   const averageVaultStatus = getVaultSimpleStatus(collateralRatio)
 
@@ -178,7 +176,7 @@ export const LoansPositionTable = ({
                           {marketVaultsUserData ? (
                             <>
                               <CommaNumber value={borrowAPR} endingText="%" />
-                              <CommaNumber value={marketVaultsUserData.borrowedAmount} beginningText="$" />
+                              <CommaNumber value={marketVaultsUserData.principle} beginningText="$" />
                               <div className={`vault-status ${averageVaultStatus.status}`}>
                                 {averageVaultStatus.text}
                               </div>

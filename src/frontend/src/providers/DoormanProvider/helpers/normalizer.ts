@@ -1,4 +1,4 @@
-import { SubscribeSmvkHistoryDataSubscription } from 'utils/__generated__/graphql'
+import { SmvkMvkHistoryDataQuery } from 'utils/__generated__/graphql'
 import { UTCTimestamp } from 'lightweight-charts'
 
 // calc
@@ -9,7 +9,7 @@ type HistoryItemType = {
   time: UTCTimestamp
 }
 
-export function normalizeDoormanChartsData(storage: SubscribeSmvkHistoryDataSubscription) {
+export function normalizeDoormanChartsData(storage: SmvkMvkHistoryDataQuery) {
   const { smvk_history_data = [] } = storage
 
   const history = smvk_history_data.reduce<{

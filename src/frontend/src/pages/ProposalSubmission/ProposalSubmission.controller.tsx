@@ -1,15 +1,6 @@
-import QueryString from 'qs'
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
 import { useLocation, Redirect } from 'react-router'
-
-// types
-import { State } from 'reducers'
-
-// data
-import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getTreasuryStorage } from 'pages/Treasury/Treasury.actions'
-import { DEFAULT_PROPOSAL } from './ProposalSubmission.helpers'
+import QueryString from 'qs'
 
 // view
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
@@ -18,18 +9,43 @@ import { ProposalSubmissionView } from './ProposalSubmission.view'
 import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
+// utils
+import { DEFAULT_PROPOSAL } from './ProposalSubmission.helpers'
+
+// providers
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
+
+// consts
+import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_DATA_SUB } from 'providers/TreasuryProvider/helpers/treasury.consts'
+import {
+  DEFAULT_PROPOSALS_ACTIVE_SUBS,
+  PROPOSALS_DATA_SUB,
+  PROPOSALS_SUBMISSION_DATA,
+} from 'providers/ProposalsProvider/helpers/proposals.const'
+
 export const ProposalSubmission = () => {
-  const dispatch = useDispatch()
   const { search } = useLocation()
 
-  const { isLoading: isProposalsLoading, submissionProposalsIds } = useProposalsContext()
+  const {
+    isLoading: isProposalsLoading,
+    submissionProposalsIds,
+    changeProposalsSubscriptionsList,
+  } = useProposalsContext()
+  const { isLoading: isTreasuryLoading, changeTreasurySubscriptionsList } = useTreasuryContext()
 
-  const { isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
+  useEffect(() => {
+    changeTreasurySubscriptionsList({
+      [TREASURY_STORAGE_DATA_SUB]: true,
+    })
+    changeProposalsSubscriptionsList({
+      [PROPOSALS_DATA_SUB]: PROPOSALS_SUBMISSION_DATA,
+    })
 
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    try {
-      await Promise.all([(!isTreasuryLoaded || isDepsChanged) && dispatch(getTreasuryStorage())].filter(Boolean))
-    } catch (e) {}
+    return () => {
+      changeTreasurySubscriptionsList(DEFAULT_TREASURY_SUBS)
+      changeProposalsSubscriptionsList(DEFAULT_PROPOSALS_ACTIVE_SUBS)
+    }
   }, [])
 
   const parsedQp = QueryString.parse(search, { ignoreQueryPrefix: true }) as { proposalId: string }
@@ -50,7 +66,7 @@ export const ProposalSubmission = () => {
   return (
     <Page>
       <PageHeader page={'proposal submission'} />
-      {isLoading || isProposalsLoading ? (
+      {isTreasuryLoading || isProposalsLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading your proposals</div>

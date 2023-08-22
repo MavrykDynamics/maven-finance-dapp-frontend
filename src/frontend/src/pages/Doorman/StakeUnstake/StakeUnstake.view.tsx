@@ -33,7 +33,12 @@ import {
 } from '../../../app/App.components/Button/Button.constants'
 import { STAKE_ACTION } from 'providers/DoormanProvider/helpers/doorman.consts'
 import { REWARDS_COMPOUND_ACTION } from 'providers/UserProvider/helpers/user.consts'
-import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
+import {
+  INPUT_STATUS_SUCCESS,
+  INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
+  ERR_MSG_TOAST,
+} from 'app/App.components/Input/Input.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 import colors from 'styles/colors'
@@ -59,6 +64,8 @@ import {
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -74,24 +81,14 @@ export const StakeUnstakeView = ({
   setInputData,
 }: StakeUnstakeViewProps) => {
   const history = useHistory()
+  const { userTokensBalances, userAddress, satelliteMvkIsDelegatedTo, isSatellite } = useUserContext()
+  const { availableDoormanRewards, availableSatellitesRewards, availableFarmRewards } = useUserRewards()
   const {
-    userTokensBalances,
-    userAddress,
-    availableDoormanRewards,
-    availableSatellitesRewards,
-    availableFarmRewards,
-    satelliteMvkIsDelegatedTo,
-    isSatellite,
-  } = useUserContext()
-  const {
-    setAction,
-    toggleActionFullScreenLoader,
-    toggleActionCompletion,
     contractAddresses: { mvkTokenAddress, doormanAddress },
     preferences: { themeSelected },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
-  const { info, loading, bug } = useToasterContext()
+  const { bug } = useToasterContext()
 
   const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
 
@@ -394,6 +391,7 @@ export const StakeUnstakeView = ({
                 balanceName: 'Wallet Balance',
                 inputSize: INPUT_LARGE,
                 balanceHandler: onUseMaxBalance('mvk'),
+                validationFns: [[validateInputLength, ERR_MSG_TOAST]],
               }}
             />
           </StakeUnstakeInputWithCoin>

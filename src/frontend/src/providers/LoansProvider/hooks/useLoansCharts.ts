@@ -1,41 +1,57 @@
-import { useState } from 'react'
-import { useSubscription } from '@apollo/client'
-
 // provider
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-
-// types
-import { LoansChartsType, UseLoansChartsStateType } from '../helpers/loans.types'
+import { useLoansContext } from './../loans.provider'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // consts & helpers
 import { GET_LOANS_HISTORY_DATA } from 'providers/LoansProvider/queries/loansHistory.query'
 import { normalizeLoansCharts } from '../helpers/loansCharts.normalizer'
+import { EMPTY_LOANS_CHARTS } from '../helpers/loans.const'
 
-const useLoansCharts = (chartsToCalc: LoansChartsType) => {
+export type LoansChartsToCalcType = {
+  calcTotalLendingChart?: boolean
+  calcTotalBorrowingChart?: boolean
+  calcTotalCollateralChart?: boolean
+  calcMarketBorrowChart?: boolean
+  calcMarketLendingChart?: boolean
+}
+
+const useLoansCharts = (chartsToCalc: LoansChartsToCalcType) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { chartsData, setLoansChartsData, marketsAddresses } = useLoansContext()
 
-  const [chartsData, setChartsData] = useState<UseLoansChartsStateType>({
-    totalLendingChart: [],
-    totalBorrowingChart: [],
-    totalCollateralChart: [],
-    marketBorrowChart: {},
-    marketLendingChart: {},
-  })
-
-  const { loading } = useSubscription(GET_LOANS_HISTORY_DATA, {
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
-
+  useQueryWithRefetch(GET_LOANS_HISTORY_DATA, {
+    onCompleted: (data) => {
       const newChartsData = normalizeLoansCharts({ indexerData: data, chartsToCalc, tokensPrices, tokensMetadata })
-      setChartsData(newChartsData)
+      setLoansChartsData(newChartsData)
     },
     onError: (error) => {
       console.error('GET_LOANS_HISTORY_DATA error: ', { error })
     },
   })
 
-  return { isLoading: loading, chartsData }
+  const {
+    calcTotalLendingChart,
+    calcTotalBorrowingChart,
+    calcTotalCollateralChart,
+    calcMarketBorrowChart,
+    calcMarketLendingChart,
+  } = chartsToCalc
+
+  const { totalLendingChart, totalBorrowingChart, totalCollateralChart, marketBorrowChart, marketLendingChart } =
+    chartsData ?? {}
+
+  const isLoading = Boolean(
+    (calcTotalLendingChart && !totalLendingChart) ||
+      (calcTotalBorrowingChart && !totalBorrowingChart) ||
+      (calcTotalCollateralChart && !totalCollateralChart) ||
+      (calcMarketBorrowChart &&
+        (!marketBorrowChart || marketsAddresses.some((marketAddress) => !marketBorrowChart[marketAddress]))) ||
+      (calcMarketLendingChart &&
+        (!marketLendingChart || marketsAddresses.some((marketAddress) => !marketLendingChart[marketAddress]))),
+  )
+
+  return { isLoading, chartsData: chartsData ?? EMPTY_LOANS_CHARTS }
 }
 
 export default useLoansCharts

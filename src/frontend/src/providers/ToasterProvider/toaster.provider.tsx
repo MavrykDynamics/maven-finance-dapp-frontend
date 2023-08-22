@@ -14,9 +14,10 @@ import {
   TOASTER_WARNING,
 } from './toaster.provider.const'
 import { generateUniqueId } from 'utils/calcFunctions'
-import { SharedErrorFileds, SharedErrors } from 'errors/error.type'
+import { InternalErrorType, SharedErrorFileds, SharedErrors } from 'errors/error.type'
 import { WalletActionType } from 'types/actions.type'
 import { getErrorPageData } from './helpers/getErrorPageData'
+import { ERROR_TYPE_FATAL, ERROR_TYPE_ROUTER } from 'errors/error.const'
 
 export const toasterContext = React.createContext<ToasterContextType>(undefined!)
 
@@ -196,12 +197,18 @@ export default class ToasterProvider extends React.Component<Props, State> {
    */
   render(): JSX.Element {
     const { error } = this.state.context
-    const errorPageContent = error instanceof FatalError ? getErrorPageData(error.type) : null
+    let errorPageContent = null
+    let type: InternalErrorType = ERROR_TYPE_ROUTER
+
+    if (error instanceof FatalError) {
+      type = error.type
+      errorPageContent = getErrorPageData(type)
+    }
 
     return (
       <toasterContext.Provider value={this.state.context}>
         {errorPageContent ? (
-          <ErrorPage headerText={errorPageContent.header} descText={errorPageContent.desc} />
+          <ErrorPage headerText={errorPageContent.header} descText={errorPageContent.desc} type={type} />
         ) : (
           this.props.children
         )}

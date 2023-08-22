@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo } from 'react'
-import { useParams } from 'react-router'
+import { usePrevious } from 'react-use'
+import { useHistory, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
+import qs from 'qs'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
 
 // types
@@ -37,7 +39,6 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 
 // actions
 import { claimAllRewardsAction, distributeProposalRewards } from 'providers/UserProvider/actions/user.actions'
-import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 
 // providers
@@ -52,11 +53,8 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
 import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 import { CLAIM_ALL_REWARDS_ACTION } from 'providers/UserProvider/helpers/user.consts'
-import {
-  MVK_BALANCE_SUB,
-  MVK_TOTAL_SUB,
-  DEFAULT_STAKING_ACTIVE_SUBS,
-} from 'providers/DoormanProvider/helpers/doorman.consts'
+import { USER_ACTIONS_HISTORY } from 'app/App.components/Pagination/pagination.consts'
+import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
@@ -68,10 +66,14 @@ import {
 // hooks
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
+import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
+import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/VestingProvider/helpers/vesting.consts'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
+  const history = useHistory()
 
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
   const {
@@ -81,54 +83,71 @@ const DashboardPersonal = () => {
     userTokensBalances,
     userAddress,
     userAvatars: { mainAvatar },
-    availableDoormanRewards,
-    availableSatellitesRewards,
-    availableFarmRewards,
-    availableLoansRewards,
-    gatheredDoormanRewards,
-    gatheredFarmRewards,
-    gatheredSatellitesRewards,
     satelliteMvkIsDelegatedTo,
-    availableProposalRewards,
+    availableLoansRewards,
     isSatellite,
     isVestee,
   } = useUserContext()
   const { changeSatellitesSubscriptionsList } = useSatellitesContext()
   const { bug } = useToasterContext()
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useDoormanContext()
+  const { isLoading: isVestingLoading, changeVestingSubscriptionsList } = useVestingContext()
+
+  const prevUserAddress = usePrevious(userAddress)
 
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
 
   useEffect(() => {
     changeStakingSubscriptionsList({
-      [MVK_TOTAL_SUB]: true,
-      [MVK_BALANCE_SUB]: true,
+      [DAPP_MVK_SMVK_STATS_SUB]: true,
     })
     changeSatellitesSubscriptionsList({
       [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
 
+    changeVestingSubscriptionsList({
+      [VESTING_STORAGE_DATA_SUB]: true,
+    })
+
     return () => {
       changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
       changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+      changeVestingSubscriptionsList(DEFAULT_VESTING_SUBS)
     }
   }, [])
 
-  const { isLoading } = useDataLoader(
+  // if we change user, redirect him to main screen on dashboard, as he might not have permission to some screens
+  useEffect(() => {
+    if (prevUserAddress && prevUserAddress !== userAddress) {
+      history.replace(`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`)
+    }
+  }, [userAddress])
+
+  const {
+    isLoading: isRewardsLoading,
+    availableDoormanRewards,
+    availableSatellitesRewards,
+    availableFarmRewards,
+    availableProposalRewards,
+    gatheredDoormanRewards,
+    gatheredFarmRewards,
+    gatheredSatellitesRewards,
+  } = useUserRewards()
+
+  const { isLoading: isDataLoading } = useDataLoader(
     async (isDepsChanged) => {
       try {
         await Promise.all(
-          [
-            (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
-            isVestee && (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
-          ].filter(Boolean),
+          [(!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage())].filter(Boolean),
         )
       } catch (e) {}
     },
     [userAddress],
   )
+
+  // global loading
+  const isLoading = isVestingLoading || isDataLoading || isDoormanLoading || isRewardsLoading
 
   // claim rewards action
   const claimRewardsAction = useCallback(async () => {
@@ -141,8 +160,14 @@ const DashboardPersonal = () => {
       return null
     }
 
-    return await claimAllRewardsAction(userAddress, doormanAddress)
-  }, [bug, doormanAddress, userAddress])
+    return await claimAllRewardsAction(
+      userAddress,
+      doormanAddress,
+      availableDoormanRewards,
+      availableSatellitesRewards,
+      availableFarmRewards,
+    )
+  }, [availableDoormanRewards, availableFarmRewards, availableSatellitesRewards, bug, doormanAddress, userAddress])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -286,10 +311,20 @@ const DashboardPersonal = () => {
                   Portfolio
                 </Button>
               </Link>
-              <Link to={`/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}`}>
+              <Link
+                to={
+                  userAddress
+                    ? `/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}${qs.stringify(
+                        { page: { [USER_ACTIONS_HISTORY]: 1 } },
+                        { addQueryPrefix: true },
+                      )}`
+                    : '#'
+                }
+              >
                 <Button
                   selected={activeTab === (isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID)}
                   kind={BUTTON_NAVIGATION}
+                  disabled={!userAddress}
                 >
                   {isSatellite ? 'Satellite' : 'Delegation'}
                 </Button>

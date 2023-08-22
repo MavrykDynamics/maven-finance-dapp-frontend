@@ -1,9 +1,13 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useLocation } from 'react-router'
-import { useDispatch } from 'react-redux'
 
-// helpers, actions, consts
-import { distinctRequestsByExecuting, getRequestStatus } from './FinancialRequests.helpers'
+// helpers
+import { getRequestStatus } from 'providers/FinancialRequestsProvider/helpers/financialRequests.utils'
+import { parseDate } from 'utils/time'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+
+// consts
 import {
   calculateSlicePositions,
   getPageNumber,
@@ -11,12 +15,15 @@ import {
   PAGINATION_SIDE_RIGHT,
   PAST_REQUESTS_FINANCIAL_REQUESTS_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
-import { votingFinancialRequestVote } from './FinancialRequest.actions'
-import { parseDate } from 'utils/time'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
+import { FINANCIAL_REQUEST_VOTE_ACTION } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
+
+// actions
+import { votingFinancialRequestVote } from 'providers/FinancialRequestsProvider/actions/financialRequests.actions'
 
 // types
-import { FinancialRequestStoreType } from 'reducers/financialRequests'
+import { FinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.types'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 // view
 import { StatusFlag } from '../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -35,26 +42,33 @@ import {
   InfoBlockName,
 } from './FinancialRequests.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const FinancialRequestsView = ({
-  financialRequestsIds,
-  financialRequestMapper,
+  ongoingFinancialRequestsIds: ongoing,
+  pastFinancialRequestsIds: past,
+  financialRequestsMapper,
 }: {
-  financialRequestsIds: FinancialRequestStoreType['financialRequestsIds']
-  financialRequestMapper: FinancialRequestStoreType['financialRequestMapper']
+  ongoingFinancialRequestsIds: FinancialRequestsContext['ongoingFinRequestsIds']
+  pastFinancialRequestsIds: FinancialRequestsContext['pastFinRequestsIds']
+  financialRequestsMapper: FinancialRequestsContext['financialRequestsMapper']
 }) => {
-  const dispatch = useDispatch()
   const { search } = useLocation()
 
   const { tokensMetadata } = useTokensContext()
+  const { bug } = useToasterContext()
+  const {
+    contractAddresses: { governanceFinancialAddress },
+  } = useDappConfigContext()
   const { userAddress, isSatellite: isUserSatellite } = useUserContext()
-
-  // Handling lists data
-  const { ongoing, past } = distinctRequestsByExecuting(financialRequestsIds, financialRequestMapper)
 
   const currentOngoingPage = getPageNumber(search, ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST)
   const currentPastPage = getPageNumber(search, PAST_REQUESTS_FINANCIAL_REQUESTS_LIST)
@@ -69,8 +83,10 @@ export const FinancialRequestsView = ({
     return ongoing.slice(from, to)
   }, [currentOngoingPage, ongoing])
 
-  const [rightSideContentId, setRightSideContentId] = useState(ongoing[0] ?? past[0] ?? 0)
-  const rightSideContent = financialRequestMapper[rightSideContentId]
+  const [rightSideContentId, setRightSideContentId] = useState<
+    keyof FinancialRequestsContext['financialRequestsMapper']
+  >(ongoing[0] ?? past[0] ?? '-1')
+  const rightSideContent = financialRequestsMapper[rightSideContentId] ?? null
 
   // Full view item data handling
   const rightItemStatus = rightSideContent && getRequestStatus(rightSideContent)
@@ -87,17 +103,46 @@ export const FinancialRequestsView = ({
     quorum: rightSideContent.quorum,
   }
 
-  const handleVotingRoundVote = (vote: string) => {
-    dispatch(votingFinancialRequestVote(vote, rightSideContent.id))
-  }
+  // financial request voting action -------------------------------------------------
+  const finVotingRoundVoteActionFn = useCallback(
+    async (vote: `${VotingTypes}`) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!governanceFinancialAddress) {
+        bug('Wrong governanceFinancial address')
+        return null
+      }
+
+      return await votingFinancialRequestVote(governanceFinancialAddress, vote, rightSideContent.id)
+    },
+    [bug, governanceFinancialAddress, rightSideContent.id, userAddress],
+  )
+
+  const contractActionProps: HookContractActionArgs<`${VotingTypes}`> = useMemo(
+    () => ({
+      actionType: FINANCIAL_REQUEST_VOTE_ACTION,
+      actionFn: finVotingRoundVoteActionFn,
+    }),
+    [finVotingRoundVoteActionFn],
+  )
+
+  const { actionWithArgs: handleVotingRoundVote } = useContractAction<`${VotingTypes}`>(contractActionProps)
 
   const RightSideBlock = () => {
     if (!rightSideContent) return null
 
     const requestedToken = getTokenDataByAddress({ tokenAddress: rightSideContent.tokenAddress, tokensMetadata })
+    // TODO add empty screen
     if (!requestedToken) return null
 
     const { decimals, symbol } = requestedToken
+
+    // -1 in cases there are NOT any votes or it's past fin request, so all buttons will be active if user satisfies all conditions for voting
+    const userVote = ongoing.includes(String(rightSideContent.id))
+      ? rightSideContent.votes.find(({ voter }) => voter === userAddress)?.vote ?? -1
+      : -1
 
     return (
       <FinancialRequestsRightContainer>
@@ -124,7 +169,7 @@ export const FinancialRequestsView = ({
               : { forBtn: undefined, againsBtn: undefined }
           }
           className={'fr-voting'}
-          disableVotingButtons={Boolean(rightSideContent?.votes?.find(({ voter }) => voter.address === userAddress))}
+          disableButtonByVote={userVote}
         />
 
         <hr />
@@ -208,6 +253,7 @@ export const FinancialRequestsView = ({
 
   return (
     <FinancialRequestsStyled>
+      {/* TODO add empty screen when no requests at all */}
       <div className="list-container">
         {ongoing.length ? (
           <>
@@ -218,8 +264,8 @@ export const FinancialRequestsView = ({
                   key={frId}
                   id={idx + 1}
                   onClickHandler={() => setRightSideContentId(frId)}
-                  request={financialRequestMapper[frId]}
-                  selected={rightSideContent?.id === frId}
+                  request={financialRequestsMapper[frId]}
+                  selected={rightSideContent?.id.toString() === frId}
                 />
               ))}
 
@@ -241,8 +287,8 @@ export const FinancialRequestsView = ({
                   key={frId}
                   id={idx + 1}
                   onClickHandler={() => setRightSideContentId(frId)}
-                  request={financialRequestMapper[frId]}
-                  selected={rightSideContent?.id === frId}
+                  request={financialRequestsMapper[frId]}
+                  selected={rightSideContent?.id.toString() === frId}
                 />
               ))}
 

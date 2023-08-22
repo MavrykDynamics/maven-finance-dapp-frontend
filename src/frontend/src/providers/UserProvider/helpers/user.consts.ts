@@ -1,7 +1,17 @@
-import { UserContextStateType, userTzKtTokenBalances } from '../user.provider.types'
+import { UserContextStateType, UserLoansData, UserRewardsType, UserTzKtTokenBalances } from '../user.provider.types'
 
 export const DEFAULT_USER_AVATAR = '/images/default-avatar.png'
 
+export const DEFAULT_USER_LOANS_DATA: UserLoansData = {
+  userBorrowings: [],
+  totalUserBorrowed: 0,
+  userLendings: [],
+  totalUserLended: 0,
+  userVaultsData: {},
+}
+
+// TODO: extract fields with comments into separate useQuery hooks
+// store in whole user context, but load in separate queries, cuz rare use cases
 export const DEFAULT_USER: UserContextStateType = {
   userAddress: null,
   satelliteMvkIsDelegatedTo: null,
@@ -14,24 +24,32 @@ export const DEFAULT_USER: UserContextStateType = {
   isNewlyRegisteredSatellite: false,
   isSatellite: false,
   isVestee: false,
-  actionsHistory: [],
+  actionsHistory: {
+    paginatedList: {},
+    itemsAmount: 0,
+  },
   govActionsCount: 0,
+  availableLoansRewards: 0,
+  userTokensBalances: {},
+  userMTokens: {},
+  userLoansData: null,
+  rewards: null,
+}
+
+export const DEFAULT_USER_TZKT_TOKENS: UserTzKtTokenBalances = {
+  userAddress: null,
+  tokens: {},
+}
+
+export const DEFAULT_USER_REWARDS: UserRewardsType = {
   gatheredDoormanRewards: 0,
   gatheredFarmRewards: 0,
   gatheredSatellitesRewards: 0,
-  availableLoansRewards: 0,
   availableSatellitesRewards: 0,
   availableDoormanRewards: 0,
-  availableFarmRewards: {},
-  userTokensBalances: {},
-  userMTokens: {},
   farmAccounts: [],
   availableProposalRewards: [],
-}
-
-export const DEFAULT_USER_TZKT_TOKENS: userTzKtTokenBalances = {
-  userAddress: null,
-  tokens: {},
+  availableFarmRewards: {},
 }
 
 // CONSTS FOR USER ACTIONS

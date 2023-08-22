@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // consts
@@ -7,8 +8,6 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.component
 import { repayPartOfVaultAction } from 'providers/VaultsProvider/actions/vaults.actions'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 import { REPAY_PART_OF_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
-import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 
 // components
 import NewButton from 'app/App.components/Button/NewButton'
@@ -27,7 +26,6 @@ import colors from 'styles/colors'
 // utils
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -37,7 +35,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { useCallback, useMemo } from 'react'
+import { operationRepay, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 export const ConfirmRepay = ({
   closePopup,
@@ -51,32 +49,35 @@ export const ConfirmRepay = ({
   useLockBodyScroll(show)
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress } = useUserContext()
-  const { bug, loading, info } = useToasterContext()
+  const { bug } = useToasterContext()
   const {
     preferences: { themeSelected },
     contractAddresses: { lendingControllerAddress },
-    setAction,
-    toggleActionCompletion,
-    toggleActionFullScreenLoader,
   } = useDappConfigContext()
 
-  const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
-
   const {
-    vaultId = 0,
-    vaultAddress = '',
-    collateralBalance = 0,
-    borrowCapacity = 0,
-    borrowedAmount = 0,
-    inputAmount = 0,
-    callback = () => {},
-  } = data ?? {}
+    vaultId,
+    vaultAddress,
+    collateralBalance,
+    totalOutstanding,
+    inputAmount,
+    availableLiquidity,
+    tokenAddress: vaultTokenAddress,
+    callback,
+  } = data
 
+  const borrowedToken = getTokenDataByAddress({ tokenAddress: vaultTokenAddress, tokensMetadata, tokensPrices })
   const { symbol = '', rate: originalRate } = borrowedToken ?? {}
   const rate = originalRate ?? 0
 
-  const futureCollateralRatio = getVaultCollateralRatio(collateralBalance, (borrowedAmount - inputAmount) * rate)
-  const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
+  const { futureCollateralRatio, futureBorrowCapacity } = useVaultFutureStats({
+    vaultCurrentTotalOutstanding: totalOutstanding,
+    vaultCurrentCollateralBalance: collateralBalance,
+    vaultTokenAddress,
+    operationType: operationRepay,
+    inputValue: inputAmount,
+    marketAvailableLiquidity: availableLiquidity,
+  })
 
   // partly repay action ---------------------
   const partlyRepayAction = useCallback(async () => {

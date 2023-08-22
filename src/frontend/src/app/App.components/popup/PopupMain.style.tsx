@@ -26,15 +26,15 @@ export const PopupContainerWrapper = styled.div<{ theme: MavrykTheme; widthSize?
 
   .close-modal {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 10px;
+    right: 10px;
     cursor: pointer;
     transition: opacity 0.3s;
 
     &:before {
       content: '✕';
-      font-size: 25px;
-      color: ${({ theme }) => theme.textColor};
+      font-size: 30px;
+      color: ${({ theme }) => theme.valueColor};
     }
 
     &:hover {

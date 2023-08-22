@@ -29,18 +29,18 @@ export type SatelliteMapper = Record<string, SatelliteRecordType>
 
 export type SatellitesContextState = {
   // data
-  satelliteMapper: SatelliteMapper | null
-  activeSatellitesIds: string[] | null
-  allSatellitesIds: string[] | null
-  oraclesIds: string[] | null
+  satelliteMapper: SatelliteMapper
+  activeSatellitesIds: string[]
+  allSatellitesIds: string[]
+  oraclesIds: string[]
 
   // values to calc satellite metrix
-  proposalsAmount: number | null
-  satelliteGovActionsAmount: number | null
-  finRequestsAmount: number | null
+  proposalsAmount: number
+  satelliteGovActionsAmount: number
+  finRequestsAmount: number
 }
 
-export type SatellitesContext = DeepNonNullable<SatellitesContextState> & {
+export type SatellitesContext = SatellitesContextState & {
   isLoading: boolean
 
   // api
@@ -72,13 +72,6 @@ export type SatelliteGovernanceTransfer = {
   to_: string //this is a contract address
   amount: number
   token: TokenType
-}
-
-export type SatellitesStatisticsSubsSkipsType = {
-  skipOracleCount?: boolean
-  skipActiveSatellitesCount?: boolean
-  skipTotalDelegatedMVK?: boolean
-  skipOracleRewardsTotal?: boolean
 }
 
 export type SatellitesDataDubsType =

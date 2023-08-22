@@ -306,7 +306,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     } catch (e) {
       bug('Fetch Error', 'Error occured while loading latest proposal id, please reload the page')
     }
-  }, [bug, changeActiveProposal, userAddress])
+  }, [apolloClient, bug, changeActiveProposal, userAddress])
 
   const submitActionFn = useCallback(async () => {
     if (!userAddress) {
@@ -331,31 +331,21 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       tokensMetadata,
     )
 
+    const { title, description, sourceCode, invoice } = currentProposal
+
     return await submitProposal(
       governanceAddress,
       {
-        title: currentProposal.title,
-        description: currentProposal.description,
-        sourceCode: currentProposal.sourceCode,
-        invoice: currentProposal.invoice,
+        title,
+        description,
+        sourceCode,
+        invoice,
       },
       fee,
       bytes,
       payments,
     )
-  }, [
-    bug,
-    currentProposal.description,
-    currentProposal.invoice,
-    currentProposal.proposalData,
-    currentProposal.proposalPayments,
-    currentProposal.sourceCode,
-    currentProposal.title,
-    fee,
-    governanceAddress,
-    tokensMetadata,
-    userAddress,
-  ])
+  }, [bug, currentProposal, fee, governanceAddress, tokensMetadata, userAddress])
 
   const submissionDappCallback = useCallback(async () => {
     await getNewProposalId() // update proposal id after successful action
@@ -398,10 +388,8 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     return await updateProposalData(governanceAddress, selectedUserProposalId, bytesDiff, paymentsDiff)
   }, [
     bug,
-    currentProposal.proposalData,
-    currentProposal.proposalPayments,
-    currentProposalOnRemote.proposalData,
-    currentProposalOnRemote.proposalPayments,
+    currentProposal,
+    currentProposalOnRemote,
     governanceAddress,
     tokensMetadata,
     userAddress,

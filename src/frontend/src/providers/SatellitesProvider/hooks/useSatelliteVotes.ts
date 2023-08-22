@@ -1,8 +1,11 @@
 import { useState } from 'react'
-import { useSubscription } from '@apollo/client'
+import { ApolloError } from '@apollo/client'
 
-import { SATELLITE_VOTES_SUBSCRIPTION } from '../queries/satelliteVotes.query'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+
+import { SATELLITE_VOTES_QUERY } from '../queries/satelliteVotes.query'
 import { normalizeSatelliteVotings } from '../helpers/satellites.normalizer'
+
 import { SatelliteVotesType } from '../satellites.provider.types'
 
 export const useSatelliteVotes = (userAddress: string) => {
@@ -12,15 +15,15 @@ export const useSatelliteVotes = (userAddress: string) => {
     proposalsVotes: [],
   })
 
-  const { loading: isSatelliteVotesLoading } = useSubscription(SATELLITE_VOTES_SUBSCRIPTION, {
+  const { loading: isSatelliteVotesLoading } = useQueryWithRefetch(SATELLITE_VOTES_QUERY, {
     variables: { userAddress },
-    onData: ({ data: { data } }) => {
-      if (!data || !data.satellite[0]) return
+    onCompleted: (data) => {
+      if (!data.satellite[0]) return
 
       const normalizedVotes = normalizeSatelliteVotings(data.satellite[0].user)
       setSatelliteVotes(normalizedVotes)
     },
-    shouldResubscribe: true,
+    onError: (e: ApolloError) => console.error('SATELLITE_VOTES_QUERY query error:', { e }),
   })
 
   return {

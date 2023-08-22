@@ -1,14 +1,8 @@
 import * as signalR from '@microsoft/signalr'
 
 // types
-import {
-  UserContext,
-  UserTzktTokensBalancesType,
-  userTzktAccountSchema,
-  userTzktTokenBalancesSchema,
-  userTzktWSAccountSchema,
-} from './../user.provider.types'
-import { GetUserDataSubscription } from 'utils/__generated__/graphql'
+import { UserContext, UserTzktTokensBalancesType } from './../user.provider.types'
+import { GetUserDataQuery } from 'utils/__generated__/graphql'
 import {
   TokenAddressType,
   TokensContext,
@@ -20,11 +14,20 @@ import {
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { api } from 'utils/api/api'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { ApiError } from 'errors/error'
+import { ApiError, unknownToError } from 'errors/error'
+import {
+  emptyUserTzktAccountSchema,
+  userTzktAccountSchema,
+  userTzktTokenBalancesSchema,
+  userTzktWSAccountSchema,
+} from './user.schemes'
 
 // consts
 import { MVK_DECIMALS, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 
+/**
+ * function to get token balance of the user
+ */
 export const getUserTokenBalanceByAddress = ({
   userTokensBalances,
   tokenAddress,
@@ -36,6 +39,9 @@ export const getUserTokenBalanceByAddress = ({
   return userTokensBalances[tokenAddress] ?? 0
 }
 
+/**
+ * nomalize user tokens fetched from tzkt, they have different structure from indexer ones
+ */
 export const normalizeUserTzktTokensBalances = ({
   userAddress,
   indexerData,
@@ -68,18 +74,19 @@ export const normalizeUserTzktTokensBalances = ({
   )
 }
 
+/**
+ * nomalize user tokens from indexer (mTokens, mvk, smvk)
+ */
 export const normalizeUserIndexerTokensBalances = ({
   indexerData,
   tokensMetadata,
+  mvkTokenAddress,
 }: {
-  indexerData: GetUserDataSubscription
+  indexerData: GetUserDataQuery
   tokensMetadata: TokensContext['tokensMetadata']
+  mvkTokenAddress: string | null
 }) => {
-  const { smvk_balance, mvk_balance, mvk_transfer_receiver, mvk_transfer_sender, m_token_accounts } =
-    indexerData.mavryk_user[0]
-
-  // TODO: find a way to 100% have mvk token address here, need back-end implementation
-  const mvkTokenAddress = mvk_transfer_receiver[0]?.mvk_token.address ?? mvk_transfer_sender[0]?.mvk_token.address
+  const { smvk_balance, mvk_balance, m_token_accounts } = indexerData.mavryk_user[0]
 
   const { mTokenBalances, userMTokens, availableLoansRewards } = m_token_accounts.reduce<{
     mTokenBalances: NonNullable<UserContext['userTokensBalances']>
@@ -125,6 +132,14 @@ export const normalizeUserIndexerTokensBalances = ({
   }
 }
 
+/**
+ * load tokens from tzkt api for user, for xtz we need to load user tzkt profile
+ *
+ * we can get 2 cases here
+ *
+ * 1. user don't exist, it will return emptyUserTzktAccountSchema responce and userTzktTokenBalancesSchema will we just [], so we'll return empty object, no tokens means on tzkt
+ * 2. user exsts, it will return userTzktAccountSchema with xtz balance data, and userTzktTokenBalancesSchema array of all other tokens, we will normalize them and return
+ */
 export const fetchTzktUserBalances = async ({
   userAddress,
   tokensMetadata,
@@ -133,31 +148,44 @@ export const fetchTzktUserBalances = async ({
   userAddress: string
 }) => {
   try {
-    const [{ data: tokensData }, { data: xtxData }] = await Promise.all([
-      api(`https://api.ghostnet.tzkt.io/v1/tokens/balances?account.eq=${userAddress}`, {}, userTzktTokenBalancesSchema),
-      api(`https://api.ghostnet.tzkt.io/v1/accounts/${userAddress}`, {}, userTzktAccountSchema),
+    const [{ data: tokensData }, { data: accountData }] = await Promise.all([
+      api(`https://api.ghostnet.tzkt.io/v1/tokens/balances?account.eq=${userAddress}`),
+      api(`https://api.ghostnet.tzkt.io/v1/accounts/${userAddress}`),
     ])
 
-    const normalizedTzktTokensBalances = normalizeUserTzktTokensBalances({
-      indexerData: tokensData.concat([
-        {
-          token: { contract: { address: XTZ_TOKEN_ADDRESS } },
-          balance: xtxData.balance.toString(),
-          account: { address: xtxData.address },
-        },
-      ]),
-      userAddress,
-      tokensMetadata,
-    })
+    const isUserEmptyOnTzkt = emptyUserTzktAccountSchema.safeParse(accountData)
 
-    return normalizedTzktTokensBalances
+    if (isUserEmptyOnTzkt.success) return {}
+
+    const parsedUserTzktTokensData = userTzktTokenBalancesSchema.safeParse(tokensData)
+    const parsedUserXtzTokenBalance = userTzktAccountSchema.safeParse(accountData)
+
+    if (parsedUserTzktTokensData.success && parsedUserXtzTokenBalance.success) {
+      return normalizeUserTzktTokensBalances({
+        indexerData: parsedUserTzktTokensData.data.concat([
+          {
+            token: { contract: { address: XTZ_TOKEN_ADDRESS } },
+            balance: parsedUserXtzTokenBalance.data.balance.toString(),
+            account: { address: parsedUserXtzTokenBalance.data.address },
+          },
+        ]),
+        userAddress,
+        tokensMetadata,
+      })
+    }
+
+    throw new Error('Error occured while loading your balances, try to reload the page, or change user')
   } catch (e) {
-    console.error(`fetchTzktUserBalances query error: `, e)
-    throw new ApiError('Error occured while loading your balances, try to reload the page')
+    const convertedError = unknownToError(e)
+    throw new ApiError(convertedError)
   }
 }
 
-// TZKT sockets handlers
+// -------- TZKT sockets handlers --------
+/**
+ * opens websocket connection to tzkt, via signalR library
+ * @returns opened socket instance
+ */
 export const openTzktWebSocket = async (): Promise<signalR.HubConnection> => {
   try {
     const tzktSocket = new signalR.HubConnectionBuilder()
@@ -175,6 +203,9 @@ export const openTzktWebSocket = async (): Promise<signalR.HubConnection> => {
   }
 }
 
+/**
+ * subscribe to current user on tzkt websocket
+ */
 export const attachTzktSocketsEventHandlers = ({
   userAddress,
   handleTokens,

@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { TabItem, TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+import { Link, useHistory, useLocation } from 'react-router-dom'
+import qs from 'qs'
 
 // styles
 import { EmptyContainer } from 'app/App.style'
 import { BorrowingTabListItemTabInfo } from '../LoansComponents.style'
+import { TabItem, TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // consts
@@ -54,6 +55,7 @@ import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vault
 import { LoanMarketType } from 'providers/LoansProvider/loans.provider.types'
 import { CollateralType, DepositorsFlagType } from 'providers/VaultsProvider/vaults.provider.types'
 import { State } from 'reducers'
+import { MINIMUN_COLLATERAL_RATIO_PERSENT } from 'providers/VaultsProvider/helpers/vaults.const'
 
 type Props = {
   openAddNewCollateralPopup: () => void
@@ -105,6 +107,10 @@ export const BorrowingExpandCardMenuSection = ({
     preferences: { themeSelected },
   } = useDappConfigContext()
 
+  const { pathname, search } = useLocation()
+  const history = useHistory()
+  const { page, ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
+
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const menuTabs = useMemo(
@@ -125,8 +131,13 @@ export const BorrowingExpandCardMenuSection = ({
   // TODO: test it when sMVK will be avaliable as collateral
   const vaultHasSmvkCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVK_TOKEN_ADDRESS)
 
-  const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (tabId: number) => {
-    setActiveTab(menuTabs.find((item) => item.id === tabId))
+  const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (newTabId: number) => {
+    // condition to set list page to 1, when change tab
+    if (activeMenuTab?.id === loansTabNames.TX_HISTORY && activeMenuTab?.id !== newTabId) {
+      history.replace(`${pathname}${qs.stringify(restQP, { addQueryPrefix: true })}`)
+    }
+
+    setActiveTab(menuTabs.find((item) => item.id === newTabId))
   }
 
   return (
@@ -172,67 +183,73 @@ export const BorrowingExpandCardMenuSection = ({
             )}
 
             <TableBody>
-              {collateralData.map(({ amount, tokenAddress }, idx) => {
-                const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+              {collateralData
+                .sort((a, b) => b.amount - a.amount)
+                .map(({ amount, tokenAddress }, idx) => {
+                  const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
 
-                if (!collateralToken || !collateralToken.rate || !checkWhetherTokenIsCollateralToken(collateralToken))
-                  return null
+                  if (!collateralToken || !collateralToken.rate || !checkWhetherTokenIsCollateralToken(collateralToken))
+                    return null
 
-                const { symbol, icon, rate, decimals } = collateralToken
+                  const { symbol, icon, rate, decimals } = collateralToken
 
-                const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
-                const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
+                  const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
+                  const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
-                return (
-                  <TableRow rowHeight={65} key={symbol}>
-                    <TableCell width={'22%'} className="vert-middle">
-                      <div className="cell-content row with-icon">
-                        <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
-                        {symbol}
-                      </div>
-                    </TableCell>
+                  return (
+                    <TableRow rowHeight={65} key={symbol}>
+                      <TableCell width={'22%'} className="vert-middle">
+                        <div className="cell-content row with-icon">
+                          <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+                          {symbol}
+                        </div>
+                      </TableCell>
 
-                    <TableCell width={'22%'}>
-                      <div className="cell-content">
-                        <CommaNumber
-                          value={convertedAmount}
-                          className="value"
-                          showDecimal
-                          decimalsToShow={assetDecimalsToShow}
-                        />
-                        <CommaNumber value={convertedAmount * rate} className="rate" beginningText="$" showDecimal />
-                      </div>
-                    </TableCell>
-                    <TableCell width={'22%'}>
-                      <div className="cell-content">
-                        <CommaNumber value={collateralShare} className="value" endingText="%" />
-                      </div>
-                    </TableCell>
-                    <TableCell className={`buttons borrowing ${!isOwner ? 'single-btn' : ''}`}>
-                      <div className="cell-content row">
-                        <Button
-                          onClick={() => openAddExistingCollateralPopup(idx)}
-                          form={BUTTON_WIDE}
-                          kind={BUTTON_SECONDARY}
-                          disabled={isActionActive || collateralToken.loanData.isPausedCollateral}
-                        >
-                          <Icon id="plus" /> Add
-                        </Button>
-                        {isOwner ? (
+                      <TableCell width={'22%'}>
+                        <div className="cell-content">
+                          <CommaNumber
+                            value={convertedAmount}
+                            className="value"
+                            showDecimal
+                            decimalsToShow={assetDecimalsToShow}
+                          />
+                          <CommaNumber value={convertedAmount * rate} className="rate" beginningText="$" showDecimal />
+                        </div>
+                      </TableCell>
+                      <TableCell width={'22%'}>
+                        <div className="cell-content">
+                          <CommaNumber value={collateralShare} className="value" endingText="%" />
+                        </div>
+                      </TableCell>
+                      <TableCell className={`buttons borrowing ${!isOwner ? 'single-btn' : ''}`}>
+                        <div className="cell-content row">
                           <Button
-                            onClick={() => openWithdrawCollateralPopup({ amount: convertedAmount, idx })}
+                            onClick={() => openAddExistingCollateralPopup(idx)}
                             form={BUTTON_WIDE}
                             kind={BUTTON_SECONDARY}
-                            disabled={collateralRatio <= 200 || isActionActive}
+                            disabled={isActionActive || collateralToken.loanData.isPausedCollateral}
                           >
-                            <Icon id="minus" /> Remove
+                            <Icon id="plus" /> Add
                           </Button>
-                        ) : null}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
+                          {isOwner ? (
+                            <Button
+                              onClick={() => openWithdrawCollateralPopup({ amount: convertedAmount, idx })}
+                              form={BUTTON_WIDE}
+                              kind={BUTTON_SECONDARY}
+                              disabled={
+                                collateralRatio <= MINIMUN_COLLATERAL_RATIO_PERSENT ||
+                                isActionActive ||
+                                convertedAmount === 0
+                              }
+                            >
+                              <Icon id="minus" /> Remove
+                            </Button>
+                          ) : null}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
 
               {/* Total row */}
               {collateralData.length >= 2 ? (

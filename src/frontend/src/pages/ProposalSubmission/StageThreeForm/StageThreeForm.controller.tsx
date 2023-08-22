@@ -1,11 +1,10 @@
 import React, { useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
 
 // context
 import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // types
@@ -13,8 +12,8 @@ import { StageThreeFormProps, StageThreeValidityItem, ValidationResult } from '.
 
 // helpers
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { reduceTreasuryAssets } from 'pages/Treasury/helpers/treasury.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasury.utils'
 import { getValidityStageThreeTable } from '../ProposalSubmission.helpers'
 
 // components
@@ -28,12 +27,12 @@ import { Info } from 'app/App.components/Info/Info.view'
 import Button from 'app/App.components/Button/NewButton'
 
 // const
+import { STAGE_3_DESCRIPTION } from 'texts/tooltips/governance'
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
-import { STAGE_3_DESCRIPTION } from 'texts/tooltips/governance'
 
 // styles
 import { SubmitProposalGeneralData } from '../ProposalSubmission.style'
@@ -49,6 +48,7 @@ import {
 } from 'app/App.components/Table'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
+// NOTE: isLoading is handled in <ProposalSubmission.controller>
 export const StageThreeForm = ({
   proposalId,
   currentProposal,
@@ -70,8 +70,11 @@ export const StageThreeForm = ({
     config: { governancePhase, fee, successReward },
   } = useProposalsContext()
 
-  const { treasuryStorage } = useSelector((state: State) => state.treasury)
-  const treasuryTokens = useMemo(() => reduceTreasuryAssets(treasuryStorage), [treasuryStorage])
+  const { treasuryAddresses, treasuryMapper } = useTreasuryContext()
+  const treasuryTokens = useMemo(
+    () => reduceTreasuryAssets(treasuryAddresses, treasuryMapper),
+    [treasuryAddresses, treasuryMapper],
+  )
 
   const isProposalRound = governancePhase === 'PROPOSAL'
 

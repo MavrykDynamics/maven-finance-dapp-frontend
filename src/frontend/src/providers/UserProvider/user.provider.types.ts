@@ -1,14 +1,18 @@
-import { TokenAddressType, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
-import { GetUserDataSubscription } from 'utils/__generated__/graphql'
 import { z } from 'zod'
+
+import { TokenAddressType, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
+import { GetUserRewardsDataQuery } from 'utils/__generated__/graphql'
+
 import {
   CLAIM_ALL_REWARDS_ACTION,
   CLAIM_VESTING_REWARD_ACTION,
   GET_MVK_FROM_FAUCET_ACTION,
   REWARDS_COMPOUND_ACTION,
 } from './helpers/user.consts'
+import { userTzktTokenBalancesSchema, userTzktWSAccountSchema } from './helpers/user.schemes'
+import { normalizeUserHistoryData } from './helpers/userData.helpers'
 
-// useUserLoansData Types
+// User loans data types
 export type UserLendBorrowItem = {
   amount: number
   id: number
@@ -18,69 +22,66 @@ export type UserLendBorrowItem = {
   tokenAddress: TokenAddressType
 }
 
-export type UserLoansDataStateType = {
+export type UserLoansData = {
   userBorrowings: Array<UserLendBorrowItem>
   totalUserBorrowed: number
   totalUserLended: number
   userLendings: Array<UserLendBorrowItem>
   userVaultsData: Record<
     string,
-    { borrowedAmount: number; borrowedVaultsCollateralAmount: number; allVaultsCollateralAmount: number }
+    { principle: number; collateralBalance: number; borrowedVaultsCollateralBalance: number; interest: number }
   >
 }
 
-// user tokens Types
-export const userTzktTokenBalancesSchema = z.array(
-  z.object({
-    token: z.object({
-      contract: z.object({
-        address: z.string(),
-      }),
-    }),
-    account: z.object({
-      address: z.string(),
-    }),
-    balance: z.string(),
-  }),
-)
+// User tokens types
 export type UserTzktTokensBalancesType = z.infer<typeof userTzktTokenBalancesSchema>
-
-export const userTzktAccountSchema = z.object({
-  balance: z.number(),
-  address: z.string(),
-})
 export type UserTzktAccountType = z.infer<typeof userTzktWSAccountSchema>
-
-export const userTzktWSAccountSchema = z.array(userTzktAccountSchema)
+export type EmptyUserTzktAccountType = z.infer<typeof userTzktWSAccountSchema>
 export type UserTzktWSAccountType = z.infer<typeof userTzktWSAccountSchema>
+
+export type UserTzKtTokenBalances = {
+  userAddress: string | null
+  tokens: Record<TokenAddressType, number>
+}
 
 // Context types
 export type UserContext = UserContextStateType & {
   isLoading: boolean
-  isRunnedInitialConnect: boolean
+  isUserRestored: boolean
 
   // actions
   connect: () => void
   signOut: () => void
   changeUser: () => void
-}
 
-export type UserIndexerFarmRewardsType = GetUserDataSubscription['mavryk_user'][number]['farm_accounts']
+  setUserLoansData: (userLoansData: UserLoansData | null) => void
+  setUserHistoryData: (page: number, userLoansData: UserHistoryData, itemsAmount: number) => void
+  setUserRewards: (userRewards: UserRewardsType) => void
+}
 
 export type UserContextStateType = UserMetadataType & {
   userAddress: string | null
-  availableProposalRewards: Array<number>
-  availableLoansRewards: number
-  availableFarmRewards: Record<string, number>
 
-  // user tokens
+  rewards: UserRewardsType | null
+  availableLoansRewards: number
+  userLoansData: UserLoansData | null
+  actionsHistory: { paginatedList: Record<number, UserHistoryData>; itemsAmount: number }
+
   userTokensBalances: Record<TokenAddressType, number>
   userMTokens: Record<TokenAddressType, UserMTokenType>
 }
 
-export type userTzKtTokenBalances = {
-  userAddress: string | null
-  tokens: Record<TokenAddressType, number>
+export type UserIndexerFarmRewardsType = GetUserRewardsDataQuery['mavryk_user'][number]['farm_accounts']
+
+export type UserRewardsType = {
+  gatheredFarmRewards: number
+  gatheredSatellitesRewards: number
+  gatheredDoormanRewards: number
+  availableDoormanRewards: number
+  availableSatellitesRewards: number
+  availableProposalRewards: Array<number>
+  availableFarmRewards: Record<string, number>
+  farmAccounts: UserIndexerFarmRewardsType
 }
 
 export type UserMetadataType = {
@@ -95,23 +96,9 @@ export type UserMetadataType = {
     counsilAvatar: string | null
     breakGlassAvatar: string | null
   }
-  actionsHistory: Array<{
-    action: string
-    amount: number
-    totalAmount: number
-    fee: number
-    id: number
-  }>
-
-  // user rewards
-  gatheredFarmRewards: number
-  gatheredSatellitesRewards: number
-  gatheredDoormanRewards: number
-  availableDoormanRewards: number
-  availableSatellitesRewards: number
-
-  farmAccounts: UserIndexerFarmRewardsType
 }
+
+export type UserHistoryData = ReturnType<typeof normalizeUserHistoryData>
 
 export type UserActionsType =
   | typeof CLAIM_VESTING_REWARD_ACTION

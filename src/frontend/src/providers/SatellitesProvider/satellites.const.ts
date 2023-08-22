@@ -69,7 +69,7 @@ export const DEFAULT_SATELLITES_ACTIVE_SUBS = {
   [SATELLITE_PARTICIPATION_DATA_SUB]: false,
 }
 
-export const DEFAULT_SATELLITES_CONTEXT: SatellitesContextState = {
+export const DEFAULT_SATELLITES_CONTEXT: DeepNullable<SatellitesContextState> = {
   satelliteMapper: null,
   activeSatellitesIds: null,
   allSatellitesIds: null,
@@ -79,7 +79,7 @@ export const DEFAULT_SATELLITES_CONTEXT: SatellitesContextState = {
   finRequestsAmount: null,
 }
 
-export const EMPTY_SATELLITES_CONTEXT: DeepNonNullable<SatellitesContextState> = {
+export const EMPTY_SATELLITES_CONTEXT: SatellitesContextState = {
   satelliteMapper: {},
   activeSatellitesIds: [],
   allSatellitesIds: [],
