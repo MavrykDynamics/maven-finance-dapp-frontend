@@ -69,8 +69,8 @@ export const StageThreeForm = ({
   const {
     config: { governancePhase, fee, successReward },
   } = useProposalsContext()
-
   const { treasuryAddresses, treasuryMapper } = useTreasuryContext()
+
   const treasuryTokens = useMemo(
     () => reduceTreasuryAssets(treasuryAddresses, treasuryMapper),
     [treasuryAddresses, treasuryMapper],

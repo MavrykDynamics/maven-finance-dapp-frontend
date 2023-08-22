@@ -1,6 +1,7 @@
 import { DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { ProposalStatusType } from 'providers/ProposalsProvider/helpers/proposals.types'
+
 import {
   ONGOING_PROPOSAL_STATUS_TOOLTIP,
   UNLOCKED_PROPOSAL_STATUS_TOOLTIP,
@@ -12,6 +13,7 @@ export const NONE_CYCLE_SELECTED_OPTION = {
   content: 'All Cycles',
   id: 'notSelected',
 }
+
 export const generateCyclesDdOptions = (currentCycle: number): Array<DropDownItemType> => {
   return [
     NONE_CYCLE_SELECTED_OPTION,

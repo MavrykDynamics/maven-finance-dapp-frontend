@@ -345,17 +345,13 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     )
   }, [bug, currentProposal, fee, governanceAddress, tokensMetadata, userAddress])
 
-  const submissionDappCallback = useCallback(async () => {
-    await getNewProposalId() // update proposal id after successful action
-  }, [getNewProposalId])
-
   const submitContractProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: SUBMIT_PROPOSAL_ACTION,
       actionFn: submitActionFn,
-      dappCallback: submissionDappCallback,
+      dappCallback: async () => await getNewProposalId(), // update proposal id after successful action
     }),
-    [submissionDappCallback, submitActionFn],
+    [getNewProposalId, submitActionFn],
   )
 
   const { action: handleProposalSubmit } = useContractAction(submitContractProps)

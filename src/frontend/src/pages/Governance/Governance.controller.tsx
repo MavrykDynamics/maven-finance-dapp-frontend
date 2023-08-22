@@ -8,9 +8,8 @@ import { State } from 'reducers'
 import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
 import { ProposalsListType } from './helpers/governanceTypes'
 
-// providers
-
-// actions & cs hooks
+// actions &  hooks
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getEmergencyGovernanceStorage } from '../EmergencyGovernance/EmergencyGovernance.actions'
 
@@ -61,7 +60,6 @@ import {
   SATELLITE_VOTE_YES,
   SATELLITE_VOTES_MAPPER,
 } from 'providers/SatellitesProvider/satellites.const'
-import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const dispatch = useDispatch()

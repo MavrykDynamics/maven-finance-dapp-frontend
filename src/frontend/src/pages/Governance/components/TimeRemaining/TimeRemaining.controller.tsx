@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
 
 // Components
 import { Timer } from 'app/App.components/Timer/Timer.controller'
