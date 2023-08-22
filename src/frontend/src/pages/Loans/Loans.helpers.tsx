@@ -5,6 +5,9 @@ import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Inp
 import { convertNumberForClient, convertNumberForContractCall } from '../../utils/calcFunctions'
 import { assetDecimalsToShow } from './Loans.const'
 import { SingleValueData } from 'lightweight-charts'
+import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
+import { DEFAULT_MIN_COLLATERAL_AMOUNT } from 'utils/constants'
 
 // HELPER FOR BORROW FEE
 export const calculateAccruedInterest = (
@@ -65,7 +68,7 @@ export const loansInputValidation = ({
   const numberOfDecimalPlaces = inputAmount.match(/\.(\d+)/)?.[1].length ?? 0
 
   // check amount by min/max value
-  if (Number(inputAmount) > minAmount && Number(inputAmount) <= maxAmount) {
+  if (Number(inputAmount) >= minAmount && Number(inputAmount) <= maxAmount) {
     // check amount by number of decimal places
     if (byDecimalPlaces) {
       return numberOfDecimalPlaces <= byDecimalPlaces ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
@@ -139,4 +142,13 @@ export const getChartSettingsBasedOnChartLength = (
         ...settings,
         height: 50,
       }
+}
+
+/**
+ *
+ * @param token tokenMetadata taken from tokensProvider
+ * @returns min ampount to deposit based if it's loand token or non-loan token
+ */
+export const geTokenMinAmountForDeposit = (token: TokenMetadataType | null) => {
+  return token && checkWhetherTokenIsLoanToken(token) ? token.loanData.minDepositAmount : DEFAULT_MIN_COLLATERAL_AMOUNT
 }
