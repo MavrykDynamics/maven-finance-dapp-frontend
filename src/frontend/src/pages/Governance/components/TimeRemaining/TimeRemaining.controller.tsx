@@ -101,7 +101,7 @@ export default function TimeRemaining() {
   }
 
   const handleMoveNextRound = () => {
-    if (governancePhase === GovPhases.TIMELOCK && timelockProposalId > 0) {
+    if (governancePhase === GovPhases.TIMELOCK && timelockProposalId && timelockProposalId > 0) {
       setShowModal(true)
     } else {
       modalMoveNext()

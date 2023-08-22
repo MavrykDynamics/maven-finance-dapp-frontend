@@ -15,7 +15,7 @@ import { getProposalsQuery, PROPOSALS_SUBMISSION_SUB } from './queries/proposals
 import { GOVERNANCE_CONFIG_QUERY } from './queries/governanceConfig.query'
 
 // types
-import { ProposalsContext, ProposalsContextStateType, ProposalsSubsRecordType } from './proposals.provider.types'
+import { ProposalsContext, NullableProposalsContextState, ProposalsSubsRecordType } from './proposals.provider.types'
 
 // consts
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
@@ -45,7 +45,7 @@ const ProposalsProvider = ({ children }: Props) => {
 
   const prevUserAddress = usePrevious(userAddress)
 
-  const [proposalsCtxState, setProposalsCtxState] = useState<ProposalsContextStateType>(DEFAULT_PROPOSALS_CTX)
+  const [proposalsCtxState, setProposalsCtxState] = useState<NullableProposalsContextState>(DEFAULT_PROPOSALS_CTX)
   const [activeSubs, setActiveSubs] = useState<ProposalsSubsRecordType>(DEFAULT_PROPOSALS_ACTIVE_SUBS)
 
   useEffect(() => {

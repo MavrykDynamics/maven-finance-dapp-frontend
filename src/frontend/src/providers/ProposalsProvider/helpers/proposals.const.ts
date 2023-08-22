@@ -1,4 +1,8 @@
-import { ProposalsSubsRecordType, ProposalsContextStateType } from '../proposals.provider.types'
+import {
+  ProposalsSubsRecordType,
+  ProposalsContextStateType,
+  NullableProposalsContextState,
+} from '../proposals.provider.types'
 
 // proposal actions
 export const PROPOSAL_ROUND_VOTE_ACTION = 'proposalRoundVote'
@@ -37,7 +41,7 @@ export const GovPhases = {
 } as const
 
 // Context consts
-export const DEFAULT_PROPOSALS_CTX: ProposalsContextStateType = {
+export const DEFAULT_PROPOSALS_CTX: NullableProposalsContextState = {
   config: null,
   proposalsMapper: null,
   currentRoundProposalsIds: null,
@@ -48,14 +52,14 @@ export const DEFAULT_PROPOSALS_CTX: ProposalsContextStateType = {
   waitingProposalsIdsToBePaid: null,
 }
 
-export const EMPTY_PROPOSALS_CTX: DeepNonNullable<ProposalsContextStateType> = {
+export const EMPTY_PROPOSALS_CTX: ProposalsContextStateType = {
   config: {
     fee: 0,
     successReward: 0,
     currentRoundEndLevel: 0,
     cycle: 0,
-    timelockProposalId: -1,
-    cycleHighestVotedProposalId: -1,
+    timelockProposalId: null,
+    cycleHighestVotedProposalId: null,
     governancePhase: GovPhases.PROPOSAL,
   },
 

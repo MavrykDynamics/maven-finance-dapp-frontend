@@ -1,7 +1,12 @@
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 import { EMPTY_PROPOSALS_CTX, GovPhases, ProposalStatus } from './proposals.const'
 
-import { ProposalsContext, ProposalsContextStateType, ProposalsSubsRecordType } from '../proposals.provider.types'
+import {
+  NullableProposalsContextState,
+  ProposalsContext,
+  ProposalsContextStateType,
+  ProposalsSubsRecordType,
+} from '../proposals.provider.types'
 import { ProposalsDataSubscriptionSubscription } from 'utils/__generated__/graphql'
 import { GovernancePhaseType, ProposalStatusType } from './proposals.types'
 
@@ -51,7 +56,7 @@ export const getProposalsProviderReturnValue = ({
   changeProposalsSubscriptionsList,
   activeSubs,
 }: {
-  proposalsCtxState: ProposalsContextStateType
+  proposalsCtxState: NullableProposalsContextState
   changeProposalsSubscriptionsList: ProposalsContext['changeProposalsSubscriptionsList']
   activeSubs: ProposalsSubsRecordType
 }) => {

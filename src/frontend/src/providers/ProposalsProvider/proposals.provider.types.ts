@@ -15,21 +15,23 @@ export type ProposalsContextStateType = {
     successReward: number
     currentRoundEndLevel: number
     cycle: number
-    timelockProposalId: number
-    cycleHighestVotedProposalId: number
+    timelockProposalId: number | null
+    cycleHighestVotedProposalId: number | null
     governancePhase: GovernancePhaseType
-  } | null
+  }
 
-  proposalsMapper: Record<number, ProposalRecordType> | null
-  currentRoundProposalsIds: Array<number> | null
-  pastProposalsIds: Array<number> | null
-  submissionProposalsIds: Array<number> | null
-  allProposalsIds: Array<number> | null
-  waitingProposalsIdsToBeExecuted: Array<number> | null
-  waitingProposalsIdsToBePaid: Array<number> | null
+  proposalsMapper: Record<number, ProposalRecordType>
+  currentRoundProposalsIds: Array<number>
+  pastProposalsIds: Array<number>
+  submissionProposalsIds: Array<number>
+  allProposalsIds: Array<number>
+  waitingProposalsIdsToBeExecuted: Array<number>
+  waitingProposalsIdsToBePaid: Array<number>
 }
 
-export type ProposalsContext = DeepNonNullable<ProposalsContextStateType> & {
+export type NullableProposalsContextState = DeepNullable<ProposalsContextStateType>
+
+export type ProposalsContext = ProposalsContextStateType & {
   isLoading: boolean
 
   changeProposalsSubscriptionsList: (newSkips: Partial<ProposalsSubsRecordType>) => void
