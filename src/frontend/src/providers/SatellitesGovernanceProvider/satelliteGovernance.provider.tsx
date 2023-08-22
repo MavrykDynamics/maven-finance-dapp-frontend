@@ -65,7 +65,7 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
 
   // methods to update context data
   const updateSatelliteGovernanceStorage = (storage: GetGovernanceSatelliteStorageQuery) => {
-    const { satelliteGovIdsMapper, mySatelliteGovIds, pastSatelliteGovIds, ongoingSatelliteGovIds } =
+    const { satelliteGovIdsMapper, mySatelliteGovIds, pastSatelliteGovIds, ongoingSatelliteGovIds, config } =
       normalizerSatelliteGovernance(storage, userAddress)
 
     setSatelliteGovCtxState((prev) => ({
@@ -74,6 +74,7 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
       mySatelliteGovIds,
       pastSatelliteGovIds,
       ongoingSatelliteGovIds,
+      config,
     }))
   }
 

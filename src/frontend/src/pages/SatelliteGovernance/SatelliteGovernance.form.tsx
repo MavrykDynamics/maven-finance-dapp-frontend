@@ -50,10 +50,10 @@ type MaxLength = {
 type Props = {
   variant?: keyof typeof SATELLITE_GOVERNANCE_CONTENT_FORM
   maxLength: MaxLength
-  isActionActive: boolean
+  isButtonDisabled: boolean
 }
 
-export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: Props) => {
+export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }: Props) => {
   const dropDownItems = useMemo(() => SATELLITE_GOVERNANCE_TOKEN_TYPES.map((item) => getDdItem(item.toUpperCase())), [])
 
   const [data, setData] = useState(SATELLITE_GOVERNANCE_INITIAL_DATA)
@@ -68,12 +68,12 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
     secondInputLabel = '',
   } = variant ? SATELLITE_GOVERNANCE_CONTENT_FORM[variant] : {}
 
-  const isDisabledButton = useMemo(
+  const internalButtonDisabledStatus = useMemo(
     () =>
       Object.values(validation).some((item) => item === INPUT_STATUS_ERROR) ||
       validation.table.some((item) => item.amount === INPUT_STATUS_ERROR || item.to_ === INPUT_STATUS_ERROR) ||
-      isActionActive,
-    [validation, isActionActive],
+      isButtonDisabled,
+    [validation, isButtonDisabled],
   )
 
   const isFixMistakenTransfer = variant === SATELLITE_GOVERNANCE_ACTION_NAMES.FIX_MISTAKEN_TRANSFER
@@ -421,7 +421,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
       )}
 
       <div className="button-wrapper">
-        <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isDisabledButton} type={SUBMIT}>
+        <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={internalButtonDisabledStatus} type={SUBMIT}>
           {btnIcon && <Icon id={btnIcon} />}
           {btnText}
         </Button>

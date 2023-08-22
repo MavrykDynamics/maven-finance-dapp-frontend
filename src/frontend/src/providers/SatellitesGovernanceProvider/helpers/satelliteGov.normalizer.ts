@@ -44,18 +44,26 @@ export const normalizerSatelliteGovernance = (
   userAddress: string | null,
 ) => {
   const { governance_satellite, governance_satellite_action: governanceSatelliteActions } = storage
-  const [governanceSatellite] = governance_satellite
+  const [
+    {
+      address,
+      admin,
+      gov_sat_approval_percentage,
+      gov_sat_duration_in_days,
+      governance_satellite_counter,
+      governance,
+      max_actions_per_satellite = 10, // default 10 for max actions per satellite
+    },
+  ] = governance_satellite
 
   const config = {
-    address: governanceSatellite.address,
-    admin: governanceSatellite.admin,
-    approvalPercentage: governanceSatellite.gov_sat_approval_percentage,
-    durationInDays: governanceSatellite.gov_sat_duration_in_days,
-    counter: governanceSatellite.governance_satellite_counter,
-    governanceId: governanceSatellite.governance.address,
-    // TODO remove 10 when api will return proper value, right now it's 0 instead of 10
-    maxActionsCount:
-      governanceSatellite.max_actions_per_satellite === 0 ? 10 : governanceSatellite.max_actions_per_satellite,
+    address,
+    admin,
+    approvalPercentage: gov_sat_approval_percentage,
+    durationInDays: gov_sat_duration_in_days,
+    counter: governance_satellite_counter,
+    governanceId: governance.address,
+    maxActionsCount: max_actions_per_satellite,
   }
 
   const actions = governanceSatelliteActions.reduce<SatelliteGovernanceActionsType>(
