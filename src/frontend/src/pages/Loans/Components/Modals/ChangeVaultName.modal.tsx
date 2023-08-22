@@ -12,6 +12,7 @@ import { changeVaultNameAction } from 'providers/VaultsProvider/actions/vaults.a
 // consts
 import {
   ERR_MSG_INPUT,
+  ERR_MSG_NONE,
   INPUT_LARGE,
   INPUT_STATUS_SUCCESS,
   InputStatusType,
@@ -104,15 +105,13 @@ export const ChangeVaultName = ({
 
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus = validateVaultName(value, vaultNames)
-    setNewVaultName((prev) => ({ ...prev, name: value, validationStatus }))
+    setNewVaultName((prev) => ({ ...prev, name: value }))
   }
 
   const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (containSpaces(e.target.value)) {
       const trimmedValue = e.target.value.trim()
-      const validationStatus = validateVaultName(trimmedValue, vaultNames)
-      setNewVaultName((prev) => ({ ...prev, validationStatus, name: trimmedValue }))
+      setNewVaultName((prev) => ({ ...prev, name: trimmedValue }))
     }
   }
 
@@ -146,7 +145,11 @@ export const ChangeVaultName = ({
             settings={{
               inputStatus: newVaultName.validationStatus,
               inputSize: INPUT_LARGE,
-              validationFns: [[validateInputLength, ERR_MSG_INPUT, [15]]],
+              validationFns: [
+                [validateInputLength, ERR_MSG_INPUT, [15]],
+                [validateVaultName, ERR_MSG_NONE, [vaultNames]],
+              ],
+              allowInputAfterError: true,
             }}
           />
 

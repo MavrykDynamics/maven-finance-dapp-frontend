@@ -32,6 +32,7 @@ type TextAreaProps = {
   disabled?: boolean
   required?: boolean
   validationFns?: ValidatorFnType[]
+  allowInputAfterError?: boolean
 }
 
 export const TextArea = ({
@@ -49,6 +50,7 @@ export const TextArea = ({
   label,
   textAreaMaxLimit,
   validationFns = [[validateInput, ERR_MSG_INPUT]],
+  allowInputAfterError = true,
 }: TextAreaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -65,7 +67,7 @@ export const TextArea = ({
     onChange,
     onBlur,
     value,
-    allowInputAfterError: true,
+    allowInputAfterError,
     validationFns:
       validationFns && validationFns.length > 0 ? [[validateInput, ERR_MSG_INPUT], ...validationFns] : validationFns,
   })

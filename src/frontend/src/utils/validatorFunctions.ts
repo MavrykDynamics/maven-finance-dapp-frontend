@@ -47,7 +47,7 @@ export function isHexadecimalByteString(input: string) {
   return a.toString(16) === input
 }
 
-export function isValidNumberValue(input: number, minValue = 0, maxValue = 0) {
+export function isNumberInRange(input: number, minValue = 0, maxValue = 0) {
   if (input >= maxValue || input <= minValue) {
     return false
   } else if (minValue && !maxValue) {

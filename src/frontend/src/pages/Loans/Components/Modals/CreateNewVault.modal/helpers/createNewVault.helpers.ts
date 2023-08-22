@@ -1,16 +1,17 @@
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
-
 // validation helper
+
+import { ERR_MSG_NONE } from 'app/App.components/Input/Input.constants'
+
 /**
  *
  * @param value the actual value from input
  * @param myVaultNames all vault names
- * @returns tuple where the first element is error Message and the second one - validation status
+ * @returns a tuple where tuple[0] indicates for error (f.e. hasError), tuple[1] is the actual err message
  */
-export function validateVaultName(value: string, myVaultNames: string[]): InputStatusType {
+export function validateVaultName(value: string, myVaultNames: string[]) {
   if (myVaultNames.find((vaultName) => vaultName.trim().toLowerCase() === value?.trim().toLowerCase())) {
-    return INPUT_STATUS_ERROR
+    return [true, ERR_MSG_NONE] as const
   }
 
-  return INPUT_STATUS_SUCCESS
+  return [false, null] as const
 }
