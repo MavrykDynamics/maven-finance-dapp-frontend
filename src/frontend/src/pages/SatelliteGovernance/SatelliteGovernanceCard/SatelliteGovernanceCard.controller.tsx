@@ -42,6 +42,7 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 
 // types
 import { SatelliteGovNormalizerReturnType } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider.types'
+import { addDynamicMessagesToActionText } from 'app/App.components/Toaster/texts/toasterActions.texts'
 
 type Props = {
   satelliteId: string
@@ -116,6 +117,15 @@ export const SatelliteGovernanceCard = ({
         bug('Click Connect in the left menu', 'Please connect your wallet')
         return null
       }
+
+      // Update toast messages for the current action (VOTE_FOR_ACTION)
+      const updatedToastActionMsgStart = {
+        title: `Voting "${type.toUpperCase()}" ...`,
+      }
+      const updatedToastActionMsgEnd = {
+        title: `"${type.toUpperCase()}" vote registered.`,
+      }
+      addDynamicMessagesToActionText(VOTE_FOR_ACTION, updatedToastActionMsgStart, updatedToastActionMsgEnd)
 
       return await voteForAction(governanceSatelliteAddress, id, type)
     },

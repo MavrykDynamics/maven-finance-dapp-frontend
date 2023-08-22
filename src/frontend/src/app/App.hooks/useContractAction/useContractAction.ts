@@ -46,7 +46,7 @@ export const useContractAction = <G>({
 
   async function invokeAction(actionResult: ActionErrorReturnType | ActionSuccessReturnType | null) {
     try {
-      // optional callback which us triggered right after action call
+      // optional callback which is triggered right after action call
       // used f.e. to close some popup etc.
       afterActionCallback?.()
 
