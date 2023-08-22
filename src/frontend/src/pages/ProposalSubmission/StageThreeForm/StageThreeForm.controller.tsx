@@ -13,8 +13,8 @@ import { StageThreeFormProps, StageThreeValidityItem, ValidationResult } from '.
 // helpers
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getValidityStageThreeTable } from '../helpers/proposalSubmissionValidation.utils'
 import { reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasury.utils'
-import { getValidityStageThreeTable } from '../ProposalSubmission.helpers'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'

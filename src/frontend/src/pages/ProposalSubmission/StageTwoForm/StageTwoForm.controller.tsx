@@ -19,14 +19,16 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 
 // helpers
 import { isHexadecimal } from 'utils/validatorFunctions'
+import { getBytesPairValidationStatus } from '../helpers/proposalSubmissionValidation.utils'
+import { checkBytesPairExists } from '../helpers/ProposalSubmissionDiff.utils'
 import { containSpaces } from 'app/App.utils/input'
-import { checkBytesPairExists, getBytesPairValidationStatus, PROPOSAL_BYTE } from '../ProposalSubmission.helpers'
 
-// const, helpers
+// const
 import { STAGE_2_DESCRIPTION } from 'texts/tooltips/governance'
 import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { INFO_DEFAULT, INFO_WARNING } from 'app/App.components/Info/info.constants'
 import { BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
+import { PROPOSAL_BYTE } from '../helpers/proposalSubmission.const'
 import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 
 // styles

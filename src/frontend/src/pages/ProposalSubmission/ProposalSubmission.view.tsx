@@ -31,17 +31,9 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // types
 import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
-import { MultyProposalItem, ProposalValidityObj, SubmittedProposalsMapper } from './ProposalSubmission.types'
+import { MultyProposalItem, ProposalValidityObj } from './ProposalSubmission.types'
 
 // consts
-import {
-  DEFAULT_PROPOSAL,
-  DEFAULT_PROPOSAL_VALIDATION,
-  checkStage1Validation,
-  checkStage2Validation,
-  checkStage3Validation,
-  isProposalHasChange,
-} from './ProposalSubmission.helpers'
 import {
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
@@ -55,6 +47,7 @@ import {
   UPDATE_PROPOSAL_DATA_ACTION,
 } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { GOVERNANCE_LATEST_USER_PROPOSAL_QUERY } from 'providers/ProposalsProvider/queries/getLatestUserProposal.query'
+import { DEFAULT_PROPOSAL_VALIDATION, DEFAULT_PROPOSAL } from './helpers/proposalSubmission.const'
 import colors from 'styles/colors'
 import {
   DROP_PROPOSAL_BUTTON_TOOLTIP,
@@ -70,7 +63,7 @@ import {
   lockProposal,
   dropProposal,
 } from 'providers/ProposalsProvider/actions/proposalsSubmission.actions'
-import { getBytesDiff, getPaymentsDiff } from './ProposalSubmission.helpers'
+import { getBytesDiff, getPaymentsDiff } from './helpers/ProposalSubmissionDiff.utils'
 import { unknownToError } from 'errors/error'
 import { isAbortError } from 'errors/error'
 import { api } from 'utils/api/api'
@@ -79,6 +72,13 @@ import {
   getTimestampByLevelHeaders,
   getTimestampByLevelSchema,
 } from 'utils/api/api-helpers/getTimestampByLevel'
+import {
+  isProposalHasChange,
+  checkStage2Validation,
+  checkStage3Validation,
+  checkStage1Validation,
+} from './helpers/proposalSubmissionValidation.utils'
+import { normalizeProposalsForSubmitProposal } from './helpers/normalizeRemoteProposals'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const history = useHistory()
@@ -127,36 +127,75 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
   // proposals that user has submitted, reduced to object mapper and arr of keys for this object
   // this object represents ds we can use with stages, to interact with in tables, inputs, etc
-  const [proposalKeys, mappedProposals, mappedValidation] = useMemo(() => {
-    const { keys, mapper, validityObj } = submissionProposalsIds
-      .filter((proposalId) => proposalsMapper[proposalId].proposerId === userAddress)
-      .reduce<SubmittedProposalsMapper>(
-        (acc, proposalId) => {
-          const proposal = proposalsMapper[proposalId]
-          acc.mapper[proposalId] = proposal
-          acc.validityObj[proposalId] = {
-            ...DEFAULT_PROPOSAL_VALIDATION,
-            bytesValidation: proposal.proposalData.map((bytesPair) => ({
-              validBytes: '',
-              validTitle: '',
-              validDescr: '',
-              byteId: bytesPair.id,
-            })),
-            paymentsValidation: proposal.proposalPayments.map((payment) => ({
-              token_amount: '',
-              title: '',
-              to__id: '',
-              paymentId: payment.id,
-            })),
-          }
-          acc.keys.push(proposal.id)
-          return acc
-        },
-        { keys: [], mapper: {}, validityObj: {} },
-      )
+  const [proposalKeys, mappedProposals, mappedValidation] = useMemo(
+    () => normalizeProposalsForSubmitProposal({ submissionProposalsIds, proposalsMapper }),
+    [submissionProposalsIds, proposalsMapper],
+  )
 
-    return [keys, mapper, validityObj]
-  }, [userAddress, submissionProposalsIds, proposalsMapper])
+  // Proposals user can swith between and modify, and validation to it
+  const [proposalState, setProposalsState] = useState<Record<number, ProposalRecordType>>(mappedProposals)
+  const [proposalsValidation, setProposalsValidation] = useState<Record<number, ProposalValidityObj>>(mappedValidation)
+
+  // Track proposals update on remote
+  useEffect(() => {
+    const { mergedProposals, mergedProposalsValidation } = proposalKeys.reduce<{
+      mergedProposals: Record<number, ProposalRecordType>
+      mergedProposalsValidation: Record<number, ProposalValidityObj>
+    }>(
+      (acc, proposalId) => {
+        const proposalFromRemote = mappedProposals[proposalId]
+        const proposalValidationFromRemote = mappedValidation[proposalId]
+
+        const proposalFromClient = proposalState[proposalId]
+        const proposalValidationFromClient = proposalsValidation[proposalId]
+
+        // if proposal exists on remote, but client don't have it, add it to client
+        if (proposalFromRemote && !proposalFromClient) {
+          acc.mergedProposals[proposalId] = proposalFromRemote
+          acc.mergedProposalsValidation[proposalId] = proposalValidationFromRemote
+          return acc
+        }
+
+        // if proposal exists on client and on remote merge their fields, to prevent clearing user enetered data
+        acc.mergedProposals[proposalId] = {
+          ...proposalFromRemote,
+          proposalData: proposalFromRemote.proposalData.concat(proposalFromClient.proposalData),
+          proposalPayments: proposalFromRemote.proposalPayments.concat(proposalFromClient.proposalPayments),
+        }
+
+        acc.mergedProposalsValidation[proposalId] = {
+          ...proposalValidationFromRemote,
+          bytesValidation: proposalValidationFromRemote.bytesValidation.concat(
+            proposalValidationFromClient.bytesValidation,
+          ),
+          paymentsValidation: proposalValidationFromRemote.paymentsValidation.concat(
+            proposalValidationFromClient.paymentsValidation,
+          ),
+        }
+
+        return acc
+      },
+      {
+        mergedProposals: {},
+        mergedProposalsValidation: {},
+      },
+    )
+
+    // user can create only 2 proposals, so if we have < 2 proposals created, add empty proposal to him, so he'll be able to fill and submit it
+    if (proposalKeys.length < 2) {
+      const defaultProposalFromState = proposalState[DEFAULT_PROPOSAL.id]
+      const defaultProposalValidationFromState = proposalsValidation[DEFAULT_PROPOSAL.id]
+
+      setProposalsState({ ...mergedProposals, [DEFAULT_PROPOSAL.id]: defaultProposalFromState ?? DEFAULT_PROPOSAL })
+      setProposalsValidation({
+        ...mergedProposalsValidation,
+        [DEFAULT_PROPOSAL.id]: defaultProposalValidationFromState ?? DEFAULT_PROPOSAL_VALIDATION,
+      })
+    } else {
+      setProposalsState(mergedProposals)
+      setProposalsValidation(mergedProposalsValidation)
+    }
+  }, [mappedProposals, mappedValidation, proposalKeys])
 
   // mapping user created proposals to tabs buttons data
   const usersProposalsToSwitch = useMemo(
@@ -168,27 +207,6 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       })),
     [proposalKeys, selectedUserProposalId, mappedProposals],
   )
-
-  // Proposals user can swith between and modify, and validation to it
-  const [proposalState, setProposalsState] = useState<Record<number, ProposalRecordType>>(mappedProposals)
-  const [proposalsValidation, setProposalsValidation] = useState<Record<number, ProposalValidityObj>>(mappedValidation)
-
-  // Track proposals update on remote
-  useEffect(() => {
-    if (proposalKeys.length < 2) {
-      const defaultProposalFromState = proposalState[DEFAULT_PROPOSAL.id]
-      const defaultProposalValidationFromState = proposalsValidation[DEFAULT_PROPOSAL.id]
-
-      setProposalsState({ ...mappedProposals, [DEFAULT_PROPOSAL.id]: defaultProposalFromState ?? DEFAULT_PROPOSAL })
-      setProposalsValidation({
-        ...mappedValidation,
-        [DEFAULT_PROPOSAL.id]: defaultProposalValidationFromState ?? DEFAULT_PROPOSAL_VALIDATION,
-      })
-    } else {
-      setProposalsState(mappedProposals)
-      setProposalsValidation(mappedValidation)
-    }
-  }, [mappedProposals, mappedValidation, proposalKeys])
 
   // Current proposal on client validation to it and current proposal on remote (might not exists if it's create new proposal with id -1)
   const currentProposal: ProposalRecordType | null = proposalState[selectedUserProposalId] ?? null

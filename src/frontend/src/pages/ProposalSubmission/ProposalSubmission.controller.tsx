@@ -9,9 +9,6 @@ import { ProposalSubmissionView } from './ProposalSubmission.view'
 import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
-// utils
-import { DEFAULT_PROPOSAL } from './ProposalSubmission.helpers'
-
 // providers
 import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
@@ -24,6 +21,7 @@ import {
   PROPOSALS_DATA_SUB,
   PROPOSALS_SUBMISSION_DATA,
 } from 'providers/ProposalsProvider/helpers/proposals.const'
+import { DEFAULT_PROPOSAL } from './helpers/proposalSubmission.const'
 
 export const ProposalSubmission = () => {
   const { search } = useLocation()
