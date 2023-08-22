@@ -118,6 +118,8 @@ export const normalizerSatelliteGovernanceActions = (
         votes,
       }
 
+      // when sub type is SATELLITES_GOVERNANCE_ALL_ACTIONS_SUB, need this logic
+      // to detect ongoing | user | past actions
       if (
         action.statusFlag === ProposalStatus.EXECUTED ||
         action.statusFlag === ProposalStatus.DROPPED ||

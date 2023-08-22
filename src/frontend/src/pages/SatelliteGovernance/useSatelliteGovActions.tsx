@@ -35,7 +35,7 @@ import {
   fixMistakenTransfer,
   registerAggregator,
   removeOracleInAggregator,
-  removeOracles,
+  removeOracleFromSatellite,
   restoreSatellite,
   setAggregatorMaintainer,
   suspendSatellite,
@@ -157,7 +157,7 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
   const removeOraclesContratActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: REMOVE_ORACLES_ACTION,
-      actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, removeOracles),
+      actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, removeOracleFromSatellite),
     }),
     [invokeActionWithSatellitAddressAndPurpose],
   )

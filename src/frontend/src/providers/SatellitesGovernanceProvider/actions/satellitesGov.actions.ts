@@ -71,7 +71,11 @@ export const unbanSatellite = async (governanceSatelliteAddress: string, satelli
 }
 
 // Remove all Oracles from Satellite
-export const removeOracles = async (governanceSatelliteAddress: string, satelliteAddress: string, purpose: string) => {
+export const removeOracleFromSatellite = async (
+  governanceSatelliteAddress: string,
+  satelliteAddress: string,
+  purpose: string,
+) => {
   try {
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(governanceSatelliteAddress)

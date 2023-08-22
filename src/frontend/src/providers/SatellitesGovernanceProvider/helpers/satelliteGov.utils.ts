@@ -33,23 +33,30 @@ export const getSatelliteGovernanceProviderReturnValue = ({
     changeSatelliteGovSubscriptionsList,
   }
 
-  const isSatelliteGovStateEmpty =
-    satelliteGovIdsMapper === null ||
-    ongoingSatelliteGovIds === null ||
+  const isSatelliteGovMapperEmpty = satelliteGovIdsMapper === null
+
+  const isSatelliteGivActionsDataEmpty =
     pastSatelliteGovIds === null ||
+    ongoingSatelliteGovIds === null ||
     mySatelliteGovIds === null ||
-    config === null
+    isSatelliteGovMapperEmpty
 
   const isLoading =
-    (activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB] && isSatelliteGovStateEmpty) ||
-    (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_PAST_ACTIONS_SUB && isSatelliteGovStateEmpty) ||
+    (activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB] && config === null) ||
+    (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_PAST_ACTIONS_SUB &&
+      pastSatelliteGovIds === null &&
+      isSatelliteGovMapperEmpty) ||
     (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_ONGOING_ACTIONS_SUB &&
-      isSatelliteGovStateEmpty) ||
-    (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_ALL_ACTIONS_SUB && isSatelliteGovStateEmpty) ||
+      ongoingSatelliteGovIds === null &&
+      isSatelliteGovMapperEmpty) ||
+    (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_ALL_ACTIONS_SUB &&
+      satelliteGovIdsMapper === null &&
+      isSatelliteGovMapperEmpty) ||
     (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_CURRENT_USER_ACTIONS_SUB &&
-      isSatelliteGovStateEmpty) ||
-    (!activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB] && isSatelliteGovStateEmpty) ||
-    (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === null && isSatelliteGovStateEmpty)
+      mySatelliteGovIds === null &&
+      isSatelliteGovMapperEmpty) ||
+    (!activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB] && config === null) ||
+    (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === null && isSatelliteGivActionsDataEmpty)
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {
