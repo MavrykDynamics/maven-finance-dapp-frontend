@@ -117,8 +117,8 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         // TODO: handle fetch errors when error boundary will be ready
         if (!isAbortError(e)) {
           console.error('getting timestamp by lvl error: ', e)
+          bug('Unexpected error happened occured, please reload the page')
         }
-        bug('Unexpected error happened occured, please reload the page')
       }
     })()
 
