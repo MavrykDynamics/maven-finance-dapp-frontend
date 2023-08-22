@@ -1,7 +1,7 @@
 import { PROPOSALS_CURRENT_DATA, PROPOSALS_DATA_SUB, PROPOSALS_PAST_DATA } from './../helpers/proposals.const'
 import { DocumentNode, OperationVariables, TypedDocumentNode, gql as apolloGql } from '@apollo/client'
 import { ProposalsSubsRecordType } from '../proposals.provider.types'
-import { ProposalsDataSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { ProposalsDataQueryQuery } from 'utils/__generated__/graphql'
 import { gql } from 'utils/__generated__'
 
 export const getProposalsQuery = ({
@@ -10,7 +10,7 @@ export const getProposalsQuery = ({
 }: {
   subType: ProposalsSubsRecordType[typeof PROPOSALS_DATA_SUB]
   isProposalRound: boolean
-}): DocumentNode | TypedDocumentNode<ProposalsDataSubscriptionSubscription, OperationVariables> => {
+}): DocumentNode | TypedDocumentNode<ProposalsDataQueryQuery, OperationVariables> => {
   const proposalsFilter =
     subType === PROPOSALS_PAST_DATA
       ? `where: {executed: {_eq: false}, _or: {current_round_proposal: {_eq: false}, _or: {status: {_eq: 1}}}}`
@@ -20,7 +20,7 @@ export const getProposalsQuery = ({
         : ` (where: {_or: [{current_round_proposal: {_eq: true}}, {_and: [{id: {_eq: $timelockProposalId}}, {_or: [{executed: {_eq: false}}, {payment_processed: {_eq: false}}]}]}]})`
       : ``
   return apolloGql(`
-	subscription proposalsDataSubscription($timelockProposalId: bigint) {
+	query proposalsDataQuery($timelockProposalId: bigint) {
 		governance_proposal(order_by: {start_datetime: desc} ${proposalsFilter}) {
 			current_cycle_end_level
 			cycle
@@ -87,8 +87,8 @@ export const getProposalsQuery = ({
 	`)
 }
 
-export const PROPOSALS_SUBMISSION_SUB = gql(`
-	subscription submissionProposalsDataSubscription($userAddress: String) {
+export const PROPOSALS_SUBMISSION_QUERY = gql(`
+	query submissionProposalsDataquery($userAddress: String) {
 		governance_proposal(order_by: {start_datetime: desc}, where: {proposer: {address: {_eq: $userAddress}}, current_round_proposal: {_eq: true}}, limit: 2) {
 			current_cycle_end_level
 			cycle

@@ -7,11 +7,11 @@ import {
   ProposalsContextStateType,
   ProposalsSubsRecordType,
 } from '../proposals.provider.types'
-import { ProposalsDataSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { ProposalsDataQueryQuery } from 'utils/__generated__/graphql'
 import { GovernancePhaseType, ProposalStatusType } from './proposals.types'
 
 export const getProposalStatus = (
-  proposal: ProposalsDataSubscriptionSubscription['governance_proposal'][number],
+  proposal: ProposalsDataQueryQuery['governance_proposal'][number],
   governancePhase: GovernancePhaseType,
   cycleHighestVotedProposalId: number | null,
   timelockProposalId: number | null,

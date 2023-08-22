@@ -1,17 +1,19 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { usePrevious } from 'react-use'
-import { ApolloError, useSubscription } from '@apollo/client'
+import { ApolloError } from '@apollo/client'
 
-// context
+// hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // helpers
 import { normalizeGovernanceConfig } from './helpers/governanceConfig.normalizer'
 import { getProposalsProviderReturnValue } from './helpers/proposals.utils'
+import { normalizeProposals, normalizeSubmissionProposals } from './helpers/proposals.normalizer'
 
 // queries
-import { getProposalsQuery, PROPOSALS_SUBMISSION_SUB } from './queries/proposalsData.query'
+import { getProposalsQuery, PROPOSALS_SUBMISSION_QUERY } from './queries/proposalsData.query'
 import { GOVERNANCE_CONFIG_QUERY } from './queries/governanceConfig.query'
 
 // types
@@ -31,7 +33,6 @@ import {
   PROPOSALS_CURRENT_DATA,
   PROPOSALS_ALL_DATA,
 } from './helpers/proposals.const'
-import { normalizeProposals, normalizeSubmissionProposals } from './helpers/proposals.normalizer'
 
 export const proposalsContext = React.createContext<ProposalsContext>(undefined!)
 
@@ -63,7 +64,7 @@ const ProposalsProvider = ({ children }: Props) => {
   }
 
   // subscribe to past proposals, active proposals or all proposals
-  useSubscription(
+  useQueryWithRefetch(
     getProposalsQuery({
       subType: activeSubs[PROPOSALS_DATA_SUB],
       isProposalRound: proposalsCtxState.config?.governancePhase === GovPhases.PROPOSAL,
@@ -76,7 +77,7 @@ const ProposalsProvider = ({ children }: Props) => {
       variables: {
         timelockProposalId: proposalsCtxState.config?.timelockProposalId ?? -1,
       },
-      onData: ({ data: { data } }) => {
+      onCompleted: (data) => {
         if (!data || !proposalsCtxState.config) return
         const {
           allProposalsIds,
@@ -137,18 +138,17 @@ const ProposalsProvider = ({ children }: Props) => {
           activeSubs,
         })
       },
-      shouldResubscribe: true,
       onError: (error) => handleSubError(error, PROPOSALS_DATA_SUB),
     },
   )
 
   // subscribe to submission proposals, it will have only 2 proposal in max case
-  useSubscription(PROPOSALS_SUBMISSION_SUB, {
+  useQueryWithRefetch(PROPOSALS_SUBMISSION_QUERY, {
     skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_SUBMISSION_DATA || !userAddress || !proposalsCtxState.config,
     variables: {
       userAddress: userAddress ?? '',
     },
-    onData: ({ data: { data } }) => {
+    onCompleted: (data) => {
       if (!data || !proposalsCtxState.config) return
 
       const { submissionProposalsIds, proposalsMapper } = normalizeSubmissionProposals({
@@ -162,23 +162,20 @@ const ProposalsProvider = ({ children }: Props) => {
         proposalsMapper: { ...prev.proposalsMapper, ...proposalsMapper },
       }))
 
-      console.log('PROPOSALS_SUBMISSION_SUB', { data, submissionProposalsIds, proposalsMapper, activeSubs })
+      console.log('PROPOSALS_SUBMISSION_QUERY', { data, submissionProposalsIds, proposalsMapper, activeSubs })
     },
-    shouldResubscribe: true,
     onError: (error) => handleSubError(error, PROPOSALS_DATA_SUB),
   })
 
   // subscribe to governance config changes
-  useSubscription(GOVERNANCE_CONFIG_QUERY, {
+  useQueryWithRefetch(GOVERNANCE_CONFIG_QUERY, {
     skip: !activeSubs[GOVERNANCE_CONFIG_SUB] || (!activeSubs[GOVERNANCE_CONFIG_SUB] && !activeSubs[PROPOSALS_DATA_SUB]),
-    onData: ({ data: { data } }) => {
-      if (!data) return
+    onCompleted: (data) => {
       setProposalsCtxState((prev) => ({
         ...prev,
         config: normalizeGovernanceConfig(data),
       }))
     },
-    shouldResubscribe: true,
     onError: (error) => handleSubError(error, GOVERNANCE_CONFIG_SUB),
   })
 

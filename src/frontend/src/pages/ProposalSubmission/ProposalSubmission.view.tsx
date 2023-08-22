@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import dayjs from 'dayjs'
 import QueryString from 'qs'
 import { useHistory } from 'react-router'
@@ -82,7 +81,6 @@ import {
 } from 'utils/api/api-helpers/getTimestampByLevel'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
-  const dispatch = useDispatch()
   const history = useHistory()
   const { bug } = useToasterContext()
   const { apolloClient } = useApolloContext()

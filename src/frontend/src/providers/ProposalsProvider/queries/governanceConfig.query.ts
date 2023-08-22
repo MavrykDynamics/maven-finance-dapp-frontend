@@ -1,7 +1,7 @@
 import { gql } from 'utils/__generated__'
 
 export const GOVERNANCE_CONFIG_QUERY = gql(`
-	subscription governanceConfigSubscription {
+	query governanceConfigQuery {
 		governance {
 			address
 			current_round

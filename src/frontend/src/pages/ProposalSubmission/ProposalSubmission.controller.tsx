@@ -20,6 +20,7 @@ import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider
 import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_DATA_SUB } from 'providers/TreasuryProvider/helpers/treasury.consts'
 import {
   DEFAULT_PROPOSALS_ACTIVE_SUBS,
+  GOVERNANCE_CONFIG_SUB,
   PROPOSALS_DATA_SUB,
   PROPOSALS_SUBMISSION_DATA,
 } from 'providers/ProposalsProvider/helpers/proposals.const'
@@ -40,6 +41,7 @@ export const ProposalSubmission = () => {
     })
     changeProposalsSubscriptionsList({
       [PROPOSALS_DATA_SUB]: PROPOSALS_SUBMISSION_DATA,
+      [GOVERNANCE_CONFIG_SUB]: true,
     })
 
     return () => {

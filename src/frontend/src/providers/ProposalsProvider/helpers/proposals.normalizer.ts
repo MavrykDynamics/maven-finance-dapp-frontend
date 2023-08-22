@@ -1,7 +1,7 @@
-import { SubmissionProposalsDataSubscriptionSubscription } from './../../../utils/__generated__/graphql'
-import { ProposalsDataSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { SubmissionProposalsDataqueryQuery } from './../../../utils/__generated__/graphql'
+import { ProposalsDataQueryQuery } from 'utils/__generated__/graphql'
 import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
-import { ProposalsContext, ProposalsSubsRecordType } from '../proposals.provider.types'
+import { ProposalsContext } from '../proposals.provider.types'
 import { ProposalRecordType } from './proposals.types'
 
 import { getProposalStatus } from 'pages/Governance/Governance.helpers'
@@ -9,10 +9,10 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 
 import { satelliteVoteSchema } from 'providers/SatellitesProvider/satellites.const'
 import { MVK_DECIMALS } from 'utils/constants'
-import { GovPhases, PROPOSALS_DATA_SUB, ProposalStatus } from './proposals.const'
+import { GovPhases, ProposalStatus } from './proposals.const'
 
 export const normalizeProposal = (
-  item: ProposalsDataSubscriptionSubscription['governance_proposal'][number],
+  item: ProposalsDataQueryQuery['governance_proposal'][number],
   { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: ProposalsContext['config'],
 ) => {
   const proposalConvertedStatus = getProposalStatus(
@@ -107,7 +107,7 @@ export const normalizeProposals = ({
   indexerData,
   governanceConfig,
 }: {
-  indexerData: SubmissionProposalsDataSubscriptionSubscription
+  indexerData: SubmissionProposalsDataqueryQuery
   governanceConfig: ProposalsContext['config']
 }) => {
   return indexerData.governance_proposal.reduce<{
@@ -171,7 +171,7 @@ export const normalizeSubmissionProposals = ({
   indexerData,
   governanceConfig,
 }: {
-  indexerData: SubmissionProposalsDataSubscriptionSubscription
+  indexerData: SubmissionProposalsDataqueryQuery
   governanceConfig: ProposalsContext['config']
 }) => {
   return indexerData.governance_proposal.reduce<{
@@ -193,7 +193,7 @@ export const normalizeSubmissionProposals = ({
 }
 
 // export const normalizeGovernanceProposals = (
-//   indexerData: ProposalsDataSubscriptionSubscription,
+//   indexerData: ProposalsDataQueryQuery,
 //   governanceConfig: State['governance']['config'],
 // ): Omit<Omit<State['governance'], 'isLoaded'>, 'config'> => {
 //   const { governancePhase, timelockProposalId } = governanceConfig
