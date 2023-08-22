@@ -1,6 +1,5 @@
 import dayjs from 'dayjs'
 import { useCallback, useMemo } from 'react'
-import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 // components
@@ -8,13 +7,12 @@ import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
-import { ProposalStatus, SatelliteGovernance } from '../../../utils/TypesAndInterfaces/Governance'
+import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
 import Expand from '../../../app/App.components/Expand/Expand.view'
 import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
 
 // actions
 import { dropAction, voteForAction } from 'providers/SatellitesGovernanceProvider/actions/satellitesGov.actions'
-import { getSatelliteGovernanceStorage } from '../satelliteGovernance.storage'
 
 // utils
 import { getSeparateSnakeCase } from '../../../utils/parse'
@@ -42,6 +40,9 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
+// types
+import { SatelliteGovNormalizerReturnType } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider.types'
+
 type Props = {
   satelliteId: string
   initiatorId: string
@@ -58,7 +59,7 @@ type Props = {
   snapshotSmvkTotalSupply: number
   accountPkh: string | null
   isActionActive: boolean
-  votes: SatelliteGovernance['satelliteGovIdsMapper'][0]['votes']
+  votes: SatelliteGovNormalizerReturnType['satelliteGovIdsMapper'][0]['votes']
 }
 
 export const SatelliteGovernanceCard = ({
@@ -84,7 +85,6 @@ export const SatelliteGovernanceCard = ({
   } = useDappConfigContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
-  const dispatch = useDispatch()
 
   const myVote = useMemo(() => votes.find((item) => item.voterId === accountPkh)?.vote, [accountPkh, votes])
   const isEndingVotingTime = dayjs().diff(actionExpirationDate) < 0
@@ -104,11 +104,6 @@ export const SatelliteGovernanceCard = ({
     }),
     [yayVotesSmvkTotal, nayVotesSmvkTotal, passVoteSmvkTotal, snapshotSmvkTotalSupply, smvkPercentageForApproval],
   )
-
-  //   TODO remove after gov satellites context
-  const sharedDappCallback = useCallback(async () => {
-    await dispatch(getSatelliteGovernanceStorage())
-  }, [dispatch])
 
   //   voteFor action ---------------------------------------------------------------------------
   const voteForActionFn = useCallback(
@@ -131,9 +126,8 @@ export const SatelliteGovernanceCard = ({
     () => ({
       actionType: VOTE_FOR_ACTION,
       actionFn: voteForActionFn,
-      dappActionCallback: sharedDappCallback,
     }),
-    [sharedDappCallback, voteForActionFn],
+    [voteForActionFn],
   )
 
   const { actionWithArgs: voteForActionHandler } = useContractAction(voteForContratActionProps)
@@ -156,9 +150,8 @@ export const SatelliteGovernanceCard = ({
     () => ({
       actionType: DROP_ACTION,
       actionFn: dropActionFn,
-      dappActionCallback: sharedDappCallback,
     }),
-    [sharedDappCallback, dropActionFn],
+    [dropActionFn],
   )
 
   const { action: dropActionHandler } = useContractAction(dropContratActionProps)

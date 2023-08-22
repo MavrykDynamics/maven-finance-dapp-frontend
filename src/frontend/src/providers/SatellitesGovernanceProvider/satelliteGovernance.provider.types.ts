@@ -3,16 +3,6 @@ import { SATELLITES_GOVERNANCE_STORAGE_SUB } from './helpers/satellitesGov.const
 
 export type SatelliteGovNormalizerReturnType = ReturnType<typeof normalizerSatelliteGovernance>
 
-// export type SatelliteGovernanceConfigType = {
-//   address: string
-//   admin: string
-//   approvalPercentage: number
-//   durationInDays: number
-//   counter: number
-//   governanceId: string
-//   maxActionsCount: number
-// }
-
 export type SatelliteGovernanceContextStateType = {
   config: SatelliteGovNormalizerReturnType['config']
   ongoingSatelliteGovIds: SatelliteGovNormalizerReturnType['ongoingSatelliteGovIds']

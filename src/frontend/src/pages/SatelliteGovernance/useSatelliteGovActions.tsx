@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react'
-import { useDispatch } from 'react-redux'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -43,7 +42,6 @@ import {
   unsuspendSatellite,
   updateAggregatorStatus,
 } from 'providers/SatellitesGovernanceProvider/actions/satellitesGov.actions'
-import { getSatelliteGovernanceStorage } from './satelliteGovernance.storage'
 
 export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: string, purpose: string) => {
   const {
@@ -51,7 +49,6 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
   } = useDappConfigContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
-  const dispatch = useDispatch()
 
   //   action helpers for actions with same parameters -----------------------------------------
   const invokeActionWithSatellitAddressAndPurpose = useCallback(
@@ -110,11 +107,6 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
     [bug, governanceSatelliteAddress, oracleAddress, purpose, satelliteAddress, userAddress],
   )
 
-  //   TODO remove after gov satellites context
-  const sharedDappCallback = useCallback(async () => {
-    await dispatch(getSatelliteGovernanceStorage())
-  }, [dispatch])
-
   //   ACTIONS
 
   //   suspend action ---------------------------------------------------------------------------
@@ -122,9 +114,8 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
     () => ({
       actionType: SUSPEND_SATELLITE_ACTION,
       actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, suspendSatellite),
-      dappActionCallback: sharedDappCallback,
     }),
-    [invokeActionWithSatellitAddressAndPurpose, sharedDappCallback],
+    [invokeActionWithSatellitAddressAndPurpose],
   )
 
   const { action: suspendSatelliteAction } = useContractAction(suspendSatelliteContratActionProps)
@@ -134,9 +125,8 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
     () => ({
       actionType: UNSUSPEND_SATELLITE_ACTION,
       actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, unsuspendSatellite),
-      dappActionCallback: sharedDappCallback,
     }),
-    [invokeActionWithSatellitAddressAndPurpose, sharedDappCallback],
+    [invokeActionWithSatellitAddressAndPurpose],
   )
 
   const { action: unsuspendSatelliteAction } = useContractAction(unSuspendSatelliteContratActionProps)
@@ -146,9 +136,8 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
     () => ({
       actionType: BAN_SATELLITE_ACTION,
       actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, banSatellite),
-      dappActionCallback: sharedDappCallback,
     }),
-    [invokeActionWithSatellitAddressAndPurpose, sharedDappCallback],
+    [invokeActionWithSatellitAddressAndPurpose],
   )
 
   const { action: banSatelliteAction } = useContractAction(banSatelliteContratActionProps)
@@ -158,9 +147,8 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
     () => ({
       actionType: UNBAN_SATELLITE_ACTION,
       actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, banSatellite),
-      dappActionCallback: sharedDappCallback,
     }),
-    [invokeActionWithSatellitAddressAndPurpose, sharedDappCallback],
+    [invokeActionWithSatellitAddressAndPurpose],
   )
 
   const { action: unbanSatelliteAction } = useContractAction(unbanSatelliteContratActionProps)
@@ -170,9 +158,8 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
     () => ({
       actionType: REMOVE_ORACLES_ACTION,
       actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, removeOracles),
-      dappActionCallback: sharedDappCallback,
     }),
-    [invokeActionWithSatellitAddressAndPurpose, sharedDappCallback],
+    [invokeActionWithSatellitAddressAndPurpose],
   )
 
   const { action: removeOraclesAction } = useContractAction(removeOraclesContratActionProps)
@@ -182,9 +169,8 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
     () => ({
       actionType: RESTORE_SATELLITE_ACTION,
       actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, restoreSatellite),
-      dappActionCallback: sharedDappCallback,
     }),
-    [invokeActionWithSatellitAddressAndPurpose, sharedDappCallback],
+    [invokeActionWithSatellitAddressAndPurpose],
   )
 
   const { action: restoreSatelliteAction } = useContractAction(restoreSatelliteContratActionProps)
@@ -194,9 +180,8 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
     () => ({
       actionType: REMOVE_ORACLES_AGGREGATOR_ACTION,
       actionFn: invokeActionWithOracle.bind(null, removeOracleInAggregator),
-      dappActionCallback: sharedDappCallback,
     }),
-    [invokeActionWithOracle, sharedDappCallback],
+    [invokeActionWithOracle],
   )
 
   const { action: removeOracleInAggregatorAction } = useContractAction(removeOracleInAggregatorContratActionProps)
@@ -206,9 +191,8 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
     () => ({
       actionType: ADD_ORACLES_AGGREGATOR_ACTION,
       actionFn: invokeActionWithOracle.bind(null, addOracleToAggregator),
-      dappActionCallback: sharedDappCallback,
     }),
-    [invokeActionWithOracle, sharedDappCallback],
+    [invokeActionWithOracle],
   )
 
   const { action: addOracleToAggregatorAction } = useContractAction(addOracleToAggregatorContratActionProps)
@@ -218,9 +202,8 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
     () => ({
       actionType: SET_AGGREGATOR_MAINTAINER_ACTION,
       actionFn: invokeActionWithOracle.bind(null, setAggregatorMaintainer),
-      dappActionCallback: sharedDappCallback,
     }),
-    [invokeActionWithOracle, sharedDappCallback],
+    [invokeActionWithOracle],
   )
 
   const { action: setAggregatorMaintainerAction } = useContractAction(setAggregatorMaintainerContratActionProps)
@@ -230,9 +213,8 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
     () => ({
       actionType: UPDATE_AGGREGATOR_STATUS_ACTION,
       actionFn: invokeActionWithOracle.bind(null, updateAggregatorStatus),
-      dappActionCallback: sharedDappCallback,
     }),
-    [invokeActionWithOracle, sharedDappCallback],
+    [invokeActionWithOracle],
   )
 
   const { action: updateAggregatorStatusAction } = useContractAction(updateAggregatorStatusContratActionProps)
@@ -260,9 +242,8 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
     () => ({
       actionType: REGISTER_AGGREGATOR_ACTION,
       actionFn: registerAggregatorActionFn,
-      dappActionCallback: sharedDappCallback,
     }),
-    [registerAggregatorActionFn, sharedDappCallback],
+    [registerAggregatorActionFn],
   )
 
   const { action: registerAggregatorAction } = useContractAction(registerAggregatorContratActionProps)
@@ -293,9 +274,8 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
     () => ({
       actionType: FIX_MISTAKEN_TRANSFER_ACTION,
       actionFn: fixMistakenTransferActionFn,
-      dappActionCallback: sharedDappCallback,
     }),
-    [fixMistakenTransferActionFn, sharedDappCallback],
+    [fixMistakenTransferActionFn],
   )
 
   const { actionWithArgs: fixMistakenTransferAction } = useContractAction(fixMistakenTransferContratActionProps)

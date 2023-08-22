@@ -1,16 +1,29 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Page } from 'styles'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
 import { useLocation, useParams, useHistory } from 'react-router'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useSatelliteGovernanceContext } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider'
 
 // const
+import {
+  ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST,
+  PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST,
+  MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
+} from '../../app/App.components/Pagination/pagination.consts'
+import {
+  SATELLITE_GOVERNANCE_ACTIONS,
+  SATELLITE_GOVERNANCE_MENU_TABS,
+  SATELLITE_GOVERNANCE_PATHNAME,
+} from './SatelliteGovernance.consts'
+import { TOTAL_DELEGATED_MVK } from 'texts/tooltips/satellite'
 import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
-
-// actions
+import {
+  DEFAULT_SATELLITE_GOVERNANCE_SUBS,
+  SATELLITES_GOVERNANCE_STORAGE_SUB,
+} from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
 
 // style
 import {
@@ -25,20 +38,8 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { H2SimpleTitle } from 'styles/generalStyledComponents/Titles.style'
 
 // helpers
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { convertBytesAddressToAddress } from '../../app/App.helpers'
-import {
-  ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST,
-  PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST,
-  MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
-} from '../../app/App.components/Pagination/pagination.consts'
 import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
-import {
-  SATELLITE_GOVERNANCE_ACTIONS,
-  SATELLITE_GOVERNANCE_MENU_TABS,
-  SATELLITE_GOVERNANCE_PATHNAME,
-} from './SatelliteGovernance.consts'
-import { TOTAL_DELEGATED_MVK } from 'texts/tooltips/satellite'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -51,8 +52,6 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getSatelliteGovernanceStorage } from './satelliteGovernance.storage'
 
 const getCurrentListNameById = (tabId: string) => {
   switch (tabId) {
@@ -78,7 +77,6 @@ const emptyContainer = (
 export const SatelliteGovernance = () => {
   const { search } = useLocation()
   const history = useHistory()
-  const dispatch = useDispatch()
 
   const { tabId = SATELLITE_GOVERNANCE_MENU_TABS.ONGOING } = useParams<{ tabId: string }>()
 
@@ -92,10 +90,26 @@ export const SatelliteGovernance = () => {
   } = useDappConfigContext()
   const { userAddress, isSatellite, govActionsCount } = useUserContext()
 
-  const { maxActionsCount } = useSelector((state: State) => state.satelliteGovernance.config)
+  const {
+    isLoading,
+    config: { maxActionsCount },
+    ongoingSatelliteGovIds,
+    pastSatelliteGovIds,
+    mySatelliteGovIds,
+    satelliteGovIdsMapper,
+    changeSatelliteGovSubscriptionsList,
+  } = useSatelliteGovernanceContext()
 
-  const { isLoaded, ongoingSatelliteGovIds, pastSatelliteGovIds, mySatelliteGovIds, satelliteGovIdsMapper } =
-    useSelector((state: State) => state.satelliteGovernance)
+  // subs
+  useEffect(() => {
+    changeSatelliteGovSubscriptionsList({
+      [SATELLITES_GOVERNANCE_STORAGE_SUB]: true,
+    })
+
+    return () => {
+      changeSatelliteGovSubscriptionsList(DEFAULT_SATELLITE_GOVERNANCE_SUBS)
+    }
+  }, [])
 
   const dropDownItems = useMemo(() => SATELLITE_GOVERNANCE_ACTIONS.map((item) => getDdItem(item)), [])
   type DropDownItemType = (typeof dropDownItems)[0]
@@ -173,17 +187,6 @@ export const SatelliteGovernance = () => {
     if (!foundItem) return
     setChosenDdItem(foundItem)
   }
-
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isLoaded || isDepsChanged) {
-          await dispatch(getSatelliteGovernanceStorage())
-        }
-      } catch (e) {}
-    },
-    [userAddress],
-  )
 
   return (
     <Page>
