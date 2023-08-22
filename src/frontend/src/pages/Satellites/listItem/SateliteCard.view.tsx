@@ -86,7 +86,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const { availableProposalRewards } = useUserRewards()
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
   const {
-    contractAddresses: { delegationAddress, mvkTokenAddress },
+    contractAddresses: { delegationAddress, mvkTokenAddress, governanceAddress },
     globalLoadingState: { isActionActive },
     preferences: { themeSelected },
   } = useDappConfigContext()
@@ -185,8 +185,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    if (!delegationAddress) {
-      bug('Wrong delegation address')
+    if (!governanceAddress) {
+      bug('Wrong governance address')
       return null
     }
 
@@ -197,8 +197,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    return await distributeProposalRewards(delegationAddress, satelliteAddressToDistribute, availableProposalRewards)
-  }, [userAddress, delegationAddress, isUserSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
+    return await distributeProposalRewards(governanceAddress, satelliteAddressToDistribute, availableProposalRewards)
+  }, [userAddress, governanceAddress, isUserSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
 
   const distributeRewardsContractActionProps: HookContractActionArgs = useMemo(
     () => ({
