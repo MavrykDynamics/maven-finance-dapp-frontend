@@ -1,6 +1,6 @@
 import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
-import { GetGovernanceSatelliteStorageQuery } from 'utils/__generated__/graphql'
+import { GetGovernanceSatelliteActionsDataQuery, GetGovernanceSatelliteConfigQuery } from 'utils/__generated__/graphql'
 
 type SatelliteGovernanceActionType = {
   id: number
@@ -39,11 +39,7 @@ type SatelliteGovernanceActionsType = {
   satelliteGovIdsMapper: Record<number, SatelliteGovernanceActionType>
 }
 
-export const normalizerSatelliteGovernance = (
-  storage: GetGovernanceSatelliteStorageQuery,
-  userAddress: string | null,
-) => {
-  const { governance_satellite, governance_satellite_action: governanceSatelliteActions } = storage
+export const normalizeSatelliteGovernanceConfig = (config: GetGovernanceSatelliteConfigQuery) => {
   const [
     {
       address,
@@ -54,9 +50,9 @@ export const normalizerSatelliteGovernance = (
       governance,
       max_actions_per_satellite = 10, // default 10 for max actions per satellite
     },
-  ] = governance_satellite
+  ] = config.governance_satellite
 
-  const config = {
+  return {
     address,
     admin,
     approvalPercentage: gov_sat_approval_percentage,
@@ -65,6 +61,13 @@ export const normalizerSatelliteGovernance = (
     governanceId: governance.address,
     maxActionsCount: max_actions_per_satellite,
   }
+}
+
+export const normalizerSatelliteGovernanceActions = (
+  actionsData: GetGovernanceSatelliteActionsDataQuery,
+  userAddress: string | null,
+) => {
+  const { governance_satellite_action: governanceSatelliteActions } = actionsData
 
   const actions = governanceSatelliteActions.reduce<SatelliteGovernanceActionsType>(
     (acc, item) => {
@@ -85,6 +88,7 @@ export const normalizerSatelliteGovernance = (
       const expirationDatetime = new Date(item.expiration_datetime ?? 0).getTime()
       const isEndingVotingTime = expirationDatetime > timeNow
 
+      // detect if action is EXECUTED | DEFEATED | DROPPED etc.
       const statusFlag = item.executed
         ? ProposalStatus.EXECUTED
         : item.status === 1
@@ -143,7 +147,6 @@ export const normalizerSatelliteGovernance = (
   )
 
   return {
-    config,
     ...actions,
   }
 }

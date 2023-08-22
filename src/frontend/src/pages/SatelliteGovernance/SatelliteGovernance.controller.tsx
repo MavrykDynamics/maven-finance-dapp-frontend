@@ -22,7 +22,8 @@ import { TOTAL_DELEGATED_MVK } from 'texts/tooltips/satellite'
 import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
 import {
   DEFAULT_SATELLITE_GOVERNANCE_SUBS,
-  SATELLITES_GOVERNANCE_STORAGE_SUB,
+  SATELLITES_GOVERNANCE_CONFIG_SUB,
+  SATELLITE_GOV_ACTIONS_DATA,
 } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
 
 // style
@@ -52,6 +53,7 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+import { TAB_ID_ONGOING, TabIdType, getSatelliteGovSub } from './utils/tabsHelper'
 
 const getCurrentListNameById = (tabId: string) => {
   switch (tabId) {
@@ -78,7 +80,7 @@ export const SatelliteGovernance = () => {
   const { search } = useLocation()
   const history = useHistory()
 
-  const { tabId = SATELLITE_GOVERNANCE_MENU_TABS.ONGOING } = useParams<{ tabId: string }>()
+  const { tabId = SATELLITE_GOVERNANCE_MENU_TABS.ONGOING } = useParams<{ tabId: TabIdType }>()
 
   const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
   const {
@@ -102,14 +104,21 @@ export const SatelliteGovernance = () => {
 
   // subs
   useEffect(() => {
-    changeSatelliteGovSubscriptionsList({
-      [SATELLITES_GOVERNANCE_STORAGE_SUB]: true,
-    })
+    const subType = getSatelliteGovSub(tabId)
+
+    if (subType !== null) {
+      changeSatelliteGovSubscriptionsList({
+        [SATELLITES_GOVERNANCE_CONFIG_SUB]: true,
+        [SATELLITE_GOV_ACTIONS_DATA]: subType,
+      })
+    } else {
+      history.push(`/satellite-governance/${TAB_ID_ONGOING}`)
+    }
 
     return () => {
       changeSatelliteGovSubscriptionsList(DEFAULT_SATELLITE_GOVERNANCE_SUBS)
     }
-  }, [])
+  }, [tabId])
 
   const dropDownItems = useMemo(() => SATELLITE_GOVERNANCE_ACTIONS.map((item) => getDdItem(item)), [])
   type DropDownItemType = (typeof dropDownItems)[0]

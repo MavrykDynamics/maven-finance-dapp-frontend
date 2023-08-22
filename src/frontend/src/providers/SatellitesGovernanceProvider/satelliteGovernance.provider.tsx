@@ -1,8 +1,11 @@
 import { ApolloError } from '@apollo/client'
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 // helpers
-import { normalizerSatelliteGovernance } from './helpers/satelliteGov.normalizer'
+import {
+  normalizeSatelliteGovernanceConfig,
+  normalizerSatelliteGovernanceActions,
+} from './helpers/satelliteGov.normalizer'
 import { getSatelliteGovernanceProviderReturnValue } from './helpers/satelliteGov.utils'
 
 // providers
@@ -16,13 +19,13 @@ import {
   SatelliteGovernanceContext,
   SatelliteGovernanceSubsRecordType,
 } from './satelliteGovernance.provider.types'
-import { GetGovernanceSatelliteStorageQuery } from 'utils/__generated__/graphql'
 
 // consts
 import {
   DEFAULT_SATELLITE_GOVERNANCE_SUBS,
   DEFAULT_SATELLITE_GOV_CTX,
-  SATELLITES_GOVERNANCE_STORAGE_SUB,
+  SATELLITES_GOVERNANCE_CONFIG_SUB,
+  SATELLITE_GOV_ACTIONS_DATA,
 } from './helpers/satellitesGov.consts'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
@@ -31,7 +34,9 @@ import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.pr
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // queries
-import { SATELLITE_GOVERNANCE_STORAGE_QUERY } from './queries/satelliteGov.query'
+import { SATELLITE_GOVERNANCE_CONFIG_QUERY, getGovernanceActionsQuery } from './queries/satelliteGov.query'
+import { GetGovernanceSatelliteActionsDataQuery, GetGovernanceSatelliteConfigQuery } from 'utils/__generated__/graphql'
+import dayjs from 'dayjs'
 
 // context
 export const satelliteGovernanceContext = React.createContext<SatelliteGovernanceContext>(undefined!)
@@ -47,6 +52,20 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
   const [satelliteGovCtxState, setSatelliteGovCtxState] =
     useState<NullableSatelliteGovernanceContextStateType>(DEFAULT_SATELLITE_GOV_CTX)
   const [activeSubs, setActiveSubs] = useState<SatelliteGovernanceSubsRecordType>(DEFAULT_SATELLITE_GOVERNANCE_SUBS)
+  const currentTimeRef = useRef(dayjs().toISOString())
+
+  const refetchQueryVariables = useCallback(
+    () => ({
+      currentTimestamp: dayjs().toISOString(),
+    }),
+    [currentTimeRef.current], // to have up-to-date query data after some indexer block update, DO NOT REMOVE from deps
+  )
+
+  useEffect(() => {
+    if (activeSubs[SATELLITE_GOV_ACTIONS_DATA] !== null) {
+      currentTimeRef.current = dayjs().toISOString()
+    }
+  }, [activeSubs])
 
   const handleSubError = (error: ApolloError, subName: SatelliteGovSubsType) => {
     console.error(`${subName} query error: `, error)
@@ -54,19 +73,53 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
   }
 
   // subscribes
-  useQueryWithRefetch(SATELLITE_GOVERNANCE_STORAGE_QUERY, {
-    skip: !activeSubs[SATELLITES_GOVERNANCE_STORAGE_SUB],
-    onCompleted: (data) => {
-      if (!data) return
-      updateSatelliteGovernanceStorage(data)
+  useQueryWithRefetch(
+    SATELLITE_GOVERNANCE_CONFIG_QUERY,
+    {
+      skip: !activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB],
+      onCompleted: (data) => {
+        if (!data) return
+        updateSatelliteGovConfig(data)
+      },
+      onError: (error) => handleSubError(error, SATELLITES_GOVERNANCE_CONFIG_SUB),
     },
-    onError: (error) => handleSubError(error, SATELLITES_GOVERNANCE_STORAGE_SUB),
-  })
+    {
+      blocksDiff: 2000,
+    },
+  )
+
+  useQueryWithRefetch(
+    getGovernanceActionsQuery(userAddress, activeSubs[SATELLITE_GOV_ACTIONS_DATA]),
+    {
+      skip: activeSubs[SATELLITE_GOV_ACTIONS_DATA] === null || userAddress === null,
+      onCompleted: (data) => {
+        if (!data) return
+        updateSatelliteGovActionsData(data)
+      },
+      variables: {
+        userAddress,
+        currentTimestamp: currentTimeRef.current,
+      },
+      onError: (error) => handleSubError(error, SATELLITES_GOVERNANCE_CONFIG_SUB),
+    },
+    {
+      refetchQueryVariables,
+    },
+  )
 
   // methods to update context data
-  const updateSatelliteGovernanceStorage = (storage: GetGovernanceSatelliteStorageQuery) => {
-    const { satelliteGovIdsMapper, mySatelliteGovIds, pastSatelliteGovIds, ongoingSatelliteGovIds, config } =
-      normalizerSatelliteGovernance(storage, userAddress)
+  const updateSatelliteGovConfig = (configData: GetGovernanceSatelliteConfigQuery) => {
+    const config = normalizeSatelliteGovernanceConfig(configData)
+
+    setSatelliteGovCtxState((prev) => ({
+      ...prev,
+      config,
+    }))
+  }
+
+  const updateSatelliteGovActionsData = (actionsData: GetGovernanceSatelliteActionsDataQuery) => {
+    const { satelliteGovIdsMapper, mySatelliteGovIds, pastSatelliteGovIds, ongoingSatelliteGovIds } =
+      normalizerSatelliteGovernanceActions(actionsData, userAddress)
 
     setSatelliteGovCtxState((prev) => ({
       ...prev,
@@ -74,7 +127,6 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
       mySatelliteGovIds,
       pastSatelliteGovIds,
       ongoingSatelliteGovIds,
-      config,
     }))
   }
 

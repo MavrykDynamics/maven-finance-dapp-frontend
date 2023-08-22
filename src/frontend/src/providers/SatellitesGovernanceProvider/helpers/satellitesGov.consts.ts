@@ -19,11 +19,22 @@ export const UPDATE_AGGREGATOR_STATUS_ACTION = 'updateAggregatorStatus'
 export const REGISTER_AGGREGATOR_ACTION = 'registerAggregator'
 export const FIX_MISTAKEN_TRANSFER_ACTION = 'fixMistakenTransfer'
 
-// subs
-export const SATELLITES_GOVERNANCE_STORAGE_SUB = 'getSatellitesStorageData'
+//  -------------- SUBS
+// CONFIG
+export const SATELLITES_GOVERNANCE_CONFIG_SUB = 'getSatelliteGovConfigData'
+
+// ACTIONS
+export const SATELLITES_GOVERNANCE_PAST_ACTIONS_SUB = 'getSatelliteGovActionsPastData'
+export const SATELLITES_GOVERNANCE_ONGOING_ACTIONS_SUB = 'getSatelliteGovActionsOngoingData'
+export const SATELLITES_GOVERNANCE_ALL_ACTIONS_SUB = 'getSatellitesActionsAllData'
+export const SATELLITES_GOVERNANCE_CURRENT_USER_ACTIONS_SUB = 'getSatelliteGovActionsCurrentUserData'
+
+// ACTIONS FIELD NAME (PAST | ONGOING | ALL | USER)
+export const SATELLITE_GOV_ACTIONS_DATA = 'satelliteGovActionsData'
 
 export const DEFAULT_SATELLITE_GOVERNANCE_SUBS: SatelliteGovernanceSubsRecordType = {
-  [SATELLITES_GOVERNANCE_STORAGE_SUB]: false,
+  [SATELLITES_GOVERNANCE_CONFIG_SUB]: false,
+  [SATELLITE_GOV_ACTIONS_DATA]: null,
 } as const
 
 // CONTEXT VARS

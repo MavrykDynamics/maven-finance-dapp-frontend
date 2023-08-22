@@ -5,7 +5,15 @@ import {
   SatelliteGovernanceContextStateType,
   SatelliteGovernanceSubsRecordType,
 } from '../satelliteGovernance.provider.types'
-import { EMPTY_SATELLITE_GOV_CTX, SATELLITES_GOVERNANCE_STORAGE_SUB } from './satellitesGov.consts'
+import {
+  EMPTY_SATELLITE_GOV_CTX,
+  SATELLITES_GOVERNANCE_CONFIG_SUB,
+  SATELLITE_GOV_ACTIONS_DATA,
+  SATELLITES_GOVERNANCE_PAST_ACTIONS_SUB,
+  SATELLITES_GOVERNANCE_ONGOING_ACTIONS_SUB,
+  SATELLITES_GOVERNANCE_ALL_ACTIONS_SUB,
+  SATELLITES_GOVERNANCE_CURRENT_USER_ACTIONS_SUB,
+} from './satellitesGov.consts'
 
 type SatelliteGovernanceContextReturnValueArgs = {
   satelliteGovCtxState: NullableSatelliteGovernanceContextStateType
@@ -18,7 +26,8 @@ export const getSatelliteGovernanceProviderReturnValue = ({
   changeSatelliteGovSubscriptionsList,
   activeSubs,
 }: SatelliteGovernanceContextReturnValueArgs) => {
-  const { satelliteGovIdsMapper, ongoingSatelliteGovIds, pastSatelliteGovIds, mySatelliteGovIds } = satelliteGovCtxState
+  const { satelliteGovIdsMapper, ongoingSatelliteGovIds, pastSatelliteGovIds, mySatelliteGovIds, config } =
+    satelliteGovCtxState
 
   const commonToReturn = {
     changeSatelliteGovSubscriptionsList,
@@ -28,11 +37,19 @@ export const getSatelliteGovernanceProviderReturnValue = ({
     satelliteGovIdsMapper === null ||
     ongoingSatelliteGovIds === null ||
     pastSatelliteGovIds === null ||
-    mySatelliteGovIds === null
+    mySatelliteGovIds === null ||
+    config === null
 
   const isLoading =
-    (activeSubs[SATELLITES_GOVERNANCE_STORAGE_SUB] && isSatelliteGovStateEmpty) ||
-    (!activeSubs[SATELLITES_GOVERNANCE_STORAGE_SUB] && isSatelliteGovStateEmpty)
+    (activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB] && isSatelliteGovStateEmpty) ||
+    (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_PAST_ACTIONS_SUB && isSatelliteGovStateEmpty) ||
+    (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_ONGOING_ACTIONS_SUB &&
+      isSatelliteGovStateEmpty) ||
+    (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_ALL_ACTIONS_SUB && isSatelliteGovStateEmpty) ||
+    (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_CURRENT_USER_ACTIONS_SUB &&
+      isSatelliteGovStateEmpty) ||
+    (!activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB] && isSatelliteGovStateEmpty) ||
+    (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === null && isSatelliteGovStateEmpty)
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {
