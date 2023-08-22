@@ -1,5 +1,5 @@
 import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
-import { GovernanceConfigSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { GovernanceConfigQueryQuery } from 'utils/__generated__/graphql'
 import { ProposalsContext } from '../proposals.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { XTZ_DECIMALS, MVK_DECIMALS } from 'utils/constants'
@@ -7,9 +7,7 @@ import { XTZ_DECIMALS, MVK_DECIMALS } from 'utils/constants'
 const calcGovPhase = (round: number) =>
   round === 0 ? GovPhases.PROPOSAL : round === 1 ? GovPhases.VOTING : GovPhases.TIMELOCK
 
-export const normalizeGovernanceConfig = (
-  dataFromIndexer: GovernanceConfigSubscriptionSubscription,
-): ProposalsContext['config'] => {
+export const normalizeGovernanceConfig = (dataFromIndexer: GovernanceConfigQueryQuery): ProposalsContext['config'] => {
   const {
     proposal_submission_fee_mutez,
     success_reward,

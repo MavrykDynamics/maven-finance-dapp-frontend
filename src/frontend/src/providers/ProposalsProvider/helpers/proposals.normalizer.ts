@@ -4,8 +4,8 @@ import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provi
 import { ProposalsContext } from '../proposals.provider.types'
 import { ProposalRecordType } from './proposals.types'
 
-import { getProposalStatus } from 'pages/Governance/Governance.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { getProposalStatus } from './proposals.utils'
 
 import { satelliteVoteSchema } from 'providers/SatellitesProvider/satellites.const'
 import { MVK_DECIMALS } from 'utils/constants'
