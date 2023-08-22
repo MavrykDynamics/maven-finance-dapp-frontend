@@ -44,10 +44,6 @@ export const Admin = () => {
     }
   }, [])
 
-  // useEffect(() => {
-  //   dispatch(getGovernanceStorage())
-  // }, [dispatch])
-
   const handleChangeGovernancePeriod = (chosenPeriod: string) => {
     dispatch(adminChangeGovernancePeriod(chosenPeriod))
   }

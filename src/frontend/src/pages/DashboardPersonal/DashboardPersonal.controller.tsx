@@ -105,7 +105,6 @@ const DashboardPersonal = () => {
       [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
-
     changeVestingSubscriptionsList({
       [VESTING_STORAGE_DATA_SUB]: true,
     })

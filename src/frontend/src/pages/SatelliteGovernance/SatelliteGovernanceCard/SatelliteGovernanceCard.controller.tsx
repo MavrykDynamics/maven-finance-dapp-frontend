@@ -1,30 +1,35 @@
 import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
+import dayjs from 'dayjs'
 
+// types
+import { SatelliteGovernance } from '../../../utils/TypesAndInterfaces/Governance'
+
+// utils
+import { parseDate } from 'utils/time'
+import { getSeparateSnakeCase } from '../../../utils/parse'
+import { dropAction, voteForAction } from '../SatelliteGovernance.actions'
+
+// consts
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
+import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
+import { PRECISION_NUMBER } from 'utils/constants'
+import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+
+// styles
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
-import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
-import { getSeparateSnakeCase } from '../../../utils/parse'
-import { SatelliteGovernance } from '../../../utils/TypesAndInterfaces/Governance'
 import Expand from '../../../app/App.components/Expand/Expand.view'
-
-import { dropAction, voteForAction } from '../SatelliteGovernance.actions'
-
+import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
+import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import {
   SatelliteGovernanceCardDropDown,
   SatelliteGovernanceCardPurposeBlock,
   SatelliteGovernanceCardTitleTextGroup,
   SatelliteGovernanceCardVotingBlock,
 } from './SatelliteGovernanceCard.style'
-import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
-import { PRECISION_NUMBER } from 'utils/constants'
-import { parseDate } from 'utils/time'
-import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
-import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import dayjs from 'dayjs'
-import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 type Props = {
   satelliteId: string

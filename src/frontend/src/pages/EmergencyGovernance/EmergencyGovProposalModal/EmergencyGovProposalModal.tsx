@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // providers
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 import { State } from 'reducers'
@@ -23,7 +24,6 @@ import { NewInputLabel } from 'app/App.components/Input/Input.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
-import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 
 export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolean; closeHandler: () => void }) => {
   const dispatch = useDispatch()

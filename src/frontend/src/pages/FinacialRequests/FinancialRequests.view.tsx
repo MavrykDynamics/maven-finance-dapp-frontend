@@ -16,6 +16,7 @@ import {
   PAST_REQUESTS_FINANCIAL_REQUESTS_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
 import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { FINANCIAL_REQUEST_VOTE_ACTION } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
 
 // actions
@@ -23,7 +24,6 @@ import { votingFinancialRequestVote } from 'providers/FinancialRequestsProvider/
 
 // types
 import { FinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.types'
-import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 // view
 import { StatusFlag } from '../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -45,8 +45,6 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-
-// providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'

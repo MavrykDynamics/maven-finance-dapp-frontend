@@ -1,5 +1,4 @@
 import { useEffect, useMemo } from 'react'
-import { useDispatch } from 'react-redux'
 import QueryString from 'qs'
 import { useLocation } from 'react-router'
 
@@ -32,7 +31,6 @@ import {
 } from 'providers/SatellitesProvider/satellites.const'
 import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
 import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
-import { State } from '../../reducers'
 
 // hooks
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -48,7 +46,6 @@ import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/Vestin
 
 // TODO: add farms when their data loading will be fixed and up
 export const Dashboard = () => {
-  const dispatch = useDispatch()
   const { search } = useLocation()
 
   const parsedQp = QueryString.parse(search, { ignoreQueryPrefix: true }) as { tab: string }

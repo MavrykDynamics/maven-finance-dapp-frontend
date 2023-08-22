@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 import {
   STATUS_FLAG_UP,
@@ -9,7 +10,6 @@ import {
   STATUS_FLAG_WARNING,
   STATUS_FLAG_WAITING,
 } from './StatusFlag.constants'
-import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 export const StatusFlagStyled = styled.div<{ theme: MavrykTheme; kind: StatusFlagKind }>`
   border-radius: 10px;
