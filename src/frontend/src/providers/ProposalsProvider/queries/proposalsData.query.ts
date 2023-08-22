@@ -13,11 +13,11 @@ export const getProposalsQuery = ({
 }): DocumentNode | TypedDocumentNode<ProposalsDataQueryQuery, OperationVariables> => {
   const proposalsFilter =
     subType === PROPOSALS_PAST_DATA
-      ? `where: {executed: {_eq: false}, _or: {current_round_proposal: {_eq: false}, _or: {status: {_eq: 1}}}}`
+      ? `, where: {_or: [{executed: {_eq: false}}, {current_round_proposal: {_eq: false}}, {status: {_eq: 1}}]}`
       : subType === PROPOSALS_CURRENT_DATA
       ? isProposalRound
-        ? `where: {current_round_proposal: {_eq: true}, status: {_eq: 0}}`
-        : ` (where: {_or: [{current_round_proposal: {_eq: true}}, {_and: [{id: {_eq: $timelockProposalId}}, {_or: [{executed: {_eq: false}}, {payment_processed: {_eq: false}}]}]}]})`
+        ? `, where: {current_round_proposal: {_eq: true}, status: {_eq: 0}}`
+        : `, where: {_or: [{current_round_proposal: {_eq: true}}, {_and: [{id: {_eq: $timelockProposalId}}, {_or: [{executed: {_eq: false}}, {payment_processed: {_eq: false}}]}]}]}`
       : ``
   return apolloGql(`
 	query proposalsDataQuery($timelockProposalId: bigint) {
@@ -89,7 +89,7 @@ export const getProposalsQuery = ({
 
 export const PROPOSALS_SUBMISSION_QUERY = gql(`
 	query submissionProposalsDataquery($userAddress: String) {
-		governance_proposal(order_by: {start_datetime: desc}, where: {proposer: {address: {_eq: $userAddress}}, current_round_proposal: {_eq: true}}, limit: 2) {
+		governance_proposal(order_by: {start_datetime: desc}, where: {proposer: {address: {_eq: $userAddress}}, current_round_proposal: {_eq: true}, status: {_eq: 0}}, limit: 2) {
 			current_cycle_end_level
 			cycle
 			success_reward

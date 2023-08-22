@@ -1,12 +1,8 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { usePrevious } from 'react-use'
 import { useHistory, useParams } from 'react-router'
-import { useDispatch, useSelector } from 'react-redux'
 import qs from 'qs'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
-
-// types
-import { State } from 'reducers'
 
 // components
 import Button from 'app/App.components/Button/NewButton'
@@ -39,7 +35,6 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 
 // actions
 import { claimAllRewardsAction, distributeProposalRewards } from 'providers/UserProvider/actions/user.actions'
-import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 
 // providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -64,14 +59,12 @@ import {
 } from 'providers/SatellitesProvider/satellites.const'
 
 // hooks
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
 import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/VestingProvider/helpers/vesting.consts'
 
 const DashboardPersonal = () => {
-  const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
   const history = useHistory()
 
@@ -94,8 +87,6 @@ const DashboardPersonal = () => {
   const { isLoading: isVestingLoading, changeVestingSubscriptionsList } = useVestingContext()
 
   const prevUserAddress = usePrevious(userAddress)
-
-  const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 
   useEffect(() => {
     changeStakingSubscriptionsList({
@@ -134,19 +125,8 @@ const DashboardPersonal = () => {
     gatheredSatellitesRewards,
   } = useUserRewards()
 
-  const { isLoading: isDataLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        await Promise.all(
-          [(!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage())].filter(Boolean),
-        )
-      } catch (e) {}
-    },
-    [userAddress],
-  )
-
   // global loading
-  const isLoading = isVestingLoading || isDataLoading || isDoormanLoading || isRewardsLoading
+  const isLoading = isVestingLoading || isDoormanLoading || isRewardsLoading
 
   // claim rewards action
   const claimRewardsAction = useCallback(async () => {

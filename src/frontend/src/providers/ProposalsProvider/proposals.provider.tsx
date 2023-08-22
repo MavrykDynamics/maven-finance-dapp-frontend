@@ -96,36 +96,43 @@ const ProposalsProvider = ({ children }: Props) => {
         const isAllProposalsQuery = activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_ALL_DATA
 
         // if we subscribe to past proposals update only past proposals stuff
-        if (isPastProposalsQuery) {
-          setProposalsCtxState((prev) => ({
-            ...prev,
-            pastProposalsIds,
-            proposalsMapper: { ...(prev.proposalsMapper ?? {}), ...proposalsMapper },
-          }))
-        }
+        // if (isPastProposalsQuery) {
+        //   setProposalsCtxState((prev) => ({
+        //     ...prev,
+        //     pastProposalsIds,
+        //     proposalsMapper: { ...(prev.proposalsMapper ?? {}), ...proposalsMapper },
+        //   }))
+        // }
         // if we subscribe to current proposals (inc. newly created) update current proposals fields and merge with all proposals, cuz user can create new proposal and it will be loaded within this sub
-        else if (isCurrentProposalsQuery) {
-          setProposalsCtxState((prev) => ({
-            ...prev,
-            currentRoundProposalsIds,
-            waitingProposalsIdsToBeExecuted,
-            waitingProposalsIdsToBePaid,
-            allProposalsIds: Array.from(new Set([...(prev.allProposalsIds ?? []), ...allProposalsIds])),
-            proposalsMapper: { ...(prev.proposalsMapper ?? {}), ...proposalsMapper },
-          }))
-        }
+        // else if (isCurrentProposalsQuery) {
+        //   setProposalsCtxState((prev) => ({
+        //     ...prev,
+        //     currentRoundProposalsIds,
+        //     waitingProposalsIdsToBeExecuted,
+        //     waitingProposalsIdsToBePaid,
+        //     allProposalsIds: Array.from(new Set([...(prev.allProposalsIds ?? []), ...allProposalsIds])),
+        //     proposalsMapper: { ...(prev.proposalsMapper ?? {}), ...proposalsMapper },
+        //   }))
+        // }
         // if we subscribe to all proposals update all fiedls
-        else if (isAllProposalsQuery) {
-          setProposalsCtxState((prev) => ({
-            ...prev,
-            allProposalsIds,
-            currentRoundProposalsIds,
-            pastProposalsIds,
-            waitingProposalsIdsToBeExecuted,
-            waitingProposalsIdsToBePaid,
-            proposalsMapper,
-          }))
-        }
+        // else if (isAllProposalsQuery) {
+        setProposalsCtxState((prev) => ({
+          ...prev,
+          allProposalsIds: Array.from(new Set([...(prev.allProposalsIds ?? []), ...allProposalsIds])),
+          pastProposalsIds: isPastProposalsQuery || isAllProposalsQuery ? pastProposalsIds : prev.pastProposalsIds,
+          currentRoundProposalsIds:
+            isCurrentProposalsQuery || isAllProposalsQuery ? currentRoundProposalsIds : prev.currentRoundProposalsIds,
+          waitingProposalsIdsToBeExecuted:
+            isCurrentProposalsQuery || isAllProposalsQuery
+              ? waitingProposalsIdsToBeExecuted
+              : prev.waitingProposalsIdsToBeExecuted,
+          waitingProposalsIdsToBePaid:
+            isCurrentProposalsQuery || isAllProposalsQuery
+              ? waitingProposalsIdsToBePaid
+              : prev.waitingProposalsIdsToBePaid,
+          proposalsMapper: { ...(prev.proposalsMapper ?? {}), ...proposalsMapper },
+        }))
+        // }
 
         console.log('getProposalsQuery', {
           data,

@@ -155,13 +155,6 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         { keys: [], mapper: {}, validityObj: {} },
       )
 
-    if (keys.length < 2) {
-      return [
-        keys.concat(DEFAULT_PROPOSAL.id),
-        { ...mapper, [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL },
-        { ...validityObj, [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL_VALIDATION },
-      ]
-    }
     return [keys, mapper, validityObj]
   }, [userAddress, submissionProposalsIds, proposalsMapper])
 
@@ -182,10 +175,19 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
   // Track proposals update on remote
   useEffect(() => {
-    // if we have user's proposals on remote set them to view/update, else set default proposal
-    setProposalsState(mappedProposals)
-    // set validation for proposals above
-    setProposalsValidation(mappedValidation)
+    if (proposalKeys.length < 2) {
+      const defaultProposalFromState = proposalState[DEFAULT_PROPOSAL.id]
+      const defaultProposalValidationFromState = proposalsValidation[DEFAULT_PROPOSAL.id]
+
+      setProposalsState({ ...mappedProposals, [DEFAULT_PROPOSAL.id]: defaultProposalFromState ?? DEFAULT_PROPOSAL })
+      setProposalsValidation({
+        ...mappedValidation,
+        [DEFAULT_PROPOSAL.id]: defaultProposalValidationFromState ?? DEFAULT_PROPOSAL_VALIDATION,
+      })
+    } else {
+      setProposalsState(mappedProposals)
+      setProposalsValidation(mappedValidation)
+    }
   }, [mappedProposals, mappedValidation, proposalKeys])
 
   // Current proposal on client validation to it and current proposal on remote (might not exists if it's create new proposal with id -1)
@@ -248,8 +250,10 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     () => ({
       actionType: DROP_PROPOSAL_ACTION,
       actionFn: dropActionFn,
+      dappActionCallback: () =>
+        changeActiveProposal(submissionProposalsIds.find((id) => id !== selectedUserProposalId) ?? DEFAULT_PROPOSAL.id),
     }),
-    [dropActionFn],
+    [changeActiveProposal, dropActionFn, selectedUserProposalId, submissionProposalsIds],
   )
 
   const { action: handleDropProposal } = useContractAction(dropContractProps)
@@ -279,8 +283,8 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const { action: handleLockProposal } = useContractAction(lockContractProps)
 
   // submit proposal action handler ----------------------------------------------
+  // TODO: test whether we need this update fn
   // submission callback to update data
-
   const getNewProposalId = useCallback(async () => {
     try {
       const newProposalData = await apolloClient.query({
@@ -295,6 +299,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         throw new Error(newProposalData.error.message)
       }
 
+      console.log({ newProposalData, selectedUserProposalId })
       if (newProposalData.data.governance_proposal.length) {
         const { id } = newProposalData.data.governance_proposal[0]
         changeActiveProposal(id ?? DEFAULT_PROPOSAL.id)
@@ -349,7 +354,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     () => ({
       actionType: SUBMIT_PROPOSAL_ACTION,
       actionFn: submitActionFn,
-      dappCallback: async () => await getNewProposalId(), // update proposal id after successful action
+      dappCallback: getNewProposalId, // update proposal id after successful action
     }),
     [getNewProposalId, submitActionFn],
   )

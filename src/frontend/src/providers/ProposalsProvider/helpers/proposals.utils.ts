@@ -1,5 +1,14 @@
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-import { EMPTY_PROPOSALS_CTX, GovPhases, ProposalStatus } from './proposals.const'
+import {
+  EMPTY_PROPOSALS_CTX,
+  GOVERNANCE_CONFIG_SUB,
+  GovPhases,
+  PROPOSALS_CURRENT_DATA,
+  PROPOSALS_DATA_SUB,
+  PROPOSALS_PAST_DATA,
+  PROPOSALS_SUBMISSION_DATA,
+  ProposalStatus,
+} from './proposals.const'
 
 import {
   NullableProposalsContextState,
@@ -16,6 +25,12 @@ export const getProposalStatus = (
   cycleHighestVotedProposalId: number | null,
   timelockProposalId: number | null,
 ): ProposalStatusType => {
+  console.log({
+    proposal,
+    governancePhase,
+    cycleHighestVotedProposalId,
+    timelockProposalId,
+  })
   // if proposal is executed give it's executed status
   if (proposal.executed) return ProposalStatus.EXECUTED
 
@@ -64,7 +79,33 @@ export const getProposalsProviderReturnValue = ({
     changeProposalsSubscriptionsList,
   }
 
-  const isLoading = true
+  const {
+    config,
+    proposalsMapper,
+    pastProposalsIds,
+    currentRoundProposalsIds,
+    allProposalsIds,
+    waitingProposalsIdsToBeExecuted,
+    waitingProposalsIdsToBePaid,
+    submissionProposalsIds,
+  } = proposalsCtxState
+
+  const isSubmissionProposalsLoading =
+    activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_SUBMISSION_DATA && !submissionProposalsIds && !proposalsMapper
+  const isGovernanceConfigLoading = activeSubs[GOVERNANCE_CONFIG_SUB] && !config
+  const isGovernancePastProposalsLoading = activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_PAST_DATA && !pastProposalsIds
+  const isGovernanceCurrentProposalsLoading =
+    activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_CURRENT_DATA &&
+    !currentRoundProposalsIds &&
+    !waitingProposalsIdsToBeExecuted &&
+    !waitingProposalsIdsToBePaid
+
+  const isLoading =
+    isSubmissionProposalsLoading ||
+    isGovernanceConfigLoading ||
+    isGovernanceCurrentProposalsLoading ||
+    isGovernancePastProposalsLoading ||
+    (activeSubs[PROPOSALS_DATA_SUB] !== null && proposalsMapper === null && allProposalsIds === null)
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {

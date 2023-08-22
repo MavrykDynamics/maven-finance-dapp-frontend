@@ -125,6 +125,9 @@ export const normalizeProposals = ({
       const normalizedProposal = normalizeProposal(indexerProposal, governanceConfig)
       const { id, executed, status, currentRoundProposal, paymentProcessed } = normalizedProposal
 
+      acc.allProposalsIds.push(normalizedProposal.id)
+      acc.proposalsMapper[normalizedProposal.id] = normalizedProposal
+
       const isPastProposal =
         status === ProposalStatus.DROPPED || status === ProposalStatus.EXECUTED || status === ProposalStatus.DEFEATED
 
@@ -152,8 +155,6 @@ export const normalizeProposals = ({
         return acc
       }
 
-      acc.allProposalsIds.push(normalizedProposal.id)
-      acc.proposalsMapper[normalizedProposal.id] = normalizedProposal
       return acc
     },
     {

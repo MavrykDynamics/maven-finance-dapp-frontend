@@ -1,17 +1,13 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Redirect, useHistory, useLocation } from 'react-router'
-import { useDispatch, useSelector } from 'react-redux'
 import QueryString from 'qs'
 
 // types
-import { State } from 'reducers'
 import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
 import { ProposalsListType } from './helpers/governanceTypes'
 
 // actions &  hooks
 import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getEmergencyGovernanceStorage } from '../EmergencyGovernance/EmergencyGovernance.actions'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -62,7 +58,6 @@ import {
 } from 'providers/SatellitesProvider/satellites.const'
 
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
-  const dispatch = useDispatch()
   const { search } = useLocation()
   const history = useHistory()
 
@@ -86,15 +81,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
     return () => {
       changeProposalsSubscriptionsList(DEFAULT_PROPOSALS_ACTIVE_SUBS)
     }
-  }, [])
-
-  const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    try {
-      await Promise.all([(!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage())].filter(Boolean))
-    } catch (e) {}
-  }, [])
+  }, [isHistory])
 
   // handle saving proposal id in query params
   const parsedQp = QueryString.parse(search, { ignoreQueryPrefix: true }) as { proposalId: string }
@@ -231,7 +218,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
         isWaitingToExecute={Boolean(waitingProposalsIdsToBeExecuted.length)}
       />
 
-      {isLoading || isGovernanceLoading ? (
+      {isGovernanceLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading proposals</div>
@@ -264,7 +251,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
               {proposalsListsToShow.length ? (
                 proposalsListsToShow.map(({ title, proposalsIds, listName, type }) => {
                   return (
-                    <>
+                    <div key={listName}>
                       <Proposals
                         proposalsList={proposalsIds}
                         handleItemSelect={handleItemSelect}
@@ -272,7 +259,6 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                         title={title}
                         type={type}
                         listName={listName}
-                        key={listName}
                       />
 
                       {/* Show this plug when we use cycle dd filter and some of the cycles don't have proposals in it */}
@@ -282,7 +268,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                           <figcaption>{`There is no propoposals on the cycle ${selectedCycle?.id}`}</figcaption>
                         </EmptyContainer>
                       ) : null}
-                    </>
+                    </div>
                   )
                 })
               ) : (
