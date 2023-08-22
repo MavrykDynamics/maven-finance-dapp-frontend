@@ -9,7 +9,7 @@ import {
   tokenMetadataSchema,
 } from '../tokens.provider.types'
 import { TokensMetadataQuery } from 'utils/__generated__/graphql'
-import { MIN_NON_LOAN_TOKEN_AMOUNT, SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { DEFAULT_MIN_COLLATERAL_AMOUNT, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { checkWhetherTokenIsCollateralToken } from './tokens.utils'
 import { TokenPricesFeedsType } from 'providers/DataFeedsProvider/helpers/feeds.schemes'
 import { TokensGqlSchemaType } from './tokens.schemes'
@@ -55,7 +55,7 @@ const handleMvkToken = ({
     isPausedCollateral: process.env.REACT_APP_IS_DEMO === 'true',
     isScaled: lending_controller_collateral_tokens[0].is_scaled_token,
     isStaked: lending_controller_collateral_tokens[0].is_staked_token,
-    minDepositAmount: MIN_NON_LOAN_TOKEN_AMOUNT,
+    minDepositAmount: DEFAULT_MIN_COLLATERAL_AMOUNT,
   }
 
   const smvkTokenMetadata: TokenMetadataType | null = smvkTokenData
@@ -184,7 +184,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
               isPausedCollateral: lending_controller_collateral_tokens[0].paused,
               isScaled: lending_controller_collateral_tokens[0].is_scaled_token,
               isStaked: lending_controller_collateral_tokens[0].is_staked_token,
-              minDepositAmount: MIN_NON_LOAN_TOKEN_AMOUNT,
+              minDepositAmount: DEFAULT_MIN_COLLATERAL_AMOUNT,
             },
           }
         }

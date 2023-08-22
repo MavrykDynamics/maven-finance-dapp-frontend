@@ -7,7 +7,7 @@ import { assetDecimalsToShow } from './Loans.const'
 import { SingleValueData } from 'lightweight-charts'
 import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
-import { MIN_NON_LOAN_TOKEN_AMOUNT } from 'utils/constants'
+import { DEFAULT_MIN_COLLATERAL_AMOUNT } from 'utils/constants'
 
 // HELPER FOR BORROW FEE
 export const calculateAccruedInterest = (
@@ -150,5 +150,5 @@ export const getChartSettingsBasedOnChartLength = (
  * @returns min ampount to deposit based if it's loand token or non-loan token
  */
 export const geTokenMinAmountForDeposit = (token: TokenMetadataType | null) => {
-  return token && checkWhetherTokenIsLoanToken(token) ? token.loanData.minDepositAmount : MIN_NON_LOAN_TOKEN_AMOUNT
+  return token && checkWhetherTokenIsLoanToken(token) ? token.loanData.minDepositAmount : DEFAULT_MIN_COLLATERAL_AMOUNT
 }

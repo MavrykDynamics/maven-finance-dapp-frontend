@@ -35,7 +35,7 @@ export type TokenMetadataType = {
   type: TokenType
 } & PropertiesFromDifferentTokenTypes
 
-export type LoanDataType = {
+export type TokenLoansDataType = {
   indexerName: string
   minDepositAmount: number
   isPausedCollateral: boolean
@@ -45,7 +45,7 @@ export type LoanDataType = {
 
 type PropertiesFromDifferentTokenTypes = DeepPartial<{
   // loan & collateral tokens properties
-  loanData: LoanDataType
+  loanData: TokenLoansDataType
 }>
 
 // loan token (market)
