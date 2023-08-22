@@ -82,9 +82,9 @@ import { normalizeProposalsForSubmitProposal } from './helpers/normalizeRemotePr
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const history = useHistory()
+
   const { bug } = useToasterContext()
   const { apolloClient } = useApolloContext()
-
   const { tokensMetadata } = useTokensContext()
   const { userAddress, isNewlyRegisteredSatellite } = useUserContext()
   const {
@@ -200,7 +200,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   // mapping user created proposals to tabs buttons data
   const usersProposalsToSwitch = useMemo(
     () =>
-      proposalKeys.map<MultyProposalItem>((id) => ({
+      proposalKeys.concat(proposalKeys.length < 2 ? [DEFAULT_PROPOSAL.id] : []).map<MultyProposalItem>((id) => ({
         text: id === DEFAULT_PROPOSAL.id ? 'Create new Proposal' : mappedProposals[id].title,
         active: id === selectedUserProposalId,
         value: id,
@@ -301,33 +301,33 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const { action: handleLockProposal } = useContractAction(lockContractProps)
 
   // submit proposal action handler ----------------------------------------------
-  // TODO: test whether we need this update fn
   // submission callback to update data
-  const getNewProposalId = useCallback(async () => {
-    try {
-      const newProposalData = await apolloClient.query({
-        query: GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
-        variables: {
-          userAddress,
-        },
-      })
+  // TODO: test whether we need this update fn
+  // const getNewProposalId = useCallback(async () => {
+  //   try {
+  //     const newProposalData = await apolloClient.query({
+  //       query: GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
+  //       variables: {
+  //         userAddress,
+  //       },
+  //     })
 
-      if (newProposalData.error) {
-        console.error('loading new proposal error', newProposalData.error)
-        throw new Error(newProposalData.error.message)
-      }
+  //     if (newProposalData.error) {
+  //       console.error('loading new proposal error', newProposalData.error)
+  //       throw new Error(newProposalData.error.message)
+  //     }
 
-      console.log({ newProposalData, selectedUserProposalId })
-      if (newProposalData.data.governance_proposal.length) {
-        const { id } = newProposalData.data.governance_proposal[0]
-        changeActiveProposal(id ?? DEFAULT_PROPOSAL.id)
-      }
+  //     console.log({ newProposalData, selectedUserProposalId })
+  //     if (newProposalData.data.governance_proposal.length) {
+  //       const { id } = newProposalData.data.governance_proposal[0]
+  //       changeActiveProposal(id ?? DEFAULT_PROPOSAL.id)
+  //     }
 
-      // changeActiveProposal
-    } catch (e) {
-      bug('Fetch Error', 'Error occured while loading latest proposal id, please reload the page')
-    }
-  }, [apolloClient, bug, changeActiveProposal, userAddress])
+  //     // changeActiveProposal
+  //   } catch (e) {
+  //     bug('Fetch Error', 'Error occured while loading latest proposal id, please reload the page')
+  //   }
+  // }, [apolloClient, bug, changeActiveProposal, userAddress])
 
   const submitActionFn = useCallback(async () => {
     if (!userAddress) {
@@ -372,9 +372,8 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     () => ({
       actionType: SUBMIT_PROPOSAL_ACTION,
       actionFn: submitActionFn,
-      dappCallback: getNewProposalId, // update proposal id after successful action
     }),
-    [getNewProposalId, submitActionFn],
+    [submitActionFn],
   )
 
   const { action: handleProposalSubmit } = useContractAction(submitContractProps)
