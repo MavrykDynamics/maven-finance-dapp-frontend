@@ -24,9 +24,10 @@ import {
 import {
   DEFAULT_SATELLITE_GOVERNANCE_SUBS,
   DEFAULT_SATELLITE_GOV_CTX,
-  SATELLITES_GOVERNANCE_ALL_ACTIONS_SUB,
   SATELLITES_GOVERNANCE_CONFIG_SUB,
   SATELLITES_GOVERNANCE_CURRENT_USER_ACTIONS_SUB,
+  SATELLITES_GOVERNANCE_ONGOING_ACTIONS_SUB,
+  SATELLITES_GOVERNANCE_PAST_ACTIONS_SUB,
   SATELLITE_GOV_ACTIONS_DATA,
 } from './helpers/satellitesGov.consts'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
@@ -90,7 +91,7 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
     },
   )
 
-  useQueryWithRefetch(
+  const { loading } = useQueryWithRefetch(
     getGovernanceActionsQuery(userAddress, activeSubs[SATELLITE_GOV_ACTIONS_DATA]),
     {
       skip: activeSubs[SATELLITE_GOV_ACTIONS_DATA] === null || userAddress === null,
@@ -123,25 +124,20 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
     const { satelliteGovIdsMapper, mySatelliteGovIds, pastSatelliteGovIds, ongoingSatelliteGovIds } =
       normalizerSatelliteGovernanceActions(actionsData, userAddress)
 
-    // when subscribe to all actions - we will have "past" & "ongoing" "user" actions ids
-    const isAllSatelliteGovActionsSub = activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_ALL_ACTIONS_SUB
-
-    // when subscribe to user actions - we can have "past" & "ongoing" ONLY for user that will erase other actions
     const isUserSatelliteGovActionsSub =
       activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_CURRENT_USER_ACTIONS_SUB
-
-    // allow prev data to avoid empty screen or loader
-    const allowPrevActionsData = !isAllSatelliteGovActionsSub || !isUserSatelliteGovActionsSub
+    const isPastSatelliteGovActionsSub =
+      activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_PAST_ACTIONS_SUB
+    const isOngoingSatelliteGovActionsSub =
+      activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_ONGOING_ACTIONS_SUB
 
     setSatelliteGovCtxState((prev) => ({
       ...prev,
       satelliteGovIdsMapper: { ...prev.satelliteGovIdsMapper, ...satelliteGovIdsMapper },
-      // to avoid empty screen or loader between tab switches - just show old data and update with the new one if it exists
-      mySatelliteGovIds: mySatelliteGovIds.length ? mySatelliteGovIds : prev.mySatelliteGovIds,
-      pastSatelliteGovIds:
-        pastSatelliteGovIds.length && allowPrevActionsData ? pastSatelliteGovIds : prev.pastSatelliteGovIds,
-      ongoingSatelliteGovIds:
-        ongoingSatelliteGovIds.length && allowPrevActionsData ? ongoingSatelliteGovIds : prev.ongoingSatelliteGovIds,
+      // to avoid empty screen or loader between tab switches - just show old data
+      mySatelliteGovIds: isUserSatelliteGovActionsSub ? mySatelliteGovIds : prev.mySatelliteGovIds,
+      pastSatelliteGovIds: isPastSatelliteGovActionsSub ? pastSatelliteGovIds : prev.pastSatelliteGovIds,
+      ongoingSatelliteGovIds: isOngoingSatelliteGovActionsSub ? ongoingSatelliteGovIds : prev.ongoingSatelliteGovIds,
     }))
   }
 
@@ -155,11 +151,10 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
         satelliteGovCtxState,
         changeSatelliteGovSubscriptionsList,
         activeSubs,
+        isActionsDataLoading: loading,
       }),
-    [activeSubs, satelliteGovCtxState],
+    [activeSubs, satelliteGovCtxState, loading],
   )
-
-  console.log(contextProviderValue.isLoading)
 
   return (
     <satelliteGovernanceContext.Provider value={contextProviderValue}>{children}</satelliteGovernanceContext.Provider>

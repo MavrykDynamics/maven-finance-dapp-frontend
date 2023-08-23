@@ -36,6 +36,7 @@ type SatelliteGovernanceActionsType = {
   ongoingSatelliteGovIds: number[]
   pastSatelliteGovIds: number[]
   mySatelliteGovIds: number[]
+  allSatelliteGovIds: number[]
   satelliteGovIdsMapper: Record<number, SatelliteGovernanceActionType>
 }
 
@@ -135,7 +136,7 @@ export const normalizerSatelliteGovernanceActions = (
       if (action.initiatorId === userAddress) {
         acc.mySatelliteGovIds.push(action.id)
       }
-
+      acc.allSatelliteGovIds.push(action.id)
       acc.satelliteGovIdsMapper[action.id] = action
 
       return acc
@@ -144,6 +145,7 @@ export const normalizerSatelliteGovernanceActions = (
       ongoingSatelliteGovIds: [],
       pastSatelliteGovIds: [],
       mySatelliteGovIds: [],
+      allSatelliteGovIds: [],
       satelliteGovIdsMapper: {},
     },
   )

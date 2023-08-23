@@ -44,6 +44,7 @@ export const DEFAULT_SATELLITE_GOV_CTX: NullableSatelliteGovernanceContextStateT
   pastSatelliteGovIds: null,
   mySatelliteGovIds: null,
   satelliteGovIdsMapper: null,
+  allSatelliteGovIds: null,
 } as const
 
 export const EMPTY_SATELLITE_GOV_CTX: SatelliteGovernanceContextStateType = {
@@ -59,5 +60,6 @@ export const EMPTY_SATELLITE_GOV_CTX: SatelliteGovernanceContextStateType = {
   ongoingSatelliteGovIds: [],
   pastSatelliteGovIds: [],
   mySatelliteGovIds: [],
+  allSatelliteGovIds: [],
   satelliteGovIdsMapper: {},
 }

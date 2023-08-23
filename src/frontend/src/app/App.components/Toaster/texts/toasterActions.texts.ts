@@ -618,30 +618,3 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
     },
   },
 }
-
-/**
- *
- * @param actiontype type of contract action (see ActionTypes type)
- * @param newStart Partial object for action "start" data
- * @param newEnd Partial object for action "end" data
- */
-export const addDynamicMessagesToActionText = (
-  actiontype: ActionTypes,
-  newStart: Partial<ToastMessageContent> = {},
-  newEnd: Partial<ToastMessageContent> = {},
-) => {
-  const { start, end } = TOASTER_ACTIONS_TEXTS[actiontype]
-
-  // NOTE be careful whern changing this part of code,
-  // it does the mutation to TOASTER_ACTIONS_TEXTS object by referrence !
-  TOASTER_ACTIONS_TEXTS[actiontype] = {
-    start: {
-      ...start,
-      ...newStart,
-    },
-    end: {
-      ...end,
-      ...newEnd,
-    },
-  }
-}

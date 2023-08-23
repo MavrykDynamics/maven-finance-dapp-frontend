@@ -21,6 +21,7 @@ export type SatelliteGovernanceContextStateType = {
   pastSatelliteGovIds: SatelliteGovNormalizerReturnType['pastSatelliteGovIds']
   mySatelliteGovIds: SatelliteGovNormalizerReturnType['mySatelliteGovIds']
   satelliteGovIdsMapper: SatelliteGovNormalizerReturnType['satelliteGovIdsMapper']
+  allSatelliteGovIds: SatelliteGovNormalizerReturnType['allSatelliteGovIds']
 }
 
 export type NullableSatelliteGovernanceContextStateType = DeepNullable<SatelliteGovernanceContextStateType>
