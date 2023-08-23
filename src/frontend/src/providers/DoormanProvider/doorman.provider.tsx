@@ -114,6 +114,8 @@ const DoormanProvider = ({ children }: Props) => {
     [activeSubs, stakingCtxState],
   )
 
+  // console.log(contextProviderValue, 'contextProviderValue')
+
   return <doormanContext.Provider value={contextProviderValue}>{children}</doormanContext.Provider>
 }
 

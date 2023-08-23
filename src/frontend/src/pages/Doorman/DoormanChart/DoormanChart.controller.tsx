@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { SingleValueData, Time } from 'lightweight-charts'
 import { cyanColor, skyColor } from 'styles'
 
 // styles
+import colors from 'styles/colors'
 import { DoormanChartCard, DoormanExitFeeCurrentValues, Wrapper } from './DoormanChart.style'
 
 // components
@@ -11,6 +12,7 @@ import { Chart } from '../../../app/App.components/Chart/Chart'
 import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { CommaNumber, formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
+import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
 
 // providers
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
@@ -18,15 +20,19 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+
 // consts & helpers
+import { calcExitFee, calcMLI } from 'utils/calcFunctions'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { MLI_FEE_CHART_DATA } from './MliFee-chart-data'
-import { calcExitFee, calcMLI } from 'utils/calcFunctions'
 import { DECIMALS_TO_SHOW } from 'utils/constants'
 import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
-import colors from 'styles/colors'
+
+// providers & hooks
 import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
+import { ChartPeriodType } from 'types/charts.type'
+import { ONE_HOUR } from 'consts/charts.const'
 
 const tabsList: TabItem[] = [
   {
@@ -76,8 +82,11 @@ export function DoormanChart() {
     preferences: { themeSelected },
   } = useDappConfigContext()
 
-  // TODO add tabs
-  const { smvkHistoryData, mvkHistoryData } = useDoormanHistory()
+  const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
+  console.log(chartPeriod, 'chartPeriod')
+  const { smvkHistoryData, mvkHistoryData } = useDoormanHistory(chartPeriod)
+
+  // --------------------------------------------------------
 
   const currentExitFee = calcExitFee(totalSupply, totalStakedMvk)
   const currentMLI = calcMLI(totalSupply, totalStakedMvk)
@@ -85,6 +94,9 @@ export function DoormanChart() {
   const [activeTabId, setActiveTabId] = useState(tabsList[0].id)
 
   const handleChangeTabs = (tabId?: number) => setActiveTabId(tabsList.find(({ id }) => tabId === id)?.id ?? 1)
+  const handlePeriodChange = useCallback((period) => {
+    setChartPeriod(period)
+  }, [])
   const exitFeeMarkerTime = findExitFeeClosestTimePlot(MLI_FEE_CHART_DATA, currentExitFee)
 
   return (
@@ -184,17 +196,20 @@ export function DoormanChart() {
         ) : null}
 
         {activeTabId === tabsList[2].id ? (
-          <Chart
-            data={{
-              type: AREA_CHART_TYPE,
-              plots: smvkHistoryData,
-            }}
-            settings={{
-              height: 370,
-            }}
-            tooltipAsset={'sMVK'}
-            numberOfItemsToDisplay={10}
-          />
+          <>
+            <ChartsSwitherWithPosition setCurrentPeriod={handlePeriodChange} />
+            <Chart
+              data={{
+                type: AREA_CHART_TYPE,
+                plots: smvkHistoryData,
+              }}
+              settings={{
+                height: 370,
+              }}
+              tooltipAsset={'sMVK'}
+              numberOfItemsToDisplay={10}
+            />
+          </>
         ) : null}
       </DoormanChartCard>
     </Wrapper>

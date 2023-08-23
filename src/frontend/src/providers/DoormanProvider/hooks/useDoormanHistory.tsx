@@ -21,7 +21,14 @@ import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
 
 // getTimestampBasedOnPeriod
 export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
-  const { activeSubs, updateStakeHistoryData, handleSubError, mvkHistoryData, smvkHistoryData } = useDoormanContext()
+  const {
+    activeSubs,
+    updateStakeHistoryData,
+    handleSubError,
+    mvkHistoryData,
+    smvkHistoryData,
+    changeStakingSubscriptionsList,
+  } = useDoormanContext()
   const currentPeriodRef = useRef(getTimestampBasedOnPeriod(period))
 
   const refetchQueryVariables = useCallback(() => {
@@ -34,11 +41,25 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
     currentPeriodRef.current = getTimestampBasedOnPeriod(period)
   }, [period])
 
+  useEffect(() => {
+    changeStakingSubscriptionsList({
+      [MVK_SMVK_HISTORY_SUB]: true,
+    })
+
+    return () => {
+      changeStakingSubscriptionsList({
+        [MVK_SMVK_HISTORY_SUB]: false,
+      })
+    }
+  }, [])
+
   const { loading } = useQueryWithRefetch(
     SMVK_MVK_HISTORY_DATA,
     {
       skip: !activeSubs[MVK_SMVK_HISTORY_SUB],
       onCompleted: (data) => {
+        if (!data) return
+        console.log(data, 'data')
         updateStakeHistoryData(data, period)
       },
       variables: {
