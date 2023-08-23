@@ -1,5 +1,4 @@
-import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
-import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
+import { ProposalStatus, SatelliteGovActiobStatusType } from 'utils/TypesAndInterfaces/Governance'
 import { GetGovernanceSatelliteActionsDataQuery, GetGovernanceSatelliteConfigQuery } from 'utils/__generated__/graphql'
 
 type SatelliteGovernanceActionType = {
@@ -8,7 +7,7 @@ type SatelliteGovernanceActionType = {
   purpose: string
   type: string
   status: number
-  statusFlag: StatusFlagKind
+  statusFlag: SatelliteGovActiobStatusType
   satelliteId: string
   initiatorId: string
   expirationDatetime: string | null
@@ -152,5 +151,19 @@ export const normalizerSatelliteGovernanceActions = (
 
   return {
     ...actions,
+    // sort user actions
+    mySatelliteGovIds: actions.mySatelliteGovIds.sort((a, b) => {
+      const statusOrder = [
+        ProposalStatus.ONGOING,
+        ProposalStatus.EXECUTED,
+        ProposalStatus.DROPPED,
+        ProposalStatus.DEFEATED,
+      ] as const
+
+      const statusA = actions.satelliteGovIdsMapper[a].statusFlag
+      const statusB = actions.satelliteGovIdsMapper[b].statusFlag
+
+      return statusOrder.indexOf(statusA) - statusOrder.indexOf(statusB)
+    }),
   }
 }
