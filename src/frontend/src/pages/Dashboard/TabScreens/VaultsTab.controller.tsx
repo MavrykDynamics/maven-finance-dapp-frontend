@@ -1,14 +1,25 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+// hooks
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+
+/// utils
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { reduceVaultsAssets } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'
+
+// consts
+import { VAULTS_DATA, VAULTS_ALL, DEFAULT_VAULTS_ACTIVE_SUBS } from 'providers/VaultsProvider/vaults.provider.consts'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
+// view
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { emptyContainer } from './LendingTab.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import PieChartView from 'app/App.components/PieChart/PieСhart.view'
-
 import {
   Table,
   TableHeader,
@@ -20,20 +31,25 @@ import {
 } from 'app/App.components/Table'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { StatBlock, BlockName } from '../Dashboard.style'
-import { TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
+import { EmptyContainer, TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'
-import { reduceVaultsAssets } from 'providers/VaultsProvider/helpers/vaults.utils'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 
-export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
-  const [hoveredPath, setHoveredPath] = useState<null | string>(null)
-
+// TODO: query to group collaterals, will reduce amount of loading data for 90%
+export const VaultsTab = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { allVaultsIds, vaultsMapper } = useVaultsContext()
+  const { allVaultsIds, vaultsMapper, changeVaultsSubscriptionsList, isLoading: isVaultsLoading } = useVaultsContext()
+
+  useEffect(() => {
+    changeVaultsSubscriptionsList({
+      [VAULTS_DATA]: VAULTS_ALL,
+    })
+
+    return () => {
+      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+    }
+  }, [])
+
+  const [hoveredPath, setHoveredPath] = useState<null | string>(null)
 
   const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio, chartData } = useMemo(() => {
     const { assetsBalances, globalVaultTVL, ...restVaultsStats } = reduceVaultsAssets(
@@ -55,7 +71,7 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
           <Button text="Vaults" icon="vaults" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
         </Link>
       </div>
-      {isLoading ? (
+      {isVaultsLoading ? (
         <DataLoaderWrapper className="tabLoader">
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
@@ -167,7 +183,10 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
           </div>
         </VaultsContentStyled>
       ) : (
-        emptyContainer
+        <EmptyContainer>
+          <img src="/images/not-found.svg" alt=" No collaterals to show" />
+          <figcaption> No collaterals to show</figcaption>
+        </EmptyContainer>
       )}
 
       <div className="descr">

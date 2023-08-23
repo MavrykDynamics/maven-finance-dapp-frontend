@@ -1,13 +1,13 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
-// styles
-import { silverColor } from 'styles'
-
 // consts
+import { silverColor } from 'styles'
+import { VESTING_STORAGE_DATA_SUB, DEFAULT_VESTING_SUBS } from 'providers/VestingProvider/helpers/vesting.consts'
+import { TREASURY_STORAGE_DATA_SUB, DEFAULT_TREASURY_SUBS } from 'providers/TreasuryProvider/helpers/treasury.consts'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
-// providers
+// hooks
 import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -20,7 +20,6 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 // components
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { emptyContainer } from './LendingTab.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import {
@@ -37,15 +36,37 @@ import {
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { BlockName, StatBlock } from '../Dashboard.style'
-import { TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
+import { EmptyContainer, TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
 
-// NOTE: isLoading os passed from <Dashboard.controller> where we get all important data
-// so no need to useEffect(() => changeSubscriptionList) f.e. for treasury
-export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { totalVestedAmount, totalClaimedAmount } = useVestingContext()
-
+export const TreasuryTab = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { treasuryAddresses, treasuryMapper } = useTreasuryContext()
+  const {
+    totalVestedAmount,
+    totalClaimedAmount,
+    changeVestingSubscriptionsList,
+    isLoading: isVestingLoading,
+  } = useVestingContext()
+  const {
+    treasuryAddresses,
+    treasuryMapper,
+    changeTreasurySubscriptionsList,
+    isLoading: isTreasuryLoading,
+  } = useTreasuryContext()
+
+  useEffect(() => {
+    changeTreasurySubscriptionsList({
+      [TREASURY_STORAGE_DATA_SUB]: true,
+    })
+
+    changeVestingSubscriptionsList({
+      [VESTING_STORAGE_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeTreasurySubscriptionsList(DEFAULT_TREASURY_SUBS)
+      changeVestingSubscriptionsList(DEFAULT_VESTING_SUBS)
+    }
+  }, [])
 
   const amountOfTokens = totalVestedAmount + totalClaimedAmount
 
@@ -84,7 +105,7 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
         </Link>
       </div>
 
-      {isLoading ? (
+      {isVestingLoading || isTreasuryLoading ? (
         <DataLoaderWrapper className="tabLoader">
           <ClockLoader width={150} height={150} />
           <div className="text">Loading treasury</div>
@@ -211,7 +232,10 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
           </div>
         </TreasuryContentStyled>
       ) : (
-        emptyContainer
+        <EmptyContainer>
+          <img src="/images/not-found.svg" alt=" No treasury assets to show" />
+          <figcaption> No treasury assets to show</figcaption>
+        </EmptyContainer>
       )}
 
       <div className="descr">

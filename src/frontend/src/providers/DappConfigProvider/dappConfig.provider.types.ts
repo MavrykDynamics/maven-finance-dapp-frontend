@@ -27,6 +27,7 @@ export type DappConfigContext = {
   maxLengths: DappMaxLengths
   mvkFaucetAddress: string | null
   minimumStakedMvkBalance: number
+  dappTotalValueLocked: number | null
   contractAddresses: Record<DappContractAddressesKeysType, string | null>
   xtzBakers: {
     dao: XtzBakerType
@@ -39,6 +40,7 @@ export type DappConfigContext = {
 
   // methods
   setAction: (actionName: null | UserActionType) => void
+  setDappTotalValueLocked: (tvl: number) => void
   // preferences actions
   toggleTheme: (theme: ThemeType) => void
   toggleRPCNodePopup: (isOpened: boolean) => void
@@ -60,6 +62,7 @@ export type DappConfigContextStateType = Pick<
   | 'contractAddresses'
   | 'preferences'
   | 'globalLoadingState'
+  | 'dappTotalValueLocked'
 >
 
 export type UserActionType = {

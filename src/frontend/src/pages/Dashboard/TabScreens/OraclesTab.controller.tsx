@@ -1,41 +1,45 @@
 import { Link } from 'react-router-dom'
 
+// utils
 import { parseDate } from 'utils/time'
+
+// hooks
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
+
+// consts
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 import colors from 'styles/colors'
 
+// view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { emptyContainer } from './LendingTab.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Trim } from 'app/App.components/Trim/Trim.view'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-
 import { StatBlock } from '../Dashboard.style'
-import { OraclesContentStyled, TabWrapperStyled, PopularFeed } from './DashboardTabs.style'
+import { OraclesContentStyled, TabWrapperStyled, PopularFeed, EmptyContainer } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
-import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { MVK_TOKEN_SYMBOL } from 'utils/constants'
-import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
-export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { feedsAddresses, feedsMapper } = useDataFeedsContext()
+export const OraclesTab = () => {
+  const { feedsAddresses, feedsMapper, isLoading: isFeedsLoading } = useDataFeedsContext()
   const {
     tokensPrices: { [MVK_TOKEN_SYMBOL]: mvkExchangeRate = 0 },
   } = useTokensContext()
-
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
-  const oracleFeeds = feedsAddresses.length
-  const popularFeeds = feedsAddresses.slice(0, 3)
 
   const { oracleRewardsTotal } = useSatelliteStatistics()
+
+  const oracleFeeds = feedsAddresses.length
+  const popularFeeds = feedsAddresses.slice(0, 3)
 
   return (
     <TabWrapperStyled className="oracles" backgroundImage="dashboard_oraclesTab_bg.png">
@@ -48,7 +52,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
         </Link>
       </div>
 
-      {isLoading ? (
+      {isFeedsLoading ? (
         <DataLoaderWrapper className="tabLoader">
           <ClockLoader width={150} height={150} />
           <div className="text">Loading oracles</div>
@@ -79,6 +83,8 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
             <div className="feeds-grid">
               {popularFeeds.map((feedAddress) => {
                 const feed = feedsMapper[feedAddress]
+
+                if (!feed) return null
 
                 return (
                   <Link key={feed.address} to={`/satellites/feed-details/${feed.address}`}>
@@ -124,7 +130,10 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
               })}
             </div>
           ) : (
-            emptyContainer
+            <EmptyContainer>
+              <img src="/images/not-found.svg" alt=" No active oracles to show" />
+              <figcaption> No active oracles to show</figcaption>
+            </EmptyContainer>
           )}
         </OraclesContentStyled>
       )}

@@ -215,10 +215,18 @@ const DappConfigProvider = ({ children }: Props) => {
     }))
   }
 
+  const setDappTotalValueLocked = (newTvlValie: number) => {
+    setDappConfigCtxState((prev) => ({
+      ...prev,
+      dappTotalValueLocked: newTvlValie,
+    }))
+  }
+
   const contextProviderValue = useMemo(() => {
     return {
       isLoading: initialConfigLoading || contractAddressesLoading,
       setAction,
+      setDappTotalValueLocked,
       // preferences
       toggleTheme,
       toggleRPCNodePopup,

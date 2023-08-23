@@ -1,38 +1,52 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
+// consts
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
+import { DAPP_MVK_SMVK_STATS_SUB, MVK_SMVK_HISTORY_SUB } from 'providers/DoormanProvider/helpers/doorman.consts'
 import { PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // utils
 import { calcExitFee, calcMLI } from 'utils/calcFunctions'
+
+// hooks
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Chart } from 'app/App.components/Chart/Chart'
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 
 import { StatBlock } from '../Dashboard.style'
-import {
-  StakingContentStyled,
-  TabWrapperStyled,
-  EmptyContainer,
-  StakingHistoryChartWrapper,
-} from './DashboardTabs.style'
+import { StakingContentStyled, TabWrapperStyled, StakingHistoryChartWrapper } from './DashboardTabs.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 
-export const emptyContainer = (
-  <EmptyContainer>
-    <img src="/images/not-found.svg" alt=" No proposals to show" />
-    <figcaption> No data to show</figcaption>
-  </EmptyContainer>
-)
+/**
+ * TODO: will need only to subscribe to staking chart, and get it's loading here, as staking stats data is subscribed in controller
+ */
+export const StakingTab = () => {
+  const {
+    totalSupply,
+    totalStakedMvk,
+    smvkHistoryData,
+    changeStakingSubscriptionsList,
+    isLoading: isStakingLoading,
+  } = useDoormanContext()
 
-export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { totalSupply, totalStakedMvk, smvkHistoryData } = useDoormanContext()
+  useEffect(() => {
+    changeStakingSubscriptionsList({
+      [MVK_SMVK_HISTORY_SUB]: true,
+    })
+
+    return () => {
+      changeStakingSubscriptionsList({
+        [MVK_SMVK_HISTORY_SUB]: false,
+      })
+    }
+  }, [])
 
   const mli = calcMLI(totalSupply, totalStakedMvk)
   const fee = calcExitFee(totalSupply, totalStakedMvk)
@@ -49,7 +63,7 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
         </Link>
       </div>
 
-      {isLoading ? (
+      {isStakingLoading ? (
         <DataLoaderWrapper className="tabLoader">
           <ClockLoader width={150} height={150} />
           <div className="text">Loading staking</div>
