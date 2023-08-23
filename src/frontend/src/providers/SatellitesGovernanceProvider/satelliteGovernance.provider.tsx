@@ -70,8 +70,8 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
     }
   }, [activeSubs])
 
-  const handleSubError = (error: ApolloError, subName: SatelliteGovSubsType) => {
-    console.error(`${subName} query error: `, error)
+  const handleSubError = (error: ApolloError, subName: SatelliteGovSubsType | null) => {
+    console.error(`${subName ?? 'Nullable'} query error: `, error)
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
@@ -103,7 +103,7 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
         userAddress,
         currentTimestamp: currentTimeRef.current,
       },
-      onError: (error) => handleSubError(error, SATELLITES_GOVERNANCE_CONFIG_SUB),
+      onError: (error) => handleSubError(error, activeSubs[SATELLITE_GOV_ACTIONS_DATA]),
     },
     {
       refetchQueryVariables,
