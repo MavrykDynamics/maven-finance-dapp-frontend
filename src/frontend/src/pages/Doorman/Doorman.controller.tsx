@@ -58,7 +58,6 @@ export const Doorman = () => {
 
   useEffect(() => {
     changeStakingSubscriptionsList({
-      [MVK_SMVK_HISTORY_SUB]: true,
       [DAPP_MVK_SMVK_STATS_SUB]: true,
     })
 

@@ -22,7 +22,7 @@ export const getDoormanProviderReturnValue = ({
   updateStakeHistoryData,
   handleSubError,
 }: DoormanContextReturnValueArgs) => {
-  const { totalStakedMvk, totalSupply, maximumTotalSupply, mvkHistoryData, smvkHistoryData } = stakingCtxState
+  const { totalStakedMvk, totalSupply, maximumTotalSupply } = stakingCtxState
 
   const commonToReturn = {
     changeStakingSubscriptionsList,
@@ -56,6 +56,8 @@ export const getDoormanProviderReturnValue = ({
     stakingCtxState,
     EMPTY_DOORMAN_CTX,
   )
+  console.log(stakingCtxState, 'stakingCtxState')
+  console.log(nonNullableProviderValue, 'nonNullableProviderValue')
   return {
     ...commonToReturn,
     ...nonNullableProviderValue,

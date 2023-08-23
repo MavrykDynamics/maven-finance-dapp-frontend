@@ -23,11 +23,11 @@ import { MVK_DECIMALS } from 'utils/constants'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import {
   DEFAULT_STAKING_CTX,
-  MVK_SMVK_HISTORY_SUB,
   DAPP_MVK_SMVK_STATS_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
+  DEFAULT_DOORMAN_HISTORY,
 } from './helpers/doorman.consts'
-import { SMVK_MVK_HISTORY_DATA, DAPP_MVK_SMVK_STATS } from './queries/doorman.query'
+import { DAPP_MVK_SMVK_STATS } from './queries/doorman.query'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { getDoormanProviderReturnValue } from './helpers/doorman.utils'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
@@ -69,15 +69,16 @@ const DoormanProvider = ({ children }: Props) => {
   const updateStakeHistoryData = ({ smvk_history_data }: SmvkMvkHistoryDataQuery, period: ChartPeriodType) => {
     const { smvkHistoryData, mvkHistoryData } = normalizeDoormanChartsData({ smvk_history_data })
 
+    console.log(stakingCtxState)
     setStakingCtxState((prevState) => ({
       ...prevState,
       smvkHistoryData:
         prevState.smvkHistoryData === null
-          ? prevState.smvkHistoryData
+          ? { ...DEFAULT_DOORMAN_HISTORY }
           : { ...prevState.smvkHistoryData, [period]: smvkHistoryData },
       mvkHistoryData:
         prevState.mvkHistoryData === null
-          ? prevState.mvkHistoryData
+          ? { ...DEFAULT_DOORMAN_HISTORY }
           : { ...prevState.mvkHistoryData, [period]: mvkHistoryData },
     }))
   }
@@ -113,8 +114,6 @@ const DoormanProvider = ({ children }: Props) => {
       }),
     [activeSubs, stakingCtxState],
   )
-
-  // console.log(contextProviderValue, 'contextProviderValue')
 
   return <doormanContext.Provider value={contextProviderValue}>{children}</doormanContext.Provider>
 }

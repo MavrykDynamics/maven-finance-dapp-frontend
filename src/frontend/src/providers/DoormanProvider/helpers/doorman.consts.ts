@@ -10,6 +10,15 @@ export const MVK_SMVK_HISTORY_SUB = 'mvkSmvkHistorySub'
 export const DAPP_MVK_SMVK_STATS_SUB = 'mvkSmvkStatsSub'
 
 // PROVIDER DEFAULT CONSTS
+
+export const DEFAULT_DOORMAN_HISTORY = {
+  [ONE_HOUR]: [],
+  [TWENTY_FOUR_HOURS]: [],
+  [ONE_WEEK]: [],
+  [ONE_MONTH]: [],
+  [ALL_TIME]: [],
+}
+
 export const DEFAULT_STAKING_ACTIVE_SUBS = {
   [DAPP_MVK_SMVK_STATS_SUB]: false,
   [MVK_SMVK_HISTORY_SUB]: false,
@@ -26,18 +35,6 @@ export const EMPTY_DOORMAN_CTX: DoormanContextStateType = {
   totalStakedMvk: 0,
   totalSupply: 0,
   maximumTotalSupply: 0,
-  mvkHistoryData: {
-    [ONE_HOUR]: [],
-    [TWENTY_FOUR_HOURS]: [],
-    [ONE_WEEK]: [],
-    [ONE_MONTH]: [],
-    [ALL_TIME]: [],
-  },
-  smvkHistoryData: {
-    [ONE_HOUR]: [],
-    [TWENTY_FOUR_HOURS]: [],
-    [ONE_WEEK]: [],
-    [ONE_MONTH]: [],
-    [ALL_TIME]: [],
-  },
+  mvkHistoryData: DEFAULT_DOORMAN_HISTORY,
+  smvkHistoryData: DEFAULT_DOORMAN_HISTORY,
 }

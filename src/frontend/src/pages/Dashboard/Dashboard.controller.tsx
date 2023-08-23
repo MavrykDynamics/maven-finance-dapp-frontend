@@ -70,7 +70,6 @@ export const Dashboard = () => {
   useEffect(() => {
     changeStakingSubscriptionsList({
       [DAPP_MVK_SMVK_STATS_SUB]: true,
-      [MVK_SMVK_HISTORY_SUB]: true,
     })
 
     changeSatellitesSubscriptionsList({

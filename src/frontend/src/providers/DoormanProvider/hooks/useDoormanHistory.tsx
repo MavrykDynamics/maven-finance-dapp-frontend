@@ -29,6 +29,7 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
     smvkHistoryData,
     changeStakingSubscriptionsList,
   } = useDoormanContext()
+
   const currentPeriodRef = useRef(getTimestampBasedOnPeriod(period))
 
   const refetchQueryVariables = useCallback(() => {
@@ -51,7 +52,7 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
         [MVK_SMVK_HISTORY_SUB]: false,
       })
     }
-  }, [])
+  }, [period])
 
   const { loading } = useQueryWithRefetch(
     SMVK_MVK_HISTORY_DATA,
@@ -79,7 +80,7 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
 
   return {
     isLoading,
-    mvkHistoryData: smvkHistoryData[period],
+    mvkHistoryData: mvkHistoryData[period],
     smvkHistoryData: smvkHistoryData[period],
   }
 }

@@ -83,8 +83,7 @@ export function DoormanChart() {
   } = useDappConfigContext()
 
   const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
-  console.log(chartPeriod, 'chartPeriod')
-  const { smvkHistoryData, mvkHistoryData } = useDoormanHistory(chartPeriod)
+  const { smvkHistoryData, mvkHistoryData, isLoading: isChartsDataLoading } = useDoormanHistory(chartPeriod)
 
   // --------------------------------------------------------
 
@@ -199,6 +198,7 @@ export function DoormanChart() {
           <>
             <ChartsSwitherWithPosition setCurrentPeriod={handlePeriodChange} />
             <Chart
+              isLoading={isChartsDataLoading}
               data={{
                 type: AREA_CHART_TYPE,
                 plots: smvkHistoryData,
