@@ -31,6 +31,7 @@ import { SMVK_MVK_HISTORY_DATA, DAPP_MVK_SMVK_STATS } from './queries/doorman.qu
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { getDoormanProviderReturnValue } from './helpers/doorman.utils'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { ChartPeriodType } from 'types/charts.type'
 
 export const doormanContext = React.createContext<DoormanContext>(undefined!)
 
@@ -53,14 +54,6 @@ const DoormanProvider = ({ children }: Props) => {
   }
 
   // subscribes
-  useQueryWithRefetch(SMVK_MVK_HISTORY_DATA, {
-    skip: !activeSubs[MVK_SMVK_HISTORY_SUB],
-    onCompleted: (data) => {
-      updateStakeHistoryData(data)
-    },
-    onError: (error) => handleSubError(error, MVK_SMVK_HISTORY_SUB),
-  })
-
   useQueryWithRefetch(DAPP_MVK_SMVK_STATS, {
     skip: !activeSubs[DAPP_MVK_SMVK_STATS_SUB] || !doormanAddress,
     variables: {
@@ -73,13 +66,19 @@ const DoormanProvider = ({ children }: Props) => {
   })
 
   // methods to update context data
-  const updateStakeHistoryData = ({ smvk_history_data }: SmvkMvkHistoryDataQuery) => {
+  const updateStakeHistoryData = ({ smvk_history_data }: SmvkMvkHistoryDataQuery, period: ChartPeriodType) => {
     const { smvkHistoryData, mvkHistoryData } = normalizeDoormanChartsData({ smvk_history_data })
 
     setStakingCtxState((prevState) => ({
       ...prevState,
-      smvkHistoryData,
-      mvkHistoryData,
+      smvkHistoryData:
+        prevState.smvkHistoryData === null
+          ? prevState.smvkHistoryData
+          : { ...prevState.smvkHistoryData, [period]: smvkHistoryData },
+      mvkHistoryData:
+        prevState.mvkHistoryData === null
+          ? prevState.mvkHistoryData
+          : { ...prevState.mvkHistoryData, [period]: mvkHistoryData },
     }))
   }
 
@@ -109,6 +108,8 @@ const DoormanProvider = ({ children }: Props) => {
         stakingCtxState,
         changeStakingSubscriptionsList,
         activeSubs,
+        updateStakeHistoryData,
+        handleSubError,
       }),
     [activeSubs, stakingCtxState],
   )

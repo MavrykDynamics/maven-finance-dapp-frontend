@@ -23,6 +23,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
+import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -32,7 +33,8 @@ export const emptyContainer = (
 )
 
 export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { totalSupply, totalStakedMvk, smvkHistoryData } = useDoormanContext()
+  const { totalSupply, totalStakedMvk } = useDoormanContext()
+  const { smvkHistoryData } = useDoormanHistory()
 
   const mli = calcMLI(totalSupply, totalStakedMvk)
   const fee = calcExitFee(totalSupply, totalStakedMvk)

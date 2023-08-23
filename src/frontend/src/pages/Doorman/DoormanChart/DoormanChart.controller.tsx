@@ -26,6 +26,7 @@ import { calcExitFee, calcMLI } from 'utils/calcFunctions'
 import { DECIMALS_TO_SHOW } from 'utils/constants'
 import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
 import colors from 'styles/colors'
+import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
 
 const tabsList: TabItem[] = [
   {
@@ -70,10 +71,13 @@ const findExitFeeClosestTimePlot = (exitFeePlots: Array<AreaChartPlotType>, exit
 }
 
 export function DoormanChart() {
-  const { smvkHistoryData, mvkHistoryData, totalStakedMvk, totalSupply } = useDoormanContext()
+  const { totalStakedMvk, totalSupply } = useDoormanContext()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
+
+  // TODO add tabs
+  const { smvkHistoryData, mvkHistoryData } = useDoormanHistory()
 
   const currentExitFee = calcExitFee(totalSupply, totalStakedMvk)
   const currentMLI = calcMLI(totalSupply, totalStakedMvk)

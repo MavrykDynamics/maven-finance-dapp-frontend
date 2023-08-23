@@ -10,6 +10,8 @@ import { EMPTY_DOORMAN_CTX, DAPP_MVK_SMVK_STATS_SUB, MVK_SMVK_HISTORY_SUB } from
 type DoormanContextReturnValueArgs = {
   stakingCtxState: NullableDoormanContextStateType
   changeStakingSubscriptionsList: DoormanContext['changeStakingSubscriptionsList']
+  updateStakeHistoryData: DoormanContext['updateStakeHistoryData']
+  handleSubError: DoormanContext['handleSubError']
   activeSubs: DoormanSubsRecordType
 }
 
@@ -17,11 +19,16 @@ export const getDoormanProviderReturnValue = ({
   stakingCtxState,
   changeStakingSubscriptionsList,
   activeSubs,
+  updateStakeHistoryData,
+  handleSubError,
 }: DoormanContextReturnValueArgs) => {
   const { totalStakedMvk, totalSupply, maximumTotalSupply, mvkHistoryData, smvkHistoryData } = stakingCtxState
 
   const commonToReturn = {
     changeStakingSubscriptionsList,
+    updateStakeHistoryData,
+    handleSubError,
+    activeSubs,
   }
 
   const isDappMvkSmvkDataEmpty = totalSupply === null || maximumTotalSupply === null || totalStakedMvk === null

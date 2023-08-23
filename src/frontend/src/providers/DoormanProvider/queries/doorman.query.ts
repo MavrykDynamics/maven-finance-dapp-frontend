@@ -2,8 +2,8 @@ import { gql } from 'utils/__generated__/gql'
 
 // TODO: add pagination by period
 export const SMVK_MVK_HISTORY_DATA = gql(`
-  query smvkMvkHistoryData {
-    smvk_history_data(distinct_on: timestamp) {
+  query smvkMvkHistoryData($periodTimestamp: timestamptz = "1970-01-01T00:00:00.000Z") {
+    smvk_history_data(distinct_on: timestamp, where: {timestamp: {_gte: $periodTimestamp}}) {
       mvk_total_supply
       smvk_total_supply
       timestamp

@@ -1,4 +1,5 @@
 import { DoormanContextStateType, NullableDoormanContextStateType } from '../doorman.provider.types'
+import { ALL_TIME, ONE_HOUR, ONE_MONTH, ONE_WEEK, TWENTY_FOUR_HOURS } from 'consts/charts.const'
 
 // CONSTS FOR STAKE ACTIONS
 export const STAKE_ACTION = 'stake'
@@ -25,6 +26,18 @@ export const EMPTY_DOORMAN_CTX: DoormanContextStateType = {
   totalStakedMvk: 0,
   totalSupply: 0,
   maximumTotalSupply: 0,
-  mvkHistoryData: [],
-  smvkHistoryData: [],
+  mvkHistoryData: {
+    [ONE_HOUR]: [],
+    [TWENTY_FOUR_HOURS]: [],
+    [ONE_WEEK]: [],
+    [ONE_MONTH]: [],
+    [ALL_TIME]: [],
+  },
+  smvkHistoryData: {
+    [ONE_HOUR]: [],
+    [TWENTY_FOUR_HOURS]: [],
+    [ONE_WEEK]: [],
+    [ONE_MONTH]: [],
+    [ALL_TIME]: [],
+  },
 }
