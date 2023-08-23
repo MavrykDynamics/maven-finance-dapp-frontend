@@ -122,8 +122,8 @@ export const SatellitesTab = () => {
         </SatellitesContentStyled>
       ) : (
         <EmptyContainer>
-          <img src="/images/not-found.svg" alt=" No active satellites to show" />
-          <figcaption> No active satellites to show</figcaption>
+          <img src="/images/not-found.svg" alt=" No active satellites data to show" />
+          <figcaption> No active satellites data to show</figcaption>
         </EmptyContainer>
       )}
 

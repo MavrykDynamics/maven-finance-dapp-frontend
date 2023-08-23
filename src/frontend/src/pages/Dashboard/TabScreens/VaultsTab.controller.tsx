@@ -1,19 +1,16 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 
-/// utils
-import { convertNumberForClient } from 'utils/calcFunctions'
+// utils
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { reduceVaultsAssets } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'
 
 // consts
-import { VAULTS_DATA, VAULTS_ALL, DEFAULT_VAULTS_ACTIVE_SUBS } from 'providers/VaultsProvider/vaults.provider.consts'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { VaultsDashboardDataType } from 'providers/VaultsProvider/vaults.provider.types'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -33,35 +30,25 @@ import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { StatBlock, BlockName } from '../Dashboard.style'
 import { EmptyContainer, TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 // TODO: query to group collaterals, will reduce amount of loading data for 90%
-export const VaultsTab = () => {
+export const VaultsTab = ({
+  isVaultsDashboardDataLoading,
+  vaultsDashboardData,
+}: {
+  isVaultsDashboardDataLoading: boolean
+  vaultsDashboardData: VaultsDashboardDataType
+}) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { allVaultsIds, vaultsMapper, changeVaultsSubscriptionsList, isLoading: isVaultsLoading } = useVaultsContext()
-
-  useEffect(() => {
-    changeVaultsSubscriptionsList({
-      [VAULTS_DATA]: VAULTS_ALL,
-    })
-
-    return () => {
-      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
-    }
-  }, [])
+  const { totalCollateralRatio, averageCollateralRatio, vaultTvl, reducedVaultsCollaterals } = vaultsDashboardData
 
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
 
-  const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio, chartData } = useMemo(() => {
-    const { assetsBalances, globalVaultTVL, ...restVaultsStats } = reduceVaultsAssets(
-      allVaultsIds,
-      vaultsMapper,
-      tokensMetadata,
-      tokensPrices,
-    )
-    const chartData = getPieChartData(assetsBalances, globalVaultTVL, hoveredPath, tokensMetadata, tokensPrices)
-
-    return { assetsBalances, globalVaultTVL, chartData, ...restVaultsStats }
-  }, [allVaultsIds, hoveredPath, tokensMetadata, tokensPrices, vaultsMapper])
+  const chartData = useMemo(
+    () => getPieChartData(reducedVaultsCollaterals, vaultTvl, hoveredPath, tokensMetadata, tokensPrices),
+    [hoveredPath, reducedVaultsCollaterals, tokensMetadata, tokensPrices, vaultTvl],
+  )
 
   return (
     <TabWrapperStyled className="vaults">
@@ -71,30 +58,30 @@ export const VaultsTab = () => {
           <Button text="Vaults" icon="vaults" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
         </Link>
       </div>
-      {isVaultsLoading ? (
+      {isVaultsDashboardDataLoading ? (
         <DataLoaderWrapper className="tabLoader">
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>
-      ) : assetsBalances.length ? (
+      ) : reducedVaultsCollaterals.length ? (
         <VaultsContentStyled>
           <div className="top">
             <StatBlock>
               <div className="name">Active Vaults</div>
               <div className="value">
-                <CommaNumber value={allVaultsIds.length} />
+                <CommaNumber value={0} />
               </div>
             </StatBlock>
             <StatBlock>
               <div className="name">Collateral Ratio</div>
               <div className="value">
-                <CommaNumber endingText="%" value={collateralRatio} />
+                <CommaNumber endingText="%" value={totalCollateralRatio} />
               </div>
             </StatBlock>
             <StatBlock>
               <div className="name">Avg. Collateral Ratio</div>
               <div className="value">
-                <CommaNumber endingText="%" value={avgCollateralRatio} />
+                <CommaNumber endingText="%" value={averageCollateralRatio} />
               </div>
             </StatBlock>
           </div>
@@ -114,7 +101,7 @@ export const VaultsTab = () => {
                   </TableHeader>
 
                   <TableBody className="treasury">
-                    {assetsBalances.map(({ balance, tokenAddress }) => {
+                    {reducedVaultsCollaterals.map(({ tokenAddress, balance }) => {
                       const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
                       if (!token || !token.rate) return null
 
@@ -129,14 +116,14 @@ export const VaultsTab = () => {
                             <CommaNumber
                               value={convertedBalance}
                               decimalsToShow={Number(decimals)}
-                              useAccurateParsing={balance < 1}
+                              useAccurateParsing={convertedBalance < 1}
                             />
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
                             <CommaNumber
                               value={convertedBalance * rate}
                               beginningText={rate ? '$' : symbol}
-                              useAccurateParsing={balance < 1}
+                              useAccurateParsing={convertedBalance < 1}
                             />
                           </TableCell>
                         </TableRow>
@@ -149,7 +136,7 @@ export const VaultsTab = () => {
               <div className="summary">
                 <div className="name">Vault TVL</div>
                 <div className="value">
-                  <CommaNumber beginningText="$" value={globalVaultTVL} />
+                  <CommaNumber beginningText="$" value={vaultTvl} />
                 </div>
               </div>
             </div>
@@ -157,7 +144,7 @@ export const VaultsTab = () => {
               <PieChartView chartData={chartData} />
 
               <div className="asset-lables scroll-block">
-                {assetsBalances.map(({ tokenAddress }) => {
+                {reducedVaultsCollaterals.map(({ tokenAddress }) => {
                   const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
                   if (!token || !token.rate) return null
 
@@ -202,3 +189,86 @@ export const VaultsTab = () => {
     </TabWrapperStyled>
   )
 }
+
+// export const reduceVaultsAssets = (
+//   vaultIds: string[],
+//   vaultsMapper: Record<string, VaultType>,
+//   tokensMetadata: TokensContext['tokensMetadata'],
+//   tokensPrices: TokensContext['tokensPrices'],
+// ) => {
+// let vaultWithBalances = 0
+// let totalBorrowedAmounts = 0
+// let totalCollateralBalances = 0
+// let colorIdx = 0
+
+// const { assets, globalVaultTVL } = vaultIds.reduce<{
+//   globalVaultTVL: number
+//   collateralRatio: number
+//   avgCollateralRatio: number
+//   assets: Record<string, VaultAssetData>
+// }>(
+//   (acc, vaultId) => {
+//     const { assets } = acc
+//     const { collateralData, borrowedAmount, borrowedTokenAddress } = vaultsMapper[vaultId]
+
+//     const token = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
+//     if (!token || !token.rate) return acc
+//     const { decimals: borrowedTokenDecimals, rate: borrowedTokenRate } = token
+
+//     const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
+
+//     totalBorrowedAmounts +=
+//       convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals }) * borrowedTokenRate
+//     totalCollateralBalances += collateralBalance
+
+//     if (borrowedAmount && collateralBalance) {
+//       vaultWithBalances++
+//     }
+
+//     collateralData.forEach(({ amount, tokenAddress }) => {
+//       const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+//       if (!token || !token.rate) return
+//       const { decimals: collateralDecimals, rate: collateralRate } = token
+
+//       const convertedAmount = convertNumberForClient({ number: amount, grade: collateralDecimals })
+
+//       acc.globalVaultTVL += convertedAmount * collateralRate
+
+//       if (assets[tokenAddress]) {
+//         assets[tokenAddress].balance += amount
+//       } else {
+//         assets[tokenAddress] = {
+//           balance: amount,
+//           chartColor: getAssetColor(colorIdx),
+//           tokenAddress,
+//         }
+//         colorIdx++
+//       }
+//     })
+
+//     return acc
+//   },
+//   {
+//     assets: {},
+//     globalVaultTVL: 0,
+//     collateralRatio: 0,
+//     avgCollateralRatio: 0,
+//   },
+// )
+
+// const collateralRatio = (totalCollateralBalances / totalBorrowedAmounts) * 100
+
+// return {
+//   assetsBalances: Object.values(assets),
+//   globalVaultTVL,
+//   collateralRatio,
+//   avgCollateralRatio: collateralRatio / vaultWithBalances,
+// }
+
+//   return {
+//     assetsBalances: [],
+//     globalVaultTVL: 0,
+//     collateralRatio: 0,
+//     avgCollateralRatio: 0,
+//   }
+// }

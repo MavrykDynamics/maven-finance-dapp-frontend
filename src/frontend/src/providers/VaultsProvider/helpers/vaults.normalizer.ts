@@ -75,7 +75,7 @@ export const normalizeVaults = ({
     liquidation_delay_in_minutes,
   } = controller
 
-  return vaults.reduce<VaultsCtxState>(
+  return vaults.reduce<Omit<VaultsCtxState, 'vaultsDashboardData'>>(
     (acc, item) => {
       const {
         vault,

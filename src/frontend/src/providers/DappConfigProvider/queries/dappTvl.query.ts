@@ -6,6 +6,7 @@ export const GET_DAPP_TVL = gql(`
 			smvk_balance
 			mvk_balance
 		}
+
 		lending_controller(where: {mock_time: {_eq: false}}) {
 			vaultsLvl: collateral_tokens {
 				token {
@@ -28,6 +29,7 @@ export const GET_DAPP_TVL = gql(`
 				}
 			}
 		}
+		
 		treasuryTvl: treasury_balance {
 			balance
 			token {

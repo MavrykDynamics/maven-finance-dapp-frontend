@@ -57,7 +57,7 @@ export const AppRoutes = () => {
       </Route>
 
       {/* DASHBOARD */}
-      <Route exact path="/">
+      <Route exact path="/:tabId?">
         <Dashboard />
       </Route>
       <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">

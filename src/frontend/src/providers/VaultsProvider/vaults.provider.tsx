@@ -9,7 +9,12 @@ import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
 import { GetUserVaultsQueryQuery } from 'utils/__generated__/graphql'
-import { VaultsContext, NullableVaultsCtxState, VaultsSubsRecordType } from './vaults.provider.types'
+import {
+  VaultsContext,
+  NullableVaultsCtxState,
+  VaultsSubsRecordType,
+  VaultsDashboardDataType,
+} from './vaults.provider.types'
 
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
@@ -103,6 +108,13 @@ export const VaultsProvider = ({ children }: Props) => {
     }))
   }
 
+  const setVaultsDashboardData = (newVaultsDashboardData: VaultsDashboardDataType) => {
+    setVaultsCtxState((prev) => ({
+      ...prev,
+      vaultsDashboardData: newVaultsDashboardData,
+    }))
+  }
+
   const changeVaultsSubscriptionsList = (newSkips: Partial<VaultsSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }
@@ -113,6 +125,7 @@ export const VaultsProvider = ({ children }: Props) => {
         vaultsCtxState,
         activeSubs,
         changeVaultsSubscriptionsList,
+        setVaultsDashboardData,
         userAddress,
       }),
     [vaultsCtxState, activeSubs],

@@ -18,6 +18,12 @@ export const EMPTY_VAULTS_CONTEXT: VaultsCtxState = {
   myVaultsIds: [],
   allVaultsIds: [],
   permissionedVaultsIds: [],
+  vaultsDashboardData: {
+    reducedVaultsCollaterals: [],
+    totalCollateralRatio: 0,
+    averageCollateralRatio: 0,
+    vaultTvl: 0,
+  },
 }
 
 export const DEFAULT_VAULTS_CONTEXT: NullableVaultsCtxState = {
@@ -25,4 +31,5 @@ export const DEFAULT_VAULTS_CONTEXT: NullableVaultsCtxState = {
   myVaultsIds: null,
   allVaultsIds: null,
   permissionedVaultsIds: null,
+  vaultsDashboardData: null,
 }

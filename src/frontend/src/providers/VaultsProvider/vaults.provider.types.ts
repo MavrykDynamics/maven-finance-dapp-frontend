@@ -31,7 +31,19 @@ export type VaultsActionsType =
 // context types
 export type VaultsContext = VaultsCtxState & {
   changeVaultsSubscriptionsList: (skips: Partial<VaultsSubsRecordType>) => void
+  setVaultsDashboardData: (newDashboardData: VaultsDashboardDataType) => void
   isLoading: boolean
+}
+
+export type VaultsDashboardDataType = {
+  reducedVaultsCollaterals: Array<{
+    balance: number
+    chartColor: string
+    tokenAddress: TokenAddressType
+  }>
+  totalCollateralRatio: number
+  vaultTvl: number
+  averageCollateralRatio: number
 }
 
 export type VaultsCtxState = {
@@ -39,6 +51,7 @@ export type VaultsCtxState = {
   permissionedVaultsIds: string[]
   myVaultsIds: string[]
   allVaultsIds: string[]
+  vaultsDashboardData: null | VaultsDashboardDataType
 }
 
 export type NullableVaultsCtxState = DeepNullable<VaultsCtxState>
