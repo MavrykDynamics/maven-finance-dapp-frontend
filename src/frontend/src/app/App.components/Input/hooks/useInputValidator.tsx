@@ -39,8 +39,8 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
   allowInputAfterError,
 }: InputValidatorProps<G>) {
   const { bug } = useToasterContext()
-  const [errorMsg, setErrorMsg] = useState<string | null>('')
-  const [toastErrMsg, setToastErrMsg] = useState<string | null>('')
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [toastErrMsg, setToastErrMsg] = useState<string | null>(null)
 
   const internalValidationFn = useCallback(
     (value: string) => {
