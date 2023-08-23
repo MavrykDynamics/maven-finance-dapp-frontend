@@ -24,8 +24,6 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
-import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import { useMemo } from 'react'
 
 export const emptyContainer = (
   <EmptyContainer>

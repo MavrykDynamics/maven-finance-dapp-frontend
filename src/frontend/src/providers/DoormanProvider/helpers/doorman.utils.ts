@@ -56,8 +56,7 @@ export const getDoormanProviderReturnValue = ({
     stakingCtxState,
     EMPTY_DOORMAN_CTX,
   )
-  console.log(stakingCtxState, 'stakingCtxState')
-  console.log(nonNullableProviderValue, 'nonNullableProviderValue')
+
   return {
     ...commonToReturn,
     ...nonNullableProviderValue,

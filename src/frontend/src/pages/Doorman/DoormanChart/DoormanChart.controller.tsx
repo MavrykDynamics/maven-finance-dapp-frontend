@@ -84,7 +84,6 @@ export function DoormanChart() {
 
   const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
   const { smvkHistoryData, mvkHistoryData, isLoading: isChartsDataLoading } = useDoormanHistory(chartPeriod)
-
   // --------------------------------------------------------
 
   const currentExitFee = calcExitFee(totalSupply, totalStakedMvk)
@@ -207,7 +206,8 @@ export function DoormanChart() {
                 height: 370,
               }}
               tooltipAsset={'sMVK'}
-              numberOfItemsToDisplay={10}
+              // TODO EXTRACT TO const
+              numberOfItemsToDisplay={smvkHistoryData.length < 10 ? smvkHistoryData.length : 10}
             />
           </>
         ) : null}

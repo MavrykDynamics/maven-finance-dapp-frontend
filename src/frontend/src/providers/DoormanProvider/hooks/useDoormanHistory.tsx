@@ -60,7 +60,6 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
       skip: !activeSubs[MVK_SMVK_HISTORY_SUB],
       onCompleted: (data) => {
         if (!data) return
-        console.log(data, 'data')
         updateStakeHistoryData(data, period)
       },
       variables: {
