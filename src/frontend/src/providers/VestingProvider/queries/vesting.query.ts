@@ -1,7 +1,7 @@
 import { gql } from 'utils/__generated__'
 
 export const GET_VESTING_STORAGE_QUERY = gql(`
-  query GetVestingStorage {
+  query getVestingQuery {
     vesting {
       address
       admin
@@ -18,9 +18,12 @@ export const GET_VESTING_STORAGE_QUERY = gql(`
       }
 
       vestees {
+        locked
+
         vestee {
           address
         }
+
         total_remainder
         total_allocated_amount
         claim_amount_per_month
@@ -28,6 +31,7 @@ export const GET_VESTING_STORAGE_QUERY = gql(`
         vesting_months
         next_redemption_timestamp
         last_claimed_timestamp
+        end_cliff_timestamp
       }
     }
   }
