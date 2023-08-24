@@ -2,7 +2,13 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 // const
-import { SATELLITE_ORACLE_STATUSES } from 'providers/SatellitesProvider/satellites.const'
+import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITES_DATA_SINGLE_SUB,
+  SATELLITE_DATA_SUB,
+  SATELLITE_ORACLE_STATUSES,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+} from 'providers/SatellitesProvider/satellites.const'
 import colors from 'styles/colors'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
@@ -40,8 +46,20 @@ const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards
     satelliteGovActionsAmount,
     finRequestsAmount,
     setSatelliteAddressToSubsctibe,
+    changeSatellitesSubscriptionsList,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
+
+  useEffect(() => {
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
+  }, [])
 
   useEffect(() => {
     if (userAddress) {

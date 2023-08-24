@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 // consts
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
-import { DAPP_MVK_SMVK_STATS_SUB, MVK_SMVK_HISTORY_SUB } from 'providers/DoormanProvider/helpers/doorman.consts'
+import { MVK_SMVK_HISTORY_SUB } from 'providers/DoormanProvider/helpers/doorman.consts'
 import { PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // utils

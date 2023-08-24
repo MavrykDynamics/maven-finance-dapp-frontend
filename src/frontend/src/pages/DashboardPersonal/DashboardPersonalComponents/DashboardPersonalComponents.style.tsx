@@ -262,7 +262,7 @@ export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
   }
 
   &.position-tab {
-    height: fit-content;
+    min-height: 490px;
     padding-right: 30px;
   }
 `

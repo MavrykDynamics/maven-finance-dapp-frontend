@@ -1,14 +1,24 @@
 import { useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { Redirect, Route, Switch, useParams } from 'react-router'
 
+// view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { Page } from 'styles'
+import { SatellitesTab } from './TabScreens/SatellitesTab.controller'
+import { DashboardStyled, BGPrimaryTitleStyled, StatBlock } from './Dashboard.style'
+import { FarmsTab } from './TabScreens/FarmsTab.controller'
+import { LendingTab } from './TabScreens/LendingTab.controller'
+import { OraclesTab } from './TabScreens/OraclesTab.controller'
+import { StakingTab } from './TabScreens/StakingTab.controller'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { TreasuryTab } from './TabScreens/TreasuryTab.controller'
+import { VaultsTab } from './TabScreens/VaultsTab.controller'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { Impact } from 'app/App.components/Impact/Impact'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
-// providers
-import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-
-// const & types
+// const
 import {
   mvkStatsType,
   isValidPersonalDashboardTabId,
@@ -24,23 +34,12 @@ import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 import { DEFAULT_STAKING_ACTIVE_SUBS, DAPP_MVK_SMVK_STATS_SUB } from 'providers/DoormanProvider/helpers/doorman.consts'
 
 // hooks
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
+import { useDappTvl } from 'providers/DappConfigProvider/hooks/useDappTvl'
 
 // utils
 import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { Impact } from 'app/App.components/Impact/Impact'
-import { Link } from 'react-router-dom'
-import { DashboardStyled, BGPrimaryTitleStyled, StatBlock } from './Dashboard.style'
-import { FarmsTab } from './TabScreens/FarmsTab.controller'
-import { LendingTab } from './TabScreens/LendingTab.controller'
-import { OraclesTab } from './TabScreens/OraclesTab.controller'
-import { SatellitesTab } from './TabScreens/SatellitesTab.controller'
-import { StakingTab } from './TabScreens/StakingTab.controller'
-import { TreasuryTab } from './TabScreens/TreasuryTab.controller'
-import { VaultsTab } from './TabScreens/VaultsTab.controller'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { useDappTvl } from 'providers/DappConfigProvider/hooks/useDappTvl'
 
 // TODO: add farms when their data loading will be fixed and up
 export const Dashboard = () => {
@@ -66,7 +65,7 @@ export const Dashboard = () => {
       <PageHeader page={'dashboard'} />
 
       <DashboardStyled>
-        {/* TODO: use staking stats loading also */}
+        {/* TODO: use staking stats loading also, when chart data loading will not affect on isStakingLoading */}
         {/* {isTvlValueLoading || isStakingLoading ? ( */}
         {isTvlValueLoading ? (
           <DataLoaderWrapper>

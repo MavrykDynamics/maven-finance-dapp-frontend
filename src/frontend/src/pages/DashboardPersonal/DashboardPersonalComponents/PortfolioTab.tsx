@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, Redirect, Route, Switch, useParams } from 'react-router-dom'
 
+// consts
 import { CHART_TEST_DATA } from '../tabs.const'
-import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { BUTTON_NAVIGATION, BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import {
   isValidPersonalDashboardSecondaryTabId,
@@ -12,26 +13,25 @@ import {
   PORTFOLIO_TAB_ID,
 } from '../DashboardPersonal.utils'
 
+// view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Chart } from 'app/App.components/Chart/Chart'
 import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { LoansTxTab } from './LoansTxTab'
+import { LendBorrowPosition } from './LendBorrowPosition'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { PortfolioChartStyled, PortfolioWalletStyled } from './DashboardPersonalComponents.style'
 import Button from 'app/App.components/Button/NewButton'
 
-import { PortfolioChartStyled, PortfolioWalletStyled } from './DashboardPersonalComponents.style'
-import { LendBorrowPosition } from './LendBorrowPosition'
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+// hooks
 import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 type PortfolioTabProps = {
   xtzAmount: number
   sMVKAmount: number
   MVKAmount: number
   mostSuppliedUserToken?: { amount: number; name: string }
-  isUserLoansLoading: boolean
 }
 
 const TOGGLE_VALUES: TabItem[] = [
@@ -42,37 +42,25 @@ const TOGGLE_VALUES: TabItem[] = [
   { id: 6, text: 'All', active: false },
 ]
 
-const PortfolioTab = ({
-  xtzAmount,
-  mostSuppliedUserToken,
-  sMVKAmount,
-  MVKAmount,
-  isUserLoansLoading,
-}: PortfolioTabProps) => {
+const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount }: PortfolioTabProps) => {
   const { secondaryTabId } = useParams<{ secondaryTabId: string }>()
 
   const { availableLoansRewards, userAddress } = useUserContext()
+  const {
+    userBorrowings,
+    totalUserBorrowed,
+    totalUserLended,
+    userVaultsData,
+    userLendings,
+    isLoading: isUserLoansLoading,
+  } = useUserLoansData()
 
-  const { changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
-
-  useEffect(() => {
-    changeLoansSubscriptionsList({
-      [LOANS_MARKETS_DATA]: true,
-    })
-
-    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
-  }, [])
+  const [toggleItems, setToggleItems] = useState<TabItem[]>(TOGGLE_VALUES)
 
   const portfolioActiveTab = useMemo(
     () => (isValidPersonalDashboardSecondaryTabId(secondaryTabId) ? secondaryTabId : PORTFOLIO_LENDING_TAB_ID),
     [secondaryTabId],
   )
-
-  const { userBorrowings, totalUserBorrowed, totalUserLended, userVaultsData, userLendings, isLoading } =
-    useUserLoansData()
-
-  const [toggleItems, setToggleItems] = useState<TabItem[]>(TOGGLE_VALUES)
-  const lastSeria = CHART_TEST_DATA.at(-1)?.value ?? 0
 
   return (
     <>
@@ -180,6 +168,7 @@ const PortfolioTab = ({
             totalUserLended={totalUserLended}
             userVaultsData={userVaultsData}
             userLoansRewards={availableLoansRewards}
+            isUserLoansLoading={isUserLoansLoading}
           />
         </Route>
         <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
