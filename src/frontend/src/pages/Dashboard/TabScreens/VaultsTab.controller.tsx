@@ -36,13 +36,11 @@ export const VaultsTab = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const {
     isLoading: isVaultsTabDataLoading,
-    vaultsDashboardData: {
-      totalCollateralRatio,
-      averageCollateralRatio,
-      vaultTvl,
-      activeVaults,
-      reducedVaultsCollaterals,
-    },
+    totalCollateralRatio,
+    averageCollateralRatio,
+    vaultTvl,
+    activeVaults,
+    reducedVaultsCollaterals,
   } = useVaultsDashboardData()
 
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
@@ -191,86 +189,3 @@ export const VaultsTab = () => {
     </TabWrapperStyled>
   )
 }
-
-// export const reduceVaultsAssets = (
-//   vaultIds: string[],
-//   vaultsMapper: Record<string, VaultType>,
-//   tokensMetadata: TokensContext['tokensMetadata'],
-//   tokensPrices: TokensContext['tokensPrices'],
-// ) => {
-// let vaultWithBalances = 0
-// let totalBorrowedAmounts = 0
-// let totalCollateralBalances = 0
-// let colorIdx = 0
-
-// const { assets, globalVaultTVL } = vaultIds.reduce<{
-//   globalVaultTVL: number
-//   collateralRatio: number
-//   avgCollateralRatio: number
-//   assets: Record<string, VaultAssetData>
-// }>(
-//   (acc, vaultId) => {
-//     const { assets } = acc
-//     const { collateralData, borrowedAmount, borrowedTokenAddress } = vaultsMapper[vaultId]
-
-//     const token = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
-//     if (!token || !token.rate) return acc
-//     const { decimals: borrowedTokenDecimals, rate: borrowedTokenRate } = token
-
-//     const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
-
-//     totalBorrowedAmounts +=
-//       convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals }) * borrowedTokenRate
-//     totalCollateralBalances += collateralBalance
-
-//     if (borrowedAmount && collateralBalance) {
-//       vaultWithBalances++
-//     }
-
-//     collateralData.forEach(({ amount, tokenAddress }) => {
-//       const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
-//       if (!token || !token.rate) return
-//       const { decimals: collateralDecimals, rate: collateralRate } = token
-
-//       const convertedAmount = convertNumberForClient({ number: amount, grade: collateralDecimals })
-
-//       acc.globalVaultTVL += convertedAmount * collateralRate
-
-//       if (assets[tokenAddress]) {
-//         assets[tokenAddress].balance += amount
-//       } else {
-//         assets[tokenAddress] = {
-//           balance: amount,
-//           chartColor: getAssetColor(colorIdx),
-//           tokenAddress,
-//         }
-//         colorIdx++
-//       }
-//     })
-
-//     return acc
-//   },
-//   {
-//     assets: {},
-//     globalVaultTVL: 0,
-//     collateralRatio: 0,
-//     avgCollateralRatio: 0,
-//   },
-// )
-
-// const collateralRatio = (totalCollateralBalances / totalBorrowedAmounts) * 100
-
-// return {
-//   assetsBalances: Object.values(assets),
-//   globalVaultTVL,
-//   collateralRatio,
-//   avgCollateralRatio: collateralRatio / vaultWithBalances,
-// }
-
-//   return {
-//     assetsBalances: [],
-//     globalVaultTVL: 0,
-//     collateralRatio: 0,
-//     avgCollateralRatio: 0,
-//   }
-// }

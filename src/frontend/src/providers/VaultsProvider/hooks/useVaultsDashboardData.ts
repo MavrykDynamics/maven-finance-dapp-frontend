@@ -61,7 +61,7 @@ export const useVaultsDashboardData = () => {
 
   return {
     isLoading: vaultsDashboardData === null,
-    vaultsDashboardData: vaultsDashboardData ?? EMPTY_VAULTS_DASHBOARD_DATA,
+    ...(vaultsDashboardData ?? EMPTY_VAULTS_DASHBOARD_DATA),
   }
 }
 
