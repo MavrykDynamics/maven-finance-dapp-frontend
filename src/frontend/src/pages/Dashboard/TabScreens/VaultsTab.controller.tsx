@@ -41,7 +41,8 @@ export const VaultsTab = ({
   vaultsDashboardData: VaultsDashboardDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { totalCollateralRatio, averageCollateralRatio, vaultTvl, reducedVaultsCollaterals } = vaultsDashboardData
+  const { totalCollateralRatio, averageCollateralRatio, vaultTvl, activeVaults, reducedVaultsCollaterals } =
+    vaultsDashboardData
 
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
 
@@ -69,7 +70,7 @@ export const VaultsTab = ({
             <StatBlock>
               <div className="name">Active Vaults</div>
               <div className="value">
-                <CommaNumber value={0} />
+                <CommaNumber value={activeVaults} />
               </div>
             </StatBlock>
             <StatBlock>

@@ -20,6 +20,25 @@ export const GET_DAPP_TVL = gql(`
 					}
 				}
 			}
+
+			collateralsForActiveVaults: collateral_tokens {
+				token {
+					token_address
+				}
+				balances_aggregate(where: {lending_controller_vault: {loan_outstanding_total: {_gt: 0}}}) {
+					aggregate {
+						sum {
+							balance
+						}
+					}
+				}
+			}
+
+			activeVaults: vaults_aggregate(where: {open: {_eq: true}}) {
+				aggregate {
+					count
+				}
+			}
 			
 			marketsTvl: loan_tokens {
 				total_borrowed

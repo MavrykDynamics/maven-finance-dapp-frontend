@@ -203,7 +203,7 @@ export const getVaultCollateralBalance = (
  * collateral ratio – is the relation of the borrowed amount to collaterals amount:
  * if vault has borrowAmount 0, collateral ratio 0 if we don't have collaterals, or 250, if we have some
  */
-export const getVaultCollateralRatio = (collateralAmount: number, totalOutstanding: number) => {
+export const getVaultCollateralRatio = (collateralAmount: number, totalOutstanding: number, useMinMax = true) => {
   // means we haven't borrowed anything
   if (collateralAmount === 0) return 0
 
@@ -211,7 +211,7 @@ export const getVaultCollateralRatio = (collateralAmount: number, totalOutstandi
   if (totalOutstanding === 0) return 250
 
   const collateralRatio = (collateralAmount / totalOutstanding) * 100
-  return getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1)))
+  return useMinMax ? getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1))) : Number(collateralRatio.toFixed(1))
 }
 
 // TODO: add descr to liquidation utils while testing liquidation functionality and popup

@@ -43,6 +43,7 @@ export type VaultsDashboardDataType = {
   }>
   totalCollateralRatio: number
   vaultTvl: number
+  activeVaults: number
   averageCollateralRatio: number
 }
 

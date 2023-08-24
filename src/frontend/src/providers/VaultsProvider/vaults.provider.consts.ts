@@ -23,6 +23,7 @@ export const EMPTY_VAULTS_CONTEXT: VaultsCtxState = {
     totalCollateralRatio: 0,
     averageCollateralRatio: 0,
     vaultTvl: 0,
+    activeVaults: 0,
   },
 }
 
