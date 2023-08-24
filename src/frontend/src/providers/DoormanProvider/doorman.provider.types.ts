@@ -1,7 +1,7 @@
 import { normalizeDoormanChartsData } from './helpers/doormanCharts.normalizer'
 
 import { DAPP_MVK_SMVK_STATS_SUB, STAKE_ACTION, UNSTAKE_ACTION } from './helpers/doorman.consts'
-import { SmvkMvkHistoryDataQuery } from 'utils/__generated__/graphql'
+import { SmvkMvkHistoryDataQuery, Smvk_History_Data_AggregateQuery } from 'utils/__generated__/graphql'
 import { ApolloError } from '@apollo/client'
 import { ChartPeriodType } from 'types/charts.type'
 import { TupleKeyValueAny } from 'types/global'
@@ -17,6 +17,7 @@ export type NullableSmvkHistoryChartsType = TupleKeyValueAny<ChartPeriodType, Sm
 export type DoormanContextStateType = {
   mvkHistoryData: NullableMvkHistoryChartsType
   smvkHistoryData: NullableSmvkHistoryChartsType
+  noChartData: SmvkHistoryData['noChartData']
   totalStakedMvk: number
   totalSupply: number
   maximumTotalSupply: number
@@ -34,7 +35,11 @@ export type DoormanContext = DoormanContextStateType & {
 
   activeSubs: DoormanSubsRecordType
   changeStakingSubscriptionsList: (skips: Partial<DoormanSubsRecordType>) => void
-  updateStakeHistoryData: (historyData: SmvkMvkHistoryDataQuery, period: ChartPeriodType) => void
+  updateStakeHistoryData: (
+    aggregatorData: Smvk_History_Data_AggregateQuery | null,
+    historyData: SmvkMvkHistoryDataQuery,
+    period: ChartPeriodType,
+  ) => void
   handleSubError: (error: ApolloError, subName: string) => void
 }
 

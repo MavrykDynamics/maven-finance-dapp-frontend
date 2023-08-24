@@ -30,6 +30,7 @@ export const DEFAULT_STAKING_CTX: NullableDoormanContextStateType = {
   maximumTotalSupply: null,
   mvkHistoryData: DEFAULT_DOORMAN_HISTORY,
   smvkHistoryData: DEFAULT_DOORMAN_HISTORY,
+  noChartData: false,
 }
 export const EMPTY_DOORMAN_CTX: DoormanContextStateType = {
   totalStakedMvk: 0,
@@ -37,4 +38,5 @@ export const EMPTY_DOORMAN_CTX: DoormanContextStateType = {
   maximumTotalSupply: 0,
   mvkHistoryData: DEFAULT_DOORMAN_HISTORY,
   smvkHistoryData: DEFAULT_DOORMAN_HISTORY,
+  noChartData: false,
 }

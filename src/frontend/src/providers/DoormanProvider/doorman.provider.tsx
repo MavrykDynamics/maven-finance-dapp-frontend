@@ -11,7 +11,11 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
 import { DoormanContext, NullableDoormanContextStateType, DoormanSubsRecordType } from './doorman.provider.types'
-import { SmvkMvkHistoryDataQuery, GetDappSmvkMvkStatsQuery } from 'utils/__generated__/graphql'
+import {
+  SmvkMvkHistoryDataQuery,
+  GetDappSmvkMvkStatsQuery,
+  Smvk_History_Data_AggregateQuery,
+} from 'utils/__generated__/graphql'
 
 // consts
 import { MVK_DECIMALS } from 'utils/constants'
@@ -61,8 +65,16 @@ const DoormanProvider = ({ children }: Props) => {
   })
 
   // methods to update context data
-  const updateStakeHistoryData = ({ smvk_history_data }: SmvkMvkHistoryDataQuery, period: ChartPeriodType) => {
-    const { smvkHistoryData, mvkHistoryData } = normalizeDoormanChartsData({ smvk_history_data })
+  const updateStakeHistoryData = (
+    aggregatorData: Smvk_History_Data_AggregateQuery | null,
+    { smvk_history_data }: SmvkMvkHistoryDataQuery,
+    period: ChartPeriodType,
+  ) => {
+    const { smvkHistoryData, mvkHistoryData, noChartData } = normalizeDoormanChartsData(
+      aggregatorData,
+      { smvk_history_data },
+      period,
+    )
 
     setStakingCtxState((prevState) => ({
       ...prevState,
@@ -74,6 +86,7 @@ const DoormanProvider = ({ children }: Props) => {
         prevState.mvkHistoryData === null
           ? { ...DEFAULT_DOORMAN_HISTORY }
           : { ...prevState.mvkHistoryData, [period]: mvkHistoryData },
+      noChartData,
     }))
   }
 
