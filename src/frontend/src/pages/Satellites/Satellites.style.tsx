@@ -36,12 +36,11 @@ export const SatelliteListStyled = styled.div`
 `
 
 export const SatelliteSearchFilter = styled(Card)<{ theme: MavrykTheme; oracle?: boolean; dataFeeds?: boolean }>`
-  background-color: ${({ theme }) => theme.containerColor};
   display: flex;
   align-items: center;
   padding: 16px 26px;
   margin-top: 0;
-  color: ${({ theme }) => theme.subTextColor};
+  color: ${({ theme }) => theme.regularText};
 
   input {
     width: 320px;

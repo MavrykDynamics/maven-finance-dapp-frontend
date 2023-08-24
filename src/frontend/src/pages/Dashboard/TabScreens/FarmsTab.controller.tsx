@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 import { State } from 'reducers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
+import { SECONDARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { calculateAPY } from 'pages/Farms/Farms.helpers'
 
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -51,7 +51,7 @@ export const FarmsTab = ({ isLoading }: { isLoading: boolean }) => {
                   <div className="top">
                     <div className="name">
                       <div className="large">{farmCardData.name}</div>
-                      <TzAddress tzAddress={farmCardData.address} hasIcon type={CYAN} />
+                      <TzAddress tzAddress={farmCardData.address} hasIcon type={SECONDARY_TZ_ADDRESS_COLOR} />
                     </div>
 
                     <CoinsIcons

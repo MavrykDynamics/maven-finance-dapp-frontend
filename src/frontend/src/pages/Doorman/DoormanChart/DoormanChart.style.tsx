@@ -5,12 +5,7 @@ import { Card } from 'styles'
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-
-  .switcher {
-    margin-top: 30px;
-    width: fit-content;
-    column-gap: 20px;
-  }
+  margin-top: 30px;
 `
 
 export const DoormanExitFeeCurrentValues = styled.div<{ theme: MavrykTheme }>`
@@ -34,13 +29,13 @@ export const DoormanExitFeeCurrentValues = styled.div<{ theme: MavrykTheme }>`
     .name {
       font-weight: 600;
       font-size: 12px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.subHeadingText};
     }
 
     .value {
       font-weight: 600;
       font-size: 12px;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
     }
   }
 `
@@ -65,7 +60,7 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
   }
 
   > div {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
     font-weight: 500;
     font-size: 12px;
   }
@@ -95,17 +90,18 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
       align-items: center;
       column-gap: 7px;
       font-size: 12px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.subHeadingText};
 
       &.mvk {
         .circle {
-          background: ${({ theme }) => theme.dataColor};
+          background: ${({ theme }) => theme.primaryChartColor};
         }
       }
 
       &.smvk {
         .circle {
-          background: ${({ theme }) => theme.valueColor};
+          // constant color for all theme
+          background: #86d4c9;
         }
       }
     }

@@ -294,6 +294,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
         href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle"
         target="_blank"
         rel="noreferrer"
+        className="info-link"
       >
         <CustomTooltip iconId="question" />
       </a>

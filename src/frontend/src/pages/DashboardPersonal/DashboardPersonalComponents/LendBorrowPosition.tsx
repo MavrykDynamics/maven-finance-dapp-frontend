@@ -141,7 +141,7 @@ export const LendBorrowPosition = ({
             text="Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral will be liquidated.
                       Risk value = Total Borrow/Borrow Limit*100 
                       Net APY = [Σ(Value of Supplied Assets*Supply APY) - Σ(Value of Borrowed Assets*Borrow APY)] / Value of Supplied Assets"
-            defaultStrokeColor={colors[themeSelected].textColor}
+            defaultStrokeColor={colors[themeSelected].regularText}
             className="tooltip"
           />
           <GaugeChart

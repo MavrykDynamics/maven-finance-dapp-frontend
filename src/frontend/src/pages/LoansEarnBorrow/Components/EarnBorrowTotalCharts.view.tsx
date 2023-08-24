@@ -1,18 +1,22 @@
+import { useMemo } from 'react'
+import classNames from 'classnames'
+
 // styles
 import { MarketChartsContainer } from 'pages/Loans/Loans.style'
+import colors from 'styles/colors'
 
 // helpers
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Chart } from 'app/App.components/Chart/Chart'
-import { CHART_COLORS, CHART_SETTINGS, numberOfItemsToDisplay } from '../LoansEarnBorrow.consts'
+import { CHART_SETTINGS, numberOfItemsToDisplay } from '../LoansEarnBorrow.consts'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from 'pages/Loans/Loans.helpers'
 
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useLoansEarnBorrowContext } from '../context/loansEarnBorrowContext'
-import classNames from 'classnames'
 
 type Props = {
   // left chart
@@ -35,6 +39,19 @@ export const EarnBorrowTotalCharts = ({
   rightChartTitle,
   rightTotalAmount,
 }: Props) => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
+  const CHART_COLORS = useMemo(
+    () => ({
+      lineColor: colors[themeSelected].primaryChartColor,
+      areaTopColor: colors[themeSelected].primaryChartColor,
+      areaBottomColor: colors[themeSelected].primaryChartBottomColor,
+      textColor: colors[themeSelected].regularText,
+    }),
+    [themeSelected],
+  )
   const { isChartsLoading } = useLoansEarnBorrowContext()
 
   const leftPart = (

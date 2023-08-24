@@ -26,7 +26,6 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // styles
-import { silverColor } from 'styles'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -45,6 +44,7 @@ import {
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import colors from 'styles/colors'
 
 // providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -71,6 +71,7 @@ export const AddCollateral = ({
   data: AddCollateralPopupDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const { userTokensBalances, userAddress } = useUserContext()
   const {
     contractAddresses: { lendingControllerAddress },
@@ -283,10 +284,17 @@ const AddCollateralTableStats = ({
   borrowCapacity: number
   validationStatus: InputStatusType
 }) => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
   return (
     <MemoizedComponent returnMemoizedComponent={validationStatus === INPUT_STATUS_ERROR}>
       <VaultModalOverview>
-        <ThreeLevelListItem className="collateral-diagram" customColor={getCollateralRationPersent(collateralRatio)}>
+        <ThreeLevelListItem
+          className="collateral-diagram"
+          customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
+        >
           <div className={`percentage`}>
             Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
           </div>
@@ -306,7 +314,7 @@ const AddCollateralTableStats = ({
             <CustomTooltip
               text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
               iconId="info"
-              defaultStrokeColor={silverColor}
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
             />
           </div>
           <CommaNumber value={borrowCapacity} className="value" beginningText="$" />

@@ -32,10 +32,10 @@ import { ADD_COLLATERAL_SCREEN_ID, BORROW_SCREEN_ID } from '../helpers/createNew
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 
 // styles
-import { silverColor } from 'styles'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { ConfirmStatsVaultOverview } from '../createNewVault.style'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
+import colors from 'styles/colors'
 
 // components
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
@@ -45,6 +45,9 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 export const ConfirmStats = () => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const { bug } = useToasterContext()
@@ -178,7 +181,7 @@ export const ConfirmStats = () => {
                 const balance = Number(amount)
 
                 return (
-                  <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
+                  <TableRow key={symbol} rowHeight={25} borderColor="primaryText" className="add-hover">
                     <TableCell width="33%">{symbol}</TableCell>
                     <TableCell width="33%">
                       <CommaNumber value={balance} decimalsToShow={Number(decimals)} useAccurateParsing={balance < 1} />
@@ -211,7 +214,7 @@ export const ConfirmStats = () => {
               Available To Borrow
               <CustomTooltip
                 iconId="info"
-                defaultStrokeColor={silverColor}
+                defaultStrokeColor={colors[themeSelected].subHeadingText}
                 text={AVALIABLE_TO_BORROW}
                 className="tooltip"
               />

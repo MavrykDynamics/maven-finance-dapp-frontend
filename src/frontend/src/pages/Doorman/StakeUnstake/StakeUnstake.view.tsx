@@ -15,7 +15,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { InputErrorMessage, InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
+import { InputErrorMessage } from 'app/App.components/Input/Input.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // helpers
@@ -334,7 +334,7 @@ export const StakeUnstakeView = ({
                 <CustomTooltip
                   text="Amount of MVK you have earned and not yet claimed. This resets every time you stake, unstake, or compound as doing one of those actions will automatically credit your staked MVK balance with any unclaimed rewards."
                   iconId="info"
-                  defaultStrokeColor={colors[themeSelected].textColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                 />
               </h3>
               <CommaNumber value={rewardsToClaim} className="amount" />
@@ -359,7 +359,7 @@ export const StakeUnstakeView = ({
               }
               iconId="info"
               className="tooltip"
-              defaultStrokeColor={colors[themeSelected].textColor}
+              defaultStrokeColor={colors[themeSelected].linksAndButtons}
             />
           </StakeUnstakeRightPart>
         </StakeUnstakeCard>
@@ -381,7 +381,7 @@ export const StakeUnstakeView = ({
             <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
             <Input
               className={`input-with-rate transparent-child-wrap`}
-              children={<InputPinnedTokenInfo>MVK</InputPinnedTokenInfo>}
+              children={'MVK'}
               inputProps={inputProps}
               settings={{
                 inputStatus: inputData.validation,

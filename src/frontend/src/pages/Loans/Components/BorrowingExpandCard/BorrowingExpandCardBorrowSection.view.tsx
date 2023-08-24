@@ -5,7 +5,6 @@ import classNames from 'classnames'
 // consts
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { BUTTON_PRIMARY, BUTTON_PULSE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { silverColor } from 'styles'
 import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault.text'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { ERR_MSG_INPUT, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
@@ -23,6 +22,7 @@ import { checkNan } from 'utils/checkNan'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // types
 import { State } from 'reducers'
@@ -41,6 +41,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { VaultOverview, StatusMessageStyled, CardSectionWrapper } from '../LoansComponents.style'
 import { MINIMUN_COLLATERAL_RATIO_PERSENT } from 'providers/VaultsProvider/helpers/vaults.const'
+import colors from 'styles/colors'
 
 type Props = {
   borrowedAssetAddress: TokenAddressType
@@ -170,20 +171,34 @@ const TableStats = ({
   futureBorrowCapacity: number
   DAOFee: number
 }) => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
   return (
     <VaultOverview>
       <div className="line">
         <ThreeLevelListItem>
           <div className="name">
             Total Amount
-            <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={TOTAL_AMOUNT} className="tooltip" />
+            <CustomTooltip
+              iconId="info"
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
+              text={TOTAL_AMOUNT}
+              className="tooltip"
+            />
           </div>
           <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">
             DAO Fee
-            <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={DAO_FEE} className="tooltip" />
+            <CustomTooltip
+              iconId="info"
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
+              text={DAO_FEE}
+              className="tooltip"
+            />
           </div>
           <CommaNumber value={inputAmount * (DAOFee / 100)} decimalsToShow={assetDecimalsToShow} className="value" />
         </ThreeLevelListItem>
@@ -204,7 +219,7 @@ const TableStats = ({
       <div className="line">
         <ThreeLevelListItem
           className="collateral-diagram right"
-          customColor={getCollateralRationPersent(futureCollateralRatio)}
+          customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
         >
           <div className={`percentage`}>
             Collateral Ratio:
@@ -222,7 +237,7 @@ const TableStats = ({
             Available To Borrow
             <CustomTooltip
               iconId="info"
-              defaultStrokeColor={silverColor}
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
               text={AVALIABLE_TO_BORROW}
               className="tooltip"
             />

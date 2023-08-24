@@ -15,12 +15,11 @@ export const BecomeSatelliteForm = styled(Card)`
     margin: 0;
     font-weight: 600;
     font-size: 22px;
-    color: ${({ theme }) => theme.textColor};
     padding-bottom: 20px;
   }
 
   .label {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
     font-weight: 700;
   }
 
@@ -37,7 +36,6 @@ export const BecomeSatelliteForm = styled(Card)`
 
   #textAreaContainer {
     margin: 42px 0;
-    color: ${({ theme }) => theme.blockNameTitleColor};
 
     textarea {
       font-size: 14px;
@@ -94,7 +92,7 @@ export const BecomeSatelliteFormBalanceCheck = styled.div<{ balanceOk: boolean; 
 export const BecomeSatelliteOracleText = styled.h3<{ theme: MavrykTheme }>`
   font-weight: 500;
   font-size: 14px;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.regularText};
   padding-bottom: 15px;
   line-height: 22px;
 
@@ -144,7 +142,7 @@ export const UnregisterSatelliteModalBase = styled.div<{ theme: MavrykTheme }>`
   }
 
   > div {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
   }
 
   .icons {
@@ -154,7 +152,7 @@ export const UnregisterSatelliteModalBase = styled.div<{ theme: MavrykTheme }>`
     margin: 10px 0;
 
     svg {
-      fill: ${({ theme }) => theme.valueColor};
+      fill: ${({ theme }) => theme.linksAndButtons};
 
       &.telegram {
         width: 22px;
@@ -171,7 +169,7 @@ export const UnregisterSatelliteModalBase = styled.div<{ theme: MavrykTheme }>`
   .card {
     margin-top: 10px;
     display: flex;
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border: 1px solid ${({ theme }) => theme.strokeColor};
     border-radius: 10px;
     padding: 18px 15px;
     column-gap: 80px;
@@ -185,14 +183,14 @@ export const UnregisterSatelliteModalBase = styled.div<{ theme: MavrykTheme }>`
       font-weight: 600;
       font-size: 14px;
       line-height: 21px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.subHeadingText};
     }
 
     .value {
       font-weight: 600;
       font-size: 22px;
       line-height: 22px;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
     }
   }
 

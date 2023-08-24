@@ -14,11 +14,11 @@ export const FooterStyled = styled.div<{ theme: MavrykTheme }>`
   font-size: 12px;
   line-height: 12px;
 
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.mainHeadingText};
 
   .powered-by {
     a {
-      color: ${({ theme }) => theme.valueColor};
+      color: ${({ theme }) => theme.linksAndButtons};
     }
   }
 
@@ -30,7 +30,7 @@ export const FooterStyled = styled.div<{ theme: MavrykTheme }>`
     column-gap: 20px;
 
     a {
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.mainHeadingText};
     }
   }
 `

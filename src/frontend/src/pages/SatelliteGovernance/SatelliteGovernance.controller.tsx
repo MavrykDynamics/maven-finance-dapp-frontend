@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { Page } from 'styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
@@ -24,6 +24,7 @@ import {
 import { EmptyContainer } from '../../app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { H2SimpleTitle } from 'styles/generalStyledComponents/Titles.style'
+import colors from 'styles/colors'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -40,6 +41,7 @@ import {
   SATELLITE_GOVERNANCE_PATHNAME,
 } from './SatelliteGovernance.consts'
 import { TOTAL_DELEGATED_MVK } from 'texts/tooltips/satellite'
+import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -48,10 +50,12 @@ import { SatelliteGovernanceCard } from './SatelliteGovernanceCard/SatelliteGove
 import { SatelliteGovernanceForm } from './SatelliteGovernance.form'
 import { CommaNumber } from '../../app/App.components/CommaNumber/CommaNumber.controller'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
-import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+import {
+  SlidingTabButtons,
+  SlidingTabButtonType,
+} from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const getCurrentListNameById = (tabId: string) => {
@@ -84,6 +88,7 @@ export const SatelliteGovernance = () => {
 
   const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
   const {
+    preferences: { themeSelected },
     maxLengths: {
       governanceSatellite: { purposeMaxLength },
       dataFeeds: { feedNameMaxLength },
@@ -103,7 +108,7 @@ export const SatelliteGovernance = () => {
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   // TODO: add same logic as in vaults, for nulling "my actions list", when user sign out
-  const tabsList = useMemo<TabItem[]>(() => {
+  const tabsList = useMemo<SlidingTabButtonType[]>(() => {
     return [
       {
         text: 'Ongoing Actions',
@@ -203,7 +208,7 @@ export const SatelliteGovernance = () => {
             <h3>Total Delegated MVK</h3>
             <div className="value">
               <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />
-              <CustomTooltip iconId="info" text={TOTAL_DELEGATED_MVK} />
+              <CustomTooltip iconId="info" text={TOTAL_DELEGATED_MVK} defaultStrokeColor={colors[themeSelected].primaryText} />
             </div>
           </SatelliteGovernanceStatsInfo>
           <SatelliteGovernanceStatsInfo>
@@ -243,7 +248,7 @@ export const SatelliteGovernance = () => {
           </DataLoaderWrapper>
         ) : (
           <SatelliteGovernanceMenuCards>
-            <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="primary-switcher" />
+            <SlidingTabButtons kind={SECONDARY_SLIDING_TAB_BUTTONS} tabItems={tabsList} onClick={handleChangeTabs} />
 
             <div>
               {paginatedItemsList.length

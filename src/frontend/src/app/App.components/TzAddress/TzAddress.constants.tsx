@@ -1,12 +1,3 @@
-export const PRIMARY = 'primary'
-export const SECONDARY = 'secondary'
-export const TRANSPARENT = 'transparent'
-export const BLUE = 'blue'
-export const CYAN = 'cyan'
-export type TzAddressStyles =
-  | typeof PRIMARY
-  | typeof SECONDARY
-  | typeof CYAN
-  | typeof TRANSPARENT
-  | typeof BLUE
-  | undefined
+export const PRIMARY_TZ_ADDRESS_COLOR = 'PRIMARY_TZ_ADDRESS_COLOR'
+export const SECONDARY_TZ_ADDRESS_COLOR = 'SECONDARY_TZ_ADDRESS_COLOR'
+export type TzAddressStyles = typeof SECONDARY_TZ_ADDRESS_COLOR | typeof PRIMARY_TZ_ADDRESS_COLOR | undefined

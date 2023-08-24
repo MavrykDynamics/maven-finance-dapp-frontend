@@ -17,6 +17,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 import { ThreeLevelListItem } from '../../Loans.style'
 import { LoansActionsSection, BorrowingExpandedCard } from '../LoansComponents.style'
+import colors from 'styles/colors'
 
 import { scrollToFullView } from 'utils/scrollToFullView'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
@@ -31,6 +32,7 @@ import {
 import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 import { useHistory, useLocation } from 'react-router'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
@@ -81,6 +83,9 @@ export const BorrowingExpandCard = ({
 
   const history = useHistory()
   const location = useLocation()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -347,7 +352,7 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(collateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
@@ -383,7 +388,7 @@ export const BorrowingExpandCard = ({
       >
         {children || (
           <BorrowingExpandedCard>
-            {status && <StatusMessage status={status} timestamp={timerTimestamp} />}
+            {status && <StatusMessage status={status} timestamp={timerTimestamp} theme={colors[themeSelected]} />}
 
             <div className="stats-and-actions">
               <BorrowingExpandCardValuesSection

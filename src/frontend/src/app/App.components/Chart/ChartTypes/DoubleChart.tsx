@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import { createChart, BusinessDay, UTCTimestamp, SingleValueData, CandlestickData } from 'lightweight-charts'
 
-import { lightTextColor, headerColor } from 'styles'
+import styleColors from 'styles/colors'
 import { getDateEnd, getDateStart, parseDate } from 'utils/time'
 import {
   DEFAULT_LAYOUT_SETTING,
@@ -17,13 +17,24 @@ import {
 
 import { ChartStyled } from '../Chart.style'
 import DoubleChartTooltip, { DOUBLE_AMOUNT_DATE_TOOLTIP } from '../Tooltips/DoubleChartTooltip'
-
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { AREA_CHART_TYPE, CANDLESTICK_CHART_TYPE, HISTOGRAM_CHART_TYPE } from '../helpers/Chart.const'
 
 import { DoubleChartPropsType } from '../helpers/Chart.types'
 
 export const DoubleChart = ({
-  settings: {
+  settings,
+  firstChart,
+  secondChart,
+  tooltipName = DOUBLE_AMOUNT_DATE_TOOLTIP,
+  tooltipAssetFirst,
+  tooltipAssetSecond,
+}: DoubleChartPropsType) => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
+  const {
     height,
     width,
     tickDateFormatter,
@@ -34,24 +45,23 @@ export const DoubleChart = ({
     yAxisSide = 'right',
     priceMargins,
     crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
-    textColor = lightTextColor,
-    borderColor = headerColor,
+    textColor = styleColors[themeSelected].regularText,
+    borderColor = styleColors[themeSelected].strokeColor,
     firstChartSeriesMarkers,
     secondChartSeriesMarkers,
     isPeriod = false,
-  } = {},
-  firstChart: {
+  } = settings ?? {}
+
+  const {
     data: { type: firstChartType, plots: firstChartPlots },
     colors: firstChartColors,
-  },
-  secondChart: {
+  } = firstChart ?? {}
+
+  const {
     data: { type: secondChartType, plots: secondChartPlots },
     colors: secondChartColors,
-  },
-  tooltipName = DOUBLE_AMOUNT_DATE_TOOLTIP,
-  tooltipAssetFirst,
-  tooltipAssetSecond,
-}: DoubleChartPropsType) => {
+  } = secondChart ?? {}
+
   const chartContainerRef = useRef<HTMLDivElement | null>(null)
   const mainChartWrapperRef = useRef<HTMLDivElement | null>(null)
 

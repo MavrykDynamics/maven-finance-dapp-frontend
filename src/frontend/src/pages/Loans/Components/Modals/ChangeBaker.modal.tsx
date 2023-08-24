@@ -22,7 +22,7 @@ import { LoansModalBase } from './Modals.style'
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { CHANGE_BAKER_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // hooks
@@ -207,16 +207,26 @@ export const ChangeBaker = ({
             <ThreeLevelListItem>
               <div className="name">Bakery Address</div>
               {activeTab === 1 ? (
-                <TzAddress className="value" tzAddress={mavrykDynamics?.address ?? ''} type={BLUE} hasIcon={false} />
+                <TzAddress
+                  className="value"
+                  tzAddress={mavrykDynamics?.address ?? ''}
+                  type={PRIMARY_TZ_ADDRESS_COLOR}
+                  hasIcon={false}
+                />
               ) : null}
 
               {activeTab === 2 ? (
-                <TzAddress className="value" tzAddress={dao?.address ?? ''} type={BLUE} hasIcon={false} />
+                <TzAddress
+                  className="value"
+                  tzAddress={dao?.address ?? ''}
+                  type={PRIMARY_TZ_ADDRESS_COLOR}
+                  hasIcon={false}
+                />
               ) : null}
 
               {activeTab === 3 ? (
                 choosenBaker ? (
-                  <TzAddress className="value" tzAddress={choosenBaker.bakerAddress} type={BLUE} hasIcon={false} />
+                  <TzAddress className="value" tzAddress={choosenBaker.bakerAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={false} />
                 ) : (
                   <div className="value">-</div>
                 )
@@ -229,7 +239,7 @@ export const ChangeBaker = ({
                   <TzAddress
                     className="value"
                     tzAddress="tz1WHZYyDqUEj5BLjofe3jctmb9wN61KeMco"
-                    type={BLUE}
+                    type={PRIMARY_TZ_ADDRESS_COLOR}
                     hasIcon={false}
                   />
                 ) : null}
@@ -238,7 +248,7 @@ export const ChangeBaker = ({
                   <TzAddress
                     className="value"
                     tzAddress="tz1LWEHti5PD7HZEgGrog6D5fxg8Pt8WSNyy"
-                    type={BLUE}
+                    type={PRIMARY_TZ_ADDRESS_COLOR}
                     hasIcon={false}
                   />
                 ) : null}

@@ -330,7 +330,7 @@ export const Market = () => {
                     <CustomTooltip
                       iconId="info"
                       text={USER_AVAILABLE_BORROW(currentMarketAddress)}
-                      defaultStrokeColor={colors[themeSelected].textColor}
+                      defaultStrokeColor={colors[themeSelected].subHeadingText}
                       className="tooltip"
                     />
                   </div>
