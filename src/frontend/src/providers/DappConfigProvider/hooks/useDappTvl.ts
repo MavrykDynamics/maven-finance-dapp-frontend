@@ -1,21 +1,17 @@
-import { getNumberInBounds } from './../../../utils/calcFunctions'
 import { useEffect, useState } from 'react'
 
 // hooks
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from '../dappConfig.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // utils
-import { getAssetColor } from 'providers/TreasuryProvider/helpers/treasury.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // types
 import { TokensContext } from './../../TokensProvider/tokens.provider.types'
-import { VaultsDashboardDataType } from 'providers/VaultsProvider/vaults.provider.types'
 import { DashboardTvlQuery } from 'utils/__generated__/graphql'
 
 // consts
@@ -23,12 +19,10 @@ import { GET_DAPP_TVL } from '../queries/dappTvl.query'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 export const useDappTvl = () => {
   const { bug } = useToasterContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { setVaultsDashboardData, vaultsDashboardData } = useVaultsContext()
   const {
     setDappTotalValueLocked,
     dappTotalValueLocked,
@@ -60,38 +54,18 @@ export const useDappTvl = () => {
   useEffect(() => {
     if (!indexerData) return
 
-    const { tvlValue, reducedVaultsCollaterals, totalCollateralRatio, averageCollateralRatio, vaultTvl, activeVaults } =
-      reduceTvlValue({
-        indexerData,
-        tokensMetadata,
-        tokensPrices,
-      })
-
-    console.log({ reducedVaultsCollaterals })
+    const { tvlValue } = reduceTvlValue({
+      indexerData,
+      tokensMetadata,
+      tokensPrices,
+    })
 
     setDappTotalValueLocked(tvlValue)
-    setVaultsDashboardData({
-      reducedVaultsCollaterals,
-      totalCollateralRatio,
-      averageCollateralRatio,
-      vaultTvl,
-      activeVaults,
-    })
   }, [indexerData, tokensMetadata, tokensPrices])
 
-  console.log({ vaultsDashboardData })
-
   return {
-    isTvlValueLoading: dappTotalValueLocked === null,
-    isVaultsDashboardDataLoading: vaultsDashboardData === null,
-    vaultsDashboardData: vaultsDashboardData ?? {
-      reducedVaultsCollaterals: [],
-      totalCollateralRatio: 0,
-      averageCollateralRatio: 0,
-      vaultTvl: 0,
-      activeVaults: 0,
-    },
-    dappTotalValueLocked: dappTotalValueLocked ?? 0,
+    isLoading: dappTotalValueLocked === null,
+    DAPP_TVL: dappTotalValueLocked ?? 0,
   }
 }
 
@@ -118,41 +92,8 @@ const reduceTvlValue = ({
       : 0
 
   // calculating vaults tvl
-  const { vaultTvl, reducedVaultsCollaterals } = lendingControllerData.vaultsLvl.reduce<{
-    vaultTvl: number
-    reducedVaultsCollaterals: VaultsDashboardDataType['reducedVaultsCollaterals']
-  }>(
+  const vaultTvl = lendingControllerData.vaultsLvl.reduce(
     (acc, { balances_aggregate, token: { token_address } }, collateralIdx) => {
-      const collateralToken = getTokenDataByAddress({
-        tokenAddress: token_address,
-        tokensMetadata,
-        tokensPrices,
-      })
-
-      if (collateralToken && collateralToken.rate) {
-        const collateralBalance = convertNumberForClient({
-          number: Number(balances_aggregate.aggregate?.sum?.balance),
-          grade: collateralToken.decimals,
-        })
-        acc.vaultTvl += collateralBalance * collateralToken.rate
-
-        acc.reducedVaultsCollaterals.push({
-          balance: Number(balances_aggregate.aggregate?.sum?.balance),
-          tokenAddress: token_address,
-          chartColor: getAssetColor(collateralIdx),
-        })
-      }
-
-      return acc
-    },
-    {
-      vaultTvl: 0,
-      reducedVaultsCollaterals: [],
-    },
-  )
-
-  const collateralsInBorrowedVaults = lendingControllerData.collateralsForActiveVaults.reduce(
-    (acc, { balances_aggregate, token: { token_address } }) => {
       const collateralToken = getTokenDataByAddress({
         tokenAddress: token_address,
         tokensMetadata,
@@ -173,10 +114,7 @@ const reduceTvlValue = ({
   )
 
   // calculating markets tvl
-  const { borrowedTvl, lendedTvl } = lendingControllerData?.marketsTvl.reduce<{
-    borrowedTvl: number
-    lendedTvl: number
-  }>(
+  const marketsTvl = lendingControllerData?.marketsTvl.reduce(
     (acc, { total_borrowed, total_remaining, token: { token_address } }) => {
       const marketToken = getTokenDataByAddress({
         tokenAddress: token_address,
@@ -185,22 +123,17 @@ const reduceTvlValue = ({
       })
 
       if (marketToken && marketToken.rate) {
-        acc.borrowedTvl +=
-          convertNumberForClient({ number: Number(total_borrowed), grade: marketToken.decimals }) * marketToken.rate
-        acc.lendedTvl +=
-          convertNumberForClient({ number: Number(total_remaining), grade: marketToken.decimals }) * marketToken.rate
+        acc +=
+          convertNumberForClient({
+            number: Number(total_borrowed) + Number(total_remaining),
+            grade: marketToken.decimals,
+          }) * marketToken.rate
       }
 
       return acc
     },
-    {
-      borrowedTvl: 0,
-      lendedTvl: 0,
-    },
+    0,
   )
-
-  const activeVaults = lendingControllerData.activeVaults.aggregate?.count ?? 0
-  const totalCollateral = getVaultCollateralRatio(collateralsInBorrowedVaults, borrowedTvl, false)
 
   // calculating treasury tvl
   const treasuryTvl = indexerTreasuryTvl
@@ -226,11 +159,6 @@ const reduceTvlValue = ({
   // }, 0)
 
   return {
-    tvlValue: doormanTVL + vaultTvl + borrowedTvl + lendedTvl + treasuryTvl + farmsTVL,
-    reducedVaultsCollaterals,
-    totalCollateralRatio: totalCollateral,
-    activeVaults,
-    averageCollateralRatio: getNumberInBounds(0, 250, totalCollateral / activeVaults),
-    vaultTvl,
+    tvlValue: doormanTVL + vaultTvl + marketsTvl + treasuryTvl + farmsTVL,
   }
 }

@@ -49,7 +49,7 @@ export const Dashboard = () => {
   const activeTab = useMemo(() => (isValidPersonalDashboardTabId(tabId) ? tabId : LENDING_TAB_ID), [tabId])
 
   const { changeStakingSubscriptionsList, isLoading: isStakingLoading } = useDoormanContext()
-  const { dappTotalValueLocked, vaultsDashboardData, isVaultsDashboardDataLoading, isTvlValueLoading } = useDappTvl()
+  const { DAPP_TVL, isLoading: isTvlValueLoading } = useDappTvl()
 
   useEffect(() => {
     changeStakingSubscriptionsList({
@@ -78,7 +78,7 @@ export const Dashboard = () => {
             <div className="top">
               <div className="tvlBlock">
                 <BGPrimaryTitleStyled>Mavryk TVL</BGPrimaryTitleStyled>
-                <CommaNumber beginningText="$" value={dappTotalValueLocked} />
+                <CommaNumber beginningText="$" value={DAPP_TVL} />
               </div>
 
               <DashboardMvkData />
@@ -110,10 +110,7 @@ export const Dashboard = () => {
 
             <Switch>
               <Route exact path={`/${VAULTS_TAB_ID}`}>
-                <VaultsTab
-                  isVaultsDashboardDataLoading={isVaultsDashboardDataLoading}
-                  vaultsDashboardData={vaultsDashboardData}
-                />
+                <VaultsTab />
               </Route>
 
               <Route exact path={`/${STAKING_TAB_ID}`}>

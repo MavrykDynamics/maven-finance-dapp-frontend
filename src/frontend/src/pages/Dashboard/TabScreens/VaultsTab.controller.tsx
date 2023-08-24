@@ -10,7 +10,6 @@ import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartDat
 
 // consts
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { VaultsDashboardDataType } from 'providers/VaultsProvider/vaults.provider.types'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -31,18 +30,20 @@ import { StatBlock, BlockName } from '../Dashboard.style'
 import { EmptyContainer, TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { useVaultsDashboardData } from 'providers/VaultsProvider/hooks/useVaultsDashboardData'
 
-// TODO: query to group collaterals, will reduce amount of loading data for 90%
-export const VaultsTab = ({
-  isVaultsDashboardDataLoading,
-  vaultsDashboardData,
-}: {
-  isVaultsDashboardDataLoading: boolean
-  vaultsDashboardData: VaultsDashboardDataType
-}) => {
+export const VaultsTab = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { totalCollateralRatio, averageCollateralRatio, vaultTvl, activeVaults, reducedVaultsCollaterals } =
-    vaultsDashboardData
+  const {
+    isLoading: isVaultsTabDataLoading,
+    vaultsDashboardData: {
+      totalCollateralRatio,
+      averageCollateralRatio,
+      vaultTvl,
+      activeVaults,
+      reducedVaultsCollaterals,
+    },
+  } = useVaultsDashboardData()
 
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
 
@@ -59,7 +60,7 @@ export const VaultsTab = ({
           <Button text="Vaults" icon="vaults" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
         </Link>
       </div>
-      {isVaultsDashboardDataLoading ? (
+      {isVaultsTabDataLoading ? (
         <DataLoaderWrapper className="tabLoader">
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
