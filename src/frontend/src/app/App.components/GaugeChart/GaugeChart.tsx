@@ -4,7 +4,8 @@ import Backdrop from './svg/Backdrop'
 import { GaugeChartStyled, ArrowStyled, ValueWrapper } from './GaugeChart.style'
 import BackgroundArc, { GRADIENT_NAME } from './svg/BackgroundArc'
 import { getNumberInBounds } from 'utils/calcFunctions'
-import { cyanColor } from 'styles'
+import colors from 'styles/colors'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type GaugeChartProps = {
   children: React.ReactNode
@@ -50,6 +51,10 @@ export const calcArcAngle = ({
  * @todo: if need add color as a prop
  */
 export const GaugeChart = ({ children, maxValue, minValue, currentValue, isProgress }: GaugeChartProps) => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
   const arrowAngle = Math.ceil(getNumberInBounds(0, 180, calcArrowAngle({ maxValue, currentValue, minValue })))
   const progressArcAngle = Math.ceil(getNumberInBounds(0, 180, calcArcAngle({ maxValue, currentValue, minValue })))
 
@@ -58,13 +63,17 @@ export const GaugeChart = ({ children, maxValue, minValue, currentValue, isProgr
       <BackgroundArc
         className={`colored-arc`}
         offset={isProgress ? progressArcAngle : 0}
-        paint={isProgress ? cyanColor : `url(#${GRADIENT_NAME})`}
+        paint={isProgress ? colors[themeSelected].gaugeChartArcColor : `url(#${GRADIENT_NAME})`}
       />
 
-      <Backdrop className="backdrop" />
+      <Backdrop
+        className="backdrop"
+        color={colors[themeSelected].backgroundColor}
+        opacity={themeSelected === 'space' ? 0.3 : 1}
+      />
       <ValueWrapper>{children}</ValueWrapper>
       <ArrowStyled angle={arrowAngle}>
-        <Arrow />
+        <Arrow color={colors[themeSelected].regularText} />
       </ArrowStyled>
     </GaugeChartStyled>
   )

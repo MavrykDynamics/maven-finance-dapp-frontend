@@ -1,35 +1,41 @@
-import React, { useEffect, useState } from 'react'
-import { SlidingTabButtonsView } from './SlidingTabButtons.view'
+import { useEffect, useState } from 'react'
+import classNames from 'classnames'
 
-export interface TabItem {
+import { ButtonStyled, SlidingTabButtonsStyled } from './SlidingTabButtons.style'
+import { PRIMARY_SLIDING_TAB_BUTTONS, SlidingTabButtonsKindsType } from './SlidingTabButtons.conts'
+
+export interface SlidingTabButtonType {
   text: string
   id: number
   active: boolean
-  isDisabled?: boolean
+  disabled?: boolean
+  path?: string
 }
 
 type SlidingTabButtonsProps = {
-  className?: string
+  tabItems: SlidingTabButtonType[]
   onClick: (tabId: number) => void
-  tabItems: TabItem[]
+  kind?: SlidingTabButtonsKindsType
   disabled?: boolean
+  className?: string
 }
 
 export const SlidingTabButtons = ({
-  onClick,
-  className = '',
   tabItems = [],
+  onClick,
+  kind = PRIMARY_SLIDING_TAB_BUTTONS,
+  className,
   disabled = false,
 }: SlidingTabButtonsProps) => {
   // if we found active item by default set it, othervise set first item active, if it's not disabled
   const [activeTab, setActiveTab] = useState<number | undefined>(
-    tabItems.find(({ active, isDisabled }) => active && !isDisabled)?.id ?? tabItems[0]?.isDisabled
+    tabItems.find(({ active, disabled }) => active && !disabled)?.id ?? tabItems[0]?.disabled
       ? tabItems[0]?.id
       : undefined,
   )
 
   useEffect(() => {
-    const foundActiveTabId = tabItems.find(({ active, isDisabled }) => active && !isDisabled)?.id
+    const foundActiveTabId = tabItems.find(({ active, disabled }) => active && !disabled)?.id
     if (typeof foundActiveTabId === 'number') {
       setActiveTab(foundActiveTabId)
     }
@@ -42,11 +48,16 @@ export const SlidingTabButtons = ({
   }
 
   return (
-    <SlidingTabButtonsView
-      className={`${className} ${disabled && 'disabled'}`}
-      onClick={clickHandler}
-      activeTab={activeTab}
-      tabValues={tabItems}
-    />
+    <SlidingTabButtonsStyled className={classNames(className, kind, { disabled: disabled })}>
+      {tabItems.map((tabItem) => (
+        <ButtonStyled
+          key={tabItem.id}
+          onClick={() => clickHandler(tabItem.id)}
+          className={classNames(kind, { selected: activeTab === tabItem.id }, { disabled: tabItem.disabled })}
+        >
+          {tabItem.text}
+        </ButtonStyled>
+      ))}
+    </SlidingTabButtonsStyled>
   )
 }

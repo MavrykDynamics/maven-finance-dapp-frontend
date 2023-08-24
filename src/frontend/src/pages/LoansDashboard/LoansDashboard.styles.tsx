@@ -18,7 +18,7 @@ export const LoansDashboardStyled = styled.div`
     .label {
       font-weight: 600;
       font-size: 14px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.subHeadingText};
     }
 
     .value-wrap {
@@ -32,7 +32,7 @@ export const LoansDashboardStyled = styled.div`
     .value {
       font-weight: 600;
       font-size: 18px;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
       margin-top: 3px;
     }
 
@@ -56,7 +56,7 @@ export const LoansDashboardStyled = styled.div`
       }
 
       &.neutral {
-        color: ${({ theme }) => theme.dataColor};
+        color: ${({ theme }) => theme.primaryText};
         background-color: ${({ theme }) => theme.neutralBgColor};
       }
     }
@@ -70,7 +70,7 @@ export const LoansDashboardStyled = styled.div`
 `
 
 export const TotalVolumeStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
-  background-image: url('/images/lendBorrowTotalVolume.svg?v=0'), ${({ theme }) => theme.dashboardTvlGradient};
+  background-image: url('/images/lendBorrowTotalVolume.svg?v=0'), ${({ theme }) => theme.dashboardTvlBackground};
   background-size: cover;
   background-repeat: no-repeat;
 
@@ -78,7 +78,7 @@ export const TotalVolumeStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     margin-top: 25px;
     font-weight: 600;
     font-size: 32px;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
   }
 
   .details {
@@ -93,7 +93,7 @@ export const TotalVolumeStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
 `
 
 export const AccountStyledStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
-  background-image: ${({ theme }) => theme.dashboardTvlGradient};
+  background-image: ${({ theme }) => theme.dashboardTvlBackground};
   background-size: cover;
   background-repeat: no-repeat;
 

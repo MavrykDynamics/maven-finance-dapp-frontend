@@ -16,7 +16,10 @@ import {
 // view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Chart } from 'app/App.components/Chart/Chart'
-import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import {
+  SlidingTabButtons,
+  SlidingTabButtonType,
+} from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { LoansTxTab } from './LoansTxTab'
 import { LendBorrowPosition } from './LendBorrowPosition'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
@@ -34,7 +37,7 @@ type PortfolioTabProps = {
   mostSuppliedUserToken?: { amount: number; name: string }
 }
 
-const TOGGLE_VALUES: TabItem[] = [
+const TOGGLE_VALUES: SlidingTabButtonType[] = [
   { id: 1, text: '24H', active: true },
   { id: 3, text: '1W', active: false },
   { id: 4, text: '1M', active: false },
@@ -55,7 +58,7 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
     isLoading: isUserLoansLoading,
   } = useUserLoansData()
 
-  const [toggleItems, setToggleItems] = useState<TabItem[]>(TOGGLE_VALUES)
+  const [toggleItems, setToggleItems] = useState<SlidingTabButtonType[]>(TOGGLE_VALUES)
 
   const portfolioActiveTab = useMemo(
     () => (isValidPersonalDashboardSecondaryTabId(secondaryTabId) ? secondaryTabId : PORTFOLIO_LENDING_TAB_ID),

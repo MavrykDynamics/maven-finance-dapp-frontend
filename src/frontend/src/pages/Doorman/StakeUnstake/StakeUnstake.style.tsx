@@ -1,7 +1,5 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
-
-import { downColor } from '../../../styles/colors'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const StakeUnstakeStyled = styled.div`
@@ -23,8 +21,6 @@ export const StakeUnstakeCard = styled.div<{ theme: MavrykTheme }>`
 
   font-size: 14px;
   font-weight: 600;
-
-  color: ${({ theme }) => theme.subTextColor};
 `
 
 export const StakeUnstakeCards = styled(Card)<{ theme: MavrykTheme }>`
@@ -38,18 +34,16 @@ export const StakeUnstakeCards = styled(Card)<{ theme: MavrykTheme }>`
   font-size: 14px;
   font-weight: 600;
 
-  color: ${({ theme }) => theme.subTextColor};
-  background-color: ${({ theme }) => theme.containerColor};
   border-radius: 10px;
 `
 
 export const StakeUnstakeActionCard = styled(Card)<{ theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.containerColor};
   border-radius: 10px;
+
   text-align: center;
   font-size: 14px;
   font-weight: 600;
-  color: ${({ theme }) => theme.subTextColor};
+
   margin: 0;
   padding: 18px 30px;
 
@@ -68,7 +62,7 @@ export const StakeUnstakeInputColumn = styled.div`
     left: 100px;
   }
 `
-export const StakeUnstakeInputLabels = styled.div`
+export const StakeUnstakeInputLabels = styled.h3`
   display: flex;
   justify-content: space-between;
   margin-left: 70px;
@@ -81,8 +75,6 @@ export const StakeUnstakeInputLabels = styled.div`
   font-size: 14px;
   line-height: 21px;
 
-  color: ${({ theme }) => theme.textColor};
-
   .minAmount {
     font-size: 14px;
   }
@@ -92,27 +84,44 @@ export const StakeUnstakeInputWithCoin = styled.div`
   column-gap: 10px;
 
   .input-balance {
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
 
     .prefix {
-      color: ${({ theme }) => theme.headerSkyColor};
+      color: ${({ theme }) => theme.primaryText};
     }
 
     .sufix {
       margin-right: 6px;
     }
   }
+
+  .pinned-child {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+
+    min-width: max-content;
+    height: 100%;
+
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 20px;
+
+    color: ${({ theme }) => theme.placeholders};
+  }
 `
 
 export const StakeUnstakeAmount = styled.div`
   display: flex;
-  color: ${({ theme }) => theme.dataColor};
+  margin-right: 15px;
+
+  color: ${({ theme }) => theme.primaryText};
   cursor: pointer;
   margin-right: 15px;
 
   p {
     margin: 0;
-    color: ${({ theme }) => theme.navTitleColor};
+    color: ${({ theme }) => theme.linksAndButtons};
   }
 `
 
@@ -121,7 +130,7 @@ export const StakeUnstakeRate = styled(StakeUnstakeAmount)`
   cursor: auto;
 
   p {
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
   }
 `
 
@@ -129,21 +138,6 @@ export const StakeUnstakeErrorMessage = styled.div<{ inputOk: boolean; accountPk
   color: ${({ inputOk, theme }) => (inputOk ? theme.upColor : theme.downColor)};
   font-size: 12px;
   font-weight: 600;
-`
-
-export const StakeUnstakeInput = styled.input<{ theme: MavrykTheme }>`
-  width: 100%;
-  height: 100%;
-  background: ${({ theme }) => theme.placeholderColor};
-  margin: 10px 0;
-  font-size: 22px;
-  font-weight: 600;
-  border: none;
-  padding: 0 20px;
-  border-radius: 10px;
-  color: ${({ theme }) => theme.subTextColor};
-  flex: 0 0 1;
-  position: relative;
 `
 
 export const StakeUnstakeInputLabel = styled.div<{ theme: MavrykTheme }>`
@@ -173,7 +167,7 @@ export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
     font-weight: 600;
     line-height: 21px;
     margin-bottom: 2px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
   }
 
   img {
@@ -184,7 +178,7 @@ export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
 
   .amount {
     font-size: 16px;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
   }
 
   .balance-btn-group {
@@ -215,8 +209,8 @@ export const StakeLabel = styled.blockquote`
   line-height: 18px;
   text-transform: uppercase;
 
-  color: ${downColor};
-  border: 1px solid ${downColor};
+  color: ${({ theme }) => theme.downColor};
+  border: 1px solid ${({ theme }) => theme.downColor};
   border-radius: 10px;
 `
 
@@ -225,7 +219,7 @@ export const StakeDelegatedUser = styled.div`
   align-items: center;
   padding: 5px 10px;
 
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border: 1px solid ${({ theme }) => theme.divider};
   border-radius: 100px;
 
   .userImage {
@@ -233,7 +227,7 @@ export const StakeDelegatedUser = styled.div`
     height: 35px;
     margin-right: 10px;
 
-    fill: ${({ theme }) => theme.cardBorderColor};
+    fill: ${({ theme }) => theme.divider};
 
     img {
       width: inherit;
@@ -249,10 +243,10 @@ export const StakeDelegatedUser = styled.div`
     font-size: 14px;
     font-weight: 600;
     line-height: 21px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
   }
 
   span {
-    color: ${({ theme }) => theme.navTitleColor};
+    color: ${({ theme }) => theme.linksAndButtons};
   }
 `

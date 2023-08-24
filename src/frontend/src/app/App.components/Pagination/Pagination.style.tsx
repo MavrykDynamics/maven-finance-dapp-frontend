@@ -9,7 +9,7 @@ export const PaginationWrapper = styled.div<{ theme: MavrykTheme; side?: Paginat
   font-weight: 400;
   font-size: 14px;
   line-height: 21px;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.regularText};
   width: fit-content;
   margin-left: auto;
   margin-top: 20px;
@@ -32,6 +32,7 @@ export const PaginationWrapper = styled.div<{ theme: MavrykTheme; side?: Paginat
 
     input {
       padding: 7.5px 0 7.5px 20px;
+      border-color: ${({ theme }) => theme.strokeColor};
     }
   }
 `
@@ -42,7 +43,7 @@ export const PaginationArrow = styled.div<{ isRight?: boolean; isDisabled: boole
   align-items: center;
   padding: 15px 0px;
   border-radius: 10px;
-  border: 1px solid ${({ theme }) => theme.valueColor};
+  border: 1px solid ${({ theme }) => theme.linksAndButtons};
   height: 36px;
   width: 36px;
   cursor: pointer;
@@ -74,6 +75,6 @@ export const PaginationArrow = styled.div<{ isRight?: boolean; isDisabled: boole
   svg {
     height: 24px;
     width: 10px;
-    fill: ${({ theme }) => theme.valueColor};
+    fill: ${({ theme }) => theme.linksAndButtons};
   }
 `

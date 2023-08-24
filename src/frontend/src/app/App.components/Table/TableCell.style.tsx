@@ -148,7 +148,7 @@ const CELL_CONTENT_STYLES = css`
 
     &.with-icon {
       svg {
-        fill: ${({ theme }) => theme.textColor};
+        fill: ${({ theme }) => theme.regularText};
       }
     }
 
@@ -157,7 +157,7 @@ const CELL_CONTENT_STYLES = css`
       height: 24px;
       margin-right: 5px;
       svg {
-        fill: ${({ theme }) => theme.data};
+        fill: ${({ theme }) => theme.primaryText};
       }
     }
 
@@ -165,7 +165,7 @@ const CELL_CONTENT_STYLES = css`
       font-weight: 400;
       font-size: 12px;
       line-height: 14px;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
     }
   }
 `
@@ -176,7 +176,7 @@ type TableCellStyledProps = {
   contentPosition?: 'left' | 'center' | 'right'
 }
 export const TableCell = styled.td<TableCellStyledProps>`
-  color: ${({ theme }) => theme.dataColor};
+  color: ${({ theme }) => theme.primaryText};
   font-weight: 600;
   font-size: 16px;
   line-height: 20px;

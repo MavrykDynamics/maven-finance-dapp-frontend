@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro'
-import { Card, cyanColor } from 'styles'
-import { TzAddress as TzAddressBase } from 'app/App.components/TzAddress/TzAddress.view'
+import { Card } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
@@ -16,6 +15,10 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
     .treasury-checkbox {
       margin-top: 25px;
       margin-bottom: -15px;
+
+      span {
+        color: ${({ theme }) => theme.mainHeadingText};
+      }
     }
 
     .no-treasury-table-data {
@@ -31,22 +34,6 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
   .pie-chart {
     display: flex;
     align-items: center;
-  }
-
-  .treasuryTooltip-link {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-
-    .treasuryTooltip {
-      width: 12px;
-      height: 12px;
-      border-color: ${cyanColor};
-
-      svg {
-        fill: ${cyanColor};
-      }
-    }
   }
 
   header {
@@ -71,15 +58,6 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
     }
   }
 
-  var {
-    color: ${({ theme }) => theme.dataColor};
-    font-style: normal;
-    font-weight: 600;
-    font-size: 22px;
-    padding-bottom: 13px;
-    white-space: nowrap;
-  }
-
   .info-block {
     display: flex;
     align-items: center;
@@ -94,24 +72,17 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
 
     .text {
       margin-right: 30px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.mainHeadingText};
     }
 
     .tzAddressToClick {
       font-size: 16px;
       font-weight: 600;
-      svg {
-        stroke: ${({ theme }) => theme.dataColor};
-      }
     }
 
     .value {
       margin-top: 0;
-      color: ${({ theme }) => theme.dataColor};
-
-      svg {
-        stroke: ${({ theme }) => theme.dataColor};
-      }
+      color: ${({ theme }) => theme.primaryText};
     }
 
     > .text,
@@ -136,6 +107,8 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
       font-weight: 600;
       font-size: 14px;
       line-height: 21px;
+
+      color: ${({ theme }) => theme.mainHeadingText};
     }
 
     .value {
@@ -153,7 +126,6 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
   }
 
   .asset-lable {
-    background: linear-gradient(90deg, #0d61ff 0%, rgba(133, 211, 200, 0) 100%);
     padding-top: 1px;
     padding-bottom: 1px;
     border-bottom-left-radius: 6px;
@@ -165,8 +137,8 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
     font-weight: 600;
     font-size: 18px;
     line-height: 18px;
-    color: ${({ theme }) => theme.textColor};
-    background-color: ${({ theme }) => theme.containerColor};
+    color: ${({ theme }) => theme.regularText};
+    background-color: ${({ theme }) => theme.cards};
     margin: 0;
     margin-left: 8px;
     line-height: 40px;
@@ -203,7 +175,7 @@ export const TreasurySelectStyle = styled(Card)<{ isSelectedTreasury?: boolean }
     font-weight: 600;
     font-size: 22px;
     line-height: 22px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
 
     &::after {
       display: none;

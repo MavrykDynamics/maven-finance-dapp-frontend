@@ -7,6 +7,7 @@ import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // style
 import { CouncilMemberStyled } from './CouncilMember.style'
@@ -30,7 +31,7 @@ export const CouncilMemberView = (props: Props) => {
 
   const isMe = userId === userAddress
   const content = (
-    <CouncilMemberStyled className={isMe ? 'is-me' : ''}>
+    <CouncilMemberStyled>
       <div className="inner">
         <AvatarStyle>
           <img
@@ -44,7 +45,7 @@ export const CouncilMemberView = (props: Props) => {
         </AvatarStyle>
         <figcaption>
           <h4>{name}</h4>
-          {userId ? <TzAddress type="blue" tzAddress={userId} hasIcon={true} /> : null}
+          {userId ? <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} tzAddress={userId} hasIcon={true} /> : null}
         </figcaption>
       </div>
       {isMe && showUpdateInfo ? (

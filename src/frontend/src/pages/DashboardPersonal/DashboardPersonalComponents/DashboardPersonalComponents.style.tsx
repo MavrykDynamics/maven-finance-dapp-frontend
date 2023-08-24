@@ -1,12 +1,11 @@
 import styled from 'styled-components'
-import { cyanColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const SmallBlockBase = styled.div<{ theme: MavrykTheme }>`
   width: calc(50% - 10px);
   height: 235px;
-  background-color: ${({ theme }) => theme.containerColor};
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  background-color: ${({ theme }) => theme.cards};
+  border: 1px solid ${({ theme }) => theme.strokeCards};
   border-radius: 10px;
   padding: 30px;
 
@@ -17,13 +16,13 @@ export const SmallBlockBase = styled.div<{ theme: MavrykTheme }>`
   .name {
     font-weight: 600;
     font-size: 14px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
   }
 
   .value {
     font-size: 16px;
     font-weight: 600;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
   }
 `
 
@@ -47,7 +46,7 @@ export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     > span {
       font-weight: 600;
       font-size: 18px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.regularText};
     }
   }
 `
@@ -70,7 +69,7 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavrykTheme
       padding-right: 10px;
 
       &.selected {
-        background: linear-gradient(90deg, #86d4c9 0.31%, #8d86eb 99.97%);
+        background: ${({ theme }) => theme.forTabs};
       }
     }
   }
@@ -81,13 +80,14 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavrykTheme
     top: 75px;
     display: flex;
     flex-direction: column;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
+
     .mvk {
       font-weight: 600;
       font-size: 27px;
 
       .suffix {
-        color: ${({ theme }) => theme.textColor};
+        color: ${({ theme }) => theme.mainHeadingText};
       }
     }
 
@@ -119,13 +119,13 @@ export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavrykThem
     .name {
       font-weight: 600;
       font-size: 14px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.subHeadingText};
     }
 
     .value {
       font-weight: 600;
       font-size: 16px;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
       display: flex;
       column-gap: 10px;
       align-items: center;
@@ -135,7 +135,7 @@ export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavrykThem
 
 export const MyRewardsStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
   background-image: url('/images/dashboard/dashboardPersonalMyRewards.svg?v=0'),
-    ${({ theme }) => theme.dashboardTvlGradient};
+    ${({ theme }) => theme.dashboardTvlBackground};
   background-size: cover;
   background-repeat: no-repeat;
 
@@ -162,19 +162,19 @@ export const MyRewardsStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     .name {
       font-weight: 600;
       font-size: 14px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.subHeadingText};
     }
 
     .value {
       font-weight: 700;
       font-size: 25px;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
       display: flex;
       align-items: flex-end;
       .suffix {
         font-weight: 600;
         font-size: 14px;
-        color: ${({ theme }) => theme.textColor};
+        color: ${({ theme }) => theme.subHeadingText};
       }
     }
   }
@@ -359,7 +359,7 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
       word-wrap: break-word;
       font-weight: 500;
       font-size: 16px;
-      color: ${({ theme }) => theme.valueColor};
+      color: ${({ theme }) => theme.linksAndButtons};
     }
 
     &.info {
@@ -369,27 +369,13 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
         display: flex;
         flex-direction: column;
         row-gap: 5px;
-
-        svg,
-        .img-wrapper {
-          width: 16px;
-          height: 16px;
-          fill: unset;
-          stroke: ${({ theme }) => theme.dataColor};
-
-          img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
-        }
       }
 
       > svg,
       .img-wrapper {
         height: 40px;
         width: 40px;
-        fill: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
+        fill: ${({ theme }) => theme.strokeColor};
         margin-right: 10px;
 
         img {
@@ -433,7 +419,7 @@ export const DelegationStatusBlock = styled(SatelliteStatusBlock)<{ theme: Mavry
     font-weight: 600;
     font-size: 18px;
     line-height: 27px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
     margin-top: 25px;
   }
 `
@@ -455,7 +441,7 @@ export const DashboardPersonalSatellitesBottomLinks = styled.div<{ theme: Mavryk
   a {
     font-weight: 600;
     font-size: 16px;
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
   }
 
   &::before {
@@ -466,7 +452,7 @@ export const DashboardPersonalSatellitesBottomLinks = styled.div<{ theme: Mavryk
     left: 50%;
     transform: translateX(-50%);
     height: 1px;
-    background: ${({ theme }) => theme.cardBorderColor};
+    background: ${({ theme }) => theme.divider};
     cursor: default;
   }
 `

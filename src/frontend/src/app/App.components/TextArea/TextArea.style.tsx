@@ -9,7 +9,7 @@ export const TextAreaStyled = styled.div`
   .textArea-wrapper {
     border-radius: 10px;
     background-color: ${({ theme }) => theme.backgroundColor};
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border: 1px solid ${({ theme }) => theme.strokeForForms};
     padding: 10px 30px 10px 20px;
     position: relative;
     width: 100%;
@@ -19,16 +19,16 @@ export const TextAreaStyled = styled.div`
     }
 
     &:hover:not(.disabled):not(:focus-within) {
-      background-color: ${({ theme }) => theme.containerColor};
+      background-color: ${({ theme }) => theme.cards};
 
       .textarea {
-        background-color: ${({ theme }) => theme.containerColor};
+        background-color: ${({ theme }) => theme.cards};
       }
     }
 
     &:focus-within {
-      box-shadow: 0 0 0 2px ${({ theme }) => theme.primaryColor}19;
-      border-color: ${({ theme }) => theme.primaryColor}7F;
+      box-shadow: 0 0 0 2px ${({ theme }) => theme.inputFocusColor}19;
+      border-color: ${({ theme }) => theme.inputFocusColor}7F;
     }
 
     &.error {
@@ -74,7 +74,7 @@ export const TextAreaStyled = styled.div`
 
 export const TextAreaCounter = styled.div`
   margin-left: auto;
-  color: ${({ theme }) => theme.headerColor};
+  color: ${({ theme }) => theme.strokeForForms};
 
   &.error {
     color: ${({ theme }) => theme.downColor};
@@ -127,7 +127,7 @@ export const TextAreaIcon = styled.svg<{ theme: MavrykTheme }>`
   text-align: center;
   visibility: visible;
   pointer-events: none;
-  stroke: ${({ theme }) => theme.backgroundTextColor};
+  stroke: ${({ theme }) => theme.strokeForForms};
 `
 
 export const TextAreaErrorMessage = styled.div<{ theme: MavrykTheme }>`
@@ -152,7 +152,7 @@ export const TextareaStyled = styled.textarea`
   line-height: 20px;
   resize: none;
   background-color: ${({ theme }) => theme.backgroundColor};
-  color: ${({ theme }) => theme.blockNameTitleColor};
+  color: ${({ theme }) => theme.placeholders};
   border: unset;
   width: 100%;
   min-height: 85px;
@@ -167,7 +167,7 @@ export const TextareaStyled = styled.textarea`
   transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 
   &::placeholder {
-    color: ${({ theme }) => theme.blockNameTitleColor};
+    color: ${({ theme }) => theme.placeholders};
     font-weight: 400;
     font-size: 12px;
   }

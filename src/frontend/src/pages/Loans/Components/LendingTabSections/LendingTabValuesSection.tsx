@@ -7,6 +7,9 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+
+import colors from 'styles/colors'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { EARN_APY, INTEREST_EARNED, M_TOKEN_BALANCE, SUPPLIED_AMOUNT } from 'texts/tooltips/loan.text'
 
 import { LoansValuesSectionInfo, LoansValuesSection } from './../LoansComponents.style'
@@ -24,6 +27,9 @@ type Props = {
 export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY }: Props) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userTokensBalances } = useUserContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensPrices, tokensMetadata })
 
@@ -47,7 +53,11 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
 
           <div className="name">
             Supplied Amount
-            <CustomTooltip iconId="info" text={SUPPLIED_AMOUNT(symbol)} />
+            <CustomTooltip
+              iconId="info"
+              text={SUPPLIED_AMOUNT(symbol)}
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
+            />
           </div>
         </LoansValuesSectionInfo>
 
@@ -58,7 +68,11 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
 
           <div className="name">
             Interest Earned
-            <CustomTooltip iconId="info" text={INTEREST_EARNED} />
+            <CustomTooltip
+              iconId="info"
+              text={INTEREST_EARNED}
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
+            />
           </div>
         </LoansValuesSectionInfo>
 
@@ -67,7 +81,7 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
 
           <div className="name margin-top">
             Earn APY
-            <CustomTooltip iconId="info" text={EARN_APY} />
+            <CustomTooltip iconId="info" text={EARN_APY} defaultStrokeColor={colors[themeSelected].subHeadingText} />
           </div>
         </LoansValuesSectionInfo>
 
@@ -76,7 +90,11 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
 
           <div className="name margin-top">
             m{symbol} Balance
-            <CustomTooltip iconId="info" text={M_TOKEN_BALANCE(symbol)} />
+            <CustomTooltip
+              iconId="info"
+              text={M_TOKEN_BALANCE(symbol)}
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
+            />
           </div>
         </LoansValuesSectionInfo>
 

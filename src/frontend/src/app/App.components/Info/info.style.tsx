@@ -18,7 +18,7 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
 
   display: flex;
   align-items: center;
-  background-color: ${({ theme }) => theme.connectInfoColor};
+  background-color: ${({ theme }) => theme.messagesBackground};
 
   > .child {
     margin-left: auto;
@@ -29,13 +29,13 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
 
     a,
     a * {
       cursor: pointer;
       display: inline;
-      color: ${({ theme }) => theme.valueColor};
+      color: ${({ theme }) => theme.linksAndButtons};
     }
   }
 
@@ -64,7 +64,7 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   }
 
   &.hasBorder {
-    background-color: ${({ theme }) => theme.connectInfoColor};
+    background-color: ${({ theme }) => theme.messagesBackground};
     border-width: 1px;
     border-style: solid;
   }

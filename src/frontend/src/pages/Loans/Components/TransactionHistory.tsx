@@ -6,7 +6,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TRANSPARENT } from 'app/App.components/Button/Button.constants'
 import { TRANSACTION_HISTORY_TABLE_NAME, PAGINATION_SIDE_CENTER } from 'app/App.components/Pagination/pagination.consts'
 import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
@@ -135,7 +135,8 @@ export const TransactionHistory = ({
       </div>
 
       <div className="lending-controller">
-        Lending Controller Address: <TzAddress tzAddress={lendingControllerAddress} type={BLUE} isBold />
+        Lending Controller Address:{' '}
+        <TzAddress tzAddress={lendingControllerAddress} type={PRIMARY_TZ_ADDRESS_COLOR} isBold />
       </div>
     </TransactionHistoryStyled>
   )

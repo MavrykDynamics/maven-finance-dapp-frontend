@@ -113,7 +113,7 @@ export const OraclesTab = () => {
                           Last Update{' '}
                           <CustomTooltip
                             iconId="info"
-                            defaultStrokeColor={colors[themeSelected].textColor}
+                            defaultStrokeColor={colors[themeSelected].subHeadingText}
                             text="Last time the aggregator was updated with a trusted answer and written on-chain."
                           />
                         </div>

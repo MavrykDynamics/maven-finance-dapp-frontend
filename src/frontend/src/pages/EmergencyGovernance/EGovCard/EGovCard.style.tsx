@@ -1,18 +1,17 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
+import { CardHover } from 'styles'
 
-export const EGovActiveCardStyled = styled.div<{ theme: MavrykTheme }>`
+export const EGovActiveCardStyled = styled(CardHover)<{ theme: MavrykTheme }>`
   width: 100%;
   border-radius: 10px;
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
-  background: ${({ theme }) => theme.containerColor};
   margin: 30px 0;
   padding: 30px;
   display: flex;
   flex-direction: column;
 
   .voting-ends {
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
     display: flex;
     margin: 10px 0 20px 0;
     font-weight: 600;
@@ -47,7 +46,7 @@ export const EGovActiveCardStyled = styled.div<{ theme: MavrykTheme }>`
       font-weight: 500;
       font-size: 14px;
       line-height: 24px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.regularText};
     }
 
     .eGov-voting {
@@ -56,7 +55,7 @@ export const EGovActiveCardStyled = styled.div<{ theme: MavrykTheme }>`
       }
 
       button.votingFor {
-        background: ${({ theme }) => theme.valueColor};
+        background: ${({ theme }) => theme.linksAndButtons};
         width: 50%;
       }
     }

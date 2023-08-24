@@ -5,18 +5,18 @@ const HOVERABLE_TABLE_ROW_STYLES = css`
   &.add-hover {
     &:hover {
       > td {
-        color: ${({ theme }) => theme.navTitleColor};
+        color: ${({ theme }) => theme.linksAndButtons};
         * {
-          color: ${({ theme }) => theme.navTitleColor};
+          color: ${({ theme }) => theme.linksAndButtons};
 
           svg {
-            stroke: ${({ theme }) => theme.navTitleColor};
+            stroke: ${({ theme }) => theme.linksAndButtons};
           }
         }
       }
 
       &:not(:last-child) {
-        border-bottom: 0.5px solid ${({ theme }) => theme.navTitleColor};
+        border-bottom: 0.5px solid ${({ theme }) => theme.linksAndButtons};
       }
     }
   }
@@ -28,7 +28,7 @@ const EDITABLE_TABLE_ROW_STYLES = css`
     position: relative;
 
     td {
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
       vertical-align: middle;
       text-align: center;
 
@@ -70,7 +70,7 @@ export const TableRow = styled.tr<{ theme: MavrykTheme; borderColor?: string; ro
   transition: border-bottom 0.4s;
 
   &:not(:last-child) {
-    border-bottom: 0.5px solid ${({ theme, borderColor = 'cardBorderColor' }) => theme[borderColor]};
+    border-bottom: 0.5px solid ${({ theme, borderColor = 'divider' }) => theme[borderColor]};
   }
 
   &.plug-row {
@@ -83,7 +83,7 @@ export const TableRow = styled.tr<{ theme: MavrykTheme; borderColor?: string; ro
       transform: translate(-50%, -50%);
       font-weight: 600;
       font-size: 14px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.mainHeadingText};
     }
   }
 

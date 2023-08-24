@@ -34,7 +34,7 @@ export const ToasterStyled = styled.div<{
   column-gap: 15px;
   min-height: 90px;
 
-  background-color: ${({ theme }) => theme.containerColor};
+  background-color: ${({ theme }) => theme.cards};
   box-shadow: 1px 7px 14px -5px rgba(0, 0, 0, 0.2);
 
   transition: transform 1s ease-in-out;

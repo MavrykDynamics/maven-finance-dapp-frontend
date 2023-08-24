@@ -33,6 +33,7 @@ import { UserActionHistory } from './UserOperationsHistory'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
@@ -113,7 +114,7 @@ const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards
                   <div className="text">
                     <div className="name">{satelliteRecord.name}</div>
                     <div className="value">
-                      <TzAddress tzAddress={satelliteRecord.address} />
+                      <TzAddress tzAddress={satelliteRecord.address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
                     </div>
                   </div>
                 </div>
@@ -155,7 +156,7 @@ const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards
                     <CustomTooltip
                       text={TOTAL_VOTING_POWER_TOOLTIP_TEXT}
                       iconId="info"
-                      defaultStrokeColor={colors[themeSelected]['textColor']}
+                      defaultStrokeColor={colors[themeSelected].subHeadingText}
                     />
                   </div>
                   <div className="value">

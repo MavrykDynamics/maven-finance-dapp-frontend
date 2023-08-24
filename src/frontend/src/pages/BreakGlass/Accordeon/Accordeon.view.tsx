@@ -28,7 +28,7 @@ export const BGAccordion = ({ methods, accordionClickHandler, accordionId, isExp
       <AccordionToggler onClick={() => accordionClickHandler(accordionId)}>
         Entrypoints {<Icon className={`accordion-icon ${isExpanded ? '' : 'down'}`} id="accordion_icon" />}
       </AccordionToggler>
-      <AccordionContent className={`${isExpanded ? 'expanded' : ''}`}>
+      <AccordionContent className={`scroll-block ${isExpanded ? 'expanded' : ''}`}>
         {methodsList.map((item) => (
           <AccordionItem key={item.method} status={methods[item.method]}>
             <Truncate>{item.methodName}</Truncate>
