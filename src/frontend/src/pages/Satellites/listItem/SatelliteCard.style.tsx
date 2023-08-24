@@ -66,8 +66,8 @@ export const SatelliteCardRow = styled.div<{ theme: MavrykTheme }>`
   justify-content: center;
   font-weight: 600;
   font-size: 14px;
-  color: ${({ theme }) => theme.textColor};
-  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+  color: ${({ theme }) => theme.mainHeadingText};
+  border-top: 1px solid ${({ theme }) => theme.divider};
 
   span {
     font-weight: 600;
@@ -82,7 +82,7 @@ export const SatelliteCardRow = styled.div<{ theme: MavrykTheme }>`
     }
 
     &.voting-pass {
-      color: ${({ theme }) => theme.headerSkyColor};
+      color: ${({ theme }) => theme.selectedColor};
     }
   }
 `
@@ -134,7 +134,7 @@ export const SatelliteTextGroup = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const SatelliteMainText = styled.div<{ theme: MavrykTheme }>`
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.subHeadingText};
   font-weight: 600;
   font-size: 14px;
   max-width: 138px;
@@ -152,7 +152,7 @@ export const SatelliteMainText = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const SatelliteSubText = styled.div<{ theme: MavrykTheme }>`
-  color: ${({ theme }) => theme.dataColor};
+  color: ${({ theme }) => theme.primaryText};
   font-weight: 600;
   font-size: 16px;
   white-space: nowrap;
@@ -184,7 +184,7 @@ export const SatelliteProfileDetails = styled.div<{ theme: MavrykTheme }>`
       top: 100%;
       left: 50%;
       transform: translateX(-50%);
-      background-color: ${({ theme }) => theme.valueColor};
+      background-color: ${({ theme }) => theme.linksAndButtons};
     }
   }
 

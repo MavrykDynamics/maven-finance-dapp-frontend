@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { CardHover, cyanColor, Card } from 'styles'
+import { CardHover, Card } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 import { EmptyContainer as EmptyContainerBase } from 'app/App.style'
 
@@ -8,11 +8,11 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
   position: relative;
 
   background: ${({ backgroundImage, theme }) =>
-    backgroundImage ? `url(/images/dashboard/${backgroundImage}), ${theme.containerColor}` : theme.containerColor};
+    backgroundImage ? `url(/images/dashboard/${backgroundImage}), ${theme.cards}` : theme.cards};
   background-size: auto;
   background-repeat: no-repeat;
   background-position: right bottom;
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border: 1px solid ${({ theme }) => theme.strokeCards};
   border-radius: 10px;
   height: 579px;
   display: flex;
@@ -21,7 +21,7 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
 
   button svg {
     stroke: none;
-    fill: ${({ theme }) => theme.containerColor};
+    fill: ${({ theme }) => theme.cards};
   }
 
   .tabLoader {
@@ -42,12 +42,6 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
       font-weight: 600;
       font-size: 22px;
       line-height: 22px;
-
-      color: ${({ theme }) => theme.textColor};
-
-      &:after {
-        background-color: ${({ theme }) => theme.textColor};
-      }
     }
   }
 
@@ -62,7 +56,7 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
       font-weight: 700;
       font-size: 18px;
       line-height: 27px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.mainHeadingText};
     }
 
     .text {
@@ -70,8 +64,10 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
       font-size: 16px;
       line-height: 24px;
 
+      color: ${({ theme }) => theme.regularText};
+
       a {
-        color: ${cyanColor};
+        color: ${({ theme }) => theme.linksAndButtons};
       }
     }
   }
@@ -104,7 +100,7 @@ export const LendingContentStyled = styled.div<{ theme: MavrykTheme }>`
     top: -25px;
     height: 280px;
     width: 1px;
-    background-color: ${({ theme }) => theme.footerColor};
+    background-color: ${({ theme }) => theme.divider};
   }
 
   .impact-wrapper {
@@ -153,7 +149,7 @@ export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
     font-weight: 600;
     font-size: 18px;
     line-height: 18px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
   }
 
   .value {
@@ -224,7 +220,7 @@ export const OraclesContentStyled = styled.div<{ theme: MavrykTheme }>`
     font-weight: 600;
     font-size: 18px;
     line-height: 18px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
   }
 
   .feeds-grid {
@@ -287,7 +283,7 @@ export const TreasuryVesting = styled.div<{
   totalColor: string
 }>`
   padding: 30px 20px 33px 20px;
-  border: 0.5px solid ${({ theme }) => theme.cardBorderColor};
+  border: 0.5px solid ${({ theme }) => theme.strokeColor};
   border-radius: 10px;
   margin-top: 20px;
 
@@ -297,7 +293,7 @@ export const TreasuryVesting = styled.div<{
     margin: 7px 0;
 
     .name {
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.subHeadingText};
       font-weight: 600;
       font-size: 14px;
       line-height: 21px;
@@ -320,7 +316,7 @@ export const TreasuryVesting = styled.div<{
     }
 
     .value {
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
       font-weight: 600;
       font-size: 14px;
       line-height: 21px;
@@ -359,8 +355,8 @@ export const TreasuryVesting = styled.div<{
       padding: 4px 6px;
       border-radius: 3px;
       line-height: 15px;
-      background: #503eaa;
-      color: #9ea9e8;
+      background: ${({ theme }) => theme.messagesBackground};
+      color: ${({ theme }) => theme.regularText};
       opacity: 0;
       transition: 0.3s all;
       visibility: hidden;
@@ -375,7 +371,7 @@ export const TreasuryVesting = styled.div<{
         margin-left: -8px;
         border-width: 8px;
         border-style: solid;
-        border-color: #503eaa transparent transparent transparent;
+        border-color: ${({ theme }) => theme.strokeCards};
       }
 
       &:hover {
@@ -456,12 +452,12 @@ export const VaultsContentStyled = styled.div<{ theme: MavrykTheme }>`
         font-weight: 600;
         font-size: 14px;
         line-height: 16px;
-        color: ${({ theme }) => theme.textColor};
+        color: ${({ theme }) => theme.regularText};
         margin: 0;
         margin-left: 8px;
         line-height: 30px;
         padding-left: 10px;
-        background-color: ${({ theme }) => theme.containerColor};
+        background-color: ${({ theme }) => theme.cards};
       }
     }
 
@@ -482,7 +478,7 @@ export const VaultsContentStyled = styled.div<{ theme: MavrykTheme }>`
         font-weight: 600;
         font-size: 22px;
         line-height: 22px;
-        color: ${({ theme }) => theme.dataColor};
+        color: ${({ theme }) => theme.primaryText};
         p {
           margin: 0;
         }
@@ -509,7 +505,7 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
       width: 1px;
       height: 100%;
       content: '';
-      background-color: ${({ theme }) => theme.footerColor};
+      background-color: ${({ theme }) => theme.divider};
     }
 
     &:last-child {
@@ -532,7 +528,7 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
     .top {
       margin-bottom: 20px;
       .name {
-        color: ${({ theme }) => theme.textColor};
+        color: ${({ theme }) => theme.mainHeadingText};
         font-weight: 500;
         font-size: 12px;
         line-height: 12px;
@@ -561,7 +557,7 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
       justify-content: space-between;
       margin: 3px 0;
       .name {
-        color: ${({ theme }) => theme.textColor};
+        color: ${({ theme }) => theme.subHeadingText};
         font-weight: 600;
         font-size: 14px;
         line-height: 21px;
@@ -569,7 +565,7 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
       }
 
       .value {
-        color: ${({ theme }) => theme.dataColor};
+        color: ${({ theme }) => theme.primaryText};
         font-weight: 600;
         font-size: 14px;
         line-height: 21px;
@@ -580,16 +576,13 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
     &:hover {
       .top {
         .name {
-          color: ${({ theme }) => theme.textColorHovered};
+          opacity: 0.8;
         }
       }
       .row-info {
-        .name {
-          color: ${({ theme }) => theme.textColorHovered};
-        }
-
+        .name,
         .value {
-          color: ${({ theme }) => theme.textColorHovered};
+          opacity: 0.8;
         }
       }
     }

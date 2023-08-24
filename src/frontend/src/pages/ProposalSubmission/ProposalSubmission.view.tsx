@@ -582,7 +582,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               className="tooltip"
               iconId="info"
               text={DROP_PROPOSAL_BUTTON_TOOLTIP}
-              defaultStrokeColor={colors[themeSelected]['valueColor']}
+              defaultStrokeColor={colors[themeSelected].linksAndButtons}
             />
           </div>
 
@@ -600,7 +600,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               className="tooltip"
               iconId="info"
               text={SUBMIT_PROPOSAL_BUTTON_TOOLTIP}
-              defaultStrokeColor={colors[themeSelected]['valueColor']}
+              defaultStrokeColor={colors[themeSelected].linksAndButtons}
             />
           </div>
 
@@ -618,7 +618,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               className="tooltip"
               iconId="info"
               text={SAVE_CHANGES_BUTTON_TOOLTIP}
-              defaultStrokeColor={colors[themeSelected]['valueColor']}
+              defaultStrokeColor={colors[themeSelected].linksAndButtons}
             />
           </div>
 
@@ -632,7 +632,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
                 className="tooltip"
                 iconId="info"
                 text={NEXT_STEP_BUTTON_TOOLTIP}
-                defaultStrokeColor={colors[themeSelected]['valueColor']}
+                defaultStrokeColor={colors[themeSelected].linksAndButtons}
               />
             </div>
           ) : null}

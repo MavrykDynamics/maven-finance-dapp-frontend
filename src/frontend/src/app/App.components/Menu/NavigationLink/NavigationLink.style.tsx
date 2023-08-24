@@ -11,7 +11,7 @@ export const NavigationLinkContainer = styled.div<{
 
   &:nth-of-type(1) {
     svg {
-      stroke: ${({ theme }) => theme.navIconColor};
+      stroke: ${({ theme }) => theme.menuButtonText};
     }
   }
 
@@ -33,13 +33,13 @@ export const NavigationLinkContainer = styled.div<{
   ${(props) =>
     props.selected &&
     css`
-      background: ${({ theme }) => theme.navLinkBackgroundActive};
-      color: ${({ theme }) => theme.navLinkTextActive};
+      background: ${({ theme }) => theme.menuBackgroundActiveColor};
+      color: ${({ theme }) => theme.menuButtonText};
       border-radius: 0 10px 10px 0;
 
       &:nth-of-type(1) {
         svg {
-          stroke: ${({ theme }) => theme.navLinkTextActive};
+          stroke: ${({ theme }) => theme.menuButtonText};
         }
       }
     `}
@@ -76,7 +76,7 @@ export const NavigationLinkItem = styled.div<{
       font-size: 16px;
       line-height: 31px;
       font-weight: 600;
-      color: ${({ theme }) => theme.navTitleColor};
+      color: ${({ theme }) => theme.menuButtonText};
       display: flex;
       align-items: center;
       justify-content: space-around;
@@ -86,7 +86,7 @@ export const NavigationLinkItem = styled.div<{
       props.selected &&
       css`
         .navLinkTitle {
-          color: ${({ theme }) => theme.navLinkTextActive};
+          color: ${({ theme }) => theme.menuButtonText};
         }
       `}
   }
@@ -117,7 +117,7 @@ export const NavigationLinkIcon = styled.div<{ selected: boolean; theme: MavrykT
     display: inline-block;
     width: 27px;
     height: 50px;
-    fill: ${({ theme }) => theme.navIconColor};
+    fill: ${({ theme }) => theme.menuButtonText};
     vertical-align: top;
   }
 
@@ -125,7 +125,7 @@ export const NavigationLinkIcon = styled.div<{ selected: boolean; theme: MavrykT
     props.selected &&
     css`
       > svg {
-        fill: ${({ theme }) => theme.navLinkTextActive};
+        fill: ${({ theme }) => theme.menuButtonText};
       }
     `}
 `
@@ -160,7 +160,7 @@ export const SubLinkText = styled.p<{ selected: boolean; theme: MavrykTheme }>`
   text-align: left;
   position: relative;
   transition: 0.3s all;
-  color: ${({ theme }) => theme.navTitleColor};
+  color: ${({ theme }) => theme.menuButtonText};
 
   ${(props) =>
     props.selected &&
@@ -174,7 +174,7 @@ export const SubLinkText = styled.p<{ selected: boolean; theme: MavrykTheme }>`
         content: '';
         width: 30px;
         height: 1px;
-        background-color: ${({ theme }) => theme.navLinkSubTitleActive};
+        background-color: ${({ theme }) => theme.selectedColor};
       }
 
       &:after {
@@ -185,10 +185,10 @@ export const SubLinkText = styled.p<{ selected: boolean; theme: MavrykTheme }>`
         width: 2px;
 
         content: '';
-        background-color: ${({ theme }) => theme.navLinkSubTitleActive};
+        background-color: ${({ theme }) => theme.selectedColor};
       }
 
-      color: ${({ theme }) => theme.navLinkSubTitleActive};
+      color: ${({ theme }) => theme.selectedColor};
     `}
 
   &:hover:not(.disabled) {
@@ -201,9 +201,9 @@ export const SubLinkText = styled.p<{ selected: boolean; theme: MavrykTheme }>`
       content: '';
       width: 30px;
       height: 1px;
-      background-color: ${({ theme }) => theme.navLinkSubTitleActive};
+      background-color: ${({ theme }) => theme.selectedColor};
     }
 
-    color: ${({ theme }) => theme.navLinkSubTitleActive};
+    color: ${({ theme }) => theme.selectedColor};
   }
 `

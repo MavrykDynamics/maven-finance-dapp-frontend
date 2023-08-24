@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 
 // providers
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // view
 import SatellitesSideBar from './SatellitesSideBar/SatellitesSideBar.controller'
@@ -39,6 +40,7 @@ import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITES_DATA_ACTIVE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
+import colors from 'styles/colors'
 import { NotStakingBannerStyled } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners.style'
 
 const Satellites = () => {
@@ -50,6 +52,9 @@ const Satellites = () => {
     changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
   const { userTokensBalances, isSatellite } = useUserContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -98,7 +103,11 @@ const Satellites = () => {
               <div className="value">
                 {tabsInfo.totalDelegetedMVK}
                 <a href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle">
-                  <CustomTooltip iconId="info" text="All staked MVK that is delegated to satellites by users" />
+                  <CustomTooltip
+                    iconId="info"
+                    text="All staked MVK that is delegated to satellites by users"
+                    defaultStrokeColor={colors[themeSelected].primaryText}
+                  />
                 </a>
               </div>
             </SatelliteGovernanceStatsInfo>

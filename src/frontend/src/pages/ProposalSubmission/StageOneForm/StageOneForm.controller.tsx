@@ -172,7 +172,7 @@ export const StageOneForm = ({
         {isProposalSubmitted ? (
           <div className="submitted-data source-code">
             <div className="label">5 - Proposal source code</div>
-            <a className="isCyan" href={currentProposal.sourceCode}>
+            <a href={currentProposal.sourceCode}>
               {currentProposal.sourceCode}
             </a>
           </div>
@@ -206,7 +206,7 @@ export const StageOneForm = ({
                     alt="invoice for the proposal"
                   />
                 </div>{' '}
-                <a className="isCyan" href={currentProposal.invoice}>
+                <a href={currentProposal.invoice}>
                   {currentProposal.invoice}
                 </a>
               </div>

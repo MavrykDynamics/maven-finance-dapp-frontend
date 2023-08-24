@@ -1,6 +1,6 @@
 import { MavrykTheme } from '../../../styles/interfaces'
 import styled from 'styled-components/macro'
-import { Card, headerColor, cyanColor } from 'styles'
+import { Card } from 'styles'
 
 export const FarmTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
   margin-bottom: 20px;
@@ -16,7 +16,7 @@ export const FarmTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
     svg {
       width: 20px;
       height: 20px;
-      fill: ${cyanColor};
+      fill: ${({ theme }) => theme.linksAndButtons};
     }
 
     .btn-vertical {
@@ -26,7 +26,7 @@ export const FarmTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
 
   &.vertical .change-view .btn-vertical svg,
   &.horizontal .change-view .btn-horizontal svg {
-    fill: ${headerColor};
+    fill: ${({ theme }) => theme.selectedColor};
   }
 
   ul {

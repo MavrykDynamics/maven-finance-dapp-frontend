@@ -43,6 +43,7 @@ export const defaultOraclePeerIdMaxLength = 52
 // err msg position
 export const ERR_MSG_TOAST = 'toast'
 export const ERR_MSG_INPUT = 'input'
+export const ERR_MSG_NONE = 'none'
 
 // toast messages
 export const INPUT_MAX_LIMIT_TOAST_TEXT = 'Too many characters were provided.'

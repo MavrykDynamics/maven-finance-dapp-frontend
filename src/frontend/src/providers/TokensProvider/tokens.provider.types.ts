@@ -35,20 +35,24 @@ export type TokenMetadataType = {
   type: TokenType
 } & PropertiesFromDifferentTokenTypes
 
+export type TokenLoansDataType = {
+  indexerName: string
+  minDepositAmount: number
+  isPausedCollateral: boolean
+  isScaled: boolean
+  isStaked: boolean
+}
+
 type PropertiesFromDifferentTokenTypes = DeepPartial<{
   // loan & collateral tokens properties
-  loanData: {
-    indexerName: string
-    isPausedCollateral: boolean
-    isScaled: boolean
-    isStaked: boolean
-  }
+  loanData: TokenLoansDataType
 }>
 
 // loan token (market)
 export interface LoansTokenMetadataType extends TokenMetadataType {
   loanData: {
     indexerName: string
+    minDepositAmount: number
   }
 }
 
@@ -56,6 +60,7 @@ export interface LoansTokenMetadataType extends TokenMetadataType {
 export interface LoansCollateralTokenMetadataType extends LoansTokenMetadataType {
   loanData: {
     indexerName: string
+    minDepositAmount: number
     isPausedCollateral: boolean
     isScaled: boolean
     isStaked: boolean

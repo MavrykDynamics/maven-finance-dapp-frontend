@@ -208,7 +208,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
             DAO Fee
             <CustomTooltip
               iconId="info"
-              defaultStrokeColor={colors[themeSelected].textColor}
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
               text={DAO_FEE}
               className="tooltip"
             />

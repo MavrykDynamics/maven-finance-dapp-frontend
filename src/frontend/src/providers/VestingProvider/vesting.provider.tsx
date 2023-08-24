@@ -6,7 +6,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
 import { NullableVestingContextStateType, VestingContext, VestingSubsRecordType } from './vesting.provider.types'
-import { GetVestingStorageQuery } from 'utils/__generated__/graphql'
+import { GetVestingQueryQuery } from 'utils/__generated__/graphql'
 
 // consts
 import { DEFAULT_VESTING_CTX, DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from './helpers/vesting.consts'
@@ -17,7 +17,7 @@ import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.pr
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // queries
-import { GET_VESTING_STORAGE_QUERY } from './queries/vestingStorage.query'
+import { GET_VESTING_STORAGE_QUERY } from './queries/vesting.query'
 
 // utils
 import { getVestingProviderReturnValue } from './helpers/vesting.utils'
@@ -52,7 +52,7 @@ const VestingProvider = ({ children }: Props) => {
   })
 
   // methods to update context data
-  const updateVestingStorage = (data: GetVestingStorageQuery) => {
+  const updateVestingStorage = (data: GetVestingQueryQuery) => {
     const { vesteeIds, vesteesMapper, totalClaimedAmount, totalVestedAmount, address } = normalizeVestingStorage(data)
 
     setVestingCtxState((prev) => ({

@@ -4,14 +4,14 @@ import { State } from 'reducers'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { Button } from 'app/App.components/Button/Button.controller'
+import Button from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/Input.controller'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import { DataFeedCard } from 'pages/DataFeedsDetails/listItem/DataFeedCard.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 // const, actions
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { INFO } from 'app/App.components/Toaster/Toaster.constants'
 import {
   calculateSlicePositions,
@@ -33,6 +33,7 @@ import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provi
 import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 export const DataFeeds = () => {
   const { feedsAddresses, feedsMapper, feedsCategories } = useDataFeedsContext()
@@ -109,14 +110,16 @@ export const DataFeeds = () => {
         />
 
         <Button
-          text="Request data feed"
-          icon="requestFeed"
           disabled={isActionActive}
-          kind={ACTION_PRIMARY}
+          kind={BUTTON_PRIMARY}
+          form={BUTTON_WIDE}
           onClick={() => {
             dispatch(showToaster(INFO, 'Coming soon', 'Request feed Feature coming soon'))
           }}
-        />
+        >
+          <Icon id="request_data_feed" />
+          Request data feed
+        </Button>
       </DataFeedsSearchFilter>
 
       {isOraclesDataLoading ? (

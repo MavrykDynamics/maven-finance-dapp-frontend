@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../styles/interfaces'
-import { downColor, upColor } from '../../styles/colors'
 
 export const BGStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
@@ -25,7 +24,7 @@ export const BGTop = styled.div<{ theme: MavrykTheme }>`
 `
 
 const BGBlockBaseStyles = styled.div<{ theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.containerColor};
+  background-color: ${({ theme }) => theme.cards};
 `
 
 export const BGStatusIndicator = styled(BGBlockBaseStyles)<{ theme: MavrykTheme }>`
@@ -38,7 +37,7 @@ export const BGStatusIndicator = styled(BGBlockBaseStyles)<{ theme: MavrykTheme 
 
   padding-bottom: 20px;
   margin-bottom: 25px;
-  border-bottom: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border-bottom: 1px solid ${({ theme }) => theme.divider};
 
   .status-indicator-wrapper {
     width: 100%;
@@ -47,6 +46,8 @@ export const BGStatusIndicator = styled(BGBlockBaseStyles)<{ theme: MavrykTheme 
     font-weight: 600;
     font-size: 16px;
     line-height: 22px;
+
+    color: ${({ theme }) => theme.mainHeadingText};
   }
 
   .color-red,
@@ -58,11 +59,11 @@ export const BGStatusIndicator = styled(BGBlockBaseStyles)<{ theme: MavrykTheme 
   }
 
   .color-red {
-    color: ${downColor};
+    color: ${({ theme }) => theme.downColor};
   }
 
   .color-green {
-    color: ${upColor};
+    color: ${({ theme }) => theme.upColor};
   }
 `
 
@@ -89,14 +90,14 @@ export const BGInfo = styled(BGBlockBaseStyles)<{ theme: MavrykTheme }>`
   justify-content: center;
   padding: 30px;
 
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border: 1px solid ${({ theme }) => theme.strokeCards};
   border-radius: 10px;
 
   font-weight: 500;
   font-size: 14px;
   line-height: 24px;
 
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.regularText};
 
   p {
     margin: 0;
@@ -104,7 +105,7 @@ export const BGInfo = styled(BGBlockBaseStyles)<{ theme: MavrykTheme }>`
   }
 
   a {
-    color: ${({ theme }) => theme.navLinkTextActive};
+    color: ${({ theme }) => theme.linksAndButtons};
     font-weight: 600;
   }
 
@@ -112,7 +113,7 @@ export const BGInfo = styled(BGBlockBaseStyles)<{ theme: MavrykTheme }>`
     margin: 0 auto;
     width: 44px;
     height: 3px;
-    background-color: ${({ theme }) => theme.textColor};
+    background-color: ${({ theme }) => theme.mainHeadingText};
     border-radius: 10px;
   }
 `
@@ -136,8 +137,8 @@ export const BGCardsWrapper = styled.div<{ theme: MavrykTheme }>`
 export const BGWhitelist = styled(BGBlockBaseStyles)<{ theme: MavrykTheme }>`
   padding: 25px 0;
   margin-top: 20px;
-  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
-
+  border-top: 1px solid ${({ theme }) => theme.divider};
+  color: ${({ theme }) => theme.mainHeadingText};
   font-weight: 600;
   font-size: 16px;
   line-height: 22px;
@@ -146,21 +147,12 @@ export const BGWhitelist = styled(BGBlockBaseStyles)<{ theme: MavrykTheme }>`
     margin-top: 10px;
 
     div {
-      color: ${({ theme }) => theme.dataColor};
-    }
-
-    svg {
-      position: relative;
-      top: 2px;
-      stroke: ${({ theme }) => theme.dataColor};
-      width: 17px;
-      height: 17px;
+      color: ${({ theme }) => theme.primaryText};
     }
   }
 `
 
 export const BGPrimaryTitle = styled.h1<{ theme: MavrykTheme }>`
-  color: ${({ theme }) => theme.textColor};
   margin: 0;
 
   font-weight: 700;

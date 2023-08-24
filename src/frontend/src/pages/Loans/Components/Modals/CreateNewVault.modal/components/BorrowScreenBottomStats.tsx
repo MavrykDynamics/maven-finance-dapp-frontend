@@ -4,7 +4,7 @@ import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/Gradien
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // styles
-import { silverColor } from 'styles'
+import colors from 'styles/colors'
 import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 
@@ -14,6 +14,7 @@ import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault
 
 // utils
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type BorrowScreenBottomStatsProps = {
   inputAmount: number
@@ -25,6 +26,9 @@ type BorrowScreenBottomStatsProps = {
 }
 
 export const BorrowScreenBottomStats = (props: BorrowScreenBottomStatsProps) => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const { headerText, inputAmount, assetDecimalsToShow, daoFee, futureCollateralRatio, futureBorrowCapacity } = props
 
   return (
@@ -35,14 +39,24 @@ export const BorrowScreenBottomStats = (props: BorrowScreenBottomStatsProps) => 
           <ThreeLevelListItem>
             <div className="name">
               Total Amount
-              <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={TOTAL_AMOUNT} className="tooltip" />
+              <CustomTooltip
+                iconId="info"
+                defaultStrokeColor={colors[themeSelected].subHeadingText}
+                text={TOTAL_AMOUNT}
+                className="tooltip"
+              />
             </div>
             <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">
               DAO Fee
-              <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={DAO_FEE} className="tooltip" />
+              <CustomTooltip
+                iconId="info"
+                defaultStrokeColor={colors[themeSelected].subHeadingText}
+                text={DAO_FEE}
+                className="tooltip"
+              />
             </div>
             <CommaNumber
               value={inputAmount * (daoFee / 100)}
@@ -64,7 +78,7 @@ export const BorrowScreenBottomStats = (props: BorrowScreenBottomStatsProps) => 
         <div className="line">
           <ThreeLevelListItem
             className="collateral-diagram right"
-            customColor={getCollateralRationPersent(futureCollateralRatio)}
+            customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
           >
             <div className={`percentage`}>
               Collateral Ratio:
@@ -82,7 +96,7 @@ export const BorrowScreenBottomStats = (props: BorrowScreenBottomStatsProps) => 
               Available To Borrow
               <CustomTooltip
                 iconId="info"
-                defaultStrokeColor={silverColor}
+                defaultStrokeColor={colors[themeSelected].subHeadingText}
                 text={AVALIABLE_TO_BORROW}
                 className="tooltip"
               />

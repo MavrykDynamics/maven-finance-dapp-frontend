@@ -358,7 +358,7 @@ export const AddCollateralScreen = () => {
                       Total Collateral Value
                       <CustomTooltip
                         iconId="info"
-                        defaultStrokeColor={colors[themeSelected].textColor}
+                        defaultStrokeColor={colors[themeSelected].subHeadingText}
                         text={COLLATERAL_VALUE}
                         className="tooltip"
                       />
@@ -370,7 +370,7 @@ export const AddCollateralScreen = () => {
                       Borrow Capacity
                       <CustomTooltip
                         iconId="info"
-                        defaultStrokeColor={colors[themeSelected].textColor}
+                        defaultStrokeColor={colors[themeSelected].subHeadingText}
                         text={BORROW_CAPACITY}
                         className="tooltip"
                       />

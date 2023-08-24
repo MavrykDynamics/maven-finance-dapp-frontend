@@ -102,7 +102,7 @@ export const USER_ACTIONS_HISTORY_DATA_QUERY = gql(`
 // TODO: use this query on certain pages to reduce size of the USER_DATA_QUERY query
 export const USER_REWARDS_DATA_QUERY = gql(`
   query getUserRewardsData($userAddress: String = "") {
-    governance_proposal(where: {reward_claim_ready: {_eq: true}, votes: {voter: {address: {_eq: $userAddress}}, _and: {voting_reward_claimed: {_eq: false}}}}) {
+    governance_proposal(where: {reward_claim_ready: {_eq: true}, votes: {voter: {address: {_eq: $userAddress}}, _and: {voting_reward_claimed: {_eq: false}}}, payments_aggregate: {count: {predicate: {_gt: 0}}}}) {
       id
     }
 

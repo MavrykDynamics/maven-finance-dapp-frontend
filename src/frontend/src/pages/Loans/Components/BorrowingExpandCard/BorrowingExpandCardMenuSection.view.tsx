@@ -4,9 +4,7 @@ import { Link, useHistory, useLocation } from 'react-router-dom'
 import qs from 'qs'
 
 // styles
-import { EmptyContainer } from 'app/App.style'
 import { BorrowingTabListItemTabInfo } from '../LoansComponents.style'
-import { TabItem, TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // consts
@@ -24,8 +22,6 @@ import {
   BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from 'app/App.components/Button/Button.constants'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import colors from 'styles/colors'
 
 // components
 import Button from 'app/App.components/Button/NewButton'
@@ -36,6 +32,14 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { TransactionHistory } from '../TransactionHistory'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import colors from 'styles/colors'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
+import { EmptyContainer } from 'app/App.style'
+import {
+  SlidingTabButtons,
+  SlidingTabButtonType,
+} from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -68,7 +72,7 @@ type Props = {
 
   collateralData: CollateralType[]
   currentToken: LoanMarketType
-  activeMenuTab?: TabItem
+  activeMenuTab?: SlidingTabButtonType
   isOwner: boolean
   vaultName: string
   vaultAddress: string
@@ -131,7 +135,7 @@ export const BorrowingExpandCardMenuSection = ({
   // TODO: test it when sMVK will be avaliable as collateral
   const vaultHasSmvkCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVK_TOKEN_ADDRESS)
 
-  const handleSwitchTab = (setActiveTab: (tab?: TabItem) => void) => (newTabId: number) => {
+  const handleSwitchTab = (setActiveTab: (tab?: SlidingTabButtonType) => void) => (newTabId: number) => {
     // condition to set list page to 1, when change tab
     if (activeMenuTab?.id === loansTabNames.TX_HISTORY && activeMenuTab?.id !== newTabId) {
       history.replace(`${pathname}${qs.stringify(restQP, { addQueryPrefix: true })}`)
@@ -142,7 +146,11 @@ export const BorrowingExpandCardMenuSection = ({
 
   return (
     <>
-      <TabSwitcher tabItems={menuTabs} onClick={handleSwitchTab(setActiveMenuTab)} className="menu-switcher " />
+      <SlidingTabButtons
+        kind={SECONDARY_SLIDING_TAB_BUTTONS}
+        tabItems={menuTabs}
+        onClick={handleSwitchTab(setActiveMenuTab)}
+      />
 
       {activeMenuTab?.id === loansTabNames.COLLATERAL_ASSETS && (
         <BorrowingTabListItemTabInfo>
@@ -294,14 +302,14 @@ export const BorrowingExpandCardMenuSection = ({
             <div className="useful-info-line">
               <div className="name">Vault Address</div>
               <div className="value">
-                <TzAddress tzAddress={vaultAddress} type={BLUE} />
+                <TzAddress tzAddress={vaultAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
               </div>
             </div>
 
             <div className="useful-info-line">
               <div className="name">Lending Controller Address</div>
               <div className="value">
-                {lendingControllerAddress ? <TzAddress tzAddress={lendingControllerAddress} type={BLUE} /> : '–'}
+                {lendingControllerAddress ? <TzAddress tzAddress={lendingControllerAddress} type={PRIMARY_TZ_ADDRESS_COLOR} /> : '–'}
               </div>
             </div>
           </div>
@@ -314,7 +322,11 @@ export const BorrowingExpandCardMenuSection = ({
                 <div className="useful-info-line">
                   <div className="name">XTZ Delegated to</div>
                   <div className="value">
-                    {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'Not Delegated'}
+                    {xtzDelegatedTo ? (
+                      <TzAddress tzAddress={xtzDelegatedTo} type={PRIMARY_TZ_ADDRESS_COLOR} />
+                    ) : (
+                      'Not Delegated'
+                    )}
                   </div>
                   <Button
                     kind={BUTTON_SIMPLE}
@@ -330,7 +342,11 @@ export const BorrowingExpandCardMenuSection = ({
                 <div className="useful-info-line">
                   <div className="name">sMVK Delegated to </div>
                   <div className="value">
-                    {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
+                    {sMVKDelegatedTo ? (
+                      <TzAddress tzAddress={sMVKDelegatedTo} type={PRIMARY_TZ_ADDRESS_COLOR} />
+                    ) : (
+                      'None'
+                    )}
                   </div>
                   <Link to={sMVKDelegatedTo ? `/satellites/satellite-details/${sMVKDelegatedTo}` : '/satellite-nodes'}>
                     <Button kind={BUTTON_SIMPLE}>
@@ -351,7 +367,7 @@ export const BorrowingExpandCardMenuSection = ({
                 <CustomTooltip
                   iconId="info"
                   text="Depositors are tz and KT addresses that are allowed to deposit tokens and XTZ into your vault. For instance, if you delegate your XTZ to a bakery, you should add the bakery’s payout address as a a depositor so your vault can receive its delegation rewards."
-                  defaultStrokeColor={colors[themeSelected].textColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                 />
               </div>
               <div className="value">
@@ -371,13 +387,13 @@ export const BorrowingExpandCardMenuSection = ({
                   <CustomTooltip
                     iconId="info"
                     text="MVK operators are tz or KT addresses that you allow to perform specific actions with your tokens. Only use this if you know exactly what you are doing. By default, you have to allow the vault to do an operator of your sMVK so it can execute its required functions."
-                    defaultStrokeColor={colors[themeSelected].textColor}
+                    defaultStrokeColor={colors[themeSelected].subHeadingText}
                   />
                 </div>
                 <div className="value">
                   {mappedMVKOperators.firstAddress ? (
                     <>
-                      <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={BLUE} />
+                      <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
                       {mappedMVKOperators.amount ?? ''}
                     </>
                   ) : (

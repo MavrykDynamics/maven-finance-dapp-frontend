@@ -10,6 +10,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { MoveNextRoundModalBase, TimeLeftAreaWrap } from './TimeRemaining.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
+import colors from 'styles/colors'
 
 // Consts
 import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
@@ -37,6 +38,10 @@ export default function TimeRemaining() {
   const {
     config: { currentRoundEndLevel, timelockProposalId, governancePhase },
   } = useProposalsContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
   const { userAddress } = useUserContext()
   const {
     contractAddresses: { governanceAddress },
@@ -145,7 +150,7 @@ export default function TimeRemaining() {
               timerView: COLON_VIEW,
               showFullDay: false,
               endText: 'remaining',
-              defaultColor: '#77A4F2',
+              defaultColor: colors[themeSelected].primaryText,
             }}
           />
         </>

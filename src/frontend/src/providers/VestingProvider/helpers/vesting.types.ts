@@ -7,6 +7,8 @@ export type VestingRecord = {
   rewardPerMonth: number
   cliffMonth: number
   vestingMonth: number
+  isLocked: boolean
+  cliffTimeEnd: string
   nextRewardDate?: string | null
   lastClaimDate?: string | null
 }

@@ -12,7 +12,7 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 // consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import colors from 'styles/colors'
 
 // helpers
@@ -260,7 +260,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
             className="tooltip"
             text={statusTooltipText}
             iconId="info"
-            defaultStrokeColor={colors[themeSelected]['textColor']}
+            defaultStrokeColor={colors[themeSelected].subHeadingText}
           />
         ) : null}
       </div>
@@ -344,7 +344,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
         <div className="proposal-data-block-name">Source Code</div>
         <div className="proposal-data-block-value">
           {proposal.sourceCode ? (
-            <a href={proposal.sourceCode} target="_blank" rel="noreferrer" className="isCyan">
+            <a href={proposal.sourceCode} target="_blank" rel="noreferrer">
               {proposal.sourceCode}
             </a>
           ) : (
@@ -357,7 +357,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
         <div className="proposal-data-block-name">Invoice</div>
         <div className="proposal-data-block-value">
           {proposal.invoice ? (
-            <a href={proposal.invoice} target="_blank" rel="noreferrer" className="isCyan">
+            <a href={proposal.invoice} target="_blank" rel="noreferrer">
               {proposal.invoice}
             </a>
           ) : (
@@ -458,7 +458,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
                 return (
                   <TableRow className="editable-row proposal-details-payments" key={payment.id}>
                     <TableCell width="25%">
-                      <TzAddress tzAddress={String(payment.to__id)} type={BLUE} hasIcon={false} />
+                      <TzAddress tzAddress={String(payment.to__id)} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={false} />
                     </TableCell>
                     <TableCell width="25%">{String(payment.title)}</TableCell>
                     <TableCell width="25%">
@@ -480,7 +480,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Proposer</div>
         <div className="proposal-data-block-value proposal-data-block-address">
-          <TzAddress tzAddress={proposal.proposerId} type={BLUE} isBold />
+          <TzAddress tzAddress={proposal.proposerId} type={PRIMARY_TZ_ADDRESS_COLOR} isBold />
         </div>
       </div>
 
@@ -491,7 +491,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
         <div className="gov-data">
           <div className="proposal-data-block-name">Governance Contract</div>
           <div className="proposal-data-block-value proposal-data-block-address">
-            <TzAddress tzAddress={proposal.governanceId} type={BLUE} isBold />
+            <TzAddress tzAddress={proposal.governanceId} type={PRIMARY_TZ_ADDRESS_COLOR} isBold />
           </div>
         </div>
       </div>

@@ -39,6 +39,7 @@ import {
   PROPOSALS_PAST_DATA,
   ProposalStatus,
 } from 'providers/ProposalsProvider/helpers/proposals.const'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // styles
 import { Page } from 'styles'
@@ -297,7 +298,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                           <ImageWithPlug imageLink={avatar} alt={`${name} avatar`} />
                           <div className="info">
                             <span>{name}</span>
-                            <TzAddress tzAddress={address} />
+                            <TzAddress tzAddress={address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
                           </div>
                         </div>
                         <StatusFlag status={voteColor} text={SATELLITE_VOTES_MAPPER[vote]} />

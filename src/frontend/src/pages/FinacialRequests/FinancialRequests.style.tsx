@@ -35,7 +35,7 @@ export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavrykTheme
     border-radius: 10px;
     bottom: 42px;
     left: 50%;
-    background-color: ${({ theme }) => theme.cardBorderColor};
+    background-color: ${({ theme }) => theme.mainHeadingText};
     transform: translateX(-50%);
   }
 
@@ -48,7 +48,7 @@ export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavrykTheme
     margin-top: 10px;
     font-weight: 600;
     font-size: 14px;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
   }
 
   .fr-voting {
@@ -66,7 +66,7 @@ export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavrykTheme
   hr {
     border: none;
     height: 1px;
-    background-color: ${({ theme }) => theme.cardBorderColor};
+    background-color: ${({ theme }) => theme.divider};
     margin-bottom: 10px;
   }
 
@@ -106,7 +106,7 @@ export const InfoBlockTitle = styled.div<{ theme: MavrykTheme }>`
   font-weight: 600;
   font-size: 18px;
   line-height: 18px;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.mainHeadingText};
 `
 
 export const InfoBlockName = styled.div<{ theme: MavrykTheme }>`
@@ -114,19 +114,13 @@ export const InfoBlockName = styled.div<{ theme: MavrykTheme }>`
   font-size: 14px;
   line-height: 24px;
   margin-top: 5px;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.regularText};
 `
 
 export const InfoBlockValue = styled(InfoBlockName)`
   font-weight: 600;
   font-size: 16px;
-  color: ${({ theme }) => theme.dataColor};
-
-  svg {
-    width: 22px;
-    height: 22px;
-    stroke: ${({ theme }) => theme.dataColor};
-  }
+  color: ${({ theme }) => theme.primaryText};
 `
 
 export const FRListItem = styled(CardHover)<{ selected: boolean; theme: MavrykTheme }>`
@@ -145,14 +139,14 @@ export const FRListItem = styled(CardHover)<{ selected: boolean; theme: MavrykTh
   ${({ selected }) =>
     selected &&
     css`
-      border-color: ${({ theme }) => theme.textColorHovered};
-      box-shadow: 0px 4px 4px ${({ theme }) => theme.boxShadowColor};
+      border-color: ${({ theme }) => theme.linksAndButtons};
+      box-shadow: 0px 4px 4px ${({ theme }) => theme.cardHoverColor};
     `}
 
   .proposal-voted-mvk {
     font-weight: 600;
     font-size: 14px;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
     margin-right: 10px;
     white-space: nowrap;
   }
@@ -166,12 +160,11 @@ export const FRListItem = styled(CardHover)<{ selected: boolean; theme: MavrykTh
     > span {
       font-weight: 500;
       margin-right: 20px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.regularText};
     }
 
     > h4 {
       font-weight: 500;
-      color: ${({ theme }) => theme.textColor};
       padding-right: 8px;
       max-width: 220px;
       overflow: hidden;

@@ -7,15 +7,19 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import Toggle from 'app/App.components/Toggle/Toggle.view'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // styles
 import { LiquidateVaultModalStyled } from './LiquidateVaultModal.styles'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
+import colors from 'styles/colors'
 
 // helpers
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { SECONDARY_TOGGLE } from 'app/App.components/Toggle/Toggle.consts'
 
 // types
 import { LiquidateVaultDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
@@ -46,6 +50,9 @@ type Props = {
 export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const { userTokensBalances } = useUserContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -150,7 +157,12 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
             <div>
               <div className="v-centering-group">
                 Liquidation Max
-                <Icon id="info" className="info-icon" />
+                <CustomTooltip
+                  text=""
+                  iconId="info"
+                  className="info-icon"
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
+                />
               </div>
               <CommaNumber
                 value={liquidationMax}
@@ -197,7 +209,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
           </Input>
 
           <Toggle
-            className="toggle"
+            kind={SECONDARY_TOGGLE}
             prefix={symbol}
             sufix={'Percent'}
             checked={showAsPercentage}
@@ -246,7 +258,12 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
             <div>
               <div className="v-centering-group">
                 Treasury Fee
-                <Icon id="info" className="info-icon" />
+                <CustomTooltip
+                  text=""
+                  iconId="info"
+                  className="info-icon"
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
+                />
               </div>
               <CommaNumber
                 value={treasuryFee}
@@ -293,7 +310,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                     const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                     return (
-                      <TableRow rowHeight={rowHeight} key={symbol + '-' + index}>
+                      <TableRow rowHeight={rowHeight} borderColor="primaryText" key={symbol + '-' + index}>
                         <TableCell width={columnWidth}>{symbol}</TableCell>
 
                         <TableCell width={columnWidth}>
