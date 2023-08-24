@@ -7,10 +7,11 @@ import { ChartSwitcherAlignmentType } from './chartSwitcher.types'
 import { ALIGN_LEFT } from './chartSwitcher.consts'
 
 type ChartSwitcherProps = {
+  currentPeriod?: ChartPeriodType
   setCurrentPeriod: (period: ChartPeriodType) => void
 }
 
-export const ChartSwitcher = ({ setCurrentPeriod }: ChartSwitcherProps) => {
+export const ChartSwitcher = ({ setCurrentPeriod, currentPeriod }: ChartSwitcherProps) => {
   // chartsPeriodArr
   const [activeTabId, setActiveTabId] = useState(0)
 
@@ -20,10 +21,10 @@ export const ChartSwitcher = ({ setCurrentPeriod }: ChartSwitcherProps) => {
         return {
           text: period,
           id: idx,
-          active: activeTabId === idx,
+          active: currentPeriod === period ?? idx === activeTabId,
         }
       }),
-    [activeTabId],
+    [activeTabId, currentPeriod],
   )
 
   const handleTabSwitch = useCallback(

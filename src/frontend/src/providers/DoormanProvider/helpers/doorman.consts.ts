@@ -11,13 +11,6 @@ export const DAPP_MVK_SMVK_STATS_SUB = 'mvkSmvkStatsSub'
 
 // PROVIDER DEFAULT CONSTS
 
-export const EMPTY_DOORMAN_HISTORY = {
-  [ONE_HOUR]: [],
-  [TWENTY_FOUR_HOURS]: [],
-  [ONE_WEEK]: [],
-  [ONE_MONTH]: [],
-  [ALL_TIME]: [],
-}
 export const DEFAULT_DOORMAN_HISTORY = {
   [ONE_HOUR]: null,
   [TWENTY_FOUR_HOURS]: null,
@@ -42,6 +35,6 @@ export const EMPTY_DOORMAN_CTX: DoormanContextStateType = {
   totalStakedMvk: 0,
   totalSupply: 0,
   maximumTotalSupply: 0,
-  mvkHistoryData: EMPTY_DOORMAN_HISTORY,
-  smvkHistoryData: EMPTY_DOORMAN_HISTORY,
+  mvkHistoryData: DEFAULT_DOORMAN_HISTORY,
+  smvkHistoryData: DEFAULT_DOORMAN_HISTORY,
 }

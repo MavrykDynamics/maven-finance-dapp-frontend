@@ -20,7 +20,7 @@ import {
   DEFAULT_STAKING_CTX,
   DAPP_MVK_SMVK_STATS_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
-  EMPTY_DOORMAN_HISTORY,
+  DEFAULT_DOORMAN_HISTORY,
 } from './helpers/doorman.consts'
 import { DAPP_MVK_SMVK_STATS } from './queries/doorman.query'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
@@ -64,16 +64,15 @@ const DoormanProvider = ({ children }: Props) => {
   const updateStakeHistoryData = ({ smvk_history_data }: SmvkMvkHistoryDataQuery, period: ChartPeriodType) => {
     const { smvkHistoryData, mvkHistoryData } = normalizeDoormanChartsData({ smvk_history_data })
 
-    console.log(stakingCtxState)
     setStakingCtxState((prevState) => ({
       ...prevState,
       smvkHistoryData:
         prevState.smvkHistoryData === null
-          ? { ...EMPTY_DOORMAN_HISTORY }
+          ? { ...DEFAULT_DOORMAN_HISTORY }
           : { ...prevState.smvkHistoryData, [period]: smvkHistoryData },
       mvkHistoryData:
         prevState.mvkHistoryData === null
-          ? { ...EMPTY_DOORMAN_HISTORY }
+          ? { ...DEFAULT_DOORMAN_HISTORY }
           : { ...prevState.mvkHistoryData, [period]: mvkHistoryData },
     }))
   }

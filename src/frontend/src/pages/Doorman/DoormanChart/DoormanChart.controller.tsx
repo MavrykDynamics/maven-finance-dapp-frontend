@@ -95,6 +95,7 @@ export function DoormanChart() {
   const handlePeriodChange = useCallback((period) => {
     setChartPeriod(period)
   }, [])
+
   const exitFeeMarkerTime = findExitFeeClosestTimePlot(MLI_FEE_CHART_DATA, currentExitFee)
 
   return (
@@ -195,7 +196,7 @@ export function DoormanChart() {
 
         {activeTabId === tabsList[2].id ? (
           <>
-            <ChartsSwitherWithPosition setCurrentPeriod={handlePeriodChange} />
+            <ChartsSwitherWithPosition currentPeriod={chartPeriod} setCurrentPeriod={handlePeriodChange} />
             <Chart
               isLoading={isChartsDataLoading}
               data={{

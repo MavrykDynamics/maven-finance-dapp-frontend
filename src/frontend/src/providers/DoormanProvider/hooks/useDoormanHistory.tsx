@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { usePrevious } from 'react-use'
 
 // types
 import { ChartPeriodType } from 'types/charts.type'
@@ -23,7 +24,8 @@ import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
 export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
   const { updateStakeHistoryData, handleSubError, mvkHistoryData, smvkHistoryData } = useDoormanContext()
 
-  const currentPeriodRef = useRef(getTimestampBasedOnPeriod(period))
+  const [currentPeriod, setCurrentPeriod] = useState(() => getTimestampBasedOnPeriod(period))
+  const [skip, setSkip] = useState(true)
 
   const refetchQueryVariables = useCallback(() => {
     return {
@@ -32,30 +34,37 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
   }, [period])
 
   useEffect(() => {
-    currentPeriodRef.current = getTimestampBasedOnPeriod(period)
+    setCurrentPeriod(getTimestampBasedOnPeriod(period))
   }, [period])
 
-  const { loading } = useQueryWithRefetch(
+  const { refetch } = useQueryWithRefetch(
     SMVK_MVK_HISTORY_DATA,
     {
+      skip,
       onCompleted: (data) => {
         if (!data) return
         updateStakeHistoryData(data, period)
       },
       variables: {
-        periodTimestamp: currentPeriodRef.current,
+        periodTimestamp: currentPeriod,
       },
       onError: (error) => handleSubError(error, MVK_SMVK_HISTORY_SUB),
     },
     { refetchQueryVariables },
   )
 
-  // On app init it's always null for specific perios, so isLoading === true
-  const areHistoriesNullable = mvkHistoryData[period] === null || smvkHistoryData[period] === null
-  // if query is in progress and state is empty - isLoading === true
-  const areHistoriesEmptyWhileFetching = mvkHistoryData[period]?.length === 0 && loading
+  // whe user clicks to fast on periodSwitcher - the query can be pendinf and return wrong data
+  // so we manually call our query to get the correct data
+  useEffect(() => {
+    setSkip(false)
+    refetch({ periodTimestamp: getTimestampBasedOnPeriod(period) })
 
-  const isLoading = areHistoriesNullable || areHistoriesEmptyWhileFetching
+    return () => {
+      setSkip(true)
+    }
+  }, [period, refetch])
+
+  const isLoading = mvkHistoryData[period] === null || smvkHistoryData[period] === null
 
   return {
     isLoading, // for empty array
