@@ -29,6 +29,7 @@ import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuse
 import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
 import VestingProvider from 'providers/VestingProvider/vesting.provider'
 import TreasuryProvider from 'providers/TreasuryProvider/treasury.provider'
+import SatelliteGovernanceProvider from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider'
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
@@ -95,21 +96,23 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
         <FullScreenLoadingApp />
       ) : (
         <ContractStatusesProvider>
-          <DoormanProvider>
-            <SatellitesProvider>
-              <LoansProvider>
-                <VaultsProvider>
-                  <ProposalsProvider>
-                    <FinancialRequestsProvider>
-                      <TreasuryProvider>
-                        <VestingProvider>{children}</VestingProvider>
-                      </TreasuryProvider>
-                    </FinancialRequestsProvider>
-                  </ProposalsProvider>
-                </VaultsProvider>
-              </LoansProvider>
-            </SatellitesProvider>
-          </DoormanProvider>
+          <SatelliteGovernanceProvider>
+            <ProposalsProvider>
+              <DoormanProvider>
+                <SatellitesProvider>
+                  <LoansProvider>
+                    <VaultsProvider>
+                      <FinancialRequestsProvider>
+                        <TreasuryProvider>
+                          <VestingProvider>{children}</VestingProvider>
+                        </TreasuryProvider>
+                      </FinancialRequestsProvider>
+                    </VaultsProvider>
+                  </LoansProvider>
+                </SatellitesProvider>
+              </DoormanProvider>
+            </ProposalsProvider>
+          </SatelliteGovernanceProvider>
         </ContractStatusesProvider>
       )}
     </>

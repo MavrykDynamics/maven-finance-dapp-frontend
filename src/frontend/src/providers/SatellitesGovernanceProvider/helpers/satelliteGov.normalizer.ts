@@ -1,6 +1,6 @@
-import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
-import { GovernanceSatelliteGraphQL, GovernanceSatelliteActionGraphQL } from 'utils/TypesAndInterfaces/Governance'
+import { GetGovernanceSatelliteActionsDataQuery, GetGovernanceSatelliteConfigQuery } from 'utils/__generated__/graphql'
+import { SatelliteGovActionStatusType } from './satellitesGov.types'
 
 type SatelliteGovernanceActionType = {
   id: number
@@ -8,7 +8,7 @@ type SatelliteGovernanceActionType = {
   purpose: string
   type: string
   status: number
-  statusFlag: StatusFlagKind
+  statusFlag: SatelliteGovActionStatusType
   satelliteId: string
   initiatorId: string
   expirationDatetime: string | null
@@ -36,32 +36,39 @@ type SatelliteGovernanceActionsType = {
   ongoingSatelliteGovIds: number[]
   pastSatelliteGovIds: number[]
   mySatelliteGovIds: number[]
+  allSatelliteGovIds: number[]
   satelliteGovIdsMapper: Record<number, SatelliteGovernanceActionType>
 }
 
-type SatelliteGovernanceType = {
-  storage: {
-    governance_satellite: GovernanceSatelliteGraphQL[]
-    governance_satellite_action: GovernanceSatelliteActionGraphQL[]
+export const normalizeSatelliteGovernanceConfig = (config: GetGovernanceSatelliteConfigQuery) => {
+  const [
+    {
+      address,
+      admin,
+      gov_sat_approval_percentage,
+      gov_sat_duration_in_days,
+      governance_satellite_counter,
+      governance,
+      max_actions_per_satellite = 10, // default 10 for max actions per satellite
+    },
+  ] = config.governance_satellite
+
+  return {
+    address,
+    admin,
+    approvalPercentage: gov_sat_approval_percentage,
+    durationInDays: gov_sat_duration_in_days,
+    counter: governance_satellite_counter,
+    governanceId: governance.address,
+    maxActionsCount: max_actions_per_satellite,
   }
-  userAddress?: string
 }
 
-export const normalizerSatelliteGovernance = ({ storage, userAddress }: SatelliteGovernanceType) => {
-  const { governance_satellite, governance_satellite_action: governanceSatelliteActions } = storage
-  const [governanceSatellite] = governance_satellite
-
-  const config = {
-    address: governanceSatellite.address,
-    admin: governanceSatellite.admin,
-    approvalPercentage: governanceSatellite.gov_sat_approval_percentage,
-    durationInDays: governanceSatellite.gov_sat_duration_in_days,
-    counter: governanceSatellite.governance_satellite_counter,
-    governanceId: governanceSatellite.governance.address,
-    // TODO remove 10 when api will return proper value, right now it's 0 instead of 10
-    maxActionsCount:
-      governanceSatellite.max_actions_per_satellite === 0 ? 10 : governanceSatellite.max_actions_per_satellite,
-  }
+export const normalizerSatelliteGovernanceActions = (
+  actionsData: GetGovernanceSatelliteActionsDataQuery,
+  userAddress: string | null,
+) => {
+  const { governance_satellite_action: governanceSatelliteActions } = actionsData
 
   const actions = governanceSatelliteActions.reduce<SatelliteGovernanceActionsType>(
     (acc, item) => {
@@ -82,6 +89,7 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
       const expirationDatetime = new Date(item.expiration_datetime ?? 0).getTime()
       const isEndingVotingTime = expirationDatetime > timeNow
 
+      // detect if action is EXECUTED | DEFEATED | DROPPED etc.
       const statusFlag = item.executed
         ? ProposalStatus.EXECUTED
         : item.status === 1
@@ -111,6 +119,8 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
         votes,
       }
 
+      // when sub type is SATELLITES_GOVERNANCE_ALL_ACTIONS_SUB, need this logic
+      // to detect ongoing | user | past actions
       if (
         action.statusFlag === ProposalStatus.EXECUTED ||
         action.statusFlag === ProposalStatus.DROPPED ||
@@ -126,7 +136,7 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
       if (action.initiatorId === userAddress) {
         acc.mySatelliteGovIds.push(action.id)
       }
-
+      acc.allSatelliteGovIds.push(action.id)
       acc.satelliteGovIdsMapper[action.id] = action
 
       return acc
@@ -135,12 +145,26 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
       ongoingSatelliteGovIds: [],
       pastSatelliteGovIds: [],
       mySatelliteGovIds: [],
+      allSatelliteGovIds: [],
       satelliteGovIdsMapper: {},
     },
   )
 
   return {
-    config,
     ...actions,
+    // sort user actions
+    mySatelliteGovIds: actions.mySatelliteGovIds.sort((a, b) => {
+      const statusOrder = [
+        ProposalStatus.ONGOING,
+        ProposalStatus.EXECUTED,
+        ProposalStatus.DROPPED,
+        ProposalStatus.DEFEATED,
+      ] as const
+
+      const statusA = actions.satelliteGovIdsMapper[a].statusFlag
+      const statusB = actions.satelliteGovIdsMapper[b].statusFlag
+
+      return statusOrder.indexOf(statusA) - statusOrder.indexOf(statusB)
+    }),
   }
 }
