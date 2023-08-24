@@ -72,7 +72,7 @@ const SatellitesVotingHistory = ({
         return (
           <SatelliteVotingHistoryListItem key={`${voteName}_${id}`}>
             <p>{votedItemName}</p>
-            <span className="currentSatellite-voting-history-info">
+            <span className="current satellite-voting-history-info">
               Voted <b className={`voting-${voteText.toLowerCase()}`}>{voteText} </b>
               {timestamp ? `on ${parseDate({ time: timestamp, timeFormat: 'MMM Do, YYYY' })}` : null}
             </span>

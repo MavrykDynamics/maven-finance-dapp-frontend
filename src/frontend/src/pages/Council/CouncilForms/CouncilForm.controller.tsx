@@ -1,7 +1,5 @@
 import { useLocation } from 'react-router-dom'
 import qs from 'qs'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'

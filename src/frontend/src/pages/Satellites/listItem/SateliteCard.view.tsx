@@ -10,7 +10,7 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import colors from 'styles/colors'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
   BUTTON_WIDE,
   BUTTON_PRIMARY,
@@ -86,7 +86,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const { availableProposalRewards } = useUserRewards()
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
   const {
-    contractAddresses: { delegationAddress, mvkTokenAddress },
+    contractAddresses: { delegationAddress, mvkTokenAddress, governanceAddress },
     globalLoadingState: { isActionActive },
     preferences: { themeSelected },
   } = useDappConfigContext()
@@ -185,8 +185,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    if (!delegationAddress) {
-      bug('Wrong delegation address')
+    if (!governanceAddress) {
+      bug('Wrong governance address')
       return null
     }
 
@@ -197,8 +197,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    return await distributeProposalRewards(delegationAddress, satelliteAddressToDistribute, availableProposalRewards)
-  }, [userAddress, delegationAddress, isUserSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
+    return await distributeProposalRewards(governanceAddress, satelliteAddressToDistribute, availableProposalRewards)
+  }, [userAddress, governanceAddress, isUserSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
 
   const distributeRewardsContractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -224,7 +224,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup>
               <SatelliteMainText>{satellite.name}</SatelliteMainText>
               <SatelliteSubText>
-                <TzAddress tzAddress={satellite.address} type={BLUE} hasIcon isBold />
+                <TzAddress tzAddress={satellite.address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon isBold />
               </SatelliteSubText>
             </SatelliteTextGroup>
           </div>
@@ -263,7 +263,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
                   <CustomTooltip
                     text={TOTAL_VOTING_POWER_TOOLTIP_TEXT}
                     iconId="info"
-                    defaultStrokeColor={colors[themeSelected]['textColor']}
+                    defaultStrokeColor={colors[themeSelected].subHeadingText}
                   />
                 </div>
                 <SatelliteSubText>

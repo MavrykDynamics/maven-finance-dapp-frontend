@@ -36,6 +36,8 @@ import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingT
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import colors from 'styles/colors'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import { useCollateralInputData } from '../Modals/hooks/Market/useCollateralInputData'
@@ -215,12 +217,16 @@ const LendingStatsTable = ({
   amount: number | string
   futureMBalance: number
 }) => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
   return (
     <div className="stats">
       <ThreeLevelListItem>
         <div className="name">
           Earn APY
-          <CustomTooltip iconId="info" text={EARN_APY} />
+          <CustomTooltip iconId="info" text={EARN_APY} defaultStrokeColor={colors[themeSelected].subHeadingText} />
         </div>
         <CommaNumber value={lendAPY} className="value" endingText="%" />
       </ThreeLevelListItem>

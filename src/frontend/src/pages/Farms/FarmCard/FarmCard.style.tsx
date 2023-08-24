@@ -1,18 +1,17 @@
 import styled from 'styled-components/macro'
-import { Card, skyColor, cyanColor, headerColor, royalPurpleColor, boxShadowColor } from 'styles'
+import { Card } from 'styles'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
   margin: 0;
   padding: 0;
-  color: ${({ theme }) => theme.textColor};
 
   .farm-info {
     h3 {
       font-weight: 600;
       font-size: 14px;
       line-height: 21px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.subHeadingText};
     }
 
     var,
@@ -20,7 +19,7 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
       font-weight: 600;
       font-size: 16px;
       line-height: 22px;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
       font-style: normal;
 
       p {
@@ -47,20 +46,20 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
       -webkit-box-orient: vertical;
     }
 
-    p {
+    /* p {
       font-weight: 400;
       font-size: 11px;
       line-height: 11px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.regularText};
       margin: 3px 0;
-    }
+    } */
 
     .subtitle {
       margin-top: 3px;
       font-weight: 400;
       font-size: 11px;
       text-align: right;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
     }
   }
 
@@ -74,7 +73,7 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
     a {
       display: flex;
       align-items: center;
-      color: ${({ theme }) => theme.topBarLinkColor};
+      color: ${({ theme }) => theme.linksAndButtons};
       font-weight: 500;
       font-size: 14px;
       line-height: 24px;
@@ -83,7 +82,7 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
 
       svg {
         fill: none;
-        stroke: ${({ theme }) => theme.topBarLinkColor};
+        stroke: ${({ theme }) => theme.linksAndButtons};
         width: 16px;
         height: 16px;
         margin-left: 8px;
@@ -161,7 +160,7 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
 
     .expand-header {
       grid-template-columns: 1fr;
-      border-top: 1px solid ${royalPurpleColor};
+      border-top: 1px solid ${({ theme }) => theme.divider};
       min-height: 47px;
     }
 
@@ -197,7 +196,7 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
         row-gap: 27px;
         align-items: center;
         margin-bottom: 10px;
-        border: 1px solid ${({ theme }) => theme.cardBorderColor};
+        border: 1px solid ${({ theme }) => theme.divider};
         border-radius: 10px;
 
         h3 {
@@ -207,8 +206,6 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
           font-weight: 600;
           font-size: 22px;
           line-height: 22px;
-
-          color: ${({ theme }) => theme.textColor};
         }
 
         div:not(.isConnected) {
@@ -263,7 +260,7 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
     align-items: center;
     justify-content: space-around;
     padding-left: 40px;
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border: 1px solid ${({ theme }) => theme.divider};
     border-radius: 10px;
     height: 100%;
 
@@ -276,7 +273,6 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
       font-weight: 400;
       font-size: 14px;
       line-height: 21px;
-      color: ${skyColor};
       margin-right: 10px;
     }
   }
@@ -285,7 +281,7 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
     svg {
       width: 19px;
       height: 19px;
-      fill: ${({ theme }) => theme.topBarLinkColor};
+      fill: ${({ theme }) => theme.linksAndButtons};
       transition: 0.3s fill;
 
       &:hover {
@@ -295,8 +291,8 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
   }
 
   &.opened {
-    border: 1px solid ${cyanColor};
-    box-shadow: 0px 4px 4px ${boxShadowColor};
+    border: 1px solid ${({ theme }) => theme.linksAndButtons};
+    box-shadow: 0px 4px 4px ${({ theme }) => theme.cardHoverColor};
   }
 
   &.opened {
@@ -315,6 +311,7 @@ export const FarmHarvestStyled = styled(Card)`
   padding: 18px 30px;
   margin: 0;
   justify-content: space-between;
+  border: 1px solid ${({ theme }) => theme.divider};
 
   .farm-info {
     flex-shrink: 0;
@@ -327,6 +324,7 @@ export const FarmStakeStyled = styled(Card)`
   padding: 18px 30px;
   margin: 0;
   flex-direction: column;
+  border: 1px solid ${({ theme }) => theme.divider};
 
   .farm-info {
     flex-shrink: 0;

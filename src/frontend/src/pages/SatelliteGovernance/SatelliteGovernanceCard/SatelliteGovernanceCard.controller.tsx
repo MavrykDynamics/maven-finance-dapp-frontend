@@ -30,14 +30,13 @@ import {
 import { DROP_ACTION, VOTE_FOR_ACTION } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
 import { PRECISION_NUMBER } from 'utils/constants'
 import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
-// providers
+// hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-
-// hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // types
@@ -180,13 +179,13 @@ export const SatelliteGovernanceCard = ({
           <SatelliteGovernanceCardTitleTextGroup>
             <div className="name">Target</div>
             <div className="value">
-              <TzAddress tzAddress={satelliteId} hasIcon={true} />
+              <TzAddress tzAddress={satelliteId} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={true} />
             </div>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
             <div className="name">Initiator</div>
             <div className="value">
-              <TzAddress tzAddress={initiatorId} hasIcon={true} />
+              <TzAddress tzAddress={initiatorId} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={true} />
             </div>
           </SatelliteGovernanceCardTitleTextGroup>
         </>

@@ -1,8 +1,7 @@
 import { useRef, useEffect, useState } from 'react'
-import dayjs from 'dayjs'
 import { createChart, BusinessDay, UTCTimestamp, SingleValueData } from 'lightweight-charts'
-
-import { skyColor, lightTextColor, headerColor } from 'styles'
+import dayjs from 'dayjs'
+import styleColors from 'styles/colors'
 import { getDateEnd, getDateStart, parseDate } from 'utils/time'
 import {
   DEFAULT_LAYOUT_SETTING,
@@ -19,9 +18,20 @@ import ChartTooltip, { AMOUNT_DATE_TOOLTIP } from '../Tooltips/ChartTooltip'
 import { ChartStyled } from '../Chart.style'
 
 import { AreaChartPropsType } from '../helpers/Chart.types'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const AreaChart = ({
-  settings: {
+  settings,
+  colors,
+  data,
+  tooltipName = AMOUNT_DATE_TOOLTIP,
+  tooltipAsset,
+}: AreaChartPropsType) => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
+  const {
     height,
     width,
     tickDateFormatter,
@@ -32,16 +42,18 @@ export const AreaChart = ({
     priceMargins,
     yAxisSide = 'right',
     crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
-    textColor = lightTextColor,
-    borderColor = headerColor,
+    textColor = styleColors[themeSelected].regularText,
+    borderColor = styleColors[themeSelected].strokeColor,
     seriesMarkers,
     isPeriod = false,
-  } = {},
-  colors: { lineColor = skyColor, areaTopColor = skyColor, areaBottomColor = 'transparent' } = {},
-  data,
-  tooltipName = AMOUNT_DATE_TOOLTIP,
-  tooltipAsset,
-}: AreaChartPropsType) => {
+  } = settings ?? {}
+
+  const {
+    lineColor = styleColors[themeSelected].primaryChartColor,
+    areaTopColor = styleColors[themeSelected].primaryChartColor,
+    areaBottomColor = styleColors[themeSelected].primaryChartBottomColor,
+  } = colors ?? {}
+
   const chartContainerRef = useRef<HTMLDivElement | null>(null)
   const mainChartWrapperRef = useRef<HTMLDivElement | null>(null)
 

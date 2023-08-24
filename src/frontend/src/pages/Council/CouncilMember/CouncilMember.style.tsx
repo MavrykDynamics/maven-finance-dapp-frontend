@@ -9,6 +9,7 @@ export const CouncilMemberStyled = styled(CardHover)<{ theme: MavrykTheme }>`
   align-items: flex-start;
   padding: 12px 28px;
   margin-bottom: 9px;
+  cursor: default;
 
   figcaption {
     width: calc(100% - 70px);
@@ -18,14 +19,14 @@ export const CouncilMemberStyled = styled(CardHover)<{ theme: MavrykTheme }>`
       font-weight: 600;
       font-size: 14px;
       line-height: 21px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.subHeadingText};
     }
 
     div {
       font-weight: 600;
       font-size: 16px;
       line-height: 22px;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
     }
   }
 
@@ -40,14 +41,6 @@ export const CouncilMemberStyled = styled(CardHover)<{ theme: MavrykTheme }>`
       height: 100%;
       object-fit: cover;
       border-radius: 50%;
-    }
-  }
-
-  &.is-me {
-    &:hover {
-      box-shadow: none;
-      border-color: ${({ theme }) => theme.cardBorderColor};
-      cursor: default;
     }
   }
 

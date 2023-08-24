@@ -8,6 +8,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // helpers
 import { scrollToFullView } from 'utils/scrollToFullView'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'
 import { getTreasuryTVL } from 'providers/TreasuryProvider/helpers/treasury.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -16,7 +17,7 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 // style
 import { TreasuryViewStyle } from './Treasury.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import {
@@ -29,7 +30,7 @@ import {
   TableScrollable,
 } from 'app/App.components/Table'
 import { Plug } from 'app/App.components/Chart/Chart.style'
-import { silverColor } from 'styles'
+import colors from 'styles/colors'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -41,6 +42,10 @@ type Props = {
 }
 
 export default function TreasuryView({ treasury, isGlobal = false, factoryAddress }: Props) {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
   const [showZeroTreasuries, setShowZeroTreasuries] = useState<boolean>(false)
   const ref = useRef<HTMLDivElement | null>(null)
@@ -71,13 +76,8 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
 
   return (
     <TreasuryViewStyle ref={ref}>
-      <a
-        href="https://mavryk.finance/litepaper#treasury "
-        target="_blank"
-        rel="noreferrer"
-        className="treasuryTooltip-link"
-      >
-        <CustomTooltip iconId="question" className="treasuryTooltip" />
+      <a href="https://mavryk.finance/litepaper#treasury " target="_blank" rel="noreferrer" className="info-link">
+        <CustomTooltip iconId="question" />
       </a>
 
       <div className="content-wrapper">
@@ -91,7 +91,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
               TVL
               <CustomTooltip
                 iconId="info"
-                defaultStrokeColor={silverColor}
+                defaultStrokeColor={colors[themeSelected].mainHeadingText}
                 text="Only tokens whitelisted by the DAO are shown in the treasuries. This is because the DAO can only interact with whitelisted tokens."
               />
             </p>
@@ -133,7 +133,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
                     const treasuryTokenBalance = convertNumberForClient({ number: balance, grade: decimals })
 
                     return (
-                      <TableRow rowHeight={25} borderColor="dataColor" className="add-hover" key={symbol}>
+                      <TableRow rowHeight={25} borderColor="primaryText" className="add-hover" key={symbol}>
                         <TableCell width="37%">{symbol}</TableCell>
                         <TableCell width="31%">
                           {treasuryTokenBalance < 0.01 ? (
@@ -206,7 +206,11 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
         <div className="address-block">
           <div className="text">Treasury{isGlobal ? ' Factory ' : ' '}Address</div>
           <div className="value">
-            <TzAddress type={BLUE} tzAddress={isGlobal ? factoryAddress : treasury.address} hasIcon />
+            <TzAddress
+              type={PRIMARY_TZ_ADDRESS_COLOR}
+              tzAddress={isGlobal ? factoryAddress : treasury.address}
+              hasIcon
+            />
           </div>
         </div>
       ) : null}

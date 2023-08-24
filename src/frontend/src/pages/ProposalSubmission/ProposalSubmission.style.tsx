@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components/macro'
-
-import { Card, boxShadowColor, CardHover } from '../../styles'
+import { Card, CardHover } from '../../styles'
 import { MavrykTheme } from '../../styles/interfaces'
 
 export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
@@ -13,7 +12,7 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
     font-weight: 500;
     font-size: 14px;
     line-height: 24px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
     margin-bottom: 30px;
   }
 
@@ -28,7 +27,7 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
 
   .label,
   label {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
   }
 `
 
@@ -82,7 +81,7 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
       height: 133px;
 
       border-radius: 10px;
-      border: 1px solid ${({ theme }) => theme.valueColor};
+      border: 1px solid ${({ theme }) => theme.linksAndButtons};
       overflow: hidden;
 
       img {
@@ -95,14 +94,14 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
         height: 20px;
         width: 20px;
 
-        fill: ${({ theme }) => theme.textColor};
+        fill: ${({ theme }) => theme.mainHeadingText};
       }
     }
 
     .value {
       font-size: 16px;
       font-weight: 600;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.regularText};
     }
   }
 
@@ -190,7 +189,7 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>
     transform: translateY(-50%);
     font-weight: 500;
     font-size: 14px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
   }
 
   label {
@@ -209,7 +208,7 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>
     svg {
       width: 13px;
       height: 13px;
-      fill: ${({ theme }) => theme.valueColor};
+      fill: ${({ theme }) => theme.linksAndButtons};
       transition: 0.3s all;
     }
 
@@ -226,8 +225,8 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>
   }
 
   &.underDrop {
-    border-color: ${({ theme }) => theme.valueColor};
-    box-shadow: 0px 4px 4px ${boxShadowColor};
+    border-color: ${({ theme }) => theme.linksAndButtons};
+    box-shadow: 0px 4px 4px ${({ theme }) => theme.cardHoverColor};
   }
 `
 

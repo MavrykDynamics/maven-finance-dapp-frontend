@@ -19,7 +19,7 @@ export const AppStyled = styled.div<{
 
 export const FullScreenLoadingApp = styled.div<{ theme: MavrykTheme }>`
   position: fixed;
-  background-color: rgba(8, 6, 40, 1);
+  background-color: ${({ theme }) => theme.loaderBackgroundColor};
   width: 100vw;
   height: 100vh;
 `
@@ -29,7 +29,7 @@ export const EmptyContainer = styled.figure<{ theme: MavrykTheme }>`
   justify-content: center;
   align-items: center;
   margin: 0;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.regularText};
   font-size: 18px;
   font-weight: 600;
   flex-direction: column;

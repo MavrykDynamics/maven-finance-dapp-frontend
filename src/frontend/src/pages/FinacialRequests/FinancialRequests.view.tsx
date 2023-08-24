@@ -49,10 +49,10 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 
 // providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { FinancialRequestRecord } from 'providers/FinancialRequestsProvider/helpers/financialRequests.types'
 
 export const FinancialRequestsView = ({
   ongoingFinancialRequestsIds: ongoing,
@@ -185,7 +185,7 @@ export const FinancialRequestsView = ({
           <div className="info_section">
             <InfoBlockTitle>Requester</InfoBlockTitle>
             <InfoBlockValue>
-              <TzAddress tzAddress={rightSideContent.requesterAddress} hasIcon />
+              <TzAddress tzAddress={rightSideContent.requesterAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
             </InfoBlockValue>
           </div>
         </div>
@@ -230,21 +230,21 @@ export const FinancialRequestsView = ({
             <div className="list_item">
               <InfoBlockName>Governance Contract</InfoBlockName>
               <InfoBlockValue>
-                <TzAddress tzAddress={rightSideContent.governanceContract} />
+                <TzAddress tzAddress={rightSideContent.governanceContract} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </InfoBlockValue>
             </div>
 
             <div className="list_item">
               <InfoBlockName>Governance Financial Contract</InfoBlockName>
               <InfoBlockValue>
-                <TzAddress tzAddress={rightSideContent.governanceFinId} />
+                <TzAddress tzAddress={rightSideContent.governanceFinId} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </InfoBlockValue>
             </div>
 
             <div className="list_item">
               <InfoBlockName>Treasury Contract</InfoBlockName>
               <InfoBlockValue>
-                <TzAddress tzAddress={rightSideContent.treasuryContract} />
+                <TzAddress tzAddress={rightSideContent.treasuryContract} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </InfoBlockValue>
             </div>
           </div>

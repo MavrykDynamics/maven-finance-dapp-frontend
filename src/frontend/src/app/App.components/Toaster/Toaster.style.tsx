@@ -18,7 +18,7 @@ export const ToasterStyled = styled.div<{ showing: boolean; theme: MavrykTheme }
   column-gap: 15px;
   min-height: 90px;
 
-  background-color: ${({ theme }) => theme.containerColor};
+  background-color: ${({ theme }) => theme.cards};
   box-shadow: 1px 7px 14px -5px rgba(0, 0, 0, 0.2);
 
   transition: transform 1s ease-in-out;
@@ -63,7 +63,7 @@ export const ToasterIcon = styled.div<{ status?: string; theme: MavrykTheme }>`
 
   .toaster-loader {
     transform: scale(0.175);
-    color: ${({ theme }) => theme.primaryColor};
+    color: ${({ theme }) => theme.selectedColor};
   }
 
   > svg {
@@ -92,7 +92,7 @@ export const ToasterContent = styled.div<{ status?: string; theme: MavrykTheme }
   .message {
     font-weight: 500;
     font-size: 14px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;

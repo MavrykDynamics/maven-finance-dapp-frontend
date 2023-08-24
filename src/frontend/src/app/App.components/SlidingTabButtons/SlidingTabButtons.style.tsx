@@ -1,115 +1,95 @@
-import styled, { css } from 'styled-components/macro'
-import { turn } from 'styles/animations'
-import { darkColor } from '../../../styles'
+import styled from 'styled-components/macro'
 import { BUTTON_RADIUS } from '../../../styles/constants'
+import { PRIMARY_SLIDING_TAB_BUTTONS, SECONDARY_SLIDING_TAB_BUTTONS } from './SlidingTabButtons.conts'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { PRIMARY, SECONDARY, TRANSPARENT } from './SlidingTabButtons.constants'
 
 export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
-  background-color: ${darkColor};
-  border: 1px solid ${({ theme }) => theme.lPurple_dPurple_lPuprple};
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
-  border-radius: 20px;
-  height: 40px;
-  padding: 1px;
 
   &.disabled {
-    opacity: 0.7;
+    opacity: 0.6;
     cursor: not-allowed;
 
     > button {
+      opacity: 0.6;
       cursor: not-allowed;
     }
   }
 
-  &.vault {
+  &.${PRIMARY_SLIDING_TAB_BUTTONS} {
+    padding: 1px;
     height: 40px;
-    width: 310px;
 
-    button {
-      white-space: nowrap;
+    background-color: ${({ theme }) => theme.backgroundColor};
+    border: 1px solid ${({ theme }) => theme.strokeColor};
+    border-radius: 20px;
+
+    &.vault {
+      height: 40px;
+      width: 310px;
     }
   }
-`
 
-export const ButtonStyled = styled.button<{ disabled: boolean; theme: MavrykTheme }>`
+  &.${SECONDARY_SLIDING_TAB_BUTTONS} {
+    column-gap: 20px;
+    width: fit-content;
+  }
+`
+// TODO: to create new button type in NewButton cmp
+export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   border: none;
   cursor: pointer;
-  height: 100%;
-  width: -webkit-fill-available;
   white-space: nowrap;
-  padding: 0 22px;
-  border-radius: ${BUTTON_RADIUS};
-  user-select: none;
-  color: ${({ theme }) => theme.lightTextColor};
-  background: transparent;
 
-  &.selected {
-    color: ${({ theme }) => theme.containerColor};
-    background: linear-gradient(90deg, #86d4c9 0.31%, #8d86eb 99.97%);
+  font-weight: 600;
+  line-height: 21px;
+
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
-  &.loading {
-    pointer-events: none;
-    opacity: 0.8;
-  }
+  &.${PRIMARY_SLIDING_TAB_BUTTONS} {
+    padding: 0 22px;
 
-  ${({ disabled }) =>
-    disabled
-      ? css`
-          opacity: 0.7;
-          cursor: not-allowed;
-        `
-      : ''}
-`
+    height: 100%;
+    width: -webkit-fill-available;
 
-export const ButtonText = styled.div<{ theme: MavrykTheme }>`
-  > div {
-    text-align: center;
-    margin: auto;
-    display: inline-block;
-    vertical-align: top;
-
-    font-weight: 600;
     font-size: 14px;
-    line-height: 21px;
-  }
-  &.${PRIMARY} {
-    color: ${({ theme }) => theme.textColor};
-  }
+    text-align: center;
 
-  &.${SECONDARY} {
-    color: ${({ theme }) => theme.primaryColor};
-  }
+    border-radius: ${BUTTON_RADIUS};
+    color: ${({ theme }) => theme.regularText};
 
-  &.${TRANSPARENT} {
-    color: ${({ theme }) => theme.primaryColor};
-  }
-`
-
-export const ButtonLoadingIcon = styled.svg<{ theme: MavrykTheme }>`
-  width: 16px;
-  height: 16px;
-  margin-top: 4px;
-  margin-right: 15px;
-  vertical-align: sub;
-  stroke: ${({ theme }) => theme.textColor};
-  stroke-width: 1px;
-  stroke-dashoffset: 94.248;
-  stroke-dasharray: 47.124;
-  animation: ${turn} 1.6s linear infinite forwards;
-
-  &.${PRIMARY} {
-    stroke: ${({ theme }) => theme.containerColor};
+    &.selected {
+      color: ${({ theme }) => theme.backgroundColor};
+      background: ${({ theme }) => theme.forTabs};
+    }
   }
 
-  &.${SECONDARY} {
-    stroke: ${({ theme }) => theme.primaryColor};
-  }
+  &.${SECONDARY_SLIDING_TAB_BUTTONS} {
+    position: relative;
+    padding-bottom: 6px;
 
-  &.${TRANSPARENT} {
-    stroke: ${({ theme }) => theme.textColor};
+    font-size: 16px;
+    color: ${({ theme }) => theme.menuButtonText};
+
+    &.selected {
+      color: ${({ theme }) => theme.selectedColor};
+
+      &::after {
+        position: absolute;
+        left: calc(50% - 15px);
+        bottom: 0;
+
+        width: 30px;
+        height: 1px;
+
+        content: '';
+        background-color: ${({ theme }) => theme.selectedColor};
+      }
+    }
   }
 `

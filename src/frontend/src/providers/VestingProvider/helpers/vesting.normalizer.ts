@@ -1,10 +1,10 @@
 import { VestingRecord } from './vesting.types'
-import { GetVestingStorageQuery, Vesting_Vestee } from 'utils/__generated__/graphql'
+import { GetVestingQueryQuery, Vesting_Vestee } from 'utils/__generated__/graphql'
 
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
 
-export function normalizeVestingStorage(storage: GetVestingStorageQuery) {
+export function normalizeVestingStorage(storage: GetVestingQueryQuery) {
   const vesteeRecord = storage.vesting[0]
 
   const { vesteesMapper = {}, vesteeIds = [] } =
@@ -23,6 +23,8 @@ export function normalizeVestingStorage(storage: GetVestingStorageQuery) {
           vestingMonth: vestee.vesting_months,
           nextRewardDate: vestee.next_redemption_timestamp,
           lastClaimDate: vestee.last_claimed_timestamp,
+          cliffTimeEnd: vestee.end_cliff_timestamp,
+          isLocked: vestee.locked,
         }
         return acc
       },

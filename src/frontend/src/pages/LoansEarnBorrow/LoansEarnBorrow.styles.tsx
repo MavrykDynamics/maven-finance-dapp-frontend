@@ -11,7 +11,7 @@ export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme; isChartLoa
   margin: 23px 0 30px 0;
   height: 152px;
 
-  border: 1px solid ${({ theme }) => theme.borderColor};
+  border: 1px solid ${({ theme }) => theme.strokeCards};
   border-radius: 10px;
 
   & > div:last-child {
@@ -28,7 +28,7 @@ export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme; isChartLoa
     font-weight: 600;
     font-size: 10px;
 
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
 
     svg {
       position: relative;
@@ -37,8 +37,6 @@ export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme; isChartLoa
 
       width: 30px;
       height: 30px;
-
-      fill: ${({ theme }) => theme.valueColor};
     }
   }
 
@@ -72,11 +70,11 @@ export const EarnBorrowCardHeader = styled.div<{ theme: MavrykTheme }>`
   padding: 0 20px;
   height: 60px;
 
-  color: ${({ theme }) => theme.dataColor};
+  color: ${({ theme }) => theme.primaryText};
   background-color: ${({ theme }) => theme.backgroundColor};
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
-  border-bottom: 1px solid ${({ theme }) => theme.borderColor};
+  border-bottom: 1px solid ${({ theme }) => theme.divider};
 
   img,
   svg {
@@ -87,7 +85,7 @@ export const EarnBorrowCardHeader = styled.div<{ theme: MavrykTheme }>`
   }
 
   svg {
-    fill: ${({ theme }) => theme.dataColor};
+    fill: ${({ theme }) => theme.primaryText};
   }
 
   h4 {
@@ -121,11 +119,11 @@ export const EarnBorrowCardBody = styled.div<{ theme: MavrykTheme }>`
     font-size: 14px;
     line-height: 21px;
 
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
 
     p {
       margin: 0;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
 
       font-weight: 600;
       font-size: 16px;
@@ -149,7 +147,7 @@ export const EarnBorrowCardBody = styled.div<{ theme: MavrykTheme }>`
       width: 14px;
       height: 14px;
 
-      fill: ${({ theme }) => theme.dataColor};
+      fill: ${({ theme }) => theme.linksAndButtons};
     }
   }
 `

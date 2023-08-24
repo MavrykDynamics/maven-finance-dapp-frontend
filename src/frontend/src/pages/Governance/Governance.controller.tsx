@@ -36,6 +36,7 @@ import {
   WAITING_PAYMENT_PROPOSALS_LIST_NAME,
 } from 'app/App.components/Pagination/pagination.consts'
 import { generateCyclesDdOptions, NONE_CYCLE_SELECTED_OPTION } from './helpers/governanceView.helpers'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // styles
 import { Page } from 'styles'
@@ -296,7 +297,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                           <ImageWithPlug imageLink={avatar} alt={`${name} avatar`} />
                           <div className="info">
                             <span>{name}</span>
-                            <TzAddress tzAddress={address} />
+                            <TzAddress tzAddress={address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
                           </div>
                         </div>
                         <StatusFlag status={voteColor} text={SATELLITE_VOTES_MAPPER[vote]} />

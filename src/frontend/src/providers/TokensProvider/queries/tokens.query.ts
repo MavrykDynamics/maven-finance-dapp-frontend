@@ -19,6 +19,7 @@ export const QUERY_TOKENS_METADATA = gql(`
       # check whether tokens is loan token
       lending_controller_loan_tokens {
         loan_token_name
+        min_repayment_amount
       }
 
       # check whether tokens is mToken

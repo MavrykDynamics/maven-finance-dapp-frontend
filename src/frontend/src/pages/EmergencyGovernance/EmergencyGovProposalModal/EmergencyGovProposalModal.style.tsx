@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { Card, headerColor } from 'styles'
 
 export const EmergencyGovProposalModalContent = styled.div<{ theme: MavrykTheme }>`
   width: 750px;
@@ -29,6 +28,10 @@ export const EmergencyGovProposalModalContent = styled.div<{ theme: MavrykTheme 
 
       label {
         left: 0;
+      }
+
+      p {
+        color: ${({ theme }) => theme.regularText};
       }
     }
   }

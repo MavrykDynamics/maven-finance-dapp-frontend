@@ -67,12 +67,32 @@ const VestingTab = () => {
   const { action: handleClaimVestingReward } = useContractAction(contractActionProps)
 
   if (!vesteeRecord) return <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`} />
-  const { vestingMonth, totalAllocated, totalRemainded, rewardPerMonth, nextRewardDate, lastClaimDate } = vesteeRecord
+  const {
+    vestingMonth,
+    totalAllocated,
+    totalRemainded,
+    rewardPerMonth,
+    nextRewardDate,
+    lastClaimDate,
+    isLocked,
+    cliffTimeEnd,
+  } = vesteeRecord
 
   const lastClaimTime = dayjs(lastClaimDate),
     nextClaimTime = dayjs(nextRewardDate),
-    hasRewardsFor = Math.max(0, nextClaimTime.diff(lastClaimTime, 'month')),
-    isClaimBtnDisabled = rewardPerMonth === 0 || hasRewardsFor === 0 || isActionActive
+    cliffTimeExpires = dayjs(cliffTimeEnd),
+    hasRewardsFor = Math.max(0, nextClaimTime.diff(lastClaimTime, 'month'))
+
+  /**
+   * claim vesting rewards is disabled if:
+   * 1. monthly rewards amount is 0
+   * 2. user have already claimer rewards for this month
+   * 3. vestee is locked for this user
+   * 4. vestee in cliff period
+   * 5. another action is in progress
+   */
+  const isClaimBtnDisabled =
+    rewardPerMonth === 0 || hasRewardsFor === 0 || isLocked || cliffTimeExpires.isBefore(dayjs()) || isActionActive
 
   return (
     <>

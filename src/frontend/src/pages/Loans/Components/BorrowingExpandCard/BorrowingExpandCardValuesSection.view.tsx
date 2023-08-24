@@ -56,7 +56,7 @@ export const BorrowingExpandCardValuesSection = ({
 
           <div className="name">
             Outstanding Debt
-            <CustomTooltip iconId="info" text={OUTSTANDING_DEBT} defaultStrokeColor={colors[themeSelected].textColor} />
+            <CustomTooltip iconId="info" text={OUTSTANDING_DEBT} defaultStrokeColor={colors[themeSelected].subHeadingText} />
           </div>
         </LoansValuesSectionInfo>
 
@@ -70,7 +70,7 @@ export const BorrowingExpandCardValuesSection = ({
           <CommaNumber value={collateralBalance} className="value" beginningText="$" showDecimal decimalsToShow={2} />
           <div className="name margin-top">
             Collateral Value
-            <CustomTooltip iconId="info" text={COLLATERAL_VALUE} defaultStrokeColor={colors[themeSelected].textColor} />
+            <CustomTooltip iconId="info" text={COLLATERAL_VALUE} defaultStrokeColor={colors[themeSelected].subHeadingText} />
           </div>
         </LoansValuesSectionInfo>
 
@@ -79,7 +79,7 @@ export const BorrowingExpandCardValuesSection = ({
           <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
           <div className="name">
             Accrued Interest
-            <CustomTooltip iconId="info" text={ACCRUED_INTEREST} defaultStrokeColor={colors[themeSelected].textColor} />
+            <CustomTooltip iconId="info" text={ACCRUED_INTEREST} defaultStrokeColor={colors[themeSelected].subHeadingText} />
           </div>
         </LoansValuesSectionInfo>
 
@@ -87,7 +87,7 @@ export const BorrowingExpandCardValuesSection = ({
           <CommaNumber value={apr} decimalsToShow={2} className="value" endingText="%" />
           <div className="name margin-top">
             APR
-            <CustomTooltip iconId="info" text={APR} defaultStrokeColor={colors[themeSelected].textColor} />
+            <CustomTooltip iconId="info" text={APR} defaultStrokeColor={colors[themeSelected].subHeadingText} />
           </div>
         </LoansValuesSectionInfo>
 
@@ -95,11 +95,14 @@ export const BorrowingExpandCardValuesSection = ({
           <CommaNumber value={borrowCapacity} className="value" beginningText="$" showDecimal decimalsToShow={2} />
           <div className="name margin-top">
             Borrow Capacity
-            <CustomTooltip iconId="info" text={BORROW_CAPACITY} defaultStrokeColor={colors[themeSelected].textColor} />
+            <CustomTooltip iconId="info" text={BORROW_CAPACITY} defaultStrokeColor={colors[themeSelected].subHeadingText} />
           </div>
         </LoansValuesSectionInfo>
       </div>
-      <LoansValuesSectionInfo className="collateral-diagram" customColor={getCollateralRationPersent(collateralRatio)}>
+      <LoansValuesSectionInfo
+        className="collateral-diagram"
+        customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
+      >
         <div className="percentage">
           Collateral Ratio:
           <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />

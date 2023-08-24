@@ -93,7 +93,7 @@ export const FarmWithdrawModal = ({
         <FarmLpActionsPopupsContent>
           <div className="popup-header">
             <CoinsIcons />
-            <div className="token-names">Unstake {tokensNames} LP Tokens</div>
+            <div>Unstake {tokensNames} LP Tokens</div>
           </div>
 
           <Input

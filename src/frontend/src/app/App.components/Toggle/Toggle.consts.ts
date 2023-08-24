@@ -1,0 +1,3 @@
+export const PRIMARY_TOGGLE = 'PRIMARY_TOGGLE'
+export const SECONDARY_TOGGLE = 'SECONDARY_TOGGLE'
+export type ToggleType = typeof PRIMARY_TOGGLE | typeof SECONDARY_TOGGLE

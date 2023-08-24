@@ -78,7 +78,7 @@ const DashboardPersonal = () => {
 
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
   const {
-    contractAddresses: { mvkTokenAddress, doormanAddress, delegationAddress },
+    contractAddresses: { mvkTokenAddress, doormanAddress, governanceAddress },
   } = useDappConfigContext()
   const {
     userTokensBalances,
@@ -191,8 +191,8 @@ const DashboardPersonal = () => {
       return null
     }
 
-    if (!delegationAddress) {
-      bug('Wrong delegation address')
+    if (!governanceAddress) {
+      bug('Wrong governance address')
       return null
     }
 
@@ -203,8 +203,8 @@ const DashboardPersonal = () => {
       return null
     }
 
-    return await distributeProposalRewards(delegationAddress, satelliteAddressToDistribute, availableProposalRewards)
-  }, [userAddress, delegationAddress, isSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
+    return await distributeProposalRewards(governanceAddress, satelliteAddressToDistribute, availableProposalRewards)
+  }, [userAddress, governanceAddress, isSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
 
   const distributeRewardsContractActionProps: HookContractActionArgs = useMemo(
     () => ({

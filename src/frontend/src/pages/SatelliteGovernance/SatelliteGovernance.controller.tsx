@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Page } from 'styles'
 import { useLocation, useParams, useHistory } from 'react-router'
 
@@ -18,8 +18,9 @@ import {
   SATELLITE_GOVERNANCE_MENU_TABS,
   SATELLITE_GOVERNANCE_PATHNAME,
 } from './SatelliteGovernance.consts'
+import { TAB_ID_ONGOING, TabIdType, getSatelliteGovSub } from './utils/tabsHelper'
+import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 import { TOTAL_DELEGATED_MVK } from 'texts/tooltips/satellite'
-import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
 import {
   DEFAULT_SATELLITE_GOVERNANCE_SUBS,
   SATELLITES_GOVERNANCE_CONFIG_SUB,
@@ -37,9 +38,11 @@ import {
 import { EmptyContainer } from '../../app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { H2SimpleTitle } from 'styles/generalStyledComponents/Titles.style'
+import colors from 'styles/colors'
 
 // helpers
 import { convertBytesAddressToAddress } from '../../app/App.helpers'
+import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
 import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
 
 // view
@@ -49,11 +52,12 @@ import { SatelliteGovernanceCard } from './SatelliteGovernanceCard/SatelliteGove
 import { SatelliteGovernanceForm } from './SatelliteGovernance.form'
 import { CommaNumber } from '../../app/App.components/CommaNumber/CommaNumber.controller'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
-import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
-import { TAB_ID_ONGOING, TabIdType, getSatelliteGovSub } from './utils/tabsHelper'
+import {
+  SlidingTabButtons,
+  SlidingTabButtonType,
+} from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 const getCurrentListNameById = (tabId: string) => {
   switch (tabId) {
@@ -84,6 +88,7 @@ export const SatelliteGovernance = () => {
 
   const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
   const {
+    preferences: { themeSelected },
     maxLengths: {
       governanceSatellite: { purposeMaxLength },
       dataFeeds: { feedNameMaxLength },
@@ -126,7 +131,7 @@ export const SatelliteGovernance = () => {
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   // TODO: add same logic as in vaults, for nulling "my actions list", when user sign out
-  const tabsList = useMemo<TabItem[]>(() => {
+  const tabsList = useMemo<SlidingTabButtonType[]>(() => {
     return [
       {
         text: 'Ongoing Actions',
@@ -215,7 +220,11 @@ export const SatelliteGovernance = () => {
             <h3>Total Delegated MVK</h3>
             <div className="value">
               <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />
-              <CustomTooltip iconId="info" text={TOTAL_DELEGATED_MVK} />
+              <CustomTooltip
+                iconId="info"
+                text={TOTAL_DELEGATED_MVK}
+                defaultStrokeColor={colors[themeSelected].primaryText}
+              />
             </div>
           </SatelliteGovernanceStatsInfo>
           <SatelliteGovernanceStatsInfo>
@@ -255,7 +264,7 @@ export const SatelliteGovernance = () => {
           </DataLoaderWrapper>
         ) : (
           <SatelliteGovernanceMenuCards>
-            <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="primary-switcher" />
+            <SlidingTabButtons kind={SECONDARY_SLIDING_TAB_BUTTONS} tabItems={tabsList} onClick={handleChangeTabs} />
 
             <div>
               {paginatedItemsList.length

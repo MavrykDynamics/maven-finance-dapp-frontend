@@ -11,7 +11,7 @@ const EDITABLE_TABLE_HEADER_STYLES = css`
       vertical-align: middle;
       text-align: center;
       font-size: 16px;
-      border-right: 1px solid ${({ theme }) => theme.cardBorderColor};
+      border-right: 1px solid ${({ theme }) => theme.strokeColor};
 
       &:last-child {
         border-right: none;
@@ -93,7 +93,7 @@ const LOANS_DASHBOARD_TABLE_HEADER_CELL_STYLES = css`
 `
 
 export const TableHeaderCell = styled.th<{ theme: MavrykTheme; contentPosition?: 'left' | 'center' | 'right' }>`
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.mainHeadingText};
 
   ${({ contentPosition }) => {
     switch (contentPosition) {

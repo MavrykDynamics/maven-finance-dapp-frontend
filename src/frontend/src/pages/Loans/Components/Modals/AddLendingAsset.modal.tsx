@@ -30,7 +30,6 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // styles
-import { silverColor } from 'styles'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -43,6 +42,7 @@ import { depositLendingAssetAction } from 'providers/LoansProvider/actions/loans
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import colors from 'styles/colors'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
@@ -62,9 +62,12 @@ export const AddLendingAsset = ({
   data: AddLendingAssetDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const {
+    preferences: { themeSelected },
     contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
+
   const { userTokensBalances, userAddress } = useUserContext()
   const { bug } = useToasterContext()
 
@@ -184,7 +187,7 @@ export const AddLendingAsset = ({
                   Earn APY{' '}
                   <CustomTooltip
                     iconId="info"
-                    defaultStrokeColor={silverColor}
+                    defaultStrokeColor={colors[themeSelected].subHeadingText}
                     text={`You will receive m${symbol} instead of your ${symbol}`}
                     className="tooltip"
                   />

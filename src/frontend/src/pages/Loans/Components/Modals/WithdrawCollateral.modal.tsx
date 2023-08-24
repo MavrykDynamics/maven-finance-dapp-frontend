@@ -88,7 +88,6 @@ export const WithdrawCollateral = ({
     contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
   const { bug } = useToasterContext()
-
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
@@ -345,7 +344,10 @@ const WithdrawCollateralTableStats = ({
   return (
     <MemoizedComponent returnMemoizedComponent={validationStatus === INPUT_STATUS_ERROR}>
       <VaultModalOverview>
-        <ThreeLevelListItem className="collateral-diagram" customColor={getCollateralRationPersent(collateralRatio)}>
+        <ThreeLevelListItem
+          className="collateral-diagram"
+          customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
+        >
           <div className={`percentage`}>
             Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
           </div>
@@ -365,7 +367,7 @@ const WithdrawCollateralTableStats = ({
             <CustomTooltip
               iconId="info"
               text="Dollar value of collateral you are able to withdraw without making your vault under-collateralized for this specific collateral asset"
-              defaultStrokeColor={colors[themeSelected].textColor}
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
             />
           </div>
           <CommaNumber value={currentCollateralToWithdraw * collateralRate} className="value" beginningText="$" />
