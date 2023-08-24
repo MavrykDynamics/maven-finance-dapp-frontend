@@ -37,7 +37,7 @@ export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
     width: fit-content;
   }
 `
-
+// TODO: to create new button type in NewButton cmp
 export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   border: none;
   cursor: pointer;

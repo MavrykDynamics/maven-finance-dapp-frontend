@@ -1,5 +1,7 @@
 import { LIGHT_THEME, DARK_THEME, SPACE_THEME, ThemeType } from 'consts/theme.const'
 
+const cyanColor = '#86d4c9'
+
 export const dark = {
   // primary colors
   selectedColor: '#8D86EB',
@@ -44,7 +46,7 @@ export const dark = {
   rpcNodeSelecledColor: '#86D4C9',
   roiCalculatorBackground: 'linear-gradient(180deg, #503eaa 0%, rgba(80, 62, 170, 0) 100%)',
   dashboardTvlBackground: 'linear-gradient(180deg, #1E1E1E 3.55%, #1E1E1E 83.47%, #1E1E1E 103.84%)',
-  // charts
+  // chart colors
   primaryChartColor: '#77A4F2',
   primaryChartBottomColor: 'rgba(119, 164, 242, 0)',
   secondaryChartColor: '#77A4F2',
@@ -53,11 +55,13 @@ export const dark = {
   gaugeChartArcColor: '#86D4C9',
   gaugeChartCircleBackgroundColor: '#1E1E1E',
   gradientDiagramBackgroundColor: '#696969',
-  // loaders
+  // loader colors
   shineAnimationGradient: `linear-gradient(to right, #8D86EB 0, #86D4C9 10%, #8D86EB 20%)`,
   loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
-  // tabs
+  // tab colors
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
+  // const colors
+  cyanColor,
 }
 
 export const light = {
@@ -104,7 +108,7 @@ export const light = {
   rpcNodeSelecledColor: '#86D4C9',
   roiCalculatorBackground: 'linear-gradient(180deg, rgba(80, 62, 170, 0.20) 0%, rgba(80, 62, 170, 0.00) 100%)',
   dashboardTvlBackground: 'linear-gradient(180deg, #FFFFFF 3.55%, #FFFFFF 83.47%, #FFFFFF 103.84%)',
-  // charts
+  // chart colors
   primaryChartColor: '#77A4F2',
   primaryChartBottomColor: 'rgba(119, 164, 242, 0)',
   secondaryChartColor: '#77A4F2',
@@ -113,11 +117,13 @@ export const light = {
   gaugeChartArcColor: '#86D4C9',
   gaugeChartCircleBackgroundColor: '#FFFFFF',
   gradientDiagramBackgroundColor: '#696969',
-  // loaders
+  // loader colors
   shineAnimationGradient: `linear-gradient(to right, #8D86EB 0, #86D4C9 10%, #8D86EB 20%)`,
   loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
-  // tabs
+  // tab colors
   forTabs: 'linear-gradient(90deg, #03C9A3 0.31%, #8D86EB 99.97%)',
+  // const colors
+  cyanColor,
 }
 
 export const space = {
@@ -164,7 +170,7 @@ export const space = {
   rpcNodeSelecledColor: '#86D4C9',
   roiCalculatorBackground: 'linear-gradient(180deg, #503eaa 0%, rgba(80, 62, 170, 0) 100%)',
   dashboardTvlBackground: 'linear-gradient(180deg, #160e3f 3.55%, #26185c 83.47%, #321f71 103.84%)',
-  // charts
+  // chart colors
   primaryChartColor: '#77A4F2',
   primaryChartBottomColor: 'rgba(119, 164, 242, 0)',
   secondaryChartColor: '#86D4C9',
@@ -173,11 +179,13 @@ export const space = {
   gaugeChartArcColor: '#86D4C9',
   gaugeChartCircleBackgroundColor: '#38237C',
   gradientDiagramBackgroundColor: '#696969',
-  // loaders
+  // loader colors
   shineAnimationGradient: `linear-gradient(to right, #8D86EB 0, #86D4C9 10%, #8D86EB 20%)`,
   loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
-  // tabs
+  // tab colors
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
+  // const colors
+  cyanColor,
 }
 
 type Themes = {
