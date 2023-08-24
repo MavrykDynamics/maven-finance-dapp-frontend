@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { Card, cyanColor, headerColor, skyColor, darkPurpleColor } from 'styles'
+import { Card } from 'styles'
 
 import { MavrykTheme } from '../../../styles/interfaces'
 
@@ -32,7 +32,7 @@ export const PropSubmissionTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
   }
 
   .title {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
     font-size: 18px;
   }
 `
@@ -44,7 +44,7 @@ export const CurrentPhaseContainer = styled.div<{ theme: MavrykTheme }>`
 
   .phase {
     font-size: 16px;
-    color: ${cyanColor};
+    color: ${({ theme }) => theme.linksAndButtons};
     text-transform: capitalize;
   }
 `

@@ -8,7 +8,7 @@ export const GradientDiagramStyled = styled.div<{ theme: MavrykTheme; gradient: 
   position: relative;
   width: 100%;
   height: 4px;
-  background: #696969;
+  background: ${({ theme }) => theme.gradientDiagramBackgroundColor};
 
   &::before {
     content: '';

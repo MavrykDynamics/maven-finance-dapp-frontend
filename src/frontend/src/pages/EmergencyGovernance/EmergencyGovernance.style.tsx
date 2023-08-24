@@ -1,6 +1,5 @@
-import styled, { css } from 'styled-components/macro'
-import { Card, skyColor, cyanColor } from 'styles'
-
+import styled from 'styled-components/macro'
+import { Card } from 'styles'
 import { MavrykTheme } from '../../styles/interfaces'
 
 export const EmergencyGovernanceCard = styled(Card)<{ theme: MavrykTheme }>`
@@ -11,12 +10,12 @@ export const EmergencyGovernanceCard = styled(Card)<{ theme: MavrykTheme }>`
     font-weight: 500;
     font-size: 14px;
     line-height: 24px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
     margin: 0;
   }
 
   a {
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
     margin-top: 10px;
     font-size: 14px;
     text-decoration: none;
@@ -48,10 +47,12 @@ export const CardContentLeftSide = styled.div<{ theme: MavrykTheme }>`
     margin: 0;
   }
 `
+
 export const CardContent = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: center;
 `
+
 export const CardContentRightSide = styled.div<{ theme: MavrykTheme }>`
   width: 50%;
   align-items: center;
@@ -76,36 +77,5 @@ export const EmergencyGovernHistory = styled.div<{ theme: MavrykTheme }>`
   > h1 {
     margin: 0;
     margin-bottom: 10px;
-  }
-`
-
-export const BGTextWithStatus = styled.div<{
-  status: boolean
-  theme: MavrykTheme
-}>`
-  color: ${({ status, theme }) => (status ? theme.downColor : theme.upColor)};
-  font-weight: 600;
-  font-size: 22px;
-`
-
-export const CardContentVoiting = styled.div`
-  width: 100%;
-  padding-left: 40px;
-
-  .voted-label {
-    display: none;
-  }
-
-  .voted-block {
-    padding-top: 0;
-  }
-
-  aside {
-    margin-top: 33px;
-    margin-bottom: 58px;
-  }
-
-  article {
-    margin-bottom: 30px;
   }
 `

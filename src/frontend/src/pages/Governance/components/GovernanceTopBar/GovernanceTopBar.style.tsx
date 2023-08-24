@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro'
-import { Card, cyanColor, darkPurpleColor } from 'styles'
-
+import { Card } from 'styles'
 import { MavrykTheme } from '../../../../styles/interfaces'
 
 export const GovernanceTopBarStyled = styled(Card)`
@@ -18,7 +17,7 @@ export const GovernanceTopBarStyled = styled(Card)`
     width: 24px;
     height: 24px;
     margin: 0 40px;
-    fill: ${({ theme }) => theme.textColor};
+    fill: ${({ theme }) => theme.regularText};
   }
 
   .action {
@@ -26,8 +25,8 @@ export const GovernanceTopBarStyled = styled(Card)`
   }
 `
 
-export const GovTopBarPhaseText = styled.div<{ isCorrectPhase?: boolean; theme: MavrykTheme }>`
-  color: ${({ isCorrectPhase, theme }) => (isCorrectPhase ? theme.headerColor : theme.textColor)};
+export const GovTopBarPhaseText = styled.div<{ isActivePhase?: boolean; theme: MavrykTheme }>`
+  color: ${({ isActivePhase, theme }) => (isActivePhase ? theme.selectedColor : theme.regularText)};
   font-weight: 600;
   font-size: 18px;
 `

@@ -1,9 +1,8 @@
 import styled from 'styled-components'
-import { Card, cyanColor, headerColor, royalPurpleColor } from 'styles'
+import { Card } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.containerColor};
   width: calc(50% - 30px);
   padding: 28px 30px;
   border-radius: 10px;
@@ -20,7 +19,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     border-radius: 10px;
     bottom: 22px;
     left: 50%;
-    background-color: ${({ theme }) => theme.textColor};
+    background-color: ${({ theme }) => theme.mainHeadingText};
     transform: translateX(-50%);
   }
 
@@ -38,7 +37,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
   }
 
   .voting-ends {
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
@@ -54,7 +53,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
   hr {
     border: none;
     height: 1px;
-    background-color: ${({ theme }) => theme.cardBorderColor};
+    background-color: ${({ theme }) => theme.divider};
     margin: 30px 0;
   }
 
@@ -66,13 +65,13 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
   }
 
   .proposal-data-block-name {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
     font-weight: 600;
     font-size: 18px;
   }
 
   .proposal-data-block-value {
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
     font-weight: 500;
     font-size: 14px;
 
@@ -86,7 +85,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
   }
 
   .proposal-data-block-no-value {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
   }
 
   .proposal-data-block-address {
@@ -127,7 +126,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
       row-gap: 7px;
 
       .title {
-        color: ${({ theme }) => theme.textColor};
+        color: ${({ theme }) => theme.regularText};
         font-size: 16px;
         white-space: nowrap;
       }
@@ -179,7 +178,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
           overflow: hidden;
           font-size: 14px;
           font-weight: 500;
-          color: ${({ theme }) => theme.dataColor};
+          color: ${({ theme }) => theme.primaryText};
           transition: 0.5s opacity;
 
           svg {
@@ -187,7 +186,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
             height: 16px;
             vertical-align: sub;
             margin-left: 4px;
-            stroke: ${cyanColor};
+            stroke: ${({ theme }) => theme.linksAndButtons};
           }
         }
       }

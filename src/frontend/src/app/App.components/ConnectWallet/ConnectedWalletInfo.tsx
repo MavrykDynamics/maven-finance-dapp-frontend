@@ -2,8 +2,8 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_WIDE } from '../Button/Button.constants'
-import { BLUE } from '../TzAddress/TzAddress.constants'
-import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from '../TzAddress/TzAddress.constants'
+import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS  } from 'utils/constants'
 
 import Icon from '../Icon/Icon.view'
 import { TzAddress } from '../TzAddress/TzAddress.view'
@@ -72,7 +72,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
       <WalletDetailsHiddenPart isShown={detailsShown}>
         <div className="top">
           <Icon id="wallet" />
-          <TzAddress tzAddress={userAddress} type={BLUE} />
+          <TzAddress tzAddress={userAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
           <a href={`https://ghost.tzstats.com/${userAddress}`} target="_blank" rel="noreferrer">
             <Icon id="send" className="icon-send" />
           </a>
@@ -260,7 +260,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
         <div className="top">
           <Icon id="wallet" />
-          <TzAddress tzAddress={userAddress} type={BLUE} />
+          <TzAddress tzAddress={userAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
           <a href={`https://ghost.tzstats.com/${userAddress}`} target="_blank" rel="noreferrer">
             <Icon id="send" className="icon-send" />
           </a>

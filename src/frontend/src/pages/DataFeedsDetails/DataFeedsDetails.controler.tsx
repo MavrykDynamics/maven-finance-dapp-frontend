@@ -51,9 +51,9 @@ import {
   calculateSlicePositions,
   getPageNumber,
 } from 'app/App.components/Pagination/pagination.consts'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import colors from 'styles/colors'
-import { Page, downColor, skyColor, cyanColor } from 'styles'
+import { Page } from 'styles'
 
 // helpers
 import { parseDate } from 'utils/time'
@@ -161,11 +161,7 @@ const DataFeedDetails = () => {
                       <div className="name">{feed.name}</div>
                       <a href="https://mavryk.finance/litepaper" target="_blank" rel="noreferrer">
                         Learn how to use {feed.name} in your smart contracts here
-                        <CustomTooltip
-                          className="info-icon"
-                          iconId={'question'}
-                          defaultStrokeColor={colors[themeSelected].textColor}
-                        />
+                        <CustomTooltip iconId={'question'} defaultStrokeColor={colors[themeSelected].mainHeadingText} />
                       </a>
                     </div>
                   </div>
@@ -182,7 +178,7 @@ const DataFeedDetails = () => {
                         } and approved by a majority of the oracles`}
                         iconId={'info'}
                         className="info-icon"
-                        defaultStrokeColor={colors[themeSelected].textColor}
+                        defaultStrokeColor={colors[themeSelected].regularText}
                       />
                     </h3>
                   </div>
@@ -194,7 +190,7 @@ const DataFeedDetails = () => {
                       <CustomTooltip
                         text={`If the price of the asset is volatile and changes more than the set deviation trigger, a new trusted price will be pushed on chain from the oracle. Aside from the deviation trigger, price updates occur on average every 15 minutes.`}
                         iconId={'info'}
-                        defaultStrokeColor={colors[themeSelected].textColor}
+                        defaultStrokeColor={colors[themeSelected].mainHeadingText}
                         className="info-icon"
                       />
                     </h3>
@@ -212,8 +208,7 @@ const DataFeedDetails = () => {
                       <CustomTooltip
                         text={'Countdown until the next set data feed update.'}
                         iconId={'info'}
-                        className="info-icon"
-                        defaultStrokeColor={colors[themeSelected].textColor}
+                        defaultStrokeColor={colors[themeSelected].regularText}
                       />
                     </h3>
 
@@ -224,8 +219,8 @@ const DataFeedDetails = () => {
                             options={{
                               short: true,
                               showZeros: false,
-                              negativeColor: downColor,
-                              defaultColor: skyColor,
+                              negativeColor: colors[themeSelected].downColor,
+                              defaultColor: colors[themeSelected].primaryText,
                             }}
                             timestamp={
                               new Date(feed.last_completed_data_last_updated_at).getTime() +
@@ -244,7 +239,7 @@ const DataFeedDetails = () => {
                         className="info-icon"
                         text={`The aggregator requires a minimum amount of responses from oracles for the answer to be trusted`}
                         iconId={'info'}
-                        defaultStrokeColor={colors[themeSelected].textColor}
+                        defaultStrokeColor={colors[themeSelected].mainHeadingText}
                       />
                     </h3>
                     <h4>Minimum of {feed.pct_oracle_threshold}%</h4>
@@ -260,10 +255,14 @@ const DataFeedDetails = () => {
                         text={`Last time the aggregator was updated with a trusted answer and written on-chain`}
                         iconId={'info'}
                         className="info-icon"
-                        defaultStrokeColor={colors[themeSelected].textColor}
+                        defaultStrokeColor={colors[themeSelected].mainHeadingText}
                       />
                     </h3>
-                    <DataFeedValueText fontSize={14} fontWeidth={500} style={{ padding: '2px 0' }}>
+                    <DataFeedValueText
+                      fontSize={14}
+                      fontWeidth={500}
+                      style={{ padding: '2px 0', color: colors[themeSelected].regularText }}
+                    >
                       {parseDate({
                         time: feed.last_completed_data_last_updated_at,
                         timeFormat: 'MMM Do, YYYY, HH:mm:ss',
@@ -281,12 +280,11 @@ const DataFeedDetails = () => {
                     <CustomTooltip
                       text={`Address of this specific data feed`}
                       iconId={'info'}
-                      className="info-icon"
-                      defaultStrokeColor={colors[themeSelected].textColor}
+                      defaultStrokeColor={colors[themeSelected].mainHeadingText}
                     />
                   </h3>
                   <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
-                    <TzAddress tzAddress={feed.address} type={BLUE} hasIcon={true} />
+                    <TzAddress tzAddress={feed.address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={true} />
                   </DataFeedValueText>
                 </div>
                 <div className="info-wrapper">
@@ -295,13 +293,12 @@ const DataFeedDetails = () => {
                     <CustomTooltip
                       text={`Address of the oracle (aggregator) factory which is responsible for creating the aggregator feeds which oracles can sign price feeds for`}
                       iconId={'info'}
-                      className="info-icon"
-                      defaultStrokeColor={colors[themeSelected].textColor}
+                      defaultStrokeColor={colors[themeSelected].mainHeadingText}
                     />
                   </h3>
                   <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
                     {feedsFactoryAddress ? (
-                      <TzAddress tzAddress={feedsFactoryAddress} type={BLUE} hasIcon={true} />
+                      <TzAddress tzAddress={feedsFactoryAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={true} />
                     ) : (
                       '-'
                     )}
@@ -343,9 +340,9 @@ const DataFeedDetails = () => {
                   <Chart
                     data={{ type: AREA_CHART_TYPE, plots: chartPlots }}
                     colors={{
-                      lineColor: cyanColor,
-                      areaTopColor: cyanColor,
-                      areaBottomColor: 'rgba(119, 164, 242, 0)',
+                      lineColor: colors[themeSelected].primaryChartColor,
+                      areaTopColor: colors[themeSelected].primaryChartColor,
+                      areaBottomColor: colors[themeSelected].primaryChartBottomColor,
                     }}
                     tooltipAsset={activeTab === 1 ? feed.name.split('/')?.[1] : '%'}
                   />

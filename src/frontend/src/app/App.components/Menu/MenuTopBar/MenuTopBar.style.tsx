@@ -1,7 +1,5 @@
 import styled, { css } from 'styled-components/macro'
-import { cyanColor } from 'styles/colors'
 import { MENU_Z_INDEX } from 'styles/constants'
-
 import { MavrykTheme } from '../../../../styles/interfaces'
 
 export const MenuTopStyled = styled.div<{ theme: MavrykTheme }>`
@@ -12,7 +10,7 @@ export const MenuTopStyled = styled.div<{ theme: MavrykTheme }>`
   max-width: 100vw;
   height: 80px;
   z-index: 11;
-  background: ${({ theme }) => theme.containerColor};
+  background: ${({ theme }) => theme.cards};
   display: flex;
   align-items: center;
   padding: 0 22px 0 34px;
@@ -42,7 +40,7 @@ export const MenuTopStyled = styled.div<{ theme: MavrykTheme }>`
         width: 28px;
         height: 28px;
         transition: 0.35s all;
-        fill: ${({ theme }) => theme.valueColor};
+        fill: ${({ theme }) => theme.linksAndButtons};
       }
 
       &:hover {
@@ -73,14 +71,12 @@ export const MenuTopStyled = styled.div<{ theme: MavrykTheme }>`
       svg {
         max-width: 26px;
         height: 21px;
-        stroke: #8d86eb;
+        stroke: ${({ theme }) => theme.linksAndButtons};
         transition: 0.6s all;
       }
 
       &:hover {
-        svg {
-          stroke: ${cyanColor};
-        }
+        opacity: 0.8;
       }
     }
 
@@ -90,13 +86,11 @@ export const MenuTopStyled = styled.div<{ theme: MavrykTheme }>`
         width: 28px;
         height: 28px;
         transition: 0.35s all;
-        fill: ${({ theme }) => theme.valueColor};
+        fill: ${({ theme }) => theme.linksAndButtons};
       }
 
       &:hover {
-        svg {
-          stroke: ${cyanColor};
-        }
+        opacity: 0.8;
       }
     }
   }
@@ -131,7 +125,7 @@ export const MenuMobileBurger = styled.div<{ theme: MavrykTheme }>`
     width: 30px;
     height: 30px;
     transition: 0.6s all;
-    fill: ${({ theme }) => theme.valueColor};
+    fill: ${({ theme }) => theme.linksAndButtons};
   }
 
   @media screen and (min-width: 1401px) {
@@ -146,7 +140,7 @@ export const MobileTopBarStyled = styled.div<{ show: boolean }>`
   max-height: 0;
   left: 0;
   top: 80px;
-  background: ${({ theme }) => theme.containerColor};
+  background: ${({ theme }) => theme.cards};
   z-index: ${MENU_Z_INDEX};
   transition: 0.5s all;
   overflow: hidden;
@@ -181,7 +175,7 @@ export const MobileTopBarStyled = styled.div<{ show: boolean }>`
       svg {
         width: 35px;
         height: 35px;
-        fill: ${({ theme }) => theme.textColor};
+        fill: ${({ theme }) => theme.menuButtonText};
       }
     }
   }

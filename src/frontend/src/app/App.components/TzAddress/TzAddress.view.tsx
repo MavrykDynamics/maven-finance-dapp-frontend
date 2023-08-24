@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import { getShortTzAddress } from '../../../utils/tzAdress'
 
 import { showToaster } from '../Toaster/Toaster.actions'
-import { SUCCESS, TOASTER_SUCCESS } from '../Toaster/Toaster.constants'
+import { TOASTER_SUCCESS } from '../Toaster/Toaster.constants'
 import { TzAddressStyles } from './TzAddress.constants'
 import { TzAddressContainer, TzAddressIcon, TzAddressStyled } from './TzAddress.style'
 import { AppDispatch } from 'app/App.controller'

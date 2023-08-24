@@ -26,9 +26,9 @@ export const InputComponentContainer = styled.div<{ theme: MavrykTheme }>`
     font-weight: 500;
     font-size: 14px;
     line-height: 24px;
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border: 1px solid ${({ theme }) => theme.strokeForForms};
     margin: 0;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.placeholders};
     -webkit-appearance: none;
     appearance: none;
     display: block;
@@ -41,20 +41,20 @@ export const InputComponentContainer = styled.div<{ theme: MavrykTheme }>`
     &:-webkit-autofill,
     &:-webkit-autofill:hover,
     &:-webkit-autofill:focus {
-      -webkit-text-fill-color: ${({ theme }) => theme.textColor};
+      -webkit-text-fill-color: ${({ theme }) => theme.placeholders};
       -webkit-box-shadow: 0 0 0px 1000px ${({ theme }) => theme.backgroundColor} inset;
     }
 
     &.search {
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.placeholders};
     }
 
     &::placeholder:not(.search) {
-      color: ${({ theme }) => theme.inputPlaceholder};
+      color: ${({ theme }) => theme.placeholders};
     }
 
     &::placeholder {
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.placeholders};
     }
 
     &:disabled {
@@ -63,12 +63,12 @@ export const InputComponentContainer = styled.div<{ theme: MavrykTheme }>`
     }
 
     &:hover:not(:disabled) {
-      background-color: ${({ theme }) => theme.containerColor};
+      background-color: ${({ theme }) => theme.cards};
     }
 
     &:focus {
-      box-shadow: 0 0 0 2px ${({ theme }) => theme.primaryColor}19;
-      border-color: ${({ theme }) => theme.primaryColor}7F;
+      box-shadow: 0 0 0 2px ${({ theme }) => theme.inputFocusColor}19;
+      border-color: ${({ theme }) => theme.inputFocusColor}7F;
     }
 
     &.error {
@@ -107,7 +107,7 @@ export const InputLabel = styled.div<{ theme: MavrykTheme }>`
   position: absolute;
   right: 16px;
   top: 18px;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.placeholders};
   font-size: 18px;
   font-weight: 600;
 
@@ -165,7 +165,7 @@ export const InputIcon = styled.svg<{ theme: MavrykTheme }>`
   text-align: center;
   visibility: visible;
   pointer-events: none;
-  stroke: ${({ theme }) => theme.backgroundTextColor};
+  stroke: ${({ theme }) => theme.placeholders};
 `
 
 export const InputErrorMessage = styled.div<{ theme: MavrykTheme }>`
@@ -202,12 +202,12 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   border-radius: 10px;
   line-height: 100%;
   margin: 0;
-  color: ${({ theme }) => theme.blockNameTitleColor};
+  color: ${({ theme }) => theme.placeholders};
   display: block;
   padding: 13px 45px 13px 20px;
 
   &::placeholder {
-    color: ${({ theme }) => theme.blockNameTitleColor};
+    color: ${({ theme }) => theme.placeholders};
   }
 
   &:disabled {
@@ -216,7 +216,7 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   }
 
   &:hover:not(:disabled) {
-    background-color: ${({ theme }) => theme.containerColor};
+    background-color: ${({ theme }) => theme.cards};
   }
 
   &.remove-right-border-radius {
@@ -231,7 +231,7 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
 
 export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
   height: 100%;
-  border-left: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border-left: 1px solid ${({ theme }) => theme.strokeColor};
   background-color: ${({ theme }) => theme.backgroundColor};
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -252,7 +252,7 @@ export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
 export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   position: relative;
   display: flex;
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border: 1px solid ${({ theme }) => theme.strokeForForms};
   border-radius: 10px;
   width: 100%;
   height: 40px;
@@ -315,8 +315,8 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   }
 
   &:focus-within {
-    box-shadow: 0 0 0 1.5px ${({ theme }) => theme.primaryColor}19;
-    border-color: ${({ theme }) => theme.primaryColor}7F;
+    box-shadow: 0 0 0 1.5px ${({ theme }) => theme.inputFocusColor}19;
+    border-color: ${({ theme }) => theme.inputFocusColor}7F;
   }
 
   &.${INPUT_STATUS_ERROR} {
@@ -367,10 +367,6 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     input {
       padding: 0 10px;
       background: transparent;
-
-      &::placeholder {
-        color: ${({ theme }) => theme.dataColor};
-      }
     }
 
     &:focus-within {
@@ -394,7 +390,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
 
     &:has(input:hover) {
       .pinned-child {
-        background-color: ${({ theme }) => theme.containerColor};
+        background-color: ${({ theme }) => theme.cards};
       }
     }
 
@@ -403,10 +399,6 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
       border-top-right-radius: 10px;
       border-bottom-right-radius: 10px;
       background-color: ${({ theme }) => theme.backgroundColor};
-
-      &:hover {
-        background-color: ${({ theme }) => theme.backgroundColor};
-      }
     }
   }
 
@@ -417,7 +409,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
   }
 
   .input-converted-amount {
@@ -427,7 +419,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     font-weight: 600;
     font-size: 12px;
     line-height: 12px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.placeholders};
   }
 
   .useMax-btn {
@@ -438,7 +430,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
 
     &::before {
       position: absolute;
-      background-color: ${({ theme }) => theme.valueColor};
+      background-color: ${({ theme }) => theme.linksAndButtons};
       width: 100%;
       content: '';
       height: 1px;
@@ -454,7 +446,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const NewInputLabel = styled.label`
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.mainHeadingText};
   display: block;
   white-space: nowrap;
   font-weight: 700;
@@ -502,7 +494,7 @@ export const InputPinnedTokenInfo = styled.div<{ theme: MavrykTheme }>`
   font-weight: 600;
   font-size: 20px;
   line-height: 20px;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.subHeadingText};
 
   svg,
   .image-wrapper {
@@ -515,7 +507,7 @@ export const InputPinnedTokenInfo = styled.div<{ theme: MavrykTheme }>`
       object-fit: cover;
     }
 
-    fill: ${({ theme }) => theme.textColor};
+    fill: ${({ theme }) => theme.subHeadingText};
   }
 `
 
@@ -528,5 +520,5 @@ export const InputPinnedDropDown = styled.div<{ theme: MavrykTheme }>`
   font-weight: 600;
   font-size: 20px;
   line-height: 20px;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.placeholders};
 `

@@ -1,40 +1,40 @@
 import { useCallback, useState } from 'react'
 import { SingleValueData, Time } from 'lightweight-charts'
-import { cyanColor, skyColor } from 'styles'
 
 // styles
-import colors from 'styles/colors'
 import { DoormanChartCard, DoormanExitFeeCurrentValues, Wrapper } from './DoormanChart.style'
 
 // components
-import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { Chart } from '../../../app/App.components/Chart/Chart'
-import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import { CommaNumber, formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
-import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
+import {
+  SlidingTabButtons,
+  SlidingTabButtonType,
+} from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // providers
+import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
+// consts & helpers
+import { CommaNumber, formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
-
 // consts & helpers
-import { calcExitFee, calcMLI } from 'utils/calcFunctions'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { MLI_FEE_CHART_DATA } from './MliFee-chart-data'
+import { calcExitFee, calcMLI } from 'utils/calcFunctions'
 import { DECIMALS_TO_SHOW } from 'utils/constants'
 import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
-
-// providers & hooks
-import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
+import colors from 'styles/colors'
+import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
 import { ChartPeriodType } from 'types/charts.type'
 import { ONE_HOUR } from 'consts/charts.const'
+import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
 
-const tabsList: TabItem[] = [
+const tabsList: SlidingTabButtonType[] = [
   {
     text: 'MVK vs. sMVK',
     id: 1,
@@ -82,25 +82,23 @@ export function DoormanChart() {
     preferences: { themeSelected },
   } = useDappConfigContext()
 
-  const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
-  const { smvkHistoryData, mvkHistoryData, isLoading: isChartsDataLoading } = useDoormanHistory(chartPeriod)
-  // --------------------------------------------------------
-
   const currentExitFee = calcExitFee(totalSupply, totalStakedMvk)
   const currentMLI = calcMLI(totalSupply, totalStakedMvk)
+
+  const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
+  const { smvkHistoryData, mvkHistoryData, isLoading: isChartsDataLoading } = useDoormanHistory(chartPeriod)
 
   const [activeTabId, setActiveTabId] = useState(tabsList[0].id)
 
   const handleChangeTabs = (tabId?: number) => setActiveTabId(tabsList.find(({ id }) => tabId === id)?.id ?? 1)
-  const handlePeriodChange = useCallback((period) => {
+  const handlePeriodChange = useCallback((period: ChartPeriodType) => {
     setChartPeriod(period)
   }, [])
-
   const exitFeeMarkerTime = findExitFeeClosestTimePlot(MLI_FEE_CHART_DATA, currentExitFee)
 
   return (
     <Wrapper>
-      {tabsList?.length ? <TabSwitcher className="switcher" tabItems={tabsList} onClick={handleChangeTabs} /> : null}
+      <SlidingTabButtons kind={SECONDARY_SLIDING_TAB_BUTTONS} tabItems={tabsList} onClick={handleChangeTabs} />
 
       <DoormanChartCard>
         {activeTabId === tabsList[0].id ? (
@@ -121,9 +119,9 @@ export function DoormanChart() {
                   plots: mvkHistoryData,
                 },
                 colors: {
-                  lineColor: skyColor,
-                  areaTopColor: skyColor,
-                  areaBottomColor: 'rgba(119, 164, 242, 0.01)',
+                  lineColor: colors[themeSelected].primaryChartColor,
+                  areaTopColor: colors[themeSelected].primaryChartColor,
+                  areaBottomColor: colors[themeSelected].primaryChartBottomColor,
                 },
               }}
               secondChart={{
@@ -132,9 +130,9 @@ export function DoormanChart() {
                   plots: smvkHistoryData,
                 },
                 colors: {
-                  lineColor: cyanColor,
-                  areaTopColor: cyanColor,
-                  areaBottomColor: 'rgba(134, 212, 201, 0.01)',
+                  lineColor: colors[themeSelected].secondaryChartColor,
+                  areaTopColor: colors[themeSelected].secondaryChartColor,
+                  areaBottomColor: colors[themeSelected].secondaryChartBottomColor,
                 },
               }}
               tooltipAssetFirst={'MVK'}
@@ -183,7 +181,8 @@ export function DoormanChart() {
                   {
                     time: exitFeeMarkerTime,
                     position: 'inBar',
-                    color: colors[themeSelected].valueColor,
+                    color: colors[themeSelected].primaryChartColor,
+
                     shape: 'circle',
                   },
                 ],

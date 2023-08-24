@@ -9,8 +9,6 @@ import { council, CouncilState } from './council'
 import { farm, FarmState } from './farm'
 import { contractAddresses, ContractAddressesState } from './contractAddresses'
 
-import { satelliteGovernance, SatelliteGovernanceState } from './satelliteGovernance'
-
 export const reducers = combineReducers({
   loading,
   toaster,
@@ -21,7 +19,6 @@ export const reducers = combineReducers({
   council,
   emergencyGovernance,
 
-  satelliteGovernance,
   farm,
 })
 
@@ -34,5 +31,4 @@ export interface State {
   council: CouncilState
   farm: FarmState
   contractAddresses: ContractAddressesState
-  satelliteGovernance: SatelliteGovernanceState
 }

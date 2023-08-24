@@ -4,15 +4,23 @@ import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { StatusMessageStyled } from './LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { skyColor } from 'styles'
+import { ThemeColorsType } from 'styles'
 
-const findStatusMessage = (status: string, timestamp?: number) => {
+const findStatusMessage = ({
+  status,
+  timestamp,
+  theme,
+}: {
+  status: string
+  timestamp?: number
+  theme: ThemeColorsType
+}) => {
   const timer = timestamp ? (
     <div className="timer">
-      <Timer timestamp={timestamp} options={{ defaultColor: skyColor, negativeColor: skyColor }} />
+      <Timer timestamp={timestamp} options={{ defaultColor: theme.primaryText, negativeColor: theme.downColor }} />
     </div>
   ) : (
-    <span className="timer" style={{ color: skyColor }}>
+    <span className="timer no-data">
       no data
     </span>
   )
@@ -55,8 +63,7 @@ const findStatusMessage = (status: string, timestamp?: number) => {
 type Props = {
   timestamp?: number
   status: string
+  theme: ThemeColorsType
 }
 
-export const StatusMessage = ({ timestamp, status }: Props) => {
-  return <>{findStatusMessage(status, timestamp)}</>
-}
+export const StatusMessage = (props: Props) => <>{findStatusMessage(props)}</>

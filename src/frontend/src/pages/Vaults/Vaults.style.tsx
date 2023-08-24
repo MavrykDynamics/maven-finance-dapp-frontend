@@ -67,7 +67,7 @@ export const VaultsFilters = styled.div`
       line-height: 14px;
 
       white-space: nowrap;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.regularText};
     }
 
     .assetsFilter {
@@ -108,13 +108,14 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
 
         > div {
           min-width: 130px;
+          color: ${({ theme }) => theme.subHeadingText};
         }
       }
     }
 
     .right-part {
       padding-left: 30px;
-      border-left: 1px solid ${({ theme }) => theme.cardBorderColor};
+      border-left: 1px solid ${({ theme }) => theme.divider};
 
       h1 {
         margin-bottom: 14px;
@@ -123,20 +124,6 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
       .table-size {
         height: 160px;
         overflow-y: auto;
-
-        &::-webkit-scrollbar {
-          width: 15px;
-          background-color: transparent;
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background-clip: padding-box;
-          border-left: 5px solid rgba(0, 0, 0, 0);
-          border-right: 5px solid rgba(0, 0, 0, 0);
-          border-radius: 6px;
-          -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-          background-color: ${({ theme }) => theme.cardBorderColor};
-        }
       }
     }
 
@@ -145,7 +132,7 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
       font-size: 16px;
       line-height: 22px;
 
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
 
       p {
         margin: 0;
@@ -163,22 +150,15 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
     justify-content: space-between;
     align-items: center;
     padding: 15px 0;
-    border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border-top: 1px solid ${({ theme }) => theme.divider};
 
     button {
       width: 250px;
-
-      &.disabled {
-        &:hover {
-          border: none;
-          color: ${({ theme }) => theme.containerColor};
-        }
-      }
     }
 
     .timer {
       display: inline-block;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
     }
   }
 

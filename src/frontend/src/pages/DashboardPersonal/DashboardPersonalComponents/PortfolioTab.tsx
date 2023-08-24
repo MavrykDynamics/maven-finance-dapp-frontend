@@ -14,7 +14,10 @@ import {
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Chart } from 'app/App.components/Chart/Chart'
-import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import {
+  SlidingTabButtons,
+  SlidingTabButtonType,
+} from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { LoansTxTab } from './LoansTxTab'
 import Button from 'app/App.components/Button/NewButton'
 
@@ -34,7 +37,7 @@ type PortfolioTabProps = {
   isUserLoansLoading: boolean
 }
 
-const TOGGLE_VALUES: TabItem[] = [
+const TOGGLE_VALUES: SlidingTabButtonType[] = [
   { id: 1, text: '24H', active: true },
   { id: 3, text: '1W', active: false },
   { id: 4, text: '1M', active: false },
@@ -71,7 +74,7 @@ const PortfolioTab = ({
   const { userBorrowings, totalUserBorrowed, totalUserLended, userVaultsData, userLendings, isLoading } =
     useUserLoansData()
 
-  const [toggleItems, setToggleItems] = useState<TabItem[]>(TOGGLE_VALUES)
+  const [toggleItems, setToggleItems] = useState<SlidingTabButtonType[]>(TOGGLE_VALUES)
   const lastSeria = CHART_TEST_DATA.at(-1)?.value ?? 0
 
   return (

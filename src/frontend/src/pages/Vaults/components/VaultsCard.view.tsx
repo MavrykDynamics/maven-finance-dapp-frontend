@@ -17,6 +17,7 @@ import { Button } from 'app/App.components/Button/Button.controller'
 // styles
 import { VaultsCardDropDown } from './../Vaults.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
+import colors, { ThemeColorsType } from 'styles/colors'
 
 // types
 import { State } from 'reducers'
@@ -30,7 +31,7 @@ import {
 } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
 
 // helpers
-import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
+import { SECONDARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
 import { LIQUIDATION_COST, LIQUIDATION_PRICE, VAULT_RISK } from 'texts/tooltips/vault.text'
 import { getStringWithoutUnderline } from 'utils/parse'
@@ -43,6 +44,7 @@ import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 const columnWidth = '33%'
 
@@ -69,10 +71,20 @@ const findStatusInfo = (
   }
 }
 
-const findFooterText = (status: string, statusColor: StatusFlagKind, timestamp?: number) => {
+const findFooterText = ({
+  status,
+  statusColor,
+  timestamp,
+  theme,
+}: {
+  status: string
+  statusColor: StatusFlagKind
+  timestamp?: number
+  theme: ThemeColorsType
+}) => {
   const timer = timestamp ? (
     <div className="timer">
-      <Timer timestamp={timestamp} options={{ defaultColor: '#77A4F2', negativeColor: '#77A4F2' }} />
+      <Timer timestamp={timestamp} options={{ defaultColor: theme.primaryText, negativeColor: theme.downColor }} />
     </div>
   ) : (
     <span className="timer">no data</span>
@@ -118,6 +130,9 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
   const {
     config: { daoFee },
   } = useLoansContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -155,7 +170,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
   const isMarkStatus = vaultsStatuses.MARK === status
 
   const { color: statusColor, text: statusText } = findStatusInfo(status)
-  const footerText = findFooterText(status, statusColor, timerTimestamp)
+  const footerText = findFooterText({ status, statusColor, timestamp: timerTimestamp, theme: colors[themeSelected] })
 
   const liquidateModalHandler = () => {
     openLiquidateVaultPopup({
@@ -181,11 +196,16 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
           <div className="group">
             <div>
               Vault Owner
-              <TzAddress type={CYAN} tzAddress={ownerAddress} />
+              <TzAddress type={SECONDARY_TZ_ADDRESS_COLOR} tzAddress={ownerAddress} hasIcon />
             </div>
             <div>
               Vault Risk
-              <CustomTooltip text={VAULT_RISK} iconId="info" className="tooltip" />
+              <CustomTooltip
+                text={VAULT_RISK}
+                iconId="info"
+                className="tooltip"
+                defaultStrokeColor={colors[themeSelected].subHeadingText}
+              />
               <div className={statusColor}>{statusText}</div>
             </div>
           </div>
@@ -193,13 +213,23 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
           <div className="group">
             <div>
               Liquidation Price
-              <CustomTooltip iconId="info" text={LIQUIDATION_PRICE} className="tooltip" />
+              <CustomTooltip
+                iconId="info"
+                text={LIQUIDATION_PRICE}
+                className="tooltip"
+                defaultStrokeColor={colors[themeSelected].subHeadingText}
+              />
               <CommaNumber value={liquidationPrice ?? 0} decimalsToShow={2} beginningText="$" className="value" />
             </div>
 
             <div>
               Liquidation Cost
-              <CustomTooltip text={LIQUIDATION_COST} iconId="info" className="tooltip" />
+              <CustomTooltip
+                text={LIQUIDATION_COST}
+                iconId="info"
+                className="tooltip"
+                defaultStrokeColor={colors[themeSelected].subHeadingText}
+              />
               <CommaNumber value={liquidationMax} decimalsToShow={2} beginningText="$" className="value" />
             </div>
           </div>
@@ -208,7 +238,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
         <div className="right-part">
           <h1>Vault Assets</h1>
 
-          <div className="table-size">
+          <div className="table-size scroll-block">
             <Table className={`no-margin borrowing-table ${isOwner ? 'show-before' : ''}`}>
               <TableHeader className={`simple-header collateral ${collateralData.length === 0 ? 'empty' : ''}`}>
                 <TableRow>

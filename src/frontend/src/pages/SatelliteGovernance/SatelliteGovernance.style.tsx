@@ -19,8 +19,8 @@ export const SatelliteGovernanceStatsInfo = styled.div<{ theme: MavrykTheme }>`
   padding: 30px 25px;
   height: 102px;
 
-  background-color: ${({ theme }) => theme.containerColor};
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  background-color: ${({ theme }) => theme.cards};
+  border: 1px solid ${({ theme }) => theme.strokeCards};
   border-radius: 10px;
 
   h3 {
@@ -28,7 +28,7 @@ export const SatelliteGovernanceStatsInfo = styled.div<{ theme: MavrykTheme }>`
     font-size: 14px;
     line-height: 21px;
 
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
   }
 
   .value {
@@ -38,7 +38,7 @@ export const SatelliteGovernanceStatsInfo = styled.div<{ theme: MavrykTheme }>`
     font-size: 16px;
     line-height: 22px;
 
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
 
     p {
       margin: 0;
@@ -61,7 +61,7 @@ export const SatelliteGovernanceAvailableActions = styled(Card)`
       font-size: 14px;
       line-height: 24px;
 
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.regularText};
     }
   }
 `
@@ -73,20 +73,7 @@ export const SatelliteGovernanceAvailableAction = styled.form<{ theme: MavrykThe
   row-gap: 30px;
   padding: 30px 20px 40px;
 
-  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
-
-  a {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    width: fit-content;
-
-    svg {
-      fill: ${({ theme }) => theme.valueColor};
-      width: 16px;
-      height: 16px;
-    }
-  }
+  border-top: 1px solid ${({ theme }) => theme.divider};
 
   p {
     margin: 0;
@@ -95,7 +82,7 @@ export const SatelliteGovernanceAvailableAction = styled.form<{ theme: MavrykThe
     font-size: 14px;
     line-height: 21px;
 
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
   }
 
   fieldset {
@@ -111,7 +98,7 @@ export const SatelliteGovernanceAvailableAction = styled.form<{ theme: MavrykThe
     font-size: 14px;
     line-height: 21px;
 
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
   }
 
   h2,

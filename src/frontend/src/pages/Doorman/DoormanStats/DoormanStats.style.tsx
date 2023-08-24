@@ -19,7 +19,7 @@ export const DoormanStatsStyled = styled(Card)`
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: ${({ theme }) => theme.textColor};
+    background-color: ${({ theme }) => theme.mainHeadingText};
     margin-left: auto;
     margin-right: auto;
     margin-top: 16px;
@@ -39,24 +39,6 @@ export const DoormanStatsHeader = styled(CardHeader)<{ theme: MavrykTheme }>`
   }
 `
 
-export const DoormanStatsGrid = styled.div<{ theme: MavrykTheme }>`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 10px;
-  font-weight: 500;
-  margin: auto;
-  text-align: center;
-
-  > div {
-    color: ${({ theme }) => theme.subTextColor};
-
-    > p {
-      color: ${({ theme }) => theme.primaryColor};
-      margin-top: 0;
-    }
-  }
-`
-
 export const DoormanList = styled.aside<{ theme: MavrykTheme }>`
   > div {
     display: flex;
@@ -66,7 +48,7 @@ export const DoormanList = styled.aside<{ theme: MavrykTheme }>`
 
     h4 {
       width: max-content;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.regularText};
       font-weight: 500;
       font-size: 14px;
       line-height: 24px;
@@ -79,17 +61,6 @@ export const DoormanList = styled.aside<{ theme: MavrykTheme }>`
       svg {
         position: relative;
         top: 2px;
-        
-        transition: 0.4s all;
-        width: 12px;
-        height: 12px;
-        fill: ${({ theme }) => theme.textColor};
-      }
-
-      &:hover {
-        svg {
-          opacity: 0.8;
-        }
       }
     }
 
@@ -103,7 +74,7 @@ export const DoormanList = styled.aside<{ theme: MavrykTheme }>`
       font-size: 16px;
       line-height: 22px;
       text-align: right;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
 
       p {
         margin: 0;
