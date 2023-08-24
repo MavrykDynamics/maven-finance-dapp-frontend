@@ -71,7 +71,6 @@ export const BorrowingExpandCard = ({
     confirmRepayPartPopup,
     changeVaultNamePopup,
     changeBakerPopup,
-    borrowAssetPopup,
     addExistingCollateralPopup,
     addNewCollateralPopup,
     withdrawCollateralPopup,
@@ -107,7 +106,6 @@ export const BorrowingExpandCard = ({
     confirmRepayFullPopup.showModal ||
     confirmRepayPartPopup.showModal ||
     changeBakerPopup.showModal ||
-    borrowAssetPopup.showModal ||
     addExistingCollateralPopup.showModal ||
     addNewCollateralPopup.showModal ||
     withdrawCollateralPopup.showModal ||
@@ -223,9 +221,9 @@ export const BorrowingExpandCard = ({
       inputAmount,
       vaultId,
       tokenAddress: borrowedTokenAddress,
-      borrowedAmount,
+      totalOutstanding,
+      availableLiquidity,
       collateralBalance,
-      borrowCapacity,
       DAOFee,
       callback: () => {
         scrollToCurrentVault()
@@ -241,7 +239,7 @@ export const BorrowingExpandCard = ({
       vaultAddress,
       tokenAddress: borrowedTokenAddress,
       collateralBalance,
-      borrowCapacity,
+      availableLiquidity,
       totalOutstanding,
       callback: () => {
         scrollToCurrentVault()
@@ -257,7 +255,7 @@ export const BorrowingExpandCard = ({
       tokenAddress: borrowedTokenAddress,
       borrowedAmount,
       collateralBalance,
-      borrowCapacity,
+      availableLiquidity,
       totalOutstanding,
       callback: () => {
         scrollToCurrentVault()
@@ -270,13 +268,14 @@ export const BorrowingExpandCard = ({
     openAddNewCollateralPopup({
       vaultAddress,
       vaultId,
-      borrowedAmount,
+      currentTotalOutstanding: totalOutstanding,
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
       availableLiquidity,
       borrowCapacity,
       collateralData: vault.collateralData,
+      xtzDelegatedTo: vault.xtzDelegatedTo,
     })
   }
 
@@ -284,7 +283,7 @@ export const BorrowingExpandCard = ({
     openAddExistingCollateralPopup({
       vaultAddress,
       vaultId,
-      borrowedAmount,
+      currentTotalOutstanding: totalOutstanding,
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
@@ -298,7 +297,8 @@ export const BorrowingExpandCard = ({
     openWithdrawCollateralPopup({
       vaultAddress,
       vaultId,
-      borrowedAmount,
+      currentTotalOutstanding: totalOutstanding,
+      availableLiquidity,
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
@@ -425,7 +425,8 @@ export const BorrowingExpandCard = ({
                     currentCollateralBalance={collateralBalance}
                     hasUserBorrowed={Boolean(borrowedAmount)}
                     borrowCapacity={borrowCapacity}
-                    currentBorrowedAmount={borrowedAmount}
+                    availableLiquidity={availableLiquidity}
+                    totalOutstanding={totalOutstanding}
                     DAOFee={DAOFee}
                     openConfirmBorrowPopup={handleClickOpenConfirmBorrowPopup}
                   />
@@ -444,7 +445,7 @@ export const BorrowingExpandCard = ({
                     borrowedAmount={borrowedAmount}
                     minimumRepay={minimumRepay}
                     collateralBalance={collateralBalance}
-                    borrowCapacity={borrowCapacity}
+                    availableLiquidity={availableLiquidity}
                   />
                 )}
               </LoansActionsSection>

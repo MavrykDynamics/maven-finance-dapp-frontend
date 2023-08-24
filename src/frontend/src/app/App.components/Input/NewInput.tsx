@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { BUTTON_SIMPLE } from '../Button/Button.constants'
 import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
@@ -41,15 +41,18 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
         validationFns = [[validateInput, ERR_MSG_INPUT]],
         errorMessage: errorMessageFromProps,
         showErrorMessage = true,
+        allowInputAfterError = false,
       },
     }: InputViewProps,
     ref,
   ) => {
-    const { onChange, value } = inputProps
-    const { status, errorMessage, handleChange, handleMaxAmount } = useInputValidator({
+    const { onChange, value, onBlur } = inputProps
+    const { status, errorMessage, handleChange, handleBlur, handleMaxAmount } = useInputValidator({
       originalErrorMessage: errorMessageFromProps,
       status: inputStatus,
       onChange,
+      onBlur,
+      allowInputAfterError,
       handleMax: useMaxHandler,
       value,
       validationFns:
@@ -69,6 +72,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
         <StyledInput
           {...inputProps}
           onChange={handleChange}
+          onBlur={handleBlur}
           className={`${status} ${children ? 'remove-right-border-radius' : ''}`}
           autoComplete={'off'}
           ref={ref}

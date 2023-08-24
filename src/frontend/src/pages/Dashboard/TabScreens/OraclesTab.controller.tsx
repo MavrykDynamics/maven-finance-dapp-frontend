@@ -35,11 +35,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const oracleFeeds = feedsAddresses.length
   const popularFeeds = feedsAddresses.slice(0, 3)
 
-  const { oracleRewardsTotal } = useSatelliteStatistics({
-    skipActiveSatellitesCount: true,
-    skipOracleCount: true,
-    skipTotalDelegatedMVK: true,
-  })
+  const { oracleRewardsTotal } = useSatelliteStatistics()
 
   return (
     <TabWrapperStyled className="oracles" backgroundImage="dashboard_oraclesTab_bg.png">

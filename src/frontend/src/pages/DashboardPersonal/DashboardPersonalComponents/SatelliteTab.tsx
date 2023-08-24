@@ -30,9 +30,11 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards: () => void }) => {
-  const { userAddress, availableProposalRewards } = useUserContext()
+  const { userAddress } = useUserContext()
+  const { availableProposalRewards } = useUserRewards()
   const {
     satelliteMapper,
     proposalsAmount,

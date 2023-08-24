@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import QueryString from 'qs'
 import { useLocation } from 'react-router'
@@ -13,15 +13,16 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 
 // const & types
+import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_DATA_SUB } from 'providers/TreasuryProvider/helpers/treasury.consts'
 import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
 import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 import {
-  MVK_TOTAL_SUB,
-  MVK_BALANCE_SUB,
+  MVK_SMVK_HISTORY_SUB,
   DEFAULT_STAKING_ACTIVE_SUBS,
-  SMVK_HISTORY_SUB,
+  DAPP_MVK_SMVK_STATS_SUB,
 } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   SATELLITE_DATA_SUB,
@@ -33,13 +34,18 @@ import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansPr
 import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
 import { State } from '../../reducers'
 
-// actions
+// hooks
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
+
+// actions
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+
+// utils
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
+import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/VestingProvider/helpers/vesting.consts'
 
 // TODO: add farms when their data loading will be fixed and up
 export const Dashboard = () => {
@@ -63,19 +69,29 @@ export const Dashboard = () => {
 
   useEffect(() => {
     changeStakingSubscriptionsList({
-      [MVK_TOTAL_SUB]: true,
-      [MVK_BALANCE_SUB]: true,
-      [SMVK_HISTORY_SUB]: true,
+      [DAPP_MVK_SMVK_STATS_SUB]: true,
+      [MVK_SMVK_HISTORY_SUB]: true,
     })
+
     changeSatellitesSubscriptionsList({
       [SATELLITE_DATA_SUB]: SATELLITES_DATA_ACTIVE_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
+
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
     })
+
     changeVaultsSubscriptionsList({
       [VAULTS_DATA]: VAULTS_ALL,
+    })
+
+    changeTreasurySubscriptionsList({
+      [TREASURY_STORAGE_DATA_SUB]: true,
+    })
+
+    changeVestingSubscriptionsList({
+      [VESTING_STORAGE_DATA_SUB]: true,
     })
 
     return () => {
@@ -83,56 +99,77 @@ export const Dashboard = () => {
       changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
       changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
       changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+      changeTreasurySubscriptionsList(DEFAULT_TREASURY_SUBS)
+      changeVestingSubscriptionsList(DEFAULT_VESTING_SUBS)
     }
   }, [])
 
   const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
 
-  const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
-  const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
+  const {
+    treasuryMapper,
+    treasuryAddresses,
+    isLoading: isTreasuryLoading,
+    changeTreasurySubscriptionsList,
+  } = useTreasuryContext()
+
+  const { isLoading: isVestingLoading, changeVestingSubscriptionsList } = useVestingContext()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   // const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
 
-  const { totalBorrowed, totalLended } = marketsAddresses.reduce<{
-    totalLended: number
-    totalBorrowed: number
-  }>(
-    (acc, marketTokenAddress) => {
-      const market = marketsMapper[marketTokenAddress]
-      const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
+  const { totalBorrowed, totalLended } = useMemo(
+    () =>
+      marketsAddresses.reduce<{
+        totalLended: number
+        totalBorrowed: number
+      }>(
+        (acc, marketTokenAddress) => {
+          const market = marketsMapper[marketTokenAddress]
+          const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
 
-      if (!token || !token.rate || !market) return acc
+          if (!token || !token.rate || !market) return acc
 
-      const { totalBorrowed, totalLended } = market
-      const { decimals, rate } = token
+          const { totalBorrowed, totalLended } = market
+          const { decimals, rate } = token
 
-      acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
-      acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
-      return acc
-    },
-    {
-      totalLended: 0,
-      totalBorrowed: 0,
-    },
+          acc.totalBorrowed += convertNumberForClient({ number: totalBorrowed, grade: decimals }) * rate
+          acc.totalLended += convertNumberForClient({ number: totalLended, grade: decimals }) * rate
+          return acc
+        },
+        {
+          totalLended: 0,
+          totalBorrowed: 0,
+        },
+      ),
+    [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices],
   )
 
   const marketCapValue = mvkExchangeRate ? mvkExchangeRate * totalSupply : 0
 
-  const treasuryTVL = treasuryStorage.reduce((acc, { balances }) => {
-    return (acc += balances.reduce((balanceAcc, { tokenAddress, balance }) => {
-      const { rate, decimals } = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices }) ?? {}
-      return rate ? balanceAcc + convertNumberForClient({ number: balance, grade: decimals }) * rate : balanceAcc
-    }, 0))
-  }, 0)
+  const treasuryTVL = useMemo(
+    () =>
+      treasuryAddresses.reduce((acc, address) => {
+        const { balances } = treasuryMapper[address]
+        return (acc += balances.reduce((balanceAcc, { tokenAddress, balance }) => {
+          const { rate, decimals } = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices }) ?? {}
+          return rate ? balanceAcc + convertNumberForClient({ number: balance, grade: decimals }) * rate : balanceAcc
+        }, 0))
+      }, 0),
+    [tokensMetadata, tokensPrices, treasuryAddresses, treasuryMapper],
+  )
 
-  const vaultsTvl = allVaultsIds.reduce((acc, vaultId) => {
-    const { collateralData } = vaultsMapper[vaultId]
+  const vaultsTvl = useMemo(
+    () =>
+      allVaultsIds.reduce((acc, vaultId) => {
+        const { collateralData } = vaultsMapper[vaultId]
 
-    return (acc += collateralData.reduce((collateralAcc, { amount, tokenAddress }) => {
-      const { rate, decimals } = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices }) ?? {}
-      return rate ? collateralAcc + convertNumberForClient({ number: amount, grade: decimals }) * rate : 0
-    }, 0))
-  }, 0)
+        return (acc += collateralData.reduce((collateralAcc, { amount, tokenAddress }) => {
+          const { rate, decimals } = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices }) ?? {}
+          return rate ? collateralAcc + convertNumberForClient({ number: amount, grade: decimals }) * rate : 0
+        }, 0))
+      }, 0),
+    [allVaultsIds, tokensMetadata, tokensPrices, vaultsMapper],
+  )
 
   // TODO: check this calculation with sam
   const farmsTVL = 0
@@ -150,8 +187,6 @@ export const Dashboard = () => {
       await Promise.all(
         [
           (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
-          (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
-          (!isTreasuryLoaded || isDepsChanged) && dispatch(getTreasuryStorage()),
           // (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage(tokensMetadata)),
         ].filter(Boolean),
       )
@@ -175,7 +210,15 @@ export const Dashboard = () => {
         tvl={tvlValue}
         mvkStatsBlock={mvkStatsBlock}
         activeTab={activeTab}
-        isLoading={isPromiseLoading || isDoormanLoading || isSatellitesLoading || isLoansLoading || isVaultsLoading}
+        isLoading={
+          isPromiseLoading ||
+          isDoormanLoading ||
+          isSatellitesLoading ||
+          isLoansLoading ||
+          isVaultsLoading ||
+          isTreasuryLoading ||
+          isVestingLoading
+        }
       />
     </Page>
   )

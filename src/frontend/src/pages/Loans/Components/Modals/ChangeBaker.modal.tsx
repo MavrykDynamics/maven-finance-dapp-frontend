@@ -110,9 +110,6 @@ export const ChangeBaker = ({
     if (!show) {
       setSelectedAddress(null)
     } else {
-      // open tab that corresponds to the delegated bakery
-      setSelectedAddress(bakerAddress)
-
       const vaultBaker = bakerySlidingButtons.find(
         ({ bakeryAddresses }) => bakerAddress && bakeryAddresses.includes(bakerAddress),
       )

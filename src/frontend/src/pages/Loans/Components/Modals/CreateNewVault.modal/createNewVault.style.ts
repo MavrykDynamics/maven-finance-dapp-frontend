@@ -1,0 +1,112 @@
+import styled from 'styled-components'
+import { MavrykTheme } from 'styles/interfaces'
+
+export const VaultModalStepper = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  align-items: center;
+
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 21px;
+  color: ${({ theme }) => theme.mainHeadingText};
+
+  div {
+    display: inline-block;
+  }
+
+  span {
+    color: ${({ theme }) => theme.linksAndButtons};
+  }
+  span.active {
+    color: ${({ theme }) => theme.selectedColor};
+  }
+`
+
+export const VaultModalStepperWrapper = styled.div`
+  width: 100%;
+  margin-bottom: 20px;
+`
+
+export const ModalStatsBlock = styled.div<{ theme: MavrykTheme }>`
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  .collateral-screen {
+    .line {
+      justify-content: start;
+      gap: 60px;
+    }
+  }
+`
+
+export const DeleteCollateralInputIconWrapper = styled.div`
+  display: inline-block;
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  height: 12px; // same as svg icon
+  transform: translate(10px, -50%);
+
+  & > div:first-of-type {
+    display: inline-block;
+  }
+
+  .text {
+    bottom: 170%;
+  }
+
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+`
+export const CollateralInputWrapper = styled.div`
+  position: relative;
+`
+
+export const BorrowScreenWrapper = styled.div`
+  .borrow-screen-top-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .borrow-screen-input-wrapper {
+    margin-bottom: 40px;
+  }
+`
+
+export const ConfirmationScreenWrapper = styled.div`
+  .stats-table-wrapper {
+    margin-top: 20px;
+  }
+
+  .table-wrapper,
+  .bottom-stats-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 20px;
+  }
+
+  .bottom-stats-wrapper {
+    margin-bottom: 0px;
+  }
+
+  .block-name {
+    padding: 0;
+  }
+`
+
+export const ConfirmStatsVaultOverview = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+`

@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react'
-import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import dayjs from 'dayjs'
 
@@ -10,9 +9,6 @@ import Button from 'app/App.components/Button/NewButton'
 // styles
 import { VestingTabStyled } from './DashboardPersonalComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-
-// types
-import { State } from 'reducers'
 
 // consts
 import { CLAIM_VESTING_REWARD_ACTION } from 'providers/UserProvider/helpers/user.consts'
@@ -27,6 +23,7 @@ import { PORTFOLIO_TAB_ID } from '../DashboardPersonal.utils'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
 
 // actions
 import { claimVestingReward } from 'providers/UserProvider/actions/user.actions'
@@ -35,7 +32,7 @@ import { claimVestingReward } from 'providers/UserProvider/actions/user.actions'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 const VestingTab = () => {
-  const { vesteesMapper } = useSelector((state: State) => state.vesting)
+  const { vesteesMapper } = useVestingContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
   const {
@@ -70,12 +67,32 @@ const VestingTab = () => {
   const { action: handleClaimVestingReward } = useContractAction(contractActionProps)
 
   if (!vesteeRecord) return <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`} />
-  const { vestingMonth, totalAllocated, totalRemainded, rewardPerMonth, nextRewardDate, lastClaimDate } = vesteeRecord
+  const {
+    vestingMonth,
+    totalAllocated,
+    totalRemainded,
+    rewardPerMonth,
+    nextRewardDate,
+    lastClaimDate,
+    isLocked,
+    cliffTimeEnd,
+  } = vesteeRecord
 
   const lastClaimTime = dayjs(lastClaimDate),
     nextClaimTime = dayjs(nextRewardDate),
-    hasRewardsFor = Math.max(0, nextClaimTime.diff(lastClaimTime, 'month')),
-    isClaimBtnDisabled = rewardPerMonth === 0 || hasRewardsFor === 0 || isActionActive
+    cliffTimeExpires = dayjs(cliffTimeEnd),
+    hasRewardsFor = Math.max(0, nextClaimTime.diff(lastClaimTime, 'month'))
+
+  /**
+   * claim vesting rewards is disabled if:
+   * 1. monthly rewards amount is 0
+   * 2. user have already claimer rewards for this month
+   * 3. vestee is locked for this user
+   * 4. vestee in cliff period
+   * 5. another action is in progress
+   */
+  const isClaimBtnDisabled =
+    rewardPerMonth === 0 || hasRewardsFor === 0 || isLocked || cliffTimeExpires.isBefore(dayjs()) || isActionActive
 
   return (
     <>

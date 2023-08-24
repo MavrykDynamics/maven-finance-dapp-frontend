@@ -1,10 +1,8 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import * as signalR from '@microsoft/signalr'
-import { useSubscription } from '@apollo/client'
 
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
-import { SUBSCRIPTION_INDEXER_LVL } from 'providers/DappConfigProvider/queries/indexerLvl.query'
 import { DEFAULT_USER, DEFAULT_USER_TZKT_TOKENS } from './helpers/user.consts'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { dappClient } from 'providers/UserProvider/wallet/WalletCore'
@@ -12,33 +10,30 @@ import { dappClient } from 'providers/UserProvider/wallet/WalletCore'
 // context
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // helpers
-import {
-  attachTzktSocketsEventHandlers,
-  fetchTzktUserBalances,
-  normalizeUserIndexerTokensBalances,
-  normalizeUserTzktTokensBalances,
-  openTzktWebSocket,
-} from './helpers/userBalances.helpers'
+import { normalizeUserIndexerTokensBalances, openTzktWebSocket } from './helpers/userBalances.helpers'
 import { normalizeUser } from './helpers/userData.helpers'
-import { sleep } from 'utils/api/sleep'
 import { getUsersFarmRewards } from './helpers/userRewards.helpers'
+import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
 // queries
-import { SUBSCRIBE_USER_DATA, SUBSCRIBE_USER_PROPOSAL_REWARDS_DATA } from './queries/userData.query'
+import { USER_DATA_QUERY } from './queries/userData.query'
 
 // types
 import {
   UserContext,
   UserContextStateType,
-  UserTzktTokensBalancesType,
-  userTzKtTokenBalances,
+  UserHistoryData,
+  UserLoansData,
+  UserRewardsType,
+  UserTzKtTokenBalances,
 } from './user.provider.types'
 
-// TODO: remove after user addres won't be needed in redux actions
-import { useDispatch } from 'react-redux'
-import { DISCONNECT, SET_REDUX_USER } from 'reducers/wallet'
+import { useUserApi } from './hooks/useUserApi'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { GetUserDataQuery } from 'utils/__generated__/graphql'
 
 export const userContext = React.createContext<UserContext>(undefined!)
 
@@ -57,178 +52,81 @@ const hasUserInLocalStorage =
  */
 export const UserProvider = ({ children }: Props) => {
   const { tokensMetadata } = useTokensContext()
-  const { bug, info, success, loading, hideToasterMessage } = useToasterContext()
-
-  const dispatch = useDispatch()
-
-  const ws = useRef<null | signalR.HubConnection>(null)
-  const lastSavedLevel = useRef<number>(0)
-
-  // store all data for user, that comes from hasura
-  const [userCtxState, setUserCtxState] = useState<UserContextStateType>(DEFAULT_USER)
-  // store user tokens from tzkt
-  const [userTzktTokens, setUserTzktTokens] = useState<userTzKtTokenBalances>(DEFAULT_USER_TZKT_TOKENS)
-  const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
+  const {
+    contractAddresses: { mvkTokenAddress },
+  } = useDappConfigContext()
+  const { bug } = useToasterContext()
 
   // track whether we've loaded user on init, if we have his wallet data in local storage
-  const isRunnedInitialConnect = useRef<null | boolean>(false)
+  const isUserRestored = useRef<boolean>(false)
+
+  const tzktSocket = useRef<null | signalR.HubConnection>(null)
+  const currentIndexedLvlListenerId = useRef<null | string>(null)
+
+  const [userCtxState, setUserCtxState] = useState<UserContextStateType>(DEFAULT_USER)
+  const [userTzktTokens, setUserTzktTokens] = useState<UserTzKtTokenBalances>(DEFAULT_USER_TZKT_TOKENS)
+
+  const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
+  const [isUserLoading, setUserLoading] = useState(hasUserInLocalStorage && !isUserRestored.current)
 
   /**
-   * we can startInitialUserLoading if:
-   * 1. we have his data in localStorage
-   * 2. we have tokensAddresses we need to load balances for
-   * 3. we haven't loaded user data previously in this app mount
-   * 4. we have tzktSocket started to attach listeners to it
+   * we can start restoring user from localStorage if:
+   *    1. we have his data in localStorage
+   *    2. we have tokensAddresses we need to load balances for
+   *    3. we have mvkToken address, so set it's balance
+   *    4. we haven't loaded user data previously in this app mount
+   *    5. we have tzktSocket started to attach listeners to it
    */
-  const canStartUserInitialLoading =
-    hasUserInLocalStorage && Object.keys(tokensMetadata).length && !isRunnedInitialConnect.current && ws.current
+  const canRestoreUser =
+    hasUserInLocalStorage &&
+    Object.keys(tokensMetadata).length &&
+    mvkTokenAddress &&
+    !isUserRestored.current &&
+    tzktSocket.current
 
   // open socket for tzkt without listeners, cuz don't have user address to subscribe
   useEffect(() => {
     openTzktWebSocket()
-      .then((socket) => (ws.current = socket))
+      .then((socket) => (tzktSocket.current = socket))
       .catch((e) => console.error(e))
 
     return () => {
-      ws?.current?.stop()
-      isRunnedInitialConnect.current = false
+      tzktSocket?.current?.stop()
+      isUserRestored.current = false
     }
   }, [])
 
-  /**
-   * @userAddress -> address of the user need for tzkt normalization, cuz it can be subscribed to 1+ user
-   * @userTokens -> loaded tokens from tztk
-   */
-  const updateUserTzktTokenBalances = useCallback(
-    (userAddress: string) => (userTokens: UserTzktTokensBalancesType) => {
-      const normalizedTzktUserTokens = normalizeUserTzktTokensBalances({
-        indexerData: userTokens,
-        userAddress,
-        tokensMetadata,
-      })
-      setUserTzktTokens((prev) => ({
-        ...prev,
-        tokens: {
-          ...prev.tokens,
-          ...normalizedTzktUserTokens,
-        },
-      }))
-    },
-    [tokensMetadata],
+  // getter & setter for tzktSocket
+  const getTzktSocket = useCallback(() => tzktSocket.current, [])
+  const setTzktSocket = useCallback(
+    (newTzktSocket: signalR.HubConnection | null) => (tzktSocket.current = newTzktSocket),
+    [],
   )
 
-  const loadInitialTzktTokensForNewlyConnectedUser = useCallback(
-    async ({ userAddress, useLoader = true }: { userAddress: string; useLoader?: boolean }) => {
-      if (useLoader) setIsTzktBalancesLoading(true)
+  const { changeUser, connect, signOut } = useUserApi({
+    setUserLoading,
+    setIsTzktBalancesLoading,
+    setUserCtxState,
+    setUserTzktTokens,
 
-      setUserCtxState((prev) => ({
-        ...prev,
-        userAddress,
-      }))
+    getTzktSocket,
+    setTzktSocket,
 
-      const fetchedTokens = await fetchTzktUserBalances({
-        userAddress,
-        tokensMetadata,
-      })
-
-      setUserTzktTokens({
-        userAddress,
-        tokens: fetchedTokens,
-      })
-
-      if (useLoader) setIsTzktBalancesLoading(false)
-    },
-    [tokensMetadata],
-  )
-
-  // handle tzkt socket close or reconnecting events
-  const handleDisconnect = useCallback((error?: Error) => {
-    if (error) {
-      console.error('tzkt socket disconnected: ', { error })
-      bug('Connection to TZKT has been lost, try to reload page', 'TZKT connection')
-    }
-  }, [])
-
-  // handle tzkt socket reconnected event, need to update all tzkt tokens, cuz balances might have changed
-  const handleOnReconnected = useCallback(
-    async (userAddress: string) => {
-      success('Connection to TZKT has been resumed', 'TZKT connection')
-      await sleep(500)
-      const loadingToasterId = loading('Updating balances of TZKT tokens...', 'TZKT connection')
-      await loadInitialTzktTokensForNewlyConnectedUser({ userAddress })
-      await sleep(500)
-      hideToasterMessage(loadingToasterId)
-      success('TZKT tokens baalnces has been updated', 'TZKT connection')
-    },
-    [loadInitialTzktTokensForNewlyConnectedUser],
-  )
-
-  // connect user's wallet to DAPP
-  const connect = useCallback(async () => {
-    try {
-      const userAddress = await DAPP_INSTANCE.connectAccount()
-
-      // if choosen wallet in popup set it to context and loan initial balances from tzkt via fetch
-      if (userAddress) {
-        loadInitialTzktTokensForNewlyConnectedUser({ userAddress })
-
-        dispatch({ type: SET_REDUX_USER, accountPkh: userAddress })
-
-        if (ws.current) {
-          attachTzktSocketsEventHandlers({
-            userAddress,
-            handleTokens: updateUserTzktTokenBalances(userAddress),
-            tzktSocket: ws.current,
-            handleDisconnect,
-            handleOnReconnected,
-          })
-        }
-      } else {
-        info('No account choosen', TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-      }
-    } catch (e) {
-      console.error(`Failed to connect wallet:`, e)
-      bug('Failed to connect wallet', TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-    }
-  }, [updateUserTzktTokenBalances, loadInitialTzktTokensForNewlyConnectedUser, handleDisconnect, handleOnReconnected])
+    userCtxState,
+  })
 
   // effect to perform resotring user from localStorage
   useEffect(() => {
-    if (canStartUserInitialLoading) connect()
-  }, [canStartUserInitialLoading, , connect])
+    if (canRestoreUser) connect()
+  }, [canRestoreUser, connect])
 
   // subscribe to user's indexer data
-  const { loading: userDataLoading } = useSubscription(SUBSCRIBE_USER_DATA, {
+  useQueryWithRefetch(USER_DATA_QUERY, {
     skip: !userCtxState.userAddress,
     variables: {
-      userAddress: userCtxState.userAddress,
+      userAddress: userCtxState.userAddress ?? '',
     },
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      // if user does not exists, TODO: should not be an option
-      if (!data || data.mavryk_user.length === 0) {
-        bug('User does not exists in DB')
-        signOut()
-        return
-      }
-
-      const { tokensBalances, availableLoansRewards, userMTokens } = normalizeUserIndexerTokensBalances({
-        indexerData: data,
-        tokensMetadata,
-      })
-
-      const normalizedUserData = normalizeUser({ indexerData: data })
-      setUserCtxState((prev) => ({
-        ...prev,
-        userTokensBalances: {
-          ...prev.userTokensBalances,
-          ...tokensBalances,
-        },
-        ...normalizedUserData,
-        availableLoansRewards,
-        userMTokens,
-      }))
-    },
+    onCompleted: (data) => setUserIndexerData(data),
     onError: (e) => {
       console.error(`UserProvider query error: `, e)
       bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
@@ -240,120 +138,87 @@ export const UserProvider = ({ children }: Props) => {
    * to reduce amount of needed rerenders, we recalc farm rewards every 3rd level change
    *
    * skip when user don't participated any farms
-   *
-   * Subscribe to level change only when user's wallet is connected and he has farms where he has deposited
    */
-  useSubscription(SUBSCRIPTION_INDEXER_LVL, {
-    skip: Object.keys(userCtxState.farmAccounts).length === 0,
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
-      const indexerLvl = data.dipdup_head.find(({ name }) => name === process.env.REACT_APP_RPC_TZKT_API)?.level
-      if (indexerLvl) {
-        if (indexerLvl - lastSavedLevel.current >= 3) {
-          setUserCtxState((prev) => ({
-            ...prev,
-            availableFarmRewards: getUsersFarmRewards({
-              userFarmsRewardsDataFromIndexer: userCtxState.farmAccounts,
-              currentLvl: indexerLvl,
-            }),
-          }))
-        }
-        lastSavedLevel.current = indexerLvl
-      }
-    },
-    onError: (e) => {
-      console.error(`UserProvider query error: `, e)
-      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-    },
-  })
-
-  /**
-   * user proposal rewards, user can have them if he votes on proposals (means he is satellite), or it's just a regular user and he delegated
-   * to satellite who is making all work
-   *
-   * skip is user is not a satellite and haven't delegated to any
-   */
-  useSubscription(SUBSCRIBE_USER_PROPOSAL_REWARDS_DATA, {
-    skip: !userCtxState.isSatellite && !userCtxState.satelliteMvkIsDelegatedTo,
-    variables: {
-      userAddress: userCtxState.isSatellite ? userCtxState.userAddress : userCtxState.satelliteMvkIsDelegatedTo ?? '',
-    },
-    shouldResubscribe: true,
-    onData: ({ data: { data } }) => {
-      if (!data) return
-
-      setUserCtxState((prev) => ({
-        ...prev,
-        availableProposalRewards: data.governance_proposal.map(({ id }) => id),
-      }))
-    },
-    onError: (e) => {
-      console.error(`UserProvider query error: `, e)
-      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-    },
-  })
-
-  // disconnect user's wallet to DAPP & set default context
-  const signOut = useCallback(async () => {
-    try {
-      await DAPP_INSTANCE.disconnectWallet()
-
-      setUserCtxState(DEFAULT_USER)
-
-      dispatch({ type: DISCONNECT })
-
-      await ws.current?.stop()
-      ws.current = null
-    } catch (e) {
-      console.error(`Failed to disconnect wallet: `, e)
-      bug('Failed to disconnect wallet', TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+  useEffect(() => {
+    const userFarms = userCtxState.rewards?.farmAccounts ?? []
+    if (Object.keys(userFarms).length !== 0) {
+      currentIndexedLvlListenerId.current = currentIndexerLevelProxy.registerListener((newIndexerLvl: number) => {
+        setUserCtxState((prev) => ({
+          ...prev,
+          availableFarmRewards: getUsersFarmRewards({
+            userFarmsRewardsDataFromIndexer: userFarms,
+            currentLvl: newIndexerLvl,
+          }),
+        }))
+      })
     }
+
+    return () => {
+      if (currentIndexedLvlListenerId.current)
+        currentIndexerLevelProxy.removeListener(currentIndexedLvlListenerId.current)
+    }
+  }, [userCtxState.rewards?.farmAccounts])
+
+  const setUserLoansData = useCallback((userLoansData: UserLoansData | null) => {
+    setUserCtxState((prev) => ({
+      ...prev,
+      userLoansData,
+    }))
   }, [])
 
-  // change user's wallet for DAPP, load new data for him and reopen socket for him
-  const changeUser = useCallback(async () => {
-    try {
-      const newUserAddress = await DAPP_INSTANCE.swapAccount()
+  const setUserHistoryData = useCallback((page: number, userHistoryData: UserHistoryData, itemsAmount: number) => {
+    setUserCtxState((prev) => ({
+      ...prev,
+      actionsHistory: { paginatedList: { ...prev.actionsHistory.paginatedList, [page]: userHistoryData }, itemsAmount },
+    }))
+  }, [])
 
-      if (newUserAddress && newUserAddress !== userCtxState.userAddress) {
-        loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress, useLoader: false })
+  const setUserRewards = useCallback((userRewards: UserRewardsType | null) => {
+    setUserCtxState((prev) => ({
+      ...prev,
+      rewards: userRewards,
+    }))
+  }, [])
 
-        dispatch({ type: SET_REDUX_USER, accountPkh: newUserAddress })
-
-        await ws.current?.stop()
-
-        const socketInstance = await openTzktWebSocket()
-        ws.current = socketInstance
-
-        attachTzktSocketsEventHandlers({
-          userAddress: newUserAddress,
-          handleTokens: updateUserTzktTokenBalances(newUserAddress),
-          tzktSocket: ws.current,
-          handleDisconnect,
-          handleOnReconnected,
-        })
-      }
-    } catch (e) {
-      console.error(`Failed to change wallet: `, e)
-      bug('Failed to change wallet', TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+  const setUserIndexerData = (indexerData: GetUserDataQuery) => {
+    // if user does not exists
+    if (indexerData.mavryk_user.length === 0) {
+      setUserLoading(false)
+      return
     }
-  }, [
-    updateUserTzktTokenBalances,
-    loadInitialTzktTokensForNewlyConnectedUser,
-    userCtxState.userAddress,
-    handleDisconnect,
-    handleOnReconnected,
-  ])
+
+    const { tokensBalances, availableLoansRewards, userMTokens } = normalizeUserIndexerTokensBalances({
+      indexerData,
+      tokensMetadata,
+      mvkTokenAddress,
+    })
+
+    const normalizedUserData = normalizeUser({ indexerData })
+    setUserCtxState((prev) => ({
+      ...prev,
+      userTokensBalances: {
+        ...prev.userTokensBalances,
+        ...tokensBalances,
+      },
+      ...normalizedUserData,
+      availableLoansRewards,
+      userMTokens,
+    }))
+    setUserLoading(false)
+  }
 
   const providerValue = useMemo(() => {
-    // set initial connect to true, when we have user address set (subs runned and loading statuses set to true) and loading statuses are off,
-    // or we don't have user wallet in LC and we are unable to restore it
-    if (
-      (!isRunnedInitialConnect.current && userCtxState.userAddress && !(userDataLoading || isTzktBalancesLoading)) ||
-      !hasUserInLocalStorage
-    ) {
-      isRunnedInitialConnect.current = true
+    const isLoading = isUserLoading || isTzktBalancesLoading
+
+    /**
+     * set isUserRestored to true, when:
+     *    1. we have't restored user
+     *    2. we have user address set in context (user data loading started)
+     *    3. loading are false, means, that user has been loaded
+     *    or 4. we don't have user's wallet in localStorage, and we can't restore him
+     */
+    if ((!isUserRestored.current && userCtxState.userAddress && !isLoading) || !hasUserInLocalStorage) {
+      isUserRestored.current = true
     }
 
     return {
@@ -362,13 +227,27 @@ export const UserProvider = ({ children }: Props) => {
         ...userCtxState.userTokensBalances,
         ...(userCtxState.userAddress === userTzktTokens.userAddress ? userTzktTokens.tokens : {}),
       },
-      isLoading: userDataLoading || isTzktBalancesLoading,
-      isRunnedInitialConnect: Boolean(isRunnedInitialConnect.current),
+      isUserRestored: isUserRestored.current,
+      isLoading,
       connect,
       signOut,
       changeUser,
+      setUserLoansData,
+      setUserHistoryData,
+      setUserRewards,
     }
-  }, [connect, signOut, changeUser, userCtxState, userTzktTokens])
+  }, [
+    userCtxState,
+    userTzktTokens,
+    isUserLoading,
+    isTzktBalancesLoading,
+    connect,
+    signOut,
+    changeUser,
+    setUserLoansData,
+    setUserHistoryData,
+    setUserRewards,
+  ])
 
   return <userContext.Provider value={providerValue}>{children}</userContext.Provider>
 }

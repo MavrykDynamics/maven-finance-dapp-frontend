@@ -19,6 +19,7 @@ import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { arrConvertStringToNumber } from 'utils/array.utils'
 
 // VALIDATION FN'S TODO: add some checking in future (no cond for it now)
 export const getBytesPairValidationStatus = (
@@ -255,9 +256,13 @@ export const getPaymentsDiff = (
 ): PaymentsDataChangesType => {
   let originalIdx = 0
 
-  const changes = updatedData
+  // convert token amount from string to number
+  const _originalData = arrConvertStringToNumber(originalData, 'token_amount')
+  const _updatedData = arrConvertStringToNumber(updatedData, 'token_amount')
+
+  const changes = _updatedData
     .reduce<PaymentsDataChangesType>((acc, item1) => {
-      const item2 = originalData?.[originalIdx]
+      const item2 = _originalData?.[originalIdx]
 
       const token1Metadata = getTokenDataByAddress({ tokensMetadata, tokenAddress: item1.token_address })
 
@@ -309,6 +314,7 @@ export const getPaymentsDiff = (
 
       // if local is different frin back one, we update this element
       if (
+        item2 &&
         ((item2.title !== item1.title && item1.title !== null) ||
           (item2.to__id !== item1.to__id && item1.to__id !== null) ||
           (item2.token_address !== item1.token_address && item1.token_address !== null)) &&
@@ -333,8 +339,8 @@ export const getPaymentsDiff = (
       return acc
     }, [])
     .concat(
-      Array.from({ length: originalData.length - updatedData.length }, (_, idx) => ({
-        removePaymentData: String(Number(updatedData.length) + Number(idx)),
+      Array.from({ length: _originalData.length - _updatedData.length }, (_, idx) => ({
+        removePaymentData: String(Number(_updatedData.length) + Number(idx)),
       })),
     )
 

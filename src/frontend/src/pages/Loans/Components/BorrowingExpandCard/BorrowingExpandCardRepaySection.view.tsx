@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import classNames from 'classnames'
 
@@ -31,12 +31,11 @@ import {
   loansTabNames,
 } from 'pages/Loans/Loans.const'
 import {
-  ERR_MSG_TOAST,
+  ERR_MSG_INPUT,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   InputStatusType,
-  defaultLargeInputMaxLength,
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
@@ -49,13 +48,13 @@ import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT 
 import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { checkNan } from 'utils/checkNan'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
+import { operationRepay, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 type Props = {
   vaultId: number
@@ -66,7 +65,7 @@ type Props = {
   borrowedAmount: number
   minimumRepay: number
   collateralBalance: number
-  borrowCapacity: number
+  availableLiquidity: number
   activeRepayTab?: SlidingTabButtonType
   openConfirmRepayPopup: (inputAmount: number, callback: () => void) => void
   openConfirmRepayFullPopup: (callback: () => void) => void
@@ -89,7 +88,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     borrowedToken,
     collateralBalance,
     borrowedTokenRate,
-    borrowCapacity,
+    availableLiquidity,
     minimumRepay,
     borrowedAmount,
     activeRepayTab,
@@ -118,17 +117,16 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     inputData.amount !== ''
   const isNotRepayInFullWarning = isRepayInFull && totalOutstanding !== inputAmount
 
-  const futureBorrowedAmount = borrowedAmount - inputAmount < 0 ? 0 : borrowedAmount - inputAmount
-  const futureTotalOutstanding = totalOutstanding - inputAmount < 0 ? 0 : totalOutstanding - inputAmount
-  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = getVaultCollateralRatio(
-      collateralBalance,
-      (totalOutstanding - inputAmount) * borrowedTokenRate,
-    )
+  const { futureBorrowCapacity, futureCollateralRatio, futureTotalOustanding } = useVaultFutureStats({
+    vaultCurrentTotalOutstanding: totalOutstanding,
+    vaultCurrentCollateralBalance: collateralBalance,
+    vaultTokenAddress: borrowedToken.address,
+    marketAvailableLiquidity: availableLiquidity,
+    operationType: operationRepay,
+    inputValue: inputAmount,
+  })
 
-    const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
-    return { futureCollateralRatio, futureBorrowCapacity }
-  }, [collateralBalance, borrowedAmount, inputAmount, borrowedTokenRate, borrowCapacity])
+  const futureBorrowedAmount = borrowedAmount - inputAmount < 0 ? 0 : borrowedAmount - inputAmount
 
   const clearData = () => {
     setInputData({
@@ -231,7 +229,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       inputStatus: inputData.validationStatus,
       convertedValue: inputAmount * borrowedTokenRate,
       inputSize: INPUT_LARGE,
-      validationFns: [[validateInputLength, ERR_MSG_TOAST]],
+      validationFns: [[validateInputLength, ERR_MSG_INPUT]],
     }),
     [
       symbol,
@@ -284,7 +282,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           <RepayTableStats
             futureBorrowedAmount={futureBorrowedAmount}
             collateralBalance={collateralBalance}
-            futureTotalOutstanding={futureTotalOutstanding}
+            futureTotalOutstanding={futureTotalOustanding}
             futureCollateralRatio={futureCollateralRatio}
             futureBorrowCapacity={futureBorrowCapacity}
             fee={fee}

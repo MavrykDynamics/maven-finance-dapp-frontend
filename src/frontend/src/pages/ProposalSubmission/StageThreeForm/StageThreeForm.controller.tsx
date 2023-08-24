@@ -7,6 +7,9 @@ import { StageThreeFormProps, StageThreeValidityItem, ValidationResult } from '.
 
 // helpers
 import { getValidityStageThreeTable } from '../ProposalSubmission.helpers'
+import { reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasury.utils'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -22,6 +25,8 @@ import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.c
 import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { STAGE_3_DESCRIPTION } from 'texts/tooltips/governance'
+import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
+import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 
 // styles
 import { SubmitProposalGeneralData } from '../ProposalSubmission.style'
@@ -36,16 +41,15 @@ import {
   TableRow,
 } from 'app/App.components/Table'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
+import { Info } from 'app/App.components/Info/Info.view'
+
+// providers
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { reduceTreasuryAssets } from 'pages/Treasury/helpers/treasury.utils'
-import { Info } from 'app/App.components/Info/Info.view'
-import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
-import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 
+// NOTE: isLoading is handled in <ProposalSubmission.controller>
 export const StageThreeForm = ({
   proposalId,
   currentProposal,
@@ -65,8 +69,11 @@ export const StageThreeForm = ({
   } = useDappConfigContext()
   const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
 
-  const { treasuryStorage } = useSelector((state: State) => state.treasury)
-  const treasuryTokens = useMemo(() => reduceTreasuryAssets(treasuryStorage), [treasuryStorage])
+  const { treasuryAddresses, treasuryMapper } = useTreasuryContext()
+  const treasuryTokens = useMemo(
+    () => reduceTreasuryAssets(treasuryAddresses, treasuryMapper),
+    [treasuryAddresses, treasuryMapper],
+  )
 
   const isProposalRound = governancePhase === 'PROPOSAL'
 

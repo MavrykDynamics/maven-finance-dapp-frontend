@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // consts
@@ -10,8 +10,6 @@ import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   InputStatusType,
-  getOnBlurValue,
-  getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
@@ -39,7 +37,7 @@ import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vault
 
 // helpers
 import { checkNan } from 'utils/checkNan'
-import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
@@ -47,7 +45,6 @@ import {
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import colors from 'styles/colors'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -58,8 +55,10 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
-import { ThemeType } from 'consts/theme.const'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
+import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
+import { operationAddCollateral, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -80,14 +79,6 @@ export const AddCollateral = ({
   const { bug } = useToasterContext()
 
   useLockBodyScroll(show)
-
-  const [inputData, setInputData] = useState<{
-    amount: string
-    validationStatus: InputStatusType
-  }>({
-    amount: '0',
-    validationStatus: INPUT_STATUS_DEFAULT,
-  })
 
   useEffect(() => {
     if (!show) {
@@ -110,36 +101,50 @@ export const AddCollateral = ({
   })
 
   const {
-    collateralBalance = 0,
-    vaultAddress = '',
-    vaultId = 0,
-    collateralRatio = 0,
-    borrowedAmount = 0,
-    borrowCapacity = 0,
-    availableLiquidity = 0,
-    collateralTokenAddress = '',
-  } = data ?? {}
+    collateralBalance,
+    vaultAddress,
+    vaultId,
+    collateralRatio,
+    currentTotalOutstanding,
+    borrowCapacity,
+    availableLiquidity,
+    collateralTokenAddress,
+    borrowedTokenAddress,
+  } = data
 
-  const { rate: originalCollateralRate = 0, decimals = 0, symbol = '', name = '', icon = '' } = collateralToken ?? {}
+  const {
+    inputData,
+    setInputData,
+    setSelectedCollateral,
+    inputOnBlurHandle,
+    inputOnChangeHandle,
+    willExceedXTZTheLimit,
+    onFocusHandler,
+    useMaxHandler,
+  } = useCollateralInputData()
+
+  useEffect(() => {
+    setSelectedCollateral(collateralTokenAddress)
+  }, [collateralTokenAddress, setSelectedCollateral])
+
+  const { rate: originalCollateralRate = 0, decimals = 0, symbol = '', icon = '' } = collateralToken ?? {}
   const collateralRate = originalCollateralRate ?? 0
   const userCollateralBalance = getUserTokenBalanceByAddress({
     userTokensBalances,
     tokenAddress: collateralTokenAddress,
   })
-  const { rate: originalBorrowedTokenRate } = borrowedToken ?? {}
-  const borrowedTokenRate = originalBorrowedTokenRate ?? 0
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
-  const futureCollateralRatio = getVaultCollateralRatio(
-    collateralBalance + inputAmount * collateralRate,
-    borrowedAmount * borrowedTokenRate,
-  )
 
-  const futureCollateralBalance = collateralBalance + inputAmount * collateralRate
-  const futureBorrowCapacity = Math.min(
-    Math.max(availableLiquidity, 0),
-    futureCollateralBalance / 2 - borrowedAmount * borrowedTokenRate,
-  )
+  const { futureBorrowCapacity, futureCollateralBalance, futureCollateralRatio } = useVaultFutureStats({
+    operationType: operationAddCollateral,
+    inputValue: inputAmount,
+    marketAvailableLiquidity: availableLiquidity,
+    vaultCurrentTotalOutstanding: currentTotalOutstanding,
+    collateralTokenAddress: collateralTokenAddress,
+    vaultTokenAddress: borrowedTokenAddress,
+    vaultCurrentCollateralBalance: collateralBalance,
+  })
 
   // deposit action
   const depositAction = useCallback(async () => {
@@ -173,7 +178,17 @@ export const AddCollateral = ({
     }
 
     return null
-  }, [userAddress, collateralToken, vaultAddress, bug, inputData.amount, decimals, closePopup])
+  }, [
+    userAddress,
+    collateralToken,
+    vaultAddress,
+    lendingControllerAddress,
+    bug,
+    inputData.amount,
+    decimals,
+    vaultId,
+    closePopup,
+  ])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -184,37 +199,6 @@ export const AddCollateral = ({
   )
 
   const { action: depositCollateralHandler } = useContractAction(contractActionProps)
-
-  // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
-    const validationStatus = loansInputValidation({
-      inputAmount: newInputAmount,
-      maxAmount,
-      options: {
-        byDecimalPlaces: decimals,
-      },
-    })
-
-    setInputData({
-      ...inputData,
-      amount: newInputAmount,
-      validationStatus: validationStatus,
-    })
-  }
-
-  const inputOnBlurHandle = () => {
-    setInputData({
-      ...inputData,
-      amount: getOnBlurValue(inputData.amount),
-    })
-  }
-
-  const onFocusHandler = () => {
-    setInputData({
-      ...inputData,
-      amount: getOnFocusValue(inputData.amount),
-    })
-  }
 
   if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
 
@@ -249,8 +233,7 @@ export const AddCollateral = ({
             settings={{
               balance: userCollateralBalance,
               balanceAsset: symbol,
-              useMaxHandler: () =>
-                inputOnChangeHandle(getLoansInputMaxAmount(userCollateralBalance, decimals), userCollateralBalance),
+              useMaxHandler: () => useMaxHandler(userCollateralBalance),
               inputStatus: inputData.validationStatus,
               convertedValue: inputAmount * (collateralRate ?? 1),
               inputSize: INPUT_LARGE,
@@ -261,6 +244,8 @@ export const AddCollateral = ({
               <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
             </InputPinnedTokenInfo>
           </Input>
+
+          <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20 mb-20" />
 
           <div className="block-name">New Vault Status</div>
 

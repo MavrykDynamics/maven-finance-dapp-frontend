@@ -1,13 +1,18 @@
 import { useCallback } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
+
 // components
 import { ErrorTopbar } from './components/ErrorTopbar'
 import { ErrorFooter } from './components/ErrorFooter'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+
 // consts
 import { errorDescDefaultText, errorHeaderDefaultText } from 'providers/ToasterProvider/toaster.provider.const'
 import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { SPACE_THEME } from 'consts/theme.const'
+import { ERROR_TYPE_FATAL, ERROR_TYPE_ROUTER } from 'errors/error.const'
+
 // styles
 import {
   ErrorPageWrapper,
@@ -23,14 +28,20 @@ import themeColors from 'styles/colors'
 
 // providers
 import { ThemeProvider } from 'styled-components'
-import { SPACE_THEME } from 'consts/theme.const'
+// types
+import { InternalErrorType } from 'errors/error.type'
 
 type ErrorPageProps = {
   headerText?: string
   descText?: string | JSX.Element
+  type?: InternalErrorType
 }
 
-export const ErrorPage = ({ headerText = errorHeaderDefaultText, descText = errorDescDefaultText }: ErrorPageProps) => {
+export const ErrorPage = ({
+  headerText = errorHeaderDefaultText,
+  descText = errorDescDefaultText,
+  type = ERROR_TYPE_FATAL,
+}: ErrorPageProps) => {
   const handleRedirect = useCallback(() => {
     window.location.assign('/')
   }, [])
@@ -49,10 +60,12 @@ export const ErrorPage = ({ headerText = errorHeaderDefaultText, descText = erro
             <Vector2 src="/images/space-cow.svg" />
             <ErrorMidHeader>{headerText}</ErrorMidHeader>
             <ErrorParagraph>{descText}</ErrorParagraph>
-            <NewButton kind={BUTTON_PRIMARY} onClick={handleRedirect}>
-              <Icon id="menu-compass" />
-              Go To Dashboard
-            </NewButton>
+            {type === ERROR_TYPE_ROUTER && (
+              <NewButton kind={BUTTON_PRIMARY} onClick={handleRedirect}>
+                <Icon id="menu-compass" />
+                Go To Dashboard
+              </NewButton>
+            )}
           </ErrorPageInner>
           <ErrorFooter handleRedirect={handleRedirect} />
         </ErrorPageWrapper>

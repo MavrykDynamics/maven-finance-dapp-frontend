@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 
 // providers
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // view
 import SatellitesSideBar from './SatellitesSideBar/SatellitesSideBar.controller'
@@ -11,12 +12,15 @@ import { SatelliteListItem } from './listItem/SateliteCard.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { DataFeedCard } from '../DataFeedsDetails/listItem/DataFeedCard.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
+import { Info } from 'app/App.components/Info/Info.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
-import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { INFO_ERROR } from 'app/App.components/Info/info.constants'
+import { NOT_STAKING_MVK_TEXT } from 'app/App.components/Info/Banners/banners.texts'
 import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 // styles
@@ -27,7 +31,6 @@ import { EmptyContainer } from 'app/App.style'
 import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { NotStakingBanner } from './components/NotStakingBanner.view'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
@@ -38,7 +41,7 @@ import {
   SATELLITES_DATA_ACTIVE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import colors from 'styles/colors'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { NotStakingBannerStyled } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners.style'
 
 const Satellites = () => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
@@ -79,7 +82,18 @@ const Satellites = () => {
     <Page>
       <PageHeader page={'satellites'} />
       {!isSatellite && getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 ? (
-        <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
+        <NotStakingBannerStyled>
+          <Info text={NOT_STAKING_MVK_TEXT} type={INFO_ERROR}>
+            <div className="link-btn">
+              <Link to="/staking">
+                <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+                  <Icon id="staking" />
+                  Staking
+                </NewButton>
+              </Link>
+            </div>
+          </Info>
+        </NotStakingBannerStyled>
       ) : null}
       <PageContent className="mt-30">
         <SatellitesOverviewStyled>
@@ -89,7 +103,11 @@ const Satellites = () => {
               <div className="value">
                 {tabsInfo.totalDelegetedMVK}
                 <a href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle">
-                  <CustomTooltip iconId="info" text="All staked MVK that is delegated to satellites by users" defaultStrokeColor={colors[themeSelected].primaryText} />
+                  <CustomTooltip
+                    iconId="info"
+                    text="All staked MVK that is delegated to satellites by users"
+                    defaultStrokeColor={colors[themeSelected].primaryText}
+                  />
                 </a>
               </div>
             </SatelliteGovernanceStatsInfo>

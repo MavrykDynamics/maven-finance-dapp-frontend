@@ -10,12 +10,18 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { changeVaultNameAction } from 'providers/VaultsProvider/actions/vaults.actions'
 
 // consts
-import { INPUT_LARGE, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
+import {
+  ERR_MSG_INPUT,
+  ERR_MSG_NONE,
+  INPUT_LARGE,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
+} from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { CHANGE_VAULT_NAME_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // helpers
-import { validateVaultLength } from './CreateNewVault.modal'
+import { validateVaultName } from './CreateNewVault.modal'
 import { containSpaces } from 'app/App.utils/input'
 
 // types
@@ -34,6 +40,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 export const ChangeVaultName = ({
   closePopup,
@@ -72,7 +79,7 @@ export const ChangeVaultName = ({
   // change name action -------------------
   const changeNameAction = useCallback(async () => {
     // is there is a vault address - do nothing
-    if (vaultAddress) {
+    if (!vaultAddress) {
       return null
     }
 
@@ -98,15 +105,13 @@ export const ChangeVaultName = ({
 
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus = validateVaultLength(value, vaultNames)
-    setNewVaultName((prev) => ({ ...prev, name: value, validationStatus }))
+    setNewVaultName((prev) => ({ ...prev, name: value }))
   }
 
   const handleOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (containSpaces(e.target.value)) {
       const trimmedValue = e.target.value.trim()
-      const validationStatus = validateVaultLength(trimmedValue, vaultNames)
-      setNewVaultName((prev) => ({ ...prev, validationStatus, name: trimmedValue }))
+      setNewVaultName((prev) => ({ ...prev, name: trimmedValue }))
     }
   }
 
@@ -140,6 +145,11 @@ export const ChangeVaultName = ({
             settings={{
               inputStatus: newVaultName.validationStatus,
               inputSize: INPUT_LARGE,
+              validationFns: [
+                [validateInputLength, ERR_MSG_INPUT, [15]],
+                [validateVaultName, ERR_MSG_NONE, [vaultNames]],
+              ],
+              allowInputAfterError: true,
             }}
           />
 

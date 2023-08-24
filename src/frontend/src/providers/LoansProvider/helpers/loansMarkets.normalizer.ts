@@ -1,20 +1,16 @@
-import { GetLLoansConfigSubscription, GetLoansMarketsSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { GetLoansConfigQuery, GetLoansMarketsQueryQuery } from 'utils/__generated__/graphql'
 import { LoansContext } from '../loans.provider.types'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
 import { calcLendingAPY, calcMarketAvaliableLiquidity } from './loans.utils'
 
-export const normalizeLoansConfig = ({
-  indexerData,
-}: {
-  indexerData: GetLLoansConfigSubscription
-}): LoansContext['config'] => {
+export const normalizeLoansConfig = ({ indexerData }: { indexerData: GetLoansConfigQuery }): LoansContext['config'] => {
   return {
     daoFee: indexerData.lending_controller[0].minimum_loan_fee_pct / 100,
     collateralFactor: indexerData.lending_controller[0].collateral_ratio / 10,
   }
 }
 
-export const normalizeLoansMarkets = ({ indexerData }: { indexerData: GetLoansMarketsSubscriptionSubscription }) => {
+export const normalizeLoansMarkets = ({ indexerData }: { indexerData: GetLoansMarketsQueryQuery }) => {
   const {
     lending_controller: [
       { interest_rate_decimals: interestRateDecimals, interest_treasury_share, decimals, loan_tokens },

@@ -2,7 +2,12 @@ import { useSelector } from 'react-redux'
 
 // helpers
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
-import { INPUT_STATUS_SUCCESS, INPUT_LARGE, INPUT_STATUS_DEFAULT } from 'app/App.components/Input/Input.constants'
+import {
+  INPUT_STATUS_SUCCESS,
+  INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
+  ERR_MSG_TOAST,
+} from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
 import { stakingInputValidation } from '../Doorman.converter'
 import { UNSTAKE_ACTION } from 'providers/DoormanProvider/helpers/doorman.consts'
@@ -29,6 +34,7 @@ import { State } from 'reducers'
 import { unstakeMVK } from 'providers/DoormanProvider/actions/doorman.actions'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useCallback, useMemo } from 'react'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -155,6 +161,7 @@ export const ExitFeeModal = ({
               inputStatus: inputData.validation,
               convertedValue,
               inputSize: INPUT_LARGE,
+              validationFns: [[validateInputLength, ERR_MSG_TOAST]],
             }}
           />
           <ExitFeeModalStats>

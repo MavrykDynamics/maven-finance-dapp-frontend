@@ -37,11 +37,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 
 export const DataFeeds = () => {
   const { feedsAddresses, feedsMapper, feedsCategories } = useDataFeedsContext()
-  const { totalOracleNetworks, isLoading: isOraclesDataLoading } = useSatelliteStatistics({
-    skipActiveSatellitesCount: true,
-    skipTotalDelegatedMVK: true,
-    skipOracleRewardsTotal: true,
-  })
+  const { totalOracleNetworks, isLoading: isOraclesDataLoading } = useSatelliteStatistics()
 
   const dispatch = useDispatch()
   const { search } = useLocation()

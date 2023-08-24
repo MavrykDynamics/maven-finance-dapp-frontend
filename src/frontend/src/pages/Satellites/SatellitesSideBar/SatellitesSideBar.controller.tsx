@@ -1,22 +1,17 @@
 import { Link } from 'react-router-dom'
 
-import { useFeedsStats } from 'providers/DataFeedsProvider/hooks/useFeedsStats'
 import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
-
-import { convertNumberForClient } from 'utils/calcFunctions'
-
-import { ACTION_PRIMARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { MVK_DECIMALS } from 'utils/constants'
-
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-
-import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { SideBarFaq, FAQLink, SatelliteSideBarStyled, SideBarSection, SideBarItem } from './SatelliteSideBar.style'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -63,14 +58,8 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     contractAddresses: { delegationAddress, feedsFactoryAddress },
   } = useDappConfigContext()
 
-  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics({
-    skipOracleRewardsTotal: true,
-  })
-  const { rewardsAmount } = useFeedsStats()
+  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks, averageFeedReward } = useSatelliteStatistics()
   const { feedsAddresses } = useDataFeedsContext()
-
-  const averageRevard =
-    convertNumberForClient({ number: rewardsAmount, grade: MVK_DECIMALS }) / Math.max(feedsAddresses.length, 1)
 
   return (
     <SatelliteSideBarStyled>
@@ -124,7 +113,9 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         </SideBarItem>
         <SideBarItem>
           <h3>Avg. Oracles Rewards MVK</h3>
-          <var>{averageRevard ? <CommaNumber value={averageRevard} /> : '-'}</var>
+          <var>
+            <CommaNumber value={averageFeedReward} />
+          </var>
         </SideBarItem>
       </SideBarSection>
 

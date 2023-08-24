@@ -25,7 +25,7 @@ import { useSelector } from 'react-redux'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
+import { UserLoansData } from 'providers/UserProvider/user.provider.types'
 
 export const LoansTxTab = ({
   txVariant,
@@ -34,7 +34,7 @@ export const LoansTxTab = ({
 }: {
   txVariant: 'lending' | 'borrowing'
   isUserLoansLoading: boolean
-  userLoansData: UserLoansDataStateType['userLendings'] | UserLoansDataStateType['userBorrowings']
+  userLoansData: UserLoansData['userLendings'] | UserLoansData['userBorrowings']
 }) => {
   const { tokensMetadata } = useTokensContext()
   const { accountPkh } = useSelector((state: State) => state.wallet)

@@ -80,7 +80,7 @@ export const LoansBorrow = () => {
     calcMarketBorrowChart: true,
   })
 
-  const { userVaultsData, isLoading: isUserLoansDataLoading } = useUserLoansData({ userAddress })
+  const { userVaultsData, isLoading: isUserLoansDataLoading } = useUserLoansData()
 
   const markets = useMemo(
     () =>
@@ -104,8 +104,8 @@ export const LoansBorrow = () => {
           address,
           annualRate: market.borrowAPR,
           annualRateName: 'APR',
-          leftValue: userVaultsData[marketTokenAddress]?.borrowedAmount ?? 0,
-          rightValue: userVaultsData[marketTokenAddress]?.allVaultsCollateralAmount ?? 0,
+          leftValue: userVaultsData[marketTokenAddress]?.principle ?? 0,
+          rightValue: userVaultsData[marketTokenAddress]?.collateralBalance ?? 0,
           totalAmount: chartData.total?.at(-1)?.value ?? 0,
           price,
           chartData,
@@ -139,9 +139,14 @@ export const LoansBorrow = () => {
           number: vault.borrowedAmount,
           grade: borrowToken.decimals,
         }),
+        convertedInterestAmount = convertNumberForClient({
+          number: vault.fee,
+          grade: borrowToken.decimals,
+        }),
+        totalOutstanding = convertedInterestAmount + convertedBorrowedAmount,
         collateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices)
 
-      return getVaultCollateralRatio(collateralBalance, convertedBorrowedAmount * borrowToken.rate) > 200
+      return getVaultCollateralRatio(collateralBalance, totalOutstanding * borrowToken.rate) > 200
     })
 
     // if we don't have valid vault to borrow, open create new vault popup

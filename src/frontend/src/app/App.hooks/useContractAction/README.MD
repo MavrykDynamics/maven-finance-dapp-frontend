@@ -8,6 +8,9 @@
 
 `afterActionCallback` - callback that is invoked immidiately after action was executed (it doesnt matter if action succeed or failed)
 
+`errActionCallback` - callback that is invoked inside catch block (f.e. to change status from loading true - to false)
+if some error occured
+
 `willUseSharedError` - instead of showing "bug toast" will set error message inside ToasterProvider, so you can take this state and show some custom css block.
 
 `isSilentAction` - if true, does not trigger toasts

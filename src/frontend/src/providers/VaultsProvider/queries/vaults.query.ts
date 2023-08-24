@@ -2,13 +2,13 @@ import { VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR } from './../vaults
 import { DocumentNode } from 'graphql'
 import { gql as apolloGql, OperationVariables, TypedDocumentNode } from '@apollo/client'
 
-import { GetVaultsSubscriptionSubscription } from 'utils/__generated__/graphql'
+import { GetUserVaultsQueryQuery } from 'utils/__generated__/graphql'
 import { VaultsSubsRecordType } from '../vaults.provider.types'
 import { gql } from 'utils/__generated__'
 
 const VAULT_OPEN_FILTER = `open: {_eq: true}`
 
-// filter for user market specific vaults
+// filter for user market specific vaults TODO: add if need
 // vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}, owner: {address: {_eq: $userAddress}}, loan_token: {token: {token_address: {_eq: $marketAddress}}}})
 const getUserVaultsQueryFilters = (
   filter: VaultsSubsRecordType[typeof VAULTS_DATA],
@@ -30,17 +30,17 @@ const getUserVaultsQueryFilters = (
   return `${VAULT_OPEN_FILTER} , owner: {address: {_neq: $userAddress}}`
 }
 
-export function getUserVaultsSubscription({
+export function getUserVaultsQuery({
   userAddress,
   filters,
 }: {
   userAddress: string | null
   filters: VaultsSubsRecordType[typeof VAULTS_DATA]
-}): DocumentNode | TypedDocumentNode<GetVaultsSubscriptionSubscription, OperationVariables> {
+}): DocumentNode | TypedDocumentNode<GetUserVaultsQueryQuery, OperationVariables> {
   const vaultsFilters = getUserVaultsQueryFilters(filters, userAddress)
 
   return apolloGql(`
-		subscription getVaultsSubscription($userAddress: String) {
+		query getUserVaultsQuery($userAddress: String) {
 			lending_controller(where: {mock_time: {_eq: false}}) {
 				max_vault_liquidation_pct
 				decimals
@@ -106,8 +106,8 @@ export function getUserVaultsSubscription({
 }
 
 // get all vaults
-export const SUBSCRIBE_TO_ALL_VAULTS = gql(`
-	subscription getAllVaultsSubscription {
+export const GET_ALL_VAULTS_QUERY = gql(`
+	query getAllVaultsQuery {
 		lending_controller(where: {mock_time: {_eq: false}}) {
 			max_vault_liquidation_pct
 			decimals

@@ -1,20 +1,25 @@
 import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import colors from 'styles/colors'
-import { State } from 'reducers'
+// consts
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getTreasuryTVL, reduceTreasuryAssets } from 'pages/Treasury/helpers/treasury.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
 
+// providers
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
+import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+
+// utils
+import { getTreasuryTVL, reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasury.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// components
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { emptyContainer } from './LendingTab.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-
 import {
   Table,
   TableHeader,
@@ -24,30 +29,38 @@ import {
   TableCell,
   TableScrollable,
 } from 'app/App.components/Table'
+
+// styles
+import colors from 'styles/colors'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { BlockName, StatBlock } from '../Dashboard.style'
 import { TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
+// NOTE: isLoading os passed from <Dashboard.controller> where we get all important data
+// so no need to useEffect(() => changeSubscriptionList) f.e. for treasury
 export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { treasuryStorage } = useSelector((state: State) => state.treasury)
-  const { totalVestedAmount, totalClaimedAmount } = useSelector((state: State) => state.vesting)
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
+  const { totalVestedAmount, totalClaimedAmount } = useVestingContext()
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { treasuryAddresses, treasuryMapper } = useTreasuryContext()
 
   const amountOfTokens = totalVestedAmount + totalClaimedAmount
 
-  const treasuryTokens = useMemo(() => Object.values(reduceTreasuryAssets(treasuryStorage)), [treasuryStorage])
+  const treasuryTokens = useMemo(
+    () => Object.values(reduceTreasuryAssets(treasuryAddresses, treasuryMapper)),
+    [treasuryAddresses, treasuryMapper],
+  )
 
   const { mostSuppliedTreasuryName, mostSuppliedTreasuryTVL, globalTreasuryTVL } = useMemo(
     () =>
-      treasuryStorage.reduce(
-        (acc, treasury) => {
+      treasuryAddresses.reduce(
+        (acc, address) => {
+          const treasury = treasuryMapper[address]
           const treasuryTVL = getTreasuryTVL(treasury, tokensMetadata, tokensPrices)
 
           if (treasuryTVL > acc.mostSuppliedTreasuryTVL) {
@@ -61,7 +74,7 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
         },
         { mostSuppliedTreasuryName: '', globalTreasuryTVL: 0, mostSuppliedTreasuryTVL: 0 },
       ),
-    [tokensMetadata, tokensPrices, treasuryStorage],
+    [tokensMetadata, tokensPrices, treasuryAddresses, treasuryMapper],
   )
 
   return (
@@ -78,7 +91,7 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
           <ClockLoader width={150} height={150} />
           <div className="text">Loading treasury</div>
         </DataLoaderWrapper>
-      ) : treasuryStorage.length ? (
+      ) : treasuryAddresses.length ? (
         <TreasuryContentStyled>
           <div className="top">
             <StatBlock>

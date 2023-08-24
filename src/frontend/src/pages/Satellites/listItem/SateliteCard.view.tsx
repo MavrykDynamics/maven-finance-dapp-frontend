@@ -66,6 +66,7 @@ import { delegate, undelegate } from 'providers/SatellitesProvider/actions/satel
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { distributeProposalRewards } from 'providers/UserProvider/actions/user.actions'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -81,16 +82,11 @@ const renderVotingHistoryItem = (vote: SatelliteVoteType) => {
 }
 
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
-  const {
-    userTokensBalances,
-    isSatellite: isUserSatellite,
-    satelliteMvkIsDelegatedTo,
-    userAddress,
-    availableProposalRewards,
-  } = useUserContext()
+  const { userTokensBalances, isSatellite: isUserSatellite, satelliteMvkIsDelegatedTo, userAddress } = useUserContext()
+  const { availableProposalRewards } = useUserRewards()
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
   const {
-    contractAddresses: { delegationAddress, mvkTokenAddress },
+    contractAddresses: { delegationAddress, mvkTokenAddress, governanceAddress },
     globalLoadingState: { isActionActive },
     preferences: { themeSelected },
   } = useDappConfigContext()
@@ -189,8 +185,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    if (!delegationAddress) {
-      bug('Wrong delegation address')
+    if (!governanceAddress) {
+      bug('Wrong governance address')
       return null
     }
 
@@ -201,8 +197,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    return await distributeProposalRewards(delegationAddress, satelliteAddressToDistribute, availableProposalRewards)
-  }, [userAddress, delegationAddress, isUserSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
+    return await distributeProposalRewards(governanceAddress, satelliteAddressToDistribute, availableProposalRewards)
+  }, [userAddress, governanceAddress, isUserSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
 
   const distributeRewardsContractActionProps: HookContractActionArgs = useMemo(
     () => ({

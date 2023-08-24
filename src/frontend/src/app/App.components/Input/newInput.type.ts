@@ -1,9 +1,13 @@
-import { ERR_MSG_INPUT, ERR_MSG_TOAST, InputSizeType, InputStatusType } from './Input.constants'
+import { ERR_MSG_INPUT, ERR_MSG_NONE, ERR_MSG_TOAST, InputSizeType, InputStatusType } from './Input.constants'
 import { InputOneChange } from './Input.controller'
 
-export type ErrorMessagePosition = typeof ERR_MSG_TOAST | typeof ERR_MSG_INPUT
+export type ErrorMessagePosition = typeof ERR_MSG_TOAST | typeof ERR_MSG_INPUT | typeof ERR_MSG_NONE
 
-export type ValidatorFnType<T = any> = [(v: string, ...args: T[]) => string, ErrorMessagePosition, T[]?]
+export type ValidatorFnType<T = any> = [
+  (v: string, ...args: T[]) => readonly [boolean, string | null],
+  ErrorMessagePosition,
+  T[]?,
+]
 
 export type Settings = {
   balance?: number
@@ -18,6 +22,7 @@ export type Settings = {
   inputSize?: InputSizeType
   errorMessage?: string
   showErrorMessage?: boolean
+  allowInputAfterError?: boolean
   validationFns?: ValidatorFnType[]
 }
 

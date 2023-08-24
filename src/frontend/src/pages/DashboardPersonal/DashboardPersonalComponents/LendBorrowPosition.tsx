@@ -7,11 +7,11 @@ import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.c
 import colors from 'styles/colors'
 
 // types
-import { UserLoansDataStateType } from 'providers/UserProvider/user.provider.types'
+import { UserLoansData } from 'providers/UserProvider/user.provider.types'
 
 // helpers
 import { getGaugeVaultRiskSimpleStatus } from 'pages/LoansDashboard/helpers/position.helpers'
-import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
+import { getNumberInBounds } from 'utils/calcFunctions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // context
@@ -37,7 +37,7 @@ export const LendBorrowPosition = ({
 }: {
   totalUserBorrowed: number
   totalUserLended: number
-  userVaultsData: UserLoansDataStateType['userVaultsData']
+  userVaultsData: UserLoansData['userVaultsData']
   userLoansRewards: number
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
@@ -57,26 +57,28 @@ export const LendBorrowPosition = ({
       marketsAddresses.reduce(
         (acc, marketTokenAddress) => {
           const market = marketsMapper[marketTokenAddress]
+
           const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
-          let borrowedPerMarket = 0
 
           if (!token || !token.rate || !market) return acc
           const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress } = market
 
+          const userMarketVaultsData = userVaultsData[loanTokenAddress]
+          if (!userMarketVaultsData) return acc
+
           const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
 
           const { rate } = token
-
-          const { borrowedAmount = 0, borrowedVaultsCollateralAmount = 0 } = userVaultsData[loanTokenAddress] ?? {}
+          const { principle, collateralBalance } = userMarketVaultsData
 
           //  calculating value risk data & how much borrowed per vault
-          acc.collateralAmount += borrowedVaultsCollateralAmount
-          acc.borrowedAmount += borrowedAmount
-          borrowedPerMarket += borrowedAmount
+          acc.collateralAmount += principle > 0 ? collateralBalance : 0
+          acc.borrowedAmount += principle
 
           // calculating net APY supplied & borrowed ratio's
           acc.sumOfRatioSuppliedToAPY += lendValue * rate * lendingAPY
-          acc.sumOfRatioBorrowedToAPR += borrowedPerMarket * borrowAPR
+          // TODO: check this calc
+          acc.sumOfRatioBorrowedToAPR += principle * borrowAPR
           acc.totalSuppliedValue += lendValue * rate
           return acc
         },

@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { normalizeTokenPrices } from './helpers/tokens.normalizer'
 
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { SubsribeOracleDataFeedSubscription } from 'utils/__generated__/graphql'
+import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemes'
 
 export const tokenMetadataSchema = z.object({
   icon: z.string().optional(),
@@ -35,20 +35,24 @@ export type TokenMetadataType = {
   type: TokenType
 } & PropertiesFromDifferentTokenTypes
 
+export type TokenLoansDataType = {
+  indexerName: string
+  minDepositAmount: number
+  isPausedCollateral: boolean
+  isScaled: boolean
+  isStaked: boolean
+}
+
 type PropertiesFromDifferentTokenTypes = DeepPartial<{
   // loan & collateral tokens properties
-  loanData: {
-    indexerName: string
-    isPausedCollateral: boolean
-    isScaled: boolean
-    isStaked: boolean
-  }
+  loanData: TokenLoansDataType
 }>
 
 // loan token (market)
 export interface LoansTokenMetadataType extends TokenMetadataType {
   loanData: {
     indexerName: string
+    minDepositAmount: number
   }
 }
 
@@ -56,6 +60,7 @@ export interface LoansTokenMetadataType extends TokenMetadataType {
 export interface LoansCollateralTokenMetadataType extends LoansTokenMetadataType {
   loanData: {
     indexerName: string
+    minDepositAmount: number
     isPausedCollateral: boolean
     isScaled: boolean
     isStaked: boolean
@@ -79,7 +84,7 @@ export type TokensContext = {
   tokensPrices: TokensPricesType
   isLoading: boolean
   // methods
-  updateTokensPrices: (feeds: SubsribeOracleDataFeedSubscription['aggregator']) => void
+  updateTokensPrices: (feeds: FullFeedsQueryType | SmallFeedsQueryType) => void
 }
 
 export type TokensContextState = Pick<TokensContext, 'tokensPrices' | 'collateralTokens' | 'tokensMetadata' | 'mTokens'>
