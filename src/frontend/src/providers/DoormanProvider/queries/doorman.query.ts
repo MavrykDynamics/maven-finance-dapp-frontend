@@ -7,21 +7,17 @@ export const SMVK_MVK_HISTORY_DATA = gql(`
       smvk_total_supply
       timestamp
     }
-  }
-`)
 
-export const SMVK_HISTORY_AGGREGATE_DATA = gql(`
-query smvk_history_data_aggregate($periodTimestamp: timestamptz = "1970-01-01T00:00:00.000Z") {
-  smvk_history_data_aggregate(where: {timestamp: {_lte: $periodTimestamp }}) {
-    aggregate {
-      sum {
-        mvk_total_supply
-        smvk_total_supply
+    smvk_history_data_aggregate(where: {timestamp: {_lte: $periodTimestamp }}) {
+      aggregate {
+        sum {
+          mvk_total_supply
+          smvk_total_supply
+        }
+        count
       }
-      count
     }
   }
-}
 `)
 
 export const DAPP_MVK_SMVK_STATS = gql(`

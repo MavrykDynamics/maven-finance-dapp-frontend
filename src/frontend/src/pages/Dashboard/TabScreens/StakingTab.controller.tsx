@@ -24,6 +24,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
+import { TWENTY_FOUR_HOURS } from 'consts/charts.const'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -34,7 +35,7 @@ export const emptyContainer = (
 
 export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
   const { totalSupply, totalStakedMvk } = useDoormanContext()
-  const { smvkHistoryData } = useDoormanHistory()
+  const { smvkHistoryData, isLoading: isChartsDataLoading, noChartData } = useDoormanHistory(TWENTY_FOUR_HOURS)
 
   const mli = calcMLI(totalSupply, totalStakedMvk)
   const fee = calcExitFee(totalSupply, totalStakedMvk)
@@ -89,6 +90,8 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
             <div className="title chart-title">Staking History</div>
             <StakingHistoryChartWrapper>
               <Chart
+                isLoading={isChartsDataLoading}
+                numberOfItemsToDisplay={smvkHistoryData.length}
                 data={{
                   type: AREA_CHART_TYPE,
                   plots: smvkHistoryData,

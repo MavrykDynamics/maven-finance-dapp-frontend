@@ -1,4 +1,4 @@
-import { SmvkMvkHistoryDataQuery, Smvk_History_Data_AggregateQuery } from 'utils/__generated__/graphql'
+import { SmvkMvkHistoryDataQuery } from 'utils/__generated__/graphql'
 import { UTCTimestamp } from 'lightweight-charts'
 
 // calc
@@ -29,7 +29,7 @@ function createChartHistoryItemFromInitValue(
   }
 }
 
-function getAggregatorValues(historyAggregatorData: Smvk_History_Data_AggregateQuery | null) {
+function getAggregatorValues(historyAggregatorData: SmvkMvkHistoryDataQuery['smvk_history_data_aggregate'] | null) {
   const defaultAggregatorValues = {
     initialMvkValue: 0,
     initialSmvkValue: 0,
@@ -38,9 +38,7 @@ function getAggregatorValues(historyAggregatorData: Smvk_History_Data_AggregateQ
 
   if (!historyAggregatorData) return defaultAggregatorValues
 
-  const {
-    smvk_history_data_aggregate: { aggregate },
-  } = historyAggregatorData
+  const { aggregate } = historyAggregatorData
 
   return {
     initialMvkValue: aggregate?.sum?.mvk_total_supply ?? 0,
@@ -51,14 +49,10 @@ function getAggregatorValues(historyAggregatorData: Smvk_History_Data_AggregateQ
 
 // ---------------------------------------------------------------------------------------------
 
-export function normalizeDoormanChartsData(
-  historyAggregatorData: Smvk_History_Data_AggregateQuery | null,
-  storage: SmvkMvkHistoryDataQuery,
-  period: ChartPeriodType,
-) {
-  const { smvk_history_data = [] } = storage
+export function normalizeDoormanChartsData(storage: SmvkMvkHistoryDataQuery, period: ChartPeriodType) {
+  const { smvk_history_data = [], smvk_history_data_aggregate } = storage
 
-  const { initialMvkValue, initialSmvkValue, count } = getAggregatorValues(historyAggregatorData)
+  const { initialMvkValue, initialSmvkValue, count } = getAggregatorValues(smvk_history_data_aggregate)
 
   if (count === 0 && smvk_history_data.length === 0) {
     return {
@@ -81,18 +75,32 @@ export function normalizeDoormanChartsData(
     smvkHistoryData: HistoryItemType[]
     noChartData: boolean
   }>(
-    (acc, item) => {
+    (acc, item, idx) => {
+      // converted values for chart data points
+      const _time = new Date(item.timestamp).getTime() as UTCTimestamp
+      const mvkValue = parseFloat(
+        calcWithoutPrecision(item.mvk_total_supply + initialMvkValue - item.smvk_total_supply).toFixed(2),
+      )
+      const sMvkValue = parseFloat(calcWithoutPrecision(item.smvk_total_supply + initialSmvkValue).toFixed(2))
+
       acc.mvkHistoryData.push({
-        value: parseFloat(
-          calcWithoutPrecision(item.mvk_total_supply + initialMvkValue - item.smvk_total_supply).toFixed(2),
-        ),
-        time: new Date(item.timestamp).getTime() as UTCTimestamp,
+        value: mvkValue,
+        time: _time,
       })
 
       acc.smvkHistoryData.push({
-        value: parseFloat(calcWithoutPrecision(item.smvk_total_supply + initialSmvkValue).toFixed(2)),
-        time: new Date(item.timestamp).getTime() as UTCTimestamp,
+        value: sMvkValue,
+        time: _time,
       })
+
+      if (idx === smvk_history_data.length - 1) {
+        // mvk last item override
+        MVK_PeriodEndPoint.time = _time
+        MVK_PeriodEndPoint.value = mvkValue
+        // smvk last item override
+        SMVK_PeriodEndPoint.time = _time
+        SMVK_PeriodEndPoint.value = sMvkValue
+      }
 
       return acc
     },
@@ -104,13 +112,23 @@ export function normalizeDoormanChartsData(
   )
 
   if (period !== ALL_TIME) {
-    // add chart start points
-    history.mvkHistoryData.unshift(MVK_PeriodStartPoint)
-    history.smvkHistoryData.unshift(SMVK_PeriodStartPoint)
+    // to avoid duplicated timestamps for charts data
+    const { mvkHistoryData, smvkHistoryData } = history
+    if (
+      mvkHistoryData[0]?.time !== MVK_PeriodStartPoint.time &&
+      smvkHistoryData[0]?.time !== SMVK_PeriodStartPoint.time
+    ) {
+      // add chart start points
+      history.mvkHistoryData.unshift(MVK_PeriodStartPoint)
+      history.smvkHistoryData.unshift(SMVK_PeriodStartPoint)
+    }
 
-    // add chart end points
-    history.mvkHistoryData.push(MVK_PeriodEndPoint)
-    history.smvkHistoryData.push(SMVK_PeriodEndPoint)
+    // add endPoint only when there is no items in smvk_history_data to have 2 points
+    if (smvk_history_data.length === 0) {
+      // add chart end points
+      history.mvkHistoryData.push(MVK_PeriodEndPoint)
+      history.smvkHistoryData.push(SMVK_PeriodEndPoint)
+    }
   }
 
   return history
