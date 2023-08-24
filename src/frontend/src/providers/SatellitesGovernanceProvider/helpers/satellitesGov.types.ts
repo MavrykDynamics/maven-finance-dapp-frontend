@@ -9,6 +9,7 @@ import {
   RESTORE_SATELLITE_ACTION,
   SET_AGGREGATOR_MAINTAINER_ACTION,
   SUSPEND_SATELLITE_ACTION,
+  SatelliteGovActionStatus,
   UNBAN_SATELLITE_ACTION,
   UNSUSPEND_SATELLITE_ACTION,
   UPDATE_AGGREGATOR_STATUS_ACTION,
@@ -30,3 +31,5 @@ export type SatellitesGovType =
   | typeof UPDATE_AGGREGATOR_STATUS_ACTION
   | typeof REGISTER_AGGREGATOR_ACTION
   | typeof FIX_MISTAKEN_TRANSFER_ACTION
+
+export type SatelliteGovActionStatusType = (typeof SatelliteGovActionStatus)[keyof typeof SatelliteGovActionStatus]

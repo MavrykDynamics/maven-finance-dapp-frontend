@@ -1,5 +1,6 @@
-import { ProposalStatus, SatelliteGovActiobStatusType } from 'utils/TypesAndInterfaces/Governance'
+import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import { GetGovernanceSatelliteActionsDataQuery, GetGovernanceSatelliteConfigQuery } from 'utils/__generated__/graphql'
+import { SatelliteGovActionStatusType } from './satellitesGov.types'
 
 type SatelliteGovernanceActionType = {
   id: number
@@ -7,7 +8,7 @@ type SatelliteGovernanceActionType = {
   purpose: string
   type: string
   status: number
-  statusFlag: SatelliteGovActiobStatusType
+  statusFlag: SatelliteGovActionStatusType
   satelliteId: string
   initiatorId: string
   expirationDatetime: string | null

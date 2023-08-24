@@ -63,3 +63,10 @@ export const EMPTY_SATELLITE_GOV_CTX: SatelliteGovernanceContextStateType = {
   allSatelliteGovIds: [],
   satelliteGovIdsMapper: {},
 }
+
+export const SatelliteGovActionStatus = {
+  EXECUTED: 'EXECUTED',
+  DEFEATED: 'DEFEATED',
+  ONGOING: 'ONGOING',
+  DROPPED: 'DROPPED',
+} as const

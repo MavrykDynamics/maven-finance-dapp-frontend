@@ -1,5 +1,6 @@
 import { ApolloError } from '@apollo/client'
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import dayjs from 'dayjs'
 
 // helpers
 import {
@@ -7,10 +8,6 @@ import {
   normalizerSatelliteGovernanceActions,
 } from './helpers/satelliteGov.normalizer'
 import { getSatelliteGovernanceProviderReturnValue } from './helpers/satelliteGov.utils'
-
-// providers
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // types
 import {
@@ -34,12 +31,13 @@ import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 // hooks
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // queries
 import { SATELLITE_GOVERNANCE_CONFIG_QUERY, getGovernanceActionsQuery } from './queries/satelliteGov.query'
 import { GetGovernanceSatelliteActionsDataQuery, GetGovernanceSatelliteConfigQuery } from 'utils/__generated__/graphql'
-import dayjs from 'dayjs'
 
 // context
 export const satelliteGovernanceContext = React.createContext<SatelliteGovernanceContext>(undefined!)
@@ -87,11 +85,11 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
       onError: (error) => handleSubError(error, SATELLITES_GOVERNANCE_CONFIG_SUB),
     },
     {
-      blocksDiff: 2000,
+      blocksDiff: 4000,
     },
   )
 
-  const { loading } = useQueryWithRefetch(
+  useQueryWithRefetch(
     getGovernanceActionsQuery(userAddress, activeSubs[SATELLITE_GOV_ACTIONS_DATA]),
     {
       skip: activeSubs[SATELLITE_GOV_ACTIONS_DATA] === null || userAddress === null,
@@ -151,9 +149,8 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
         satelliteGovCtxState,
         changeSatelliteGovSubscriptionsList,
         activeSubs,
-        isActionsDataLoading: loading,
       }),
-    [activeSubs, satelliteGovCtxState, loading],
+    [activeSubs, satelliteGovCtxState],
   )
 
   return (

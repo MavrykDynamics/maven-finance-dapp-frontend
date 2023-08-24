@@ -18,15 +18,7 @@ export const ProposalStatus = {
   TIMELOCK: 'TIMELOCK',
 } as const
 
-export const SatelliteGovActionStatus = {
-  EXECUTED: 'EXECUTED',
-  DEFEATED: 'DEFEATED',
-  ONGOING: 'ONGOING',
-  DROPPED: 'DROPPED',
-} as const
-
 export type ProposalStatusType = (typeof ProposalStatus)[keyof typeof ProposalStatus]
-export type SatelliteGovActiobStatusType = (typeof SatelliteGovActionStatus)[keyof typeof SatelliteGovActionStatus]
 
 // Governance config types
 export type GovernanceGraphQL = Omit<Governance, '__typename'>
