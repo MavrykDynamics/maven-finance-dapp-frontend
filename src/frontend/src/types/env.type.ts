@@ -1,10 +1,10 @@
 import { z } from 'zod'
 
 const envVariables = z.object({
-  INLINE_RUNTIME_CHUNK: z.boolean(),
+  INLINE_RUNTIME_CHUNK: z.string(),
   NODE_ENV: z.string(),
   REACT_APP_BUILD_ENV: z.string(),
-  PORT: z.number(),
+  PORT: z.string(),
   REACT_APP_RECAPTCHA_SITE_KEY: z.string(),
   REACT_APP_NAME: z.string(),
   REACT_APP_NETWORK: z.string(),
@@ -18,8 +18,6 @@ const envVariables = z.object({
   REACT_APP_CHAIN_ID: z.string(),
   WERT_IO_ORIGIN: z.string(),
 })
-
-envVariables.parse(process.env)
 
 declare global {
   namespace NodeJS {
