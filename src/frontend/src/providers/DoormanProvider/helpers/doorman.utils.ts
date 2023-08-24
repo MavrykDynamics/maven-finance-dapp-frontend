@@ -5,7 +5,7 @@ import {
   NullableDoormanContextStateType,
   DoormanSubsRecordType,
 } from '../doorman.provider.types'
-import { EMPTY_DOORMAN_CTX, DAPP_MVK_SMVK_STATS_SUB, MVK_SMVK_HISTORY_SUB } from './doorman.consts'
+import { EMPTY_DOORMAN_CTX, DAPP_MVK_SMVK_STATS_SUB } from './doorman.consts'
 
 type DoormanContextReturnValueArgs = {
   stakingCtxState: NullableDoormanContextStateType
@@ -22,13 +22,15 @@ export const getDoormanProviderReturnValue = ({
   updateStakeHistoryData,
   handleSubError,
 }: DoormanContextReturnValueArgs) => {
-  const { totalStakedMvk, totalSupply, maximumTotalSupply } = stakingCtxState
+  const { totalStakedMvk, totalSupply, maximumTotalSupply, mvkHistoryData, smvkHistoryData } = stakingCtxState
 
   const commonToReturn = {
     changeStakingSubscriptionsList,
     updateStakeHistoryData,
     handleSubError,
     activeSubs,
+    mvkHistoryData,
+    smvkHistoryData,
   }
 
   const isDappMvkSmvkDataEmpty = totalSupply === null || maximumTotalSupply === null || totalStakedMvk === null
@@ -40,13 +42,13 @@ export const getDoormanProviderReturnValue = ({
    */
   const isLoading =
     (activeSubs[DAPP_MVK_SMVK_STATS_SUB] && isDappMvkSmvkDataEmpty) ||
-    (!activeSubs[MVK_SMVK_HISTORY_SUB] && !activeSubs[DAPP_MVK_SMVK_STATS_SUB] && isDappMvkSmvkDataEmpty)
+    (!activeSubs[DAPP_MVK_SMVK_STATS_SUB] && isDappMvkSmvkDataEmpty)
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {
     return {
-      ...commonToReturn,
       ...EMPTY_DOORMAN_CTX,
+      ...commonToReturn,
       isLoading: true,
     }
   }

@@ -21,14 +21,7 @@ import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
 
 // getTimestampBasedOnPeriod
 export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
-  const {
-    activeSubs,
-    updateStakeHistoryData,
-    handleSubError,
-    mvkHistoryData,
-    smvkHistoryData,
-    changeStakingSubscriptionsList,
-  } = useDoormanContext()
+  const { updateStakeHistoryData, handleSubError, mvkHistoryData, smvkHistoryData } = useDoormanContext()
 
   const currentPeriodRef = useRef(getTimestampBasedOnPeriod(period))
 
@@ -42,22 +35,9 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
     currentPeriodRef.current = getTimestampBasedOnPeriod(period)
   }, [period])
 
-  useEffect(() => {
-    changeStakingSubscriptionsList({
-      [MVK_SMVK_HISTORY_SUB]: true,
-    })
-
-    return () => {
-      changeStakingSubscriptionsList({
-        [MVK_SMVK_HISTORY_SUB]: false,
-      })
-    }
-  }, [period])
-
   const { loading } = useQueryWithRefetch(
     SMVK_MVK_HISTORY_DATA,
     {
-      skip: !activeSubs[MVK_SMVK_HISTORY_SUB],
       onCompleted: (data) => {
         if (!data) return
         updateStakeHistoryData(data, period)
@@ -70,16 +50,16 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
     { refetchQueryVariables },
   )
 
-  // On app init it's always null, so isLoading === true
-  const areHistoriesNullable = mvkHistoryData === null || smvkHistoryData === null
+  // On app init it's always null for specific perios, so isLoading === true
+  const areHistoriesNullable = mvkHistoryData[period] === null || smvkHistoryData[period] === null
   // if query is in progress and state is empty - isLoading === true
-  const areHistoriesEmpty = mvkHistoryData === null || smvkHistoryData === null
+  const areHistoriesEmptyWhileFetching = mvkHistoryData[period]?.length === 0 && loading
 
-  const isLoading = areHistoriesNullable || (loading && areHistoriesEmpty)
+  const isLoading = areHistoriesNullable || areHistoriesEmptyWhileFetching
 
   return {
-    isLoading,
-    mvkHistoryData: mvkHistoryData[period],
-    smvkHistoryData: smvkHistoryData[period],
+    isLoading, // for empty array
+    mvkHistoryData: mvkHistoryData[period] ?? [],
+    smvkHistoryData: smvkHistoryData[period] ?? [],
   }
 }

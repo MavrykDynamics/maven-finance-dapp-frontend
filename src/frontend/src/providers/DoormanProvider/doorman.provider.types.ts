@@ -1,6 +1,6 @@
-import { normalizeDoormanChartsData } from './helpers/normalizer'
+import { normalizeDoormanChartsData } from './helpers/doormanCharts.normalizer'
 
-import { MVK_SMVK_HISTORY_SUB, DAPP_MVK_SMVK_STATS_SUB, STAKE_ACTION, UNSTAKE_ACTION } from './helpers/doorman.consts'
+import { DAPP_MVK_SMVK_STATS_SUB, STAKE_ACTION, UNSTAKE_ACTION } from './helpers/doorman.consts'
 import { SmvkMvkHistoryDataQuery } from 'utils/__generated__/graphql'
 import { ApolloError } from '@apollo/client'
 import { ChartPeriodType } from 'types/charts.type'
@@ -8,21 +8,26 @@ import { TupleKeyValueAny } from 'types/global'
 
 export type SmvkHistoryData = ReturnType<typeof normalizeDoormanChartsData>
 export type StakeActionType = typeof STAKE_ACTION | typeof UNSTAKE_ACTION
-export type StakingSubsType = typeof DAPP_MVK_SMVK_STATS_SUB | typeof MVK_SMVK_HISTORY_SUB
+export type StakingSubsType = typeof DAPP_MVK_SMVK_STATS_SUB
 
-// history types
-export type MvkHistoryChartsType = TupleKeyValueAny<ChartPeriodType, SmvkHistoryData['mvkHistoryData']>
-export type SMvkHistoryChartsType = TupleKeyValueAny<ChartPeriodType, SmvkHistoryData['smvkHistoryData']>
+// nullable history default state types
+export type NullableMvkHistoryChartsType = TupleKeyValueAny<ChartPeriodType, SmvkHistoryData['mvkHistoryData'] | null>
+export type NullableSmvkHistoryChartsType = TupleKeyValueAny<ChartPeriodType, SmvkHistoryData['smvkHistoryData'] | null>
 
 export type DoormanContextStateType = {
-  mvkHistoryData: MvkHistoryChartsType
-  smvkHistoryData: SMvkHistoryChartsType
+  mvkHistoryData: NullableMvkHistoryChartsType
+  smvkHistoryData: NullableSmvkHistoryChartsType
   totalStakedMvk: number
   totalSupply: number
   maximumTotalSupply: number
 }
 
-export type NullableDoormanContextStateType = DeepNullable<DoormanContextStateType>
+export type NullableDoormanContextStateType = DeepNullable<
+  Omit<DoormanContextStateType, 'mvkHistoryData' | 'smvkHistoryData'>
+> & {
+  mvkHistoryData: NullableMvkHistoryChartsType
+  smvkHistoryData: NullableSmvkHistoryChartsType
+}
 
 export type DoormanContext = DoormanContextStateType & {
   isLoading: boolean
@@ -30,7 +35,7 @@ export type DoormanContext = DoormanContextStateType & {
   activeSubs: DoormanSubsRecordType
   changeStakingSubscriptionsList: (skips: Partial<DoormanSubsRecordType>) => void
   updateStakeHistoryData: (historyData: SmvkMvkHistoryDataQuery, period: ChartPeriodType) => void
-  handleSubError: (error: ApolloError, subName: StakingSubsType) => void
+  handleSubError: (error: ApolloError, subName: string) => void
 }
 
 export type DoormanActionData = {
