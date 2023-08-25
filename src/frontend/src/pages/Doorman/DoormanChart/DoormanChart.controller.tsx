@@ -86,7 +86,12 @@ export function DoormanChart() {
   const currentMLI = calcMLI(totalSupply, totalStakedMvk)
 
   const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
-  const { smvkHistoryData, mvkHistoryData, isLoading: isChartsDataLoading } = useDoormanHistory(chartPeriod)
+  const {
+    smvkHistoryData,
+    mvkHistoryData,
+    isLoading: isChartsDataLoading,
+    noChartData,
+  } = useDoormanHistory(chartPeriod)
 
   const [activeTabId, setActiveTabId] = useState(tabsList[0].id)
 
@@ -95,6 +100,7 @@ export function DoormanChart() {
     setChartPeriod(period)
   }, [])
   const exitFeeMarkerTime = findExitFeeClosestTimePlot(MLI_FEE_CHART_DATA, currentExitFee)
+  const numberOfItemsToDisplay = smvkHistoryData.length < 10 && !noChartData ? smvkHistoryData.length : 10
 
   return (
     <Wrapper>
@@ -114,6 +120,8 @@ export function DoormanChart() {
             </div>
 
             <DoubleChart
+              isLoading={isChartsDataLoading}
+              numberOfItemsToDisplay={numberOfItemsToDisplay}
               firstChart={{
                 data: {
                   type: 'area',
@@ -207,8 +215,8 @@ export function DoormanChart() {
                 height: 370,
               }}
               tooltipAsset={'sMVK'}
-              // TODO EXTRACT TO const
-              numberOfItemsToDisplay={smvkHistoryData.length < 10 ? smvkHistoryData.length : 10}
+              // check is there is a dat for chart, if no - show default chart text
+              numberOfItemsToDisplay={numberOfItemsToDisplay}
             />
           </>
         ) : null}
