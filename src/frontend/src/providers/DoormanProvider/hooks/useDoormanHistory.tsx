@@ -18,10 +18,20 @@ import { ONE_HOUR } from 'consts/charts.const'
 
 // utils
 import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
+import { ApolloError } from '@apollo/client'
+import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // getTimestampBasedOnPeriod
 export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
-  const { updateStakeHistoryData, handleSubError, mvkHistoryData, smvkHistoryData, noChartData } = useDoormanContext()
+  const { updateStakeHistoryData, mvkHistoryData, smvkHistoryData, noChartData } = useDoormanContext()
+  const { bug } = useToasterContext()
+
+  const handleSubError = (error: ApolloError, subName: string) => {
+    console.error(`${subName} query error: `, error)
+    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+  }
 
   const [currentPeriod, setCurrentPeriod] = useState(() => getTimestampBasedOnPeriod(period))
   const aborterRef = useRef(new AbortController())

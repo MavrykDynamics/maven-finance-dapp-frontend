@@ -2,16 +2,19 @@ import { ApolloError } from '@apollo/client'
 import React, { useContext, useMemo, useState } from 'react'
 
 // helpers
+import { getDoormanProviderReturnValue } from './helpers/doorman.utils'
 import { normalizeDoormanChartsData } from './helpers/doormanCharts.normalizer'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
 import { DoormanContext, NullableDoormanContextStateType, DoormanSubsRecordType } from './doorman.provider.types'
 import { SmvkMvkHistoryDataQuery, GetDappSmvkMvkStatsQuery } from 'utils/__generated__/graphql'
+import { ChartPeriodType } from 'types/charts.type'
 
 // consts
 import { MVK_DECIMALS } from 'utils/constants'
@@ -24,9 +27,6 @@ import {
 } from './helpers/doorman.consts'
 import { DAPP_MVK_SMVK_STATS } from './queries/doorman.query'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
-import { getDoormanProviderReturnValue } from './helpers/doorman.utils'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { ChartPeriodType } from 'types/charts.type'
 
 export const doormanContext = React.createContext<DoormanContext>(undefined!)
 
@@ -66,14 +66,8 @@ const DoormanProvider = ({ children }: Props) => {
 
     setStakingCtxState((prevState) => ({
       ...prevState,
-      smvkHistoryData:
-        prevState.smvkHistoryData === null
-          ? { ...DEFAULT_DOORMAN_HISTORY }
-          : { ...prevState.smvkHistoryData, [period]: smvkHistoryData },
-      mvkHistoryData:
-        prevState.mvkHistoryData === null
-          ? { ...DEFAULT_DOORMAN_HISTORY }
-          : { ...prevState.mvkHistoryData, [period]: mvkHistoryData },
+      smvkHistoryData: { ...prevState.smvkHistoryData, [period]: smvkHistoryData },
+      mvkHistoryData: { ...prevState.mvkHistoryData, [period]: mvkHistoryData },
       noChartData,
     }))
   }
@@ -105,7 +99,6 @@ const DoormanProvider = ({ children }: Props) => {
         changeStakingSubscriptionsList,
         activeSubs,
         updateStakeHistoryData,
-        handleSubError,
       }),
     [activeSubs, stakingCtxState],
   )

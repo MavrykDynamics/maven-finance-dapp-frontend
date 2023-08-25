@@ -11,7 +11,6 @@ type DoormanContextReturnValueArgs = {
   stakingCtxState: NullableDoormanContextStateType
   changeStakingSubscriptionsList: DoormanContext['changeStakingSubscriptionsList']
   updateStakeHistoryData: DoormanContext['updateStakeHistoryData']
-  handleSubError: DoormanContext['handleSubError']
   activeSubs: DoormanSubsRecordType
 }
 
@@ -20,15 +19,12 @@ export const getDoormanProviderReturnValue = ({
   changeStakingSubscriptionsList,
   activeSubs,
   updateStakeHistoryData,
-  handleSubError,
 }: DoormanContextReturnValueArgs) => {
   const { totalStakedMvk, totalSupply, maximumTotalSupply, mvkHistoryData, smvkHistoryData } = stakingCtxState
 
   const commonToReturn = {
     changeStakingSubscriptionsList,
     updateStakeHistoryData,
-    handleSubError,
-    activeSubs,
     mvkHistoryData,
     smvkHistoryData,
   }

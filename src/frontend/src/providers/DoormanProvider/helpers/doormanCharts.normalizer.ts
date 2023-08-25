@@ -29,7 +29,9 @@ function createChartHistoryItemFromInitValue(
   }
 }
 
-function getAggregatorValues(historyAggregatorData: SmvkMvkHistoryDataQuery['smvk_history_data_aggregate'] | null) {
+function getAggregatorValues(
+  historyAggregatorData: SmvkMvkHistoryDataQuery['smvk_history_data_aggregate'] | null | undefined,
+) {
   const defaultAggregatorValues = {
     initialMvkValue: 0,
     initialSmvkValue: 0,
@@ -41,6 +43,7 @@ function getAggregatorValues(historyAggregatorData: SmvkMvkHistoryDataQuery['smv
   const { aggregate } = historyAggregatorData
 
   return {
+    // - (aggregate?.sum?.smvk_total_supply ?? 0)
     initialMvkValue: aggregate?.sum?.mvk_total_supply ?? 0,
     initialSmvkValue: aggregate?.sum?.smvk_total_supply ?? 0,
     count: Number(aggregate?.count) ?? 0,
@@ -78,9 +81,11 @@ export function normalizeDoormanChartsData(storage: SmvkMvkHistoryDataQuery, per
     (acc, item, idx) => {
       // converted values for chart data points
       const _time = new Date(item.timestamp).getTime() as UTCTimestamp
+
       const mvkValue = parseFloat(
         calcWithoutPrecision(item.mvk_total_supply + initialMvkValue - item.smvk_total_supply).toFixed(2),
       )
+
       const sMvkValue = parseFloat(calcWithoutPrecision(item.smvk_total_supply + initialSmvkValue).toFixed(2))
 
       acc.mvkHistoryData.push({
@@ -92,15 +97,6 @@ export function normalizeDoormanChartsData(storage: SmvkMvkHistoryDataQuery, per
         value: sMvkValue,
         time: _time,
       })
-
-      if (idx === smvk_history_data.length - 1) {
-        // mvk last item override
-        MVK_PeriodEndPoint.time = _time
-        MVK_PeriodEndPoint.value = mvkValue
-        // smvk last item override
-        SMVK_PeriodEndPoint.time = _time
-        SMVK_PeriodEndPoint.value = sMvkValue
-      }
 
       return acc
     },
