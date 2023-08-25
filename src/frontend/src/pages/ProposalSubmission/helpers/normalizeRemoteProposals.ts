@@ -45,12 +45,14 @@ export const mergeRemoteProposalsWithClient = ({
   mappedValidation,
   proposalState,
   proposalsValidation,
+  lastProposalIdFromOperation,
 }: {
   proposalKeys: Array<number>
   mappedProposals: Record<number, ProposalRecordType>
   proposalState: Record<number, ProposalRecordType>
   mappedValidation: Record<number, ProposalValidityObj>
   proposalsValidation: Record<number, ProposalValidityObj>
+  lastProposalIdFromOperation: null | number
 }) => {
   const { mergedProposals, mergedProposalsValidation } = proposalKeys.reduce<{
     mergedProposals: Record<number, ProposalRecordType>
@@ -63,6 +65,8 @@ export const mergeRemoteProposalsWithClient = ({
       const proposalFromClient = proposalState[proposalId]
       const proposalValidationFromClient = proposalsValidation[proposalId]
 
+      const isCurrentProposalUpdated = lastProposalIdFromOperation === proposalFromClient.id
+
       // if proposal exists on remote, but client don't have it, add it to client
       if (proposalFromRemote && !proposalFromClient) {
         acc.mergedProposals[proposalId] = proposalFromRemote
@@ -73,66 +77,74 @@ export const mergeRemoteProposalsWithClient = ({
       // if proposal exists on client and on remote merge their fields, to prevent clearing user enetered data
       acc.mergedProposals[proposalId] = {
         ...proposalFromRemote,
-        proposalData: proposalFromRemote.proposalData
-          .concat(proposalFromClient.proposalData)
-          .reduce<{ ids: Record<string, boolean>; proposalData: ProposalRecordType['proposalData'] }>(
-            (acc, byte) => {
-              if (acc.ids[byte.id]) return acc
-              acc.proposalData.push(byte)
-              acc.ids[byte.id] = true
-              return acc
-            },
-            {
-              ids: {},
-              proposalData: [],
-            },
-          ).proposalData,
-        proposalPayments: proposalFromRemote.proposalPayments
-          .concat(proposalFromClient.proposalPayments)
-          .reduce<{ ids: Record<string, boolean>; proposalPayments: ProposalRecordType['proposalPayments'] }>(
-            (acc, payment) => {
-              if (acc.ids[payment.id]) return acc
-              acc.proposalPayments.push(payment)
-              acc.ids[payment.id] = true
-              return acc
-            },
-            {
-              ids: {},
-              proposalPayments: [],
-            },
-          ).proposalPayments,
+        proposalData: isCurrentProposalUpdated
+          ? proposalFromRemote.proposalData
+          : proposalFromRemote.proposalData
+              .concat(proposalFromClient.proposalData)
+              .reduce<{ ids: Record<string, boolean>; proposalData: ProposalRecordType['proposalData'] }>(
+                (acc, byte) => {
+                  if (acc.ids[byte.id]) return acc
+                  acc.proposalData.push(byte)
+                  acc.ids[byte.id] = true
+                  return acc
+                },
+                {
+                  ids: {},
+                  proposalData: [],
+                },
+              ).proposalData,
+        proposalPayments: isCurrentProposalUpdated
+          ? proposalFromRemote.proposalPayments
+          : proposalFromRemote.proposalPayments
+              .concat(proposalFromClient.proposalPayments)
+              .reduce<{ ids: Record<string, boolean>; proposalPayments: ProposalRecordType['proposalPayments'] }>(
+                (acc, payment) => {
+                  if (acc.ids[payment.id]) return acc
+                  acc.proposalPayments.push(payment)
+                  acc.ids[payment.id] = true
+                  return acc
+                },
+                {
+                  ids: {},
+                  proposalPayments: [],
+                },
+              ).proposalPayments,
       }
 
       acc.mergedProposalsValidation[proposalId] = {
         ...proposalValidationFromRemote,
-        bytesValidation: proposalValidationFromRemote.bytesValidation
-          .concat(proposalValidationFromClient.bytesValidation)
-          .reduce<{ ids: Record<string, boolean>; bytesValidation: ProposalValidityObj['bytesValidation'] }>(
-            (acc, validation) => {
-              if (acc.ids[validation.byteId]) return acc
-              acc.bytesValidation.push(validation)
-              acc.ids[validation.byteId] = true
-              return acc
-            },
-            {
-              ids: {},
-              bytesValidation: [],
-            },
-          ).bytesValidation,
-        paymentsValidation: proposalValidationFromRemote.paymentsValidation
-          .concat(proposalValidationFromClient.paymentsValidation)
-          .reduce<{ ids: Record<string, boolean>; paymentsValidation: ProposalValidityObj['paymentsValidation'] }>(
-            (acc, validation) => {
-              if (acc.ids[validation.paymentId]) return acc
-              acc.paymentsValidation.push(validation)
-              acc.ids[validation.paymentId] = true
-              return acc
-            },
-            {
-              ids: {},
-              paymentsValidation: [],
-            },
-          ).paymentsValidation,
+        bytesValidation: isCurrentProposalUpdated
+          ? proposalValidationFromRemote.bytesValidation
+          : proposalValidationFromRemote.bytesValidation
+              .concat(proposalValidationFromClient.bytesValidation)
+              .reduce<{ ids: Record<string, boolean>; bytesValidation: ProposalValidityObj['bytesValidation'] }>(
+                (acc, validation) => {
+                  if (acc.ids[validation.byteId]) return acc
+                  acc.bytesValidation.push(validation)
+                  acc.ids[validation.byteId] = true
+                  return acc
+                },
+                {
+                  ids: {},
+                  bytesValidation: [],
+                },
+              ).bytesValidation,
+        paymentsValidation: isCurrentProposalUpdated
+          ? proposalValidationFromRemote.paymentsValidation
+          : proposalValidationFromRemote.paymentsValidation
+              .concat(proposalValidationFromClient.paymentsValidation)
+              .reduce<{ ids: Record<string, boolean>; paymentsValidation: ProposalValidityObj['paymentsValidation'] }>(
+                (acc, validation) => {
+                  if (acc.ids[validation.paymentId]) return acc
+                  acc.paymentsValidation.push(validation)
+                  acc.ids[validation.paymentId] = true
+                  return acc
+                },
+                {
+                  ids: {},
+                  paymentsValidation: [],
+                },
+              ).paymentsValidation,
       }
 
       return acc

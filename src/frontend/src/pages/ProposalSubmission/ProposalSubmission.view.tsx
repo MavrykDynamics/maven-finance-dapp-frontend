@@ -100,6 +100,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
   const [activeTab, setActiveTab] = useState(1)
   const [isFormDisabled, setIsFormDisabled] = useState(true)
+  const [lastProposalIdFromOperation, setLastProposalIdFromOperation] = useState<null | number>(null)
 
   useEffect(() => {
     const abortController = new AbortController()
@@ -116,7 +117,10 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         if (dayjs(votingEndTimestamp).diff() <= 0) {
           setIsFormDisabled(true)
           console.error('current round is over, move round, please')
+          return
         }
+
+        setIsFormDisabled(false)
       } catch (e) {
         // TODO: handle fetch errors when error boundary will be ready
         if (!isAbortError(e)) {
@@ -148,115 +152,12 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       proposalKeys,
       proposalState,
       proposalsValidation,
+      lastProposalIdFromOperation,
     })
 
     setProposalsState(proposals)
     setProposalsValidation(validation)
-    // const { mergedProposals, mergedProposalsValidation } = proposalKeys.reduce<{
-    //   mergedProposals: Record<number, ProposalRecordType>
-    //   mergedProposalsValidation: Record<number, ProposalValidityObj>
-    // }>(
-    //   (acc, proposalId) => {
-    //     const proposalFromRemote = mappedProposals[proposalId]
-    //     const proposalValidationFromRemote = mappedValidation[proposalId]
-
-    //     const proposalFromClient = proposalState[proposalId]
-    //     const proposalValidationFromClient = proposalsValidation[proposalId]
-
-    //     // if proposal exists on remote, but client don't have it, add it to client
-    //     if (proposalFromRemote && !proposalFromClient) {
-    //       acc.mergedProposals[proposalId] = proposalFromRemote
-    //       acc.mergedProposalsValidation[proposalId] = proposalValidationFromRemote
-    //       return acc
-    //     }
-
-    //     // if proposal exists on client and on remote merge their fields, to prevent clearing user enetered data
-    //     acc.mergedProposals[proposalId] = {
-    //       ...proposalFromRemote,
-    //       proposalData: proposalFromRemote.proposalData
-    //         .concat(proposalFromClient.proposalData)
-    //         .reduce<{ ids: Record<string, boolean>; proposalData: ProposalRecordType['proposalData'] }>(
-    //           (acc, byte) => {
-    //             if (acc.ids[byte.id]) return acc
-    //             acc.proposalData.push(byte)
-    //             acc.ids[byte.id] = true
-    //             return acc
-    //           },
-    //           {
-    //             ids: {},
-    //             proposalData: [],
-    //           },
-    //         ).proposalData,
-    //       proposalPayments: proposalFromRemote.proposalPayments
-    //         .concat(proposalFromClient.proposalPayments)
-    //         .reduce<{ ids: Record<string, boolean>; proposalPayments: ProposalRecordType['proposalPayments'] }>(
-    //           (acc, payment) => {
-    //             if (acc.ids[payment.id]) return acc
-    //             acc.proposalPayments.push(payment)
-    //             acc.ids[payment.id] = true
-    //             return acc
-    //           },
-    //           {
-    //             ids: {},
-    //             proposalPayments: [],
-    //           },
-    //         ).proposalPayments,
-    //     }
-
-    //     acc.mergedProposalsValidation[proposalId] = {
-    //       ...proposalValidationFromRemote,
-    //       bytesValidation: proposalValidationFromRemote.bytesValidation
-    //         .concat(proposalValidationFromClient.bytesValidation)
-    //         .reduce<{ ids: Record<string, boolean>; bytesValidation: ProposalValidityObj['bytesValidation'] }>(
-    //           (acc, validation) => {
-    //             if (acc.ids[validation.byteId]) return acc
-    //             acc.bytesValidation.push(validation)
-    //             acc.ids[validation.byteId] = true
-    //             return acc
-    //           },
-    //           {
-    //             ids: {},
-    //             bytesValidation: [],
-    //           },
-    //         ).bytesValidation,
-    //       paymentsValidation: proposalValidationFromRemote.paymentsValidation
-    //         .concat(proposalValidationFromClient.paymentsValidation)
-    //         .reduce<{ ids: Record<string, boolean>; paymentsValidation: ProposalValidityObj['paymentsValidation'] }>(
-    //           (acc, validation) => {
-    //             if (acc.ids[validation.paymentId]) return acc
-    //             acc.paymentsValidation.push(validation)
-    //             acc.ids[validation.paymentId] = true
-    //             return acc
-    //           },
-    //           {
-    //             ids: {},
-    //             paymentsValidation: [],
-    //           },
-    //         ).paymentsValidation,
-    //     }
-
-    //     return acc
-    //   },
-    //   {
-    //     mergedProposals: {},
-    //     mergedProposalsValidation: {},
-    //   },
-    // )
-
-    // // user can create only 2 proposals, so if we have < 2 proposals created, add empty proposal to him, so he'll be able to fill and submit it
-    // if (proposalKeys.length < 2) {
-    //   const defaultProposalFromState = proposalState[DEFAULT_PROPOSAL.id]
-    //   const defaultProposalValidationFromState = proposalsValidation[DEFAULT_PROPOSAL.id]
-
-    //   setProposalsState({ ...mergedProposals, [DEFAULT_PROPOSAL.id]: defaultProposalFromState ?? DEFAULT_PROPOSAL })
-    //   setProposalsValidation({
-    //     ...mergedProposalsValidation,
-    //     [DEFAULT_PROPOSAL.id]: defaultProposalValidationFromState ?? DEFAULT_PROPOSAL_VALIDATION,
-    //   })
-    // } else {
-    //   setProposalsState(mergedProposals)
-    //   setProposalsValidation(mergedProposalsValidation)
-    // }
+    setLastProposalIdFromOperation(null)
   }, [mappedProposals, mappedValidation, proposalKeys])
 
   // mapping user created proposals to tabs buttons data
@@ -365,32 +266,33 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
   // submit proposal action handler ----------------------------------------------
   // submission callback to update data
-  // TODO: set created proposal id as selected & clear default proposal data
-  // const getNewProposalId = useCallback(async () => {
-  //   try {
-  //     const newProposalData = await apolloClient.query({
-  //       query: GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
-  //       variables: {
-  //         userAddress,
-  //       },
-  //     })
+  const getNewProposalId = useCallback(async () => {
+    try {
+      const newProposalData = await apolloClient.query({
+        query: GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
+        variables: {
+          userAddress,
+        },
+      })
 
-  //     if (newProposalData.error) {
-  //       console.error('loading new proposal error', newProposalData.error)
-  //       throw new Error(newProposalData.error.message)
-  //     }
+      if (newProposalData.error) {
+        console.error('loading new proposal error', newProposalData.error)
+        throw new Error(newProposalData.error.message)
+      }
 
-  //     console.log({ newProposalData, selectedUserProposalId })
-  //     if (newProposalData.data.governance_proposal.length) {
-  //       const { id } = newProposalData.data.governance_proposal[0]
-  //       changeActiveProposal(id ?? DEFAULT_PROPOSAL.id)
-  //     }
+      console.log('getNewProposalId result', { newProposalData, proposalState })
+      if (newProposalData.data.governance_proposal.length) {
+        const { id } = newProposalData.data.governance_proposal[0]
+        changeActiveProposal(id ?? DEFAULT_PROPOSAL.id)
 
-  //     // changeActiveProposal
-  //   } catch (e) {
-  //     bug('Fetch Error', 'Error occured while loading latest proposal id, please reload the page')
-  //   }
-  // }, [apolloClient, bug, changeActiveProposal, userAddress])
+        if (proposalState[DEFAULT_PROPOSAL.id]) proposalState[DEFAULT_PROPOSAL.id] = DEFAULT_PROPOSAL
+      }
+
+      // changeActiveProposal
+    } catch (e) {
+      bug('Fetch Error', 'Error occured while loading latest proposal id, please reload the page')
+    }
+  }, [apolloClient, changeActiveProposal, proposalState, userAddress])
 
   const submitActionFn = useCallback(async () => {
     if (!userAddress) {
@@ -435,6 +337,10 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     () => ({
       actionType: SUBMIT_PROPOSAL_ACTION,
       actionFn: submitActionFn,
+      dappActionCallback: () => {
+        console.log('dappActionCallback submit')
+        getNewProposalId()
+      },
     }),
     [submitActionFn],
   )
@@ -464,6 +370,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       tokensMetadata,
     )
 
+    setLastProposalIdFromOperation(selectedUserProposalId)
     return await updateProposalData(governanceAddress, selectedUserProposalId, bytesDiff, paymentsDiff)
   }, [
     bug,
