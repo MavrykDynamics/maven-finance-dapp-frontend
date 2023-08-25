@@ -65,9 +65,7 @@ export const Dashboard = () => {
       <PageHeader page={'dashboard'} />
 
       <DashboardStyled>
-        {/* TODO: use staking stats loading also, when chart data loading will not affect on isStakingLoading */}
-        {/* {isTvlValueLoading || isStakingLoading ? ( */}
-        {isTvlValueLoading ? (
+        {isTvlValueLoading || isStakingLoading ? (
           <DataLoaderWrapper>
             <ClockLoader width={150} height={150} />
             <div className="text">Loading DAPP dashboard data</div>
@@ -147,7 +145,8 @@ export const Dashboard = () => {
 
 const DashboardMvkData = () => {
   const { tokensPrices } = useTokensContext()
-  const { totalStakedMvk, totalSupply, maximumTotalSupply, isLoading: isStakingLoading } = useDoormanContext()
+  // staking stats loading is handled in <Dashboard /> component
+  const { totalStakedMvk, totalSupply, maximumTotalSupply } = useDoormanContext()
 
   const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
   const mvkStatsBlock: mvkStatsType = {
@@ -164,55 +163,46 @@ const DashboardMvkData = () => {
 
   return (
     <div className="mvkStats">
-      {isStakingLoading ? (
-        <DataLoaderWrapper margin="25px 0px 25px -15px">
-          <ClockLoader width={75} height={75} />
-          <div className="text">Loading MVK token data</div>
-        </DataLoaderWrapper>
-      ) : (
-        <>
-          <BGPrimaryTitleStyled>MVK</BGPrimaryTitleStyled>
-          <div className="statsWrapper">
-            <StatBlock>
-              <div className="name">Market Cap</div>
-              <div className="value">
-                <CommaNumber value={mvkStatsBlock.marketCap} endingText="USD" />
-              </div>
-            </StatBlock>
-
-            <StatBlock>
-              <div className="name">Staked MVK</div>
-              <div className="value">
-                <CommaNumber value={mvkStatsBlock.stakedMvk} endingText="MVK" />
-              </div>
-            </StatBlock>
-
-            <StatBlock>
-              <div className="name">Live Price</div>
-              <div className="value">
-                <CommaNumber beginningText="$" value={mvkStatsBlock.livePrice} />
-                <div className="impact-wrapper">
-                  <Impact value={mvkRateChange} endingText="% 24h" />
-                </div>
-              </div>
-            </StatBlock>
-
-            <StatBlock>
-              <div className="name">Circulating Supply</div>
-              <div className="value">
-                <CommaNumber value={mvkStatsBlock.circuatingSupply} endingText="MVK" />
-              </div>
-            </StatBlock>
-
-            <StatBlock>
-              <div className="name">Max Supply</div>
-              <div className="value">
-                <CommaNumber value={mvkStatsBlock.maxSupply} endingText="MVK" />
-              </div>
-            </StatBlock>
+      <BGPrimaryTitleStyled>MVK</BGPrimaryTitleStyled>
+      <div className="statsWrapper">
+        <StatBlock>
+          <div className="name">Market Cap</div>
+          <div className="value">
+            <CommaNumber value={mvkStatsBlock.marketCap} endingText="USD" />
           </div>
-        </>
-      )}
+        </StatBlock>
+
+        <StatBlock>
+          <div className="name">Staked MVK</div>
+          <div className="value">
+            <CommaNumber value={mvkStatsBlock.stakedMvk} endingText="MVK" />
+          </div>
+        </StatBlock>
+
+        <StatBlock>
+          <div className="name">Live Price</div>
+          <div className="value">
+            <CommaNumber beginningText="$" value={mvkStatsBlock.livePrice} />
+            <div className="impact-wrapper">
+              <Impact value={mvkRateChange} endingText="% 24h" />
+            </div>
+          </div>
+        </StatBlock>
+
+        <StatBlock>
+          <div className="name">Circulating Supply</div>
+          <div className="value">
+            <CommaNumber value={mvkStatsBlock.circuatingSupply} endingText="MVK" />
+          </div>
+        </StatBlock>
+
+        <StatBlock>
+          <div className="name">Max Supply</div>
+          <div className="value">
+            <CommaNumber value={mvkStatsBlock.maxSupply} endingText="MVK" />
+          </div>
+        </StatBlock>
+      </div>
     </div>
   )
 }

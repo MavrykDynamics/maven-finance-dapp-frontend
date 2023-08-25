@@ -1,11 +1,10 @@
-import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 // consts
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
-import { MVK_SMVK_HISTORY_SUB } from 'providers/DoormanProvider/helpers/doorman.consts'
 import colors from 'styles/colors'
 import { PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { TWENTY_FOUR_HOURS } from 'consts/charts.const'
 
 // utils
 import { calcExitFee, calcMLI } from 'utils/calcFunctions'
@@ -13,6 +12,7 @@ import { calcExitFee, calcMLI } from 'utils/calcFunctions'
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
+import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
 
 // view
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -25,33 +25,18 @@ import { StakingContentStyled, TabWrapperStyled, StakingHistoryChartWrapper } fr
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { getChartXAxisTicks } from 'utils/charts.utils'
 
 /**
  * TODO: will need only to subscribe to staking chart, and get it's loading here, as staking stats data is subscribed in controller
  */
 export const StakingTab = () => {
-  const {
-    totalSupply,
-    totalStakedMvk,
-    smvkHistoryData,
-    changeStakingSubscriptionsList,
-    isLoading: isStakingLoading,
-  } = useDoormanContext()
+  const { totalSupply, totalStakedMvk, isLoading: isStakingLoading } = useDoormanContext()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
 
-  useEffect(() => {
-    changeStakingSubscriptionsList({
-      [MVK_SMVK_HISTORY_SUB]: true,
-    })
-
-    return () => {
-      changeStakingSubscriptionsList({
-        [MVK_SMVK_HISTORY_SUB]: false,
-      })
-    }
-  }, [])
+  const { smvkHistoryData, isLoading: isChartsDataLoading, noChartData } = useDoormanHistory(TWENTY_FOUR_HOURS)
 
   const mli = calcMLI(totalSupply, totalStakedMvk)
   const fee = calcExitFee(totalSupply, totalStakedMvk)
@@ -108,12 +93,15 @@ export const StakingTab = () => {
             <div className="title chart-title">Staking History</div>
             <StakingHistoryChartWrapper>
               <Chart
+                isLoading={isChartsDataLoading}
+                numberOfItemsToDisplay={smvkHistoryData.length && !noChartData ? smvkHistoryData.length : 10}
                 data={{
                   type: AREA_CHART_TYPE,
                   plots: smvkHistoryData,
                 }}
                 settings={{
                   height: 100,
+                  tickDateFormatter: (date: number) => getChartXAxisTicks(date, TWENTY_FOUR_HOURS),
                 }}
                 tooltipAsset={'sMVK'}
               />

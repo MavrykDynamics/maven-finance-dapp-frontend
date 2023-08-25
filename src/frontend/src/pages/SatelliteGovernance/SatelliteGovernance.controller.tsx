@@ -1,17 +1,31 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Page } from 'styles'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
 import { useLocation, useParams, useHistory } from 'react-router'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useSatelliteGovernanceContext } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider'
 
 // const
-import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
-
-// actions
-import { getSatelliteGovernanceStorage } from './SatelliteGovernance.actions'
+import {
+  ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST,
+  PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST,
+  MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
+} from '../../app/App.components/Pagination/pagination.consts'
+import {
+  SATELLITE_GOVERNANCE_ACTIONS,
+  SATELLITE_GOVERNANCE_MENU_TABS,
+  SATELLITE_GOVERNANCE_PATHNAME,
+} from './SatelliteGovernance.consts'
+import { TAB_ID_ONGOING, TabIdType, getSatelliteGovSub } from './utils/tabsHelper'
+import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
+import { TOTAL_DELEGATED_MVK } from 'texts/tooltips/satellite'
+import {
+  DEFAULT_SATELLITE_GOVERNANCE_SUBS,
+  SATELLITES_GOVERNANCE_CONFIG_SUB,
+  SATELLITE_GOV_ACTIONS_DATA,
+} from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
 
 // style
 import {
@@ -27,21 +41,9 @@ import { H2SimpleTitle } from 'styles/generalStyledComponents/Titles.style'
 import colors from 'styles/colors'
 
 // helpers
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { convertBytesAddressToAddress } from '../../app/App.helpers'
-import {
-  ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST,
-  PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST,
-  MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
-} from '../../app/App.components/Pagination/pagination.consts'
+import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
 import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
-import {
-  SATELLITE_GOVERNANCE_ACTIONS,
-  SATELLITE_GOVERNANCE_MENU_TABS,
-  SATELLITE_GOVERNANCE_PATHNAME,
-} from './SatelliteGovernance.consts'
-import { TOTAL_DELEGATED_MVK } from 'texts/tooltips/satellite'
-import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -56,7 +58,6 @@ import {
   SlidingTabButtons,
   SlidingTabButtonType,
 } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const getCurrentListNameById = (tabId: string) => {
   switch (tabId) {
@@ -82,9 +83,8 @@ const emptyContainer = (
 export const SatelliteGovernance = () => {
   const { search } = useLocation()
   const history = useHistory()
-  const dispatch = useDispatch()
 
-  const { tabId = SATELLITE_GOVERNANCE_MENU_TABS.ONGOING } = useParams<{ tabId: string }>()
+  const { tabId = SATELLITE_GOVERNANCE_MENU_TABS.ONGOING } = useParams<{ tabId: TabIdType }>()
 
   const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
   const {
@@ -93,14 +93,37 @@ export const SatelliteGovernance = () => {
       governanceSatellite: { purposeMaxLength },
       dataFeeds: { feedNameMaxLength },
     },
+    globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { userAddress, isSatellite, govActionsCount } = useUserContext()
 
-  const { maxActionsCount } = useSelector((state: State) => state.satelliteGovernance.config)
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const {
+    isLoading,
+    config: { maxActionsCount },
+    ongoingSatelliteGovIds,
+    pastSatelliteGovIds,
+    mySatelliteGovIds,
+    satelliteGovIdsMapper,
+    changeSatelliteGovSubscriptionsList,
+  } = useSatelliteGovernanceContext()
 
-  const { isLoaded, ongoingSatelliteGovIds, pastSatelliteGovIds, mySatelliteGovIds, satelliteGovIdsMapper } =
-    useSelector((state: State) => state.satelliteGovernance)
+  // subs
+  useEffect(() => {
+    const subType = getSatelliteGovSub(tabId)
+
+    if (subType !== null) {
+      changeSatelliteGovSubscriptionsList({
+        [SATELLITES_GOVERNANCE_CONFIG_SUB]: true,
+        [SATELLITE_GOV_ACTIONS_DATA]: subType,
+      })
+    } else {
+      history.push(`/satellite-governance/${TAB_ID_ONGOING}`)
+    }
+
+    return () => {
+      changeSatelliteGovSubscriptionsList(DEFAULT_SATELLITE_GOVERNANCE_SUBS)
+    }
+  }, [tabId])
 
   const dropDownItems = useMemo(() => SATELLITE_GOVERNANCE_ACTIONS.map((item) => getDdItem(item)), [])
   type DropDownItemType = (typeof dropDownItems)[0]
@@ -179,17 +202,6 @@ export const SatelliteGovernance = () => {
     setChosenDdItem(foundItem)
   }
 
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isLoaded || isDepsChanged) {
-          await dispatch(getSatelliteGovernanceStorage())
-        }
-      } catch (e) {}
-    },
-    [userAddress],
-  )
-
   return (
     <Page>
       <PageHeader page={'satellite-governance'} />
@@ -208,7 +220,11 @@ export const SatelliteGovernance = () => {
             <h3>Total Delegated MVK</h3>
             <div className="value">
               <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />
-              <CustomTooltip iconId="info" text={TOTAL_DELEGATED_MVK} defaultStrokeColor={colors[themeSelected].primaryText} />
+              <CustomTooltip
+                iconId="info"
+                text={TOTAL_DELEGATED_MVK}
+                defaultStrokeColor={colors[themeSelected].primaryText}
+              />
             </div>
           </SatelliteGovernanceStatsInfo>
           <SatelliteGovernanceStatsInfo>
@@ -235,7 +251,7 @@ export const SatelliteGovernance = () => {
 
             <SatelliteGovernanceForm
               maxLength={maxLength}
-              isActionActive={isActionActive || govActionsCount >= maxActionsCount}
+              isButtonDisabled={isActionActive || govActionsCount >= maxActionsCount}
               variant={chosenDdItem?.id}
             />
           </SatelliteGovernanceAvailableActions>

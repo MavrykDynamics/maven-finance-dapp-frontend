@@ -12,6 +12,7 @@ import { VaultsActionsType } from 'providers/VaultsProvider/vaults.provider.type
 import { FinancialRequestsActionsTypes } from 'providers/FinancialRequestsProvider/financialRequests.types'
 import { WalletOperationError } from 'errors/error'
 import { ProposalActionsTypes } from 'providers/ProposalsProvider/helpers/proposals.types'
+import { SatellitesGovType } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.types'
 
 export type ActionTypes =
   | StakeActionType
@@ -21,6 +22,7 @@ export type ActionTypes =
   | VaultsActionsType
   | ProposalActionsTypes
   | FinancialRequestsActionsTypes
+  | SatellitesGovType
 
 export type DappConfigContext = {
   // data
