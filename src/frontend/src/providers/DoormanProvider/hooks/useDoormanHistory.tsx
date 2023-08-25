@@ -13,7 +13,6 @@ import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { SMVK_MVK_HISTORY_DATA } from '../queries/doorman.query'
 
 // consts
-import { MVK_SMVK_HISTORY_SUB } from '../helpers/doorman.consts'
 import { ONE_HOUR } from 'consts/charts.const'
 
 // utils
@@ -66,15 +65,13 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
       variables: {
         periodTimestamp: currentPeriod,
       },
-      onError: (error) => handleSubError(error, MVK_SMVK_HISTORY_SUB),
+      onError: (error) => handleSubError(error, 'SMVK_MVK_HISTORY_DATA'),
     },
     { refetchQueryVariables },
   )
 
-  const isLoading = mvkHistoryData[period] === null || smvkHistoryData[period] === null
-
   return {
-    isLoading, // for empty array
+    isLoading: mvkHistoryData[period] === null || smvkHistoryData[period] === null,
     noChartData,
     mvkHistoryData: mvkHistoryData[period] ?? [],
     smvkHistoryData: smvkHistoryData[period] ?? [],

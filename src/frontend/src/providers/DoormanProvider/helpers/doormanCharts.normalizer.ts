@@ -1,13 +1,13 @@
-import { SmvkMvkHistoryDataQuery } from 'utils/__generated__/graphql'
+import dayjs from 'dayjs'
 import { UTCTimestamp } from 'lightweight-charts'
+
+import { SmvkMvkHistoryDataQuery } from 'utils/__generated__/graphql'
 
 // calc
 import { calcWithoutPrecision } from 'utils/calcFunctions'
 import { ChartPeriodType } from 'types/charts.type'
 import { ALL_TIME } from 'consts/charts.const'
-import dayjs from 'dayjs'
 import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
-import { convertFromISOStringToUTCDate } from 'utils/date'
 
 type HistoryItemType = {
   value: number
@@ -23,9 +23,9 @@ function createChartHistoryItemFromInitValue(
 ): HistoryItemType {
   return {
     value: parseFloat(calcWithoutPrecision(value).toFixed(2)),
-    time: convertFromISOStringToUTCDate(
+    time: dayjs(
       type === 'first' && period ? getTimestampBasedOnPeriod(period) : dayjs().toISOString(),
-    ),
+    ).valueOf() as UTCTimestamp,
   }
 }
 
@@ -78,9 +78,9 @@ export function normalizeDoormanChartsData(storage: SmvkMvkHistoryDataQuery, per
     smvkHistoryData: HistoryItemType[]
     noChartData: boolean
   }>(
-    (acc, item, idx) => {
+    (acc, item) => {
       // converted values for chart data points
-      const _time = new Date(item.timestamp).getTime() as UTCTimestamp
+      const _time = dayjs(item.timestamp).valueOf() as UTCTimestamp
 
       const mvkValue = parseFloat(
         calcWithoutPrecision(item.mvk_total_supply + initialMvkValue - item.smvk_total_supply).toFixed(2),
