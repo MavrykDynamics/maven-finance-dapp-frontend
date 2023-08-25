@@ -35,6 +35,7 @@ type Props = {
   children: React.ReactNode
 }
 
+// TODO: handle initial loading with null values
 const DappConfigProvider = ({ children }: Props) => {
   const handleSubError = (error: ApolloError) => {
     console.error(`DappConfigProvider query error: `, error)
