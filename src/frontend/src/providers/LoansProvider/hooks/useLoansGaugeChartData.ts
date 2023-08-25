@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 // hooks
 import { useLoansContext } from '../loans.provider'
@@ -123,9 +123,12 @@ export const useLoansGaugeChartData = ({ userVaultsData }: Props) => {
     }
   }, [apyGaugeData])
 
+  const setVaultsData = useCallback(() => setGaugeData(vaultRiskGaugeData), [vaultRiskGaugeData])
+  const setApyData = useCallback(() => setGaugeData(apyGaugeData), [apyGaugeData])
+
   return {
     gaugeData,
-    setVaultsData: () => setGaugeData(vaultRiskGaugeData),
-    setApyData: () => setGaugeData(apyGaugeData),
+    setVaultsData,
+    setApyData,
   }
 }
