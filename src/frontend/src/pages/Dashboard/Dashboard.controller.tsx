@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { Redirect, Route, Switch, useParams } from 'react-router'
+import { Redirect, useLocation } from 'react-router'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -29,6 +29,7 @@ import {
   STAKING_TAB_ID,
   TREASURY_TAB_ID,
   VAULTS_TAB_ID,
+  TabId,
 } from './Dashboard.utils'
 import { MVK_TOKEN_SYMBOL } from 'utils/constants'
 import { DEFAULT_STAKING_ACTIVE_SUBS, DAPP_MVK_SMVK_STATS_SUB } from 'providers/DoormanProvider/helpers/doorman.consts'
@@ -40,12 +41,17 @@ import { useDappTvl } from 'providers/DappConfigProvider/hooks/useDappTvl'
 
 // utils
 import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
+import QueryString from 'qs'
 
 // TODO: add farms when their data loading will be fixed and up
 export const Dashboard = () => {
-  const { tabId } = useParams<{ tabId: string }>()
+  const { search } = useLocation()
 
-  const activeTab = useMemo(() => (isValidPersonalDashboardTabId(tabId) ? tabId : LENDING_TAB_ID), [tabId])
+  const parsedQp = QueryString.parse(search, { ignoreQueryPrefix: true }) as { tab: string }
+  const activeTab = useMemo(
+    () => (isValidPersonalDashboardTabId(parsedQp.tab) ? parsedQp.tab : LENDING_TAB_ID),
+    [parsedQp],
+  )
 
   const { changeStakingSubscriptionsList, isLoading: isStakingLoading } = useDoormanContext()
   const { DAPP_TVL, isLoading: isTvlValueLoading } = useDappTvl()
@@ -85,62 +91,53 @@ export const Dashboard = () => {
               <Link to={`/${LENDING_TAB_ID}`} className={activeTab === LENDING_TAB_ID ? 'selected' : ''}>
                 Earn/Borrow
               </Link>
-              <Link to={`/${VAULTS_TAB_ID}`} className={activeTab === VAULTS_TAB_ID ? 'selected' : ''}>
+              <Link to={`/?tab=${VAULTS_TAB_ID}`} className={activeTab === VAULTS_TAB_ID ? 'selected' : ''}>
                 Vaults
               </Link>
-              <Link to={`/${STAKING_TAB_ID}`} className={activeTab === STAKING_TAB_ID ? 'selected' : ''}>
+              <Link to={`/?tab=${STAKING_TAB_ID}`} className={activeTab === STAKING_TAB_ID ? 'selected' : ''}>
                 Staking
               </Link>
-              <Link to={`/${SATELLITES_TAB_ID}`} className={activeTab === SATELLITES_TAB_ID ? 'selected' : ''}>
+              <Link to={`/?tab=${SATELLITES_TAB_ID}`} className={activeTab === SATELLITES_TAB_ID ? 'selected' : ''}>
                 Satellites
               </Link>
-              <Link to={`/${TREASURY_TAB_ID}`} className={activeTab === TREASURY_TAB_ID ? 'selected' : ''}>
+              <Link to={`/?tab=${TREASURY_TAB_ID}`} className={activeTab === TREASURY_TAB_ID ? 'selected' : ''}>
                 Treasury
               </Link>
-              <Link to={`/${FARMS_TAB_ID}`} className={activeTab === FARMS_TAB_ID ? 'selected' : ''}>
+              <Link to={`/?tab=${FARMS_TAB_ID}`} className={activeTab === FARMS_TAB_ID ? 'selected' : ''}>
                 Farms
               </Link>
-              <Link to={`/${ORACLES_TAB_ID}`} className={activeTab === ORACLES_TAB_ID ? 'selected' : ''}>
+              <Link to={`/?tab=${ORACLES_TAB_ID}`} className={activeTab === ORACLES_TAB_ID ? 'selected' : ''}>
                 Oracles
               </Link>
             </div>
 
-            <Switch>
-              <Route exact path={`/${VAULTS_TAB_ID}`}>
-                <VaultsTab />
-              </Route>
-
-              <Route exact path={`/${STAKING_TAB_ID}`}>
-                <StakingTab />
-              </Route>
-
-              <Route exact path={`/${SATELLITES_TAB_ID}`}>
-                <SatellitesTab />
-              </Route>
-
-              <Route exact path={`/${TREASURY_TAB_ID}`}>
-                <TreasuryTab />
-              </Route>
-
-              <Route exact path={`/${FARMS_TAB_ID}`}>
-                <FarmsTab />
-              </Route>
-
-              <Route exact path={`/${ORACLES_TAB_ID}`}>
-                <OraclesTab />
-              </Route>
-
-              <Route exact path={`/${LENDING_TAB_ID}`}>
-                <LendingTab />
-              </Route>
-
-              <Redirect to={`/${LENDING_TAB_ID}`} />
-            </Switch>
+            <TabById activeTab={activeTab} />
           </>
         )}
       </DashboardStyled>
     </Page>
   )
+}
+
+const TabById = ({ activeTab }: { activeTab: TabId }) => {
+  switch (activeTab) {
+    case LENDING_TAB_ID:
+      return <LendingTab />
+    case VAULTS_TAB_ID:
+      return <VaultsTab />
+    case FARMS_TAB_ID:
+      return <FarmsTab />
+    case SATELLITES_TAB_ID:
+      return <SatellitesTab />
+    case ORACLES_TAB_ID:
+      return <OraclesTab />
+    case TREASURY_TAB_ID:
+      return <TreasuryTab />
+    case STAKING_TAB_ID:
+      return <StakingTab />
+    default:
+      return <Redirect to={`/${LENDING_TAB_ID}`} />
+  }
 }
 
 const DashboardMvkData = () => {
