@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 
@@ -61,6 +61,10 @@ import { parseDate } from 'utils/time'
 // actions
 import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
+import { ChartPeriodType } from 'types/charts.type'
+import { ONE_HOUR } from 'consts/charts.const'
+import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
+import { getChartXAxisTicks } from 'utils/charts.utils'
 
 const tabsList = [
   {
@@ -88,7 +92,8 @@ const DataFeedDetails = () => {
     isLoading: isSatellitesLoading,
     changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
-  const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts(feedId)
+  const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
+  const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts(feedId, chartPeriod)
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -111,6 +116,11 @@ const DataFeedDetails = () => {
   const [isTrustedAnswer, setTrustedAnswer] = useState(true)
 
   const [activeTab, setActiveTab] = useState(tabsList[0].id)
+
+  // handlers
+  const handlePeriodChange = useCallback((period: ChartPeriodType) => {
+    setChartPeriod(period)
+  }, [])
 
   useEffect(() => {
     if (!feed) return
@@ -331,6 +341,7 @@ const DataFeedDetails = () => {
               </div>
 
               <FeedDetailsChartWrapper>
+                <ChartsSwitherWithPosition currentPeriod={chartPeriod} setCurrentPeriod={handlePeriodChange} />
                 {isFeedsChartsLoading ? (
                   <DataLoaderWrapper margin="0">
                     <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
@@ -338,6 +349,8 @@ const DataFeedDetails = () => {
                   </DataLoaderWrapper>
                 ) : (
                   <Chart
+                    isLoading={isFeedsChartsLoading}
+                    numberOfItemsToDisplay={chartPlots.length < 10 ? chartPlots.length : 10}
                     data={{ type: AREA_CHART_TYPE, plots: chartPlots }}
                     colors={{
                       lineColor: colors[themeSelected].primaryChartColor,
@@ -345,6 +358,7 @@ const DataFeedDetails = () => {
                       areaBottomColor: colors[themeSelected].primaryChartBottomColor,
                     }}
                     tooltipAsset={activeTab === 1 ? feed.name.split('/')?.[1] : '%'}
+                    settings={{ tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod) }}
                   />
                 )}
               </FeedDetailsChartWrapper>

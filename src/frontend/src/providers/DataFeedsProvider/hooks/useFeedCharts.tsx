@@ -12,9 +12,9 @@ import { ONE_HOUR } from 'consts/charts.const'
 import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
 import { useDataFeedsContext } from '../dataFeeds.provider'
 
-// TODO: after dev-demo store all data in ctx to show feed chart user was on immidiately
 export const useFeedCharts = (feedAddress: string, period: ChartPeriodType = ONE_HOUR) => {
-  const { updateFeedsHistoryAndVolatility, dataFeedsHistory, dataFeedsVolatility } = useDataFeedsContext()
+  const { updateFeedsHistoryAndVolatility, dataFeedsHistory, dataFeedsVolatility, resetFeedsHistoryAndVolatility } =
+    useDataFeedsContext()
   const { bug } = useToasterContext()
 
   const [currentPeriod, setCurrentPeriod] = useState(() => getTimestampBasedOnPeriod(period))
@@ -40,12 +40,7 @@ export const useFeedCharts = (feedAddress: string, period: ChartPeriodType = ONE
   }, [period])
 
   useEffect(() => {
-    // return () => {
-    //   setFeedChartData({
-    //     dataFeedsHistory: null,
-    //     dataFeedsVolatility: null,
-    //   })
-    // }
+    resetFeedsHistoryAndVolatility()
   }, [feedAddress])
 
   useQueryWithRefetch(
@@ -75,7 +70,7 @@ export const useFeedCharts = (feedAddress: string, period: ChartPeriodType = ONE
   )
 
   return {
-    isLoading: dataFeedsHistory === null || dataFeedsVolatility === null,
+    isLoading: dataFeedsHistory[period] === null || dataFeedsVolatility[period] === null,
     dataFeedsHistory: dataFeedsHistory[period],
     dataFeedsVolatility: dataFeedsVolatility[period],
   }

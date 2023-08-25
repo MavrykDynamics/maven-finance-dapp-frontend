@@ -10,7 +10,7 @@ import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.
 
 // types
 import { TokensContext, TokensContextState } from './tokens.provider.types'
-import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemes'
+import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
 import { TokensGqlSchemaType, tokensGqlSchema } from './helpers/tokens.schemes'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)

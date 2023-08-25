@@ -8,7 +8,7 @@ import {
   FullFeedsQueryType,
   smallFeedsQuerySchema,
   SmallFeedsQueryType,
-} from './helpers/feeds.schemes'
+} from './helpers/feeds.schemas'
 
 // helpers
 import {
@@ -22,7 +22,11 @@ import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
 // constext
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { DEFAULT_DATA_FEEDS_CTX } from './helpers/feeds.consts'
+import {
+  DEFAULT_DATA_FEEDS_CTX,
+  DEFAULT_DATA_FEEDS_HISTORY,
+  DFEFAULT_DATA_FEEDS_VOLATILITY,
+} from './helpers/feeds.consts'
 import { getDataFeedsProviderReturnValue } from './helpers/feeds.utils'
 import { FeedHistoryQeuryQuery } from 'utils/__generated__/graphql'
 import { ChartPeriodType } from 'types/charts.type'
@@ -126,12 +130,21 @@ export const DataFeedsProvider = ({ children }: Props) => {
     }))
   }
 
+  const resetFeedsHistoryAndVolatility = () => {
+    setFeedsCtxState((prevState) => ({
+      ...prevState,
+      dataFeedsHistory: DEFAULT_DATA_FEEDS_HISTORY,
+      dataFeedsVolatility: DFEFAULT_DATA_FEEDS_VOLATILITY,
+    }))
+  }
+
   const contextProviderValue = useMemo(
     () =>
       getDataFeedsProviderReturnValue({
         feedsCtxState,
         isInitialLoading: initialLoadingStatus.current,
         updateFeedsHistoryAndVolatility,
+        resetFeedsHistoryAndVolatility,
       }),
     [feedsCtxState],
   )

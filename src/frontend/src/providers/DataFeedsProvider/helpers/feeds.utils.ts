@@ -10,17 +10,20 @@ type DataFeedsContextReturnValueArgs = {
   feedsCtxState: NullableDataFeedsContextStateType
   isInitialLoading: boolean
   updateFeedsHistoryAndVolatility: DataFeedsContext['updateFeedsHistoryAndVolatility']
+  resetFeedsHistoryAndVolatility: DataFeedsContext['resetFeedsHistoryAndVolatility']
 }
 
 export const getDataFeedsProviderReturnValue = ({
   feedsCtxState,
   isInitialLoading,
   updateFeedsHistoryAndVolatility,
+  resetFeedsHistoryAndVolatility,
 }: DataFeedsContextReturnValueArgs) => {
   //   const {} = feedsCtxState
 
   const commonToReturn = {
     updateFeedsHistoryAndVolatility,
+    resetFeedsHistoryAndVolatility,
   }
 
   const isLoading = isInitialLoading

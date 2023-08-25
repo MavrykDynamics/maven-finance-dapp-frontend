@@ -38,4 +38,5 @@ export type DataFeedsContext = DataFeedsContextStateType & {
     data: FeedHistoryQeuryQuery['aggregator'][number]['history_data'],
     period: ChartPeriodType,
   ) => void
+  resetFeedsHistoryAndVolatility: () => void
 }
