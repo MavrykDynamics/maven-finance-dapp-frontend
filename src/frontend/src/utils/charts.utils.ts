@@ -29,3 +29,25 @@ export function getTimestampBasedOnPeriod(period: ChartPeriodType) {
       )
   }
 }
+
+export function getChartXAxisTicks(date: number, period: ChartPeriodType) {
+  const _date = dayjs(date)
+
+  switch (period) {
+    case ONE_HOUR:
+      return _date.format('HH:mm')
+    case TWENTY_FOUR_HOURS:
+      return _date.format('HH:mm')
+    case ONE_WEEK:
+      return _date.format('ddd HH:mm')
+    case ONE_MONTH:
+      return _date.format('MMM D')
+    case ALL_TIME:
+      return _date.format('MMM D')
+    default:
+      throw new ValidationError(
+        `Incorrect period for getChartXAxisTicks() function. Use the following one: ${chartsPeriodArr.join(' | ')}`,
+        { code: 400 },
+      )
+  }
+}

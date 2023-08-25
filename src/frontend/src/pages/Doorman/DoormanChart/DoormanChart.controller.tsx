@@ -33,6 +33,8 @@ import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
 import { ChartPeriodType } from 'types/charts.type'
 import { ONE_HOUR } from 'consts/charts.const'
 import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
+import dayjs from 'dayjs'
+import { getChartXAxisTicks } from 'utils/charts.utils'
 
 const tabsList: SlidingTabButtonType[] = [
   {
@@ -146,7 +148,9 @@ export function DoormanChart() {
               }}
               tooltipAssetFirst={'MVK'}
               tooltipAssetSecond={'sMVK'}
-              settings={{}}
+              settings={{
+                tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod),
+              }}
             />
           </>
         ) : null}
@@ -213,6 +217,7 @@ export function DoormanChart() {
               }}
               settings={{
                 height: 370,
+                tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod),
               }}
               tooltipAsset={'sMVK'}
               // check is there is a dat for chart, if no - show default chart text

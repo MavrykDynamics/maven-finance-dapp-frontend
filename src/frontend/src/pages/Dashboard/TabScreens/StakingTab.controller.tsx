@@ -26,6 +26,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import colors from 'styles/colors'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
+import { getChartXAxisTicks } from 'utils/charts.utils'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -97,13 +98,14 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
             <StakingHistoryChartWrapper>
               <Chart
                 isLoading={isChartsDataLoading}
-                numberOfItemsToDisplay={smvkHistoryData.length}
+                numberOfItemsToDisplay={smvkHistoryData.length && !noChartData ? smvkHistoryData.length : 10}
                 data={{
                   type: AREA_CHART_TYPE,
                   plots: smvkHistoryData,
                 }}
                 settings={{
                   height: 100,
+                  tickDateFormatter: (date: number) => getChartXAxisTicks(date, TWENTY_FOUR_HOURS),
                 }}
                 tooltipAsset={'sMVK'}
               />
