@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 import QueryString from 'qs'
 import { useHistory } from 'react-router'
@@ -78,7 +78,7 @@ import {
   checkStage3Validation,
   checkStage1Validation,
 } from './helpers/proposalSubmissionValidation.utils'
-import { normalizeProposalsForSubmitProposal } from './helpers/normalizeRemoteProposals'
+import { mergeRemoteProposalsWithClient, normalizeProposalsForSubmitProposal } from './helpers/normalizeRemoteProposals'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const history = useHistory()
@@ -112,7 +112,11 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
           getTimestampByLevelSchema,
         )
 
-        setIsFormDisabled(dayjs(votingEndTimestamp).diff() <= 0)
+        // TODO: mb show bug in a future
+        if (dayjs(votingEndTimestamp).diff() <= 0) {
+          setIsFormDisabled(true)
+          console.error('current round is over, move round, please')
+        }
       } catch (e) {
         // TODO: handle fetch errors when error boundary will be ready
         if (!isAbortError(e)) {
@@ -137,64 +141,122 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const [proposalsValidation, setProposalsValidation] = useState<Record<number, ProposalValidityObj>>(mappedValidation)
 
   // Track proposals update on remote
-  useEffect(() => {
-    const { mergedProposals, mergedProposalsValidation } = proposalKeys.reduce<{
-      mergedProposals: Record<number, ProposalRecordType>
-      mergedProposalsValidation: Record<number, ProposalValidityObj>
-    }>(
-      (acc, proposalId) => {
-        const proposalFromRemote = mappedProposals[proposalId]
-        const proposalValidationFromRemote = mappedValidation[proposalId]
+  useLayoutEffect(() => {
+    const { proposals, validation } = mergeRemoteProposalsWithClient({
+      mappedProposals,
+      mappedValidation,
+      proposalKeys,
+      proposalState,
+      proposalsValidation,
+    })
 
-        const proposalFromClient = proposalState[proposalId]
-        const proposalValidationFromClient = proposalsValidation[proposalId]
+    setProposalsState(proposals)
+    setProposalsValidation(validation)
+    // const { mergedProposals, mergedProposalsValidation } = proposalKeys.reduce<{
+    //   mergedProposals: Record<number, ProposalRecordType>
+    //   mergedProposalsValidation: Record<number, ProposalValidityObj>
+    // }>(
+    //   (acc, proposalId) => {
+    //     const proposalFromRemote = mappedProposals[proposalId]
+    //     const proposalValidationFromRemote = mappedValidation[proposalId]
 
-        // if proposal exists on remote, but client don't have it, add it to client
-        if (proposalFromRemote && !proposalFromClient) {
-          acc.mergedProposals[proposalId] = proposalFromRemote
-          acc.mergedProposalsValidation[proposalId] = proposalValidationFromRemote
-          return acc
-        }
+    //     const proposalFromClient = proposalState[proposalId]
+    //     const proposalValidationFromClient = proposalsValidation[proposalId]
 
-        // if proposal exists on client and on remote merge their fields, to prevent clearing user enetered data
-        acc.mergedProposals[proposalId] = {
-          ...proposalFromRemote,
-          proposalData: proposalFromRemote.proposalData.concat(proposalFromClient.proposalData),
-          proposalPayments: proposalFromRemote.proposalPayments.concat(proposalFromClient.proposalPayments),
-        }
+    //     // if proposal exists on remote, but client don't have it, add it to client
+    //     if (proposalFromRemote && !proposalFromClient) {
+    //       acc.mergedProposals[proposalId] = proposalFromRemote
+    //       acc.mergedProposalsValidation[proposalId] = proposalValidationFromRemote
+    //       return acc
+    //     }
 
-        acc.mergedProposalsValidation[proposalId] = {
-          ...proposalValidationFromRemote,
-          bytesValidation: proposalValidationFromRemote.bytesValidation.concat(
-            proposalValidationFromClient.bytesValidation,
-          ),
-          paymentsValidation: proposalValidationFromRemote.paymentsValidation.concat(
-            proposalValidationFromClient.paymentsValidation,
-          ),
-        }
+    //     // if proposal exists on client and on remote merge their fields, to prevent clearing user enetered data
+    //     acc.mergedProposals[proposalId] = {
+    //       ...proposalFromRemote,
+    //       proposalData: proposalFromRemote.proposalData
+    //         .concat(proposalFromClient.proposalData)
+    //         .reduce<{ ids: Record<string, boolean>; proposalData: ProposalRecordType['proposalData'] }>(
+    //           (acc, byte) => {
+    //             if (acc.ids[byte.id]) return acc
+    //             acc.proposalData.push(byte)
+    //             acc.ids[byte.id] = true
+    //             return acc
+    //           },
+    //           {
+    //             ids: {},
+    //             proposalData: [],
+    //           },
+    //         ).proposalData,
+    //       proposalPayments: proposalFromRemote.proposalPayments
+    //         .concat(proposalFromClient.proposalPayments)
+    //         .reduce<{ ids: Record<string, boolean>; proposalPayments: ProposalRecordType['proposalPayments'] }>(
+    //           (acc, payment) => {
+    //             if (acc.ids[payment.id]) return acc
+    //             acc.proposalPayments.push(payment)
+    //             acc.ids[payment.id] = true
+    //             return acc
+    //           },
+    //           {
+    //             ids: {},
+    //             proposalPayments: [],
+    //           },
+    //         ).proposalPayments,
+    //     }
 
-        return acc
-      },
-      {
-        mergedProposals: {},
-        mergedProposalsValidation: {},
-      },
-    )
+    //     acc.mergedProposalsValidation[proposalId] = {
+    //       ...proposalValidationFromRemote,
+    //       bytesValidation: proposalValidationFromRemote.bytesValidation
+    //         .concat(proposalValidationFromClient.bytesValidation)
+    //         .reduce<{ ids: Record<string, boolean>; bytesValidation: ProposalValidityObj['bytesValidation'] }>(
+    //           (acc, validation) => {
+    //             if (acc.ids[validation.byteId]) return acc
+    //             acc.bytesValidation.push(validation)
+    //             acc.ids[validation.byteId] = true
+    //             return acc
+    //           },
+    //           {
+    //             ids: {},
+    //             bytesValidation: [],
+    //           },
+    //         ).bytesValidation,
+    //       paymentsValidation: proposalValidationFromRemote.paymentsValidation
+    //         .concat(proposalValidationFromClient.paymentsValidation)
+    //         .reduce<{ ids: Record<string, boolean>; paymentsValidation: ProposalValidityObj['paymentsValidation'] }>(
+    //           (acc, validation) => {
+    //             if (acc.ids[validation.paymentId]) return acc
+    //             acc.paymentsValidation.push(validation)
+    //             acc.ids[validation.paymentId] = true
+    //             return acc
+    //           },
+    //           {
+    //             ids: {},
+    //             paymentsValidation: [],
+    //           },
+    //         ).paymentsValidation,
+    //     }
 
-    // user can create only 2 proposals, so if we have < 2 proposals created, add empty proposal to him, so he'll be able to fill and submit it
-    if (proposalKeys.length < 2) {
-      const defaultProposalFromState = proposalState[DEFAULT_PROPOSAL.id]
-      const defaultProposalValidationFromState = proposalsValidation[DEFAULT_PROPOSAL.id]
+    //     return acc
+    //   },
+    //   {
+    //     mergedProposals: {},
+    //     mergedProposalsValidation: {},
+    //   },
+    // )
 
-      setProposalsState({ ...mergedProposals, [DEFAULT_PROPOSAL.id]: defaultProposalFromState ?? DEFAULT_PROPOSAL })
-      setProposalsValidation({
-        ...mergedProposalsValidation,
-        [DEFAULT_PROPOSAL.id]: defaultProposalValidationFromState ?? DEFAULT_PROPOSAL_VALIDATION,
-      })
-    } else {
-      setProposalsState(mergedProposals)
-      setProposalsValidation(mergedProposalsValidation)
-    }
+    // // user can create only 2 proposals, so if we have < 2 proposals created, add empty proposal to him, so he'll be able to fill and submit it
+    // if (proposalKeys.length < 2) {
+    //   const defaultProposalFromState = proposalState[DEFAULT_PROPOSAL.id]
+    //   const defaultProposalValidationFromState = proposalsValidation[DEFAULT_PROPOSAL.id]
+
+    //   setProposalsState({ ...mergedProposals, [DEFAULT_PROPOSAL.id]: defaultProposalFromState ?? DEFAULT_PROPOSAL })
+    //   setProposalsValidation({
+    //     ...mergedProposalsValidation,
+    //     [DEFAULT_PROPOSAL.id]: defaultProposalValidationFromState ?? DEFAULT_PROPOSAL_VALIDATION,
+    //   })
+    // } else {
+    //   setProposalsState(mergedProposals)
+    //   setProposalsValidation(mergedProposalsValidation)
+    // }
   }, [mappedProposals, mappedValidation, proposalKeys])
 
   // mapping user created proposals to tabs buttons data
@@ -209,8 +271,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   )
 
   // Current proposal on client validation to it and current proposal on remote (might not exists if it's create new proposal with id -1)
-  const currentProposal: ProposalRecordType | null = proposalState[selectedUserProposalId] ?? null
-  const currentProposalValidation: ProposalValidityObj | null = proposalsValidation[selectedUserProposalId] ?? null
+  const currentProposal: ProposalRecordType = proposalState[selectedUserProposalId] ?? DEFAULT_PROPOSAL
+  const currentProposalValidation: ProposalValidityObj =
+    proposalsValidation[selectedUserProposalId] ?? DEFAULT_PROPOSAL_VALIDATION
   const currentProposalOnRemote: ProposalRecordType | null = proposalsMapper[selectedUserProposalId] ?? null
 
   // ------ ACTIONS HANDLERDS START ------
@@ -302,7 +365,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
   // submit proposal action handler ----------------------------------------------
   // submission callback to update data
-  // TODO: test whether we need this update fn
+  // TODO: set created proposal id as selected & clear default proposal data
   // const getNewProposalId = useCallback(async () => {
   //   try {
   //     const newProposalData = await apolloClient.query({
@@ -501,11 +564,11 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     !isBytesValid ||
     !isPaymentsValid ||
     genProposalDisabledState ||
-    (currentProposal.id === DEFAULT_PROPOSAL.id ? !isStageOneDataValid : currentProposal.locked || !proposalHasChange)
+    (currentProposal?.id === DEFAULT_PROPOSAL.id ? !isStageOneDataValid : currentProposal?.locked || !proposalHasChange)
 
   const isSubmitDisabled =
     !isProposalSubmitted ||
-    currentProposal.locked ||
+    currentProposal?.locked ||
     proposalHasChange ||
     genProposalDisabledState ||
     currentProposal?.proposalData?.filter(({ title, encoded_code }) => title || encoded_code).length < 1
@@ -533,7 +596,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
         <SubmitProposalHeader>
           <H2Title>Step {activeTab}</H2Title>
-          <StatusFlag text={currentProposal.status} status={currentProposal.status} />
+          <StatusFlag text={currentProposal?.status} status={currentProposal?.status} />
         </SubmitProposalHeader>
 
         {activeTab === 1 && (
