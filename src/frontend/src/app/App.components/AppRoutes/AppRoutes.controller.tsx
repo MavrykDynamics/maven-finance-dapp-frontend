@@ -56,14 +56,6 @@ export const AppRoutes = () => {
         <Doorman />
       </Route>
 
-      {/* DASHBOARD */}
-      <Route exact path="/">
-        <Dashboard />
-      </Route>
-      <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
-        <DashboardPersonal />
-      </Route>
-
       {/* SATELLITES */}
       <Route exact path="/satellites">
         <Satellites />
@@ -143,6 +135,14 @@ export const AppRoutes = () => {
       </Route>
       <Route exact path="/loans/borrow">
         <LoansBorrow />
+      </Route>
+
+      {/* DASHBOARD */}
+      <Route exact path="/:tabId?">
+        <Dashboard />
+      </Route>
+      <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
+        <DashboardPersonal />
       </Route>
 
       {/* NOT PROD PAGES */}

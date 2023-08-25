@@ -70,6 +70,11 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
     { refetchQueryVariables },
   )
 
+  console.log({
+    mvkHistoryData,
+    smvkHistoryData,
+  })
+
   return {
     isLoading: mvkHistoryData[period] === null || smvkHistoryData[period] === null,
     noChartData,

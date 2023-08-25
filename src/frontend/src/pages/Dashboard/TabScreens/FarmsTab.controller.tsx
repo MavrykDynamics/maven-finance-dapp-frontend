@@ -13,15 +13,17 @@ import CoinsIcons from 'app/App.components/Icon/CoinsIcons.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { emptyContainer } from './LendingTab.controller'
 
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
-import { FarmsContentStyled, TabWrapperStyled } from './DashboardTabs.style'
+import { EmptyContainer, FarmsContentStyled, TabWrapperStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
-export const FarmsTab = ({ isLoading }: { isLoading: boolean }) => {
+export const FarmsTab = () => {
+  // TODO: use from context, when context will be here
+  const isFarmsLoading = false
   const { farms } = useSelector((state: State) => state.farm)
   // On dashboard farms tab show only live farms
+
   const liveFarms = useMemo(() => farms.filter(({ isLive }) => isLive), [farms])
 
   return (
@@ -34,7 +36,7 @@ export const FarmsTab = ({ isLoading }: { isLoading: boolean }) => {
       </div>
 
       <FarmsContentStyled className="scroll-block">
-        {isLoading ? (
+        {isFarmsLoading ? (
           <DataLoaderWrapper className="tabLoader">
             <ClockLoader width={150} height={150} />
             <div className="text">Loading farms</div>
@@ -81,7 +83,10 @@ export const FarmsTab = ({ isLoading }: { isLoading: boolean }) => {
             )
           })
         ) : (
-          emptyContainer
+          <EmptyContainer>
+            <img src="/images/not-found.svg" alt=" No live farms to show" />
+            <figcaption> No live farms to show</figcaption>
+          </EmptyContainer>
         )}
       </FarmsContentStyled>
 
