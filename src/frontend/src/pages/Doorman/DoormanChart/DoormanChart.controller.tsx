@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { SingleValueData, Time } from 'lightweight-charts'
 
 // styles
 import { DoormanChartCard, DoormanExitFeeCurrentValues, Wrapper } from './DoormanChart.style'
 
 // components
+import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
 import { Chart } from '../../../app/App.components/Chart/Chart'
 import {
   SlidingTabButtons,
@@ -29,6 +30,10 @@ import { calcExitFee, calcMLI } from 'utils/calcFunctions'
 import { DECIMALS_TO_SHOW } from 'utils/constants'
 import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
 import colors from 'styles/colors'
+import { ChartPeriodType } from 'types/charts.type'
+import { ONE_HOUR } from 'consts/charts.const'
+import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
+import { getChartXAxisTicks } from 'utils/charts.utils'
 
 const tabsList: SlidingTabButtonType[] = [
   {
@@ -73,7 +78,7 @@ const findExitFeeClosestTimePlot = (exitFeePlots: Array<AreaChartPlotType>, exit
 }
 
 export function DoormanChart() {
-  const { smvkHistoryData, mvkHistoryData, totalStakedMvk, totalSupply } = useDoormanContext()
+  const { totalStakedMvk, totalSupply } = useDoormanContext()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
@@ -81,10 +86,22 @@ export function DoormanChart() {
   const currentExitFee = calcExitFee(totalSupply, totalStakedMvk)
   const currentMLI = calcMLI(totalSupply, totalStakedMvk)
 
+  const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
+  const {
+    smvkHistoryData,
+    mvkHistoryData,
+    isLoading: isChartsDataLoading,
+    noChartData,
+  } = useDoormanHistory(chartPeriod)
+
   const [activeTabId, setActiveTabId] = useState(tabsList[0].id)
 
   const handleChangeTabs = (tabId?: number) => setActiveTabId(tabsList.find(({ id }) => tabId === id)?.id ?? 1)
+  const handlePeriodChange = useCallback((period: ChartPeriodType) => {
+    setChartPeriod(period)
+  }, [])
   const exitFeeMarkerTime = findExitFeeClosestTimePlot(MLI_FEE_CHART_DATA, currentExitFee)
+  const numberOfItemsToDisplay = smvkHistoryData.length < 10 && !noChartData ? smvkHistoryData.length : 10
 
   return (
     <Wrapper>
@@ -93,6 +110,7 @@ export function DoormanChart() {
       <DoormanChartCard>
         {activeTabId === tabsList[0].id ? (
           <>
+            <ChartsSwitherWithPosition currentPeriod={chartPeriod} setCurrentPeriod={handlePeriodChange} />
             <div className="double-chart-legend">
               <div className="row mvk">
                 <div className="circle" /> MVK
@@ -103,6 +121,8 @@ export function DoormanChart() {
             </div>
 
             <DoubleChart
+              isLoading={isChartsDataLoading}
+              numberOfItemsToDisplay={numberOfItemsToDisplay}
               firstChart={{
                 data: {
                   type: 'area',
@@ -127,7 +147,9 @@ export function DoormanChart() {
               }}
               tooltipAssetFirst={'MVK'}
               tooltipAssetSecond={'sMVK'}
-              settings={{}}
+              settings={{
+                tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod),
+              }}
             />
           </>
         ) : null}
@@ -172,7 +194,7 @@ export function DoormanChart() {
                     time: exitFeeMarkerTime,
                     position: 'inBar',
                     color: colors[themeSelected].primaryChartColor,
-                    
+
                     shape: 'circle',
                   },
                 ],
@@ -184,17 +206,23 @@ export function DoormanChart() {
         ) : null}
 
         {activeTabId === tabsList[2].id ? (
-          <Chart
-            data={{
-              type: AREA_CHART_TYPE,
-              plots: smvkHistoryData,
-            }}
-            settings={{
-              height: 370,
-            }}
-            tooltipAsset={'sMVK'}
-            numberOfItemsToDisplay={10}
-          />
+          <>
+            <ChartsSwitherWithPosition currentPeriod={chartPeriod} setCurrentPeriod={handlePeriodChange} />
+            <Chart
+              isLoading={isChartsDataLoading}
+              data={{
+                type: AREA_CHART_TYPE,
+                plots: smvkHistoryData,
+              }}
+              settings={{
+                height: 370,
+                tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod),
+              }}
+              tooltipAsset={'sMVK'}
+              // check is there is a dat for chart, if no - show default chart text
+              numberOfItemsToDisplay={numberOfItemsToDisplay}
+            />
+          </>
         ) : null}
       </DoormanChartCard>
     </Wrapper>

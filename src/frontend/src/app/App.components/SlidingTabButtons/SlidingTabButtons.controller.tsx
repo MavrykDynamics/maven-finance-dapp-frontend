@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import classNames from 'classnames'
 
 import { ButtonStyled, SlidingTabButtonsStyled } from './SlidingTabButtons.style'
@@ -41,11 +41,14 @@ export const SlidingTabButtons = ({
     }
   }, [tabItems])
 
-  const clickHandler = (tabId: number) => {
-    if (disabled) return
-    setActiveTab(tabId)
-    onClick(tabId)
-  }
+  const clickHandler = useCallback(
+    (tabId: number) => {
+      if (disabled) return
+      setActiveTab(tabId)
+      onClick(tabId)
+    },
+    [disabled, onClick],
+  )
 
   return (
     <SlidingTabButtonsStyled className={classNames(className, kind, { disabled: disabled })}>

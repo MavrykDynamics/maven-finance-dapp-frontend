@@ -19,11 +19,7 @@ import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider
 import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_DATA_SUB } from 'providers/TreasuryProvider/helpers/treasury.consts'
 import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
 import { MVK_TOKEN_SYMBOL } from 'utils/constants'
-import {
-  MVK_SMVK_HISTORY_SUB,
-  DEFAULT_STAKING_ACTIVE_SUBS,
-  DAPP_MVK_SMVK_STATS_SUB,
-} from 'providers/DoormanProvider/helpers/doorman.consts'
+import { DEFAULT_STAKING_ACTIVE_SUBS, DAPP_MVK_SMVK_STATS_SUB } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
@@ -38,7 +34,6 @@ import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // actions
-import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 
 // utils
@@ -70,7 +65,6 @@ export const Dashboard = () => {
   useEffect(() => {
     changeStakingSubscriptionsList({
       [DAPP_MVK_SMVK_STATS_SUB]: true,
-      [MVK_SMVK_HISTORY_SUB]: true,
     })
 
     changeSatellitesSubscriptionsList({

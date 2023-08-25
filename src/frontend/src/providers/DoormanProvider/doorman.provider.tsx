@@ -2,35 +2,26 @@ import { ApolloError } from '@apollo/client'
 import React, { useContext, useMemo, useState } from 'react'
 
 // helpers
-import { normalizeDoormanChartsData } from './helpers/normalizer'
+import { getDoormanProviderReturnValue } from './helpers/doorman.utils'
+import { normalizeDoormanChartsData } from './helpers/doormanCharts.normalizer'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
-import {
-  DoormanContext,
-  NullableDoormanContextStateType,
-  DoormanSubsRecordType,
-  StakingSubsType,
-} from './doorman.provider.types'
+import { DoormanContext, NullableDoormanContextStateType, DoormanSubsRecordType } from './doorman.provider.types'
 import { SmvkMvkHistoryDataQuery, GetDappSmvkMvkStatsQuery } from 'utils/__generated__/graphql'
+import { ChartPeriodType } from 'types/charts.type'
 
 // consts
 import { MVK_DECIMALS } from 'utils/constants'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import {
-  DEFAULT_STAKING_CTX,
-  MVK_SMVK_HISTORY_SUB,
-  DAPP_MVK_SMVK_STATS_SUB,
-  DEFAULT_STAKING_ACTIVE_SUBS,
-} from './helpers/doorman.consts'
-import { SMVK_MVK_HISTORY_DATA, DAPP_MVK_SMVK_STATS } from './queries/doorman.query'
+import { DEFAULT_STAKING_CTX, DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from './helpers/doorman.consts'
+import { DAPP_MVK_SMVK_STATS } from './queries/doorman.query'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
-import { getDoormanProviderReturnValue } from './helpers/doorman.utils'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 export const doormanContext = React.createContext<DoormanContext>(undefined!)
 
@@ -47,20 +38,12 @@ const DoormanProvider = ({ children }: Props) => {
   const [stakingCtxState, setStakingCtxState] = useState<NullableDoormanContextStateType>(DEFAULT_STAKING_CTX)
   const [activeSubs, setActiveSubs] = useState<DoormanSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
 
-  const handleSubError = (error: ApolloError, subName: StakingSubsType) => {
+  const handleSubError = (error: ApolloError, subName: string) => {
     console.error(`${subName} query error: `, error)
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
   // subscribes
-  useQueryWithRefetch(SMVK_MVK_HISTORY_DATA, {
-    skip: !activeSubs[MVK_SMVK_HISTORY_SUB],
-    onCompleted: (data) => {
-      updateStakeHistoryData(data)
-    },
-    onError: (error) => handleSubError(error, MVK_SMVK_HISTORY_SUB),
-  })
-
   useQueryWithRefetch(DAPP_MVK_SMVK_STATS, {
     skip: !activeSubs[DAPP_MVK_SMVK_STATS_SUB] || !doormanAddress,
     variables: {
@@ -73,13 +56,14 @@ const DoormanProvider = ({ children }: Props) => {
   })
 
   // methods to update context data
-  const updateStakeHistoryData = ({ smvk_history_data }: SmvkMvkHistoryDataQuery) => {
-    const { smvkHistoryData, mvkHistoryData } = normalizeDoormanChartsData({ smvk_history_data })
+  const updateStakeHistoryData = (historyData: SmvkMvkHistoryDataQuery, period: ChartPeriodType) => {
+    const { smvkHistoryData, mvkHistoryData, noChartData } = normalizeDoormanChartsData(historyData, period)
 
     setStakingCtxState((prevState) => ({
       ...prevState,
-      smvkHistoryData,
-      mvkHistoryData,
+      smvkHistoryData: { ...prevState.smvkHistoryData, [period]: smvkHistoryData },
+      mvkHistoryData: { ...prevState.mvkHistoryData, [period]: mvkHistoryData },
+      noChartData,
     }))
   }
 
@@ -109,6 +93,7 @@ const DoormanProvider = ({ children }: Props) => {
         stakingCtxState,
         changeStakingSubscriptionsList,
         activeSubs,
+        updateStakeHistoryData,
       }),
     [activeSubs, stakingCtxState],
   )

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { TWENTY_FOUR_HOURS } from 'consts/charts.const'
 
 // utils
 import { calcExitFee, calcMLI } from 'utils/calcFunctions'
@@ -24,6 +25,8 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import colors from 'styles/colors'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
+import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
+import { getChartXAxisTicks } from 'utils/charts.utils'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -36,7 +39,8 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
-  const { totalSupply, totalStakedMvk, smvkHistoryData } = useDoormanContext()
+  const { totalSupply, totalStakedMvk } = useDoormanContext()
+  const { smvkHistoryData, isLoading: isChartsDataLoading, noChartData } = useDoormanHistory(TWENTY_FOUR_HOURS)
 
   const mli = calcMLI(totalSupply, totalStakedMvk)
   const fee = calcExitFee(totalSupply, totalStakedMvk)
@@ -93,12 +97,15 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
             <div className="title chart-title">Staking History</div>
             <StakingHistoryChartWrapper>
               <Chart
+                isLoading={isChartsDataLoading}
+                numberOfItemsToDisplay={smvkHistoryData.length && !noChartData ? smvkHistoryData.length : 10}
                 data={{
                   type: AREA_CHART_TYPE,
                   plots: smvkHistoryData,
                 }}
                 settings={{
                   height: 100,
+                  tickDateFormatter: (date: number) => getChartXAxisTicks(date, TWENTY_FOUR_HOURS),
                 }}
                 tooltipAsset={'sMVK'}
               />
