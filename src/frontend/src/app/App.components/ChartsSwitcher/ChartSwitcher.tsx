@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
-import { SlidingTabButtons, TabItem } from '../SlidingTabButtons/SlidingTabButtons.controller'
+import { SlidingTabButtonType, SlidingTabButtons } from '../SlidingTabButtons/SlidingTabButtons.controller'
 import { chartsPeriodArr } from 'consts/charts.const'
 import { ChartPeriodType } from 'types/charts.type'
 import { ChartsSwitherWrapper } from './ChartSwitcher.style'
@@ -15,7 +15,7 @@ export const ChartSwitcher = ({ setCurrentPeriod, currentPeriod }: ChartSwitcher
   // chartsPeriodArr
   const [activeTabId, setActiveTabId] = useState(0)
 
-  const tabItems: TabItem[] = useMemo(
+  const tabItems: SlidingTabButtonType[] = useMemo(
     () =>
       chartsPeriodArr.map((period, idx) => {
         return {
