@@ -103,6 +103,7 @@ export function DoormanChart() {
       <DoormanChartCard>
         {activeTabId === tabsList[0].id ? (
           <>
+            <ChartsSwitherWithPosition currentPeriod={chartPeriod} setCurrentPeriod={handlePeriodChange} />
             <div className="double-chart-legend">
               <div className="row mvk">
                 <div className="circle" /> MVK

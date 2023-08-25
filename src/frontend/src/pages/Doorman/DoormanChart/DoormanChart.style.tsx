@@ -79,8 +79,8 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
 
   .double-chart-legend {
     position: absolute;
-    top: 20px;
-    left: 20px;
+    top: 24px;
+    left: 364px;
     display: flex;
     flex-direction: column;
     row-gap: 5px;

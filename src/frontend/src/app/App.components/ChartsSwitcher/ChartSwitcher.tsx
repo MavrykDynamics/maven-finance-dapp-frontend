@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import { SlidingTabButtonType, SlidingTabButtons } from '../SlidingTabButtons/SlidingTabButtons.controller'
 import { chartsPeriodArr } from 'consts/charts.const'
 import { ChartPeriodType } from 'types/charts.type'
@@ -11,9 +11,9 @@ type ChartSwitcherProps = {
   setCurrentPeriod: (period: ChartPeriodType) => void
 }
 
-export const ChartSwitcher = ({ setCurrentPeriod, currentPeriod }: ChartSwitcherProps) => {
+// TODO try to play with state to avoid blinks between diff screen switched
+export const ChartSwitcher = memo(({ setCurrentPeriod, currentPeriod }: ChartSwitcherProps) => {
   // chartsPeriodArr
-  const [activeTabId, setActiveTabId] = useState(0)
 
   const tabItems: SlidingTabButtonType[] = useMemo(
     () =>
@@ -21,16 +21,14 @@ export const ChartSwitcher = ({ setCurrentPeriod, currentPeriod }: ChartSwitcher
         return {
           text: period,
           id: idx,
-          active: currentPeriod === period ?? idx === activeTabId,
+          active: currentPeriod === period,
         }
       }),
-    [activeTabId, currentPeriod],
+    [currentPeriod],
   )
 
   const handleTabSwitch = useCallback(
     (tabId: number) => {
-      setActiveTabId(tabId)
-
       // tabId is the same as index of chartsPeriodArr, so we can use it to avoid function recreation.
       setCurrentPeriod(chartsPeriodArr[tabId])
     },
@@ -38,7 +36,7 @@ export const ChartSwitcher = ({ setCurrentPeriod, currentPeriod }: ChartSwitcher
   )
 
   return <SlidingTabButtons tabItems={tabItems} onClick={handleTabSwitch} />
-}
+})
 
 type ChartSwitherWithPositionProps = ChartSwitcherProps & {
   align?: ChartSwitcherAlignmentType
