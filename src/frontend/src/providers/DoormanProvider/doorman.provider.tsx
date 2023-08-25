@@ -19,12 +19,7 @@ import { ChartPeriodType } from 'types/charts.type'
 // consts
 import { MVK_DECIMALS } from 'utils/constants'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import {
-  DEFAULT_STAKING_CTX,
-  DAPP_MVK_SMVK_STATS_SUB,
-  DEFAULT_STAKING_ACTIVE_SUBS,
-  DEFAULT_DOORMAN_HISTORY,
-} from './helpers/doorman.consts'
+import { DEFAULT_STAKING_CTX, DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from './helpers/doorman.consts'
 import { DAPP_MVK_SMVK_STATS } from './queries/doorman.query'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
