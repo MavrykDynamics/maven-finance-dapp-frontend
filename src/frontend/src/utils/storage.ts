@@ -1,9 +1,9 @@
-export const getItemFromStorage = (item: string) => {
+export const getItemFromStorage = <T extends unknown>(item: string): T => {
   const itemFromStorage = localStorage.getItem(item)
   return itemFromStorage ? JSON.parse(itemFromStorage) : null
 }
 
-export const setItemInStorage = (item: string, value: object | boolean | string) => {
+export const setItemInStorage = <T extends unknown>(item: string, value: T): T => {
   localStorage.setItem(item, JSON.stringify(value))
 
   return getItemFromStorage(item)
@@ -11,13 +11,4 @@ export const setItemInStorage = (item: string, value: object | boolean | string)
 
 export const removeItemFromStorage = (item: string) => {
   localStorage.removeItem(item)
-}
-
-export const updateItemInStorage = (item: string, updateValue: object) => {
-  const itemFromStorage = getItemFromStorage(item)
-  const updatedItem = {
-    ...itemFromStorage,
-    ...updateValue,
-  }
-  return setItemInStorage(item, updatedItem)
 }
