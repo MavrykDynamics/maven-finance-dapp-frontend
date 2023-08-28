@@ -30,7 +30,7 @@ export const FooterStyled = styled.div<{ theme: MavrykTheme }>`
     column-gap: 20px;
 
     a {
-      color: ${({ theme }) => theme.mainHeadingText};
+      color: ${({ theme }) => theme.linksAndButtons};
     }
   }
 `
