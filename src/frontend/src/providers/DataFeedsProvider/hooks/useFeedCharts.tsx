@@ -1,16 +1,26 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-
-import { FEED_HISTORY_QUERY } from '../queries/feeds.query'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { ApolloError } from '@apollo/client'
+
+// queries
+import { FEED_HISTORY_QUERY } from '../queries/feeds.query'
+
+// hooks
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useDataFeedsContext } from '../dataFeeds.provider'
+
+// providers
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { FEED_HISTORY_SUB } from '../helpers/feeds.consts'
-import { ChartPeriodType } from 'types/charts.type'
 import { ONE_HOUR } from 'consts/charts.const'
+
+// types
+import { ChartPeriodType } from 'types/charts.type'
+
+// utils
 import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
-import { useDataFeedsContext } from '../dataFeeds.provider'
 
 export const useFeedCharts = (feedAddress: string, period: ChartPeriodType = ONE_HOUR) => {
   const { updateFeedsHistoryAndVolatility, dataFeedsHistory, dataFeedsVolatility, resetFeedsHistoryAndVolatility } =
@@ -34,9 +44,11 @@ export const useFeedCharts = (feedAddress: string, period: ChartPeriodType = ONE
   useEffect(() => {
     setCurrentPeriod(getTimestampBasedOnPeriod(period))
 
-    // cancel queries
-    aborterRef.current.abort()
-    aborterRef.current = new AbortController()
+    return () => {
+      // cancel queries
+      aborterRef.current.abort()
+      aborterRef.current = new AbortController()
+    }
   }, [period])
 
   useEffect(() => {
@@ -62,7 +74,7 @@ export const useFeedCharts = (feedAddress: string, period: ChartPeriodType = ONE
 
         updateFeedsHistoryAndVolatility(feedsHistory, period)
       },
-      onError: (error) => handleSubError(error, FEED_HISTORY_SUB),
+      onError: (error) => handleSubError(error, 'Feeds history query error'),
     },
     {
       refetchQueryVariables,

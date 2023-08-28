@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 
 // types
+import { ChartPeriodType } from 'types/charts.type'
 import { State } from 'reducers'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 
@@ -26,6 +27,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { Button } from 'app/App.components/Button/Button.controller'
+import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
 
 // styles
 import {
@@ -37,6 +39,7 @@ import {
   FeedDetailsChartWrapper,
 } from './DataFeedsDetails.style'
 import { EmptyContainer } from 'app/App.style'
+import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 
 // consts
 import {
@@ -51,20 +54,15 @@ import {
   calculateSlicePositions,
   getPageNumber,
 } from 'app/App.components/Pagination/pagination.consts'
+import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import colors from 'styles/colors'
 import { Page } from 'styles'
+import { ONE_HOUR } from 'consts/charts.const'
 
 // helpers
-import { parseDate } from 'utils/time'
-
-// actions
-import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
-import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
-import { ChartPeriodType } from 'types/charts.type'
-import { ONE_HOUR } from 'consts/charts.const'
-import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
 import { getChartXAxisTicks } from 'utils/charts.utils'
+import { parseDate } from 'utils/time'
 
 const tabsList = [
   {

@@ -1,9 +1,6 @@
 import { ALL_TIME, ONE_HOUR, ONE_MONTH, ONE_WEEK, TWENTY_FOUR_HOURS } from 'consts/charts.const'
 import { DataFeedsContextStateType, NullableDataFeedsContextStateType } from '../dataFeeds.provider.types'
 
-// CONSTS FOR STAKING PROVIDER STATES
-export const FEED_HISTORY_SUB = 'feedsHistorySub'
-
 // PROVIDER DEFAULT CONSTS
 
 export const DEFAULT_DATA_FEEDS_HISTORY = {

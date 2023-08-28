@@ -1,7 +1,15 @@
 import React, { useContext, useMemo, useRef, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
+// consts
+import {
+  DEFAULT_DATA_FEEDS_CTX,
+  DEFAULT_DATA_FEEDS_HISTORY,
+  DFEFAULT_DATA_FEEDS_VOLATILITY,
+} from './helpers/feeds.consts'
+
 // types
+import { ChartPeriodType } from 'types/charts.type'
 import { DataFeedsContext, NullableDataFeedsContextStateType } from './dataFeeds.provider.types'
 import {
   fullFeedsQuerySchema,
@@ -11,6 +19,7 @@ import {
 } from './helpers/feeds.schemas'
 
 // helpers
+import { getDataFeedsProviderReturnValue } from './helpers/feeds.utils'
 import {
   normalizeDataFeedsHistory,
   normalizeDataFeedsVolatility,
@@ -19,19 +28,15 @@ import {
 } from './helpers/feedsNormalizer'
 import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
 
-// constext
+// contexts
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import {
-  DEFAULT_DATA_FEEDS_CTX,
-  DEFAULT_DATA_FEEDS_HISTORY,
-  DFEFAULT_DATA_FEEDS_VOLATILITY,
-} from './helpers/feeds.consts'
-import { getDataFeedsProviderReturnValue } from './helpers/feeds.utils'
+
+// types
 import { FeedHistoryQeuryQuery } from 'utils/__generated__/graphql'
-import { ChartPeriodType } from 'types/charts.type'
 
 export const dataFeedsContext = React.createContext<DataFeedsContext>(undefined!)
+
 const propomotedAddresses = [
   'KT1AgXce6SwfMNQ6wcKGALHi46FuN77bHioV',
   'KT1C1sYNxacr8LPZimA512gAfWajdGah75nq',
@@ -45,17 +50,12 @@ type Props = {
 export const DataFeedsProvider = ({ children }: Props) => {
   const { updateTokensPrices } = useTokensContext()
 
-  // TODO: calc it based on nullable values
-  const initialLoadingStatus = useRef(true)
-
   const [feedsCtxState, setFeedsCtxState] = useState<NullableDataFeedsContextStateType>(DEFAULT_DATA_FEEDS_CTX)
 
   // load initial feeds data
   const { refetch: refetchDataFeeds } = useQuery(FEEDS_QUERY, {
     onCompleted: (data) => {
       try {
-        initialLoadingStatus.current = false
-
         const parsedFeeds = fullFeedsQuerySchema.parse(data.aggregator)
 
         updateFullDataFeeds(parsedFeeds)
@@ -69,7 +69,6 @@ export const DataFeedsProvider = ({ children }: Props) => {
 
   // update feeds price and track whether need to load new feed
   useQueryWithRefetch(FEEDS_UPDATE_QUERY, {
-    skip: initialLoadingStatus.current,
     onCompleted: (data) => {
       try {
         const parsedSmallFeeds = smallFeedsQuerySchema.parse(data.aggregator)
@@ -95,12 +94,8 @@ export const DataFeedsProvider = ({ children }: Props) => {
 
     setFeedsCtxState((prevState) => ({
       ...prevState,
-      feedsCategories: Array.from(
-        new Set([...(prevState.feedsCategories ? prevState.feedsCategories : []), ...feedsCategories]),
-      ),
-      feedsAddresses: Array.from(
-        new Set([...(feedsCtxState.feedsAddresses ? feedsCtxState.feedsAddresses : []), ...feedsAddresses]),
-      ),
+      feedsCategories: Array.from(new Set([...(prevState.feedsCategories ?? []), ...feedsCategories])),
+      feedsAddresses: Array.from(new Set([...(feedsCtxState.feedsAddresses ?? []), ...feedsAddresses])),
       feedsMapper: { ...feedsCtxState.feedsMapper, ...feedsMapper },
     }))
   }
@@ -142,7 +137,6 @@ export const DataFeedsProvider = ({ children }: Props) => {
     () =>
       getDataFeedsProviderReturnValue({
         feedsCtxState,
-        isInitialLoading: initialLoadingStatus.current,
         updateFeedsHistoryAndVolatility,
         resetFeedsHistoryAndVolatility,
       }),

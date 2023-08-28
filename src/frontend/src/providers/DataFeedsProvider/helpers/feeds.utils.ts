@@ -8,25 +8,25 @@ import { EMPTY_DATA_FEEDS_CTX } from './feeds.consts'
 
 type DataFeedsContextReturnValueArgs = {
   feedsCtxState: NullableDataFeedsContextStateType
-  isInitialLoading: boolean
   updateFeedsHistoryAndVolatility: DataFeedsContext['updateFeedsHistoryAndVolatility']
   resetFeedsHistoryAndVolatility: DataFeedsContext['resetFeedsHistoryAndVolatility']
 }
 
 export const getDataFeedsProviderReturnValue = ({
   feedsCtxState,
-  isInitialLoading,
   updateFeedsHistoryAndVolatility,
   resetFeedsHistoryAndVolatility,
 }: DataFeedsContextReturnValueArgs) => {
-  //   const {} = feedsCtxState
+  const { feedsMapper, feedsAddresses, feedsCategories, dataFeedsVolatility, dataFeedsHistory } = feedsCtxState
 
   const commonToReturn = {
     updateFeedsHistoryAndVolatility,
     resetFeedsHistoryAndVolatility,
+    dataFeedsVolatility,
+    dataFeedsHistory,
   }
 
-  const isLoading = isInitialLoading
+  const isLoading = feedsMapper === null || feedsAddresses === null || feedsCategories === null
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {
