@@ -1,20 +1,20 @@
 import { ChartPeriodType } from 'types/charts.type'
-import {
-  normalizeFeeds,
-  normalizeFeed,
-  normalizeDataFeedsHistory,
-  normalizeDataFeedsVolatility,
-} from './helpers/feedsNormalizer'
+import { normalizeFeeds, normalizeFeed, normalizeDataFeedsHistory } from './helpers/feedsNormalizer'
 import { FeedHistoryQeuryQuery } from 'utils/__generated__/graphql'
 
 export type DataFeedsStorageType = ReturnType<typeof normalizeFeeds>
 export type Feed = NonNullable<ReturnType<typeof normalizeFeed>>
 export type DataFeedsHistoryType = ReturnType<typeof normalizeDataFeedsHistory>
-export type DataFeedsVolatilityType = ReturnType<typeof normalizeDataFeedsVolatility>
 
 // nullable history default state types
-export type NullableDataFeedsHistoryChartsType = TupleKeyValueAny<ChartPeriodType, DataFeedsHistoryType | null>
-export type NullableDataFeedsVolatilityChartsType = TupleKeyValueAny<ChartPeriodType, DataFeedsVolatilityType | null>
+export type NullableDataFeedsHistoryChartsType = TupleKeyValueAny<
+  ChartPeriodType,
+  DataFeedsHistoryType['dataFeedsHistory'] | null
+>
+export type NullableDataFeedsVolatilityChartsType = TupleKeyValueAny<
+  ChartPeriodType,
+  DataFeedsHistoryType['dataFeedsVolatility'] | null
+>
 
 export type DataFeedsContextStateType = {
   feedsMapper: DataFeedsStorageType['feedsMapper']

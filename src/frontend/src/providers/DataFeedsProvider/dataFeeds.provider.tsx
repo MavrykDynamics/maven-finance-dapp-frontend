@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useRef, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
 // consts
@@ -20,12 +20,7 @@ import {
 
 // helpers
 import { getDataFeedsProviderReturnValue } from './helpers/feeds.utils'
-import {
-  normalizeDataFeedsHistory,
-  normalizeDataFeedsVolatility,
-  normalizeFeeds,
-  normalizeFeedsPrices,
-} from './helpers/feedsNormalizer'
+import { normalizeDataFeedsHistory, normalizeFeeds, normalizeFeedsPrices } from './helpers/feedsNormalizer'
 import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
 
 // contexts
@@ -115,8 +110,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
     data: FeedHistoryQeuryQuery['aggregator'][number]['history_data'],
     period: ChartPeriodType,
   ) => {
-    const dataFeedsHistory = normalizeDataFeedsHistory(data)
-    const dataFeedsVolatility = normalizeDataFeedsVolatility(data)
+    const { dataFeedsHistory, dataFeedsVolatility } = normalizeDataFeedsHistory(data)
 
     setFeedsCtxState((prevState) => ({
       ...prevState,

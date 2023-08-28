@@ -89,34 +89,34 @@ export function normalizeFeedsPrices(feedsFromCtx: DataFeedsContext['feedsMapper
 }
 
 export function normalizeDataFeedsHistory(historyData: FeedHistoryQeuryQuery['aggregator'][number]['history_data']) {
-  return historyData?.length
-    ? historyData
-        .map((item) => {
-          return {
-            time: new Date(item.timestamp).getTime() as UTCTimestamp,
-            value: symbolsAfterDecimalPoint(
-              convertNumberForClient({ number: item.data, grade: item.aggregator.decimals }),
-            ),
-          } as AreaChartPlotType
-        })
-        .reverse()
-    : []
-}
+  const { dataFeedsHistory, dataFeedsVolatility } = historyData.reduce<{
+    dataFeedsHistory: AreaChartPlotType[]
+    dataFeedsVolatility: AreaChartPlotType[]
+  }>(
+    (acc, { data, aggregator: { decimals }, timestamp }, idx, arr) => {
+      if (!arr?.[idx - 1]) return acc
 
-export function normalizeDataFeedsVolatility(historyData: FeedHistoryQeuryQuery['aggregator'][number]['history_data']) {
-  return historyData?.length >= 2
-    ? historyData
-        .reduce<Array<AreaChartPlotType>>((acc, { data, aggregator: { decimals }, timestamp }, idx, arr) => {
-          if (!arr?.[idx - 1]) return acc
-          acc.push({
-            time: new Date(timestamp).getTime() as UTCTimestamp,
-            value: percentageDifference(
-              symbolsAfterDecimalPoint(convertNumberForClient({ number: data, grade: decimals })),
-              symbolsAfterDecimalPoint(convertNumberForClient({ number: arr[idx - 1]?.data ?? 0, grade: decimals })),
-            ),
-          } as AreaChartPlotType)
-          return acc
-        }, [])
-        .reverse()
-    : []
+      if (arr.length >= 2) {
+        // volatility
+        acc.dataFeedsVolatility.push({
+          time: new Date(timestamp).getTime() as UTCTimestamp,
+          value: percentageDifference(
+            symbolsAfterDecimalPoint(convertNumberForClient({ number: data, grade: decimals })),
+            symbolsAfterDecimalPoint(convertNumberForClient({ number: arr[idx - 1]?.data ?? 0, grade: decimals })),
+          ),
+        } as AreaChartPlotType)
+      }
+
+      // history
+      acc.dataFeedsHistory.push({
+        time: new Date(timestamp).getTime() as UTCTimestamp,
+        value: symbolsAfterDecimalPoint(convertNumberForClient({ number: data, grade: decimals })),
+      } as AreaChartPlotType)
+
+      return acc
+    },
+    { dataFeedsHistory: [], dataFeedsVolatility: [] },
+  )
+
+  return { dataFeedsHistory: dataFeedsHistory.reverse(), dataFeedsVolatility: dataFeedsVolatility.reverse() }
 }
