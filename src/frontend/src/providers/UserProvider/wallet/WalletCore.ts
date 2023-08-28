@@ -12,7 +12,7 @@ const DAPP_METADATA = {
 }
 
 const getRpcNode = () => {
-  const rpcNode = getItemFromStorage(RPC_NODE) ?? ecadLabSUrl
+  const rpcNode = getItemFromStorage<string>(RPC_NODE) ?? ecadLabSUrl
   return rpcNode
 }
 
