@@ -154,7 +154,7 @@ export const ConfirmationScreen = () => {
             <TableHeader className="treasury">
               <TableRow>
                 <TableHeaderCell>Asset</TableHeaderCell>
-                <TableHeaderCell>Amount</TableHeaderCell>
+                <TableHeaderCell contentPosition="center">Amount</TableHeaderCell>
                 <TableHeaderCell contentPosition="right">USD Value</TableHeaderCell>
               </TableRow>
             </TableHeader>
