@@ -5,6 +5,7 @@ import { SingleValueData, Time } from 'lightweight-charts'
 import { DoormanChartCard, DoormanExitFeeCurrentValues, Wrapper } from './DoormanChart.style'
 
 // components
+import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
 import { Chart } from '../../../app/App.components/Chart/Chart'
 import {
   SlidingTabButtons,
@@ -29,11 +30,9 @@ import { calcExitFee, calcMLI } from 'utils/calcFunctions'
 import { DECIMALS_TO_SHOW } from 'utils/constants'
 import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
 import colors from 'styles/colors'
-import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
 import { ChartPeriodType } from 'types/charts.type'
 import { ONE_HOUR } from 'consts/charts.const'
 import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
-import dayjs from 'dayjs'
 import { getChartXAxisTicks } from 'utils/charts.utils'
 
 const tabsList: SlidingTabButtonType[] = [

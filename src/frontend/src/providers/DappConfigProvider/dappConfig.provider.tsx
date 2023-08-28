@@ -35,6 +35,7 @@ type Props = {
   children: React.ReactNode
 }
 
+// TODO: handle initial loading with null values
 const DappConfigProvider = ({ children }: Props) => {
   const handleSubError = (error: ApolloError) => {
     console.error(`DappConfigProvider query error: `, error)
@@ -215,10 +216,18 @@ const DappConfigProvider = ({ children }: Props) => {
     }))
   }
 
+  const setDappTotalValueLocked = (newTvlValie: number) => {
+    setDappConfigCtxState((prev) => ({
+      ...prev,
+      dappTotalValueLocked: newTvlValie,
+    }))
+  }
+
   const contextProviderValue = useMemo(() => {
     return {
       isLoading: initialConfigLoading || contractAddressesLoading,
       setAction,
+      setDappTotalValueLocked,
       // preferences
       toggleTheme,
       toggleRPCNodePopup,

@@ -89,6 +89,16 @@ export const Chart = ({
     )
   }
 
+  if (isLoading) {
+    return (
+      <ChartWrapper>
+        <ChartLoaderBlock>
+          <SpinnerCircleLoaderStyled className={loaderSize} />
+        </ChartLoaderBlock>
+      </ChartWrapper>
+    )
+  }
+
   if (data.plots.length < numberOfItemsToDisplay) {
     return (
       <Plug className="chartPlug">
@@ -139,13 +149,5 @@ export const Chart = ({
     return null
   }
 
-  return isLoading ? (
-    <ChartWrapper>
-      <ChartLoaderBlock>
-        <SpinnerCircleLoaderStyled className={loaderSize} />
-      </ChartLoaderBlock>
-    </ChartWrapper>
-  ) : (
-    renderChart()
-  )
+  return renderChart()
 }

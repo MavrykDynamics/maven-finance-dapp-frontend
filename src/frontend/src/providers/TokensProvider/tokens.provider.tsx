@@ -19,8 +19,8 @@ type Props = {
   children: React.ReactNode
 }
 
+// TODO: handle itial loading with null init values
 export const TokensProvider = ({ children }: Props) => {
-  // TODO: replace with null init values
   const initialLoadingStatus = useRef(true)
 
   const [tokensCtxState, setTokensCtxState] = useState<TokensContextState>({

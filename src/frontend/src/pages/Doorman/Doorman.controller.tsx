@@ -23,11 +23,7 @@ import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import {
-  DAPP_MVK_SMVK_STATS_SUB,
-  MVK_SMVK_HISTORY_SUB,
-  DEFAULT_STAKING_ACTIVE_SUBS,
-} from 'providers/DoormanProvider/helpers/doorman.consts'
+import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITES_DATA_SINGLE_SUB,

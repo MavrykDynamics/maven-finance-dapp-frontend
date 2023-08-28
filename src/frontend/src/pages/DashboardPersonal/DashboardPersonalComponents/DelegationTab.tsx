@@ -30,6 +30,12 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import {
+  SATELLITE_DATA_SUB,
+  SATELLITES_DATA_SINGLE_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+} from 'providers/SatellitesProvider/satellites.const'
 
 const DelegationTab = ({ distributeProposalRewards }: { distributeProposalRewards: () => void }) => {
   const {
@@ -37,6 +43,7 @@ const DelegationTab = ({ distributeProposalRewards }: { distributeProposalReward
     proposalsAmount,
     satelliteGovActionsAmount,
     finRequestsAmount,
+    changeSatellitesSubscriptionsList,
     setSatelliteAddressToSubsctibe,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
@@ -47,6 +54,17 @@ const DelegationTab = ({ distributeProposalRewards }: { distributeProposalReward
   } = useDappConfigContext()
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+
+  useEffect(() => {
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
+  }, [])
 
   useEffect(() => {
     if (satelliteMvkIsDelegatedTo) {

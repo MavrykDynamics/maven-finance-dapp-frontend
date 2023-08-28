@@ -1,24 +1,18 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 // consts
-import { GaugeChartStateType, GAUGE_STATE_RISK_PART, GAUGE_STATE_APY_PART } from 'pages/LoansDashboard/LoansDashboard'
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
 import colors from 'styles/colors'
 
 // types
 import { UserLoansData } from 'providers/UserProvider/user.provider.types'
 
-// helpers
-import { getGaugeVaultRiskSimpleStatus } from 'pages/LoansDashboard/helpers/position.helpers'
-import { getNumberInBounds } from 'utils/calcFunctions'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-
-// context
+// hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useLoansGaugeChartData } from 'providers/LoansProvider/hooks/useLoansGaugeChartData'
 
 // view
 import { LBHInfoBlock } from './DashboardPersonalComponents.style'
@@ -28,100 +22,35 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
 import Button from 'app/App.components/Button/NewButton'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const LendBorrowPosition = ({
   userLoansRewards,
   totalUserBorrowed,
   totalUserLended,
   userVaultsData,
+  isUserLoansLoading,
 }: {
   totalUserBorrowed: number
   totalUserLended: number
   userVaultsData: UserLoansData['userVaultsData']
   userLoansRewards: number
+  isUserLoansLoading: boolean
 }) => {
-  const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { userAddress, userMTokens } = useUserContext()
-  const { marketsAddresses, marketsMapper } = useLoansContext()
-
+  const { changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
 
-  // calc data for gauge chart
-  const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {
-    vaultRiskGaugeData: GaugeChartStateType
-    apyGaugeData: GaugeChartStateType
-  } => {
-    const { borrowedAmount, collateralAmount, totalSuppliedValue, sumOfRatioSuppliedToAPY, sumOfRatioBorrowedToAPR } =
-      marketsAddresses.reduce(
-        (acc, marketTokenAddress) => {
-          const market = marketsMapper[marketTokenAddress]
-
-          const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
-
-          if (!token || !token.rate || !market) return acc
-          const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress } = market
-
-          const userMarketVaultsData = userVaultsData[loanTokenAddress]
-          if (!userMarketVaultsData) return acc
-
-          const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
-
-          const { rate } = token
-          const { principle, collateralBalance } = userMarketVaultsData
-
-          //  calculating value risk data & how much borrowed per vault
-          acc.collateralAmount += principle > 0 ? collateralBalance : 0
-          acc.borrowedAmount += principle
-
-          // calculating net APY supplied & borrowed ratio's
-          acc.sumOfRatioSuppliedToAPY += lendValue * rate * lendingAPY
-          // TODO: check this calc
-          acc.sumOfRatioBorrowedToAPR += principle * borrowAPR
-          acc.totalSuppliedValue += lendValue * rate
-          return acc
-        },
-        {
-          borrowedAmount: 0,
-          collateralAmount: 0,
-          totalSuppliedValue: 0,
-          sumOfRatioSuppliedToAPY: 0,
-          sumOfRatioBorrowedToAPR: 0,
-        },
-      )
-
-    const vaultRiskValue = !userAddress || !collateralAmount ? 0 : (borrowedAmount / collateralAmount) * 100
-    const apyNet =
-      !userAddress || !totalSuppliedValue ? 0 : (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue
-
-    return {
-      vaultRiskGaugeData: {
-        ...GAUGE_STATE_RISK_PART,
-        currentValue: getNumberInBounds(0, 100, vaultRiskValue),
-        ...getGaugeVaultRiskSimpleStatus(vaultRiskValue),
-      },
-      apyGaugeData: {
-        ...GAUGE_STATE_APY_PART,
-        currentValue: getNumberInBounds(0, 100, apyNet),
-      },
-    }
-  }, [marketsAddresses, userAddress, marketsMapper, tokensMetadata, tokensPrices, userMTokens, userVaultsData])
-
-  // Default data for gauge chart will be for vault risk
-  const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
-    ...GAUGE_STATE_APY_PART,
-    currentValue: 0,
-    text: '',
-    status: null,
-  })
-
-  // Set gauge chart data for vault risk
   useEffect(() => {
-    if (gaugeData.isAPY) {
-      setGaugeData(apyGaugeData)
-    }
-  }, [apyGaugeData])
+    changeLoansSubscriptionsList({
+      [LOANS_MARKETS_DATA]: true,
+    })
+
+    return () => changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
+  }, [])
+
+  const { gaugeData, setApyData, setVaultsData } = useLoansGaugeChartData({ userVaultsData })
 
   return (
     <LBHInfoBlock className="position-tab">
@@ -134,57 +63,65 @@ export const LendBorrowPosition = ({
         </Link>
       </div>
 
-      <div className="acc-stats">
-        <div className="gauge-chart">
-          <CustomTooltip
-            iconId="info"
-            text="Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral will be liquidated.
+      {isUserLoansLoading || isLoansLoading ? (
+        <div className="loader-wrapper">
+          <ClockLoader />
+        </div>
+      ) : (
+        <>
+          <div className="acc-stats">
+            <div className="gauge-chart">
+              <CustomTooltip
+                iconId="info"
+                text="Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral will be liquidated.
                       Risk value = Total Borrow/Borrow Limit*100 
                       Net APY = [Σ(Value of Supplied Assets*Supply APY) - Σ(Value of Borrowed Assets*Borrow APY)] / Value of Supplied Assets"
-            defaultStrokeColor={colors[themeSelected].regularText}
-            className="tooltip"
-          />
-          <GaugeChart
-            maxValue={gaugeData.maxValue}
-            minValue={gaugeData.minValue}
-            currentValue={gaugeData.currentValue}
-            isProgress={gaugeData.isAPY}
-          >
-            <div
-              className={`lend-borrow-position ${gaugeData.status ?? ''}`}
-              onMouseEnter={() => setGaugeData(vaultRiskGaugeData)}
-              onMouseLeave={() => setGaugeData(apyGaugeData)}
-            >
-              <CommaNumber
-                value={gaugeData.currentValue}
-                className="amount"
-                endingText={gaugeData.isAPY ? '%' : ''}
-                showDecimal={false}
+                defaultStrokeColor={colors[themeSelected].regularText}
+                className="tooltip"
               />
-              <div className="status">{gaugeData.text}</div>
+              <GaugeChart
+                maxValue={gaugeData.maxValue}
+                minValue={gaugeData.minValue}
+                currentValue={gaugeData.currentValue}
+                isProgress={gaugeData.isAPY}
+              >
+                <div
+                  className={`lend-borrow-position ${gaugeData.status ?? ''}`}
+                  onMouseEnter={setVaultsData}
+                  onMouseLeave={setApyData}
+                >
+                  <CommaNumber
+                    value={gaugeData.currentValue}
+                    className="amount"
+                    endingText={gaugeData.isAPY ? '%' : ''}
+                    showDecimal={false}
+                  />
+                  <div className="status">{gaugeData.text}</div>
+                </div>
+              </GaugeChart>
             </div>
-          </GaugeChart>
-        </div>
 
-        <div className="stats">
-          <div className="column">
-            <div className="name">Total Supplied</div>
-            <CommaNumber value={totalUserLended} className="value" beginningText="$" />
+            <div className="stats">
+              <div className="column">
+                <div className="name">Total Supplied</div>
+                <CommaNumber value={totalUserLended} className="value" beginningText="$" />
+              </div>
+
+              <div className="column">
+                <div className="name">Total Borrowed</div>
+                <CommaNumber value={totalUserBorrowed} className="value" beginningText="$" />
+              </div>
+
+              <div className="column">
+                <div className="name">Earned To Date</div>
+                <CommaNumber value={userLoansRewards} className="value" beginningText="$" />
+              </div>
+            </div>
           </div>
 
-          <div className="column">
-            <div className="name">Total Borrowed</div>
-            <CommaNumber value={totalUserBorrowed} className="value" beginningText="$" />
-          </div>
-
-          <div className="column">
-            <div className="name">Earned To Date</div>
-            <CommaNumber value={userLoansRewards} className="value" beginningText="$" />
-          </div>
-        </div>
-      </div>
-
-      <LoansPositionTable userVaultsData={userVaultsData} />
+          <LoansPositionTable userVaultsData={userVaultsData} />
+        </>
+      )}
     </LBHInfoBlock>
   )
 }
