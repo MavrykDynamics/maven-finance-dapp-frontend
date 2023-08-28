@@ -45,9 +45,11 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
   useEffect(() => {
     setCurrentPeriod(getTimestampBasedOnPeriod(period))
 
-    // cancel queries
-    aborterRef.current.abort()
-    aborterRef.current = new AbortController()
+    return () => {
+      // cancel queries
+      aborterRef.current.abort()
+      aborterRef.current = new AbortController()
+    }
   }, [period])
 
   useQueryWithRefetch(
