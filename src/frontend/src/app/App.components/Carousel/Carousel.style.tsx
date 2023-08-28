@@ -11,7 +11,7 @@ export const CarouselStyle = styled.div<{ theme: MavrykTheme }>`
     font-weight: 400;
     font-size: 14px;
     line-height: 21px;
-    color: ${({ theme }) => theme.stroke};
+    color: ${({ theme }) => theme.primaryText};
     right: 16px;
     top: -54px;
   }
@@ -26,13 +26,15 @@ export const CarouselStyle = styled.div<{ theme: MavrykTheme }>`
   }
 
   .gradient-left {
-    background: ${({ theme }) => `linear-gradient(271.16deg, ${theme.backgroundColor} 3.98%, rgba(8, 6, 40, 0) 108.12%)`};
+    background: ${({ theme }) =>
+      `linear-gradient(271.16deg, ${theme.backgroundColor} 3.98%, rgba(8, 6, 40, 0) 108.12%)`};
     transform: matrix(-1, 0, 0, 1, 0, 0);
   }
 
   .gradient-right {
     right: 0;
-    background: ${({ theme }) => `linear-gradient(271.16deg, ${theme.backgroundColor} 3.98%, rgba(8, 6, 40, 0) 108.12%)`};
+    background: ${({ theme }) =>
+      `linear-gradient(271.16deg, ${theme.backgroundColor} 3.98%, rgba(8, 6, 40, 0) 108.12%)`};
   }
 `
 
