@@ -60,7 +60,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
     })
 
     return (
-      <InputWrapper className={`${className} ${status} ${inputSize}`} id={'inputStyled'}>
+      <InputWrapper
+        className={`${className} ${status} ${inputSize} ${inputProps.disabled ? 'disabled' : ''}`}
+        id={'inputStyled'}
+      >
         {label ? (
           <NewInputLabel>
             {label}
