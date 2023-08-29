@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 // components
@@ -43,7 +43,7 @@ export const ErrorPage = ({
   descText = errorDescDefaultText,
   type = ERROR_TYPE_FATAL,
 }: ErrorPageProps) => {
-  const themeSelected = getItemFromStorage<ThemeType>('theme', themeSchema) || SPACE_THEME
+  const themeSelected = useMemo(() => getItemFromStorage<ThemeType>('theme', themeSchema) || SPACE_THEME, [])
 
   const handleRedirect = useCallback(() => {
     window.location.assign('/')
@@ -53,7 +53,7 @@ export const ErrorPage = ({
     <Router>
       <ThemeProvider theme={themeColors[themeSelected]}>
         <ErrorPageWrapper themeSelected={themeSelected}>
-          <ErrorTopbar handleRedirect={handleRedirect} />
+          <ErrorTopbar themeSelected={themeSelected} handleRedirect={handleRedirect} />
           <ErrorPageInner>
             <ErrorTopHeader>Error</ErrorTopHeader>
             <Vector1 src="/images/satellite-error.svg" />
@@ -68,7 +68,7 @@ export const ErrorPage = ({
               </NewButton>
             )}
           </ErrorPageInner>
-          <ErrorFooter handleRedirect={handleRedirect} />
+          <ErrorFooter themeSelected={themeSelected} handleRedirect={handleRedirect} />
         </ErrorPageWrapper>
       </ThemeProvider>
     </Router>

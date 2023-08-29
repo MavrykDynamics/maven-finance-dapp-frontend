@@ -49,6 +49,7 @@ export const ErrorPageInner = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const ErrorTopHeader = styled.div<{ theme: MavrykTheme }>`
+  /* TODO change color after Ann add new color */
   color: ${({ theme }) => theme.regularText};
   font-size: 18px;
   font-style: normal;
@@ -58,7 +59,7 @@ export const ErrorTopHeader = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const ErrorMidHeader = styled.div<{ theme: MavrykTheme }>`
-  color: ${({ theme }) => theme.regularText};
+  color: ${({ theme }) => theme.mainHeadingText};
   font-size: 25px;
   font-style: normal;
   font-weight: 700;
@@ -66,7 +67,7 @@ export const ErrorMidHeader = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const ErrorParagraph = styled.div<{ theme: MavrykTheme }>`
-  color: ${({ theme }) => theme.regularText};
+  color: ${({ theme }) => theme.mainHeadingText};
   text-align: center;
   font-size: 14px;
   font-style: normal;
@@ -145,7 +146,7 @@ export const ErrorFooterRight = styled.div<{ theme: MavrykTheme }>`
     font-weight: 400;
     color: inherit;
     line-height: normal;
-    color: ${({ theme }) => theme.mainHeadingText};
+    color: ${({ theme }) => theme.linksAndButtons};
   }
 `
 
