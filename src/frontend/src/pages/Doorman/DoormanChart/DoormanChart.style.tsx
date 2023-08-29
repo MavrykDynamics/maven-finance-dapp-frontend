@@ -65,6 +65,14 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
     font-size: 12px;
   }
 
+  .chart-legend {
+    background-color: ${({ theme }) => theme.cards};
+    opacity: 0.9;
+    z-index: 15;
+    padding: 3px;
+    border-radius: 5px;
+  }
+
   .mli-label {
     position: absolute;
     bottom: 55px;
@@ -79,8 +87,8 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
 
   .double-chart-legend {
     position: absolute;
-    top: 24px;
-    left: 364px;
+    top: 65px;
+    left: 25px;
     display: flex;
     flex-direction: column;
     row-gap: 5px;

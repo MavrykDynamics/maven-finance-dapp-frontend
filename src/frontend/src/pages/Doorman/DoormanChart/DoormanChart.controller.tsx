@@ -6,33 +6,39 @@ import { DoormanChartCard, DoormanExitFeeCurrentValues, Wrapper } from './Doorma
 
 // components
 import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
+import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
 import { Chart } from '../../../app/App.components/Chart/Chart'
 import {
   SlidingTabButtons,
   SlidingTabButtonType,
 } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
-// providers
-import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
+// hooks
+
+import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
-// consts & helpers
+// consts
 import { CommaNumber, formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
-// types
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
-// consts & helpers
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
-import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
-import { MLI_FEE_CHART_DATA } from './MliFee-chart-data'
-import { calcExitFee, calcMLI } from 'utils/calcFunctions'
-import { DECIMALS_TO_SHOW } from 'utils/constants'
-import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
-import colors from 'styles/colors'
-import { ChartPeriodType } from 'types/charts.type'
 import { ONE_HOUR } from 'consts/charts.const'
-import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
+import colors from 'styles/colors'
+import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
+import { DECIMALS_TO_SHOW } from 'utils/constants'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
+import { MLI_FEE_CHART_DATA } from './MliFee-chart-data'
+import {
+  SECONDARY_SLIDING_TAB_BUTTONS,
+  SMALL_SLIDING_TAB_BUTTONS,
+} from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
+
+// types
+import { ChartPeriodType } from 'types/charts.type'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+
+// utils
+import { calcExitFee, calcMLI } from 'utils/calcFunctions'
+import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
 import { getChartXAxisTicks } from 'utils/charts.utils'
 
 const tabsList: SlidingTabButtonType[] = [
@@ -110,8 +116,12 @@ export function DoormanChart() {
       <DoormanChartCard>
         {activeTabId === tabsList[0].id ? (
           <>
-            <ChartsSwitherWithPosition currentPeriod={chartPeriod} setCurrentPeriod={handlePeriodChange} />
-            <div className="double-chart-legend">
+            <ChartsSwitherWithPosition
+              currentPeriod={chartPeriod}
+              setCurrentPeriod={handlePeriodChange}
+              size={SMALL_SLIDING_TAB_BUTTONS}
+            />
+            <div className="double-chart-legend chart-legend">
               <div className="row mvk">
                 <div className="circle" /> MVK
               </div>
@@ -148,6 +158,7 @@ export function DoormanChart() {
               tooltipAssetFirst={'MVK'}
               tooltipAssetSecond={'sMVK'}
               settings={{
+                height: 380,
                 tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod),
               }}
             />
@@ -167,7 +178,7 @@ export function DoormanChart() {
               </div>
             </DoormanExitFeeCurrentValues>
 
-            <div className="mli-label">MLI (%)</div>
+            <div className="mli-label chart-legend">MLI (%)</div>
             <div className="fee-label">Exit Fee(%)</div>
             <Chart
               data={{
@@ -175,7 +186,7 @@ export function DoormanChart() {
                 plots: MLI_FEE_CHART_DATA,
               }}
               settings={{
-                height: 370,
+                height: 380,
                 tickDateFormatter: (timeTick) => formatNumber({ number: timeTick, decimalsToShow: 0 }),
                 valueTooltipFormatter: (amount) => formatNumber({ number: amount, decimalsToShow: DECIMALS_TO_SHOW }),
                 // as data is static we can set margins we want, but if data will change we will need to check those margins
@@ -207,7 +218,11 @@ export function DoormanChart() {
 
         {activeTabId === tabsList[2].id ? (
           <>
-            <ChartsSwitherWithPosition currentPeriod={chartPeriod} setCurrentPeriod={handlePeriodChange} />
+            <ChartsSwitherWithPosition
+              currentPeriod={chartPeriod}
+              setCurrentPeriod={handlePeriodChange}
+              size={SMALL_SLIDING_TAB_BUTTONS}
+            />
             <Chart
               isLoading={isChartsDataLoading}
               data={{
@@ -215,7 +230,7 @@ export function DoormanChart() {
                 plots: smvkHistoryData,
               }}
               settings={{
-                height: 370,
+                height: 380,
                 tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod),
               }}
               tooltipAsset={'sMVK'}
